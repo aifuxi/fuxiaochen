@@ -14,6 +14,7 @@
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
+    "cross-env": "^7.0.3",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.8",
     "next": "13.4.8",
@@ -21,13 +22,13 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.2",
-    "typescript": "5.1.6",
-    "cross-env": "^7.0.3"
+    "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
+    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
