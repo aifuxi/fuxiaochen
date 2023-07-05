@@ -17,6 +17,7 @@ const config = {
         html: true,
       },
     ],
+    '@next/next/no-img-element': 'off',
   },
   ignorePatterns: ['*.config.js', '.next', 'dist'],
 };

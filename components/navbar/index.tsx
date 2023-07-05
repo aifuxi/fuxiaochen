@@ -41,7 +41,7 @@ const Navbar = () => {
 
   return (
     <div className="py-10 flex justify-between items-center">
-      <Logo className="w-[64px] h-[64px]" />
+      <Logo />
       <button>
         <Menu size={40} onClick={setTrue} />
       </button>
@@ -62,6 +62,7 @@ const Navbar = () => {
             <li key={item.link}>
               <Link
                 href={item.link}
+                onClick={setFalse}
                 className="text-2xl font-bold tracking-widest text-gray-900"
               >
                 {item.label}

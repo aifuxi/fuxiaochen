@@ -1,26 +1,20 @@
-import { SVGProps } from 'react';
+import Link from 'next/link';
 
-const Logo = (props: SVGProps<SVGSVGElement>) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="1em"
-    height="1em"
-    fill="none"
-    viewBox="0 0 360 360"
-    {...props}
-  >
-    <g clipPath="url(#a)">
-      <rect width={360} height={360} fill="#000" rx={180} />
-      <path
-        fill="#fff"
-        d="M250.224 76.298v33.787h-87.009v53.521h66.677v33.189h-66.677V285h-41.86V76.298h128.869Z"
-      />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <rect width={360} height={360} fill="#fff" rx={180} />
-      </clipPath>
-    </defs>
-  </svg>
+import { cn } from '@/utils';
+
+const Logo = () => (
+  <Link href="/">
+    <button
+      className={cn(
+        'relative flex h-14 w-14 flex-col items-center justify-center',
+        'rounded-full bg-white text-3xl font-black',
+        'after:animate-spin-slow after:absolute after:inset-0 after:rounded-full ',
+        'after:border-2 after:border-l-green-400 after:border-r-red-400 after:border-t-blue-400 after:border-b-amber-400',
+        'focus:outline-none focus:border-none', // 解决点击按钮后出现蓝色边框的问题
+      )}
+    >
+      F
+    </button>
+  </Link>
 );
 export default Logo;
