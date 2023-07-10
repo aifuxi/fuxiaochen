@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 
 import ArticleItem from '@/app/articles/article-item';
 import { PageTitle } from '@/components';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/constants';
 import { getTags } from '@/services';
 
 export async function generateMetadata({
@@ -31,7 +31,7 @@ export default async function TagDetailPage({
 }) {
   const data = await getTags({
     page: DEFAULT_PAGE,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: MAX_PAGE_SIZE,
     friendlyUrl: params.friendlyUrl,
     published: true,
   });

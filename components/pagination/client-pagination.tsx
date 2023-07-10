@@ -17,7 +17,12 @@ type Props = {
   changePage: (currentPage: number) => void;
 };
 
-const ClientPagination = ({ page, total, changePage, className }: Props) => {
+export default function ClientPagination({
+  page,
+  total,
+  changePage,
+  className,
+}: Props) {
   return (
     <div className={cn('flex justify-end items-center', className)}>
       <div>
@@ -199,6 +204,4 @@ const ClientPagination = ({ page, total, changePage, className }: Props) => {
       </Popover>
     );
   }
-};
-
-export default ClientPagination;
+}

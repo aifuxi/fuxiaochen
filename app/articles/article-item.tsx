@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -11,7 +9,7 @@ type Props = {
   article: Article;
 };
 
-const ArticleItem = ({ article }: Props) => {
+export default function ArticleItem({ article }: Props) {
   return (
     <article
       className={cn(
@@ -71,6 +69,4 @@ const ArticleItem = ({ article }: Props) => {
       </div>
     </article>
   );
-};
-
-export default ArticleItem;
+}

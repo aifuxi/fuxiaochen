@@ -7,7 +7,7 @@ import { cn } from '@/utils';
 
 import ArticleItem from './articles/article-item';
 
-export default async function Home() {
+export default async function HomePage() {
   const res = await getArticles({
     page: DEFAULT_PAGE,
     published: true,
@@ -32,6 +32,16 @@ export default async function Home() {
           F西，努力做一个更好的程序员。
         </h1>
       </div>
+      {renderLatestArticles()}
+    </>
+  );
+
+  function renderLatestArticles() {
+    if (!articles?.length) {
+      return null;
+    }
+
+    return (
       <div className="flex flex-col space-y-8 pt-8">
         <PageTitle title="最新文章" />
         <ul className="flex flex-col space-y-10">
@@ -50,6 +60,6 @@ export default async function Home() {
           </Link>
         </div>
       </div>
-    </>
-  );
+    );
+  }
 }

@@ -1,9 +1,5 @@
-'use client';
-
 import { redirect } from 'next/navigation';
 
-const AdminPage = () => {
+export default function AdminPage() {
   redirect('/admin/article');
-};
-
-export default AdminPage;
+}

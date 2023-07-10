@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: '标签',
 };
 
-const TagsPage = async () => {
+export default async function TagsPage() {
   const data = await getTags({ page: DEFAULT_PAGE, pageSize: MAX_PAGE_SIZE });
 
   return (
@@ -43,6 +43,4 @@ const TagsPage = async () => {
       </ul>
     </div>
   );
-};
-
-export default TagsPage;
+}

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Link from 'next/link';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
@@ -9,15 +7,16 @@ type Props = {
   total: number;
 };
 
-const Pagination = ({ currentPage, total }: Props) => {
+export default function Pagination({ currentPage, total }: Props) {
   const pageNumber = Math.ceil(total / DEFAULT_PAGE_SIZE);
 
   return (
     <div className="flex justify-between">
       {renderPrevButton()}
-      <span>
-        {currentPage} of {pageNumber}
-      </span>
+      <div>
+        第<span className="font-semibold px-1">{currentPage}</span>页 / 共
+        <span className="font-semibold px-1">{pageNumber}</span>页
+      </div>
       {renderNextButton()}
     </div>
   );
@@ -54,6 +53,4 @@ const Pagination = ({ currentPage, total }: Props) => {
       </button>
     );
   }
-};
-
-export default Pagination;
+}
