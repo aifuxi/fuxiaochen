@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'bytemd/dist/index.css';
+@import 'highlight.js/styles/atom-one-dark.css';
+
+@import './scrollbar.scss';
+@import './poppins-font.scss';
+
+.markdown-body {
+  @apply prose;
+}
+
+#aifuxi-content-editor .bytemd {
+  height: 80vh !important;
+}

@@ -10,6 +10,7 @@ import {
   IconJuejin,
   IconWechat,
 } from '../icons';
+import PreviewImage from '../preview-image';
 
 type Props = {
   className?: string;
@@ -54,7 +55,13 @@ const SocialInfo = ({ className }: Props) => {
       >
         <IconBilibili />
       </Link>
-      <IconWechat className="hover:text-[#07c160] transition-all hover:scale-105 cursor-pointer" />
+      <PreviewImage
+        triggerNode={
+          <IconWechat className="hover:text-[#07c160] transition-all hover:scale-105 cursor-pointer" />
+        }
+        imageUrl="/images/wechat-qr-code.jpg"
+        className="w-[500px]"
+      />
     </div>
   );
 };

@@ -2,12 +2,24 @@ const colors = require('tailwindcss/colors');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ['class'],
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '2rem',
+        sm: '4rem',
+        lg: '8rem',
+        xl: '10rem',
+        '2xl': '12rem',
+      },
+    },
     extend: {
       colors: {
         primary: colors.indigo,
@@ -51,8 +63,29 @@ module.exports = {
           'monospace',
         ],
       },
+      keyframes: {
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
+        },
+        typing: {
+          from: { width: '0' },
+          to: { width: '18ch' },
+        },
+        blink: {
+          from: { 'border-right-color': 'transparent' },
+          to: { 'border-right-color': 'black' },
+        },
+      },
       animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
         'spin-slow': 'spin 6s linear infinite',
+        typing: 'typing 2s steps(18), blink 1s infinite',
       },
     },
   },

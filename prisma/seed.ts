@@ -1,3 +1,4 @@
+import { fakerZH_CN as faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -6,18 +7,18 @@ async function main() {
   for (let i = 0; i < 30; i++) {
     await prisma.article.create({
       data: {
-        title: `文章标题-${i + 1}`,
-        friendlyUrl: `article_${i + 1}`,
-        description: `我是文章描述，嘻嘻嘻，我有一头小毛驴呀重来也不骑，有一天我心血来潮骑着xxxxx${i}`,
-        content: `我是文章内容，嘻嘻嘻，我有一头小毛驴呀重来也不骑，有一天我心血来潮骑着xxxxx${i}`,
-        published: true,
+        title: faker.location.streetAddress({ useFullAddress: true }),
+        friendlyUrl: faker.lorem.slug(),
+        description: faker.lorem.paragraph(),
+        content: faker.lorem.paragraphs(30),
+        published: faker.datatype.boolean(),
       },
     });
 
     await prisma.tag.create({
       data: {
-        name: `话题-${i + 1}`,
-        friendlyUrl: `tag_${i + 1}`,
+        name: faker.person.suffix() + i,
+        friendlyUrl: faker.lorem.slug(),
       },
     });
   }
@@ -27,7 +28,9 @@ main()
   .then(async () => {
     await prisma.$disconnect();
   })
-  .catch(async () => {
+  .catch(async (e) => {
     await prisma.$disconnect();
+    console.log(e);
+
     process.exit(1);
   });

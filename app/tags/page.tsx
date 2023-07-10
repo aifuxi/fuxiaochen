@@ -1,18 +1,32 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 
+import { PageTitle } from '@/components';
+import { DEFAULT_PAGE, MAX_PAGE_SIZE } from '@/constants';
 import { getTags } from '@/services';
+import { cn } from '@/utils';
+
+export const metadata: Metadata = {
+  title: '标签',
+};
 
 const TagsPage = async () => {
-  const data = await getTags({ pageSize: 10000 });
+  const data = await getTags({ page: DEFAULT_PAGE, pageSize: MAX_PAGE_SIZE });
+
   return (
-    <div className="flex flex-col space-y-8 min-h-[68vh]">
-      <h1
-        className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900
-    sm:text-4xl sm:leading-10 md:text-6xl md:leading-14 border-b py-8"
-      >
-        标签
-      </h1>
-      <ul className="flex flex-wrap">
+    <div
+      className={cn(
+        'flex min-h-[68vh]',
+        'flex-col sm:flex-row sm:items-center',
+        'space-y-8 sm:space-y-0 sm:space-x-8 ',
+        'sm:divide-x-4',
+      )}
+    >
+      <PageTitle
+        title="标签"
+        className={cn('sm:border-b-0 sm:whitespace-nowrap')}
+      />
+      <ul className={cn('flex flex-wrap ', 'sm:pl-8')}>
         {data?.data?.map((tag) => (
           <li key={tag.id} className="flex space-x-2 ">
             <Link

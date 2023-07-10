@@ -1,9 +1,10 @@
 import Link from 'next/link';
 
+import { WEBSITE } from '@/constants';
 import { cn } from '@/utils';
 
 const Logo = () => (
-  <Link href="/">
+  <Link href="/" className="flex items-center">
     <button
       className={cn(
         'relative flex h-14 w-14 flex-col items-center justify-center',
@@ -15,6 +16,8 @@ const Logo = () => (
     >
       F
     </button>
+
+    <h2 className="ml-4 text-2xl font-semibold">{WEBSITE}</h2>
   </Link>
 );
 export default Logo;

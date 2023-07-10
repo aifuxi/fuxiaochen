@@ -1,8 +1,8 @@
 import { Metadata } from 'next';
 
-import { Footer, Navbar } from '@/components';
+import { Footer, Navbar, ToastProvider } from '@/components';
 import { WEBSITE } from '@/constants';
-import '@/styles/globals.scss';
+import '@/styles/global.scss';
 
 export const metadata: Metadata = {
   title: {
@@ -38,11 +38,13 @@ export default function RootLayout({
         />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body className="debug-screens antialiased">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 xl:max-w-5xl xl:px-0 h-screen">
-          <Navbar />
-          {children}
-          <Footer />
+      <body className="debug-screens antialiased min-w-[360px]">
+        <div className="container">
+          <ToastProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </ToastProvider>
         </div>
       </body>
     </html>

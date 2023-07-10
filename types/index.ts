@@ -8,9 +8,12 @@ export type NavItem = {
   link: string;
 };
 
-export type Tag = PrismaTag & { articleCount?: number };
+export type Tag = PrismaTag & {
+  articleCount?: number;
+  articles?: PrismaArticle[];
+};
 
-export type Article = PrismaArticle & { tags: PrismaTag[] };
+export type Article = PrismaArticle & { tags?: PrismaTag[] };
 
 export type CreateTagRequest = {
   name: string;
@@ -43,15 +46,20 @@ export type URLStruct = {
 };
 
 export type PaginationRequest = {
-  page?: number;
-  pageSize?: number;
+  page: number;
+  pageSize: number;
 };
 
 export type GetArticlesRequest = {
   published?: boolean;
+  title?: string;
   tags?: string[];
 } & PaginationRequest;
 
-export type GetTagsRequest = PaginationRequest;
+export type GetTagsRequest = {
+  friendlyUrl?: string;
+  /** 该标签下对应文章的发布状态 */
+  published?: boolean;
+} & PaginationRequest;
 
 export type DynamicRouteHandleParams = { params: { id: string } };

@@ -1,22 +1,19 @@
+import React from 'react';
+
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-import { SocialInfo } from '@/components';
+import { PageTitle, SocialInfo } from '@/components';
 import { NICKNAME } from '@/constants';
 
 export const metadata: Metadata = {
   title: '关于',
 };
 
-const AboutPage = () => {
+export default function AboutPage() {
   return (
     <div className="flex flex-col space-y-8">
-      <h1
-        className="text-3xl font-extrabold leading-9 tracking-tight text-gray-900
-        sm:text-4xl sm:leading-10 md:text-6xl md:leading-14 border-b py-8"
-      >
-        关于
-      </h1>
+      <PageTitle title="关于" />
 
       <div className="flex flex-col items-center space-y-2">
         <Image
@@ -29,9 +26,9 @@ const AboutPage = () => {
         <h3 className="text-2xl font-bold leading-8 tracking-tight">
           {NICKNAME}
         </h3>
-        <div className="text-gray-500 dark:text-gray-400">前端开发工程师</div>
+        <div className="text-gray-500 dark:text-gray-400">前端工程师</div>
         <blockquote className="text-gray-500 dark:text-gray-400 italic indent-8">
-          学习的时候要带着自己的思考，不要盲目崇拜，也不要全部照搬前人的经验和成果。只有经过自己思考，学以致用，放能在属于自己的蛊仙(程序员)之路上走的更远！
+          学习的时候要带着自己的思考，不要盲目崇拜，也不要全部照搬前人的经验和成果。只有经过自己思考，学以致用，方能在属于自己的蛊仙(程序员)之路上走的更远！
         </blockquote>
         <div className="w-full text-right text-gray-500 dark:text-gray-400 italic text-xs">
           forked from 大爱仙尊-古月方源
@@ -40,26 +37,24 @@ const AboutPage = () => {
 
       <SocialInfo />
 
-      <div className="prose dark:prose-dark">
+      <div className="prose max-w-none dark:prose-dark">
         <ul>
-          <li>姓名：xxx</li>
-          <li>昵称：xxx</li>
-          <li>座右铭：你不一定要很厲害，才能開始；但你要開始，才能很厲害</li>
-          <li>我是一名前端工程师，xxxxxxxxxxxxxxxxxxxxxxxxx</li>
+          <li>昵称：F西</li>
+          <li>
+            简介：我是一名前端工程师，但是对后端也很感兴趣，两者都持续学习中，目标是让自己具备全栈开发的能力。在我看来，不懂后端的前端不是好前端。
+          </li>
           <li>坐标：上海</li>
           <li>
-            skill：
+            技能：
             <ul>
-              <li>前端：React、ES6/7/8、Antd、Axios、Tailwindcss</li>
-              <li>服务端：Next.js、Koa2、Prisma、Typeorm</li>
+              <li>前端：React、Tailwind CSS、Next.js、Typescript</li>
+              <li>服务端：Node.js、Linux</li>
               <li>数据库：Mysql、Postgresql</li>
-              <li>其他：Webpack、Vite、Typescript、Serverless</li>
+              <li>其他：Webpack、Vite</li>
             </ul>
           </li>
         </ul>
       </div>
     </div>
   );
-};
-
-export default AboutPage;
+}

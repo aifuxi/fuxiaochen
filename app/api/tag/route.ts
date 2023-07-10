@@ -1,7 +1,7 @@
 import type { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
-import { DEFAULT_PAGE_SIZE, ZERO } from '@/constants';
+import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO } from '@/constants';
 import prisma from '@/libs/prisma';
 import type { Tag } from '@/types';
 import { createSuccessResponse, createSuccessTotalResponse } from '@/utils';
@@ -10,6 +10,18 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
+  const friendlyUrl = searchParams.get('friendlyUrl');
+  const published = searchParams.get('published');
+  let needPublished: boolean | undefined = undefined;
+
+  if (typeof published === 'string') {
+    if (published === TRUE) {
+      needPublished = true;
+    }
+    if (published === FALSE) {
+      needPublished = false;
+    }
+  }
 
   let take = DEFAULT_PAGE_SIZE;
   let skip = ZERO;
@@ -27,6 +39,11 @@ export async function GET(request: Request) {
       skip = ZERO;
     }
   }
+
+  if (typeof friendlyUrl === 'string' && friendlyUrl?.length > 0) {
+    Object.assign(condition, { friendlyUrl });
+  }
+
   const tags = await prisma.tag.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -35,16 +52,24 @@ export async function GET(request: Request) {
     take,
     skip,
     include: {
-      articles: true,
+      articles: needPublished
+        ? {
+            where: {
+              published: true,
+            },
+          }
+        : true,
     },
   });
+
   const total = (await prisma.tag.count({ where: condition })) || 0;
 
   const newTags = tags.map((tag) => {
-    const { articles, ...rest } = tag;
+    const { articles } = tag;
     const tmpTag: Tag = {
-      ...rest,
-      articleCount: articles?.filter((item) => item.published)?.length || 0,
+      ...tag,
+      articles,
+      articleCount: articles?.length || 0,
     };
     return tmpTag;
   });
