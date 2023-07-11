@@ -3,6 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import ArticleItem from '@/app/articles/article-item';
+import EmptyArticleList from '@/app/articles/empty-article-list';
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/constants';
 import { getTags } from '@/services';
@@ -42,16 +43,28 @@ export default async function TagDetailPage({
   return (
     <div className="flex flex-col space-y-8">
       <PageTitle title={currentTag?.name || ''} />
-      <p className="prose">
-        共<span className="font-semibold px-1">{articleCount}</span>篇文章
-      </p>
-      <ul className="flex flex-col space-y-10">
-        {articles?.map((article) => (
-          <li key={article.id}>
-            <ArticleItem article={article} />
-          </li>
-        ))}
-      </ul>
+      {renderArticles()}
     </div>
   );
+
+  function renderArticles() {
+    if (!articles?.length) {
+      return <EmptyArticleList />;
+    }
+
+    return (
+      <>
+        <p className="prose">
+          共<span className="font-semibold px-1">{articleCount}</span>篇文章
+        </p>
+        <ul className="flex flex-col space-y-10">
+          {articles?.map((article) => (
+            <li key={article.id}>
+              <ArticleItem article={article} />
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  }
 }

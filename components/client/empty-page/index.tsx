@@ -18,7 +18,7 @@ export default function EmptyPage({
   className,
   bottomOptionNode = (
     <Link href="/">
-      <Button size={'lg'}>回首页</Button>
+      <Button size={'lg'}>返回首页</Button>
     </Link>
   ),
 }: Props) {

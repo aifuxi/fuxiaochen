@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 
 import { BytemdViewer } from '@/components/client';
 import { PageTitle, PreviewImage } from '@/components/rsc';
@@ -11,7 +10,9 @@ import {
   PLACEHOLDER_COVER,
 } from '@/constants';
 import { getArticles } from '@/services';
-import { cn, formatToDateTime, isUndefined } from '@/utils';
+import { cn, formatToDateTime, isNil } from '@/utils';
+
+import EmptyArticle from './empty-article';
 
 export async function generateMetadata({
   params,
@@ -43,8 +44,8 @@ export default async function ArticleDetailPage({
   });
   const currentArticle = data.data?.[0];
 
-  if (isUndefined(currentArticle)) {
-    redirect('/404');
+  if (isNil(currentArticle)) {
+    return <EmptyArticle />;
   }
 
   return (

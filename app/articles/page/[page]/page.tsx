@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import ArticleItem from '@/app/articles/article-item';
+import EmptyArticleList from '@/app/articles/empty-article-list';
 import { PageTitle, Pagination } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { getArticles } from '@/services';
@@ -38,20 +39,20 @@ export default async function ArticlePage({
   return (
     <div className="flex flex-col space-y-8">
       <PageTitle title="全部文章" />
-      <p className="prose">
-        共<span className="font-semibold px-1">{total}</span>篇文章
-      </p>
       {renderArticles()}
     </div>
   );
 
   function renderArticles() {
     if (!articles?.length) {
-      return null;
+      return <EmptyArticleList />;
     }
 
     return (
       <>
+        <p className="prose">
+          共<span className="font-semibold px-1">{total}</span>篇文章
+        </p>
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (
             <li key={article.id}>
@@ -59,7 +60,7 @@ export default async function ArticlePage({
             </li>
           ))}
         </ul>
-        <Pagination currentPage={page} total={total} />
+        <Pagination currentPage={DEFAULT_PAGE} total={total} />
       </>
     );
   }
