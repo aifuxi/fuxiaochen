@@ -3,7 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 
 import ArticleItem from '@/app/articles/article-item';
-import { PageTitle } from '@/components';
+import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/constants';
 import { getTags } from '@/services';
 

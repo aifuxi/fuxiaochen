@@ -16,7 +16,7 @@ type Props = {
   className?: string;
 };
 
-const SocialInfo = ({ className }: Props) => {
+export default function SocialInfo({ className }: Props) {
   return (
     <div
       className={cn(
@@ -64,6 +64,4 @@ const SocialInfo = ({ className }: Props) => {
       />
     </div>
   );
-};
-
-export default SocialInfo;
+}

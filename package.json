@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 6121 --turbo",
+    "dev": "next dev -p 6121",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -70,6 +70,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/ali-oss": "^6.16.8",
+    "@types/markdown-navbar": "^1.4.0",
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "cz-conventional-changelog": "^3.3.0",

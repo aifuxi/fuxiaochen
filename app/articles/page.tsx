@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import { PageTitle, Pagination } from '@/components';
+import { PageTitle, Pagination } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { getArticles } from '@/services';
 

@@ -6,7 +6,8 @@ import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import useSWR from 'swr';
 
-import { ClientPagination, PageLoading, PreviewImage } from '@/components';
+import { ClientPagination } from '@/components/client';
+import { PageLoading, PreviewImage } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {

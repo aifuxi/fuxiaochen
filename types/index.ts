@@ -52,6 +52,7 @@ export type PaginationRequest = {
 
 export type GetArticlesRequest = {
   published?: boolean;
+  friendlyUrl?: string;
   title?: string;
   tags?: string[];
 } & PaginationRequest;

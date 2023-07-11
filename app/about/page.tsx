@@ -3,7 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
-import { PageTitle, SocialInfo } from '@/components';
+import { PageTitle, SocialInfo } from '@/components/rsc';
 import { NICKNAME } from '@/constants';
 
 export const metadata: Metadata = {

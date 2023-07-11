@@ -8,7 +8,7 @@ import { uploadFile } from '@/services';
 
 import { plugins } from './config';
 
-import { useToast } from '../ui/use-toast';
+import { useToast } from '../../ui/use-toast';
 
 type Props = {
   content: string;

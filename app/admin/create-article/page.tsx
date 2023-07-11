@@ -6,7 +6,8 @@ import { useBoolean } from 'ahooks';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
-import { BytemdEditor, PageLoading } from '@/components';
+import { BytemdEditor } from '@/components/client';
+import { PageLoading } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

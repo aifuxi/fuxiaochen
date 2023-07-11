@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 
-const IconJuejin = (props: SVGProps<SVGSVGElement>) => (
+export const IconJuejin = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -21,4 +21,3 @@ const IconJuejin = (props: SVGProps<SVGSVGElement>) => (
     </g>
   </svg>
 );
-export default IconJuejin;

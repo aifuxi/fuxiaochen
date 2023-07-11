@@ -10,7 +10,7 @@ type Props = {
 
 const BytemdViewer: React.FC<Props> = ({ content }) => {
   return (
-    <div className="prose w-full">
+    <div className="prose max-w-none">
       <Viewer value={content} plugins={plugins} />
     </div>
   );

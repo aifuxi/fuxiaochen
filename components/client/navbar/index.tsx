@@ -5,10 +5,9 @@ import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { Logo } from '@/components/rsc';
 import { NavItem } from '@/types';
 import { cn } from '@/utils';
-
-import Logo from '../logo';
 
 const baseNavItems: NavItem[] = [
   {
@@ -41,12 +40,12 @@ const baseNavItems: NavItem[] = [
   },
 ];
 
-const Navbar = () => {
+export default function Navbar() {
   const [state, { setTrue, setFalse }] = useBoolean(false);
   const pathname = usePathname();
 
   return (
-    <div className="py-10 flex justify-between items-center sticky top-0 bg-white">
+    <div className="py-10 flex justify-between items-center sticky top-0 z-10 bg-white">
       <Logo />
       <button className="md:hidden">
         <Menu size={40} onClick={setTrue} />
@@ -96,6 +95,4 @@ const Navbar = () => {
       </div>
     </div>
   );
-};
-
-export default Navbar;
+}

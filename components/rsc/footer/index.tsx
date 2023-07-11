@@ -4,7 +4,7 @@ import { WEBSITE } from '@/constants/info';
 
 import SocialInfo from '../social-info';
 
-const Footer = () => {
+export default function Footer() {
   return (
     <div className="flex flex-col items-center py-12 space-y-1 text-gray-300 text-xs">
       <SocialInfo className="text-2xl" />
@@ -27,6 +27,4 @@ const Footer = () => {
       </div>
     </div>
   );
-};
-
-export default Footer;
+}

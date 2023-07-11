@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { PageTitle } from '@/components';
+import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, MAX_PAGE_SIZE } from '@/constants';
 import { getTags } from '@/services';
 import { cn } from '@/utils';

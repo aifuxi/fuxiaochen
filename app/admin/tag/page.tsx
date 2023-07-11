@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import { PlusIcon } from 'lucide-react';
 import useSWR from 'swr';
 
-import { ClientPagination, PageLoading } from '@/components';
+import { ClientPagination } from '@/components/client';
+import { PageLoading } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
 import {
   Table,

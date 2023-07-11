@@ -1,9 +1,9 @@
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { NextResponse } from 'next/server';
 
 import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO } from '@/constants';
 import prisma from '@/libs/prisma';
-import type { Tag } from '@/types';
+import { Tag } from '@/types';
 import { createSuccessResponse, createSuccessTotalResponse } from '@/utils';
 
 export async function GET(request: Request) {

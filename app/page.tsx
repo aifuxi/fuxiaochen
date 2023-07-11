@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { PageTitle } from '@/components';
+import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, LATEST_ARTICLES_PAGE_SIZE } from '@/constants';
 import { getArticles } from '@/services';
 import { cn } from '@/utils';

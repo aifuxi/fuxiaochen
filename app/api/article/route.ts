@@ -9,12 +9,12 @@ import { createSuccessResponse, createSuccessTotalResponse } from '@/utils';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  console.log(searchParams);
 
   const title = searchParams.get('title');
   const page = searchParams.get('page');
   const pageSize = searchParams.get('pageSize');
   const published = searchParams.get('published');
+  const friendlyUrl = searchParams.get('friendlyUrl');
 
   const { tags = [] } = parse(
     req.url?.split('?')[1] || '',
@@ -39,6 +39,10 @@ export async function GET(req: Request) {
     if (published === FALSE) {
       Object.assign(condition, { published: false });
     }
+  }
+
+  if (typeof friendlyUrl === 'string' && friendlyUrl?.length > 0) {
+    Object.assign(condition, { friendlyUrl });
   }
 
   if (typeof page === 'string' && typeof pageSize === 'string') {

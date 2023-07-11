@@ -9,7 +9,7 @@
 @import './poppins-font.scss';
 
 .markdown-body {
-  @apply prose;
+  @apply prose max-w-none;
 }
 
 #aifuxi-content-editor .bytemd {

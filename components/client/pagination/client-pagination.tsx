@@ -4,11 +4,14 @@ import React from 'react';
 
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { DEFAULT_PAGE_SIZE } from '@/constants';
 import { cn } from '@/utils';
-
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { ScrollArea } from '../ui/scroll-area';
 
 type Props = {
   className?: string;

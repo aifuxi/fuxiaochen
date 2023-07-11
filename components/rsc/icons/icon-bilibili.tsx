@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SVGProps } from 'react';
 
-const IconBilibili = (props: SVGProps<SVGSVGElement>) => (
+export const IconBilibili = (props: SVGProps<SVGSVGElement>) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="1em"
@@ -19,4 +19,3 @@ const IconBilibili = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-export default IconBilibili;

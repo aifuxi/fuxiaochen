@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import ArticleItem from '@/app/articles/article-item';
-import { PageTitle, Pagination } from '@/components';
+import { PageTitle, Pagination } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
 import { getArticles } from '@/services';
 

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
-import { Footer, Navbar, ToastProvider } from '@/components';
+import { Navbar, ToastProvider } from '@/components/client';
+import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
 
