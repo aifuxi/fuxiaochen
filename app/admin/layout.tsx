@@ -2,9 +2,12 @@
 
 import React from 'react';
 
+import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { EmptyPage } from '@/components/client';
+import { PageLoading, Unauthorized401Illustration } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
 import { NavItem } from '@/types';
 
@@ -29,11 +32,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { data: session, status } = useSession();
 
   return (
     <div>
       {renderAdminNav()}
-      {children}
+      {renderChildren()}
     </div>
   );
 
@@ -54,5 +58,30 @@ export default function AdminLayout({
         ))}
       </ul>
     );
+  }
+
+  function renderChildren() {
+    if (status === 'loading') {
+      return <PageLoading />;
+    }
+
+    if (!session) {
+      return (
+        <EmptyPage
+          className="h-[calc(100vh-320px)]"
+          illustration={
+            <Unauthorized401Illustration className="w-[320px] h-[320px] sm:w-[500px] sm:h-[500px]" />
+          }
+          title="达咩，请登录~"
+          bottomOptionNode={
+            <Button size={'lg'} onClick={() => signIn()}>
+              去登录
+            </Button>
+          }
+        />
+      );
+    }
+
+    return children;
   }
 }

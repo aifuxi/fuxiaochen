@@ -216,8 +216,21 @@ const AdminCreateArticle = () => {
         <Button
           size={'lg'}
           onClick={() => {
-            updateArticle(id, createArticleReq).finally(() => {
-              router.push('/admin/article');
+            updateArticle(id, createArticleReq).then((res) => {
+              if (res.code !== ZERO) {
+                toast({
+                  variant: 'destructive',
+                  title: res.msg || 'Error',
+                  description: res.error || 'error',
+                });
+              } else {
+                toast({
+                  variant: 'default',
+                  title: 'Success',
+                  description: '编辑文章成功',
+                });
+                router.push('/admin/article');
+              }
             });
           }}
         >
@@ -229,8 +242,21 @@ const AdminCreateArticle = () => {
         <Button
           size={'lg'}
           onClick={() => {
-            createArticle(createArticleReq).finally(() => {
-              router.push('/admin/article');
+            createArticle(createArticleReq).then((res) => {
+              if (res.code !== ZERO) {
+                toast({
+                  variant: 'destructive',
+                  title: res.msg || 'Error',
+                  description: res.error || 'error',
+                });
+              } else {
+                toast({
+                  variant: 'default',
+                  title: 'Success',
+                  description: '创建文章成功',
+                });
+                router.push('/admin/article');
+              }
             });
           }}
         >

@@ -1,6 +1,12 @@
 import { Metadata } from 'next';
+import { Session } from 'next-auth';
 
-import { Navbar, ToastProvider } from '@/components/client';
+import {
+  AnalyticsProvider,
+  AuthProvider,
+  Navbar,
+  ToastProvider,
+} from '@/components/client';
 import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
@@ -14,8 +20,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  session,
 }: {
   children: React.ReactNode;
+  session: Session;
 }) {
   return (
     <html lang="zh-CN">
@@ -40,13 +48,17 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
       </head>
       <body className="debug-screens antialiased min-w-[360px]">
-        <div className="container">
-          <ToastProvider>
-            <Navbar />
-            {children}
-            <Footer />
-          </ToastProvider>
-        </div>
+        <ToastProvider>
+          <AuthProvider session={session}>
+            <AnalyticsProvider>
+              <div className="container">
+                <Navbar />
+                {children}
+                <Footer />
+              </div>
+            </AnalyticsProvider>
+          </AuthProvider>
+        </ToastProvider>
       </body>
     </html>
   );

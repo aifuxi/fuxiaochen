@@ -1,10 +1,16 @@
 import type { Prisma } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-import { FALSE, TRUE } from '@/constants';
+import { authOptions, FALSE, TRUE } from '@/constants';
 import prisma from '@/libs/prisma';
 import type { Article, DynamicRouteHandleParams } from '@/types';
-import { createSuccessResponse } from '@/utils';
+import {
+  checkPermission,
+  createFailResponse,
+  createSuccessResponse,
+} from '@/utils';
 
 export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const { searchParams } = new URL(req.url);
@@ -40,6 +46,13 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
 }
 
 export async function PUT(req: Request, { params }: DynamicRouteHandleParams) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
   const articleID = params.id;
   const body = await req.json();
 
@@ -72,6 +85,14 @@ export async function DELETE(
   req: Request,
   { params }: DynamicRouteHandleParams,
 ) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
+
   const articleID = params.id;
   const article = await prisma.article.delete({
     where: { id: articleID },

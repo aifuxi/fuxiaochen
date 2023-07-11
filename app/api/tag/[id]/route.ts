@@ -1,8 +1,15 @@
+import { StatusCodes } from 'http-status-codes';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
+import { authOptions } from '@/constants';
 import prisma from '@/libs/prisma';
 import { DynamicRouteHandleParams, Tag } from '@/types';
-import { createSuccessResponse } from '@/utils';
+import {
+  checkPermission,
+  createFailResponse,
+  createSuccessResponse,
+} from '@/utils';
 
 export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const tagID = params.id;
@@ -28,6 +35,13 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
 }
 
 export async function PUT(req: Request, { params }: DynamicRouteHandleParams) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
   const tagID = params.id;
   const body = await req.json();
   // const tagInDB = await prisma.tag.findUnique({ where: { id: tagID } });
@@ -51,6 +65,14 @@ export async function DELETE(
   req: Request,
   { params }: DynamicRouteHandleParams,
 ) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
+
   const tagID = params.id;
   const tag = await prisma.tag.delete({
     where: { id: tagID },

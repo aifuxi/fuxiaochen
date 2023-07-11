@@ -6,6 +6,11 @@ import {
   IconJuejin,
   IconWechat,
 } from './icons';
+import {
+  NoDataIllustration,
+  NotFound404Illustration,
+  Unauthorized401Illustration,
+} from './illustrations';
 import { PageLoading, SpinLoading } from './loading';
 import Logo from './logo';
 import PageTitle from './page-title';
@@ -27,4 +32,7 @@ export {
   Pagination,
   PreviewImage,
   SocialInfo,
+  NoDataIllustration,
+  NotFound404Illustration,
+  Unauthorized401Illustration,
 };

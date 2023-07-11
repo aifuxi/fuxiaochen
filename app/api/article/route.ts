@@ -1,11 +1,18 @@
 import type { Prisma } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import { parse } from 'qs';
 
-import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO } from '@/constants';
+import { authOptions, DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO } from '@/constants';
 import prisma from '@/libs/prisma';
 import type { Article, GetArticlesRequest } from '@/types';
-import { createSuccessResponse, createSuccessTotalResponse } from '@/utils';
+import {
+  checkPermission,
+  createFailResponse,
+  createSuccessResponse,
+  createSuccessTotalResponse,
+} from '@/utils';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -90,6 +97,14 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
+
   const body = await req.json();
 
   let tags: Array<{ id: number }> | undefined = [];

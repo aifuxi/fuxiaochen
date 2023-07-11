@@ -1,11 +1,19 @@
 import { format } from 'date-fns';
 import fs from 'fs';
+import { StatusCodes } from 'http-status-codes';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 import path from 'path';
 
+import { authOptions } from '@/constants';
 import aliOSS from '@/libs/ali-oss';
 import type { URLStruct } from '@/types';
-import { createSuccessResponse, isProduction } from '@/utils';
+import {
+  checkPermission,
+  createFailResponse,
+  createSuccessResponse,
+  isProduction,
+} from '@/utils';
 
 const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();
@@ -19,6 +27,14 @@ const saveFile = async (file: File) => {
 };
 
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+  const hasPermission = checkPermission(session);
+  if (!hasPermission) {
+    return NextResponse.json(createFailResponse(`禁止操作`), {
+      status: StatusCodes.FORBIDDEN,
+    });
+  }
+
   // Get formData from request
   const formData = await req.formData();
 

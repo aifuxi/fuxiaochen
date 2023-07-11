@@ -1,3 +1,4 @@
+import { checkPermission } from './auth';
 import { isNil, isNull, isUndefined } from './check';
 import {
   cn,
@@ -31,4 +32,5 @@ export {
   isUndefined,
   isNull,
   isNil,
+  checkPermission,
 };
