@@ -25,39 +25,41 @@ export default function SocialInfo({ className }: Props) {
       )}
     >
       <Link
-        rel="noopener noreferrer"
         href={`mailto:${EMAIL}`}
-        className="hover:text-gray-800 transition-all hover:scale-105"
+        className={cn(
+          'transition-all',
+          'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
+        )}
       >
         <IconEmail />
       </Link>
       <Link
         target="_blank"
-        rel="noopener noreferrer"
         href={GITHUB_PAGE}
-        className="hover:text-gray-800 transition-all hover:scale-105"
+        className={cn(
+          'transition-all',
+          'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
+        )}
       >
         <IconGithub />
       </Link>
       <Link
         target="_blank"
-        rel="noopener noreferrer"
         href={JUEJIN_PAGE}
-        className="hover:text-[#1e80ff] transition-all hover:scale-105"
+        className="hover:text-[#1e80ff] transition-all hover:scale-110"
       >
         <IconJuejin />
       </Link>
       <Link
         target="_blank"
-        rel="noopener noreferrer"
         href={BILIBILI_PAGE}
-        className="hover:text-[#00aeec] transition-all hover:scale-105"
+        className="hover:text-[#00aeec] transition-all hover:scale-110"
       >
         <IconBilibili />
       </Link>
       <PreviewImage
         triggerNode={
-          <IconWechat className="hover:text-[#07c160] transition-all hover:scale-105 cursor-pointer" />
+          <IconWechat className="hover:text-[#07c160] transition-all hover:scale-110 cursor-pointer" />
         }
         imageUrl="/images/wechat-qr-code.jpg"
         className="w-[500px]"

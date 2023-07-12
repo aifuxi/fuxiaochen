@@ -1,5 +1,5 @@
-import { fakerZH_CN as faker } from '@faker-js/faker';
 import { PrismaClient } from '@prisma/client';
+import Mockjs from 'mockjs';
 
 const prisma = new PrismaClient();
 
@@ -7,18 +7,18 @@ async function main() {
   for (let i = 0; i < 90; i++) {
     await prisma.article.create({
       data: {
-        title: faker.location.streetAddress({ useFullAddress: true }),
-        friendlyUrl: faker.lorem.slug(),
-        description: faker.lorem.paragraph(),
-        content: faker.lorem.paragraphs(30),
-        published: faker.datatype.boolean(),
+        title: Mockjs.Random.ctitle(6) + i,
+        friendlyUrl: Mockjs.Random.word(),
+        description: Mockjs.Random.cparagraph(),
+        content: Mockjs.Random.cparagraph(),
+        published: Mockjs.Random.boolean(),
       },
     });
 
     await prisma.tag.create({
       data: {
-        name: faker.person.suffix() + i,
-        friendlyUrl: faker.lorem.slug(),
+        name: Mockjs.Random.cword() + i,
+        friendlyUrl: Mockjs.Random.word() + i,
       },
     });
   }

@@ -24,14 +24,20 @@ export default function ArticleItem({ article }: Props) {
         >
           <Image
             src={article.cover ? article.cover : PLACEHOLDER_COVER}
-            alt="cover"
+            alt={article.title}
             width="0"
             height="0"
+            priority
             sizes="100vw"
             className="w-full h-auto rounded hover:scale-105 transition-transform"
           />
         </Link>
-        <div className='text-base font-medium leading-6 text-gray-500 dark:text-gray-400"'>
+        <div
+          className={cn(
+            'text-base font-medium leading-6 ',
+            'text-gray-500 dark:text-gray-400',
+          )}
+        >
           {formatToDate(new Date(article.createdAt))}
         </div>
       </div>
@@ -43,7 +49,10 @@ export default function ArticleItem({ article }: Props) {
           {article.tags?.map((tag) => (
             <Link
               key={tag.id}
-              className=" text-sm font-medium text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+              className={cn(
+                'text-sm font-medium ',
+                'text-primary-500 hover:text-primary-600 dark:hover:text-primary-400',
+              )}
               href={`/tags/${tag.friendlyUrl}`}
             >
               {tag.name}
@@ -52,15 +61,19 @@ export default function ArticleItem({ article }: Props) {
         </div>
         <div
           className={cn(
-            'prose text-ellipsis overflow-hidden break-words line-clamp-3 text-gray-500 dark:text-gray-400',
+            'prose text-ellipsis overflow-hidden break-words line-clamp-3 ',
             'md:max-w-[100ch]',
+            'text-gray-500 dark:text-gray-400',
           )}
         >
           {article.description}
         </div>
         <div className="text-base font-medium leading-6">
           <Link
-            className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+            className={cn(
+              'text-primary-500 ',
+              'hover:text-primary-600 dark:hover:text-primary-400',
+            )}
             href={`/articles/${article.friendlyUrl}`}
           >
             查看更多 →

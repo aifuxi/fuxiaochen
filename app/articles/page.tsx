@@ -34,8 +34,9 @@ export default async function ArticlesPage() {
 
     return (
       <>
-        <p className="prose">
-          共<span className="font-semibold px-1">{total}</span>篇文章
+        <p>
+          共<span className="font-semibold px-1">{total}</span>
+          篇文章
         </p>
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (

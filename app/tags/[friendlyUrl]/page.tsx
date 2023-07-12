@@ -54,7 +54,7 @@ export default async function TagDetailPage({
 
     return (
       <>
-        <p className="prose">
+        <p>
           共<span className="font-semibold px-1">{articleCount}</span>篇文章
         </p>
         <ul className="flex flex-col space-y-10">

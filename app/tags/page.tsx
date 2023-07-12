@@ -30,11 +30,19 @@ export default async function TagsPage() {
         {data?.data?.map((tag) => (
           <li key={tag.id} className="flex space-x-2 ">
             <Link
-              className="mr-4 mb-4 text-sm font-medium text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+              className={cn(
+                'mr-4 mb-4 text-sm font-medium text-primary-500 ',
+                'hover:text-primary-600 dark:hover:text-primary-400',
+              )}
               href={`/tags/${tag.friendlyUrl}`}
             >
               {tag.name}
-              <span className="text-sm font-semibold text-gray-600">
+              <span
+                className={cn(
+                  'text-sm font-semibold ml-2',
+                  'text-gray-500 dark:text-gray-400',
+                )}
+              >
                 ({tag.articleCount || 0})
               </span>
             </Link>

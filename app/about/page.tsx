@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import { PageTitle, SocialInfo } from '@/components/rsc';
 import { NICKNAME } from '@/constants';
+import { cn } from '@/utils';
 
 export const metadata: Metadata = {
   title: '关于',
@@ -27,17 +28,24 @@ export default function AboutPage() {
           {NICKNAME}
         </h3>
         <div className="text-gray-500 dark:text-gray-400">前端工程师</div>
-        <blockquote className="text-gray-500 dark:text-gray-400 italic indent-8">
+        <blockquote
+          className={cn(' italic indent-8', 'text-gray-500 dark:text-gray-400')}
+        >
           学习的时候要带着自己的思考，不要盲目崇拜，也不要全部照搬前人的经验和成果。只有经过自己思考，学以致用，方能在属于自己的蛊仙(程序员)之路上走的更远！
         </blockquote>
-        <div className="w-full text-right text-gray-500 dark:text-gray-400 italic text-xs">
+        <div
+          className={cn(
+            'w-full text-right italic text-xs',
+            'text-gray-500 dark:text-gray-400 ',
+          )}
+        >
           forked from 大爱仙尊-古月方源
         </div>
       </div>
 
       <SocialInfo />
 
-      <div className="prose max-w-none dark:prose-dark">
+      <div className="prose max-w-none dark:prose-invert">
         <ul>
           <li>昵称：F西</li>
           <li>

@@ -49,12 +49,8 @@ export default async function ArticleDetailPage({
   }
 
   return (
-    <div>
-      <div className="text-center text-base font-medium leading-6 tracking-wider text-gray-500">
-        {formatToDateTime(currentArticle.createdAt)}
-      </div>
-      <PageTitle title={currentArticle.title} className="text-center" />
-      <div className="flex justify-center my-8">
+    <div className="flex flex-col space-y-8">
+      <div className="flex justify-center">
         <PreviewImage
           triggerNode={
             <Image
@@ -65,13 +61,17 @@ export default async function ArticleDetailPage({
               sizes="100vw"
               className={cn(
                 'h-auto rounded cursor-pointer',
-                'w-full 2xl:w-3/4',
+                'w-full 2xl:w-4/5',
               )}
             />
           }
           imageUrl={currentArticle.cover || PLACEHOLDER_COVER}
         />
       </div>
+      <div className="text-center text-base font-medium leading-6 tracking-wider text-gray-500">
+        {formatToDateTime(currentArticle.createdAt)}
+      </div>
+      <PageTitle title={currentArticle.title} className="text-center pt-0" />
 
       <div className={cn('flex items-start space-x-8', 'flex-col lg:flex-row')}>
         <div

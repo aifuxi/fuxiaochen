@@ -10,6 +10,7 @@ import {
 import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
+import { cn } from '@/utils';
 
 export const metadata: Metadata = {
   title: {
@@ -47,7 +48,13 @@ export default function RootLayout({
         />
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body className="debug-screens antialiased min-w-[360px]">
+      <body
+        className={cn(
+          'debug-screens antialiased min-w-[360px] transition-all',
+          'bg-white dark:bg-gray-900',
+          'text-black dark:text-white',
+        )}
+      >
         <ToastProvider>
           <AuthProvider session={session}>
             <AnalyticsProvider>

@@ -50,7 +50,7 @@ export default async function ArticlePage({
 
     return (
       <>
-        <p className="prose">
+        <p>
           共<span className="font-semibold px-1">{total}</span>篇文章
         </p>
         <ul className="flex flex-col space-y-10">

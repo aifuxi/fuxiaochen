@@ -9,6 +9,8 @@ import { Logo } from '@/components/rsc';
 import { NavItem } from '@/types';
 import { cn } from '@/utils';
 
+import ThemeSwitcher from '../theme-switcher';
+
 const baseNavItems: NavItem[] = [
   {
     label: '首页',
@@ -45,28 +47,40 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <div className="py-10 flex justify-between items-center sticky top-0 z-10 bg-white">
+    <div
+      className={cn(
+        'py-10 flex justify-between items-center sticky top-0 z-10 ',
+        'bg-white dark:bg-gray-900',
+      )}
+    >
       <Logo />
-      <button className="md:hidden">
-        <Menu size={40} onClick={setTrue} />
-      </button>
 
-      <ul className={cn('hidden md:flex md:space-x-6')}>
-        {baseNavItems.map((item) => (
-          <li key={item.link}>
-            <Link
-              href={item.link}
-              className={cn(
-                'flex items-center h-[56px] text-xl font-semibold underline-offset-4 tracking-widest text-gray-500 transition-colors ',
-                'hover:text-gray-800 hover:underline',
-                pathname === item.link && 'text-gray-800 underline',
-              )}
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className="flex items-center">
+        <ul className={cn('hidden md:flex md:space-x-6')}>
+          {baseNavItems.map((item) => (
+            <li key={item.link}>
+              <Link
+                href={item.link}
+                className={cn(
+                  'flex items-center h-[56px] text-xl font-semibold underline-offset-4 tracking-widest  transition-colors ',
+                  'hover:text-gray-800 dark:hover:text-white hover:underline',
+                  'text-gray-500 dark:text-gray-400',
+                  pathname === item.link &&
+                    'text-gray-800 dark:text-white underline',
+                )}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <ThemeSwitcher className="ml-4" />
+
+        <button className="md:hidden ml-4">
+          <Menu size={36} onClick={setTrue} />
+        </button>
+      </div>
 
       <div
         className={cn(
@@ -75,7 +89,7 @@ export default function Navbar() {
         )}
       >
         <div className="py-12 pr-4 flex items-center justify-end">
-          <button onClick={setFalse}>
+          <button onClick={setFalse} className="text-gray-900">
             <X size={40} />
           </button>
         </div>
