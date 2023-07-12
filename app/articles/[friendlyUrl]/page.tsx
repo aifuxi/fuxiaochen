@@ -25,9 +25,9 @@ export async function generateMetadata({
     friendlyUrl: params.friendlyUrl,
     published: true,
   });
-  const currentArticle = data.data?.[0];
+  const title = data.data?.[0]?.title || '文章未找到';
   return {
-    title: `${currentArticle?.title}`,
+    title,
   };
 }
 

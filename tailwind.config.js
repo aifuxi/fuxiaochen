@@ -77,8 +77,9 @@ module.exports = {
           to: { width: '100%' },
         },
         blink: {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
+          '0%': { opacity: '1' },
+          '50%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       animation: {
@@ -86,7 +87,7 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'spin-slow': 'spin 6s linear infinite',
         typing: 'typing 2s steps(15)',
-        blink: 'blink 1s linear infinite ',
+        blink: 'blink 0.7s infinite',
       },
       typography: (theme) => ({
         DEFAULT: {

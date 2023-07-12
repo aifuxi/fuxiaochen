@@ -8,7 +8,7 @@ import ArticleItem from './article-item';
 import EmptyArticleList from './empty-article-list';
 
 export const metadata: Metadata = {
-  title: '全部文章',
+  title: '文章',
 };
 
 export default async function ArticlesPage() {

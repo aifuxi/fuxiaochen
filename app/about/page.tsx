@@ -39,7 +39,7 @@ export default function AboutPage() {
             'text-gray-500 dark:text-gray-400 ',
           )}
         >
-          forked from 大爱仙尊-古月方源
+          forked from 大爱仙尊 - 古月方源
         </div>
       </div>
 

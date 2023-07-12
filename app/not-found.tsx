@@ -1,5 +1,11 @@
+import { Metadata } from 'next';
+
 import { EmptyPage } from '@/components/client';
 import { NotFound404Illustration } from '@/components/rsc';
+
+export const metadata: Metadata = {
+  title: '404 Not Found',
+};
 
 const NotFoundPage = () => {
   return (

@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: { page: string };
 }): Promise<Metadata> {
   return {
-    title: `第${params.page}页 - 全部文章`,
+    title: `第${params.page}页文章`,
   };
 }
 

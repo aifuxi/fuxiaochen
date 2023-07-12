@@ -19,9 +19,9 @@ export async function generateMetadata({
     friendlyUrl: params.friendlyUrl,
     published: true,
   });
-  const currentTag = data.data?.[0];
+  const name = data.data?.[0]?.name || '标签未找到';
   return {
-    title: `${currentTag?.name} - 标签`,
+    title: `${name} - 标签`,
   };
 }
 
