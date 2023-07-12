@@ -27,7 +27,7 @@ export default function RootLayout({
   session: Session;
 }) {
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <link
           rel="apple-touch-icon"
@@ -47,10 +47,28 @@ export default function RootLayout({
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
+        {/* 防止切换主题时闪烁 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+        (function() {
+          if (
+            localStorage.getItem('color-theme') === 'dark' ||
+            (!('color-theme' in localStorage) &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches)
+          ) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        })();
+      `,
+          }}
+        />
       </head>
       <body
         className={cn(
-          'debug-screens antialiased min-w-[360px] transition-all',
+          'debug-screens antialiased min-w-[360px]',
           'bg-white dark:bg-gray-900',
           'text-black dark:text-white',
         )}
