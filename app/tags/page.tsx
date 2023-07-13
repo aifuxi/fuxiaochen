@@ -5,7 +5,7 @@ import { getServerSideTags } from '@/app/fetch-data';
 import { GiscusComment } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, MAX_PAGE_SIZE } from '@/constants';
-import { cn, isNil } from '@/utils';
+import { cn } from '@/utils';
 
 export const metadata: Metadata = {
   title: '标签',
@@ -40,7 +40,7 @@ export default async function TagsPage() {
   );
 
   function renderTagList() {
-    if (isNil(tags)) {
+    if (!tags?.length) {
       return <div className="pl-8">暂无标签</div>;
     }
 
