@@ -38,3 +38,6 @@ next-env.d.ts
 # next-sitemap在build生成的文件
 /public/robots.txt
 /public/*.xml
+
+# prisma sqlite文件
+/prisma/data.db
