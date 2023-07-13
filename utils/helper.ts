@@ -33,10 +33,6 @@ export function isServer() {
   return typeof window === 'undefined';
 }
 
-export function getBaseURL() {
-  return isServer() ? process.env.BASE_URL : '';
-}
-
 /**
  * 判断当前是不是生产环境
  * @returns

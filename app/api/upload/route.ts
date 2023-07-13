@@ -17,7 +17,7 @@ import {
 
 const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();
-  const timePrefix = format(new Date(), 'yyyy-MM-dd-HH-mm-ss');
+  const timePrefix = format(new Date(), 'yyyy-MM');
   const baseURL = `/uploads/${timePrefix}-${file.name}`;
   const filePath = path.join(process.cwd(), 'public', baseURL);
 
@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
   let url: string;
   if (isProduction()) {
-    const timePrefix = format(new Date(), 'yyyy-MM-dd-HH-mm-ss');
+    const timePrefix = format(new Date(), 'yyyy-MM');
     const filename = `images/${timePrefix}_${file.name}`;
     const fileArrayBuffer = await file.arrayBuffer();
     const { name } = await aliOSS.put(filename, Buffer.from(fileArrayBuffer));

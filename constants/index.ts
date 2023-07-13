@@ -1,6 +1,7 @@
 import { HttpMethod } from './http-method';
 import {
   BILIBILI_PAGE,
+  DOMAIN,
   EMAIL,
   GITHUB_PAGE,
   JUEJIN_PAGE,
@@ -42,4 +43,5 @@ export {
   MAX_PAGE_SIZE,
   HttpMethod,
   authOptions,
+  DOMAIN,
 };

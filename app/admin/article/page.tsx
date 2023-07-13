@@ -27,7 +27,7 @@ import {
 } from '@/constants';
 import { ARTICLE_URL, getArticles, updateArticle } from '@/services';
 import { GetArticlesRequest } from '@/types';
-import { formatToDate, obj2QueryString } from '@/utils';
+import { cn, formatToDate, obj2QueryString } from '@/utils';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 
@@ -63,24 +63,32 @@ const AdminArticle = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[220px]">标题</TableHead>
-            <TableHead className="w-[120px]">封面</TableHead>
-            <TableHead className="w-[180px]">friendly_url</TableHead>
-            <TableHead className="w-[220px]">描述</TableHead>
-            <TableHead className="w-[160px]">标签</TableHead>
-            <TableHead className="w-[160px]">创建时间</TableHead>
-            <TableHead className="w-[160px]">更新时间</TableHead>
-            <TableHead className="w-[120px]">发布状态</TableHead>
-            <TableHead className="min-w-[120px]">操作</TableHead>
+            <TableHead className="w-[160px] max-w-[160px]">标题</TableHead>
+            <TableHead className="min-w-[160px] w-[160px] max-w-[160px]">
+              封面
+            </TableHead>
+            <TableHead className="w-[160px] max-w-[160px]">
+              friendly_url
+            </TableHead>
+            <TableHead className="w-[160px] max-w-[160px]">描述</TableHead>
+            <TableHead className="w-[160px] max-w-[160px]">标签</TableHead>
+            <TableHead className="w-[160px] max-w-[160px]">创建时间</TableHead>
+            {/* <TableHead className="w-[160px] max-w-[160px]">更新时间</TableHead> */}
+            <TableHead className="min-w-[100px] w-[100px] max-w-[100px]">
+              发布状态
+            </TableHead>
+            <TableHead className="min-w-[160px] w-[160px] max-w-[160px]">
+              操作
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {articles?.map((article) => (
             <TableRow key={article.id}>
-              <TableCell className="max-w-[220px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {article.title}
               </TableCell>
-              <TableCell className="w-[120px]">
+              <TableCell className="min-w-[160px] w-[160px] max-w-[160px]">
                 <PreviewImage
                   triggerNode={
                     <img
@@ -92,26 +100,29 @@ const AdminArticle = () => {
                   imageUrl={article.cover ? article.cover : PLACEHOLDER_COVER}
                 />
               </TableCell>
-              <TableCell className="w-[180px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {article.friendlyUrl}
               </TableCell>
-              <TableCell className="w-[220px]">
-                <div className="text-xs text-ellipsis overflow-hidden break-all line-clamp-3">
-                  {article.description}
-                </div>
+              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+                {article.description}
               </TableCell>
-              <TableCell className="w-160px text-primary-500 text-xs font-medium">
-                {article.tags
+              <TableCell
+                className={cn(
+                  'w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap  text-xs font-medium',
+                  'text-primary-500 dark:text-primary-400',
+                )}
+              >
+                {article.tags?.length
                   ? article.tags.map((tag) => tag.name).join('、')
                   : '-'}
               </TableCell>
-              <TableCell className="w-[160px]">
+              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {formatToDate(new Date(article.createdAt))}
               </TableCell>
-              <TableCell className="w-[160px]">
+              {/* <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {formatToDate(new Date(article.updatedAt))}
-              </TableCell>
-              <TableCell className="w-[120px]">
+              </TableCell> */}
+              <TableCell className="w-[100px] min-w-[100px] max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">
                 <div className="flex flex-col justify-center space-y-1">
                   <Switch
                     checked={article.published}
@@ -139,16 +150,18 @@ const AdminArticle = () => {
                   />
                 </div>
               </TableCell>
-              <TableCell className="flex space-x-2 min-w-[120px]">
-                <Link href={`/admin/create-article?id=${article.id}`}>
-                  <Button size={'icon'} variant={'outline'}>
-                    <Edit size={16} />
-                  </Button>
-                </Link>
-                <DeleteArticleItemButton
-                  article={article}
-                  refreshArticle={mutate}
-                />
+              <TableCell className="min-w-[160px] w-[160px] max-w-[160px] ">
+                <div className="flex space-x-2 items-center">
+                  <Link href={`/admin/create-article?id=${article.id}`}>
+                    <Button size={'icon'} variant={'outline'}>
+                      <Edit size={16} />
+                    </Button>
+                  </Link>
+                  <DeleteArticleItemButton
+                    article={article}
+                    refreshArticle={mutate}
+                  />
+                </div>
               </TableCell>
             </TableRow>
           ))}

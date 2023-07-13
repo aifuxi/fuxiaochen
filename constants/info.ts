@@ -15,3 +15,6 @@ export const BILIBILI_PAGE = 'https://space.bilibili.com/315542317';
 
 /** 网站名称 */
 export const WEBSITE = `${NICKNAME}的个人站`;
+
+/** 网站域名 */
+export const DOMAIN = 'https://aifuxi.cool';

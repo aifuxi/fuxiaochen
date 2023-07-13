@@ -4,22 +4,16 @@ import { Metadata } from 'next';
 
 import ArticleItem from '@/app/articles/article-item';
 import EmptyArticleList from '@/app/articles/empty-article-list';
+import { getServerSideTagByFriendlyUrl } from '@/app/fetch-data';
 import { PageTitle } from '@/components/rsc';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from '@/constants';
-import { getTags } from '@/services';
 
 export async function generateMetadata({
   params,
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
-  const data = await getTags({
-    page: DEFAULT_PAGE,
-    pageSize: DEFAULT_PAGE_SIZE,
-    friendlyUrl: params.friendlyUrl,
-    published: true,
-  });
-  const name = data.data?.[0]?.name || '标签未找到';
+  const data = await getServerSideTagByFriendlyUrl(params.friendlyUrl);
+  const name = data.data?.name || '标签未找到';
   return {
     title: `${name} - 标签`,
   };
@@ -30,15 +24,10 @@ export default async function TagDetailPage({
 }: {
   params: { friendlyUrl: string };
 }) {
-  const data = await getTags({
-    page: DEFAULT_PAGE,
-    pageSize: MAX_PAGE_SIZE,
-    friendlyUrl: params.friendlyUrl,
-    published: true,
-  });
-  const currentTag = data.data?.[0];
+  const data = await getServerSideTagByFriendlyUrl(params.friendlyUrl);
+  const currentTag = data.data;
   const articles = currentTag?.articles;
-  const articleCount = currentTag?.articleCount;
+  const articleCount = articles?.length || 0;
 
   return (
     <div className="flex flex-col space-y-8">

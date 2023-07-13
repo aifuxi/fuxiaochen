@@ -2,14 +2,10 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { BytemdViewer } from '@/components/client';
+import { getServerSideArticleByFriendlyUrl } from '@/app/fetch-data';
+import { BytemdViewer, GiscusComment } from '@/components/client';
 import { PageTitle, PreviewImage } from '@/components/rsc';
-import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  PLACEHOLDER_COVER,
-} from '@/constants';
-import { getArticles } from '@/services';
+import { PLACEHOLDER_COVER } from '@/constants';
 import { cn, formatToDateTime, isNil } from '@/utils';
 
 import EmptyArticle from './empty-article';
@@ -19,13 +15,8 @@ export async function generateMetadata({
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
-  const data = await getArticles({
-    page: DEFAULT_PAGE,
-    pageSize: DEFAULT_PAGE_SIZE,
-    friendlyUrl: params.friendlyUrl,
-    published: true,
-  });
-  const title = data.data?.[0]?.title || '文章未找到';
+  const data = await getServerSideArticleByFriendlyUrl(params.friendlyUrl);
+  const title = data.data?.title || '文章未找到';
   return {
     title,
   };
@@ -36,13 +27,8 @@ export default async function ArticleDetailPage({
 }: {
   params: { friendlyUrl: string };
 }) {
-  const data = await getArticles({
-    page: DEFAULT_PAGE,
-    pageSize: DEFAULT_PAGE_SIZE,
-    friendlyUrl: params.friendlyUrl,
-    published: true,
-  });
-  const currentArticle = data.data?.[0];
+  const data = await getServerSideArticleByFriendlyUrl(params.friendlyUrl);
+  const currentArticle = data.data;
 
   if (isNil(currentArticle)) {
     return <EmptyArticle />;
@@ -83,7 +69,7 @@ export default async function ArticleDetailPage({
           <div className="">
             <div className="font-semibold text-gray-500 mb-4">标签</div>
             <div className="flex flex-wrap">
-              {currentArticle.tags?.map((tag) => (
+              {currentArticle?.tags?.map((tag) => (
                 <Link
                   key={tag.id}
                   className="mr-4 mb-2 text-sm font-medium text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
@@ -102,7 +88,7 @@ export default async function ArticleDetailPage({
           </div>
           <div className={cn('text-base leading-6', 'hidden lg:block lg:pt-4')}>
             <Link
-              className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+              className="font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
               href={`/articles`}
             >
               ← 返回文章列表
@@ -113,6 +99,8 @@ export default async function ArticleDetailPage({
           <BytemdViewer content={currentArticle.content} />
         </div>
       </div>
+
+      <GiscusComment />
     </div>
   );
 }

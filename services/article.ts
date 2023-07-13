@@ -6,14 +6,12 @@ import type {
   GetArticlesRequest,
   TotalResponse,
 } from '@/types';
-import { getBaseURL, obj2QueryString } from '@/utils';
+import { obj2QueryString } from '@/utils';
 
 export const ARTICLE_URL = '/api/article';
 
 export async function getArticles(data: GetArticlesRequest) {
-  const res = await fetch(
-    `${getBaseURL()}${ARTICLE_URL}${obj2QueryString(data)}`,
-  );
+  const res = await fetch(`${ARTICLE_URL}${obj2QueryString(data)}`);
   return res.json() as unknown as TotalResponse<Article[]>;
 }
 
@@ -26,12 +24,9 @@ export async function deleteArticle(id: string) {
 
 export async function getArticle(id: string, published?: boolean) {
   const query = published ? { published: true } : {};
-  const res = await fetch(
-    `${getBaseURL()}${ARTICLE_URL}/${id}${obj2QueryString(query)}`,
-    {
-      method: HttpMethod.GET,
-    },
-  );
+  const res = await fetch(`${ARTICLE_URL}/${id}${obj2QueryString(query)}`, {
+    method: HttpMethod.GET,
+  });
   return res.json() as unknown as GeneralResponse<Article | undefined>;
 }
 

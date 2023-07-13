@@ -32,10 +32,15 @@ const baseNavItems: NavItem[] = [
   //   label: '项目',
   //   link: '/projects',
   // },
-  // {
-  //   label: '日志',
-  //   link: '/logs',
-  // },
+
+  {
+    label: '留言',
+    link: '/message-board',
+  },
+  {
+    label: '日志',
+    link: '/logs',
+  },
   {
     label: '关于',
     link: '/about',

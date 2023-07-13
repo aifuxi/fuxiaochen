@@ -6,17 +6,17 @@ import type {
   Tag,
   TotalResponse,
 } from '@/types';
-import { getBaseURL, obj2QueryString } from '@/utils';
+import { obj2QueryString } from '@/utils';
 
 export const TAG_URL = '/api/tag';
 
 export async function getTags(data: GetTagsRequest) {
-  const res = await fetch(`${getBaseURL()}${TAG_URL}${obj2QueryString(data)}`);
+  const res = await fetch(`${TAG_URL}${obj2QueryString(data)}`);
   return res.json() as unknown as TotalResponse<Tag[]>;
 }
 
 export async function getTag(id: string) {
-  const res = await fetch(`${getBaseURL()}${TAG_URL}/${id}`, {
+  const res = await fetch(`${TAG_URL}/${id}`, {
     method: HttpMethod.GET,
   });
   return res.json() as unknown as GeneralResponse<Tag | undefined>;

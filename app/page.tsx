@@ -2,13 +2,13 @@ import Link from 'next/link';
 
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE, LATEST_ARTICLES_PAGE_SIZE } from '@/constants';
-import { getArticles } from '@/services';
 import { cn } from '@/utils';
 
 import ArticleItem from './articles/article-item';
+import { getServerSideArticles } from './fetch-data';
 
 export default async function HomePage() {
-  const res = await getArticles({
+  const res = await getServerSideArticles({
     page: DEFAULT_PAGE,
     published: true,
     pageSize: LATEST_ARTICLES_PAGE_SIZE,

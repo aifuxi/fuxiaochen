@@ -3,6 +3,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 
+import { GiscusComment } from '@/components/client';
 import { PageTitle, SocialInfo } from '@/components/rsc';
 import { NICKNAME } from '@/constants';
 import { cn } from '@/utils';
@@ -63,6 +64,7 @@ export default function AboutPage() {
           </li>
         </ul>
       </div>
+      <GiscusComment />
     </div>
   );
 }

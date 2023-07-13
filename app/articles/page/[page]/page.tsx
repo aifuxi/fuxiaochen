@@ -3,9 +3,9 @@ import { redirect } from 'next/navigation';
 
 import ArticleItem from '@/app/articles/article-item';
 import EmptyArticleList from '@/app/articles/empty-article-list';
+import { getServerSideArticles } from '@/app/fetch-data';
 import { PageTitle, Pagination } from '@/components/rsc';
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
-import { getArticles } from '@/services';
 
 export async function generateMetadata({
   params,
@@ -28,7 +28,7 @@ export default async function ArticlePage({
     redirect('/articles');
   }
 
-  const res = await getArticles({
+  const res = await getServerSideArticles({
     page,
     published: true,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -60,7 +60,7 @@ export default async function ArticlePage({
             </li>
           ))}
         </ul>
-        <Pagination currentPage={DEFAULT_PAGE} total={total} />
+        <Pagination currentPage={page} total={total} />
       </>
     );
   }

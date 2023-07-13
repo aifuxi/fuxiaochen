@@ -4,7 +4,7 @@ import Mockjs from 'mockjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  for (let i = 0; i < 90; i++) {
+  for (let i = 0; i < 30; i++) {
     await prisma.article.create({
       data: {
         title: Mockjs.Random.ctitle(6) + i,

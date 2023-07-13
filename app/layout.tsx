@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import {
   AnalyticsProvider,
   AuthProvider,
+  BackToTop,
   Navbar,
   ToastProvider,
 } from '@/components/client';
@@ -81,6 +82,7 @@ export default function RootLayout({
                 {children}
                 <Footer />
               </div>
+              <BackToTop />
             </AnalyticsProvider>
           </AuthProvider>
         </ToastProvider>
