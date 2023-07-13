@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   title: '标签',
 };
 
+export const revalidate = 60;
+
 export default async function TagsPage() {
   const data = await getServerSideTags({
     page: DEFAULT_PAGE,

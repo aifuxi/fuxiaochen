@@ -10,6 +10,7 @@ import EmptyArticleList from './empty-article-list';
 export const metadata: Metadata = {
   title: '文章',
 };
+export const revalidate = 60;
 
 export default async function ArticlesPage() {
   const res = await getServerSideArticles({

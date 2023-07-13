@@ -7,6 +7,8 @@ import EmptyArticleList from '@/app/articles/empty-article-list';
 import { getServerSideTagByFriendlyUrl } from '@/app/fetch-data';
 import { PageTitle } from '@/components/rsc';
 
+export const revalidate = 60;
+
 export async function generateMetadata({
   params,
 }: {

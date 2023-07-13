@@ -7,6 +7,8 @@ import { cn } from '@/utils';
 import ArticleItem from './articles/article-item';
 import { getServerSideArticles } from './fetch-data';
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const res = await getServerSideArticles({
     page: DEFAULT_PAGE,
