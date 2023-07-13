@@ -27,7 +27,7 @@ export default function GiscusComment() {
           mutation.type === 'attributes' &&
           mutation.attributeName === 'class'
         ) {
-          if (document.documentElement.classList.contains('dark')) {
+          if (window.document.documentElement.classList.contains('dark')) {
             setTheme('dark');
           } else {
             setTheme('light');
@@ -35,7 +35,7 @@ export default function GiscusComment() {
         }
       });
     },
-    document.documentElement,
+    window.document.documentElement,
     { attributes: true, attributeFilter: ['class'] },
   );
 
