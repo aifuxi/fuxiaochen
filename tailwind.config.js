@@ -14,9 +14,9 @@ module.exports = {
       center: true,
       padding: {
         DEFAULT: '2rem',
-        sm: '4rem',
-        lg: '8rem',
-        xl: '10rem',
+        sm: '2rem',
+        lg: '4rem',
+        xl: '8rem',
         '2xl': '12rem',
       },
     },
@@ -228,6 +228,9 @@ module.exports = {
     require('@tailwindcss/forms'),
     require('tailwindcss-animate'),
     require('@tailwindcss/typography'),
-    require('tailwindcss-debug-screens'),
+
+    // 开发模式下加载显示屏幕大小的插件
+    process.env.NODE_ENV === 'development' &&
+      require('tailwindcss-debug-screens'),
   ],
 };
