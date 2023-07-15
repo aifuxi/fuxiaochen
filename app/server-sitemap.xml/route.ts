@@ -53,7 +53,7 @@ function generatePageSitemaps(prefix: string, total: number): ISitemapField[] {
   const totalPage = Math.ceil(total / DEFAULT_PAGE_SIZE);
   const pageSitemaps: ISitemapField[] = [];
 
-  for (let i = 1; i <= totalPage; i++) {
+  for (let i = 2; i <= totalPage; i++) {
     pageSitemaps.push({
       loc: `${prefix}/${i}`,
       changefreq: 'hourly',

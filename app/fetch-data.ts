@@ -121,7 +121,14 @@ export async function getServerSideTagByFriendlyUrl(
       friendlyUrl,
     },
     include: {
-      articles: true,
+      articles: {
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: {
+          tags: true,
+        },
+      },
     },
   });
 

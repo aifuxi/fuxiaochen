@@ -101,7 +101,16 @@ const AdminArticle = () => {
                 />
               </TableCell>
               <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
-                {article.friendlyUrl}
+                <Link
+                  href={`/articles/${article.friendlyUrl}`}
+                  target="_blank"
+                  className={cn(
+                    'text-primary-500 hover:text-primary-400',
+                    'dark:text-primary-400 dark:hover:text-primary-500',
+                  )}
+                >
+                  {article.friendlyUrl}
+                </Link>
               </TableCell>
               <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {article.description}

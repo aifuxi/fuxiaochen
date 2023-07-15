@@ -61,7 +61,9 @@ export default async function ArticleDetailPage({
       </div>
       <PageTitle title={currentArticle.title} className="text-center pt-0" />
 
-      <div className={cn('flex items-start space-x-8', 'flex-col lg:flex-row')}>
+      <div
+        className={cn('grid gap-x-8 items-start', 'lg:grid-cols-[200px,1fr]')}
+      >
         <div
           className={cn(
             'flex flex-col space-y-4 divide-y w-full',
@@ -97,7 +99,7 @@ export default async function ArticleDetailPage({
             </Link>
           </div>
         </div>
-        <div className="flex-1">
+        <div>
           <BytemdViewer content={currentArticle.content} />
         </div>
       </div>
