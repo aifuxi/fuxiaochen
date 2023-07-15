@@ -6,13 +6,5 @@
 @import 'highlight.js/styles/panda-syntax-dark.css';
 
 @import './scrollbar.scss';
-@import './copy-code.scss';
+@import './bytemd.scss';
 @import './poppins-font.scss';
-
-#aifuxi-content-editor .bytemd {
-  height: 80vh !important;
-}
-
-.markdown-body {
-  @apply prose xl:max-w-3xl 2xl:max-w-4xl dark:prose-invert;
-}

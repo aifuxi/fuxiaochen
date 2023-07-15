@@ -1,0 +1,23 @@
+#aifuxi-content-editor .bytemd {
+  height: 80vh;
+}
+
+#aifuxi-content-editor .bytemd-fullscreen {
+  height: 100vh;
+  z-index: 10;
+}
+
+.markdown-body {
+  @apply prose xl:max-w-3xl 2xl:max-w-4xl dark:prose-invert;
+}
+
+pre > code[class*='language-'] {
+  position: relative;
+}
+
+pre > code[class*='language-']::before {
+  position: absolute;
+  content: attr(data-language);
+  top: -0.3em;
+  left: 0em;
+}
