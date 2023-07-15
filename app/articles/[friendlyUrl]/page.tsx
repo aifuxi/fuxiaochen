@@ -10,8 +10,6 @@ import { cn, formatToDateTime, isNil } from '@/utils';
 
 import EmptyArticle from './empty-article';
 
-export const revalidate = 60;
-
 export async function generateMetadata({
   params,
 }: {
