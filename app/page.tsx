@@ -1,13 +1,19 @@
+import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { PageTitle } from '@/components/rsc';
-import { DEFAULT_PAGE, LATEST_ARTICLES_PAGE_SIZE } from '@/constants';
+import { DEFAULT_PAGE, LATEST_ARTICLES_PAGE_SIZE, NICKNAME } from '@/constants';
 import { cn } from '@/utils';
 
 import ArticleItem from './articles/article-item';
 import { getServerSideArticles } from './fetch-data';
 
 export const revalidate = 60;
+
+export const metadata: Metadata = {
+  description: `${NICKNAME}，一个正在努力的程序员。`,
+  keywords: 'F西的个人站、F西、aifuxi',
+};
 
 export default async function HomePage() {
   const res = await getServerSideArticles({
