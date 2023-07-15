@@ -11,6 +11,10 @@
   @apply prose xl:max-w-3xl 2xl:max-w-4xl dark:prose-invert;
 }
 
+.medium-zoom-image--opened {
+  z-index: 10;
+}
+
 pre > code[class*='language-'] {
   position: relative;
 }
