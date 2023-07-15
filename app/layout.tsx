@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
+import Script from 'next/script';
 
 import {
   AnalyticsProvider,
@@ -71,7 +72,7 @@ export default function RootLayout({
         className={cn(
           'debug-screens antialiased min-w-[360px]',
           'bg-white dark:bg-gray-900',
-          'text-black dark:text-white',
+          'text-black dark:text-white ',
         )}
       >
         <ToastProvider>
@@ -87,6 +88,12 @@ export default function RootLayout({
           </AuthProvider>
         </ToastProvider>
       </body>
+
+      <Script
+        id="copy-code"
+        src="/libs/copy-code.js"
+        strategy="afterInteractive"
+      />
     </html>
   );
 }
