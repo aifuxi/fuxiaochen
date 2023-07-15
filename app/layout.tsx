@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { Session } from 'next-auth';
-import Script from 'next/script';
 
 import {
   AnalyticsProvider,
@@ -17,7 +16,7 @@ import { cn } from '@/utils';
 export const metadata: Metadata = {
   title: {
     template: `%s - ${WEBSITE}`,
-    default: `${WEBSITE}`, // a default is required when creating a template
+    default: `${WEBSITE}`,
   },
 };
 
@@ -88,12 +87,6 @@ export default function RootLayout({
           </AuthProvider>
         </ToastProvider>
       </body>
-
-      <Script
-        id="copy-code"
-        src="/libs/copy-code.js"
-        strategy="afterInteractive"
-      />
     </html>
   );
 }
