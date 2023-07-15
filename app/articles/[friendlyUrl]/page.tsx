@@ -8,6 +8,7 @@ import { PageTitle, PreviewImage } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
 import { cn, formatToDateTime, isNil } from '@/utils';
 
+import EditArticle from './edit-article';
 import EmptyArticle from './empty-article';
 
 export async function generateMetadata({
@@ -88,13 +89,19 @@ export default async function ArticleDetailPage({
               {formatToDateTime(currentArticle.updatedAt)}
             </div>
           </div>
-          <div className={cn('text-base leading-6', 'hidden lg:block lg:pt-4')}>
+          <div
+            className={cn(
+              ' text-base leading-6',
+              'hidden lg:flex lg:items-center lg:space-x-4 lg:pt-4',
+            )}
+          >
             <Link
               className="font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
               href={`/articles`}
             >
               ← 返回文章列表
             </Link>
+            <EditArticle articleId={currentArticle.id} />
           </div>
         </div>
         <div>
