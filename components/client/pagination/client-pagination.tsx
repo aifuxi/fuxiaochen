@@ -29,7 +29,7 @@ export default function ClientPagination({
   return (
     <div className={cn('flex justify-end items-center', className)}>
       <div>
-        <p className="text-sm text-gray-700">
+        <p className="text-sm">
           第
           <span className="font-medium ml-1">
             {(page - 1) * DEFAULT_PAGE_SIZE || 1}
@@ -135,7 +135,7 @@ export default function ClientPagination({
             changePage(page - 1);
           }}
           className={cn(
-            'relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
+            'relative inline-flex items-center rounded-l-md px-2 py-2 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
             page === 1 ? 'cursor-not-allowed' : 'cursor-pointer ',
           )}
         >
@@ -151,7 +151,7 @@ export default function ClientPagination({
             changePage(page + 1);
           }}
           className={cn(
-            'cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0',
+            'cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-2  ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
             page === pageCount ? 'cursor-not-allowed' : 'cursor-pointer ',
           )}
         >
@@ -170,8 +170,8 @@ export default function ClientPagination({
           className={cn(
             'cursor-pointer relative z-10 inline-flex items-center  px-6 py-3 text-sm font-semibold focus:z-20 ',
             page === currentPage
-              ? 'bg-gray-800 text-white  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-800'
-              : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50  focus:outline-offset-0',
+              ? 'bg-gray-800 text-white dark:bg-white dark:text-gray-800  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-800 dark:focus-visible:outline-white'
+              : 'text-gray-800 dark:text-white ring-1 ring-inset ring-gray-300  focus:outline-offset-0',
           )}
         >
           {currentPage}
@@ -184,7 +184,7 @@ export default function ClientPagination({
     return (
       <Popover>
         <PopoverTrigger>
-          <span className="relative inline-flex items-center px-6 py-3 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
+          <span className="relative inline-flex items-center px-6 py-3 text-sm font-semibold  ring-1 ring-inset ring-gray-300 focus:outline-offset-0">
             ...
           </span>
         </PopoverTrigger>
@@ -195,7 +195,11 @@ export default function ClientPagination({
                 <li key={v}>
                   <div
                     onClick={() => changePage(v)}
-                    className="cursor-pointer flex justify-center py-1 rounded-sm text-sm hover:bg-gray-800 hover:text-white"
+                    className={cn(
+                      'cursor-pointer flex justify-center py-1 rounded-sm text-sm',
+                      'hover:bg-gray-800 dark:hover:bg-white',
+                      'hover:text-white dark:hover:text-gray-800',
+                    )}
                   >
                     {v}
                   </div>
