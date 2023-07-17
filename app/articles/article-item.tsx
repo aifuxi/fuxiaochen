@@ -1,15 +1,24 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { PLACEHOLDER_COVER } from '@/constants';
+import { PLACEHOLDER_COVER, UMT_SOURCE } from '@/constants';
 import { Article } from '@/types';
-import { cn, formatToDate } from '@/utils';
+import { cn, formatToDate, obj2QueryString } from '@/utils';
 
 type Props = {
   article: Article;
+  umtSource?: string;
 };
 
-export default function ArticleItem({ article }: Props) {
+export default function ArticleItem({ article, umtSource }: Props) {
+  const articleUrl = `/articles/${article.friendlyUrl}${
+    umtSource
+      ? obj2QueryString({
+          [UMT_SOURCE]: umtSource,
+        })
+      : ''
+  }`;
+
   return (
     <article
       className={cn(
@@ -18,10 +27,7 @@ export default function ArticleItem({ article }: Props) {
       )}
     >
       <div className="flex flex-col space-y-2 md:w-[280px]">
-        <Link
-          href={`/articles/${article.friendlyUrl}`}
-          className="overflow-hidden"
-        >
+        <Link href={articleUrl} className="overflow-hidden">
           <Image
             src={article.cover ? article.cover : PLACEHOLDER_COVER}
             alt={article.title}
@@ -43,7 +49,7 @@ export default function ArticleItem({ article }: Props) {
       </div>
       <div className="flex flex-col space-y-2 md:flex-1">
         <h2 className="text-2xl font-bold leading-8 tracking-tight hover:underline">
-          <Link href={`/articles/${article.friendlyUrl}`}>{article.title}</Link>
+          <Link href={articleUrl}>{article.title}</Link>
         </h2>
         <div className="flex space-x-4">
           {article.tags?.map((tag) => (
@@ -74,7 +80,7 @@ export default function ArticleItem({ article }: Props) {
               'text-primary-500 ',
               'hover:text-primary-600 dark:hover:text-primary-400',
             )}
-            href={`/articles/${article.friendlyUrl}`}
+            href={articleUrl}
           >
             查看更多 →
           </Link>

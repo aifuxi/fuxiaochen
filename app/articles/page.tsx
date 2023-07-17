@@ -42,7 +42,7 @@ export default async function ArticlesPage() {
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (
             <li key={article.id}>
-              <ArticleItem article={article} />
+              <ArticleItem article={article} umtSource={`/articles`} />
             </li>
           ))}
         </ul>

@@ -8,6 +8,7 @@ import { PageTitle, PreviewImage } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
 import { cn, formatToDateTime, isNil } from '@/utils';
 
+import BackToPreviousPage from './back-to-previous-page';
 import EditArticle from './edit-article';
 import EmptyArticle from './empty-article';
 
@@ -84,9 +85,9 @@ export default async function ArticleDetailPage({
             </div>
           </div>
           <div className="pt-4">
-            <div className="font-semibold text-gray-500 mb-4">最后更新时间</div>
+            <div className="font-semibold text-gray-500 mb-4">最近更新时间</div>
             <div className="text-sm leading-6 tracking-wider text-gray-500">
-              {formatToDateTime(currentArticle.updatedAt)}
+              {formatToDateTime(currentArticle.updatedAt, true)}
             </div>
           </div>
           <div
@@ -95,12 +96,7 @@ export default async function ArticleDetailPage({
               'hidden lg:flex lg:items-center lg:space-x-4 lg:pt-4',
             )}
           >
-            <Link
-              className="font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-              href={`/articles`}
-            >
-              ← 返回文章列表
-            </Link>
+            <BackToPreviousPage />
             <EditArticle articleId={currentArticle.id} />
           </div>
         </div>

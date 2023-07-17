@@ -5,7 +5,8 @@ import { Metadata } from 'next';
 import ArticleItem from '@/app/articles/article-item';
 import EmptyArticleList from '@/app/articles/empty-article-list';
 import { getServerSideTagByFriendlyUrl } from '@/app/fetch-data';
-import { PageTitle } from '@/components/rsc';
+import { EmptyPage } from '@/components/client';
+import { NotFound404Illustration, PageTitle } from '@/components/rsc';
 
 export async function generateMetadata({
   params,
@@ -29,6 +30,17 @@ export default async function TagDetailPage({
   const articles = currentTag?.articles;
   const articleCount = articles?.length || 0;
 
+  if (!currentTag) {
+    return (
+      <EmptyPage
+        illustration={
+          <NotFound404Illustration className="w-[320px] h-[320px] sm:w-[500px] sm:h-[500px]" />
+        }
+        title="啊噢，标签不见啦~"
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col space-y-8">
       <PageTitle title={currentTag?.name || ''} />
@@ -44,12 +56,20 @@ export default async function TagDetailPage({
     return (
       <>
         <p>
-          共<span className="font-semibold px-1">{articleCount}</span>篇文章
+          共<span className="font-semibold px-1">{articleCount}</span>
+          篇文章
         </p>
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (
             <li key={article.id}>
-              <ArticleItem article={article} />
+              <ArticleItem
+                article={article}
+                umtSource={
+                  currentTag?.friendlyUrl
+                    ? `/tags/${currentTag.friendlyUrl}`
+                    : ''
+                }
+              />
             </li>
           ))}
         </ul>

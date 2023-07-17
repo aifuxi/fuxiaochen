@@ -23,6 +23,7 @@ import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   PLACEHOLDER_COVER,
+  UMT_SOURCE,
   ZERO,
 } from '@/constants';
 import { ARTICLE_URL, getArticles, updateArticle } from '@/services';
@@ -102,7 +103,9 @@ const AdminArticle = () => {
               </TableCell>
               <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 <Link
-                  href={`/articles/${article.friendlyUrl}`}
+                  href={`/articles/${article.friendlyUrl}${obj2QueryString({
+                    [UMT_SOURCE]: '/admin/article',
+                  })}`}
                   target="_blank"
                   className={cn(
                     'text-primary-500 hover:text-primary-400',
@@ -122,7 +125,19 @@ const AdminArticle = () => {
                 )}
               >
                 {article.tags?.length
-                  ? article.tags.map((tag) => tag.name).join('、')
+                  ? article.tags.map((tag) => (
+                      <Link
+                        key={tag.id}
+                        href={`/tags/${tag.friendlyUrl}`}
+                        target="_blank"
+                        className={cn(
+                          'mr-1 text-primary-500 hover:text-primary-400',
+                          'dark:text-primary-400 dark:hover:text-primary-500',
+                        )}
+                      >
+                        {tag.name}
+                      </Link>
+                    ))
                   : '-'}
               </TableCell>
               <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
