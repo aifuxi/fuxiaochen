@@ -62,12 +62,15 @@ export default async function ArticleDetailPage({
       <PageTitle title={currentArticle.title} className="text-center pt-0" />
 
       <div
-        className={cn('grid gap-x-8 items-start', 'lg:grid-cols-[200px,1fr]')}
+        className={cn(
+          'flex items-start',
+          'flex-col lg:flex-row justify-between',
+        )}
       >
         <div
           className={cn(
             'flex flex-col space-y-4 divide-y w-full',
-            'lg:w-[200px] lg:sticky lg:top-[136px]',
+            'lg:w-[200px] lg:min-w-[200px] lg:sticky lg:top-[136px] lg:mr-8',
           )}
         >
           <div className="">
@@ -92,7 +95,7 @@ export default async function ArticleDetailPage({
           </div>
           <div
             className={cn(
-              ' text-base leading-6',
+              'text-base leading-6',
               'hidden lg:flex lg:items-center lg:space-x-4 lg:pt-4',
             )}
           >
@@ -100,7 +103,7 @@ export default async function ArticleDetailPage({
             <EditArticle articleId={currentArticle.id} />
           </div>
         </div>
-        <div>
+        <div className="max-w-[100%] lg:max-w-[calc(100%-232px)]">
           <BytemdViewer content={currentArticle.content} />
         </div>
       </div>
