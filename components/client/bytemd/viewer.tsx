@@ -18,11 +18,17 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
        * @param {string|undefined} text
        */
       function copyToClipboard(text = '') {
+        // 复制代码时去除开头的$符号，然后trim一下，一般是复制shell命令的代码块会用到
+        let handledText: string = text;
+        if (text.startsWith('$')) {
+          handledText = text.slice(1).trim();
+        }
+
         // 创建一个textarea元素
         const textarea = document.createElement('textarea');
         textarea.style.position = 'absolute';
         textarea.style.left = '-9999px';
-        textarea.value = text;
+        textarea.value = handledText;
         document.body.appendChild(textarea);
 
         // 选择textarea元素中的文本
