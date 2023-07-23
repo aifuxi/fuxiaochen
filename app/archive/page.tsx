@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { PageTitle } from '@/components/rsc';
-import { formatToDate } from '@/utils';
+import { cn, formatToDate } from '@/utils';
 
 import { getServerSideArticleArchive } from '../fetch-data';
 
@@ -40,8 +40,16 @@ export default async function ArchivePage() {
               <ul>
                 {articles.map((article) => (
                   <li key={article.id}>
-                    <Link href={`/articles/${article.friendlyUrl}`}>
-                      {formatToDate(new Date(article.createdAt))}-
+                    <Link
+                      href={`/articles/${article.friendlyUrl}`}
+                      className={cn(
+                        '!no-underline',
+                        'text-gray-500 dark:text-gray-400',
+                        'hover:!text-600 dark:hover:!text-gray-200',
+                      )}
+                    >
+                      {formatToDate(new Date(article.createdAt))}
+                      &nbsp;&nbsp;
                       {article.title}
                     </Link>
                   </li>
