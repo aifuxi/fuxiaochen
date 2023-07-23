@@ -27,6 +27,7 @@ module.exports = {
       fontFamily: {
         sans: [
           'Poppins',
+          'SimHei',
           'PingFang SC',
           'ui-sans-serif',
           'system-ui',
