@@ -77,12 +77,14 @@ export default function ArticleItem({ article, umtSource }: Props) {
         <div className="text-base font-medium leading-6">
           <Link
             className={cn(
-              'text-primary-500 ',
-              'hover:text-primary-600 dark:hover:text-primary-400',
+              ' border border-transparent rounded-md px-1.5 pb-1',
+              'text-gray-700 dark:text-gray-400',
+              'hover:text-gray-900 dark:hover:text-gray-300',
+              'border-b-[#ddd]',
             )}
             href={articleUrl}
           >
-            查看更多 →
+            芝麻开门，显示全文！
           </Link>
         </div>
       </div>
