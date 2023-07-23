@@ -107,6 +107,9 @@ dependencies:
   http-status-codes:
     specifier: ^2.2.0
     version: 2.2.0
+  lodash-es:
+    specifier: ^4.17.21
+    version: 4.17.21
   lucide-react:
     specifier: ^0.258.0
     version: 0.258.0(react@18.2.0)
@@ -172,6 +175,9 @@ devDependencies:
   '@types/ali-oss':
     specifier: ^6.16.8
     version: 6.16.8
+  '@types/lodash-es':
+    specifier: ^4.17.8
+    version: 4.17.8
   '@types/markdown-navbar':
     specifier: ^1.4.0
     version: 1.4.0
@@ -1911,15 +1917,13 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: false
 
-  /@types/lodash-es@4.17.7:
-    resolution: {integrity: sha512-z0ptr6UI10VlU6l5MYhGwS4mC8DZyYer2mCoyysZtSF7p26zOX8UpbrV0YpNYLGS8K4PUFIyEr62IMFFjveSiQ==}
+  /@types/lodash-es@4.17.8:
+    resolution: {integrity: sha512-euY3XQcZmIzSy7YH5+Unb3b2X12Wtk54YWINBvvGQ5SmMvwb11JQskGsfkH/5HXK77Kr8GF0wkVDIxzAisWtog==}
     dependencies:
       '@types/lodash': 4.14.195
-    dev: false
 
   /@types/lodash@4.14.195:
     resolution: {integrity: sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==}
-    dev: false
 
   /@types/markdown-navbar@1.4.0:
     resolution: {integrity: sha512-WUG7MBobWDlKtY/d3RdBsD9ExR+UwY4zSj3XYLGEttu78AtZuOUXsW0JQb6jkjIc//Cn9qJZGW/Hs2NGaaXudA==}
@@ -2525,7 +2529,7 @@ packages:
       '@popperjs/core': 2.11.8
       '@types/codemirror': 5.60.8
       '@types/hast': 2.3.4
-      '@types/lodash-es': 4.17.7
+      '@types/lodash-es': 4.17.8
       '@types/mdast': 3.0.11
       codemirror-ssr: 0.65.0(@types/codemirror@5.60.8)
       hast-util-sanitize: 4.1.0
