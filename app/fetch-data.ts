@@ -1,4 +1,5 @@
 import { Prisma } from '@prisma/client';
+import { groupBy } from 'lodash-es';
 
 import { DEFAULT_PAGE_SIZE, ZERO } from '@/constants';
 import prisma from '@/libs/prisma';
@@ -11,6 +12,30 @@ import {
   TotalResponse,
 } from '@/types';
 import { createSuccessResponse, createSuccessTotalResponse } from '@/utils';
+
+export async function getServerSideArticleArchive(): Promise<Record<
+  string,
+  Article[]
+> | null> {
+  const articles = await prisma.article.findMany({
+    where: {
+      published: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (!articles?.length) {
+    return null;
+  }
+
+  const archive = groupBy(articles, (article) => {
+    return new Date(article.createdAt).getFullYear();
+  });
+
+  return archive;
+}
 
 export async function getServerSideArticles({
   page,

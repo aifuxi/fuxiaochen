@@ -42,6 +42,10 @@ const baseNavItems: NavItem[] = [
     link: '/logs',
   },
   {
+    label: '归档',
+    link: '/archive',
+  },
+  {
     label: '关于',
     link: '/about',
   },
@@ -67,11 +71,12 @@ export default function Navbar() {
               <Link
                 href={item.link}
                 className={cn(
-                  'flex items-center h-[56px] text-xl font-semibold underline-offset-4 tracking-widest  transition-colors ',
+                  'flex items-center h-[56px]  font-semibold underline-offset-4 tracking-widest  transition-colors ',
                   'hover:text-gray-800 dark:hover:text-white hover:underline',
                   'text-gray-500 dark:text-gray-400',
                   pathname === item.link &&
                     'text-gray-800 dark:text-white underline',
+                  'text-lg lg:text-xl',
                 )}
               >
                 {item.label}
