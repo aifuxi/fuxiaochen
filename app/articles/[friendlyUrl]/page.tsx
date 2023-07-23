@@ -103,7 +103,7 @@ export default async function ArticleDetailPage({
             <EditArticle articleId={currentArticle.id} />
           </div>
         </div>
-        <div className="max-w-[100%] lg:max-w-[calc(100%-232px)]">
+        <div className="max-w-[100%] lg:max-w-[calc(100%-232px)] flex-1">
           <BytemdViewer content={currentArticle.content} />
         </div>
       </div>
