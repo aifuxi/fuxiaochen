@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   title: '归档',
 };
 
+export const revalidate = 60;
+
 export default async function ArchivePage() {
   const archive = await getServerSideArticleArchive();
 
