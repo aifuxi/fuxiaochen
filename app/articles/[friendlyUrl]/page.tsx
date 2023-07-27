@@ -59,7 +59,10 @@ export default async function ArticleDetailPage({
       <div className="text-center text-base font-medium leading-6 tracking-wider text-gray-500">
         {formatToDateTime(currentArticle.createdAt)}
       </div>
-      <PageTitle title={currentArticle.title} className="text-center pt-0" />
+      <PageTitle
+        title={currentArticle.title}
+        className="text-center pt-0 !leading-[1.2em]"
+      />
 
       <div
         className={cn(
