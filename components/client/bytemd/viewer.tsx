@@ -17,33 +17,24 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
        * 复制函数
        * @param {string|undefined} text
        */
-      function copyToClipboard(text = '') {
+      async function copyToClipboard(text = '') {
         // 复制代码时去除开头的$符号，然后trim一下，一般是复制shell命令的代码块会用到
         let handledText: string = text;
         if (text.startsWith('$')) {
           handledText = text.slice(1).trim();
         }
-
-        // 创建一个textarea元素
-        const textarea = document.createElement('textarea');
-        textarea.style.position = 'absolute';
-        textarea.style.left = '-9999px';
-        textarea.value = handledText;
-        document.body.appendChild(textarea);
-
-        // 选择textarea元素中的文本
-        textarea.select();
-
-        // 执行复制操作
-        document.execCommand('copy');
-
-        // 移除textarea元素
-        document.body.removeChild(textarea);
+        try {
+          await navigator.clipboard.writeText(handledText || '');
+          /* Resolved - 文本被成功复制到剪贴板 */
+        } catch (err) {
+          /* Rejected - 文本未被复制到剪贴板 */
+          console.log(err);
+        }
       }
 
       const clipboardIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>`;
       const clipboardCheckIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-check"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>`;
-      const successTip = `<span style="margin-left: 1em; color: #4ade80;">复制成功</span>`;
+      const successTip = `<span style="margin-left: 1em; color: #4ade80; font-size: 12px;">复制成功</span>`;
       const codeBlockList = document.querySelectorAll(
         `pre > code[class*='language-']`,
       );
@@ -63,9 +54,9 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
         copyBtn.innerHTML = clipboardIcon;
         codeBlock.appendChild(copyBtn);
 
-        copyBtn.addEventListener('click', () => {
+        copyBtn.addEventListener('click', async () => {
           const code = codeBlock.textContent;
-          copyToClipboard(code || '');
+          await copyToClipboard(code || '');
 
           copyBtn.innerHTML = clipboardCheckIcon + successTip;
           let timer: number | undefined = undefined;

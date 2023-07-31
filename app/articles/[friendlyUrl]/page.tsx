@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { getServerSideArticleByFriendlyUrl } from '@/app/fetch-data';
 import { BytemdViewer, GiscusComment } from '@/components/client';
-import { PageTitle, PreviewImage } from '@/components/rsc';
+import { PageTitle } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
 import { cn, formatToDateTime, isNil } from '@/utils';
 
@@ -39,21 +39,13 @@ export default async function ArticleDetailPage({
   return (
     <div className="flex flex-col space-y-8">
       <div className="flex justify-center">
-        <PreviewImage
-          triggerNode={
-            <Image
-              src={currentArticle.cover || PLACEHOLDER_COVER}
-              alt={currentArticle.title}
-              width="0"
-              height="0"
-              sizes="100vw"
-              className={cn(
-                'h-auto rounded cursor-pointer',
-                'w-full 2xl:w-4/5',
-              )}
-            />
-          }
-          imageUrl={currentArticle.cover || PLACEHOLDER_COVER}
+        <Image
+          src={currentArticle.cover || PLACEHOLDER_COVER}
+          alt={currentArticle.title}
+          width="0"
+          height="0"
+          sizes="100vw"
+          className={cn('h-auto rounded', 'w-full 2xl:w-4/5')}
         />
       </div>
       <div className="text-center text-base font-medium leading-6 tracking-wider text-gray-500">
@@ -99,7 +91,7 @@ export default async function ArticleDetailPage({
           <div
             className={cn(
               'text-base leading-6',
-              'hidden lg:flex lg:items-center lg:space-x-4 lg:pt-4',
+              'hidden lg:flex lg:items-center  lg:pt-4',
             )}
           >
             <BackToPreviousPage />

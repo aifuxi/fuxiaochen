@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 
 import BackToTop from './back-to-top';
 import { BytemdEditor, BytemdViewer } from './bytemd';
+import EmailDialog from './email-dialog';
 import EmptyPage from './empty-page';
 import Navbar from './navbar';
 import ClientPagination from './pagination/client-pagination';
@@ -29,4 +30,5 @@ export {
   EmptyPage,
   BackToTop,
   GiscusComment,
+  EmailDialog,
 };

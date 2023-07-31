@@ -71,8 +71,8 @@ export default function AboutPage() {
         <p>所以，即使是在专科，也是有一定的学习机会，要好好把握住。</p>
         <h2>技术：</h2>
         <p>
-          工作中和日常主要以<code>React</code>+<code>Typescript</code>
-          为主，顺带着写点<code>Node.js</code>做BFF。
+          工作中和日常主要以 <code>React</code>+<code>Typescript</code>
+          为主，顺带着写点 <code>Node.js</code> 做 BFF 。
         </p>
       </div>
       <GiscusComment />

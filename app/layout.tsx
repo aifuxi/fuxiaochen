@@ -66,6 +66,8 @@ export default function RootLayout({
       `,
           }}
         />
+        {/* 打开外部链接时，以新开tab的方式打开 */}
+        <base target="_blank" />
       </head>
       <body
         className={cn(
