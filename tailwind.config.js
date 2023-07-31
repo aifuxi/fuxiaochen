@@ -27,7 +27,6 @@ module.exports = {
       fontFamily: {
         sans: [
           'Poppins',
-          'SimHei',
           'PingFang SC',
           'ui-sans-serif',
           'system-ui',
@@ -95,9 +94,12 @@ module.exports = {
           css: {
             color: theme('colors.gray.700'),
             a: {
-              color: theme('colors.primary.500'),
+              backgroundColor: 'transparent',
+              textDecoration: 'none',
+              boxShadow: `inset 0 -6px 0 ${theme('colors.primary.400')}`,
+              transition: 'background-color ease-out .4s',
               '&:hover': {
-                color: `${theme('colors.primary.600')} !important`,
+                backgroundColor: `${theme('colors.primary.400')}`,
               },
               code: { color: theme('colors.primary.400') },
             },
@@ -165,9 +167,12 @@ module.exports = {
           css: {
             color: theme('colors.gray.300'),
             a: {
-              color: theme('colors.primary.500'),
+              backgroundColor: 'transparent',
+              textDecoration: 'none',
+              boxShadow: `inset 0 -6px 0 ${theme('colors.primary.600')}`,
+              transition: 'background-color ease-out .4s',
               '&:hover': {
-                color: `${theme('colors.primary.400')} !important`,
+                backgroundColor: `${theme('colors.primary.600')}`,
               },
               code: { color: theme('colors.primary.400') },
             },

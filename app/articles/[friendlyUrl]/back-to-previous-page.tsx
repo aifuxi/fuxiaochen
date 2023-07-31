@@ -14,10 +14,10 @@ export default function BackToPreviousPage() {
 
   return (
     <Link
-      className="font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+      className="underline font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
       href={link}
     >
-      ← 返回上一页
+      <code>$ cd ..</code>
     </Link>
   );
 }

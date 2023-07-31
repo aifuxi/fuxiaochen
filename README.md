@@ -5,8 +5,8 @@
 
 ## 开发需要用到的知识
 
-- ![Next.js](https://nextjs.org/docs)的App Router写法
-- ![Tailwind CSS](https://tailwindcss.com/)及UI库 ![shadcn/ui](https://ui.shadcn.com/)
+- ![Next.js](https://nextjs.org/docs)的 App Router 写法
+- ![Tailwind CSS](https://tailwindcss.com/)及 UI 库 ![shadcn/ui](https://ui.shadcn.com/)
 - React
 - Typescript
 - ![Prisma](https://www.prisma.io/)
@@ -15,11 +15,23 @@
 
 ## 启动项目
 
+0. 初始化 git 仓库，可选
+
+因为 husky 需要在 git 下才能运行，所以要先初始化 git ，要不然 `husky install` 的时候初始化不了 git hooks
+
+```shell
+git init
+```
+
+如果不需要 husky 的话，可以不做这步操作
+
 1. 安装依赖
 
 ```bash
 pnpm i
 ```
+
+**注**: 在 Mac 上如果安装了 husky , 可能需要执行 `chmod ug+x .husky/*` 来让里面的脚本可以执行
 
 2. 初始化 prisma 和数据库
 
@@ -62,8 +74,8 @@ pnpm dev
 6. 浏览器打开，http://localhost:6121/ 查看页面
 
 7. 后台管理界面： http://localhost:6121/admin ，需要使用 github 登录
-  
-8. 更多配置信息请看`.env.development`文件 
+
+8. 更多配置信息请看`.env.development`文件
 
 ## 部署
 

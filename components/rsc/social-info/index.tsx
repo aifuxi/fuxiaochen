@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { EmailDialog } from '@/components/client';
 import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 import { cn } from '@/utils';
 
@@ -24,15 +25,17 @@ export default function SocialInfo({ className }: Props) {
         className,
       )}
     >
-      <Link
-        href={`mailto:${EMAIL}`}
-        className={cn(
-          'transition-all',
-          'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
-        )}
-      >
-        <IconEmail />
-      </Link>
+      <EmailDialog
+        triggerNode={
+          <IconEmail
+            className={cn(
+              'transition-all',
+              'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
+            )}
+          />
+        }
+        email={EMAIL}
+      />
       <Link
         target="_blank"
         href={GITHUB_PAGE}

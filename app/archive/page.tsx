@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 
 import { PageTitle } from '@/components/rsc';
-import { cn, formatToDate } from '@/utils';
+import { formatToDate } from '@/utils';
 
 import { getServerSideArticleArchive } from '../fetch-data';
 
@@ -31,25 +31,25 @@ export default async function ArchivePage() {
     }
 
     const years = Object.keys(archive);
+    const total = years?.reduce((prev, current) => {
+      return prev + (archive[current]?.length || 0);
+    }, 0);
 
     return (
       <div className="prose max-w-none dark:prose-invert">
+        <h2>总共写了 {total} 篇文章，继续努力！</h2>
+
         {years.map((year) => {
           const articles = archive[year];
           return (
             <div key={year}>
-              <h2>{year}：</h2>
+              <h2>
+                {year}年（{articles?.length || 0}篇）
+              </h2>
               <ul>
                 {articles.map((article) => (
                   <li key={article.id}>
-                    <Link
-                      href={`/articles/${article.friendlyUrl}`}
-                      className={cn(
-                        '!no-underline',
-                        'text-gray-500 dark:text-gray-400',
-                        'hover:!text-600 dark:hover:!text-gray-200',
-                      )}
-                    >
+                    <Link href={`/articles/${article.friendlyUrl}`}>
                       {formatToDate(new Date(article.createdAt))}
                       &nbsp;&nbsp;
                       {article.title}
