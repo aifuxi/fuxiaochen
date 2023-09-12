@@ -12,7 +12,7 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   description: `${NICKNAME}，一个正在努力的程序员。`,
-  keywords: 'F西的个人站、F西、aifuxi',
+  keywords: 'F西、aifuxi',
 };
 
 export default async function HomePage() {
@@ -34,17 +34,14 @@ export default async function HomePage() {
         <div className="flex">
           <h1
             className={cn(
-              'flex font-semibold overflow-hidden whitespace-nowrap animate-typing',
+              'flex font-semibold',
               'text-xl sm:text-4xl 2xl:text-5xl',
             )}
           >
             F西，努力做一个更好的程序员。
           </h1>
           <span
-            className={cn(
-              'ml-2 w-2 h-full animate-blink',
-              'bg-gray-900 dark:bg-white',
-            )}
+            className={cn('ml-2 w-2 h-full', 'bg-gray-900 dark:bg-white')}
           />
         </div>
       </div>
