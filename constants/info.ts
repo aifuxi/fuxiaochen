@@ -14,7 +14,7 @@ export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494';
 export const BILIBILI_PAGE = 'https://space.bilibili.com/315542317';
 
 /** 网站名称 */
-export const WEBSITE = `${NICKNAME}的个人站`;
+export const WEBSITE = `${NICKNAME}`;
 
 /** 网站域名 */
 export const DOMAIN = 'https://aifuxi.cool';

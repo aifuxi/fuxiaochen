@@ -49,7 +49,7 @@ export default function AdminLayout({
             <Link href={v.link}>
               <Button
                 size={'lg'}
-                variant={pathname === v.link ? 'default' : 'outline'}
+                variant={pathname === v.link ? 'default' : 'secondary'}
               >
                 {v.label}
               </Button>

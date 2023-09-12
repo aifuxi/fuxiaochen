@@ -43,7 +43,7 @@ const EditTagButton = ({ refreshTag, tag }: Props) => {
       }}
     >
       <DialogTrigger asChild>
-        <Button size={'icon'} variant={'outline'}>
+        <Button size={'icon'}>
           <Edit size={16} />
         </Button>
       </DialogTrigger>
