@@ -32,14 +32,14 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag, refreshTag }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={'outline'} size={'icon'} className="text-red-500">
+        <Button variant={'destructive'} size={'icon'}>
           <Trash2 size={16} />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>确定要删除该标签吗？</AlertDialogTitle>
-          <AlertDialogDescription className="text-red-500">
+          <AlertDialogDescription className="text-destructive">
             该操作不可逆，数据将直接从数据库删除
           </AlertDialogDescription>
         </AlertDialogHeader>
