@@ -1,4 +1,4 @@
-const colors = require('tailwindcss/colors');
+import plugin from 'tailwindcss/plugin';
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -12,17 +12,51 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: {
-        DEFAULT: '2rem',
-        sm: '2rem',
-        lg: '4rem',
-        xl: '8rem',
-        '2xl': '12rem',
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
       },
     },
     extend: {
       colors: {
-        primary: colors.indigo,
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
         sans: [
@@ -72,162 +106,11 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
         },
-        typing: {
-          from: { width: '0' },
-          to: { width: '100%' },
-        },
-        blink: {
-          '0%': { opacity: '1' },
-          '50%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'spin-slow': 'spin 6s linear infinite',
-        typing: 'typing 2s steps(15)',
-        blink: 'blink 0.7s infinite',
       },
-      typography: (theme) => ({
-        DEFAULT: {
-          css: {
-            color: theme('colors.gray.700'),
-            a: {
-              backgroundColor: 'transparent',
-              textDecoration: 'none',
-              boxShadow: `inset 0 -6px 0 ${theme('colors.primary.400')}`,
-              transition: 'background-color ease-out .4s',
-              '&:hover': {
-                backgroundColor: `${theme('colors.primary.400')}`,
-              },
-              code: { color: theme('colors.primary.400') },
-            },
-            h1: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.900'),
-            },
-            h2: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.900'),
-            },
-            h3: {
-              fontWeight: '600',
-              color: theme('colors.gray.900'),
-            },
-            'h4,h5,h6': {
-              color: theme('colors.gray.900'),
-            },
-            pre: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            code: {
-              color: theme('colors.pink.500'),
-              backgroundColor: theme('colors.gray.100'),
-              paddingLeft: '4px',
-              paddingRight: '4px',
-              paddingTop: '2px',
-              paddingBottom: '2px',
-              borderRadius: '0.25rem',
-            },
-            'code::before': {
-              content: 'none',
-            },
-            'code::after': {
-              content: 'none',
-            },
-            details: {
-              backgroundColor: theme('colors.gray.100'),
-              paddingLeft: '4px',
-              paddingRight: '4px',
-              paddingTop: '2px',
-              paddingBottom: '2px',
-              borderRadius: '0.25rem',
-            },
-            hr: { borderColor: theme('colors.gray.200') },
-            'ol li::marker': {
-              fontWeight: '600',
-              color: theme('colors.gray.500'),
-            },
-            'ul li::marker': {
-              backgroundColor: theme('colors.gray.500'),
-            },
-            strong: { color: theme('colors.gray.600') },
-            blockquote: {
-              color: theme('colors.gray.900'),
-              borderLeftColor: theme('colors.gray.200'),
-            },
-          },
-        },
-
-        // Invert (for dark mode)
-        invert: {
-          css: {
-            color: theme('colors.gray.300'),
-            a: {
-              backgroundColor: 'transparent',
-              textDecoration: 'none',
-              boxShadow: `inset 0 -6px 0 ${theme('colors.primary.600')}`,
-              transition: 'background-color ease-out .4s',
-              '&:hover': {
-                backgroundColor: `${theme('colors.primary.600')}`,
-              },
-              code: { color: theme('colors.primary.400') },
-            },
-            h1: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.100'),
-            },
-            h2: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.100'),
-            },
-            h3: {
-              fontWeight: '600',
-              color: theme('colors.gray.100'),
-            },
-            'h4,h5,h6': {
-              color: theme('colors.gray.100'),
-            },
-            pre: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            code: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            details: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            hr: { borderColor: theme('colors.gray.700') },
-            'ol li::marker': {
-              fontWeight: '600',
-              color: theme('colors.gray.400'),
-            },
-            'ul li::marker': {
-              backgroundColor: theme('colors.gray.400'),
-            },
-            strong: { color: theme('colors.gray.100') },
-            thead: {
-              th: {
-                color: theme('colors.gray.100'),
-              },
-            },
-            tbody: {
-              tr: {
-                borderBottomColor: theme('colors.gray.700'),
-              },
-            },
-            blockquote: {
-              color: theme('colors.gray.100'),
-              borderLeftColor: theme('colors.gray.700'),
-            },
-          },
-        },
-      }),
     },
   },
   plugins: [
@@ -237,5 +120,21 @@ module.exports = {
     // 开发模式下加载显示屏幕大小的插件
     process.env.NODE_ENV === 'development' &&
       require('tailwindcss-debug-screens'),
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.cyberpunk-clip': {
+          clipPath:
+            'polygon(0 0,100% 0,100% calc(100% - var(--cyberpunk-clip)),calc(100% - var(--cyberpunk-clip)) 100%,0 100%)',
+        },
+        // ".cyberpunk-divider-clip": {
+        //   clipPath:
+        //     "polygon(0 -1px,100% -1px,calc(100% - 10px) 100%,10px 100%)",
+        // },
+        '.big-cyberpunk-clip': {
+          clipPath:
+            'polygon(0 0,calc(100% - var(--cyberpunk-clip)) 0,100% var(--cyberpunk-clip),100% 100%,0 100%)',
+        },
+      });
+    }),
   ],
 };

@@ -177,7 +177,7 @@ const AdminArticle = () => {
               <TableCell className="min-w-[160px] w-[160px] max-w-[160px] ">
                 <div className="flex space-x-2 items-center">
                   <Link href={`/admin/create-article?id=${article.id}`}>
-                    <Button size={'icon'} variant={'outline'}>
+                    <Button size={'icon'}>
                       <Edit size={16} />
                     </Button>
                   </Link>

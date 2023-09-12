@@ -6,9 +6,9 @@ import {
   AuthProvider,
   BackToTop,
   Navbar,
-  ToastProvider,
 } from '@/components/client';
 import { Footer } from '@/components/rsc';
+import { Toaster } from '@/components/ui/toaster';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
 import { cn } from '@/utils';
@@ -76,18 +76,18 @@ export default function RootLayout({
           'text-black dark:text-white ',
         )}
       >
-        <ToastProvider>
-          <AuthProvider session={session}>
-            <AnalyticsProvider>
-              <div className="container">
-                <Navbar />
-                {children}
-                <Footer />
-              </div>
-              <BackToTop />
-            </AnalyticsProvider>
-          </AuthProvider>
-        </ToastProvider>
+        <AuthProvider session={session}>
+          <AnalyticsProvider>
+            <div className="container">
+              <Navbar />
+              {children}
+              <Footer />
+            </div>
+            <BackToTop />
+          </AnalyticsProvider>
+        </AuthProvider>
+
+        <Toaster />
       </body>
     </html>
   );
