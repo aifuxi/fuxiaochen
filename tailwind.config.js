@@ -60,7 +60,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          'Poppins',
+          'Tomorrow',
           'PingFang SC',
           'ui-sans-serif',
           'system-ui',
@@ -86,7 +86,7 @@ module.exports = {
           'serif',
         ],
         mono: [
-          'Fira Code',
+          'Jetbrains Mono',
           'ui-monospace',
           'SFMono-Regular',
           'Menlo',
