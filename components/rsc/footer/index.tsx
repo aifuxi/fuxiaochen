@@ -7,7 +7,7 @@ import SocialInfo from '../social-info';
 export default function Footer() {
   return (
     <div className="flex flex-col items-center py-12 space-y-1 text-gray-300 text-xs">
-      <SocialInfo className="text-2xl" />
+      <SocialInfo className="text-2xl xl:hidden" />
       <Link
         href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=36100202000364"
         target="_blank"
