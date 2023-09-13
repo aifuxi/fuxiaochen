@@ -25,7 +25,6 @@ export default function EmailDialog({ email, triggerNode, className }: Props) {
           <p className="text-2xl">{email}</p>
           <Button
             size={'icon'}
-            variant={'outline'}
             onClick={async () => {
               try {
                 await navigator.clipboard.writeText(email || '');
