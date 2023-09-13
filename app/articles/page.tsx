@@ -22,8 +22,8 @@ export default async function ArticlesPage() {
   const total = res?.total || 0;
 
   return (
-    <div className="flex flex-col space-y-8">
-      <PageTitle title="全部文章" />
+    <div className="container flex flex-col space-y-8">
+      <PageTitle title="文章 / Articles" />
       {renderArticles()}
     </div>
   );
