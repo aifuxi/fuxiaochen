@@ -24,8 +24,8 @@ export default async function HomePage() {
   const articles = res?.data;
 
   return (
-    <>
-      <div className="flex flex-col h-[calc(100vh-136px)] justify-center items-center">
+    <div className="container">
+      <div className="flex flex-col h-screen justify-center items-center">
         <img
           src="/images/nyan-cat.gif"
           alt="Nyan Cat"
@@ -46,7 +46,7 @@ export default async function HomePage() {
         </div>
       </div>
       {renderLatestArticles()}
-    </>
+    </div>
   );
 
   function renderLatestArticles() {

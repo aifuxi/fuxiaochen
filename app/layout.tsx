@@ -72,11 +72,9 @@ export default function RootLayout({
       <body className={cn('debug-screens antialiased min-w-[360px]')}>
         <AuthProvider session={session}>
           <AnalyticsProvider>
-            <div className="container">
-              <NavbarV1 />
-              {children}
-              <Footer />
-            </div>
+            <NavbarV1 />
+            {children}
+            <Footer />
             <BackToTop />
           </AnalyticsProvider>
         </AuthProvider>

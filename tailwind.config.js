@@ -114,7 +114,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
     require('tailwindcss-animate'),
     require('@tailwindcss/typography'),
     // 开发模式下加载显示屏幕大小的插件
