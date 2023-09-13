@@ -1,33 +1,32 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-import { PLACEHOLDER_COVER, UMT_SOURCE } from '@/constants';
+import { Button } from '@/components/ui/button';
+import { PLACEHOLDER_COVER } from '@/constants';
 import { Article } from '@/types';
-import { cn, formatToDate, obj2QueryString } from '@/utils';
+import { cn, formatToDate } from '@/utils';
 
 type Props = {
   article: Article;
-  umtSource?: string;
 };
 
-export default function ArticleItem({ article, umtSource }: Props) {
-  const articleUrl = `/articles/${article.friendlyUrl}${
-    umtSource
-      ? obj2QueryString({
-          [UMT_SOURCE]: umtSource,
-        })
-      : ''
-  }`;
+export default function ArticleItem({ article }: Props) {
+  const router = useRouter();
+  const articleUrl = `/articles/${article.friendlyUrl}`;
 
   return (
-    <article
+    <Link
+      href={articleUrl}
       className={cn(
-        'flex flex-col space-y-2',
+        'flex flex-col space-y-2 border-b pb-6',
         'md:flex-row md:space-x-6 md:space-y-0',
       )}
     >
       <div className="flex flex-col space-y-2 md:w-[280px]">
-        <Link href={articleUrl} className="overflow-hidden">
+        <div className="overflow-hidden cyberpunk-clip">
           <Image
             src={article.cover ? article.cover : PLACEHOLDER_COVER}
             alt={article.title}
@@ -35,59 +34,45 @@ export default function ArticleItem({ article, umtSource }: Props) {
             height="0"
             priority
             sizes="100vw"
-            className="w-full h-auto rounded hover:scale-105 transition-transform"
+            className="w-full h-auto hover:scale-105 transition-transform"
           />
-        </Link>
-        <div
-          className={cn(
-            'text-base font-medium leading-6 ',
-            'text-gray-500 dark:text-gray-400',
-          )}
-        >
+        </div>
+        <div className={cn('text-base font-medium text-primary/50')}>
           {formatToDate(new Date(article.createdAt))}
         </div>
       </div>
       <div className="flex flex-col space-y-2 md:flex-1">
-        <h2 className="text-2xl font-bold leading-8 tracking-tight hover:underline">
-          <Link href={articleUrl}>{article.title}</Link>
-        </h2>
+        <h2 className="text-2xl font-bold">{article.title}</h2>
         <div className="flex space-x-4">
           {article.tags?.map((tag) => (
-            <Link
+            <span
               key={tag.id}
-              className={cn(
-                'text-sm font-medium ',
-                'text-primary-500 hover:text-primary-600 dark:hover:text-primary-400',
-              )}
-              href={`/tags/${tag.friendlyUrl}`}
+              className={cn('text-sm font-medium cursor-pointer')}
+              onClick={() => {
+                router.push(`/tags/${tag.friendlyUrl}`);
+              }}
             >
               {tag.name}
-            </Link>
+            </span>
           ))}
         </div>
         <div
           className={cn(
-            'prose text-ellipsis overflow-hidden break-words line-clamp-3 ',
-            'md:max-w-[100ch]',
-            'text-gray-500 dark:text-gray-400',
+            'text-ellipsis overflow-hidden break-words line-clamp-3 text-primary/50',
           )}
         >
           {article.description}
         </div>
-        <div className="text-base font-medium leading-6">
-          <Link
-            className={cn(
-              ' border border-transparent rounded-md px-1.5 pb-1',
-              'text-gray-700 dark:text-gray-400',
-              'hover:text-gray-900 dark:hover:text-gray-300',
-              'border-b-[#ddd]',
-            )}
-            href={articleUrl}
+        <div className="pt-3">
+          <Button
+            onClick={() => {
+              router.push(articleUrl);
+            }}
           >
-            芝麻开门，显示全文！
-          </Link>
+            阅读更多
+          </Button>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
