@@ -5,7 +5,7 @@ import {
   AnalyticsProvider,
   AuthProvider,
   BackToTop,
-  Navbar,
+  NavbarV1,
 } from '@/components/client';
 import { Footer } from '@/components/rsc';
 import { Toaster } from '@/components/ui/toaster';
@@ -69,17 +69,11 @@ export default function RootLayout({
         {/* 打开外部链接时，以新开tab的方式打开 */}
         <base target="_blank" />
       </head>
-      <body
-        className={cn(
-          'debug-screens antialiased min-w-[360px]',
-          'bg-white dark:bg-gray-900',
-          'text-black dark:text-white ',
-        )}
-      >
+      <body className={cn('debug-screens antialiased min-w-[360px]')}>
         <AuthProvider session={session}>
           <AnalyticsProvider>
             <div className="container">
-              <Navbar />
+              <NavbarV1 />
               {children}
               <Footer />
             </div>

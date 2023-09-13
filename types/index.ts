@@ -3,11 +3,6 @@ import type {
   Tag as PrismaTag,
 } from '@prisma/client';
 
-export type NavItem = {
-  label: string;
-  link: string;
-};
-
 export type Tag = PrismaTag & {
   articleCount?: number;
   articles?: PrismaArticle[];

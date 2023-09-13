@@ -8,7 +8,7 @@ export const NICKNAME = 'F西';
 export const GITHUB_PAGE = 'https://github.com/aifuxi';
 
 /** 掘金个人页 */
-export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494';
+export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494/posts';
 
 /** B站个人页 */
 export const BILIBILI_PAGE = 'https://space.bilibili.com/315542317';

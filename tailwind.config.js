@@ -132,7 +132,7 @@ module.exports = {
         // },
         '.big-cyberpunk-clip': {
           clipPath:
-            'polygon(0 0,calc(100% - var(--cyberpunk-clip)) 0,100% var(--cyberpunk-clip),100% 100%,0 100%)',
+            'polygon(0 0,calc(100% - var(--large-cyberpunk-clip)) 0,100% var(--large-cyberpunk-clip),100% 100%,0 100%)',
         },
       });
     }),
