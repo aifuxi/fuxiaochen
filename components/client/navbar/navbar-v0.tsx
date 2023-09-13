@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { Logo } from '@/components/rsc';
-import { NavItem } from '@/types';
 import { cn } from '@/utils';
 
 import ThemeSwitcher from '../theme-switcher';
@@ -51,7 +50,7 @@ const baseNavItems: NavItem[] = [
   },
 ];
 
-export default function Navbar() {
+export default function NavbarV0() {
   const [state, { setTrue, setFalse }] = useBoolean(false);
   const pathname = usePathname();
 
