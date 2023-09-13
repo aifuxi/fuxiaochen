@@ -57,7 +57,7 @@
  
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border tracking-wider;
   }
   body {
     @apply bg-background text-foreground;
@@ -68,6 +68,7 @@
 @import 'highlight.js/styles/panda-syntax-dark.css';
 
 @import './scrollbar.scss';
-@import './poppins-font.scss';
+// @import './poppins-font.scss';
+@import './tomorrow-font.scss';
 @import './bytemd.scss';
 
