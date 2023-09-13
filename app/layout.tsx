@@ -6,6 +6,7 @@ import {
   AuthProvider,
   BackToTop,
   NavbarV1,
+  ToggleTheme,
 } from '@/components/client';
 import { Footer } from '@/components/rsc';
 import { Toaster } from '@/components/ui/toaster';
@@ -28,7 +29,7 @@ export default function RootLayout({
   session: Session;
 }) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <head>
         <link
           rel="apple-touch-icon"
@@ -69,16 +70,25 @@ export default function RootLayout({
         {/* 打开外部链接时，以新开tab的方式打开 */}
         <base target="_blank" />
       </head>
-      <body className={cn('debug-screens antialiased min-w-[360px]')}>
+      <body className={cn('debug-screens min-w-[360px]')}>
         <AuthProvider session={session}>
           <AnalyticsProvider>
+            {/* 侧边导航栏 */}
             <NavbarV1 />
             {children}
+
+            {/* 底部 footer */}
             <Footer />
-            <BackToTop />
           </AnalyticsProvider>
         </AuthProvider>
 
+        {/* 切换主题按钮 */}
+        <ToggleTheme className="fixed top-16 right-12" />
+
+        {/* 返回顶部按钮 */}
+        <BackToTop />
+
+        {/* Toast 容器 */}
         <Toaster />
       </body>
     </html>

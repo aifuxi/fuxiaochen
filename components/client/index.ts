@@ -7,6 +7,7 @@ import EmptyPage from './empty-page';
 import { NavbarV0, NavbarV1 } from './navbar';
 import ClientPagination from './pagination/client-pagination';
 import { AnalyticsProvider, AuthProvider, ToastProvider } from './provider';
+import ToggleTheme from './toggle-theme';
 
 /**
  * 因为这个组件里面用到了window对象，正常情况下使用ssr会在服务端进行预渲染，
@@ -32,4 +33,5 @@ export {
   BackToTop,
   GiscusComment,
   EmailDialog,
+  ToggleTheme,
 };
