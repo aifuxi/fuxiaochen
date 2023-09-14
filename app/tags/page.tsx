@@ -22,48 +22,31 @@ export default async function TagsPage() {
   const tags = data.data;
 
   return (
-    <>
-      <div
-        className={cn(
-          'flex min-h-[68vh]',
-          'flex-col sm:flex-row sm:items-center',
-          'space-y-8 sm:space-y-0 sm:space-x-8 ',
-          'sm:divide-x-4',
-        )}
-      >
-        <PageTitle
-          title="标签"
-          className={cn('sm:border-b-0 sm:whitespace-nowrap')}
-        />
-        {renderTagList()}
-      </div>
+    <div className={cn('container flex flex-col h-screen space-y-8')}>
+      <PageTitle title="标签 / Tags" />
+      {renderTagList()}
       <GiscusComment />
-    </>
+    </div>
   );
 
   function renderTagList() {
     if (!tags?.length) {
-      return <div className="pl-8">暂无标签</div>;
+      return <div className="pl-8 pt-16">暂无标签</div>;
     }
 
     return (
-      <ul className={cn('flex flex-wrap ', 'sm:pl-8')}>
+      <ul className={cn('flex flex-wrap  pt-16')}>
         {tags?.map((tag) => (
           <li key={tag.id} className="flex space-x-2 ">
             <Link
               className={cn(
-                'mr-4 mb-4 text-sm font-medium text-primary-500 ',
-                'hover:text-primary-600 dark:hover:text-primary-400',
+                'mr-4 mb-4 text-sm font-medium',
+                'text-primary/50 hover:text-primary',
               )}
               href={`/tags/${tag.friendlyUrl}`}
             >
               {tag.name}
-              <span
-                className={cn(
-                  'text-sm font-semibold ml-2',
-                  'text-gray-500 dark:text-gray-400',
-                )}
-              >
+              <span className={cn('text-sm font-semibold ml-2')}>
                 ({tag.articleCount || 0})
               </span>
             </Link>
