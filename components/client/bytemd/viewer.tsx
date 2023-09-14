@@ -44,8 +44,8 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
           .filter((item) => item.startsWith('language-'))[0]
           .split('-')
           .slice(-1)[0];
-        codeBlock.setAttribute('data-language', languageName);
-        codeBlock.setAttribute('style', 'position: relative;');
+        codeBlock.parentElement?.setAttribute('data-language', languageName);
+        codeBlock.parentElement?.setAttribute('style', 'position: relative;');
 
         const copyBtn = document.createElement('div');
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

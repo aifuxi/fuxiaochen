@@ -61,7 +61,12 @@ const baseNavItems: NavItem[] = [
 const NavbarV1 = () => {
   const pathname = usePathname();
   return (
-    <div className="fixed inset-y-12 left-12 flex flex-col items-center">
+    <div
+      className={cn(
+        'fixed z-10 inset-y-12  flex flex-col items-center',
+        'left-0 xl:left-4 2xl:left-12',
+      )}
+    >
       <Logo />
       <div className="flex-1">
         <div className="grid gap-y-4 mt-16">
@@ -70,10 +75,11 @@ const NavbarV1 = () => {
               key={item.link}
               href={item.link}
               className={cn(
-                'px-4 py-8 cyberpunk-clip',
-                pathname === item.link &&
-                  'bg-primary text-primary-foreground font-semibold',
-                'hover:bg-primary hover:text-primary-foreground hover:font-semibold',
+                'px-4 py-8 cyberpunk-clip text-primary/50',
+                'hover:text-primary-foreground hover:font-semibold hover:bg-primary',
+                pathname === item.link && [
+                  'text-primary-foreground font-semibold bg-primary',
+                ],
               )}
             >
               {item.label}
@@ -82,13 +88,13 @@ const NavbarV1 = () => {
         </div>
       </div>
 
-      <div className="grid gap-y-4 place-content-center text-2xl">
+      <div className="grid gap-y-4 place-content-center text-2xl text-primary/50">
         <EmailDialog
           triggerNode={
             <IconEmail
               className={cn(
                 'transition-all',
-                'cursor-pointer text-primary  hover:scale-110',
+                'cursor-pointer hover:text-primary hover:scale-110',
               )}
             />
           }
@@ -97,7 +103,7 @@ const NavbarV1 = () => {
         <Link
           target="_blank"
           href={GITHUB_PAGE}
-          className={cn('transition-all', 'text-primary  hover:scale-110')}
+          className={cn('transition-all', 'hover:text-primary hover:scale-110')}
         >
           <IconGithub />
         </Link>

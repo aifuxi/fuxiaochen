@@ -42,7 +42,7 @@ export default async function TagDetailPage({
   }
 
   return (
-    <div className="flex flex-col space-y-8">
+    <div className="container flex flex-col space-y-8">
       <PageTitle title={currentTag?.name || ''} />
       {renderArticles()}
     </div>
@@ -62,14 +62,7 @@ export default async function TagDetailPage({
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (
             <li key={article.id}>
-              <ArticleItem
-                article={article}
-                umtSource={
-                  currentTag?.friendlyUrl
-                    ? `/tags/${currentTag.friendlyUrl}`
-                    : ''
-                }
-              />
+              <ArticleItem article={article} />
             </li>
           ))}
         </ul>
