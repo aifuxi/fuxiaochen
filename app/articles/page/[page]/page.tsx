@@ -39,8 +39,8 @@ export default async function ArticlePage({
   const total = res?.total || 0;
 
   return (
-    <div className="flex flex-col space-y-8">
-      <PageTitle title="全部文章" />
+    <div className="container flex flex-col space-y-8">
+      <PageTitle title={`第 ${page} 页 / Page ${page}`} />
       {renderArticles()}
     </div>
   );
@@ -58,7 +58,7 @@ export default async function ArticlePage({
         <ul className="flex flex-col space-y-10">
           {articles?.map((article) => (
             <li key={article.id}>
-              <ArticleItem article={article} umtSource={`/articles/${page}`} />
+              <ArticleItem article={article} />
             </li>
           ))}
         </ul>

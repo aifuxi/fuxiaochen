@@ -1,5 +1,6 @@
 'use client';
 
+import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -21,12 +22,13 @@ export default function ArticleItem({ article }: Props) {
     <Link
       href={articleUrl}
       className={cn(
-        'flex flex-col space-y-2 border-b pb-6',
+        'relative flex flex-col space-y-2 border-b p-8',
         'md:flex-row md:space-x-6 md:space-y-0',
+        `after:absolute after:inset-0 after:w-0  after:z-[-1] after:hover:bg-primary-foreground after:hover:w-full after:transition-all after:duration-700`,
       )}
     >
       <div className="flex flex-col space-y-2 md:w-[280px]">
-        <div className="overflow-hidden cyberpunk-clip">
+        <div className="overflow-hidden">
           <Image
             src={article.cover ? article.cover : PLACEHOLDER_COVER}
             alt={article.title}
@@ -68,8 +70,10 @@ export default function ArticleItem({ article }: Props) {
             onClick={() => {
               router.push(articleUrl);
             }}
+            className="transition-transform duration-300 hover:scale-105 group/read-more"
           >
             阅读更多
+            <ArrowRight className="ml-2 h-4 w-4 transition-all duration-300 group-hover/read-more:ml-2.5" />
           </Button>
         </div>
       </div>
