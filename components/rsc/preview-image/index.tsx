@@ -16,12 +16,12 @@ export default function PreviewImage({
     <Dialog>
       <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       <DialogContent
-        className={cn('max-w-[60vw] flex justify-center', className)}
+        className={cn('flex max-w-[60vw] justify-center', className)}
       >
         <img
           src={imageUrl}
           alt="cover"
-          className={cn('block w-full h-auto mt-6', className)}
+          className={cn('mt-6 block h-auto w-full', className)}
         />
       </DialogContent>
     </Dialog>
