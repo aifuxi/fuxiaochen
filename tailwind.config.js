@@ -61,9 +61,6 @@ module.exports = {
       fontFamily: {
         sans: [
           'Tomorrow',
-          'PingFang SC',
-          'ui-sans-serif',
-          'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
           'Segoe UI',
@@ -121,6 +118,10 @@ module.exports = {
       require('tailwindcss-debug-screens'),
     plugin(function ({ addUtilities }) {
       addUtilities({
+        '.small-cyberpunk-clip': {
+          clipPath:
+            'polygon(0 0,100% 0,100% calc(100% - var(--small-cyberpunk-clip)),calc(100% - var(--small-cyberpunk-clip)) 100%,0 100%)',
+        },
         '.cyberpunk-clip': {
           clipPath:
             'polygon(0 0,100% 0,100% calc(100% - var(--cyberpunk-clip)),calc(100% - var(--cyberpunk-clip)) 100%,0 100%)',

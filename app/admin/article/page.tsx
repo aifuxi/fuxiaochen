@@ -107,10 +107,6 @@ const AdminArticle = () => {
                     [UMT_SOURCE]: '/admin/article',
                   })}`}
                   target="_blank"
-                  className={cn(
-                    'text-primary-500 hover:text-primary-400',
-                    'dark:text-primary-400 dark:hover:text-primary-500',
-                  )}
                 >
                   {article.friendlyUrl}
                 </Link>
@@ -121,7 +117,6 @@ const AdminArticle = () => {
               <TableCell
                 className={cn(
                   'w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap  text-xs font-medium',
-                  'text-primary-500 dark:text-primary-400',
                 )}
               >
                 {article.tags?.length
@@ -130,10 +125,7 @@ const AdminArticle = () => {
                         key={tag.id}
                         href={`/tags/${tag.friendlyUrl}`}
                         target="_blank"
-                        className={cn(
-                          'mr-1 text-primary-500 hover:text-primary-400',
-                          'dark:text-primary-400 dark:hover:text-primary-500',
-                        )}
+                        className={cn('mr-1 ')}
                       >
                         {tag.name}
                       </Link>
@@ -205,9 +197,7 @@ const AdminArticle = () => {
           }}
         />
       ) : (
-        <div className="w-full text-center p-8 text-gray-500 h-[44vh]">
-          无数据
-        </div>
+        <div className="w-full text-center p-8 h-[44vh]">无数据</div>
       )}
     </div>
   );
