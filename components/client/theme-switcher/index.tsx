@@ -48,7 +48,7 @@ export default function ThemeSwitcher({ className }: { className?: string }) {
     <div className={cn('cursor-pointer', className)}>
       <Sun
         size={24}
-        className="hidden dark:block text-white"
+        className="hidden text-white dark:block"
         onClick={handleChangeTheme}
       />
       <MoonStar size={24} className="dark:hidden" onClick={handleChangeTheme} />

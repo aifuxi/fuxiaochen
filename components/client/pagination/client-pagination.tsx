@@ -27,21 +27,21 @@ export default function ClientPagination({
   className,
 }: Props) {
   return (
-    <div className={cn('flex justify-end items-center', className)}>
+    <div className={cn('flex items-center justify-end', className)}>
       <div>
         <p className="text-sm">
           第
-          <span className="font-medium ml-1">
+          <span className="ml-1 font-medium">
             {(page - 1) * DEFAULT_PAGE_SIZE || 1}
           </span>
           ~
-          <span className="font-medium mr-1">
+          <span className="mr-1 font-medium">
             {total >= DEFAULT_PAGE_SIZE * page
               ? DEFAULT_PAGE_SIZE * page
               : total}
           </span>
           条数据，共
-          <span className="font-medium px-1">{total}</span>条
+          <span className="px-1 font-medium">{total}</span>条
         </p>
       </div>
       <div className="ml-12">{renderPageItem()}</div>
@@ -135,7 +135,7 @@ export default function ClientPagination({
             changePage(page - 1);
           }}
           className={cn(
-            'relative inline-flex items-center rounded-l-md px-2 py-2 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
+            'relative inline-flex items-center rounded-l-md p-2 ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
             page === 1 ? 'cursor-not-allowed' : 'cursor-pointer ',
           )}
         >
@@ -151,7 +151,7 @@ export default function ClientPagination({
             changePage(page + 1);
           }}
           className={cn(
-            'cursor-pointer relative inline-flex items-center rounded-r-md px-2 py-2  ring-1 ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
+            'relative inline-flex cursor-pointer items-center rounded-r-md p-2 ring-1  ring-inset ring-gray-300 focus:z-20 focus:outline-offset-0',
             page === pageCount ? 'cursor-not-allowed' : 'cursor-pointer ',
           )}
         >
@@ -168,10 +168,10 @@ export default function ClientPagination({
           aria-current="page"
           onClick={() => changePage(currentPage)}
           className={cn(
-            'cursor-pointer relative z-10 inline-flex items-center  px-6 py-3 text-sm font-semibold focus:z-20 ',
+            'relative z-10 inline-flex cursor-pointer items-center  px-6 py-3 text-sm font-semibold focus:z-20 ',
             page === currentPage
-              ? 'bg-gray-800 text-white dark:bg-white dark:text-gray-800  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-800 dark:focus-visible:outline-white'
-              : 'text-gray-800 dark:text-white ring-1 ring-inset ring-gray-300  focus:outline-offset-0',
+              ? 'bg-gray-800 text-white focus-visible:outline focus-visible:outline-2  focus-visible:outline-offset-2 focus-visible:outline-gray-800 dark:bg-white dark:text-gray-800 dark:focus-visible:outline-white'
+              : 'text-gray-800 ring-1 ring-inset ring-gray-300 focus:outline-offset-0  dark:text-white',
           )}
         >
           {currentPage}
@@ -196,7 +196,7 @@ export default function ClientPagination({
                   <div
                     onClick={() => changePage(v)}
                     className={cn(
-                      'cursor-pointer flex justify-center py-1 rounded-sm text-sm',
+                      'flex cursor-pointer justify-center rounded-sm py-1 text-sm',
                       'hover:bg-gray-800 dark:hover:bg-white',
                       'hover:text-white dark:hover:text-gray-800',
                     )}

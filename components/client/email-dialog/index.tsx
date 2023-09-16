@@ -19,9 +19,9 @@ export default function EmailDialog({ email, triggerNode, className }: Props) {
     <Dialog>
       <DialogTrigger asChild>{triggerNode}</DialogTrigger>
       <DialogContent
-        className={cn('max-w-[60vw] flex justify-center', className)}
+        className={cn('flex max-w-[60vw] justify-center', className)}
       >
-        <div className="flex space-x-4 items-center">
+        <div className="flex items-center space-x-4">
           <p className="text-2xl">{email}</p>
           <Button
             size={'icon'}
