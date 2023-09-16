@@ -70,9 +70,7 @@ const AdminTag = () => {
             <TableRow key={tag.id}>
               <TableCell>{tag.name}</TableCell>
               <TableCell>{tag.friendlyUrl}</TableCell>
-              <TableCell className="text-primary-500">
-                {tag.articleCount}
-              </TableCell>
+              <TableCell>{tag.articleCount}</TableCell>
               <TableCell className="w-[160px]">
                 {formatToDate(new Date(tag.createdAt))}
               </TableCell>
@@ -100,9 +98,7 @@ const AdminTag = () => {
           }}
         />
       ) : (
-        <div className="w-full text-center p-8 text-gray-500 h-[44vh]">
-          无数据
-        </div>
+        <div className="w-full text-center p-8 h-[44vh]">无数据</div>
       )}
     </div>
   );

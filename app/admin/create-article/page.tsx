@@ -176,8 +176,8 @@ const AdminCreateArticle = () => {
               }}
             />
           </div>
-          <div className="flex items-center flex-wrap gap-2">
-            <Label>话题</Label>
+          <div className="flex items-center flex-wrap gap-4">
+            <Label>标签</Label>
 
             {tags?.map((tag) => {
               return (
