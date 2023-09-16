@@ -26,9 +26,9 @@ const TagCheckboxItem = ({
     >
       <Badge
         variant={
-          createArticleReq?.tags?.includes(tag.id) ? 'default' : 'outline'
+          createArticleReq?.tags?.includes(tag.id) ? 'default' : 'secondary'
         }
-        className={cn('cursor-pointer p-2')}
+        className={cn('cursor-pointer p-2 rounded-none cyberpunk-clip')}
       >
         <span>{tag.name}</span>
         <Checkbox

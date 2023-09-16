@@ -9,7 +9,6 @@ import { usePathname } from 'next/navigation';
 import { EmptyPage } from '@/components/client';
 import { PageLoading, Unauthorized401Illustration } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
-import { NavItem } from '@/types';
 
 const adminNavItems: NavItem[] = [
   {
@@ -35,7 +34,7 @@ export default function AdminLayout({
   const { data: session, status } = useSession();
 
   return (
-    <div>
+    <div className="container pt-16 relative">
       {renderAdminNav()}
       {renderChildren()}
     </div>
