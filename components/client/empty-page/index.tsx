@@ -25,12 +25,12 @@ export default function EmptyPage({
   return (
     <div
       className={cn(
-        'h-[calc(100vh-136px)] flex flex-col justify-center items-center',
+        'flex h-[calc(100vh-136px)] flex-col items-center justify-center',
         className,
       )}
     >
       {illustration}
-      <h2 className="text-3xl md:text-5xl xl:text-6xl font-black text-center">
+      <h2 className="text-center text-3xl font-black md:text-5xl xl:text-6xl">
         {title}
       </h2>
       <div className="mt-10">{bottomOptionNode}</div>

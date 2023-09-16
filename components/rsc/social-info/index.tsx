@@ -30,7 +30,7 @@ export default function SocialInfo({ className }: Props) {
           <IconEmail
             className={cn(
               'transition-all',
-              'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
+              'hover:scale-110 hover:text-gray-800  dark:hover:text-white',
             )}
           />
         }
@@ -41,7 +41,7 @@ export default function SocialInfo({ className }: Props) {
         href={GITHUB_PAGE}
         className={cn(
           'transition-all',
-          'hover:text-gray-800 dark:hover:text-white  hover:scale-110',
+          'hover:scale-110 hover:text-gray-800  dark:hover:text-white',
         )}
       >
         <IconGithub />
@@ -49,20 +49,20 @@ export default function SocialInfo({ className }: Props) {
       <Link
         target="_blank"
         href={JUEJIN_PAGE}
-        className="hover:text-[#1e80ff] transition-all hover:scale-110"
+        className="transition-all hover:scale-110 hover:text-[#1e80ff]"
       >
         <IconJuejin />
       </Link>
       <Link
         target="_blank"
         href={BILIBILI_PAGE}
-        className="hover:text-[#00aeec] transition-all hover:scale-110"
+        className="transition-all hover:scale-110 hover:text-[#00aeec]"
       >
         <IconBilibili />
       </Link>
       <PreviewImage
         triggerNode={
-          <IconWechat className="hover:text-[#07c160] transition-all hover:scale-110 cursor-pointer" />
+          <IconWechat className="cursor-pointer transition-all hover:scale-110 hover:text-[#07c160]" />
         }
         imageUrl="/images/wechat-qr-code.jpg"
         className="w-[500px]"

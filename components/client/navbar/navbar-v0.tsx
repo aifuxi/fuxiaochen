@@ -57,7 +57,7 @@ export default function NavbarV0() {
   return (
     <div
       className={cn(
-        'py-10 flex justify-between items-center sticky top-0 z-10 ',
+        'sticky top-0 z-10 flex items-center justify-between py-10 ',
         'bg-white dark:bg-gray-900',
       )}
     >
@@ -70,11 +70,11 @@ export default function NavbarV0() {
               <Link
                 href={item.link}
                 className={cn(
-                  'flex items-center h-[56px]  font-semibold underline-offset-4 tracking-widest  transition-colors ',
-                  'hover:text-gray-800 dark:hover:text-white hover:underline',
+                  'flex h-[56px] items-center  font-semibold tracking-widest underline-offset-4  transition-colors ',
+                  'hover:text-gray-800 hover:underline dark:hover:text-white',
                   'text-gray-500 dark:text-gray-400',
                   pathname === item.link &&
-                    'text-gray-800 dark:text-white underline',
+                    'text-gray-800 underline dark:text-white',
                   'text-lg lg:text-xl',
                 )}
               >
@@ -86,18 +86,18 @@ export default function NavbarV0() {
 
         <ThemeSwitcher className="ml-4" />
 
-        <button className="md:hidden ml-4">
+        <button className="ml-4 md:hidden">
           <Menu size={36} onClick={setTrue} />
         </button>
       </div>
 
       <div
         className={cn(
-          'fixed top-0 left-0 z-50 w-full h-full transform opacity-95 bg-gray-200 duration-300 ease-in-out',
+          'fixed left-0 top-0 z-50 h-full w-full bg-gray-200 opacity-95 duration-300 ease-in-out',
           state ? 'translate-x-0' : 'translate-x-full',
         )}
       >
-        <div className="py-12 pr-4 flex items-center justify-end">
+        <div className="flex items-center justify-end py-12 pr-4">
           <button onClick={setFalse} className="text-gray-900">
             <X size={40} />
           </button>

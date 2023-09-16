@@ -63,22 +63,22 @@ const NavbarV1 = () => {
   return (
     <div
       className={cn(
-        'fixed z-10 inset-y-12  flex flex-col items-center',
+        'fixed inset-y-12 z-10  flex flex-col items-center',
         'left-0 xl:left-4 2xl:left-12',
       )}
     >
       <Logo />
       <div className="flex-1">
-        <div className="grid gap-y-4 mt-16">
+        <div className="mt-16 grid gap-y-4">
           {baseNavItems.map((item) => (
             <Link
               key={item.link}
               href={item.link}
               className={cn(
-                'px-4 py-8 cyberpunk-clip text-primary/50',
-                'hover:text-primary-foreground hover:font-semibold hover:bg-primary',
+                'cyberpunk-clip text-primary/50 px-4 py-8',
+                'hover:text-primary-foreground hover:bg-primary hover:font-semibold',
                 pathname === item.link && [
-                  'text-primary-foreground font-semibold bg-primary',
+                  'text-primary-foreground bg-primary font-semibold',
                 ],
               )}
             >
@@ -88,13 +88,13 @@ const NavbarV1 = () => {
         </div>
       </div>
 
-      <div className="grid gap-y-4 place-content-center text-2xl text-primary/50">
+      <div className="text-primary/50 grid place-content-center gap-y-4 text-2xl">
         <EmailDialog
           triggerNode={
             <IconEmail
               className={cn(
                 'transition-all',
-                'cursor-pointer hover:text-primary hover:scale-110',
+                'hover:text-primary cursor-pointer hover:scale-110',
               )}
             />
           }
@@ -110,20 +110,20 @@ const NavbarV1 = () => {
         <Link
           target="_blank"
           href={JUEJIN_PAGE}
-          className="hover:text-[#1e80ff] transition-all hover:scale-110"
+          className="transition-all hover:scale-110 hover:text-[#1e80ff]"
         >
           <IconJuejin />
         </Link>
         <Link
           target="_blank"
           href={BILIBILI_PAGE}
-          className="hover:text-[#00aeec] transition-all hover:scale-110"
+          className="transition-all hover:scale-110 hover:text-[#00aeec]"
         >
           <IconBilibili />
         </Link>
         <PreviewImage
           triggerNode={
-            <IconWechat className="hover:text-[#07c160] transition-all hover:scale-110 cursor-pointer" />
+            <IconWechat className="cursor-pointer transition-all hover:scale-110 hover:text-[#07c160]" />
           }
           imageUrl="/images/wechat-qr-code.jpg"
           className="w-[500px]"

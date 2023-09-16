@@ -14,8 +14,8 @@ export default function Pagination({ currentPage, total }: Props) {
     <div className="flex justify-between">
       {renderPrevButton()}
       <div>
-        第<span className="font-semibold px-1">{currentPage}</span>页 / 共
-        <span className="font-semibold px-1">{pageNumber}</span>页
+        第<span className="px-1 font-semibold">{currentPage}</span>页 / 共
+        <span className="px-1 font-semibold">{pageNumber}</span>页
       </div>
       {renderNextButton()}
     </div>
