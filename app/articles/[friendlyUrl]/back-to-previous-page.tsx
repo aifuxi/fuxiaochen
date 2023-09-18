@@ -10,7 +10,7 @@ export default function BackToPreviousPage() {
 
   return (
     <Link
-      className="underline font-semibold"
+      className="underline font-semibold text-primary/50 hover:text-primary transition-colors"
       href={'#'}
       onClick={(e) => {
         e.preventDefault();

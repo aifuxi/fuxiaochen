@@ -2,35 +2,45 @@ import React from 'react';
 
 import { Metadata } from 'next';
 
-import ArticleItem from '@/app/articles/article-item';
-import EmptyArticleList from '@/app/articles/empty-article-list';
-import { getServerSideTagByFriendlyUrl } from '@/app/fetch-data';
+import {
+  getTagArticlesByFriendlyURLAction,
+  getTagByFriendlyURLAction,
+} from '@/app/_actions/tag';
 import { EmptyPage } from '@/components/client';
 import { NotFound404Illustration, PageTitle } from '@/components/rsc';
+import { DEFAULT_PAGE } from '@/constants';
+
+import TagArticles from './TagArticles';
 
 export async function generateMetadata({
   params,
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
-  const data = await getServerSideTagByFriendlyUrl(params.friendlyUrl);
-  const name = data.data?.name || '标签未找到';
+  const tag = await getTagByFriendlyURLAction(params.friendlyUrl);
+  const name = tag?.name || '-';
   return {
-    title: `${name} - 标签`,
+    title: `${name}`,
   };
 }
 
 export default async function TagDetailPage({
   params,
+  searchParams,
 }: {
   params: { friendlyUrl: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const data = await getServerSideTagByFriendlyUrl(params.friendlyUrl);
-  const currentTag = data.data;
-  const articles = currentTag?.articles;
-  const articleCount = articles?.length || 0;
+  const { page } = searchParams ?? {};
+  const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-  if (!currentTag) {
+  const tag = await getTagByFriendlyURLAction(params.friendlyUrl);
+  const { articles, total } = await getTagArticlesByFriendlyURLAction({
+    friendlyURL: params.friendlyUrl,
+    page: currentPage,
+  });
+
+  if (!total) {
     return (
       <EmptyPage
         illustration={
@@ -43,30 +53,9 @@ export default async function TagDetailPage({
 
   return (
     <div className="container flex flex-col space-y-8">
-      <PageTitle title={currentTag?.name || ''} />
-      {renderArticles()}
+      <PageTitle title={tag?.name || '-'} />
+
+      <TagArticles total={total} articles={articles} />
     </div>
   );
-
-  function renderArticles() {
-    if (!articles?.length) {
-      return <EmptyArticleList />;
-    }
-
-    return (
-      <>
-        <p>
-          共<span className="font-semibold px-1">{articleCount}</span>
-          篇文章
-        </p>
-        <ul className="flex flex-col space-y-10">
-          {articles?.map((article) => (
-            <li key={article.id}>
-              <ArticleItem article={article} />
-            </li>
-          ))}
-        </ul>
-      </>
-    );
-  }
 }

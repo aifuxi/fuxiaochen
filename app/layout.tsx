@@ -15,10 +15,7 @@ import '@/styles/global.scss';
 import { cn } from '@/utils';
 
 export const metadata: Metadata = {
-  title: {
-    template: `%s - ${WEBSITE}`,
-    default: `${WEBSITE}`,
-  },
+  title: `${WEBSITE}`,
 };
 
 export default function RootLayout({

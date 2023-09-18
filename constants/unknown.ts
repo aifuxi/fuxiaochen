@@ -2,7 +2,7 @@
 export const PLACEHOLDER_COVER = '/images/no-cover.png';
 
 /** 默认每页多少条数据 */
-export const DEFAULT_PAGE_SIZE = 20;
+export const DEFAULT_PAGE_SIZE = 10;
 
 /** 取最新文章数 */
 export const LATEST_ARTICLES_PAGE_SIZE = 10;
