@@ -1,12 +1,7 @@
-'use client';
-
-import React, { useState } from 'react';
-
 import { PlusIcon } from 'lucide-react';
-import useSWR from 'swr';
 
-import { ClientPagination } from '@/components/client';
-import { PageLoading } from '@/components/rsc';
+import { adminCreateTagAction, adminGetTagsAction } from '@/app/_actions/tag';
+import { Pagination } from '@/components/client/pagination/pagination';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -16,36 +11,30 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from '@/constants';
-import { getTags, TAG_URL } from '@/services';
-import { GetTagsRequest } from '@/types';
-import { formatToDate, obj2QueryString } from '@/utils';
+import { DEFAULT_PAGE } from '@/constants';
+import { formatToDate } from '@/utils';
 
 import CreateTagButton from './create-tag-button';
 import DeleteTagItemButton from './delete-tag-item-button';
 import EditTagButton from './edit-tag-button';
 
-const AdminTag = () => {
-  const [req, setReq] = useState<GetTagsRequest>({
-    pageSize: DEFAULT_PAGE_SIZE,
-    page: DEFAULT_PAGE,
-  });
-  const { data, isLoading, mutate } = useSWR(
-    `${TAG_URL}${obj2QueryString(req)}`,
-    () => getTags(req),
-  );
-  const tags = data?.data;
-  const total = data?.total || 0;
+export default async function AdminTag({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const { page } = searchParams ?? {};
+  const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-  if (isLoading) {
-    return <PageLoading />;
-  }
+  const { tags, total } = await adminGetTagsAction({
+    page: currentPage,
+  });
 
   return (
     <div>
       <div className="flex justify-end">
         <CreateTagButton
-          refreshTag={mutate}
+          createTag={adminCreateTagAction}
           triggerNode={
             <Button size={'lg'}>
               <PlusIcon className="mr-2 h-4 w-4" />
@@ -57,51 +46,38 @@ const AdminTag = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>名称</TableHead>
-            <TableHead>friendly_url</TableHead>
-            <TableHead>文章数</TableHead>
-            <TableHead className="w-[160px]">创建时间</TableHead>
-            <TableHead className="w-[160px]">更新时间</TableHead>
-            <TableHead className="min-w-[120px]">操作</TableHead>
+            <TableHead className="w-[200px]">名称</TableHead>
+            <TableHead className="w-[200px]">friendly_url</TableHead>
+            <TableHead className="w-[200px]">文章数</TableHead>
+            <TableHead className="w-[200px]">创建时间</TableHead>
+            <TableHead className="w-[200px]">更新时间</TableHead>
+            <TableHead className="w-min-[200px]">操作</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {tags?.map((tag) => (
             <TableRow key={tag.id}>
-              <TableCell>{tag.name}</TableCell>
-              <TableCell>{tag.friendlyUrl}</TableCell>
-              <TableCell>{tag.articleCount}</TableCell>
-              <TableCell className="w-[160px]">
+              <TableCell className="w-[200px]">{tag.name}</TableCell>
+              <TableCell className="w-[200px]">{tag.friendlyUrl}</TableCell>
+              <TableCell className="w-[200px]">
+                {tag.articles?.length || 0}
+              </TableCell>
+              <TableCell className="w-[200px]">
                 {formatToDate(new Date(tag.createdAt))}
               </TableCell>
-              <TableCell className="w-[160px]">
+              <TableCell className="w-[200px]">
                 {formatToDate(new Date(tag.updatedAt))}
               </TableCell>
-              <TableCell className="flex space-x-2 min-w-[120px]">
-                <EditTagButton tag={tag} refreshTag={mutate} />
-                <DeleteTagItemButton tag={tag} refreshTag={mutate} />
+              <TableCell className="flex space-x-2 w-min-[200px]">
+                <EditTagButton tag={tag} />
+                <DeleteTagItemButton tag={tag} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      {Boolean(total) ? (
-        <ClientPagination
-          className="mt-4"
-          page={req.page}
-          total={total}
-          changePage={(currentPage: number) => {
-            setReq({
-              ...req,
-              page: currentPage,
-            });
-          }}
-        />
-      ) : (
-        <div className="w-full text-center p-8 h-[44vh]">无数据</div>
-      )}
+
+      <Pagination total={total} />
     </div>
   );
-};
-
-export default AdminTag;
+}
