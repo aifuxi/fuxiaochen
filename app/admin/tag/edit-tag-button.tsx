@@ -23,10 +23,9 @@ import type { CreateTagRequest, Tag } from '@/types';
 
 type Props = {
   tag: Tag;
-  refreshTag: () => void;
 };
 
-const EditTagButton = ({ refreshTag, tag }: Props) => {
+const EditTagButton = ({ tag }: Props) => {
   const { toast } = useToast();
   const [state, { setTrue, setFalse }] = useBoolean(false);
 
@@ -41,6 +40,7 @@ const EditTagButton = ({ refreshTag, tag }: Props) => {
       onOpenChange={(visible) => {
         visible ? setTrue() : setFalse();
       }}
+      key={tag.id}
     >
       <DialogTrigger asChild>
         <Button size={'icon'}>
@@ -97,7 +97,6 @@ const EditTagButton = ({ refreshTag, tag }: Props) => {
                 })
                 .finally(() => {
                   setFalse();
-                  refreshTag?.();
                 });
             }}
           >

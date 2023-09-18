@@ -23,10 +23,9 @@ import type { Tag } from '@/types';
 
 type Props = {
   tag: Tag;
-  refreshTag?: () => void;
 };
 
-const DeleteTagItemButton: React.FC<Props> = ({ tag, refreshTag }) => {
+const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
   const { toast } = useToast();
 
   return (
@@ -47,25 +46,21 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag, refreshTag }) => {
           <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteTag(tag.id)
-                .then((res) => {
-                  if (res.code !== ZERO) {
-                    toast({
-                      variant: 'destructive',
-                      title: res.msg || 'Error',
-                      description: res.error || 'error',
-                    });
-                  } else {
-                    toast({
-                      variant: 'default',
-                      title: 'Success',
-                      description: '删除标签成功',
-                    });
-                  }
-                })
-                .finally(() => {
-                  refreshTag?.();
-                });
+              deleteTag(tag.id).then((res) => {
+                if (res.code !== ZERO) {
+                  toast({
+                    variant: 'destructive',
+                    title: res.msg || 'Error',
+                    description: res.error || 'error',
+                  });
+                } else {
+                  toast({
+                    variant: 'default',
+                    title: 'Success',
+                    description: '删除标签成功',
+                  });
+                }
+              });
             }}
           >
             删除
