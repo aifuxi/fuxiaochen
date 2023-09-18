@@ -1,11 +1,11 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import { getServerSideTags } from '@/app/fetch-data';
 import { GiscusComment } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
-import { DEFAULT_PAGE, MAX_PAGE_SIZE } from '@/constants';
 import { cn } from '@/utils';
+
+import { getTagsWithArticleCountAction } from '../_actions/tag';
 
 export const metadata: Metadata = {
   title: '标签',
@@ -14,12 +14,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function TagsPage() {
-  const data = await getServerSideTags({
-    page: DEFAULT_PAGE,
-    pageSize: MAX_PAGE_SIZE,
-  });
-
-  const tags = data.data;
+  const tags = await getTagsWithArticleCountAction();
 
   return (
     <div className={cn('container flex flex-col h-screen space-y-8')}>
@@ -40,14 +35,14 @@ export default async function TagsPage() {
           <li key={tag.id} className="flex space-x-2 ">
             <Link
               className={cn(
-                'mr-4 mb-4 text-sm font-medium',
+                'mr-4 mb-4 text-sm font-medium transition-colors',
                 'text-primary/50 hover:text-primary',
               )}
               href={`/tags/${tag.friendlyUrl}`}
             >
               {tag.name}
               <span className={cn('text-sm font-semibold ml-2')}>
-                ({tag.articleCount || 0})
+                ({tag.articles.length || 0})
               </span>
             </Link>
           </li>

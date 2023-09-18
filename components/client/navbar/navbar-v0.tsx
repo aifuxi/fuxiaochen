@@ -8,8 +8,6 @@ import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/rsc';
 import { cn } from '@/utils';
 
-import ThemeSwitcher from '../theme-switcher';
-
 const baseNavItems: NavItem[] = [
   {
     label: '首页',
@@ -83,8 +81,6 @@ export default function NavbarV0() {
             </li>
           ))}
         </ul>
-
-        <ThemeSwitcher className="ml-4" />
 
         <button className="ml-4 md:hidden">
           <Menu size={36} onClick={setTrue} />

@@ -12,7 +12,7 @@ export default function EditArticle({ articleId }: { articleId: string }) {
   if (status === 'authenticated' && session) {
     return (
       <Link
-        className="ml-4 flex items-center font-semibold text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+        className="ml-4 flex items-center font-semibold text-primary/50 hover:text-primary transition-colors"
         href={`/admin/create-article?id=${articleId}`}
       >
         <span className="mr-1">编辑</span>

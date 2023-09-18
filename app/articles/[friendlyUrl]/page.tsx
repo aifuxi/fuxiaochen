@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { getServerSideArticleByFriendlyUrl } from '@/app/fetch-data';
+import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
 import { BytemdViewer, GiscusComment } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
@@ -17,8 +17,8 @@ export async function generateMetadata({
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
-  const data = await getServerSideArticleByFriendlyUrl(params.friendlyUrl);
-  const title = data.data?.title || '文章未找到';
+  const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
+  const title = article?.title || '文章未找到';
   return {
     title,
   };
@@ -29,10 +29,9 @@ export default async function ArticleDetailPage({
 }: {
   params: { friendlyUrl: string };
 }) {
-  const data = await getServerSideArticleByFriendlyUrl(params.friendlyUrl);
-  const currentArticle = data.data;
+  const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
 
-  if (isNil(currentArticle)) {
+  if (isNil(article)) {
     return <EmptyArticle />;
   }
 
@@ -40,8 +39,8 @@ export default async function ArticleDetailPage({
     <div className=" flex flex-col space-y-8">
       <div className="flex justify-center">
         <Image
-          src={currentArticle.cover || PLACEHOLDER_COVER}
-          alt={currentArticle.title}
+          src={article.cover || PLACEHOLDER_COVER}
+          alt={article.title}
           width="0"
           height="0"
           sizes="100vw"
@@ -50,10 +49,10 @@ export default async function ArticleDetailPage({
       </div>
       <div className="container flex flex-col space-y-8">
         <div className="text-center text-base font-medium leading-6 tracking-wider text-primary/50">
-          {formatToDateTime(currentArticle.createdAt)}
+          {formatToDateTime(article.createdAt)}
         </div>
         <PageTitle
-          title={currentArticle.title}
+          title={article.title}
           className="text-center pt-0 !leading-[1.2em]"
         />
 
@@ -72,7 +71,7 @@ export default async function ArticleDetailPage({
             <div className="">
               <div className="font-semibold text-primary/50 mb-4">标签</div>
               <div className="flex flex-wrap">
-                {currentArticle?.tags?.map((tag) => (
+                {article?.tags?.map((tag) => (
                   <Link
                     key={tag.id}
                     className="mr-4 mb-2 text-sm font-medium transition-colors text-primary/75 hover:text-primary"
@@ -88,7 +87,7 @@ export default async function ArticleDetailPage({
                 最近更新时间
               </div>
               <div className="text-sm leading-6 tracking-wider text-primary/50">
-                {formatToDateTime(currentArticle.updatedAt, true)}
+                {formatToDateTime(article.updatedAt, true)}
               </div>
             </div>
             <div
@@ -98,11 +97,11 @@ export default async function ArticleDetailPage({
               )}
             >
               <BackToPreviousPage />
-              <EditArticle articleId={currentArticle.id} />
+              <EditArticle articleId={article.id} />
             </div>
           </div>
           <div className="max-w-[100%] lg:max-w-[calc(100%-232px)] flex-1">
-            <BytemdViewer content={currentArticle.content} />
+            <BytemdViewer content={article.content} />
           </div>
         </div>
 
