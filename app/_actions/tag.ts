@@ -94,6 +94,16 @@ export async function adminGetTagsAction(params: { page: number }) {
   return { tags, total };
 }
 
+export async function adminGetAllTagsAction() {
+  const tags = await prisma.tag.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return { tags };
+}
+
 export async function adminCreateTagAction(params: CreateTagRequest) {
   const tag = await prisma.tag.create({
     data: { ...params },

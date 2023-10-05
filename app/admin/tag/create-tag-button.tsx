@@ -27,9 +27,10 @@ const defaultCreateTagReq: CreateTagRequest = {
 type Props = {
   triggerNode: React.ReactNode;
   createTag: (req: CreateTagRequest) => Promise<Tag>;
+  refreshTag?: () => Promise<any>;
 };
 
-const CreateTagButton = ({ triggerNode, createTag }: Props) => {
+const CreateTagButton = ({ triggerNode, createTag, refreshTag }: Props) => {
   const { toast } = useToast();
   const [state, { setTrue, setFalse }] = useBoolean(false);
 
@@ -77,7 +78,7 @@ const CreateTagButton = ({ triggerNode, createTag }: Props) => {
             size={'lg'}
             onClick={async () => {
               try {
-                createTag(createTagReq);
+                await createTag(createTagReq);
               } catch (error) {
                 toast({
                   variant: 'destructive',
@@ -87,6 +88,7 @@ const CreateTagButton = ({ triggerNode, createTag }: Props) => {
               } finally {
                 setFalse();
                 setCreateTagReq(defaultCreateTagReq);
+                await refreshTag?.();
               }
             }}
           >
