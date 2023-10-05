@@ -1,6 +1,6 @@
 import { getServerSideSitemap, type ISitemapField } from 'next-sitemap';
 
-import { DEFAULT_PAGE_SIZE, DOMAIN } from '@/constants';
+import { DOMAIN } from '@/constants';
 import prisma from '@/libs/prisma';
 
 export async function GET() {
@@ -22,11 +22,6 @@ export async function GET() {
     },
   });
 
-  const articlePageSitemaps: ISitemapField[] = generatePageSitemaps(
-    `${DOMAIN}/articles/page`,
-    articles?.length || 0,
-  );
-
   const articlesSitemaps = articles.map((item): ISitemapField => {
     return {
       loc: `${DOMAIN}/articles/${item.friendlyUrl}`,
@@ -42,23 +37,5 @@ export async function GET() {
     };
   });
 
-  return getServerSideSitemap([
-    ...articlesSitemaps,
-    ...articlePageSitemaps,
-    ...tagsSitemaps,
-  ]);
-}
-
-function generatePageSitemaps(prefix: string, total: number): ISitemapField[] {
-  const totalPage = Math.ceil(total / DEFAULT_PAGE_SIZE);
-  const pageSitemaps: ISitemapField[] = [];
-
-  for (let i = 2; i <= totalPage; i++) {
-    pageSitemaps.push({
-      loc: `${prefix}/${i}`,
-      changefreq: 'hourly',
-    });
-  }
-
-  return pageSitemaps;
+  return getServerSideSitemap([...articlesSitemaps, ...tagsSitemaps]);
 }
