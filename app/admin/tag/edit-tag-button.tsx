@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Label } from '@radix-ui/react-label';
 import { useBoolean } from 'ahooks';
@@ -23,6 +23,7 @@ import type { CreateTagRequest, Tag } from '@/types';
 
 type Props = {
   tag: Tag;
+  editTag: (tagID: string, req: CreateTagRequest) => Promise<Tag>;
 };
 
 const EditTagButton = ({ tag }: Props) => {
@@ -33,6 +34,10 @@ const EditTagButton = ({ tag }: Props) => {
     name: tag.name,
     friendlyUrl: tag.friendlyUrl,
   });
+
+  useEffect(() => {
+    setUpdateTagReq({ name: tag.name, friendlyUrl: tag.friendlyUrl });
+  }, [tag, setUpdateTagReq]);
 
   return (
     <Dialog

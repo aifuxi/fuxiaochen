@@ -15,6 +15,8 @@ export type CreateTagRequest = {
   friendlyUrl: string;
 };
 
+export type UpdateTagRequest = Partial<CreateTagRequest>;
+
 export type CreateArticleRequest = {
   title: string;
   friendlyUrl: string;
