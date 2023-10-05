@@ -1,6 +1,10 @@
 import { PlusIcon } from 'lucide-react';
 
-import { adminCreateTagAction, adminGetTagsAction } from '@/app/_actions/tag';
+import {
+  adminCreateTagAction,
+  adminEditTagAction,
+  adminGetTagsAction,
+} from '@/app/_actions/tag';
 import { Pagination } from '@/components/client/pagination/pagination';
 import { Button } from '@/components/ui/button';
 import {
@@ -69,7 +73,7 @@ export default async function AdminTag({
                 {formatToDate(new Date(tag.updatedAt))}
               </TableCell>
               <TableCell className="flex space-x-2 w-min-[200px]">
-                <EditTagButton tag={tag} />
+                <EditTagButton tag={tag} editTag={adminEditTagAction} />
                 <DeleteTagItemButton tag={tag} />
               </TableCell>
             </TableRow>

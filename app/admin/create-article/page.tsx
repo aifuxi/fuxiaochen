@@ -6,6 +6,7 @@ import { useBoolean } from 'ahooks';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 
+import { adminCreateTagAction } from '@/app/_actions/tag';
 import { BytemdEditor } from '@/components/client';
 import { PageLoading } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
@@ -14,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { ZERO } from '@/constants';
+import { DEFAULT_PAGE, MAX_PAGE_SIZE, ZERO } from '@/constants';
 import {
   createArticle,
   getArticle,
@@ -41,7 +42,9 @@ const defaultCreateArticleReq: CreateArticleRequest = {
 
 const AdminCreateArticle = () => {
   const { toast } = useToast();
-  const { data, isLoading, mutate } = useSWR(TAG_URL, getTags);
+  const { data, isLoading, mutate } = useSWR(TAG_URL, () =>
+    getTags({ page: DEFAULT_PAGE, pageSize: MAX_PAGE_SIZE }),
+  );
   const router = useRouter();
   const id = useSearchParams().get('id');
   const tags = data?.data;
@@ -190,6 +193,7 @@ const AdminCreateArticle = () => {
               );
             })}
             <CreateTagButton
+              createTag={adminCreateTagAction}
               refreshTag={mutate}
               triggerNode={
                 <Button variant={'link'}>没找到合适的标签？点我新建一个</Button>
