@@ -63,7 +63,7 @@ const NavbarV1 = () => {
   return (
     <div
       className={cn(
-        'fixed inset-y-12 z-10  flex flex-col items-center',
+        'fixed inset-y-12 z-10 hidden lg:flex flex-col items-center',
         'left-0 xl:left-4 2xl:left-12',
       )}
     >
