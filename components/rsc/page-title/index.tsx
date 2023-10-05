@@ -12,13 +12,12 @@ export default function PageTitle({ title, className }: Props) {
     <h2
       className={cn(
         'flex items-center justify-between border-b pb-8 pt-16 font-extrabold',
-        'text-4xl sm:text-5xl',
-        'leading-9 sm:leading-10',
+        'text-4xl lg:text-5xl',
         className,
       )}
     >
       <span>{title}</span>
-      <BarCode className="w-[300px]" />
+      <BarCode className="w-[300px] hidden md:block" />
     </h2>
   );
 }
