@@ -9,6 +9,7 @@ import { usePathname } from 'next/navigation';
 import { EmptyPage } from '@/components/client';
 import { PageLoading, Unauthorized401Illustration } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/utils';
 
 const adminNavItems: NavItem[] = [
   {
@@ -49,6 +50,7 @@ export default function AdminLayout({
               <Button
                 size={'lg'}
                 variant={pathname === v.link ? 'default' : 'secondary'}
+                className={cn(pathname === v.link && 'font-semibold')}
               >
                 {v.label}
               </Button>
