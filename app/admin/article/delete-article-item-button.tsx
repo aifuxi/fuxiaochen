@@ -16,8 +16,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
-import { ZERO } from '@/constants';
 import { deleteArticle } from '@/services';
 import { type Article } from '@/types';
 
@@ -30,8 +28,6 @@ export const DeleteArticleItemButton: React.FC<Props> = ({
   article,
   refreshArticle,
 }) => {
-  const { toast } = useToast();
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -50,25 +46,9 @@ export const DeleteArticleItemButton: React.FC<Props> = ({
           <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              deleteArticle(article.id)
-                .then((res) => {
-                  if (res.code !== ZERO) {
-                    toast({
-                      variant: 'destructive',
-                      title: res.msg ?? 'Error',
-                      description: res.error ?? 'error',
-                    });
-                  } else {
-                    toast({
-                      variant: 'default',
-                      title: 'Success',
-                      description: '操作成功',
-                    });
-                  }
-                })
-                .finally(() => {
-                  refreshArticle?.();
-                });
+              deleteArticle(article.id).finally(() => {
+                refreshArticle?.();
+              });
             }}
           >
             删除

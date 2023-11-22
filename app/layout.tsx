@@ -2,14 +2,12 @@ import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
 import {
-  AnalyticsProvider,
   AuthProvider,
   BackToTop,
   NavbarV1,
   ToggleTheme,
 } from '@/components/client';
 import { Footer } from '@/components/rsc';
-import { Toaster } from '@/components/ui/toaster';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
 import { cn } from '@/utils';
@@ -69,14 +67,12 @@ export default function RootLayout({
       </head>
       <body className={cn('debug-screens min-w-[360px]')}>
         <AuthProvider session={session}>
-          <AnalyticsProvider>
-            {/* 侧边导航栏 */}
-            <NavbarV1 />
-            {children}
+          {/* 侧边导航栏 */}
+          <NavbarV1 />
+          {children}
 
-            {/* 底部 footer */}
-            <Footer />
-          </AnalyticsProvider>
+          {/* 底部 footer */}
+          <Footer />
         </AuthProvider>
 
         {/* 切换主题按钮 */}
@@ -84,9 +80,6 @@ export default function RootLayout({
 
         {/* 返回顶部按钮 */}
         <BackToTop />
-
-        {/* Toast 容器 */}
-        <Toaster />
       </body>
     </html>
   );
