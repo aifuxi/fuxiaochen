@@ -2,10 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { Edit } from 'lucide-react';
 import Link from 'next/link';
+
+import { Edit } from 'lucide-react';
 import useSWR from 'swr';
 
+import { DeleteArticleItemButton } from './delete-article-item-button';
 import { ClientPagination } from '@/components/client';
 import { PageLoading, PreviewImage } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
@@ -27,10 +29,8 @@ import {
   ZERO,
 } from '@/constants';
 import { ARTICLE_URL, getArticles, updateArticle } from '@/services';
-import { GetArticlesRequest } from '@/types';
+import { type GetArticlesRequest } from '@/types';
 import { cn, formatToDate, obj2QueryString } from '@/utils';
-
-import { DeleteArticleItemButton } from './delete-article-item-button';
 
 const defaultGetArticlesReq: GetArticlesRequest = {
   pageSize: DEFAULT_PAGE_SIZE,
@@ -48,7 +48,7 @@ const AdminArticle = () => {
     () => getArticles(req),
   );
   const articles = data?.data;
-  const total = data?.total || 0;
+  const total = data?.total ?? 0;
 
   if (isLoading) {
     return <PageLoading />;
@@ -148,8 +148,8 @@ const AdminArticle = () => {
                           if (res.code !== ZERO) {
                             toast({
                               variant: 'destructive',
-                              title: res.msg || 'Error',
-                              description: res.error || 'error',
+                              title: res.msg ?? 'Error',
+                              description: res.error ?? 'error',
                             });
                           } else {
                             toast({

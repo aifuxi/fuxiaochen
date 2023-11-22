@@ -1,4 +1,4 @@
-import { getServerSideSitemap, type ISitemapField } from 'next-sitemap';
+import { type ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
 import { DOMAIN } from '@/constants';
 import prisma from '@/libs/prisma';
@@ -25,14 +25,14 @@ export async function GET() {
   const articlesSitemaps = articles.map((item): ISitemapField => {
     return {
       loc: `${DOMAIN}/articles/${item.friendlyUrl}`,
-      lastmod: new Date(item.updatedAt || item.createdAt).toISOString(),
+      lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };
   });
   const tagsSitemaps = tags.map((item): ISitemapField => {
     return {
       loc: `${DOMAIN}/tags/${item.friendlyUrl}`,
-      lastmod: new Date(item.updatedAt || item.createdAt).toISOString(),
+      lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };
   });

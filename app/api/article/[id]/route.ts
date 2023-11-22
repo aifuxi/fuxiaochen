@@ -1,9 +1,10 @@
-import type { Prisma } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-import { authOptions, FALSE, TRUE } from '@/constants';
+import type { Prisma } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
+
+import { FALSE, TRUE, authOptions } from '@/constants';
 import prisma from '@/libs/prisma';
 import type { Article, DynamicRouteHandleParams } from '@/types';
 import {
@@ -38,7 +39,7 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
     },
   });
 
-  if (!article || (needPublished && !article.published)) {
+  if (!article ?? (needPublished && !article.published)) {
     return NextResponse.json(createSuccessResponse<null>(null));
   }
 

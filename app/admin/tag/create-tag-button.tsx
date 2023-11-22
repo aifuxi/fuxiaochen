@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Tag } from '@prisma/client';
+import { type Tag } from '@prisma/client';
 import { Label } from '@radix-ui/react-label';
 import { useBoolean } from 'ahooks';
 
@@ -64,7 +64,7 @@ const CreateTagButton = ({ triggerNode, createTag, refreshTag }: Props) => {
           <div className="grid gap-4">
             <Label>friendly_url</Label>
             <Input
-              value={createTagReq.friendlyUrl || ''}
+              value={createTagReq.friendlyUrl ?? ''}
               placeholder="请输入标签friendly_url（只支持数字、字母、下划线、中划线）..."
               onChange={(e) => {
                 const value = e.currentTarget.value;
@@ -83,7 +83,7 @@ const CreateTagButton = ({ triggerNode, createTag, refreshTag }: Props) => {
                 toast({
                   variant: 'destructive',
                   title: 'Error',
-                  description: String(error) || 'error',
+                  description: String(error) ?? 'error',
                 });
               } finally {
                 setFalse();

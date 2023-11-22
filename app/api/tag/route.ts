@@ -1,11 +1,12 @@
-import { Prisma } from '@prisma/client';
-import { StatusCodes } from 'http-status-codes';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
-import { authOptions, DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO } from '@/constants';
+import { type Prisma } from '@prisma/client';
+import { StatusCodes } from 'http-status-codes';
+
+import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO, authOptions } from '@/constants';
 import prisma from '@/libs/prisma';
-import { Tag } from '@/types';
+import { type Tag } from '@/types';
 import {
   checkPermission,
   createFailResponse,
@@ -69,14 +70,14 @@ export async function GET(request: Request) {
     },
   });
 
-  const total = (await prisma.tag.count({ where: condition })) || 0;
+  const total = (await prisma.tag.count({ where: condition })) ?? 0;
 
   const newTags = tags.map((tag) => {
     const { articles } = tag;
     const tmpTag: Tag = {
       ...tag,
       articles,
-      articleCount: articles?.length || 0,
+      articleCount: articles?.length ?? 0,
     };
     return tmpTag;
   });
@@ -103,7 +104,7 @@ export async function POST(req: Request) {
   const { articles, ...rest } = tag;
   const tagWithArticleCount: Tag = {
     ...rest,
-    articleCount: articles?.length || 0,
+    articleCount: articles?.length ?? 0,
   };
   return NextResponse.json(createSuccessResponse<Tag>(tagWithArticleCount));
 }

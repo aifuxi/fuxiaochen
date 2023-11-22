@@ -1,16 +1,17 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
-import { BytemdViewer, GiscusComment } from '@/components/client';
-import { PageTitle } from '@/components/rsc';
-import { PLACEHOLDER_COVER } from '@/constants';
-import { cn, formatToDateTime, isNil } from '@/utils';
+import { isNil } from 'lodash-es';
 
 import BackToPreviousPage from './back-to-previous-page';
 import EditArticle from './edit-article';
 import EmptyArticle from './empty-article';
+import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
+import { BytemdViewer, GiscusComment } from '@/components/client';
+import { PageTitle } from '@/components/rsc';
+import { PLACEHOLDER_COVER } from '@/constants';
+import { cn, formatToDateTime } from '@/utils';
 
 export async function generateMetadata({
   params,
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
   const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
-  const title = article?.title || '文章未找到';
+  const title = article?.title ?? '文章未找到';
   return {
     title,
   };
@@ -39,7 +40,7 @@ export default async function ArticleDetailPage({
     <div className=" flex flex-col space-y-8">
       <div className="flex justify-center">
         <Image
-          src={article.cover || PLACEHOLDER_COVER}
+          src={article.cover ?? PLACEHOLDER_COVER}
           alt={article.title}
           width="0"
           height="0"

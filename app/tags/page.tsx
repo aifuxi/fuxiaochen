@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 import Link from 'next/link';
 
 import { GiscusComment } from '@/components/client';
@@ -42,7 +42,7 @@ export default async function TagsPage() {
             >
               {tag.name}
               <span className={cn('text-sm font-semibold ml-2')}>
-                ({tag.articles.length || 0})
+                ({tag.articles.length ?? 0})
               </span>
             </Link>
           </li>

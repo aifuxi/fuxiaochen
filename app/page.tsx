@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import { NICKNAME } from '@/constants';
 import { cn } from '@/utils';
@@ -10,10 +10,10 @@ export const metadata: Metadata = {
   keywords: 'F西、aifuxi',
 };
 
-export default async function HomePage() {
+export default function HomePage() {
   return (
     <div className="container">
-      <div className="flex flex-col h-screen justify-center items-center">
+      <div className="flex flex-col h-[calc(100vh-136px)] justify-center items-center">
         <img
           src="/images/nyan-cat.webp"
           alt="Nyan Cat"

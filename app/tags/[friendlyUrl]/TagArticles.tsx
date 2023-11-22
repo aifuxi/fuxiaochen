@@ -3,7 +3,7 @@ import React from 'react';
 import ArticleItem from '@/app/articles/article-item';
 import EmptyArticleList from '@/app/articles/empty-article-list';
 import { Pagination } from '@/components/client/pagination/pagination';
-import { Article } from '@/types';
+import { type Article } from '@/types';
 
 type Props = {
   total: number;

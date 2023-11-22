@@ -6,15 +6,17 @@
   "scripts": {
     "dev": "next dev -p 6121",
     "build": "next build",
-    "start": "next start -p 3000",
     "lint": "next lint",
     "prepare": "husky install",
-    "postbuild": "next-sitemap",
-    "prisma:generate": "prisma generate",
-    "prisma:dev": "prisma migrate dev",
-    "prisma:studio": "prisma studio",
-    "prisma:db": "prisma db push",
-    "prisma:seed": "prisma db seed"
+    "lint:fix": "eslint --no-cache --fix ./",
+    "formate": "prettier --write --log-level warn \"./**/*.{js,jsx,ts,tsx}\"",
+    "cz": "git cz",
+    "postbuild": "next-sitemap --config next-sitemap.config.cjs",
+    "db:gen": "prisma generate",
+    "db:dev": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -26,9 +28,10 @@
     "@bytemd/plugin-gfm": "^1.21.0",
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
     "@bytemd/plugin-medium-zoom": "^1.21.0",
+    "@bytemd/plugin-mermaid": "^1.21.0",
     "@bytemd/react": "^1.21.0",
     "@giscus/react": "^2.3.0",
-    "@prisma/client": "^5.3.1",
+    "@prisma/client": "^5.6.0",
     "@radix-ui/react-alert-dialog": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.4",
@@ -39,79 +42,85 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.4",
-    "@types/node": "20.3.3",
-    "@types/react": "18.2.14",
-    "@types/react-dom": "18.2.6",
     "ahooks": "^3.7.8",
     "ali-oss": "^6.17.1",
     "autoprefixer": "10.4.14",
     "bytemd": "^1.21.0",
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
-    "cross-env": "^7.0.3",
     "date-fns": "^2.30.0",
-    "eslint": "8.44.0",
-    "eslint-config-next": "13.4.8",
     "highlight.js": "^11.8.0",
     "http-status-codes": "^2.2.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.258.0",
-    "mockjs": "^1.1.0",
-    "next": "13.4.10",
+    "next": "14.0.3",
     "next-auth": "^4.22.1",
     "next-sitemap": "^4.1.8",
-    "postcss": "8.4.24",
     "qs": "^6.11.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.32.2",
-    "swr": "^2.2.0",
-    "tailwind-merge": "^1.13.2",
-    "tailwindcss": "3.3.2",
-    "tailwindcss-animate": "^1.0.6",
-    "typescript": "5.1.6"
+    "swr": "^2.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "@tailwindcss/typography": "^0.5.9",
-    "@trivago/prettier-plugin-sort-imports": "^4.1.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.1",
     "@types/ali-oss": "^6.16.8",
+    "@types/eslint": "^8.44.7",
     "@types/lodash-es": "^4.17.8",
     "@types/markdown-navbar": "^1.4.0",
     "@types/mockjs": "^1.0.7",
+    "@types/node": "20.3.3",
     "@types/qs": "^6.9.7",
-    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "@types/react": "18.2.38",
+    "@types/react-dom": "18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
+    "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint": "^8.47.0",
+    "eslint-config-next": "^13.5.6",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
-    "prettier": "^2.8.7",
-    "prisma": "^5.3.1",
+    "mockjs": "^1.1.0",
+    "postcss": "8.4.24",
+    "prettier": "^3.0.0",
+    "prettier-plugin-tailwindcss": "^0.5.1",
+    "prisma": "^5.6.0",
     "sass": "^1.62.1",
+    "tailwind-merge": "^1.13.2",
+    "tailwindcss": "3.3.2",
+    "tailwindcss-animate": "^1.0.6",
     "tailwindcss-debug-screens": "^2.2.1",
-    "tsx": "^3.12.7"
+    "tsx": "^3.12.7",
+    "typescript": "5.1.6"
   },
   "lint-staged": {
-    "*.+(js|jsx|ts|tsx)": [
-      "eslint --fix"
-    ],
-    "*.+(js|jsx|ts|tsx|json|css|md|mdx)": [
-      "prettier --write"
+    "./**/*.{js,jsx,ts,tsx}": [
+      "pnpm lint:fix"
     ]
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "node_modules/cz-git"
     }
   },
-  "browserslist": [
-    "defaults and supports es6-module",
-    "node > 16",
-    "supports css-grid"
-  ],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "engines": {
-    "node": ">= 16"
+    "node": ">= 20"
   }
 }

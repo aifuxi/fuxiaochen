@@ -24,7 +24,7 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
           handledText = text.slice(1).trim();
         }
         try {
-          await navigator.clipboard.writeText(handledText || '');
+          await navigator.clipboard.writeText(handledText ?? '');
           /* Resolved - 文本被成功复制到剪贴板 */
         } catch (err) {
           /* Rejected - 文本未被复制到剪贴板 */
@@ -56,7 +56,7 @@ const BytemdViewer: React.FC<Props> = ({ content }) => {
 
         copyBtn.addEventListener('click', async () => {
           const code = codeBlock.textContent;
-          await copyToClipboard(code || '');
+          await copyToClipboard(code ?? '');
 
           copyBtn.innerHTML = clipboardCheckIcon + successTip;
           let timer: number | undefined = undefined;

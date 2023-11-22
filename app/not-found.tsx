@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import { EmptyPage } from '@/components/client';
 import { NotFound404Illustration } from '@/components/rsc';
