@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import type { CreateTagRequest } from '@/types';
 
 const defaultCreateTagReq: CreateTagRequest = {
@@ -31,7 +30,6 @@ type Props = {
 };
 
 const CreateTagButton = ({ triggerNode, createTag, refreshTag }: Props) => {
-  const { toast } = useToast();
   const [state, { setTrue, setFalse }] = useBoolean(false);
 
   const [createTagReq, setCreateTagReq] =
@@ -80,11 +78,6 @@ const CreateTagButton = ({ triggerNode, createTag, refreshTag }: Props) => {
               try {
                 await createTag(createTagReq);
               } catch (error) {
-                toast({
-                  variant: 'destructive',
-                  title: 'Error',
-                  description: String(error) ?? 'error',
-                });
               } finally {
                 setFalse();
                 setCreateTagReq(defaultCreateTagReq);

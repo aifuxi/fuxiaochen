@@ -16,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
 import { DEFAULT_PAGE, MAX_PAGE_SIZE, ZERO } from '@/constants';
 import {
   TAG_URL,
@@ -41,7 +40,6 @@ const defaultCreateArticleReq: CreateArticleRequest = {
 };
 
 const AdminCreateArticle = () => {
-  const { toast } = useToast();
   const { data, isLoading, mutate } = useSWR(TAG_URL, () =>
     getTags({ page: DEFAULT_PAGE, pageSize: MAX_PAGE_SIZE }),
   );
@@ -149,12 +147,6 @@ const AdminCreateArticle = () => {
                       });
                       return;
                     }
-
-                    toast({
-                      variant: 'destructive',
-                      title: res.msg ?? 'Error',
-                      description: res.error ?? 'error',
-                    });
                   });
                 }
               }}
@@ -222,17 +214,7 @@ const AdminCreateArticle = () => {
           onClick={() => {
             updateArticle(id, createArticleReq).then((res) => {
               if (res.code !== ZERO) {
-                toast({
-                  variant: 'destructive',
-                  title: res.msg ?? 'Error',
-                  description: res.error ?? 'error',
-                });
               } else {
-                toast({
-                  variant: 'default',
-                  title: 'Success',
-                  description: '编辑文章成功',
-                });
                 router.push('/admin/article');
               }
             });
@@ -248,17 +230,7 @@ const AdminCreateArticle = () => {
           onClick={() => {
             createArticle(createArticleReq).then((res) => {
               if (res.code !== ZERO) {
-                toast({
-                  variant: 'destructive',
-                  title: res.msg ?? 'Error',
-                  description: res.error ?? 'error',
-                });
               } else {
-                toast({
-                  variant: 'default',
-                  title: 'Success',
-                  description: '创建文章成功',
-                });
                 router.push('/admin/article');
               }
             });

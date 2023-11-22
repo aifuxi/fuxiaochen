@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 import { ZERO } from '@/constants';
 import { updateTag } from '@/services';
 import type { CreateTagRequest, Tag } from '@/types';
@@ -27,7 +26,6 @@ type Props = {
 };
 
 const EditTagButton = ({ tag }: Props) => {
-  const { toast } = useToast();
   const [state, { setTrue, setFalse }] = useBoolean(false);
 
   const [updateTagReq, setUpdateTagReq] = useState<CreateTagRequest>({
@@ -87,17 +85,7 @@ const EditTagButton = ({ tag }: Props) => {
               updateTag(tag.id, updateTagReq)
                 .then((res) => {
                   if (res.code !== ZERO) {
-                    toast({
-                      variant: 'destructive',
-                      title: res.msg ?? 'Error',
-                      description: res.error ?? 'error',
-                    });
                   } else {
-                    toast({
-                      variant: 'default',
-                      title: 'Success',
-                      description: '编辑标签成功',
-                    });
                   }
                 })
                 .finally(() => {

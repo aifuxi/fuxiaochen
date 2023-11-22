@@ -16,7 +16,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 import { ZERO } from '@/constants';
 import { deleteTag } from '@/services';
 import type { Tag } from '@/types';
@@ -26,8 +25,6 @@ type Props = {
 };
 
 const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
-  const { toast } = useToast();
-
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -48,17 +45,7 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
             onClick={() => {
               deleteTag(tag.id).then((res) => {
                 if (res.code !== ZERO) {
-                  toast({
-                    variant: 'destructive',
-                    title: res.msg ?? 'Error',
-                    description: res.error ?? 'error',
-                  });
                 } else {
-                  toast({
-                    variant: 'default',
-                    title: 'Success',
-                    description: '删除标签成功',
-                  });
                 }
               });
             }}
