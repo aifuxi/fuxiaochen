@@ -5,7 +5,7 @@ import { type Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO, authOptions } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 import { type Tag } from '@/types';
 import {
   checkPermission,
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
 
   let take = DEFAULT_PAGE_SIZE;
   let skip = ZERO;
-  const condition: Prisma.TagWhereInput = {};
+  const condition: db.TagWhereInput = {};
 
   if (typeof page === 'string' && typeof pageSize === 'string') {
     const size = Number(pageSize);
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     Object.assign(condition, { friendlyUrl });
   }
 
-  const tags = await prisma.tag.findMany({
+  const tags = await db.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
     },
   });
 
-  const total = (await prisma.tag.count({ where: condition })) ?? 0;
+  const total = (await db.tag.count({ where: condition })) ?? 0;
 
   const newTags = tags.map((tag) => {
     const { articles } = tag;
@@ -96,7 +96,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
 
-  const tag = await prisma.tag.create({
+  const tag = await db.tag.create({
     data: { ...body },
     include: { articles: true },
   });

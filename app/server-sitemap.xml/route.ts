@@ -1,10 +1,10 @@
 import { type ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
 import { DOMAIN } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 
 export async function GET() {
-  const articles = await prisma.article.findMany({
+  const articles = await db.article.findMany({
     select: {
       friendlyUrl: true,
       createdAt: true,
@@ -14,7 +14,7 @@ export async function GET() {
       published: true,
     },
   });
-  const tags = await prisma.tag.findMany({
+  const tags = await db.tag.findMany({
     select: {
       friendlyUrl: true,
       createdAt: true,

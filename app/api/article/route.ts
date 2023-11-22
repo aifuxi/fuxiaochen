@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 import { parse } from 'qs';
 
 import { DEFAULT_PAGE_SIZE, FALSE, TRUE, ZERO, authOptions } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 import type { Article, GetArticlesRequest } from '@/types';
 import {
   checkPermission,
@@ -30,10 +30,10 @@ export async function GET(req: Request) {
 
   let take = DEFAULT_PAGE_SIZE;
   let skip = ZERO;
-  const condition: Prisma.ArticleWhereInput = {};
+  const condition: db.ArticleWhereInput = {};
 
   if (typeof title === 'string' && title?.length > 0) {
-    const titleFilter: Prisma.StringFilter = {
+    const titleFilter: db.StringFilter = {
       contains: title.trim(),
     };
 
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
   }
 
   if (Array.isArray(tags) && tags.length) {
-    const tagFilter: Prisma.ArticleWhereInput = {
+    const tagFilter: db.ArticleWhereInput = {
       tags: {
         some: {
           id: {
@@ -79,7 +79,7 @@ export async function GET(req: Request) {
     Object.assign(condition, tagFilter);
   }
 
-  const articles = await prisma.article.findMany({
+  const articles = await db.article.findMany({
     where: condition,
     orderBy: {
       createdAt: 'desc',
@@ -90,7 +90,7 @@ export async function GET(req: Request) {
       tags: true,
     },
   });
-  const total = (await prisma.article.count({ where: condition })) ?? 0;
+  const total = (await db.article.count({ where: condition })) ?? 0;
 
   return NextResponse.json(
     createSuccessTotalResponse<Article[]>(articles, total),
@@ -116,7 +116,7 @@ export async function POST(req: Request) {
   } else {
     tags = undefined;
   }
-  const article = await prisma.article.create({
+  const article = await db.article.create({
     data: {
       ...body,
       tags: {
