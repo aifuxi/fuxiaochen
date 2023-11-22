@@ -1,5 +1,5 @@
-import { Metadata } from 'next';
-import { Session } from 'next-auth';
+import { type Metadata } from 'next';
+import { type Session } from 'next-auth';
 
 import {
   AnalyticsProvider,
@@ -52,7 +52,7 @@ export default function RootLayout({
             __html: `
         (function() {
           if (
-            localStorage.getItem('color-theme') === 'dark' ||
+            localStorage.getItem('color-theme') === 'dark' ??
             (!('color-theme' in localStorage) &&
               window.matchMedia('(prefers-color-scheme: dark)').matches)
           ) {

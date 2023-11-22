@@ -32,7 +32,7 @@ export default function ClientPagination({
         <p className="text-sm">
           第
           <span className="ml-1 font-medium">
-            {(page - 1) * DEFAULT_PAGE_SIZE || 1}
+            {(page - 1) * DEFAULT_PAGE_SIZE ?? 1}
           </span>
           ~
           <span className="mr-1 font-medium">
@@ -49,7 +49,7 @@ export default function ClientPagination({
   );
 
   function renderPageItem() {
-    const pageCount = Math.ceil(total / DEFAULT_PAGE_SIZE) || 1;
+    const pageCount = Math.ceil(total / DEFAULT_PAGE_SIZE) ?? 1;
     const pageNumbers = Array.from({ length: pageCount }).map((_, index) => {
       return index + 1;
     });

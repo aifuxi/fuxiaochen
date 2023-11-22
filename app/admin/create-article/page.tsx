@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { useBoolean } from 'ahooks';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import { useBoolean } from 'ahooks';
 import useSWR from 'swr';
 
+import TagCheckboxItem from './tag-checkbox-item';
 import { adminCreateTagAction } from '@/app/_actions/tag';
 import { BytemdEditor } from '@/components/client';
 import { PageLoading } from '@/components/rsc';
@@ -17,16 +19,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { DEFAULT_PAGE, MAX_PAGE_SIZE, ZERO } from '@/constants';
 import {
+  TAG_URL,
   createArticle,
   getArticle,
   getTags,
-  TAG_URL,
   updateArticle,
   uploadFile,
 } from '@/services';
 import type { CreateArticleRequest } from '@/types';
-
-import TagCheckboxItem from './tag-checkbox-item';
 
 import CreateTagButton from '../tag/create-tag-button';
 
@@ -60,13 +60,13 @@ const AdminCreateArticle = () => {
         .then((res) => {
           const article = res.data;
           if (article) {
-            const tagIds = article.tags?.map((v) => v.id) || [];
+            const tagIds = article.tags?.map((v) => v.id) ?? [];
             setCreateArticleReq({
               title: article.title,
               friendlyUrl: article.friendlyUrl,
               description: article.description,
               content: article.content,
-              cover: article.cover || '',
+              cover: article.cover ?? '',
               tags: tagIds,
               published: article.published,
             });
@@ -78,7 +78,7 @@ const AdminCreateArticle = () => {
     }
   }, [router, id, showLoading, hideLoading]);
 
-  if (isLoading || loading) {
+  if (isLoading ?? loading) {
     return <PageLoading />;
   }
 
@@ -152,8 +152,8 @@ const AdminCreateArticle = () => {
 
                     toast({
                       variant: 'destructive',
-                      title: res.msg || 'Error',
-                      description: res.error || 'error',
+                      title: res.msg ?? 'Error',
+                      description: res.error ?? 'error',
                     });
                   });
                 }
@@ -224,8 +224,8 @@ const AdminCreateArticle = () => {
               if (res.code !== ZERO) {
                 toast({
                   variant: 'destructive',
-                  title: res.msg || 'Error',
-                  description: res.error || 'error',
+                  title: res.msg ?? 'Error',
+                  description: res.error ?? 'error',
                 });
               } else {
                 toast({
@@ -250,8 +250,8 @@ const AdminCreateArticle = () => {
               if (res.code !== ZERO) {
                 toast({
                   variant: 'destructive',
-                  title: res.msg || 'Error',
-                  description: res.error || 'error',
+                  title: res.msg ?? 'Error',
+                  description: res.error ?? 'error',
                 });
               } else {
                 toast({

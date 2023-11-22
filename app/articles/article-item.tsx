@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { PLACEHOLDER_COVER } from '@/constants';
-import { Article } from '@/types';
+import { type Article } from '@/types';
 import { cn, formatToDate } from '@/utils';
 
 type Props = {

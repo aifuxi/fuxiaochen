@@ -1,5 +1,4 @@
 import { checkPermission } from './auth';
-import { isNil, isNull, isUndefined } from './check';
 import {
   cn,
   createFailResponse,
@@ -27,8 +26,5 @@ export {
   obj2QueryString,
   formatToDate,
   formatToDateTime,
-  isUndefined,
-  isNull,
-  isNil,
   checkPermission,
 };

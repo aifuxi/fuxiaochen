@@ -3,7 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { CreateArticleRequest, Tag } from '@/types';
+import { type CreateArticleRequest, type Tag } from '@/types';
 import { cn } from '@/utils';
 
 type Props = {
