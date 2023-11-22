@@ -1,12 +1,10 @@
-const path = require('path');
+import path from 'node:path';
+import url from 'node:url';
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+/** @type {import("next").NextConfig} */
+const config = {
   sassOptions: {
-    includePaths: [path.join(__dirname, 'styles')],
-  },
-  experimental: {
-    serverActions: true,
+    includePaths: [path.join(url.fileURLToPath(import.meta.url), 'styles')],
   },
   images: {
     remotePatterns: [
@@ -30,4 +28,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default config;

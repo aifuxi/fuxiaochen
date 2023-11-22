@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
+import TagArticles from './TagArticles';
 import {
   getTagArticlesByFriendlyURLAction,
   getTagByFriendlyURLAction,
@@ -10,15 +11,13 @@ import { EmptyPage } from '@/components/client';
 import { NotFound404Illustration, PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE } from '@/constants';
 
-import TagArticles from './TagArticles';
-
 export async function generateMetadata({
   params,
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
   const tag = await getTagByFriendlyURLAction(params.friendlyUrl);
-  const name = tag?.name || '-';
+  const name = tag?.name ?? '-';
   return {
     title: `${name}`,
   };
@@ -29,7 +28,7 @@ export default async function TagDetailPage({
   searchParams,
 }: {
   params: { friendlyUrl: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
@@ -53,7 +52,7 @@ export default async function TagDetailPage({
 
   return (
     <div className="container flex flex-col space-y-8">
-      <PageTitle title={tag?.name || '-'} />
+      <PageTitle title={tag?.name ?? '-'} />
 
       <TagArticles total={total} articles={articles} />
     </div>

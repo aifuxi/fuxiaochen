@@ -1,12 +1,13 @@
 import * as React from 'react';
 
+import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
+
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
 } from 'lucide-react';
-import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils';
@@ -94,7 +95,7 @@ export function PaginationButton({
             );
           });
         }}
-        disabled={Number(page) === 1 || isPending}
+        disabled={Number(page) === 1 ?? isPending}
       >
         <ChevronsLeftIcon className="h-4 w-4" aria-hidden="true" />
       </Button>
@@ -114,7 +115,7 @@ export function PaginationButton({
             );
           });
         }}
-        disabled={Number(page) === 1 || isPending}
+        disabled={Number(page) === 1 ?? isPending}
       >
         <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
       </Button>
@@ -170,7 +171,7 @@ export function PaginationButton({
             );
           });
         }}
-        disabled={Number(page) === (pageCount ?? 10) || isPending}
+        disabled={Number(page) === (pageCount ?? 10) ?? isPending}
       >
         <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
       </Button>
@@ -188,7 +189,7 @@ export function PaginationButton({
             })}`,
           );
         }}
-        disabled={Number(page) === (pageCount ?? 10) || isPending}
+        disabled={Number(page) === (pageCount ?? 10) ?? isPending}
       >
         <ChevronsRightIcon className="h-4 w-4" aria-hidden="true" />
       </Button>

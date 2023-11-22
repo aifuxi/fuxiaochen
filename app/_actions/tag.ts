@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
 import prisma from '@/libs/prisma';
-import { CreateTagRequest, UpdateTagRequest } from '@/types';
+import { type CreateTagRequest, type UpdateTagRequest } from '@/types';
 
 export async function getTagsWithArticleCountAction() {
   const tags = await prisma.tag.findMany({
@@ -50,7 +50,7 @@ export async function getTagArticlesByFriendlyURLAction(params: {
   });
 
   const articles = tag?.articles.slice(skip, skip + take);
-  const total = tag?.articles.length || 0;
+  const total = tag?.articles.length ?? 0;
 
   return { articles, total };
 }
@@ -88,7 +88,7 @@ export async function adminGetTagsAction(params: { page: number }) {
   const count = await prisma.tag.count({});
 
   tags = tags?.slice(skip, skip + take);
-  const total = count || 0;
+  const total = count ?? 0;
 
   revalidatePath('/admin/tag');
   return { tags, total };

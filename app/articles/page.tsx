@@ -1,4 +1,4 @@
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE } from '@/constants';
@@ -15,7 +15,7 @@ export const revalidate = 60;
 export default async function ArticlesPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;

@@ -27,7 +27,7 @@ export default function EmailDialog({ email, triggerNode, className }: Props) {
             size={'icon'}
             onClick={async () => {
               try {
-                await navigator.clipboard.writeText(email || '');
+                await navigator.clipboard.writeText(email ?? '');
                 toast({
                   variant: 'default',
                   title: 'Success',

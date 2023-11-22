@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Article } from '@prisma/client';
+import { type Article } from '@prisma/client';
 
 import { Pagination } from '@/components/client/pagination/pagination';
 

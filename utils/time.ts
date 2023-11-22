@@ -3,7 +3,7 @@ import localCN from 'date-fns/locale/zh-CN';
 
 export function formatToDate(date: number | Date | string): string {
   let newDate: Date;
-  if (typeof date === 'number' || typeof date === 'string') {
+  if (typeof date === 'number' ?? typeof date === 'string') {
     newDate = new Date(date);
   } else {
     newDate = date;
@@ -19,7 +19,7 @@ export function formatToDateTime(
   useDot?: boolean,
 ): string {
   let newDate: Date;
-  if (typeof date === 'number' || typeof date === 'string') {
+  if (typeof date === 'number' ?? typeof date === 'string') {
     newDate = new Date(date);
   } else {
     newDate = date;

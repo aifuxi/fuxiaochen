@@ -8,9 +8,14 @@
 # testing
 /coverage
 
+# database
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
+
 # next.js
 /.next/
 /out/
+next-env.d.ts
 
 # production
 /build
@@ -23,21 +28,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# local env files
-.env*.local
-.env.production
+.pnpm-debug.log*
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts
 
 # next-sitemap在build生成的文件
 /public/robots.txt
 /public/*.xml
-
-# prisma sqlite文件
-/prisma/data.db

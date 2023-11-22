@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { ZERO } from '@/constants';
 import { deleteArticle } from '@/services';
-import { Article } from '@/types';
+import { type Article } from '@/types';
 
 type Props = {
   article: Article;
@@ -55,8 +55,8 @@ export const DeleteArticleItemButton: React.FC<Props> = ({
                   if (res.code !== ZERO) {
                     toast({
                       variant: 'destructive',
-                      title: res.msg || 'Error',
-                      description: res.error || 'error',
+                      title: res.msg ?? 'Error',
+                      description: res.error ?? 'error',
                     });
                   } else {
                     toast({

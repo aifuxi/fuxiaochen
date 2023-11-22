@@ -40,7 +40,7 @@ export const AnalyticsProvider = ({
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-        var _hmt = _hmt || [];
+        var _hmt = _hmt ?? [];
         (function() {
           var hm = document.createElement("script");
           hm.src = "https://hm.baidu.com/hm.js?51710f2d608b0bcb4ebf43b7ae473b14";
@@ -55,7 +55,7 @@ export const AnalyticsProvider = ({
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-        var _hmt = _hmt || [];
+        var _hmt = _hmt ?? [];
         (function() {
           var hm = document.createElement("script");
           hm.src = "${domain}/gtag/js?id=${gaMeasurementId}";
@@ -70,7 +70,7 @@ export const AnalyticsProvider = ({
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
           __html: `
-              window.dataLayer = window.dataLayer || [];
+              window.dataLayer = window.dataLayer ?? [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
             

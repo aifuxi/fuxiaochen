@@ -1,10 +1,11 @@
-import { StatusCodes } from 'http-status-codes';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
+import { StatusCodes } from 'http-status-codes';
+
 import { authOptions } from '@/constants';
 import prisma from '@/libs/prisma';
-import { DynamicRouteHandleParams, Tag } from '@/types';
+import { type DynamicRouteHandleParams, type Tag } from '@/types';
 import {
   checkPermission,
   createFailResponse,
@@ -29,7 +30,7 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const { articles, ...rest } = tag;
   const tagWithArticleCount: Tag = {
     ...rest,
-    articleCount: articles?.filter((item) => item.published)?.length || 0,
+    articleCount: articles?.filter((item) => item.published)?.length ?? 0,
   };
   return NextResponse.json(createSuccessResponse<Tag>(tagWithArticleCount));
 }
@@ -56,7 +57,7 @@ export async function PUT(req: Request, { params }: DynamicRouteHandleParams) {
   const { articles, ...rest } = tag;
   const tagWithArticleCount: Tag = {
     ...rest,
-    articleCount: articles?.length || 0,
+    articleCount: articles?.length ?? 0,
   };
   return NextResponse.json(createSuccessResponse<Tag>(tagWithArticleCount));
 }
@@ -83,7 +84,7 @@ export async function DELETE(
   const { articles, ...rest } = tag;
   const tagWithArticleCount: Tag = {
     ...rest,
-    articleCount: articles?.length || 0,
+    articleCount: articles?.length ?? 0,
   };
   return NextResponse.json(createSuccessResponse<Tag>(tagWithArticleCount));
 }

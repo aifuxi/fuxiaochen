@@ -71,7 +71,7 @@ const EditTagButton = ({ tag }: Props) => {
           <div className="grid gap-4">
             <Label>friendly_url</Label>
             <Input
-              value={updateTagReq.friendlyUrl || ''}
+              value={updateTagReq.friendlyUrl ?? ''}
               placeholder="请输入标签friendly_url（只支持数字、字母、下划线、中划线）..."
               onChange={(e) => {
                 const value = e.currentTarget.value;
@@ -89,8 +89,8 @@ const EditTagButton = ({ tag }: Props) => {
                   if (res.code !== ZERO) {
                     toast({
                       variant: 'destructive',
-                      title: res.msg || 'Error',
-                      description: res.error || 'error',
+                      title: res.msg ?? 'Error',
+                      description: res.error ?? 'error',
                     });
                   } else {
                     toast({

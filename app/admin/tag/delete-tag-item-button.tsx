@@ -50,8 +50,8 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
                 if (res.code !== ZERO) {
                   toast({
                     variant: 'destructive',
-                    title: res.msg || 'Error',
-                    description: res.error || 'error',
+                    title: res.msg ?? 'Error',
+                    description: res.error ?? 'error',
                   });
                 } else {
                   toast({

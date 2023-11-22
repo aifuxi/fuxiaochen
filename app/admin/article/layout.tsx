@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Metadata } from 'next';
+import { type Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '文章管理',

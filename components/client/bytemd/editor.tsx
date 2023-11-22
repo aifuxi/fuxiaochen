@@ -3,10 +3,9 @@
 import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
+import { plugins } from './config';
 import { ZERO } from '@/constants/index';
 import { uploadFile } from '@/services';
-
-import { plugins } from './config';
 
 import { useToast } from '../../ui/use-toast';
 
@@ -30,14 +29,14 @@ const BytemdEditor: React.FC<Props> = ({
     if (res.code !== ZERO) {
       toast({
         variant: 'destructive',
-        title: res.msg || 'Error',
-        description: res.error || 'error',
+        title: res.msg ?? 'Error',
+        description: res.error ?? 'error',
       });
       return [];
     }
     return [
       {
-        url: res.data?.url || '',
+        url: res.data?.url ?? '',
       },
     ];
   };

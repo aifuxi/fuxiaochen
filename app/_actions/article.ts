@@ -26,7 +26,7 @@ export async function getArticlesAction(params: { page: number }) {
       where: {
         published: true,
       },
-    })) || 0;
+    })) ?? 0;
 
   return { articles, total };
 }

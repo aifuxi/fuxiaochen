@@ -1,5 +1,8 @@
 import { PlusIcon } from 'lucide-react';
 
+import CreateTagButton from './create-tag-button';
+import DeleteTagItemButton from './delete-tag-item-button';
+import EditTagButton from './edit-tag-button';
 import {
   adminCreateTagAction,
   adminEditTagAction,
@@ -18,14 +21,10 @@ import {
 import { DEFAULT_PAGE } from '@/constants';
 import { formatToDate } from '@/utils';
 
-import CreateTagButton from './create-tag-button';
-import DeleteTagItemButton from './delete-tag-item-button';
-import EditTagButton from './edit-tag-button';
-
 export default async function AdminTag({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
@@ -64,7 +63,7 @@ export default async function AdminTag({
               <TableCell className="w-[200px]">{tag.name}</TableCell>
               <TableCell className="w-[200px]">{tag.friendlyUrl}</TableCell>
               <TableCell className="w-[200px]">
-                {tag.articles?.length || 0}
+                {tag.articles?.length ?? 0}
               </TableCell>
               <TableCell className="w-[200px]">
                 {formatToDate(new Date(tag.createdAt))}
