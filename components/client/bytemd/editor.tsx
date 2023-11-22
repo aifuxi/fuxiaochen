@@ -7,8 +7,6 @@ import { plugins } from './config';
 import { ZERO } from '@/constants/index';
 import { uploadFile } from '@/services';
 
-import { useToast } from '../../ui/use-toast';
-
 type Props = {
   content: string;
   setContent: (content: string) => void;
@@ -20,18 +18,12 @@ const BytemdEditor: React.FC<Props> = ({
   setContent,
   editorProps,
 }) => {
-  const { toast } = useToast();
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
     const fd = new FormData();
     fd.append('file', files[0]);
     const res = await uploadFile(fd);
 
     if (res.code !== ZERO) {
-      toast({
-        variant: 'destructive',
-        title: res.msg ?? 'Error',
-        description: res.error ?? 'error',
-      });
       return [];
     }
     return [
