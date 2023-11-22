@@ -3,11 +3,11 @@
 import { revalidatePath } from 'next/cache';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 import { type CreateTagRequest, type UpdateTagRequest } from '@/types';
 
 export async function getTagsWithArticleCountAction() {
-  const tags = await prisma.tag.findMany({
+  const tags = await db.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -33,7 +33,7 @@ export async function getTagArticlesByFriendlyURLAction(params: {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  const tag = await prisma.tag.findUnique({
+  const tag = await db.tag.findUnique({
     where: {
       friendlyUrl: params.friendlyURL,
     },
@@ -56,7 +56,7 @@ export async function getTagArticlesByFriendlyURLAction(params: {
 }
 
 export async function getTagByFriendlyURLAction(friendlyURL: string) {
-  const tag = await prisma.tag.findUnique({
+  const tag = await db.tag.findUnique({
     where: {
       friendlyUrl: friendlyURL,
     },
@@ -69,7 +69,7 @@ export async function adminGetTagsAction(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  let tags = await prisma.tag.findMany({
+  let tags = await db.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -85,7 +85,7 @@ export async function adminGetTagsAction(params: { page: number }) {
     },
   });
 
-  const count = await prisma.tag.count({});
+  const count = await db.tag.count({});
 
   tags = tags?.slice(skip, skip + take);
   const total = count ?? 0;
@@ -95,7 +95,7 @@ export async function adminGetTagsAction(params: { page: number }) {
 }
 
 export async function adminGetAllTagsAction() {
-  const tags = await prisma.tag.findMany({
+  const tags = await db.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -105,7 +105,7 @@ export async function adminGetAllTagsAction() {
 }
 
 export async function adminCreateTagAction(params: CreateTagRequest) {
-  const tag = await prisma.tag.create({
+  const tag = await db.tag.create({
     data: { ...params },
     include: { articles: true },
   });
@@ -119,7 +119,7 @@ export async function adminEditTagAction(
   tagID: string,
   params: UpdateTagRequest,
 ) {
-  const tag = await prisma.tag.update({
+  const tag = await db.tag.update({
     where: {
       id: tagID,
     },
@@ -132,7 +132,7 @@ export async function adminEditTagAction(
 }
 
 export async function adminDeleteTagAction(tagID: string) {
-  const tag = await prisma.tag.delete({
+  const tag = await db.tag.delete({
     where: {
       id: tagID,
     },

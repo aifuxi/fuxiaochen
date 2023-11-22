@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { StatusCodes } from 'http-status-codes';
 
 import { authOptions } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 import { type DynamicRouteHandleParams, type Tag } from '@/types';
 import {
   checkPermission,
@@ -14,9 +14,9 @@ import {
 
 export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const tagID = params.id;
-  // const tagInDB = await prisma.tag.findUnique({ where: { id: tagID } });
+  // const tagInDB = await db.tag.findUnique({ where: { id: tagID } });
   // TODO: 处理不存在的情况
-  const tag = await prisma.tag.findFirst({
+  const tag = await db.tag.findFirst({
     where: {
       id: tagID,
     },
@@ -45,9 +45,9 @@ export async function PUT(req: Request, { params }: DynamicRouteHandleParams) {
   }
   const tagID = params.id;
   const body = await req.json();
-  // const tagInDB = await prisma.tag.findUnique({ where: { id: tagID } });
+  // const tagInDB = await db.tag.findUnique({ where: { id: tagID } });
   // TODO: 处理不存在的情况
-  const tag = await prisma.tag.update({
+  const tag = await db.tag.update({
     where: { id: tagID },
     data: { ...body },
     include: {
@@ -75,7 +75,7 @@ export async function DELETE(
   }
 
   const tagID = params.id;
-  const tag = await prisma.tag.delete({
+  const tag = await db.tag.delete({
     where: { id: tagID },
     include: {
       articles: true,

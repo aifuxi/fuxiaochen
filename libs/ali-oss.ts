@@ -2,7 +2,7 @@ import OSS from 'ali-oss';
 
 const globalForAliOSS = global as unknown as { aliOSS: OSS | undefined };
 
-const aliOSS =
+export const aliOSS =
   globalForAliOSS.aliOSS ??
   new OSS({
     accessKeyId: process.env.OSS_ACCESS_KEY_ID ?? '',
@@ -12,5 +12,3 @@ const aliOSS =
   });
 
 if (process.env.NODE_ENV !== 'production') globalForAliOSS.aliOSS = aliOSS;
-
-export default aliOSS;

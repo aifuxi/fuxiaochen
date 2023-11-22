@@ -5,7 +5,7 @@ import type { Prisma } from '@prisma/client';
 import { StatusCodes } from 'http-status-codes';
 
 import { FALSE, TRUE, authOptions } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 import type { Article, DynamicRouteHandleParams } from '@/types';
 import {
   checkPermission,
@@ -17,7 +17,7 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const { searchParams } = new URL(req.url);
   const articleID = params.id;
   const published = searchParams.get('published');
-  const condition: Prisma.ArticleWhereInput = {};
+  const condition: db.ArticleWhereInput = {};
   let needPublished: boolean | undefined = undefined;
 
   if (typeof published === 'string') {
@@ -32,7 +32,7 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
     Object.assign(condition, { id: articleID });
   }
 
-  const article = await prisma.article.findFirst({
+  const article = await db.article.findFirst({
     where: condition,
     include: {
       tags: true,
@@ -66,7 +66,7 @@ export async function PUT(req: Request, { params }: DynamicRouteHandleParams) {
     tags = undefined;
   }
   // TODO: 处理不存在的情况
-  const article = await prisma.article.update({
+  const article = await db.article.update({
     where: { id: articleID },
     data: {
       ...body,
@@ -95,7 +95,7 @@ export async function DELETE(
   }
 
   const articleID = params.id;
-  const article = await prisma.article.delete({
+  const article = await db.article.delete({
     where: { id: articleID },
     include: {
       tags: true,
