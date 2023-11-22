@@ -1,13 +1,13 @@
 'use server';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
-import prisma from '@/libs/prisma';
+import { db } from '@/libs/prisma';
 
 export async function getArticlesAction(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  const articles = await prisma.article.findMany({
+  const articles = await db.article.findMany({
     include: {
       tags: true,
     },
@@ -22,7 +22,7 @@ export async function getArticlesAction(params: { page: number }) {
   });
 
   const total =
-    (await prisma.article.count({
+    (await db.article.count({
       where: {
         published: true,
       },
@@ -32,7 +32,7 @@ export async function getArticlesAction(params: { page: number }) {
 }
 
 export async function getArticleByFriendlyURLAction(friendlyURL: string) {
-  const article = await prisma.article.findUnique({
+  const article = await db.article.findUnique({
     where: {
       friendlyUrl: friendlyURL,
     },
