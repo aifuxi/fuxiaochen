@@ -30,7 +30,6 @@
     "@bytemd/plugin-medium-zoom": "^1.21.0",
     "@bytemd/plugin-mermaid": "^1.21.0",
     "@bytemd/react": "^1.21.0",
-    "@giscus/react": "^2.3.0",
     "@prisma/client": "^5.6.0",
     "@radix-ui/react-alert-dialog": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",

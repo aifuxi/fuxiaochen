@@ -2,7 +2,6 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
-import { GiscusComment } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 
 export const metadata: Metadata = {
@@ -16,7 +15,6 @@ export default function LogsPage() {
       <p className="prose dark:prose-invert">
         在这里记录网站更新日志和自己的一些记录
       </p>
-      <GiscusComment />
     </div>
   );
 }
