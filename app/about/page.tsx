@@ -3,7 +3,6 @@ import React from 'react';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 
-import { GiscusComment } from '@/components/client';
 import { PageTitle, SocialInfo } from '@/components/rsc';
 import { NICKNAME } from '@/constants';
 import { cn } from '@/utils';
@@ -73,7 +72,6 @@ export default function AboutPage() {
           为主，顺带着写点 <code>Node.js</code> 做 BFF 。
         </p>
       </div>
-      <GiscusComment />
     </div>
   );
 }

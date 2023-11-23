@@ -8,7 +8,7 @@ import BackToPreviousPage from './back-to-previous-page';
 import EditArticle from './edit-article';
 import EmptyArticle from './empty-article';
 import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
-import { BytemdViewer, GiscusComment } from '@/components/client';
+import { BytemdViewer } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
 import { cn, formatToDateTime } from '@/utils';
@@ -105,8 +105,6 @@ export default async function ArticleDetailPage({
             <BytemdViewer content={article.content} />
           </div>
         </div>
-
-        <GiscusComment />
       </div>
     </div>
   );

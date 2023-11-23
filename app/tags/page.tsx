@@ -1,7 +1,6 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { GiscusComment } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 import { cn } from '@/utils';
 
@@ -20,7 +19,6 @@ export default async function TagsPage() {
     <div className={cn('container flex flex-col h-screen space-y-8')}>
       <PageTitle title="标签 / Tags" />
       {renderTagList()}
-      <GiscusComment />
     </div>
   );
 
