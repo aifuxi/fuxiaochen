@@ -5,17 +5,14 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { EmailDialog } from '@/components/client';
 import {
   IconBilibili,
-  IconEmail,
   IconGithub,
   IconJuejin,
   IconWechat,
   Logo,
-  PreviewImage,
 } from '@/components/rsc';
-import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
+import { BILIBILI_PAGE, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 import { cn } from '@/utils';
 
 const baseNavItems: NavItem[] = [
@@ -89,17 +86,6 @@ const NavbarV1 = () => {
       </div>
 
       <div className="text-primary/50 grid place-content-center gap-y-4 text-2xl">
-        <EmailDialog
-          triggerNode={
-            <IconEmail
-              className={cn(
-                'transition-all',
-                'hover:text-primary cursor-pointer hover:scale-110',
-              )}
-            />
-          }
-          email={EMAIL}
-        />
         <Link
           target="_blank"
           href={GITHUB_PAGE}
@@ -121,13 +107,6 @@ const NavbarV1 = () => {
         >
           <IconBilibili />
         </Link>
-        <PreviewImage
-          triggerNode={
-            <IconWechat className="cursor-pointer transition-all hover:scale-110 hover:text-[#07c160]" />
-          }
-          imageUrl="/images/wechat-qr-code.jpg"
-          className="w-[500px]"
-        />
       </div>
     </div>
   );
