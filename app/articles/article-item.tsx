@@ -1,9 +1,10 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+import { ArrowRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { PLACEHOLDER_COVER } from '@/constants';
@@ -22,7 +23,7 @@ export default function ArticleItem({ article }: Props) {
     <Link
       href={articleUrl}
       className={cn(
-        'relative flex flex-col space-y-2 border-b p-8',
+        'relative flex flex-col space-y-2 border-b p-4  md:p-8',
         'md:flex-row md:space-x-6 md:space-y-0',
         `after:absolute after:inset-0 after:w-0  after:z-[-1] after:hover:bg-primary-foreground after:hover:w-full after:transition-all after:duration-700`,
       )}
