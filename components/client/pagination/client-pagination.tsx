@@ -20,7 +20,7 @@ type Props = {
   changePage: (currentPage: number) => void;
 };
 
-export default function ClientPagination({
+export function ClientPagination({
   page,
   total,
   changePage,

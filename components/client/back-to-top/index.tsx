@@ -8,7 +8,7 @@ import { ArrowBigUpDash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils';
 
-export default function BackToTop() {
+export function BackToTop() {
   const [visible, { setFalse, setTrue }] = useBoolean(false);
 
   const handleScroll = useMemoizedFn(() => {

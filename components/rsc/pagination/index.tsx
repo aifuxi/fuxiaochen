@@ -7,7 +7,7 @@ type Props = {
   total: number;
 };
 
-export default function Pagination({ currentPage, total }: Props) {
+export function Pagination({ currentPage, total }: Props) {
   const pageNumber = Math.ceil(total / DEFAULT_PAGE_SIZE);
 
   return (

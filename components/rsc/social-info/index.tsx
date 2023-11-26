@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function SocialInfo({ className }: Props) {
+export function SocialInfo({ className }: Props) {
   return (
     <div
       className={cn(

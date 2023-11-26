@@ -12,7 +12,7 @@ type Props = {
   bottomOptionNode?: React.ReactNode;
 };
 
-export default function EmptyPage({
+export function EmptyPage({
   illustration,
   title,
   className,

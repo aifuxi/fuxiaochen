@@ -30,10 +30,10 @@ export async function GET(req: Request) {
 
   let take = DEFAULT_PAGE_SIZE;
   let skip = ZERO;
-  const condition: db.ArticleWhereInput = {};
+  const condition: Prisma.ArticleWhereInput = {};
 
   if (typeof title === 'string' && title?.length > 0) {
-    const titleFilter: db.StringFilter = {
+    const titleFilter: Prisma.StringFilter = {
       contains: title.trim(),
     };
 
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
   }
 
   if (Array.isArray(tags) && tags.length) {
-    const tagFilter: db.ArticleWhereInput = {
+    const tagFilter: Prisma.ArticleWhereInput = {
       tags: {
         some: {
           id: {
