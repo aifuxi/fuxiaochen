@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 };
 
-export default function PageTitle({ title, className }: Props) {
+export function PageTitle({ title, className }: Props) {
   return (
     <h2
       className={cn(

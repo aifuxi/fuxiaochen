@@ -15,7 +15,7 @@ export default function EmptyArticle() {
       }
       title="啊噢，文章不见啦~"
       bottomOptionNode={
-        <Button size={'lg'} onClick={router.back}>
+        <Button size={'lg'} onClick={() => router.back()}>
           返回
         </Button>
       }
