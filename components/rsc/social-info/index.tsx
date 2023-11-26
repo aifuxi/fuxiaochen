@@ -1,17 +1,9 @@
 import Link from 'next/link';
 
-import { EmailDialog } from '@/components/client';
-import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
+import { BILIBILI_PAGE, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 import { cn } from '@/utils';
 
-import {
-  IconBilibili,
-  IconEmail,
-  IconGithub,
-  IconJuejin,
-  IconWechat,
-} from '../icons';
-import PreviewImage from '../preview-image';
+import { IconBilibili, IconGithub, IconJuejin } from '../icons';
 
 type Props = {
   className?: string;
@@ -25,17 +17,6 @@ export default function SocialInfo({ className }: Props) {
         className,
       )}
     >
-      <EmailDialog
-        triggerNode={
-          <IconEmail
-            className={cn(
-              'transition-all',
-              'hover:scale-110 hover:text-gray-800  dark:hover:text-white',
-            )}
-          />
-        }
-        email={EMAIL}
-      />
       <Link
         target="_blank"
         href={GITHUB_PAGE}
@@ -60,13 +41,6 @@ export default function SocialInfo({ className }: Props) {
       >
         <IconBilibili />
       </Link>
-      <PreviewImage
-        triggerNode={
-          <IconWechat className="cursor-pointer transition-all hover:scale-110 hover:text-[#07c160]" />
-        }
-        imageUrl="/images/wechat-qr-code.jpg"
-        className="w-[500px]"
-      />
     </div>
   );
 }
