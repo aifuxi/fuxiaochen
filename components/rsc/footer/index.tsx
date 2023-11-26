@@ -1,10 +1,11 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { WEBSITE } from '@/constants/info';
 
-import SocialInfo from '../social-info';
+import { SocialInfo } from '../social-info';
 
-export default function Footer() {
+export function Footer() {
   return (
     <div className="flex flex-col items-center space-y-1 justify-center text-xs text-gray-300 h-[136px]">
       <SocialInfo className="text-2xl xl:hidden" />
@@ -14,7 +15,13 @@ export default function Footer() {
         rel="nofollow"
         className="flex items-center"
       >
-        <img src="/images/beian.png" alt="gongan" className="mr-1 h-3 w-3" />
+        <Image
+          src="/images/beian.png"
+          width={12}
+          height={12}
+          alt="gongan"
+          className="mr-1"
+        />
         赣公网安备 36100202000364号
       </Link>
       <div className="flex items-center space-x-2 ">

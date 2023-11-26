@@ -17,7 +17,7 @@ export async function GET(req: Request, { params }: DynamicRouteHandleParams) {
   const { searchParams } = new URL(req.url);
   const articleID = params.id;
   const published = searchParams.get('published');
-  const condition: db.ArticleWhereInput = {};
+  const condition: Prisma.ArticleWhereInput = {};
   let needPublished: boolean | undefined = undefined;
 
   if (typeof published === 'string') {

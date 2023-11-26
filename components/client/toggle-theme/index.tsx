@@ -8,7 +8,7 @@ import { MoonStar, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils';
 
-export default function ToggleTheme({ className }: { className?: string }) {
+export function ToggleTheme({ className }: { className?: string }) {
   useMount(() => {
     // On page load or when changing themes, best to add inline in `head` to avoid FOUC
     if (

@@ -7,10 +7,13 @@ import {
   NavbarV1,
   ToggleTheme,
 } from '@/components/client';
+import { ThemeProvider } from '@/components/client/providers';
 import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.scss';
 import { cn } from '@/utils';
+
+import '@radix-ui/themes/styles.css';
 
 export const metadata: Metadata = {
   title: `${WEBSITE}`,
@@ -67,12 +70,18 @@ export default function RootLayout({
       </head>
       <body className={cn('debug-screens min-w-[360px]')}>
         <AuthProvider session={session}>
-          {/* 侧边导航栏 */}
-          <NavbarV1 />
-          {children}
+          <ThemeProvider
+            accentColor="sky"
+            panelBackground="solid"
+            radius="none"
+          >
+            {/* 侧边导航栏 */}
+            <NavbarV1 />
+            {children}
 
-          {/* 底部 footer */}
-          <Footer />
+            {/* 底部 footer */}
+            <Footer />
+          </ThemeProvider>
         </AuthProvider>
 
         {/* 切换主题按钮 */}
