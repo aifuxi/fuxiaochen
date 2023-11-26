@@ -9,7 +9,7 @@ import useSWR from 'swr';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { ClientPagination } from '@/components/client';
-import { PageLoading, PreviewImage } from '@/components/rsc';
+import { PageLoading } from '@/components/rsc';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import {
@@ -20,7 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { toast } from '@/components/ui/use-toast';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -90,15 +89,10 @@ const AdminArticle = () => {
                 {article.title}
               </TableCell>
               <TableCell className="min-w-[160px] w-[160px] max-w-[160px]">
-                <PreviewImage
-                  triggerNode={
-                    <img
-                      src={article.cover ? article.cover : PLACEHOLDER_COVER}
-                      className="cursor-pointer"
-                      alt={article.title}
-                    />
-                  }
-                  imageUrl={article.cover ? article.cover : PLACEHOLDER_COVER}
+                <img
+                  src={article.cover ? article.cover : PLACEHOLDER_COVER}
+                  className="cursor-pointer"
+                  alt={article.title}
                 />
               </TableCell>
               <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
@@ -146,17 +140,7 @@ const AdminArticle = () => {
                       updateArticle(article.id, { published: checked })
                         .then((res) => {
                           if (res.code !== ZERO) {
-                            toast({
-                              variant: 'destructive',
-                              title: res.msg ?? 'Error',
-                              description: res.error ?? 'error',
-                            });
                           } else {
-                            toast({
-                              variant: 'default',
-                              title: 'Success',
-                              description: '操作成功',
-                            });
                           }
                         })
                         .finally(() => {

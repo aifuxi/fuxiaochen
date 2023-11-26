@@ -15,7 +15,6 @@ import { PageLoading, SpinLoading } from './loading';
 import Logo from './logo';
 import PageTitle from './page-title';
 import Pagination from './pagination';
-import PreviewImage from './preview-image';
 import SocialInfo from './social-info';
 
 export {
@@ -30,7 +29,6 @@ export {
   SpinLoading,
   PageTitle,
   Pagination,
-  PreviewImage,
   SocialInfo,
   NoDataIllustration,
   NotFound404Illustration,
