@@ -4,22 +4,13 @@ import React, { useState } from 'react';
 
 import Link from 'next/link';
 
+import { Button, IconButton, Switch, Table } from '@radix-ui/themes';
 import { Edit } from 'lucide-react';
 import useSWR from 'swr';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { ClientPagination } from '@/components/client';
 import { PageLoading } from '@/components/rsc';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
@@ -57,45 +48,53 @@ const AdminArticle = () => {
     <div>
       <div className="flex justify-end">
         <Link href={'/admin/create-article'}>
-          <Button>创建文章</Button>
+          <Button size={'2'}>创建文章</Button>
         </Link>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[160px] max-w-[160px]">标题</TableHead>
-            <TableHead className="min-w-[160px] w-[160px] max-w-[160px]">
+      <Table.Root>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+              标题
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="min-w-[160px] w-[160px] max-w-[160px]">
               封面
-            </TableHead>
-            <TableHead className="w-[160px] max-w-[160px]">
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
               friendly_url
-            </TableHead>
-            <TableHead className="w-[160px] max-w-[160px]">描述</TableHead>
-            <TableHead className="w-[160px] max-w-[160px]">标签</TableHead>
-            <TableHead className="w-[160px] max-w-[160px]">创建时间</TableHead>
-            {/* <TableHead className="w-[160px] max-w-[160px]">更新时间</TableHead> */}
-            <TableHead className="min-w-[100px] w-[100px] max-w-[100px]">
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+              描述
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+              标签
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+              创建时间
+            </Table.ColumnHeaderCell>
+            {/* <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">更新时间</Table.ColumnHeaderCell> */}
+            <Table.ColumnHeaderCell className="min-w-[100px] w-[100px] max-w-[100px]">
               发布状态
-            </TableHead>
-            <TableHead className="min-w-[160px] w-[160px] max-w-[160px]">
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="min-w-[160px] w-[160px] max-w-[160px]">
               操作
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {articles?.map((article) => (
-            <TableRow key={article.id}>
-              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+            <Table.Row key={article.id}>
+              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {article.title}
-              </TableCell>
-              <TableCell className="min-w-[160px] w-[160px] max-w-[160px]">
+              </Table.Cell>
+              <Table.Cell className="min-w-[160px] w-[160px] max-w-[160px]">
                 <img
                   src={article.cover ? article.cover : PLACEHOLDER_COVER}
                   className="cursor-pointer"
                   alt={article.title}
                 />
-              </TableCell>
-              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              </Table.Cell>
+              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 <Link
                   href={`/articles/${article.friendlyUrl}${obj2QueryString({
                     [UMT_SOURCE]: '/admin/article',
@@ -104,11 +103,11 @@ const AdminArticle = () => {
                 >
                   {article.friendlyUrl}
                 </Link>
-              </TableCell>
-              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              </Table.Cell>
+              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {article.description}
-              </TableCell>
-              <TableCell
+              </Table.Cell>
+              <Table.Cell
                 className={cn(
                   'w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap  text-xs font-medium',
                 )}
@@ -125,14 +124,14 @@ const AdminArticle = () => {
                       </Link>
                     ))
                   : '-'}
-              </TableCell>
-              <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              </Table.Cell>
+              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {formatToDate(new Date(article.createdAt))}
-              </TableCell>
+              </Table.Cell>
               {/* <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
                 {formatToDate(new Date(article.updatedAt))}
               </TableCell> */}
-              <TableCell className="w-[100px] min-w-[100px] max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <Table.Cell className="w-[100px] min-w-[100px] max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">
                 <div className="flex flex-col justify-center space-y-1">
                   <Switch
                     checked={article.published}
@@ -149,24 +148,24 @@ const AdminArticle = () => {
                     }}
                   />
                 </div>
-              </TableCell>
-              <TableCell className="min-w-[160px] w-[160px] max-w-[160px] ">
+              </Table.Cell>
+              <Table.Cell className="min-w-[160px] w-[160px] max-w-[160px] ">
                 <div className="flex space-x-2 items-center">
                   <Link href={`/admin/create-article?id=${article.id}`}>
-                    <Button size={'icon'}>
+                    <IconButton>
                       <Edit size={16} />
-                    </Button>
+                    </IconButton>
                   </Link>
                   <DeleteArticleItemButton
                     article={article}
                     refreshArticle={mutate}
                   />
                 </div>
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
 
       {Boolean(total) ? (
         <ClientPagination

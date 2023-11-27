@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { IconButton } from '@radix-ui/themes';
 import { Trash2 } from 'lucide-react';
 
 import {
@@ -15,7 +16,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
 import { ZERO } from '@/constants';
 import { deleteTag } from '@/services';
 import type { Tag } from '@/types';
@@ -28,9 +28,9 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={'destructive'} size={'icon'}>
+        <IconButton className="bg-red-9" color="red">
           <Trash2 size={16} />
-        </Button>
+        </IconButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

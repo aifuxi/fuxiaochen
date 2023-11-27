@@ -35,6 +35,7 @@ const config = {
       },
     ],
     'no-console': 'error',
+    '@next/next/no-img-element': 'off',
   },
 };
 
