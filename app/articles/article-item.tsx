@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRightIcon } from '@radix-ui/react-icons';
 
 import { Button } from '@/components/ui/button';
 import { PLACEHOLDER_COVER } from '@/constants';
@@ -74,7 +74,7 @@ export default function ArticleItem({ article }: Props) {
             className="transition-transform duration-300 hover:scale-105 group/read-more"
           >
             阅读更多
-            <ArrowRight className="ml-2 h-4 w-4 transition-all duration-300 group-hover/read-more:ml-2.5" />
+            <ArrowRightIcon className="ml-2 h-4 w-4 transition-all duration-300 group-hover/read-more:ml-2.5" />
           </Button>
         </div>
       </div>

@@ -4,9 +4,8 @@ import React from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { DEFAULT_PAGE_SIZE } from '@/constants';
-
 import { PaginationButton } from './pagination-button';
+import { DEFAULT_PAGE_SIZE } from '@/constants';
 
 interface PaginationButtonProps {
   total: number;
@@ -44,8 +43,6 @@ export const Pagination = ({ total }: PaginationButtonProps) => {
     <PaginationButton
       pageCount={pageCount}
       page={page}
-      page_size={`${DEFAULT_PAGE_SIZE}`}
-      sort={''}
       createQueryString={createQueryString}
       router={router}
       pathname={pathname}

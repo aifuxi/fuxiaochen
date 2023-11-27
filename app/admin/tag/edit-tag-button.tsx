@@ -1,104 +1,73 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-
-import { Label } from '@radix-ui/react-label';
-import { IconButton } from '@radix-ui/themes';
-import { useBoolean } from 'ahooks';
-import { Edit } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
+import { type Tag } from '@prisma/client';
+import { Pencil1Icon } from '@radix-ui/react-icons';
 import {
+  Button,
   Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { ZERO } from '@/constants';
-import { updateTag } from '@/services';
-import type { CreateTagRequest, Tag } from '@/types';
+  Flex,
+  IconButton,
+  Text,
+  TextField,
+} from '@radix-ui/themes';
+
+import { updateTag } from '@/app/_actions/tag';
 
 type Props = {
   tag: Tag;
-  editTag: (tagID: string, req: CreateTagRequest) => Promise<Tag>;
 };
 
 const EditTagButton = ({ tag }: Props) => {
-  const [state, { setTrue, setFalse }] = useBoolean(false);
-
-  const [updateTagReq, setUpdateTagReq] = useState<CreateTagRequest>({
-    name: tag.name,
-    friendlyUrl: tag.friendlyUrl,
-  });
-
-  useEffect(() => {
-    setUpdateTagReq({ name: tag.name, friendlyUrl: tag.friendlyUrl });
-  }, [tag, setUpdateTagReq]);
-
   return (
-    <Dialog
-      open={state}
-      onOpenChange={(visible) => {
-        visible ? setTrue() : setFalse();
-      }}
-      key={tag.id}
-    >
-      <DialogTrigger asChild>
-        <IconButton className="bg-accent-9">
-          <Edit size={16} />
+    <Dialog.Root>
+      <Dialog.Trigger>
+        <IconButton color="gray" variant="solid" highContrast>
+          <Pencil1Icon />
         </IconButton>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>编辑标签</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-4">
-            <Label>标签名称</Label>
-            <Input
-              value={updateTagReq.name}
-              placeholder="请输入标签名称..."
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setUpdateTagReq({ ...updateTagReq, name: value });
-              }}
-            />
-          </div>
-          <div className="grid gap-4">
-            <Label>friendly_url</Label>
-            <Input
-              value={updateTagReq.friendlyUrl ?? ''}
-              placeholder="请输入标签friendly_url（只支持数字、字母、下划线、中划线）..."
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setUpdateTagReq({ ...updateTagReq, friendlyUrl: value });
-              }}
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            size={'lg'}
-            onClick={() => {
-              updateTag(tag.id, updateTagReq)
-                .then((res) => {
-                  if (res.code !== ZERO) {
-                  } else {
-                  }
-                })
-                .finally(() => {
-                  setFalse();
-                });
-            }}
-          >
-            <span>保存</span>
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Title>编辑标签</Dialog.Title>
+        <form action={updateTag}>
+          <Flex direction="column" gap="3">
+            <label>
+              <Text as="div" size="2" mb="1" weight="bold">
+                名称
+              </Text>
+              <TextField.Input
+                defaultValue={tag.name}
+                placeholder="请输入标签名称"
+                name="name"
+                autoComplete="off"
+              />
+            </label>
+            <label>
+              <Text as="div" size="2" mb="1" weight="bold">
+                链接
+              </Text>
+              <TextField.Input
+                defaultValue={tag.friendlyUrl}
+                placeholder="请输入标签链接"
+                name="friendlyUrl"
+                autoComplete="off"
+              />
+            </label>
+            <input type="hidden" name="id" value={tag.id} />
+          </Flex>
+          <Flex gap="3" mt="4" justify="end">
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                取消
+              </Button>
+            </Dialog.Close>
+            <Dialog.Close>
+              <Button type="submit" color="gray" highContrast>
+                保存
+              </Button>
+            </Dialog.Close>
+          </Flex>
+        </form>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 };
 

@@ -2,9 +2,10 @@
 
 import React from 'react';
 
-import { Edit } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+
+import { Pencil1Icon } from '@radix-ui/react-icons';
 
 export default function EditArticle({ articleId }: { articleId: string }) {
   const { data: session, status } = useSession();
@@ -16,7 +17,7 @@ export default function EditArticle({ articleId }: { articleId: string }) {
         href={`/admin/create-article?id=${articleId}`}
       >
         <span className="mr-1">编辑</span>
-        <Edit size={16} />
+        <Pencil1Icon />
       </Link>
     );
   }

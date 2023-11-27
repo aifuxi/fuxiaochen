@@ -2,10 +2,10 @@
 
 import React from 'react';
 
+import { ThickArrowUpIcon } from '@radix-ui/react-icons';
+import { IconButton } from '@radix-ui/themes';
 import { useBoolean, useMemoizedFn, useMount, useUnmount } from 'ahooks';
-import { ArrowBigUpDash } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
 import { cn } from '@/utils';
 
 export function BackToTop() {
@@ -28,14 +28,16 @@ export function BackToTop() {
   });
 
   return (
-    <Button
+    <IconButton
+      variant="solid"
       className={cn('fixed bottom-10 right-10', !visible && 'hidden')}
-      size={'icon'}
+      color="gray"
+      highContrast
       onClick={() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }}
     >
-      <ArrowBigUpDash size={24} />
-    </Button>
+      <ThickArrowUpIcon />
+    </IconButton>
   );
 }

@@ -1,5 +1,5 @@
-import { Loader2 } from 'lucide-react';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 export const SpinLoading = () => {
-  return <Loader2 className="animate-spin" size={64} />;
+  return <ReloadIcon className="animate-spin w-16 h-16" />;
 };

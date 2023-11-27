@@ -1,15 +1,15 @@
 import * as React from 'react';
 
-import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context';
+import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-} from 'lucide-react';
+  DoubleArrowLeftIcon,
+  DoubleArrowRightIcon,
+} from '@radix-ui/react-icons';
+import { Button, IconButton } from '@radix-ui/themes';
 
-import { Button } from '@/components/ui/button';
 import { cn } from '@/utils';
 
 interface PaginationButtonProps
@@ -19,8 +19,6 @@ interface PaginationButtonProps
   > {
   pageCount: number;
   page: string;
-  page_size?: string;
-  sort: string;
   createQueryString: (params: Record<string, string | number | null>) => string;
   router: AppRouterInstance;
   pathname: string;
@@ -32,8 +30,6 @@ interface PaginationButtonProps
 export function PaginationButton({
   pageCount,
   page,
-  page_size,
-  sort,
   createQueryString,
   router,
   pathname,
@@ -79,72 +75,54 @@ export function PaginationButton({
       )}
       {...props}
     >
-      <Button
+      <IconButton
         aria-label="Go to first page"
-        variant="secondary"
-        size="icon"
-        className="hidden h-8 w-8 lg:flex"
+        color="gray"
+        className="hidden lg:flex"
         onClick={() => {
           startTransition(() => {
             router.push(
               `${pathname}?${createQueryString({
                 page: 1,
-                page_size: page_size ?? null,
-                sort,
               })}`,
             );
           });
         }}
         disabled={Number(page) === 1 ?? isPending}
       >
-        <ChevronsLeftIcon className="h-4 w-4" aria-hidden="true" />
-      </Button>
+        <DoubleArrowLeftIcon />
+      </IconButton>
       <Button
         aria-label="Go to previous page"
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8"
+        color="gray"
         onClick={() => {
           startTransition(() => {
             router.push(
               `${pathname}?${createQueryString({
                 page: Number(page) - 1,
-                page_size: page_size ?? null,
-                sort,
               })}`,
             );
           });
         }}
         disabled={Number(page) === 1 ?? isPending}
       >
-        <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+        <ChevronLeftIcon />
       </Button>
       {paginationRange.map((pageNumber, i) =>
         pageNumber === '...' ? (
-          <Button
-            aria-label="Page separator"
-            key={i}
-            variant="secondary"
-            size="icon"
-            className="h-8 w-8"
-            disabled
-          >
+          <Button aria-label="Page separator" key={i} color="gray" disabled>
             ...
           </Button>
         ) : (
           <Button
-            aria-label={`Page ${pageNumber}`}
             key={i}
-            variant={Number(page) === pageNumber ? 'default' : 'secondary'}
-            size="icon"
-            className="h-8 w-8"
+            color="gray"
+            highContrast={pageNumber === Number(page)}
             onClick={() => {
               startTransition(() => {
                 router.push(
                   `${pathname}?${createQueryString({
                     page: pageNumber,
-                    page_size: page_size ?? null,
-                    sort,
                   })}`,
                 );
               });
@@ -157,41 +135,33 @@ export function PaginationButton({
       )}
       <Button
         aria-label="Go to next page"
-        variant="secondary"
-        size="icon"
-        className="h-8 w-8"
+        color="gray"
         onClick={() => {
           startTransition(() => {
             router.push(
               `${pathname}?${createQueryString({
                 page: Number(page) + 1,
-                page_size: page_size ?? null,
-                sort,
               })}`,
             );
           });
         }}
         disabled={Number(page) === (pageCount ?? 10) ?? isPending}
       >
-        <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+        <ChevronRightIcon />
       </Button>
       <Button
         aria-label="Go to last page"
-        variant="secondary"
-        size="icon"
-        className="hidden h-8 w-8 lg:flex"
+        color="gray"
         onClick={() => {
           router.push(
             `${pathname}?${createQueryString({
               page: pageCount ?? 10,
-              page_size: page_size ?? null,
-              sort,
             })}`,
           );
         }}
         disabled={Number(page) === (pageCount ?? 10) ?? isPending}
       >
-        <ChevronsRightIcon className="h-4 w-4" aria-hidden="true" />
+        <DoubleArrowRightIcon />
       </Button>
     </div>
   );

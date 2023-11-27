@@ -2,8 +2,8 @@
 
 import React from 'react';
 
+import { TrashIcon } from '@radix-ui/react-icons';
 import { IconButton } from '@radix-ui/themes';
-import { Trash2 } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -31,8 +31,8 @@ export const DeleteArticleItemButton: React.FC<Props> = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <IconButton className="bg-red-9" color="red">
-          <Trash2 size={16} />
+        <IconButton color="red">
+          <TrashIcon />
         </IconButton>
       </AlertDialogTrigger>
       <AlertDialogContent>
