@@ -6,10 +6,10 @@ import { signIn, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { Button } from '@radix-ui/themes';
+
 import { EmptyPage } from '@/components/client';
 import { PageLoading, Unauthorized401Illustration } from '@/components/rsc';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/utils';
 
 const adminNavItems: NavItem[] = [
   {
@@ -48,9 +48,8 @@ export default function AdminLayout({
           <li key={v.link}>
             <Link href={v.link}>
               <Button
-                size={'lg'}
-                variant={pathname === v.link ? 'default' : 'secondary'}
-                className={cn(pathname === v.link && 'font-semibold')}
+                size={'4'}
+                variant={pathname === v.link ? 'solid' : 'soft'}
               >
                 {v.label}
               </Button>
@@ -75,7 +74,7 @@ export default function AdminLayout({
           }
           title="达咩，请登录~"
           bottomOptionNode={
-            <Button size={'lg'} onClick={() => signIn()}>
+            <Button size={'4'} onClick={() => signIn()}>
               去登录
             </Button>
           }
