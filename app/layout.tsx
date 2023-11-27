@@ -10,10 +10,8 @@ import {
 import { ThemeProvider } from '@/components/client/providers';
 import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
-import '@/styles/global.scss';
+import '@/styles/global.css';
 import { cn } from '@/utils';
-
-import '@radix-ui/themes/styles.css';
 
 export const metadata: Metadata = {
   title: `${WEBSITE}`,

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Label } from '@radix-ui/react-label';
+import { IconButton } from '@radix-ui/themes';
 import { useBoolean } from 'ahooks';
 import { Edit } from 'lucide-react';
 
@@ -46,9 +47,9 @@ const EditTagButton = ({ tag }: Props) => {
       key={tag.id}
     >
       <DialogTrigger asChild>
-        <Button size={'icon'}>
+        <IconButton className="bg-accent-9">
           <Edit size={16} />
-        </Button>
+        </IconButton>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

@@ -1,3 +1,4 @@
+import { radixThemePreset } from 'radix-themes-tw';
 import plugin from 'tailwindcss/plugin';
 
 import { type Config } from 'tailwindcss';
@@ -10,6 +11,8 @@ export default {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
   ],
+  // your existing configuration
+  presets: [radixThemePreset],
   theme: {
     container: {
       center: true,
