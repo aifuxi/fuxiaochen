@@ -49,7 +49,8 @@ export default function AdminLayout({
             <Link href={v.link}>
               <Button
                 size={'4'}
-                variant={pathname === v.link ? 'solid' : 'soft'}
+                color="gray"
+                highContrast={pathname === v.link}
               >
                 {v.label}
               </Button>
