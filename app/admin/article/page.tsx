@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 
 import Link from 'next/link';
 
+import { Pencil1Icon } from '@radix-ui/react-icons';
 import { Button, IconButton, Switch, Table } from '@radix-ui/themes';
-import { Edit } from 'lucide-react';
 import useSWR from 'swr';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
@@ -48,7 +48,9 @@ const AdminArticle = () => {
     <div>
       <div className="flex justify-end">
         <Link href={'/admin/create-article'}>
-          <Button size={'2'}>创建文章</Button>
+          <Button size={'2'} color="gray" highContrast>
+            创建文章
+          </Button>
         </Link>
       </div>
       <Table.Root>
@@ -152,8 +154,8 @@ const AdminArticle = () => {
               <Table.Cell className="min-w-[160px] w-[160px] max-w-[160px] ">
                 <div className="flex space-x-2 items-center">
                   <Link href={`/admin/create-article?id=${article.id}`}>
-                    <IconButton>
-                      <Edit size={16} />
+                    <IconButton color="gray" highContrast>
+                      <Pencil1Icon />
                     </IconButton>
                   </Link>
                   <DeleteArticleItemButton

@@ -2,22 +2,10 @@
 
 import React from 'react';
 
-import { IconButton } from '@radix-ui/themes';
-import { Trash2 } from 'lucide-react';
+import { TrashIcon } from '@radix-ui/react-icons';
+import { AlertDialog, Button, Flex, IconButton } from '@radix-ui/themes';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { ZERO } from '@/constants';
-import { deleteTag } from '@/services';
+import { deleteTag } from '@/app/_actions/tag';
 import type { Tag } from '@/types';
 
 type Props = {
@@ -26,35 +14,38 @@ type Props = {
 
 const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <IconButton className="bg-red-9" color="red">
-          <Trash2 size={16} />
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>
+        <IconButton color="red">
+          <TrashIcon />
         </IconButton>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>确定要删除该标签吗？</AlertDialogTitle>
-          <AlertDialogDescription className="text-destructive">
-            该操作不可逆，数据将直接从数据库删除
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              deleteTag(tag.id).then((res) => {
-                if (res.code !== ZERO) {
-                } else {
-                }
-              });
-            }}
-          >
-            删除
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      </AlertDialog.Trigger>
+      <AlertDialog.Content>
+        <AlertDialog.Title>删除标签</AlertDialog.Title>
+        <AlertDialog.Description className="text-destructive">
+          确定要删除该标签吗？
+        </AlertDialog.Description>
+
+        <Flex gap="3" mt="4" justify="end">
+          <AlertDialog.Cancel>
+            <Button variant="soft" color="gray">
+              取消
+            </Button>
+          </AlertDialog.Cancel>
+          <AlertDialog.Action>
+            <Button
+              variant="solid"
+              color="red"
+              onClick={async () => {
+                await deleteTag(tag.id);
+              }}
+            >
+              删除
+            </Button>
+          </AlertDialog.Action>
+        </Flex>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
   );
 };
 

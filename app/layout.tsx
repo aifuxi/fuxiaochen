@@ -1,12 +1,7 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
-import {
-  AuthProvider,
-  BackToTop,
-  NavbarV1,
-  ToggleTheme,
-} from '@/components/client';
+import { AuthProvider, BackToTop, NavbarV1 } from '@/components/client';
 import { ThemeProvider } from '@/components/client/providers';
 import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
@@ -79,14 +74,11 @@ export default function RootLayout({
 
             {/* 底部 footer */}
             <Footer />
+
+            {/* 返回顶部按钮 */}
+            <BackToTop />
           </ThemeProvider>
         </AuthProvider>
-
-        {/* 切换主题按钮 */}
-        <ToggleTheme className="fixed top-16 right-12" />
-
-        {/* 返回顶部按钮 */}
-        <BackToTop />
       </body>
     </html>
   );
