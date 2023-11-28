@@ -2,59 +2,47 @@
 
 import React from 'react';
 
+import { type Article } from '@prisma/client';
 import { TrashIcon } from '@radix-ui/react-icons';
-import { IconButton } from '@radix-ui/themes';
+import { AlertDialog, Button, Flex, IconButton } from '@radix-ui/themes';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { deleteArticle } from '@/services';
-import { type Article } from '@/types';
+import { deleteArticle } from '@/app/_actions/article';
 
 type Props = {
   article: Article;
-  refreshArticle?: () => void;
 };
 
-export const DeleteArticleItemButton: React.FC<Props> = ({
-  article,
-  refreshArticle,
-}) => {
+export function DeleteArticleItemButton({ article }: Props) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
+    <AlertDialog.Root>
+      <AlertDialog.Trigger>
         <IconButton color="red">
           <TrashIcon />
         </IconButton>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>确定要删除该文章吗？</AlertDialogTitle>
-          <AlertDialogDescription className="text-destructive">
-            该操作不可逆，数据将直接从数据库删除
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={() => {
-              deleteArticle(article.id).finally(() => {
-                refreshArticle?.();
-              });
-            }}
-          >
-            删除
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+      </AlertDialog.Trigger>
+      <AlertDialog.Content>
+        <AlertDialog.Title>删除文章</AlertDialog.Title>
+        <AlertDialog.Description>确定要删除该文章吗？</AlertDialog.Description>
+
+        <Flex gap="3" mt="4" justify="end">
+          <AlertDialog.Cancel>
+            <Button variant="soft" color="gray">
+              取消
+            </Button>
+          </AlertDialog.Cancel>
+          <AlertDialog.Action>
+            <Button
+              variant="solid"
+              color="red"
+              onClick={async () => {
+                await deleteArticle(article.id);
+              }}
+            >
+              删除
+            </Button>
+          </AlertDialog.Action>
+        </Flex>
+      </AlertDialog.Content>
+    </AlertDialog.Root>
   );
-};
+}
