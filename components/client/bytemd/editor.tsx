@@ -13,11 +13,7 @@ type Props = {
   editorProps?: Partial<EditorProps>;
 };
 
-const BytemdEditor: React.FC<Props> = ({
-  content,
-  setContent,
-  editorProps,
-}) => {
+export function BytemdEditor({ content, setContent, editorProps }: Props) {
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
     const fd = new FormData();
     fd.append('file', files[0]);
@@ -44,6 +40,4 @@ const BytemdEditor: React.FC<Props> = ({
       {...editorProps}
     />
   );
-};
-
-export default BytemdEditor;
+}
