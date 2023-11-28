@@ -1,84 +1,63 @@
-'use client';
-
-import React, { useState } from 'react';
+import React from 'react';
 
 import Link from 'next/link';
 
-import { Pencil1Icon } from '@radix-ui/react-icons';
-import { Button, IconButton, Switch, Table } from '@radix-ui/themes';
-import useSWR from 'swr';
+import { Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
+import { Badge, Button, Flex, IconButton, Table } from '@radix-ui/themes';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
-import { ClientPagination } from '@/components/client';
-import { PageLoading } from '@/components/rsc';
-import {
-  DEFAULT_PAGE,
-  DEFAULT_PAGE_SIZE,
-  PLACEHOLDER_COVER,
-  UMT_SOURCE,
-  ZERO,
-} from '@/constants';
-import { ARTICLE_URL, getArticles, updateArticle } from '@/services';
-import { type GetArticlesRequest } from '@/types';
-import { cn, formatToDate, obj2QueryString } from '@/utils';
+import { TogglePublishSwitch } from './toggle-publish-switch';
+import { getArticles } from '@/app/_actions/article';
+import { Pagination } from '@/components/client/pagination/pagination';
+import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants';
+import { formatToDate } from '@/utils';
 
-const defaultGetArticlesReq: GetArticlesRequest = {
-  pageSize: DEFAULT_PAGE_SIZE,
-  page: DEFAULT_PAGE,
-  title: undefined,
-  published: undefined,
-};
+export default async function AdminArticle({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
+  const { page } = searchParams ?? {};
+  const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-const AdminArticle = () => {
-  const [req, setReq] = useState<GetArticlesRequest>({
-    ...defaultGetArticlesReq,
+  const { articles, total } = await getArticles({
+    page: currentPage,
   });
-  const { data, isLoading, mutate } = useSWR(
-    `${ARTICLE_URL}${obj2QueryString(req)}`,
-    () => getArticles(req),
-  );
-  const articles = data?.data;
-  const total = data?.total ?? 0;
-
-  if (isLoading) {
-    return <PageLoading />;
-  }
 
   return (
-    <div>
-      <div className="flex justify-end">
+    <Flex gap={'4'} direction={'column'}>
+      <Flex justify={'end'}>
         <Link href={'/admin/create-article'}>
-          <Button size={'2'} color="gray" highContrast>
+          <Button color="gray" highContrast>
+            <PlusIcon />
             创建文章
           </Button>
         </Link>
-      </div>
-      <Table.Root>
+      </Flex>
+      <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+            <Table.ColumnHeaderCell className="w-[200px]">
               标题
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="min-w-[160px] w-[160px] max-w-[160px]">
+            <Table.ColumnHeaderCell className="w-[200px]">
               封面
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
-              friendly_url
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+
+            <Table.ColumnHeaderCell className="w-[200px]">
               描述
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+            <Table.ColumnHeaderCell className="w-[200px]">
               标签
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">
+            <Table.ColumnHeaderCell className="w-[200px]">
               创建时间
             </Table.ColumnHeaderCell>
-            {/* <Table.ColumnHeaderCell className="w-[160px] max-w-[160px]">更新时间</Table.ColumnHeaderCell> */}
-            <Table.ColumnHeaderCell className="min-w-[100px] w-[100px] max-w-[100px]">
+
+            <Table.ColumnHeaderCell className="w-[200px]">
               发布状态
             </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell className="min-w-[160px] w-[160px] max-w-[160px]">
+            <Table.ColumnHeaderCell className="w-[200px]">
               操作
             </Table.ColumnHeaderCell>
           </Table.Row>
@@ -86,106 +65,56 @@ const AdminArticle = () => {
         <Table.Body>
           {articles?.map((article) => (
             <Table.Row key={article.id}>
-              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <Table.Cell className="!align-middle  w-[200px]">
                 {article.title}
               </Table.Cell>
-              <Table.Cell className="min-w-[160px] w-[160px] max-w-[160px]">
+              <Table.Cell className="!align-middle w-[200px]">
                 <img
                   src={article.cover ? article.cover : PLACEHOLDER_COVER}
-                  className="cursor-pointer"
                   alt={article.title}
                 />
               </Table.Cell>
-              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
-                <Link
-                  href={`/articles/${article.friendlyUrl}${obj2QueryString({
-                    [UMT_SOURCE]: '/admin/article',
-                  })}`}
-                  target="_blank"
-                >
-                  {article.friendlyUrl}
-                </Link>
-              </Table.Cell>
-              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <Table.Cell className="!align-middle  w-[200px]">
                 {article.description}
               </Table.Cell>
-              <Table.Cell
-                className={cn(
-                  'w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap  text-xs font-medium',
-                )}
-              >
-                {article.tags?.length
-                  ? article.tags.map((tag) => (
-                      <Link
-                        key={tag.id}
-                        href={`/tags/${tag.friendlyUrl}`}
-                        target="_blank"
-                        className={cn('mr-1 ')}
-                      >
-                        {tag.name}
-                      </Link>
-                    ))
-                  : '-'}
+              <Table.Cell className={'!align-middle  w-[200px]'}>
+                <Flex gap="2">
+                  {article.tags?.length
+                    ? article.tags.map((tag) => (
+                        <Link
+                          key={tag.id}
+                          href={`/tags/${tag.friendlyUrl}`}
+                          target="_blank"
+                        >
+                          <Badge>{tag.name}</Badge>
+                        </Link>
+                      ))
+                    : '-'}
+                </Flex>
               </Table.Cell>
-              <Table.Cell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
+              <Table.Cell className="!align-middle  w-[200px]">
                 {formatToDate(new Date(article.createdAt))}
               </Table.Cell>
-              {/* <TableCell className="w-[160px] max-w-[160px] text-ellipsis overflow-hidden whitespace-nowrap">
-                {formatToDate(new Date(article.updatedAt))}
-              </TableCell> */}
-              <Table.Cell className="w-[100px] min-w-[100px] max-w-[100px] text-ellipsis overflow-hidden whitespace-nowrap">
-                <div className="flex flex-col justify-center space-y-1">
-                  <Switch
-                    checked={article.published}
-                    onCheckedChange={(checked) => {
-                      updateArticle(article.id, { published: checked })
-                        .then((res) => {
-                          if (res.code !== ZERO) {
-                          } else {
-                          }
-                        })
-                        .finally(() => {
-                          mutate();
-                        });
-                    }}
-                  />
-                </div>
+
+              <Table.Cell className="!align-middle  w-[200px]">
+                <TogglePublishSwitch article={article} />
               </Table.Cell>
-              <Table.Cell className="min-w-[160px] w-[160px] max-w-[160px] ">
-                <div className="flex space-x-2 items-center">
+              <Table.Cell className="!align-middle w-[200px]">
+                <Flex gap={'2'} align={'center'}>
                   <Link href={`/admin/create-article?id=${article.id}`}>
                     <IconButton color="gray" highContrast>
                       <Pencil1Icon />
                     </IconButton>
                   </Link>
-                  <DeleteArticleItemButton
-                    article={article}
-                    refreshArticle={mutate}
-                  />
-                </div>
+                  <DeleteArticleItemButton article={article} />
+                </Flex>
               </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
       </Table.Root>
 
-      {Boolean(total) ? (
-        <ClientPagination
-          className="mt-4"
-          page={req.page}
-          total={total}
-          changePage={(currentPage: number) => {
-            setReq({
-              ...req,
-              page: currentPage,
-            });
-          }}
-        />
-      ) : (
-        <div className="w-full text-center p-8 h-[44vh]">无数据</div>
-      )}
-    </div>
+      <Pagination total={total} />
+    </Flex>
   );
-};
-
-export default AdminArticle;
+}

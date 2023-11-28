@@ -194,25 +194,19 @@ export async function getTags(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  let tags = await db.tag.findMany({
+  const tags = await db.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
     include: {
-      articles: {
-        where: {
-          published: true,
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-      },
+      articles: true,
     },
+    skip,
+    take,
   });
 
   const count = await db.tag.count({});
 
-  tags = tags?.slice(skip, skip + take);
   const total = count ?? 0;
 
   revalidatePath('/admin/tag');

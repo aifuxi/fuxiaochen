@@ -53,7 +53,7 @@ export default async function AdminTag({
                 {formatToDate(new Date(tag.updatedAt))}
               </Table.Cell>
               <Table.Cell className="!align-middle !h-rx-9">
-                <Flex gap={'2'} align={'end'}>
+                <Flex gap={'2'} align={'center'}>
                   <EditTagButton tag={tag} />
                   <DeleteTagItemButton tag={tag} />
                 </Flex>
