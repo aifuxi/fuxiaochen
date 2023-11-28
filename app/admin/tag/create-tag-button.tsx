@@ -7,7 +7,7 @@ import { Button, Dialog, Flex, Text, TextField } from '@radix-ui/themes';
 
 import { createTag } from '@/app/_actions/tag';
 
-const CreateTagButton = () => {
+export function CreateTagButton() {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -59,6 +59,4 @@ const CreateTagButton = () => {
       </Dialog.Content>
     </Dialog.Root>
   );
-};
-
-export default CreateTagButton;
+}
