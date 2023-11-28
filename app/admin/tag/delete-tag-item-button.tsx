@@ -22,9 +22,7 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
       </AlertDialog.Trigger>
       <AlertDialog.Content>
         <AlertDialog.Title>删除标签</AlertDialog.Title>
-        <AlertDialog.Description className="text-destructive">
-          确定要删除该标签吗？
-        </AlertDialog.Description>
+        <AlertDialog.Description>确定要删除该标签吗？</AlertDialog.Description>
 
         <Flex gap="3" mt="4" justify="end">
           <AlertDialog.Cancel>

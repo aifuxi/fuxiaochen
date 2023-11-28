@@ -11,7 +11,7 @@ import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/client';
 import { PageTitle } from '@/components/rsc';
 import { PLACEHOLDER_COVER } from '@/constants';
-import { cn, formatToDateTime } from '@/utils';
+import { cn, formatToDate } from '@/utils';
 
 export async function generateMetadata({
   params,
@@ -50,7 +50,7 @@ export default async function ArticleDetailPage({
       </div>
       <div className="container flex flex-col space-y-8">
         <div className="text-center text-base font-medium leading-6 tracking-wider text-primary/50">
-          {formatToDateTime(article.createdAt)}
+          {formatToDate(article.createdAt)}
         </div>
         <PageTitle
           title={article.title}
@@ -88,7 +88,7 @@ export default async function ArticleDetailPage({
                 最近更新时间
               </div>
               <div className="text-sm leading-6 tracking-wider text-primary/50">
-                {formatToDateTime(article.updatedAt, true)}
+                {formatToDate(article.updatedAt)}
               </div>
             </div>
             <div
