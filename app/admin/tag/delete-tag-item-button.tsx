@@ -12,7 +12,7 @@ type Props = {
   tag: Tag;
 };
 
-const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
+export function DeleteTagItemButton({ tag }: Props) {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger>
@@ -45,6 +45,4 @@ const DeleteTagItemButton: React.FC<Props> = ({ tag }) => {
       </AlertDialog.Content>
     </AlertDialog.Root>
   );
-};
-
-export default DeleteTagItemButton;
+}

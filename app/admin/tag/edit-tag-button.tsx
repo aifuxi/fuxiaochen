@@ -17,7 +17,7 @@ type Props = {
   tag: Tag;
 };
 
-const EditTagButton = ({ tag }: Props) => {
+export function EditTagButton({ tag }: Props) {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -69,6 +69,6 @@ const EditTagButton = ({ tag }: Props) => {
       </Dialog.Content>
     </Dialog.Root>
   );
-};
+}
 
 export default EditTagButton;

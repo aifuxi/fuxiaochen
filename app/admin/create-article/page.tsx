@@ -1,246 +1,90 @@
-'use client';
-
-import React, { useEffect, useState } from 'react';
-
-import { useRouter, useSearchParams } from 'next/navigation';
-
-import { useBoolean } from 'ahooks';
-import useSWR from 'swr';
-
-import TagCheckboxItem from './tag-checkbox-item';
-import { adminCreateTagAction } from '@/app/_actions/tag';
-import { BytemdEditor } from '@/components/client';
-import { PageLoading } from '@/components/rsc';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
-import { DEFAULT_PAGE, MAX_PAGE_SIZE, ZERO } from '@/constants';
 import {
-  TAG_URL,
-  createArticle,
-  getArticle,
-  getTags,
-  updateArticle,
-  uploadFile,
-} from '@/services';
-import type { CreateArticleRequest } from '@/types';
+  Button,
+  Flex,
+  Switch,
+  Text,
+  TextArea,
+  TextFieldInput,
+} from '@radix-ui/themes';
 
-import CreateTagButton from '../tag/create-tag-button';
+import { BytemdEditorField } from './bytemd-editor-field';
+import { TagsField } from './tags-field';
+import { createArticle } from '@/app/_actions/article';
+import { getAllTags } from '@/app/_actions/tag';
 
-const defaultCreateArticleReq: CreateArticleRequest = {
-  title: '',
-  description: '',
-  friendlyUrl: '',
-  content: '',
-  cover: '',
-  tags: [],
-  published: true,
-};
-
-const AdminCreateArticle = () => {
-  const { data, isLoading, mutate } = useSWR(TAG_URL, () =>
-    getTags({ page: DEFAULT_PAGE, pageSize: MAX_PAGE_SIZE }),
-  );
-  const router = useRouter();
-  const id = useSearchParams().get('id');
-  const tags = data?.data;
-  const [createArticleReq, setCreateArticleReq] =
-    useState<CreateArticleRequest>(defaultCreateArticleReq);
-  const [loading, { setTrue: showLoading, setFalse: hideLoading }] =
-    useBoolean(false);
-
-  useEffect(() => {
-    if (id && typeof id === 'string') {
-      showLoading();
-      getArticle(id)
-        .then((res) => {
-          const article = res.data;
-          if (article) {
-            const tagIds = article.tags?.map((v) => v.id) ?? [];
-            setCreateArticleReq({
-              title: article.title,
-              friendlyUrl: article.friendlyUrl,
-              description: article.description,
-              content: article.content,
-              cover: article.cover ?? '',
-              tags: tagIds,
-              published: article.published,
-            });
-          }
-        })
-        .finally(() => {
-          hideLoading();
-        });
-    }
-  }, [router, id, showLoading, hideLoading]);
-
-  if (isLoading ?? loading) {
-    return <PageLoading />;
-  }
+export default async function AdminCreateArticle() {
+  const tags = await getAllTags();
 
   return (
-    <>
-      <div className="grid gap-4">
-        <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw] grid">
-          {renderOperationButton()}
+    <form action={createArticle}>
+      <Flex direction={'column'} gap={'4'}>
+        <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
+          <Button type="submit" className="!w-full" size={'4'}>
+            创建
+          </Button>
         </div>
-        <div className="grid gap-6">
-          <div className="grid gap-2">
-            <Label htmlFor="title">标题</Label>
-            <Input
-              id="title"
+        <Flex direction={'column'} gap={'4'}>
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              标题
+            </Text>
+            <TextFieldInput
               placeholder="请输入标题..."
-              value={createArticleReq.title}
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setCreateArticleReq({ ...createArticleReq, title: value });
-              }}
+              name="title"
+              autoComplete="off"
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="friendlyUrl">friendly_url</Label>
-            <Input
-              id="friendlyUrl"
+          </label>
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              friendly_url
+            </Text>
+            <TextFieldInput
               placeholder="请输入文章friendly_url（只支持数字、字母、下划线、中划线）..."
-              value={createArticleReq.friendlyUrl}
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setCreateArticleReq({
-                  ...createArticleReq,
-                  friendlyUrl: value,
-                });
-              }}
+              name="friendlyUrl"
+              autoComplete="off"
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">描述</Label>
-            <Textarea
-              id="description"
+          </label>
+          <label>
+            <Text as="div" size="2" mb="1" weight="bold">
+              描述
+            </Text>
+            <TextArea
               placeholder="请输入描述..."
-              value={createArticleReq.description}
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setCreateArticleReq({
-                  ...createArticleReq,
-                  description: value,
-                });
-              }}
+              name="description"
+              autoComplete="off"
             />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="cover">封面</Label>
-            <input
-              type="file"
-              onChange={(e) => {
-                const value = e.currentTarget.files?.[0];
-                if (value) {
-                  const fd = new FormData();
-                  fd.append('file', value);
-
-                  uploadFile(fd).then((res) => {
-                    if (res.code === ZERO) {
-                      setCreateArticleReq({
-                        ...createArticleReq,
-                        cover: res?.data?.url,
-                      });
-                      return;
-                    }
-                  });
-                }
-              }}
-            />
-            <Textarea
-              id="cover"
+          </label>
+          <Flex direction={'column'} gap={'1'}>
+            <Text as="div" size="2" weight="bold">
+              封面
+            </Text>
+            <TextFieldInput
               placeholder="请输入封面链接..."
-              value={createArticleReq.cover}
-              onChange={(e) => {
-                const value = e.currentTarget.value;
-                setCreateArticleReq({ ...createArticleReq, cover: value });
-              }}
+              name="cover"
+              autoComplete="off"
             />
+            <input type="file" />
+          </Flex>
+          <div>
+            <Text as="div" size="2" mb="1" weight="bold">
+              是否发布
+            </Text>
+            <Switch name="published" color="gray" highContrast defaultChecked />
           </div>
-          <div className="flex items-center gap-2">
-            <Label htmlFor="published">是否发布</Label>
-            <Switch
-              id="published"
-              checked={createArticleReq.published}
-              onCheckedChange={(value) => {
-                setCreateArticleReq({ ...createArticleReq, published: value });
-              }}
-            />
+          <div>
+            <Text as="div" size="2" mb="1" weight="bold">
+              标签
+            </Text>
+            <TagsField tags={tags} name="tags" />
           </div>
-          <div className="flex items-center flex-wrap gap-4">
-            <Label>标签</Label>
-
-            {tags?.map((tag) => {
-              return (
-                <TagCheckboxItem
-                  key={tag.id}
-                  tag={tag}
-                  createArticleReq={createArticleReq}
-                  setCreateArticleReq={setCreateArticleReq}
-                />
-              );
-            })}
-            <CreateTagButton
-              createTag={adminCreateTagAction}
-              refreshTag={mutate}
-              triggerNode={
-                <Button variant={'link'}>没找到合适的标签？点我新建一个</Button>
-              }
-            />
+          <div>
+            <Text as="div" size="2" mb="1" weight="bold">
+              内容
+            </Text>
+            <BytemdEditorField name="content" />
           </div>
-          <div className="grid gap-2" id="aifuxi-content-editor">
-            <Label htmlFor="content">内容</Label>
-            <BytemdEditor
-              content={createArticleReq.content}
-              setContent={(content: string) => {
-                setCreateArticleReq({ ...createArticleReq, content });
-              }}
-            />
-          </div>
-        </div>
-      </div>
-    </>
+        </Flex>
+      </Flex>
+    </form>
   );
-
-  function renderOperationButton() {
-    if (id && typeof id === 'string') {
-      return (
-        <Button
-          size={'lg'}
-          onClick={() => {
-            updateArticle(id, createArticleReq).then((res) => {
-              if (res.code !== ZERO) {
-              } else {
-                router.push('/admin/article');
-              }
-            });
-          }}
-        >
-          <span>保存</span>
-        </Button>
-      );
-    } else {
-      return (
-        <Button
-          size={'lg'}
-          onClick={() => {
-            createArticle(createArticleReq).then((res) => {
-              if (res.code !== ZERO) {
-              } else {
-                router.push('/admin/article');
-              }
-            });
-          }}
-        >
-          <span>创建</span>
-        </Button>
-      );
-    }
-  }
-};
-
-export default AdminCreateArticle;
+}

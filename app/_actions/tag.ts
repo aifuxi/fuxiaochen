@@ -209,6 +209,13 @@ export async function getTags(params: { page: number }) {
 
   const total = count ?? 0;
 
-  revalidatePath('/admin/tag');
   return { tags, total };
+}
+
+export async function getAllTags() {
+  return await db.tag.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
 }

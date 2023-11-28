@@ -1,10 +1,16 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
+
+import { isArray } from 'lodash-es';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
 import { db } from '@/libs/prisma';
-import { updateArticleReqSchema } from '@/typings/article';
+import {
+  createArticleReqSchema,
+  updateArticleReqSchema,
+} from '@/typings/article';
 
 export async function getArticlesAction(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
@@ -132,4 +138,36 @@ export async function toggleArticlePublish(id: string) {
     });
     revalidatePath('/admin/article');
   }
+}
+
+export async function createArticle(formData: FormData) {
+  const parsed = createArticleReqSchema.parse({
+    title: formData.get('title'),
+    friendlyUrl: formData.get('friendlyUrl'),
+    description: formData.get('description'),
+    content: formData.get('content'),
+    published: Boolean(formData.get('published')),
+    cover: formData.get('cover'),
+    tags: isArray(formData.get('tags'))
+      ? formData.get('tags')
+      : [formData.get('tags')],
+  });
+
+  await db.article.create({
+    data: {
+      title: parsed.title,
+      friendlyUrl: parsed.friendlyUrl,
+      description: parsed.description,
+      content: parsed.content,
+      published: parsed.published,
+      cover: parsed.cover,
+      tags: {
+        connect: parsed.tags
+          ? parsed.tags.map((tagID) => ({ id: tagID }))
+          : undefined,
+      },
+    },
+  });
+
+  redirect('/admin/article');
 }
