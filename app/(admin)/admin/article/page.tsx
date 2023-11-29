@@ -9,7 +9,7 @@ import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
 import { getArticles } from '@/app/_actions/article';
 import { Pagination } from '@/components/client/pagination/pagination';
-import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants';
+import { DEFAULT_PAGE, PATHS, PLACEHOLDER_COVER } from '@/constants';
 import { formatToDate } from '@/utils';
 
 export default async function AdminArticle({
@@ -27,7 +27,7 @@ export default async function AdminArticle({
   return (
     <Flex gap={'4'} direction={'column'}>
       <Flex justify={'end'}>
-        <Link href={'/admin/create-article'}>
+        <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
           <Button color="gray" highContrast>
             <PlusIcon />
             创建文章
@@ -83,7 +83,7 @@ export default async function AdminArticle({
                     ? article.tags.map((tag) => (
                         <Link
                           key={tag.id}
-                          href={`/tags/${tag.friendlyUrl}`}
+                          href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}
                           target="_blank"
                         >
                           <Badge>{tag.name}</Badge>
@@ -101,7 +101,7 @@ export default async function AdminArticle({
               </Table.Cell>
               <Table.Cell className="!align-middle w-[200px]">
                 <Flex gap={'2'} align={'center'}>
-                  <Link href={`/admin/create-article?id=${article.id}`}>
+                  <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${article.id}`}>
                     <IconButton color="gray" highContrast>
                       <Pencil1Icon />
                     </IconButton>

@@ -1,5 +1,5 @@
-import { HttpMethod } from './http-method';
-import {
+export { HttpMethod } from './http-method';
+export {
   BILIBILI_PAGE,
   DOMAIN,
   EMAIL,
@@ -8,8 +8,8 @@ import {
   NICKNAME,
   WEBSITE,
 } from './info';
-import { authOptions } from './next-auth';
-import {
+export { authOptions } from './next-auth';
+export {
   DEFAULT_PAGE,
   DEFAULT_PAGE_SIZE,
   ENTER_CODE,
@@ -24,26 +24,4 @@ import {
   ZERO,
 } from './unknown';
 
-export {
-  EMAIL,
-  NICKNAME,
-  JUEJIN_PAGE,
-  GITHUB_PAGE,
-  BILIBILI_PAGE,
-  WEBSITE,
-  PLACEHOLDER_COVER,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_PAGE,
-  SUCCESS_CODE,
-  FAIL_CODE,
-  TRUE,
-  FALSE,
-  ZERO,
-  ENTER_CODE,
-  LATEST_ARTICLES_PAGE_SIZE,
-  MAX_PAGE_SIZE,
-  HttpMethod,
-  authOptions,
-  DOMAIN,
-  UMT_SOURCE,
-};
+export { PATHS } from './path';

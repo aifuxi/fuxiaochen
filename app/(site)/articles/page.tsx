@@ -1,11 +1,10 @@
 import { type Metadata } from 'next';
 
+import ArticleList from './article-list';
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE } from '@/constants';
 
-import ArticleList from './article-list';
-
-import { getArticlesAction } from '../_actions/article';
+import { getArticlesAction } from '../../_actions/article';
 
 export const metadata: Metadata = {
   title: '文章',

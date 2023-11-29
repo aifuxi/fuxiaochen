@@ -69,14 +69,14 @@ export default function RootLayout({
             radius="none"
           >
             {/* 侧边导航栏 */}
-            <NavbarV1 />
+            {/* <NavbarV1 /> */}
             {children}
 
             {/* 底部 footer */}
-            <Footer />
+            {/* <Footer /> */}
 
             {/* 返回顶部按钮 */}
-            <BackToTop />
+            {/* <BackToTop /> */}
           </ThemeProvider>
         </AuthProvider>
       </body>
