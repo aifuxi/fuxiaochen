@@ -1,10 +1,13 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
+import { Badge, Flex } from '@radix-ui/themes';
+
 import { PageTitle } from '@/components/rsc';
+import { PATHS } from '@/constants';
 import { cn } from '@/utils';
 
-import { getTagsWithArticleCountAction } from '../_actions/tag';
+import { getAllTags } from '../../_actions/tag';
 
 export const metadata: Metadata = {
   title: '标签',
@@ -13,7 +16,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function TagsPage() {
-  const tags = await getTagsWithArticleCountAction();
+  const tags = await getAllTags();
 
   return (
     <div className={cn('container flex flex-col h-screen space-y-8')}>
@@ -28,24 +31,15 @@ export default async function TagsPage() {
     }
 
     return (
-      <ul className={cn('flex flex-wrap  pt-16')}>
+      <Flex wrap={'wrap'} gap={'4'}>
         {tags?.map((tag) => (
-          <li key={tag.id} className="flex space-x-2 ">
-            <Link
-              className={cn(
-                'mr-4 mb-4 text-sm font-medium transition-colors',
-                'text-primary/50 hover:text-primary',
-              )}
-              href={`/tags/${tag.friendlyUrl}`}
-            >
+          <Link href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`} key={tag.id}>
+            <Badge size={'2'} color="gray" style={{ cursor: 'pointer' }}>
               {tag.name}
-              <span className={cn('text-sm font-semibold ml-2')}>
-                ({tag.articles.length ?? 0})
-              </span>
-            </Link>
-          </li>
+            </Badge>
+          </Link>
         ))}
-      </ul>
+      </Flex>
     );
   }
 }

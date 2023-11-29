@@ -12,7 +12,7 @@ import { TagsField } from './tags-field';
 import { createArticle } from '@/app/_actions/article';
 import { getAllTags } from '@/app/_actions/tag';
 
-export default async function AdminCreateArticle() {
+export default async function AdminArticleCreate() {
   const tags = await getAllTags();
 
   return (

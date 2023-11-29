@@ -1,7 +1,7 @@
 import React from 'react';
 
-import ArticleItem from '@/app/articles/article-item';
-import EmptyArticleList from '@/app/articles/empty-article-list';
+import ArticleItem from '@/app/(site)/articles/article-item';
+import EmptyArticleList from '@/app/(site)/articles/empty-article-list';
 import { Pagination } from '@/components/client/pagination/pagination';
 import { type Article } from '@/types';
 
