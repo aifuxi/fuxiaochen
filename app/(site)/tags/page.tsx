@@ -1,11 +1,10 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge, Flex } from '@radix-ui/themes';
+import { Badge, Container, Flex } from '@radix-ui/themes';
 
 import { PageTitle } from '@/components/rsc';
 import { PATHS } from '@/constants';
-import { cn } from '@/utils';
 
 import { getAllTags } from '../../_actions/tag';
 
@@ -19,10 +18,13 @@ export default async function TagsPage() {
   const tags = await getAllTags();
 
   return (
-    <div className={cn('container flex flex-col h-screen space-y-8')}>
-      <PageTitle title="标签 / Tags" />
-      {renderTagList()}
-    </div>
+    <Container size={'4'}>
+      <Flex direction={'column'} gap={'8'} className={'h-screen'}>
+        <PageTitle title="标签" />
+
+        {renderTagList()}
+      </Flex>
+    </Container>
   );
 
   function renderTagList() {
