@@ -1,15 +1,4 @@
-import { type Metadata } from 'next';
-
 import { Container, Flex, Heading } from '@radix-ui/themes';
-
-import { NICKNAME } from '@/constants';
-
-export const revalidate = 60;
-
-export const metadata: Metadata = {
-  description: `${NICKNAME}，一个正在努力的程序员。`,
-  keywords: 'F西、aifuxi',
-};
 
 export default function HomePage() {
   return (

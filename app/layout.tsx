@@ -7,7 +7,10 @@ import { WEBSITE } from '@/constants';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
-  title: `${WEBSITE}`,
+  title: {
+    template: `%s - ${WEBSITE}`,
+    default: `${WEBSITE}`,
+  },
 };
 
 export default function RootLayout({
