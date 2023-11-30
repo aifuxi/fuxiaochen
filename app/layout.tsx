@@ -1,12 +1,10 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
-import { AuthProvider, BackToTop, NavbarV1 } from '@/components/client';
+import { AuthProvider } from '@/components/client';
 import { ThemeProvider } from '@/components/client/providers';
-import { Footer } from '@/components/rsc';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.css';
-import { cn } from '@/utils';
 
 export const metadata: Metadata = {
   title: `${WEBSITE}`,
@@ -20,7 +18,7 @@ export default function RootLayout({
   session: Session;
 }) {
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning lang="zh-CN">
       <head>
         <link
           rel="apple-touch-icon"
@@ -61,12 +59,14 @@ export default function RootLayout({
         {/* 打开外部链接时，以新开tab的方式打开 */}
         <base target="_blank" />
       </head>
-      <body className={cn('debug-screens min-w-[360px]')}>
+
+      <body className={'debug-screens'}>
         <AuthProvider session={session}>
           <ThemeProvider
             accentColor="sky"
             panelBackground="solid"
             radius="none"
+            className="h-full"
           >
             {/* 侧边导航栏 */}
             {/* <NavbarV1 /> */}
