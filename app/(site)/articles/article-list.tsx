@@ -4,7 +4,6 @@ import { type Article } from '@prisma/client';
 import { Flex, Text } from '@radix-ui/themes';
 
 import ArticleItem from './article-item';
-import EmptyArticleList from './empty-article-list';
 import { Pagination } from '@/components/client/pagination/pagination';
 
 type Props = {
@@ -13,10 +12,6 @@ type Props = {
 };
 
 const ArticleList = ({ total, articles }: Props) => {
-  if (!articles?.length) {
-    return <EmptyArticleList />;
-  }
-
   return (
     <Flex direction={'column'} gap={'4'}>
       <Text size={'6'} as="p">
