@@ -5,8 +5,7 @@ import { type Metadata } from 'next';
 import { Container, Flex } from '@radix-ui/themes';
 
 import { getTagArticles, getTagByFriendlyURL } from '@/app/_actions/tag';
-import { EmptyPage } from '@/components/client';
-import { NotFound404Illustration, PageTitle } from '@/components/rsc';
+import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE } from '@/constants';
 
 import ArticleList from '../../articles/article-list';
@@ -38,17 +37,6 @@ export default async function TagDetailPage({
     friendlyURL: params.friendlyUrl,
     page: currentPage,
   });
-
-  if (!total) {
-    return (
-      <EmptyPage
-        illustration={
-          <NotFound404Illustration className="w-[320px] h-[320px] sm:w-[500px] sm:h-[500px]" />
-        }
-        title="啊噢，标签不见啦~"
-      />
-    );
-  }
 
   return (
     <Container size={'4'}>
