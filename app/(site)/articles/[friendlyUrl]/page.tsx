@@ -2,9 +2,7 @@ import { type Metadata } from 'next';
 import Link from 'next/link';
 
 import { Badge, Container, Flex } from '@radix-ui/themes';
-import { isNil } from 'lodash-es';
 
-import EmptyArticle from './empty-article';
 import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/client';
 import { PATHS, PLACEHOLDER_COVER } from '@/constants';
@@ -28,24 +26,20 @@ export default async function ArticleDetailPage({
 }) {
   const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
 
-  if (isNil(article)) {
-    return <EmptyArticle />;
-  }
-
   return (
     <Flex direction={'column'} gap={'8'} align={'center'}>
       <img
         className="w-[1500px] h-[500px] object-fill"
-        src={article.cover ?? PLACEHOLDER_COVER}
-        alt={article.title}
+        src={article?.cover ?? PLACEHOLDER_COVER}
+        alt={article?.title}
       />
 
       <Flex direction={'column'} gap={'8'} pb={'9'}>
         <Container size={'4'}>
-          <BytemdViewer content={article.content} />
+          <BytemdViewer content={article?.content ?? ''} />
 
           <Flex wrap={'wrap'} gap={'4'}>
-            {article.tags?.map((tag) => (
+            {article?.tags?.map((tag) => (
               <Link key={tag.id} href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}>
                 <Badge color="gray" size={'2'} className="!cursor-pointer">
                   {tag.name}

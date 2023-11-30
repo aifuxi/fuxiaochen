@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -11,10 +11,9 @@ import {
   LetterCaseCapitalizeIcon,
   ReaderIcon,
 } from '@radix-ui/react-icons';
-import { Badge, Button, Flex, Text } from '@radix-ui/themes';
+import { Badge, Flex, Text } from '@radix-ui/themes';
 
-import { EmptyPage } from '@/components/client';
-import { PageLoading, Unauthorized401Illustration } from '@/components/rsc';
+import { PageLoading } from '@/components/rsc';
 import { PATHS } from '@/constants';
 
 const adminNavItems: Array<{
@@ -88,23 +87,6 @@ export default function AdminLayout({
   function renderChildren() {
     if (status === 'loading') {
       return <PageLoading />;
-    }
-
-    if (!session) {
-      return (
-        <EmptyPage
-          className="h-[calc(100vh-320px)]"
-          illustration={
-            <Unauthorized401Illustration className="w-[320px] h-[320px] sm:w-[500px] sm:h-[500px]" />
-          }
-          title="达咩，请登录~"
-          bottomOptionNode={
-            <Button size={'4'} onClick={() => signIn()}>
-              去登录
-            </Button>
-          }
-        />
-      );
     }
 
     return children;
