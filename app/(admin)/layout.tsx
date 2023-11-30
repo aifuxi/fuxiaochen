@@ -50,11 +50,15 @@ export default function AdminLayout({
   return (
     <Flex>
       <Flex
-        className="w-64 h-screen  bg-gray-1"
+        className="min-w-[256px] max-w-[256px] h-screen  bg-gray-1"
         direction={'column'}
         p={'2'}
         gap={'2'}
       >
+        {session?.user?.image && (
+          <img src={session?.user?.image} alt={session?.user?.name ?? ''} />
+        )}
+
         {adminNavItems.map((el) => (
           <Link key={el.link} href={el.link}>
             <Badge
@@ -72,9 +76,7 @@ export default function AdminLayout({
       </Flex>
       <Flex
         grow={'1'}
-        px={'8'}
-        pt={'4'}
-        py={'2'}
+        p={'8'}
         direction={'column'}
         className="h-screen overflow-scroll"
       >

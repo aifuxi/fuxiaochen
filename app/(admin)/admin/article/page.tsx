@@ -3,7 +3,14 @@ import React from 'react';
 import Link from 'next/link';
 
 import { Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
-import { Badge, Button, Flex, IconButton, Table } from '@radix-ui/themes';
+import {
+  Badge,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Table,
+} from '@radix-ui/themes';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
@@ -26,6 +33,10 @@ export default async function AdminArticle({
 
   return (
     <Flex gap={'4'} direction={'column'}>
+      <Heading size={'6'} as="h4">
+        文章管理
+      </Heading>
+
       <Flex justify={'end'}>
         <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
           <Button color="gray" highContrast>

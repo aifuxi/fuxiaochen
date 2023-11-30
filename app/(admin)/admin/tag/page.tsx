@@ -1,4 +1,4 @@
-import { Flex, Table } from '@radix-ui/themes';
+import { Flex, Heading, Table } from '@radix-ui/themes';
 
 import { CreateTagButton } from './create-tag-button';
 import { DeleteTagItemButton } from './delete-tag-item-button';
@@ -22,6 +22,9 @@ export default async function AdminTag({
 
   return (
     <Flex gap={'4'} direction={'column'}>
+      <Heading size={'6'} as="h4">
+        标签管理
+      </Heading>
       <Flex justify={'end'}>
         <CreateTagButton />
       </Flex>
