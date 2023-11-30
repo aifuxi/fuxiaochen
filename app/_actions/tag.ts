@@ -27,7 +27,7 @@ export async function getTagsWithArticleCountAction() {
   return tags;
 }
 
-export async function getTagArticlesByFriendlyURLAction(params: {
+export async function getTagArticles(params: {
   friendlyURL: string;
   page: number;
 }) {
@@ -56,7 +56,7 @@ export async function getTagArticlesByFriendlyURLAction(params: {
   return { articles, total };
 }
 
-export async function getTagByFriendlyURLAction(friendlyURL: string) {
+export async function getTagByFriendlyURL(friendlyURL: string) {
   const tag = await db.tag.findUnique({
     where: {
       friendlyUrl: friendlyURL,

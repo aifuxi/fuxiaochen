@@ -1,11 +1,11 @@
 import React from 'react';
 
 import { type Article } from '@prisma/client';
-
-import { Pagination } from '@/components/client/pagination/pagination';
+import { Flex, Text } from '@radix-ui/themes';
 
 import ArticleItem from './article-item';
 import EmptyArticleList from './empty-article-list';
+import { Pagination } from '@/components/client/pagination/pagination';
 
 type Props = {
   total: number;
@@ -18,21 +18,23 @@ const ArticleList = ({ total, articles }: Props) => {
   }
 
   return (
-    <>
-      <p>
-        共<span className="font-semibold px-1">{total}</span>
-        篇文章
-      </p>
-      <ul className="flex flex-col">
+    <Flex direction={'column'} gap={'4'}>
+      <Text size={'6'} as="p">
+        共&nbsp;
+        <Text size={'6'} weight={'medium'} as="span">
+          {total}
+        </Text>
+        &nbsp;篇文章
+      </Text>
+
+      <Flex direction={'column'}>
         {articles?.map((article) => (
-          <li key={article.id}>
-            <ArticleItem article={article} />
-          </li>
+          <ArticleItem key={article.id} article={article} />
         ))}
-      </ul>
+      </Flex>
 
       <Pagination total={total} />
-    </>
+    </Flex>
   );
 };
 

@@ -1,4 +1,4 @@
-import { cn } from '@/utils';
+import { Flex, Heading } from '@radix-ui/themes';
 
 import { BarCode } from '../illustrations';
 
@@ -7,17 +7,14 @@ type Props = {
   className?: string;
 };
 
-export function PageTitle({ title, className }: Props) {
+export function PageTitle({ title }: Props) {
   return (
-    <h2
-      className={cn(
-        'flex items-center justify-between border-b pb-8 pt-16 font-extrabold',
-        'text-4xl lg:text-5xl',
-        className,
-      )}
-    >
-      <span>{title}</span>
-      <BarCode className="w-[300px] hidden md:block" />
-    </h2>
+    <Flex justify={'between'} align={'center'} pt={'8'} pb={'4'}>
+      <Heading as="h4" size={'8'}>
+        {title}
+      </Heading>
+
+      <BarCode className="w-[300px] h-12" />
+    </Flex>
   );
 }

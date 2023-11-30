@@ -1,10 +1,12 @@
 import { type Metadata } from 'next';
 
+import { Container, Flex } from '@radix-ui/themes';
+
 import ArticleList from './article-list';
 import { PageTitle } from '@/components/rsc';
 import { DEFAULT_PAGE } from '@/constants';
 
-import { getArticlesAction } from '../../_actions/article';
+import { getPublishedArticles } from '../../_actions/article';
 
 export const metadata: Metadata = {
   title: '文章',
@@ -19,15 +21,17 @@ export default async function ArticlesPage({
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-  const { articles, total } = await getArticlesAction({
+  const { articles, total } = await getPublishedArticles({
     page: currentPage,
   });
 
   return (
-    <div className="container flex flex-col space-y-8">
-      <PageTitle title="文章 / Articles" />
+    <Container size={'4'}>
+      <Flex direction={'column'} gap={'8'} pb={'8'}>
+        <PageTitle title="文章" />
 
-      <ArticleList articles={articles} total={total} />
-    </div>
+        <ArticleList articles={articles} total={total} />
+      </Flex>
+    </Container>
   );
 }
