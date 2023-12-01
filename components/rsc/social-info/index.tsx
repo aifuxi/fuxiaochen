@@ -1,46 +1,37 @@
 import Link from 'next/link';
 
+import { Flex } from '@radix-ui/themes';
+
 import { BILIBILI_PAGE, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
-import { cn } from '@/utils';
 
-import { IconBilibili, IconGithub, IconJuejin } from '../icons';
+import { IconBilibili, IconGithub, IconJuejin } from '../../icons';
 
-type Props = {
-  className?: string;
-};
-
-export function SocialInfo({ className }: Props) {
+export function SocialInfo() {
   return (
-    <div
-      className={cn(
-        'flex justify-center space-x-2 text-4xl text-gray-300',
-        className,
-      )}
-    >
+    <Flex gap={'2'}>
       <Link
         target="_blank"
         href={GITHUB_PAGE}
-        className={cn(
-          'transition-all',
-          'hover:scale-110 hover:text-gray-800  dark:hover:text-white',
-        )}
+        className={
+          'transition-all text-gray-11 hover:text-gray-12 text-3 hover:scale-110'
+        }
       >
         <IconGithub />
       </Link>
       <Link
         target="_blank"
         href={JUEJIN_PAGE}
-        className="transition-all hover:scale-110 hover:text-[#1e80ff]"
+        className="transition-all text-3 text-gray-11 hover:scale-110 hover:text-[#1e80ff]"
       >
         <IconJuejin />
       </Link>
       <Link
         target="_blank"
         href={BILIBILI_PAGE}
-        className="transition-all hover:scale-110 hover:text-[#00aeec]"
+        className="transition-all text-3 text-gray-11 hover:scale-110 hover:text-[#00aeec]"
       >
         <IconBilibili />
       </Link>
-    </div>
+    </Flex>
   );
 }
