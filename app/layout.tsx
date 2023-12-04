@@ -41,24 +41,6 @@ export default function RootLayout({
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* 防止切换主题时闪烁 */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-        (function() {
-          if (
-            localStorage.getItem('color-theme') === 'dark' ??
-            (!('color-theme' in localStorage) &&
-              window.matchMedia('(prefers-color-scheme: dark)').matches)
-          ) {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        })();
-      `,
-          }}
-        />
         {/* 打开外部链接时，以新开tab的方式打开 */}
         <base target="_blank" />
       </head>
