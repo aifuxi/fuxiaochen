@@ -8,10 +8,11 @@ import { BytemdEditor } from '@/components/client/bytemd';
 
 type Props = {
   name: string;
+  defaultValue?: string;
 };
 
-export function BytemdEditorField({ name }: Props) {
-  const [content, setContent] = React.useState('');
+export function BytemdEditorField({ name, defaultValue }: Props) {
+  const [content, setContent] = React.useState(defaultValue ?? '');
   return (
     <Flex
       gap={'1'}

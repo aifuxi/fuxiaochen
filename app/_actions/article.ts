@@ -66,9 +66,24 @@ export async function updateArticle(formData: FormData) {
     friendlyUrl: formData.get('friendlyUrl'),
     cover: formData.get('cover'),
     content: formData.get('content'),
-    published: formData.get('published'),
-    tags: formData.get('tags'),
+    published: Boolean(formData.get('published')),
+    tags: isArray(formData.getAll('tags'))
+      ? formData.getAll('tags')
+      : [formData.get('tags')],
   });
+
+  const article = await db.article.findFirst({
+    where: { id: parsed.id },
+    include: { tags: true },
+  });
+
+  const articleTagIDs = article?.tags.map((el) => el.id);
+  // 新增的 tags
+  const needConnect = parsed.tags?.filter((el) => !articleTagIDs?.includes(el));
+  // 需要移除的 tags
+  const needDisconnect = article?.tags
+    .filter((el) => !parsed.tags?.includes(el.id))
+    ?.map((el) => el.id);
 
   await db.article.update({
     data: {
@@ -79,8 +94,11 @@ export async function updateArticle(formData: FormData) {
       content: parsed.content,
       published: parsed.published,
       tags: {
-        connect: parsed.tags?.length
-          ? parsed.tags.map((tagID) => ({ id: tagID }))
+        connect: needConnect?.length
+          ? needConnect.map((tagID) => ({ id: tagID }))
+          : undefined,
+        disconnect: needDisconnect?.length
+          ? needDisconnect.map((tagID) => ({ id: tagID }))
           : undefined,
       },
     },
@@ -90,6 +108,7 @@ export async function updateArticle(formData: FormData) {
   });
 
   revalidatePath('/admin/article');
+  redirect('/admin/article');
 }
 
 export async function toggleArticlePublish(id: string) {
@@ -110,6 +129,18 @@ export async function toggleArticlePublish(id: string) {
     });
     revalidatePath('/admin/article');
   }
+}
+export async function getArticle(id: string) {
+  const article = await db.article.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      tags: true,
+    },
+  });
+
+  return article;
 }
 
 export async function createArticle(formData: FormData) {

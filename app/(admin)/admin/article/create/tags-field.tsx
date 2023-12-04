@@ -16,8 +16,10 @@ type Props = {
   name: string;
 };
 
-export function TagsField({ tags, name }: Props) {
-  const [tagIDs, setTagIDs] = useImmer(new Set<string>());
+export function TagsField({ tags, name, initialTags }: Props) {
+  const [tagIDs, setTagIDs] = useImmer(
+    new Set<string>(initialTags?.map((el) => el.id)),
+  );
 
   return (
     <Flex gap={'2'} wrap={'wrap'}>
