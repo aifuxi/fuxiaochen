@@ -93,7 +93,11 @@ export function EditForm({
                 }
               }}
             />
-            <img src={cover} className="w-full h-auto" alt={article?.title} />
+            <img
+              src={cover}
+              className="h-[300px] object-scale-down"
+              alt={article?.title}
+            />
           </Flex>
           <div>
             <Text as="div" size="2" mb="1" weight="bold">
