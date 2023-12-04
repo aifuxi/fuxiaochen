@@ -83,7 +83,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
                 }
               }}
             />
-            <img src={cover} className="w-full h-auto" alt={''} />
+            <img src={cover} className="h-[300px] object-scale-down" alt={''} />
           </Flex>
           <div>
             <Text as="div" size="2" mb="1" weight="bold">
