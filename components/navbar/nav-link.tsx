@@ -16,6 +16,7 @@ export function NavLink({ el }: { el: { label: string; link: string } }) {
     <Flex key={el.link} py="6" asChild justify={'center'} align={'center'}>
       <Link
         href={el.link}
+        target="_self"
         className={cn(
           'cursor-pointer transition-all min-w-[64px]',
           pathname === el.link ? 'bg-gray-12' : '',
