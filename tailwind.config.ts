@@ -12,6 +12,12 @@ export default {
   ],
   // your existing configuration
   presets: [radixThemePreset],
+  theme: {
+    debugScreens: {
+      position: ['bottom', 'right'],
+      ignore: ['dark'],
+    },
+  },
   plugins: [
     require('tailwindcss-animate'),
     require('@tailwindcss/typography'),
