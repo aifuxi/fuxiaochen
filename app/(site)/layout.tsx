@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <main className="flex">
       <Navbar />
-      <div className="flex-1 flex flex-col h-screen overflow-scroll">
+      <div className="flex-1 flex flex-col">
         {children}
 
         <Footer />
