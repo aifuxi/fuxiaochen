@@ -96,8 +96,8 @@ dependencies:
     specifier: 14.0.3
     version: 14.0.3(react-dom@18.2.0)(react@18.2.0)(sass@1.62.1)
   next-auth:
-    specifier: ^4.22.1
-    version: 4.22.1(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.24.5
+    version: 4.24.5(next@14.0.3)(react-dom@18.2.0)(react@18.2.0)
   next-sitemap:
     specifier: ^4.1.8
     version: 4.1.8(next@14.0.3)
@@ -6803,10 +6803,10 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: false
 
-  /next-auth@4.22.1(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-NTR3f6W7/AWXKw8GSsgSyQcDW6jkslZLH8AiZa5PQ09w1kR8uHtR9rez/E9gAq/o17+p0JYHE8QjF3RoniiObA==}
+  /next-auth@4.24.5(next@14.0.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-3RafV3XbfIKk6rF6GlLE4/KxjTcuMCifqrmD+98ejFq73SRoj2rmzoca8u764977lH/Q7jo6Xu6yM+Re1Mz/Og==}
     peerDependencies:
-      next: ^12.2.5 || ^13
+      next: ^12.2.5 || ^13 || ^14
       nodemailer: ^6.6.5
       react: ^17.0.2 || ^18
       react-dom: ^17.0.2 || ^18
