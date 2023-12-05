@@ -1,5 +1,3 @@
-import { Heading } from '@radix-ui/themes';
-
 export default function HomePage() {
   return (
     <div className="container">
@@ -10,9 +8,9 @@ export default function HomePage() {
           className={'w-full h-auto'}
         />
 
-        <Heading as="h2" size={'9'}>
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
           F西，努力做一个更好的程序员。
-        </Heading>
+        </h1>
       </div>
     </div>
   );
