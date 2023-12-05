@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Flex } from '@radix-ui/themes';
-
 import { NavLink } from './nav-link';
 import { PATHS } from '@/constants/path';
 
@@ -34,11 +32,11 @@ export function Navbar() {
     <nav className="w-32 h-screen flex flex-col items-center pt-24">
       <Logo />
 
-      <Flex direction={'column'} gap={'4'} justify={'center'} mt={'9'}>
+      <div className="flex flex-col justify-center gap-4 mt-9">
         {navItems.map((el) => {
           return <NavLink key={el.link} el={el} />;
         })}
-      </Flex>
+      </div>
     </nav>
   );
 }

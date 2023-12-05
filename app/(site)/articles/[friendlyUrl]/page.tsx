@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge, Container, Flex } from '@radix-ui/themes';
+import { Badge, Container } from '@radix-ui/themes';
 
 import { getArticleByFriendlyURL } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/client';
@@ -27,18 +27,18 @@ export default async function ArticleDetailPage({
   const article = await getArticleByFriendlyURL(params.friendlyUrl);
 
   return (
-    <Flex direction={'column'} gap={'8'} align={'center'}>
+    <div className="flex flex-col gap-8 items-center">
       <img
         className="w-[1500px] h-[500px] object-fill"
         src={article?.cover ?? PLACEHOLDER_COVER}
         alt={article?.title}
       />
 
-      <Flex direction={'column'} gap={'8'} pb={'9'}>
+      <div className="flex flex-col gap-8 pb-9">
         <Container size={'4'}>
           <BytemdViewer content={article?.content ?? ''} />
 
-          <Flex wrap={'wrap'} gap={'4'}>
+          <div className="flex flex-wrap gap-4">
             {article?.tags?.map((tag) => (
               <Link key={tag.id} href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}>
                 <Badge color="gray" size={'2'} className="!cursor-pointer">
@@ -46,9 +46,9 @@ export default async function ArticleDetailPage({
                 </Badge>
               </Link>
             ))}
-          </Flex>
+          </div>
         </Container>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 }

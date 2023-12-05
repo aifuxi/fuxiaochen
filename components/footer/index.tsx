@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Flex, Link as RadixLink, Separator, Text } from '@radix-ui/themes';
+import { Link as RadixLink, Separator, Text } from '@radix-ui/themes';
 
 import { WEBSITE } from '@/constants/info';
 
@@ -8,7 +8,7 @@ import { SocialInfo } from '../rsc/social-info';
 
 export function Footer() {
   return (
-    <Flex direction={'column'} align={'center'} gap={'1'} py={'8'}>
+    <div className="flex flex-col items-center gap-1 py-8">
       <SocialInfo />
       <RadixLink asChild color="gray">
         <Link
@@ -16,16 +16,16 @@ export function Footer() {
           target="_blank"
           rel="nofollow"
         >
-          <Flex align={'center'} gap={'2'}>
+          <div className="flex items-center gap-2">
             <img src="/images/beian.png" alt="gongan" className="w-4 h-4" />
             <Text size={'1'} color="gray">
               赣公网安备 36100202000364号
             </Text>
-          </Flex>
+          </div>
         </Link>
       </RadixLink>
 
-      <Flex align={'center'} gap={'2'}>
+      <div className="flex items-center gap-2">
         <Text
           size={'1'}
           color="gray"
@@ -43,7 +43,7 @@ export function Footer() {
             </Text>
           </Link>
         </RadixLink>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 }

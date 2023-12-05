@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { Flex, Heading, Link as RadixLink } from '@radix-ui/themes';
+import { Heading, Link as RadixLink } from '@radix-ui/themes';
 
 import { CreateForm } from './create-form';
 import { getAllTags } from '@/app/_actions/tag';
@@ -10,8 +10,8 @@ export default async function AdminArticleCreate() {
   const tags = await getAllTags();
 
   return (
-    <Flex gap={'4'} direction={'column'}>
-      <Flex gap={'4'} align={'center'}>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4">
         <RadixLink asChild color="gray">
           <Link href={PATHS.ADMIN_ARTICLE}>
             <Heading size={'6'} as="h4">
@@ -26,9 +26,9 @@ export default async function AdminArticleCreate() {
         <Heading size={'6'} as="h4">
           创建文章
         </Heading>
-      </Flex>
+      </div>
 
       <CreateForm tags={tags} />
-    </Flex>
+    </div>
   );
 }

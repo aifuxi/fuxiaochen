@@ -1,6 +1,6 @@
 import { type Metadata } from 'next';
 
-import { Container, Flex } from '@radix-ui/themes';
+import { Container } from '@radix-ui/themes';
 
 import ArticleList from './article-list';
 import { PageTitle } from '@/components/rsc';
@@ -27,11 +27,11 @@ export default async function ArticlesPage({
 
   return (
     <Container size={'4'}>
-      <Flex direction={'column'} gap={'8'} pb={'8'}>
+      <div className="flex flex-col gap-8 pb-8">
         <PageTitle title="文章" />
 
         <ArticleList articles={articles} total={total} />
-      </Flex>
+      </div>
     </Container>
   );
 }

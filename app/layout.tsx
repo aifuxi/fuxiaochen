@@ -53,15 +53,7 @@ export default function RootLayout({
             radius="none"
             className="h-full"
           >
-            {/* 侧边导航栏 */}
-            {/* <NavbarV1 /> */}
             {children}
-
-            {/* 底部 footer */}
-            {/* <Footer /> */}
-
-            {/* 返回顶部按钮 */}
-            {/* <BackToTop /> */}
           </ThemeProvider>
         </AuthProvider>
       </body>

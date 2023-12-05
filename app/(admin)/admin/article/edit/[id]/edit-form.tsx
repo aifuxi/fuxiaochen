@@ -5,7 +5,6 @@ import React from 'react';
 import { type Article, type Tag } from '@prisma/client';
 import {
   Button,
-  Flex,
   Switch,
   Text,
   TextArea,
@@ -30,13 +29,13 @@ export function EditForm({
 
   return (
     <form action={updateArticle}>
-      <Flex direction={'column'} gap={'4'}>
+      <div className="flex flex-col gap-4">
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
           <Button type="submit" className="!w-full" size={'4'}>
             保存
           </Button>
         </div>
-        <Flex direction={'column'} gap={'4'}>
+        <div className="flex flex-col gap-4">
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
               标题
@@ -70,7 +69,7 @@ export function EditForm({
               autoComplete="off"
             />
           </label>
-          <Flex direction={'column'} gap={'1'}>
+          <div className="flex flex-col gap-1">
             <Text as="div" size="2" weight="bold">
               封面
             </Text>
@@ -98,7 +97,7 @@ export function EditForm({
               className="h-[300px] object-scale-down"
               alt={article?.title}
             />
-          </Flex>
+          </div>
           <div>
             <Text as="div" size="2" mb="1" weight="bold">
               是否发布
@@ -124,8 +123,8 @@ export function EditForm({
           </div>
 
           <input type="hidden" name="id" value={article?.id} />
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </form>
   );
 }

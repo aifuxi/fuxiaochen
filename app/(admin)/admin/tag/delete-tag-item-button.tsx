@@ -2,11 +2,11 @@
 
 import React from 'react';
 
+import { type Tag } from '@prisma/client';
 import { TrashIcon } from '@radix-ui/react-icons';
-import { AlertDialog, Button, Flex, IconButton } from '@radix-ui/themes';
+import { AlertDialog, Button, IconButton } from '@radix-ui/themes';
 
 import { deleteTag } from '@/app/_actions/tag';
-import type { Tag } from '@/typings/params';
 
 type Props = {
   tag: Tag;
@@ -24,7 +24,7 @@ export function DeleteTagItemButton({ tag }: Props) {
         <AlertDialog.Title>删除标签</AlertDialog.Title>
         <AlertDialog.Description>确定要删除该标签吗？</AlertDialog.Description>
 
-        <Flex gap="3" mt="4" justify="end">
+        <div className="flex gap-3 mt-4 justify-end">
           <AlertDialog.Cancel>
             <Button variant="soft" color="gray">
               取消
@@ -41,7 +41,7 @@ export function DeleteTagItemButton({ tag }: Props) {
               删除
             </Button>
           </AlertDialog.Action>
-        </Flex>
+        </div>
       </AlertDialog.Content>
     </AlertDialog.Root>
   );
