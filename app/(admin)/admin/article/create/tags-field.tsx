@@ -1,10 +1,9 @@
 'use client';
 
-import { Badge, Flex } from '@radix-ui/themes';
+import { type Tag } from '@prisma/client';
+import { Badge } from '@radix-ui/themes';
 import { enableMapSet } from 'immer';
 import { useImmer } from 'use-immer';
-
-import { type Tag } from '@/typings/params';
 
 import { CreateTagButton } from '../../tag/create-tag-button';
 
@@ -22,10 +21,10 @@ export function TagsField({ tags, name, initialTags }: Props) {
   );
 
   return (
-    <Flex gap={'2'} wrap={'wrap'}>
+    <div className="flex flex-wrap gap-2">
       {tags?.map((v) => {
         return (
-          <Flex gap={'2'} key={v.id}>
+          <div key={v.id} className="flex gap-2">
             <label>
               <Badge
                 variant={tagIDs.has(v.id) ? 'solid' : 'soft'}
@@ -49,11 +48,11 @@ export function TagsField({ tags, name, initialTags }: Props) {
                 {v.name}
               </Badge>
             </label>
-          </Flex>
+          </div>
         );
       })}
 
       <CreateTagButton />
-    </Flex>
+    </div>
   );
 }

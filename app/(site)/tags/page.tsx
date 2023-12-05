@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge, Container, Flex } from '@radix-ui/themes';
+import { Badge, Container } from '@radix-ui/themes';
 
 import { PageTitle } from '@/components/rsc';
 import { PATHS } from '@/constants';
@@ -19,11 +19,11 @@ export default async function TagsPage() {
 
   return (
     <Container size={'4'}>
-      <Flex direction={'column'} gap={'8'} className={'h-screen'}>
+      <div className="h-screen flex flex-col gap-8 pb-8">
         <PageTitle title="标签" />
 
         {renderTagList()}
-      </Flex>
+      </div>
     </Container>
   );
 
@@ -33,7 +33,7 @@ export default async function TagsPage() {
     }
 
     return (
-      <Flex wrap={'wrap'} gap={'4'}>
+      <div className="flex flex-wrap gap-4">
         {tags?.map((tag) => (
           <Link href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`} key={tag.id}>
             <Badge size={'2'} color="gray" style={{ cursor: 'pointer' }}>
@@ -41,7 +41,7 @@ export default async function TagsPage() {
             </Badge>
           </Link>
         ))}
-      </Flex>
+      </div>
     );
   }
 }

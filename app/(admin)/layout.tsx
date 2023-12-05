@@ -11,7 +11,7 @@ import {
   LetterCaseCapitalizeIcon,
   ReaderIcon,
 } from '@radix-ui/react-icons';
-import { Badge, Flex, Text } from '@radix-ui/themes';
+import { Badge, Text } from '@radix-ui/themes';
 
 import { PageLoading } from '@/components/rsc';
 import { PATHS } from '@/constants';
@@ -47,13 +47,8 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   return (
-    <Flex>
-      <Flex
-        className="min-w-[256px] max-w-[256px] h-screen  bg-gray-1"
-        direction={'column'}
-        p={'2'}
-        gap={'2'}
-      >
+    <div className="flex">
+      <div className="min-w-[256px] max-w-[256px] h-screen  bg-gray-1 flex-col flex p-2 gap-2">
         {session?.user?.image && (
           <img src={session?.user?.image} alt={session?.user?.name ?? ''} />
         )}
@@ -72,16 +67,11 @@ export default function AdminLayout({
             </Badge>
           </Link>
         ))}
-      </Flex>
-      <Flex
-        grow={'1'}
-        p={'8'}
-        direction={'column'}
-        className="h-screen overflow-scroll"
-      >
+      </div>
+      <div className="h-screen overflow-scroll flex flex-1 p-8 flex-col">
         {renderChildren()}
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   );
 
   function renderChildren() {

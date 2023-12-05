@@ -5,7 +5,6 @@ import React from 'react';
 import { type Tag } from '@prisma/client';
 import {
   Button,
-  Flex,
   Switch,
   Text,
   TextArea,
@@ -23,13 +22,13 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
 
   return (
     <form action={createArticle}>
-      <Flex direction={'column'} gap={'4'}>
+      <div className="flex flex-col gap-4">
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
           <Button type="submit" className="!w-full" size={'4'}>
             创建
           </Button>
         </div>
-        <Flex direction={'column'} gap={'4'}>
+        <div className="flex flex-col gap-4">
           <label>
             <Text as="div" size="2" mb="1" weight="bold">
               标题
@@ -60,7 +59,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
               autoComplete="off"
             />
           </label>
-          <Flex direction={'column'} gap={'1'}>
+          <div className="flex flex-col gap-1">
             <Text as="div" size="2" weight="bold">
               封面
             </Text>
@@ -84,7 +83,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
               }}
             />
             <img src={cover} className="h-[300px] object-scale-down" alt={''} />
-          </Flex>
+          </div>
           <div>
             <Text as="div" size="2" mb="1" weight="bold">
               是否发布
@@ -103,8 +102,8 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
             </Text>
             <BytemdEditorField name="content" />
           </div>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </form>
   );
 }

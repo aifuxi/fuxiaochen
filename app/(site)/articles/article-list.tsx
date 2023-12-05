@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { type Article } from '@prisma/client';
-import { Flex, Text } from '@radix-ui/themes';
+import { Text } from '@radix-ui/themes';
 
 import ArticleItem from './article-item';
 import { Pagination } from '@/components/client/pagination/pagination';
@@ -13,7 +13,7 @@ type Props = {
 
 const ArticleList = ({ total, articles }: Props) => {
   return (
-    <Flex direction={'column'} gap={'4'}>
+    <div className="flex flex-col gap-4">
       <Text size={'6'} as="p">
         共&nbsp;
         <Text size={'6'} weight={'medium'} as="span">
@@ -22,14 +22,14 @@ const ArticleList = ({ total, articles }: Props) => {
         &nbsp;篇文章
       </Text>
 
-      <Flex direction={'column'}>
+      <div className="flex flex-col">
         {articles?.map((article) => (
           <ArticleItem key={article.id} article={article} />
         ))}
-      </Flex>
+      </div>
 
       <Pagination total={total} />
-    </Flex>
+    </div>
   );
 };
 

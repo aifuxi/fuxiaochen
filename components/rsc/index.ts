@@ -14,5 +14,4 @@ export {
 export { PageLoading, SpinLoading } from './loading';
 export { Logo } from '../logo';
 export { PageTitle } from './page-title';
-export { Pagination } from './pagination';
 export { SocialInfo } from './social-info';

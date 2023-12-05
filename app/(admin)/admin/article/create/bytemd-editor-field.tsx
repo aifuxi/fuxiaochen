@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import { Flex } from '@radix-ui/themes';
-
 import { BytemdEditor } from '@/components/client/bytemd';
 
 type Props = {
@@ -14,12 +12,7 @@ type Props = {
 export function BytemdEditorField({ name, defaultValue }: Props) {
   const [content, setContent] = React.useState(defaultValue ?? '');
   return (
-    <Flex
-      gap={'1'}
-      direction={'column'}
-      id="aifuxi-content-editor"
-      width={'100%'}
-    >
+    <div id="aifuxi-content-editor" className="w-full flex flex-col gap-1">
       <BytemdEditor
         content={content}
         setContent={(v) => {
@@ -27,6 +20,6 @@ export function BytemdEditorField({ name, defaultValue }: Props) {
         }}
       />
       <input type="hidden" name={name} value={content} />
-    </Flex>
+    </div>
   );
 }

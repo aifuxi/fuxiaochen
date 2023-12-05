@@ -1,4 +1,4 @@
-import { Flex, Heading, Table } from '@radix-ui/themes';
+import { Heading, Table } from '@radix-ui/themes';
 
 import { CreateTagButton } from './create-tag-button';
 import { DeleteTagItemButton } from './delete-tag-item-button';
@@ -21,13 +21,13 @@ export default async function AdminTag({
   });
 
   return (
-    <Flex gap={'4'} direction={'column'}>
+    <div className="flex flex-col gap-4">
       <Heading size={'6'} as="h4">
         标签管理
       </Heading>
-      <Flex justify={'end'}>
+      <div className="flex justify-end">
         <CreateTagButton />
-      </Flex>
+      </div>
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
@@ -56,10 +56,10 @@ export default async function AdminTag({
                 {formatToDate(new Date(tag.updatedAt))}
               </Table.Cell>
               <Table.Cell className="!align-middle !h-rx-9">
-                <Flex gap={'2'} align={'center'}>
+                <div className="flex gap-2 items-center">
                   <EditTagButton tag={tag} />
                   <DeleteTagItemButton tag={tag} />
-                </Flex>
+                </div>
               </Table.Cell>
             </Table.Row>
           ))}
@@ -67,6 +67,6 @@ export default async function AdminTag({
       </Table.Root>
 
       <Pagination total={total} />
-    </Flex>
+    </div>
   );
 }
