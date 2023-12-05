@@ -5,7 +5,8 @@ import Image from 'next/image';
 
 import { Container } from '@radix-ui/themes';
 
-import { PageTitle, SocialInfo } from '@/components/rsc';
+import { PageTitle } from '@/components/page-title';
+import { SocialInfo } from '@/components/social-info';
 import { NICKNAME } from '@/constants';
 import { cn } from '@/utils';
 

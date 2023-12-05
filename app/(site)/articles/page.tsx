@@ -3,7 +3,7 @@ import { type Metadata } from 'next';
 import { Container } from '@radix-ui/themes';
 
 import ArticleList from './article-list';
-import { PageTitle } from '@/components/rsc';
+import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants';
 
 import { getPublishedArticles } from '../../_actions/article';

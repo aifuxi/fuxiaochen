@@ -1,8 +1,8 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
-import { AuthProvider } from '@/components/client';
-import { ThemeProvider } from '@/components/client/providers';
+import { AuthProvider } from '@/components/providers';
+import { ThemeProvider } from '@/components/providers';
 import { WEBSITE } from '@/constants';
 import '@/styles/global.css';
 

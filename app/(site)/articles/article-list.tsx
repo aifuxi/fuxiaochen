@@ -4,7 +4,7 @@ import { type Article } from '@prisma/client';
 import { Text } from '@radix-ui/themes';
 
 import ArticleItem from './article-item';
-import { Pagination } from '@/components/client/pagination/pagination';
+import { Pagination } from '@/components/pagination/pagination';
 
 type Props = {
   total: number;

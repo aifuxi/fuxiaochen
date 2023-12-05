@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { BytemdEditor } from '@/components/client/bytemd';
+import { BytemdEditor } from '@/components/bytemd';
 
 type Props = {
   name: string;

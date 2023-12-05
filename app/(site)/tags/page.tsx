@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { Badge, Container } from '@radix-ui/themes';
 
-import { PageTitle } from '@/components/rsc';
+import { PageTitle } from '@/components/page-title';
 import { PATHS } from '@/constants';
 
 import { getAllTags } from '../../_actions/tag';
