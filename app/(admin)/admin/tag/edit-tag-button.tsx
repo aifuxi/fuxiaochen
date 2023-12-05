@@ -2,14 +2,7 @@
 
 import { type Tag } from '@prisma/client';
 import { Pencil1Icon } from '@radix-ui/react-icons';
-import {
-  Button,
-  Dialog,
-  Flex,
-  IconButton,
-  Text,
-  TextField,
-} from '@radix-ui/themes';
+import { Button, Dialog, IconButton, Text, TextField } from '@radix-ui/themes';
 
 import { updateTag } from '@/app/_actions/tag';
 
@@ -28,7 +21,7 @@ export function EditTagButton({ tag }: Props) {
       <Dialog.Content>
         <Dialog.Title>编辑标签</Dialog.Title>
         <form action={updateTag}>
-          <Flex direction="column" gap="3">
+          <div className="flex flex-col gap-3">
             <label>
               <Text as="div" size="2" mb="1" weight="bold">
                 名称
@@ -52,8 +45,8 @@ export function EditTagButton({ tag }: Props) {
               />
             </label>
             <input type="hidden" name="id" value={tag.id} />
-          </Flex>
-          <Flex gap="3" mt="4" justify="end">
+          </div>
+          <div className="flex gap-3 mt-4 justify-end">
             <Dialog.Close>
               <Button variant="soft" color="gray">
                 取消
@@ -64,7 +57,7 @@ export function EditTagButton({ tag }: Props) {
                 保存
               </Button>
             </Dialog.Close>
-          </Flex>
+          </div>
         </form>
       </Dialog.Content>
     </Dialog.Root>

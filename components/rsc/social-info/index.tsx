@@ -1,14 +1,12 @@
 import Link from 'next/link';
 
-import { Flex } from '@radix-ui/themes';
-
 import { BILIBILI_PAGE, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 
 import { IconBilibili, IconGithub, IconJuejin } from '../../icons';
 
 export function SocialInfo() {
   return (
-    <Flex gap={'2'}>
+    <div className="flex gap-2">
       <Link
         target="_blank"
         href={GITHUB_PAGE}
@@ -32,6 +30,6 @@ export function SocialInfo() {
       >
         <IconBilibili />
       </Link>
-    </Flex>
+    </div>
   );
 }

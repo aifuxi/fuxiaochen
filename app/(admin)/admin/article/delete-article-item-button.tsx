@@ -4,7 +4,7 @@ import React from 'react';
 
 import { type Article } from '@prisma/client';
 import { TrashIcon } from '@radix-ui/react-icons';
-import { AlertDialog, Button, Flex, IconButton } from '@radix-ui/themes';
+import { AlertDialog, Button, IconButton } from '@radix-ui/themes';
 
 import { deleteArticle } from '@/app/_actions/article';
 
@@ -24,7 +24,7 @@ export function DeleteArticleItemButton({ article }: Props) {
         <AlertDialog.Title>删除文章</AlertDialog.Title>
         <AlertDialog.Description>确定要删除该文章吗？</AlertDialog.Description>
 
-        <Flex gap="3" mt="4" justify="end">
+        <div className="flex gap-3 mt-4 justify-end">
           <AlertDialog.Cancel>
             <Button variant="soft" color="gray">
               取消
@@ -41,7 +41,7 @@ export function DeleteArticleItemButton({ article }: Props) {
               删除
             </Button>
           </AlertDialog.Action>
-        </Flex>
+        </div>
       </AlertDialog.Content>
     </AlertDialog.Root>
   );

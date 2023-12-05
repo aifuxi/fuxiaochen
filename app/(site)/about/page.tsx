@@ -3,7 +3,7 @@ import React from 'react';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 
-import { Container, Flex } from '@radix-ui/themes';
+import { Container } from '@radix-ui/themes';
 
 import { PageTitle, SocialInfo } from '@/components/rsc';
 import { NICKNAME } from '@/constants';
@@ -16,10 +16,10 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <Container size={'4'}>
-      <Flex direction={'column'} gap={'8'} pb={'9'}>
+      <div className="flex flex-col gap-8 pb-9">
         <PageTitle title="关于" />
 
-        <Flex direction={'column'} gap={'2'}>
+        <div className="flex flex-col gap-2">
           <Image
             src="https://aifuxi.oss-cn-shanghai.aliyuncs.com/self/avatar.jpeg"
             width={180}
@@ -35,7 +35,7 @@ export default function AboutPage() {
           <div className={cn('w-full text-right italic text-xs')}>
             Forked from 大爱仙尊 - 古月方源
           </div>
-        </Flex>
+        </div>
 
         <SocialInfo />
 
@@ -75,7 +75,7 @@ export default function AboutPage() {
             为主，顺带着写点 <code>Node.js</code> 做 BFF 。
           </p>
         </div>
-      </Flex>
+      </div>
     </Container>
   );
 }

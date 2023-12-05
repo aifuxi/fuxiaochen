@@ -3,14 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 
 import { Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
-import {
-  Badge,
-  Button,
-  Flex,
-  Heading,
-  IconButton,
-  Table,
-} from '@radix-ui/themes';
+import { Badge, Button, Heading, IconButton, Table } from '@radix-ui/themes';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
@@ -32,19 +25,19 @@ export default async function AdminArticle({
   });
 
   return (
-    <Flex gap={'4'} direction={'column'}>
+    <div className="flex flex-col gap-4">
       <Heading size={'6'} as="h4">
         文章管理
       </Heading>
 
-      <Flex justify={'end'}>
+      <div className="flex justify-end">
         <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
           <Button color="gray" highContrast>
             <PlusIcon />
             创建文章
           </Button>
         </Link>
-      </Flex>
+      </div>
       <Table.Root variant="surface">
         <Table.Header>
           <Table.Row>
@@ -89,7 +82,7 @@ export default async function AdminArticle({
                 {article.description}
               </Table.Cell>
               <Table.Cell className={'!align-middle  w-[200px]'}>
-                <Flex gap="2">
+                <div className="flex gap-2">
                   {article.tags?.length
                     ? article.tags.map((tag) => (
                         <Link
@@ -101,7 +94,7 @@ export default async function AdminArticle({
                         </Link>
                       ))
                     : '-'}
-                </Flex>
+                </div>
               </Table.Cell>
               <Table.Cell className="!align-middle  w-[200px]">
                 {formatToDate(new Date(article.createdAt))}
@@ -111,14 +104,14 @@ export default async function AdminArticle({
                 <TogglePublishSwitch article={article} />
               </Table.Cell>
               <Table.Cell className="!align-middle w-[200px]">
-                <Flex gap={'2'} align={'center'}>
+                <div className="flex items-center gap-2">
                   <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${article.id}`}>
                     <IconButton color="gray" highContrast>
                       <Pencil1Icon />
                     </IconButton>
                   </Link>
                   <DeleteArticleItemButton article={article} />
-                </Flex>
+                </div>
               </Table.Cell>
             </Table.Row>
           ))}
@@ -126,6 +119,6 @@ export default async function AdminArticle({
       </Table.Root>
 
       <Pagination total={total} />
-    </Flex>
+    </div>
   );
 }

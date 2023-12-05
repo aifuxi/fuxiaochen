@@ -40,7 +40,7 @@ export default async function TagDetailPage({
 
   return (
     <Container size={'4'}>
-      <Flex direction={'column'} gap={'8'} pb={'8'}>
+      <Flex className="flex flex-col gap-8 pb-8">
         <PageTitle title={tag?.name ?? '-'} />
 
         <ArticleList articles={articles} total={total} />

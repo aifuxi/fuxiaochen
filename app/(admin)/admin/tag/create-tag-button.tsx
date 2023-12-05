@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { PlusIcon } from '@radix-ui/react-icons';
-import { Button, Dialog, Flex, Text, TextField } from '@radix-ui/themes';
+import { Button, Dialog, Text, TextField } from '@radix-ui/themes';
 
 import { createTag } from '@/app/_actions/tag';
 
@@ -19,7 +19,7 @@ export function CreateTagButton() {
       <Dialog.Content>
         <Dialog.Title>创建标签</Dialog.Title>
         <form action={createTag}>
-          <Flex direction="column" gap="3">
+          <div className="flex flex-col gap-3">
             <label>
               <Text as="div" size="2" mb="1" weight="bold">
                 名称
@@ -42,8 +42,8 @@ export function CreateTagButton() {
                 autoComplete="off"
               />
             </label>
-          </Flex>
-          <Flex gap="3" mt="4" justify="end">
+          </div>
+          <div className="flex gap-3 mt-4 justify-end">
             <Dialog.Close>
               <Button variant="soft" color="gray">
                 取消
@@ -54,7 +54,7 @@ export function CreateTagButton() {
                 创建
               </Button>
             </Dialog.Close>
-          </Flex>
+          </div>
         </form>
       </Dialog.Content>
     </Dialog.Root>
