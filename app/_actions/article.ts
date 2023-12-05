@@ -12,7 +12,7 @@ import {
   updateArticleReqSchema,
 } from '@/typings/article';
 
-export async function getArticleByFriendlyURLAction(friendlyURL: string) {
+export async function getArticleByFriendlyURL(friendlyURL: string) {
   const article = await db.article.findUnique({
     where: {
       friendlyUrl: friendlyURL,

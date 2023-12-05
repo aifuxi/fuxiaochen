@@ -8,7 +8,7 @@ import path from 'path';
 
 import { authOptions } from '@/constants';
 import { aliOSS } from '@/libs/ali-oss';
-import type { URLStruct } from '@/types';
+import type { URLStruct } from '@/typings/params';
 import {
   checkPermission,
   createFailResponse,

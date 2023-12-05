@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { WEBSITE } from '@/constants';
-import { type GeneralResponse, type TotalResponse } from '@/types';
+import { type GeneralResponse, type TotalResponse } from '@/typings/params';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

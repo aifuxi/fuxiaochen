@@ -4,7 +4,7 @@ import { Badge, Flex } from '@radix-ui/themes';
 import { enableMapSet } from 'immer';
 import { useImmer } from 'use-immer';
 
-import { type Tag } from '@/types';
+import { type Tag } from '@/typings/params';
 
 import { CreateTagButton } from '../../tag/create-tag-button';
 

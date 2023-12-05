@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { Badge, Container, Flex } from '@radix-ui/themes';
 
-import { getArticleByFriendlyURLAction } from '@/app/_actions/article';
+import { getArticleByFriendlyURL } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/client';
 import { PATHS, PLACEHOLDER_COVER } from '@/constants';
 
@@ -12,7 +12,7 @@ export async function generateMetadata({
 }: {
   params: { friendlyUrl: string };
 }): Promise<Metadata> {
-  const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
+  const article = await getArticleByFriendlyURL(params.friendlyUrl);
   const title = article?.title ?? '文章未找到';
   return {
     title,
@@ -24,7 +24,7 @@ export default async function ArticleDetailPage({
 }: {
   params: { friendlyUrl: string };
 }) {
-  const article = await getArticleByFriendlyURLAction(params.friendlyUrl);
+  const article = await getArticleByFriendlyURL(params.friendlyUrl);
 
   return (
     <Flex direction={'column'} gap={'8'} align={'center'}>

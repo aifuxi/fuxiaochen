@@ -20,7 +20,6 @@ export {
   PLACEHOLDER_COVER,
   SUCCESS_CODE,
   TRUE,
-  UMT_SOURCE,
   ZERO,
 } from './unknown';
 
