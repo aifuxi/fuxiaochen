@@ -20,12 +20,12 @@
 /* USE IMPORT TO IMPORT YOUR CUSTOMER STYLE */
 @import './scrollbar.css';
 @import './tomorrow-font.css';
+@import './poppins-font.css';
 @import './bytemd.css';
 
 @import '@radix-ui/themes/styles.css';
-
+@import './theme-config.css';
 /* Make sure `@import` statements must come first 👆 */
-
 /* If you are using @layer @apply or other tailwindcss nested declarations,
    maker sure enable 'tailwindcss/nesting' in your PostCSS configuration
 */

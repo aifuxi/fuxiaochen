@@ -14,35 +14,3 @@
 .medium-zoom-image--opened {
   z-index: 10;
 }
-
-.markdown-body pre {
-  position: relative;
-  background-color: hsl(var(--primary-foreground));
-  border-radius: 0 !important;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% calc(100% - var(--cyberpunk-clip)),
-    calc(100% - var(--cyberpunk-clip)) 100%,
-    0 100%
-  );
-}
-
-pre > code[class*='language-'] {
-  position: relative;
-  background-color: hsl(var(--primary-foreground));
-  color: hsl(var(--primary));
-}
-
-pre::before {
-  position: absolute;
-  content: attr(data-language);
-  background-color: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  bottom: 0;
-  right: 0;
-  z-index: 10;
-  display: inline-flex;
-  padding: 0.2em 0.5em;
-  align-items: center;
-}
