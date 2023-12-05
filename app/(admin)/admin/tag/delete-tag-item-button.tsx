@@ -6,7 +6,7 @@ import { TrashIcon } from '@radix-ui/react-icons';
 import { AlertDialog, Button, Flex, IconButton } from '@radix-ui/themes';
 
 import { deleteTag } from '@/app/_actions/tag';
-import type { Tag } from '@/types';
+import type { Tag } from '@/typings/params';
 
 type Props = {
   tag: Tag;

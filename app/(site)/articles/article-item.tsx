@@ -4,7 +4,7 @@ import { ArrowRightIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Flex, Heading, Text } from '@radix-ui/themes';
 
 import { PATHS, PLACEHOLDER_COVER } from '@/constants';
-import { type Article } from '@/types';
+import { type Article } from '@/typings/params';
 import { cn, formatToDate } from '@/utils';
 
 type Props = {
