@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { BILIBILI_PAGE, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 
-import { IconBilibili, IconGithub, IconJuejin } from '../../icons';
+import { IconBilibili, IconGithub, IconJuejin } from '../icons';
 
 export function SocialInfo() {
   return (

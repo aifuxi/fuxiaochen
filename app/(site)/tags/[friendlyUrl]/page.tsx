@@ -5,7 +5,7 @@ import { type Metadata } from 'next';
 import { Container, Flex } from '@radix-ui/themes';
 
 import { getTagArticles, getTagByFriendlyURL } from '@/app/_actions/tag';
-import { PageTitle } from '@/components/rsc';
+import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants';
 
 import ArticleList from '../../articles/article-list';
