@@ -1,3 +1,5 @@
+import { fontFamily } from 'tailwindcss/defaultTheme';
+
 import { type Config } from 'tailwindcss';
 
 export default {
@@ -62,7 +64,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        // sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: ['Poppins', 'PingFang SC', ...fontFamily.sans],
       },
       keyframes: {
         'accordion-down': {
