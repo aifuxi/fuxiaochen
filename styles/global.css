@@ -1,34 +1,13 @@
-/* Before */
-
-/*  don't use this
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*/
-
-/* After, when you set 'postcss-import' your PostCSS configuration,
-   use @import 'tailwindcss/xxx',  
-   don't use @tailwind xxx   */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
 
 @import 'bytemd/dist/index.css';
 @import 'highlight.js/styles/panda-syntax-dark.css';
 
-/* DO NOT DEFINE ANY REGULAR CSS IN THIS FILE */
-/* USE IMPORT TO IMPORT YOUR CUSTOMER STYLE */
-@import './scrollbar.css';
-@import './tomorrow-font.css';
 @import './poppins-font.css';
 @import './bytemd.css';
 
-@import '@radix-ui/themes/styles.css';
-@import './theme-config.css';
-/* Make sure `@import` statements must come first 👆 */
-/* If you are using @layer @apply or other tailwindcss nested declarations,
-   maker sure enable 'tailwindcss/nesting' in your PostCSS configuration
-*/
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -51,10 +30,6 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0rem;
-
-    --small-cyberpunk-clip: 4px;
-    --cyberpunk-clip: 8px;
-    --large-cyberpunk-clip: 32px;
   }
 
   .dark {
@@ -77,5 +52,16 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
