@@ -1,9 +1,0 @@
-/* theme-config.css */
-.radix-themes {
-  --default-font-family: Poppins, 'PingFang SC', -apple-system,
-    BlinkMacSystemFont, 'Segoe UI (Custom)', Roboto, 'Helvetica Neue', system-ui,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
-
-  --code-font-family: 'Jetbrains Mono', 'Fira Code', 'Menlo', 'Consolas',
-    'Bitstream Vera Sans Mono', monospace, 'Apple Color Emoji', 'Segoe UI Emoji';
-}
