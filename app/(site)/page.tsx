@@ -1,8 +1,8 @@
-import { Container, Heading } from '@radix-ui/themes';
+import { Heading } from '@radix-ui/themes';
 
 export default function HomePage() {
   return (
-    <Container size={'4'}>
+    <div className="container">
       <div className="h-screen flex flex-col justify-center items-center">
         <img
           src="/images/nyan-cat.webp"
@@ -14,6 +14,6 @@ export default function HomePage() {
           F西，努力做一个更好的程序员。
         </Heading>
       </div>
-    </Container>
+    </div>
   );
 }

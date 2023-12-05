@@ -3,8 +3,6 @@ import React from 'react';
 import { type Metadata } from 'next';
 import Image from 'next/image';
 
-import { Container } from '@radix-ui/themes';
-
 import { PageTitle } from '@/components/page-title';
 import { SocialInfo } from '@/components/social-info';
 import { NICKNAME } from '@/constants';
@@ -16,7 +14,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <Container size={'4'}>
+    <div className="container mx-auto">
       <div className="flex flex-col gap-8 pb-9">
         <PageTitle title="关于" />
 
@@ -77,6 +75,6 @@ export default function AboutPage() {
           </p>
         </div>
       </div>
-    </Container>
+    </div>
   );
 }
