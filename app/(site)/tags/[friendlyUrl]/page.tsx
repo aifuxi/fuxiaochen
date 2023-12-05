@@ -2,8 +2,6 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
-import { Container, Flex } from '@radix-ui/themes';
-
 import { getTagArticles, getTagByFriendlyURL } from '@/app/_actions/tag';
 import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants';
@@ -39,12 +37,12 @@ export default async function TagDetailPage({
   });
 
   return (
-    <Container size={'4'}>
-      <Flex className="flex flex-col gap-8 pb-8">
+    <div className="container mx-auto">
+      <div className="flex flex-col gap-8 pb-8">
         <PageTitle title={tag?.name ?? '-'} />
 
         <ArticleList articles={articles} total={total} />
-      </Flex>
-    </Container>
+      </div>
+    </div>
   );
 }
