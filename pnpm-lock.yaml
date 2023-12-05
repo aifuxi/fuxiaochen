@@ -29,6 +29,9 @@ dependencies:
   '@bytemd/react':
     specifier: ^1.21.0
     version: 1.21.0(react@18.2.0)
+  '@fontsource/poppins':
+    specifier: ^5.0.8
+    version: 5.0.8
   '@hookform/resolvers':
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.48.2)
@@ -999,6 +1002,10 @@ packages:
       '@floating-ui/dom': 1.4.4
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@fontsource/poppins@5.0.8:
+    resolution: {integrity: sha512-P8owfYWluoUY5Nyzk4gT/L6LmLmseP6ezFWhj6VBUa5pRIdnCvNJpoQ6i/vhekjtJOfqX6nKlB+LCttoUl2GQQ==}
     dev: false
 
   /@hookform/resolvers@3.3.2(react-hook-form@7.48.2):
