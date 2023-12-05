@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge, Container } from '@radix-ui/themes';
+import { Badge } from '@radix-ui/themes';
 
 import { getArticleByFriendlyURL } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/bytemd';
@@ -35,7 +35,7 @@ export default async function ArticleDetailPage({
       />
 
       <div className="flex flex-col gap-8 pb-9">
-        <Container size={'4'}>
+        <div className="container mx-auto">
           <BytemdViewer content={article?.content ?? ''} />
 
           <div className="flex flex-wrap gap-4">
@@ -47,7 +47,7 @@ export default async function ArticleDetailPage({
               </Link>
             ))}
           </div>
-        </Container>
+        </div>
       </div>
     </div>
   );

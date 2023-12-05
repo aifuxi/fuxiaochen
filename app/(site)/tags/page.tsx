@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge, Container } from '@radix-ui/themes';
+import { Badge } from '@radix-ui/themes';
 
 import { PageTitle } from '@/components/page-title';
 import { PATHS } from '@/constants';
@@ -18,13 +18,13 @@ export default async function TagsPage() {
   const tags = await getAllTags();
 
   return (
-    <Container size={'4'}>
+    <div className="container mx-auto">
       <div className="h-screen flex flex-col gap-8 pb-8">
         <PageTitle title="标签" />
 
         {renderTagList()}
       </div>
-    </Container>
+    </div>
   );
 
   function renderTagList() {

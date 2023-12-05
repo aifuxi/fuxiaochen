@@ -1,7 +1,5 @@
 import { type Metadata } from 'next';
 
-import { Container } from '@radix-ui/themes';
-
 import ArticleList from './article-list';
 import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants';
@@ -26,12 +24,12 @@ export default async function ArticlesPage({
   });
 
   return (
-    <Container size={'4'}>
+    <div className="container mx-auto">
       <div className="flex flex-col gap-8 pb-8">
         <PageTitle title="文章" />
 
         <ArticleList articles={articles} total={total} />
       </div>
-    </Container>
+    </div>
   );
 }
