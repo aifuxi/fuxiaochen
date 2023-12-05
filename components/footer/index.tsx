@@ -4,7 +4,7 @@ import { Link as RadixLink, Separator, Text } from '@radix-ui/themes';
 
 import { WEBSITE } from '@/constants/info';
 
-import { SocialInfo } from '../rsc/social-info';
+import { SocialInfo } from '../social-info';
 
 export function Footer() {
   return (

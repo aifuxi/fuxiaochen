@@ -13,7 +13,7 @@ import {
 } from '@radix-ui/react-icons';
 import { Badge, Text } from '@radix-ui/themes';
 
-import { PageLoading } from '@/components/rsc';
+import { PageLoading } from '@/components/loading';
 import { PATHS } from '@/constants';
 
 const adminNavItems: Array<{

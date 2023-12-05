@@ -8,7 +8,7 @@ import { Badge, Button, Heading, IconButton, Table } from '@radix-ui/themes';
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
 import { getArticles } from '@/app/_actions/article';
-import { Pagination } from '@/components/client/pagination/pagination';
+import { Pagination } from '@/components/pagination/pagination';
 import { DEFAULT_PAGE, PATHS, PLACEHOLDER_COVER } from '@/constants';
 import { formatToDate } from '@/utils';
 

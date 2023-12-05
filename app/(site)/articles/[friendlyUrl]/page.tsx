@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Badge, Container } from '@radix-ui/themes';
 
 import { getArticleByFriendlyURL } from '@/app/_actions/article';
-import { BytemdViewer } from '@/components/client';
+import { BytemdViewer } from '@/components/bytemd';
 import { PATHS, PLACEHOLDER_COVER } from '@/constants';
 
 export async function generateMetadata({
