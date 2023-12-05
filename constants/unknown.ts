@@ -30,6 +30,3 @@ export const ZERO = 0;
 
 /** Enter Code */
 export const ENTER_CODE = 'Enter';
-
-/** 来源query key */
-export const UMT_SOURCE = 'umt_source';

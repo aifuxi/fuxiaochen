@@ -5,7 +5,7 @@ import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
 import { plugins } from './config';
 import { ZERO } from '@/constants/index';
-import { uploadFile } from '@/services';
+import { uploadFile } from '@/services/upload';
 
 type Props = {
   content: string;
