@@ -1,5 +1,3 @@
-import { Heading } from '@radix-ui/themes';
-
 import { BarCode } from '../illustrations';
 
 type Props = {
@@ -9,12 +7,12 @@ type Props = {
 
 export function PageTitle({ title }: Props) {
   return (
-    <div className="border-b border-b-gray-6 flex justify-between items-center py-8">
-      <Heading as="h4" size={'9'}>
+    <div className="flex justify-between items-center py-8">
+      <h2 className="text-3xl font-semibold tracking-tight transition-colors">
         {title}
-      </Heading>
+      </h2>
 
-      <BarCode className="w-[450px] h-[60px]" />
+      <BarCode className="w-[300px] h-[40px]" />
     </div>
   );
 }
