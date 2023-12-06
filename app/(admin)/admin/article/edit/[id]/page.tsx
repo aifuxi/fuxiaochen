@@ -1,7 +1,5 @@
 import Link from 'next/link';
 
-import { Heading, Link as RadixLink } from '@radix-ui/themes';
-
 import { EditForm } from './edit-form';
 import { getArticle } from '@/app/_actions/article';
 import { getAllTags } from '@/app/_actions/tag';
@@ -18,20 +16,16 @@ export default async function AdminArticleCreate({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
-        <RadixLink asChild color="gray">
-          <Link href={PATHS.ADMIN_ARTICLE}>
-            <Heading size={'6'} as="h4">
-              文章管理
-            </Heading>
-          </Link>
-        </RadixLink>
+        <Link href={PATHS.ADMIN_ARTICLE}>
+          <h2 className="text-3xl font-semibold tracking-tight transition-colors text-foreground/80 hover:text-foreground ">
+            文章管理
+          </h2>
+        </Link>
 
-        <Heading size={'6'} as="h4" color="gray">
-          /
-        </Heading>
-        <Heading size={'6'} as="h4">
+        <div>/</div>
+        <h2 className="text-3xl font-semibold tracking-tight transition-colors">
           编辑文章
-        </Heading>
+        </h2>
       </div>
 
       <EditForm article={article ?? undefined} tags={tags} />
