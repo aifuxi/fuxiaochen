@@ -1,27 +1,29 @@
-import { PATHS } from '@/constants/path';
+import Link from 'next/link';
 
-const _navItems: Array<{
-  label: string;
-  link: string;
-}> = [
-  {
-    label: '首页',
-    link: PATHS.SITE_HOME,
-  },
-  {
-    label: '文章',
-    link: PATHS.SITE_ARTICLES,
-  },
-  {
-    label: '标签',
-    link: PATHS.SITE_TAGS,
-  },
-  {
-    label: '关于',
-    link: PATHS.SITE_ABOUT,
-  },
-];
+import { GithubIcon } from 'lucide-react';
+
+import { NavList } from './nav-list';
+import { GITHUB_PAGE } from '@/constants';
+
+import { SwitchTheme } from '../switch-theme';
+import { Button } from '../ui/button';
 
 export function Navbar() {
-  return null;
+  return (
+    <header className="border-b w-full sticky top-0 bg-background z-10">
+      <div className="container flex h-14">
+        <NavList />
+
+        <div className="flex-1 flex justify-end items-center gap-1">
+          <SwitchTheme />
+
+          <Link href={GITHUB_PAGE} target="_blank">
+            <Button variant="ghost" size={'icon'}>
+              <GithubIcon size={16} />
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </header>
+  );
 }

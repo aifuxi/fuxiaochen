@@ -1,10 +1,8 @@
 import React from 'react';
 
 import { type Metadata } from 'next';
-import Image from 'next/image';
 
 import { PageTitle } from '@/components/page-title';
-import { SocialInfo } from '@/components/social-info';
 import { NICKNAME } from '@/constants';
 import { cn } from '@/utils';
 
@@ -18,12 +16,10 @@ export default function AboutPage() {
       <div className="flex flex-col gap-8 pb-9">
         <PageTitle title="关于" />
 
-        <div className="flex flex-col gap-2">
-          <Image
+        <div className="flex flex-col gap-2 items-center">
+          <img
             src="https://aifuxi.oss-cn-shanghai.aliyuncs.com/self/avatar.jpeg"
-            width={180}
-            height={180}
-            className="cyberpunk-clip"
+            className="w-[180px] h-[180px]"
             alt={NICKNAME}
           />
           <h3 className="text-2xl font-bold leading-8">{NICKNAME}</h3>
@@ -35,8 +31,6 @@ export default function AboutPage() {
             Forked from 大爱仙尊 - 古月方源
           </div>
         </div>
-
-        <SocialInfo />
 
         <div className="prose max-w-none dark:prose-invert">
           <h2>简介：</h2>
