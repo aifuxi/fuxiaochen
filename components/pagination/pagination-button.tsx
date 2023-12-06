@@ -8,9 +8,10 @@ import {
   DoubleArrowLeftIcon,
   DoubleArrowRightIcon,
 } from '@radix-ui/react-icons';
-import { Button, IconButton } from '@radix-ui/themes';
 
 import { cn } from '@/utils';
+
+import { Button } from '../ui/button';
 
 interface PaginationButtonProps
   extends React.DetailedHTMLProps<
@@ -75,9 +76,10 @@ export function PaginationButton({
       )}
       {...props}
     >
-      <IconButton
+      <Button
         aria-label="Go to first page"
-        color="gray"
+        size={'icon'}
+        variant={'secondary'}
         className="hidden lg:flex"
         onClick={() => {
           startTransition(() => {
@@ -91,10 +93,11 @@ export function PaginationButton({
         disabled={Number(page) === 1 ?? isPending}
       >
         <DoubleArrowLeftIcon />
-      </IconButton>
+      </Button>
       <Button
         aria-label="Go to previous page"
-        color="gray"
+        size={'icon'}
+        variant={'secondary'}
         onClick={() => {
           startTransition(() => {
             router.push(
@@ -110,14 +113,18 @@ export function PaginationButton({
       </Button>
       {paginationRange.map((pageNumber, i) =>
         pageNumber === '...' ? (
-          <Button aria-label="Page separator" key={i} color="gray" disabled>
+          <Button
+            aria-label="Page separator"
+            key={i}
+            variant={'secondary'}
+            disabled
+          >
             ...
           </Button>
         ) : (
           <Button
             key={i}
-            color="gray"
-            highContrast={pageNumber === Number(page)}
+            variant={pageNumber === Number(page) ? 'default' : 'secondary'}
             onClick={() => {
               startTransition(() => {
                 router.push(
@@ -135,7 +142,8 @@ export function PaginationButton({
       )}
       <Button
         aria-label="Go to next page"
-        color="gray"
+        size={'icon'}
+        variant={'secondary'}
         onClick={() => {
           startTransition(() => {
             router.push(
@@ -151,7 +159,8 @@ export function PaginationButton({
       </Button>
       <Button
         aria-label="Go to last page"
-        color="gray"
+        size={'icon'}
+        variant={'secondary'}
         onClick={() => {
           router.push(
             `${pathname}?${createQueryString({

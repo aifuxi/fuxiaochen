@@ -14,3 +14,7 @@
 .medium-zoom-image--opened {
   z-index: 10;
 }
+
+.markdown-body pre {
+  border-radius: 0 !important;
+}

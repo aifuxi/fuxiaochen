@@ -1,11 +1,11 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { Badge } from '@radix-ui/themes';
-
 import { getArticleByFriendlyURL } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/bytemd';
+import { badgeVariants } from '@/components/ui/badge';
 import { PATHS, PLACEHOLDER_COVER } from '@/constants';
+import { cn } from '@/utils/helper';
 
 export async function generateMetadata({
   params,
@@ -38,12 +38,18 @@ export default async function ArticleDetailPage({
         <div className="container mx-auto">
           <BytemdViewer content={article?.content ?? ''} />
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex items-center flex-wrap  gap-4">
+            <p className="text-xl text-muted-foreground">标签：</p>
             {article?.tags?.map((tag) => (
-              <Link key={tag.id} href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}>
-                <Badge color="gray" size={'2'} className="!cursor-pointer">
-                  {tag.name}
-                </Badge>
+              <Link
+                href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}
+                key={tag.id}
+                className={cn(
+                  badgeVariants({ variant: 'default' }),
+                  'text-md px-4 py-2 !rounded-none',
+                )}
+              >
+                {tag.name}
               </Link>
             ))}
           </div>
