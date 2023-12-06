@@ -2,8 +2,8 @@
 
 import React from 'react';
 
-import { PlusIcon } from '@radix-ui/react-icons';
 import { Button, Dialog, Text, TextField } from '@radix-ui/themes';
+import { PlusIcon } from 'lucide-react';
 
 import { createTag } from '@/app/_actions/tag';
 

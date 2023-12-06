@@ -2,8 +2,8 @@ import React from 'react';
 
 import Link from 'next/link';
 
-import { Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
 import { Badge, Button, Heading, IconButton, Table } from '@radix-ui/themes';
+import { PencilIcon, PlusIcon } from 'lucide-react';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
@@ -107,7 +107,7 @@ export default async function AdminArticle({
                 <div className="flex items-center gap-2">
                   <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${article.id}`}>
                     <IconButton color="gray" highContrast>
-                      <Pencil1Icon />
+                      <PencilIcon />
                     </IconButton>
                   </Link>
                   <DeleteArticleItemButton article={article} />

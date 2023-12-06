@@ -6,12 +6,8 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import {
-  HomeIcon,
-  LetterCaseCapitalizeIcon,
-  ReaderIcon,
-} from '@radix-ui/react-icons';
 import { Badge, Text } from '@radix-ui/themes';
+import { BookText, HomeIcon, Tags } from 'lucide-react';
 
 import { PageLoading } from '@/components/loading';
 import { PATHS } from '@/constants';
@@ -29,12 +25,12 @@ const adminNavItems: Array<{
   {
     label: '文章管理',
     link: PATHS.ADMIN_ARTICLE,
-    icon: <ReaderIcon className="w-[18px] h-[18px]" />,
+    icon: <BookText className="w-[18px] h-[18px]" />,
   },
   {
     label: '标签管理',
     link: PATHS.ADMIN_TAG,
-    icon: <LetterCaseCapitalizeIcon className="w-[18px] h-[18px]" />,
+    icon: <Tags className="w-[18px] h-[18px]" />,
   },
 ];
 

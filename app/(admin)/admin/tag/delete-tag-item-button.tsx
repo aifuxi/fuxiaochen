@@ -3,8 +3,8 @@
 import React from 'react';
 
 import { type Tag } from '@prisma/client';
-import { TrashIcon } from '@radix-ui/react-icons';
 import { AlertDialog, Button, IconButton } from '@radix-ui/themes';
+import { TrashIcon } from 'lucide-react';
 
 import { deleteTag } from '@/app/_actions/tag';
 
