@@ -1,8 +1,8 @@
 'use client';
 
 import { type Tag } from '@prisma/client';
-import { Pencil1Icon } from '@radix-ui/react-icons';
 import { Button, Dialog, IconButton, Text, TextField } from '@radix-ui/themes';
+import { PencilIcon } from 'lucide-react';
 
 import { updateTag } from '@/app/_actions/tag';
 
@@ -15,7 +15,7 @@ export function EditTagButton({ tag }: Props) {
     <Dialog.Root>
       <Dialog.Trigger>
         <IconButton color="gray" variant="solid" highContrast>
-          <Pencil1Icon />
+          <PencilIcon />
         </IconButton>
       </Dialog.Trigger>
       <Dialog.Content>

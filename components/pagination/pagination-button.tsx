@@ -5,9 +5,9 @@ import { type AppRouterInstance } from 'next/dist/shared/lib/app-router-context.
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-  DoubleArrowLeftIcon,
-  DoubleArrowRightIcon,
-} from '@radix-ui/react-icons';
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+} from 'lucide-react';
 
 import { cn } from '@/utils';
 
@@ -92,7 +92,7 @@ export function PaginationButton({
         }}
         disabled={Number(page) === 1 ?? isPending}
       >
-        <DoubleArrowLeftIcon />
+        <ChevronsLeftIcon />
       </Button>
       <Button
         aria-label="Go to previous page"
@@ -170,7 +170,7 @@ export function PaginationButton({
         }}
         disabled={Number(page) === (pageCount ?? 10) ?? isPending}
       >
-        <DoubleArrowRightIcon />
+        <ChevronsRightIcon />
       </Button>
     </div>
   );
