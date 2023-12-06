@@ -1,11 +1,9 @@
-import { Heading } from '@radix-ui/themes';
-
 export default function AdminPage() {
   return (
     <div className="flex flex-col gap-4">
-      <Heading size={'6'} as="h4">
+      <h2 className="text-3xl font-semibold tracking-tight transition-colors">
         Dashboard
-      </Heading>
+      </h2>
     </div>
   );
 }
