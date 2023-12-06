@@ -1,5 +1,5 @@
-import { ReloadIcon } from '@radix-ui/react-icons';
+import { RotateCcwIcon } from 'lucide-react';
 
 export const SpinLoading = () => {
-  return <ReloadIcon className="animate-spin w-16 h-16" />;
+  return <RotateCcwIcon className="animate-spin w-16 h-16" />;
 };
