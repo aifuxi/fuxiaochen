@@ -2,22 +2,33 @@
 
 import React from 'react';
 
-import { Button, Dialog, Text, TextField } from '@radix-ui/themes';
+import { Text, TextField } from '@radix-ui/themes';
 import { PlusIcon } from 'lucide-react';
 
 import { createTag } from '@/app/_actions/tag';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export function CreateTagButton() {
   return (
-    <Dialog.Root>
-      <Dialog.Trigger>
-        <Button color="gray" variant="solid" highContrast>
-          <PlusIcon />
-          <span>创建标签</span>
+    <Dialog>
+      <DialogTrigger>
+        <Button>
+          <PlusIcon className="mr-2" size={16} />
+          创建标签
         </Button>
-      </Dialog.Trigger>
-      <Dialog.Content>
-        <Dialog.Title>创建标签</Dialog.Title>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>创建标签</DialogTitle>
+        </DialogHeader>
         <form action={createTag}>
           <div className="flex flex-col gap-3">
             <label>
@@ -43,20 +54,11 @@ export function CreateTagButton() {
               />
             </label>
           </div>
-          <div className="flex gap-3 mt-4 justify-end">
-            <Dialog.Close>
-              <Button variant="soft" color="gray">
-                取消
-              </Button>
-            </Dialog.Close>
-            <Dialog.Close>
-              <Button type="submit" color="gray" highContrast>
-                创建
-              </Button>
-            </Dialog.Close>
-          </div>
+          <DialogFooter>
+            <Button>创建</Button>
+          </DialogFooter>
         </form>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   );
 }

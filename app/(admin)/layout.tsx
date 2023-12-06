@@ -6,11 +6,12 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { Badge, Text } from '@radix-ui/themes';
 import { BookText, HomeIcon, Tags } from 'lucide-react';
 
 import { PageLoading } from '@/components/loading';
+import { badgeVariants } from '@/components/ui/badge';
 import { PATHS } from '@/constants';
+import { cn } from '@/utils/helper';
 
 const adminNavItems: Array<{
   label: string;
@@ -44,23 +45,24 @@ export default function AdminLayout({
 
   return (
     <div className="flex">
-      <div className="min-w-[256px] max-w-[256px] h-screen  bg-gray-1 flex-col flex p-2 gap-2">
+      <div className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex p-2 gap-2">
         {session?.user?.image && (
           <img src={session?.user?.image} alt={session?.user?.name ?? ''} />
         )}
 
         {adminNavItems.map((el) => (
-          <Link key={el.link} href={el.link}>
-            <Badge
-              size={'2'}
-              color={'gray'}
-              variant={pathname === el.link ? 'solid' : 'soft'}
-              highContrast={pathname === el.link}
-              className="w-full !cursor-pointer"
-            >
-              {el.icon}
-              <Text size={'4'}>{el.label}</Text>
-            </Badge>
+          <Link
+            key={el.link}
+            href={el.link}
+            className={cn(
+              badgeVariants({
+                variant: pathname === el.link ? 'secondary' : 'default',
+              }),
+              'text-md px-4 py-2 !rounded-none flex gap-2 items-center',
+            )}
+          >
+            {el.icon}
+            <span>{el.label}</span>
           </Link>
         ))}
       </div>
