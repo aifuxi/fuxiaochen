@@ -64,8 +64,8 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        // sans: ['Poppins', 'PingFang SC', ...fontFamily.sans],
-        sans: ['Poppins', ...fontFamily.sans],
+        sans: ['Poppins', 'PingFang SC', ...fontFamily.sans],
+        // sans: ['Poppins', ...fontFamily.sans],
       },
       keyframes: {
         'accordion-down': {
