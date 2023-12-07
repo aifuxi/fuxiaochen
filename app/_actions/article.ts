@@ -3,13 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { isArray } from 'lodash-es';
-
 import { DEFAULT_PAGE_SIZE } from '@/constants';
 import { db } from '@/libs/prisma';
 import {
-  createArticleReqSchema,
-  updateArticleReqSchema,
+  type CreateArticleReq,
+  type UpdateArticleReq,
 } from '@/typings/article';
 
 export async function getArticleByFriendlyURL(friendlyURL: string) {
@@ -58,20 +56,7 @@ export async function deleteArticle(id: string) {
   revalidatePath('/admin/article');
 }
 
-export async function updateArticle(formData: FormData) {
-  const parsed = updateArticleReqSchema.parse({
-    title: formData.get('title'),
-    description: formData.get('description'),
-    id: formData.get('id'),
-    friendlyUrl: formData.get('friendlyUrl'),
-    cover: formData.get('cover'),
-    content: formData.get('content'),
-    published: Boolean(formData.get('published')),
-    tags: isArray(formData.getAll('tags'))
-      ? formData.getAll('tags')
-      : [formData.get('tags')],
-  });
-
+export async function updateArticle(parsed: UpdateArticleReq) {
   const article = await db.article.findFirst({
     where: { id: parsed.id },
     include: { tags: true },
@@ -143,19 +128,7 @@ export async function getArticle(id: string) {
   return article;
 }
 
-export async function createArticle(formData: FormData) {
-  const parsed = createArticleReqSchema.parse({
-    title: formData.get('title'),
-    friendlyUrl: formData.get('friendlyUrl'),
-    description: formData.get('description'),
-    content: formData.get('content'),
-    published: Boolean(formData.get('published')),
-    cover: formData.get('cover'),
-    tags: isArray(formData.get('tags'))
-      ? formData.get('tags')
-      : [formData.get('tags')],
-  });
-
+export async function createArticle(parsed: CreateArticleReq) {
   await db.article.create({
     data: {
       title: parsed.title,
