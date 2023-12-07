@@ -1,9 +1,10 @@
 'use client';
 
 import { type Tag } from '@prisma/client';
-import { Badge } from '@radix-ui/themes';
 import { enableMapSet } from 'immer';
 import { useImmer } from 'use-immer';
+
+import { Badge } from '@/components/ui/badge';
 
 import { CreateTagButton } from '../../tag/create-tag-button';
 
@@ -27,10 +28,8 @@ export function TagsField({ tags, name, initialTags }: Props) {
           <div key={v.id} className="flex gap-2">
             <label>
               <Badge
-                variant={tagIDs.has(v.id) ? 'solid' : 'soft'}
-                color="gray"
-                highContrast
-                size={'2'}
+                variant={tagIDs.has(v.id) ? 'default' : 'outline'}
+                className="text-md px-4 py-2 !rounded-none"
               >
                 {/* <Checkbox name={name} checked={tagIDs.has(v.id)} /> */}
                 <input

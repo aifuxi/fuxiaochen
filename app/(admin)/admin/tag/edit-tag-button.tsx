@@ -1,7 +1,10 @@
 'use client';
 
+import React from 'react';
+import { useForm } from 'react-hook-form';
+
+import { zodResolver } from '@hookform/resolvers/zod';
 import { type Tag } from '@prisma/client';
-import { Text, TextField } from '@radix-ui/themes';
 import { PencilIcon } from 'lucide-react';
 
 import { updateTag } from '@/app/_actions/tag';
@@ -9,21 +12,53 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { type UpdateTagReq, updateTagReqSchema } from '@/typings/tag';
 
 type Props = {
   tag: Tag;
 };
 
 export function EditTagButton({ tag }: Props) {
+  const [open, setOpen] = React.useState(false);
+  const form = useForm<UpdateTagReq>({
+    resolver: zodResolver(updateTagReqSchema),
+  });
+
+  React.useEffect(() => {
+    if (open) {
+      form.setValue('name', tag.name);
+      form.setValue('friendlyUrl', tag.friendlyUrl);
+      form.setValue('id', tag.id);
+      form.clearErrors();
+    }
+  }, [form, open, tag]);
+
+  async function onSubmit(values: UpdateTagReq) {
+    try {
+      await updateTag(values);
+      setOpen(false);
+    } catch (e) {
+      // TODO: 错误处理，弹 Toast
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <Button size={'icon'}>
+        <Button size={'icon'} onClick={() => setOpen(true)}>
           <PencilIcon size={16} />
         </Button>
       </DialogTrigger>
@@ -31,36 +66,55 @@ export function EditTagButton({ tag }: Props) {
         <DialogHeader>
           <DialogTitle>编辑标签</DialogTitle>
         </DialogHeader>
-        <form action={updateTag}>
-          <div className="flex flex-col gap-3">
-            <label>
-              <Text as="div" size="2" mb="1" weight="bold">
-                名称
-              </Text>
-              <TextField.Input
-                defaultValue={tag.name}
-                placeholder="请输入标签名称"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+            <div className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>id</FormLabel>
+                    <FormControl>
+                      <Input {...field} disabled />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="name"
-                autoComplete="off"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>名称</FormLabel>
+                    <FormControl>
+                      <Input placeholder="请输入标签名称" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </label>
-            <label>
-              <Text as="div" size="2" mb="1" weight="bold">
-                链接
-              </Text>
-              <TextField.Input
-                defaultValue={tag.friendlyUrl}
-                placeholder="请输入标签链接"
+              <FormField
+                control={form.control}
                 name="friendlyUrl"
-                autoComplete="off"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>链接</FormLabel>
+                    <FormControl>
+                      <Input placeholder="请输入标签链接" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </label>
-            <input type="hidden" name="id" value={tag.id} />
-          </div>
-          <DialogFooter>
-            <Button>保存</Button>
-          </DialogFooter>
-        </form>
+
+              <div className="flex justify-end">
+                <Button type="submit">保存</Button>
+              </div>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
