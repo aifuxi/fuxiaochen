@@ -42,7 +42,7 @@ export function NavList() {
 
   return (
     <nav className="h-full flex items-center gap-6 text-sm font-medium">
-      <Link href={PATHS.SITE_HOME} className={cn()}>
+      <Link href={PATHS.SITE_HOME} className={cn('mr-4')}>
         <IconLogo className="w-8 h-8" />
       </Link>
 
