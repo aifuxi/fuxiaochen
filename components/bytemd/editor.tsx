@@ -8,30 +8,35 @@ import { ZERO } from '@/constants/index';
 import { uploadFile } from '@/services/upload';
 
 type Props = {
-  content: string;
+  content?: string;
   setContent: (content: string) => void;
   editorProps?: Partial<EditorProps>;
 };
 
 export function BytemdEditor({ content, setContent, editorProps }: Props) {
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
-    const fd = new FormData();
-    fd.append('file', files[0]);
-    const res = await uploadFile(fd);
+    const file = files[0];
+    if (file) {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await uploadFile(fd);
 
-    if (res.code !== ZERO) {
+      if (res.code !== ZERO) {
+        return [];
+      }
+      return [
+        {
+          url: res.data?.url ?? '',
+        },
+      ];
+    } else {
       return [];
     }
-    return [
-      {
-        url: res.data?.url ?? '',
-      },
-    ];
   };
 
   return (
     <Editor
-      value={content}
+      value={content ?? ''}
       plugins={plugins}
       placeholder="请输入内容..."
       onChange={(v) => setContent(v)}

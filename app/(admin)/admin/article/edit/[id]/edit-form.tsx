@@ -1,22 +1,33 @@
 'use client';
 
 import React from 'react';
+import { useForm } from 'react-hook-form';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { type Article, type Tag } from '@prisma/client';
-import {
-  Button,
-  Switch,
-  Text,
-  TextArea,
-  TextFieldInput,
-} from '@radix-ui/themes';
+import { type z } from 'zod';
 
 import { updateArticle } from '@/app/_actions/article';
-import { ZERO } from '@/constants/unknown';
+import { BytemdEditor } from '@/components/bytemd';
+import { Button } from '@/components/ui/button';
+import { Combobox } from '@/components/ui/combobox';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { PLACEHOLDER_COVER, ZERO } from '@/constants/unknown';
 import { uploadFile } from '@/services/upload';
-
-import { BytemdEditorField } from '../../create/bytemd-editor-field';
-import { TagsField } from '../../create/tags-field';
+import {
+  type UpdateArticleReq,
+  updateArticleReqSchema,
+} from '@/typings/article';
 
 export function EditForm({
   article,
@@ -25,106 +36,180 @@ export function EditForm({
   article?: Article & { tags?: Tag[] };
   tags?: Tag[];
 }) {
-  const [cover, setCover] = React.useState(article?.cover ?? '');
+  const [cover, setCover] = React.useState(article?.cover ?? PLACEHOLDER_COVER);
+  const form = useForm<z.infer<typeof updateArticleReqSchema>>({
+    resolver: zodResolver(updateArticleReqSchema),
+    defaultValues: {
+      title: article?.title ?? '',
+      id: article?.id ?? '',
+      friendlyUrl: article?.friendlyUrl ?? '',
+      description: article?.description ?? '',
+      content: article?.content ?? '',
+      published: article?.published ?? true,
+      cover: article?.cover ?? PLACEHOLDER_COVER,
+      tags: article?.tags?.map((el) => el.id) ?? [],
+    },
+  });
+
+  async function onSubmit(values: UpdateArticleReq) {
+    try {
+      await updateArticle(values);
+    } catch (e) {}
+  }
 
   return (
-    <form action={updateArticle}>
-      <div className="flex flex-col gap-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
-          <Button type="submit" className="!w-full" size={'4'}>
+          <Button type="submit" variant={'outline'} className="!w-full">
             保存
           </Button>
         </div>
-        <div className="flex flex-col gap-4">
-          <label>
-            <Text as="div" size="2" mb="1" weight="bold">
-              标题
-            </Text>
-            <TextFieldInput
-              placeholder="请输入标题..."
-              name="title"
-              defaultValue={article?.title}
-              autoComplete="off"
-            />
-          </label>
-          <label>
-            <Text as="div" size="2" mb="1" weight="bold">
-              friendly_url
-            </Text>
-            <TextFieldInput
-              placeholder="请输入文章friendly_url（只支持数字、字母、下划线、中划线）..."
-              name="friendlyUrl"
-              defaultValue={article?.friendlyUrl}
-              autoComplete="off"
-            />
-          </label>
-          <label>
-            <Text as="div" size="2" mb="1" weight="bold">
-              描述
-            </Text>
-            <TextArea
-              placeholder="请输入描述..."
-              name="description"
-              defaultValue={article?.description}
-              autoComplete="off"
-            />
-          </label>
-          <div className="flex flex-col gap-1">
-            <Text as="div" size="2" weight="bold">
-              封面
-            </Text>
-            <TextFieldInput
-              placeholder="请输入封面链接..."
-              name="cover"
-              key={cover}
-              defaultValue={cover}
-              autoComplete="off"
-            />
-            <input
-              type="file"
-              onChange={async (e) => {
-                const fd = new FormData();
-                fd.append('file', e.target.files?.[0]);
-                const res = await uploadFile(fd);
 
-                if (res.code === ZERO) {
-                  setCover(res.data?.url ?? '');
-                }
-              }}
-            />
-            <img
-              src={cover}
-              className="h-[300px] object-scale-down"
-              alt={article?.title}
-            />
-          </div>
-          <div>
-            <Text as="div" size="2" mb="1" weight="bold">
-              是否发布
-            </Text>
-            <Switch
-              name="published"
-              color="gray"
-              highContrast
-              defaultChecked={article?.published}
-            />
-          </div>
-          <div>
-            <Text as="div" size="2" mb="1" weight="bold">
-              标签
-            </Text>
-            <TagsField tags={tags} name="tags" initialTags={article?.tags} />
-          </div>
-          <div>
-            <Text as="div" size="2" mb="1" weight="bold">
-              内容
-            </Text>
-            <BytemdEditorField name="content" defaultValue={article?.content} />
-          </div>
+        <div className="grid gap-4 pb-24">
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>标题</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="请输入标题..." />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="friendlyUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>标题</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder="请输入文章friendly_url（只支持数字、字母、下划线、中划线）..."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>描述</FormLabel>
+                <FormControl>
+                  <Textarea {...field} placeholder="请输入描述..." />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="cover"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>封面</FormLabel>
+                <FormControl>
+                  <Textarea {...field} placeholder="请输入封面链接..." />
+                </FormControl>
+                <FormMessage />
+                <Input
+                  type="file"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const fd = new FormData();
+                      fd.append('file', file);
+                      const res = await uploadFile(fd);
 
-          <input type="hidden" name="id" value={article?.id} />
+                      if (res.code === ZERO) {
+                        setCover(res.data?.url ?? '');
+                        form.setValue('cover', res.data?.url ?? '');
+                      }
+                    } else {
+                      // TODO: 提示请选择文件
+                    }
+                  }}
+                />
+                {Boolean(cover) && (
+                  <img
+                    src={cover}
+                    className="h-[300px] object-scale-down"
+                    alt={''}
+                  />
+                )}
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>是否发布</FormLabel>
+                <FormControl>
+                  <div>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>标签</FormLabel>
+                <FormControl>
+                  <Combobox
+                    options={
+                      tags?.map((el) => ({
+                        label: el.name,
+                        value: el.id,
+                      })) ?? []
+                    }
+                    multiple
+                    clearable
+                    selectPlaceholder="请选择文章标签（多选）"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="content"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>内容</FormLabel>
+                <FormControl>
+                  <div id="aifuxi-content-editor">
+                    <BytemdEditor
+                      content={field.value}
+                      setContent={field.onChange}
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 }

@@ -17,8 +17,9 @@ export const createArticleReqSchema = z.object({
   tags: z.string().array().optional(),
 });
 
-export type CreateArticleReq = Infer<typeof createArticleReqSchema>;
-
 export const updateArticleReqSchema = createArticleReqSchema.partial().extend({
   id: z.string().min(1),
 });
+
+export type CreateArticleReq = Infer<typeof createArticleReqSchema>;
+export type UpdateArticleReq = Infer<typeof updateArticleReqSchema>;
