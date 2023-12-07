@@ -1,4 +1,4 @@
-import { type infer as Infer, z } from 'zod';
+import { z } from 'zod';
 
 import { REGEX } from '@/constants/regex';
 
@@ -14,4 +14,5 @@ export const updateTagReqSchema = createTagReqSchema.partial().extend({
   id: z.string().min(1),
 });
 
-export type CreateTagReq = Infer<typeof createTagReqSchema>;
+export type CreateTagReq = z.infer<typeof createTagReqSchema>;
+export type UpdateTagReq = z.infer<typeof updateTagReqSchema>;
