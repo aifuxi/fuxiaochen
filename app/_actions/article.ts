@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { DEFAULT_PAGE_SIZE } from '@/constants';
+import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 import { db } from '@/libs/prisma';
 import {
   type CreateArticleReq,

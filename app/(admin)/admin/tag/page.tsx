@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DEFAULT_PAGE } from '@/constants';
+import { DEFAULT_PAGE } from '@/constants/unknown';
 import { formatToDate } from '@/utils';
 
 export default async function AdminTag({

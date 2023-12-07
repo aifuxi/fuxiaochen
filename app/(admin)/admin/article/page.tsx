@@ -18,7 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DEFAULT_PAGE, PATHS, PLACEHOLDER_COVER } from '@/constants';
+import { PATHS } from '@/constants/path';
+import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants/unknown';
 import { cn, formatToDate } from '@/utils';
 
 export default async function AdminArticle({
