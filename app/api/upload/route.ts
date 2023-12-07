@@ -6,7 +6,7 @@ import fs from 'fs';
 import { StatusCodes } from 'http-status-codes';
 import path from 'path';
 
-import { authOptions } from '@/constants';
+import { authOptions } from '@/constants/next-auth';
 import { aliOSS } from '@/libs/ali-oss';
 import type { URLStruct } from '@/typings/params';
 import {

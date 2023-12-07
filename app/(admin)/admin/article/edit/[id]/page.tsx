@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { EditForm } from './edit-form';
 import { getArticle } from '@/app/_actions/article';
 import { getAllTags } from '@/app/_actions/tag';
-import { PATHS } from '@/constants';
+import { PATHS } from '@/constants/path';
 
 export default async function AdminArticleCreate({
   params,

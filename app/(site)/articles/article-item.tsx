@@ -5,7 +5,8 @@ import { MoveRightIcon } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { PATHS, PLACEHOLDER_COVER } from '@/constants';
+import { PATHS } from '@/constants/path';
+import { PLACEHOLDER_COVER } from '@/constants/unknown';
 import { cn, formatToDate } from '@/utils';
 
 type Props = {
