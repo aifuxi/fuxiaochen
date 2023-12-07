@@ -6,8 +6,8 @@ import { PencilIcon, PlusIcon } from 'lucide-react';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
-import { getArticles } from '@/app/_actions/article';
-import { Pagination } from '@/components/pagination/pagination';
+import { getArticles } from '@/app/actions/article';
+import { Pagination } from '@/components/pagination';
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {

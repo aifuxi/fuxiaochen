@@ -6,7 +6,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import { PATHS } from '@/constants/path';
 import { cn } from '@/utils';
 
-import { getAllTags } from '../../_actions/tag';
+import { getAllTags } from '../../actions/tag';
 
 export const metadata: Metadata = {
   title: '标签',

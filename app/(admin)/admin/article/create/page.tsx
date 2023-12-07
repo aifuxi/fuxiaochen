@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { CreateForm } from './create-form';
-import { getAllTags } from '@/app/_actions/tag';
+import { getAllTags } from '@/app/actions/tag';
 import { PATHS } from '@/constants/path';
 
 export default async function AdminArticleCreate() {

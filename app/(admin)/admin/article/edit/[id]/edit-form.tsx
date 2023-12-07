@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type Article, type Tag } from '@prisma/client';
 import { type z } from 'zod';
 
-import { updateArticle } from '@/app/_actions/article';
+import { updateArticle } from '@/app/actions/article';
 import { BytemdEditor } from '@/components/bytemd';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';

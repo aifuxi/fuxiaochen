@@ -5,7 +5,7 @@ import React from 'react';
 import { type Article } from '@prisma/client';
 import { TrashIcon } from 'lucide-react';
 
-import { deleteArticle } from '@/app/_actions/article';
+import { deleteArticle } from '@/app/actions/article';
 import {
   AlertDialog,
   AlertDialogAction,
