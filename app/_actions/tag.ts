@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants';
 import { db } from '@/libs/prisma';
-import { createTagReqSchema, updateTagReqSchema } from '@/typings/tag';
+import { type CreateTagReq, type UpdateTagReq } from '@/typings/tag';
 
 export async function getTagArticles(params: {
   friendlyURL: string;
@@ -45,12 +45,7 @@ export async function getTagByFriendlyURL(friendlyURL: string) {
   return tag;
 }
 
-export async function createTag(formData: FormData) {
-  const parsed = createTagReqSchema.parse({
-    name: formData.get('name'),
-    friendlyUrl: formData.get('friendlyUrl'),
-  });
-
+export async function createTag(parsed: CreateTagReq) {
   await db.tag.create({
     data: {
       name: parsed.name,
@@ -61,13 +56,7 @@ export async function createTag(formData: FormData) {
   revalidatePath('/admin/tag');
 }
 
-export async function updateTag(formData: FormData) {
-  const parsed = updateTagReqSchema.parse({
-    name: formData.get('name'),
-    id: formData.get('id'),
-    friendlyUrl: formData.get('friendlyUrl'),
-  });
-
+export async function updateTag(parsed: UpdateTagReq) {
   await db.tag.update({
     data: {
       name: parsed.name,

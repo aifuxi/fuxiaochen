@@ -3,17 +3,12 @@
 import React from 'react';
 
 import { type Tag } from '@prisma/client';
-import {
-  Button,
-  Switch,
-  Text,
-  TextArea,
-  TextFieldInput,
-} from '@radix-ui/themes';
+import { Switch, Text, TextArea, TextFieldInput } from '@radix-ui/themes';
 
 import { BytemdEditorField } from './bytemd-editor-field';
 import { TagsField } from './tags-field';
 import { createArticle } from '@/app/_actions/article';
+import { Button } from '@/components/ui/button';
 import { ZERO } from '@/constants/unknown';
 import { uploadFile } from '@/services/upload';
 
@@ -24,7 +19,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
     <form action={createArticle}>
       <div className="flex flex-col gap-4">
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
-          <Button type="submit" className="!w-full" size={'4'}>
+          <Button type="submit" className="!w-full">
             创建
           </Button>
         </div>
