@@ -2,7 +2,7 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
-import { getTagArticles, getTagByFriendlyURL } from '@/app/_actions/tag';
+import { getTagArticles, getTagByFriendlyURL } from '@/app/actions/tag';
 import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants/unknown';
 

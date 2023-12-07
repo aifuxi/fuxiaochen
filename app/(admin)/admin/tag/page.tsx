@@ -1,8 +1,8 @@
 import { CreateTagButton } from './create-tag-button';
 import { DeleteTagItemButton } from './delete-tag-item-button';
 import { EditTagButton } from './edit-tag-button';
-import { getTags } from '@/app/_actions/tag';
-import { Pagination } from '@/components/pagination/pagination';
+import { getTags } from '@/app/actions/tag';
+import { Pagination } from '@/components/pagination';
 import {
   Table,
   TableBody,

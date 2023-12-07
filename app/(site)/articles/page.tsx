@@ -4,7 +4,7 @@ import ArticleList from './article-list';
 import { PageTitle } from '@/components/page-title';
 import { DEFAULT_PAGE } from '@/constants/unknown';
 
-import { getPublishedArticles } from '../../_actions/article';
+import { getPublishedArticles } from '../../actions/article';
 
 export const metadata: Metadata = {
   title: '文章',

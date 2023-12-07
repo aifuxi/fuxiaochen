@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { PlusIcon } from 'lucide-react';
 import { type z } from 'zod';
 
-import { createTag } from '@/app/_actions/tag';
+import { createTag } from '@/app/actions/tag';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
