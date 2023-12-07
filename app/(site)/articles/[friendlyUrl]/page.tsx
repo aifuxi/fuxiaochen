@@ -1,7 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
-import { getArticleByFriendlyURL } from '@/app/_actions/article';
+import { getArticleByFriendlyURL } from '@/app/actions/article';
 import { BytemdViewer } from '@/components/bytemd';
 import { badgeVariants } from '@/components/ui/badge';
 import { PATHS } from '@/constants/path';

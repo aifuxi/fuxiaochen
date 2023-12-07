@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type Tag } from '@prisma/client';
 import { PencilIcon } from 'lucide-react';
 
-import { updateTag } from '@/app/_actions/tag';
+import { updateTag } from '@/app/actions/tag';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,

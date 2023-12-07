@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 import { EditForm } from './edit-form';
-import { getArticle } from '@/app/_actions/article';
-import { getAllTags } from '@/app/_actions/tag';
+import { getArticle } from '@/app/actions/article';
+import { getAllTags } from '@/app/actions/tag';
 import { PATHS } from '@/constants/path';
 
 export default async function AdminArticleCreate({
