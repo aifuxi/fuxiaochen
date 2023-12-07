@@ -11,7 +11,7 @@ import { Button } from '../ui/button';
 export function Navbar() {
   return (
     <header className="border-b w-full sticky top-0 bg-background z-10">
-      <div className="container flex h-14">
+      <div className="container flex h-16">
         <NavList />
 
         <div className="flex-1 flex justify-end items-center gap-1">
