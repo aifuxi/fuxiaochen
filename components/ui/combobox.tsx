@@ -3,7 +3,6 @@
 import * as React from 'react';
 
 import { Check, ChevronDown, XSquare } from 'lucide-react';
-import { useImmer } from 'use-immer';
 
 import { Badge } from './badge';
 import { Button } from './button';
@@ -18,10 +17,10 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { ScrollArea } from './scroll-area';
 import { cn } from '@/utils/helper';
 
-export interface ComboboxOption {
+export type ComboboxOption = {
   value: string;
   label: string;
-}
+};
 
 type ComboboxPropsSingle = {
   options: ComboboxOption[];
@@ -75,7 +74,7 @@ export const handleMultipleSelect = (
 export const Combobox = React.forwardRef(
   (props: ComboboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     const [open, setOpen] = React.useState(false);
-    const [tagMap] = useImmer(
+    const [tagMap] = React.useState(
       new Map<string, string>(
         props?.options?.map((el) => [el.value, el.label]) ?? [],
       ),

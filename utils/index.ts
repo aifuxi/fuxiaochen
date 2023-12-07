@@ -11,7 +11,6 @@ import {
 } from './helper';
 import { numberFormatter } from './number';
 import { formatToDate } from './time';
-import { obj2QueryString } from './url';
 
 export {
   cn,
@@ -23,7 +22,6 @@ export {
   isDev,
   generatePageTitle,
   numberFormatter,
-  obj2QueryString,
   formatToDate,
   checkPermission,
 };
