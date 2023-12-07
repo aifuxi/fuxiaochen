@@ -3,7 +3,7 @@ import React from 'react';
 import { type Metadata } from 'next';
 
 import { PageTitle } from '@/components/page-title';
-import { NICKNAME } from '@/constants';
+import { NICKNAME } from '@/constants/info';
 import { cn } from '@/utils';
 
 export const metadata: Metadata = {

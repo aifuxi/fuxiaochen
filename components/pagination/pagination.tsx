@@ -5,7 +5,7 @@ import React from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import { PaginationButton } from './pagination-button';
-import { DEFAULT_PAGE_SIZE } from '@/constants';
+import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 interface PaginationButtonProps {
   total: number;

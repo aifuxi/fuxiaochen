@@ -1,6 +1,6 @@
 import { type ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
-import { DOMAIN } from '@/constants';
+import { DOMAIN } from '@/constants/info';
 import { db } from '@/libs/prisma';
 
 export async function GET() {

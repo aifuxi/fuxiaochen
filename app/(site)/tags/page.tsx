@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { PageTitle } from '@/components/page-title';
 import { badgeVariants } from '@/components/ui/badge';
-import { PATHS } from '@/constants';
+import { PATHS } from '@/constants/path';
 import { cn } from '@/utils';
 
 import { getAllTags } from '../../_actions/tag';

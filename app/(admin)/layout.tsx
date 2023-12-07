@@ -10,7 +10,7 @@ import { BookText, HomeIcon, Tags } from 'lucide-react';
 
 import { PageLoading } from '@/components/loading';
 import { badgeVariants } from '@/components/ui/badge';
-import { PATHS } from '@/constants';
+import { PATHS } from '@/constants/path';
 import { cn } from '@/utils/helper';
 
 const adminNavItems: Array<{

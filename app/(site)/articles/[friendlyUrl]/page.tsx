@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { getArticleByFriendlyURL } from '@/app/_actions/article';
 import { BytemdViewer } from '@/components/bytemd';
 import { badgeVariants } from '@/components/ui/badge';
-import { PATHS, PLACEHOLDER_COVER } from '@/constants';
+import { PATHS } from '@/constants/path';
+import { PLACEHOLDER_COVER } from '@/constants/unknown';
 import { cn } from '@/utils/helper';
 
 export async function generateMetadata({

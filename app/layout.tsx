@@ -2,7 +2,7 @@ import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
-import { WEBSITE } from '@/constants';
+import { WEBSITE } from '@/constants/info';
 import '@/styles/global.css';
 
 import '@fontsource/poppins/400.css';

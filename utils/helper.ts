@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { WEBSITE } from '@/constants';
+import { WEBSITE } from '@/constants/info';
 import { type GeneralResponse, type TotalResponse } from '@/typings/params';
 
 export function cn(...inputs: ClassValue[]) {
