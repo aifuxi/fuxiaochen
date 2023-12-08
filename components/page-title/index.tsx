@@ -1,4 +1,4 @@
-import { BarCode } from '../illustrations';
+import { IconBarCode } from '../icons';
 
 type Props = {
   title: string;
@@ -12,7 +12,7 @@ export function PageTitle({ title }: Props) {
         {title}
       </h2>
 
-      <BarCode className="w-[300px] h-[40px]" />
+      <IconBarCode className="w-[300px] h-[40px]" />
     </div>
   );
 }

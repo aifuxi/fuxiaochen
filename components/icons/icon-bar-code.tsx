@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react';
 
-export const BarCode = (props: SVGProps<SVGSVGElement>) => (
+export const IconBarCode = (props: SVGProps<SVGSVGElement>) => (
   <svg
     width="1em"
     height="1em"

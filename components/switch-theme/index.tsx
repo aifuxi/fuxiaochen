@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { useTheme } from 'next-themes';
 
-import { MoonStarIcon, SunIcon, Tv2Icon } from 'lucide-react';
+import { MoonStarIcon, RotateCwIcon, SunIcon, Tv2Icon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
@@ -36,13 +36,18 @@ const themeOptions = [
 export function SwitchTheme() {
   const [open, setOpen] = React.useState(false);
   const { setTheme, theme, resolvedTheme } = useTheme();
+
   const icon = React.useMemo(() => {
-    if (!theme) {
-      return <Tv2Icon size={16} />;
-    } else {
-      return themeOptions.filter((el) => el.value === resolvedTheme)?.[0]?.icon;
+    if (resolvedTheme === 'light' || theme === 'light') {
+      return <SunIcon size={16} />;
     }
-  }, [theme, resolvedTheme]);
+
+    if (resolvedTheme === 'dark' || theme === 'dark') {
+      return <MoonStarIcon size={16} />;
+    }
+
+    return <RotateCwIcon className="animate-spin" size={16} />;
+  }, [resolvedTheme, theme]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -52,6 +57,9 @@ export function SwitchTheme() {
           aria-expanded={open}
           variant="ghost"
           size={'icon'}
+          onClick={() => {
+            throw new Error();
+          }}
         >
           {icon}
         </Button>
