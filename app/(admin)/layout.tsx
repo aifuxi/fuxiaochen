@@ -1,48 +1,21 @@
-'use client';
-
-import React from 'react';
-
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
-import { BookText, HomeIcon, Tags } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 import { PageLoading } from '@/components/loading';
-import { buttonVariants } from '@/components/ui/button';
+import { SideNav } from '@/components/navbar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { PATHS } from '@/constants/path';
-import { cn } from '@/utils/helper';
+import { auth } from '@/libs/auth';
 
-const adminNavItems: Array<{
-  label: string;
-  link: string;
-  icon?: React.ReactNode;
-}> = [
-  {
-    label: 'Dashboard',
-    link: PATHS.ADMIN_HOME,
-    icon: <HomeIcon className="w-[18px] h-[18px]" />,
-  },
-  {
-    label: '文章管理',
-    link: PATHS.ADMIN_ARTICLE,
-    icon: <BookText className="w-[18px] h-[18px]" />,
-  },
-  {
-    label: '标签管理',
-    link: PATHS.ADMIN_TAG,
-    icon: <Tags className="w-[18px] h-[18px]" />,
-  },
-];
-
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status } = useSession();
-  const pathname = usePathname();
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    redirect(PATHS.AUTH_SIGN_IN);
+  }
 
   return (
     <div className="flex">
@@ -57,21 +30,7 @@ export default function AdminLayout({
           <Skeleton className="w-[200px] h-[200px] my-6" />
         )}
 
-        {adminNavItems.map((el) => (
-          <Link
-            key={el.link}
-            href={el.link}
-            className={cn(
-              buttonVariants({
-                variant: pathname === el.link ? 'secondary' : 'default',
-              }),
-              'text-md px-4 py-2 !rounded-none flex gap-2 items-center !justify-start w-full',
-            )}
-          >
-            {el.icon}
-            <span>{el.label}</span>
-          </Link>
-        ))}
+        <SideNav />
       </div>
       <div className="h-screen overflow-scroll flex flex-1 p-8 flex-col">
         {renderChildren()}
