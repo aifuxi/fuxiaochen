@@ -27,3 +27,5 @@ export function Navbar() {
     </header>
   );
 }
+
+export { SideNav } from './side-nav';
