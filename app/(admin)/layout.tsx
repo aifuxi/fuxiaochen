@@ -9,7 +9,8 @@ import { usePathname } from 'next/navigation';
 import { BookText, HomeIcon, Tags } from 'lucide-react';
 
 import { PageLoading } from '@/components/loading';
-import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { PATHS } from '@/constants/path';
 import { cn } from '@/utils/helper';
 
@@ -45,9 +46,15 @@ export default function AdminLayout({
 
   return (
     <div className="flex">
-      <div className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex p-2 gap-2">
-        {session?.user?.image && (
-          <img src={session?.user?.image} alt={session?.user?.name ?? ''} />
+      <div className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex items-center p-2 gap-2">
+        {session?.user?.image ? (
+          <img
+            src={session?.user?.image}
+            className="border w-[200px] h-[200px]  my-6"
+            alt={session?.user?.name ?? ''}
+          />
+        ) : (
+          <Skeleton className="w-[200px] h-[200px] my-6" />
         )}
 
         {adminNavItems.map((el) => (
@@ -55,10 +62,10 @@ export default function AdminLayout({
             key={el.link}
             href={el.link}
             className={cn(
-              badgeVariants({
+              buttonVariants({
                 variant: pathname === el.link ? 'secondary' : 'default',
               }),
-              'text-md px-4 py-2 !rounded-none flex gap-2 items-center',
+              'text-md px-4 py-2 !rounded-none flex gap-2 items-center !justify-start w-full',
             )}
           >
             {el.icon}
