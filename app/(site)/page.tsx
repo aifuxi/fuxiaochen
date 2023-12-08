@@ -9,7 +9,7 @@ export default function HomePage() {
         />
 
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          F西，努力做一个更好的程序员。
+          西格玛👨🏻男人, 从不惧怕挑战
         </h1>
       </div>
     </div>
