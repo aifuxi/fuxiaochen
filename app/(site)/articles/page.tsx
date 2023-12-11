@@ -25,7 +25,7 @@ export default async function ArticlesPage({
 
   return (
     <div className="container mx-auto">
-      <div className="h-screen flex flex-col gap-8 pb-8">
+      <div className="min-h-screen flex flex-col gap-8 pb-8">
         <PageTitle title="文章" />
 
         <ArticleList articles={articles} total={total} />

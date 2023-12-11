@@ -29,9 +29,9 @@ const ArticleList = ({ total, articles }: Props) => {
         </>
       ) : (
         <div className="grid gap-8 place-content-center">
-          <IllustrationNoContent className="w-[400px] h-[400px]" />
+          <IllustrationNoContent className="w-[30vh] h-[30vh]" />
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-            暂无文章，请添加
+            暂无文章
           </h3>
         </div>
       )}

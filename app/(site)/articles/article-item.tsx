@@ -41,7 +41,7 @@ export default function ArticleItem({ article }: Props) {
           ))}
         </div>
 
-        <p className="leading-7 [&:not(:first-child)]:mt-6">
+        <p className="leading-7 [&:not(:first-child)]:mt-6 line-clamp-2 sm:line-clamp-4">
           {article.description}
         </p>
 
