@@ -25,7 +25,7 @@ type Props = {
 export function DeleteArticleItemButton({ article }: Props) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <Button size={'icon'}>
           <TrashIcon size={16} />
         </Button>

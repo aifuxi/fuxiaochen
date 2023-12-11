@@ -57,7 +57,7 @@ export function EditTagButton({ tag }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button size={'icon'} onClick={() => setOpen(true)}>
           <PencilIcon size={16} />
         </Button>

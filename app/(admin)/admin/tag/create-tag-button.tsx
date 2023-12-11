@@ -53,7 +53,7 @@ export function CreateTagButton() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
           <PlusIcon className="mr-2" size={16} />
           创建标签
