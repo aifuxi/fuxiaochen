@@ -57,9 +57,6 @@ export function SwitchTheme() {
           aria-expanded={open}
           variant="ghost"
           size={'icon'}
-          onClick={() => {
-            throw new Error();
-          }}
         >
           {icon}
         </Button>
