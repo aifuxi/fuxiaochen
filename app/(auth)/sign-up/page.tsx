@@ -117,6 +117,9 @@ export default function SignInPage() {
               </div>
             </CardContent>
             <CardFooter className="grid gap-8 grid-cols-4">
+              <Button type="submit" className="col-span-3">
+                创建
+              </Button>
               <Button
                 variant="outline"
                 type="button"
@@ -124,9 +127,6 @@ export default function SignInPage() {
                 className="col-span-1"
               >
                 重置
-              </Button>
-              <Button type="submit" className="col-span-3">
-                创建
               </Button>
             </CardFooter>
           </form>
