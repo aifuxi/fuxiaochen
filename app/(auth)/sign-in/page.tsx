@@ -61,7 +61,7 @@ export default function SignInPage() {
 
   return (
     <div className="w-screen h-screen grid place-content-center">
-      <Card className="min-w-[360px]">
+      <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px]">
         <CardHeader>
           <CardTitle>用户登录</CardTitle>
           <CardDescription>请输入你的邮箱和密码进行登录</CardDescription>
@@ -102,12 +102,10 @@ export default function SignInPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="grid gap-8 grid-cols-4">
+            <CardFooter className="grid gap-2 ">
               {/* TODO: 表单提交的时候，登录按钮展示loading态 */}
-              <Button type="submit" className="col-span-3">
-                登录
-              </Button>
-              <Button type="reset" variant="outline" className="col-span-1">
+              <Button type="submit">登录</Button>
+              <Button type="reset" variant="outline">
                 重置
               </Button>
             </CardFooter>
