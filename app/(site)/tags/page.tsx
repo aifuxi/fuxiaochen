@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
+import { IllustrationNoContent } from '@/components/illustrations';
 import { PageTitle } from '@/components/page-title';
 import { badgeVariants } from '@/components/ui/badge';
 import { PATHS } from '@/constants/path';
@@ -29,7 +30,14 @@ export default async function TagsPage() {
 
   function renderTagList() {
     if (!tags?.length) {
-      return <div className="pl-8 pt-16">暂无标签</div>;
+      return (
+        <div className="grid gap-8 place-content-center">
+          <IllustrationNoContent className="w-[400px] h-[400px]" />
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
+            暂无标签，请添加
+          </h3>
+        </div>
+      );
     }
 
     return (
