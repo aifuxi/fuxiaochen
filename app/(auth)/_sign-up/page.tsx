@@ -46,7 +46,7 @@ export default function SignInPage() {
 
   return (
     <div className="w-screen h-screen grid place-content-center">
-      <Card className="min-w-[360px]">
+      <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px]">
         <CardHeader>
           <CardTitle>创建用户</CardTitle>
           <CardDescription>请输入下面信息创建一个新用户</CardDescription>
@@ -117,15 +117,12 @@ export default function SignInPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="grid gap-8 grid-cols-4">
-              <Button type="submit" className="col-span-3">
-                创建
-              </Button>
+            <CardFooter className="grid gap-2">
+              <Button type="submit">创建</Button>
               <Button
                 variant="outline"
                 type="button"
                 onClick={() => form.reset()}
-                className="col-span-1"
               >
                 重置
               </Button>
