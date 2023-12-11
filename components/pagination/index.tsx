@@ -39,6 +39,11 @@ export const Pagination = ({ total }: PaginationButtonProps) => {
     [searchParams],
   );
 
+  // 只有一页数据或者不满一页数据，不展示分页组件
+  if (total <= pageCount) {
+    return null;
+  }
+
   return (
     <PaginationButton
       pageCount={pageCount}
