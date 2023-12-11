@@ -1,3 +1,4 @@
+import { SignOutButton } from './sign-out-button';
 import { SideNav } from '@/components/navbar';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 import { auth } from '@/libs/auth';
@@ -18,7 +19,11 @@ export default async function AdminLayout({
           alt={session?.user?.name ?? ''}
         />
 
-        <SideNav />
+        <div className="w-full flex-1 flex-col flex items-center">
+          <SideNav />
+        </div>
+
+        <SignOutButton />
       </div>
       <div className="h-screen overflow-scroll flex flex-1 p-8 flex-col">
         {children}
