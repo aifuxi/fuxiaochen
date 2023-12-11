@@ -1,6 +1,7 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
+import BackToTop from '@/components/back-to-top';
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
 import { WEBSITE } from '@/constants/info';
 import '@/styles/global.css';
@@ -53,7 +54,10 @@ export default function RootLayout({
 
       <body className={'debug-screens'}>
         <AuthProvider session={session}>
-          <NextThemeProvider attribute="class">{children}</NextThemeProvider>
+          <NextThemeProvider attribute="class">
+            {children}
+            <BackToTop />
+          </NextThemeProvider>
         </AuthProvider>
       </body>
     </html>
