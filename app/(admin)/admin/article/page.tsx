@@ -82,7 +82,7 @@ export default async function AdminArticle({
                   {article.tags?.length
                     ? article.tags.map((tag) => (
                         <Link
-                          href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}
+                          href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
                           key={tag.id}
                           target="_blank"
                           className={cn(

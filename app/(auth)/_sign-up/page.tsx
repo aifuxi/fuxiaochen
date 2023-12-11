@@ -26,6 +26,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { type CreateUserReq, createUserReqSchema } from '@/typings/user';
 
+// 暂时不支持注册用户，这个页面先放在这里，以 “_”开头的目录(_sign-up)，Next.js不会生成页面路由
 export default function SignInPage() {
   const form = useForm<z.infer<typeof createUserReqSchema>>({
     resolver: zodResolver(createUserReqSchema),

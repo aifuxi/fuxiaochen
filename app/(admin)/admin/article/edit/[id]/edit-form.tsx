@@ -42,7 +42,7 @@ export function EditForm({
     defaultValues: {
       title: article?.title ?? '',
       id: article?.id ?? '',
-      friendlyUrl: article?.friendlyUrl ?? '',
+      friendlyURL: article?.friendlyURL ?? '',
       description: article?.description ?? '',
       content: article?.content ?? '',
       published: article?.published ?? true,
@@ -82,7 +82,7 @@ export function EditForm({
           />
           <FormField
             control={form.control}
-            name="friendlyUrl"
+            name="friendlyURL"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>标题</FormLabel>

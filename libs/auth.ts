@@ -7,6 +7,10 @@ import type { NextAuthOptions } from 'next-auth';
 import { getServerSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+import { compareSync } from 'bcryptjs';
+
+import { db } from './prisma';
+
 // You'll need to import and pass this
 // to `NextAuth` in `app/api/auth/[...nextauth]/route.ts`
 export const authConfig = {
@@ -23,25 +27,59 @@ export const authConfig = {
         email: { label: 'Email', type: 'text', placeholder: '123@qq.com' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        const user = { id: '1', name: 'J Smith', email: 'jsmith@example.com' };
-
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
+      async authorize(credentials) {
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        if (!credentials?.email || !credentials?.password) {
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
+
+        const user = await db.user.findUnique({
+          where: {
+            email: credentials?.email,
+          },
+        });
+
+        if (!user) {
+          return null;
+        }
+
+        // 检查密码
+        const isPasswordValid = compareSync(
+          credentials?.password ?? '',
+          user.password,
+        );
+        if (!isPasswordValid) {
+          return null;
+        }
+
+        return user;
       },
     }),
   ],
   pages: {
     signIn: '/sign-in',
     newUser: '/sign-up',
+  },
+  callbacks: {
+    session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+    },
+
+    jwt({ token, user }) {
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+        };
+      }
+      return token;
+    },
   },
 } satisfies NextAuthOptions;
 
