@@ -49,7 +49,7 @@ export default async function AdminTag({
           {tags?.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell className="!align-middle">{tag.name}</TableCell>
-              <TableCell className="!align-middle">{tag.friendlyUrl}</TableCell>
+              <TableCell className="!align-middle">{tag.friendlyURL}</TableCell>
               <TableCell className="!align-middle">
                 {tag.articles?.length ?? 0}
               </TableCell>

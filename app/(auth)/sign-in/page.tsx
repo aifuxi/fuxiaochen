@@ -2,6 +2,9 @@
 
 import { useForm } from 'react-hook-form';
 
+import { signIn } from 'next-auth/react';
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type z } from 'zod';
 
@@ -23,14 +26,38 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PATHS } from '@/constants/path';
 import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
 
 export default function SignInPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const form = useForm<z.infer<typeof signInUserReqSchema>>({
     resolver: zodResolver(signInUserReqSchema),
+    defaultValues: {
+      email: 'aifuxi@aifuxi.cool',
+      password: '123456',
+    },
   });
 
-  async function onSubmit(values: SignInUserReq) {}
+  async function onSubmit(values: SignInUserReq) {
+    const callbackURL = searchParams.get('callbackUrl') ?? PATHS.ADMIN_HOME;
+    const res = await signIn('credentials', {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+      callbackUrl: `${window.location.origin}`,
+    });
+    if (res?.error) {
+      // TODO: 弹Toast
+      // eslint-disable-next-line no-console
+      console.error('出错了', res.error);
+    } else {
+      // TODO: 弹Toast
+    }
+
+    router.push(callbackURL);
+  }
 
   return (
     <div className="w-screen h-screen grid place-content-center">
@@ -76,6 +103,7 @@ export default function SignInPage() {
               </div>
             </CardContent>
             <CardFooter className="grid gap-8 grid-cols-4">
+              {/* TODO: 表单提交的时候，登录按钮展示loading态 */}
               <Button type="submit" className="col-span-3">
                 登录
               </Button>

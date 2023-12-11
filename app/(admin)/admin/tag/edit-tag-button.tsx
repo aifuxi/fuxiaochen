@@ -40,7 +40,7 @@ export function EditTagButton({ tag }: Props) {
   React.useEffect(() => {
     if (open) {
       form.setValue('name', tag.name);
-      form.setValue('friendlyUrl', tag.friendlyUrl);
+      form.setValue('friendlyURL', tag.friendlyURL);
       form.setValue('id', tag.id);
       form.clearErrors();
     }
@@ -97,7 +97,7 @@ export function EditTagButton({ tag }: Props) {
               />
               <FormField
                 control={form.control}
-                name="friendlyUrl"
+                name="friendlyURL"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>链接</FormLabel>

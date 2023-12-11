@@ -6,7 +6,7 @@ import { db } from '@/libs/prisma';
 export async function GET() {
   const articles = await db.article.findMany({
     select: {
-      friendlyUrl: true,
+      friendlyURL: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -16,7 +16,7 @@ export async function GET() {
   });
   const tags = await db.tag.findMany({
     select: {
-      friendlyUrl: true,
+      friendlyURL: true,
       createdAt: true,
       updatedAt: true,
     },
@@ -24,14 +24,14 @@ export async function GET() {
 
   const articlesSitemaps = articles.map((item): ISitemapField => {
     return {
-      loc: `${DOMAIN}/articles/${item.friendlyUrl}`,
+      loc: `${DOMAIN}/articles/${item.friendlyURL}`,
       lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };
   });
   const tagsSitemaps = tags.map((item): ISitemapField => {
     return {
-      loc: `${DOMAIN}/tags/${item.friendlyUrl}`,
+      loc: `${DOMAIN}/tags/${item.friendlyURL}`,
       lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };
