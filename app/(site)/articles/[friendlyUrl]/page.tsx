@@ -28,7 +28,7 @@ export default async function ArticleDetailPage({
   const article = await getArticleByFriendlyURL(params.friendlyURL);
 
   return (
-    <div className="flex flex-col gap-8 items-center">
+    <div className="flex flex-col gap-8 items-center pt-8">
       <img
         className="max-w-[calc(100vw-2rem)] object-fill"
         src={article?.cover ?? PLACEHOLDER_COVER}
@@ -36,24 +36,22 @@ export default async function ArticleDetailPage({
       />
 
       <div className="flex flex-col gap-8 pb-9">
-        <div className="container mx-auto">
-          <BytemdViewer content={article?.content ?? ''} />
+        <BytemdViewer content={article?.content ?? ''} />
 
-          <div className="flex items-center flex-wrap gap-4 pt-8">
-            <p className="sm:text-xl text-muted-foreground">标签：</p>
-            {article?.tags?.map((tag) => (
-              <Link
-                href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
-                key={tag.id}
-                className={cn(
-                  badgeVariants({ variant: 'default' }),
-                  'sm:text-md sm:px-4 sm:py-2 !rounded-none',
-                )}
-              >
-                {tag.name}
-              </Link>
-            ))}
-          </div>
+        <div className="flex items-center flex-wrap gap-4 pt-8">
+          <p className="sm:text-xl text-muted-foreground">标签：</p>
+          {article?.tags?.map((tag) => (
+            <Link
+              href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
+              key={tag.id}
+              className={cn(
+                badgeVariants({ variant: 'default' }),
+                'sm:text-md sm:px-4 sm:py-2 !rounded-none',
+              )}
+            >
+              {tag.name}
+            </Link>
+          ))}
         </div>
       </div>
     </div>
