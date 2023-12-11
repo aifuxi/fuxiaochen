@@ -13,7 +13,7 @@ import {
 export async function getArticleByFriendlyURL(friendlyURL: string) {
   const article = await db.article.findUnique({
     where: {
-      friendlyUrl: friendlyURL,
+      friendlyURL: friendlyURL,
     },
     include: {
       tags: true,
@@ -74,7 +74,7 @@ export async function updateArticle(parsed: UpdateArticleReq) {
     data: {
       title: parsed.title,
       description: parsed.description,
-      friendlyUrl: parsed.friendlyUrl,
+      friendlyURL: parsed.friendlyURL,
       cover: parsed.cover,
       content: parsed.content,
       published: parsed.published,
@@ -132,7 +132,7 @@ export async function createArticle(parsed: CreateArticleReq) {
   await db.article.create({
     data: {
       title: parsed.title,
-      friendlyUrl: parsed.friendlyUrl,
+      friendlyURL: parsed.friendlyURL,
       description: parsed.description,
       content: parsed.content,
       published: parsed.published,

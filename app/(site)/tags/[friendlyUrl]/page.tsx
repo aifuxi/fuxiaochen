@@ -11,9 +11,9 @@ import ArticleList from '../../articles/article-list';
 export async function generateMetadata({
   params,
 }: {
-  params: { friendlyUrl: string };
+  params: { friendlyURL: string };
 }): Promise<Metadata> {
-  const tag = await getTagByFriendlyURL(params.friendlyUrl);
+  const tag = await getTagByFriendlyURL(params.friendlyURL);
   const name = tag?.name ?? '-';
   return {
     title: `${name}`,
@@ -24,15 +24,15 @@ export default async function TagDetailPage({
   params,
   searchParams,
 }: {
-  params: { friendlyUrl: string };
+  params: { friendlyURL: string };
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-  const tag = await getTagByFriendlyURL(params.friendlyUrl);
+  const tag = await getTagByFriendlyURL(params.friendlyURL);
   const { articles, total } = await getTagArticles({
-    friendlyURL: params.friendlyUrl,
+    friendlyURL: params.friendlyURL,
     page: currentPage,
   });
 

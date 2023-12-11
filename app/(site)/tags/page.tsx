@@ -36,7 +36,7 @@ export default async function TagsPage() {
       <div className="flex flex-wrap gap-4">
         {tags?.map((tag) => (
           <Link
-            href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}
+            href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
             key={tag.id}
             className={cn(
               badgeVariants({ variant: 'default' }),

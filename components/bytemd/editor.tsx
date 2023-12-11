@@ -4,7 +4,7 @@ import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
 import { plugins } from './config';
-import { ZERO } from '@/constants/index';
+import { ZERO } from '@/constants/unknown';
 import { uploadFile } from '@/services/upload';
 
 type Props = {

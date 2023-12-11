@@ -11,9 +11,9 @@ import { cn } from '@/utils/helper';
 export async function generateMetadata({
   params,
 }: {
-  params: { friendlyUrl: string };
+  params: { friendlyURL: string };
 }): Promise<Metadata> {
-  const article = await getArticleByFriendlyURL(params.friendlyUrl);
+  const article = await getArticleByFriendlyURL(params.friendlyURL);
   const title = article?.title ?? '文章未找到';
   return {
     title,
@@ -23,9 +23,9 @@ export async function generateMetadata({
 export default async function ArticleDetailPage({
   params,
 }: {
-  params: { friendlyUrl: string };
+  params: { friendlyURL: string };
 }) {
-  const article = await getArticleByFriendlyURL(params.friendlyUrl);
+  const article = await getArticleByFriendlyURL(params.friendlyURL);
 
   return (
     <div className="flex flex-col gap-8 items-center">
@@ -43,7 +43,7 @@ export default async function ArticleDetailPage({
             <p className="text-xl text-muted-foreground">标签：</p>
             {article?.tags?.map((tag) => (
               <Link
-                href={`${PATHS.SITE_TAGS}/${tag.friendlyUrl}`}
+                href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
                 key={tag.id}
                 className={cn(
                   badgeVariants({ variant: 'default' }),

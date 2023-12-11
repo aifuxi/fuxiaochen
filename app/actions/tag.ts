@@ -15,7 +15,7 @@ export async function getTagArticles(params: {
 
   const tag = await db.tag.findUnique({
     where: {
-      friendlyUrl: params.friendlyURL,
+      friendlyURL: params.friendlyURL,
     },
     include: {
       articles: {
@@ -38,7 +38,7 @@ export async function getTagArticles(params: {
 export async function getTagByFriendlyURL(friendlyURL: string) {
   const tag = await db.tag.findUnique({
     where: {
-      friendlyUrl: friendlyURL,
+      friendlyURL: friendlyURL,
     },
   });
 
@@ -49,7 +49,7 @@ export async function createTag(parsed: CreateTagReq) {
   await db.tag.create({
     data: {
       name: parsed.name,
-      friendlyUrl: parsed.friendlyUrl,
+      friendlyURL: parsed.friendlyURL,
     },
   });
 
@@ -60,7 +60,7 @@ export async function updateTag(parsed: UpdateTagReq) {
   await db.tag.update({
     data: {
       name: parsed.name,
-      friendlyUrl: parsed.friendlyUrl,
+      friendlyURL: parsed.friendlyURL,
     },
     where: {
       id: parsed.id,

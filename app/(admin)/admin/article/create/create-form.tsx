@@ -35,7 +35,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
     resolver: zodResolver(createArticleReqSchema),
     defaultValues: {
       title: '',
-      friendlyUrl: '',
+      friendlyURL: '',
       description: '',
       content: '',
       published: true,
@@ -75,7 +75,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
           />
           <FormField
             control={form.control}
-            name="friendlyUrl"
+            name="friendlyURL"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>标题</FormLabel>

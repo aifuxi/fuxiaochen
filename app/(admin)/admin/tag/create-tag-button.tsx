@@ -33,7 +33,7 @@ export function CreateTagButton() {
     resolver: zodResolver(createTagReqSchema),
     defaultValues: {
       name: '',
-      friendlyUrl: '',
+      friendlyURL: '',
     },
   });
 
@@ -81,7 +81,7 @@ export function CreateTagButton() {
               />
               <FormField
                 control={form.control}
-                name="friendlyUrl"
+                name="friendlyURL"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>链接</FormLabel>
