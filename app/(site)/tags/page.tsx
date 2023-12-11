@@ -32,9 +32,9 @@ export default async function TagsPage() {
     if (!tags?.length) {
       return (
         <div className="grid gap-8 place-content-center">
-          <IllustrationNoContent className="w-[400px] h-[400px]" />
+          <IllustrationNoContent className="w-[30vh] h-[30vh]" />
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
-            暂无标签，请添加
+            暂无标签
           </h3>
         </div>
       );
@@ -48,7 +48,7 @@ export default async function TagsPage() {
             key={tag.id}
             className={cn(
               badgeVariants({ variant: 'default' }),
-              'text-md px-4 py-2 !rounded-none',
+              'text-md sm:px-4 sm:py-2 !rounded-none',
             )}
           >
             {tag.name}

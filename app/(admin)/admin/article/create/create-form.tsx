@@ -78,7 +78,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
             name="friendlyURL"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>标题</FormLabel>
+                <FormLabel>friendly_url</FormLabel>
                 <FormControl>
                   <Input
                     {...field}

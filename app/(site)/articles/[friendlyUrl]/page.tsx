@@ -30,7 +30,7 @@ export default async function ArticleDetailPage({
   return (
     <div className="flex flex-col gap-8 items-center">
       <img
-        className="w-[1500px] h-[500px] object-fill"
+        className="max-w-[calc(100vw-2rem)] object-fill"
         src={article?.cover ?? PLACEHOLDER_COVER}
         alt={article?.title}
       />
@@ -39,15 +39,15 @@ export default async function ArticleDetailPage({
         <div className="container mx-auto">
           <BytemdViewer content={article?.content ?? ''} />
 
-          <div className="flex items-center flex-wrap  gap-4">
-            <p className="text-xl text-muted-foreground">标签：</p>
+          <div className="flex items-center flex-wrap gap-4 pt-8">
+            <p className="sm:text-xl text-muted-foreground">标签：</p>
             {article?.tags?.map((tag) => (
               <Link
                 href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
                 key={tag.id}
                 className={cn(
                   badgeVariants({ variant: 'default' }),
-                  'text-md px-4 py-2 !rounded-none',
+                  'sm:text-md sm:px-4 sm:py-2 !rounded-none',
                 )}
               >
                 {tag.name}
