@@ -12,7 +12,7 @@ export function PageTitle({ title }: Props) {
         {title}
       </h2>
 
-      <IconBarCode className="w-[300px] h-[40px]" />
+      <IconBarCode className="w-[300px] h-[40px] hidden sm:block" />
     </div>
   );
 }
