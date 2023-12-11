@@ -9,7 +9,7 @@ import { cn } from '@/utils/helper';
 
 import { IconLogo } from '../icons/icon-logo';
 
-const navItems: Array<{
+export const navItems: Array<{
   label: string;
   link: string;
   external?: boolean;
@@ -42,7 +42,7 @@ export function NavList() {
 
   return (
     <nav className="h-full flex items-center gap-6 text-base font-medium">
-      <Link href={PATHS.SITE_HOME} className={cn('mr-4')}>
+      <Link href={PATHS.SITE_HOME} className={cn('mr-4 hidden sm:flex')}>
         <IconLogo className="w-8 h-8" />
       </Link>
 
@@ -52,7 +52,7 @@ export function NavList() {
           href={el.link}
           target={el.external ? '_blank' : '_self'}
           className={cn(
-            'transition-colors hover:text-foreground/80 ',
+            'transition-colors hover:text-foreground/80 hidden sm:flex',
             pathname === el.link ? 'text-foreground' : 'text-foreground/60',
           )}
         >

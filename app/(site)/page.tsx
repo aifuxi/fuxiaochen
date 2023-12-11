@@ -1,3 +1,5 @@
+import { SLOGAN } from '@/constants/info';
+
 export default function HomePage() {
   return (
     <div className="container">
@@ -9,7 +11,7 @@ export default function HomePage() {
         />
 
         <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-          西格玛👨🏻男人, 从不惧怕挑战
+          {SLOGAN}
         </h1>
       </div>
     </div>
