@@ -8,7 +8,7 @@
 }
 
 .markdown-body {
-  @apply prose max-w-none dark:prose-invert;
+  @apply prose max-w-[calc(100vw-2rem)] dark:prose-invert;
 }
 
 .medium-zoom-image--opened {
