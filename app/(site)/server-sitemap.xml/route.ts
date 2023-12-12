@@ -1,8 +1,9 @@
 import { type ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
-import { PATHS } from '@/constants/path';
 import { env } from '@/libs/env.mjs';
 import { db } from '@/libs/prisma';
+
+import { PATHS } from '@/constants/path';
 
 export async function GET() {
   const articles = await db.article.findMany({

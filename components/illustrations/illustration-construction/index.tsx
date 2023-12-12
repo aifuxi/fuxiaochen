@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { cn } from '@/utils/helper';
+
 import { IllustrationConstructionDark } from './illustration-construction-dark';
 import { IllustrationConstructionLight } from './illustration-construction-light';
-import { cn } from '@/utils/helper';
 
 export function IllustrationConstruction(props: React.SVGProps<SVGSVGElement>) {
   return (

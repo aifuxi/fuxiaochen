@@ -1,7 +1,9 @@
 import { type Metadata } from 'next';
 
 import { getTagArticles, getTagByFriendlyURL } from '@/app/actions/tag';
+
 import { PageTitle } from '@/components/page-title';
+
 import { DEFAULT_PAGE } from '@/constants/unknown';
 
 import ArticleList from '../../articles/article-list';

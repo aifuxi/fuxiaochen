@@ -4,6 +4,8 @@ import * as React from 'react';
 
 import { Check, ChevronDown, XSquare } from 'lucide-react';
 
+import { cn } from '@/utils/helper';
+
 import { Badge } from './badge';
 import { Button } from './button';
 import {
@@ -15,7 +17,6 @@ import {
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { ScrollArea } from './scroll-area';
-import { cn } from '@/utils/helper';
 
 export type ComboboxOption = {
   value: string;

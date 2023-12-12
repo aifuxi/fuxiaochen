@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { type z } from 'zod';
 
 import { createUser } from '@/app/actions/user';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -24,6 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+
 import { type CreateUserReq, createUserReqSchema } from '@/typings/user';
 
 // 暂时不支持注册用户，这个页面先放在这里，以 “_”开头的目录(_sign-up)，Next.js不会生成页面路由

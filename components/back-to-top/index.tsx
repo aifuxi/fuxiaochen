@@ -6,6 +6,7 @@ import { useBoolean, useMemoizedFn, useMount, useUnmount } from 'ahooks';
 import { ArrowBigUpDashIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+
 import { cn } from '@/utils/helper';
 
 export default function BackToTop() {

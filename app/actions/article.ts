@@ -3,12 +3,14 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
-import { db } from '@/libs/prisma';
 import {
   type CreateArticleReq,
   type UpdateArticleReq,
 } from '@/typings/article';
+
+import { db } from '@/libs/prisma';
+
+import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 export async function getArticleByFriendlyURL(friendlyURL: string) {
   const article = await db.article.findUnique({

@@ -2,9 +2,10 @@ import Link from 'next/link';
 
 import { GithubIcon } from 'lucide-react';
 
+import { GITHUB_PAGE } from '@/constants/info';
+
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
-import { GITHUB_PAGE } from '@/constants/info';
 
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';

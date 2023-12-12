@@ -3,8 +3,9 @@
 import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
-import { plugins } from './config';
 import { uploadFile } from '@/app/actions/upload';
+
+import { plugins } from './config';
 
 import { useToast } from '../ui/use-toast';
 

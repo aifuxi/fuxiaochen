@@ -1,8 +1,10 @@
 import Link from 'next/link';
 
-import { CreateForm } from './create-form';
 import { getAllTags } from '@/app/actions/tag';
+
 import { PATHS } from '@/constants/path';
+
+import { CreateForm } from './create-form';
 
 export default async function AdminArticleCreate() {
   const tags = await getAllTags();
