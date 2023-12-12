@@ -5,7 +5,7 @@ import { IllustrationNoContent } from '@/components/illustrations';
 import { PageTitle } from '@/components/page-title';
 import { badgeVariants } from '@/components/ui/badge';
 import { PATHS } from '@/constants/path';
-import { cn } from '@/utils';
+import { cn } from '@/utils/helper';
 
 import { getAllTags } from '../../actions/tag';
 

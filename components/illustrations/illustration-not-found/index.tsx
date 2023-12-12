@@ -2,7 +2,7 @@ import React from 'react';
 
 import { IllustrationNotFoundDark } from './illustration-not-found-dark';
 import { IllustrationNotFoundLight } from './illustration-not-found-light';
-import { cn } from '@/utils';
+import { cn } from '@/utils/helper';
 
 export function IllustrationNotFound(props: React.SVGProps<SVGSVGElement>) {
   return (

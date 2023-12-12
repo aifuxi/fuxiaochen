@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
-import { cn, formatToDate } from '@/utils';
+import { cn } from '@/utils/helper';
+import { formatToDate } from '@/utils/time';
 
 type Props = {
   article: Article & { tags?: Tag[] };

@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { DEFAULT_PAGE } from '@/constants/unknown';
-import { formatToDate } from '@/utils';
+import { formatToDate } from '@/utils/time';
 
 export default async function AdminTag({
   searchParams,

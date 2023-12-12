@@ -2,27 +2,9 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 import { WEBSITE } from '@/constants/info';
-import { type GeneralResponse, type TotalResponse } from '@/typings/params';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-export function createSuccessResponse<T>(data: T): GeneralResponse<T> {
-  return { code: 0, msg: 'success', data };
-}
-
-export function createSuccessTotalResponse<T>(
-  data: T,
-  total: number,
-): TotalResponse<T> {
-  return { code: 0, msg: 'success', data, total };
-}
-
-export function createFailResponse(
-  errorMsg?: string,
-): GeneralResponse<undefined> {
-  return { code: -1, msg: 'fail', error: errorMsg ?? 'error' };
 }
 
 /**

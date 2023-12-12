@@ -9,7 +9,7 @@ import {
   ChevronsRightIcon,
 } from 'lucide-react';
 
-import { cn } from '@/utils';
+import { cn } from '@/utils/helper';
 
 import { Button } from '../ui/button';
 
