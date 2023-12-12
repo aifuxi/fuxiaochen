@@ -1,20 +1,11 @@
-import { getServerSession } from 'next-auth';
-import { NextResponse } from 'next/server';
+'use server';
 
 import { format } from 'date-fns';
 import fs from 'fs';
-import { StatusCodes } from 'http-status-codes';
 import path from 'path';
 
-import { authOptions } from '@/constants/next-auth';
 import { aliOSS } from '@/libs/ali-oss';
-import type { URLStruct } from '@/typings/params';
-import {
-  checkPermission,
-  createFailResponse,
-  createSuccessResponse,
-  isProduction,
-} from '@/utils';
+import { isProduction } from '@/utils/helper';
 
 const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();
@@ -27,18 +18,7 @@ const saveFile = async (file: File) => {
   return baseURL;
 };
 
-export async function POST(req: Request) {
-  const session = await getServerSession(authOptions);
-  const hasPermission = checkPermission(session);
-  if (!hasPermission) {
-    return NextResponse.json(createFailResponse(`禁止操作`), {
-      status: StatusCodes.FORBIDDEN,
-    });
-  }
-
-  // Get formData from request
-  const formData = await req.formData();
-
+export async function uploadFile(formData: FormData) {
   // Get file from formData
   const file = formData.get('file') as File;
 
@@ -53,5 +33,5 @@ export async function POST(req: Request) {
     url = await saveFile(file);
   }
 
-  return NextResponse.json(createSuccessResponse<URLStruct>({ url }));
+  return url;
 }

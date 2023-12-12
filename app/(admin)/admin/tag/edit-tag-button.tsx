@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { type UpdateTagReq, updateTagReqSchema } from '@/typings/tag';
 
 type Props = {
@@ -33,6 +34,7 @@ type Props = {
 
 export function EditTagButton({ tag }: Props) {
   const [open, setOpen] = React.useState(false);
+  const { toast } = useToast();
   const form = useForm<UpdateTagReq>({
     resolver: zodResolver(updateTagReqSchema),
   });
@@ -51,7 +53,11 @@ export function EditTagButton({ tag }: Props) {
       await updateTag(values);
       setOpen(false);
     } catch (e) {
-      // TODO: 错误处理，弹 Toast
+      toast({
+        title: '请求失败',
+        variant: 'destructive',
+        description: e as string,
+      });
     }
   }
 
