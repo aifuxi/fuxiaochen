@@ -28,12 +28,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-
-import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
-
-import { cn } from '@/utils/helper';
-
 import { PATHS } from '@/constants/path';
+import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
+import { cn } from '@/utils/helper';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -42,8 +39,8 @@ export default function SignInPage() {
   const form = useForm<z.infer<typeof signInUserReqSchema>>({
     resolver: zodResolver(signInUserReqSchema),
     defaultValues: {
-      email: 'aifuxi@aifuxi.cool',
-      password: '123456',
+      email: '',
+      password: '',
     },
   });
 
