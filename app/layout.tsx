@@ -1,13 +1,10 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
-import { Toaster } from '@/components/ui/toaster';
-
 import BackToTop from '@/components/back-to-top';
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
-
+import { Toaster } from '@/components/ui/toaster';
 import { WEBSITE } from '@/constants/info';
-
 import '@/styles/global.css';
 
 import '@fontsource/poppins/400.css';
@@ -54,6 +51,12 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest" />
         {/* 打开外部链接时，以新开tab的方式打开 */}
         <base target="_blank" />
+
+        {/* Google Search Console 验证 https://aifuxi.cool/的所有权需要设置的HTML标签 */}
+        <meta
+          name="google-site-verification"
+          content="UT_Si71yQw3RQF1ALRd33CyBjR56msBkQRXe20WP4L0"
+        />
       </head>
 
       <body className={'debug-screens'}>
