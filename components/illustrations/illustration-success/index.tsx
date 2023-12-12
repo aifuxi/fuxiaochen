@@ -2,7 +2,7 @@ import React from 'react';
 
 import { IllustrationSuccessDark } from './illustration-success-dark';
 import { IllustrationSuccessLight } from './illustration-success-light';
-import { cn } from '@/utils';
+import { cn } from '@/utils/helper';
 
 export function IllustrationSuccess(props: React.SVGProps<SVGSVGElement>) {
   return (

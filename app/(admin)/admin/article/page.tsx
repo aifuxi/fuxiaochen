@@ -20,7 +20,8 @@ import {
 } from '@/components/ui/table';
 import { PATHS } from '@/constants/path';
 import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants/unknown';
-import { cn, formatToDate } from '@/utils';
+import { cn } from '@/utils/helper';
+import { formatToDate } from '@/utils/time';
 
 export default async function AdminArticle({
   searchParams,
