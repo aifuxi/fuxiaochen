@@ -2,9 +2,11 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
-import { db } from '@/libs/prisma';
 import { type CreateTagReq, type UpdateTagReq } from '@/typings/tag';
+
+import { db } from '@/libs/prisma';
+
+import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 export async function getTagArticles(params: {
   friendlyURL: string;

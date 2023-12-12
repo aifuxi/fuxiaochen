@@ -2,11 +2,15 @@ import { type Metadata } from 'next';
 import Link from 'next/link';
 
 import { getArticleByFriendlyURL } from '@/app/actions/article';
-import { BytemdViewer } from '@/components/bytemd';
+
 import { badgeVariants } from '@/components/ui/badge';
+
+import { BytemdViewer } from '@/components/bytemd';
+
+import { cn } from '@/utils/helper';
+
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
-import { cn } from '@/utils/helper';
 
 export async function generateMetadata({
   params,

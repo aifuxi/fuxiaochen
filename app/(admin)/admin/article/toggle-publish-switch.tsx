@@ -3,6 +3,7 @@
 import { type Article } from '@prisma/client';
 
 import { toggleArticlePublish } from '@/app/actions/article';
+
 import { Switch } from '@/components/ui/switch';
 
 type Props = {

@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { cn } from '@/utils/helper';
+
 import { IllustrationIdleDark } from './illustration-idle-dark';
 import { IllustrationIdleLight } from './illustration-idle-light';
-import { cn } from '@/utils/helper';
 
 export function IllustrationIdle(props: React.SVGProps<SVGSVGElement>) {
   return (

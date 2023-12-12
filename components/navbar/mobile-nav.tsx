@@ -7,7 +7,6 @@ import { usePathname } from 'next/navigation';
 
 import { AlignJustifyIcon } from 'lucide-react';
 
-import { navItems } from './nav-list';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Sheet,
@@ -17,8 +16,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { SLOGAN, WEBSITE } from '@/constants/info';
+
 import { cn } from '@/utils/helper';
+
+import { SLOGAN, WEBSITE } from '@/constants/info';
+
+import { navItems } from './nav-list';
 
 export function MobileNav() {
   const pathname = usePathname();

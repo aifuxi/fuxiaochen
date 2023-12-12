@@ -8,6 +8,7 @@ import { type Tag } from '@prisma/client';
 import { PencilIcon } from 'lucide-react';
 
 import { updateTag } from '@/app/actions/tag';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,6 +27,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+
 import { type UpdateTagReq, updateTagReqSchema } from '@/typings/tag';
 
 type Props = {

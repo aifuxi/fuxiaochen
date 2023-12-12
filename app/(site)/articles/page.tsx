@@ -1,8 +1,10 @@
 import { type Metadata } from 'next';
 
-import ArticleList from './article-list';
 import { PageTitle } from '@/components/page-title';
+
 import { DEFAULT_PAGE } from '@/constants/unknown';
+
+import ArticleList from './article-list';
 
 import { getPublishedArticles } from '../../actions/article';
 

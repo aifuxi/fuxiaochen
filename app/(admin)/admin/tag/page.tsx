@@ -1,8 +1,5 @@
-import { CreateTagButton } from './create-tag-button';
-import { DeleteTagItemButton } from './delete-tag-item-button';
-import { EditTagButton } from './edit-tag-button';
 import { getTags } from '@/app/actions/tag';
-import { Pagination } from '@/components/pagination';
+
 import {
   Table,
   TableBody,
@@ -11,8 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { DEFAULT_PAGE } from '@/constants/unknown';
+
+import { Pagination } from '@/components/pagination';
+
 import { formatToDate } from '@/utils/time';
+
+import { DEFAULT_PAGE } from '@/constants/unknown';
+
+import { CreateTagButton } from './create-tag-button';
+import { DeleteTagItemButton } from './delete-tag-item-button';
+import { EditTagButton } from './edit-tag-button';
 
 export default async function AdminTag({
   searchParams,

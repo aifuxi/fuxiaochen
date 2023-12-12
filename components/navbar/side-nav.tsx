@@ -8,8 +8,10 @@ import { usePathname } from 'next/navigation';
 import { BookText, HomeIcon, Tags } from 'lucide-react';
 
 import { buttonVariants } from '@/components/ui/button';
-import { PATHS } from '@/constants/path';
+
 import { cn } from '@/utils/helper';
+
+import { PATHS } from '@/constants/path';
 
 const adminNavItems: Array<{
   label: string;
