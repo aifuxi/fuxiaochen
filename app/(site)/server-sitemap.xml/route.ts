@@ -1,6 +1,7 @@
 import { type ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
-import { DOMAIN } from '@/constants/info';
+import { PATHS } from '@/constants/path';
+import { env } from '@/libs/env.mjs';
 import { db } from '@/libs/prisma';
 
 export async function GET() {
@@ -24,14 +25,14 @@ export async function GET() {
 
   const articlesSitemaps = articles.map((item): ISitemapField => {
     return {
-      loc: `${DOMAIN}/articles/${item.friendlyURL}`,
+      loc: `${env.SITE_URL}${PATHS.SITE_ARTICLES}/${item.friendlyURL}`,
       lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };
   });
   const tagsSitemaps = tags.map((item): ISitemapField => {
     return {
-      loc: `${DOMAIN}/tags/${item.friendlyURL}`,
+      loc: `${env.SITE_URL}${PATHS.SITE_TAGS}/${item.friendlyURL}`,
       lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
       changefreq: 'hourly',
     };

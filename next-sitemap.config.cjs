@@ -1,6 +1,8 @@
+const SITE_URL = process.env.SITE_URL;
+
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://aifuxi.cool',
+  siteUrl: SITE_URL,
   generateRobotsTxt: true,
   // 以/admin/*的路由不生成sitemap
   exclude: ['/admin/*', '/server-sitemap.xml'],
@@ -13,6 +15,6 @@ module.exports = {
         disallow: ['/admin/'],
       },
     ],
-    additionalSitemaps: ['https://aifuxi.cool/server-sitemap.xml'],
+    additionalSitemaps: [`${SITE_URL}/server-sitemap.xml`],
   },
 };

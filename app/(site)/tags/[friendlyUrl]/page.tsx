@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { type Metadata } from 'next';
 
 import { getTagArticles, getTagByFriendlyURL } from '@/app/actions/tag';
@@ -19,6 +17,8 @@ export async function generateMetadata({
     title: `${name}`,
   };
 }
+
+export const revalidate = 60;
 
 export default async function TagDetailPage({
   params,
