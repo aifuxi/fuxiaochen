@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev -p 6121",
+    "start": "next start -p 3000",
     "build": "next build",
     "lint": "next lint",
     "prepare": "husky install",
