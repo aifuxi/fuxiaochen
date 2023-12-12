@@ -3,6 +3,7 @@ import { type Session } from 'next-auth';
 
 import BackToTop from '@/components/back-to-top';
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
+import { Toaster } from '@/components/ui/toaster';
 import { WEBSITE } from '@/constants/info';
 import '@/styles/global.css';
 
@@ -57,6 +58,8 @@ export default function RootLayout({
           <NextThemeProvider attribute="class">
             {children}
             <BackToTop />
+
+            <Toaster />
           </NextThemeProvider>
         </AuthProvider>
       </body>

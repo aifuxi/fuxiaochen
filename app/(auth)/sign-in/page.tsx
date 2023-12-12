@@ -6,6 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -26,12 +27,15 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
 import { PATHS } from '@/constants/path';
 import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
+import { cn } from '@/utils/helper';
 
 export default function SignInPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof signInUserReqSchema>>({
     resolver: zodResolver(signInUserReqSchema),
     defaultValues: {
@@ -49,11 +53,16 @@ export default function SignInPage() {
       callbackUrl: `${window.location.origin}`,
     });
     if (res?.error) {
-      // TODO: 弹Toast
-      // eslint-disable-next-line no-console
-      console.error('出错了', res.error);
+      toast({
+        variant: 'destructive',
+        title: '请求失败',
+        description: res?.error,
+      });
     } else {
-      // TODO: 弹Toast
+      toast({
+        title: '请求成功',
+        description: '登录成功，欢迎回来',
+      });
     }
 
     router.push(callbackURL);
@@ -103,8 +112,16 @@ export default function SignInPage() {
               </div>
             </CardContent>
             <CardFooter className="grid gap-2 ">
-              {/* TODO: 表单提交的时候，登录按钮展示loading态 */}
-              <Button type="submit">登录</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                <Loader2Icon
+                  size={16}
+                  className={cn(
+                    'mr-2 animate-spin',
+                    form.formState.isSubmitting ? '' : 'hidden',
+                  )}
+                />
+                登录
+              </Button>
               <Button type="reset" variant="outline">
                 重置
               </Button>

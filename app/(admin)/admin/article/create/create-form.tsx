@@ -8,6 +8,7 @@ import { type Tag } from '@prisma/client';
 import { type z } from 'zod';
 
 import { createArticle } from '@/app/actions/article';
+import { uploadFile } from '@/app/actions/upload';
 import { BytemdEditor } from '@/components/bytemd';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -22,8 +23,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { PLACEHOLDER_COVER, ZERO } from '@/constants/unknown';
-import { uploadFile } from '@/services/upload';
+import { useToast } from '@/components/ui/use-toast';
+import { PLACEHOLDER_COVER } from '@/constants/unknown';
 import {
   type CreateArticleReq,
   createArticleReqSchema,
@@ -31,6 +32,7 @@ import {
 
 export function CreateForm({ tags }: { tags?: Tag[] }) {
   const [cover, setCover] = React.useState(PLACEHOLDER_COVER);
+  const { toast } = useToast();
   const form = useForm<z.infer<typeof createArticleReqSchema>>({
     resolver: zodResolver(createArticleReqSchema),
     defaultValues: {
@@ -115,18 +117,27 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
                 <Input
                   type="file"
                   onChange={async (e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      const fd = new FormData();
-                      fd.append('file', file);
-                      const res = await uploadFile(fd);
+                    try {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const fd = new FormData();
+                        fd.append('file', file);
+                        const url = await uploadFile(fd);
 
-                      if (res.code === ZERO) {
-                        setCover(res.data?.url ?? '');
-                        form.setValue('cover', res.data?.url ?? '');
+                        setCover(url ?? '');
+                        form.setValue('cover', url ?? '');
+                      } else {
+                        toast({
+                          title: '提示',
+                          description: '请选择一个文件',
+                        });
                       }
-                    } else {
-                      // TODO: 提示请选择文件
+                    } catch (error) {
+                      toast({
+                        title: '请求失败',
+                        variant: 'destructive',
+                        description: error as string,
+                      });
                     }
                   }}
                 />
