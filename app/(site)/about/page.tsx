@@ -4,7 +4,7 @@ import { type Metadata } from 'next';
 
 import { PageTitle } from '@/components/page-title';
 import { NICKNAME } from '@/constants/info';
-import { cn } from '@/utils';
+import { cn } from '@/utils/helper';
 
 export const metadata: Metadata = {
   title: '关于',
