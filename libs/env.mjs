@@ -3,34 +3,63 @@ import { z } from 'zod';
 
 export const env = createEnv({
   server: {
+    /** prisma */
     DATABASE_URL: z.string(),
+
+    /** 运行时 */
     NODE_ENV: z
       .enum(['development', 'test', 'production'])
       .default('development'),
+
+    /** next-auth */
     NEXTAUTH_SECRET:
       process.env.NODE_ENV === 'production'
         ? z.string()
         : z.string().optional(),
     NEXTAUTH_URL: z.string().url(),
+
+    /** 网站 */
     SITE_URL: z.string().url(),
-    // 阿里云OSS
+
+    /** 阿里云OSS */
     OSS_ACCESS_KEY_ID: z.string(),
     OSS_ACCESS_KEY_SECRET: z.string(),
     OSS_REGION: z.string(),
     OSS_BUCKET: z.string(),
+
+    /** ADMIN */
+    ADMIN_NICKNAME: z.string(),
+    ADMIN_AVATAR: z.string().optional(),
+    ADMIN_EMAIL: z.string().email(),
+    ADMIN_PASSWORD: z.string().min(6).max(20),
   },
   client: {},
   // If you're using Next.js < 13.4.4, you'll need to specify the runtimeEnv manually
   runtimeEnv: {
+    /** prisma */
     DATABASE_URL: process.env.DATABASE_URL,
+
+    /** 运行时 */
     NODE_ENV: process.env.NODE_ENV,
+
+    /** 网站 */
+    SITE_URL: process.env.SITE_URL,
+
+    /** next-auth */
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    SITE_URL: process.env.SITE_URL,
+
+    /** 阿里云OSS */
     OSS_ACCESS_KEY_ID: process.env.OSS_ACCESS_KEY_ID,
     OSS_ACCESS_KEY_SECRET: process.env.OSS_ACCESS_KEY_SECRET,
     OSS_REGION: process.env.OSS_REGION,
     OSS_BUCKET: process.env.OSS_BUCKET,
+
+    /** ADMIN */
+    ADMIN_NICKNAME: process.env.ADMIN_NICKNAME,
+    ADMIN_AVATAR: process.env.ADMIN_AVATAR,
+    ADMIN_EMAIL: process.env.ADMIN_EMAIL,
+    ADMIN_PASSWORD: process.env.OSS_BUCKET,
   },
 
   // For Next.js >= 13.4.4, you only need to destructure client variables:
