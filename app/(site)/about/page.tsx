@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { type Metadata } from 'next';
 
 import { PageTitle } from '@/components/page-title';
@@ -9,6 +7,8 @@ import { cn } from '@/utils/helper';
 export const metadata: Metadata = {
   title: '关于',
 };
+
+export const revalidate = 60;
 
 export default function AboutPage() {
   return (

@@ -1,5 +1,5 @@
-import { SignOutButton } from './sign-out-button';
 import { SideNav } from '@/components/navbar';
+import { SignOutButton } from '@/components/sign-out-button';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 import { auth } from '@/libs/auth';
 
