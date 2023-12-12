@@ -6,6 +6,7 @@ import { type Tag } from '@prisma/client';
 import { TrashIcon } from 'lucide-react';
 
 import { deleteTag } from '@/app/actions/tag';
+
 import {
   AlertDialog,
   AlertDialogAction,

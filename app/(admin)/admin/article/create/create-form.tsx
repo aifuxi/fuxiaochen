@@ -9,7 +9,7 @@ import { type z } from 'zod';
 
 import { createArticle } from '@/app/actions/article';
 import { uploadFile } from '@/app/actions/upload';
-import { BytemdEditor } from '@/components/bytemd';
+
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -24,11 +24,15 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
+
+import { BytemdEditor } from '@/components/bytemd';
+
 import {
   type CreateArticleReq,
   createArticleReqSchema,
 } from '@/typings/article';
+
+import { PLACEHOLDER_COVER } from '@/constants/unknown';
 
 export function CreateForm({ tags }: { tags?: Tag[] }) {
   const [cover, setCover] = React.useState(PLACEHOLDER_COVER);

@@ -2,9 +2,10 @@ import React from 'react';
 
 import { type Article } from '@prisma/client';
 
-import ArticleItem from './article-item';
 import { IllustrationNoContent } from '@/components/illustrations';
 import { Pagination } from '@/components/pagination';
+
+import ArticleItem from './article-item';
 
 type Props = {
   total: number;

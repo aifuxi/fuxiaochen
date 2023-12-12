@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { cn } from '@/utils/helper';
+
 import { IllustrationNoAccessDark } from './illustration-no-access-dark';
 import { IllustrationNoAccessLight } from './illustration-no-access-light';
-import { cn } from '@/utils/helper';
 
 export function IllustrationNoAccess(props: React.SVGProps<SVGSVGElement>) {
   return (

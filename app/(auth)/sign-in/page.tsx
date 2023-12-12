@@ -28,9 +28,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PATHS } from '@/constants/path';
+
 import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
+
 import { cn } from '@/utils/helper';
+
+import { PATHS } from '@/constants/path';
 
 export default function SignInPage() {
   const router = useRouter();

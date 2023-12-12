@@ -1,11 +1,14 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
 
+import { badgeVariants } from '@/components/ui/badge';
+
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageTitle } from '@/components/page-title';
-import { badgeVariants } from '@/components/ui/badge';
-import { PATHS } from '@/constants/path';
+
 import { cn } from '@/utils/helper';
+
+import { PATHS } from '@/constants/path';
 
 import { getAllTags } from '../../actions/tag';
 
