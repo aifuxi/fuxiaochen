@@ -30,6 +30,12 @@ export async function uploadFile(formData: FormData) {
     const fileArrayBuffer = await file.arrayBuffer();
     const { name } = await aliOSS.put(filename, Buffer.from(fileArrayBuffer));
     url = aliOSS.generateObjectUrl(name);
+    if (url) {
+      // 阿里云 OSS 上传后返回的链接是http协议的，这里替换成https
+      // 因为线上环境网站是使用https协议的，网站里面所有的链接/请求都应该走https（最佳实践是这样）
+      // 要不然浏览器搜索栏会有个小感叹号，不太好看
+      url = url.replace(/http:\/\//g, 'https://');
+    }
   } else {
     url = await saveFile(file);
   }
