@@ -34,6 +34,8 @@ import {
 
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 
+import { CreateTagButton } from '../../../tag/create-tag-button';
+
 export function EditForm({
   article,
   tags,
@@ -65,9 +67,14 @@ export function EditForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+      <form autoComplete="off">
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
-          <Button type="submit" variant={'outline'} className="!w-full">
+          <Button
+            type="button"
+            onClick={() => form.handleSubmit(onSubmit)()}
+            variant={'outline'}
+            className="!w-full"
+          >
             保存
           </Button>
         </div>
@@ -187,19 +194,25 @@ export function EditForm({
               <FormItem>
                 <FormLabel>标签</FormLabel>
                 <FormControl>
-                  <Combobox
-                    options={
-                      tags?.map((el) => ({
-                        label: el.name,
-                        value: el.id,
-                      })) ?? []
-                    }
-                    multiple
-                    clearable
-                    selectPlaceholder="请选择文章标签（多选）"
-                    value={field.value}
-                    onValueChange={field.onChange}
-                  />
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    <div className="col-span-10">
+                      <Combobox
+                        options={
+                          tags?.map((el) => ({
+                            label: el.name,
+                            value: el.id,
+                          })) ?? []
+                        }
+                        multiple
+                        clearable
+                        selectPlaceholder="请选择文章标签（多选）"
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      />
+                    </div>
+
+                    <CreateTagButton />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
