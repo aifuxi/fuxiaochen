@@ -29,7 +29,7 @@ export default function ArticleItem({ article }: Props) {
       <img
         src={article.cover ? article.cover : PLACEHOLDER_COVER}
         alt={article.title}
-        className="w-[300px]"
+        className="w-[300px] border"
       />
       <div className="flex flex-col gap-3 flex-1">
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
