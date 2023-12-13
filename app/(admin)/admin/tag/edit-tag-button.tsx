@@ -75,7 +75,7 @@ export function EditTagButton({ tag }: Props) {
           <DialogTitle>编辑标签</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+          <form autoComplete="off">
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -118,7 +118,12 @@ export function EditTagButton({ tag }: Props) {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">保存</Button>
+                <Button
+                  type="button"
+                  onClick={() => form.handleSubmit(onSubmit)()}
+                >
+                  保存
+                </Button>
               </div>
             </div>
           </form>
