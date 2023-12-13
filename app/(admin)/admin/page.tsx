@@ -1,4 +1,10 @@
+import { type Metadata } from 'next';
+
 import { IllustrationConstruction } from '@/components/illustrations';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+};
 
 export default function AdminPage() {
   return (
