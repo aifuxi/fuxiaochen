@@ -66,7 +66,7 @@ export function CreateTagButton() {
           <DialogTitle>创建标签</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+          <form autoComplete="off">
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -96,7 +96,12 @@ export function CreateTagButton() {
               />
 
               <div className="flex justify-end">
-                <Button type="submit">创建</Button>
+                <Button
+                  type="button"
+                  onClick={() => form.handleSubmit(onSubmit)()}
+                >
+                  创建
+                </Button>
               </div>
             </div>
           </form>
