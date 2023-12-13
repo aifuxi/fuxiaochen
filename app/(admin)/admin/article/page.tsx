@@ -78,6 +78,7 @@ export default async function AdminArticle({
                 <img
                   src={article.cover ? article.cover : PLACEHOLDER_COVER}
                   alt={article.title}
+                  className="border"
                 />
               </TableCell>
               <TableCell className="!align-middle  w-[200px]">

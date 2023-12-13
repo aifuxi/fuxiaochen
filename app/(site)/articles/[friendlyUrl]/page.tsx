@@ -36,7 +36,7 @@ export default async function ArticleDetailPage({
   return (
     <div className="flex flex-col gap-8 items-center pt-8">
       <img
-        className="max-w-[calc(100vw-2rem)] object-fill"
+        className="max-w-[calc(100vw-2rem)] object-fill border"
         src={article?.cover ?? PLACEHOLDER_COVER}
         alt={article?.title}
       />
