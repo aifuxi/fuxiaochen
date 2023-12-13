@@ -41,7 +41,7 @@ export default async function ArticleDetailPage({
         alt={article?.title}
       />
 
-      <div className="flex flex-col gap-8 pb-9">
+      <div className="container flex flex-col gap-8 pb-9">
         <BytemdViewer content={article?.content ?? ''} />
 
         <div className="flex items-center flex-wrap gap-4 pt-8">
