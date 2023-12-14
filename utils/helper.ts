@@ -1,43 +1,23 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { WEBSITE } from '@/constants/info';
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 /**
- * 判断当前是不是服务端环境
- * @returns
+ * 1. 英文变成全小写
+ * 2. 把空格和,\.。，“”"替换为 -
+ * 3. 把除字母、数字、- 之外的字符都替换成空
+ * 4. 以空格切分，再用 - 连接
+ * 5. eg: I have a dream. => i-have-a-dream
  */
-export function isServer() {
-  return typeof window === 'undefined';
-}
-
-/**
- * 判断当前是不是生产环境
- * @returns
- */
-export function isProduction() {
-  return process.env.NODE_ENV === 'production';
-}
-
-/**
- * 判断当前是不是开发环境
- * @returns
- */
-export function isDev() {
-  return process.env.NODE_ENV === 'development';
-}
-
-/**
- * 生成页面title
- * @returns
- */
-export function generatePageTitle(data?: string) {
-  if (!data) {
-    return WEBSITE;
-  }
-  return `${data} - ${WEBSITE}`;
+export function toFriendlyURL(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[,\.。，“”"]/g, '-')
+    .replace(/ /g, '-')
+    .replace(/[^a-zA-Z0-9-]/g, '')
+    .split(' ')
+    .join('-');
 }
