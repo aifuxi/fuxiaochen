@@ -29,6 +29,8 @@ import { Input } from '@/components/ui/input';
 
 import { type CreateTagReq, createTagReqSchema } from '@/typings/tag';
 
+import { toFriendlyURL } from '@/utils/helper';
+
 export function CreateTagButton() {
   const [open, setOpen] = React.useState(false);
   const form = useForm<z.infer<typeof createTagReqSchema>>({
@@ -51,6 +53,14 @@ export function CreateTagButton() {
       await createTag(values);
       setOpen(false);
     } catch (e) {}
+  }
+
+  function formatFriendlyURL() {
+    const tmp = form.getValues().friendlyURL?.trim();
+    if (tmp) {
+      const formatted = toFriendlyURL(tmp);
+      form.setValue('friendlyURL', formatted);
+    }
   }
 
   return (
@@ -88,7 +98,12 @@ export function CreateTagButton() {
                   <FormItem>
                     <FormLabel>链接</FormLabel>
                     <FormControl>
-                      <Input placeholder="请输入标签链接" {...field} />
+                      <div className="flex items-center w-full gap-4">
+                        <Input placeholder="请输入标签链接" {...field} />
+                        <Button type="button" onClick={formatFriendlyURL}>
+                          格式化
+                        </Button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

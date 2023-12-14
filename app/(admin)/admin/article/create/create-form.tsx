@@ -32,6 +32,8 @@ import {
   createArticleReqSchema,
 } from '@/typings/article';
 
+import { toFriendlyURL } from '@/utils/helper';
+
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 
 import { CreateTagButton } from '../../tag/create-tag-button';
@@ -56,6 +58,14 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
     try {
       await createArticle(values);
     } catch (e) {}
+  }
+
+  function formatFriendlyURL() {
+    const tmp = form.getValues().friendlyURL?.trim();
+    if (tmp) {
+      const formatted = toFriendlyURL(tmp);
+      form.setValue('friendlyURL', formatted);
+    }
   }
 
   return (
@@ -93,10 +103,15 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
               <FormItem>
                 <FormLabel>friendly_url</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="请输入文章friendly_url（只支持数字、字母、下划线、中划线）..."
-                  />
+                  <div className="flex items-center w-full gap-4">
+                    <Input
+                      {...field}
+                      placeholder="请输入文章friendly_url（只支持数字、字母、下划线、中划线）..."
+                    />
+                    <Button type="button" onClick={formatFriendlyURL}>
+                      格式化
+                    </Button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
