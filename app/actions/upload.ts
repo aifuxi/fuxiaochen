@@ -5,8 +5,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { aliOSS } from '@/libs/ali-oss';
-
-import { isProduction } from '@/utils/helper';
+import { env } from '@/libs/env.mjs';
 
 const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();
@@ -24,7 +23,7 @@ export async function uploadFile(formData: FormData) {
   const file = formData.get('file') as File;
 
   let url: string;
-  if (isProduction()) {
+  if (env.NODE_ENV === 'production') {
     const timePrefix = format(new Date(), 'yyyy-MM');
     const filename = `images/${timePrefix}/${file.name}`;
     const fileArrayBuffer = await file.arrayBuffer();
