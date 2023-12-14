@@ -1,10 +1,13 @@
 import { type Metadata } from 'next';
 import { type Session } from 'next-auth';
 
+import { Toaster } from '@/components/ui/toaster';
+
 import BackToTop from '@/components/back-to-top';
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
-import { Toaster } from '@/components/ui/toaster';
-import { WEBSITE } from '@/constants/info';
+
+import { NICKNAME, SLOGAN, WEBSITE } from '@/constants/info';
+
 import '@/styles/global.css';
 
 import '@fontsource/poppins/400.css';
@@ -19,6 +22,8 @@ export const metadata: Metadata = {
     template: `%s - ${WEBSITE}`,
     default: `${WEBSITE}`,
   },
+  description: SLOGAN,
+  keywords: NICKNAME,
 };
 
 export default function RootLayout({

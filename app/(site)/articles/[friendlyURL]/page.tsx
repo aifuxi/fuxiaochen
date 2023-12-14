@@ -8,6 +8,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 
 import { cn } from '@/utils/helper';
+import { formatToDate } from '@/utils/time';
 
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
@@ -18,9 +19,10 @@ export async function generateMetadata({
   params: { friendlyURL: string };
 }): Promise<Metadata> {
   const article = await getArticleByFriendlyURL(params.friendlyURL);
-  const title = article?.title ?? '文章未找到';
   return {
-    title,
+    title: article?.title,
+    description: article?.description,
+    keywords: article?.tags?.map((el) => el.name).join(','),
   };
 }
 
@@ -42,6 +44,13 @@ export default async function ArticleDetailPage({
       />
 
       <div className="container flex flex-col gap-8 pb-9">
+        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+          {article?.title}
+        </h1>
+
+        <p className="text-sm text-muted-foreground">
+          {article?.createdAt ? formatToDate(article?.createdAt) : '未知时间'}
+        </p>
         <BytemdViewer content={article?.content ?? ''} />
 
         <div className="flex items-center flex-wrap gap-4 pt-8">
