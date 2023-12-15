@@ -1,5 +1,8 @@
 import { type Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+import { isNil } from 'lodash-es';
 
 import { getArticleByFriendlyURL } from '@/app/actions/article';
 
@@ -35,6 +38,10 @@ export default async function ArticleDetailPage({
 }) {
   const article = await getArticleByFriendlyURL(params.friendlyURL);
 
+  if (isNil(article)) {
+    return notFound();
+  }
+
   return (
     <div className="flex flex-col gap-8 items-center pt-8">
       <img
@@ -49,7 +56,7 @@ export default async function ArticleDetailPage({
         </h1>
 
         <p className="text-sm text-muted-foreground">
-          {article?.createdAt ? formatToDate(article?.createdAt) : '未知时间'}
+          {formatToDate(article.createdAt)}
         </p>
         <BytemdViewer content={article?.content ?? ''} />
 
