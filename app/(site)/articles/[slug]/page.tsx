@@ -55,7 +55,7 @@ export default async function ArticleDetailPage({
       />
 
       <div className="container flex flex-col gap-8 pb-9">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
           {article?.title}
         </h1>
 
