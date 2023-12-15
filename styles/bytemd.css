@@ -7,7 +7,7 @@
 }
 
 .markdown-body {
-  @apply prose max-w-[calc(100vw-2rem)] dark:prose-invert;
+  @apply prose max-w-[calc(100vw-2rem)] dark:prose-invert md:!mx-auto md:max-w-2xl lg:max-w-3xl xl:max-w-5xl;
 }
 
 .medium-zoom-image--opened {
