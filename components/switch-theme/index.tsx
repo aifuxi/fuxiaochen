@@ -4,9 +4,10 @@ import * as React from 'react';
 
 import { useTheme } from 'next-themes';
 
+import { type VariantProps } from 'class-variance-authority';
 import { MoonStarIcon, RotateCwIcon, SunIcon, Tv2Icon } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
+import { Button, type buttonVariants } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
 import {
   Popover,
@@ -34,7 +35,9 @@ const themeOptions = [
   },
 ];
 
-export function SwitchTheme() {
+export type Props = VariantProps<typeof buttonVariants>;
+
+export function SwitchTheme(props: Props) {
   const [open, setOpen] = React.useState(false);
   const { setTheme, theme, resolvedTheme } = useTheme();
 
@@ -58,6 +61,7 @@ export function SwitchTheme() {
           aria-expanded={open}
           variant="ghost"
           size={'icon'}
+          {...props}
         >
           {icon}
         </Button>
