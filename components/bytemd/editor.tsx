@@ -52,7 +52,10 @@ export function BytemdEditor({ content, setContent, editorProps }: Props) {
       onChange={(v) => setContent(v)}
       uploadImages={handleUploadImages}
       locale={zh_Hans}
-      {...editorProps}
+      editorConfig={{
+        ...editorProps,
+        lineNumbers: true,
+      }}
     />
   );
 }

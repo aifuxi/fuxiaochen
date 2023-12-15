@@ -54,9 +54,6 @@ export default function RootLayout({
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* 打开外部链接时，以新开tab的方式打开 */}
-        <base target="_blank" />
-
         {/* Google Search Console 验证 https://aifuxi.cool/的所有权需要设置的HTML标签 */}
         <meta
           name="google-site-verification"

@@ -7,7 +7,7 @@
 }
 
 .markdown-body {
-  @apply prose max-w-[calc(100vw-2rem)] dark:prose-invert md:!mx-auto md:max-w-2xl lg:max-w-3xl xl:max-w-5xl;
+  @apply prose max-w-[calc(100vw-2rem)] dark:prose-invert md:!mx-auto md:max-w-2xl lg:max-w-3xl 2xl:max-w-4xl;
 }
 
 .medium-zoom-image--opened {
@@ -59,6 +59,21 @@
 /* 编辑器内光标颜色 */
 .CodeMirror-cursor {
   @apply !border-l-2 !border-l-foreground;
+}
+
+/* 编辑器内显示行数 */
+.CodeMirror-linenumber {
+  @apply !text-foreground;
+}
+
+/* 编辑器内显示行数背景 */
+.CodeMirror-gutters {
+  @apply !border-r-muted !bg-background;
+}
+
+/* 自动生成目录插件后，自定义目录样式 */
+.markdown-body nav.toc {
+  @apply right-2 top-40 lg:fixed lg:border-l lg:text-sm xl:right-8 2xl:right-16;
 }
 
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
