@@ -2,7 +2,7 @@ import React from 'react';
 
 import Link from 'next/link';
 
-import { PencilIcon, PlusIcon } from 'lucide-react';
+import { EyeIcon, PencilIcon, PlusIcon } from 'lucide-react';
 
 import { getArticles } from '@/app/actions/article';
 
@@ -112,6 +112,14 @@ export default async function AdminArticle({
               </TableCell>
               <TableCell className="!align-middle w-[200px]">
                 <div className="flex items-center gap-2">
+                  <Link
+                    href={`${PATHS.SITE_ARTICLES}/${article.friendlyURL}`}
+                    target="_blank"
+                  >
+                    <Button size={'icon'}>
+                      <EyeIcon size={16} />
+                    </Button>
+                  </Link>
                   <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${article.id}`}>
                     <Button size={'icon'}>
                       <PencilIcon size={16} />
