@@ -1,10 +1,9 @@
-#aifuxi-content-editor .bytemd {
-  height: 80vh;
+.bytemd {
+  @apply !min-h-screen;
 }
 
-#aifuxi-content-editor .bytemd-fullscreen {
-  height: 100vh;
-  z-index: 10;
+.bytemd-fullscreen {
+  @apply !z-10 !h-screen;
 }
 
 .markdown-body {
@@ -12,9 +11,74 @@
 }
 
 .medium-zoom-image--opened {
-  z-index: 10;
+  @apply z-20;
+}
+
+.medium-zoom-overlay {
+  @apply z-20 !bg-background;
 }
 
 .markdown-body pre {
-  border-radius: 0 !important;
+  @apply !rounded-none;
+}
+
+/* 编辑器内标题样式 */
+.cm-header {
+  @apply !text-pink-500 dark:!text-pink-600;
+}
+
+/* 编辑器内列表项样式 */
+.cm-variable-2 {
+  @apply !text-cyan-500 dark:!text-cyan-600;
+}
+
+/* 编辑器内代码块样式 */
+.cm-comment {
+  @apply !text-orange-500 dark:!text-orange-600;
+}
+
+/* 编辑器内代码块样式 */
+.cm-quote {
+  @apply !text-green-500 dark:!text-green-600;
+}
+
+/* 编辑器内链接样式 */
+.cm-link {
+  @apply !text-blue-500 dark:!text-blue-600;
+}
+
+/* 编辑器内图片链接样式 */
+.cm-string {
+  @apply !text-rose-500 dark:!text-rose-600;
+}
+
+/* 编辑器内光标颜色 */
+.CodeMirror-cursor {
+  @apply !border-l-2 !border-l-foreground;
+}
+
+/* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
+/* ByteMD editor overrides	*/
+.bytemd {
+  @apply !rounded-none border-border !bg-background !text-foreground;
+}
+
+.bytemd-toolbar {
+  @apply !rounded-none border-border !bg-background;
+}
+
+.CodeMirror {
+  @apply !bg-background !text-foreground;
+}
+
+.bytemd-split {
+  @apply !border-l-border;
+}
+
+.bytemd-status {
+  @apply !border-t-border;
+}
+
+.bytemd-toolbar-icon {
+  @apply transition-all duration-100 hover:!bg-accent;
 }
