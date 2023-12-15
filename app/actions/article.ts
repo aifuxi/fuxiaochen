@@ -8,14 +8,25 @@ import {
   type UpdateArticleReq,
 } from '@/typings/article';
 
+import { auth } from '@/libs/auth';
 import { db } from '@/libs/prisma';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 export async function getArticleByFriendlyURL(friendlyURL: string) {
+  // 未登录，只查出已发布的文章published=true
+  let published: boolean | undefined = true;
+  const session = await auth();
+
+  if (session?.user?.id) {
+    // 登录后，不管文章有没有发布，都查出来
+    published = undefined;
+  }
+
   const article = await db.article.findUnique({
     where: {
-      friendlyURL: friendlyURL,
+      friendlyURL,
+      published,
     },
     include: {
       tags: true,

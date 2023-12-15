@@ -1,4 +1,7 @@
 import { type Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import { isNil } from 'lodash-es';
 
 import { getTagArticles, getTagByFriendlyURL } from '@/app/actions/tag';
 
@@ -33,6 +36,11 @@ export default async function TagDetailPage({
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
   const tag = await getTagByFriendlyURL(params.friendlyURL);
+
+  if (isNil(tag)) {
+    return notFound();
+  }
+
   const { articles, total } = await getTagArticles({
     friendlyURL: params.friendlyURL,
     page: currentPage,
@@ -41,7 +49,7 @@ export default async function TagDetailPage({
   return (
     <div className="container mx-auto">
       <div className="min-h-screen flex flex-col gap-8 pb-8">
-        <PageTitle title={tag?.name ?? '-'} />
+        <PageTitle title={tag.name} />
 
         <ArticleList articles={articles} total={total} />
       </div>
