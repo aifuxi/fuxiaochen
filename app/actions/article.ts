@@ -13,7 +13,7 @@ import { db } from '@/libs/prisma';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
-export async function getArticleByFriendlyURL(friendlyURL: string) {
+export async function getArticleBySlug(slug: string) {
   // 未登录，只查出已发布的文章published=true
   let published: boolean | undefined = true;
   const session = await auth();
@@ -25,7 +25,7 @@ export async function getArticleByFriendlyURL(friendlyURL: string) {
 
   const article = await db.article.findUnique({
     where: {
-      friendlyURL,
+      slug,
       published,
     },
     include: {
@@ -87,7 +87,7 @@ export async function updateArticle(parsed: UpdateArticleReq) {
     data: {
       title: parsed.title,
       description: parsed.description,
-      friendlyURL: parsed.friendlyURL,
+      slug: parsed.slug,
       cover: parsed.cover,
       content: parsed.content,
       published: parsed.published,
@@ -145,7 +145,7 @@ export async function createArticle(parsed: CreateArticleReq) {
   await db.article.create({
     data: {
       title: parsed.title,
-      friendlyURL: parsed.friendlyURL,
+      slug: parsed.slug,
       description: parsed.description,
       content: parsed.content,
       published: parsed.published,

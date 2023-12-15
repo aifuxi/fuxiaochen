@@ -11,7 +11,7 @@ import {
 
 import { Pagination } from '@/components/pagination';
 
-import { formatToDate } from '@/utils/time';
+import { formatToDateTime } from '@/utils/time';
 
 import { DEFAULT_PAGE } from '@/constants/unknown';
 
@@ -43,7 +43,7 @@ export default async function AdminTag({
         <TableHeader>
           <TableRow>
             <TableHead>名称</TableHead>
-            <TableHead>friendly_url</TableHead>
+            <TableHead>slug</TableHead>
             <TableHead>文章数</TableHead>
             <TableHead>创建时间</TableHead>
             <TableHead>更新时间</TableHead>
@@ -54,15 +54,15 @@ export default async function AdminTag({
           {tags?.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell className="!align-middle">{tag.name}</TableCell>
-              <TableCell className="!align-middle">{tag.friendlyURL}</TableCell>
+              <TableCell className="!align-middle">{tag.slug}</TableCell>
               <TableCell className="!align-middle">
                 {tag.articles?.length ?? 0}
               </TableCell>
               <TableCell className="!align-middle">
-                {formatToDate(new Date(tag.createdAt))}
+                {formatToDateTime(tag.createdAt)}
               </TableCell>
               <TableCell className="!align-middle">
-                {formatToDate(new Date(tag.updatedAt))}
+                {formatToDateTime(tag.updatedAt)}
               </TableCell>
               <TableCell className="!align-middle !h-rx-9">
                 <div className="flex gap-2 items-center">

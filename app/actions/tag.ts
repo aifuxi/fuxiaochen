@@ -8,16 +8,13 @@ import { db } from '@/libs/prisma';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
-export async function getTagArticles(params: {
-  friendlyURL: string;
-  page: number;
-}) {
+export async function getTagArticles(params: { slug: string; page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
   const tag = await db.tag.findUnique({
     where: {
-      friendlyURL: params.friendlyURL,
+      slug: params.slug,
     },
     include: {
       articles: {
@@ -37,10 +34,10 @@ export async function getTagArticles(params: {
   return { articles, total };
 }
 
-export async function getTagByFriendlyURL(friendlyURL: string) {
+export async function getTagBySlug(slug: string) {
   const tag = await db.tag.findUnique({
     where: {
-      friendlyURL: friendlyURL,
+      slug: slug,
     },
   });
 
@@ -51,7 +48,7 @@ export async function createTag(parsed: CreateTagReq) {
   await db.tag.create({
     data: {
       name: parsed.name,
-      friendlyURL: parsed.friendlyURL,
+      slug: parsed.slug,
     },
   });
 
@@ -62,7 +59,7 @@ export async function updateTag(parsed: UpdateTagReq) {
   await db.tag.update({
     data: {
       name: parsed.name,
-      friendlyURL: parsed.friendlyURL,
+      slug: parsed.slug,
     },
     where: {
       id: parsed.id,

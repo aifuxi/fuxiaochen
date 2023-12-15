@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { getUnixTime } from 'date-fns';
 import { isNil } from 'lodash-es';
 
-import { getArticleByFriendlyURL } from '@/app/actions/article';
+import { getArticleBySlug } from '@/app/actions/article';
 
 import { badgeVariants } from '@/components/ui/badge';
 
@@ -20,9 +20,9 @@ import { PLACEHOLDER_COVER } from '@/constants/unknown';
 export async function generateMetadata({
   params,
 }: {
-  params: { friendlyURL: string };
+  params: { slug: string };
 }): Promise<Metadata> {
-  const article = await getArticleByFriendlyURL(params.friendlyURL);
+  const article = await getArticleBySlug(params.slug);
   return {
     title: article?.title,
     description: article?.description,
@@ -35,9 +35,9 @@ export const revalidate = 60;
 export default async function ArticleDetailPage({
   params,
 }: {
-  params: { friendlyURL: string };
+  params: { slug: string };
 }) {
-  const article = await getArticleByFriendlyURL(params.friendlyURL);
+  const article = await getArticleBySlug(params.slug);
 
   if (isNil(article)) {
     return notFound();
@@ -65,7 +65,7 @@ export default async function ArticleDetailPage({
           <p className="sm:text-xl text-muted-foreground">标签：</p>
           {article?.tags?.map((tag) => (
             <Link
-              href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
+              href={`${PATHS.SITE_TAGS}/${tag.slug}`}
               key={tag.id}
               className={cn(
                 badgeVariants({ variant: 'default' }),

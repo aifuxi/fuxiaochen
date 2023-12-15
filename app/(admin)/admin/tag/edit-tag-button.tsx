@@ -30,7 +30,7 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { type UpdateTagReq, updateTagReqSchema } from '@/typings/tag';
 
-import { toFriendlyURL } from '@/utils/helper';
+import { toSlug } from '@/utils/helper';
 
 type Props = {
   tag: Tag;
@@ -46,7 +46,7 @@ export function EditTagButton({ tag }: Props) {
   React.useEffect(() => {
     if (open) {
       form.setValue('name', tag.name);
-      form.setValue('friendlyURL', tag.friendlyURL);
+      form.setValue('slug', tag.slug);
       form.setValue('id', tag.id);
       form.clearErrors();
     }
@@ -65,11 +65,11 @@ export function EditTagButton({ tag }: Props) {
     }
   }
 
-  function formatFriendlyURL() {
-    const tmp = form.getValues().friendlyURL?.trim();
+  function formatSlug() {
+    const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = toFriendlyURL(tmp);
-      form.setValue('friendlyURL', formatted);
+      const formatted = toSlug(tmp);
+      form.setValue('slug', formatted);
     }
   }
 
@@ -119,14 +119,14 @@ export function EditTagButton({ tag }: Props) {
               />
               <FormField
                 control={form.control}
-                name="friendlyURL"
+                name="slug"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>链接</FormLabel>
                     <FormControl>
                       <div className="flex items-center w-full gap-4">
                         <Input placeholder="请输入标签链接" {...field} />
-                        <Button type="button" onClick={formatFriendlyURL}>
+                        <Button type="button" onClick={formatSlug}>
                           格式化
                         </Button>
                       </div>

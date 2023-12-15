@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 
 import { isNil } from 'lodash-es';
 
-import { getTagArticles, getTagByFriendlyURL } from '@/app/actions/tag';
+import { getTagArticles, getTagBySlug } from '@/app/actions/tag';
 
 import { PageTitle } from '@/components/page-title';
 
@@ -14,9 +14,9 @@ import ArticleList from '../../articles/article-list';
 export async function generateMetadata({
   params,
 }: {
-  params: { friendlyURL: string };
+  params: { slug: string };
 }): Promise<Metadata> {
-  const tag = await getTagByFriendlyURL(params.friendlyURL);
+  const tag = await getTagBySlug(params.slug);
   const name = tag?.name ?? '-';
   return {
     title: `${name}`,
@@ -29,20 +29,20 @@ export default async function TagDetailPage({
   params,
   searchParams,
 }: {
-  params: { friendlyURL: string };
+  params: { slug: string };
   searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { page } = searchParams ?? {};
   const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
 
-  const tag = await getTagByFriendlyURL(params.friendlyURL);
+  const tag = await getTagBySlug(params.slug);
 
   if (isNil(tag)) {
     return notFound();
   }
 
   const { articles, total } = await getTagArticles({
-    friendlyURL: params.friendlyURL,
+    slug: params.slug,
     page: currentPage,
   });
 

@@ -20,7 +20,7 @@ import {
 import { Pagination } from '@/components/pagination';
 
 import { cn } from '@/utils/helper';
-import { formatToDate } from '@/utils/time';
+import { formatToDateTime } from '@/utils/time';
 
 import { PATHS } from '@/constants/path';
 import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants/unknown';
@@ -57,12 +57,12 @@ export default async function AdminArticle({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">标题</TableHead>
+            <TableHead className="w-[400px]">标题/描述</TableHead>
             <TableHead className="w-[200px]">封面</TableHead>
 
-            <TableHead className="w-[200px]">描述</TableHead>
             <TableHead className="w-[200px]">标签</TableHead>
             <TableHead className="w-[200px]">创建时间</TableHead>
+            <TableHead className="w-[200px]">更新时间</TableHead>
 
             <TableHead className="w-[200px]">发布状态</TableHead>
             <TableHead className="w-[200px]">操作</TableHead>
@@ -71,8 +71,11 @@ export default async function AdminArticle({
         <TableBody>
           {articles?.map((article) => (
             <TableRow key={article.id}>
-              <TableCell className="!align-middle  w-[200px]">
-                {article.title}
+              <TableCell className="!align-middle  w-[400px]">
+                {article.title} <br />
+                <span className="text-xs text-muted-foreground">
+                  {article.description}
+                </span>
               </TableCell>
               <TableCell className="!align-middle w-[200px]">
                 <img
@@ -81,15 +84,12 @@ export default async function AdminArticle({
                   className="border"
                 />
               </TableCell>
-              <TableCell className="!align-middle  w-[200px]">
-                {article.description}
-              </TableCell>
               <TableCell className={'!align-middle  w-[200px]'}>
                 <div className="flex flex-wrap gap-2">
                   {article.tags?.length
                     ? article.tags.map((tag) => (
                         <Link
-                          href={`${PATHS.SITE_TAGS}/${tag.friendlyURL}`}
+                          href={`${PATHS.SITE_TAGS}/${tag.slug}`}
                           key={tag.id}
                           target="_blank"
                           className={cn(
@@ -104,7 +104,10 @@ export default async function AdminArticle({
                 </div>
               </TableCell>
               <TableCell className="!align-middle  w-[200px]">
-                {formatToDate(new Date(article.createdAt))}
+                {formatToDateTime(new Date(article.createdAt))}
+              </TableCell>
+              <TableCell className="!align-middle  w-[200px]">
+                {formatToDateTime(new Date(article.updatedAt))}
               </TableCell>
 
               <TableCell className="!align-middle  w-[200px]">
@@ -113,7 +116,7 @@ export default async function AdminArticle({
               <TableCell className="!align-middle w-[200px]">
                 <div className="flex items-center gap-2">
                   <Link
-                    href={`${PATHS.SITE_ARTICLES}/${article.friendlyURL}`}
+                    href={`${PATHS.SITE_ARTICLES}/${article.slug}`}
                     target="_blank"
                   >
                     <Button size={'icon'}>
