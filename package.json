@@ -34,7 +34,6 @@
     "@bytemd/plugin-medium-zoom": "^1.21.0",
     "@bytemd/plugin-mermaid": "^1.21.0",
     "@bytemd/react": "^1.21.0",
-    "@fontsource/poppins": "^5.0.8",
     "@hookform/resolvers": "^3.3.2",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@prisma/client": "^5.6.0",
