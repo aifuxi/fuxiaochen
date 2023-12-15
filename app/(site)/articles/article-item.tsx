@@ -19,7 +19,7 @@ type Props = {
 export default function ArticleItem({ article }: Props) {
   return (
     <Link
-      href={`${PATHS.SITE_ARTICLES}/${article.friendlyURL}`}
+      href={`${PATHS.SITE_ARTICLES}/${article.slug}`}
       className={cn(
         'relative flex flex-col space-y-2 border-b p-4  md:p-8',
         'md:flex-row md:space-x-6 md:space-y-0',

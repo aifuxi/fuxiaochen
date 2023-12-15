@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
  * 4. 以空格切分，再用 - 连接
  * 5. eg: I have a dream. => i-have-a-dream
  */
-export function toFriendlyURL(str: string) {
+export function toSlug(str: string) {
   return str
     .toLowerCase()
     .replace(/[,\.。，“”"]/g, '-')

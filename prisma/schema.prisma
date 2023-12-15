@@ -57,9 +57,9 @@ model VerificationToken {
 }
 
 model Tag {
-  name        String    @unique
-  friendlyURL String    @unique
-  articles    Article[]
+  name     String    @unique
+  slug     String    @unique
+  articles Article[]
 
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
@@ -68,7 +68,7 @@ model Tag {
 
 model Article {
   title       String  @unique
-  friendlyURL String  @unique
+  slug        String  @unique
   description String
   content     String
   cover       String?
