@@ -2,6 +2,7 @@ import { type Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { getUnixTime } from 'date-fns';
 import { isNil } from 'lodash-es';
 
 import { getArticleByFriendlyURL } from '@/app/actions/article';
@@ -11,7 +12,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 
 import { cn } from '@/utils/helper';
-import { formatToDate } from '@/utils/time';
+import { formatToDate, formatToDateTime } from '@/utils/time';
 
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
@@ -42,6 +43,9 @@ export default async function ArticleDetailPage({
     return notFound();
   }
 
+  const noUpdate =
+    getUnixTime(article.createdAt) === getUnixTime(article.updatedAt);
+
   return (
     <div className="flex flex-col gap-8 items-center pt-8">
       <img
@@ -55,9 +59,6 @@ export default async function ArticleDetailPage({
           {article?.title}
         </h1>
 
-        <p className="text-sm text-muted-foreground">
-          {formatToDate(article.createdAt)}
-        </p>
         <BytemdViewer content={article?.content ?? ''} />
 
         <div className="flex items-center flex-wrap gap-4 pt-8">
@@ -75,6 +76,21 @@ export default async function ArticleDetailPage({
             </Link>
           ))}
         </div>
+
+        <p className="text-muted-foreground">
+          发布于
+          <span className="font-semibold mx-1">
+            {formatToDate(article.createdAt)}
+          </span>
+          {!noUpdate && (
+            <>
+              ，最后更新时间
+              <span className="font-semibold mx-1">
+                {formatToDateTime(article.updatedAt)}
+              </span>
+            </>
+          )}
+        </p>
       </div>
     </div>
   );
