@@ -5,7 +5,7 @@ import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
 import { uploadFile } from '@/app/actions/upload';
 
-import { plugins } from './config';
+import { plugins, sanitize } from './config';
 
 import { useToast } from '../ui/use-toast';
 
@@ -48,6 +48,7 @@ export function BytemdEditor({ content, setContent, editorProps }: Props) {
       value={content ?? ''}
       plugins={plugins}
       placeholder="请输入内容..."
+      sanitize={sanitize}
       onChange={(v) => setContent(v)}
       uploadImages={handleUploadImages}
       locale={zh_Hans}

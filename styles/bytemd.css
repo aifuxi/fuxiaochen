@@ -22,6 +22,10 @@
   @apply !rounded-none;
 }
 
+.markdown-body iframe {
+  @apply aspect-video w-full;
+}
+
 /* 编辑器内标题样式 */
 .cm-header {
   @apply !text-pink-500 dark:!text-pink-600;
