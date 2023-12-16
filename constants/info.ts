@@ -4,11 +4,14 @@ export const EMAIL = 'aifuxi.js@gmail.com';
 /** 昵称 */
 export const NICKNAME = 'F西';
 
-/** Github个人页 */
+/** Github 个人页 */
 export const GITHUB_PAGE = 'https://github.com/aifuxi';
 
-/** 网站代码Github地址 */
+/** 网站代码 Github 地址 */
 export const SOURCE_CODE_GITHUB_PAGE = 'https://github.com/aifuxi/aifuxi.cool';
+
+/** 网站代码 Gitee 地址 */
+export const SOURCE_CODE_GITEE_PAGE = 'https://gitee.com/aifuxi/aifuxi.cool';
 
 /** 掘金个人页 */
 export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494/posts';
