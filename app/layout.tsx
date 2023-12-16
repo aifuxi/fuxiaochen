@@ -4,6 +4,7 @@ import { type Session } from 'next-auth';
 import { Toaster } from '@/components/ui/toaster';
 
 import BackToTop from '@/components/back-to-top';
+import { Console } from '@/components/console';
 import { AuthProvider, NextThemeProvider } from '@/components/providers';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants/info';
@@ -61,6 +62,8 @@ export default function RootLayout({
             <BackToTop />
 
             <Toaster />
+
+            <Console />
           </NextThemeProvider>
         </AuthProvider>
       </body>
