@@ -1,91 +1,107 @@
-## 前置环境准备
+# aifuxi.cool
 
-- node 版本>=16
-- pnpm
+> 预览地址：<https://aifuxi.cool>
 
-## 开发需要用到的知识
+![aifuxi.cool](./resources/qrcode.png)
 
-- ![Next.js](https://nextjs.org/docs)的 App Router 写法
-- ![Tailwind CSS](https://tailwindcss.com/)及 UI 库 ![shadcn/ui](https://ui.shadcn.com/)
-- React
-- Typescript
-- ![Prisma](https://www.prisma.io/)
+## 为什么要开发这个项目
 
-如果你对上面的技术都不了解，可能无法开发，需要自行补齐
+- **圆梦**：读大学时候的梦想，有一个自己的网站，记录自己的技术和日常
+
+- **装B**：“秀肌肉”，方便吹牛B
+
+- **锻炼技术**：当前工作内容对自己技术提升有限
+
+- **兴趣**：喜欢写代码和玩游戏
+
+## 项目介绍
+
+使用 `Next.js` 构建的博客类型网站，主要使用以下技术：
+
+- **[React](https://react.dev/)**
+
+- **[TypeScript](https://www.typescriptlang.org/)**
+
+- **[Next.js](https://nextjs.org/)**：React SSR 框架
+
+- **[Tailwind CSS](https://tailwindcss.com/)**：原子化 CSS，写样式巨快巨好用
+
+- **[shadcn/ui](https://ui.shadcn.com/)**：UI 组件库
+
+- **[ByteMD](https://github.com/bytedance/bytemd/)**：Markdown 编辑器
+
+这个项目算是 “秀肌肉” 的项目，集所有我会的技术于一身，包括但不限于：
+
+- 最佳实践
+
+  - CDN，把图片上传到阿里云OSS上
+  - 压缩图片，使用 webp 格式的图片，降低图片大小
+  - SEO，待补充
+
+- 项目工程化
+
+  - 代码结构和组织方式
+
+  - `eslint` 规范代码
+
+  - `prettier` 格式化代码
+
+  - `husky` Git 操作的不同阶段执行自定义的脚本
+
+    - `pre-commit` 执行 eslint，检查代码格式
+
+    - `commit-msg` 校验 commit 信息是否符合规范
+
+- 运维部署
+
+  - 在 Linux 上使用 pm2 启动 Node.js 项目
+  - Nginx
+    - 做 Web 服务器，开启 HTTP2，开启 HTTPS
+    - 反向代理
+
+## 前置准备
+
+- `Node.js` >= 20.x
+
+- `Pnpm`
 
 ## 启动项目
 
-0. 初始化 git 仓库，可选
-
-因为 husky 需要在 git 下才能运行，所以要先初始化 git ，要不然 `husky install` 的时候初始化不了 git hooks
-
 ```shell
-git init
+# 1. 安装依赖
+$ pnpm i
+
+# 2. 准备数据库
+$ pnpm db:push
+
+# 3. 生成admin用户，默认相关配置在 .env.development 中
+$ pnpm db:seed
+
+# 4. 启动开发环境
+$ pnpm dev
 ```
 
-如果不需要 husky 的话，可以不做这步操作
+- **主页**：`http://localhost:6121`
 
-1. 安装依赖
+- **登录页**：`http://localhost:6121/sign-in`
 
-```bash
-pnpm i
-```
+  - 初始管理员信息在 `.env.development` 中
 
-**注**: 在 Mac 上如果安装了 husky , 可能需要执行 `chmod ug+x .husky/*` 来让里面的脚本可以执行
+  - 初始管理员邮箱：`admin@admin.com`
 
-2. 初始化 prisma 和数据库
+  - 初始管理员密码：`123456`
 
-```bash
-pnpm prisma:dev
-```
+## 反馈
 
-**注**： 这一步 prisma 会去 github 上下载一些文件，如果你没魔法的的话，可能会等很长时间或者直接下载失败、超时等，需要各位自行解决网络问题。
-
-3. 生成 prisma client 类型定义
-
-```bash
-pnpm prisma:generate
-```
-
-4. 编辑 env 配置文件
-
-修改`.env`文件，把`WHITELIST_EMAILS`字段的值改为你注册 github 时的邮箱地址，支持多个邮箱，用英文逗号隔开，逗号间不允许有空格
-
-比如：
-
-```txt
-WHITELIST_EMAILS="zs@qq.com"
-```
-
-或者
-
-```txt
-WHITELIST_EMAILS="zs@qq.com,lisi@abc.com"
-```
-
-**注**： WHITELIST_EMAILS 这个字段是用来设置在后台界面是否允许增删改数据的
-
-5. 启动开发环境
-
-```bash
-pnpm dev
-```
-
-6. 浏览器打开，http://localhost:6121/ 查看页面
-
-7. 后台管理界面： http://localhost:6121/admin ，需要使用 github 登录
-
-8. 更多配置信息请看`.env.development`文件
+提 issue 或者给通过 `aifuxi.js@gmail.com` 联系我
 
 ## 部署
 
-因为本项目还在不断更新中，随时可能有破坏性变更，不建议直接部署到生产环境。可以把这个项目当作一个参考，借鉴借鉴里面的代码，把你想要的功能 copy 到你自己的项目里去。
+...待补充
 
-这里挖个坑，后面有空再补全具体的部署流程。
+## 待补充
 
-## 其它
-
-有什么问题可以提 issue，或者访问https://aifuxi.cool/about 这个页面查看联系信息，通过微信或者给发邮件和我联系。
+...待补充
 
 ## LICENCE
 
