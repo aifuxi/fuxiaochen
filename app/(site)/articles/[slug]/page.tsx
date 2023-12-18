@@ -10,6 +10,7 @@ import { getArticleBySlug } from '@/app/actions/article';
 import { badgeVariants } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
+import { GoBack } from '@/components/go-back';
 
 import { cn } from '@/utils/helper';
 import { formatToDate, formatToDateTime } from '@/utils/time';
@@ -91,6 +92,10 @@ export default async function ArticleDetailPage({
             </>
           )}
         </p>
+
+        <div className="flex">
+          <GoBack />
+        </div>
       </div>
     </div>
   );
