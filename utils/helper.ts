@@ -19,7 +19,7 @@ export function cn(...inputs: ClassValue[]) {
 export function toSlug(str: string) {
   return str
     .toLowerCase()
-    .replace(/[,\.。，“”"]/g, '-')
+    .replace(/[_\+\*\^@,\.。，“”"]/g, '-')
     .replace(/ /g, '-')
     .replace(/[^a-zA-Z0-9-]/g, '')
     .split(' ')
