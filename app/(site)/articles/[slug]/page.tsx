@@ -12,7 +12,9 @@ import { badgeVariants } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { cn } from '@/utils/helper';
+import { env } from '@/libs/env.mjs';
+
+import { cn, getOpenGraphImage } from '@/utils/helper';
 import { formatToDate, formatToDateTime } from '@/utils/time';
 
 import { PATHS } from '@/constants/path';
@@ -24,10 +26,27 @@ export async function generateMetadata({
   params: { slug: string };
 }): Promise<Metadata> {
   const article = await getArticleBySlug(params.slug);
+
+  if (!article) {
+    return {};
+  }
+
   return {
-    title: article?.title,
-    description: article?.description,
+    title: article.title,
+    description: article.description,
     keywords: article?.tags?.map((el) => el.name).join(','),
+    openGraph: {
+      type: 'article',
+      url: `${env.SITE_URL}${PATHS.SITE_ARTICLES}/${article.slug}`,
+      title: article.title,
+      description: article.description,
+      tags: article?.tags?.map((el) => el.name),
+      images: [
+        {
+          url: getOpenGraphImage(article.cover),
+        },
+      ],
+    },
   };
 }
 
