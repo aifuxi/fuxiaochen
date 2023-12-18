@@ -26,6 +26,11 @@
   @apply aspect-video w-full;
 }
 
+/* 隐藏目录列表项前面的样式 */
+.toc :where(ol):not(:where([class~='not-prose'] *)) {
+  list-style-type: none;
+}
+
 /* 编辑器内标题样式 */
 .cm-header {
   @apply !text-pink-500 dark:!text-pink-600;
