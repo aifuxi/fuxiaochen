@@ -48,11 +48,15 @@ export default function RootLayout({
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* Google Search Console 验证 https://aifuxi.cool/的所有权需要设置的HTML标签 */}
+
+        {/* Google Search Console 验证 */}
         <meta
           name="google-site-verification"
           content="UT_Si71yQw3RQF1ALRd33CyBjR56msBkQRXe20WP4L0"
         />
+
+        {/* 百度站长验证 */}
+        <meta name="baidu-site-verification" content="codeva-3wpRQCVZIT" />
       </head>
 
       <body className={'debug-screens'}>
