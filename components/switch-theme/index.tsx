@@ -59,6 +59,7 @@ export function SwitchTheme(props: Props) {
         <Button
           role="combobox"
           aria-expanded={open}
+          aria-label="切换主题"
           variant="ghost"
           size={'icon'}
           {...props}
