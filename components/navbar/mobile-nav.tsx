@@ -30,7 +30,12 @@ export function MobileNav() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant={'outline'} size={'icon'} className={cn('sm:hidden')}>
+        <Button
+          variant={'outline'}
+          size={'icon'}
+          aria-label="菜单"
+          className={cn('sm:hidden')}
+        >
           <AlignJustifyIcon size={16} />
         </Button>
       </SheetTrigger>
