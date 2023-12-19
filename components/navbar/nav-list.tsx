@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { cn } from '@/utils/helper';
 
-import { SOURCE_CODE_GITHUB_PAGE } from '@/constants/info';
+import { NICKNAME } from '@/constants/info';
 import { PATHS } from '@/constants/path';
 
 import { IconLogo } from '../icons/icon-logo';
@@ -31,11 +31,6 @@ export const navItems: Array<{
     label: '关于',
     link: PATHS.SITE_ABOUT,
   },
-  {
-    label: 'Github',
-    link: SOURCE_CODE_GITHUB_PAGE,
-    external: true,
-  },
 ];
 
 export function NavList() {
@@ -43,7 +38,11 @@ export function NavList() {
 
   return (
     <nav className="h-full flex items-center gap-6 text-base font-medium">
-      <Link href={PATHS.SITE_HOME} className={cn('mr-4 hidden sm:flex')}>
+      <Link
+        href={PATHS.SITE_HOME}
+        className={cn('mr-4 hidden sm:flex')}
+        aria-label={NICKNAME}
+      >
         <IconLogo className="w-8 h-8" />
       </Link>
 

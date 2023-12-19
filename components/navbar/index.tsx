@@ -19,8 +19,8 @@ export function Navbar() {
         <div className="flex-1 flex justify-end items-center gap-1">
           <SwitchTheme />
 
-          <Link href={GITHUB_PAGE} target="_blank">
-            <Button variant="ghost" size={'icon'}>
+          <Link href={GITHUB_PAGE} target="_blank" aria-label={GITHUB_PAGE}>
+            <Button variant="ghost" size={'icon'} aria-label="Github Icon">
               <GithubIcon size={16} />
             </Button>
           </Link>
