@@ -3,7 +3,6 @@ export const PATHS = {
   SITE_HOME: '/',
   SITE_ARTICLES: '/articles',
   SITE_TAGS: '/tags',
-  SITE_ABOUT: '/about',
 
   /** ************* ADMIN ****************** */
   ADMIN_HOME: '/admin',
