@@ -5,11 +5,10 @@ import { isNil } from 'lodash-es';
 
 import { getTagArticles, getTagBySlug } from '@/app/actions/tag';
 
+import { ArticleList } from '@/components/articles';
 import { PageTitle } from '@/components/page-title';
 
 import { DEFAULT_PAGE } from '@/constants/unknown';
-
-import ArticleList from '../../articles/article-list';
 
 export async function generateMetadata({
   params,
