@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     template: `%s - ${WEBSITE}`,
     default: `${WEBSITE}`,
   },
-  description: SLOGAN,
+  description: `${NICKNAME}, ${SLOGAN}`,
   keywords: NICKNAME,
 };
 
