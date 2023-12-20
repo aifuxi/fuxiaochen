@@ -2,6 +2,12 @@
   @apply !min-h-screen;
 }
 
+.bytemd .CodeMirror,
+.bytemd code,
+.bytemd kbd {
+  @apply !font-mono;
+}
+
 .bytemd-fullscreen {
   @apply !z-10 !h-screen;
 }
