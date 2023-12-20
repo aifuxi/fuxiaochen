@@ -16,7 +16,7 @@ type Props = {
   article: Article & { tags?: Tag[] };
 };
 
-export default function ArticleItem({ article }: Props) {
+export function ArticleItem({ article }: Props) {
   return (
     <Link
       href={`${PATHS.SITE_ARTICLES}/${article.slug}`}

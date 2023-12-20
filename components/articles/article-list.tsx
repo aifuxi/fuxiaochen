@@ -5,14 +5,14 @@ import { type Article } from '@prisma/client';
 import { IllustrationNoContent } from '@/components/illustrations';
 import { Pagination } from '@/components/pagination';
 
-import ArticleItem from './article-item';
+import { ArticleItem } from './article-item';
 
 type Props = {
   total: number;
   articles?: Article[];
 };
 
-const ArticleList = ({ total, articles }: Props) => {
+export function ArticleList({ total, articles }: Props) {
   return (
     <div className="flex flex-col gap-4">
       {articles?.length ? (
@@ -40,6 +40,4 @@ const ArticleList = ({ total, articles }: Props) => {
       <Pagination total={total} />
     </div>
   );
-};
-
-export default ArticleList;
+}
