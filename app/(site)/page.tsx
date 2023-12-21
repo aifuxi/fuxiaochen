@@ -12,11 +12,11 @@ import { PATHS } from '@/constants/path';
 
 export default function HomePage() {
   return (
-    <div className="container">
-      <HomeRect className="absolute right-0 z-[-1] top-16 w-3/5" />
+    <div className="container pt-20">
+      <HomeRect className="absolute lg:right-0 -right-1/3  z-[-1] -top-48 lg:top-0 w-3/5  lg:w-2/5" />
 
-      <div className="flex justify-between items-center min-h-[calc(100vh-64px)]">
-        <div className="grid gap-2">
+      <div className="flex flex-col lg:flex-row lg:justify-between items-center min-h-[calc(100vh-64px)] ">
+        <div className="flex-1 grid gap-2 pb-8 md:pb-0">
           <p className="text-muted-foreground tracking-widest">你好，我是</p>
           <strong className="text-5xl tracking-widest">{NICKNAME}</strong>
           <p className="text-xl text-muted-foreground tracking-widest">
@@ -37,8 +37,8 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-        <div>
-          <pre className="shadow-2xl">
+        <div className="flex-1 w-full flex justify-center">
+          <pre className="shadow-2xl text-xs sm:text-sm lg:text-base max-w-max">
             <code className="hljs language-typescript">
               <span className="hljs-keyword">class</span>{' '}
               <span className="hljs-title class_">Person</span> {'{'}

@@ -57,7 +57,6 @@
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
-    "highlight.js": "^11.8.0",
     "http-status-codes": "^2.2.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.294.0",
