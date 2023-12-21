@@ -10,6 +10,7 @@ import { getArticleBySlug } from '@/app/actions/article';
 import { badgeVariants } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
+import { GiscusComment } from '@/components/giscus-comment';
 import { GoBack } from '@/components/go-back';
 
 import { env } from '@/libs/env.mjs';
@@ -35,6 +36,7 @@ export async function generateMetadata({
     title: article.title,
     description: article.description,
     keywords: article?.tags?.map((el) => el.name).join(','),
+    metadataBase: new URL(env.SITE_URL),
     openGraph: {
       type: 'article',
       url: `${env.SITE_URL}${PATHS.SITE_ARTICLES}/${article.slug}`,
@@ -111,6 +113,8 @@ export default async function ArticleDetailPage({
             </>
           )}
         </p>
+
+        <GiscusComment />
 
         <div className="flex">
           <GoBack />
