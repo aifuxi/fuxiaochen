@@ -27,6 +27,10 @@ export const navItems: Array<{
     label: '标签',
     link: PATHS.SITE_TAGS,
   },
+  {
+    label: '留言板',
+    link: PATHS.SITE_MESSAGE_BOARD,
+  },
 ];
 
 export function NavList() {
