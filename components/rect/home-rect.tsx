@@ -29,8 +29,8 @@ export const HomeRect = (props: SVGProps<SVGSVGElement>) => (
       >
         {/* <stop stop-color="#6A98F0" />
         <stop offset="1" stop-color="#4961DC" /> */}
-        <stop stop-color="hsl(var(--primary)/.9)" />
-        <stop offset="1" stop-color="hsl(var(--primary))" />
+        <stop stopColor="hsl(var(--primary)/.9)" />
+        <stop offset="1" stopColor="hsl(var(--primary))" />
       </linearGradient>
     </defs>
   </svg>
