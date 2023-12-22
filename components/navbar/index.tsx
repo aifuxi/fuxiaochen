@@ -2,21 +2,32 @@ import Link from 'next/link';
 
 import { GithubIcon } from 'lucide-react';
 
-import { GITHUB_PAGE } from '@/constants/info';
+import { cn } from '@/utils/helper';
+
+import { GITHUB_PAGE, NICKNAME } from '@/constants/info';
+import { PATHS } from '@/constants/path';
 
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
 
+import { IconLogo } from '../icons';
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
 
 export function Navbar() {
   return (
-    <header className="border-b w-full sticky top-0 bg-background z-10">
+    <header className="w-full sticky top-0 bg-background z-10 shadow-lg">
       <div className="container flex items-center h-16 p-4 sm:p-8">
+        <Link
+          href={PATHS.SITE_HOME}
+          className={cn('mr-4 hidden sm:flex')}
+          aria-label={NICKNAME}
+        >
+          <IconLogo className="w-10 h-10" />
+        </Link>
         <NavList />
         <MobileNav />
-        <div className="flex-1 flex justify-end items-center gap-1">
+        <div className="flex flex-1 sm:flex-none justify-end items-center gap-1">
           <SwitchTheme />
 
           <Link href={GITHUB_PAGE} target="_blank" aria-label={GITHUB_PAGE}>
