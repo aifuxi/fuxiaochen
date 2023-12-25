@@ -30,7 +30,7 @@ export default function BackToTop() {
 
   return (
     <Button
-      className={cn('fixed bottom-10 right-10', !visible && 'hidden')}
+      className={cn('fixed bottom-8 right-8', !visible && 'hidden')}
       size={'icon'}
       onClick={() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
