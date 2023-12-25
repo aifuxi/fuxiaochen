@@ -4,7 +4,6 @@ import { env } from '@/libs/env.mjs';
 import { db } from '@/libs/prisma';
 
 import { PATHS } from '@/constants/path';
-import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 export async function GET() {
   const articles = await db.article.findMany({
@@ -25,25 +24,7 @@ export async function GET() {
     },
   });
 
-  const articlePages = Math.ceil((articles?.length || 0) / DEFAULT_PAGE_SIZE);
-  const articlePagesSitemaps: ISitemapField[] = [];
   const firstArticle = articles[0]?.createdAt;
-
-  for (let i = 1; i <= articlePages; i++) {
-    if (i === 1) {
-      articlePagesSitemaps.push({
-        loc: `${env.SITE_URL}${PATHS.SITE_ARTICLES}`,
-        lastmod: firstArticle?.toISOString(),
-        changefreq: 'hourly',
-      });
-    } else {
-      articlePagesSitemaps.push({
-        loc: `${env.SITE_URL}${PATHS.SITE_ARTICLES}?page=${i}`,
-        lastmod: firstArticle?.toISOString(),
-        changefreq: 'hourly',
-      });
-    }
-  }
 
   const articlesSitemaps = articles.map((item): ISitemapField => {
     return {
@@ -61,8 +42,12 @@ export async function GET() {
   });
 
   return getServerSideSitemap([
+    {
+      loc: `${env.SITE_URL}${PATHS.SITE_ARTICLES}`,
+      lastmod: firstArticle?.toISOString(),
+      changefreq: 'hourly',
+    },
     ...articlesSitemaps,
     ...tagsSitemaps,
-    ...articlePagesSitemaps,
   ]);
 }
