@@ -2,8 +2,6 @@ import Link from 'next/link';
 
 import { buttonVariants } from '@/components/ui/button';
 
-import { HomeRect } from '@/components/rect';
-
 import { cn } from '@/utils/helper';
 
 import { NICKNAME } from '@/constants/info';
@@ -17,8 +15,6 @@ import { ThingsILove } from './_components/things-i-love';
 export default function HomePage() {
   return (
     <div className="container pt-20">
-      <HomeRect className="absolute lg:right-0 -right-1/3  z-[-1] -top-48 lg:top-0 w-3/5  lg:w-2/5" />
-
       <div className="flex flex-col lg:flex-row lg:justify-between items-center">
         <div className="flex-1 grid gap-2 pb-8 md:pb-0">
           <p className="text-muted-foreground tracking-widest">你好，我是</p>

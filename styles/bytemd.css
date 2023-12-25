@@ -60,9 +60,12 @@
   opacity: 1;
 }
 
-/* 隐藏目录列表项前面的样式 */
-.toc :where(ol):not(:where([class~='not-prose'] *)) {
-  list-style-type: none;
+.toc ol {
+  @apply pl-4;
+}
+
+.toc ol > li {
+  @apply mb-1;
 }
 
 /* 编辑器内标题样式 */
@@ -108,11 +111,6 @@
 /* 编辑器内显示行数背景 */
 .CodeMirror-gutters {
   @apply !border-r-muted !bg-background;
-}
-
-/* 自动生成目录插件后，自定义目录样式 */
-.markdown-body nav.toc {
-  @apply right-2 top-40 lg:fixed lg:border-l lg:text-sm xl:right-8 2xl:right-16;
 }
 
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
