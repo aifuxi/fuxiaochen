@@ -13,7 +13,7 @@ export function AboutMe() {
         <span className="hidden sm:inline-flex">/</span>
         <span>About me</span>
       </h2>
-      <div className="absolute top-40 -skew-y-[3deg] -inset-x-full -z-[1] min-h-[700px]  md:min-h-[400px] pointer-events-none bg-foreground"></div>
+      <div className="absolute top-40 -skew-y-[3deg] inset-x-0  -z-[1] min-h-[700px]  md:min-h-[400px] pointer-events-none bg-foreground"></div>
       <div className="w-full flex flex-col md:flex-row justify-between items-center pt-28 text-sm sm:text-base">
         <img
           src="/images/aifuxi.webp"

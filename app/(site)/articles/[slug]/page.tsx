@@ -21,6 +21,8 @@ import { formatToDate, formatToDateTime } from '@/utils/time';
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 
+import { CustomerToc } from './_components/customer-toc';
+
 export async function generateMetadata({
   params,
 }: {
@@ -69,20 +71,18 @@ export default async function ArticleDetailPage({
     getUnixTime(article.createdAt) === getUnixTime(article.updatedAt);
 
   return (
-    <div className="flex flex-col gap-8 items-center pt-8">
-      <img
-        className="max-w-[calc(100vw-2rem)] object-fill border"
-        src={article?.cover ?? PLACEHOLDER_COVER}
-        alt={article?.title}
-      />
+    <div className="flex justify-between max-w-[1140px] mx-8 lg:mx-auto gap-6">
+      <div className="flex flex-1 flex-col gap-4">
+        <img
+          className="object-fill border"
+          src={article?.cover ?? PLACEHOLDER_COVER}
+          alt={article?.title}
+        />
 
-      <div className="container flex flex-col gap-8 pb-9">
         <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
           {article?.title}
         </h1>
-
-        <BytemdViewer content={article?.content ?? ''} />
-
+        <BytemdViewer content={article.content ?? ''} />
         <div className="flex items-center flex-wrap gap-4 pt-8">
           <p className="sm:text-xl text-muted-foreground">标签：</p>
           {article?.tags?.map((tag) => (
@@ -120,6 +120,8 @@ export default async function ArticleDetailPage({
           <GoBack />
         </div>
       </div>
+
+      <CustomerToc />
     </div>
   );
 }
