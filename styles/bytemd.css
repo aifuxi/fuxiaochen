@@ -25,7 +25,7 @@
 }
 
 .markdown-body pre {
-  @apply !rounded-none !bg-transparent;
+  @apply !rounded-none;
 }
 
 .markdown-body iframe {
