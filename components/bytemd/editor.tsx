@@ -54,7 +54,6 @@ export function BytemdEditor({ content, setContent, editorProps }: Props) {
       locale={zh_Hans}
       editorConfig={{
         ...editorProps,
-        lineNumbers: true,
       }}
     />
   );
