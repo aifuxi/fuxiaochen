@@ -33,3 +33,21 @@ export function tocPlugin(): BytemdPlugin {
       }),
   };
 }
+
+/**
+ * 将内容里面的外部链接打开方式为_blank
+ */
+export function modifyHrefTargetPlugin(): BytemdPlugin {
+  return {
+    viewerEffect({ markdownBody }) {
+      Array.from(markdownBody.querySelectorAll('a'))
+        .filter((a) => {
+          const href = a.getAttribute('href');
+          return Boolean(href && href.startsWith('http'));
+        })
+        .forEach((a) => {
+          a.setAttribute('target', '_blank');
+        });
+    },
+  };
+}
