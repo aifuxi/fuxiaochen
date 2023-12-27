@@ -10,7 +10,7 @@ nav.toc {
 }
 
 nav.toc .toc-link {
-  @apply line-clamp-1 h-7 text-ellipsis leading-7 transition-colors hover:text-primary;
+  @apply line-clamp-1 h-7 text-ellipsis break-all leading-7 transition-colors hover:text-primary;
 }
 
 nav.toc .toc-link-active {
