@@ -53,7 +53,7 @@ const skillsets: Skill[] = [
 
 export function MyKillsets() {
   return (
-    <div className="py-20 flex flex-col items-center">
+    <div className="container py-20 flex flex-col items-center">
       <h2 className="mt-10 scroll-m-20 flex flex-col sm:flex-row text-3xl font-semibold tracking-widest transition-colors first:mt-0">
         <span>我的技术栈</span>
         <span className="hidden sm:inline-flex">/</span>

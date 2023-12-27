@@ -28,7 +28,7 @@ const hobbies: Hobby[] = [
 
 export function ThingsILove() {
   return (
-    <div className="pt-48 flex flex-col items-center gap-6">
+    <div className="container pt-48 flex flex-col items-center gap-6">
       <h2 className="mt-10 scroll-m-20 flex flex-col sm:flex-row text-3xl font-semibold tracking-widest transition-colors first:mt-0">
         <span>我喜欢做的事</span>
         <span className="hidden sm:inline-flex">/</span>
