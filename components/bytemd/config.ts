@@ -8,7 +8,7 @@ import mermaid from '@bytemd/plugin-mermaid';
 import { type EditorProps } from '@bytemd/react';
 import { merge } from 'lodash-es';
 
-import { tocPlugin } from './plugin';
+import { modifyHrefTargetPlugin, tocPlugin } from './plugin';
 
 export const plugins = [
   gfm(),
@@ -19,6 +19,7 @@ export const plugins = [
   mediumZoom(),
   mermaid(),
   tocPlugin(),
+  modifyHrefTargetPlugin(),
 ];
 
 export const sanitize: EditorProps['sanitize'] = (schema) => {

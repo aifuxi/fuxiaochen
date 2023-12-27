@@ -21,7 +21,7 @@ import { formatToDate, formatToDateTime } from '@/utils/time';
 import { PATHS } from '@/constants/path';
 import { PLACEHOLDER_COVER } from '@/constants/unknown';
 
-import { CustomerToc } from './_components/customer-toc';
+import { ArticleTOC } from './article-toc';
 
 export async function generateMetadata({
   params,
@@ -72,7 +72,8 @@ export default async function ArticleDetailPage({
 
   return (
     <div className="flex justify-between max-w-[1140px] mx-8 lg:mx-auto gap-6">
-      <div className="flex flex-1 flex-col gap-4">
+      <ArticleTOC />
+      <div className="flex flex-1 flex-col gap-4 pt-12">
         <img
           className="object-fill border"
           src={article?.cover ?? PLACEHOLDER_COVER}
@@ -120,8 +121,6 @@ export default async function ArticleDetailPage({
           <GoBack />
         </div>
       </div>
-
-      <CustomerToc />
     </div>
   );
 }
