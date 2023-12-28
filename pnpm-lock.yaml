@@ -23,6 +23,9 @@ dependencies:
   '@bytemd/plugin-highlight-ssr':
     specifier: ^1.21.0
     version: 1.21.0(bytemd@1.21.0)
+  '@bytemd/plugin-math':
+    specifier: ^1.21.0
+    version: 1.21.0(bytemd@1.21.0)
   '@bytemd/plugin-medium-zoom':
     specifier: ^1.21.0
     version: 1.21.0(bytemd@1.21.0)
@@ -512,6 +515,17 @@ packages:
     dependencies:
       bytemd: 1.21.0
       rehype-highlight: 6.0.0
+    dev: false
+
+  /@bytemd/plugin-math@1.21.0(bytemd@1.21.0):
+    resolution: {integrity: sha512-SkKTuPX8D+3x3aVRfZbCGg52mUDar54zn/cbnPY7RYqGUQRz0tSXVApC4mJxfzWpxvPnbjkmy742NVriDUoFrw==}
+    peerDependencies:
+      bytemd: ^1.5.0
+    dependencies:
+      '@types/katex': 0.16.7
+      bytemd: 1.21.0
+      katex: 0.16.9
+      remark-math: 5.1.1
     dev: false
 
   /@bytemd/plugin-medium-zoom@1.21.0(bytemd@1.21.0):
@@ -2315,6 +2329,10 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
+  /@types/katex@0.16.7:
+    resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
+    dev: false
+
   /@types/lodash-es@4.17.8:
     resolution: {integrity: sha512-euY3XQcZmIzSy7YH5+Unb3b2X12Wtk54YWINBvvGQ5SmMvwb11JQskGsfkH/5HXK77Kr8GF0wkVDIxzAisWtog==}
     dependencies:
@@ -3290,6 +3308,11 @@ packages:
   /commander@7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
+    dev: false
+
+  /commander@8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
     dev: false
 
   /commitizen@4.3.0(typescript@5.1.6):
@@ -5957,6 +5980,13 @@ packages:
       object.values: 1.1.7
     dev: true
 
+  /katex@0.16.9:
+    resolution: {integrity: sha512-fsSYjWS0EEOwvy81j3vRA8TEAhQhKiqO+FQaKWp0m39qwOzHVBgAUBIXWj1pB+O2W3fIpNa6Y9KSKCVbfPhyAQ==}
+    hasBin: true
+    dependencies:
+      commander: 8.3.0
+    dev: false
+
   /khroma@2.1.0:
     resolution: {integrity: sha512-Ls993zuzfayK269Svk9hzpeGUKob/sIgZzyHYdjQoAdQetRKpOLj+k/QQQ/6Qi0Yz65mlROrfd+Ev+1+7dz9Kw==}
     dev: false
@@ -6332,6 +6362,14 @@ packages:
       - supports-color
     dev: false
 
+  /mdast-util-math@2.0.2:
+    resolution: {integrity: sha512-8gmkKVp9v6+Tgjtq6SYx9kGPpTf6FVYRa53/DLh479aldR9AyP48qeVOgNZ5X7QUK7nOy4yw7vg6mbiGcs9jWQ==}
+    dependencies:
+      '@types/mdast': 3.0.11
+      longest-streak: 3.1.0
+      mdast-util-to-markdown: 1.5.0
+    dev: false
+
   /mdast-util-newline-to-break@1.0.0:
     resolution: {integrity: sha512-491LcYv3gbGhhCrLoeALncQmega2xPh+m3gbsIhVsOX4sw85+ShLFPvPyibxc1Swx/6GtzxgVodq+cGa/47ULg==}
     dependencies:
@@ -6542,6 +6580,18 @@ packages:
       micromark-extension-gfm-task-list-item: 1.0.5
       micromark-util-combine-extensions: 1.1.0
       micromark-util-types: 1.1.0
+    dev: false
+
+  /micromark-extension-math@2.1.2:
+    resolution: {integrity: sha512-es0CcOV89VNS9wFmyn+wyFTKweXGW4CEvdaAca6SWRWPyYCbBisnjaHLjWO4Nszuiud84jCpkHsqAJoa768Pvg==}
+    dependencies:
+      '@types/katex': 0.16.7
+      katex: 0.16.9
+      micromark-factory-space: 1.1.0
+      micromark-util-character: 1.2.0
+      micromark-util-symbol: 1.1.0
+      micromark-util-types: 1.1.0
+      uvu: 0.5.6
     dev: false
 
   /micromark-factory-destination@1.1.0:
@@ -7928,6 +7978,15 @@ packages:
       unified: 10.1.2
     transitivePeerDependencies:
       - supports-color
+    dev: false
+
+  /remark-math@5.1.1:
+    resolution: {integrity: sha512-cE5T2R/xLVtfFI4cCePtiRn+e6jKMtFDR3P8V3qpv8wpKjwvHoBA4eJzvX+nVrnlNy0911bdGmuspCSwetfYHw==}
+    dependencies:
+      '@types/mdast': 3.0.11
+      mdast-util-math: 2.0.2
+      micromark-extension-math: 2.1.2
+      unified: 10.1.2
     dev: false
 
   /remark-parse@10.0.2:
