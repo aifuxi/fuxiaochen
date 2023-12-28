@@ -25,7 +25,23 @@
 }
 
 .markdown-body pre {
-  @apply !rounded-none !bg-muted;
+  @apply relative !my-0 !rounded-none !bg-muted !p-0 text-primary;
+}
+.markdown-body pre > code {
+  @apply mt-10;
+}
+
+.markdown-body pre > .copy-code-button {
+  @apply absolute right-4 top-0 z-[1] flex h-[40px] cursor-pointer items-center text-lg opacity-0 transition-opacity ease-in-out;
+}
+
+.markdown-body pre:hover > .copy-code-button {
+  @apply opacity-100;
+}
+
+.markdown-body pre::after {
+  content: attr(data-language);
+  @apply absolute  inset-x-0 top-0 border-b border-b-muted-foreground/20 px-4 py-2 text-primary;
 }
 
 .markdown-body iframe {
@@ -40,21 +56,11 @@
   order: 2;
 }
 
-.markdown-body h2,
-.markdown-body h3,
-.markdown-body h4,
-.markdown-body h5,
-.markdown-body h6 {
-  display: flex;
-  align-items: center;
-  @apply scroll-mt-16;
+.markdown-body :where(h1, h2, h3, h4) {
+  @apply flex scroll-mt-20 items-center break-all;
 }
 
-.markdown-body h2:hover .markdown-anchor,
-.markdown-body h3:hover .markdown-anchor,
-.markdown-body h4:hover .markdown-anchor,
-.markdown-body h5:hover .markdown-anchor,
-.markdown-body h6:hover .markdown-anchor {
+.markdown-body :where(h1, h2, h3, h4):hover .markdown-anchor {
   opacity: 1;
 }
 

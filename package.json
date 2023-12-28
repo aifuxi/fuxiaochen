@@ -31,6 +31,7 @@
     "@bytemd/plugin-gemoji": "^1.21.0",
     "@bytemd/plugin-gfm": "^1.21.0",
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
+    "@bytemd/plugin-math": "^1.21.0",
     "@bytemd/plugin-medium-zoom": "^1.21.0",
     "@bytemd/plugin-mermaid": "^1.21.0",
     "@bytemd/react": "^1.21.0",
