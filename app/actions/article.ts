@@ -106,7 +106,6 @@ export async function updateArticle(parsed: UpdateArticleReq) {
   });
 
   revalidatePath('/admin/article');
-  redirect('/admin/article');
 }
 
 export async function toggleArticlePublish(id: string) {
