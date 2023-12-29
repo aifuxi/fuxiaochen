@@ -71,9 +71,9 @@ export default async function ArticleDetailPage({
     getUnixTime(article.createdAt) === getUnixTime(article.updatedAt);
 
   return (
-    <div className="flex justify-between max-w-[1140px] mx-8 lg:mx-auto gap-6">
+    <div className="flex lg:justify-between max-w-[1140px] px-4 lg:mx-auto">
       <ArticleTOC />
-      <div className="flex flex-1 flex-col gap-4 pt-12">
+      <div className="flex flex-1 flex-col gap-y-4 pt-12">
         <img
           className="object-fill border"
           src={article?.cover ?? PLACEHOLDER_COVER}
