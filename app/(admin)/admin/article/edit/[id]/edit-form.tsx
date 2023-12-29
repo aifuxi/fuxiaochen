@@ -3,6 +3,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useRouter } from 'next/navigation';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Article, type Tag } from '@prisma/client';
 import { type z } from 'zod';
@@ -45,6 +47,7 @@ export function EditForm({
   article?: Article & { tags?: Tag[] };
   tags?: Tag[];
 }) {
+  const router = useRouter();
   const [cover, setCover] = React.useState(article?.cover ?? PLACEHOLDER_COVER);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof updateArticleReqSchema>>({
@@ -64,6 +67,7 @@ export function EditForm({
   async function onSubmit(values: UpdateArticleReq) {
     try {
       await updateArticle(values);
+      router.back();
     } catch (e) {}
   }
 
