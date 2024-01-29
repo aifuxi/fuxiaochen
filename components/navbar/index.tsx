@@ -11,7 +11,6 @@ import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
 
 import { IconLogo } from '../icons';
-import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
 
 export function Navbar() {
@@ -28,8 +27,6 @@ export function Navbar() {
         <NavList />
         <MobileNav />
         <div className="flex flex-1 sm:flex-none justify-end items-center gap-1">
-          <SwitchTheme />
-
           <Link href={GITHUB_PAGE} target="_blank" aria-label={GITHUB_PAGE}>
             <Button variant="ghost" size={'icon'} aria-label="Github Icon">
               <GithubIcon size={16} />

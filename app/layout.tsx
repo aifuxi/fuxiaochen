@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
-import { AuthProvider, NextThemeProvider } from '@/components/providers';
+import { AuthProvider } from '@/components/providers';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants/info';
 
@@ -28,7 +28,7 @@ export default function RootLayout({
   session: Session;
 }) {
   return (
-    <html suppressHydrationWarning lang="zh-CN">
+    <html lang="zh-CN">
       <head>
         <link
           rel="apple-touch-icon"
@@ -61,14 +61,12 @@ export default function RootLayout({
 
       <body className={'debug-screens'}>
         <AuthProvider session={session}>
-          <NextThemeProvider attribute="class">
-            {children}
-            <BackToTop />
+          {children}
+          <BackToTop />
 
-            <Toaster />
+          <Toaster />
 
-            <Console />
-          </NextThemeProvider>
+          <Console />
         </AuthProvider>
       </body>
     </html>

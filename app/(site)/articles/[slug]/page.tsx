@@ -10,7 +10,6 @@ import { getArticleBySlug } from '@/app/actions/article';
 import { badgeVariants } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
-import { GiscusComment } from '@/components/giscus-comment';
 import { GoBack } from '@/components/go-back';
 
 import { env } from '@/libs/env.mjs';
@@ -114,8 +113,6 @@ export default async function ArticleDetailPage({
             </>
           )}
         </p>
-
-        <GiscusComment />
 
         <div className="flex">
           <GoBack />
