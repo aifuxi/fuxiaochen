@@ -44,3 +44,5 @@ yarn-error.log*
 
 # 本地上传的文件
 /public/uploads/*
+
+.idea
