@@ -9,6 +9,7 @@
     "prisma.prisma",
     "bradlc.vscode-tailwindcss",
     "jgclark.vscode-todo-highlight",
-    "meganrogge.template-string-converter"
+    "meganrogge.template-string-converter",
+    "catppuccin.catppuccin-vsc-pack"
   ]
 }
