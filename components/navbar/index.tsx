@@ -1,38 +1,26 @@
 import Link from 'next/link';
 
-import { GithubIcon } from 'lucide-react';
-
 import { cn } from '@/utils/helper';
 
-import { GITHUB_PAGE, NICKNAME } from '@/constants/info';
+import { NICKNAME } from '@/constants/info';
 import { PATHS } from '@/constants/path';
 
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
 
-import { IconLogo } from '../icons';
-import { Button } from '../ui/button';
-
 export function Navbar() {
   return (
     <header className="w-full sticky top-0 bg-background z-10 shadow-lg">
-      <div className="container flex items-center h-16 p-4 sm:p-8">
+      <div className="flex items-center h-16 py-4 px-10 sm:p-8">
         <Link
           href={PATHS.SITE_HOME}
-          className={cn('mr-4 hidden sm:flex')}
+          className={cn('mr-4 hidden sm:flex w-[240px]')}
           aria-label={NICKNAME}
         >
-          <IconLogo className="w-10 h-10" />
+          <img src="/fuxiaochen-logo.svg" alt={NICKNAME} className="h-[30px]" />
         </Link>
         <NavList />
         <MobileNav />
-        <div className="flex flex-1 sm:flex-none justify-end items-center gap-1">
-          <Link href={GITHUB_PAGE} target="_blank" aria-label={GITHUB_PAGE}>
-            <Button variant="ghost" size={'icon'} aria-label="Github Icon">
-              <GithubIcon size={16} />
-            </Button>
-          </Link>
-        </div>
       </div>
     </header>
   );

@@ -96,7 +96,7 @@ export const Combobox = React.forwardRef(
                 props.value &&
                 Boolean(props.value.length) &&
                 props.value?.map((el) => (
-                  <Badge key={el} className="mr-2 !rounded-none">
+                  <Badge key={el} className="mr-2">
                     {tagMap.get(el)}
                   </Badge>
                 ))}

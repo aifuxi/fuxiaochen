@@ -1,10 +1,8 @@
 import Link from 'next/link';
 
 import { type Article, type Tag } from '@prisma/client';
-import { MoveRightIcon } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 
 import { cn } from '@/utils/helper';
 import { formatToDate } from '@/utils/time';
@@ -37,11 +35,7 @@ export function ArticleItem({ article }: Props) {
         </h4>
 
         <div className="flex flex-wrap gap-4">
-          {article.tags?.map((tag) => (
-            <Badge key={tag.id} className="!rounded-none">
-              {tag.name}
-            </Badge>
-          ))}
+          {article.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}
         </div>
 
         <p className="leading-7 [&:not(:first-child)]:mt-6 line-clamp-2 sm:line-clamp-4">
@@ -53,11 +47,6 @@ export function ArticleItem({ article }: Props) {
             <p className="text-sm text-muted-foreground">
               {formatToDate(new Date(article.createdAt))}
             </p>
-
-            <Button>
-              阅读更多
-              <MoveRightIcon className="ml-2 h-4 w-4" />
-            </Button>
           </div>
         </div>
       </div>

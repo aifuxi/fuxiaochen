@@ -30,16 +30,14 @@ export function NavList() {
   const pathname = usePathname();
 
   return (
-    <nav className="h-16 flex-1 hidden sm:flex justify-end items-center gap-6 text-base font-medium mr-8">
+    <nav className="h-16 flex-1 hidden sm:flex items-center gap-6 text-base font-medium mr-8">
       {navItems.map((el) => (
         <Link
           key={el.link}
           href={el.link}
           className={cn(
-            'transition-colors h-full items-center hover:text-foreground/80 hidden sm:flex',
-            pathname === el.link
-              ? 'text-foreground font-semibold'
-              : 'text-foreground/60',
+            'transition-colors h-full items-center hidden sm:flex text-primary hover:text-primary/80 px-2.5',
+            pathname === el.link ? 'font-semibold' : '',
           )}
         >
           {el.label}

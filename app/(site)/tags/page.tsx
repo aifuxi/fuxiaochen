@@ -51,7 +51,7 @@ export default async function TagsPage() {
             key={tag.id}
             className={cn(
               badgeVariants({ variant: 'default' }),
-              'text-md sm:px-4 sm:py-2 !rounded-none',
+              'text-md sm:px-4 sm:py-2',
             )}
           >
             {tag.name}

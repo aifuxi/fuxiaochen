@@ -91,7 +91,7 @@ export default async function ArticleDetailPage({
               key={tag.id}
               className={cn(
                 badgeVariants({ variant: 'default' }),
-                'sm:text-md sm:px-4 sm:py-2 !rounded-none',
+                'sm:text-md sm:px-4 sm:py-2',
               )}
             >
               {tag.name}

@@ -92,10 +92,7 @@ export default async function AdminArticle({
                           href={`${PATHS.SITE_TAGS}/${tag.slug}`}
                           key={tag.id}
                           target="_blank"
-                          className={cn(
-                            badgeVariants({ variant: 'default' }),
-                            '!rounded-none',
-                          )}
+                          className={cn(badgeVariants({ variant: 'default' }))}
                         >
                           {tag.name}
                         </Link>

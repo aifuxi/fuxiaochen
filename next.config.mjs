@@ -12,11 +12,6 @@ const config = {
   sassOptions: {
     includePaths: [path.join(url.fileURLToPath(import.meta.url), 'styles')],
   },
-  transpilePackages: [
-    '@douyinfe/semi-ui',
-    '@douyinfe/semi-icons',
-    '@douyinfe/semi-illustrations',
-  ],
   images: {
     remotePatterns: [
       {

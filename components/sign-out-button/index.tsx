@@ -20,7 +20,7 @@ export function SignOutButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={'secondary'} className="!w-full">
+        <Button variant={'secondary'} className="!w-full mb-4">
           <PowerIcon size={16} className="mr-2 " />
           退出登录
         </Button>

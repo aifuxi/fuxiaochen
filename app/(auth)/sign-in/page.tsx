@@ -28,9 +28,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { PATHS } from '@/constants/path';
+
 import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
+
 import { cn } from '@/utils/helper';
+
+import { PATHS } from '@/constants/path';
 
 export default function SignInPage() {
   const router = useRouter();
@@ -55,12 +58,12 @@ export default function SignInPage() {
     if (res?.error) {
       toast({
         variant: 'destructive',
-        title: '请求失败',
+        title: '登录失败',
         description: res?.error,
       });
     } else {
       toast({
-        title: '请求成功',
+        title: '登录成功',
         description: '登录成功，欢迎回来',
       });
     }
@@ -72,7 +75,7 @@ export default function SignInPage() {
     <div className="w-screen h-screen grid place-content-center">
       <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px]">
         <CardHeader>
-          <CardTitle>用户登录</CardTitle>
+          <CardTitle>欢迎回来</CardTitle>
           <CardDescription>请输入你的邮箱和密码进行登录</CardDescription>
         </CardHeader>
         <Form {...form}>
