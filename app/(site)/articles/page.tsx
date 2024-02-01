@@ -2,8 +2,6 @@ import { type Metadata } from 'next';
 
 import { ArticleList } from '@/components/articles';
 
-import { DEFAULT_PAGE } from '@/constants/unknown';
-
 import { getPublishedArticles } from '../../actions/article';
 
 export const metadata: Metadata = {
@@ -11,23 +9,12 @@ export const metadata: Metadata = {
 };
 export const revalidate = 60;
 
-export default async function ArticlesPage({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
-  const { page } = searchParams ?? {};
-  const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
-
-  const { articles, total } = await getPublishedArticles({
-    page: currentPage,
-  });
+export default async function ArticlesPage() {
+  const { articles, total } = await getPublishedArticles();
 
   return (
-    <div className="container mx-auto">
-      <div className="min-h-screen flex flex-col gap-8 pb-8">
-        <ArticleList articles={articles} total={total} />
-      </div>
+    <div className="min-h-screen flex flex-col gap-8 pb-8">
+      <ArticleList articles={articles} total={total} />
     </div>
   );
 }

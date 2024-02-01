@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { type Article, type Tag } from '@prisma/client';
@@ -18,38 +19,31 @@ export function ArticleItem({ article }: Props) {
   return (
     <Link
       href={`${PATHS.SITE_ARTICLES}/${article.slug}`}
-      className={cn(
-        'relative flex flex-col space-y-2 border-b p-4  md:p-8',
-        'md:flex-row md:space-x-6 md:space-y-0',
-        `after:absolute after:inset-0 after:w-0  after:z-[-1] after:hover:bg-foreground/5 after:hover:w-full after:transition-all after:duration-700`,
-      )}
+      className={cn('flex py-3 px-5 bg-background hover:bg-accent rounded-2xl')}
     >
-      <img
-        src={article.cover ? article.cover : PLACEHOLDER_COVER}
-        alt={article.title}
-        className="w-[300px] border"
-      />
-      <div className="flex flex-col gap-3 flex-1">
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+      <div className="flex flex-col flex-1 text-xs space-y-1">
+        <h4 className="text-base font-semibold line-clamp-1">
           {article.title}
         </h4>
 
-        <div className="flex flex-wrap gap-4">
-          {article.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}
-        </div>
+        <p className="line-clamp-1">{article.description}</p>
 
-        <p className="leading-7 [&:not(:first-child)]:mt-6 line-clamp-2 sm:line-clamp-4">
-          {article.description}
-        </p>
-
-        <div className="flex flex-col justify-end flex-1">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-muted-foreground">
-              {formatToDate(new Date(article.createdAt))}
-            </p>
+        <div className="flex justify-between">
+          <div>
+            <span>{formatToDate(new Date(article.createdAt))}</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {article.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}
           </div>
         </div>
       </div>
+      <Image
+        src={article.cover ? article.cover : PLACEHOLDER_COVER}
+        alt={article.title}
+        width={110}
+        height={74}
+        className="ml-6 border rounded-lg"
+      />
     </Link>
   );
 }

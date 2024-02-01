@@ -160,10 +160,7 @@ export async function createArticle(parsed: CreateArticleReq) {
   redirect('/admin/article');
 }
 
-export async function getPublishedArticles(params: { page: number }) {
-  const take = DEFAULT_PAGE_SIZE;
-  const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
-
+export async function getPublishedArticles() {
   const articles = await db.article.findMany({
     orderBy: {
       createdAt: 'desc',
@@ -174,8 +171,6 @@ export async function getPublishedArticles(params: { page: number }) {
     where: {
       published: true,
     },
-    skip,
-    take,
   });
 
   const count = await db.article.count({

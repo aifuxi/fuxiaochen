@@ -20,10 +20,6 @@ export const navItems: Array<{
     label: '文章',
     link: PATHS.SITE_ARTICLES,
   },
-  {
-    label: '标签',
-    link: PATHS.SITE_TAGS,
-  },
 ];
 
 export function NavList() {
