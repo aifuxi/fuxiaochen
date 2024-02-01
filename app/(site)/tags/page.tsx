@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { badgeVariants } from '@/components/ui/badge';
 
 import { IllustrationNoContent } from '@/components/illustrations';
-import { PageTitle } from '@/components/page-title';
 
 import { cn } from '@/utils/helper';
 
@@ -23,11 +22,7 @@ export default async function TagsPage() {
 
   return (
     <div className="container mx-auto">
-      <div className="h-screen flex flex-col gap-8 pb-8">
-        <PageTitle title="标签" />
-
-        {renderTagList()}
-      </div>
+      <div className="h-screen flex flex-col gap-8 pb-8">{renderTagList()}</div>
     </div>
   );
 

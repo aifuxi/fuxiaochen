@@ -1,7 +1,6 @@
 import { type Metadata } from 'next';
 
 import { ArticleList } from '@/components/articles';
-import { PageTitle } from '@/components/page-title';
 
 import { DEFAULT_PAGE } from '@/constants/unknown';
 
@@ -27,8 +26,6 @@ export default async function ArticlesPage({
   return (
     <div className="container mx-auto">
       <div className="min-h-screen flex flex-col gap-8 pb-8">
-        <PageTitle title="文章" />
-
         <ArticleList articles={articles} total={total} />
       </div>
     </div>
