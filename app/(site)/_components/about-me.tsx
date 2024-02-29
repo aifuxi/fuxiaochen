@@ -1,9 +1,6 @@
-import Link from 'next/link';
-
 import { cn } from '@/utils/helper';
 
 import { EMAIL, NICKNAME } from '@/constants/info';
-import { PATHS } from '@/constants/path';
 
 export function AboutMe() {
   return (
@@ -37,16 +34,7 @@ export function AboutMe() {
               </div>
             </div>
             <p>闲暇之余喜欢写代码、玩游戏和骑车。</p>
-            <p>
-              如果你对我感兴趣，可以在本站
-              <Link
-                href={PATHS.SITE_MESSAGE_BOARD}
-                className="font-semibold mx-1"
-              >
-                留言
-              </Link>
-              或者通过 {EMAIL} 发邮件联系我。
-            </p>
+            <p>如果你对我感兴趣，可以通过 {EMAIL} 发邮件联系我。</p>
           </div>
         </div>
       </div>
