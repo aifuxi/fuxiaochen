@@ -4,7 +4,6 @@
 import { ASCII_ART_FONT } from '@/constants/ascii';
 import {
   NICKNAME,
-  SOURCE_CODE_GITEE_PAGE,
   SOURCE_CODE_GITHUB_PAGE,
 } from '@/constants/info';
 
@@ -25,10 +24,7 @@ console.log(
   `%c网站源码 Github：${SOURCE_CODE_GITHUB_PAGE}`,
   `color: #999; font-size: 1rem;${fontFamily}`,
 );
-console.log(
-  `%c网站源码 Gitee：${SOURCE_CODE_GITEE_PAGE}`,
-  `color: #999; font-size: 1rem;${fontFamily}`,
-);
+
 
 /**
  * 在浏览器控制台输出一些自定义信息，注意必须使用 client 组件，因为是要运行在浏览器上的
