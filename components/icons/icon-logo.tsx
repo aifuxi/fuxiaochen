@@ -6,20 +6,15 @@ export const IconLogo = (props: SVGProps<SVGSVGElement>) => (
     width="1em"
     height="1em"
     fill="none"
-    viewBox="0 0 64 64"
+    viewBox="0 0 48 48"
     {...props}
   >
-    <g clipPath="url(#a)">
-      <path fill="hsl(var(--primary))" d="M0 0h64v48L48 64H0V0Z" />
-      <path
-        fill="hsl(var(--primary-foreground))"
-        d="M20.928 51V15.624h25.104v6.384H28.416v8.352h15.456v6.144H28.416V51h-7.488Z"
-      />
-    </g>
-    <defs>
-      <clipPath id="a">
-        <path fill="hsl(var(--primary-foreground))" d="M0 0h64v64H0z" />
-      </clipPath>
-    </defs>
+    <rect width={48} height={48} fill="hsl(var(--primary))" rx={12} />
+    <path
+      fill="hsl(var(--primary-foreground))"
+      fillRule="evenodd"
+      d="M13.176 9.422h21.621v7.217c0 .615-.498 1.113-1.113 1.113H13.176v-8.33Zm9.011 10.412h10.811v7.217c0 .615-.498 1.113-1.113 1.113h-9.698v-8.33Zm-9.011 0v18.744h6.093c.615 0 1.114-.498 1.114-1.114v-17.63h-7.207Z"
+      clipRule="evenodd"
+    />
   </svg>
 );
