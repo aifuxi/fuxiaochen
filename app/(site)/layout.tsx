@@ -3,13 +3,10 @@ import { Navbar } from '@/components/navbar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="flex flex-col relative">
+    <div className="flex flex-col gap-20">
       <Navbar />
-      <section className="flex-1 flex flex-col relative">
-        {children}
-
-        <Footer />
-      </section>
-    </main>
+      <div className="flex-1 flex flex-col items-center">{children}</div>
+      <Footer />
+    </div>
   );
 }
