@@ -46,7 +46,7 @@ export default async function TagDetailPage({
   });
 
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <div className="min-h-screen flex flex-col gap-8 pb-8">
         <PageTitle title={tag.name} />
 

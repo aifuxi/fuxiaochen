@@ -10,7 +10,7 @@ import { PATHS } from '@/constants/path';
 
 export default function NotFoundPage() {
   return (
-    <div className="container h-screen grid place-items-center">
+    <div className="h-screen grid place-items-center">
       <div className="grid gap-8">
         <IllustrationNotFound className="w-[400px] h-[400px]" />
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">

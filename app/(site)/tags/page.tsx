@@ -22,7 +22,7 @@ export default async function TagsPage() {
   const tags = await getAllTags();
 
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <div className="h-screen flex flex-col gap-8 pb-8">
         <PageTitle title="标签" />
 
