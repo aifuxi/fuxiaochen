@@ -88,17 +88,15 @@ export default async function AdminArticle({
                 <div className="flex flex-wrap gap-2">
                   {article.tags?.length
                     ? article.tags.map((tag) => (
-                        <Link
-                          href={`${PATHS.SITE_TAGS}/${tag.slug}`}
+                        <div
                           key={tag.id}
-                          target="_blank"
                           className={cn(
                             badgeVariants({ variant: 'default' }),
                             '!rounded-none',
                           )}
                         >
                           {tag.name}
-                        </Link>
+                        </div>
                       ))
                     : '-'}
                 </div>
