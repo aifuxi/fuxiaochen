@@ -16,7 +16,7 @@ import { Button } from '../ui/button';
 
 export function Navbar() {
   return (
-    <header className="w-full sticky top-0 bg-background z-10 shadow-lg flex justify-center">
+    <header className="w-full sticky top-0 bg-background z-10 flex justify-center">
       <div className="w-full flex items-center h-16 p-4 sm:p-8 max-w-screen-xl">
         <Link
           href={PATHS.SITE_HOME}
