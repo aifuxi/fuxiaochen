@@ -69,15 +69,15 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        blinking: {
-          from: { opacity: '0' },
-          to: { opacity: '1' },
+        'cursor-blink': {
+          '50%': { borderColor: 'transparent' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        blinking: 'blinking 0.6s ease-out infinite',
+        // 光标闪烁动画
+        'cursor-blink': 'cursor-blink 0.6s step-end infinite alternate',
       },
     },
   },

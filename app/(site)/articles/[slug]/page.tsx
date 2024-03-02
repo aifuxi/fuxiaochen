@@ -1,9 +1,12 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+import { format } from 'date-fns';
 import { isNil } from 'lodash-es';
 
 import { getArticleBySlug } from '@/app/actions/article';
+
+import { Badge } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
@@ -12,10 +15,8 @@ import { env } from '@/libs/env.mjs';
 
 import { getOpenGraphImage } from '@/utils/helper';
 
+import { NICKNAME } from '@/constants/info';
 import { PATHS } from '@/constants/path';
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
-
-import { ArticleTOC } from './article-toc';
 
 export async function generateMetadata({
   params,
@@ -62,24 +63,28 @@ export default async function ArticleDetailPage({
   }
 
   return (
-    <div className="flex lg:justify-between max-w-[1140px] px-4 lg:mx-auto lg:space-x-8">
-      <ArticleTOC />
-      <div className="flex flex-1 flex-col gap-y-4 pt-12">
-        <img
-          className="object-fill border"
-          src={article?.cover ?? PLACEHOLDER_COVER}
-          alt={article?.title}
-        />
-
-        <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight lg:text-5xl">
-          {article?.title}
-        </h1>
-        <BytemdViewer content={article.content ?? ''} />
-
-        <div className="flex">
-          <GoBack />
+    <div className="flex flex-col gap-y-4">
+      <article>
+        {article.cover && (
+          <img
+            src={article.cover}
+            alt={article.title}
+            className="max-w-[65ch] h-auto mb-16"
+          />
+        )}
+        <h1 className="mb-4 text-4xl font-extrabold ">{article.title}</h1>
+        <div className="text-sm flex flex-row items-center text-muted-foreground">
+          <div>{NICKNAME}</div>
+          <span className="mx-2">·</span>
+          <span>{format(article.createdAt, 'MMMM dd, yyyy')}</span>
         </div>
+        <BytemdViewer content={article.content || ''} />
+      </article>
+
+      <div className="flex flex-row gap-2">
+        {article.tags?.map((el) => <Badge key={el.id}>{el.name}</Badge>)}
       </div>
+      <GoBack />
     </div>
   );
 }

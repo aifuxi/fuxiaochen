@@ -17,7 +17,7 @@ code.hljs {
 */
 .hljs {
   color: #24292e;
-  @apply !bg-muted;
+  @apply !bg-background;
 }
 .hljs-doctag,
 .hljs-keyword,
