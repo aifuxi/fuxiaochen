@@ -5,7 +5,7 @@ import { BookAIcon, TagIcon } from 'lucide-react';
 import { countStatistics } from '@/app/actions/statistics';
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
+  title: '首页',
 };
 
 type StatisticsCardProps = {
@@ -33,7 +33,7 @@ export default async function AdminPage() {
   return (
     <div className="h-screen flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        Dashboard
+        首页
       </h2>
 
       <div className="flex-1">

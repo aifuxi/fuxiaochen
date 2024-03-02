@@ -19,7 +19,7 @@ const adminNavItems: Array<{
   icon?: React.ReactNode;
 }> = [
   {
-    label: 'Dashboard',
+    label: '首页',
     link: PATHS.ADMIN_HOME,
     icon: <HomeIcon className="w-[18px] h-[18px]" />,
   },
