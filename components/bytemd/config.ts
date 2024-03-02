@@ -12,7 +12,7 @@ import mermaid_zhHans from '@bytemd/plugin-mermaid/lib/locales/zh_Hans.json';
 import { type EditorProps } from '@bytemd/react';
 import { merge } from 'lodash-es';
 
-import { codeBlockPlugin, modifyHrefTargetPlugin, tocPlugin } from './plugin';
+import { codeBlockPlugin, modifyHrefTargetPlugin } from './plugin';
 
 export const plugins = [
   breaks(),
@@ -23,7 +23,6 @@ export const plugins = [
   math({ locale: math_zhHans }),
   mermaid({ locale: mermaid_zhHans }),
   mediumZoom(),
-  tocPlugin(),
   modifyHrefTargetPlugin(),
   codeBlockPlugin(),
 ];

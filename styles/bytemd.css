@@ -13,7 +13,7 @@
 }
 
 .markdown-body {
-  @apply prose w-full max-w-[calc(100vw-2rem)] dark:prose-invert md:!mx-auto md:max-w-2xl lg:max-w-3xl 2xl:max-w-4xl;
+  @apply prose prose-zinc w-full dark:prose-invert;
 }
 
 .medium-zoom-image--opened {
@@ -25,7 +25,7 @@
 }
 
 .markdown-body pre {
-  @apply relative !my-0 !rounded-none !bg-muted !p-0 text-primary;
+  @apply relative !my-0 !rounded-xl border !bg-background !p-0 text-primary;
 }
 .markdown-body pre > code {
   @apply mt-10;
@@ -41,23 +41,11 @@
 
 .markdown-body pre::after {
   content: attr(data-language);
-  @apply absolute  inset-x-0 top-0 border-b border-b-muted-foreground/20 px-4 py-2 text-primary;
+  @apply absolute  inset-x-0 top-0 border-b  px-4 py-2 text-primary;
 }
 
 .markdown-body iframe {
   @apply aspect-video w-full;
-}
-
-.markdown-body .markdown-anchor {
-  float: left;
-  margin-left: 0.2em;
-  opacity: 0;
-  transition: opacity ease-out 150ms;
-  order: 2;
-}
-
-.markdown-body :where(h1, h2, h3, h4) {
-  @apply flex scroll-mt-20 items-center break-all;
 }
 
 .markdown-body :where(h1, h2, h3, h4):hover .markdown-anchor {
@@ -112,7 +100,7 @@
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
 /* ByteMD editor overrides	*/
 .bytemd {
-  @apply !rounded-none !border-border !bg-background !text-foreground;
+  @apply !rounded-xl !border-border !bg-background !text-foreground;
 }
 
 .bytemd-toolbar {
