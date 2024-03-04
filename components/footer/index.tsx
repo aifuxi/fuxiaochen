@@ -20,7 +20,7 @@ export function Footer() {
       </Link>
 
       <div className="flex items-center gap-2">
-        <span>{`© ${new Date().getFullYear()} • ${WEBSITE}`}</span>
+        <span>{`© ${new Date().getFullYear()} · ${WEBSITE}`}</span>
         <Separator orientation="vertical" />
         <Link
           href="https://beian.miit.gov.cn/"
