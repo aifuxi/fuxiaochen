@@ -39,7 +39,10 @@ export default async function AdminPage() {
       <div className="flex-1">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {statistics.map((el) => (
-            <div key={el.title} className="border bg-card text-card-foreground">
+            <div
+              key={el.title}
+              className="border bg-card text-card-foreground rounded-lg"
+            >
               <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
                 <h3 className="tracking-tight font-medium">{el.title}</h3>
                 {el.icon}

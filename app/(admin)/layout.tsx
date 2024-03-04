@@ -4,8 +4,6 @@ import { SwitchTheme } from '@/components/switch-theme';
 
 import { auth } from '@/libs/auth';
 
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
-
 export default async function AdminLayout({
   children,
 }: {
@@ -16,11 +14,13 @@ export default async function AdminLayout({
   return (
     <div className="flex">
       <div className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex items-center p-2 gap-2">
-        <img
-          src={session?.user?.image ?? PLACEHOLDER_COVER}
-          className="border w-[200px] h-[200px]  my-6"
-          alt={session?.user?.name ?? ''}
-        />
+        {session?.user?.image && (
+          <img
+            src={session?.user?.image}
+            className="border w-[200px] h-[200px]  my-6 rounded-lg"
+            alt={session?.user?.name ?? ''}
+          />
+        )}
 
         <div className="w-full flex-1 flex-col flex items-center">
           <SideNav />

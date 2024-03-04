@@ -23,7 +23,7 @@ import { cn } from '@/utils/helper';
 import { formatToDateTime } from '@/utils/time';
 
 import { PATHS } from '@/constants/path';
-import { DEFAULT_PAGE, PLACEHOLDER_COVER } from '@/constants/unknown';
+import { DEFAULT_PAGE } from '@/constants/unknown';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
@@ -78,11 +78,15 @@ export default async function AdminArticle({
                 </span>
               </TableCell>
               <TableCell className="!align-middle w-[200px]">
-                <img
-                  src={article.cover ? article.cover : PLACEHOLDER_COVER}
-                  alt={article.title}
-                  className="border"
-                />
+                {article.cover ? (
+                  <img
+                    src={article.cover}
+                    alt={article.title}
+                    className="border rounded-lg"
+                  />
+                ) : (
+                  '-'
+                )}
               </TableCell>
               <TableCell className={'!align-middle  w-[200px]'}>
                 <div className="flex flex-wrap gap-2">
@@ -90,10 +94,7 @@ export default async function AdminArticle({
                     ? article.tags.map((tag) => (
                         <div
                           key={tag.id}
-                          className={cn(
-                            badgeVariants({ variant: 'default' }),
-                            '!rounded-none',
-                          )}
+                          className={cn(badgeVariants({ variant: 'default' }))}
                         >
                           {tag.name}
                         </div>
