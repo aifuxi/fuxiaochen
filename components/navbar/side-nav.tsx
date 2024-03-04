@@ -46,7 +46,7 @@ export function SideNav() {
         buttonVariants({
           variant: pathname === el.link ? 'secondary' : 'default',
         }),
-        'text-md px-4 py-2 !rounded-none flex gap-2 items-center !justify-start w-full',
+        'text-md px-4 py-2 flex gap-2 items-center !justify-start w-full',
       )}
     >
       {el.icon}

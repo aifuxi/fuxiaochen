@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Article, type Tag } from '@prisma/client';
+import { isNil } from 'lodash-es';
 import { type z } from 'zod';
 
 import { updateArticle } from '@/app/actions/article';
@@ -36,8 +37,6 @@ import {
 
 import { toSlug } from '@/utils/helper';
 
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
-
 import { CreateTagButton } from '../../../tag/create-tag-button';
 
 export function EditForm({
@@ -48,7 +47,7 @@ export function EditForm({
   tags?: Tag[];
 }) {
   const router = useRouter();
-  const [cover, setCover] = React.useState(article?.cover ?? PLACEHOLDER_COVER);
+  const [cover, setCover] = React.useState(article?.cover);
   const { toast } = useToast();
   const form = useForm<z.infer<typeof updateArticleReqSchema>>({
     resolver: zodResolver(updateArticleReqSchema),
@@ -59,7 +58,7 @@ export function EditForm({
       description: article?.description ?? '',
       content: article?.content ?? '',
       published: article?.published ?? true,
-      cover: article?.cover ?? PLACEHOLDER_COVER,
+      cover: article?.cover ?? '',
       tags: article?.tags?.map((el) => el.id) ?? [],
     },
   });
@@ -178,7 +177,7 @@ export function EditForm({
                     }
                   }}
                 />
-                {Boolean(cover) && (
+                {!isNil(cover) && (
                   <img
                     src={cover}
                     className="h-[300px] object-scale-down"

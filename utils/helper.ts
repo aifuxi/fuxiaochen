@@ -1,10 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-import { env } from '@/libs/env.mjs';
-
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -28,7 +24,7 @@ export function toSlug(str: string) {
 
 export function getOpenGraphImage(cover?: string | null) {
   if (!cover || cover.startsWith('/')) {
-    return `${env.SITE_URL}${PLACEHOLDER_COVER}`;
+    return '';
   }
 
   return cover;

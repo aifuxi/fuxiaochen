@@ -34,12 +34,10 @@ import {
 
 import { toSlug } from '@/utils/helper';
 
-import { PLACEHOLDER_COVER } from '@/constants/unknown';
-
 import { CreateTagButton } from '../../tag/create-tag-button';
 
 export function CreateForm({ tags }: { tags?: Tag[] }) {
-  const [cover, setCover] = React.useState(PLACEHOLDER_COVER);
+  const [cover, setCover] = React.useState('');
   const { toast } = useToast();
   const form = useForm<z.infer<typeof createArticleReqSchema>>({
     resolver: zodResolver(createArticleReqSchema),
@@ -49,7 +47,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
       description: '',
       content: '',
       published: true,
-      cover: PLACEHOLDER_COVER,
+      cover: '',
       tags: [],
     },
   });

@@ -1,6 +1,3 @@
-/** 默认文章封面 */
-export const PLACEHOLDER_COVER = '/images/no-cover.png';
-
 /** 默认每页多少条数据 */
 export const DEFAULT_PAGE_SIZE = 10;
 
