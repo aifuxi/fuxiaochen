@@ -37,7 +37,7 @@ export function SignOutButton() {
               await signOut();
             }}
           >
-            确定退出登录
+            确定
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
