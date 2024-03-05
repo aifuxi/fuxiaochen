@@ -10,7 +10,6 @@ import { IllustrationNoContent } from '@/components/illustrations';
 
 import { NICKNAME } from '@/constants/info';
 import { PATHS } from '@/constants/path';
-import { DEFAULT_PAGE } from '@/constants/unknown';
 
 import { getPublishedArticles } from '../../actions/article';
 
@@ -19,17 +18,8 @@ export const metadata: Metadata = {
 };
 export const revalidate = 60;
 
-export default async function ArticlesPage({
-  searchParams,
-}: {
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
-  const { page } = searchParams ?? {};
-  const currentPage = typeof page === 'string' ? parseInt(page) : DEFAULT_PAGE;
-
-  const { articles } = await getPublishedArticles({
-    page: currentPage,
-  });
+export default async function ArticlesPage() {
+  const { articles } = await getPublishedArticles();
 
   return (
     <div className="w-full flex flex-col justify-center max-w-screen-md gap-5">
