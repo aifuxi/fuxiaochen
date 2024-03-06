@@ -27,9 +27,8 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "name" TEXT,
+    "email" TEXT,
     "emailVerified" DATETIME,
     "image" TEXT
 );
@@ -44,7 +43,7 @@ CREATE TABLE "VerificationToken" (
 -- CreateTable
 CREATE TABLE "Tag" (
     "name" TEXT NOT NULL,
-    "friendlyURL" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "id" TEXT NOT NULL PRIMARY KEY,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
@@ -53,7 +52,7 @@ CREATE TABLE "Tag" (
 -- CreateTable
 CREATE TABLE "Article" (
     "title" TEXT NOT NULL,
-    "friendlyURL" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "cover" TEXT,
@@ -90,13 +89,13 @@ CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationTok
 CREATE UNIQUE INDEX "Tag_name_key" ON "Tag"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Tag_friendlyURL_key" ON "Tag"("friendlyURL");
+CREATE UNIQUE INDEX "Tag_slug_key" ON "Tag"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Article_title_key" ON "Article"("title");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Article_friendlyURL_key" ON "Article"("friendlyURL");
+CREATE UNIQUE INDEX "Article_slug_key" ON "Article"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_ArticleToTag_AB_unique" ON "_ArticleToTag"("A", "B");

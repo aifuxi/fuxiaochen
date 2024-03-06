@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2Icon } from 'lucide-react';
+import { GithubIcon, Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -71,12 +71,23 @@ export default function SignInPage() {
     router.push(callbackURL);
   }
 
+  async function handleSignUpWithGithub() {
+    await signIn('github', {
+      redirect: false,
+    });
+    toast({
+      title: '请求成功',
+      description: 'Github 成功',
+    });
+    router.push(PATHS.ADMIN_HOME);
+  }
+
   return (
     <div className="w-screen h-screen grid place-content-center">
       <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px]">
         <CardHeader>
-          <CardTitle>用户登录</CardTitle>
-          <CardDescription>请输入你的邮箱和密码进行登录</CardDescription>
+          <CardTitle>注册</CardTitle>
+          <CardDescription>输入邮箱和密码进行注册</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
@@ -89,7 +100,7 @@ export default function SignInPage() {
                     <FormItem>
                       <FormLabel>邮箱</FormLabel>
                       <FormControl>
-                        <Input placeholder="请输入邮箱地址" {...field} />
+                        <Input placeholder="email@example.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -102,11 +113,7 @@ export default function SignInPage() {
                     <FormItem>
                       <FormLabel>密码</FormLabel>
                       <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="请输入密码"
-                          {...field}
-                        />
+                        <Input type="password" placeholder="密码" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -114,19 +121,39 @@ export default function SignInPage() {
                 />
               </div>
             </CardContent>
-            <CardFooter className="grid gap-2 ">
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                <Loader2Icon
-                  size={16}
-                  className={cn(
-                    'mr-2 animate-spin',
-                    form.formState.isSubmitting ? '' : 'hidden',
-                  )}
-                />
-                登录
-              </Button>
-              <Button type="reset" variant="outline">
-                重置
+            <CardFooter className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4 ">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  <Loader2Icon
+                    size={16}
+                    className={cn(
+                      'mr-2 animate-spin',
+                      form.formState.isSubmitting ? '' : 'hidden',
+                    )}
+                  />
+                  注册
+                </Button>
+                <Button type="reset" variant="outline">
+                  重置
+                </Button>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    或者
+                  </span>
+                </div>
+              </div>
+              <Button
+                variant="default"
+                className="!w-full"
+                type="button"
+                onClick={handleSignUpWithGithub}
+              >
+                <GithubIcon size={16} className="mr-2 " /> 使用 Github 登录
               </Button>
             </CardFooter>
           </form>
