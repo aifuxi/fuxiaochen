@@ -1,27 +1,7 @@
-import { redirect } from 'next/navigation';
+import { type FCProps } from '@/types';
 
-import { SwitchTheme } from '@/components/switch-theme';
+import { AuthLayout } from '@/features/auth';
 
-import { PATHS } from '@/config';
-import { auth } from '@/lib/auth';
-
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await auth();
-
-  if (session?.user) {
-    redirect(PATHS.ADMIN_HOME);
-  }
-
-  return (
-    <>
-      {children}
-      <div className="fixed w-12 h-12 grid place-content-center right-12 top-6">
-        <SwitchTheme variant={'outline'} />
-      </div>
-    </>
-  );
+export default function Layout({ children }: FCProps) {
+  return <AuthLayout>{children}</AuthLayout>;
 }
