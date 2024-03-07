@@ -17,6 +17,10 @@ import {
 import { Button } from '@/components/ui/button';
 
 export function SignOutButton() {
+  async function handleLogout() {
+    await logout();
+  }
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -32,7 +36,7 @@ export function SignOutButton() {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={logout}>确定</AlertDialogAction>
+          <AlertDialogAction onClick={handleLogout}>确定</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
