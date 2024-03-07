@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
 
-import { aliOSS } from '@/libs/ali-oss';
+import { aliOSS } from '@/lib/ali-oss';
 
 const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();

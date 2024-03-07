@@ -1,6 +1,6 @@
 'use server';
 
-import { prisma } from '@/libs/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function countStatistics() {
   const articleCount = await prisma.article.count({

@@ -4,9 +4,9 @@ import { revalidatePath } from 'next/cache';
 
 import { type CreateTagReq, type UpdateTagReq } from '@/typings/tag';
 
-import { prisma } from '@/libs/prisma';
-
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
+
+import { prisma } from '@/lib/prisma';
 
 export async function getTagArticles(params: { slug: string; page: number }) {
   const take = DEFAULT_PAGE_SIZE;
