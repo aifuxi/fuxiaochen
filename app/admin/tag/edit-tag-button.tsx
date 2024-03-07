@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,8 @@ import { type Tag } from '@prisma/client';
 import { PencilIcon } from 'lucide-react';
 
 import { updateTag } from '@/app/actions/tag';
+
+import { type UpdateTagReq, updateTagReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,8 +31,6 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
 import { toSlug } from '@/utils/helper';
-
-import { type UpdateTagReq, updateTagReqSchema } from '@/types/tag';
 
 type Props = {
   tag: Tag;

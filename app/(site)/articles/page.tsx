@@ -8,8 +8,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { IllustrationNoContent } from '@/components/illustrations';
 
-import { NICKNAME } from '@/constants/info';
-import { PATHS } from '@/constants/path';
+import { NICKNAME, PATHS } from '@/config';
 
 import { getPublishedArticles } from '../../actions/article';
 

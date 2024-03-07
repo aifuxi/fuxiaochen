@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,8 @@ import { PlusIcon } from 'lucide-react';
 import { type z } from 'zod';
 
 import { createTag } from '@/app/actions/tag';
+
+import { type CreateTagReq, createTagReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,8 +31,6 @@ import { Input } from '@/components/ui/input';
 
 import { toSlug } from '@/utils/helper';
 
-import { type CreateTagReq, createTagReqSchema } from '@/types/tag';
-
 export function CreateTagButton() {
   const [open, setOpen] = React.useState(false);
   const form = useForm<z.infer<typeof createTagReqSchema>>({
@@ -49,10 +49,8 @@ export function CreateTagButton() {
   }, [form, open]);
 
   async function onSubmit(values: CreateTagReq) {
-    try {
-      await createTag(values);
-      setOpen(false);
-    } catch (e) {}
+    await createTag(values);
+    setOpen(false);
   }
 
   function formatSlug() {

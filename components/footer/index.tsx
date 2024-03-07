@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
-import { Separator } from '@/components/ui/separator';
+import { WEBSITE } from '@/config';
 
-import { WEBSITE } from '@/constants/info';
+import { Separator } from '@/components/ui/separator';
 
 export function Footer() {
   return (

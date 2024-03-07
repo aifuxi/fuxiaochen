@@ -2,8 +2,7 @@ import { redirect } from 'next/navigation';
 
 import { SwitchTheme } from '@/components/switch-theme';
 
-import { PATHS } from '@/constants/path';
-
+import { PATHS } from '@/config';
 import { auth } from '@/lib/auth';
 
 export default async function Layout({

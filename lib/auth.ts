@@ -5,9 +5,9 @@ import GithubProvider from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import * as bcrypt from 'bcryptjs';
 
-import { PATHS } from '@/constants/path';
+import { type SignInUserReq } from '@/types';
 
-import { type SignInUserReq } from '@/types/user';
+import { PATHS } from '@/config';
 
 import { prisma } from './prisma';
 

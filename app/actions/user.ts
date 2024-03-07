@@ -2,8 +2,9 @@
 
 import { hashSync } from 'bcryptjs';
 
+import { type CreateUserReq } from '@/types';
+
 import { prisma } from '@/lib/prisma';
-import { type CreateUserReq } from '@/types/user';
 
 export async function createUser(params: CreateUserReq) {
   const hashedPassword = hashSync(params.password);

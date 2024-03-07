@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useRouter } from 'next/navigation';
@@ -12,6 +12,8 @@ import { type z } from 'zod';
 
 import { updateArticle } from '@/app/actions/article';
 import { uploadFile } from '@/app/actions/upload';
+
+import { type UpdateArticleReq, updateArticleReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -31,8 +33,6 @@ import { useToast } from '@/components/ui/use-toast';
 import { BytemdEditor } from '@/components/bytemd';
 
 import { toSlug } from '@/utils/helper';
-
-import { type UpdateArticleReq, updateArticleReqSchema } from '@/types/article';
 
 import { CreateTagButton } from '../../../tag/create-tag-button';
 
@@ -61,10 +61,8 @@ export function EditForm({
   });
 
   async function onSubmit(values: UpdateArticleReq) {
-    try {
-      await updateArticle(values);
-      router.back();
-    } catch (e) {}
+    await updateArticle(values);
+    router.back();
   }
 
   function formatSlug() {

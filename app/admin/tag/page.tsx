@@ -13,7 +13,7 @@ import { Pagination } from '@/components/pagination';
 
 import { formatToDateTime } from '@/utils/time';
 
-import { DEFAULT_PAGE } from '@/constants/unknown';
+import { DEFAULT_PAGE } from '@/config';
 
 import { CreateTagButton } from './create-tag-button';
 import { DeleteTagItemButton } from './delete-tag-item-button';

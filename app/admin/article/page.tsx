@@ -1,10 +1,12 @@
-import React from 'react';
+import * as React from 'react';
 
 import Link from 'next/link';
 
 import { EyeIcon, PencilIcon, PlusIcon } from 'lucide-react';
 
 import { getArticles } from '@/app/actions/article';
+
+import { DEFAULT_PAGE, PATHS } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,9 +23,6 @@ import { Pagination } from '@/components/pagination';
 
 import { cn } from '@/utils/helper';
 import { formatToDateTime } from '@/utils/time';
-
-import { PATHS } from '@/constants/path';
-import { DEFAULT_PAGE } from '@/constants/unknown';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';

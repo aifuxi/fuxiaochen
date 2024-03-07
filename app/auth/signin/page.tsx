@@ -10,6 +10,10 @@ import { type z } from 'zod';
 
 import { loginWithGithub } from '@/app/actions/auth';
 
+import { signInUserReqSchema } from '@/types';
+
+import { PATHS } from '@/config';
+
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Card,
@@ -30,10 +34,6 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { cn } from '@/utils/helper';
-
-import { PATHS } from '@/constants/path';
-
-import { signInUserReqSchema } from '@/types/user';
 
 export default function SignInPage() {
   const form = useForm<z.infer<typeof signInUserReqSchema>>({

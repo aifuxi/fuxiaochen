@@ -6,6 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { GithubIcon, Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
 
+import { signInUserReqSchema } from '@/types';
+
+import { PATHS } from '@/config';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -27,10 +31,7 @@ import { Input } from '@/components/ui/input';
 
 import { cn } from '@/utils/helper';
 
-import { PATHS } from '@/constants/path';
-
 import { signIn } from '@/lib/auth';
-import { signInUserReqSchema } from '@/types/user';
 
 export default function SignInPage() {
   const form = useForm<z.infer<typeof signInUserReqSchema>>({

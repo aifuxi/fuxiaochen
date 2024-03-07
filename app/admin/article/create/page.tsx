@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { getAllTags } from '@/app/actions/tag';
 
-import { PATHS } from '@/constants/path';
+import { PATHS } from '@/config';
 
 import { CreateForm } from './create-form';
 

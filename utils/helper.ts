@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 

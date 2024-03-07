@@ -1,10 +1,10 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
-import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
+import { DEFAULT_PAGE_SIZE } from '@/config';
 
 import { PaginationButton } from './pagination-button';
 

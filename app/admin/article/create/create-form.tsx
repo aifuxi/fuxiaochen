@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,6 +9,8 @@ import { type z } from 'zod';
 
 import { createArticle } from '@/app/actions/article';
 import { uploadFile } from '@/app/actions/upload';
+
+import { type CreateArticleReq, createArticleReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -29,8 +31,6 @@ import { BytemdEditor } from '@/components/bytemd';
 
 import { toSlug } from '@/utils/helper';
 
-import { type CreateArticleReq, createArticleReqSchema } from '@/types/article';
-
 import { CreateTagButton } from '../../tag/create-tag-button';
 
 export function CreateForm({ tags }: { tags?: Tag[] }) {
@@ -50,9 +50,7 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
   });
 
   async function onSubmit(values: CreateArticleReq) {
-    try {
-      await createArticle(values);
-    } catch (e) {}
+    await createArticle(values);
   }
 
   function formatSlug() {

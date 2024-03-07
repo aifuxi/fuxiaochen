@@ -4,8 +4,7 @@ import { buttonVariants } from '@/components/ui/button';
 
 import { cn } from '@/utils/helper';
 
-import { NICKNAME } from '@/constants/info';
-import { PATHS } from '@/constants/path';
+import { NICKNAME, PATHS } from '@/config';
 
 export default function HomePage() {
   return (

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { REGEX } from '@/constants/regex';
+import { REGEX } from '@/config';
 
 export const createTagReqSchema = z.object({
   name: z.string().min(1, { message: '长度不能少于1个字符' }),
