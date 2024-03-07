@@ -1,8 +1,8 @@
 'use client';
 
-import { signOut } from 'next-auth/react';
-
 import { PowerIcon } from 'lucide-react';
+
+import { logout } from '@/app/actions/auth';
 
 import {
   AlertDialog,
@@ -32,13 +32,7 @@ export function SignOutButton() {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              await signOut();
-            }}
-          >
-            确定
-          </AlertDialogAction>
+          <AlertDialogAction onClick={logout}>确定</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

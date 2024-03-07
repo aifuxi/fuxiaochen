@@ -1,8 +1,12 @@
+import { redirect } from 'next/navigation';
+
 import { SideNav } from '@/components/navbar';
 import { SignOutButton } from '@/components/sign-out-button';
 import { SwitchTheme } from '@/components/switch-theme';
 
 import { auth } from '@/libs/auth';
+
+import { PATHS } from '@/constants/path';
 
 export default async function AdminLayout({
   children,
@@ -10,6 +14,10 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
+
+  if (!session?.user) {
+    redirect(PATHS.AUTH_SIGNIN);
+  }
 
   return (
     <div className="flex">

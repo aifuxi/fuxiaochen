@@ -1,11 +1,10 @@
 import { type Metadata } from 'next';
-import { type Session } from 'next-auth';
 
 import { Toaster } from '@/components/ui/toaster';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
-import { AuthProvider, NextThemeProvider } from '@/components/providers';
+import { NextThemeProvider } from '@/components/providers';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants/info';
 
@@ -22,10 +21,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  session,
 }: {
   children: React.ReactNode;
-  session: Session;
 }) {
   return (
     <html suppressHydrationWarning lang="zh-CN">
@@ -38,16 +35,14 @@ export default function RootLayout({
       </head>
 
       <body className={'debug-screens'}>
-        <AuthProvider session={session}>
-          <NextThemeProvider attribute="class">
-            {children}
-            <BackToTop />
+        <NextThemeProvider attribute="class">
+          {children}
+          <BackToTop />
 
-            <Toaster />
+          <Toaster />
 
-            <Console />
-          </NextThemeProvider>
-        </AuthProvider>
+          <Console />
+        </NextThemeProvider>
       </body>
     </html>
   );

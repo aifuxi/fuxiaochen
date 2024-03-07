@@ -12,6 +12,6 @@ export const PATHS = {
   ADMIN_TAG: '/admin/tag',
 
   /** ************* AUTH ****************** */
-  AUTH_SIGNIN: '/signin',
-  AUTH_SIGNUP: '/signup',
+  AUTH_SIGNIN: '/auth/signin',
+  AUTH_SIGNUP: '/auth/signup',
 };

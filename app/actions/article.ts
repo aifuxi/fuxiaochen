@@ -9,7 +9,7 @@ import {
 } from '@/typings/article';
 
 import { auth } from '@/libs/auth';
-import { db } from '@/libs/prisma';
+import { prisma } from '@/libs/prisma';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
@@ -23,7 +23,7 @@ export async function getArticleBySlug(slug: string) {
     published = undefined;
   }
 
-  const article = await db.article.findUnique({
+  const article = await prisma.article.findUnique({
     where: {
       slug,
       published,
@@ -40,7 +40,7 @@ export async function getArticles(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  const articles = await db.article.findMany({
+  const articles = await prisma.article.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -51,7 +51,7 @@ export async function getArticles(params: { page: number }) {
     take,
   });
 
-  const count = await db.article.count({});
+  const count = await prisma.article.count({});
 
   const total = count ?? 0;
 
@@ -60,7 +60,7 @@ export async function getArticles(params: { page: number }) {
 }
 
 export async function deleteArticle(id: string) {
-  await db.article.delete({
+  await prisma.article.delete({
     where: {
       id,
     },
@@ -70,7 +70,7 @@ export async function deleteArticle(id: string) {
 }
 
 export async function updateArticle(parsed: UpdateArticleReq) {
-  const article = await db.article.findFirst({
+  const article = await prisma.article.findFirst({
     where: { id: parsed.id },
     include: { tags: true },
   });
@@ -83,7 +83,7 @@ export async function updateArticle(parsed: UpdateArticleReq) {
     .filter((el) => !parsed.tags?.includes(el.id))
     ?.map((el) => el.id);
 
-  await db.article.update({
+  await prisma.article.update({
     data: {
       title: parsed.title,
       description: parsed.description,
@@ -109,14 +109,14 @@ export async function updateArticle(parsed: UpdateArticleReq) {
 }
 
 export async function toggleArticlePublish(id: string) {
-  const article = await db.article.findFirst({
+  const article = await prisma.article.findFirst({
     where: {
       id,
     },
   });
 
   if (article) {
-    await db.article.update({
+    await prisma.article.update({
       data: {
         published: !article.published,
       },
@@ -128,7 +128,7 @@ export async function toggleArticlePublish(id: string) {
   }
 }
 export async function getArticle(id: string) {
-  const article = await db.article.findFirst({
+  const article = await prisma.article.findFirst({
     where: {
       id,
     },
@@ -141,7 +141,7 @@ export async function getArticle(id: string) {
 }
 
 export async function createArticle(parsed: CreateArticleReq) {
-  await db.article.create({
+  await prisma.article.create({
     data: {
       title: parsed.title,
       slug: parsed.slug,
@@ -161,7 +161,7 @@ export async function createArticle(parsed: CreateArticleReq) {
 }
 
 export async function getPublishedArticles() {
-  const articles = await db.article.findMany({
+  const articles = await prisma.article.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -173,7 +173,7 @@ export async function getPublishedArticles() {
     },
   });
 
-  const count = await db.article.count({
+  const count = await prisma.article.count({
     where: {
       published: true,
     },
