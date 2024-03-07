@@ -5,9 +5,11 @@ import { Navbar } from '@/components/navbar';
 
 export default function Layout({ children }: FCProps) {
   return (
-    <div className="flex flex-col gap-20">
+    <div className="grid grid-cols-1 gap-20">
       <Navbar />
-      <div className="flex-1 flex flex-col items-center">{children}</div>
+      <div className="flex flex-col items-center h-[calc(100vh-160px-180px)]">
+        {children}
+      </div>
       <Footer />
     </div>
   );

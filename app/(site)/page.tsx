@@ -1,14 +1,14 @@
 import Link from 'next/link';
 
+import { NICKNAME, PATHS } from '@/config';
+
 import { buttonVariants } from '@/components/ui/button';
 
 import { cn } from '@/utils/helper';
 
-import { NICKNAME, PATHS } from '@/config';
-
 export default function HomePage() {
   return (
-    <div className="max-w-screen-md gap-5 flex flex-col justify-center min-h-[calc(100vh-160px-180px)]">
+    <div className="max-w-screen-md gap-5 flex flex-col justify-center min-h-full">
       <p className="text-muted-foreground tracking-widest">你好，我是</p>
       <strong className="text-5xl tracking-widest">{NICKNAME}</strong>
       <p className="text-xl text-muted-foreground tracking-widest">
