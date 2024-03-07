@@ -57,7 +57,12 @@ const config = {
     'no-restricted-imports': [
       'error',
       {
-        patterns: ['@/features/*/*', '@/types/*/*', '@/config/*/*'],
+        patterns: [
+          '@/features/*/*',
+          '@/types/*/*',
+          '@/config/*/*',
+          '@/providers/*/*',
+        ],
       },
     ],
     'import/default': 'off',
