@@ -5,9 +5,9 @@ import GithubProvider from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import * as bcrypt from 'bcryptjs';
 
-import { type SignInUserReq } from '@/types';
-
 import { PATHS } from '@/config';
+
+import { type SigninDTO } from '@/features/auth';
 
 import { prisma } from './prisma';
 
@@ -17,7 +17,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
     GithubProvider,
     Credentials({
       authorize: async (credentials) => {
-        const { email, password } = credentials as SignInUserReq;
+        const { email, password } = credentials as SigninDTO;
 
         if (!email || !password) {
           return null;
@@ -34,6 +34,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
         if (!bcrypt.compareSync(password, user.password)) {
           return null;
         }
+        // TODO: 生成token，关联account，创建session，参考 PrismaAdapter 的github代码
 
         return user;
       },

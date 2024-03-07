@@ -5,8 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 6121",
-    "start": "next start -p 3000",
+    "dev": "cross-env NODE_ENV=development next dev -p 6121",
+    "start": "cross-env NODE_ENV=production next start -p 3000",
     "build": "next build",
     "lint": "next lint",
     "prepare": "husky install",
@@ -56,6 +56,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.48.2",
+    "react-spinners": "^0.13.8",
     "sharp": "^0.32.2",
     "zod": "^3.22.4"
   },

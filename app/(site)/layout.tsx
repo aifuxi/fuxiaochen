@@ -1,7 +1,9 @@
+import { type FCProps } from '@/types';
+
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: FCProps) {
   return (
     <div className="flex flex-col gap-20">
       <Navbar />

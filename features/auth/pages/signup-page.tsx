@@ -10,9 +10,9 @@ import {
 } from '@/components/ui/card';
 
 import { FormLoadingSpinner } from '../components/form-loading-spinner';
-import { SigninForm } from '../components/signin-form';
+import { SignupForm } from '../components/signup-form';
 
-export const SignInPage = () => {
+export const SignupPage = () => {
   const [loading, { setTrue: showLoading, setFalse: hideLoading }] =
     useBoolean(false);
 
@@ -21,10 +21,10 @@ export const SignInPage = () => {
       <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px] relative">
         <FormLoadingSpinner loading={loading} />
         <CardHeader>
-          <CardTitle>登录</CardTitle>
-          <CardDescription>请输入你的邮箱和密码进行登录</CardDescription>
+          <CardTitle>邮箱注册</CardTitle>
+          <CardDescription>输入下面信息进行注册</CardDescription>
         </CardHeader>
-        <SigninForm showLoading={showLoading} hideLoading={hideLoading} />
+        <SignupForm showLoading={showLoading} hideLoading={hideLoading} />
       </Card>
     </div>
   );
