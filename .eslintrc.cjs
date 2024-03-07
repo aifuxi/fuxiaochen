@@ -37,6 +37,14 @@ const config = {
     'no-console': 'error',
     '@next/next/no-img-element': 'off',
   },
+  ignorePatterns: [
+    'node_modules',
+    'dist',
+    'build',
+    'public',
+    '.gitignore',
+    'pnpm-lock.yaml',
+  ],
 };
 
 module.exports = config;
