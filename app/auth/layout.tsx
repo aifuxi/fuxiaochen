@@ -12,9 +12,11 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (session?.user?.email ?? session?.user?.name) {
+
+  if (session?.user) {
     redirect(PATHS.ADMIN_HOME);
   }
+
   return (
     <>
       {children}

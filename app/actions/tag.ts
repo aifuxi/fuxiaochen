@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 
 import { type CreateTagReq, type UpdateTagReq } from '@/typings/tag';
 
-import { db } from '@/libs/prisma';
+import { prisma } from '@/libs/prisma';
 
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
@@ -12,7 +12,7 @@ export async function getTagArticles(params: { slug: string; page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  const tag = await db.tag.findUnique({
+  const tag = await prisma.tag.findUnique({
     where: {
       slug: params.slug,
     },
@@ -35,7 +35,7 @@ export async function getTagArticles(params: { slug: string; page: number }) {
 }
 
 export async function getTagBySlug(slug: string) {
-  const tag = await db.tag.findUnique({
+  const tag = await prisma.tag.findUnique({
     where: {
       slug: slug,
     },
@@ -45,7 +45,7 @@ export async function getTagBySlug(slug: string) {
 }
 
 export async function createTag(parsed: CreateTagReq) {
-  await db.tag.create({
+  await prisma.tag.create({
     data: {
       name: parsed.name,
       slug: parsed.slug,
@@ -56,7 +56,7 @@ export async function createTag(parsed: CreateTagReq) {
 }
 
 export async function updateTag(parsed: UpdateTagReq) {
-  await db.tag.update({
+  await prisma.tag.update({
     data: {
       name: parsed.name,
       slug: parsed.slug,
@@ -70,7 +70,7 @@ export async function updateTag(parsed: UpdateTagReq) {
 }
 
 export async function deleteTag(id: string) {
-  await db.tag.delete({
+  await prisma.tag.delete({
     where: {
       id,
     },
@@ -83,7 +83,7 @@ export async function getTags(params: { page: number }) {
   const take = DEFAULT_PAGE_SIZE;
   const skip = (params.page - 1) * DEFAULT_PAGE_SIZE;
 
-  const tags = await db.tag.findMany({
+  const tags = await prisma.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
@@ -94,7 +94,7 @@ export async function getTags(params: { page: number }) {
     take,
   });
 
-  const count = await db.tag.count({});
+  const count = await prisma.tag.count({});
 
   const total = count ?? 0;
 
@@ -102,7 +102,7 @@ export async function getTags(params: { page: number }) {
 }
 
 export async function getAllTags() {
-  return await db.tag.findMany({
+  return await prisma.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },

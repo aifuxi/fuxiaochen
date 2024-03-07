@@ -2,13 +2,13 @@
 
 import { useForm } from 'react-hook-form';
 
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GithubIcon, Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
+
+import { loginWithGithub } from '@/app/actions/auth';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -28,18 +28,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 
-import { type SignInUserReq, signInUserReqSchema } from '@/typings/user';
+import { signInUserReqSchema } from '@/typings/user';
 
 import { cn } from '@/utils/helper';
 
 import { PATHS } from '@/constants/path';
 
 export default function SignInPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof signInUserReqSchema>>({
     resolver: zodResolver(signInUserReqSchema),
     defaultValues: {
@@ -48,39 +44,31 @@ export default function SignInPage() {
     },
   });
 
-  async function onSubmit(values: SignInUserReq) {
-    const callbackURL = searchParams.get('callbackUrl') ?? PATHS.ADMIN_HOME;
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: values.email,
-      password: values.password,
-      callbackUrl: `${window.location.origin}`,
-    });
-    if (res?.error) {
-      toast({
-        variant: 'destructive',
-        title: '请求失败',
-        description: res?.error,
-      });
-    } else {
-      toast({
-        title: '请求成功',
-        description: '登录成功，欢迎回来',
-      });
-    }
-
-    router.push(callbackURL);
+  async function onSubmit() {
+    // const callbackURL = searchParams.get('callbackUrl') ?? PATHS.ADMIN_HOME;
+    // const res = await signIn('credentials', {
+    //   redirect: false,
+    //   email: values.email,
+    //   password: values.password,
+    //   callbackUrl: `${window.location.origin}`,
+    // });
+    // if (res?.error) {
+    //   toast({
+    //     variant: 'destructive',
+    //     title: '请求失败',
+    //     description: res?.error,
+    //   });
+    // } else {
+    //   toast({
+    //     title: '请求成功',
+    //     description: '登录成功，欢迎回来',
+    //   });
+    // }
+    // router.push(callbackURL);
   }
 
   async function handleSignUpWithGithub() {
-    await signIn('github', {
-      redirect: false,
-    });
-    toast({
-      title: '请求成功',
-      description: 'Github 成功',
-    });
-    router.push(PATHS.ADMIN_HOME);
+    await loginWithGithub();
   }
 
   return (
