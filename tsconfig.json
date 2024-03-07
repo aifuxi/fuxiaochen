@@ -30,14 +30,16 @@
     }
   },
   "include": [
-    ".eslintrc.cjs",
+    ".next/types/**/*.ts",
     "next-env.d.ts",
+    "next.config.js",
+
     "**/*.ts",
     "**/*.tsx",
-    "**/*.cjs",
-    "**/*.js",
-    "**/*.mjs",
-    ".next/types/**/*.ts"
+
+    ".eslintrc.cjs",
+    ".prettierrc.cjs",
+    ".commitlintrc.cjs"
   ],
   "exclude": ["node_modules"]
 }

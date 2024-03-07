@@ -28,6 +28,14 @@ const config = {
     /** 样式文件单独分组，放最下面 */
     '.(css|less|scss|sass|stylus)$',
   ],
+  ignore: [
+    'node_modules',
+    'dist',
+    'build',
+    'public',
+    '.gitignore',
+    'pnpm-lock.yaml',
+  ],
 };
 
-export default config;
+module.exports = config;
