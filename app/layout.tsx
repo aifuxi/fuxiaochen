@@ -1,14 +1,16 @@
 import { type Metadata } from 'next';
 
+import { NICKNAME, SLOGAN, WEBSITE } from '@/config';
+
 import { type FCProps } from '@/types';
+
+import { NextThemeProvider } from '@/providers';
 
 import { Toaster } from '@/components/ui/toaster';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
-import { NextThemeProvider } from '@/components/providers';
 
-import { NICKNAME, SLOGAN, WEBSITE } from '@/config';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
