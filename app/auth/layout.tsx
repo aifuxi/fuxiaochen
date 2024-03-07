@@ -2,9 +2,9 @@ import { redirect } from 'next/navigation';
 
 import { SwitchTheme } from '@/components/switch-theme';
 
-import { auth } from '@/libs/auth';
-
 import { PATHS } from '@/constants/path';
+
+import { auth } from '@/lib/auth';
 
 export default async function Layout({
   children,

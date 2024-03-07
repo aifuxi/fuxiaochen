@@ -1,8 +1,8 @@
 'use server';
 
-import { signIn, signOut } from '@/libs/auth';
-
 import { PATHS } from '@/constants/path';
+
+import { signIn, signOut } from '@/lib/auth';
 
 export const loginWithGithub = async () => {
   await signIn('github', {
