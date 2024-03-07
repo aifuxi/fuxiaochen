@@ -59,9 +59,9 @@ const config = {
       {
         patterns: [
           '@/features/*/*',
-          '@/types/*/*',
-          '@/config/*/*',
-          '@/providers/*/*',
+          '@/types/*',
+          '@/config/*',
+          '@/providers/*',
         ],
       },
     ],

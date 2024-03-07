@@ -1,10 +1,11 @@
 import { redirect } from 'next/navigation';
 
+import { PATHS } from '@/config';
+
 import { SideNav } from '@/components/navbar';
-import { SignOutButton } from '@/components/sign-out-button';
 import { SwitchTheme } from '@/components/switch-theme';
 
-import { PATHS } from '@/config';
+import { SignOutButton } from '@/features/auth';
 import { auth } from '@/lib/auth';
 
 export default async function AdminLayout({

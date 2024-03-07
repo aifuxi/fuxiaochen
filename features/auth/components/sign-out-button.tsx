@@ -2,8 +2,6 @@
 
 import { PowerIcon } from 'lucide-react';
 
-import { logout } from '@/app/actions/auth';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,9 +14,11 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-export function SignOutButton() {
+import { signoutAndRedirect } from '../actions/signout';
+
+export const SignOutButton = () => {
   async function handleLogout() {
-    await logout();
+    await signoutAndRedirect();
   }
 
   return (
@@ -41,4 +41,4 @@ export function SignOutButton() {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+};
