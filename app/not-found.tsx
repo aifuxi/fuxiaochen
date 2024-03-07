@@ -1,12 +1,12 @@
-import React from 'react';
+import * as React from 'react';
 
 import Link from 'next/link';
+
+import { PATHS } from '@/config';
 
 import { Button } from '@/components/ui/button';
 
 import { IllustrationNotFound } from '@/components/illustrations';
-
-import { PATHS } from '@/constants/path';
 
 export default function NotFoundPage() {
   return (

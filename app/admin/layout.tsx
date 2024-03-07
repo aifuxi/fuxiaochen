@@ -4,8 +4,7 @@ import { SideNav } from '@/components/navbar';
 import { SignOutButton } from '@/components/sign-out-button';
 import { SwitchTheme } from '@/components/switch-theme';
 
-import { PATHS } from '@/constants/path';
-
+import { PATHS } from '@/config';
 import { auth } from '@/lib/auth';
 
 export default async function AdminLayout({

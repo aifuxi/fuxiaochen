@@ -1,11 +1,7 @@
 'use client';
 
 /* eslint-disable no-console */
-import { ASCII_ART_FONT } from '@/constants/ascii';
-import {
-  NICKNAME,
-  SOURCE_CODE_GITHUB_PAGE,
-} from '@/constants/info';
+import { ASCII_ART_FONT, NICKNAME, SOURCE_CODE_GITHUB_PAGE } from '@/config';
 
 const fontFamily =
   'font-family: Poppins, PingFang SC, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";';
@@ -24,7 +20,6 @@ console.log(
   `%c网站源码 Github：${SOURCE_CODE_GITHUB_PAGE}`,
   `color: #999; font-size: 1rem;${fontFamily}`,
 );
-
 
 /**
  * 在浏览器控制台输出一些自定义信息，注意必须使用 client 组件，因为是要运行在浏览器上的

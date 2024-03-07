@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { getArticle } from '@/app/actions/article';
 import { getAllTags } from '@/app/actions/tag';
 
-import { PATHS } from '@/constants/path';
+import { PATHS } from '@/config';
 
 import { EditForm } from './edit-form';
 

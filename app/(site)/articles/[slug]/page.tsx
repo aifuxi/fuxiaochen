@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { NICKNAME } from '@/constants/info';
+import { NICKNAME } from '@/config';
 
 export async function generateMetadata({
   params,

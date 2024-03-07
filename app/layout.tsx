@@ -1,13 +1,14 @@
 import { type Metadata } from 'next';
 
+import { type FCProps } from '@/types';
+
 import { Toaster } from '@/components/ui/toaster';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
 import { NextThemeProvider } from '@/components/providers';
 
-import { NICKNAME, SLOGAN, WEBSITE } from '@/constants/info';
-
+import { NICKNAME, SLOGAN, WEBSITE } from '@/config';
 import '@/styles/global.css';
 
 export const metadata: Metadata = {
@@ -19,11 +20,7 @@ export const metadata: Metadata = {
   keywords: NICKNAME,
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: FCProps) {
   return (
     <html suppressHydrationWarning lang="zh-CN">
       <head>

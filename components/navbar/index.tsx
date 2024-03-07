@@ -4,8 +4,7 @@ import { GithubIcon } from 'lucide-react';
 
 import { cn } from '@/utils/helper';
 
-import { GITHUB_PAGE, NICKNAME } from '@/constants/info';
-import { PATHS } from '@/constants/path';
+import { GITHUB_PAGE, NICKNAME, PATHS } from '@/config';
 
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';

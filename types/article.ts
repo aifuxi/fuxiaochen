@@ -1,6 +1,6 @@
 import { type infer as Infer, z } from 'zod';
 
-import { REGEX } from '@/constants/regex';
+import { REGEX } from '@/config';
 
 export const createArticleReqSchema = z.object({
   title: z.string().min(1, { message: '长度不能少于1个字符' }),

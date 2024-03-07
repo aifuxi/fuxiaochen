@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { AlignJustifyIcon } from 'lucide-react';
+
+import { SLOGAN, WEBSITE } from '@/config';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -18,8 +20,6 @@ import {
 } from '@/components/ui/sheet';
 
 import { cn } from '@/utils/helper';
-
-import { SLOGAN, WEBSITE } from '@/constants/info';
 
 import { navItems } from './nav-list';
 

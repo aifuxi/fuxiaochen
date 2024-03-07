@@ -1,17 +1,17 @@
 'use client';
 
-import React from 'react';
+import * as React from 'react';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { BookText, HomeIcon, Tags } from 'lucide-react';
 
+import { PATHS } from '@/config';
+
 import { buttonVariants } from '@/components/ui/button';
 
 import { cn } from '@/utils/helper';
-
-import { PATHS } from '@/constants/path';
 
 const adminNavItems: Array<{
   label: string;
