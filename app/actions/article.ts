@@ -3,15 +3,11 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import {
-  type CreateArticleReq,
-  type UpdateArticleReq,
-} from '@/typings/article';
-
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { type CreateArticleReq, type UpdateArticleReq } from '@/types/article';
 
 export async function getArticleBySlug(slug: string) {
   // 未登录，只查出已发布的文章published=true

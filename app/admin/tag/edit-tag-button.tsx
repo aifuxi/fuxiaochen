@@ -28,9 +28,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 
-import { type UpdateTagReq, updateTagReqSchema } from '@/typings/tag';
-
 import { toSlug } from '@/utils/helper';
+
+import { type UpdateTagReq, updateTagReqSchema } from '@/types/tag';
 
 type Props = {
   tag: Tag;

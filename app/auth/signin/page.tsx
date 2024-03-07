@@ -29,11 +29,11 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { signInUserReqSchema } from '@/typings/user';
-
 import { cn } from '@/utils/helper';
 
 import { PATHS } from '@/constants/path';
+
+import { signInUserReqSchema } from '@/types/user';
 
 export default function SignInPage() {
   const form = useForm<z.infer<typeof signInUserReqSchema>>({

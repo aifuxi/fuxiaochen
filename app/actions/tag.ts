@@ -2,11 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 
-import { type CreateTagReq, type UpdateTagReq } from '@/typings/tag';
-
 import { DEFAULT_PAGE_SIZE } from '@/constants/unknown';
 
 import { prisma } from '@/lib/prisma';
+import { type CreateTagReq, type UpdateTagReq } from '@/types/tag';
 
 export async function getTagArticles(params: { slug: string; page: number }) {
   const take = DEFAULT_PAGE_SIZE;

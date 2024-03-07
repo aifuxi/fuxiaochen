@@ -27,9 +27,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { type CreateTagReq, createTagReqSchema } from '@/typings/tag';
-
 import { toSlug } from '@/utils/helper';
+
+import { type CreateTagReq, createTagReqSchema } from '@/types/tag';
 
 export function CreateTagButton() {
   const [open, setOpen] = React.useState(false);

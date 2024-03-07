@@ -27,12 +27,9 @@ import { useToast } from '@/components/ui/use-toast';
 
 import { BytemdEditor } from '@/components/bytemd';
 
-import {
-  type CreateArticleReq,
-  createArticleReqSchema,
-} from '@/typings/article';
-
 import { toSlug } from '@/utils/helper';
+
+import { type CreateArticleReq, createArticleReqSchema } from '@/types/article';
 
 import { CreateTagButton } from '../../tag/create-tag-button';
 
