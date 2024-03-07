@@ -25,48 +25,26 @@ import { NextLink } from '@/components/next-link';
 
 import { cn } from '@/utils/helper';
 
-import { signinWithGithub } from '../actions/signin';
-import { signInUserReqSchema } from '../types';
+import { signinWithCredentials, signinWithGithub } from '../actions/signin';
+import { type SigninDTO, signinSchema } from '../types';
 
-export const SigninForm = () => {
-  const form = useForm<z.infer<typeof signInUserReqSchema>>({
-    resolver: zodResolver(signInUserReqSchema),
+export type SigninFormProps = {
+  showLoading: () => void;
+  hideLoading: () => void;
+};
+
+export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
+  const form = useForm<z.infer<typeof signinSchema>>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  async function onSubmit() {
-    // const callbackURL = searchParams.get('callbackUrl') ?? PATHS.ADMIN_HOME;
-    // const res = await signIn('credentials', {
-    //   redirect: false,
-    //   email: values.email,
-    //   password: values.password,
-    //   callbackUrl: `${window.location.origin}`,
-    // });
-    // if (res?.error) {
-    //   toast({
-    //     variant: 'destructive',
-    //     title: '请求失败',
-    //     description: res?.error,
-    //   });
-    // } else {
-    //   toast({
-    //     title: '请求成功',
-    //     description: '登录成功，欢迎回来',
-    //   });
-    // }
-    // router.push(callbackURL);
-  }
-
-  async function handleSignUpWithGithub() {
-    await signinWithGithub();
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} autoComplete="off">
+      <form onSubmit={form.handleSubmit(handleSubmit)} autoComplete="off">
         <CardContent>
           <div className="grid gap-4">
             <FormField
@@ -117,7 +95,9 @@ export const SigninForm = () => {
           </Button>
 
           <div className="flex justify-end ">
-            <NextLink href={PATHS.AUTH_SIGNUP}>还没有账号？去注册</NextLink>
+            <NextLink href={PATHS.AUTH_SIGNUP}>
+              还没有账号？去用邮箱注册
+            </NextLink>
           </div>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -141,4 +121,16 @@ export const SigninForm = () => {
       </form>
     </Form>
   );
+
+  async function handleSubmit(values: SigninDTO) {
+    showLoading();
+    await signinWithCredentials(values);
+    hideLoading();
+  }
+
+  async function handleSignUpWithGithub() {
+    showLoading();
+    await signinWithGithub();
+    hideLoading();
+  }
 };
