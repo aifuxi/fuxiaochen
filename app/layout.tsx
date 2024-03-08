@@ -4,7 +4,7 @@ import { NICKNAME, SLOGAN, WEBSITE } from '@/config';
 
 import { type FCProps } from '@/types';
 
-import { NextThemeProvider } from '@/providers';
+import { NextThemeProvider, ReactQueryProvider } from '@/providers';
 
 import { Toaster } from '@/components/ui/toaster';
 
@@ -34,14 +34,16 @@ export default function RootLayout({ children }: FCProps) {
       </head>
 
       <body className={'debug-screens'}>
-        <NextThemeProvider attribute="class">
-          {children}
-          <BackToTop />
+        <ReactQueryProvider>
+          <NextThemeProvider attribute="class">
+            {children}
+            <BackToTop />
 
-          <Toaster />
+            <Toaster />
 
-          <Console />
-        </NextThemeProvider>
+            <Console />
+          </NextThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

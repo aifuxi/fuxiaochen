@@ -1,4 +1,8 @@
+'use client';
+
 import React from 'react';
+
+import { useQuery } from '@tanstack/react-query';
 
 import {
   Table,
@@ -17,8 +21,11 @@ import { CreateTagButton } from '../components/create-tag-button';
 import { DeleteTagButton } from '../components/delete-tag-button';
 import { EditTagButton } from '../components/edit-tag-button';
 
-export const AdminTagListPage = async () => {
-  const { tags } = await getTags();
+export const AdminTagListPage = () => {
+  const { data } = useQuery({
+    queryKey: ['tags'],
+    queryFn: () => getTags(),
+  });
 
   return (
     <div className="flex flex-col gap-4">
@@ -40,7 +47,7 @@ export const AdminTagListPage = async () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {tags?.map((tag) => (
+          {data?.tags?.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell className="!align-middle">{tag.name}</TableCell>
               <TableCell className="!align-middle">{tag.slug}</TableCell>
