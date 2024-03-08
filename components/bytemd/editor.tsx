@@ -1,13 +1,13 @@
 'use client';
 
+import toast from 'react-hot-toast';
+
 import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
 import { uploadFile } from '@/app/actions/upload';
 
 import { plugins, sanitize } from './config';
-
-import { useToast } from '../ui/use-toast';
 
 type Props = {
   content?: string;
@@ -16,8 +16,6 @@ type Props = {
 };
 
 export function BytemdEditor({ content, setContent, editorProps }: Props) {
-  const { toast } = useToast();
-
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
     const file = files[0];
     if (file) {
@@ -31,11 +29,7 @@ export function BytemdEditor({ content, setContent, editorProps }: Props) {
           },
         ];
       } catch (error) {
-        toast({
-          title: '请求失败',
-          variant: 'destructive',
-          description: error as string,
-        });
+        toast.error(error as string);
         return [];
       }
     } else {

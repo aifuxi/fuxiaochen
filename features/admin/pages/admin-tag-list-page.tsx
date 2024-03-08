@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import toast from 'react-hot-toast';
 
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -29,6 +31,15 @@ export const AdminTagListPage = () => {
       </h2>
       <div className="flex justify-end">
         <CreateTagButton />
+        <Button
+          onClick={() => {
+            toast.success('成功～');
+            toast.error('操作失败！');
+            toast.loading('加载中...');
+          }}
+        >
+          TEST
+        </Button>
       </div>
       <Table>
         <TableHeader>
