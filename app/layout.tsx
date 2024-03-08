@@ -6,7 +6,7 @@ import { type FCProps } from '@/types';
 
 import { NextThemeProvider, ReactQueryProvider } from '@/providers';
 
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/toast';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: FCProps) {
         />
       </head>
 
-      <body className={'debug-screens'}>
+      <body className={'debug-screens shadow-black'}>
         <ReactQueryProvider>
           <NextThemeProvider attribute="class">
             {children}

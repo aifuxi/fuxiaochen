@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 import { useRouter } from 'next/navigation';
 
@@ -21,7 +22,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 
 import { NextLink } from '@/components/next-link';
 
@@ -37,7 +37,6 @@ export type SignupFormProps = {
 };
 
 export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
-  const { toast } = useToast();
   const router = useRouter();
   const form = useForm<SignupDTO>({
     resolver: zodResolver(signupSchema),
@@ -124,18 +123,11 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
     hideLoading();
 
     if (resp?.error) {
-      toast({
-        variant: 'destructive',
-        title: '注册失败',
-        description: resp?.error,
-      });
+      toast.error(`注册失败: ${resp?.error}`);
       return;
     }
 
-    toast({
-      title: '请求成功',
-      description: '注册成功，赶快登录吧～',
-    });
+    toast.success('注册成功，赶快登录吧～');
 
     // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
     router.push(PATHS.AUTH_SIGNIN);

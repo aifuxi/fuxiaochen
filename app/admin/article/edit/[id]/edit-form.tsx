@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 import { useRouter } from 'next/navigation';
 
@@ -28,7 +29,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
 
 import { BytemdEditor } from '@/components/bytemd';
 
@@ -45,7 +45,6 @@ export function EditForm({
 }) {
   const router = useRouter();
   const [cover, setCover] = React.useState(article?.cover);
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof updateArticleReqSchema>>({
     resolver: zodResolver(updateArticleReqSchema),
     defaultValues: {
@@ -158,17 +157,10 @@ export function EditForm({
                         setCover(url ?? '');
                         form.setValue('cover', url ?? '');
                       } else {
-                        toast({
-                          title: '提示',
-                          description: '请选择一个文件',
-                        });
+                        toast('请选择一个文件');
                       }
                     } catch (error) {
-                      toast({
-                        title: '请求失败',
-                        variant: 'destructive',
-                        description: error as string,
-                      });
+                      toast.error(error as string);
                     }
                   }}
                 />
