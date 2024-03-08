@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/toast';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
+import { Favicon } from '@/components/favicon';
 
 import '@/styles/global.css';
 
@@ -32,7 +33,6 @@ export default function RootLayout({ children }: FCProps) {
           href="/images/fuxiaochen-dark.svg"
         />
       </head>
-
       <body className={'debug-screens shadow-black'}>
         <ReactQueryProvider>
           <NextThemeProvider attribute="class">
@@ -42,6 +42,8 @@ export default function RootLayout({ children }: FCProps) {
             <Toaster />
 
             <Console />
+
+            <Favicon />
           </NextThemeProvider>
         </ReactQueryProvider>
       </body>
