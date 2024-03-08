@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Tag } from '@prisma/client';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { Loader2Icon, PencilIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,6 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 
 import { LoadingSpinner } from '@/components/loading-spinner';
 
@@ -33,50 +31,24 @@ import { toSlug } from '@/utils/helper';
 
 import {
   type UpdateTagDTO,
-  getTagByID,
-  updateTag,
   updateTagSchema,
+  useGetTag,
+  useUpdateTag,
 } from '@/features/tag';
-import { queryClient } from '@/lib/react-query';
 
 type EditTagButtonProps = {
   tag: Tag;
 };
 
 export const EditTagButton = ({ tag }: EditTagButtonProps) => {
-  const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateTagDTO>({
     resolver: zodResolver(updateTagSchema),
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['tag', tag.id],
-    queryFn: () => getTagByID(tag.id),
-    enabled: Boolean(tag.id && open),
-  });
+  const { data, isLoading } = useGetTag(tag.id);
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ['tag', tag.id],
-    mutationFn: (params: UpdateTagDTO) => updateTag(params),
-    async onSuccess(resp) {
-      if (resp?.error) {
-        toast({
-          variant: 'destructive',
-          title: '更新失败',
-          description: resp?.error,
-        });
-        return;
-      }
-
-      toast({
-        title: '操作成功',
-        description: 'Success',
-      });
-      setOpen(false);
-      await queryClient.invalidateQueries({ queryKey: ['tags'] });
-    },
-  });
+  const updateTagQuery = useUpdateTag();
 
   React.useEffect(() => {
     if (open && data?.tag) {
@@ -156,9 +128,9 @@ export const EditTagButton = ({ tag }: EditTagButtonProps) => {
                 <Button
                   type="button"
                   onClick={() => form.handleSubmit(handleSubmit)()}
-                  disabled={isPending}
+                  disabled={updateTagQuery.isPending}
                 >
-                  {isPending && (
+                  {updateTagQuery.isPending && (
                     <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   保存
@@ -172,7 +144,8 @@ export const EditTagButton = ({ tag }: EditTagButtonProps) => {
   );
 
   async function handleSubmit(values: UpdateTagDTO) {
-    await mutateAsync(values);
+    await updateTagQuery.mutateAsync(values);
+    setOpen(false);
   }
 
   function formatSlug() {

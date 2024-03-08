@@ -24,26 +24,7 @@ type DeleteTagButtonProps = {
 };
 
 export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
-  //   mutationKey: ['tag', tag.id],
-  //   mutationFn: (id: string) => deleteTagByID(id),
-  //   async onSuccess(resp) {
-  //     if (resp?.error) {
-  //       toast({
-  //         variant: 'destructive',
-  //         title: '删除失败',
-  //         description: resp?.error,
-  //       });
-  //       return;
-  //     }
-
-  //     toast({
-  //       title: '操作成功',
-  //       description: 'Success',
-  //     });
-  //     await queryClient.invalidateQueries({ queryKey: ['tags'] });
-  //   },
-  // });
-  const deleteTagQuery = useDeleteTag(tag.id);
+  const deleteTagQuery = useDeleteTag();
 
   return (
     <AlertDialog>

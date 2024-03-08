@@ -1,9 +1,9 @@
-import { getTagByID } from '..';
-import { type QueryClientConfig, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-export const useGetTag = (id: string, config?: QueryClientConfig) => {
+import { getTagByID } from '../actions';
+
+export const useGetTag = (id: string) => {
   return useQuery({
-    ...config,
     queryKey: ['get_tag', id],
     queryFn: () => getTagByID(id),
   });

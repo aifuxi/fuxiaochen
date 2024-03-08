@@ -1,4 +1,4 @@
-import { type QueryClientConfig, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { queryClient } from '@/lib/react-query';
 
@@ -6,9 +6,8 @@ import { getTags } from '../actions';
 
 const queryKey = ['tags'];
 
-export const useGetTags = (config?: QueryClientConfig) => {
+export const useGetTags = () => {
   return useQuery({
-    ...config,
     queryKey,
     queryFn: () => getTags(),
   });

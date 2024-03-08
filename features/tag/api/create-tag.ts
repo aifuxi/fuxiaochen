@@ -4,12 +4,13 @@ import { toast } from '@/components/ui/use-toast';
 
 import { invalidateGetTagsQuery } from './get-tags';
 
-import { deleteTagByID } from '../actions';
+import { createTag } from '../actions';
+import { type CreateTagDTO } from '../types';
 
-export const useDeleteTag = () => {
+export const useCreateTag = () => {
   return useMutation({
-    mutationKey: ['delete_tag'],
-    mutationFn: (id: string) => deleteTagByID(id),
+    mutationKey: ['create_tag'],
+    mutationFn: (params: CreateTagDTO) => createTag(params),
     async onSuccess() {
       toast({
         title: '操作成功',
