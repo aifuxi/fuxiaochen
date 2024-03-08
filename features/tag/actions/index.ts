@@ -1,7 +1,5 @@
 'use server';
 
-import { type ErrorResponse } from '@/types';
-
 import { prisma } from '@/lib/prisma';
 
 import {
@@ -38,15 +36,13 @@ export const getTagByID = async (id: string) => {
   return { tag };
 };
 
-export const createTag = async (
-  params: CreateTagDTO,
-): Promise<ErrorResponse | undefined> => {
+export const createTag = async (params: CreateTagDTO) => {
   const result = await createTagSchema.safeParseAsync(params);
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(';');
     // TODO: 记录日志
-    return { error };
+    throw new Error(error);
   }
 
   const isExist = await prisma.tag.findUnique({
@@ -58,7 +54,7 @@ export const createTag = async (
 
   if (isExist) {
     // TODO: 记录日志
-    return { error: '标签名称或者slug重复' };
+    throw new Error('标签名称或者slug重复');
   }
 
   await prisma.tag.create({
@@ -69,13 +65,11 @@ export const createTag = async (
   });
 };
 
-export const deleteTagByID = async (
-  id: string,
-): Promise<ErrorResponse | undefined> => {
+export const deleteTagByID = async (id: string) => {
   const isExist = await isTagExistByID(id);
 
   if (!isExist) {
-    return { error: '标签不存在' };
+    throw new Error('标签不存在');
   }
 
   await prisma.tag.delete({
@@ -85,20 +79,18 @@ export const deleteTagByID = async (
   });
 };
 
-export const updateTag = async (
-  params: UpdateTagDTO,
-): Promise<ErrorResponse | undefined> => {
+export const updateTag = async (params: UpdateTagDTO) => {
   const result = await updateTagSchema.safeParseAsync(params);
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(';');
     // TODO: 记录日志
-    return { error };
+    throw new Error(error);
   }
 
   const isExist = await isTagExistByID(result.data.id);
   if (!isExist) {
-    return { error: '标签不存在' };
+    throw new Error('标签不存在');
   }
 
   await prisma.tag.update({

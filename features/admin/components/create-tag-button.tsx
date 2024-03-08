@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
 import { Loader2Icon, PlusIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -27,8 +26,11 @@ import { Input } from '@/components/ui/input';
 
 import { toSlug } from '@/utils/helper';
 
-import { type CreateTagDTO, createTag, createTagSchema } from '@/features/tag';
-import { queryClient } from '@/lib/react-query';
+import {
+  type CreateTagDTO,
+  createTagSchema,
+  useCreateTag,
+} from '@/features/tag';
 
 export const CreateTagButton = () => {
   const [open, setOpen] = React.useState(false);
@@ -40,14 +42,7 @@ export const CreateTagButton = () => {
     },
   });
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ['tag'],
-    mutationFn: createTag,
-    async onSuccess() {
-      await queryClient.invalidateQueries({ queryKey: ['tags'] });
-      setOpen(false);
-    },
-  });
+  const createTagQuery = useCreateTag();
 
   React.useEffect(() => {
     if (open) {
@@ -106,10 +101,10 @@ export const CreateTagButton = () => {
               <div className="flex justify-end">
                 <Button
                   type="button"
-                  disabled={isPending}
+                  disabled={createTagQuery.isPending}
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
-                  {isPending && (
+                  {createTagQuery.isPending && (
                     <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   创建
@@ -123,7 +118,8 @@ export const CreateTagButton = () => {
   );
 
   async function handleSubmit(values: CreateTagDTO) {
-    await mutateAsync(values);
+    await createTagQuery.mutateAsync(values);
+    setOpen(false);
   }
 
   function formatSlug() {
