@@ -1,9 +1,10 @@
 import Link from 'next/link';
 
 import { getArticle } from '@/app/actions/article';
-import { getAllTags } from '@/app/actions/tag';
 
 import { PATHS } from '@/config';
+
+import { getTags } from '@/features/tag';
 
 import { EditForm } from './edit-form';
 
@@ -12,7 +13,7 @@ export default async function AdminArticleCreate({
 }: {
   params: { id: string };
 }) {
-  const tags = await getAllTags();
+  const { tags } = await getTags();
   const article = await getArticle(params.id);
 
   return (

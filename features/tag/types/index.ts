@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { REGEX } from '@/config';
 
-export const createTagReqSchema = z.object({
+export const createTagSchema = z.object({
   name: z.string().min(1, { message: '长度不能少于1个字符' }),
   slug: z
     .string()
@@ -10,9 +10,9 @@ export const createTagReqSchema = z.object({
     .min(1, { message: '长度不能少于1个字符' }),
 });
 
-export const updateTagReqSchema = createTagReqSchema.partial().extend({
+export const updateTagSchema = createTagSchema.partial().extend({
   id: z.string().min(1),
 });
 
-export type CreateTagReq = z.infer<typeof createTagReqSchema>;
-export type UpdateTagReq = z.infer<typeof updateTagReqSchema>;
+export type CreateTagDTO = z.infer<typeof createTagSchema>;
+export type UpdateTagDTO = z.infer<typeof updateTagSchema>;

@@ -5,8 +5,6 @@ import * as React from 'react';
 import { type Tag } from '@prisma/client';
 import { TrashIcon } from 'lucide-react';
 
-import { deleteTag } from '@/app/actions/tag';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,12 +16,17 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
-type Props = {
+import { deleteTagByID } from '@/features/tag';
+
+type DeleteTagButtonProps = {
   tag: Tag;
 };
 
-export function DeleteTagItemButton({ tag }: Props) {
+export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
+  const { toast } = useToast();
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -38,15 +41,27 @@ export function DeleteTagItemButton({ tag }: Props) {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              await deleteTag(tag.id);
-            }}
-          >
-            删除
-          </AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteTag}>删除</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+
+  async function handleDeleteTag() {
+    const resp = await deleteTagByID(tag.id);
+
+    if (resp?.error) {
+      toast({
+        variant: 'destructive',
+        title: '删除失败',
+        description: resp?.error,
+      });
+      return;
+    }
+
+    toast({
+      title: '操作成功',
+      description: 'Success',
+    });
+  }
+};

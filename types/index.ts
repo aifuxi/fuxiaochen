@@ -1,3 +1,9 @@
-export * from './common';
 export * from './article';
-export * from './tag';
+
+export type FCProps = {
+  readonly children: React.ReactNode;
+};
+
+export type ErrorResponse = {
+  error?: string;
+};

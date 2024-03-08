@@ -34,7 +34,7 @@ import { BytemdEditor } from '@/components/bytemd';
 
 import { toSlug } from '@/utils/helper';
 
-import { CreateTagButton } from '../../../tag/create-tag-button';
+import { CreateTagButton } from '@/features/admin';
 
 export function EditForm({
   article,
