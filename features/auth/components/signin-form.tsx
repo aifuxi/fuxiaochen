@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useUnmount } from 'ahooks';
 import { GithubIcon, Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
 
@@ -40,6 +41,10 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
       email: '',
       password: '',
     },
+  });
+
+  useUnmount(() => {
+    hideLoading();
   });
 
   return (
@@ -125,12 +130,10 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
   async function handleSubmit(values: SigninDTO) {
     showLoading();
     await signinWithCredentials(values);
-    hideLoading();
   }
 
   async function handleSignUpWithGithub() {
     showLoading();
     await signinWithGithub();
-    hideLoading();
   }
 };
