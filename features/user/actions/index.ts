@@ -9,7 +9,7 @@ import { prisma } from '@/lib/prisma';
 
 export const createUser = async (
   params: SignupDTO,
-): Promise<ErrorResponse | undefined> => {
+): Promise<ErrorResponse | void> => {
   const result = await signupSchema.safeParseAsync(params);
 
   if (!result.success) {
@@ -26,7 +26,7 @@ export const createUser = async (
 
   if (isExist) {
     return {
-      error: '当前邮箱已存在！',
+      error: '当前邮箱已注册！',
     };
   }
 

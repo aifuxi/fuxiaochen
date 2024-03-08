@@ -122,7 +122,8 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
     showLoading();
     const resp = await createUser(values);
     hideLoading();
-    if (!resp?.error) {
+
+    if (resp?.error) {
       toast({
         variant: 'destructive',
         title: '注册失败',
@@ -135,6 +136,8 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
       title: '请求成功',
       description: '注册成功，赶快登录吧～',
     });
+
+    // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
     router.push(PATHS.AUTH_SIGNIN);
   }
 };
