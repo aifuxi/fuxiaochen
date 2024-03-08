@@ -45,14 +45,13 @@ export const createTag = async (params: CreateTagDTO) => {
     throw new Error(error);
   }
 
-  const isExist = await prisma.tag.findUnique({
+  const tags = await prisma.tag.findMany({
     where: {
-      name: result.data.name,
-      slug: result.data.slug,
+      OR: [{ name: result.data.name }, { slug: result.data.slug }],
     },
   });
 
-  if (isExist) {
+  if (tags.length) {
     // TODO: 记录日志
     throw new Error('标签名称或者slug重复');
   }
