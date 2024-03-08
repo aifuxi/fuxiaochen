@@ -4,12 +4,7 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Tag } from '@prisma/client';
-import { PencilIcon } from 'lucide-react';
-
-import { updateTag } from '@/app/actions/tag';
-
-import { type UpdateTagReq, updateTagReqSchema } from '@/types';
+import { PlusIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -28,78 +23,43 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/components/ui/use-toast';
 
 import { toSlug } from '@/utils/helper';
 
-type Props = {
-  tag: Tag;
-};
+import { type CreateTagDTO, createTag, createTagSchema } from '@/features/tag';
 
-export function EditTagButton({ tag }: Props) {
+export const CreateTagButton = () => {
   const [open, setOpen] = React.useState(false);
-  const { toast } = useToast();
-  const form = useForm<UpdateTagReq>({
-    resolver: zodResolver(updateTagReqSchema),
+  const form = useForm<CreateTagDTO>({
+    resolver: zodResolver(createTagSchema),
+    defaultValues: {
+      name: '',
+      slug: '',
+    },
   });
 
   React.useEffect(() => {
     if (open) {
-      form.setValue('name', tag.name);
-      form.setValue('slug', tag.slug);
-      form.setValue('id', tag.id);
+      form.reset();
       form.clearErrors();
     }
-  }, [form, open, tag]);
-
-  async function onSubmit(values: UpdateTagReq) {
-    try {
-      await updateTag(values);
-      setOpen(false);
-    } catch (e) {
-      toast({
-        title: '请求失败',
-        variant: 'destructive',
-        description: e as string,
-      });
-    }
-  }
-
-  function formatSlug() {
-    const tmp = form.getValues().slug?.trim();
-    if (tmp) {
-      const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
-    }
-  }
+  }, [form, open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={'icon'} onClick={() => setOpen(true)}>
-          <PencilIcon size={16} />
+        <Button onClick={() => setOpen(true)}>
+          <PlusIcon className="mr-2" size={16} />
+          创建标签
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>编辑标签</DialogTitle>
+          <DialogTitle>创建标签</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form autoComplete="off">
             <div className="grid gap-4">
-              <FormField
-                control={form.control}
-                name="id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>id</FormLabel>
-                    <FormControl>
-                      <Input {...field} disabled />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="name"
@@ -107,11 +67,7 @@ export function EditTagButton({ tag }: Props) {
                   <FormItem>
                     <FormLabel>名称</FormLabel>
                     <FormControl>
-                      <Input
-                        className="flex-1"
-                        placeholder="请输入标签名称"
-                        {...field}
-                      />
+                      <Input placeholder="请输入标签名称" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,10 +78,10 @@ export function EditTagButton({ tag }: Props) {
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>链接</FormLabel>
+                    <FormLabel>slug</FormLabel>
                     <FormControl>
                       <div className="flex items-center w-full gap-4">
-                        <Input placeholder="请输入标签链接" {...field} />
+                        <Input placeholder="请输入标签slug" {...field} />
                         <Button type="button" onClick={formatSlug}>
                           格式化
                         </Button>
@@ -139,9 +95,9 @@ export function EditTagButton({ tag }: Props) {
               <div className="flex justify-end">
                 <Button
                   type="button"
-                  onClick={() => form.handleSubmit(onSubmit)()}
+                  onClick={() => form.handleSubmit(handleSubmit)()}
                 >
-                  保存
+                  创建
                 </Button>
               </div>
             </div>
@@ -150,6 +106,17 @@ export function EditTagButton({ tag }: Props) {
       </DialogContent>
     </Dialog>
   );
-}
 
-export default EditTagButton;
+  async function handleSubmit(values: CreateTagDTO) {
+    await createTag(values);
+    setOpen(false);
+  }
+
+  function formatSlug() {
+    const tmp = form.getValues().slug?.trim();
+    if (tmp) {
+      const formatted = toSlug(tmp);
+      form.setValue('slug', formatted);
+    }
+  }
+};

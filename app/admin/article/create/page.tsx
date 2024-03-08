@@ -1,13 +1,13 @@
 import Link from 'next/link';
 
-import { getAllTags } from '@/app/actions/tag';
-
 import { PATHS } from '@/config';
+
+import { getTags } from '@/features/tag';
 
 import { CreateForm } from './create-form';
 
 export default async function AdminArticleCreate() {
-  const tags = await getAllTags();
+  const { tags } = await getTags();
 
   return (
     <div className="flex flex-col gap-4">
