@@ -36,7 +36,7 @@ export const AdminLayout = async ({ children }: FCProps) => {
 
         <SignOutButton />
       </div>
-      <div className="h-screen overflow-scroll flex flex-1 p-8 flex-col">
+      <div className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col">
         {children}
       </div>
 
