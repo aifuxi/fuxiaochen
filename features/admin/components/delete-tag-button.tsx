@@ -3,7 +3,8 @@
 import * as React from 'react';
 
 import { type Tag } from '@prisma/client';
-import { TrashIcon } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2Icon, TrashIcon } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -19,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
 import { deleteTagByID } from '@/features/tag';
+import { queryClient } from '@/lib/react-query';
 
 type DeleteTagButtonProps = {
   tag: Tag;
@@ -26,6 +28,26 @@ type DeleteTagButtonProps = {
 
 export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
   const { toast } = useToast();
+  const { mutateAsync, isPending } = useMutation({
+    mutationKey: ['tag', tag.id],
+    mutationFn: (id: string) => deleteTagByID(id),
+    async onSuccess(resp) {
+      if (resp?.error) {
+        toast({
+          variant: 'destructive',
+          title: '删除失败',
+          description: resp?.error,
+        });
+        return;
+      }
+
+      toast({
+        title: '操作成功',
+        description: 'Success',
+      });
+      await queryClient.invalidateQueries({ queryKey: ['tags'] });
+    },
+  });
 
   return (
     <AlertDialog>
@@ -41,27 +63,16 @@ export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteTag}>删除</AlertDialogAction>
+          <AlertDialogAction onClick={handleDeleteTag} disabled={isPending}>
+            {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+            删除
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 
   async function handleDeleteTag() {
-    const resp = await deleteTagByID(tag.id);
-
-    if (resp?.error) {
-      toast({
-        variant: 'destructive',
-        title: '删除失败',
-        description: resp?.error,
-      });
-      return;
-    }
-
-    toast({
-      title: '操作成功',
-      description: 'Success',
-    });
+    await mutateAsync(tag.id);
   }
 };

@@ -9,7 +9,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { FormLoadingSpinner } from '../components/form-loading-spinner';
+import { LoadingSpinner } from '@/components/loading-spinner';
+
 import { SignupForm } from '../components/signup-form';
 
 export const SignupPage = () => {
@@ -19,7 +20,7 @@ export const SignupPage = () => {
   return (
     <div className="w-screen h-screen grid place-content-center">
       <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px] relative">
-        <FormLoadingSpinner loading={loading} />
+        <LoadingSpinner loading={loading} />
         <CardHeader>
           <CardTitle>邮箱注册</CardTitle>
           <CardDescription>输入下面信息进行注册</CardDescription>

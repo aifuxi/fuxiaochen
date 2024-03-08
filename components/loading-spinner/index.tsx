@@ -5,11 +5,11 @@ import { HashLoader } from 'react-spinners';
 
 import { useTheme } from 'next-themes';
 
-type FormLoadingSpinnerProps = {
+type LoadingSpinnerProps = {
   loading: boolean;
 };
 
-export const FormLoadingSpinner = ({ loading }: FormLoadingSpinnerProps) => {
+export const LoadingSpinner = ({ loading }: LoadingSpinnerProps) => {
   const { resolvedTheme } = useTheme();
 
   return loading ? (
