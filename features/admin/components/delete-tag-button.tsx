@@ -3,7 +3,6 @@
 import * as React from 'react';
 
 import { type Tag } from '@prisma/client';
-import { useMutation } from '@tanstack/react-query';
 import { Loader2Icon, TrashIcon } from 'lucide-react';
 
 import {
@@ -17,37 +16,34 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
 
-import { deleteTagByID } from '@/features/tag';
-import { queryClient } from '@/lib/react-query';
+import { useDeleteTag } from '@/features/tag';
 
 type DeleteTagButtonProps = {
   tag: Tag;
 };
 
 export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
-  const { toast } = useToast();
-  const { mutateAsync, isPending } = useMutation({
-    mutationKey: ['tag', tag.id],
-    mutationFn: (id: string) => deleteTagByID(id),
-    async onSuccess(resp) {
-      if (resp?.error) {
-        toast({
-          variant: 'destructive',
-          title: '删除失败',
-          description: resp?.error,
-        });
-        return;
-      }
+  //   mutationKey: ['tag', tag.id],
+  //   mutationFn: (id: string) => deleteTagByID(id),
+  //   async onSuccess(resp) {
+  //     if (resp?.error) {
+  //       toast({
+  //         variant: 'destructive',
+  //         title: '删除失败',
+  //         description: resp?.error,
+  //       });
+  //       return;
+  //     }
 
-      toast({
-        title: '操作成功',
-        description: 'Success',
-      });
-      await queryClient.invalidateQueries({ queryKey: ['tags'] });
-    },
-  });
+  //     toast({
+  //       title: '操作成功',
+  //       description: 'Success',
+  //     });
+  //     await queryClient.invalidateQueries({ queryKey: ['tags'] });
+  //   },
+  // });
+  const deleteTagQuery = useDeleteTag(tag.id);
 
   return (
     <AlertDialog>
@@ -63,8 +59,13 @@ export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDeleteTag} disabled={isPending}>
-            {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+          <AlertDialogAction
+            onClick={handleDeleteTag}
+            disabled={deleteTagQuery.isPending}
+          >
+            {deleteTagQuery.isPending && (
+              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+            )}
             删除
           </AlertDialogAction>
         </AlertDialogFooter>
@@ -73,6 +74,6 @@ export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
   );
 
   async function handleDeleteTag() {
-    await mutateAsync(tag.id);
+    await deleteTagQuery.mutateAsync(tag.id);
   }
 };

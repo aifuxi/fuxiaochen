@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import { useQuery } from '@tanstack/react-query';
-
 import {
   Table,
   TableBody,
@@ -15,17 +13,14 @@ import {
 
 import { formatToDateTime } from '@/utils/time';
 
-import { getTags } from '@/features/tag';
+import { useGetTags } from '@/features/tag';
 
 import { CreateTagButton } from '../components/create-tag-button';
 import { DeleteTagButton } from '../components/delete-tag-button';
 import { EditTagButton } from '../components/edit-tag-button';
 
 export const AdminTagListPage = () => {
-  const { data } = useQuery({
-    queryKey: ['tags'],
-    queryFn: () => getTags(),
-  });
+  const getTagsQuery = useGetTags();
 
   return (
     <div className="flex flex-col gap-4">
@@ -47,7 +42,7 @@ export const AdminTagListPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.tags?.map((tag) => (
+          {getTagsQuery?.data?.tags?.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell className="!align-middle">{tag.name}</TableCell>
               <TableCell className="!align-middle">{tag.slug}</TableCell>
