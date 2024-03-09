@@ -39,7 +39,7 @@ import {
   useUpdateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
-import { formatSlug } from '@/lib/util';
+import { toSlug } from '@/lib/util';
 
 export const EditArticleForm = () => {
   const getTagsQuery = useGetTags();
@@ -262,7 +262,7 @@ export const EditArticleForm = () => {
   function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = formatSlug(tmp);
+      const formatted = toSlug(tmp);
       form.setValue('slug', formatted);
     }
   }

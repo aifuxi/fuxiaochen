@@ -35,7 +35,7 @@ import {
   useCreateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
-import { formatSlug } from '@/lib/util';
+import { toSlug } from '@/lib/util';
 
 export const CreateArticleForm = () => {
   const router = useRouter();
@@ -241,7 +241,7 @@ export const CreateArticleForm = () => {
   function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = formatSlug(tmp);
+      const formatted = toSlug(tmp);
       form.setValue('slug', formatted);
     }
   }

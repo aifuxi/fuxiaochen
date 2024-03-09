@@ -11,13 +11,11 @@ import {
 import {
   BookIcon,
   CalendarIcon,
-  CopyIcon,
   HashIcon,
-  KeyRoundIcon,
   LanguagesIcon,
+  WrenchIcon,
 } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -28,7 +26,7 @@ import {
 } from '@/components/ui/table';
 
 import { type Tag, useGetTags } from '@/features/tag';
-import { copyToClipboard, formatDateDetail } from '@/lib/util';
+import { toSlashDateString } from '@/lib/util';
 
 import { CreateTagButton } from '../components/create-tag-button';
 import { DeleteTagButton } from '../components/delete-tag-button';
@@ -37,31 +35,11 @@ import { EditTagButton } from '../components/edit-tag-button';
 const columnHelper = createColumnHelper<Tag>();
 
 const columns = [
-  columnHelper.accessor('id', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <KeyRoundIcon size={14} />
-        <span>id</span>
-      </div>
-    ),
-    cell: (info) => (
-      <Badge>
-        {info.getValue()}
-        <CopyIcon
-          size={14}
-          className="cursor-pointer ml-1"
-          onClick={() => {
-            copyToClipboard(info.getValue());
-          }}
-        />
-      </Badge>
-    ),
-  }),
   columnHelper.accessor('name', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <LanguagesIcon size={14} />
-        <span>name</span>
+        <span>名称</span>
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -79,7 +57,7 @@ const columns = [
     header: () => (
       <div className="flex space-x-1 items-center">
         <BookIcon size={14} />
-        <span>article_count</span>
+        <span>文章数量</span>
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -88,22 +66,27 @@ const columns = [
     header: () => (
       <div className="flex space-x-1 items-center">
         <CalendarIcon size={14} />
-        <span>created_at</span>
+        <span>创建时间</span>
       </div>
     ),
-    cell: (info) => formatDateDetail(info.getValue()),
+    cell: (info) => toSlashDateString(info.getValue()),
   }),
   columnHelper.accessor('updatedAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <CalendarIcon size={14} />
-        <span>updated_at</span>
+        <span>最后更新时间</span>
       </div>
     ),
-    cell: (info) => formatDateDetail(info.getValue()),
+    cell: (info) => toSlashDateString(info.getValue()),
   }),
   columnHelper.accessor('id', {
-    header: 'actions',
+    header: () => (
+      <div className="flex space-x-1 items-center">
+        <WrenchIcon size={14} />
+        <span>操作</span>
+      </div>
+    ),
     cell: (info) => (
       <div className="flex gap-2 items-center">
         <EditTagButton id={info.getValue()} />

@@ -12,18 +12,16 @@ import {
 } from '@tanstack/react-table';
 import {
   CalendarIcon,
-  CopyIcon,
-  HashIcon,
   HeadingIcon,
-  KeyRoundIcon,
   PencilIcon,
   PlusIcon,
   TagsIcon,
+  WrenchIcon,
 } from 'lucide-react';
 
 import { PATHS } from '@/config';
 
-import { Badge, badgeVariants } from '@/components/ui/badge';
+import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -35,7 +33,7 @@ import {
 } from '@/components/ui/table';
 
 import { type Article, useGetArticles } from '@/features/article';
-import { cn , copyToClipboard, formatDateDetail } from '@/lib/util';
+import { cn, toSlashDateString } from '@/lib/util';
 
 import { DeleteArticleButton } from '../components/delete-article-button';
 
@@ -44,40 +42,11 @@ import { DeleteArticleButton } from '../components/delete-article-button';
 const columnHelper = createColumnHelper<Article>();
 
 const columns = [
-  columnHelper.accessor('id', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <KeyRoundIcon size={14} />
-        <span>id</span>
-      </div>
-    ),
-    cell: (info) => (
-      <Badge>
-        {info.getValue()}
-        <CopyIcon
-          size={14}
-          className="cursor-pointer ml-1"
-          onClick={() => {
-            copyToClipboard(info.getValue());
-          }}
-        />
-      </Badge>
-    ),
-  }),
   columnHelper.accessor('title', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <HeadingIcon size={14} />
-        <span>title</span>
-      </div>
-    ),
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('slug', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <HashIcon size={14} />
-        <span>slug</span>
+        <span>文章标题</span>
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -86,7 +55,7 @@ const columns = [
     header: () => (
       <div className="flex space-x-1 items-center">
         <TagsIcon size={14} />
-        <span>tags</span>
+        <span>标签</span>
       </div>
     ),
     cell: (info) => (
@@ -108,22 +77,27 @@ const columns = [
     header: () => (
       <div className="flex space-x-1 items-center">
         <CalendarIcon size={14} />
-        <span>created_at</span>
+        <span>创建时间</span>
       </div>
     ),
-    cell: (info) => formatDateDetail(info.getValue()),
+    cell: (info) => toSlashDateString(info.getValue()),
   }),
   columnHelper.accessor('updatedAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <CalendarIcon size={14} />
-        <span>updated_at</span>
+        <span>最后更新时间</span>
       </div>
     ),
-    cell: (info) => formatDateDetail(info.getValue()),
+    cell: (info) => toSlashDateString(info.getValue()),
   }),
   columnHelper.accessor('id', {
-    header: 'actions',
+    header: () => (
+      <div className="flex space-x-1 items-center">
+        <WrenchIcon size={14} />
+        <span>操作</span>
+      </div>
+    ),
     cell: (info) => (
       <div className="flex items-center gap-2">
         <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
