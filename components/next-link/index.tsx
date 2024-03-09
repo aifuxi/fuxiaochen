@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { cn } from '@/utils/helper';
+import { cn } from '@/lib/util';
 
 import { buttonVariants } from '../ui/button';
 

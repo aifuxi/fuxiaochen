@@ -1,10 +1,4 @@
 /* eslint-disable no-useless-escape */
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 /**
  * 1. 英文变成全小写
@@ -21,12 +15,4 @@ export function toSlug(str: string) {
     .replace(/[^a-zA-Z0-9-]/g, '')
     .split(' ')
     .join('-');
-}
-
-export function getOpenGraphImage(cover?: string | null) {
-  if (!cover || cover.startsWith('/')) {
-    return '';
-  }
-
-  return cover;
 }

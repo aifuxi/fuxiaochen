@@ -25,9 +25,8 @@ import { Input } from '@/components/ui/input';
 
 import { NextLink } from '@/components/next-link';
 
-import { cn } from '@/utils/helper';
-
 import { createUser } from '@/features/user';
+import { cn } from '@/lib/util';
 
 import { type SignupDTO, signupSchema } from '../types';
 

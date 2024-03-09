@@ -34,10 +34,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { cn } from '@/utils/helper';
-
 import { type Article, useGetArticles } from '@/features/article';
-import { copyToClipboard, formatDateDetail } from '@/lib/util';
+import { cn , copyToClipboard, formatDateDetail } from '@/lib/util';
 
 import { DeleteArticleButton } from '../components/delete-article-button';
 

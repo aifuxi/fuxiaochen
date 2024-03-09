@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { cn } from '@/utils/helper';
-
 import { PATHS } from '@/config';
+
+import { cn } from '@/lib/util';
 
 export const navItems: Array<{
   label: string;
