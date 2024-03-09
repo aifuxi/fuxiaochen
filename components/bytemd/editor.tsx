@@ -9,13 +9,17 @@ import { uploadFile } from '@/app/actions/upload';
 
 import { plugins, sanitize } from './config';
 
-type Props = {
+type BytemdEditorProps = {
   content?: string;
   setContent: (content: string) => void;
   editorProps?: Partial<EditorProps>;
 };
 
-export function BytemdEditor({ content, setContent, editorProps }: Props) {
+export const BytemdEditor = ({
+  content,
+  setContent,
+  editorProps,
+}: BytemdEditorProps) => {
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
     const file = files[0];
     if (file) {
@@ -51,4 +55,4 @@ export function BytemdEditor({ content, setContent, editorProps }: Props) {
       }}
     />
   );
-}
+};

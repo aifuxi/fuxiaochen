@@ -2,14 +2,16 @@ import toast from 'react-hot-toast';
 
 import { format, toDate } from 'date-fns';
 
-export const copyToClipboard = async (text: string) => {
+export const copyToClipboard = (text: string) => {
   if (navigator.clipboard) {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success('已复制到粘贴板');
-    } catch (error) {
-      toast.error(error as string);
-    }
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        toast.success('已复制到粘贴板');
+      })
+      .catch((error) => {
+        toast.error(error as string);
+      });
   } else {
     toast.error('浏览器不支持 Clipboard API');
   }

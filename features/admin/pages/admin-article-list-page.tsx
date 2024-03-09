@@ -59,8 +59,8 @@ const columns = [
         <CopyIcon
           size={14}
           className="cursor-pointer ml-1"
-          onClick={async () => {
-            await copyToClipboard(info.getValue());
+          onClick={() => {
+            copyToClipboard(info.getValue());
           }}
         />
       </Badge>
