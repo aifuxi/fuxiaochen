@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { Check, ChevronDown, XSquare } from 'lucide-react';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 import { Badge } from './badge';
 import { Button } from './button';

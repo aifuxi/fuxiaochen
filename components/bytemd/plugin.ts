@@ -1,6 +1,6 @@
 import type { BytemdPlugin } from 'bytemd';
 
-import { copyToClipboard } from '@/lib/util';
+import { copyToClipboard } from '@/lib/utils';
 
 /**
  * 插件功能

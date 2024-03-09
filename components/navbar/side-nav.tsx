@@ -11,7 +11,7 @@ import { PATHS } from '@/config';
 
 import { buttonVariants } from '@/components/ui/button';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 const adminNavItems: Array<{
   label: string;

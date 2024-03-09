@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 const themeOptions = [
   {

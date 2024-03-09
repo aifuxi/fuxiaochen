@@ -39,7 +39,7 @@ import {
   useUpdateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
-import { toSlug } from '@/lib/util';
+import { toSlug } from '@/lib/utils';
 
 export const EditArticleForm = () => {
   const getTagsQuery = useGetTags();

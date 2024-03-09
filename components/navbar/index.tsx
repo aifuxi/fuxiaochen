@@ -7,7 +7,7 @@ import { GithubIcon } from 'lucide-react';
 
 import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/config';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';

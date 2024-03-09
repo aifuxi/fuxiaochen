@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { IllustrationNoContent } from '@/components/illustrations';
 
-import { toSimpleDateString } from '@/lib/util';
+import { toSimpleDateString } from '@/lib/utils';
 
 import { getPublishedArticles } from '../../actions/article';
 

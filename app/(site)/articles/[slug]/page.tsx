@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { toDetailDateString } from '@/lib/util';
+import { toDetailDateString } from '@/lib/utils';
 
 export async function generateMetadata({
   params,

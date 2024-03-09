@@ -7,7 +7,7 @@ import { ArrowBigUpDashIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 export default function BackToTop() {
   const [visible, { setFalse, setTrue }] = useBoolean(false);

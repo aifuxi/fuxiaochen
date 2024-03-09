@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { PATHS } from '@/config';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 export const navItems: Array<{
   label: string;

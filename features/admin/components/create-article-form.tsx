@@ -35,7 +35,7 @@ import {
   useCreateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
-import { toSlug } from '@/lib/util';
+import { toSlug } from '@/lib/utils';
 
 export const CreateArticleForm = () => {
   const router = useRouter();
