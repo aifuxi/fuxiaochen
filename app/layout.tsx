@@ -33,7 +33,7 @@ export default function RootLayout({ children }: FCProps) {
           href="/images/fuxiaochen-dark.svg"
         />
       </head>
-      <body className={'debug-screens shadow-black'}>
+      <body className={'debug-screen'}>
         <ReactQueryProvider>
           <NextThemeProvider attribute="class">
             {children}
