@@ -28,8 +28,6 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
 
-import { toSlug } from '@/utils/helper';
-
 import { CreateTagButton } from '@/features/admin';
 import {
   type CreateArticleDTO,
@@ -37,6 +35,7 @@ import {
   useCreateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
+import { formatSlug } from '@/lib/util';
 
 export const CreateArticleForm = () => {
   const router = useRouter();
@@ -68,7 +67,7 @@ export const CreateArticleForm = () => {
         <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
           <Button
             type="button"
-            onClick={() => form.handleSubmit(onSubmit)()}
+            onClick={() => form.handleSubmit(handleSubmit)()}
             variant={'outline'}
             className="!w-full"
           >
@@ -102,7 +101,7 @@ export const CreateArticleForm = () => {
                       {...field}
                       placeholder="请输入文章slug（只支持数字、字母、下划线、中划线）..."
                     />
-                    <Button type="button" onClick={formatSlug}>
+                    <Button type="button" onClick={handleFormatSlug}>
                       格式化
                     </Button>
                   </div>
@@ -234,15 +233,15 @@ export const CreateArticleForm = () => {
     </Form>
   );
 
-  async function onSubmit(values: CreateArticleDTO) {
+  async function handleSubmit(values: CreateArticleDTO) {
     await createArticleQuery.mutateAsync(values);
     router.push(PATHS.ADMIN_ARTICLE);
   }
 
-  function formatSlug() {
+  function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = toSlug(tmp);
+      const formatted = formatSlug(tmp);
       form.setValue('slug', formatted);
     }
   }

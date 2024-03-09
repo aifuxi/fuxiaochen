@@ -24,13 +24,12 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { toSlug } from '@/utils/helper';
-
 import {
   type CreateTagDTO,
   createTagSchema,
   useCreateTag,
 } from '@/features/tag';
+import { formatSlug } from '@/lib/util';
 
 export const CreateTagButton = () => {
   const [open, setOpen] = React.useState(false);
@@ -88,7 +87,7 @@ export const CreateTagButton = () => {
                     <FormControl>
                       <div className="flex items-center w-full gap-4">
                         <Input placeholder="请输入标签slug" {...field} />
-                        <Button type="button" onClick={formatSlug}>
+                        <Button type="button" onClick={handleFormatSlug}>
                           格式化
                         </Button>
                       </div>
@@ -122,10 +121,10 @@ export const CreateTagButton = () => {
     setOpen(false);
   }
 
-  function formatSlug() {
+  function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = toSlug(tmp);
+      const formatted = formatSlug(tmp);
       form.setValue('slug', formatted);
     }
   }
