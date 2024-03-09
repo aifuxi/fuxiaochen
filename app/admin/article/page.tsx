@@ -22,7 +22,8 @@ import {
 import { Pagination } from '@/components/pagination';
 
 import { cn } from '@/utils/helper';
-import { formatToDateTime } from '@/utils/time';
+
+import { formatDateDetail } from '@/lib/util';
 
 import { DeleteArticleItemButton } from './delete-article-item-button';
 import { TogglePublishSwitch } from './toggle-publish-switch';
@@ -102,10 +103,10 @@ export default async function AdminArticle({
                 </div>
               </TableCell>
               <TableCell className="!align-middle  w-[200px]">
-                {formatToDateTime(new Date(article.createdAt))}
+                {formatDateDetail(new Date(article.createdAt))}
               </TableCell>
               <TableCell className="!align-middle  w-[200px]">
-                {formatToDateTime(new Date(article.updatedAt))}
+                {formatDateDetail(new Date(article.updatedAt))}
               </TableCell>
 
               <TableCell className="!align-middle  w-[200px]">
