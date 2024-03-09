@@ -9,7 +9,7 @@ export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
-export const formatSlug = (s: string) => {
+export const toSlug = (s: string) => {
   if (!s) {
     return '';
   }
@@ -34,14 +34,20 @@ export const copyToClipboard = (text: string) => {
   }
 };
 
-export const formatDateDetail = (date: number | Date) => {
+export const toDetailDateString = (date: number | Date) => {
   const newDate = toDate(date);
 
   return format(newDate, 'MMMM dd, yyyy, EEEE, HH:mm:ss');
 };
 
-export const formatDateSimple = (date: number | Date) => {
+export const toSimpleDateString = (date: number | Date) => {
   const newDate = toDate(date);
 
   return format(newDate, 'MMMM dd, yyyy, EEEE');
+};
+
+export const toSlashDateString = (date: number | Date) => {
+  const newDate = toDate(date);
+
+  return format(newDate, 'yyyy/mm/dd HH:mm:ss, EEEE');
 };

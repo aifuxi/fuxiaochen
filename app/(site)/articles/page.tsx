@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 
 import { IllustrationNoContent } from '@/components/illustrations';
 
-import { formatDateSimple } from '@/lib/util';
+import { toSimpleDateString } from '@/lib/util';
 
 import { getPublishedArticles } from '../../actions/article';
 
@@ -63,7 +63,7 @@ export default async function ArticlesPage() {
                   <div className="text-sm flex">
                     <div className="flex-1 text-muted-foreground">
                       {NICKNAME}&nbsp;·&nbsp;
-                      {formatDateSimple(el.createdAt)}
+                      {toSimpleDateString(el.createdAt)}
                     </div>
                   </div>
                   <div className="flex flex-row gap-2">

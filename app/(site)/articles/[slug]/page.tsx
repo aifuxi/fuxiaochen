@@ -12,7 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { formatDateDetail } from '@/lib/util';
+import { toDetailDateString } from '@/lib/util';
 
 export async function generateMetadata({
   params,
@@ -59,7 +59,7 @@ export default async function ArticleDetailPage({
         <div className="text-sm flex flex-row items-center text-muted-foreground">
           <div>{NICKNAME}</div>
           <span className="mx-2">·</span>
-          <span>{formatDateDetail(article.createdAt)}</span>
+          <span>{toDetailDateString(article.createdAt)}</span>
         </div>
         <BytemdViewer content={article.content || ''} />
       </article>

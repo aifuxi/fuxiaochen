@@ -29,7 +29,7 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button size={'icon'} variant="ghost">
-          <TrashIcon size={16} />
+          <TrashIcon size={16} className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

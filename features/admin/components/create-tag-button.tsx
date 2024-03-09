@@ -29,7 +29,7 @@ import {
   createTagSchema,
   useCreateTag,
 } from '@/features/tag';
-import { formatSlug } from '@/lib/util';
+import { toSlug } from '@/lib/util';
 
 export const CreateTagButton = () => {
   const [open, setOpen] = React.useState(false);
@@ -124,7 +124,7 @@ export const CreateTagButton = () => {
   function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = formatSlug(tmp);
+      const formatted = toSlug(tmp);
       form.setValue('slug', formatted);
     }
   }
