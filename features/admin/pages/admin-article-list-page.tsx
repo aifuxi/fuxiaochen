@@ -31,6 +31,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { type Article, useGetArticles } from '@/features/article';
 import { cn, toSlashDateString } from '@/lib/utils';
@@ -100,11 +105,16 @@ const columns = [
     ),
     cell: (info) => (
       <div className="flex items-center gap-2">
-        <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
-          <Button size={'icon'} variant="ghost">
-            <PencilIcon size={16} />
-          </Button>
-        </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
+              <Button size={'icon'} variant="ghost">
+                <PencilIcon size={16} />
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>编辑</TooltipContent>
+        </Tooltip>
         <DeleteArticleButton id={info.getValue()} />
       </div>
     ),

@@ -7,6 +7,7 @@ import { type FCProps } from '@/types';
 import { NextThemeProvider, ReactQueryProvider } from '@/providers';
 
 import { Toaster } from '@/components/ui/toast';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 import BackToTop from '@/components/back-to-top';
 import { Console } from '@/components/console';
@@ -35,16 +36,18 @@ export default function RootLayout({ children }: FCProps) {
       </head>
       <body className={'debug-screen'}>
         <ReactQueryProvider>
-          <NextThemeProvider attribute="class">
-            {children}
-            <BackToTop />
+          <TooltipProvider>
+            <NextThemeProvider attribute="class">
+              {children}
+              <BackToTop />
 
-            <Toaster />
+              <Toaster />
 
-            <Console />
+              <Console />
 
-            <Favicon />
-          </NextThemeProvider>
+              <Favicon />
+            </NextThemeProvider>
+          </TooltipProvider>
         </ReactQueryProvider>
       </body>
     </html>
