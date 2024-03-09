@@ -33,7 +33,7 @@ import {
 } from '@/components/ui/table';
 
 import { type Article, useGetArticles } from '@/features/article';
-import { cn, toSlashDateString } from '@/lib/util';
+import { cn, toSlashDateString } from '@/lib/utils';
 
 import { DeleteArticleButton } from '../components/delete-article-button';
 

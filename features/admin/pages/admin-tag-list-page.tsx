@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/table';
 
 import { type Tag, useGetTags } from '@/features/tag';
-import { toSlashDateString } from '@/lib/util';
+import { toSlashDateString } from '@/lib/utils';
 
 import { CreateTagButton } from '../components/create-tag-button';
 import { DeleteTagButton } from '../components/delete-tag-button';

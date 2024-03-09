@@ -24,7 +24,7 @@ import { Input } from '@/components/ui/input';
 
 import { NextLink } from '@/components/next-link';
 
-import { cn } from '@/lib/util';
+import { cn } from '@/lib/utils';
 
 import { signinWithCredentials, signinWithGithub } from '../actions/signin';
 import { type SigninDTO, signinSchema } from '../types';

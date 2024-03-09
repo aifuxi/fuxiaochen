@@ -32,7 +32,7 @@ import {
   useGetTag,
   useUpdateTag,
 } from '@/features/tag';
-import { toSlug } from '@/lib/util';
+import { toSlug } from '@/lib/utils';
 
 type EditTagButtonProps = {
   id: string;

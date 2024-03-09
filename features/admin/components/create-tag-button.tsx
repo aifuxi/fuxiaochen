@@ -29,7 +29,7 @@ import {
   createTagSchema,
   useCreateTag,
 } from '@/features/tag';
-import { toSlug } from '@/lib/util';
+import { toSlug } from '@/lib/utils';
 
 export const CreateTagButton = () => {
   const [open, setOpen] = React.useState(false);
