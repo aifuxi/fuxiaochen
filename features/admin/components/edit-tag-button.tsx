@@ -23,6 +23,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { LoadingSpinner } from '@/components/loading-spinner';
 
@@ -61,9 +66,14 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
-          <PencilIcon size={16} />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
+              <PencilIcon size={16} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>编辑</TooltipContent>
+        </Tooltip>
       </DialogTrigger>
       <DialogContent>
         <LoadingSpinner loading={isLoading} />

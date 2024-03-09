@@ -15,6 +15,11 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { useDeleteArticle } from '@/features/article';
 
@@ -28,9 +33,14 @@ export const DeleteArticleButton = ({ id }: DeleteArticleButtonProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="ghost">
-          <TrashIcon size={16} className="text-destructive" />
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button size={'icon'} variant="ghost">
+              <TrashIcon size={16} className="text-destructive" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>删除</TooltipContent>
+        </Tooltip>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogTrigger>
