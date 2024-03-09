@@ -7,3 +7,4 @@ export * from './pages/admin-home-page';
 export * from './pages/admin-tag-list-page';
 export * from './pages/create-article-page';
 export * from './pages/edit-article-page';
+export * from './pages/admin-article-list-page';

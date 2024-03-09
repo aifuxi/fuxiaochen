@@ -2,10 +2,7 @@
 
 import * as React from 'react';
 
-import { type Article } from '@prisma/client';
 import { TrashIcon } from 'lucide-react';
-
-import { deleteArticle } from '@/app/actions/article';
 
 import {
   AlertDialog,
@@ -19,15 +16,19 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-type Props = {
-  article: Article;
+import { useDeleteArticle } from '@/features/article';
+
+type DeleteArticleButtonProps = {
+  id: string;
 };
 
-export function DeleteArticleItemButton({ article }: Props) {
+export const DeleteArticleButton = ({ id }: DeleteArticleButtonProps) => {
+  const deleteArticleQuery = useDeleteArticle();
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'}>
+        <Button size={'icon'} variant="ghost">
           <TrashIcon size={16} />
         </Button>
       </AlertDialogTrigger>
@@ -38,15 +39,13 @@ export function DeleteArticleItemButton({ article }: Props) {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={async () => {
-              await deleteArticle(article.id);
-            }}
-          >
-            删除
-          </AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete}>删除</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+
+  async function handleDelete() {
+    await deleteArticleQuery.mutateAsync(id);
+  }
+};
