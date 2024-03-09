@@ -10,11 +10,11 @@
     "build": "next build",
     "lint": "next lint",
     "prepare": "husky install",
-    "lint:fix": "eslint --no-cache --fix ./",
+    "lint:fix": "eslint --fix .",
     "formate": "prettier --write --log-level warn \"./**/*.{js,jsx,ts,tsx}\"",
     "cz": "git cz",
     "db:gen": "prisma generate",
-    "db:migrate": "prisma migrate dev",
+    "db:dev": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:push": "prisma db push"
   },
