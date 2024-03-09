@@ -230,12 +230,10 @@ export function EditForm({
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
-                  <div id="aifuxi-content-editor">
-                    <BytemdEditor
-                      content={field.value}
-                      setContent={field.onChange}
-                    />
-                  </div>
+                  <BytemdEditor
+                    content={field.value}
+                    setContent={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
