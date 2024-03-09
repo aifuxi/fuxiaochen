@@ -2,6 +2,8 @@ import { type infer as Infer, z } from 'zod';
 
 import { REGEX } from '@/config';
 
+import { type getArticles } from '../actions';
+
 export const createArticleSchema = z.object({
   title: z.string().min(1, { message: '长度不能少于1个字符' }),
   slug: z
@@ -23,3 +25,7 @@ export const updateArticleSchema = createArticleSchema.partial().extend({
 
 export type CreateArticleDTO = Infer<typeof createArticleSchema>;
 export type UpdateArticleDTO = Infer<typeof updateArticleSchema>;
+
+export type Article = Awaited<
+  ReturnType<typeof getArticles>
+>['articles'][number];

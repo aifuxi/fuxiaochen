@@ -32,7 +32,7 @@
   "include": [
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "next.config.cjs",
+    "next.config.mjs",
 
     "**/*.ts",
     "**/*.tsx",
