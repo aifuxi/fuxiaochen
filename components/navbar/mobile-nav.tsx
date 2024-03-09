@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 
-import { cn } from '@/utils/helper';
+import { cn } from '@/lib/util';
 
 import { navItems } from './nav-list';
 

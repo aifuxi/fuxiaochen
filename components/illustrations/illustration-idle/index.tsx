@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { cn } from '@/utils/helper';
+import { cn } from '@/lib/util';
 
 import { IllustrationIdleDark } from './illustration-idle-dark';
 import { IllustrationIdleLight } from './illustration-idle-light';

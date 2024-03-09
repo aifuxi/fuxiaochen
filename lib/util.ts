@@ -1,6 +1,12 @@
 import toast from 'react-hot-toast';
 
+import { type ClassValue, clsx } from 'clsx';
 import { format, toDate } from 'date-fns';
+import { twMerge } from 'tailwind-merge';
+
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs));
+};
 
 export const copyToClipboard = (text: string) => {
   if (navigator.clipboard) {
