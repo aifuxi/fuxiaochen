@@ -4,14 +4,13 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { type Tag } from '@prisma/client';
-import { type z } from 'zod';
+import { useRouter } from 'next/navigation';
 
-import { createArticle } from '@/app/actions/article';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { uploadFile } from '@/app/actions/upload';
 
-import { type CreateArticleReq, createArticleReqSchema } from '@/types';
+import { PATHS } from '@/config';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -32,11 +31,26 @@ import { BytemdEditor } from '@/components/bytemd';
 import { toSlug } from '@/utils/helper';
 
 import { CreateTagButton } from '@/features/admin';
+import {
+  type CreateArticleDTO,
+  createArticleSchema,
+  useCreateArticle,
+} from '@/features/article';
+import { useGetTags } from '@/features/tag';
 
-export function CreateForm({ tags }: { tags?: Tag[] }) {
+export const CreateArticleForm = () => {
+  const router = useRouter();
+
+  const getTagsQuery = useGetTags();
+  const tags = React.useMemo(() => {
+    return getTagsQuery.data?.tags ?? [];
+  }, [getTagsQuery]);
+
+  const createArticleQuery = useCreateArticle();
+
   const [cover, setCover] = React.useState('');
-  const form = useForm<z.infer<typeof createArticleReqSchema>>({
-    resolver: zodResolver(createArticleReqSchema),
+  const form = useForm<CreateArticleDTO>({
+    resolver: zodResolver(createArticleSchema),
     defaultValues: {
       title: '',
       slug: '',
@@ -47,18 +61,6 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
       tags: [],
     },
   });
-
-  async function onSubmit(values: CreateArticleReq) {
-    await createArticle(values);
-  }
-
-  function formatSlug() {
-    const tmp = form.getValues().slug?.trim();
-    if (tmp) {
-      const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
-    }
-  }
 
   return (
     <Form {...form}>
@@ -218,12 +220,10 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
-                  <div id="aifuxi-content-editor">
-                    <BytemdEditor
-                      content={field.value}
-                      setContent={field.onChange}
-                    />
-                  </div>
+                  <BytemdEditor
+                    content={field.value}
+                    setContent={field.onChange}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -233,4 +233,17 @@ export function CreateForm({ tags }: { tags?: Tag[] }) {
       </form>
     </Form>
   );
-}
+
+  async function onSubmit(values: CreateArticleDTO) {
+    await createArticleQuery.mutateAsync(values);
+    router.push(PATHS.ADMIN_ARTICLE);
+  }
+
+  function formatSlug() {
+    const tmp = form.getValues().slug?.trim();
+    if (tmp) {
+      const formatted = toSlug(tmp);
+      form.setValue('slug', formatted);
+    }
+  }
+};
