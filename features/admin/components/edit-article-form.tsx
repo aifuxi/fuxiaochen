@@ -4,17 +4,17 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Article, type Tag } from '@prisma/client';
 import { isNil } from 'lodash-es';
 import { type z } from 'zod';
 
-import { updateArticle } from '@/app/actions/article';
 import { uploadFile } from '@/app/actions/upload';
 
-import { type UpdateArticleReq, updateArticleReqSchema } from '@/types';
+import { PATHS } from '@/config';
+
+import { updateArticleReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -35,14 +35,27 @@ import { BytemdEditor } from '@/components/bytemd';
 import { toSlug } from '@/utils/helper';
 
 import { CreateTagButton } from '@/features/admin';
+import {
+  type UpdateArticleDTO,
+  useGetArticle,
+  useUpdateArticle,
+} from '@/features/article';
+import { useGetTags } from '@/features/tag';
 
-export function EditForm({
-  article,
-  tags,
-}: {
-  article?: Article & { tags?: Tag[] };
-  tags?: Tag[];
-}) {
+export const EditArticleForm = () => {
+  const getTagsQuery = useGetTags();
+  const tags = React.useMemo(() => {
+    return getTagsQuery.data?.tags ?? [];
+  }, [getTagsQuery]);
+
+  const { id } = useParams<{ id: string }>();
+  const getArticleQuery = useGetArticle(id);
+  const article = React.useMemo(() => {
+    return getArticleQuery.data?.article;
+  }, [getArticleQuery]);
+
+  const updateArticleQuery = useUpdateArticle();
+
   const router = useRouter();
   const [cover, setCover] = React.useState(article?.cover);
   const form = useForm<z.infer<typeof updateArticleReqSchema>>({
@@ -59,18 +72,16 @@ export function EditForm({
     },
   });
 
-  async function onSubmit(values: UpdateArticleReq) {
-    await updateArticle(values);
-    router.back();
-  }
-
-  function formatSlug() {
-    const tmp = form.getValues().slug?.trim();
-    if (tmp) {
-      const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
-    }
-  }
+  React.useEffect(() => {
+    form.setValue('title', article?.title ?? '');
+    form.setValue('id', article?.id ?? '');
+    form.setValue('slug', article?.slug ?? '');
+    form.setValue('description', article?.description ?? '');
+    form.setValue('content', article?.content ?? '');
+    form.setValue('published', article?.published ?? true);
+    form.setValue('cover', article?.cover ?? '');
+    form.setValue('tags', article?.tags?.map((el) => el.id) ?? []);
+  }, [article, form]);
 
   return (
     <Form {...form}>
@@ -243,4 +254,17 @@ export function EditForm({
       </form>
     </Form>
   );
-}
+
+  async function onSubmit(values: UpdateArticleDTO) {
+    await updateArticleQuery.mutateAsync(values);
+    router.push(PATHS.ADMIN_ARTICLE);
+  }
+
+  function formatSlug() {
+    const tmp = form.getValues().slug?.trim();
+    if (tmp) {
+      const formatted = toSlug(tmp);
+      form.setValue('slug', formatted);
+    }
+  }
+};

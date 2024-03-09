@@ -30,7 +30,12 @@ export const getArticles = async () => {
 };
 
 export const getArticleByID = async (id: string) => {
-  const article = await prisma.article.findUnique({ where: { id } });
+  const article = await prisma.article.findUnique({
+    where: { id },
+    include: {
+      tags: true,
+    },
+  });
 
   return { article };
 };
