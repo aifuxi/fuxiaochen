@@ -6,10 +6,10 @@ import { Viewer } from '@bytemd/react';
 
 import { plugins, sanitize } from './config';
 
-type Props = {
+type BytemdViewerProps = {
   content: string;
 };
 
-export function BytemdViewer({ content }: Props) {
+export const BytemdViewer = ({ content }: BytemdViewerProps) => {
   return <Viewer value={content} plugins={plugins} sanitize={sanitize} />;
-}
+};

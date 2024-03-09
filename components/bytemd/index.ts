@@ -1,2 +1,2 @@
-export { BytemdEditor } from './editor';
-export { BytemdViewer } from './viewer';
+export * from './editor';
+export * from './viewer';
