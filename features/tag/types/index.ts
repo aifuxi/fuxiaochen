@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 import { REGEX } from '@/config';
 
+import { type getTags } from '../actions';
+
 export const createTagSchema = z.object({
   name: z.string().min(1, { message: '长度不能少于1个字符' }),
   slug: z
@@ -16,3 +18,5 @@ export const updateTagSchema = createTagSchema.partial().extend({
 
 export type CreateTagDTO = z.infer<typeof createTagSchema>;
 export type UpdateTagDTO = z.infer<typeof updateTagSchema>;
+
+export type Tag = Awaited<ReturnType<typeof getTags>>['tags'][number];

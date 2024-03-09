@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type Tag } from '@prisma/client';
 import { Loader2Icon, PencilIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -37,16 +36,16 @@ import {
 } from '@/features/tag';
 
 type EditTagButtonProps = {
-  tag: Tag;
+  id: string;
 };
 
-export const EditTagButton = ({ tag }: EditTagButtonProps) => {
+export const EditTagButton = ({ id }: EditTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateTagDTO>({
     resolver: zodResolver(updateTagSchema),
   });
 
-  const { data, isLoading } = useGetTag(tag.id);
+  const { data, isLoading } = useGetTag(id);
 
   const updateTagQuery = useUpdateTag();
 
@@ -63,7 +62,7 @@ export const EditTagButton = ({ tag }: EditTagButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={'icon'} onClick={() => setOpen(true)}>
+        <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
           <PencilIcon size={16} />
         </Button>
       </DialogTrigger>

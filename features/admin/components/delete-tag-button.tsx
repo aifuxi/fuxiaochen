@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import { type Tag } from '@prisma/client';
 import { Loader2Icon, TrashIcon } from 'lucide-react';
 
 import {
@@ -20,16 +19,16 @@ import { Button } from '@/components/ui/button';
 import { useDeleteTag } from '@/features/tag';
 
 type DeleteTagButtonProps = {
-  tag: Tag;
+  id: string;
 };
 
-export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
+export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
   const deleteTagQuery = useDeleteTag();
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'}>
+        <Button size={'icon'} variant="ghost">
           <TrashIcon size={16} />
         </Button>
       </AlertDialogTrigger>
@@ -55,6 +54,6 @@ export const DeleteTagButton = ({ tag }: DeleteTagButtonProps) => {
   );
 
   async function handleDeleteTag() {
-    await deleteTagQuery.mutateAsync(tag.id);
+    await deleteTagQuery.mutateAsync(id);
   }
 };

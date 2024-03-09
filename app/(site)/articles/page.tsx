@@ -2,13 +2,13 @@ import { type Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { format } from 'date-fns';
-
 import { NICKNAME, PATHS } from '@/config';
 
 import { Badge } from '@/components/ui/badge';
 
 import { IllustrationNoContent } from '@/components/illustrations';
+
+import { formatDateSimple } from '@/lib/util';
 
 import { getPublishedArticles } from '../../actions/article';
 
@@ -63,7 +63,7 @@ export default async function ArticlesPage() {
                   <div className="text-sm flex">
                     <div className="flex-1 text-muted-foreground">
                       {NICKNAME}&nbsp;·&nbsp;
-                      {format(el.createdAt, 'MMMM dd, yyyy')}
+                      {formatDateSimple(el.createdAt)}
                     </div>
                   </div>
                   <div className="flex flex-row gap-2">

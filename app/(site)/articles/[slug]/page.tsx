@@ -1,17 +1,18 @@
 import { type Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import { format } from 'date-fns';
 import { isNil } from 'lodash-es';
 
 import { getArticleBySlug } from '@/app/actions/article';
+
+import { NICKNAME } from '@/config';
 
 import { Badge } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { NICKNAME } from '@/config';
+import { formatDateDetail } from '@/lib/util';
 
 export async function generateMetadata({
   params,
@@ -58,7 +59,7 @@ export default async function ArticleDetailPage({
         <div className="text-sm flex flex-row items-center text-muted-foreground">
           <div>{NICKNAME}</div>
           <span className="mx-2">·</span>
-          <span>{format(article.createdAt, 'MMMM dd, yyyy')}</span>
+          <span>{formatDateDetail(article.createdAt)}</span>
         </div>
         <BytemdViewer content={article.content || ''} />
       </article>
