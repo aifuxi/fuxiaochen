@@ -32,11 +32,7 @@
 }
 
 .markdown-body pre > .copy-code-button {
-  @apply absolute right-4 top-0 z-[1] flex h-[40px] cursor-pointer items-center text-lg opacity-100 transition-opacity ease-in-out xl:opacity-0;
-}
-
-.markdown-body pre:hover > .copy-code-button {
-  @apply opacity-100;
+  @apply absolute right-4 top-0 z-[1] flex h-[40px] cursor-pointer items-center text-lg;
 }
 
 .markdown-body pre::after {

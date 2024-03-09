@@ -1,12 +1,10 @@
-import Link, { type LinkProps } from 'next/link';
-
-import { type FCProps } from '@/types';
+import Link from 'next/link';
 
 import { cn } from '@/utils/helper';
 
 import { buttonVariants } from '../ui/button';
 
-export type NextLinkProps = LinkProps & { className?: string } & FCProps;
+export type NextLinkProps = React.ComponentProps<typeof Link>;
 
 export const NextLink = ({ className, children, ...props }: NextLinkProps) => {
   return (
@@ -18,6 +16,7 @@ export const NextLink = ({ className, children, ...props }: NextLinkProps) => {
         className,
       )}
     >
+      <a href=""></a>
       {children}
     </Link>
   );
