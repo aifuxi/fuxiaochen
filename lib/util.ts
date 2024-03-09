@@ -2,10 +2,21 @@ import toast from 'react-hot-toast';
 
 import { type ClassValue, clsx } from 'clsx';
 import { format, toDate } from 'date-fns';
+import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
+};
+
+export const formatSlug = (s: string) => {
+  if (!s) {
+    return '';
+  }
+
+  return slugify(s, {
+    lower: true,
+  });
 };
 
 export const copyToClipboard = (text: string) => {

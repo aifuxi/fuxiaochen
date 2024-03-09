@@ -26,14 +26,13 @@ import { Input } from '@/components/ui/input';
 
 import { LoadingSpinner } from '@/components/loading-spinner';
 
-import { toSlug } from '@/utils/helper';
-
 import {
   type UpdateTagDTO,
   updateTagSchema,
   useGetTag,
   useUpdateTag,
 } from '@/features/tag';
+import { formatSlug } from '@/lib/util';
 
 type EditTagButtonProps = {
   id: string;
@@ -113,7 +112,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                     <FormControl>
                       <div className="flex items-center w-full gap-4">
                         <Input placeholder="请输入标签slug" {...field} />
-                        <Button type="button" onClick={formatSlug}>
+                        <Button type="button" onClick={handleFormatSlug}>
                           格式化
                         </Button>
                       </div>
@@ -147,10 +146,10 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
     setOpen(false);
   }
 
-  function formatSlug() {
+  function handleFormatSlug() {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
-      const formatted = toSlug(tmp);
+      const formatted = formatSlug(tmp);
       form.setValue('slug', formatted);
     }
   }
