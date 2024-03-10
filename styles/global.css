@@ -6,7 +6,6 @@
 
 @import 'bytemd/dist/index.css';
 @import './bytemd.css';
-@import './scrollbar.css';
 @import './github-light.css';
 @import './github-dark.css';
 @import './toc.css';

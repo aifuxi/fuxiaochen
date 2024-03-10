@@ -25,8 +25,17 @@
 }
 
 .markdown-body pre {
-  @apply relative !my-0 !rounded-xl border !bg-background !p-0 text-primary;
+  @apply relative !my-0 !rounded-xl border !bg-background/50 !p-0 text-primary;
 }
+
+.markdown-body code::-webkit-scrollbar {
+  @apply h-1.5 w-1.5;
+}
+
+.markdown-body code::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground) / 0.2);
+}
+
 .markdown-body pre > code {
   @apply mt-10;
 }
