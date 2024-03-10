@@ -27,6 +27,7 @@
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
     "@bytemd/plugin-mermaid": "^1.21.0",
     "@bytemd/react": "^1.21.0",
+    "@fontsource-variable/nunito": "^5.0.18",
     "@hookform/resolvers": "^3.3.2",
     "@prisma/client": "5.10.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",

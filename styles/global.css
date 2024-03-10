@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import '@fontsource-variable/nunito';
+
 @import 'bytemd/dist/index.css';
-@import './poppins-font.css';
 @import './bytemd.css';
 @import './scrollbar.css';
 @import './github-light.css';
