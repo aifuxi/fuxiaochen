@@ -8,8 +8,6 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { uploadFile } from '@/app/actions/upload';
-
 import { PATHS } from '@/config';
 
 import { Button } from '@/components/ui/button';
@@ -35,6 +33,7 @@ import {
   useCreateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
+import { uploadFile } from '@/features/upload';
 import { toSlug } from '@/lib/utils';
 
 export const CreateArticleForm = () => {

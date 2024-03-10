@@ -43,7 +43,7 @@ export const toDetailDateString = (date: number | Date) => {
 export const toSimpleDateString = (date: number | Date) => {
   const newDate = toDate(date);
 
-  return format(newDate, 'MMMM dd, yyyy, EEEE');
+  return format(newDate, 'MMMM dd, yyyy');
 };
 
 export const toSlashDateString = (date: number | Date) => {

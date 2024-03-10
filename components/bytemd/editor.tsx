@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
-import { uploadFile } from '@/app/actions/upload';
+import { uploadFile } from '@/features/upload';
 
 import { plugins, sanitize } from './config';
 

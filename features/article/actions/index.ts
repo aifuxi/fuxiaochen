@@ -29,9 +29,44 @@ export const getArticles = async () => {
   return { articles, total };
 };
 
+export const getPublishedArticles = async () => {
+  const articles = await prisma.article.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      tags: true,
+    },
+    where: {
+      published: true,
+    },
+  });
+
+  const count = await prisma.article.count({
+    where: {
+      published: true,
+    },
+  });
+
+  const total = count ?? 0;
+
+  return { articles, total };
+};
+
 export const getArticleByID = async (id: string) => {
   const article = await prisma.article.findUnique({
     where: { id },
+    include: {
+      tags: true,
+    },
+  });
+
+  return { article };
+};
+
+export const getPlublishedArticleBySlug = async (slug: string) => {
+  const article = await prisma.article.findUnique({
+    where: { slug, published: true },
     include: {
       tags: true,
     },

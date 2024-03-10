@@ -8,13 +8,8 @@ import { useParams, useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil } from 'lodash-es';
-import { type z } from 'zod';
-
-import { uploadFile } from '@/app/actions/upload';
 
 import { PATHS } from '@/config';
-
-import { updateArticleReqSchema } from '@/types';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -35,10 +30,12 @@ import { BytemdEditor } from '@/components/bytemd';
 import { CreateTagButton } from '@/features/admin';
 import {
   type UpdateArticleDTO,
+  updateArticleSchema,
   useGetArticle,
   useUpdateArticle,
 } from '@/features/article';
 import { useGetTags } from '@/features/tag';
+import { uploadFile } from '@/features/upload';
 import { toSlug } from '@/lib/utils';
 
 export const EditArticleForm = () => {
@@ -57,8 +54,8 @@ export const EditArticleForm = () => {
 
   const router = useRouter();
   const [cover, setCover] = React.useState(article?.cover);
-  const form = useForm<z.infer<typeof updateArticleReqSchema>>({
-    resolver: zodResolver(updateArticleReqSchema),
+  const form = useForm<UpdateArticleDTO>({
+    resolver: zodResolver(updateArticleSchema),
     defaultValues: {
       title: article?.title ?? '',
       id: article?.id ?? '',
