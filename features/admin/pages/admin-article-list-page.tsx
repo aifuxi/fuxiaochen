@@ -91,7 +91,7 @@ const columns = [
     header: () => (
       <div className="flex space-x-1 items-center">
         <CalendarIcon size={14} />
-        <span>最后更新时间</span>
+        <span>更新时间</span>
       </div>
     ),
     cell: (info) => toSlashDateString(info.getValue()),
