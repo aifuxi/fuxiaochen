@@ -58,8 +58,8 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Poppins', 'PingFang', ...fontFamily.sans],
-        mono: ['JetBrains Mono', 'Fira Code', ...fontFamily.mono],
+        sans: ['Nunito Variable', 'PingFang', ...fontFamily.sans],
+        mono: [...fontFamily.mono],
       },
       keyframes: {
         'accordion-down': {
