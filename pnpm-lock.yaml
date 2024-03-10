@@ -29,9 +29,9 @@ dependencies:
   '@bytemd/react':
     specifier: ^1.21.0
     version: 1.21.0(react@18.2.0)
-  '@fontsource-variable/nunito':
+  '@fontsource-variable/rubik':
     specifier: ^5.0.18
-    version: 5.0.18
+    version: 5.0.21
   '@hookform/resolvers':
     specifier: ^3.3.2
     version: 3.3.2(react-hook-form@7.48.2)
@@ -1076,8 +1076,8 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  /@fontsource-variable/nunito@5.0.18:
-    resolution: {integrity: sha512-DaAMnvCuwxv2tCjUIGudvayzO3jjsDEH2DcqcgwRZnjBp5RZRynYkV4aBmvMkQ+Grzpm7MMTqNltiLcJxqSeAQ==}
+  /@fontsource-variable/rubik@5.0.21:
+    resolution: {integrity: sha512-Af9eFEpA9AHC1aizYfKoL4L1sjJvp93nCjhEdPFRDgHo4cO3vNrPkbdg+ER1oO3IASkjFYBPcc35QcpbRTQXTA==}
     dev: false
 
   /@hookform/resolvers@3.3.2(react-hook-form@7.48.2):
