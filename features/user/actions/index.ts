@@ -2,20 +2,16 @@
 
 import { hashSync } from 'bcryptjs';
 
-import { type ErrorResponse } from '@/types';
-
 import { type SignupDTO, signupSchema } from '@/features/auth';
 import { prisma } from '@/lib/prisma';
 
-export const createUser = async (
-  params: SignupDTO,
-): Promise<ErrorResponse | void> => {
+export const createUser = async (params: SignupDTO) => {
   const result = await signupSchema.safeParseAsync(params);
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(';');
     // TODO: 记录日志
-    return { error };
+    throw new Error(error);
   }
 
   const isExist = await prisma.user.findUnique({
@@ -25,9 +21,7 @@ export const createUser = async (
   });
 
   if (isExist) {
-    return {
-      error: '当前邮箱已注册！',
-    };
+    throw new Error('当前邮箱已注册！');
   }
 
   const hashedPassword = hashSync(result.data.password);
