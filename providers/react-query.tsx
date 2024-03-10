@@ -14,7 +14,10 @@ export const ReactQueryProvider = ({ children }: FCProps) => {
     <QueryClientProvider client={queryClient}>
       {children}
       {process.env.NODE_ENV === 'development' && (
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition="top-left" />
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-left"
+        />
       )}
     </QueryClientProvider>
   );
