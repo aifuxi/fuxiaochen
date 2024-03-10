@@ -17,7 +17,7 @@ const saveFile = async (file: File) => {
   return baseURL;
 };
 
-export async function uploadFile(formData: FormData) {
+export const uploadFile = async (formData: FormData) => {
   // Get file from formData
   const file = formData.get('file') as File;
 
@@ -39,4 +39,4 @@ export async function uploadFile(formData: FormData) {
   }
 
   return url;
-}
+};
