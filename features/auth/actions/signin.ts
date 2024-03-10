@@ -4,8 +4,6 @@ import { AuthError } from 'next-auth';
 
 import { PATHS } from '@/config';
 
-import { type ErrorResponse } from '@/types';
-
 import { signIn } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
@@ -17,15 +15,13 @@ export const signinWithGithub = async () => {
   });
 };
 
-export const signinWithCredentials = async (
-  params: SigninDTO,
-): Promise<ErrorResponse | void> => {
+export const signinWithCredentials = async (params: SigninDTO) => {
   const result = await signinSchema.safeParseAsync(params);
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(';');
     // TODO: 记录日志
-    return { error };
+    throw new Error(error);
   }
 
   const isExist = await prisma.user.findUnique({
@@ -36,7 +32,7 @@ export const signinWithCredentials = async (
 
   if (!isExist) {
     // TODO: 记录日志
-    return { error: '邮箱或密码错误' };
+    throw new Error('邮箱或密码错误');
   }
 
   try {
@@ -47,7 +43,7 @@ export const signinWithCredentials = async (
   } catch (error) {
     if (error instanceof AuthError) {
       // TODO: 记录日志
-      return { error: '邮箱或密码错误' };
+      throw new Error('邮箱或密码错误');
     }
 
     throw error;

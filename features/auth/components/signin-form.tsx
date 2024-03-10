@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUnmount } from 'ahooks';
@@ -129,11 +130,24 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
 
   async function handleSubmit(values: SigninDTO) {
     showLoading();
-    await signinWithCredentials(values);
+    try {
+      await signinWithCredentials(values);
+      toast.success('登录成功');
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      hideLoading();
+    }
   }
 
   async function handleSignUpWithGithub() {
-    showLoading();
-    await signinWithGithub();
+    try {
+      await signinWithGithub();
+      toast.success('登录成功');
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      hideLoading();
+    }
   }
 };
