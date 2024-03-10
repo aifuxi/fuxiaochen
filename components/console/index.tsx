@@ -4,7 +4,7 @@
 import { ASCII_ART_FONT, NICKNAME, SOURCE_CODE_GITHUB_PAGE } from '@/config';
 
 const fontFamily =
-  'font-family: Nunito Variable, PingFang SC, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";';
+  'font-family: Rubik Variable, PingFang SC, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";';
 
 // 放到这里执行，保证只输出一次
 console.log(ASCII_ART_FONT);

@@ -58,7 +58,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Nunito Variable', 'PingFang', ...fontFamily.sans],
+        sans: ['Rubik Variable', 'PingFang', ...fontFamily.sans],
         mono: [...fontFamily.mono],
       },
       keyframes: {
