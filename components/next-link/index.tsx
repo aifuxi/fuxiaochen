@@ -16,7 +16,6 @@ export const NextLink = ({ className, children, ...props }: NextLinkProps) => {
         className,
       )}
     >
-      <a href=""></a>
       {children}
     </Link>
   );

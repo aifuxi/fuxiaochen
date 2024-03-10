@@ -46,7 +46,7 @@ export default async function ArticleDetailPage({
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="max-w-[65ch] mx-auto py-24">
       <article>
         {article.cover && (
           <img

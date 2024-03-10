@@ -21,7 +21,7 @@ export default async function ArticlesPage() {
   const { articles } = await getPublishedArticles();
 
   return (
-    <div className="w-full flex flex-col justify-center max-w-screen-md gap-5 min-h-full">
+    <div className="w-full flex flex-col justify-center max-w-screen-md gap-5 min-h-full mx-auto pt-24">
       <h2 className="text-4xl md:text-5xl leading-[1.125] font-bold tracking-tight">
         文章
       </h2>
