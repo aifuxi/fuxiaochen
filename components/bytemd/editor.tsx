@@ -10,13 +10,13 @@ import { uploadFile } from '@/features/upload';
 import { plugins, sanitize } from './config';
 
 type BytemdEditorProps = {
-  content?: string;
-  setContent: (content: string) => void;
+  body?: string;
+  setContent: (body: string) => void;
   editorProps?: Partial<EditorProps>;
 };
 
 export const BytemdEditor = ({
-  content,
+  body,
   setContent,
   editorProps,
 }: BytemdEditorProps) => {
@@ -43,7 +43,7 @@ export const BytemdEditor = ({
 
   return (
     <Editor
-      value={content ?? ''}
+      value={body ?? ''}
       plugins={plugins}
       placeholder="请输入内容..."
       sanitize={sanitize}

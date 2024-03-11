@@ -14,7 +14,7 @@ export const createArticleSchema = z.object({
     .min(1, { message: '长度不能少于1个字符' }),
   description: z.string().min(1, { message: '长度不能少于1个字符' }),
   cover: z.string().min(1, { message: '长度不能少于1个字符' }).optional(),
-  content: z.string().min(1, { message: '长度不能少于1个字符' }),
+  body: z.string().min(1, { message: '长度不能少于1个字符' }),
   published: z.boolean().optional(),
   tags: z.string().array().optional(),
 });

@@ -53,7 +53,7 @@ export const CreateArticleForm = () => {
       title: '',
       slug: '',
       description: '',
-      content: '',
+      body: '',
       published: true,
       cover: '',
       tags: [],
@@ -213,13 +213,13 @@ export const CreateArticleForm = () => {
           />
           <FormField
             control={form.control}
-            name="content"
+            name="body"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
                   <BytemdEditor
-                    content={field.value}
+                    body={field.value}
                     setContent={field.onChange}
                   />
                 </FormControl>

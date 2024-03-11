@@ -114,7 +114,7 @@ export const createArticle = async (params: CreateArticleDTO) => {
       title: result.data.title,
       slug: result.data.slug,
       description: result.data.description,
-      content: result.data.content,
+      body: result.data.body,
       published: result.data.published,
       cover: result.data.cover,
       tags: {
@@ -183,7 +183,7 @@ export const updateArticle = async (params: UpdateArticleDTO) => {
       description: result.data.description,
       slug: result.data.slug,
       cover: result.data.cover,
-      content: result.data.content,
+      body: result.data.body,
       published: result.data.published,
       tags: {
         connect: needConnect?.length

@@ -18,6 +18,7 @@
 next-env.d.ts
 
 .env.production
+.env
 
 # production
 /build
@@ -44,3 +45,4 @@ yarn-error.log*
 
 # 本地上传的文件
 /public/uploads/*
+

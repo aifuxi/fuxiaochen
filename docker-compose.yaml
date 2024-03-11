@@ -1,0 +1,40 @@
+version: '3'
+services:
+  mysql8:
+    image: mysql:8
+    cap_add:
+      # 添加到SYS NICE的上限会抑制一些没用的错误消息
+      - SYS_NICE
+    # 要求docker-compose在失败时总是重新启动这个容器
+    # restart: always
+    environment:
+      # 方法一：设置时区为上海
+      - TZ=Asia/Shanghai
+      # - SET_CONTAINER_TIMEZONE=true # 方法二： 设置时区为上海
+      # - CONTAINER_TIMEZONE=Asia/Shanghai # 方法二： 设置时区为上海
+      # mysql启动时自动创建数据库
+      - MYSQL_DATABASE=fuxiaochen
+      # 设置root账户密码
+      - MYSQL_ROOT_PASSWORD=123456
+    volumes:
+      - fuxiaochen_mysql8_db:/data/db
+    # 和本机共享网络，设置了host模式的网络，就不需要暴露端口了，因为是和主机共享了
+    # network_mode: 'host'
+    # 设置了host模式的网络，就不需要暴露端口了，因为是和主机共享了
+    ports:
+      - 3306:3306
+    command: [
+        'mysqld',
+        # 设置字符编码
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+      ]
+    networks:
+      - my_network
+
+volumes:
+  fuxiaochen_mysql8_db:
+
+networks:
+  my_network:
+    driver: bridge
