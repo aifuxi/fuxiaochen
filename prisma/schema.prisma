@@ -67,12 +67,11 @@ model Tag {
   name     String    @unique
   slug     String    @unique
   articles Article[]
+  snippets Snippet[]
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Snippet   Snippet? @relation(fields: [snippetId], references: [id])
-  snippetId String?
 }
 
 model Article {

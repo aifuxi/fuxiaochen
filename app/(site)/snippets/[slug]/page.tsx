@@ -2,15 +2,12 @@ import { notFound } from 'next/navigation';
 
 import { isNil } from 'lodash-es';
 
-import {
-  SnippetDetailPage,
-  getPlublishedSnippetBySlug,
-} from '@/features/snippet';
+import { SnippetDetailPage, getSnippetBySlug } from '@/features/snippet';
 
 export const revalidate = 60;
 
 export default async function Page({ params }: { params: { slug: string } }) {
-  const { snippet } = await getPlublishedSnippetBySlug(params.slug);
+  const { snippet } = await getSnippetBySlug(params.slug);
 
   if (isNil(snippet)) {
     return notFound();

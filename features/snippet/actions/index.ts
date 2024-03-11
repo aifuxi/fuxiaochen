@@ -29,23 +29,6 @@ export const getSnippets = async () => {
   return { snippets, total };
 };
 
-export const getPublishedSnippets = async () => {
-  const snippets = await prisma.snippet.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-    include: {
-      tags: true,
-    },
-  });
-
-  const count = await prisma.snippet.count({});
-
-  const total = count ?? 0;
-
-  return { snippets, total };
-};
-
 export const getSnippetByID = async (id: string) => {
   const snippet = await prisma.snippet.findUnique({
     where: { id },
@@ -57,7 +40,7 @@ export const getSnippetByID = async (id: string) => {
   return { snippet };
 };
 
-export const getPlublishedSnippetBySlug = async (slug: string) => {
+export const getSnippetBySlug = async (slug: string) => {
   const snippet = await prisma.snippet.findUnique({
     where: { slug },
     include: {
@@ -137,10 +120,10 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
     throw new Error('Snippet不存在');
   }
 
-  const SnippetTagIDs = snippet?.tags.map((el) => el.id);
+  const snippetTagIDs = snippet?.tags.map((el) => el.id);
   // 新增的 tags
   const needConnect = result.data.tags?.filter(
-    (el) => !SnippetTagIDs?.includes(el),
+    (el) => !snippetTagIDs?.includes(el),
   );
   // 需要移除的 tags
   const needDisconnect = snippet?.tags
