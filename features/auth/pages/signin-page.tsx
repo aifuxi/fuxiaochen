@@ -2,6 +2,8 @@
 
 import { useBoolean } from 'ahooks';
 
+import { PATHS } from '@/config';
+
 import {
   Card,
   CardDescription,
@@ -10,6 +12,7 @@ import {
 } from '@/components/ui/card';
 
 import { LoadingSpinner } from '@/components/loading-spinner';
+import { NextLink } from '@/components/next-link';
 
 import { SigninForm } from '../components/signin-form';
 
@@ -22,7 +25,9 @@ export const SignInPage = () => {
       <Card className="w-[320px] sm:w-full sm:max-w-none sm:min-w-[360px] relative">
         <LoadingSpinner loading={loading} />
         <CardHeader>
-          <CardTitle>登录</CardTitle>
+          <CardTitle className="flex justify-between items-center">
+            登录 <NextLink href={PATHS.SITE_HOME}>回首页</NextLink>
+          </CardTitle>
           <CardDescription>请输入你的邮箱和密码进行登录</CardDescription>
         </CardHeader>
         <SigninForm showLoading={showLoading} hideLoading={hideLoading} />

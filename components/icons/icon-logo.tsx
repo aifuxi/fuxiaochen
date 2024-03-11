@@ -4,7 +4,13 @@ import { useTheme } from 'next-themes';
 
 import { WEBSITE } from '@/config';
 
-export const IconLogo = () => {
+import { cn } from '@/lib/utils';
+
+type IconLogoProps = {
+  className?: string;
+};
+
+export const IconLogo = ({ className }: IconLogoProps) => {
   const { resolvedTheme } = useTheme();
   return (
     <img
@@ -13,7 +19,7 @@ export const IconLogo = () => {
           ? '/images/fuxiaochen-light.svg'
           : '/images/fuxiaochen-dark.svg'
       }
-      className="w-6 h-6"
+      className={cn('w-6 h-6', className)}
       alt={WEBSITE}
     />
   );
