@@ -40,7 +40,7 @@ const adminNavItems: Array<{
   },
 ];
 
-export function SideNav() {
+export const SideNav = () => {
   const pathname = usePathname();
 
   return adminNavItems.map((el) => (
@@ -58,4 +58,4 @@ export function SideNav() {
       <span>{el.label}</span>
     </Link>
   ));
-}
+};

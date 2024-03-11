@@ -57,5 +57,3 @@ export const Navbar = () => {
     </header>
   );
 };
-
-export { SideNav } from './side-nav';
