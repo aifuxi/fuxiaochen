@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 
 import { navItems } from './nav-list';
 
-export function MobileNav() {
+export const MobileNav = () => {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
@@ -66,4 +66,4 @@ export function MobileNav() {
       </SheetContent>
     </Sheet>
   );
-}
+};

@@ -21,7 +21,7 @@ export const AdminLayout = async ({ children }: FCProps) => {
 
   return (
     <div className="flex">
-      <div className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex items-center p-2 gap-2">
+      <aside className="min-w-[256px] max-w-[256px] h-screen bg-foreground flex-col flex items-center p-2 gap-2">
         {session?.user?.image && (
           <img
             src={session?.user?.image}
@@ -35,10 +35,10 @@ export const AdminLayout = async ({ children }: FCProps) => {
         </div>
 
         <SignOutButton />
-      </div>
-      <div className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col">
+      </aside>
+      <section className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col">
         {children}
-      </div>
+      </section>
 
       <div className="fixed w-12 h-12 grid place-content-center right-12 top-6">
         <SwitchTheme variant={'outline'} />
