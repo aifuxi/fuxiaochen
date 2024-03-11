@@ -1,6 +1,6 @@
 'use client';
 
-import { PowerIcon } from 'lucide-react';
+import { LogOutIcon } from 'lucide-react';
 
 import {
   AlertDialog,
@@ -24,9 +24,9 @@ export const SignOutButton = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={'secondary'} className="!w-full">
-          <PowerIcon size={16} className="mr-2 " />
-          退出登录
+        <Button variant="ghost" className="!w-full text-lg">
+          <LogOutIcon size={24} className="mr-2 " />
+          Log Out
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

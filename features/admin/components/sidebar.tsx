@@ -9,7 +9,7 @@ import { BookText, Code2Icon, HomeIcon, Tags } from 'lucide-react';
 
 import { PATHS } from '@/config';
 
-import { buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
 
@@ -19,43 +19,50 @@ const adminNavItems: Array<{
   icon?: React.ReactNode;
 }> = [
   {
-    label: '首页',
+    label: 'Dashboard',
     link: PATHS.ADMIN_HOME,
     icon: <HomeIcon className="w-[18px] h-[18px]" />,
   },
   {
-    label: '文章管理',
+    label: 'Articles',
     link: PATHS.ADMIN_ARTICLE,
     icon: <BookText className="w-[18px] h-[18px]" />,
   },
   {
-    label: '标签管理',
+    label: 'Tags',
     link: PATHS.ADMIN_TAG,
     icon: <Tags className="w-[18px] h-[18px]" />,
   },
   {
-    label: 'Snippet管理',
+    label: 'Snippets',
     link: PATHS.ADMIN_SNIPPET,
     icon: <Code2Icon className="w-[18px] h-[18px]" />,
   },
 ];
 
-export const SideNav = () => {
+export const Sidebar = () => {
   const pathname = usePathname();
 
   return adminNavItems.map((el) => (
     <Link
       key={el.link}
       href={el.link}
-      className={cn(
-        buttonVariants({
-          variant: pathname === el.link ? 'secondary' : 'default',
-        }),
-        'text-md px-4 py-2 flex gap-2 items-center !justify-start w-full',
-      )}
+      className="flex items-center min-w-full space-x-4"
     >
-      {el.icon}
-      <span>{el.label}</span>
+      <Button
+        size="icon"
+        variant={pathname === el.link ? 'default' : 'secondary'}
+      >
+        {el.icon}
+      </Button>
+      <span
+        className={cn(
+          'text-base transition-all text-primary',
+          pathname === el.link ? 'font-semibold' : '',
+        )}
+      >
+        {el.label}
+      </span>
     </Link>
   ));
 };
