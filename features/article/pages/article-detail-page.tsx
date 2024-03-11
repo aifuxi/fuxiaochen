@@ -33,7 +33,7 @@ export const ArticleDetailPage = ({ article }: ArticleDetailProps) => {
         <BytemdViewer body={article.body || ''} />
       </article>
 
-      <div className="flex space-x-2">
+      <div className="flex flex-wrap gap-2">
         {article.tags?.map((el) => (
           <Badge key={el.id} className="px-5 py-2 text-base">
             {el.name}

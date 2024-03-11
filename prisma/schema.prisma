@@ -71,6 +71,8 @@ model Tag {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Snippet   Snippet? @relation(fields: [snippetId], references: [id])
+  snippetId String?
 }
 
 model Article {
@@ -80,6 +82,18 @@ model Article {
   body        String  @db.Text
   cover       String?
   published   Boolean @default(false)
+  tags        Tag[]
+
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Snippet {
+  title       String @unique
+  slug        String @unique
+  description String
+  body        String @db.Text
   tags        Tag[]
 
   id        String   @id @default(cuid())
