@@ -187,7 +187,7 @@ export const EditSnippetForm = () => {
 
   async function handleSubmit(values: UpdateSnippetDTO) {
     await updateSnippetQuery.mutateAsync(values);
-    router.push(PATHS.ADMIN_ARTICLE);
+    router.push(PATHS.ADMIN_SNIPPET);
   }
 
   function handleFormatSlug() {

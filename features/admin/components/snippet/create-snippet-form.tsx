@@ -170,7 +170,7 @@ export const CreateSnippetForm = () => {
 
   async function handleSubmit(values: CreateSnippetDTO) {
     await createSnippetQuery.mutateAsync(values);
-    router.push(PATHS.ADMIN_ARTICLE);
+    router.push(PATHS.ADMIN_SNIPPET);
   }
 
   function handleFormatSlug() {
