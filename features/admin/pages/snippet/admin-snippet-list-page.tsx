@@ -37,21 +37,19 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { type Article, useGetArticles } from '@/features/article';
+import { type Snippet, useGetSnippets } from '@/features/snippet';
 import { cn, toSlashDateString } from '@/lib/utils';
 
-import { DeleteArticleButton } from '../components/delete-article-button';
+import { DeleteSnippetButton } from '../../components/snippet/delete-snippet-button';
 
-// import { ToggleArticlePublishSwitch } from '../components/toggle-article-publish-switch';
-
-const columnHelper = createColumnHelper<Article>();
+const columnHelper = createColumnHelper<Snippet>();
 
 const columns = [
   columnHelper.accessor('title', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <HeadingIcon size={14} />
-        <span>文章标题</span>
+        <span>Snippet标题</span>
       </div>
     ),
     cell: (info) => info.getValue(),
@@ -107,7 +105,7 @@ const columns = [
       <div className="flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
-            <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
+            <Link href={`${PATHS.ADMIN_SNIPPET_EDIT}/${info.getValue()}`}>
               <Button size={'icon'} variant="ghost">
                 <PencilIcon size={16} />
               </Button>
@@ -115,17 +113,17 @@ const columns = [
           </TooltipTrigger>
           <TooltipContent>编辑</TooltipContent>
         </Tooltip>
-        <DeleteArticleButton id={info.getValue()} />
+        <DeleteSnippetButton id={info.getValue()} />
       </div>
     ),
   }),
 ];
 
-export const AdminArticleListPage = () => {
-  const getArticlesQuery = useGetArticles();
+export const AdminSnippetListPage = () => {
+  const getSnippetsQuery = useGetSnippets();
   const data = React.useMemo(
-    () => getArticlesQuery.data?.articles ?? [],
-    [getArticlesQuery],
+    () => getSnippetsQuery.data?.snippets ?? [],
+    [getSnippetsQuery],
   );
   const table = useReactTable({
     columns,
@@ -136,14 +134,14 @@ export const AdminArticleListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        文章管理
+        Snippet管理
       </h2>
 
       <div className="flex justify-end">
-        <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
+        <Link href={PATHS.ADMIN_SNIPPET_CREATE}>
           <Button>
             <PlusIcon className="mr-2 " size={16} />
-            创建文章
+            创建Snippet
           </Button>
         </Link>
       </div>

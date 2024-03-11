@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import Link from 'next/link';
+
 import {
   createColumnHelper,
   flexRender,
@@ -9,13 +11,18 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
-  BookIcon,
   CalendarIcon,
-  HashIcon,
-  LanguagesIcon,
+  HeadingIcon,
+  PencilIcon,
+  PlusIcon,
+  TagsIcon,
   WrenchIcon,
 } from 'lucide-react';
 
+import { PATHS } from '@/config';
+
+import { badgeVariants } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -24,43 +31,52 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
-import { type Tag, useGetTags } from '@/features/tag';
-import { toSlashDateString } from '@/lib/utils';
+import { type Article, useGetArticles } from '@/features/article';
+import { cn, toSlashDateString } from '@/lib/utils';
 
-import { CreateTagButton } from '../components/create-tag-button';
-import { DeleteTagButton } from '../components/delete-tag-button';
-import { EditTagButton } from '../components/edit-tag-button';
+import { DeleteArticleButton } from '../../components/article/delete-article-button';
 
-const columnHelper = createColumnHelper<Tag>();
+// import { ToggleArticlePublishSwitch } from '../components/toggle-article-publish-switch';
+
+const columnHelper = createColumnHelper<Article>();
 
 const columns = [
-  columnHelper.accessor('name', {
+  columnHelper.accessor('title', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <LanguagesIcon size={14} />
-        <span>名称</span>
+        <HeadingIcon size={14} />
+        <span>文章标题</span>
       </div>
     ),
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('slug', {
+  columnHelper.accessor('tags', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <HashIcon size={14} />
-        <span>slug</span>
+        <TagsIcon size={14} />
+        <span>标签</span>
       </div>
     ),
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('_count.articles', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <BookIcon size={14} />
-        <span>文章数量</span>
+    cell: (info) => (
+      <div className="flex flex-wrap gap-2">
+        {info.getValue()?.length
+          ? info.getValue().map((tag) => (
+              <div
+                key={tag.id}
+                className={cn(badgeVariants({ variant: 'default' }))}
+              >
+                {tag.name}
+              </div>
+            ))
+          : '-'}
       </div>
     ),
-    cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('createdAt', {
     header: () => (
@@ -88,19 +104,28 @@ const columns = [
       </div>
     ),
     cell: (info) => (
-      <div className="flex gap-2 items-center">
-        <EditTagButton id={info.getValue()} />
-        <DeleteTagButton id={info.getValue()} />
+      <div className="flex items-center gap-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
+              <Button size={'icon'} variant="ghost">
+                <PencilIcon size={16} />
+              </Button>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>编辑</TooltipContent>
+        </Tooltip>
+        <DeleteArticleButton id={info.getValue()} />
       </div>
     ),
   }),
 ];
 
-export const AdminTagListPage = () => {
-  const getTagsQuery = useGetTags();
+export const AdminArticleListPage = () => {
+  const getArticlesQuery = useGetArticles();
   const data = React.useMemo(
-    () => getTagsQuery.data?.tags ?? [],
-    [getTagsQuery],
+    () => getArticlesQuery.data?.articles ?? [],
+    [getArticlesQuery],
   );
   const table = useReactTable({
     columns,
@@ -111,10 +136,16 @@ export const AdminTagListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        标签管理
+        文章管理
       </h2>
+
       <div className="flex justify-end">
-        <CreateTagButton />
+        <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
+          <Button>
+            <PlusIcon className="mr-2 " size={16} />
+            创建文章
+          </Button>
+        </Link>
       </div>
       <Table>
         <TableHeader>
@@ -137,7 +168,7 @@ export const AdminTagListPage = () => {
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="p-2 ">
+                <TableCell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}

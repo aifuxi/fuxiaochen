@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-import Link from 'next/link';
-
 import {
   createColumnHelper,
   flexRender,
@@ -11,18 +9,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import {
+  BookIcon,
   CalendarIcon,
-  HeadingIcon,
-  PencilIcon,
-  PlusIcon,
-  TagsIcon,
+  HashIcon,
+  LanguagesIcon,
   WrenchIcon,
 } from 'lucide-react';
 
-import { PATHS } from '@/config';
-
-import { badgeVariants } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -31,50 +24,43 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
-import { type Snippet, useGetSnippets } from '@/features/snippet';
-import { cn, toSlashDateString } from '@/lib/utils';
+import { type Tag, useGetTags } from '@/features/tag';
+import { toSlashDateString } from '@/lib/utils';
 
-import { DeleteSnippetButton } from '../components/delete-snippet-button';
+import { CreateTagButton } from '../../components/tag/create-tag-button';
+import { DeleteTagButton } from '../../components/tag/delete-tag-button';
+import { EditTagButton } from '../../components/tag/edit-tag-button';
 
-const columnHelper = createColumnHelper<Snippet>();
+const columnHelper = createColumnHelper<Tag>();
 
 const columns = [
-  columnHelper.accessor('title', {
+  columnHelper.accessor('name', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <HeadingIcon size={14} />
-        <span>Snippet标题</span>
+        <LanguagesIcon size={14} />
+        <span>名称</span>
       </div>
     ),
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('tags', {
+  columnHelper.accessor('slug', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <TagsIcon size={14} />
-        <span>标签</span>
+        <HashIcon size={14} />
+        <span>slug</span>
       </div>
     ),
-    cell: (info) => (
-      <div className="flex flex-wrap gap-2">
-        {info.getValue()?.length
-          ? info.getValue().map((tag) => (
-              <div
-                key={tag.id}
-                className={cn(badgeVariants({ variant: 'default' }))}
-              >
-                {tag.name}
-              </div>
-            ))
-          : '-'}
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('_count.articles', {
+    header: () => (
+      <div className="flex space-x-1 items-center">
+        <BookIcon size={14} />
+        <span>文章数量</span>
       </div>
     ),
+    cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('createdAt', {
     header: () => (
@@ -102,28 +88,19 @@ const columns = [
       </div>
     ),
     cell: (info) => (
-      <div className="flex items-center gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href={`${PATHS.ADMIN_SNIPPET_EDIT}/${info.getValue()}`}>
-              <Button size={'icon'} variant="ghost">
-                <PencilIcon size={16} />
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>编辑</TooltipContent>
-        </Tooltip>
-        <DeleteSnippetButton id={info.getValue()} />
+      <div className="flex gap-2 items-center">
+        <EditTagButton id={info.getValue()} />
+        <DeleteTagButton id={info.getValue()} />
       </div>
     ),
   }),
 ];
 
-export const AdminSnippetListPage = () => {
-  const getSnippetsQuery = useGetSnippets();
+export const AdminTagListPage = () => {
+  const getTagsQuery = useGetTags();
   const data = React.useMemo(
-    () => getSnippetsQuery.data?.snippets ?? [],
-    [getSnippetsQuery],
+    () => getTagsQuery.data?.tags ?? [],
+    [getTagsQuery],
   );
   const table = useReactTable({
     columns,
@@ -134,16 +111,10 @@ export const AdminSnippetListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        Snippet管理
+        标签管理
       </h2>
-
       <div className="flex justify-end">
-        <Link href={PATHS.ADMIN_SNIPPET_CREATE}>
-          <Button>
-            <PlusIcon className="mr-2 " size={16} />
-            创建Snippet
-          </Button>
-        </Link>
+        <CreateTagButton />
       </div>
       <Table>
         <TableHeader>
@@ -166,7 +137,7 @@ export const AdminSnippetListPage = () => {
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <TableCell key={cell.id} className="p-2 ">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}
