@@ -1,7 +1,9 @@
-// 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
-// 根据自己需要做了部分修改
+'use client';
+
 import * as React from 'react';
 
+// 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
+// 根据自己需要做了部分修改
 import { Check, ChevronDown, XSquare } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -75,11 +77,12 @@ export const handleMultipleSelect = (
 export const Combobox = React.forwardRef(
   (props: ComboboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     const [open, setOpen] = React.useState(false);
-    const [tagMap] = React.useState(
-      new Map<string, string>(
+
+    const tagMap = React.useMemo(() => {
+      return new Map<string, string>(
         props?.options?.map((el) => [el.value, el.label]) ?? [],
-      ),
-    );
+      );
+    }, [props?.options]);
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
