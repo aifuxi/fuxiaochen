@@ -28,9 +28,11 @@ import {
 import { type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
-import { CreateTagButton } from '../../components/tag/create-tag-button';
-import { DeleteTagButton } from '../../components/tag/delete-tag-button';
-import { EditTagButton } from '../../components/tag/edit-tag-button';
+import {
+  CreateTagButton,
+  DeleteTagButton,
+  EditTagButton,
+} from '../../components';
 
 const columnHelper = createColumnHelper<Tag>();
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { PATHS } from '@/config';
 
-import { EditSnippetForm } from '../../components/snippet/edit-snippet-form';
+import { EditSnippetForm } from '../../components';
 
 export const EditSnippetPage = () => {
   return (
