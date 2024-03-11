@@ -34,6 +34,10 @@
 
 .markdown-body code::-webkit-scrollbar-thumb {
   background: hsl(var(--foreground) / 0.2);
+
+  /* 滚动条圆角 需要同时设置 background-clip: padding-box;和border-radius */
+  background-clip: padding-box;
+  border-radius: 10px;
 }
 
 .markdown-body pre > code {
