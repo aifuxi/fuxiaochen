@@ -19,11 +19,13 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
     <Link
       key={snippet.id}
       href={`${PATHS.SITE_SNIPPETS}/${snippet.slug}`}
-      className="rounded-2xl border flex items-center p-6"
+      className="rounded-2xl border flex items-center p-6 transition-[border] hover:border-primary"
     >
       <div className="grid gap-2">
-        <h3 className="text-2xl font-semibold">{snippet.title}</h3>
-        <p className="text-sm text-muted-foreground">{snippet.description}</p>
+        <h3 className="text-2xl font-semibold line-clamp-1">{snippet.title}</h3>
+        <p className="text-sm text-muted-foreground line-clamp-1">
+          {snippet.description}
+        </p>
         <div className="text-sm text-muted-foreground">
           {toSimpleDateString(snippet.createdAt)}
         </div>

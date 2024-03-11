@@ -30,7 +30,7 @@ export const SnippetList = ({ snippets }: SnippetListProps) => {
 
   return (
     <motion.ul
-      className="grid gap-4"
+      className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4"
       variants={LIST_CONTAINER_VARIANTS}
       initial="hidden"
       animate="visible"
