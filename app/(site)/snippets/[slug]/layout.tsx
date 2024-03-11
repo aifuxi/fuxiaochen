@@ -6,14 +6,14 @@ import { WEBSITE } from '@/config';
 
 import { type FCProps } from '@/types';
 
-import { getPlublishedSnippetBySlug } from '@/features/snippet';
+import { getSnippetBySlug } from '@/features/snippet';
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const { snippet } = await getPlublishedSnippetBySlug(params.slug);
+  const { snippet } = await getSnippetBySlug(params.slug);
 
   if (isNil(snippet)) {
     return {};
