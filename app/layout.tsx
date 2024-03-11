@@ -10,7 +10,6 @@ import { Toaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import BackToTop from '@/components/back-to-top';
-import { Console } from '@/components/console';
 import { Favicon } from '@/components/favicon';
 
 import '@/styles/global.css';
@@ -39,11 +38,10 @@ export default function RootLayout({ children }: FCProps) {
           <TooltipProvider>
             <NextThemeProvider attribute="class">
               {children}
+
               <BackToTop />
 
               <Toaster />
-
-              <Console />
 
               <Favicon />
             </NextThemeProvider>
