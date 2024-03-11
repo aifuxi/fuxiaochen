@@ -5,7 +5,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { BookText, HomeIcon, Tags } from 'lucide-react';
+import { BookText, Code2Icon, HomeIcon, Tags } from 'lucide-react';
 
 import { PATHS } from '@/config';
 
@@ -32,6 +32,11 @@ const adminNavItems: Array<{
     label: '标签管理',
     link: PATHS.ADMIN_TAG,
     icon: <Tags className="w-[18px] h-[18px]" />,
+  },
+  {
+    label: 'Snippet管理',
+    link: PATHS.ADMIN_SNIPPET,
+    icon: <Code2Icon className="w-[18px] h-[18px]" />,
   },
 ];
 
