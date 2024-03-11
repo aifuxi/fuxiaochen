@@ -2,25 +2,25 @@ import Link from 'next/link';
 
 import { PATHS } from '@/config';
 
-import { CreateArticleForm } from '../components/create-article-form';
+import { EditSnippetForm } from '../../components/snippet/edit-snippet-form';
 
-export const CreateArticlePage = () => {
+export const EditSnippetPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
-        <Link href={PATHS.ADMIN_ARTICLE}>
+        <Link href={PATHS.ADMIN_SNIPPET}>
           <h2 className="text-3xl font-semibold tracking-tight transition-colors text-foreground/80 hover:text-foreground ">
-            文章管理
+            Snippet管理
           </h2>
         </Link>
 
         <div>/</div>
         <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-          创建文章
+          编辑Snippet
         </h2>
       </div>
 
-      <CreateArticleForm />
+      <EditSnippetForm />
     </div>
   );
 };

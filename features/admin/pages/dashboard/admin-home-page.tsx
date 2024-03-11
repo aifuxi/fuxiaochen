@@ -2,8 +2,8 @@ import React from 'react';
 
 import { BookAIcon, TagIcon } from 'lucide-react';
 
-import { getStatistics } from '../actions/statistics';
-import { type StatisticsCardProps } from '../types';
+import { getStatistics } from '../../actions/statistics';
+import { type StatisticsCardProps } from '../../types';
 
 export const AdminHomePage = async () => {
   const { articleCount, tagCount } = await getStatistics();
