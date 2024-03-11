@@ -13,7 +13,7 @@
 }
 
 .markdown-body {
-  @apply prose prose-zinc w-full dark:prose-invert;
+  @apply prose prose-zinc !w-full !max-w-full dark:prose-invert;
 }
 
 .medium-zoom-image--opened {

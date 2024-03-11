@@ -15,13 +15,13 @@ type ArticleDetailProps = {
 
 export const ArticleDetailPage = ({ article }: ArticleDetailProps) => {
   return (
-    <div className="max-w-[65ch] mx-auto py-24 grid gap-9">
+    <div className="max-w-screen-md 2xl:max-w-6xl mx-auto pb-24 grid gap-9 px-6">
       <article>
         {article.cover && (
           <img
             src={article.cover}
             alt={article.title}
-            className="max-w-[65ch] h-auto mb-16"
+            className="max-w-screen-md 2xl:max-w-6xl h-auto mb-16 w-full"
           />
         )}
         <h1 className="mb-4 text-4xl font-extrabold ">{article.title}</h1>

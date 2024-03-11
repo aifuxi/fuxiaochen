@@ -5,6 +5,11 @@ import Link from 'next/link';
 import { NICKNAME, PATHS } from '@/config';
 
 import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 import { toSimpleDateString } from '@/lib/utils';
 
@@ -19,11 +24,26 @@ export const ArticleListItem = ({ article }: ArticleListItemProps) => {
     <Link
       key={article.id}
       href={`${PATHS.SITE_ARTICLES}/${article.slug}`}
-      className="rounded-2xl border flex items-center p-6"
+      className="rounded-2xl border flex items-center p-6 transition-[border] hover:border-primary h-full"
     >
       <div className="grid gap-2">
-        <h3 className="text-2xl font-semibold">{article.title}</h3>
-        <p className="text-sm text-muted-foreground">{article.description}</p>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <h3 className="text-2xl font-semibold line-clamp-1">
+              {article.title}
+            </h3>
+          </TooltipTrigger>
+          <TooltipContent>{article.title}</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="text-sm text-muted-foreground line-clamp-1">
+              {article.description}
+            </p>
+          </TooltipTrigger>
+          <TooltipContent>{article.description}</TooltipContent>
+        </Tooltip>
+
         <div className="text-sm text-muted-foreground">
           {NICKNAME}&nbsp;·&nbsp;
           {toSimpleDateString(article.createdAt)}
