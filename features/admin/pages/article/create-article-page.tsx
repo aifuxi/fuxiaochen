@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { PATHS } from '@/config';
 
-import { CreateArticleForm } from '../../components/article/create-article-form';
+import { CreateArticleForm } from '../../components';
 
 export const CreateArticlePage = () => {
   return (

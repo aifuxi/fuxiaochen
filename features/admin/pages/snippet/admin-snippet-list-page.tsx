@@ -19,7 +19,7 @@ import {
   WrenchIcon,
 } from 'lucide-react';
 
-import { PATHS } from '@/config';
+import { PATHS, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,7 +40,7 @@ import {
 import { type Snippet, useGetSnippets } from '@/features/snippet';
 import { cn, toSlashDateString } from '@/lib/utils';
 
-import { DeleteSnippetButton } from '../../components/snippet/delete-snippet-button';
+import { DeleteSnippetButton } from '../../components';
 
 const columnHelper = createColumnHelper<Snippet>();
 
@@ -72,7 +72,7 @@ const columns = [
                 {tag.name}
               </div>
             ))
-          : '-'}
+          : PLACEHODER_TEXT}
       </div>
     ),
   }),

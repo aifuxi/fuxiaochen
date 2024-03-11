@@ -19,7 +19,7 @@ import {
   WrenchIcon,
 } from 'lucide-react';
 
-import { PATHS } from '@/config';
+import { PATHS, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,7 +40,7 @@ import {
 import { type Article, useGetArticles } from '@/features/article';
 import { cn, toSlashDateString } from '@/lib/utils';
 
-import { DeleteArticleButton } from '../../components/article/delete-article-button';
+import { DeleteArticleButton } from '../../components';
 
 // import { ToggleArticlePublishSwitch } from '../components/toggle-article-publish-switch';
 
@@ -74,7 +74,7 @@ const columns = [
                 {tag.name}
               </div>
             ))
-          : '-'}
+          : PLACEHODER_TEXT}
       </div>
     ),
   }),
