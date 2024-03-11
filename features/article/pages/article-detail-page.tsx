@@ -30,7 +30,7 @@ export const ArticleDetailPage = ({ article }: ArticleDetailProps) => {
           <span className="mx-2">·</span>
           <span>{toSimpleDateString(article.createdAt)}</span>
         </div>
-        <BytemdViewer content={article.content || ''} />
+        <BytemdViewer body={article.body || ''} />
       </article>
 
       <div className="flex space-x-2">

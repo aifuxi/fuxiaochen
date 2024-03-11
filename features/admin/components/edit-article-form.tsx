@@ -61,7 +61,7 @@ export const EditArticleForm = () => {
       id: article?.id ?? '',
       slug: article?.slug ?? '',
       description: article?.description ?? '',
-      content: article?.content ?? '',
+      body: article?.body ?? '',
       published: article?.published ?? true,
       cover: article?.cover ?? '',
       tags: article?.tags?.map((el) => el.id) ?? [],
@@ -73,7 +73,7 @@ export const EditArticleForm = () => {
     form.setValue('id', article?.id ?? '');
     form.setValue('slug', article?.slug ?? '');
     form.setValue('description', article?.description ?? '');
-    form.setValue('content', article?.content ?? '');
+    form.setValue('body', article?.body ?? '');
     form.setValue('published', article?.published ?? true);
     form.setValue('cover', article?.cover ?? '');
     form.setValue('tags', article?.tags?.map((el) => el.id) ?? []);
@@ -232,13 +232,13 @@ export const EditArticleForm = () => {
           />
           <FormField
             control={form.control}
-            name="content"
+            name="body"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
                   <BytemdEditor
-                    content={field.value}
+                    body={field.value}
                     setContent={field.onChange}
                   />
                 </FormControl>
