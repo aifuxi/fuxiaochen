@@ -3,7 +3,7 @@ import { type Variants } from 'framer-motion';
 export const LIST_CONTAINER_VARIANTS: Variants = {
   visible: {
     transition: {
-      delayChildren: 0.2,
+      delayChildren: 0.8,
       staggerChildren: 0.1,
     },
   },
@@ -29,7 +29,7 @@ export const LIST_ITEM_VARIANTS: Variants = {
 export const HERO_SECTION_CONTAINER_VARIANTS: Variants = {
   visible: {
     transition: {
-      delayChildren: 0.3,
+      delayChildren: 0.8,
       staggerChildren: 0.15,
     },
   },
