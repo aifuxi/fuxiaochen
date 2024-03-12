@@ -16,7 +16,7 @@ import '@/styles/global.css';
 
 export const metadata: Metadata = {
   title: {
-    template: `%s · ${WEBSITE}`,
+    template: `%s - ${WEBSITE}`,
     default: `${WEBSITE}`,
   },
   description: `${SLOGAN}`,

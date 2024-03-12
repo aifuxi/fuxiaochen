@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { PATHS, PLACEHODER_TEXT } from '@/config';
+import { PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -51,7 +51,7 @@ const columns = [
   columnHelper.accessor('title', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <IconSolarTextField className='text-sm' />
+        <IconSolarTextField className="text-sm" />
         <span>文章标题</span>
       </div>
     ),
@@ -60,7 +60,7 @@ const columns = [
   columnHelper.accessor('tags', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <IconSolarTag className='text-sm' />
+        <IconSolarTag className="text-sm" />
         <span>标签</span>
       </div>
     ),
@@ -82,7 +82,7 @@ const columns = [
   columnHelper.accessor('createdAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <IconSolarCalendarMark className='text-sm' />
+        <IconSolarCalendarMark className="text-sm" />
         <span>创建时间</span>
       </div>
     ),
@@ -91,7 +91,7 @@ const columns = [
   columnHelper.accessor('updatedAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <IconSolarCalendarMark className='text-sm' />
+        <IconSolarCalendarMark className="text-sm" />
         <span>更新时间</span>
       </div>
     ),
@@ -100,7 +100,7 @@ const columns = [
   columnHelper.accessor('id', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <IconSolarTuningSquare2 className='text-sm' />
+        <IconSolarTuningSquare2 className="text-sm" />
         <span>操作</span>
       </div>
     ),
@@ -110,7 +110,7 @@ const columns = [
           <TooltipTrigger asChild>
             <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
               <Button size={'icon'} variant="ghost">
-                <IconSolarPen className='text-sm' />
+                <IconSolarPen className="text-sm" />
               </Button>
             </Link>
           </TooltipTrigger>
@@ -137,7 +137,7 @@ export const AdminArticleListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        文章管理
+        {PATHS_MAP[PATHS.ADMIN_ARTICLE]}
       </h2>
 
       <div className="flex justify-end">

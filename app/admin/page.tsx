@@ -1,9 +1,12 @@
 import { type Metadata } from 'next';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { AdminHomePage } from '@/features/admin';
+import { getAdminPageTitle } from '@/utils';
 
 export const metadata: Metadata = {
-  title: '首页',
+  title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_HOME]),
 };
 
 export default function Page() {

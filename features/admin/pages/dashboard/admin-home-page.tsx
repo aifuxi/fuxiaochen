@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { IconSolarBook, IconSolarHashtagSquare } from '@/components/icons';
 
 import { getStatistics } from '../../actions/statistics';
@@ -26,7 +28,7 @@ export const AdminHomePage = async () => {
   return (
     <div className="h-screen flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        首页
+        {PATHS_MAP[PATHS.ADMIN_HOME]}
       </h2>
 
       <div className="flex-1">

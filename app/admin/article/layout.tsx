@@ -1,9 +1,13 @@
 import { type Metadata } from 'next';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { type FCProps } from '@/types';
 
+import { getAdminPageTitle } from '@/utils';
+
 export const metadata: Metadata = {
-  title: '文章管理',
+  title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_ARTICLE]),
 };
 
 export default function Layout({ children }: FCProps) {

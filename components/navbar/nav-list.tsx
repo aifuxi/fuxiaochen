@@ -3,25 +3,25 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { PATHS } from '@/config';
+import { PATHS, PATHS_MAP } from '@/config';
 
 import { cn } from '@/lib/utils';
 
 export const navItems: Array<{
-  label: string;
+  label?: string;
   link: string;
   external?: boolean;
 }> = [
   {
-    label: '首页',
+    label: PATHS_MAP[PATHS.SITE_HOME],
     link: PATHS.SITE_HOME,
   },
   {
-    label: '文章',
+    label: PATHS_MAP[PATHS.SITE_ARTICLES],
     link: PATHS.SITE_ARTICLES,
   },
   {
-    label: 'Snippets',
+    label: PATHS_MAP[PATHS.SITE_SNIPPETS],
     link: PATHS.SITE_SNIPPETS,
   },
 ];

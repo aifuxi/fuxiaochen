@@ -1,9 +1,11 @@
 import { type Metadata } from 'next';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { type FCProps } from '@/types';
 
 export const metadata: Metadata = {
-  title: '文章',
+  title: PATHS_MAP[PATHS.SITE_ARTICLES],
 };
 
 export default function Layout({ children }: FCProps) {

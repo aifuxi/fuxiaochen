@@ -20,7 +20,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${article.title} · ${WEBSITE}`,
+    title: `${article.title} - ${WEBSITE}`,
     description: article.description,
     keywords: article.tags.map((el) => el.name).join(','),
   };

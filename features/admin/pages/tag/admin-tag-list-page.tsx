@@ -9,6 +9,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import {
   Table,
   TableBody,
@@ -114,7 +116,7 @@ export const AdminTagListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        标签管理
+        {PATHS_MAP[PATHS.ADMIN_TAG]}
       </h2>
       <div className="flex justify-end">
         <CreateTagButton />
