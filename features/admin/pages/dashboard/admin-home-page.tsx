@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { BookAIcon, TagIcon } from 'lucide-react';
+import { IconSolarBook, IconSolarHashtagSquare } from '@/components/icons';
 
 import { getStatistics } from '../../actions/statistics';
 import { type StatisticsCardProps } from '../../types';
@@ -12,12 +12,14 @@ export const AdminHomePage = async () => {
     {
       title: '文章总数',
       count: articleCount,
-      icon: <BookAIcon size={24} className="text-muted-foreground" />,
+      icon: <IconSolarBook className="text-muted-foreground text-2xl" />,
     },
     {
       title: '标签总数',
       count: tagCount,
-      icon: <TagIcon size={24} className="text-muted-foreground" />,
+      icon: (
+        <IconSolarHashtagSquare className="text-muted-foreground text-2xl" />
+      ),
     },
   ];
 

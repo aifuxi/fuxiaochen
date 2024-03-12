@@ -3,11 +3,12 @@
 import * as React from 'react';
 
 import { useBoolean, useMemoizedFn, useMount, useUnmount } from 'ahooks';
-import { ArrowBigUpDashIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
+
+import { IconSolarSquareAltArrowUp } from '../icons';
 
 export default function BackToTop() {
   const [visible, { setFalse, setTrue }] = useBoolean(false);
@@ -36,7 +37,7 @@ export default function BackToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }}
     >
-      <ArrowBigUpDashIcon size={24} />
+      <IconSolarSquareAltArrowUp className="text-2xl" />
     </Button>
   );
 }

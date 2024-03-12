@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2Icon, PlusIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +22,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+
+import { IconSolarAddSquare, IconSolarRestart } from '@/components/icons';
 
 import {
   type CreateTagDTO,
@@ -54,7 +55,7 @@ export const CreateTagButton = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <PlusIcon className="mr-2" size={16} />
+          <IconSolarAddSquare className="mr-2 text-base" />
           创建标签
         </Button>
       </DialogTrigger>
@@ -104,7 +105,7 @@ export const CreateTagButton = () => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createTagQuery.isPending && (
-                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    <IconSolarRestart className="mr-2 text-base animate-spin" />
                   )}
                   创建
                 </Button>

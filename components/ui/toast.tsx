@@ -2,9 +2,14 @@
 
 import toast, { Toaster as HotToaster, ToastBar } from 'react-hot-toast';
 
-import { CheckCircleIcon, Loader2Icon, XCircleIcon, XIcon } from 'lucide-react';
-
 import { Button } from './button';
+
+import {
+  IconSolarCheckCircle,
+  IconSolarCloseCircle,
+  IconSolarCloseSquare,
+  IconSolarRestart,
+} from '../icons';
 
 export const Toaster = () => {
   return (
@@ -14,13 +19,13 @@ export const Toaster = () => {
         className:
           '!bg-primary !text-primary-foreground !rounded-full !shadow-2xl !p-4 text-xl !font-semibold !max-w-[50vw]',
         success: {
-          icon: <CheckCircleIcon size={36} className="text-green-500" />,
+          icon: <IconSolarCheckCircle className="text-green-500 text-4xl" />,
         },
         error: {
-          icon: <XCircleIcon size={36} className="text-red-500" />,
+          icon: <IconSolarCloseCircle className="text-red-500 text-4xl" />,
         },
         loading: {
-          icon: <Loader2Icon size={36} className="animate-spin" />,
+          icon: <IconSolarRestart className="animate-spin text-4xl" />,
         },
       }}
     >
@@ -32,7 +37,7 @@ export const Toaster = () => {
               {message}
               {t.type !== 'loading' && (
                 <Button onClick={() => toast.dismiss(t.id)}>
-                  <XIcon />
+                  <IconSolarCloseSquare />
                 </Button>
               )}
             </>

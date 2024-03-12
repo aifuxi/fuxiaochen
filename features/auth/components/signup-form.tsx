@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2Icon } from 'lucide-react';
 
 import { PATHS } from '@/config';
 
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import { IconSolarRestart } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
 import { createUser } from '@/features/user';
@@ -95,10 +95,9 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
         <CardFooter className="grid gap-4">
           <div className="grid grid-cols-2 gap-4 ">
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              <Loader2Icon
-                size={16}
+              <IconSolarRestart
                 className={cn(
-                  'mr-2 animate-spin',
+                  'mr-2 animate-spin text-base',
                   form.formState.isSubmitting ? '' : 'hidden',
                 )}
               />
@@ -117,18 +116,16 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
   );
 
   async function handleSubmit(values: SignupDTO) {
-    showLoading();
-    const resp = await createUser(values);
-    hideLoading();
-
-    if (resp?.error) {
-      toast.error(`注册失败: ${resp?.error}`);
-      return;
+    try {
+      showLoading();
+      await createUser(values);
+      toast.success('注册成功，赶快登录吧～');
+      // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
+      router.push(PATHS.AUTH_SIGNIN);
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      hideLoading();
     }
-
-    toast.success('注册成功，赶快登录吧～');
-
-    // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
-    router.push(PATHS.AUTH_SIGNIN);
   }
 };

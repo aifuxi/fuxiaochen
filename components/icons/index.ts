@@ -1,18 +1,4 @@
-export { IconBilibili } from './icon-bilibili';
-export { IconEmail } from './icon-email';
-export { IconGithub } from './icon-github';
-export { IconJuejin } from './icon-juejin';
-export { IconLogo } from './icon-logo';
-export { IconWechat } from './icon-wechat';
-export { IconBarCode } from './icon-bar-code';
-export { IconCode } from './icon-code';
-export { IconJavaScript } from './icon-javascript';
-export { IconTypeScript } from './icon-typescript';
-export { IconHTML } from './icon-html';
-export { IconCSS } from './icon-css';
-export { IconTailwindCSS } from './icon-tailwindcss';
-export { IconNodejs } from './icon-nodejs';
-export { IconNextjs } from './icon-nextjs';
-export { IconReact } from './icon-react';
-export { IconBike } from './icon-bike';
-export { IconGame } from './icon-game';
+export * from './icon-logo';
+
+export * from './solar';
+export * from './fa6-brands';

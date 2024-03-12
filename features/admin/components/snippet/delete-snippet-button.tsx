@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 
-import { TrashIcon } from 'lucide-react';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +19,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { IconSolarTrashBinMinimalistic2 } from '@/components/icons';
+
 import { useDeleteSnippet } from '@/features/snippet';
 
 type DeleteSnippetButtonProps = {
@@ -36,7 +36,7 @@ export const DeleteSnippetButton = ({ id }: DeleteSnippetButtonProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button size={'icon'} variant="ghost">
-              <TrashIcon size={16} className="text-destructive" />
+              <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>删除</TooltipContent>
