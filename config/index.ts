@@ -4,3 +4,4 @@ export * from './path';
 export * from './regex';
 export * from './unknown';
 export * from './variants';
+export * from './colors';

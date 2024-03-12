@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
 
-import { IconBaranGithub, IconLogo } from '../icons';
+import { IconBaranGithub, IconLogoFuXiaoChen } from '../icons';
 import { NextLink } from '../next-link';
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
@@ -32,7 +32,7 @@ export const Navbar = () => {
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
-          <IconLogo />
+          <IconLogoFuXiaoChen />
           <span className="ml-2 font-semibold text-primary text-base">
             {WEBSITE}
           </span>
