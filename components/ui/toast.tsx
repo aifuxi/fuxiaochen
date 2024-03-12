@@ -36,8 +36,8 @@ export const Toaster = () => {
               {icon}
               {message}
               {t.type !== 'loading' && (
-                <Button onClick={() => toast.dismiss(t.id)}>
-                  <IconSolarCloseSquare />
+                <Button size="icon" onClick={() => toast.dismiss(t.id)}>
+                  <IconSolarCloseSquare className="text-2xl" />
                 </Button>
               )}
             </>
