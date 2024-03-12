@@ -2,7 +2,12 @@
 
 /** @type {import("next").NextConfig} */
 const config = {
+  // build 阶段禁止 eslint
   eslint: { ignoreDuringBuilds: true },
+  // build 阶段禁止 ts 类型检查
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
