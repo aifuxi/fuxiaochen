@@ -5,7 +5,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { PATHS } from '@/config';
+import { PATHS, PATHS_MAP } from '@/config';
 
 import { Button } from '@/components/ui/button';
 
@@ -19,27 +19,27 @@ import {
 import { cn } from '@/lib/utils';
 
 const adminNavItems: Array<{
-  label: string;
+  label?: string;
   link: string;
   icon?: React.ReactNode;
 }> = [
   {
-    label: 'Dashboard',
+    label: PATHS_MAP[PATHS.ADMIN_HOME],
     link: PATHS.ADMIN_HOME,
     icon: <IconSolarChartSquare className="text-lg" />,
   },
   {
-    label: 'Articles',
+    label: PATHS_MAP[PATHS.ADMIN_ARTICLE],
     link: PATHS.ADMIN_ARTICLE,
     icon: <IconSolarBook className="text-lg" />,
   },
   {
-    label: 'Tags',
+    label: PATHS_MAP[PATHS.ADMIN_TAG],
     link: PATHS.ADMIN_TAG,
     icon: <IconSolarHashtagSquare className="text-lg" />,
   },
   {
-    label: 'Snippets',
+    label: PATHS_MAP[PATHS.ADMIN_SNIPPET],
     link: PATHS.ADMIN_SNIPPET,
     icon: <IconSolarCodeSquare className="text-lg" />,
   },
@@ -62,7 +62,7 @@ export const Sidebar = () => {
       </Button>
       <span
         className={cn(
-          'text-base transition-all text-primary',
+          'text-base transition-all text-primary font-medium',
           pathname === el.link ? 'font-semibold' : '',
         )}
       >

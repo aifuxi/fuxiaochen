@@ -1,9 +1,11 @@
 import { type Metadata } from 'next';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { type FCProps } from '@/types';
 
 export const metadata: Metadata = {
-  title: '登录',
+  title: PATHS_MAP[PATHS.AUTH_SIGNIN],
 };
 
 export default function Layout({ children }: FCProps) {

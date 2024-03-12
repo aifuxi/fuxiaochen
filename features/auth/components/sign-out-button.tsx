@@ -26,7 +26,7 @@ export const SignOutButton = () => {
       <AlertDialogTrigger asChild>
         <Button variant="ghost" className="!w-full text-lg">
           <IconSolarLogout2 className="mr-2 text-2xl" />
-          Log Out
+          退出登录
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

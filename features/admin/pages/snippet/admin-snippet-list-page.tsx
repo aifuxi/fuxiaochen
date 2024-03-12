@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { PATHS, PLACEHODER_TEXT } from '@/config';
+import { PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -135,7 +135,7 @@ export const AdminSnippetListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-semibold tracking-tight transition-colors">
-        Snippet管理
+        {PATHS_MAP[PATHS.ADMIN_SNIPPET]}
       </h2>
 
       <div className="flex justify-end">

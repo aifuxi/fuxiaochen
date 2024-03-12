@@ -1,9 +1,11 @@
 import { type Metadata } from 'next';
 
+import { PATHS, PATHS_MAP } from '@/config';
+
 import { type FCProps } from '@/types';
 
 export const metadata: Metadata = {
-  title: 'Snippets',
+  title: PATHS_MAP[PATHS.SITE_SNIPPETS],
 };
 
 export default function Layout({ children }: FCProps) {
