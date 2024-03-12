@@ -6,14 +6,15 @@ import { WEBSITE } from '@/config';
 
 import { cn } from '@/lib/utils';
 
-type IconLogoProps = {
-  className?: string;
-};
-
-export const IconLogo = ({ className }: IconLogoProps) => {
+export const IconLogoFuXiaoChen = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLImageElement>) => {
   const { resolvedTheme } = useTheme();
+
   return (
     <img
+      {...props}
       src={
         resolvedTheme === 'dark'
           ? '/images/fuxiaochen-light.svg'

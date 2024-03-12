@@ -74,12 +74,27 @@ export default {
         'cursor-blink': {
           '50%': { borderColor: 'transparent' },
         },
+        'intro-scroll': {
+          '0%': {
+            transform: 'translateY(0)',
+            opacity: '0',
+          },
+          '20%': {
+            transform: 'translateY(2px)',
+            opacity: '1',
+          },
+          '100%': {
+            transform: 'translateY(8px)',
+            opacity: '0',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         // 光标闪烁动画
         'cursor-blink': 'cursor-blink 0.6s step-end infinite alternate',
+        'intro-scroll': 'intro-scroll 3s ease infinite',
       },
     },
   },
