@@ -1,3 +1,4 @@
+import { addDynamicIconSelectors } from '@iconify/tailwind';
 import { fontFamily } from 'tailwindcss/defaultTheme';
 
 import { type Config } from 'tailwindcss';
@@ -88,5 +89,7 @@ export default {
     // 开发模式下加载显示屏幕大小的插件
     process.env.NODE_ENV === 'development' &&
       require('tailwindcss-debug-screens'),
+    // Iconify plugin
+    addDynamicIconSelectors(),
   ],
 } satisfies Config;

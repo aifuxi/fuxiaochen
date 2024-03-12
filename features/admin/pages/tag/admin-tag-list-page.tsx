@@ -8,13 +8,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  BookIcon,
-  CalendarIcon,
-  HashIcon,
-  LanguagesIcon,
-  WrenchIcon,
-} from 'lucide-react';
 
 import {
   Table,
@@ -24,6 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+import {
+  IconSolarBook,
+  IconSolarCalendarMark,
+  IconSolarHashtagSquare,
+  IconSolarTextField,
+  IconSolarTuningSquare2,
+} from '@/components/icons';
 
 import { type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
@@ -40,7 +41,7 @@ const columns = [
   columnHelper.accessor('name', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <LanguagesIcon size={14} />
+        <IconSolarTextField className="text-sm" />
         <span>名称</span>
       </div>
     ),
@@ -49,7 +50,7 @@ const columns = [
   columnHelper.accessor('slug', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <HashIcon size={14} />
+        <IconSolarHashtagSquare className="text-sm" />
         <span>slug</span>
       </div>
     ),
@@ -58,7 +59,7 @@ const columns = [
   columnHelper.accessor('_count.articles', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <BookIcon size={14} />
+        <IconSolarBook className="text-sm" />
         <span>文章数量</span>
       </div>
     ),
@@ -67,7 +68,7 @@ const columns = [
   columnHelper.accessor('createdAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <CalendarIcon size={14} />
+        <IconSolarCalendarMark className="text-sm" />
         <span>创建时间</span>
       </div>
     ),
@@ -76,7 +77,7 @@ const columns = [
   columnHelper.accessor('updatedAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <CalendarIcon size={14} />
+        <IconSolarCalendarMark className="text-sm" />
         <span>更新时间</span>
       </div>
     ),
@@ -85,7 +86,7 @@ const columns = [
   columnHelper.accessor('id', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <WrenchIcon size={14} />
+        <IconSolarTuningSquare2 className="text-sm" />
         <span>操作</span>
       </div>
     ),

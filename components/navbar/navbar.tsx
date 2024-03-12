@@ -3,7 +3,6 @@
 import Link from 'next/link';
 
 import { useScroll } from 'ahooks';
-import { GithubIcon } from 'lucide-react';
 
 import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/config';
 
@@ -12,7 +11,7 @@ import { cn } from '@/lib/utils';
 import { MobileNav } from './mobile-nav';
 import { NavList } from './nav-list';
 
-import { IconLogo } from '../icons';
+import { IconBaranGithub, IconLogo } from '../icons';
 import { NextLink } from '../next-link';
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
@@ -49,7 +48,7 @@ export const Navbar = () => {
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
             <Button variant="ghost" size={'icon'} aria-label="Github Icon">
-              <GithubIcon size={16} />
+              <IconBaranGithub className="text-base" />
             </Button>
           </Link>
         </div>

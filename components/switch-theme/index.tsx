@@ -5,7 +5,6 @@ import * as React from 'react';
 import { useTheme } from 'next-themes';
 
 import { type VariantProps } from 'class-variance-authority';
-import { MoonStarIcon, RotateCwIcon, SunIcon, Tv2Icon } from 'lucide-react';
 
 import { Button, type buttonVariants } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command';
@@ -17,21 +16,28 @@ import {
 
 import { cn } from '@/lib/utils';
 
+import {
+  IconSolarCropMinimalistic,
+  IconSolarMoonStars,
+  IconSolarRestartSquare,
+  IconSolarSun,
+} from '../icons';
+
 const themeOptions = [
   {
     value: 'light',
     label: '浅色',
-    icon: <SunIcon size={16} />,
+    icon: <IconSolarSun className="text-base" />,
   },
   {
     value: 'dark',
     label: '深色',
-    icon: <MoonStarIcon size={16} />,
+    icon: <IconSolarMoonStars className="text-base" />,
   },
   {
     value: 'system',
     label: '系统',
-    icon: <Tv2Icon size={16} />,
+    icon: <IconSolarCropMinimalistic className="text-base" />,
   },
 ];
 
@@ -43,14 +49,14 @@ export function SwitchTheme(props: Props) {
 
   const icon = React.useMemo(() => {
     if (resolvedTheme === 'light' || theme === 'light') {
-      return <SunIcon size={16} />;
+      return <IconSolarSun className="text-base" />;
     }
 
     if (resolvedTheme === 'dark' || theme === 'dark') {
-      return <MoonStarIcon size={16} />;
+      return <IconSolarMoonStars className="text-base" />;
     }
 
-    return <RotateCwIcon className="animate-spin" size={16} />;
+    return <IconSolarRestartSquare className="animate-spin text-base" />;
   }, [resolvedTheme, theme]);
 
   return (

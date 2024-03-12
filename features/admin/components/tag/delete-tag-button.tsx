@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 
-import { Loader2Icon, TrashIcon } from 'lucide-react';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +19,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import {
+  IconSolarRestart,
+  IconSolarTrashBinMinimalistic2,
+} from '@/components/icons';
+
 import { useDeleteTag } from '@/features/tag';
 
 type DeleteTagButtonProps = {
@@ -36,7 +39,7 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button size={'icon'} variant="ghost">
-              <TrashIcon size={16} className="text-destructive" />
+              <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>删除</TooltipContent>
@@ -54,7 +57,7 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
             disabled={deleteTagQuery.isPending}
           >
             {deleteTagQuery.isPending && (
-              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+              <IconSolarRestart className="mr-2 text-base animate-spin" />
             )}
             删除
           </AlertDialogAction>

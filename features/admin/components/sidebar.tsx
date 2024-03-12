@@ -5,11 +5,16 @@ import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { BookText, Code2Icon, HomeIcon, Tags } from 'lucide-react';
-
 import { PATHS } from '@/config';
 
 import { Button } from '@/components/ui/button';
+
+import {
+  IconSolarBook,
+  IconSolarChartSquare,
+  IconSolarCodeSquare,
+  IconSolarHashtagSquare,
+} from '@/components/icons';
 
 import { cn } from '@/lib/utils';
 
@@ -21,22 +26,22 @@ const adminNavItems: Array<{
   {
     label: 'Dashboard',
     link: PATHS.ADMIN_HOME,
-    icon: <HomeIcon className="w-[18px] h-[18px]" />,
+    icon: <IconSolarChartSquare className="text-lg" />,
   },
   {
     label: 'Articles',
     link: PATHS.ADMIN_ARTICLE,
-    icon: <BookText className="w-[18px] h-[18px]" />,
+    icon: <IconSolarBook className="text-lg" />,
   },
   {
     label: 'Tags',
     link: PATHS.ADMIN_TAG,
-    icon: <Tags className="w-[18px] h-[18px]" />,
+    icon: <IconSolarHashtagSquare className="text-lg" />,
   },
   {
     label: 'Snippets',
     link: PATHS.ADMIN_SNIPPET,
-    icon: <Code2Icon className="w-[18px] h-[18px]" />,
+    icon: <IconSolarCodeSquare className="text-lg" />,
   },
 ];
 

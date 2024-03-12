@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUnmount } from 'ahooks';
-import { GithubIcon, Loader2Icon } from 'lucide-react';
 import { type z } from 'zod';
 
 import { PATHS } from '@/config';
@@ -23,6 +22,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
+import { IconBaranGithub, IconSolarRestart } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
 import { cn } from '@/lib/utils';
@@ -87,10 +87,9 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
         </CardContent>
         <CardFooter className="grid gap-2 ">
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            <Loader2Icon
-              size={16}
+            <IconSolarRestart
               className={cn(
-                'mr-2 animate-spin',
+                'mr-2 animate-spin text-base',
                 form.formState.isSubmitting ? '' : 'hidden',
               )}
             />
@@ -121,7 +120,7 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
             type="button"
             onClick={handleSignUpWithGithub}
           >
-            <GithubIcon size={16} className="mr-2 " /> 使用 Github 登录
+            <IconBaranGithub className="mr-2 text-base" /> 使用 Github 登录
           </Button>
         </CardFooter>
       </form>

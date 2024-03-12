@@ -10,14 +10,6 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import {
-  CalendarIcon,
-  HeadingIcon,
-  PencilIcon,
-  PlusIcon,
-  TagsIcon,
-  WrenchIcon,
-} from 'lucide-react';
 
 import { PATHS, PLACEHODER_TEXT } from '@/config';
 
@@ -37,6 +29,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import {
+  IconSolarAddSquare,
+  IconSolarCalendarMark,
+  IconSolarPen,
+  IconSolarTag,
+  IconSolarTextField,
+  IconSolarTuningSquare2,
+} from '@/components/icons';
+
 import { type Article, useGetArticles } from '@/features/article';
 import { cn, toSlashDateString } from '@/lib/utils';
 
@@ -50,7 +51,7 @@ const columns = [
   columnHelper.accessor('title', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <HeadingIcon size={14} />
+        <IconSolarTextField className='text-sm' />
         <span>文章标题</span>
       </div>
     ),
@@ -59,7 +60,7 @@ const columns = [
   columnHelper.accessor('tags', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <TagsIcon size={14} />
+        <IconSolarTag className='text-sm' />
         <span>标签</span>
       </div>
     ),
@@ -81,7 +82,7 @@ const columns = [
   columnHelper.accessor('createdAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <CalendarIcon size={14} />
+        <IconSolarCalendarMark className='text-sm' />
         <span>创建时间</span>
       </div>
     ),
@@ -90,7 +91,7 @@ const columns = [
   columnHelper.accessor('updatedAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <CalendarIcon size={14} />
+        <IconSolarCalendarMark className='text-sm' />
         <span>更新时间</span>
       </div>
     ),
@@ -99,7 +100,7 @@ const columns = [
   columnHelper.accessor('id', {
     header: () => (
       <div className="flex space-x-1 items-center">
-        <WrenchIcon size={14} />
+        <IconSolarTuningSquare2 className='text-sm' />
         <span>操作</span>
       </div>
     ),
@@ -109,7 +110,7 @@ const columns = [
           <TooltipTrigger asChild>
             <Link href={`${PATHS.ADMIN_ARTICLE_EDIT}/${info.getValue()}`}>
               <Button size={'icon'} variant="ghost">
-                <PencilIcon size={16} />
+                <IconSolarPen className='text-sm' />
               </Button>
             </Link>
           </TooltipTrigger>
@@ -142,7 +143,7 @@ export const AdminArticleListPage = () => {
       <div className="flex justify-end">
         <Link href={PATHS.ADMIN_ARTICLE_CREATE}>
           <Button>
-            <PlusIcon className="mr-2 " size={16} />
+            <IconSolarAddSquare className="mr-2 text-base" />
             创建文章
           </Button>
         </Link>

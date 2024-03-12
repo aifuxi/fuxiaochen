@@ -4,8 +4,6 @@ import * as React from 'react';
 
 // 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
 // 根据自己需要做了部分修改
-import { Check, ChevronDown, XSquare } from 'lucide-react';
-
 import { cn } from '@/lib/utils';
 
 import { Badge } from './badge';
@@ -19,6 +17,12 @@ import {
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { ScrollArea } from './scroll-area';
+
+import {
+  IconSolarCheckSquare,
+  IconSolarCloseSquare,
+  IconSolarSquareAltArrowDown,
+} from '../icons';
 
 export type ComboboxOption = {
   value: string;
@@ -118,9 +122,9 @@ export const Combobox = React.forwardRef(
             <div className="flex h-full items-center shrink-0">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
-                <XSquare
+                <IconSolarCloseSquare
                   className={cn(
-                    'ml-2 h-4 w-4 opacity-50 hover:opacity-80 transition-opacity',
+                    'ml-2 text-base opacity-50 hover:opacity-80 transition-opacity',
                   )}
                   onClick={(e) => {
                     props.onValueChange?.([]);
@@ -130,9 +134,9 @@ export const Combobox = React.forwardRef(
                   }}
                 />
               )}
-              <ChevronDown
+              <IconSolarSquareAltArrowDown
                 className={cn(
-                  'ml-2 h-4 w-4 rotate-0 opacity-50 transition-transform',
+                  'ml-2 text-base rotate-0 opacity-50 transition-transform',
                   open && 'rotate-180',
                 )}
               />
@@ -170,9 +174,9 @@ export const Combobox = React.forwardRef(
                         }
                       }}
                     >
-                      <Check
+                      <IconSolarCheckSquare
                         className={cn(
-                          'mr-2 h-4 w-4 opacity-0',
+                          'mr-2 text-base opacity-0',
                           !props.multiple &&
                             props.value === option.value &&
                             'opacity-100',

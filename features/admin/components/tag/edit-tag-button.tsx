@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2Icon, PencilIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +28,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { IconSolarPen, IconSolarRestart } from '@/components/icons';
 import { LoadingSpinner } from '@/components/loading-spinner';
 
 import {
@@ -69,7 +69,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
-              <PencilIcon size={16} />
+              <IconSolarPen className="text-base" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>编辑</TooltipContent>
@@ -139,7 +139,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   disabled={updateTagQuery.isPending}
                 >
                   {updateTagQuery.isPending && (
-                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    <IconSolarRestart className="mr-2 text-base animate-spin" />
                   )}
                   保存
                 </Button>
