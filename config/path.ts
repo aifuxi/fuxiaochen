@@ -6,6 +6,7 @@ export const PATHS = {
 
   /** ************* ADMIN ****************** */
   ADMIN_HOME: '/admin',
+  ADMIN_STATISTIC: '/admin/statistic',
 
   ADMIN_BLOG: '/admin/blog',
   ADMIN_BLOG_CREATE: '/admin/blog/create',
@@ -29,7 +30,8 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.SITE_SNIPPET]: '片段',
 
   /** ************* ADMIN ****************** */
-  [PATHS.ADMIN_HOME]: '统计',
+  [PATHS.ADMIN_HOME]: '首页',
+  [PATHS.ADMIN_STATISTIC]: '统计',
   [PATHS.ADMIN_BLOG]: 'Blog',
   [PATHS.ADMIN_BLOG_CREATE]: '创建 Blog',
   [PATHS.ADMIN_BLOG_EDIT]: '编辑 Blog',

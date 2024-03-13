@@ -14,6 +14,14 @@ import {
 import { NICKNAME, PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -146,9 +154,27 @@ export const AdminBlogListPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-3xl font-semibold tracking-tight transition-colors">
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink>
+              <Link href={PATHS.ADMIN_HOME}>{PATHS_MAP[PATHS.ADMIN_HOME]}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{PATHS_MAP[PATHS.ADMIN_BLOG]}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <h2 className="text-4xl md:text-5xl font-bold mb-2">
         {PATHS_MAP[PATHS.ADMIN_BLOG]}
       </h2>
+      <p className="text-lg text-muted-foreground">
+        {PATHS_MAP[PATHS.ADMIN_BLOG]}管理，在这里对
+        {PATHS_MAP[PATHS.ADMIN_BLOG]}进行 增、删、改、查操作
+      </p>
 
       <div className="flex justify-end">
         <Link href={PATHS.ADMIN_BLOG_CREATE}>

@@ -37,3 +37,14 @@ export const IconSolarAltArrowDownLinear = ({
     ></span>
   );
 };
+export const IconSolarAltArrowRightLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--alt-arrow-right-linear]', className)}
+    ></span>
+  );
+};
