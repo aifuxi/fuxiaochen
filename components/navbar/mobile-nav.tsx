@@ -19,7 +19,7 @@ import {
 
 import { cn } from '@/lib/utils';
 
-import { navItems } from './nav-list';
+import { navItems } from './config';
 
 import { IconSolarDocumentText } from '../icons';
 
