@@ -26,7 +26,7 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
         )}
         <h1 className="mb-4 text-4xl font-extrabold ">{blog.title}</h1>
         <div className="text-sm flex flex-row items-center text-muted-foreground">
-          <div>{NICKNAME}</div>
+          <div>{blog.author ?? NICKNAME}</div>
           <span className="mx-2">·</span>
           <span>{toSimpleDateString(blog.createdAt)}</span>
         </div>
