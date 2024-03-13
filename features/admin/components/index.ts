@@ -1,5 +1,5 @@
 export * from './tag';
 export * from './snippet';
-export * from './article';
+export * from './blog';
 
 export * from './layout';

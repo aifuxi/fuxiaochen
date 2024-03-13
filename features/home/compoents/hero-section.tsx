@@ -83,13 +83,13 @@ export const HeroSection = () => {
         variants={HERO_SECTION_ITEM_VARIANTS}
       >
         <Link
-          href={PATHS.SITE_ARTICLES}
+          href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
           Read The Blog
         </Link>
         <Link
-          href={PATHS.SITE_ARTICLES}
+          href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
           About Me

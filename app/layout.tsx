@@ -39,7 +39,7 @@ export default function RootLayout({ children }: FCProps) {
             <NextThemeProvider attribute="class">
               {children}
 
-              {typeof window !== 'undefined' && <BackToTop />}
+              <BackToTop />
 
               <Toaster />
 

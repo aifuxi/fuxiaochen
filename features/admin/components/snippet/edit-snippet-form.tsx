@@ -109,7 +109,7 @@ export const EditSnippetForm = () => {
                   <div className="flex items-center w-full gap-4">
                     <Input
                       {...field}
-                      placeholder="请输入文章slug（只支持数字、字母、下划线、中划线）..."
+                      placeholder="请输入Blogslug（只支持数字、字母、下划线、中划线）..."
                     />
                     <Button type="button" onClick={handleFormatSlug}>
                       格式化
@@ -151,7 +151,7 @@ export const EditSnippetForm = () => {
                         }
                         multiple
                         clearable
-                        selectPlaceholder="请选择文章标签（多选）"
+                        selectPlaceholder="请选择Blog标签（多选）"
                         value={field.value}
                         onValueChange={field.onChange}
                       />

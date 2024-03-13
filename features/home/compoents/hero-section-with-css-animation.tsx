@@ -55,13 +55,13 @@ export const HeroSectionWithCssAnimation = () => {
       </p>
       <div className="flex space-x-4">
         <Link
-          href={PATHS.SITE_ARTICLES}
+          href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
           Read The Blog
         </Link>
         <Link
-          href={PATHS.SITE_ARTICLES}
+          href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
           About Me

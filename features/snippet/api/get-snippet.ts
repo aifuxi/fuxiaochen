@@ -4,7 +4,7 @@ import { getSnippetByID } from '../actions';
 
 export const useGetSnippet = (id: string) => {
   return useQuery({
-    queryKey: ['get_aritcle', id],
+    queryKey: ['get_blog', id],
     queryFn: () => getSnippetByID(id),
   });
 };

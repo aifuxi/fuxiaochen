@@ -7,8 +7,9 @@ export const IconLogoGmail = ({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement>) => {
   return (
-    <span {...props} className={cn('icon-[logos--google-gmail]', className)}>
-      Email
-    </span>
+    <span
+      {...props}
+      className={cn('icon-[logos--google-gmail]', className)}
+    ></span>
   );
 };

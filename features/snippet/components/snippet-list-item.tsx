@@ -23,7 +23,7 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
   return (
     <Link
       key={snippet.id}
-      href={`${PATHS.SITE_SNIPPETS}/${snippet.slug}`}
+      href={`${PATHS.SITE_SNIPPET}/${snippet.slug}`}
       className="rounded-2xl border flex items-center h-full p-6 transition-[border] hover:border-primary"
     >
       <div className="grid gap-2">

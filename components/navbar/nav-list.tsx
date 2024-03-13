@@ -17,12 +17,12 @@ export const navItems: Array<{
     link: PATHS.SITE_HOME,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_ARTICLES],
-    link: PATHS.SITE_ARTICLES,
+    label: PATHS_MAP[PATHS.SITE_BLOG],
+    link: PATHS.SITE_BLOG,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_SNIPPETS],
-    link: PATHS.SITE_SNIPPETS,
+    label: PATHS_MAP[PATHS.SITE_SNIPPET],
+    link: PATHS.SITE_SNIPPET,
   },
 ];
 
