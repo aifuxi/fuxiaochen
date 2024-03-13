@@ -11,9 +11,9 @@ export const Sidenav = async () => {
   const session = await auth();
 
   return (
-    <aside className="min-w-[256px] max-w-[256px] h-screen flex-col flex items-center py-12 px-8 border-r">
+    <aside className="min-w-[256px] max-w-[256px] h-screen flex-col flex items-center py-12 px-8 bg-foreground">
       {session?.user?.image && (
-        <Avatar className="w-14 h-14">
+        <Avatar className="w-14 h-14 border border-muted-foreground/10">
           <AvatarImage
             src={session?.user?.image}
             alt={session?.user?.name ?? ''}
@@ -22,7 +22,7 @@ export const Sidenav = async () => {
         </Avatar>
       )}
 
-      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight mt-2">
+      <h4 className="scroll-m-20 text-lg font-semibold tracking-tight mt-2 text-primary-foreground">
         {session?.user?.name ?? ''}
       </h4>
 

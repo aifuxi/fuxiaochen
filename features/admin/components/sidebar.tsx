@@ -56,13 +56,14 @@ export const Sidebar = () => {
     >
       <Button
         size="icon"
-        variant={pathname === el.link ? 'default' : 'secondary'}
+        variant={pathname === el.link ? 'secondary' : 'default'}
+        className={cn(pathname === el.link ? '' : 'bg-muted-foreground/10')}
       >
         {el.icon}
       </Button>
       <span
         className={cn(
-          'text-base transition-all text-primary font-medium',
+          'text-base transition-all text-primary-foreground font-medium',
           pathname === el.link ? 'font-semibold' : '',
         )}
       >
