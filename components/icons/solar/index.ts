@@ -20,3 +20,5 @@ export * from './icon-solar-check';
 export * from './icon-solar-close';
 export * from './icon-solar-arrow';
 export * from './icon-solar-magnifer';
+export * from './icon-solar-menu-dots';
+export * from './icon-solar-home';

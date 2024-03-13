@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import Link from 'next/link';
+
 import {
   createColumnHelper,
   flexRender,
@@ -11,6 +13,14 @@ import {
 
 import { PATHS, PATHS_MAP } from '@/config';
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
 import {
   Table,
   TableBody,
@@ -115,9 +125,27 @@ export const AdminTagListPage = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-3xl font-semibold tracking-tight transition-colors">
+      <Breadcrumb className="mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink>
+              <Link href={PATHS.ADMIN_HOME}>{PATHS_MAP[PATHS.ADMIN_HOME]}</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>{PATHS_MAP[PATHS.ADMIN_TAG]}</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      <h2 className="text-4xl md:text-5xl font-bold mb-2">
         {PATHS_MAP[PATHS.ADMIN_TAG]}
       </h2>
+      <p className="text-lg text-muted-foreground">
+        {PATHS_MAP[PATHS.ADMIN_TAG]}管理，在这里对{PATHS_MAP[PATHS.ADMIN_TAG]}
+        进行 增、删、改、查操作
+      </p>
       <div className="flex justify-end">
         <CreateTagButton />
       </div>

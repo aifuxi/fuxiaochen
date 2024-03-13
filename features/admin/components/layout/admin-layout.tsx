@@ -19,10 +19,10 @@ export const AdminLayout = async ({ children }: React.PropsWithChildren) => {
 
   return (
     <>
-      <div className="w-screen h-screen flex bg-black dark:bg-white">
+      <div className="flex bg-black dark:bg-white w-screen h-screen overflow-hidden">
         <Sidenav />
 
-        <section className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col bg-background rounded-tl-[2.5em] shadow-md">
+        <section className="flex flex-1 p-8 flex-col bg-background rounded-tl-[2.5em] shadow-md  overflow-y-auto">
           {children}
         </section>
       </div>
