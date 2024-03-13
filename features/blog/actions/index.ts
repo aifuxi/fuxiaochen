@@ -117,6 +117,7 @@ export const createBlog = async (params: CreateBlogDTO) => {
       body: result.data.body,
       published: result.data.published,
       cover: result.data.cover,
+      author: result.data.author,
       tags: {
         connect: result.data.tags
           ? result.data.tags.map((tagID) => ({ id: tagID }))
@@ -183,6 +184,7 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
       description: result.data.description,
       slug: result.data.slug,
       cover: result.data.cover,
+      author: result.data.author,
       body: result.data.body,
       published: result.data.published,
       tags: {
