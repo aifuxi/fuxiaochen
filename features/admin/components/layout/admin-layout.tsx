@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { PATHS } from '@/config';
 
-
 import { SwitchTheme } from '@/components/switch-theme';
 
 import { auth } from '@/lib/auth';
@@ -20,10 +19,10 @@ export const AdminLayout = async ({ children }: React.PropsWithChildren) => {
 
   return (
     <>
-      <div className="flex">
+      <div className="w-screen h-screen flex bg-black dark:bg-white">
         <Sidenav />
 
-        <section className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col">
+        <section className="max-h-screen overflow-y-auto flex flex-1 p-8 flex-col bg-background rounded-tl-[2.5em] shadow-md">
           {children}
         </section>
       </div>
