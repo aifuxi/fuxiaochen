@@ -59,7 +59,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Rubik Variable', 'PingFang', ...fontFamily.sans],
+        sans: ['Poppins', 'PingFang', ...fontFamily.sans],
         mono: [...fontFamily.mono],
       },
       keyframes: {
