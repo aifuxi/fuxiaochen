@@ -80,6 +80,7 @@ model Blog {
   description String
   body        String  @db.Text
   cover       String?
+  author      String?
   published   Boolean @default(false)
   tags        Tag[]
 

@@ -14,6 +14,7 @@ export const createBlogSchema = z.object({
     .min(1, { message: '长度不能少于1个字符' }),
   description: z.string().min(1, { message: '长度不能少于1个字符' }),
   cover: z.string().nullable().optional(),
+  author: z.string().nullable().optional(),
   body: z.string().min(1, { message: '长度不能少于1个字符' }),
   published: z.boolean().optional(),
   tags: z.string().array().optional(),

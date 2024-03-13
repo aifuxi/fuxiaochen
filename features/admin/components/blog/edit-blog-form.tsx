@@ -64,6 +64,7 @@ export const EditBlogForm = () => {
       body: blog?.body ?? '',
       published: blog?.published ?? true,
       cover: blog?.cover ?? '',
+      author: blog?.author ?? '',
       tags: blog?.tags?.map((el) => el.id) ?? [],
     },
   });
@@ -143,12 +144,33 @@ export const EditBlogForm = () => {
           />
           <FormField
             control={form.control}
+            name="author"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>作者</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder="请输入作者..."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="cover"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>封面</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="请输入封面链接..." />
+                  <Textarea
+                    {...field}
+                    value={field.value ?? ''}
+                    placeholder="请输入封面链接..."
+                  />
                 </FormControl>
                 <FormMessage />
                 <Input

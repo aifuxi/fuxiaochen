@@ -11,7 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import { PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/config';
+import { NICKNAME, PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/config';
 
 import { badgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -57,6 +57,15 @@ const columns = [
     ),
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor('author', {
+    header: () => (
+      <div className="flex space-x-1 items-center">
+        <IconSolarTextField className="text-sm" />
+        <span>作者</span>
+      </div>
+    ),
+    cell: (info) => info.getValue() ?? NICKNAME,
+  }),
   columnHelper.accessor('tags', {
     header: () => (
       <div className="flex space-x-1 items-center">
@@ -79,6 +88,7 @@ const columns = [
       </div>
     ),
   }),
+
   columnHelper.accessor('createdAt', {
     header: () => (
       <div className="flex space-x-1 items-center">
