@@ -56,7 +56,7 @@ export const TransitionCurve = ({ children }: FCProps) => {
       <div
         style={{ opacity: dimensions.width ? 1 : 0 }}
         className={cn(
-          'bg-primary transition-opacity delay-[0.1s] ease-linear duration-0',
+          'bg-primary transition-opacity delay-100 ease-linear duration-0',
           'fixed w-screen pointer-events-none inset-x-0',
         )}
       />

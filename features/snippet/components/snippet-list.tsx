@@ -1,11 +1,3 @@
-'use client';
-
-import React from 'react';
-
-import { motion } from 'framer-motion';
-
-import { LIST_CONTAINER_VARIANTS, LIST_ITEM_VARIANTS } from '@/config';
-
 import { IllustrationNoContent } from '@/components/illustrations';
 
 import { SnippetListItem } from './snippet-list-item';
@@ -29,17 +21,12 @@ export const SnippetList = ({ snippets }: SnippetListProps) => {
   }
 
   return (
-    <motion.ul
-      className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4"
-      variants={LIST_CONTAINER_VARIANTS}
-      initial="hidden"
-      animate="visible"
-    >
+    <ul className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
       {snippets.map((el) => (
-        <motion.li key={el.id} variants={LIST_ITEM_VARIANTS}>
+        <li key={el.id}>
           <SnippetListItem snippet={el} />
-        </motion.li>
+        </li>
       ))}
-    </motion.ul>
+    </ul>
   );
 };
