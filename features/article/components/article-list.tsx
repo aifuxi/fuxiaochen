@@ -1,11 +1,3 @@
-'use client';
-
-import React from 'react';
-
-import { motion } from 'framer-motion';
-
-import { LIST_CONTAINER_VARIANTS, LIST_ITEM_VARIANTS } from '@/config';
-
 import { IllustrationNoContent } from '@/components/illustrations';
 
 import { ArticleListItem } from './article-list-item';
@@ -29,17 +21,12 @@ export const ArticleList = ({ articles }: ArticleListProps) => {
   }
 
   return (
-    <motion.ul
-      className="grid grid-cols-1 2xl:grid-cols-2 gap-4"
-      variants={LIST_CONTAINER_VARIANTS}
-      initial="hidden"
-      animate="visible"
-    >
+    <ul className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
       {articles.map((el) => (
-        <motion.li key={el.id} variants={LIST_ITEM_VARIANTS}>
+        <li key={el.id}>
           <ArticleListItem article={el} />
-        </motion.li>
+        </li>
       ))}
-    </motion.ul>
+    </ul>
   );
 };

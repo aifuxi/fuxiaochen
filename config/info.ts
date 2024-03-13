@@ -2,7 +2,7 @@
 export const EMAIL = 'aifuxi.js@gmail.com';
 
 /** 昵称 */
-export const NICKNAME = '付小晨';
+export const NICKNAME = 'GG Bound';
 
 /** Github 个人页 */
 export const GITHUB_PAGE = 'https://github.com/aifuxi';

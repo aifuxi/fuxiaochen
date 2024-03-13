@@ -15,7 +15,9 @@ export const PageTransition = ({ children }: FCProps) => {
 
   return (
     <AnimatePresence mode="wait">
-      <TransitionCurve key={pathname}>{children}</TransitionCurve>
+      {typeof window !== 'undefined' && (
+        <TransitionCurve key={pathname}>{children}</TransitionCurve>
+      )}
     </AnimatePresence>
   );
 };
