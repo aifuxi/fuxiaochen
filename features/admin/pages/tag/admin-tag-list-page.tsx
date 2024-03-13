@@ -58,11 +58,11 @@ const columns = [
     ),
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('_count.articles', {
+  columnHelper.accessor('_count.blogs', {
     header: () => (
       <div className="flex space-x-1 items-center">
         <IconSolarBook className="text-sm" />
-        <span>文章数量</span>
+        <span>Blog数量</span>
       </div>
     ),
     cell: (info) => info.getValue(),

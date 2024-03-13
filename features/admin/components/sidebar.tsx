@@ -29,8 +29,8 @@ const adminNavItems: Array<{
     icon: <IconSolarChartSquare className="text-lg" />,
   },
   {
-    label: PATHS_MAP[PATHS.ADMIN_ARTICLE],
-    link: PATHS.ADMIN_ARTICLE,
+    label: PATHS_MAP[PATHS.ADMIN_BLOG],
+    link: PATHS.ADMIN_BLOG,
     icon: <IconSolarBook className="text-lg" />,
   },
   {

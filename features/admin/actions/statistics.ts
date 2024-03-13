@@ -3,10 +3,10 @@
 import { prisma } from '@/lib/prisma';
 
 export const getStatistics = async () => {
-  const articleCount = await prisma.article.count({
+  const blogCount = await prisma.blog.count({
     where: { published: true },
   });
   const tagCount = await prisma.tag.count();
 
-  return { articleCount, tagCount };
+  return { blogCount, tagCount };
 };

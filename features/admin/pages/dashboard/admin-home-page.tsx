@@ -8,12 +8,12 @@ import { getStatistics } from '../../actions/statistics';
 import { type StatisticsCardProps } from '../../types';
 
 export const AdminHomePage = async () => {
-  const { articleCount, tagCount } = await getStatistics();
+  const { blogCount, tagCount } = await getStatistics();
 
   const statistics: StatisticsCardProps[] = [
     {
-      title: '文章总数',
-      count: articleCount,
+      title: 'Blog总数',
+      count: blogCount,
       icon: <IconSolarBook className="text-muted-foreground text-2xl" />,
     },
     {

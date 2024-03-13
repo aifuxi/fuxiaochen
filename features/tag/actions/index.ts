@@ -22,7 +22,7 @@ export const getTags = async () => {
       createdAt: 'desc',
     },
     include: {
-      articles: true,
+      blogs: true,
       _count: true,
     },
   });

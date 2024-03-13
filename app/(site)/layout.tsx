@@ -5,7 +5,7 @@ import { Navbar } from '@/components/navbar';
 export default function Layout({ children }: FCProps) {
   return (
     <>
-      {typeof window !== 'undefined' && <Navbar />}
+      <Navbar />
       <main>{children}</main>
     </>
   );

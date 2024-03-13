@@ -5,8 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development next dev -p 6121",
-    "start": "cross-env NODE_ENV=production next start -p 3000",
+    "dev": "next dev -p 6121",
+    "start": "next start -p 3000",
     "build": "next build",
     "build:analyzer": "cross-env ANALYZE=true next build",
     "lint": "next lint",
