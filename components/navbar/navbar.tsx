@@ -1,15 +1,24 @@
 'use client';
 
+import React from 'react';
+
 import Link from 'next/link';
 
 import { useScroll } from 'ahooks';
 
 import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/config';
 
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+
 import { cn } from '@/lib/utils';
 
+import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
-import { NavList } from './nav-list';
 
 import { IconBaranGithub, IconLogoFuXiaoChen } from '../icons';
 import { NextLink } from '../next-link';
@@ -17,7 +26,7 @@ import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
 
 export const Navbar = () => {
-  const scroll = useScroll(window.document);
+  const scroll = useScroll(document);
 
   return (
     <header
@@ -37,7 +46,19 @@ export const Navbar = () => {
             {WEBSITE}
           </span>
         </NextLink>
-        <NavList />
+        <div className="h-16 flex-1 hidden sm:flex justify-end items-center gap-6 text-base font-medium mr-8">
+          <NavigationMenu className="list-none">
+            {navItems.map((el) => (
+              <NavigationMenuItem key={el.link}>
+                <Link href={el.link} legacyBehavior passHref>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                    {el.label}
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenu>
+        </div>
         <MobileNav />
         <div className="flex flex-1 sm:flex-none justify-end items-center gap-1">
           <SwitchTheme />
