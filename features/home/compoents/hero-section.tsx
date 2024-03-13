@@ -1,17 +1,9 @@
-'use client';
-
-import React from 'react';
-
 import Link from 'next/link';
-
-import { motion } from 'framer-motion';
 
 import {
   BRAND_COLOR_GOLANG,
   BRAND_COLOR_REACT,
   BRAND_COLOR_TYPESCRIPT,
-  HERO_SECTION_CONTAINER_VARIANTS,
-  HERO_SECTION_ITEM_VARIANTS,
   NICKNAME,
   PATHS,
 } from '@/config';
@@ -30,33 +22,27 @@ import { socialMediaList } from './social-media';
 
 export const HeroSection = () => {
   return (
-    <motion.div
-      variants={HERO_SECTION_CONTAINER_VARIANTS}
-      initial="hidden"
-      animate="visible"
-      className="min-w-screen-md gap-5 flex flex-col justify-center min-h-full "
-    >
-      <motion.p
-        variants={HERO_SECTION_ITEM_VARIANTS}
-        className="text-5xl tracking-widest"
-      >
-        你好，我是
-      </motion.p>
-      <motion.strong
-        variants={HERO_SECTION_ITEM_VARIANTS}
-        className={`text-8xl tracking-widest font-black text-[${BRAND_COLOR_TYPESCRIPT}] bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`}
+    <div className="min-w-screen-md gap-5 flex flex-col justify-center min-h-full ">
+      <p className="text-5xl tracking-widest animate-fade-down ">你好，我是</p>
+      <strong
+        className={cn(
+          `text-8xl tracking-widest font-black text-[${BRAND_COLOR_TYPESCRIPT}] bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
+          'animate-fade-down  animate-delay-200',
+        )}
         style={{
           WebkitTextFillColor: 'transparent',
         }}
       >
         {NICKNAME}
-      </motion.strong>
-      <motion.div variants={HERO_SECTION_ITEM_VARIANTS}>
+      </strong>
+      <div className={cn('animate-fade-down  animate-delay-[400ms]')}>
         <TypeIntro />
-      </motion.div>
-      <motion.p
-        variants={HERO_SECTION_ITEM_VARIANTS}
-        className="text-5xl tracking-widest"
+      </div>
+      <p
+        className={cn(
+          'text-5xl tracking-widest',
+          'animate-fade-down  animate-delay-[800ms]',
+        )}
       >
         喜欢
         <span className={`font-semibold text-[${BRAND_COLOR_REACT}]`}>
@@ -71,16 +57,20 @@ export const HeroSection = () => {
           Golang
         </span>
         <span className="ml-4">\owo/ ~</span>
-      </motion.p>
-      <motion.p
-        variants={HERO_SECTION_ITEM_VARIANTS}
-        className="text-2xl text-muted-foreground tracking-widest"
+      </p>
+      <p
+        className={cn(
+          'text-2xl text-muted-foreground tracking-widest',
+          'animate-fade-down  animate-delay-1000',
+        )}
       >
         我在这个网站记录我的成长，正在努力 💪 成为一个更好的程序员。
-      </motion.p>
-      <motion.div
-        className="flex space-x-4"
-        variants={HERO_SECTION_ITEM_VARIANTS}
+      </p>
+      <div
+        className={cn(
+          'flex space-x-4',
+          'animate-fade-down  animate-delay-[1200ms]',
+        )}
       >
         <Link
           href={PATHS.SITE_BLOG}
@@ -94,16 +84,16 @@ export const HeroSection = () => {
         >
           About Me
         </Link>
-      </motion.div>
+      </div>
 
-      <motion.ul
-        className="flex space-x-4"
-        variants={HERO_SECTION_CONTAINER_VARIANTS}
-        initial="hidden"
-        animate="visible"
+      <ul
+        className={cn(
+          'flex space-x-4',
+          'animate-fade-down  animate-delay-[1400ms]',
+        )}
       >
         {socialMediaList.map((el) => (
-          <motion.li key={el.link} variants={HERO_SECTION_ITEM_VARIANTS}>
+          <li key={el.link}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button asChild variant="outline" size="icon">
@@ -114,9 +104,9 @@ export const HeroSection = () => {
               </TooltipTrigger>
               <TooltipContent>{el.label}</TooltipContent>
             </Tooltip>
-          </motion.li>
+          </li>
         ))}
-      </motion.ul>
-    </motion.div>
+      </ul>
+    </div>
   );
 };
