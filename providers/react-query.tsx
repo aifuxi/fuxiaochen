@@ -5,11 +5,9 @@ import React from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import { type FCProps } from '@/types';
-
 import { queryClient } from '@/lib/react-query';
 
-export const ReactQueryProvider = ({ children }: FCProps) => {
+export const ReactQueryProvider = ({ children }: React.PropsWithChildren) => {
   return (
     <QueryClientProvider client={queryClient}>
       {children}

@@ -1,10 +1,10 @@
+import React from 'react';
+
 import { type Metadata } from 'next';
 
 import { isNil } from 'lodash-es';
 
 import { WEBSITE } from '@/config';
-
-import { type FCProps } from '@/types';
 
 import { getSnippetBySlug } from '@/features/snippet';
 
@@ -26,6 +26,6 @@ export async function generateMetadata({
   };
 }
 
-export default function Layout({ children }: FCProps) {
+export default function Layout({ children }: React.PropsWithChildren) {
   return <>{children}</>;
 }

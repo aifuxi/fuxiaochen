@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 export function IllustrationFailureDark(props: React.SVGProps<SVGSVGElement>) {
   return (

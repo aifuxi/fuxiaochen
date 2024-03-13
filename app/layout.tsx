@@ -1,8 +1,8 @@
+import React from 'react';
+
 import { type Metadata } from 'next';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/config';
-
-import { type FCProps } from '@/types';
 
 import { NextThemeProvider, ReactQueryProvider } from '@/providers';
 
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   keywords: NICKNAME,
 };
 
-export default function RootLayout({ children }: FCProps) {
+export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html suppressHydrationWarning lang="zh-CN">
       <head>
