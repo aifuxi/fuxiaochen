@@ -106,5 +106,7 @@ export default {
       require('tailwindcss-debug-screens'),
     // Iconify plugin
     addDynamicIconSelectors(),
+    // 动画插件
+    require('tailwindcss-animated'),
   ],
 } satisfies Config;
