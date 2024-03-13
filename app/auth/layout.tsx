@@ -1,7 +1,7 @@
-import { type FCProps } from '@/types';
+import React from 'react';
 
 import { AuthLayout } from '@/features/auth';
 
-export default function Layout({ children }: FCProps) {
+export default function Layout({ children }: React.PropsWithChildren) {
   return <AuthLayout>{children}</AuthLayout>;
 }

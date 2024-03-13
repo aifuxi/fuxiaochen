@@ -1,14 +1,14 @@
+import React from 'react';
+
 import { redirect } from 'next/navigation';
 
 import { PATHS } from '@/config';
-
-import { type FCProps } from '@/types';
 
 import { SwitchTheme } from '@/components/switch-theme';
 
 import { auth } from '@/lib/auth';
 
-export const AuthLayout = async ({ children }: FCProps) => {
+export const AuthLayout = async ({ children }: React.PropsWithChildren) => {
   const session = await auth();
 
   if (session?.user) {

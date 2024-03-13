@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 
 import { PATHS } from '@/config';
 
-import { type FCProps } from '@/types';
 
 import { SwitchTheme } from '@/components/switch-theme';
 
@@ -12,7 +11,7 @@ import { auth } from '@/lib/auth';
 
 import { Sidenav } from '../sidenav';
 
-export const AdminLayout = async ({ children }: FCProps) => {
+export const AdminLayout = async ({ children }: React.PropsWithChildren) => {
   const session = await auth();
 
   if (!session?.user) {

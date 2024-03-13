@@ -11,7 +11,7 @@ import { type Variants, motion } from 'framer-motion';
 
 import { PATHS_MAP } from '@/config';
 
-import { type FCProps } from '@/types';
+import React from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -30,7 +30,7 @@ const anim = (variants: Variants) => {
   };
 };
 
-export const TransitionCurve = ({ children }: FCProps) => {
+export const TransitionCurve = ({ children }: React.PropsWithChildren) => {
   const pathname = usePathname();
   const [dimensions, setDimensions] = useState({
     width: 0,

@@ -6,11 +6,9 @@ import { usePathname } from 'next/navigation';
 
 import { AnimatePresence } from 'framer-motion';
 
-import { type FCProps } from '@/types';
-
 import { TransitionCurve } from './transition-curve';
 
-export const PageTransition = ({ children }: FCProps) => {
+export const PageTransition = ({ children }: React.PropsWithChildren) => {
   const pathname = usePathname();
 
   return (

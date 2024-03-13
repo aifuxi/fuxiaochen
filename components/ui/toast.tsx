@@ -1,6 +1,10 @@
 'use client';
 
-import toast, { Toaster as HotToaster, ToastBar } from 'react-hot-toast';
+import toast, {
+  Toaster as HotToaster,
+  type Toast,
+  ToastBar,
+} from 'react-hot-toast';
 
 import { Button } from './button';
 
@@ -29,9 +33,9 @@ export const Toaster = () => {
         },
       }}
     >
-      {(t) => (
+      {(t: Toast) => (
         <ToastBar toast={t}>
-          {({ icon, message }) => (
+          {({ icon, message }: Toast) => (
             <>
               {icon}
               {message}
