@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { PulseLoader } from 'react-spinners';
 
 import {
   type ColumnDef,
@@ -19,16 +20,22 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+import { CreateTagButton } from '@/features/admin';
+
 import { Button } from './button';
+
+import { IllustrationNoContent } from '../illustrations';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  loading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  loading,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
 
@@ -64,28 +71,7 @@ export function DataTable<TData, TValue>({
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+        <TableBody>{renderContent()}</TableBody>
       </Table>
       <div className="flex px-4 items-center">
         <div className="flex-1 text-sm text-muted-foreground">
@@ -113,4 +99,44 @@ export function DataTable<TData, TValue>({
       </div>
     </div>
   );
+
+  function renderContent() {
+    if (loading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24">
+            <div className="grid place-content-center gap-4 py-16">
+              <div>
+                <PulseLoader color="hsl(var(--primary))" loading />
+              </div>
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (!table.getRowModel().rows?.length && !loading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            <div className="grid place-content-center gap-4 py-16">
+              <IllustrationNoContent />
+              <p>暂无内容，请添加</p>
+              <CreateTagButton />
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return table.getRowModel().rows.map((row) => (
+      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  }
 }
