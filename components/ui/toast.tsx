@@ -10,7 +10,7 @@ import {
   IconSolarDangerCircle,
   IconSolarDangerTriangle,
   IconSolarInfoCircle,
-  IconSolarRestart,
+  IconSolarRestartLinear,
 } from '@/components/icons';
 
 export const ReactHotToaster = () => {
@@ -64,7 +64,7 @@ export const showErrorToast = (msg: Message, opts?: ToastOptions) => {
 export const showLoadingToast = (msg: Message, opts?: ToastOptions) => {
   toast(msg, {
     ...opts,
-    icon: <IconSolarRestart className="text-xl animate-spin" />,
+    icon: <IconSolarRestartLinear className="text-xl animate-spin" />,
     className: 'bg-foreground !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };

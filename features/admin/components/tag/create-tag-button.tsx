@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-import { IconSolarAddSquare, IconSolarRestart } from '@/components/icons';
+import { IconSolarAddSquare, IconSolarRestartLinear } from '@/components/icons';
 
 import {
   type CreateTagDTO,
@@ -105,7 +105,7 @@ export const CreateTagButton = () => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createTagQuery.isPending && (
-                    <IconSolarRestart className="mr-2 text-base animate-spin" />
+                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   创建
                 </Button>

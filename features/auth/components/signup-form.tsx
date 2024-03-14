@@ -22,7 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
-import { IconSolarRestart } from '@/components/icons';
+import { IconSolarRestartLinear } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
 import { createUser } from '@/features/user';
@@ -95,7 +95,7 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
         <CardFooter className="grid gap-4">
           <div className="grid grid-cols-2 gap-4 ">
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              <IconSolarRestart
+              <IconSolarRestartLinear
                 className={cn(
                   'mr-2 animate-spin text-base',
                   form.formState.isSubmitting ? '' : 'hidden',
