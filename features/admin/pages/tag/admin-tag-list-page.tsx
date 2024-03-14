@@ -128,7 +128,11 @@ export const AdminTagListPage = () => {
       <div className="flex justify-end">
         <CreateTagButton />
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={getTagsQuery.isLoading}
+      />
     </div>
   );
 };
