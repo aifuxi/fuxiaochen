@@ -29,8 +29,8 @@ export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
   const labelLink = breadcrumbList[breadcrumbList.length - 1]!;
 
   return (
-    <>
-      <Breadcrumb className={cn('mb-4', className)}>
+    <div className={className}>
+      <Breadcrumb className={cn('mb-4')}>
         <BreadcrumbList>
           {linkList.map((el) => (
             <>
@@ -50,9 +50,9 @@ export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
       <h2 className="text-4xl md:text-5xl font-bold mb-4">
         {PATHS_MAP[labelLink]}
       </h2>
-      <p className="text-lg text-muted-foreground mb-9">
+      <p className="text-lg text-muted-foreground">
         {PATH_DESCRIPTION_MAP[labelLink]}
       </p>
-    </>
+    </div>
   );
 };
