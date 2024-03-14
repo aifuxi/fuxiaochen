@@ -1,11 +1,16 @@
 'use server';
 
+import { type Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
+import { getSkip } from '@/utils';
 
 import {
   type CreateTagDTO,
+  type GetTagsDTO,
   type UpdateTagDTO,
   createTagSchema,
+  getTagsSchema,
   updateTagSchema,
 } from '../types';
 
@@ -15,25 +20,60 @@ export const isTagExistByID = async (id: string): Promise<boolean> => {
   return Boolean(isExist);
 };
 
-export const getTags = async () => {
-  const total = await prisma.tag.count();
+export const getTags = async (params: GetTagsDTO) => {
+  const result = await getTagsSchema.safeParseAsync(params);
+
+  if (!result.success) {
+    const error = result.error.format()._errors?.join(';');
+    // TODO: 记录日志
+    throw new Error(error);
+  }
+
+  const cond: Prisma.TagWhereInput = {};
+  // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (result.data.name?.trim()) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          name: {
+            contains: result.data.name?.trim(),
+          },
+        },
+      ],
+    ];
+  }
+  if (result.data.slug?.trim()) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          slug: {
+            contains: result.data.slug?.trim(),
+          },
+        },
+      ],
+    ];
+  }
+
+  const sort: Prisma.TagOrderByWithRelationInput = {};
+  if (result.data.orderBy && result.data.order) {
+    sort[result.data.orderBy] = result.data.order;
+  }
+
+  const total = await prisma.tag.count({ where: cond });
   const tags = await prisma.tag.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: sort,
+    where: cond,
     include: {
       blogs: true,
       _count: true,
     },
+    take: result.data.pageSize,
+    skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
 
   return { tags, total };
-};
-
-export const getTagByID = async (id: string) => {
-  const tag = await prisma.tag.findUnique({ where: { id } });
-
-  return { tag };
 };
 
 export const createTag = async (params: CreateTagDTO) => {
@@ -101,4 +141,10 @@ export const updateTag = async (params: UpdateTagDTO) => {
       id: result.data.id,
     },
   });
+};
+
+export const getTagByID = async (id: string) => {
+  const tag = await prisma.tag.findUnique({ where: { id } });
+
+  return { tag };
 };
