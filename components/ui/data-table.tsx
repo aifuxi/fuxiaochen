@@ -10,6 +10,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { type Updater } from 'use-immer';
 
 import {
   Table,
@@ -22,22 +23,34 @@ import {
 
 import { CreateTagButton } from '@/features/admin';
 
-import { Button } from './button';
-
 import { IllustrationNoContent } from '../illustrations';
+import { Pagination } from '../pagination';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
+  total?: number;
+  params: {
+    pageIndex: number;
+    pageSize: number;
+  };
+  updateParams: Updater<{
+    pageIndex: number;
+    pageSize: number;
+  }>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   loading,
+  params,
+  updateParams,
+  total = 0,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
+  const pageCount = Math.ceil(total / params.pageSize);
 
   const table = useReactTable({
     data,
@@ -45,6 +58,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
+    pageCount,
     state: {
       rowSelection,
     },
@@ -75,27 +89,16 @@ export function DataTable<TData, TValue>({
       </Table>
       <div className="flex px-4 items-center">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{' '}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {renderInfo()}
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4 ">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+
+        <Pagination
+          total={total}
+          params={{ ...params }}
+          updateParams={updateParams}
+          showQuickJumper
+          showSizeChanger
+        />
       </div>
     </div>
   );
@@ -138,5 +141,38 @@ export function DataTable<TData, TValue>({
         ))}
       </TableRow>
     ));
+  }
+
+  function renderInfo() {
+    // 如果存在行选择信息，优先展示行选择信息
+    if (table.getFilteredSelectedRowModel().rows.length) {
+      return (
+        <p>
+          已选中
+          <span className="font-semibold mx-1">
+            {table.getFilteredSelectedRowModel().rows.length}
+          </span>
+          行数据
+        </p>
+      );
+    }
+
+    return (
+      // 当前数据和总条数
+      <p>
+        显示第
+        <span className="font-semibold mx-1">
+          {params.pageIndex === 1
+            ? 1
+            : (params.pageIndex - 1) * params.pageSize}
+        </span>
+        条-第
+        <span className="font-semibold mx-1">
+          {Math.min(total, params.pageIndex * params.pageSize)}
+        </span>
+        条，共
+        <span className="font-semibold mx-1">{total}</span>条
+      </p>
+    );
   }
 }

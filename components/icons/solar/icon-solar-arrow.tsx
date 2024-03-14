@@ -37,6 +37,31 @@ export const IconSolarAltArrowDownLinear = ({
     ></span>
   );
 };
+
+export const IconSolarAltArrowUpLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--alt-arrow-up-linear]', className)}
+    ></span>
+  );
+};
+
+export const IconSolarAltArrowLeftLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--alt-arrow-left-linear]', className)}
+    ></span>
+  );
+};
+
 export const IconSolarAltArrowRightLinear = ({
   className,
   ...props
@@ -45,6 +70,36 @@ export const IconSolarAltArrowRightLinear = ({
     <span
       {...props}
       className={cn('icon-[solar--alt-arrow-right-linear]', className)}
+    ></span>
+  );
+};
+
+export const IconSolarRoundDoubleAltArrowLeftLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn(
+        'icon-[solar--round-double-alt-arrow-left-linear]',
+        className,
+      )}
+    ></span>
+  );
+};
+
+export const IconSolarRoundDoubleAltArrowRightLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn(
+        'icon-[solar--round-double-alt-arrow-right-linear]',
+        className,
+      )}
     ></span>
   );
 };

@@ -16,7 +16,17 @@ export const updateTagSchema = createTagSchema.partial().extend({
   id: z.string().min(1),
 });
 
+export const getTagsSchema = z.object({
+  name: z.string().optional(),
+  slug: z.string().optional(),
+  pageIndex: z.number(),
+  pageSize: z.number(),
+  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
+});
+
 export type CreateTagDTO = z.infer<typeof createTagSchema>;
 export type UpdateTagDTO = z.infer<typeof updateTagSchema>;
+export type GetTagsDTO = z.infer<typeof getTagsSchema>;
 
 export type Tag = Awaited<ReturnType<typeof getTags>>['tags'][number];
