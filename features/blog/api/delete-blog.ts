@@ -1,6 +1,6 @@
-import toast from 'react-hot-toast';
-
 import { useMutation } from '@tanstack/react-query';
+
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { invalidateGetBlogsQuery } from './get-blogs';
 
@@ -11,11 +11,11 @@ export const useDeleteBlog = () => {
     mutationKey: ['delete_blog'],
     mutationFn: (id: string) => deleteBlogByID(id),
     async onSuccess() {
-      toast.success('操作成功');
+      showSuccessToast('操作成功');
       await invalidateGetBlogsQuery();
     },
     onError(error) {
-      toast.error(`操作失败: ${error.message}`);
+      showErrorToast(`操作失败: ${error.message}`);
     },
   });
 };

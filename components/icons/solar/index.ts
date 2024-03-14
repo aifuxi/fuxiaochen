@@ -22,3 +22,5 @@ export * from './icon-solar-arrow';
 export * from './icon-solar-magnifer';
 export * from './icon-solar-menu-dots';
 export * from './icon-solar-home';
+export * from './icon-solar-danger';
+export * from './icon-solar-info';

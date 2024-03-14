@@ -1,13 +1,13 @@
 'use client';
 
-import toast from 'react-hot-toast';
-
 import { Editor, type EditorProps } from '@bytemd/react';
 import zh_Hans from 'bytemd/locales/zh_Hans.json';
 
 import { uploadFile } from '@/features/upload';
 
 import { plugins, sanitize } from './config';
+
+import { showErrorToast } from '../ui/toast';
 
 type BytemdEditorProps = {
   body?: string;
@@ -33,7 +33,7 @@ export const BytemdEditor = ({
           },
         ];
       } catch (error) {
-        toast.error(error as string);
+        showErrorToast(error as string);
         return [];
       }
     } else {

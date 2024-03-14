@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 import { useRouter } from 'next/navigation';
 
@@ -23,6 +22,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
+import { showErrorToast, showInfoToast } from '@/components/ui/toast';
 
 import { BytemdEditor } from '@/components/bytemd';
 
@@ -167,10 +167,10 @@ export const CreateBlogForm = () => {
                         setCover(url ?? '');
                         form.setValue('cover', url ?? '');
                       } else {
-                        toast('请选择一个文件');
+                        showInfoToast('请选择一个文件');
                       }
                     } catch (error) {
-                      toast.error(error as string);
+                      showErrorToast(error as string);
                     }
                   }}
                 />

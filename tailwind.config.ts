@@ -11,6 +11,7 @@ export default {
     './app/**/*.{ts,tsx}',
     './features/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './lib/**/*.{ts,tsx}',
   ],
   theme: {
     debugScreens: {

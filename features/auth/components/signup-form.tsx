@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 import { useRouter } from 'next/navigation';
 
@@ -21,6 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { IconSolarRestart } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
@@ -119,11 +119,11 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
     try {
       showLoading();
       await createUser(values);
-      toast.success('注册成功，赶快登录吧～');
+      showSuccessToast('注册成功，赶快登录吧～');
       // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
       router.push(PATHS.AUTH_SIGNIN);
     } catch (error) {
-      toast.error((error as Error).message);
+      showErrorToast((error as Error).message);
     } finally {
       hideLoading();
     }
