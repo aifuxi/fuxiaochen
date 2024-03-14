@@ -1,9 +1,9 @@
-import toast from 'react-hot-toast';
-
 import { type ClassValue, clsx } from 'clsx';
 import { format, toDate } from 'date-fns';
 import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
+
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -24,13 +24,13 @@ export const copyToClipboard = (text: string) => {
     navigator.clipboard
       .writeText(text)
       .then(() => {
-        toast.success('已复制到粘贴板');
+        showSuccessToast('已复制到粘贴板');
       })
       .catch((error) => {
-        toast.error(error as string);
+        showErrorToast(error as string);
       });
   } else {
-    toast.error('浏览器不支持 Clipboard API');
+    showErrorToast('浏览器不支持 Clipboard API');
   }
 };
 

@@ -1,6 +1,6 @@
-import toast from 'react-hot-toast';
-
 import { useMutation } from '@tanstack/react-query';
+
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { invalidateGetTagsQuery } from './get-tags';
 
@@ -11,11 +11,11 @@ export const useDeleteTag = () => {
     mutationKey: ['delete_tag'],
     mutationFn: (id: string) => deleteTagByID(id),
     async onSuccess() {
-      toast.success('操作成功');
+      showSuccessToast('操作成功');
       await invalidateGetTagsQuery();
     },
     onError(error) {
-      toast.error(`操作失败: ${error.message}`);
+      showErrorToast(`操作失败: ${error.message}`);
     },
   });
 };

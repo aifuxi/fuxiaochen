@@ -1,6 +1,6 @@
-import toast from 'react-hot-toast';
-
 import { useMutation } from '@tanstack/react-query';
+
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { invalidateGetSnippetsQuery } from './get-snippets';
 
@@ -12,11 +12,11 @@ export const useUpdateSnippet = () => {
     mutationKey: ['update_Snippet'],
     mutationFn: (params: UpdateSnippetDTO) => updateSnippet(params),
     async onSuccess() {
-      toast.success('操作成功');
+      showSuccessToast('操作成功');
       await invalidateGetSnippetsQuery();
     },
     onError(error) {
-      toast.error(`操作失败: ${error.message}`);
+      showErrorToast(`操作失败: ${error.message}`);
     },
   });
 };

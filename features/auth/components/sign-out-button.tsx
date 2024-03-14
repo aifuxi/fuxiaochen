@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 
 import { IconSolarLogout2 } from '@/components/icons';
 
+import { cn } from '@/lib/utils';
+
 import { signoutAndRedirect } from '../actions/signout';
 
 export const SignOutButton = () => {
@@ -24,7 +26,11 @@ export const SignOutButton = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="ghost" className="!w-full text-lg">
+        <Button
+          className={cn(
+            '!w-full text-lg text-primary-foreground bg-muted-foreground/10 hover:bg-muted-foreground/20',
+          )}
+        >
           <IconSolarLogout2 className="mr-2 text-2xl" />
           退出登录
         </Button>

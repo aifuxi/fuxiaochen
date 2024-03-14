@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useUnmount } from 'ahooks';
@@ -21,6 +20,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { IconBaranGithub, IconSolarRestart } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
@@ -131,9 +131,9 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
     showLoading();
     try {
       await signinWithCredentials(values);
-      toast.success('登录成功');
+      showSuccessToast('登录成功');
     } catch (error) {
-      toast.error((error as Error).message);
+      showErrorToast((error as Error).message);
     } finally {
       hideLoading();
     }
@@ -142,9 +142,9 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
   async function handleSignUpWithGithub() {
     try {
       await signinWithGithub();
-      toast.success('登录成功');
+      showSuccessToast('登录成功');
     } catch (error) {
-      toast.error((error as Error).message);
+      showErrorToast((error as Error).message);
     } finally {
       hideLoading();
     }

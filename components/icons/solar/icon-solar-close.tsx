@@ -25,3 +25,15 @@ export const IconSolarCloseCircle = ({
     ></span>
   );
 };
+
+export const IconSolarCloseLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--close-circle-linear]', className)}
+    ></span>
+  );
+};
