@@ -13,6 +13,7 @@ export const IconSolarCheckSquare = ({
     ></span>
   );
 };
+
 export const IconSolarCheckCircle = ({
   className,
   ...props
@@ -21,6 +22,30 @@ export const IconSolarCheckCircle = ({
     <span
       {...props}
       className={cn('icon-[solar--check-circle-bold]', className)}
+    ></span>
+  );
+};
+
+export const IconSolarCheckCircleLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--check-circle-bold]', className)}
+    ></span>
+  );
+};
+
+export const IconSolarCheckReadLinear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--check-read-linear]', className)}
     ></span>
   );
 };
