@@ -24,3 +24,4 @@ export * from './icon-solar-menu-dots';
 export * from './icon-solar-home';
 export * from './icon-solar-danger';
 export * from './icon-solar-info';
+export * from './icon-solar-sticker';

@@ -13,3 +13,14 @@ export const IconSolarTuningSquare2 = ({
     ></span>
   );
 };
+export const IconSolarTuning2Linear = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      {...props}
+      className={cn('icon-[solar--tuning-2-linear]', className)}
+    ></span>
+  );
+};
