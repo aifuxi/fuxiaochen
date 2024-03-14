@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import {
   IconSolarCropMinimalistic,
   IconSolarMoonStars,
-  IconSolarRestart,
+  IconSolarRestartLinear,
   IconSolarSun,
 } from '../icons';
 
@@ -56,7 +56,7 @@ export function SwitchTheme(props: Props) {
       return <IconSolarMoonStars className="text-base" />;
     }
 
-    return <IconSolarRestart className="animate-spin text-base" />;
+    return <IconSolarRestartLinear className="animate-spin text-base" />;
   }, [resolvedTheme, theme]);
 
   return (

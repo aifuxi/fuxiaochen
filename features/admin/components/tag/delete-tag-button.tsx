@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import {
-  IconSolarRestart,
+  IconSolarRestartLinear,
   IconSolarTrashBinMinimalistic2,
 } from '@/components/icons';
 
@@ -57,7 +57,7 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
             disabled={deleteTagQuery.isPending}
           >
             {deleteTagQuery.isPending && (
-              <IconSolarRestart className="mr-2 text-base animate-spin" />
+              <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
             )}
             删除
           </AlertDialogAction>

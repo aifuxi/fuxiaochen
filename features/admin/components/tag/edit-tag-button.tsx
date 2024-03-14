@@ -28,7 +28,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { IconSolarPen, IconSolarRestart } from '@/components/icons';
+import { IconSolarPen, IconSolarRestartLinear } from '@/components/icons';
 import { LoadingSpinner } from '@/components/loading-spinner';
 
 import {
@@ -139,7 +139,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   disabled={updateTagQuery.isPending}
                 >
                   {updateTagQuery.isPending && (
-                    <IconSolarRestart className="mr-2 text-base animate-spin" />
+                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   保存
                 </Button>
