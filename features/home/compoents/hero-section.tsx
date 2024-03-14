@@ -1,12 +1,6 @@
 import Link from 'next/link';
 
-import {
-  BRAND_COLOR_GOLANG,
-  BRAND_COLOR_REACT,
-  BRAND_COLOR_TYPESCRIPT,
-  NICKNAME,
-  PATHS,
-} from '@/config';
+import { NICKNAME, PATHS } from '@/config';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -26,7 +20,7 @@ export const HeroSection = () => {
       <p className="text-5xl tracking-widest animate-fade-down ">你好，我是</p>
       <strong
         className={cn(
-          `text-8xl tracking-widest font-black text-[${BRAND_COLOR_TYPESCRIPT}] bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
+          `text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
           'animate-fade-down  animate-delay-200',
         )}
         style={{
@@ -45,17 +39,9 @@ export const HeroSection = () => {
         )}
       >
         喜欢
-        <span className={`font-semibold text-[${BRAND_COLOR_REACT}]`}>
-          React
-        </span>
-        、
-        <span className={`font-semibold text-[${BRAND_COLOR_TYPESCRIPT}]`}>
-          TypeScript
-        </span>
-        和
-        <span className={`font-semibold text-[${BRAND_COLOR_GOLANG}]`}>
-          Golang
-        </span>
+        <span className={`font-semibold text-[#00d8ff]`}>React</span>、
+        <span className={`font-semibold text-[#007acc]`}>TypeScript</span>和
+        <span className={`font-semibold text-[#00b4e0]`}>Golang</span>
         <span className="ml-4">\owo/ ~</span>
       </p>
       <p
