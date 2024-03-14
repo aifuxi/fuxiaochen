@@ -1,11 +1,4 @@
-import {
-  BILIBILI_PAGE,
-  BRAND_COLOR_BILIBILI,
-  BRAND_COLOR_JUEJIN,
-  EMAIL,
-  GITHUB_PAGE,
-  JUEJIN_PAGE,
-} from '@/config';
+import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/config';
 
 import {
   IconBaranGithub,
@@ -32,7 +25,7 @@ export const socialMediaList: Array<{
   {
     icon: (
       <IconBrandBilibili
-        className={`text-2xl transition-colors text-[${BRAND_COLOR_BILIBILI}]`}
+        className={`text-2xl transition-colors hover:text-[#00AEEC]`}
       />
     ),
     label: 'Bilibili',
@@ -41,7 +34,7 @@ export const socialMediaList: Array<{
   {
     icon: (
       <IconLogoJuejin
-        className={`text-2xl transition-colors text-[${BRAND_COLOR_JUEJIN}]`}
+        className={`text-2xl transition-colors hover:text-[#2985fc]`}
       />
     ),
     label: '掘金',
