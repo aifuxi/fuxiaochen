@@ -5,6 +5,8 @@ import GithubProvider from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import * as bcrypt from 'bcryptjs';
 
+import { NODE_ENV } from '@/config';
+
 import { PATHS } from '@/constants';
 import { type SigninDTO } from '@/features/auth';
 
@@ -42,7 +44,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
   pages: {
     signIn: PATHS.AUTH_SIGNIN,
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: NODE_ENV === 'development',
   session: {
     strategy: 'jwt',
   },
