@@ -14,28 +14,46 @@ import { cn } from '@/lib/utils';
 import { socialMediaList } from './social-media';
 
 export const HeroSection = () => {
+  let delay = 0;
+
+  // 每次调用，增加延时
+  const getDelay = () => (delay += 200);
+
   return (
     <div className="min-w-screen-md gap-5 flex flex-col justify-center min-h-full ">
-      <p className="text-5xl tracking-widest animate-fade-down ">你好，我是</p>
+      <p
+        className="text-5xl tracking-widest animate-fade-down"
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
+      >
+        你好，我是
+      </p>
       <strong
         className={cn(
           `text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
-          'animate-fade-down  animate-delay-200',
+          'animate-fade-down',
         )}
         style={{
           WebkitTextFillColor: 'transparent',
+          animationDelay: `${getDelay()}ms`,
         }}
       >
         {NICKNAME}
       </strong>
-      <div className={cn('animate-fade-down  animate-delay-[400ms]')}>
+      <div
+        className={cn('animate-fade-down')}
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
+      >
         <TypeIntro />
       </div>
       <p
-        className={cn(
-          'text-5xl tracking-widest',
-          'animate-fade-down  animate-delay-[800ms]',
-        )}
+        className={cn('text-5xl tracking-widest', 'animate-fade-down')}
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
       >
         喜欢
         <span className={`font-semibold text-[#00d8ff]`}>React</span>、
@@ -46,16 +64,19 @@ export const HeroSection = () => {
       <p
         className={cn(
           'text-2xl text-muted-foreground tracking-widest',
-          'animate-fade-down  animate-delay-1000',
+          'animate-fade-down',
         )}
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
       >
         我在这个网站记录我的成长，正在努力 💪 成为一个更好的程序员。
       </p>
       <div
-        className={cn(
-          'flex space-x-4',
-          'animate-fade-down  animate-delay-[1200ms]',
-        )}
+        className={cn('flex space-x-4', 'animate-fade-down')}
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
       >
         <Link
           href={PATHS.SITE_BLOG}
@@ -72,10 +93,10 @@ export const HeroSection = () => {
       </div>
 
       <ul
-        className={cn(
-          'flex space-x-4',
-          'animate-fade-down  animate-delay-[1400ms]',
-        )}
+        className={cn('flex space-x-4', 'animate-fade-down')}
+        style={{
+          animationDelay: `${getDelay()}ms`,
+        }}
       >
         {socialMediaList.map((el) => (
           <li key={el.link}>
