@@ -4,6 +4,8 @@ import { format } from 'date-fns';
 import fs from 'fs';
 import path from 'path';
 
+import { NODE_ENV } from '@/config';
+
 import { aliOSS } from '@/lib/ali-oss';
 
 const saveFile = async (file: File) => {
@@ -22,7 +24,7 @@ export const uploadFile = async (formData: FormData) => {
   const file = formData.get('file') as File;
 
   let url: string;
-  if (process.env.NODE_ENV === 'production') {
+  if (NODE_ENV === 'production') {
     const timePrefix = format(new Date(), 'yyyy-MM');
     const filename = `images/${timePrefix}/${file.name}`;
     const fileArrayBuffer = await file.arrayBuffer();
