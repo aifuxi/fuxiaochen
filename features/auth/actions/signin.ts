@@ -2,8 +2,7 @@
 
 import { AuthError } from 'next-auth';
 
-import { PATHS } from '@/config';
-
+import { PATHS } from '@/constants';
 import { signIn } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 

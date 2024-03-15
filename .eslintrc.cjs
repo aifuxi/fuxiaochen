@@ -62,6 +62,7 @@ const config = {
           '@/features/*/*',
           '@/types/*',
           '@/config/*',
+          '@/constants/*',
           '@/providers/*',
         ],
       },

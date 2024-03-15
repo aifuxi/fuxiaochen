@@ -2,8 +2,6 @@ import React from 'react';
 
 import Link from 'next/link';
 
-import { PATHS } from '@/config';
-
 import { Badge } from '@/components/ui/badge';
 import {
   Tooltip,
@@ -11,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { PATHS } from '@/constants';
 import { toSimpleDateString } from '@/lib/utils';
 
 import { type Snippet } from '../types';

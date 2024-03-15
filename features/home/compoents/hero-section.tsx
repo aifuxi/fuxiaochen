@@ -1,7 +1,5 @@
 import Link from 'next/link';
 
-import { NICKNAME, PATHS } from '@/config';
-
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Tooltip,
@@ -9,6 +7,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { NICKNAME, PATHS } from '@/constants';
 import { TypeIntro } from '@/features/home';
 import { cn } from '@/lib/utils';
 

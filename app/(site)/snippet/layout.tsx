@@ -2,7 +2,7 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
-import { PATHS, PATHS_MAP } from '@/config';
+import { PATHS, PATHS_MAP } from '@/constants';
 
 export const metadata: Metadata = {
   title: PATHS_MAP[PATHS.SITE_SNIPPET],

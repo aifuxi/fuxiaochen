@@ -2,8 +2,7 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
-import { PATHS, PATHS_MAP } from '@/config';
-
+import { PATHS, PATHS_MAP } from '@/constants';
 import { getAdminPageTitle } from '@/utils';
 
 export const metadata: Metadata = {

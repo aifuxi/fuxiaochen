@@ -7,8 +7,6 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { PATHS } from '@/config';
-
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import {
@@ -25,6 +23,7 @@ import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 import { IconSolarRestartLinear } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
+import { PATHS } from '@/constants';
 import { createUser } from '@/features/user';
 import { cn } from '@/lib/utils';
 

@@ -1,7 +1,6 @@
-import { PATHS } from '@/config';
-
 import { PageHeader } from '@/components/page-header';
 
+import { PATHS } from '@/constants';
 import { BlogList, getPublishedBlogs } from '@/features/blog';
 
 export const revalidate = 60;

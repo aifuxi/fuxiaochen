@@ -2,8 +2,7 @@
 
 import { useTheme } from 'next-themes';
 
-import { WEBSITE } from '@/config';
-
+import { WEBSITE } from '@/constants';
 import { cn } from '@/lib/utils';
 
 export const IconLogoFuXiaoChen = ({

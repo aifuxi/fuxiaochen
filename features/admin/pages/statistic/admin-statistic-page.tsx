@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { PATHS } from '@/config';
-
 import { IconSolarBook, IconSolarHashtagSquare } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
+
+import { PATHS } from '@/constants';
 
 import { getStatistics } from '../../actions/statistics';
 import { type StatisticsCardProps } from '../../types';

@@ -4,8 +4,7 @@ import { type Metadata } from 'next';
 
 import { isNil } from 'lodash-es';
 
-import { WEBSITE } from '@/config';
-
+import { WEBSITE } from '@/constants';
 import { getPlublishedBlogBySlug } from '@/features/blog';
 
 export async function generateMetadata({

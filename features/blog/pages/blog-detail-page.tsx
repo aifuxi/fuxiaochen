@@ -1,10 +1,9 @@
-import { NICKNAME } from '@/config';
-
 import { Badge } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
+import { NICKNAME } from '@/constants';
 import { toSimpleDateString } from '@/lib/utils';
 
 import { type Blog } from '../types';

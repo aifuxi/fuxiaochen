@@ -5,8 +5,7 @@ import GithubProvider from 'next-auth/providers/github';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import * as bcrypt from 'bcryptjs';
 
-import { PATHS } from '@/config';
-
+import { PATHS } from '@/constants';
 import { type SigninDTO } from '@/features/auth';
 
 import { prisma } from './prisma';

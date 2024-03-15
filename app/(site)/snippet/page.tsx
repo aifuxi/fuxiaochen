@@ -1,7 +1,6 @@
-import { PATHS } from '@/config';
-
 import { PageHeader } from '@/components/page-header';
 
+import { PATHS } from '@/constants';
 import { SnippetList, getSnippets } from '@/features/snippet';
 
 export const revalidate = 60;

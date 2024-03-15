@@ -7,8 +7,6 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { PATHS } from '@/config';
-
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -24,6 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
 
+import { PATHS } from '@/constants';
 import { CreateTagButton } from '@/features/admin';
 import {
   type CreateSnippetDTO,

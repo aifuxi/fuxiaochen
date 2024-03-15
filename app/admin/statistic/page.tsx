@@ -1,7 +1,6 @@
 import { type Metadata } from 'next';
 
-import { PATHS, PATHS_MAP } from '@/config';
-
+import { PATHS, PATHS_MAP } from '@/constants';
 import { AdminStatisticPage } from '@/features/admin';
 import { getAdminPageTitle } from '@/utils';
 

@@ -1,11 +1,11 @@
-import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/config';
-
 import {
   IconBaranGithub,
   IconBrandBilibili,
   IconLogoGmail,
   IconLogoJuejin,
 } from '@/components/icons';
+
+import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
 
 export const socialMediaList: Array<{
   icon: React.ReactNode;

@@ -6,8 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type z } from 'zod';
 
-import { PATHS } from '@/config';
-
 import { Button } from '@/components/ui/button';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import {
@@ -24,6 +22,7 @@ import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 import { IconBaranGithub, IconSolarRestartLinear } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
+import { PATHS } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { signinWithCredentials, signinWithGithub } from '../actions/signin';

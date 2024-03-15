@@ -5,8 +5,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { SLOGAN, WEBSITE } from '@/config';
-
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Sheet,
@@ -17,6 +15,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 
+import { SLOGAN, WEBSITE } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { navItems } from './config';

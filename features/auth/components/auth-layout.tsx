@@ -2,10 +2,9 @@ import React from 'react';
 
 import { redirect } from 'next/navigation';
 
-import { PATHS } from '@/config';
-
 import { SwitchTheme } from '@/components/switch-theme';
 
+import { PATHS } from '@/constants';
 import { auth } from '@/lib/auth';
 
 export const AuthLayout = async ({ children }: React.PropsWithChildren) => {
