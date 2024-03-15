@@ -1,4 +1,4 @@
-import { type infer as Infer, z } from 'zod';
+import { z } from 'zod';
 
 import { REGEX } from '@/config';
 
@@ -24,7 +24,17 @@ export const updateBlogSchema = createBlogSchema.partial().extend({
   id: z.string().min(1),
 });
 
-export type CreateBlogDTO = Infer<typeof createBlogSchema>;
-export type UpdateBlogDTO = Infer<typeof updateBlogSchema>;
+export const getBlogsSchema = z.object({
+  title: z.string().optional(),
+  slug: z.string().optional(),
+  pageIndex: z.number(),
+  pageSize: z.number(),
+  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
+});
+
+export type CreateBlogDTO = z.infer<typeof createBlogSchema>;
+export type UpdateBlogDTO = z.infer<typeof updateBlogSchema>;
+export type GetBlogsDTO = z.infer<typeof getBlogsSchema>;
 
 export type Blog = Awaited<ReturnType<typeof getBlogs>>['blogs'][number];

@@ -1,11 +1,16 @@
 'use server';
 
+import { type Prisma } from '@prisma/client';
+
 import { prisma } from '@/lib/prisma';
+import { getSkip } from '@/utils';
 
 import {
   type CreateBlogDTO,
+  type GetBlogsDTO,
   type UpdateBlogDTO,
   createBlogSchema,
+  getBlogsSchema,
   updateBlogSchema,
 } from '../types';
 
@@ -15,15 +20,56 @@ export const isBlogExistByID = async (id: string): Promise<boolean> => {
   return Boolean(isExist);
 };
 
-export const getBlogs = async () => {
-  const total = await prisma.blog.count();
+export const getBlogs = async (params: GetBlogsDTO) => {
+  const result = await getBlogsSchema.safeParseAsync(params);
+
+  if (!result.success) {
+    const error = result.error.format()._errors?.join(';');
+    // TODO: 记录日志
+    throw new Error(error);
+  }
+
+  const cond: Prisma.BlogWhereInput = {};
+  // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (result.data.title?.trim()) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          title: {
+            contains: result.data.title?.trim(),
+          },
+        },
+      ],
+    ];
+  }
+  if (result.data.slug?.trim()) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          slug: {
+            contains: result.data.slug?.trim(),
+          },
+        },
+      ],
+    ];
+  }
+
+  const sort: Prisma.BlogOrderByWithRelationInput = {};
+  if (result.data.orderBy && result.data.order) {
+    sort[result.data.orderBy] = result.data.order;
+  }
+
+  const total = await prisma.blog.count({ where: cond });
   const blogs = await prisma.blog.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
     include: {
       tags: true,
     },
+    orderBy: sort,
+    where: cond,
+    take: result.data.pageSize,
+    skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
 
   return { blogs, total };

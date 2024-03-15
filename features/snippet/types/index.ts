@@ -1,4 +1,4 @@
-import { type infer as Infer, z } from 'zod';
+import { z } from 'zod';
 
 import { REGEX } from '@/config';
 
@@ -30,8 +30,8 @@ export const getSnippetsSchema = z.object({
   order: z.enum(['asc', 'desc']).optional(),
 });
 
-export type CreateSnippetDTO = Infer<typeof createSnippetSchema>;
-export type UpdateSnippetDTO = Infer<typeof updateSnippetSchema>;
+export type CreateSnippetDTO = z.infer<typeof createSnippetSchema>;
+export type UpdateSnippetDTO = z.infer<typeof updateSnippetSchema>;
 export type GetSnippetsDTO = z.infer<typeof getSnippetsSchema>;
 
 export type Snippet = Awaited<

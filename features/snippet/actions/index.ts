@@ -61,13 +61,13 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
     sort[result.data.orderBy] = result.data.order;
   }
 
-  const total = await prisma.snippet.count();
+  const total = await prisma.snippet.count({ where: cond });
   const snippets = await prisma.snippet.findMany({
-    orderBy: sort,
-    where: cond,
     include: {
       tags: true,
     },
+    orderBy: sort,
+    where: cond,
     take: result.data.pageSize,
     skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
