@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Tooltip,
   TooltipContent,
@@ -29,7 +30,6 @@ import {
 } from '@/components/ui/tooltip';
 
 import { IconSolarPen, IconSolarRestartLinear } from '@/components/icons';
-import { LoadingSpinner } from '@/components/loading-spinner';
 
 import {
   type UpdateTagDTO,
@@ -49,7 +49,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
     resolver: zodResolver(updateTagSchema),
   });
 
-  const { data, isLoading } = useGetTag(id);
+  const { data, isPending } = useGetTag(id);
 
   const updateTagQuery = useUpdateTag();
 
@@ -76,7 +76,6 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
         </Tooltip>
       </DialogTrigger>
       <DialogContent>
-        <LoadingSpinner loading={isLoading} />
         <DialogHeader>
           <DialogTitle>编辑标签</DialogTitle>
         </DialogHeader>
@@ -90,7 +89,11 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>id</FormLabel>
                     <FormControl>
-                      <Input {...field} disabled />
+                      {isPending ? (
+                        <Skeleton className="w-full rounded-lg h-10" />
+                      ) : (
+                        <Input {...field} disabled />
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -103,11 +106,15 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>名称</FormLabel>
                     <FormControl>
-                      <Input
-                        className="flex-1"
-                        placeholder="请输入标签名称"
-                        {...field}
-                      />
+                      {isPending ? (
+                        <Skeleton className="w-full rounded-lg h-10" />
+                      ) : (
+                        <Input
+                          className="flex-1"
+                          placeholder="请输入标签名称"
+                          {...field}
+                        />
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -120,12 +127,16 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>slug</FormLabel>
                     <FormControl>
-                      <div className="flex items-center w-full gap-4">
-                        <Input placeholder="请输入标签slug" {...field} />
-                        <Button type="button" onClick={handleFormatSlug}>
-                          格式化
-                        </Button>
-                      </div>
+                      {isPending ? (
+                        <Skeleton className="w-full rounded-lg h-10" />
+                      ) : (
+                        <div className="flex items-center w-full gap-4">
+                          <Input placeholder="请输入标签slug" {...field} />
+                          <Button type="button" onClick={handleFormatSlug}>
+                            格式化
+                          </Button>
+                        </div>
+                      )}
                     </FormControl>
                     <FormMessage />
                   </FormItem>
