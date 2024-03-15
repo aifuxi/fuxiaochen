@@ -22,6 +22,7 @@ import {
   IconSolarSortFromTopToBottomLinear,
   IconSolarTextField,
 } from '@/components/icons';
+import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
 import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
@@ -214,6 +215,13 @@ export const AdminTagListPage = () => {
         loading={getTagsQuery.isLoading}
         params={{ ...params }}
         updateParams={updateParams}
+        noResult={
+          <div className="grid place-content-center gap-4 py-16">
+            <IllustrationNoContent />
+            <p>暂无内容</p>
+            <CreateTagButton />
+          </div>
+        }
       />
     </div>
   );

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
@@ -38,6 +38,7 @@ import {
   IconSolarTag,
   IconSolarTextField,
 } from '@/components/icons';
+import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
 import {
@@ -51,6 +52,7 @@ import { toSlashDateString } from '@/lib/utils';
 import { DeleteSnippetButton } from '../../components';
 
 export const AdminSnippetListPage = () => {
+  const router = useRouter();
   const [params, updateParams] = useImmer<GetSnippetsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -190,11 +192,13 @@ export const AdminSnippetListPage = () => {
           <div className="flex gap-2 items-center">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href={`${PATHS.ADMIN_SNIPPET_EDIT}/${record.id}`}>
-                  <Button size={'icon'} variant="ghost">
-                    <IconSolarPen className="text-base" />
-                  </Button>
-                </Link>
+                <Button
+                  size={'icon'}
+                  variant="ghost"
+                  onClick={() => handleGoToEdit(record.id)}
+                >
+                  <IconSolarPen className="text-base" />
+                </Button>
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
@@ -264,12 +268,10 @@ export const AdminSnippetListPage = () => {
             <IconSolarRestart className="mr-2" />
             重置
           </Button>
-          <Link href={PATHS.ADMIN_SNIPPET_CREATE}>
-            <Button>
-              <IconSolarAddSquare className="mr-2 text-base" />
-              创建Snippet
-            </Button>
-          </Link>
+          <Button onClick={handleGoToCreate}>
+            <IconSolarAddSquare className="mr-2 text-base" />
+            创建 Snippet
+          </Button>
         </div>
       </div>
 
@@ -280,6 +282,13 @@ export const AdminSnippetListPage = () => {
         loading={getSnippetsQuery.isLoading}
         params={{ ...params }}
         updateParams={updateParams}
+        noResult={
+          <div className="grid place-content-center gap-4 py-16">
+            <IllustrationNoContent />
+            <p>暂无内容</p>
+            <Button onClick={handleGoToCreate}>去创建</Button>
+          </div>
+        }
       />
     </div>
   );
@@ -324,5 +333,13 @@ export const AdminSnippetListPage = () => {
         }
       }
     });
+  }
+
+  function handleGoToCreate() {
+    router.push(PATHS.ADMIN_SNIPPET_CREATE);
+  }
+
+  function handleGoToEdit(id: string) {
+    router.push(`${PATHS.ADMIN_SNIPPET_EDIT}/${id}`);
   }
 };
