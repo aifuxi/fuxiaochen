@@ -30,13 +30,13 @@ import {
   createSnippetSchema,
   useCreateSnippet,
 } from '@/features/snippet';
-import { useGetTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { toSlug } from '@/lib/utils';
 
 export const CreateSnippetForm = () => {
   const router = useRouter();
 
-  const getTagsQuery = useGetTags();
+  const getTagsQuery = useGetAllTags();
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

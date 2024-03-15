@@ -34,12 +34,12 @@ import {
   useGetBlog,
   useUpdateBlog,
 } from '@/features/blog';
-import { useGetTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { uploadFile } from '@/features/upload';
 import { toSlug } from '@/lib/utils';
 
 export const EditBlogForm = () => {
-  const getTagsQuery = useGetTags();
+  const getTagsQuery = useGetAllTags();
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);
