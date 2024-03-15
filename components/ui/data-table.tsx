@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { PulseLoader } from 'react-spinners';
 
 import {
   type ColumnDef,
@@ -20,6 +19,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+
+import { Skeleton } from './skeleton';
 
 import { Pagination } from '../pagination';
 
@@ -103,17 +104,19 @@ export function DataTable<TData, TValue>({
 
   function renderContent() {
     if (loading) {
-      return (
-        <TableRow>
-          <TableCell colSpan={columns.length} className="h-24">
-            <div className="grid place-content-center gap-4 py-16">
-              <div>
-                <PulseLoader color="hsl(var(--primary))" loading />
-              </div>
-            </div>
-          </TableCell>
-        </TableRow>
-      );
+      return Array.from({ length: params.pageSize }).map((_, idx) => {
+        return (
+          <TableRow key={idx}>
+            {Array.from({ length: columns.length }).map((__, index) => {
+              return (
+                <TableCell key={index}>
+                  <Skeleton className="w-full h-4 rounded-[4px]" />
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        );
+      });
     }
 
     if (!table.getRowModel().rows?.length && !loading) {
