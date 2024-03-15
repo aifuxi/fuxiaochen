@@ -151,11 +151,11 @@ export const AdminTagListPage = () => {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const tag = row.original;
+        const record = row.original;
         return (
           <div className="flex gap-2 items-center">
-            <EditTagButton id={tag.id} />
-            <DeleteTagButton id={tag.id} />
+            <EditTagButton id={record.id} />
+            <DeleteTagButton id={record.id} />
           </div>
         );
       },

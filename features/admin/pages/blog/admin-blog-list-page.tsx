@@ -4,25 +4,22 @@ import React from 'react';
 
 import Link from 'next/link';
 
+import { type ColumnDef } from '@tanstack/react-table';
+import { useImmer } from 'use-immer';
+
 import {
-  createColumnHelper,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table';
+  DEFAULT_PAGE_INDEX,
+  DEFAULT_PAGE_SIZE,
+  NICKNAME,
+  PATHS,
+  PLACEHODER_TEXT,
+} from '@/config';
 
-import { NICKNAME, PATHS, PLACEHODER_TEXT } from '@/config';
-
-import { badgeVariants } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DataTable } from '@/components/ui/data-table';
+import { Input } from '@/components/ui/input';
 import {
   Tooltip,
   TooltipContent,
@@ -32,118 +29,186 @@ import {
 import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
+  IconSolarHashtagSquare,
+  IconSolarMinimalisticMagnifer,
   IconSolarPen,
+  IconSolarRestart,
+  IconSolarSortFromBottomToTopLinear,
+  IconSolarSortFromTopToBottomLinear,
   IconSolarTag,
   IconSolarTextField,
-  IconSolarTuningSquare2,
 } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
 
-import { type Blog, useGetBlogs } from '@/features/blog';
-import { cn, toSlashDateString } from '@/lib/utils';
+import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
+import { type Tag } from '@/features/tag';
+import { toSlashDateString } from '@/lib/utils';
 
 import { DeleteBlogButton } from '../../components';
 
 // import { ToggleBlogPublishSwitch } from '../components/toggle-blog-publish-switch';
 
-const columnHelper = createColumnHelper<Blog>();
-
-const columns = [
-  columnHelper.accessor('title', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarTextField className="text-sm" />
-        <span>Blog标题</span>
-      </div>
-    ),
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor('author', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarTextField className="text-sm" />
-        <span>作者</span>
-      </div>
-    ),
-    cell: (info) => info.getValue() ?? NICKNAME,
-  }),
-  columnHelper.accessor('tags', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarTag className="text-sm" />
-        <span>标签</span>
-      </div>
-    ),
-    cell: (info) => (
-      <div className="flex flex-wrap gap-2">
-        {info.getValue()?.length
-          ? info.getValue().map((tag) => (
-              <div
-                key={tag.id}
-                className={cn(badgeVariants({ variant: 'default' }))}
-              >
-                {tag.name}
-              </div>
-            ))
-          : PLACEHODER_TEXT}
-      </div>
-    ),
-  }),
-
-  columnHelper.accessor('createdAt', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarCalendarMark className="text-sm" />
-        <span>创建时间</span>
-      </div>
-    ),
-    cell: (info) => toSlashDateString(info.getValue()),
-  }),
-  columnHelper.accessor('updatedAt', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarCalendarMark className="text-sm" />
-        <span>更新时间</span>
-      </div>
-    ),
-    cell: (info) => toSlashDateString(info.getValue()),
-  }),
-  columnHelper.accessor('id', {
-    header: () => (
-      <div className="flex space-x-1 items-center">
-        <IconSolarTuningSquare2 className="text-sm" />
-        <span>操作</span>
-      </div>
-    ),
-    cell: (info) => (
-      <div className="flex items-center gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Link href={`${PATHS.ADMIN_BLOG_EDIT}/${info.getValue()}`}>
-              <Button size={'icon'} variant="ghost">
-                <IconSolarPen className="text-sm" />
-              </Button>
-            </Link>
-          </TooltipTrigger>
-          <TooltipContent>编辑</TooltipContent>
-        </Tooltip>
-        <DeleteBlogButton id={info.getValue()} />
-      </div>
-    ),
-  }),
-];
-
 export const AdminBlogListPage = () => {
-  const getBlogsQuery = useGetBlogs();
+  const [params, updateParams] = useImmer<GetBlogsDTO>({
+    pageIndex: DEFAULT_PAGE_INDEX,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const [inputParams, updateInputParams] = useImmer<
+    Omit<GetBlogsDTO, 'pageIndex' | 'pageSize'>
+  >({
+    slug: undefined,
+    title: undefined,
+  });
+
+  const getBlogsQuery = useGetBlogs(params);
   const data = React.useMemo(
     () => getBlogsQuery.data?.blogs ?? [],
     [getBlogsQuery],
   );
-  const table = useReactTable({
-    columns,
-    data,
-    getCoreRowModel: getCoreRowModel(),
-  });
+
+  const columns: ColumnDef<Blog>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'title',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarTextField className="text-sm" />
+          <span>标题</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'author',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarTextField className="text-sm" />
+          <span>作者</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const author: string | undefined = row.getValue('author');
+        return author?.length ? author : NICKNAME;
+      },
+    },
+    {
+      accessorKey: 'slug',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarHashtagSquare className="text-sm" />
+          <span>slug</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'tags',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarTag className="text-sm" />
+          <span>标签</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        const tags: Tag[] = row.getValue('tags') ?? [];
+
+        return (
+          <div className="flex flex-wrap gap-2">
+            {tags.length
+              ? tags.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)
+              : PLACEHODER_TEXT}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'createdAt',
+      header: () => (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            handleOrderChange('createdAt');
+          }}
+        >
+          <IconSolarCalendarMark className="text-sm" />
+          <span className="mx-1">创建时间</span>
+          {params.order === 'asc' && params.orderBy == 'createdAt' && (
+            <IconSolarSortFromBottomToTopLinear />
+          )}
+          {params.order === 'desc' && params.orderBy == 'createdAt' && (
+            <IconSolarSortFromTopToBottomLinear />
+          )}
+        </Button>
+      ),
+      cell({ row }) {
+        return toSlashDateString(row.getValue('createdAt'));
+      },
+    },
+    {
+      accessorKey: 'updatedAt',
+      header: () => (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            handleOrderChange('updatedAt');
+          }}
+        >
+          <IconSolarCalendarMark className="text-sm" />
+          <span className="mx-1">更新时间</span>
+          {params.order === 'asc' && params.orderBy == 'updatedAt' && (
+            <IconSolarSortFromBottomToTopLinear />
+          )}
+          {params.order === 'desc' && params.orderBy == 'updatedAt' && (
+            <IconSolarSortFromTopToBottomLinear />
+          )}
+        </Button>
+      ),
+      cell({ row }) {
+        return toSlashDateString(row.getValue('updatedAt'));
+      },
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => {
+        const record = row.original;
+        return (
+          <div className="flex gap-2 items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href={`${PATHS.ADMIN_BLOG_EDIT}/${record.id}`}>
+                  <Button size={'icon'} variant="ghost">
+                    <IconSolarPen className="text-base" />
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>编辑</TooltipContent>
+            </Tooltip>
+            <DeleteBlogButton id={record.id} />
+          </div>
+        );
+      },
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-4">
@@ -157,35 +222,101 @@ export const AdminBlogListPage = () => {
           </Button>
         </Link>
       </div>
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+
+      <div className="grid gap-4 grid-cols-4">
+        <Input
+          placeholder="请输入标题"
+          value={inputParams.title}
+          onChange={(v) =>
+            updateInputParams((draft) => {
+              draft.title = v.target.value;
+            })
+          }
+          onKeyUp={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
+        />
+        <Input
+          placeholder="请输入slug"
+          value={inputParams.slug}
+          onChange={(v) =>
+            updateInputParams((draft) => {
+              draft.slug = v.target.value;
+            })
+          }
+          onKeyUp={(e) => {
+            if (e.key === 'Enter') {
+              handleSearch();
+            }
+          }}
+        />
+        <div className="flex items-center space-x-4">
+          <Button onClick={handleSearch}>
+            <IconSolarMinimalisticMagnifer className="mr-2" />
+            搜索
+          </Button>
+          <Button onClick={handleReset}>
+            <IconSolarRestart className="mr-2" />
+            重置
+          </Button>
+          <Link href={PATHS.ADMIN_SNIPPET_CREATE}>
+            <Button>
+              <IconSolarAddSquare className="mr-2 text-base" />
+              创建Snippet
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
+        data={data}
+        total={getBlogsQuery.data?.total}
+        loading={getBlogsQuery.isLoading}
+        params={{ ...params }}
+        updateParams={updateParams}
+      />
     </div>
   );
+
+  function handleSearch() {
+    updateParams((draft) => {
+      draft.title = inputParams.title;
+      draft.slug = inputParams.slug;
+    });
+  }
+
+  function handleReset() {
+    updateInputParams((draft) => {
+      draft.title = '';
+      draft.slug = '';
+    });
+    updateParams((draft) => {
+      draft.title = '';
+      draft.slug = '';
+      draft.pageIndex = DEFAULT_PAGE_INDEX;
+      draft.order = undefined;
+      draft.orderBy = undefined;
+    });
+  }
+
+  function handleOrderChange(orderBy: GetBlogsDTO['orderBy']) {
+    updateParams((draft) => {
+      if (draft.orderBy !== orderBy) {
+        draft.orderBy = orderBy;
+        draft.order = 'asc';
+      } else {
+        if (draft.order === 'desc') {
+          draft.orderBy = undefined;
+          draft.order = undefined;
+        } else if (draft.order === 'asc') {
+          draft.order = 'desc';
+        } else {
+          draft.order = 'asc';
+        }
+      }
+    });
+  }
 };

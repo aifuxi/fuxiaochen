@@ -178,12 +178,12 @@ export const AdminSnippetListPage = () => {
     {
       id: 'actions',
       cell: ({ row }) => {
-        const tag = row.original;
+        const record = row.original;
         return (
           <div className="flex gap-2 items-center">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href={`${PATHS.ADMIN_SNIPPET_EDIT}/${tag.id}`}>
+                <Link href={`${PATHS.ADMIN_SNIPPET_EDIT}/${record.id}`}>
                   <Button size={'icon'} variant="ghost">
                     <IconSolarPen className="text-base" />
                   </Button>
@@ -191,7 +191,7 @@ export const AdminSnippetListPage = () => {
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
-            <DeleteSnippetButton id={tag.id} />
+            <DeleteSnippetButton id={record.id} />
           </div>
         );
       },
