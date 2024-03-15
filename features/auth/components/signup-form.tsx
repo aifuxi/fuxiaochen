@@ -30,12 +30,7 @@ import { cn } from '@/lib/utils';
 
 import { type SignupDTO, signupSchema } from '../types';
 
-export type SignupFormProps = {
-  showLoading: () => void;
-  hideLoading: () => void;
-};
-
-export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
+export const SignupForm = () => {
   const router = useRouter();
   const form = useForm<SignupDTO>({
     resolver: zodResolver(signupSchema),
@@ -117,15 +112,12 @@ export const SignupForm = ({ showLoading, hideLoading }: SignupFormProps) => {
 
   async function handleSubmit(values: SignupDTO) {
     try {
-      showLoading();
       await createUser(values);
       showSuccessToast('注册成功，赶快登录吧～');
       // TODO: 这里可以做一个优化，携带刚刚注册的邮箱跳到登录页，登录页读取后自动回填邮箱
       router.push(PATHS.AUTH_SIGNIN);
     } catch (error) {
       showErrorToast((error as Error).message);
-    } finally {
-      hideLoading();
     }
   }
 };

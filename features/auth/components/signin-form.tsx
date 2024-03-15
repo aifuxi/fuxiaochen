@@ -4,7 +4,6 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useUnmount } from 'ahooks';
 import { type z } from 'zod';
 
 import { PATHS } from '@/config';
@@ -30,22 +29,13 @@ import { cn } from '@/lib/utils';
 import { signinWithCredentials, signinWithGithub } from '../actions/signin';
 import { type SigninDTO, signinSchema } from '../types';
 
-export type SigninFormProps = {
-  showLoading: () => void;
-  hideLoading: () => void;
-};
-
-export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
+export const SigninForm = () => {
   const form = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
       email: '',
       password: '',
     },
-  });
-
-  useUnmount(() => {
-    hideLoading();
   });
 
   return (
@@ -128,14 +118,11 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
   );
 
   async function handleSubmit(values: SigninDTO) {
-    showLoading();
     try {
       await signinWithCredentials(values);
       showSuccessToast('登录成功');
     } catch (error) {
       showErrorToast((error as Error).message);
-    } finally {
-      hideLoading();
     }
   }
 
@@ -145,8 +132,6 @@ export const SigninForm = ({ showLoading, hideLoading }: SigninFormProps) => {
       showSuccessToast('登录成功');
     } catch (error) {
       showErrorToast((error as Error).message);
-    } finally {
-      hideLoading();
     }
   }
 };
