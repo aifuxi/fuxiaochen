@@ -91,6 +91,20 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
   return { snippets, total };
 };
 
+export const getAllSnippets = async () => {
+  const total = await prisma.snippet.count({});
+  const snippets = await prisma.snippet.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      tags: true,
+    },
+  });
+
+  return { snippets, total };
+};
+
 export const getSnippetByID = async (id: string) => {
   const snippet = await prisma.snippet.findUnique({
     where: { id },
