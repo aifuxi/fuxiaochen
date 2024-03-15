@@ -31,11 +31,11 @@ import {
   useGetSnippet,
   useUpdateSnippet,
 } from '@/features/snippet';
-import { useGetTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { toSlug } from '@/lib/utils';
 
 export const EditSnippetForm = () => {
-  const getTagsQuery = useGetTags();
+  const getTagsQuery = useGetAllTags();
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

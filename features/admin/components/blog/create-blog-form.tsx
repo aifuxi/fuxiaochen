@@ -32,14 +32,14 @@ import {
   createBlogSchema,
   useCreateBlog,
 } from '@/features/blog';
-import { useGetTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { uploadFile } from '@/features/upload';
 import { toSlug } from '@/lib/utils';
 
 export const CreateBlogForm = () => {
   const router = useRouter();
 
-  const getTagsQuery = useGetTags();
+  const getTagsQuery = useGetAllTags();
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

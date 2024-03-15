@@ -76,6 +76,17 @@ export const getTags = async (params: GetTagsDTO) => {
   return { tags, total };
 };
 
+export const getAllTags = async () => {
+  const total = await prisma.tag.count();
+  const tags = await prisma.tag.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  return { tags, total };
+};
+
 export const createTag = async (params: CreateTagDTO) => {
   const result = await createTagSchema.safeParseAsync(params);
 
