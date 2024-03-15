@@ -24,6 +24,7 @@ export const updateSnippetSchema = createSnippetSchema.partial().extend({
 export const getSnippetsSchema = z.object({
   title: z.string().optional(),
   slug: z.string().optional(),
+  tags: z.string().array().optional(),
   pageIndex: z.number(),
   pageSize: z.number(),
   orderBy: z.enum(['createdAt', 'updatedAt']).optional(),

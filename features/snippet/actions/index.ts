@@ -55,6 +55,22 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
       ],
     ];
   }
+  if (result.data.tags?.length) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          tags: {
+            some: {
+              id: {
+                in: result.data.tags,
+              },
+            },
+          },
+        },
+      ],
+    ];
+  }
 
   const sort: Prisma.SnippetOrderByWithRelationInput = {};
   if (result.data.orderBy && result.data.order) {

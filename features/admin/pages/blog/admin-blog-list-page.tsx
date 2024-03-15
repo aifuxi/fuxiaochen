@@ -18,6 +18,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Combobox } from '@/components/ui/combobox';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import {
@@ -41,7 +42,7 @@ import {
 import { PageHeader } from '@/components/page-header';
 
 import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
-import { type Tag } from '@/features/tag';
+import { type Tag, useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import { DeleteBlogButton } from '../../components';
@@ -59,6 +60,7 @@ export const AdminBlogListPage = () => {
   >({
     slug: undefined,
     title: undefined,
+    tags: undefined,
   });
 
   const getBlogsQuery = useGetBlogs(params);
@@ -66,6 +68,11 @@ export const AdminBlogListPage = () => {
     () => getBlogsQuery.data?.blogs ?? [],
     [getBlogsQuery],
   );
+
+  const getTagsQuery = useGetAllTags();
+  const tags = React.useMemo(() => {
+    return getTagsQuery.data?.tags ?? [];
+  }, [getTagsQuery]);
 
   const columns: ColumnDef<Blog>[] = [
     {
@@ -252,6 +259,23 @@ export const AdminBlogListPage = () => {
             }
           }}
         />
+        <Combobox
+          options={
+            tags?.map((el) => ({
+              label: el.name,
+              value: el.id,
+            })) ?? []
+          }
+          multiple
+          clearable
+          selectPlaceholder="请选择标签"
+          value={inputParams.tags}
+          onValueChange={(v) => {
+            updateInputParams((draft) => {
+              draft.tags = v;
+            });
+          }}
+        />
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <IconSolarMinimalisticMagnifer className="mr-2" />
@@ -285,6 +309,7 @@ export const AdminBlogListPage = () => {
     updateParams((draft) => {
       draft.title = inputParams.title;
       draft.slug = inputParams.slug;
+      draft.tags = inputParams.tags;
     });
   }
 
@@ -292,10 +317,12 @@ export const AdminBlogListPage = () => {
     updateInputParams((draft) => {
       draft.title = '';
       draft.slug = '';
+      draft.tags = undefined;
     });
     updateParams((draft) => {
       draft.title = '';
       draft.slug = '';
+      draft.tags = undefined;
       draft.pageIndex = DEFAULT_PAGE_INDEX;
       draft.order = undefined;
       draft.orderBy = undefined;
