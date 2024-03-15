@@ -55,6 +55,22 @@ export const getBlogs = async (params: GetBlogsDTO) => {
       ],
     ];
   }
+  if (result.data.tags?.length) {
+    cond.OR = [
+      ...(cond.OR ?? []),
+      ...[
+        {
+          tags: {
+            some: {
+              id: {
+                in: result.data.tags,
+              },
+            },
+          },
+        },
+      ],
+    ];
+  }
 
   const sort: Prisma.BlogOrderByWithRelationInput = {};
   if (result.data.orderBy && result.data.order) {

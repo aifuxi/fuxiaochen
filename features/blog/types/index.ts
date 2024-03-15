@@ -27,6 +27,7 @@ export const updateBlogSchema = createBlogSchema.partial().extend({
 export const getBlogsSchema = z.object({
   title: z.string().optional(),
   slug: z.string().optional(),
+  tags: z.string().array().optional(),
   pageIndex: z.number(),
   pageSize: z.number(),
   orderBy: z.enum(['createdAt', 'updatedAt']).optional(),

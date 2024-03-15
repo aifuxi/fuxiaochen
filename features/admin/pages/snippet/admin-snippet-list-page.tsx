@@ -17,6 +17,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Combobox } from '@/components/ui/combobox';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import {
@@ -44,7 +45,7 @@ import {
   type Snippet,
   useGetSnippets,
 } from '@/features/snippet';
-import { type Tag } from '@/features/tag';
+import { type Tag, useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import { DeleteSnippetButton } from '../../components';
@@ -60,6 +61,7 @@ export const AdminSnippetListPage = () => {
   >({
     slug: undefined,
     title: undefined,
+    tags: undefined,
   });
 
   const getSnippetsQuery = useGetSnippets(params);
@@ -67,6 +69,11 @@ export const AdminSnippetListPage = () => {
     () => getSnippetsQuery.data?.snippets ?? [],
     [getSnippetsQuery],
   );
+
+  const getTagsQuery = useGetAllTags();
+  const tags = React.useMemo(() => {
+    return getTagsQuery.data?.tags ?? [];
+  }, [getTagsQuery]);
 
   const columns: ColumnDef<Snippet>[] = [
     {
@@ -231,6 +238,23 @@ export const AdminSnippetListPage = () => {
             }
           }}
         />
+        <Combobox
+          options={
+            tags?.map((el) => ({
+              label: el.name,
+              value: el.id,
+            })) ?? []
+          }
+          multiple
+          clearable
+          selectPlaceholder="请选择标签"
+          value={inputParams.tags}
+          onValueChange={(v) => {
+            updateInputParams((draft) => {
+              draft.tags = v;
+            });
+          }}
+        />
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <IconSolarMinimalisticMagnifer className="mr-2" />
@@ -264,6 +288,7 @@ export const AdminSnippetListPage = () => {
     updateParams((draft) => {
       draft.title = inputParams.title;
       draft.slug = inputParams.slug;
+      draft.tags = inputParams.tags;
     });
   }
 
@@ -271,10 +296,12 @@ export const AdminSnippetListPage = () => {
     updateInputParams((draft) => {
       draft.title = '';
       draft.slug = '';
+      draft.tags = undefined;
     });
     updateParams((draft) => {
       draft.title = '';
       draft.slug = '';
+      draft.tags = undefined;
       draft.pageIndex = DEFAULT_PAGE_INDEX;
       draft.order = undefined;
       draft.orderBy = undefined;
