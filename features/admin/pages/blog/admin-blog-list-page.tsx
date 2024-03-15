@@ -7,14 +7,6 @@ import { useRouter } from 'next/navigation';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
 
-import {
-  DEFAULT_PAGE_INDEX,
-  DEFAULT_PAGE_SIZE,
-  NICKNAME,
-  PATHS,
-  PLACEHODER_TEXT,
-} from '@/config';
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -42,6 +34,13 @@ import {
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
+import {
+  DEFAULT_PAGE_INDEX,
+  DEFAULT_PAGE_SIZE,
+  NICKNAME,
+  PATHS,
+  PLACEHODER_TEXT,
+} from '@/constants';
 import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
 import { type Tag, useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';

@@ -5,8 +5,6 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { PATHS, PATHS_MAP } from '@/config';
-
 import { Button } from '@/components/ui/button';
 
 import {
@@ -17,6 +15,7 @@ import {
   IconSolarHomeSmile,
 } from '@/components/icons';
 
+import { PATHS, PATHS_MAP } from '@/constants';
 import { cn } from '@/lib/utils';
 
 const adminNavItems: Array<{

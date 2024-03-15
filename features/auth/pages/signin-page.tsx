@@ -1,5 +1,3 @@
-import { PATHS } from '@/config';
-
 import {
   Card,
   CardDescription,
@@ -8,6 +6,8 @@ import {
 } from '@/components/ui/card';
 
 import { NextLink } from '@/components/next-link';
+
+import { PATHS } from '@/constants';
 
 import { SigninForm } from '../components/signin-form';
 

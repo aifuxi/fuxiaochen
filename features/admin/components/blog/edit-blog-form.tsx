@@ -8,8 +8,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNil } from 'lodash-es';
 
-import { PATHS } from '@/config';
-
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import {
@@ -27,6 +25,7 @@ import { showErrorToast, showInfoToast } from '@/components/ui/toast';
 
 import { BytemdEditor } from '@/components/bytemd';
 
+import { PATHS } from '@/constants';
 import { CreateTagButton } from '@/features/admin';
 import {
   type UpdateBlogDTO,

@@ -6,8 +6,6 @@ import Link from 'next/link';
 
 import { useScroll } from 'ahooks';
 
-import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/config';
-
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -15,6 +13,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
+import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { navItems } from './config';

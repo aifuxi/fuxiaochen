@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { REGEX } from '@/config';
+import { REGEX } from '@/constants';
 
 import { type getSnippets } from '../actions';
 

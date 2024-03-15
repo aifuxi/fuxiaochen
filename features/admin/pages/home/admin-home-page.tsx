@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { PATHS } from '@/config';
-
 import { IllustrationConstruction } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
+
+import { PATHS } from '@/constants';
 
 export const AdminHomePage = () => {
   return (

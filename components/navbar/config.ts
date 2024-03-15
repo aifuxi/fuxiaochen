@@ -1,4 +1,4 @@
-import { PATHS, PATHS_MAP } from '@/config';
+import { PATHS, PATHS_MAP } from '@/constants';
 
 export const navItems: Array<{
   label?: string;

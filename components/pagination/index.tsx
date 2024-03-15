@@ -2,7 +2,7 @@ import React from 'react';
 
 import { type Updater } from 'use-immer';
 
-import { PAGE_SIZE_OPTIONS } from '@/config';
+import { PAGE_SIZE_OPTIONS } from '@/constants';
 
 import { IconSolarMenuDots } from '../icons';
 import { Button } from '../ui/button';

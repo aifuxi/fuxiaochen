@@ -5,8 +5,6 @@ import React from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
 
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/config';
-
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DataTable } from '@/components/ui/data-table';
@@ -25,6 +23,7 @@ import {
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/constants';
 import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 

@@ -1,6 +1,6 @@
-import { PATHS } from '@/config';
-
 import { PageHeader } from '@/components/page-header';
+
+import { PATHS } from '@/constants';
 
 import { EditBlogForm } from '../../components';
 
