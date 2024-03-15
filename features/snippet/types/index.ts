@@ -21,8 +21,18 @@ export const updateSnippetSchema = createSnippetSchema.partial().extend({
   id: z.string().min(1),
 });
 
+export const getSnippetsSchema = z.object({
+  title: z.string().optional(),
+  slug: z.string().optional(),
+  pageIndex: z.number(),
+  pageSize: z.number(),
+  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
+});
+
 export type CreateSnippetDTO = Infer<typeof createSnippetSchema>;
 export type UpdateSnippetDTO = Infer<typeof updateSnippetSchema>;
+export type GetSnippetsDTO = z.infer<typeof getSnippetsSchema>;
 
 export type Snippet = Awaited<
   ReturnType<typeof getSnippets>
