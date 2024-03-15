@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
@@ -39,6 +39,7 @@ import {
   IconSolarTag,
   IconSolarTextField,
 } from '@/components/icons';
+import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
 import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
@@ -50,6 +51,7 @@ import { DeleteBlogButton } from '../../components';
 // import { ToggleBlogPublishSwitch } from '../components/toggle-blog-publish-switch';
 
 export const AdminBlogListPage = () => {
+  const router = useRouter();
   const [params, updateParams] = useImmer<GetBlogsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -202,11 +204,13 @@ export const AdminBlogListPage = () => {
           <div className="flex gap-2 items-center">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href={`${PATHS.ADMIN_BLOG_EDIT}/${record.id}`}>
-                  <Button size={'icon'} variant="ghost">
-                    <IconSolarPen className="text-base" />
-                  </Button>
-                </Link>
+                <Button
+                  size={'icon'}
+                  variant="ghost"
+                  onClick={() => handleGoToEdit(record.id)}
+                >
+                  <IconSolarPen className="text-base" />
+                </Button>
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
@@ -220,15 +224,6 @@ export const AdminBlogListPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
-
-      <div className="flex justify-end">
-        <Link href={PATHS.ADMIN_BLOG_CREATE}>
-          <Button>
-            <IconSolarAddSquare className="mr-2 text-base" />
-            创建Blog
-          </Button>
-        </Link>
-      </div>
 
       <div className="grid gap-4 grid-cols-4">
         <Input
@@ -285,12 +280,10 @@ export const AdminBlogListPage = () => {
             <IconSolarRestart className="mr-2" />
             重置
           </Button>
-          <Link href={PATHS.ADMIN_SNIPPET_CREATE}>
-            <Button>
-              <IconSolarAddSquare className="mr-2 text-base" />
-              创建Snippet
-            </Button>
-          </Link>
+          <Button onClick={handleGoToCreate}>
+            <IconSolarAddSquare className="mr-2 text-base" />
+            创建 Blog
+          </Button>
         </div>
       </div>
 
@@ -301,6 +294,13 @@ export const AdminBlogListPage = () => {
         loading={getBlogsQuery.isLoading}
         params={{ ...params }}
         updateParams={updateParams}
+        noResult={
+          <div className="grid place-content-center gap-4 py-16">
+            <IllustrationNoContent />
+            <p>暂无内容</p>
+            <Button onClick={handleGoToCreate}>去创建</Button>
+          </div>
+        }
       />
     </div>
   );
@@ -345,5 +345,13 @@ export const AdminBlogListPage = () => {
         }
       }
     });
+  }
+
+  function handleGoToCreate() {
+    router.push(PATHS.ADMIN_BLOG_CREATE);
+  }
+
+  function handleGoToEdit(id: string) {
+    router.push(`${PATHS.ADMIN_BLOG_EDIT}/${id}`);
   }
 };

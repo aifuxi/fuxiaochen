@@ -21,24 +21,21 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-import { CreateTagButton } from '@/features/admin';
-
-import { IllustrationNoContent } from '../illustrations';
 import { Pagination } from '../pagination';
+
+type PaginationConfig = {
+  pageIndex: number;
+  pageSize: number;
+};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
   total?: number;
-  params: {
-    pageIndex: number;
-    pageSize: number;
-  };
-  updateParams: Updater<{
-    pageIndex: number;
-    pageSize: number;
-  }>;
+  params: PaginationConfig;
+  noResult?: React.ReactNode;
+  updateParams: Updater<PaginationConfig>;
 }
 
 export function DataTable<TData, TValue>({
@@ -47,6 +44,7 @@ export function DataTable<TData, TValue>({
   loading,
   params,
   updateParams,
+  noResult,
   total = 0,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -122,11 +120,7 @@ export function DataTable<TData, TValue>({
       return (
         <TableRow>
           <TableCell colSpan={columns.length} className="h-24 text-center">
-            <div className="grid place-content-center gap-4 py-16">
-              <IllustrationNoContent />
-              <p>暂无内容，请添加</p>
-              <CreateTagButton />
-            </div>
+            {noResult}
           </TableCell>
         </TableRow>
       );
