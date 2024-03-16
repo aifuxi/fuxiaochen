@@ -31,7 +31,7 @@ export const DeleteNoteButton = ({ id }: DeleteNoteButtonProps) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="ghost">
+        <Button size={'icon'} variant="outline">
           <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
         </Button>
       </AlertDialogTrigger>

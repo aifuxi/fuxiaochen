@@ -13,7 +13,6 @@
 @import './bytemd.css';
 @import './github-light.css';
 @import './github-dark.css';
-@import './toc.css';
 
 @layer base {
   :root {

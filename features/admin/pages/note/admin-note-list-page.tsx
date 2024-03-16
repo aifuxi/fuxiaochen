@@ -15,8 +15,9 @@ import {
   IconSolarRestart,
 } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
+import { Pagination } from '@/components/pagination';
 
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/constants';
+import { DEFAULT_PAGE_INDEX, PATHS } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
 import { useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
@@ -31,7 +32,7 @@ import {
 export const AdminNoteListPage = () => {
   const [params, updateParams] = useImmer<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
-    pageSize: DEFAULT_PAGE_SIZE,
+    pageSize: 5,
   });
 
   const [inputParams, updateInputParams] = useImmer<
@@ -98,31 +99,64 @@ export const AdminNoteListPage = () => {
           </Button>
           <CreateNoteButton />
         </div>
-      </div>
 
-      <ul className="grid gap-4 w-[65ch]  mx-auto">
-        {data.map((note) => (
-          <li key={note.id}>
-            <div className="border rounded-lg px-6 relative pb-6">
-              <BytemdViewer body={note.body || ''} />
-              <div className="grid grid-cols-12">
-                <div className="col-span-6 flex flex-wrap gap-2 mb-1">
-                  {note.tags?.map((tag) => (
-                    <Badge key={tag.id}>{tag.name}</Badge>
-                  ))}
+        <ul className="grid gap-4 w-[65ch]  mx-auto">
+          {data.map((note) => (
+            <li key={note.id}>
+              <div className="border rounded-lg px-6 relative pb-6">
+                <BytemdViewer body={note.body || ''} />
+                <div className="grid grid-cols-12">
+                  <div className="col-span-6 flex flex-wrap gap-2 mb-1">
+                    {note.tags?.map((tag) => (
+                      <Badge key={tag.id}>{tag.name}</Badge>
+                    ))}
+                  </div>
+                  <div className="col-span-6 flex-1 flex items-end justify-end text-muted-foreground">
+                    {toSlashDateString(note.createdAt)}
+                  </div>
                 </div>
-                <div className="col-span-6 flex-1 flex items-end justify-end text-muted-foreground">
-                  {toSlashDateString(note.createdAt)}
+                <div className="absolute right-2 top-2 space-x-2">
+                  <EditNoteButton id={note.id} />
+                  <DeleteNoteButton id={note.id} />
                 </div>
               </div>
-              <div className="absolute right-2 top-2 space-x-2">
-                <EditNoteButton id={note.id} />
-                <DeleteNoteButton id={note.id} />
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center justify-betweens">
+          <div>
+            <p>
+              显示第
+              <span className="font-semibold mx-1">
+                {params.pageIndex === 1
+                  ? 1
+                  : (params.pageIndex - 1) * params.pageSize}
+              </span>
+              条-第
+              <span className="font-semibold mx-1">
+                {Math.min(
+                  getNotesQuery.data?.total ?? 0,
+                  params.pageIndex * params.pageSize,
+                )}
+              </span>
+              条，共
+              <span className="font-semibold mx-1">
+                {getNotesQuery.data?.total}
+              </span>
+              条
+            </p>
+          </div>
+          <div className="flex-1 flex items-center justify-end">
+            <Pagination
+              total={getNotesQuery.data?.total}
+              params={{ ...params }}
+              updateParams={updateParams}
+              showSizeChanger
+            />
+          </div>
+        </div>
+      </div>
     </AdminAnimatePage>
   );
 
