@@ -17,7 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 
 import {
-  IconSolarCropMinimalistic,
+  IconSolarMonitorBold,
   IconSolarMoonStars,
   IconSolarRestartLinear,
   IconSolarSun,
@@ -37,7 +37,7 @@ const themeOptions = [
   {
     value: 'system',
     label: '系统',
-    icon: <IconSolarCropMinimalistic className="text-base" />,
+    icon: <IconSolarMonitorBold className="text-base" />,
   },
 ];
 
@@ -89,6 +89,7 @@ export function SwitchTheme(props: Props) {
                   <div
                     className={cn(
                       theme === el.value ? 'opacity-100' : 'opacity-50',
+                      'flex items-center',
                     )}
                   >
                     {el.icon}
