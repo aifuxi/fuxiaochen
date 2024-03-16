@@ -97,7 +97,7 @@ export const Combobox = React.forwardRef(
             aria-expanded={open}
             className="w-full justify-between hover:bg-secondary/20 active:scale-100"
           >
-            <span className="line-clamp-1 text-left font-normal">
+            <span className="line-clamp-1 text-left font-normal text-muted-foreground">
               {/* 多选 */}
               {props.multiple &&
                 props.value &&
