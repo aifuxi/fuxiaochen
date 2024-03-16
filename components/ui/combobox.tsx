@@ -19,9 +19,9 @@ import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { ScrollArea } from './scroll-area';
 
 import {
-  IconSolarCheckSquare,
-  IconSolarCloseSquare,
-  IconSolarSquareAltArrowDown,
+  IconSolarAltArrowDownLinear,
+  IconSolarCheckCircle,
+  IconSolarCloseLinear,
 } from '../icons';
 
 export type ComboboxOption = {
@@ -122,7 +122,7 @@ export const Combobox = React.forwardRef(
             <div className="flex h-full items-center shrink-0">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
-                <IconSolarCloseSquare
+                <IconSolarCloseLinear
                   className={cn(
                     'ml-2 text-base opacity-50 hover:opacity-80 transition-opacity',
                   )}
@@ -134,7 +134,7 @@ export const Combobox = React.forwardRef(
                   }}
                 />
               )}
-              <IconSolarSquareAltArrowDown
+              <IconSolarAltArrowDownLinear
                 className={cn(
                   'ml-2 text-base rotate-0 opacity-50 transition-transform',
                   open && 'rotate-180',
@@ -174,7 +174,7 @@ export const Combobox = React.forwardRef(
                         }
                       }}
                     >
-                      <IconSolarCheckSquare
+                      <IconSolarCheckCircle
                         className={cn(
                           'mr-2 text-base opacity-0',
                           !props.multiple &&
