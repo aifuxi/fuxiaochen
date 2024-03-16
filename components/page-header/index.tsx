@@ -32,14 +32,14 @@ export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
       <Breadcrumb className={cn('mb-4')}>
         <BreadcrumbList>
           {linkList.map((el) => (
-            <>
+            <React.Fragment key={el}>
               <BreadcrumbItem>
                 <BreadcrumbLink>
                   <Link href={el}>{PATHS_MAP[el]}</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-            </>
+            </React.Fragment>
           ))}
           <BreadcrumbItem>
             <BreadcrumbPage>{PATHS_MAP[labelLink]}</BreadcrumbPage>
