@@ -17,6 +17,7 @@ export const PATHS = {
   ADMIN_SNIPPET_EDIT: '/admin/snippet/edit',
 
   ADMIN_TAG: '/admin/tag',
+  ADMIN_NOTE: '/admin/note',
 
   /** ************* AUTH ****************** */
   AUTH_SIGNIN: '/auth/signin',
@@ -39,6 +40,7 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.ADMIN_SNIPPET_CREATE]: '创建片段',
   [PATHS.ADMIN_SNIPPET_EDIT]: '编辑片段',
   [PATHS.ADMIN_TAG]: '标签',
+  [PATHS.ADMIN_NOTE]: '笔记',
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGNIN]: '登录',
@@ -63,6 +65,7 @@ export const PATH_DESCRIPTION_MAP: Record<string, string> = {
     'Talk is cheap. Show me the code. From Linus Torvalds',
   [PATHS.ADMIN_SNIPPET_EDIT]: '修修补补，总比没有好',
   [PATHS.ADMIN_TAG]: `标签管理，在这里对标签进行 增、删、改、查操作`,
+  [PATHS.ADMIN_NOTE]: '好记性不如烂笔头，灵感一闪',
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGNIN]: '登录',

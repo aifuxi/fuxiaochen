@@ -1,5 +1,5 @@
 .bytemd {
-  @apply !min-h-screen;
+  /* @apply !min-h-screen; */
 }
 
 .bytemd .CodeMirror,
