@@ -67,6 +67,10 @@ export const Pagination = ({
     return range;
   }, [pageCount, params]);
 
+  if (pageCount <= 1) {
+    return null;
+  }
+
   return (
     <div className="flex items-center space-x-6 lg:space-x-8 py-4">
       <div className="flex items-center space-x-2">
