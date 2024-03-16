@@ -13,6 +13,7 @@ import {
   IconSolarCodeSquare,
   IconSolarHashtagSquare,
   IconSolarHomeSmile,
+  IconSolarNotesBold,
 } from '@/components/icons';
 
 import { PATHS, PATHS_MAP } from '@/constants';
@@ -34,19 +35,24 @@ const adminNavItems: Array<{
     icon: <IconSolarChartSquare className="text-lg" />,
   },
   {
-    label: PATHS_MAP[PATHS.ADMIN_BLOG],
-    link: PATHS.ADMIN_BLOG,
-    icon: <IconSolarBook className="text-lg" />,
-  },
-  {
     label: PATHS_MAP[PATHS.ADMIN_TAG],
     link: PATHS.ADMIN_TAG,
     icon: <IconSolarHashtagSquare className="text-lg" />,
   },
   {
+    label: PATHS_MAP[PATHS.ADMIN_BLOG],
+    link: PATHS.ADMIN_BLOG,
+    icon: <IconSolarBook className="text-lg" />,
+  },
+  {
     label: PATHS_MAP[PATHS.ADMIN_SNIPPET],
     link: PATHS.ADMIN_SNIPPET,
     icon: <IconSolarCodeSquare className="text-lg" />,
+  },
+  {
+    label: PATHS_MAP[PATHS.ADMIN_NOTE],
+    link: PATHS.ADMIN_NOTE,
+    icon: <IconSolarNotesBold className="text-lg" />,
   },
 ];
 
