@@ -106,12 +106,12 @@ export const AdminNoteListPage = () => {
             <div className="border rounded-lg px-6 relative pb-6">
               <BytemdViewer body={note.body || ''} />
               <div className="grid grid-cols-12">
-                <div className="col-span-8 flex flex-wrap gap-2 mb-1">
+                <div className="col-span-6 flex flex-wrap gap-2 mb-1">
                   {note.tags?.map((tag) => (
                     <Badge key={tag.id}>{tag.name}</Badge>
                   ))}
                 </div>
-                <div className="col-span-4 flex-1 flex items-end justify-end text-muted-foreground">
+                <div className="col-span-6 flex-1 flex items-end justify-end text-muted-foreground">
                   {toSlashDateString(note.createdAt)}
                 </div>
               </div>
