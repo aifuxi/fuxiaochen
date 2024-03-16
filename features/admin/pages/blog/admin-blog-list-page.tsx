@@ -22,6 +22,7 @@ import {
 import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
+  IconSolarEyeBold,
   IconSolarHashtagSquare,
   IconSolarMinimalisticMagnifer,
   IconSolarPen,
@@ -42,12 +43,10 @@ import {
   PLACEHODER_TEXT,
 } from '@/constants';
 import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
-import { type Tag, useGetAllTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
-import { DeleteBlogButton } from '../../components';
-
-// import { ToggleBlogPublishSwitch } from '../components/toggle-blog-publish-switch';
+import { DeleteBlogButton, ToggleBlogPublishSwitch } from '../../components';
 
 export const AdminBlogListPage = () => {
   const router = useRouter();
@@ -116,8 +115,7 @@ export const AdminBlogListPage = () => {
         </div>
       ),
       cell: ({ row }) => {
-        const author: string | undefined = row.getValue('author');
-        return author?.length ? author : NICKNAME;
+        return row?.original?.author?.length ? row?.original?.author : NICKNAME;
       },
     },
     {
@@ -138,14 +136,31 @@ export const AdminBlogListPage = () => {
         </div>
       ),
       cell: ({ row }) => {
-        const tags: Tag[] = row.getValue('tags') ?? [];
-
         return (
           <div className="flex flex-wrap gap-2">
             {tags.length
-              ? tags.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)
+              ? row.original.tags.map((tag) => (
+                  <Badge key={tag.id}>{tag.name}</Badge>
+                ))
               : PLACEHODER_TEXT}
           </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'published',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarEyeBold className="text-sm" />
+          <span>发布状态</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return (
+          <ToggleBlogPublishSwitch
+            id={row.original.id}
+            published={row.original.published}
+          />
         );
       },
     },
@@ -169,7 +184,7 @@ export const AdminBlogListPage = () => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('createdAt'));
+        return toSlashDateString(row.original.createdAt);
       },
     },
     {
@@ -192,13 +207,12 @@ export const AdminBlogListPage = () => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('updatedAt'));
+        return toSlashDateString(row.original.updatedAt);
       },
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        const record = row.original;
         return (
           <div className="flex gap-2 items-center">
             <Tooltip>
@@ -206,14 +220,14 @@ export const AdminBlogListPage = () => {
                 <Button
                   size={'icon'}
                   variant="ghost"
-                  onClick={() => handleGoToEdit(record.id)}
+                  onClick={() => handleGoToEdit(row.original.id)}
                 >
                   <IconSolarPen className="text-base" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
-            <DeleteBlogButton id={record.id} />
+            <DeleteBlogButton id={row.original.id} />
           </div>
         );
       },
