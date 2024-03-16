@@ -28,6 +28,7 @@ import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import {
+  AdminAnimatePage,
   CreateTagButton,
   DeleteTagButton,
   EditTagButton,
@@ -163,7 +164,7 @@ export const AdminTagListPage = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
 
       <div className="grid gap-4 grid-cols-4">
@@ -222,7 +223,7 @@ export const AdminTagListPage = () => {
           </div>
         }
       />
-    </div>
+    </AdminAnimatePage>
   );
 
   function handleSearch() {

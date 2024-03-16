@@ -46,7 +46,11 @@ import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
 import { useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
-import { DeleteBlogButton, ToggleBlogPublishSwitch } from '../../components';
+import {
+  AdminAnimatePage,
+  DeleteBlogButton,
+  ToggleBlogPublishSwitch,
+} from '../../components';
 
 export const AdminBlogListPage = () => {
   const router = useRouter();
@@ -235,7 +239,7 @@ export const AdminBlogListPage = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
 
       <div className="grid gap-4 grid-cols-4">
@@ -315,7 +319,7 @@ export const AdminBlogListPage = () => {
           </div>
         }
       />
-    </div>
+    </AdminAnimatePage>
   );
 
   function handleSearch() {

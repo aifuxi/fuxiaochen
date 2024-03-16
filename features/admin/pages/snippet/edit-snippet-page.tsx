@@ -2,11 +2,11 @@ import { PageHeader } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 
-import { EditSnippetForm } from '../../components';
+import { AdminAnimatePage, EditSnippetForm } from '../../components';
 
 export const EditSnippetPage = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader
         breadcrumbList={[
           PATHS.ADMIN_HOME,
@@ -16,6 +16,6 @@ export const EditSnippetPage = () => {
       />
 
       <EditSnippetForm />
-    </div>
+    </AdminAnimatePage>
   );
 };

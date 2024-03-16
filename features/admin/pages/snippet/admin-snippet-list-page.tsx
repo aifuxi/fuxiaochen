@@ -48,7 +48,7 @@ import {
 import { type Tag, useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
-import { DeleteSnippetButton } from '../../components';
+import { AdminAnimatePage, DeleteSnippetButton } from '../../components';
 
 export const AdminSnippetListPage = () => {
   const router = useRouter();
@@ -209,7 +209,7 @@ export const AdminSnippetListPage = () => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_SNIPPET]} />
 
       <div className="grid gap-4 grid-cols-4">
@@ -289,7 +289,7 @@ export const AdminSnippetListPage = () => {
           </div>
         }
       />
-    </div>
+    </AdminAnimatePage>
   );
 
   function handleSearch() {

@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/page-header';
 import { PATHS } from '@/constants';
 
 import { getStatistics } from '../../actions/statistics';
+import { AdminAnimatePage } from '../../components';
 import { type StatisticsCardProps } from '../../types';
 
 export const AdminStatisticPage = async () => {
@@ -27,7 +28,7 @@ export const AdminStatisticPage = async () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col gap-4">
+    <AdminAnimatePage className="h-screen flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_STATISTIC]} />
 
       <div className="flex-1">
@@ -48,6 +49,6 @@ export const AdminStatisticPage = async () => {
           ))}
         </div>
       </div>
-    </div>
+    </AdminAnimatePage>
   );
 };

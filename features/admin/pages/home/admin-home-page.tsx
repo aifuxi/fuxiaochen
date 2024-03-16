@@ -5,9 +5,11 @@ import { PageHeader } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 
+import { AdminAnimatePage } from '../../components';
+
 export const AdminHomePage = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader breadcrumbList={[PATHS.ADMIN_HOME]} />
 
       <div className="grid place-content-center mt-[18vh]">
@@ -16,6 +18,6 @@ export const AdminHomePage = () => {
           开发中
         </h3>
       </div>
-    </div>
+    </AdminAnimatePage>
   );
 };
