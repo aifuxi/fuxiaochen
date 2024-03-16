@@ -67,7 +67,7 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
+        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
           <IconSolarPen className="text-base" />
         </Button>
       </DialogTrigger>
