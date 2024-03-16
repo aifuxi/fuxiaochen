@@ -70,7 +70,7 @@ export const HeroSection = () => {
           animationDelay: `${getDelay()}ms`,
         }}
       >
-        我在这个网站记录我的成长，正在努力 💪 成为一个更好的程序员。
+        我在这个网站记录我的成长，努力 💪 成为一个更好的程序员。
       </p>
       <div
         className={cn('flex space-x-4', 'animate-fade-down')}
