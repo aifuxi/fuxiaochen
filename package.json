@@ -63,7 +63,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
-    "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "image-type": "^5.2.0",
     "lodash-es": "^4.17.21",

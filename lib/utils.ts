@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
-import { format, toDate } from 'date-fns';
+import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
 import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
 
@@ -34,20 +35,10 @@ export const copyToClipboard = (text: string) => {
   }
 };
 
-export const toDetailDateString = (date: number | Date) => {
-  const newDate = toDate(date);
-
-  return format(newDate, 'MMMM dd, yyyy, EEEE, HH:mm:ss');
-};
-
 export const toSimpleDateString = (date: number | Date) => {
-  const newDate = toDate(date);
-
-  return format(newDate, 'MMMM dd, yyyy');
+  return dayjs(date).locale('zh-cn').format('YYYY年M月D日');
 };
 
 export const toSlashDateString = (date: number | Date) => {
-  const newDate = toDate(date);
-
-  return format(newDate, 'yyyy/MM/dd HH:mm:ss');
+  return dayjs(date).locale('zh-cn').format('YYYY年M月D日 dddd HH:mm:ss');
 };
