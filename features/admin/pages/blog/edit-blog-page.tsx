@@ -2,11 +2,11 @@ import { PageHeader } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 
-import { EditBlogForm } from '../../components';
+import { AdminAnimatePage, EditBlogForm } from '../../components';
 
 export const EditBlogPage = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <AdminAnimatePage className="flex flex-col gap-4">
       <PageHeader
         breadcrumbList={[
           PATHS.ADMIN_HOME,
@@ -16,6 +16,6 @@ export const EditBlogPage = () => {
       />
 
       <EditBlogForm />
-    </div>
+    </AdminAnimatePage>
   );
 };
