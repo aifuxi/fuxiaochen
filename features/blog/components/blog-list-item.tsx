@@ -44,7 +44,7 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
         </Tooltip>
 
         <div className="text-sm text-muted-foreground">
-          {blog.author ?? NICKNAME}
+          {blog.author ? blog.author : NICKNAME}
           <span className="mx-2">·</span>
           {toSimpleDateString(blog.createdAt)}
         </div>
