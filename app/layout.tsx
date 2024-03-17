@@ -7,7 +7,7 @@ import { NextThemeProvider, ReactQueryProvider } from '@/providers';
 import { ReactHotToaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-import BackToTop from '@/components/back-to-top';
+import { BackToTop } from '@/components/back-to-top';
 import { Favicon } from '@/components/favicon';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants';
