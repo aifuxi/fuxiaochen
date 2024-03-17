@@ -6,6 +6,8 @@ import { twMerge } from 'tailwind-merge';
 
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
+import { ADMIN_EMAILS } from '@/constants';
+
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
@@ -41,4 +43,11 @@ export const toSimpleDateString = (date: number | Date) => {
 
 export const toSlashDateString = (date: number | Date) => {
   return dayjs(date).locale('zh-cn').format('YYYY年M月D日 dddd HH:mm:ss');
+};
+
+export const isAdmin = (email?: string | null) => {
+  if (!email || !ADMIN_EMAILS?.length) {
+    return false;
+  }
+  return ADMIN_EMAILS.includes(email);
 };

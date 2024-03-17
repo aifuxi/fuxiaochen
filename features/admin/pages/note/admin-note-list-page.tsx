@@ -5,10 +5,19 @@ import React from 'react';
 import { TagTypeEnum } from '@prisma/client';
 import { useImmer } from 'use-immer';
 
+import { type WithSession } from '@/types';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { BytemdViewer } from '@/components/bytemd';
 import {
@@ -18,10 +27,16 @@ import {
 import { PageHeader } from '@/components/page-header';
 import { Pagination, PaginationInfo } from '@/components/pagination';
 
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/constants';
+import {
+  DEFAULT_PAGE_INDEX,
+  DEFAULT_PAGE_SIZE,
+  PATHS,
+  PUBLISHED_ENUM,
+  PUBLISHED_LABEL_MAP,
+} from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
 import { useGetAllTags } from '@/features/tag';
-import { toSlashDateString } from '@/lib/utils';
+import { isAdmin, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -31,7 +46,7 @@ import {
   ToggleNotePublishButton,
 } from '../../components';
 
-export const AdminNoteListPage = () => {
+export const AdminNoteListPage = ({ session }: WithSession) => {
   const [params, updateParams] = useImmer<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
@@ -41,6 +56,7 @@ export const AdminNoteListPage = () => {
     Omit<GetNotesDTO, 'pageIndex' | 'pageSize'>
   >({
     body: undefined,
+    published: undefined,
     tags: undefined,
   });
 
@@ -82,6 +98,31 @@ export const AdminNoteListPage = () => {
             }
           }}
         />
+        {isAdmin(session?.user?.email) && (
+          <Select
+            onValueChange={(v: PUBLISHED_ENUM) =>
+              updateInputParams((draft) => {
+                draft.published = v;
+              })
+            }
+            value={inputParams.published}
+          >
+            <SelectTrigger className="text-muted-foreground">
+              <SelectValue placeholder="请选择发布状态" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={PUBLISHED_ENUM.ALL}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.ALL]}
+              </SelectItem>
+              <SelectItem value={PUBLISHED_ENUM.PUBLISHED}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.PUBLISHED]}
+              </SelectItem>
+              <SelectItem value={PUBLISHED_ENUM.NO_PUBLISHED}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.NO_PUBLISHED]}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         <Combobox
           options={
             tags?.map((el) => ({
@@ -162,16 +203,19 @@ export const AdminNoteListPage = () => {
     updateParams((draft) => {
       draft.body = inputParams.body;
       draft.tags = inputParams.tags;
+      draft.published = inputParams.published;
     });
   }
 
   function handleReset() {
     updateInputParams((draft) => {
       draft.body = '';
+      draft.published = undefined;
       draft.tags = undefined;
     });
     updateParams((draft) => {
       draft.body = '';
+      draft.published = undefined;
       draft.tags = undefined;
       draft.pageIndex = DEFAULT_PAGE_INDEX;
       draft.order = undefined;
