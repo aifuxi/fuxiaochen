@@ -15,7 +15,7 @@ export const createTagSchema = z.object({
     TagTypeEnum.ALL,
     TagTypeEnum.BLOG,
     TagTypeEnum.NOTE,
-    TagTypeEnum.SIPPET,
+    TagTypeEnum.SNIPPET,
   ]),
 });
 
@@ -31,7 +31,7 @@ export const getTagsSchema = z.object({
       TagTypeEnum.ALL,
       TagTypeEnum.BLOG,
       TagTypeEnum.NOTE,
-      TagTypeEnum.SIPPET,
+      TagTypeEnum.SNIPPET,
     ])
     .optional(),
   pageIndex: z.number(),

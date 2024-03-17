@@ -36,7 +36,7 @@ import { toSlug } from '@/lib/utils';
 export const CreateSnippetForm = () => {
   const router = useRouter();
 
-  const getTagsQuery = useGetAllTags(TagTypeEnum.SIPPET);
+  const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

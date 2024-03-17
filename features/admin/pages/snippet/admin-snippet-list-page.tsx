@@ -72,7 +72,7 @@ export const AdminSnippetListPage = () => {
     [getSnippetsQuery],
   );
 
-  const getTagsQuery = useGetAllTags(TagTypeEnum.SIPPET);
+  const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

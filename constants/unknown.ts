@@ -9,12 +9,12 @@ export const TAG_TYPES = [
   TagTypeEnum.ALL,
   TagTypeEnum.BLOG,
   TagTypeEnum.NOTE,
-  TagTypeEnum.SIPPET,
+  TagTypeEnum.SNIPPET,
 ];
 
 export const TAG_TYPE_MAP = {
   [TagTypeEnum.ALL]: '通用',
   [TagTypeEnum.BLOG]: '博客',
   [TagTypeEnum.NOTE]: '笔记',
-  [TagTypeEnum.SIPPET]: '片段',
+  [TagTypeEnum.SNIPPET]: '片段',
 };
