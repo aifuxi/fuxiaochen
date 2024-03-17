@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
@@ -56,6 +57,7 @@ export const EditSnippetForm = () => {
       id: snippet?.id ?? '',
       slug: snippet?.slug ?? '',
       description: snippet?.description ?? '',
+      published: snippet?.published ?? false,
       body: snippet?.body ?? '',
 
       tags: snippet?.tags?.map((el) => el.id) ?? [],
@@ -68,6 +70,7 @@ export const EditSnippetForm = () => {
     form.setValue('slug', snippet?.slug ?? '');
     form.setValue('description', snippet?.description ?? '');
     form.setValue('body', snippet?.body ?? '');
+    form.setValue('published', snippet?.published ?? false);
     form.setValue('tags', snippet?.tags?.map((el) => el.id) ?? []);
   }, [snippet, form]);
 
@@ -128,6 +131,24 @@ export const EditSnippetForm = () => {
                 <FormLabel>描述</FormLabel>
                 <FormControl>
                   <Textarea {...field} placeholder="请输入描述..." />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>是否发布</FormLabel>
+                <FormControl>
+                  <div>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

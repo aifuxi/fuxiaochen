@@ -162,7 +162,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="text-muted-foreground">
                           <SelectValue placeholder="标签类型" />
                         </SelectTrigger>
                       </FormControl>

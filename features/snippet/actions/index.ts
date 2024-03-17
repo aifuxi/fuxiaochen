@@ -31,8 +31,13 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
     throw new Error(error);
   }
 
+  // 无权限，只能查看已发布的
+  const published = await noPermission();
   const cond: Prisma.SnippetWhereInput = {};
   // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (published) {
+    cond.published = published;
+  }
   if (result.data.title?.trim()) {
     cond.OR = [
       ...(cond.OR ?? []),
@@ -181,6 +186,30 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
           ? result.data.tags.map((tagID) => ({ id: tagID }))
           : undefined,
       },
+    },
+  });
+};
+
+export const toggleSnippetPublished = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
+  const snippet = await prisma.snippet.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!snippet) {
+    throw new Error('片段不存在');
+  }
+
+  await prisma.snippet.update({
+    data: {
+      published: !snippet.published,
+    },
+    where: {
+      id,
     },
   });
 };

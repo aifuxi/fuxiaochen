@@ -31,8 +31,13 @@ export const getNotes = async (params: GetNotesDTO) => {
     throw new Error(error);
   }
 
+  // 无权限，只能查看已发布的
+  const published = await noPermission();
   const cond: Prisma.NoteWhereInput = {};
   // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (published) {
+    cond.published = published;
+  }
   if (result.data.body?.trim()) {
     cond.OR = [
       ...(cond.OR ?? []),
@@ -144,6 +149,30 @@ export const createNote = async (params: CreateNoteDTO) => {
           ? result.data.tags.map((tagID) => ({ id: tagID }))
           : undefined,
       },
+    },
+  });
+};
+
+export const toggleNotePublished = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
+  const note = await prisma.note.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!note) {
+    throw new Error('笔记不存在');
+  }
+
+  await prisma.note.update({
+    data: {
+      published: !note.published,
+    },
+    where: {
+      id,
     },
   });
 };

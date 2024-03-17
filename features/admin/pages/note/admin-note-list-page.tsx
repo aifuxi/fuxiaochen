@@ -28,6 +28,7 @@ import {
   CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
+  ToggleNotePublishButton,
 } from '../../components';
 
 export const AdminNoteListPage = () => {
@@ -68,7 +69,7 @@ export const AdminNoteListPage = () => {
     >
       <div className="w-[65ch] mx-auto grid gap-4">
         <Input
-          placeholder="内容"
+          placeholder="请输入内容"
           value={inputParams.body}
           onChange={(v) =>
             updateInputParams((draft) => {
@@ -90,7 +91,7 @@ export const AdminNoteListPage = () => {
           }
           multiple
           clearable
-          selectPlaceholder="标签"
+          selectPlaceholder="请选择标签"
           value={inputParams.tags}
           onValueChange={(v) => {
             updateInputParams((draft) => {
@@ -125,6 +126,10 @@ export const AdminNoteListPage = () => {
                   </div>
                 </div>
                 <div className="absolute right-2 top-2 space-x-2">
+                  <ToggleNotePublishButton
+                    id={note.id}
+                    published={note.published}
+                  />
                   <EditNoteButton id={note.id} />
                   <DeleteNoteButton id={note.id} />
                 </div>

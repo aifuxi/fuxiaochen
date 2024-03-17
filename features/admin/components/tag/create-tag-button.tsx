@@ -83,7 +83,7 @@ export const CreateTagButton = () => {
                   <FormItem>
                     <FormLabel>名称</FormLabel>
                     <FormControl>
-                      <Input placeholder="请输入标签名称" {...field} />
+                      <Input placeholder="请输入名称" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,7 +97,7 @@ export const CreateTagButton = () => {
                     <FormLabel>slug</FormLabel>
                     <FormControl>
                       <div className="flex items-center w-full gap-4">
-                        <Input placeholder="请输入标签slug" {...field} />
+                        <Input placeholder="请输入slug" {...field} />
                         <Button type="button" onClick={handleFormatSlug}>
                           格式化
                         </Button>
@@ -118,8 +118,8 @@ export const CreateTagButton = () => {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="标签类型" />
+                        <SelectTrigger className="text-muted-foreground">
+                          <SelectValue placeholder="请选择标签" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

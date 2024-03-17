@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
@@ -49,6 +50,7 @@ export const CreateSnippetForm = () => {
       title: '',
       slug: '',
       description: '',
+      published: true,
       body: '',
       tags: [],
     },
@@ -76,7 +78,7 @@ export const CreateSnippetForm = () => {
               <FormItem>
                 <FormLabel>标题</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="请输入标题..." />
+                  <Input {...field} placeholder="请输入标题" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -90,10 +92,7 @@ export const CreateSnippetForm = () => {
                 <FormLabel>slug</FormLabel>
                 <FormControl>
                   <div className="flex items-center w-full gap-4">
-                    <Input
-                      {...field}
-                      placeholder="请输入slug（只支持数字、字母、下划线、中划线）..."
-                    />
+                    <Input {...field} placeholder="请输入slug" />
                     <Button type="button" onClick={handleFormatSlug}>
                       格式化
                     </Button>
@@ -110,7 +109,25 @@ export const CreateSnippetForm = () => {
               <FormItem>
                 <FormLabel>描述</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="请输入描述..." />
+                  <Textarea {...field} placeholder="请输入描述" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>是否发布</FormLabel>
+                <FormControl>
+                  <div>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -134,7 +151,7 @@ export const CreateSnippetForm = () => {
                         }
                         multiple
                         clearable
-                        selectPlaceholder="请选择标签（多选）"
+                        selectPlaceholder="请选择标签"
                         value={field.value}
                         onValueChange={field.onChange}
                       />

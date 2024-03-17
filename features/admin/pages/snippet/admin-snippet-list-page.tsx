@@ -23,6 +23,7 @@ import {
 import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
+  IconSolarEyeBold,
   IconSolarHashtagSquare,
   IconSolarMinimalisticMagnifer,
   IconSolarPen,
@@ -49,7 +50,11 @@ import {
 import { type Tag, useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
-import { AdminContentLayout, DeleteSnippetButton } from '../../components';
+import {
+  AdminContentLayout,
+  DeleteSnippetButton,
+  ToggleSnippetPublishSwitch,
+} from '../../components';
 
 export const AdminSnippetListPage = () => {
   const router = useRouter();
@@ -135,6 +140,23 @@ export const AdminSnippetListPage = () => {
               ? tags.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)
               : PLACEHODER_TEXT}
           </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'published',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarEyeBold className="text-sm" />
+          <span>发布状态</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return (
+          <ToggleSnippetPublishSwitch
+            id={row.original.id}
+            published={row.original.published}
+          />
         );
       },
     },

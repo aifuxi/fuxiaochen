@@ -88,7 +88,7 @@ export const CreateBlogForm = () => {
               <FormItem>
                 <FormLabel>标题</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="请输入标题..." />
+                  <Input {...field} placeholder="请输入标题" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,10 +102,7 @@ export const CreateBlogForm = () => {
                 <FormLabel>slug</FormLabel>
                 <FormControl>
                   <div className="flex items-center w-full gap-4">
-                    <Input
-                      {...field}
-                      placeholder="请输入Blogslug（只支持数字、字母、下划线、中划线）..."
-                    />
+                    <Input {...field} placeholder="请输入slug" />
                     <Button type="button" onClick={handleFormatSlug}>
                       格式化
                     </Button>
@@ -122,7 +119,7 @@ export const CreateBlogForm = () => {
               <FormItem>
                 <FormLabel>描述</FormLabel>
                 <FormControl>
-                  <Textarea {...field} placeholder="请输入描述..." />
+                  <Textarea {...field} placeholder="请输入描述" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -138,7 +135,7 @@ export const CreateBlogForm = () => {
                   <Input
                     {...field}
                     value={field.value ?? ''}
-                    placeholder="请输入作者..."
+                    placeholder="请输入作者"
                   />
                 </FormControl>
                 <FormMessage />
@@ -155,7 +152,7 @@ export const CreateBlogForm = () => {
                   <Textarea
                     {...field}
                     value={field.value ?? ''}
-                    placeholder="请输入封面链接..."
+                    placeholder="请输入封面链接"
                   />
                 </FormControl>
                 <FormMessage />
@@ -236,7 +233,7 @@ export const CreateBlogForm = () => {
                         }
                         multiple
                         clearable
-                        selectPlaceholder="请选择Blog标签（多选）"
+                        selectPlaceholder="请选择标签"
                         value={field.value}
                         onValueChange={field.onChange}
                       />

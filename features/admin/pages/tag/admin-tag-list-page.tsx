@@ -202,7 +202,7 @@ export const AdminTagListPage = () => {
     >
       <div className="grid gap-4 grid-cols-4">
         <Input
-          placeholder="请输入标签名称"
+          placeholder="请输入名称"
           value={inputParams.name}
           onChange={(v) =>
             updateInputParams((draft) => {
@@ -216,7 +216,7 @@ export const AdminTagListPage = () => {
           }}
         />
         <Input
-          placeholder="请输入标签slug"
+          placeholder="请输入slug"
           value={inputParams.slug}
           onChange={(v) =>
             updateInputParams((draft) => {
@@ -237,8 +237,8 @@ export const AdminTagListPage = () => {
           }
           value={inputParams.type}
         >
-          <SelectTrigger>
-            <SelectValue placeholder="标签类型" />
+          <SelectTrigger className="text-muted-foreground">
+            <SelectValue placeholder="请选择类型" />
           </SelectTrigger>
           <SelectContent>
             {TAG_TYPES.map((el) => (

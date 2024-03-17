@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
 import { IconSolarPen, IconSolarRestartLinear } from '@/components/icons';
@@ -59,6 +60,7 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
     if (open && data?.note) {
       const { note } = data;
       form.setValue('body', note.body);
+      form.setValue('published', note.published);
       form.setValue('tags', note?.tags?.map((el) => el.id) ?? []);
       form.setValue('id', note.id);
       form.clearErrors();
@@ -97,13 +99,31 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
                             }
                             multiple
                             clearable
-                            selectPlaceholder="请选择"
+                            selectPlaceholder="请选择标签"
                             value={field.value}
                             onValueChange={field.onChange}
                           />
                         </div>
 
                         <CreateTagButton />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="published"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>是否发布</FormLabel>
+                    <FormControl>
+                      <div>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />

@@ -4,6 +4,7 @@ import { type getNotes } from '../actions';
 
 export const createNoteSchema = z.object({
   body: z.string().min(1, { message: '长度不能少于1个字符' }),
+  published: z.boolean().optional(),
   tags: z.string().array().optional(),
 });
 
