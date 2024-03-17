@@ -2,6 +2,8 @@
 
 import { type Prisma } from '@prisma/client';
 
+import { ERROR_NO_PERMISSION } from '@/constants';
+import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
 
@@ -88,6 +90,9 @@ export const getAllTags = async () => {
 };
 
 export const createTag = async (params: CreateTagDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await createTagSchema.safeParseAsync(params);
 
   if (!result.success) {
@@ -116,6 +121,9 @@ export const createTag = async (params: CreateTagDTO) => {
 };
 
 export const deleteTagByID = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const isExist = await isTagExistByID(id);
 
   if (!isExist) {
@@ -130,6 +138,9 @@ export const deleteTagByID = async (id: string) => {
 };
 
 export const updateTag = async (params: UpdateTagDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await updateTagSchema.safeParseAsync(params);
 
   if (!result.success) {

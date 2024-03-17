@@ -2,6 +2,8 @@
 
 import { type Prisma } from '@prisma/client';
 
+import { ERROR_NO_PERMISSION } from '@/constants';
+import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
 
@@ -128,6 +130,10 @@ export const getSnippetBySlug = async (slug: string) => {
 };
 
 export const deleteSnippetByID = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
+
   const isExist = await isSnippetExistByID(id);
 
   if (!isExist) {
@@ -142,6 +148,9 @@ export const deleteSnippetByID = async (id: string) => {
 };
 
 export const createSnippet = async (params: CreateSnippetDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await createSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
@@ -177,6 +186,9 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
 };
 
 export const updateSnippet = async (params: UpdateSnippetDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await updateSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {

@@ -11,6 +11,8 @@ import { OSS_UPLOAD_DIR } from '@/config';
 
 import { isProduction } from '@/utils/env';
 
+import { ERROR_NO_PERMISSION } from '@/constants';
+import { noPermission } from '@/features/user';
 import { aliOSS } from '@/lib/ali-oss';
 
 const UPLOAD_DIR = 'uploads';
@@ -112,6 +114,9 @@ const uploadToOSS = async (input: string) => {
 };
 
 export const uploadFile = async (formData: FormData) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   // Get file from formData
   const file = formData.get('file') as File;
 
