@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useParams, useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { TagTypeEnum } from '@prisma/client';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -34,7 +35,7 @@ import { useGetAllTags } from '@/features/tag';
 import { toSlug } from '@/lib/utils';
 
 export const EditSnippetForm = () => {
-  const getTagsQuery = useGetAllTags();
+  const getTagsQuery = useGetAllTags(TagTypeEnum.SIPPET);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);
