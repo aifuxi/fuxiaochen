@@ -8,12 +8,21 @@ import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
 
+import { type WithSession } from '@/types';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Tooltip,
   TooltipContent,
@@ -41,6 +50,8 @@ import {
   DEFAULT_PAGE_SIZE,
   PATHS,
   PLACEHODER_TEXT,
+  PUBLISHED_ENUM,
+  PUBLISHED_LABEL_MAP,
 } from '@/constants';
 import {
   type GetSnippetsDTO,
@@ -48,7 +59,7 @@ import {
   useGetSnippets,
 } from '@/features/snippet';
 import { type Tag, useGetAllTags } from '@/features/tag';
-import { toSlashDateString } from '@/lib/utils';
+import { isAdmin, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -56,7 +67,7 @@ import {
   ToggleSnippetPublishSwitch,
 } from '../../components';
 
-export const AdminSnippetListPage = () => {
+export const AdminSnippetListPage = ({ session }: WithSession) => {
   const router = useRouter();
   const [params, updateParams] = useImmer<GetSnippetsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
@@ -68,6 +79,7 @@ export const AdminSnippetListPage = () => {
   >({
     slug: undefined,
     title: undefined,
+    published: undefined,
     tags: undefined,
   });
 
@@ -291,6 +303,31 @@ export const AdminSnippetListPage = () => {
             });
           }}
         />
+        {isAdmin(session?.user?.email) && (
+          <Select
+            onValueChange={(v: PUBLISHED_ENUM) =>
+              updateInputParams((draft) => {
+                draft.published = v;
+              })
+            }
+            value={inputParams.published}
+          >
+            <SelectTrigger className="text-muted-foreground">
+              <SelectValue placeholder="请选择发布状态" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={PUBLISHED_ENUM.ALL}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.ALL]}
+              </SelectItem>
+              <SelectItem value={PUBLISHED_ENUM.PUBLISHED}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.PUBLISHED]}
+              </SelectItem>
+              <SelectItem value={PUBLISHED_ENUM.NO_PUBLISHED}>
+                {PUBLISHED_LABEL_MAP[PUBLISHED_ENUM.NO_PUBLISHED]}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <IconSolarMinimalisticMagnifer className="mr-2" />
@@ -325,6 +362,7 @@ export const AdminSnippetListPage = () => {
     updateParams((draft) => {
       draft.title = inputParams.title;
       draft.slug = inputParams.slug;
+      draft.published = inputParams.published;
       draft.tags = inputParams.tags;
     });
   }
@@ -334,11 +372,13 @@ export const AdminSnippetListPage = () => {
       draft.title = '';
       draft.slug = '';
       draft.tags = undefined;
+      draft.published = undefined;
     });
     updateParams((draft) => {
       draft.title = '';
       draft.slug = '';
       draft.tags = undefined;
+      draft.published = undefined;
       draft.pageIndex = DEFAULT_PAGE_INDEX;
       draft.order = undefined;
       draft.orderBy = undefined;

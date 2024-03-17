@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { REGEX } from '@/constants';
+import { PUBLISHED_ENUM, REGEX } from '@/constants';
 
 import { type getSnippets } from '../actions';
 
@@ -25,6 +25,13 @@ export const updateSnippetSchema = createSnippetSchema.partial().extend({
 export const getSnippetsSchema = z.object({
   title: z.string().optional(),
   slug: z.string().optional(),
+  published: z
+    .enum([
+      PUBLISHED_ENUM.ALL,
+      PUBLISHED_ENUM.PUBLISHED,
+      PUBLISHED_ENUM.NO_PUBLISHED,
+    ])
+    .optional(),
   tags: z.string().array().optional(),
   pageIndex: z.number(),
   pageSize: z.number(),

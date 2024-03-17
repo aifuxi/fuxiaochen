@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { REGEX } from '@/constants';
+import { PUBLISHED_ENUM, REGEX } from '@/constants';
 
 import { type getBlogs } from '../actions';
 
@@ -27,6 +27,13 @@ export const updateBlogSchema = createBlogSchema.partial().extend({
 export const getBlogsSchema = z.object({
   title: z.string().optional(),
   slug: z.string().optional(),
+  published: z
+    .enum([
+      PUBLISHED_ENUM.ALL,
+      PUBLISHED_ENUM.PUBLISHED,
+      PUBLISHED_ENUM.NO_PUBLISHED,
+    ])
+    .optional(),
   tags: z.string().array().optional(),
   pageIndex: z.number(),
   pageSize: z.number(),

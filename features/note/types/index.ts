@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { PUBLISHED_ENUM } from '@/constants';
+
 import { type getNotes } from '../actions';
 
 export const createNoteSchema = z.object({
@@ -14,6 +16,13 @@ export const updateNoteSchema = createNoteSchema.partial().extend({
 
 export const getNotesSchema = z.object({
   body: z.string().optional(),
+  published: z
+    .enum([
+      PUBLISHED_ENUM.ALL,
+      PUBLISHED_ENUM.PUBLISHED,
+      PUBLISHED_ENUM.NO_PUBLISHED,
+    ])
+    .optional(),
   tags: z.string().array().optional(),
 
   pageIndex: z.number(),

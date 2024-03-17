@@ -1,8 +1,9 @@
 'use server';
 
 import { type Prisma } from '@prisma/client';
+import { isUndefined } from 'lodash-es';
 
-import { ERROR_NO_PERMISSION } from '@/constants';
+import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from '@/constants';
 import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
@@ -35,8 +36,17 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
   const published = await noPermission();
   const cond: Prisma.SnippetWhereInput = {};
   // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
-  if (published) {
-    cond.published = published;
+  if (published || !isUndefined(result.data.published)) {
+    const searchPublished: boolean | undefined =
+      PUBLISHED_MAP[result.data.published!];
+
+    if (!isUndefined(searchPublished)) {
+      cond.published = searchPublished;
+    }
+
+    if (published) {
+      cond.published = published;
+    }
   }
   if (result.data.title?.trim()) {
     cond.OR = [
