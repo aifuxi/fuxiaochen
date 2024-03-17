@@ -7,7 +7,7 @@ import { uploadFile } from '@/features/upload';
 
 import { plugins, sanitize } from './config';
 
-import { showErrorToast } from '../ui/toast';
+import { hideToast, showErrorToast, showLoadingToast } from '../ui/toast';
 
 type BytemdEditorProps = {
   body?: string;
@@ -23,19 +23,24 @@ export const BytemdEditor = ({
   const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
     const file = files[0];
     if (file) {
-      try {
-        const fd = new FormData();
-        fd.append('file', file);
-        const url = await uploadFile(fd);
-        return [
-          {
-            url,
-          },
-        ];
-      } catch (error) {
-        showErrorToast(error as string);
+      const fd = new FormData();
+      fd.append('file', file);
+
+      const toastID = showLoadingToast('上传中');
+      const { url, error } = await uploadFile(fd);
+      hideToast(toastID);
+
+      if (error) {
+        showErrorToast(error);
         return [];
       }
+
+      if (url) {
+        showErrorToast('上传成功');
+        return [{ url }];
+      }
+
+      return [];
     } else {
       return [];
     }
