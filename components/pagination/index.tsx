@@ -145,3 +145,22 @@ export const Pagination = ({
     </div>
   );
 };
+
+type PaginationInfoProps = Pick<PaginationProps, 'params' | 'total'>;
+
+export const PaginationInfo = ({ params, total = 0 }: PaginationInfoProps) => {
+  return (
+    <p>
+      显示第
+      <span className="font-semibold mx-1">
+        {params.pageIndex === 1 ? 1 : (params.pageIndex - 1) * params.pageSize}
+      </span>
+      条-第
+      <span className="font-semibold mx-1">
+        {Math.min(total, params.pageIndex * params.pageSize)}
+      </span>
+      条，共
+      <span className="font-semibold mx-1">{total}</span>条
+    </p>
+  );
+};
