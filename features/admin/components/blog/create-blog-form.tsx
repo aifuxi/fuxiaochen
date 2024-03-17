@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { TagTypeEnum } from '@prisma/client';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -43,7 +44,7 @@ import { toSlug } from '@/lib/utils';
 export const CreateBlogForm = () => {
   const router = useRouter();
 
-  const getTagsQuery = useGetAllTags();
+  const getTagsQuery = useGetAllTags(TagTypeEnum.BLOG);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { TagTypeEnum } from '@prisma/client';
 import { useImmer } from 'use-immer';
 
 import { Badge } from '@/components/ui/badge';
@@ -51,7 +52,7 @@ export const AdminNoteListPage = () => {
     [getNotesQuery],
   );
 
-  const getTagsQuery = useGetAllTags();
+  const getTagsQuery = useGetAllTags(TagTypeEnum.NOTE);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);

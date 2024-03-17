@@ -4,6 +4,7 @@ import React from 'react';
 
 import { useRouter } from 'next/navigation';
 
+import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
 
@@ -71,7 +72,7 @@ export const AdminSnippetListPage = () => {
     [getSnippetsQuery],
   );
 
-  const getTagsQuery = useGetAllTags();
+  const getTagsQuery = useGetAllTags(TagTypeEnum.SIPPET);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);
