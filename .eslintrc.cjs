@@ -29,6 +29,7 @@ const config = {
     // Feel free to reconfigure them to your own preference.
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
+    '@typescript-eslint/prefer-nullish-coalescing': 'warn',
 
     // 修复: 'React' must be in scope when using JSXeslint
     'react/react-in-jsx-scope': 'off',

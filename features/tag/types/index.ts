@@ -1,3 +1,4 @@
+import { TagTypeEnum } from '@prisma/client';
 import { z } from 'zod';
 
 import { REGEX } from '@/constants';
@@ -10,6 +11,12 @@ export const createTagSchema = z.object({
     .string()
     .regex(REGEX.SLUG, { message: '只允许输入数字、小写字母和中横线' })
     .min(1, { message: '长度不能少于1个字符' }),
+  type: z.enum([
+    TagTypeEnum.ALL,
+    TagTypeEnum.BLOG,
+    TagTypeEnum.NOTE,
+    TagTypeEnum.SIPPET,
+  ]),
 });
 
 export const updateTagSchema = createTagSchema.partial().extend({
@@ -19,6 +26,14 @@ export const updateTagSchema = createTagSchema.partial().extend({
 export const getTagsSchema = z.object({
   name: z.string().optional(),
   slug: z.string().optional(),
+  type: z
+    .enum([
+      TagTypeEnum.ALL,
+      TagTypeEnum.BLOG,
+      TagTypeEnum.NOTE,
+      TagTypeEnum.SIPPET,
+    ])
+    .optional(),
   pageIndex: z.number(),
   pageSize: z.number(),
   orderBy: z.enum(['createdAt', 'updatedAt']).optional(),

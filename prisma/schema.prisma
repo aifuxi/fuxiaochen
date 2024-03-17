@@ -63,12 +63,24 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum TagTypeEnum {
+  // 通用
+  ALL
+  // 仅用于blog
+  BLOG
+  // 仅用于片段
+  SIPPET
+  // 仅用于笔记
+  NOTE
+}
+
 model Tag {
-  name     String    @unique
-  slug     String    @unique
+  name     String      @unique
+  slug     String      @unique
   blogs    Blog[]
   snippets Snippet[]
   notes    Note[]
+  type     TagTypeEnum @default(ALL)
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -91,10 +103,11 @@ model Blog {
 }
 
 model Snippet {
-  title       String @unique
-  slug        String @unique
+  title       String  @unique
+  slug        String  @unique
   description String
-  body        String @db.Text
+  body        String  @db.Text
+  published   Boolean @default(false)
   tags        Tag[]
 
   id        String   @id @default(cuid())
@@ -103,8 +116,9 @@ model Snippet {
 }
 
 model Note {
-  body String @db.Text
-  tags Tag[]
+  body      String  @db.Text
+  published Boolean @default(false)
+  tags      Tag[]
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
