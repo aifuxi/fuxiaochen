@@ -10,10 +10,7 @@ export const AdminAnimatePage = ({
   ...props
 }: AdminAnimatePageProps) => {
   return (
-    <div
-      {...props}
-      className={cn(className, 'animate-fade-left animate-ease-in-out')}
-    >
+    <div {...props} className={cn(className, 'animate-fade')}>
       {children}
     </div>
   );
