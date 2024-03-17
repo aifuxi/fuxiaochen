@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
-import { invalidateGetBlogsQuery } from './get-blogs';
+import { invalidateQueries } from '@/lib/react-query';
 
 import { toggleBlogPublished, updateBlog } from '../actions';
 import { type UpdateBlogDTO } from '../types';
@@ -13,7 +13,7 @@ export const useUpdateBlog = () => {
     mutationFn: (params: UpdateBlogDTO) => updateBlog(params),
     async onSuccess() {
       showSuccessToast('操作成功');
-      await invalidateGetBlogsQuery();
+      await invalidateQueries();
     },
     onError(error) {
       showErrorToast(`操作失败: ${error.message}`);
@@ -27,7 +27,7 @@ export const useToggleBlogPublish = () => {
     mutationFn: (id: string) => toggleBlogPublished(id),
     async onSuccess() {
       showSuccessToast('操作成功');
-      await invalidateGetBlogsQuery();
+      await invalidateQueries();
     },
     onError(error) {
       showErrorToast(`操作失败: ${error.message}`);

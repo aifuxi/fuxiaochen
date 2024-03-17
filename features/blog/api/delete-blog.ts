@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
-import { invalidateGetBlogsQuery } from './get-blogs';
+import { invalidateQueries } from '@/lib/react-query';
 
 import { deleteBlogByID } from '../actions';
 
@@ -12,7 +12,7 @@ export const useDeleteBlog = () => {
     mutationFn: (id: string) => deleteBlogByID(id),
     async onSuccess() {
       showSuccessToast('操作成功');
-      await invalidateGetBlogsQuery();
+      await invalidateQueries();
     },
     onError(error) {
       showErrorToast(`操作失败: ${error.message}`);
