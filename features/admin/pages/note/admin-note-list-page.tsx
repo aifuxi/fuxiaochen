@@ -59,7 +59,10 @@ export const AdminNoteListPage = () => {
   return (
     <AdminContentLayout
       pageHeader={
-        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
+        <PageHeader
+          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]}
+          action={<CreateNoteButton />}
+        />
       }
     >
       <div className="w-[65ch] mx-auto grid gap-4">
@@ -103,7 +106,6 @@ export const AdminNoteListPage = () => {
             <IconSolarRestart className="mr-2" />
             重置
           </Button>
-          <CreateNoteButton />
         </div>
 
         <ul className="grid gap-4 w-[65ch]  mx-auto">
