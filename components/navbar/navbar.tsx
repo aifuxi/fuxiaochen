@@ -50,7 +50,12 @@ export const Navbar = () => {
             {navItems.map((el) => (
               <NavigationMenuItem key={el.link}>
                 <Link href={el.link} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <NavigationMenuLink
+                    className={cn(
+                      navigationMenuTriggerStyle(),
+                      'bg-transparent',
+                    )}
+                  >
                     {el.label}
                   </NavigationMenuLink>
                 </Link>
