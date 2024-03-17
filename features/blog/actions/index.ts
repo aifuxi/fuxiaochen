@@ -2,6 +2,8 @@
 
 import { type Prisma } from '@prisma/client';
 
+import { ERROR_NO_PERMISSION } from '@/constants';
+import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
 
@@ -138,6 +140,10 @@ export const getPlublishedBlogBySlug = async (slug: string) => {
 };
 
 export const deleteBlogByID = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
+
   const isExist = await isBlogExistByID(id);
 
   if (!isExist) {
@@ -152,6 +158,9 @@ export const deleteBlogByID = async (id: string) => {
 };
 
 export const createBlog = async (params: CreateBlogDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await createBlogSchema.safeParseAsync(params);
 
   if (!result.success) {
@@ -190,6 +199,9 @@ export const createBlog = async (params: CreateBlogDTO) => {
 };
 
 export const toggleBlogPublished = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const blog = await prisma.blog.findUnique({
     where: {
       id,
@@ -211,6 +223,9 @@ export const toggleBlogPublished = async (id: string) => {
 };
 
 export const updateBlog = async (params: UpdateBlogDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await updateBlogSchema.safeParseAsync(params);
 
   if (!result.success) {

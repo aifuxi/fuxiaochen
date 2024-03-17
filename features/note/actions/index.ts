@@ -2,6 +2,8 @@
 
 import { type Prisma } from '@prisma/client';
 
+import { ERROR_NO_PERMISSION } from '@/constants';
+import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
 
@@ -106,6 +108,9 @@ export const getNoteByID = async (id: string) => {
 };
 
 export const deleteNoteByID = async (id: string) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const isExist = await isNoteExistByID(id);
 
   if (!isExist) {
@@ -120,6 +125,9 @@ export const deleteNoteByID = async (id: string) => {
 };
 
 export const createNote = async (params: CreateNoteDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await createNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
@@ -141,6 +149,9 @@ export const createNote = async (params: CreateNoteDTO) => {
 };
 
 export const updateNote = async (params: UpdateNoteDTO) => {
+  if (await noPermission()) {
+    throw ERROR_NO_PERMISSION;
+  }
   const result = await updateNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
