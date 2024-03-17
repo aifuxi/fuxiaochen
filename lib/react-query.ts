@@ -8,3 +8,6 @@ const queryConfig: DefaultOptions<Error> = {
 };
 
 export const queryClient = new QueryClient({ defaultOptions: queryConfig });
+
+// 对所有的查询进行失效处理
+export const invalidateQueries = () => queryClient.invalidateQueries();

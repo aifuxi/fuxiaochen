@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
-import { invalidateGetSnippetsQuery } from './get-snippets';
+import { invalidateQueries } from '@/lib/react-query';
 
 import { createSnippet } from '../actions';
 import { type CreateSnippetDTO } from '../types';
@@ -13,7 +13,7 @@ export const useCreateSnippet = () => {
     mutationFn: (params: CreateSnippetDTO) => createSnippet(params),
     async onSuccess() {
       showSuccessToast('操作成功');
-      await invalidateGetSnippetsQuery();
+      await invalidateQueries();
     },
     onError(error) {
       showErrorToast(`操作失败: ${error.message}`);
