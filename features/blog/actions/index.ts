@@ -31,8 +31,13 @@ export const getBlogs = async (params: GetBlogsDTO) => {
     throw new Error(error);
   }
 
+  // 无权限，只能查看已发布的blog
+  const published = await noPermission();
   const cond: Prisma.BlogWhereInput = {};
   // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (published) {
+    cond.published = published;
+  }
   if (result.data.title?.trim()) {
     cond.OR = [
       ...(cond.OR ?? []),
