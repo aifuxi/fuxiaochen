@@ -211,7 +211,15 @@ export const AdminSnippetListPage = () => {
   return (
     <AdminContentLayout
       pageHeader={
-        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_SNIPPET]} />
+        <PageHeader
+          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_SNIPPET]}
+          action={
+            <Button onClick={handleGoToCreate}>
+              <IconSolarAddSquare className="mr-2 text-base" />
+              创建 Snippet
+            </Button>
+          }
+        />
       }
     >
       <div className="grid gap-4 grid-cols-4">
@@ -268,10 +276,6 @@ export const AdminSnippetListPage = () => {
           <Button onClick={handleReset}>
             <IconSolarRestart className="mr-2" />
             重置
-          </Button>
-          <Button onClick={handleGoToCreate}>
-            <IconSolarAddSquare className="mr-2 text-base" />
-            创建 Snippet
           </Button>
         </div>
       </div>

@@ -17,9 +17,14 @@ import {
 type PageHeaderProps = {
   breadcrumbList?: string[];
   className?: string;
+  action?: React.ReactNode;
 };
 
-export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
+export const PageHeader = ({
+  breadcrumbList,
+  className,
+  action,
+}: PageHeaderProps) => {
   if (!breadcrumbList?.length) {
     return null;
   }
@@ -28,7 +33,7 @@ export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
   const labelLink = breadcrumbList[breadcrumbList.length - 1]!;
 
   return (
-    <div className={className}>
+    <div className={cn('relative', className)}>
       <Breadcrumb className={cn('mb-2')}>
         <BreadcrumbList>
           {linkList.map((el) => (
@@ -52,6 +57,8 @@ export const PageHeader = ({ breadcrumbList, className }: PageHeaderProps) => {
       <p className="text-base text-muted-foreground">
         {PATH_DESCRIPTION_MAP[labelLink]}
       </p>
+
+      <div className="absolute bottom-4 right-4">{action}</div>
     </div>
   );
 };

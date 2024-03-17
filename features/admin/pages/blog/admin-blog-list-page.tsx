@@ -241,7 +241,15 @@ export const AdminBlogListPage = () => {
   return (
     <AdminContentLayout
       pageHeader={
-        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
+        <PageHeader
+          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]}
+          action={
+            <Button onClick={handleGoToCreate}>
+              <IconSolarAddSquare className="mr-2 text-base" />
+              创建 Blog
+            </Button>
+          }
+        />
       }
     >
       <div className="grid gap-4 grid-cols-4">
@@ -298,10 +306,6 @@ export const AdminBlogListPage = () => {
           <Button onClick={handleReset}>
             <IconSolarRestart className="mr-2" />
             重置
-          </Button>
-          <Button onClick={handleGoToCreate}>
-            <IconSolarAddSquare className="mr-2 text-base" />
-            创建 Blog
           </Button>
         </div>
       </div>

@@ -166,7 +166,10 @@ export const AdminTagListPage = () => {
   return (
     <AdminContentLayout
       pageHeader={
-        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
+        <PageHeader
+          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]}
+          action={<CreateTagButton />}
+        />
       }
     >
       <div className="grid gap-4 grid-cols-4">
@@ -207,7 +210,6 @@ export const AdminTagListPage = () => {
             <IconSolarRestart className="mr-2" />
             重置
           </Button>
-          <CreateTagButton />
         </div>
       </div>
       <DataTable
