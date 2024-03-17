@@ -1,6 +1,6 @@
 'use server';
 
-import { type Prisma } from '@prisma/client';
+import { type Prisma, TagTypeEnum } from '@prisma/client';
 
 import { ERROR_NO_PERMISSION } from '@/constants';
 import { noPermission } from '@/features/user';
@@ -33,6 +33,9 @@ export const getTags = async (params: GetTagsDTO) => {
 
   const cond: Prisma.TagWhereInput = {};
   // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
+  if (result.data.type) {
+    cond.type = result.data.type;
+  }
   if (result.data.name?.trim()) {
     cond.OR = [
       ...(cond.OR ?? []),
@@ -78,12 +81,19 @@ export const getTags = async (params: GetTagsDTO) => {
   return { tags, total };
 };
 
-export const getAllTags = async () => {
-  const total = await prisma.tag.count();
+export const getAllTags = async (type?: TagTypeEnum) => {
+  const cond: Prisma.TagWhereInput = {
+    type: {
+      in: type ? [TagTypeEnum.ALL, type] : [TagTypeEnum.ALL],
+    },
+  };
+
+  const total = await prisma.tag.count({ where: cond });
   const tags = await prisma.tag.findMany({
     orderBy: {
       createdAt: 'desc',
     },
+    where: cond,
   });
 
   return { tags, total };
@@ -116,6 +126,7 @@ export const createTag = async (params: CreateTagDTO) => {
     data: {
       name: result.data.name,
       slug: result.data.slug,
+      type: result.data.type,
     },
   });
 };
@@ -158,6 +169,7 @@ export const updateTag = async (params: UpdateTagDTO) => {
     data: {
       name: result.data.name,
       slug: result.data.slug,
+      type: result.data.type,
     },
     where: {
       id: result.data.id,
@@ -167,6 +179,5 @@ export const updateTag = async (params: UpdateTagDTO) => {
 
 export const getTagByID = async (id: string) => {
   const tag = await prisma.tag.findUnique({ where: { id } });
-
   return { tag };
 };

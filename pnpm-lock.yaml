@@ -143,6 +143,9 @@ dependencies:
   image-type:
     specifier: ^5.2.0
     version: 5.2.0
+  immer:
+    specifier: ^10.0.4
+    version: 10.0.4
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21

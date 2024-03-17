@@ -4,6 +4,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { TagTypeEnum } from '@prisma/client';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,9 +23,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { IconSolarAddSquare, IconSolarRestartLinear } from '@/components/icons';
 
+import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
 import {
   type CreateTagDTO,
   createTagSchema,
@@ -39,6 +48,7 @@ export const CreateTagButton = () => {
     defaultValues: {
       name: '',
       slug: '',
+      type: TagTypeEnum.ALL,
     },
   });
 
@@ -93,6 +103,33 @@ export const CreateTagButton = () => {
                         </Button>
                       </div>
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>类型</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="标签类型" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {TAG_TYPES.map((el) => (
+                          <SelectItem key={el} value={el}>
+                            {TAG_TYPE_MAP[el]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

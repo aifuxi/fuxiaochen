@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { type TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useImmer } from 'use-immer';
 
@@ -9,6 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import {
   IconSolarBook,
@@ -23,7 +31,14 @@ import {
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageHeader } from '@/components/page-header';
 
-import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/constants';
+import {
+  DEFAULT_PAGE_INDEX,
+  DEFAULT_PAGE_SIZE,
+  PATHS,
+  PLACEHODER_TEXT,
+  TAG_TYPES,
+  TAG_TYPE_MAP,
+} from '@/constants';
 import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
@@ -45,6 +60,7 @@ export const AdminTagListPage = () => {
   >({
     slug: undefined,
     name: undefined,
+    type: undefined,
   });
 
   const getTagsQuery = useGetTags(params);
@@ -95,6 +111,18 @@ export const AdminTagListPage = () => {
       ),
     },
     {
+      accessorKey: 'type',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarTextField className="text-sm" />
+          <span>类型</span>
+        </div>
+      ),
+      cell({ row }) {
+        return TAG_TYPE_MAP[row.original.type] ?? PLACEHODER_TEXT;
+      },
+    },
+    {
       accessorKey: '_count.blogs',
       header: () => (
         <div className="flex space-x-1 items-center">
@@ -123,7 +151,7 @@ export const AdminTagListPage = () => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('createdAt'));
+        return toSlashDateString(row.original.createdAt);
       },
     },
     {
@@ -146,7 +174,7 @@ export const AdminTagListPage = () => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('updatedAt'));
+        return toSlashDateString(row.original.updatedAt);
       },
     },
     {
@@ -201,6 +229,25 @@ export const AdminTagListPage = () => {
             }
           }}
         />
+        <Select
+          onValueChange={(v: TagTypeEnum) =>
+            updateInputParams((draft) => {
+              draft.type = v;
+            })
+          }
+          value={inputParams.type}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="标签类型" />
+          </SelectTrigger>
+          <SelectContent>
+            {TAG_TYPES.map((el) => (
+              <SelectItem key={el} value={el}>
+                {TAG_TYPE_MAP[el]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <IconSolarMinimalisticMagnifer className="mr-2" />
@@ -234,6 +281,7 @@ export const AdminTagListPage = () => {
     updateParams((draft) => {
       draft.name = inputParams.name;
       draft.slug = inputParams.slug;
+      draft.type = inputParams.type;
     });
   }
 
@@ -241,10 +289,12 @@ export const AdminTagListPage = () => {
     updateInputParams((draft) => {
       draft.name = '';
       draft.slug = '';
+      draft.type = undefined;
     });
     updateParams((draft) => {
       draft.name = '';
       draft.slug = '';
+      draft.type = undefined;
       draft.pageIndex = DEFAULT_PAGE_INDEX;
       draft.order = undefined;
       draft.orderBy = undefined;
