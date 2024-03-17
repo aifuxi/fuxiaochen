@@ -22,7 +22,7 @@ import {
 
 import { Skeleton } from './skeleton';
 
-import { Pagination } from '../pagination';
+import { Pagination, PaginationInfo } from '../pagination';
 
 type PaginationConfig = {
   pageIndex: number;
@@ -156,22 +156,7 @@ export function DataTable<TData, TValue>({
 
     return (
       // 当前数据和总条数
-      pageCount > 1 && (
-        <p>
-          显示第
-          <span className="font-semibold mx-1">
-            {params.pageIndex === 1
-              ? 1
-              : (params.pageIndex - 1) * params.pageSize}
-          </span>
-          条-第
-          <span className="font-semibold mx-1">
-            {Math.min(total, params.pageIndex * params.pageSize)}
-          </span>
-          条，共
-          <span className="font-semibold mx-1">{total}</span>条
-        </p>
-      )
+      pageCount > 1 && <PaginationInfo total={total} params={{ ...params }} />
     );
   }
 }

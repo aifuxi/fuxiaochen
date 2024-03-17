@@ -15,7 +15,7 @@ import {
   IconSolarRestart,
 } from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
-import { Pagination } from '@/components/pagination';
+import { Pagination, PaginationInfo } from '@/components/pagination';
 
 import { DEFAULT_PAGE_INDEX, PATHS } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
@@ -43,6 +43,9 @@ export const AdminNoteListPage = () => {
   });
 
   const getNotesQuery = useGetNotes(params);
+  const pageCount = Math.ceil(
+    (getNotesQuery.data?.total ?? 0) / params.pageSize,
+  );
   const data = React.useMemo(
     () => getNotesQuery.data?.notes ?? [],
     [getNotesQuery],
@@ -125,28 +128,12 @@ export const AdminNoteListPage = () => {
         </ul>
 
         <div className="flex items-center justify-betweens">
-          <div>
-            <p>
-              显示第
-              <span className="font-semibold mx-1">
-                {params.pageIndex === 1
-                  ? 1
-                  : (params.pageIndex - 1) * params.pageSize}
-              </span>
-              条-第
-              <span className="font-semibold mx-1">
-                {Math.min(
-                  getNotesQuery.data?.total ?? 0,
-                  params.pageIndex * params.pageSize,
-                )}
-              </span>
-              条，共
-              <span className="font-semibold mx-1">
-                {getNotesQuery.data?.total}
-              </span>
-              条
-            </p>
-          </div>
+          {pageCount > 1 && (
+            <PaginationInfo
+              total={getNotesQuery.data?.total}
+              params={{ ...params }}
+            />
+          )}
           <div className="flex-1 flex items-center justify-end">
             <Pagination
               total={getNotesQuery.data?.total}
