@@ -69,7 +69,7 @@ enum TagTypeEnum {
   // 仅用于blog
   BLOG
   // 仅用于片段
-  SIPPET
+  SNIPPET
   // 仅用于笔记
   NOTE
 }
