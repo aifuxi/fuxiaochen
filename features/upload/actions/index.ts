@@ -113,9 +113,12 @@ const uploadToOSS = async (input: string) => {
   return url;
 };
 
-export const uploadFile = async (formData: FormData) => {
+export const uploadFile = async (
+  formData: FormData,
+): Promise<{ error?: string; url?: string }> => {
   if (await noPermission()) {
-    throw ERROR_NO_PERMISSION;
+    // throw ERROR_NO_PERMISSION;
+    return { error: ERROR_NO_PERMISSION.message };
   }
   // Get file from formData
   const file = formData.get('file') as File;
@@ -131,7 +134,7 @@ export const uploadFile = async (formData: FormData) => {
     if (result) {
       // TODO: 记录日志, 删除文件失败
     }
-    return ossURL;
+    return { url: ossURL };
   }
 
   // 如果是图片且已经被压缩过
@@ -143,5 +146,5 @@ export const uploadFile = async (formData: FormData) => {
     }
   }
 
-  return url;
+  return { url };
 };

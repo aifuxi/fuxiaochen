@@ -62,9 +62,13 @@ export const showErrorToast = (msg: Message, opts?: ToastOptions) => {
 };
 
 export const showLoadingToast = (msg: Message, opts?: ToastOptions) => {
-  toast(msg, {
+  return toast(msg, {
     ...opts,
     icon: <IconSolarRestartLinear className="text-xl animate-spin" />,
     className: 'bg-foreground !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
+};
+
+export const hideToast = (id: string) => {
+  toast.dismiss(id);
 };

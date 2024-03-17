@@ -21,7 +21,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
-import { showErrorToast, showInfoToast } from '@/components/ui/toast';
+import {
+  hideToast,
+  showErrorToast,
+  showInfoToast,
+  showLoadingToast,
+} from '@/components/ui/toast';
 
 import { BytemdEditor } from '@/components/bytemd';
 
@@ -180,7 +185,18 @@ export const EditBlogForm = () => {
                       if (file) {
                         const fd = new FormData();
                         fd.append('file', file);
-                        const url = await uploadFile(fd);
+                        const toastID = showLoadingToast('上传中');
+                        const { url, error } = await uploadFile(fd);
+                        hideToast(toastID);
+
+                        if (error) {
+                          showErrorToast(error);
+                          return [];
+                        }
+
+                        if (url) {
+                          showErrorToast('上传成功');
+                        }
 
                         setCover(url ?? '');
                         form.setValue('cover', url ?? '');
