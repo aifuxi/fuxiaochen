@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/page-header';
 import { PATHS } from '@/constants';
 
 import { getStatistics } from '../../actions/statistics';
-import { AdminAnimatePage } from '../../components';
+import { AdminContentLayout } from '../../components';
 import { type StatisticsCardProps } from '../../types';
 
 export const AdminStatisticPage = async () => {
@@ -28,9 +28,13 @@ export const AdminStatisticPage = async () => {
   ];
 
   return (
-    <AdminAnimatePage className="h-screen flex flex-col gap-4">
-      <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_STATISTIC]} />
-
+    <AdminContentLayout
+      pageHeader={
+        <PageHeader
+          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_STATISTIC]}
+        />
+      }
+    >
       <div className="flex-1">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {statistics.map((el) => (
@@ -49,6 +53,6 @@ export const AdminStatisticPage = async () => {
           ))}
         </div>
       </div>
-    </AdminAnimatePage>
+    </AdminContentLayout>
   );
 };

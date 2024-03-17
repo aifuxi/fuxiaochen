@@ -28,7 +28,7 @@ import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import {
-  AdminAnimatePage,
+  AdminContentLayout,
   CreateTagButton,
   DeleteTagButton,
   EditTagButton,
@@ -164,9 +164,11 @@ export const AdminTagListPage = () => {
   ];
 
   return (
-    <AdminAnimatePage className="flex flex-col gap-4">
-      <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
-
+    <AdminContentLayout
+      pageHeader={
+        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
+      }
+    >
       <div className="grid gap-4 grid-cols-4">
         <Input
           placeholder="请输入标签名称"
@@ -223,7 +225,7 @@ export const AdminTagListPage = () => {
           </div>
         }
       />
-    </AdminAnimatePage>
+    </AdminContentLayout>
   );
 
   function handleSearch() {

@@ -47,7 +47,7 @@ import { useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import {
-  AdminAnimatePage,
+  AdminContentLayout,
   DeleteBlogButton,
   ToggleBlogPublishSwitch,
 } from '../../components';
@@ -239,9 +239,11 @@ export const AdminBlogListPage = () => {
   ];
 
   return (
-    <AdminAnimatePage className="flex flex-col gap-4">
-      <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
-
+    <AdminContentLayout
+      pageHeader={
+        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
+      }
+    >
       <div className="grid gap-4 grid-cols-4">
         <Input
           placeholder="请输入标题"
@@ -319,7 +321,7 @@ export const AdminBlogListPage = () => {
           </div>
         }
       />
-    </AdminAnimatePage>
+    </AdminContentLayout>
   );
 
   function handleSearch() {

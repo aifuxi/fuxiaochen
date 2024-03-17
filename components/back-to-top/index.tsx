@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { useBoolean, useMemoizedFn, useMount, useUnmount } from 'ahooks';
+import { useBoolean, useScroll } from 'ahooks';
 
 import { Button } from '@/components/ui/button';
 
@@ -10,34 +10,33 @@ import { cn } from '@/lib/utils';
 
 import { IconSolarSquareAltArrowUp } from '../icons';
 
-export default function BackToTop() {
+type BackToTopProps = {
+  scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
+};
+
+export const BackToTop = ({ scrollRef: scrollElement }: BackToTopProps) => {
   const [visible, { setFalse, setTrue }] = useBoolean(false);
 
-  const handleScroll = useMemoizedFn(() => {
-    if (window.document.documentElement.scrollTop > 100) {
+  const target = scrollElement?.current ?? document.documentElement;
+  const scroll = useScroll(scrollElement?.current ?? document.documentElement);
+
+  React.useEffect(() => {
+    if ((scroll?.top ?? 0) > 100) {
       setTrue();
     } else {
       setFalse();
     }
-  });
-
-  useMount(() => {
-    window.document.addEventListener('scroll', handleScroll);
-  });
-
-  useUnmount(() => {
-    window.document.removeEventListener('scroll', handleScroll);
-  });
+  }, [scroll, setFalse, setTrue]);
 
   return (
     <Button
       className={cn('fixed bottom-8 right-8', !visible && 'hidden')}
       size={'icon'}
       onClick={() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        target.scrollTo({ top: 0, behavior: 'smooth' });
       }}
     >
       <IconSolarSquareAltArrowUp className="text-2xl" />
     </Button>
   );
-}
+};

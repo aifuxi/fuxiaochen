@@ -17,13 +17,13 @@ import {
 import { PageHeader } from '@/components/page-header';
 import { Pagination, PaginationInfo } from '@/components/pagination';
 
-import { DEFAULT_PAGE_INDEX, PATHS } from '@/constants';
+import { DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, PATHS } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
 import { useGetAllTags } from '@/features/tag';
 import { toSlashDateString } from '@/lib/utils';
 
 import {
-  AdminAnimatePage,
+  AdminContentLayout,
   CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
@@ -32,7 +32,7 @@ import {
 export const AdminNoteListPage = () => {
   const [params, updateParams] = useImmer<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
-    pageSize: 5,
+    pageSize: DEFAULT_PAGE_SIZE,
   });
 
   const [inputParams, updateInputParams] = useImmer<
@@ -57,8 +57,11 @@ export const AdminNoteListPage = () => {
   }, [getTagsQuery]);
 
   return (
-    <AdminAnimatePage className="flex flex-col gap-4">
-      <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
+    <AdminContentLayout
+      pageHeader={
+        <PageHeader breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
+      }
+    >
       <div className="w-[65ch] mx-auto grid gap-4">
         <Input
           placeholder="内容"
@@ -144,7 +147,7 @@ export const AdminNoteListPage = () => {
           </div>
         </div>
       </div>
-    </AdminAnimatePage>
+    </AdminContentLayout>
   );
 
   function handleSearch() {
