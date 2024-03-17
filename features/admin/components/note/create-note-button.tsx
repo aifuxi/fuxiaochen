@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
 import { IconSolarAddSquare, IconSolarRestartLinear } from '@/components/icons';
@@ -42,6 +43,7 @@ export const CreateNoteButton = () => {
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
       body: '',
+      published: true,
       tags: [],
     },
   });
@@ -93,13 +95,31 @@ export const CreateNoteButton = () => {
                             }
                             multiple
                             clearable
-                            selectPlaceholder="请选择"
+                            selectPlaceholder="请选择标签"
                             value={field.value}
                             onValueChange={field.onChange}
                           />
                         </div>
 
                         <CreateTagButton />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="published"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>是否发布</FormLabel>
+                    <FormControl>
+                      <div>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />

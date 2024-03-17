@@ -128,7 +128,7 @@ export const Pagination = ({
                 });
               }}
             >
-              <SelectTrigger className="h-10 w-[70px]">
+              <SelectTrigger className="h-10 w-[70px] text-muted-foreground">
                 <SelectValue placeholder={params.pageSize} />
               </SelectTrigger>
               <SelectContent side="top">

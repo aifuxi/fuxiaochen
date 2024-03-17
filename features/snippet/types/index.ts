@@ -13,6 +13,7 @@ export const createSnippetSchema = z.object({
     })
     .min(1, { message: '长度不能少于1个字符' }),
   description: z.string().min(1, { message: '长度不能少于1个字符' }),
+  published: z.boolean().optional(),
   body: z.string().min(1, { message: '长度不能少于1个字符' }),
   tags: z.string().array().optional(),
 });
