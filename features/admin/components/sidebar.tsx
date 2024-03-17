@@ -63,10 +63,7 @@ export const Sidebar = () => {
     <Link
       key={el.link}
       href={el.link}
-      className={cn(
-        'flex items-center min-w-full space-x-4',
-        pathname === el.link && 'animate-shake',
-      )}
+      className={cn('flex items-center min-w-full space-x-4')}
     >
       <Button
         size="icon"
