@@ -9,6 +9,7 @@ import { prisma } from './prisma';
 
 export const { handlers, auth, signOut, signIn } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  trustHost: true,
   providers: [GithubProvider],
   // 使用next-auth自带的登录界面
   // pages: {
