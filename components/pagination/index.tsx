@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { type Updater } from 'use-immer';
+import { type SetState } from 'ahooks/lib/useSetState';
 
 import { PAGE_SIZE_OPTIONS } from '@/constants';
 
@@ -21,7 +21,7 @@ type PaginationProps = {
     pageIndex: number;
     pageSize: number;
   };
-  updateParams: Updater<{
+  updateParams: SetState<{
     pageIndex: number;
     pageSize: number;
   }>;
@@ -82,8 +82,8 @@ export const Pagination = ({
                 pageNumber === Number(params.pageIndex) ? 'outline' : 'ghost'
               }
               onClick={() => {
-                updateParams((draft) => {
-                  draft.pageIndex = Number(pageNumber);
+                updateParams({
+                  pageIndex: Number(pageNumber),
                 });
               }}
             >
@@ -104,11 +104,8 @@ export const Pagination = ({
               }}
               onKeyUp={(e) => {
                 if (e.key === 'Enter') {
-                  updateParams((draft) => {
-                    draft.pageIndex = Math.min(
-                      Number(quickJumpPage),
-                      pageCount,
-                    );
+                  updateParams({
+                    pageIndex: Math.min(Number(quickJumpPage), pageCount),
                   });
                   setQuickJumpPage('');
                 }
@@ -123,8 +120,8 @@ export const Pagination = ({
             <Select
               value={`${params.pageSize}`}
               onValueChange={(value) => {
-                updateParams((draft) => {
-                  draft.pageSize = Number(value);
+                updateParams({
+                  pageSize: Number(value),
                 });
               }}
             >

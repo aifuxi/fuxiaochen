@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
-import { useImmer } from 'use-immer';
+import { useSetState } from 'ahooks';
 
 import { type WithSession } from '@/types';
 
@@ -66,12 +66,12 @@ import {
 
 export const AdminBlogListPage = ({ session }: WithSession) => {
   const router = useRouter();
-  const [params, updateParams] = useImmer<GetBlogsDTO>({
+  const [params, updateParams] = useSetState<GetBlogsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
-  const [inputParams, updateInputParams] = useImmer<
+  const [inputParams, updateInputParams] = useSetState<
     Omit<GetBlogsDTO, 'pageIndex' | 'pageSize'>
   >({
     slug: undefined,
@@ -270,8 +270,8 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           placeholder="请输入标题"
           value={inputParams.title}
           onChange={(v) =>
-            updateInputParams((draft) => {
-              draft.title = v.target.value;
+            updateInputParams({
+              title: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -284,8 +284,8 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           placeholder="请输入slug"
           value={inputParams.slug}
           onChange={(v) =>
-            updateInputParams((draft) => {
-              draft.slug = v.target.value;
+            updateInputParams({
+              slug: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -306,17 +306,15 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           selectPlaceholder="请选择标签"
           value={inputParams.tags}
           onValueChange={(v) => {
-            updateInputParams((draft) => {
-              draft.tags = v;
+            updateInputParams({
+              tags: v,
             });
           }}
         />
         {isAdmin(session?.user?.email) && (
           <Select
             onValueChange={(v: PUBLISHED_ENUM) =>
-              updateInputParams((draft) => {
-                draft.published = v;
-              })
+              updateInputParams({ published: v })
             }
             value={inputParams.published}
           >
@@ -368,45 +366,43 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
   );
 
   function handleSearch() {
-    updateParams((draft) => {
-      draft.title = inputParams.title;
-      draft.slug = inputParams.slug;
-      draft.published = inputParams.published;
-      draft.tags = inputParams.tags;
+    updateParams({
+      title: inputParams.title,
+      slug: inputParams.slug,
+      published: inputParams.published,
+      tags: inputParams.tags,
     });
   }
 
   function handleReset() {
-    updateInputParams((draft) => {
-      draft.title = '';
-      draft.slug = '';
-      draft.published = undefined;
-      draft.tags = undefined;
+    updateInputParams({
+      title: '',
+      slug: '',
+      published: undefined,
+      tags: undefined,
     });
-    updateParams((draft) => {
-      draft.title = '';
-      draft.slug = '';
-      draft.published = undefined;
-      draft.tags = undefined;
-      draft.pageIndex = DEFAULT_PAGE_INDEX;
-      draft.order = undefined;
-      draft.orderBy = undefined;
+    updateParams({
+      title: '',
+      slug: '',
+      published: undefined,
+      tags: undefined,
+      pageIndex: DEFAULT_PAGE_INDEX,
+      order: undefined,
+      orderBy: undefined,
     });
   }
 
   function handleOrderChange(orderBy: GetBlogsDTO['orderBy']) {
-    updateParams((draft) => {
-      if (draft.orderBy !== orderBy) {
-        draft.orderBy = orderBy;
-        draft.order = 'asc';
+    updateParams((prev) => {
+      if (prev.orderBy !== orderBy) {
+        return { orderBy: orderBy, order: 'asc' };
       } else {
-        if (draft.order === 'desc') {
-          draft.orderBy = undefined;
-          draft.order = undefined;
-        } else if (draft.order === 'asc') {
-          draft.order = 'desc';
+        if (prev.order === 'desc') {
+          return { orderBy: undefined, order: undefined };
+        } else if (prev.order === 'asc') {
+          return { order: 'desc' };
         } else {
-          draft.order = 'asc';
+          return { order: 'asc' };
         }
       }
     });
