@@ -13,7 +13,7 @@ export const AdminLayout = async ({ children }: React.PropsWithChildren) => {
   const session = await auth();
 
   if (!session?.user) {
-    redirect(PATHS.AUTH_SIGNIN);
+    redirect(PATHS.NEXT_AUTH_SIGNIN);
   }
 
   return (

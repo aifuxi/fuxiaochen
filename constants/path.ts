@@ -22,6 +22,7 @@ export const PATHS = {
   /** ************* AUTH ****************** */
   AUTH_SIGNIN: '/auth/signin',
   AUTH_SIGNUP: '/auth/signup',
+  NEXT_AUTH_SIGNIN: '/api/auth/signin',
 };
 
 export const PATHS_MAP: Record<string, string> = {
