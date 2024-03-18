@@ -4,7 +4,7 @@ import React from 'react';
 
 import { type TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
-import { useImmer } from 'use-immer';
+import { useSetState } from 'ahooks';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -50,12 +50,12 @@ import {
 } from '../../components';
 
 export const AdminTagListPage = () => {
-  const [params, updateParams] = useImmer<GetTagsDTO>({
+  const [params, updateParams] = useSetState<GetTagsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
-  const [inputParams, updateInputParams] = useImmer<
+  const [inputParams, updateInputParams] = useSetState<
     Omit<GetTagsDTO, 'pageIndex' | 'pageSize'>
   >({
     slug: undefined,
@@ -205,8 +205,8 @@ export const AdminTagListPage = () => {
           placeholder="请输入名称"
           value={inputParams.name}
           onChange={(v) =>
-            updateInputParams((draft) => {
-              draft.name = v.target.value;
+            updateInputParams({
+              name: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -219,8 +219,8 @@ export const AdminTagListPage = () => {
           placeholder="请输入slug"
           value={inputParams.slug}
           onChange={(v) =>
-            updateInputParams((draft) => {
-              draft.slug = v.target.value;
+            updateInputParams({
+              slug: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -231,8 +231,8 @@ export const AdminTagListPage = () => {
         />
         <Select
           onValueChange={(v: TagTypeEnum) =>
-            updateInputParams((draft) => {
-              draft.type = v;
+            updateInputParams({
+              type: v,
             })
           }
           value={inputParams.type}
@@ -278,42 +278,40 @@ export const AdminTagListPage = () => {
   );
 
   function handleSearch() {
-    updateParams((draft) => {
-      draft.name = inputParams.name;
-      draft.slug = inputParams.slug;
-      draft.type = inputParams.type;
+    updateParams({
+      name: inputParams.name,
+      slug: inputParams.slug,
+      type: inputParams.type,
     });
   }
 
   function handleReset() {
-    updateInputParams((draft) => {
-      draft.name = '';
-      draft.slug = '';
-      draft.type = undefined;
+    updateInputParams({
+      name: '',
+      slug: '',
+      type: undefined,
     });
-    updateParams((draft) => {
-      draft.name = '';
-      draft.slug = '';
-      draft.type = undefined;
-      draft.pageIndex = DEFAULT_PAGE_INDEX;
-      draft.order = undefined;
-      draft.orderBy = undefined;
+    updateParams({
+      name: '',
+      slug: '',
+      type: undefined,
+      pageIndex: DEFAULT_PAGE_INDEX,
+      order: undefined,
+      orderBy: undefined,
     });
   }
 
   function handleOrderChange(orderBy: GetTagsDTO['orderBy']) {
-    updateParams((draft) => {
-      if (draft.orderBy !== orderBy) {
-        draft.orderBy = orderBy;
-        draft.order = 'asc';
+    updateParams((prev) => {
+      if (prev.orderBy !== orderBy) {
+        return { orderBy: orderBy, order: 'asc' };
       } else {
-        if (draft.order === 'desc') {
-          draft.orderBy = undefined;
-          draft.order = undefined;
-        } else if (draft.order === 'asc') {
-          draft.order = 'desc';
+        if (prev.order === 'desc') {
+          return { orderBy: undefined, order: undefined };
+        } else if (prev.order === 'asc') {
+          return { order: 'desc' };
         } else {
-          draft.order = 'asc';
+          return { order: 'asc' };
         }
       }
     });

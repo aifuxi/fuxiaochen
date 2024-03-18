@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { TagTypeEnum } from '@prisma/client';
-import { useImmer } from 'use-immer';
+import { useSetState } from 'ahooks';
 
 import { type WithSession } from '@/types';
 
@@ -47,12 +47,12 @@ import {
 } from '../../components';
 
 export const AdminNoteListPage = ({ session }: WithSession) => {
-  const [params, updateParams] = useImmer<GetNotesDTO>({
+  const [params, updateParams] = useSetState<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
-  const [inputParams, updateInputParams] = useImmer<
+  const [inputParams, updateInputParams] = useSetState<
     Omit<GetNotesDTO, 'pageIndex' | 'pageSize'>
   >({
     body: undefined,
@@ -88,8 +88,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
           placeholder="请输入内容"
           value={inputParams.body}
           onChange={(v) =>
-            updateInputParams((draft) => {
-              draft.body = v.target.value;
+            updateInputParams({
+              body: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -101,8 +101,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
         {isAdmin(session?.user?.email) && (
           <Select
             onValueChange={(v: PUBLISHED_ENUM) =>
-              updateInputParams((draft) => {
-                draft.published = v;
+              updateInputParams({
+                published: v,
               })
             }
             value={inputParams.published}
@@ -135,8 +135,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
           selectPlaceholder="请选择标签"
           value={inputParams.tags}
           onValueChange={(v) => {
-            updateInputParams((draft) => {
-              draft.tags = v;
+            updateInputParams({
+              tags: v,
             });
           }}
         />
@@ -200,26 +200,26 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
   );
 
   function handleSearch() {
-    updateParams((draft) => {
-      draft.body = inputParams.body;
-      draft.tags = inputParams.tags;
-      draft.published = inputParams.published;
+    updateParams({
+      body: inputParams.body,
+      tags: inputParams.tags,
+      published: inputParams.published,
     });
   }
 
   function handleReset() {
-    updateInputParams((draft) => {
-      draft.body = '';
-      draft.published = undefined;
-      draft.tags = undefined;
+    updateInputParams({
+      body: '',
+      published: undefined,
+      tags: undefined,
     });
-    updateParams((draft) => {
-      draft.body = '';
-      draft.published = undefined;
-      draft.tags = undefined;
-      draft.pageIndex = DEFAULT_PAGE_INDEX;
-      draft.order = undefined;
-      draft.orderBy = undefined;
+    updateParams({
+      body: '',
+      published: undefined,
+      tags: undefined,
+      pageIndex: DEFAULT_PAGE_INDEX,
+      order: undefined,
+      orderBy: undefined,
     });
   }
 };

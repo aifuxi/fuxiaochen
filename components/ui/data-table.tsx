@@ -9,7 +9,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { type Updater } from 'use-immer';
+import { type SetState } from 'ahooks/lib/useSetState';
 
 import {
   Table,
@@ -36,7 +36,7 @@ interface DataTableProps<TData, TValue> {
   total?: number;
   params: PaginationConfig;
   noResult?: React.ReactNode;
-  updateParams: Updater<PaginationConfig>;
+  updateParams: SetState<PaginationConfig>;
 }
 
 export function DataTable<TData, TValue>({

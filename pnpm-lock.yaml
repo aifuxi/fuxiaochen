@@ -29,9 +29,6 @@ dependencies:
   '@bytemd/react':
     specifier: ^1.21.0
     version: 1.21.0(react@18.2.0)
-  '@fontsource-variable/rubik':
-    specifier: ^5.0.18
-    version: 5.0.21
   '@fontsource/poppins':
     specifier: ^5.0.12
     version: 5.0.12
@@ -143,9 +140,6 @@ dependencies:
   image-type:
     specifier: ^5.2.0
     version: 5.2.0
-  immer:
-    specifier: ^10.0.4
-    version: 10.0.4
   lodash-es:
     specifier: ^4.17.21
     version: 4.17.21
@@ -188,9 +182,6 @@ dependencies:
   tailwindcss-animated:
     specifier: ^1.0.1
     version: 1.0.1(tailwindcss@3.3.2)
-  use-immer:
-    specifier: ^0.9.0
-    version: 0.9.0(immer@10.0.4)(react@18.2.0)
   zod:
     specifier: ^3.22.4
     version: 3.22.4
@@ -2148,10 +2139,6 @@ packages:
       '@floating-ui/dom': 1.4.4
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-    dev: false
-
-  /@fontsource-variable/rubik@5.0.21:
-    resolution: {integrity: sha512-Af9eFEpA9AHC1aizYfKoL4L1sjJvp93nCjhEdPFRDgHo4cO3vNrPkbdg+ER1oO3IASkjFYBPcc35QcpbRTQXTA==}
     dev: false
 
   /@fontsource/poppins@5.0.12:
@@ -7251,10 +7238,6 @@ packages:
       file-type: 18.7.0
     dev: false
 
-  /immer@10.0.4:
-    resolution: {integrity: sha512-cuBuGK40P/sk5IzWa9QPUaAdvPHjkk1c+xYsd9oZw+YQQEV+10G0P5uMpGctZZKnyQ+ibRO08bD25nWLmYi2pw==}
-    dev: false
-
   /import-fresh@3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
     engines: {node: '>=6'}
@@ -10963,16 +10946,6 @@ packages:
       '@types/react': 18.2.38
       react: 18.2.0
       tslib: 2.6.0
-    dev: false
-
-  /use-immer@0.9.0(immer@10.0.4)(react@18.2.0):
-    resolution: {integrity: sha512-/L+enLi0nvuZ6j4WlyK0US9/ECUtV5v9RUbtxnn5+WbtaXYUaOBoKHDNL9I5AETdurQ4rIFIj/s+Z5X80ATyKw==}
-    peerDependencies:
-      immer: '>=2.0.0'
-      react: ^16.8.0 || ^17.0.1 || ^18.0.0
-    dependencies:
-      immer: 10.0.4
-      react: 18.2.0
     dev: false
 
   /use-sidecar@1.1.2(@types/react@18.2.38)(react@18.2.0):
