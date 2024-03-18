@@ -13,11 +13,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 import { IconSolarTrashBinMinimalistic2 } from '@/components/icons';
 
@@ -25,22 +20,21 @@ import { useDeleteSnippet } from '@/features/snippet';
 
 type DeleteSnippetButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const DeleteSnippetButton = ({ id }: DeleteSnippetButtonProps) => {
+export const DeleteSnippetButton = ({
+  id,
+  refresh,
+}: DeleteSnippetButtonProps) => {
   const deleteSnippetQuery = useDeleteSnippet();
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size={'icon'} variant="ghost">
-              <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>删除</TooltipContent>
-        </Tooltip>
+        <Button size={'icon'} variant="ghost">
+          <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogTrigger>
@@ -57,7 +51,8 @@ export const DeleteSnippetButton = ({ id }: DeleteSnippetButtonProps) => {
     </AlertDialog>
   );
 
-  async function handleDelete() {
-    await deleteSnippetQuery.mutateAsync(id);
+  function handleDelete() {
+    deleteSnippetQuery.run(id);
+    refresh();
   }
 };

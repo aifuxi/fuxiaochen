@@ -177,6 +177,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           <ToggleBlogPublishSwitch
             id={row.original.id}
             published={row.original.published}
+            refresh={getBlogsQuery.refresh}
           />
         );
       },
@@ -244,7 +245,10 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
-            <DeleteBlogButton id={row.original.id} />
+            <DeleteBlogButton
+              id={row.original.id}
+              refresh={getBlogsQuery.refresh}
+            />
           </div>
         );
       },
@@ -351,7 +355,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
         columns={columns}
         data={data}
         total={getBlogsQuery.data?.total}
-        loading={getBlogsQuery.isLoading}
+        loading={getBlogsQuery.loading}
         params={{ ...params }}
         updateParams={updateParams}
         noResult={

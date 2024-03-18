@@ -41,7 +41,10 @@ import {
 } from '@/features/tag';
 import { toSlug } from '@/lib/utils';
 
-export const CreateTagButton = () => {
+type CreateTagButtonProps = {
+  refresh: () => void;
+};
+export const CreateTagButton = ({ refresh }: CreateTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<CreateTagDTO>({
     resolver: zodResolver(createTagSchema),
@@ -138,10 +141,10 @@ export const CreateTagButton = () => {
               <div className="flex justify-end">
                 <Button
                   type="button"
-                  disabled={createTagQuery.isPending}
+                  disabled={createTagQuery.loading}
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
-                  {createTagQuery.isPending && (
+                  {createTagQuery.loading && (
                     <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   创建
@@ -154,9 +157,10 @@ export const CreateTagButton = () => {
     </Dialog>
   );
 
-  async function handleSubmit(values: CreateTagDTO) {
-    await createTagQuery.mutateAsync(values);
+  function handleSubmit(values: CreateTagDTO) {
+    createTagQuery.run(values);
     setOpen(false);
+    refresh();
   }
 
   function handleFormatSlug() {

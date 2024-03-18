@@ -7,17 +7,20 @@ import { useToggleSnippetPublish } from '@/features/snippet';
 type ToggleSnippetPublishSwitchProps = {
   id: string;
   published: boolean;
+  refresh: () => void;
 };
 
 export const ToggleSnippetPublishSwitch = ({
   id,
   published,
+  refresh,
 }: ToggleSnippetPublishSwitchProps) => {
   const toggleSnippetPublishQuery = useToggleSnippetPublish();
 
   return <Switch checked={published} onCheckedChange={handleCheckedChange} />;
 
-  async function handleCheckedChange() {
-    await toggleSnippetPublishQuery.mutateAsync(id);
+  function handleCheckedChange() {
+    toggleSnippetPublishQuery.run(id);
+    refresh();
   }
 };

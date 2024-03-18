@@ -168,6 +168,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
           <ToggleSnippetPublishSwitch
             id={row.original.id}
             published={row.original.published}
+            refresh={getSnippetsQuery.refresh}
           />
         );
       },
@@ -236,7 +237,10 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
               </TooltipTrigger>
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
-            <DeleteSnippetButton id={record.id} />
+            <DeleteSnippetButton
+              id={record.id}
+              refresh={getSnippetsQuery.refresh}
+            />
           </div>
         );
       },
@@ -344,7 +348,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         columns={columns}
         data={data}
         total={getSnippetsQuery.data?.total}
-        loading={getSnippetsQuery.isLoading}
+        loading={getSnippetsQuery.loading}
         params={{ ...params }}
         updateParams={updateParams}
         noResult={

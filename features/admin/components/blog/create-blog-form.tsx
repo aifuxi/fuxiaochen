@@ -239,7 +239,7 @@ export const CreateBlogForm = () => {
                       />
                     </div>
 
-                    <CreateTagButton />
+                    <CreateTagButton refresh={getTagsQuery.refresh} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -267,8 +267,8 @@ export const CreateBlogForm = () => {
     </Form>
   );
 
-  async function handleSubmit(values: CreateBlogDTO) {
-    await createBlogQuery.mutateAsync(values);
+  function handleSubmit(values: CreateBlogDTO) {
+    createBlogQuery.run(values);
     router.push(PATHS.ADMIN_BLOG);
   }
 

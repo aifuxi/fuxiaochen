@@ -1,19 +1,17 @@
-import { type GetTagsDTO } from '..';
 import { type TagTypeEnum } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { useRequest } from 'ahooks';
 
 import { getAllTags, getTags } from '../actions';
+import { type GetTagsDTO } from '../types';
 
 export const useGetTags = (params: GetTagsDTO) => {
-  return useQuery({
-    queryKey: ['tags', params],
-    queryFn: () => getTags(params),
+  return useRequest(() => getTags(params), {
+    refreshDeps: [params],
+    loadingDelay: 300,
+    refreshOnWindowFocus: true,
   });
 };
 
 export const useGetAllTags = (type?: TagTypeEnum) => {
-  return useQuery({
-    queryKey: ['get_all_tags', type],
-    queryFn: () => getAllTags(type),
-  });
+  return useRequest(() => getAllTags(type));
 };

@@ -1,11 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useRequest } from 'ahooks';
 
 import { getSnippets } from '../actions';
 import { type GetSnippetsDTO } from '../types';
 
 export const useGetSnippets = (params: GetSnippetsDTO) => {
-  return useQuery({
-    queryKey: ['snippets', params],
-    queryFn: () => getSnippets(params),
+  return useRequest(() => getSnippets(params), {
+    refreshDeps: [params],
+    loadingDelay: 300,
+    refreshOnWindowFocus: true,
   });
 };

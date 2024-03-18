@@ -154,6 +154,7 @@ export const createNote = async (params: CreateNoteDTO) => {
   await prisma.note.create({
     data: {
       body: result.data.body,
+      published: result.data.published,
       tags: {
         connect: result.data.tags
           ? result.data.tags.map((tagID) => ({ id: tagID }))
@@ -223,6 +224,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   await prisma.note.update({
     data: {
       body: result.data.body,
+      published: result.data.published,
       tags: {
         connect: needConnect?.length
           ? needConnect.map((tagID) => ({ id: tagID }))

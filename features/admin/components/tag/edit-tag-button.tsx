@@ -49,15 +49,16 @@ import { toSlug } from '@/lib/utils';
 
 type EditTagButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const EditTagButton = ({ id }: EditTagButtonProps) => {
+export const EditTagButton = ({ id, refresh }: EditTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateTagDTO>({
     resolver: zodResolver(updateTagSchema),
   });
 
-  const { data, isPending } = useGetTag(id);
+  const { data, loading } = useGetTag(id, open);
 
   const updateTagQuery = useUpdateTag();
 
@@ -98,7 +99,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>id</FormLabel>
                     <FormControl>
-                      {isPending ? (
+                      {loading ? (
                         <Skeleton className="w-full rounded-lg h-10" />
                       ) : (
                         <Input {...field} disabled />
@@ -115,7 +116,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>名称</FormLabel>
                     <FormControl>
-                      {isPending ? (
+                      {loading ? (
                         <Skeleton className="w-full rounded-lg h-10" />
                       ) : (
                         <Input
@@ -136,7 +137,7 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                   <FormItem>
                     <FormLabel>slug</FormLabel>
                     <FormControl>
-                      {isPending ? (
+                      {loading ? (
                         <Skeleton className="w-full rounded-lg h-10" />
                       ) : (
                         <div className="flex items-center w-full gap-4">
@@ -183,9 +184,9 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
                 <Button
                   type="button"
                   onClick={() => form.handleSubmit(handleSubmit)()}
-                  disabled={updateTagQuery.isPending}
+                  disabled={updateTagQuery.loading}
                 >
-                  {updateTagQuery.isPending && (
+                  {updateTagQuery.loading && (
                     <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   保存
@@ -198,9 +199,10 @@ export const EditTagButton = ({ id }: EditTagButtonProps) => {
     </Dialog>
   );
 
-  async function handleSubmit(values: UpdateTagDTO) {
-    await updateTagQuery.mutateAsync(values);
+  function handleSubmit(values: UpdateTagDTO) {
+    updateTagQuery.run(values);
     setOpen(false);
+    refresh();
   }
 
   function handleFormatSlug() {
