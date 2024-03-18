@@ -25,7 +25,7 @@ import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
 
 export const Navbar = () => {
-  const scroll = useScroll(document);
+  const scroll = useScroll(() => document);
 
   return (
     <header
