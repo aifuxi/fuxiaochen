@@ -51,3 +51,13 @@ export const isAdmin = (email?: string | null) => {
   }
   return ADMIN_EMAILS.includes(email);
 };
+
+export const isBrowser = () => {
+  // 代码来自：https://ahooks.js.org/zh-CN/guide/blog/ssr
+  /* eslint-disable @typescript-eslint/prefer-optional-chain */
+  return !!(
+    typeof window !== 'undefined' &&
+    window.document &&
+    window.document.createElement
+  );
+};
