@@ -70,28 +70,29 @@ export const Pagination = ({
   return (
     <div className="flex items-center space-x-6 lg:space-x-8 py-4">
       <div className="flex items-center space-x-2">
-        {paginationRange.map((pageNumber, i) =>
-          pageNumber === '...' ? (
-            <Button key={i} variant="ghost" className="!cursor-not-allowed">
-              <IconSolarMenuDots />
-            </Button>
-          ) : (
-            <Button
-              key={i}
-              variant={
-                pageNumber === Number(params.pageIndex) ? 'outline' : 'ghost'
-              }
-              onClick={() => {
-                updateParams({
-                  pageIndex: Number(pageNumber),
-                });
-              }}
-            >
-              {pageNumber}
-            </Button>
-          ),
-        )}
-        {showQuickJumper && (
+        {pageCount > 1 &&
+          paginationRange.map((pageNumber, i) =>
+            pageNumber === '...' ? (
+              <Button key={i} variant="ghost" className="!cursor-not-allowed">
+                <IconSolarMenuDots />
+              </Button>
+            ) : (
+              <Button
+                key={i}
+                variant={
+                  pageNumber === Number(params.pageIndex) ? 'outline' : 'ghost'
+                }
+                onClick={() => {
+                  updateParams({
+                    pageIndex: Number(pageNumber),
+                  });
+                }}
+              >
+                {pageNumber}
+              </Button>
+            ),
+          )}
+        {showQuickJumper && pageCount > 1 && (
           <div className="flex items-center space-x-2">
             跳转至
             <Input
@@ -114,7 +115,7 @@ export const Pagination = ({
             页
           </div>
         )}
-        {showSizeChanger && (
+        {showSizeChanger && total > 0 && (
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium whitespace-nowrap">每页条数</p>
             <Select
