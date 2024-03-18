@@ -42,7 +42,7 @@ export const EditSnippetForm = () => {
   }, [getTagsQuery]);
 
   const { id } = useParams<{ id: string }>();
-  const getSnippetQuery = useGetSnippet(id);
+  const getSnippetQuery = useGetSnippet(id, Boolean(id));
   const snippet = React.useMemo(() => {
     return getSnippetQuery.data?.snippet;
   }, [getSnippetQuery]);
@@ -178,7 +178,7 @@ export const EditSnippetForm = () => {
                       />
                     </div>
 
-                    <CreateTagButton />
+                    <CreateTagButton refresh={getTagsQuery.refresh} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -206,8 +206,8 @@ export const EditSnippetForm = () => {
     </Form>
   );
 
-  async function handleSubmit(values: UpdateSnippetDTO) {
-    await updateSnippetQuery.mutateAsync(values);
+  function handleSubmit(values: UpdateSnippetDTO) {
+    updateSnippetQuery.run(values);
     router.push(PATHS.ADMIN_SNIPPET);
   }
 

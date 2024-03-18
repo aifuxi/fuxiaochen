@@ -1,11 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useRequest } from 'ahooks';
 
 import { getBlogs } from '../actions';
 import { type GetBlogsDTO } from '../types';
 
 export const useGetBlogs = (params: GetBlogsDTO) => {
-  return useQuery({
-    queryKey: ['blogs', params],
-    queryFn: () => getBlogs(params),
+  return useRequest(() => getBlogs(params), {
+    refreshDeps: [params],
+    loadingDelay: 300,
+    refreshOnWindowFocus: true,
   });
 };

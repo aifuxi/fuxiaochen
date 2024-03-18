@@ -79,7 +79,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
       pageHeader={
         <PageHeader
           breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]}
-          action={<CreateNoteButton />}
+          action={<CreateNoteButton refresh={getNotesQuery.refresh} />}
         />
       }
     >
@@ -170,9 +170,16 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                   <ToggleNotePublishButton
                     id={note.id}
                     published={note.published}
+                    refresh={getNotesQuery.refresh}
                   />
-                  <EditNoteButton id={note.id} />
-                  <DeleteNoteButton id={note.id} />
+                  <EditNoteButton
+                    id={note.id}
+                    refresh={getNotesQuery.refresh}
+                  />
+                  <DeleteNoteButton
+                    id={note.id}
+                    refresh={getNotesQuery.refresh}
+                  />
                 </div>
               </div>
             </li>

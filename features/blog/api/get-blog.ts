@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useRequest } from 'ahooks';
 
 import { getBlogByID } from '../actions';
 
-export const useGetBlog = (id: string) => {
-  return useQuery({
-    queryKey: ['get_blog', id],
-    queryFn: () => getBlogByID(id),
+export const useGetBlog = (id: string, ready: boolean) => {
+  return useRequest(() => getBlogByID(id), {
+    ready,
+    loadingDelay: 300,
   });
 };

@@ -23,9 +23,10 @@ import { useDeleteNote } from '@/features/note';
 
 type DeleteNoteButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const DeleteNoteButton = ({ id }: DeleteNoteButtonProps) => {
+export const DeleteNoteButton = ({ id, refresh }: DeleteNoteButtonProps) => {
   const deleteNoteQuery = useDeleteNote();
 
   return (
@@ -44,9 +45,9 @@ export const DeleteNoteButton = ({ id }: DeleteNoteButtonProps) => {
           <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDeleteNote}
-            disabled={deleteNoteQuery.isPending}
+            disabled={deleteNoteQuery.loading}
           >
-            {deleteNoteQuery.isPending && (
+            {deleteNoteQuery.loading && (
               <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
             )}
             删除
@@ -56,7 +57,8 @@ export const DeleteNoteButton = ({ id }: DeleteNoteButtonProps) => {
     </AlertDialog>
   );
 
-  async function handleDeleteNote() {
-    await deleteNoteQuery.mutateAsync(id);
+  function handleDeleteNote() {
+    deleteNoteQuery.run(id);
+    refresh();
   }
 };

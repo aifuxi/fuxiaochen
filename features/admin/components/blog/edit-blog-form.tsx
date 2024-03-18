@@ -50,7 +50,7 @@ export const EditBlogForm = () => {
   }, [getTagsQuery]);
 
   const { id } = useParams<{ id: string }>();
-  const getBlogQuery = useGetBlog(id);
+  const getBlogQuery = useGetBlog(id, Boolean(id));
   const blog = React.useMemo(() => {
     return getBlogQuery.data?.blog;
   }, [getBlogQuery]);
@@ -258,7 +258,7 @@ export const EditBlogForm = () => {
                       />
                     </div>
 
-                    <CreateTagButton />
+                    <CreateTagButton refresh={getTagsQuery.refresh} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -286,8 +286,8 @@ export const EditBlogForm = () => {
     </Form>
   );
 
-  async function handleSubmit(values: UpdateBlogDTO) {
-    await updateBlogQuery.mutateAsync(values);
+  function handleSubmit(values: UpdateBlogDTO) {
+    updateBlogQuery.run(values);
     router.push(PATHS.ADMIN_BLOG);
   }
 

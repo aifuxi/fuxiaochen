@@ -14,11 +14,13 @@ import { useToggleNotePublish } from '@/features/note';
 type ToggleNotePublishButtonProps = {
   id: string;
   published: boolean;
+  refresh: () => void;
 };
 
 export const ToggleNotePublishButton = ({
   id,
   published,
+  refresh,
 }: ToggleNotePublishButtonProps) => {
   const toggleNotePublishQuery = useToggleNotePublish();
 
@@ -28,7 +30,8 @@ export const ToggleNotePublishButton = ({
     </Button>
   );
 
-  async function handleToggleNotePublish() {
-    await toggleNotePublishQuery.mutateAsync(id);
+  function handleToggleNotePublish() {
+    toggleNotePublishQuery.run(id);
+    refresh();
   }
 };

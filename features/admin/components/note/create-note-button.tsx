@@ -37,7 +37,11 @@ import { useGetAllTags } from '@/features/tag';
 
 import { CreateTagButton } from '../tag';
 
-export const CreateNoteButton = () => {
+type CreateNoteButtonProps = {
+  refresh: () => void;
+};
+
+export const CreateNoteButton = ({ refresh }: CreateNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<CreateNoteDTO>({
     resolver: zodResolver(createNoteSchema),
@@ -101,7 +105,7 @@ export const CreateNoteButton = () => {
                           />
                         </div>
 
-                        <CreateTagButton />
+                        <CreateTagButton refresh={getTagsQuery.refresh} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -147,10 +151,10 @@ export const CreateNoteButton = () => {
               <div className="flex justify-end">
                 <Button
                   type="button"
-                  disabled={createNoteQuery.isPending}
+                  disabled={createNoteQuery.loading}
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
-                  {createNoteQuery.isPending && (
+                  {createNoteQuery.loading && (
                     <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   创建
@@ -163,8 +167,9 @@ export const CreateNoteButton = () => {
     </Dialog>
   );
 
-  async function handleSubmit(values: CreateNoteDTO) {
-    await createNoteQuery.mutateAsync(values);
+  function handleSubmit(values: CreateNoteDTO) {
+    createNoteQuery.run(values);
     setOpen(false);
+    refresh();
   }
 };

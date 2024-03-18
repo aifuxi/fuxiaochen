@@ -183,8 +183,8 @@ export const AdminTagListPage = () => {
         const record = row.original;
         return (
           <div className="flex gap-2 items-center">
-            <EditTagButton id={record.id} />
-            <DeleteTagButton id={record.id} />
+            <EditTagButton id={record.id} refresh={getTagsQuery.refresh} />
+            <DeleteTagButton id={record.id} refresh={getTagsQuery.refresh} />
           </div>
         );
       },
@@ -196,7 +196,7 @@ export const AdminTagListPage = () => {
       pageHeader={
         <PageHeader
           breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]}
-          action={<CreateTagButton />}
+          action={<CreateTagButton refresh={getTagsQuery.refresh} />}
         />
       }
     >
@@ -263,14 +263,14 @@ export const AdminTagListPage = () => {
         columns={columns}
         data={data}
         total={getTagsQuery.data?.total}
-        loading={getTagsQuery.isLoading}
+        loading={getTagsQuery.loading}
         params={{ ...params }}
         updateParams={updateParams}
         noResult={
           <div className="grid place-content-center gap-4 py-16">
             <IllustrationNoContent />
             <p>暂无内容</p>
-            <CreateTagButton />
+            <CreateTagButton refresh={getTagsQuery.refresh} />
           </div>
         }
       />

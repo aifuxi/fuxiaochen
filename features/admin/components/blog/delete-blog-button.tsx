@@ -13,11 +13,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 import { IconSolarTrashBinMinimalistic2 } from '@/components/icons';
 
@@ -25,22 +20,18 @@ import { useDeleteBlog } from '@/features/blog';
 
 type DeleteBlogButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const DeleteBlogButton = ({ id }: DeleteBlogButtonProps) => {
+export const DeleteBlogButton = ({ id, refresh }: DeleteBlogButtonProps) => {
   const deleteBlogQuery = useDeleteBlog();
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size={'icon'} variant="ghost">
-              <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>删除</TooltipContent>
-        </Tooltip>
+        <Button size={'icon'} variant="ghost">
+          <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogTrigger>
@@ -55,7 +46,8 @@ export const DeleteBlogButton = ({ id }: DeleteBlogButtonProps) => {
     </AlertDialog>
   );
 
-  async function handleDelete() {
-    await deleteBlogQuery.mutateAsync(id);
+  function handleDelete() {
+    deleteBlogQuery.run(id);
+    refresh();
   }
 };

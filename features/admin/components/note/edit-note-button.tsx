@@ -40,15 +40,16 @@ import { CreateTagButton } from '../tag';
 
 type EditNoteButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
+export const EditNoteButton = ({ id, refresh }: EditNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateNoteDTO>({
     resolver: zodResolver(updateNoteSchema),
   });
 
-  const { data } = useGetNote(id);
+  const { data } = useGetNote(id, open);
   const getTagsQuery = useGetAllTags(TagTypeEnum.NOTE);
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
@@ -105,7 +106,7 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
                           />
                         </div>
 
-                        <CreateTagButton />
+                        <CreateTagButton refresh={getTagsQuery.refresh} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -152,9 +153,9 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
                 <Button
                   type="button"
                   onClick={() => form.handleSubmit(handleSubmit)()}
-                  disabled={updateNoteQuery.isPending}
+                  disabled={updateNoteQuery.loading}
                 >
-                  {updateNoteQuery.isPending && (
+                  {updateNoteQuery.loading && (
                     <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
                   )}
                   保存
@@ -167,8 +168,9 @@ export const EditNoteButton = ({ id }: EditNoteButtonProps) => {
     </Dialog>
   );
 
-  async function handleSubmit(values: UpdateNoteDTO) {
-    await updateNoteQuery.mutateAsync(values);
+  function handleSubmit(values: UpdateNoteDTO) {
+    updateNoteQuery.run(values);
     setOpen(false);
+    refresh();
   }
 };

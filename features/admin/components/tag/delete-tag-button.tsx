@@ -13,11 +13,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 import {
   IconSolarRestartLinear,
@@ -28,22 +23,18 @@ import { useDeleteTag } from '@/features/tag';
 
 type DeleteTagButtonProps = {
   id: string;
+  refresh: () => void;
 };
 
-export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
+export const DeleteTagButton = ({ id, refresh }: DeleteTagButtonProps) => {
   const deleteTagQuery = useDeleteTag();
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button size={'icon'} variant="ghost">
-              <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>删除</TooltipContent>
-        </Tooltip>
+        <Button size={'icon'} variant="ghost">
+          <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogTrigger>
@@ -54,9 +45,9 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
           <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDeleteTag}
-            disabled={deleteTagQuery.isPending}
+            disabled={deleteTagQuery.loading}
           >
-            {deleteTagQuery.isPending && (
+            {deleteTagQuery.loading && (
               <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
             )}
             删除
@@ -66,7 +57,8 @@ export const DeleteTagButton = ({ id }: DeleteTagButtonProps) => {
     </AlertDialog>
   );
 
-  async function handleDeleteTag() {
-    await deleteTagQuery.mutateAsync(id);
+  function handleDeleteTag() {
+    deleteTagQuery.run(id);
+    refresh();
   }
 };
