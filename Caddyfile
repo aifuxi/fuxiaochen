@@ -1,0 +1,3 @@
+fuxiaochen.com {
+	reverse_proxy localhost:6121
+}

@@ -11,6 +11,7 @@
     "jgclark.vscode-todo-highlight",
     "meganrogge.template-string-converter",
     "formulahendry.auto-rename-tag",
-    "formulahendry.auto-close-tag"
+    "formulahendry.auto-close-tag",
+    "matthewpi.caddyfile-support"
   ]
 }
