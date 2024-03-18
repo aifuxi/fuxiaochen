@@ -1,6 +1,6 @@
 import type { BytemdPlugin } from 'bytemd';
 
-import { copyToClipboard } from '@/lib/utils';
+import { copyToClipboard, isBrowser } from '@/lib/utils';
 
 /**
  * 插件功能
@@ -17,6 +17,11 @@ export const codeBlockPlugin = (): BytemdPlugin => {
 
   return {
     viewerEffect({ markdownBody }) {
+      // 针对 SSR 场景适配
+      if (!isBrowser()) {
+        return;
+      }
+
       const preElements = Array.from(markdownBody.querySelectorAll('pre'));
 
       preElements.forEach((el) => {
