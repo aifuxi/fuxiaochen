@@ -25,9 +25,9 @@ db_dump_data:
 	docker exec -it ${MYSQL_CONTAINER_NAME} mysqldump -uroot -p${MYSQL_ROOT_PASSWORD} --no-create-info --no-create-db --single-transaction ${MYSQL_DB_NAME} > ./sql/${MYSQL_DB_NAME}_dump_data.sql
 
 # 在后台启动Caddy，并配置反向代理
-run_caddy:
-	caddy start --config ./Caddyfile
+rc:
+	caddy run --config ./Caddyfile
 
 # 重新加载Caddy配置
-reload_caddy:
+rl:
 	caddy reload --config ./Caddyfile
