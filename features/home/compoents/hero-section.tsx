@@ -85,7 +85,7 @@ export const HeroSection = () => {
           我的博客
         </Link>
         <Link
-          href={PATHS.SITE_BLOG}
+          href={PATHS.SITE_ABOUT}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
           关于我
