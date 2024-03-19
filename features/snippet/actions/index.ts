@@ -114,6 +114,9 @@ export const getAllSnippets = async () => {
     orderBy: {
       createdAt: 'desc',
     },
+    where: {
+      published: true,
+    },
     include: {
       tags: true,
     },
@@ -135,7 +138,7 @@ export const getSnippetByID = async (id: string) => {
 
 export const getSnippetBySlug = async (slug: string) => {
   const snippet = await prisma.snippet.findUnique({
-    where: { slug },
+    where: { slug, published: true },
     include: {
       tags: true,
     },
