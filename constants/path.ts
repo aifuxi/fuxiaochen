@@ -3,6 +3,7 @@ export const PATHS = {
   SITE_HOME: '/',
   SITE_BLOG: '/blog',
   SITE_SNIPPET: '/snippet',
+  SITE_ABOUT: '/about',
 
   /** ************* ADMIN ****************** */
   ADMIN_HOME: '/admin',
@@ -30,6 +31,7 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.SITE_HOME]: '首页',
   [PATHS.SITE_BLOG]: '博客',
   [PATHS.SITE_SNIPPET]: '片段',
+  [PATHS.SITE_ABOUT]: '关于',
 
   /** ************* ADMIN ****************** */
   [PATHS.ADMIN_HOME]: '首页',
