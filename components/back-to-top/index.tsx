@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 
 import { cn, isBrowser } from '@/lib/utils';
 
-import { IconSolarSquareAltArrowUp } from '../icons';
+import { IconSolarAltArrowUpLinear } from '../icons';
 
 type BackToTopProps = {
   scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
@@ -41,7 +41,7 @@ export const BackToTop = ({ scrollRef: scrollElement }: BackToTopProps) => {
         }
       }}
     >
-      <IconSolarSquareAltArrowUp className="text-2xl" />
+      <IconSolarAltArrowUpLinear className="text-2xl" />
     </Button>
   );
 };

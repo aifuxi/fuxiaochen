@@ -21,3 +21,9 @@ export const WEBSITE = `${NICKNAME}`;
 
 /** Slogan */
 export const SLOGAN = '努力做一个更好的程序员。';
+
+/** 网站ICP备案号 */
+export const BEI_AN_NUMBER = '赣ICP备2024026230号';
+
+/** 工信部网站链接 */
+export const BEI_AN_LINK = 'https://beian.miit.gov.cn';
