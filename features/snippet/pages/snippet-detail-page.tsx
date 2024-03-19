@@ -16,8 +16,8 @@ export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
     <div className="max-w-6xl mx-auto py-24 grid gap-9">
       <article>
         <h1 className="mb-4 text-4xl font-extrabold ">{snippet.title}</h1>
-        <div className="text-sm flex flex-row items-center text-muted-foreground">
-          <span>{toSimpleDateString(snippet.createdAt)}</span>
+        <div className="text-sm flex flex-row items-center text-muted-foreground mb-4">
+          <span>发布于{toSimpleDateString(snippet.createdAt)}</span>
         </div>
         <BytemdViewer body={snippet.body || ''} />
       </article>
