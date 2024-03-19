@@ -55,6 +55,8 @@ export const AdminTagListPage = () => {
   const [params, updateParams] = useSetState<GetTagsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
+    order: 'desc',
+    orderBy: 'createdAt',
   });
 
   const [inputParams, updateInputParams] = useSetState<
@@ -334,8 +336,8 @@ export const AdminTagListPage = () => {
       slug: '',
       type: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: undefined,
-      orderBy: undefined,
+      order: 'desc',
+      orderBy: 'createdAt',
     });
   }
 
