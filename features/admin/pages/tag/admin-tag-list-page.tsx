@@ -2,10 +2,11 @@
 
 import React from 'react';
 
-import { type TagTypeEnum } from '@prisma/client';
+import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DataTable } from '@/components/ui/data-table';
@@ -21,8 +22,9 @@ import {
 import {
   IconSolarBook,
   IconSolarCalendarMark,
-  IconSolarHashtagSquare,
+  IconSolarCodeSquare,
   IconSolarMinimalisticMagnifer,
+  IconSolarNotesBold,
   IconSolarRestart,
   IconSolarSortFromBottomToTopLinear,
   IconSolarSortFromTopToBottomLinear,
@@ -102,15 +104,6 @@ export const AdminTagListPage = () => {
       ),
     },
     {
-      accessorKey: 'slug',
-      header: () => (
-        <div className="flex space-x-1 items-center">
-          <IconSolarHashtagSquare className="text-sm" />
-          <span>slug</span>
-        </div>
-      ),
-    },
-    {
       accessorKey: 'type',
       header: () => (
         <div className="flex space-x-1 items-center">
@@ -119,7 +112,25 @@ export const AdminTagListPage = () => {
         </div>
       ),
       cell({ row }) {
-        return TAG_TYPE_MAP[row.original.type] ?? PLACEHODER_TEXT;
+        const originalType = row.original.type;
+        const typeLabel = TAG_TYPE_MAP[originalType];
+        if (!typeLabel) {
+          return PLACEHODER_TEXT;
+        }
+
+        const iconMap = {
+          [TagTypeEnum.ALL]: '',
+          [TagTypeEnum.BLOG]: <IconSolarBook className="text-sm" />,
+          [TagTypeEnum.NOTE]: <IconSolarNotesBold className="text-sm" />,
+          [TagTypeEnum.SNIPPET]: <IconSolarCodeSquare className="text-sm" />,
+        };
+
+        return (
+          <Badge>
+            {iconMap[originalType]}
+            {typeLabel}
+          </Badge>
+        );
       },
     },
     {
@@ -127,9 +138,36 @@ export const AdminTagListPage = () => {
       header: () => (
         <div className="flex space-x-1 items-center">
           <IconSolarBook className="text-sm" />
-          <span>Blog数量</span>
+          <span>博客</span>
         </div>
       ),
+      cell({ row }) {
+        return row.original._count.blogs || PLACEHODER_TEXT;
+      },
+    },
+    {
+      accessorKey: '_count.snippets',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarCodeSquare className="text-sm" />
+          <span>片段</span>
+        </div>
+      ),
+      cell({ row }) {
+        return row.original._count.snippets || PLACEHODER_TEXT;
+      },
+    },
+    {
+      accessorKey: '_count.notes',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <IconSolarNotesBold className="text-sm" />
+          <span>笔记</span>
+        </div>
+      ),
+      cell({ row }) {
+        return row.original._count.snippets || PLACEHODER_TEXT;
+      },
     },
     {
       accessorKey: 'createdAt',
