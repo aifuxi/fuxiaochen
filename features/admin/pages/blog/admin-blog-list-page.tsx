@@ -263,7 +263,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           action={
             <Button onClick={handleGoToCreate}>
               <IconSolarAddSquare className="mr-2 text-base" />
-              创建 Blog
+              创建博客
             </Button>
           }
         />
