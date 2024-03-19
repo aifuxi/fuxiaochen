@@ -1,12 +1,15 @@
 import { type ClassValue, clsx } from 'clsx';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import slugify from 'slugify';
 import { twMerge } from 'tailwind-merge';
 
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
 import { ADMIN_EMAILS } from '@/constants';
+
+dayjs.extend(relativeTime);
 
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
@@ -37,8 +40,8 @@ export const copyToClipboard = (text: string) => {
   }
 };
 
-export const toSimpleDateString = (date: number | Date) => {
-  return dayjs(date).locale('zh-cn').format('YYYY年M月D日');
+export const toFromNow = (date: number | Date) => {
+  return dayjs(date).locale('zh-cn').fromNow();
 };
 
 export const toSlashDateString = (date: number | Date) => {

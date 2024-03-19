@@ -4,7 +4,7 @@ import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
 import { NICKNAME } from '@/constants';
-import { toSimpleDateString } from '@/lib/utils';
+import { toFromNow } from '@/lib/utils';
 
 import { type Blog } from '../types';
 
@@ -27,7 +27,7 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
         <div className="text-sm flex flex-row items-center text-muted-foreground">
           <div>{blog.author ? blog.author : NICKNAME}</div>
           <span className="mx-2">·</span>
-          <span>发布于{toSimpleDateString(blog.createdAt)}</span>
+          <span>发布于 {toFromNow(blog.createdAt)}</span>
         </div>
         <BytemdViewer body={blog.body || ''} />
       </article>
