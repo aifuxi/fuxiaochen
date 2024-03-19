@@ -72,6 +72,8 @@ export const getTags = async (params: GetTagsDTO) => {
     where: cond,
     include: {
       blogs: true,
+      notes: true,
+      snippets: true,
       _count: true,
     },
     take: result.data.pageSize,

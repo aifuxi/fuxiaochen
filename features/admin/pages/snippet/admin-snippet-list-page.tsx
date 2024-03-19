@@ -33,7 +33,6 @@ import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
   IconSolarEyeBold,
-  IconSolarHashtagSquare,
   IconSolarMinimalisticMagnifer,
   IconSolarPen,
   IconSolarRestart,
@@ -123,15 +122,6 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         <div className="flex space-x-1 items-center">
           <IconSolarTextField className="text-sm" />
           <span>标题</span>
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'slug',
-      header: () => (
-        <div className="flex space-x-1 items-center">
-          <IconSolarHashtagSquare className="text-sm" />
-          <span>slug</span>
         </div>
       ),
     },
