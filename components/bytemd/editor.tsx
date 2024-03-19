@@ -7,7 +7,12 @@ import { uploadFile } from '@/features/upload';
 
 import { plugins, sanitize } from './config';
 
-import { hideToast, showErrorToast, showLoadingToast } from '../ui/toast';
+import {
+  hideToast,
+  showErrorToast,
+  showLoadingToast,
+  showSuccessToast,
+} from '../ui/toast';
 
 type BytemdEditorProps = {
   body?: string;
@@ -36,7 +41,7 @@ export const BytemdEditor = ({
       }
 
       if (url) {
-        showErrorToast('上传成功');
+        showSuccessToast('上传成功');
         return [{ url }];
       }
 
