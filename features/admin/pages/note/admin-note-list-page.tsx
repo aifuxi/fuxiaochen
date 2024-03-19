@@ -50,6 +50,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
   const [params, updateParams] = useSetState<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
+    order: 'desc',
+    orderBy: 'createdAt',
   });
 
   const [inputParams, updateInputParams] = useSetState<
@@ -227,8 +229,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
       published: undefined,
       tags: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: undefined,
-      orderBy: undefined,
+      order: 'desc',
+      orderBy: 'createdAt',
     });
   }
 };

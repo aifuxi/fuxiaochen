@@ -71,6 +71,8 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
   const [params, updateParams] = useSetState<GetSnippetsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
+    order: 'desc',
+    orderBy: 'createdAt',
   });
 
   const [inputParams, updateInputParams] = useSetState<
@@ -374,8 +376,8 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
       tags: undefined,
       published: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: undefined,
-      orderBy: undefined,
+      order: 'desc',
+      orderBy: 'createdAt',
     });
   }
 
