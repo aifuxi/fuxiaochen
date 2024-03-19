@@ -4,6 +4,8 @@ import React from 'react';
 
 import { useScroll } from 'ahooks';
 
+import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { BackToTop } from '@/components/back-to-top';
 
 import { cn } from '@/lib/utils';
@@ -20,22 +22,19 @@ export const AdminContentLayout = ({
   const scroll = useScroll(scrollRef);
 
   return (
-    <div
-      ref={scrollRef}
-      className="w-full max-h-screen h-screen overflow-y-auto flex flex-col space-y-4 relative"
-    >
+    <div ref={scrollRef} className="w-full flex flex-col space-y-4 relative">
       <div
         className={cn(
-          'sticky top-0 bg-background p-12 pb-2 backdrop-blur-lg transition-[background-color,border-width] z-50',
+          'sticky top-0 bg-background p-12 pb-2 backdrop-blur-lg transition-[background-color,border-width]',
           (scroll?.top ?? 0) > 60 &&
             'bg-background/90 border-b border-border/50',
         )}
       >
         {pageHeader}
       </div>
-      <div className="px-12 flex flex-col space-y-4 animate-fade">
+      <ScrollArea className="px-12 animate-fade h-[calc(100vh-174px)]">
         {children}
-      </div>
+      </ScrollArea>
 
       <BackToTop scrollRef={scrollRef} />
     </div>

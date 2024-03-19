@@ -240,7 +240,7 @@ export const AdminTagListPage = () => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4">
+      <div className="grid gap-4 grid-cols-4 mb-4">
         <Input
           placeholder="请输入名称"
           value={inputParams.name}
