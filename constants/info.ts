@@ -27,3 +27,10 @@ export const BEI_AN_NUMBER = '赣ICP备2024026230号';
 
 /** 工信部网站链接 */
 export const BEI_AN_LINK = 'https://beian.miit.gov.cn';
+
+/** 公安备案号 */
+export const GONG_AN_NUMBER = '赣公网安备xxx号';
+
+/** 公安网站链接 */
+export const GONG_AN_LINK =
+  'http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=xxx';

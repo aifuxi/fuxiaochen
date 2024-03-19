@@ -82,13 +82,13 @@ export const HeroSection = () => {
           href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
-          Read The Blog
+          我的博客
         </Link>
         <Link
           href={PATHS.SITE_BLOG}
           className={cn(buttonVariants({ variant: 'outline' }))}
         >
-          About Me
+          关于我
         </Link>
       </div>
 
