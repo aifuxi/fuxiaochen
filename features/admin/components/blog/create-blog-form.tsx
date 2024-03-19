@@ -26,6 +26,7 @@ import {
   showErrorToast,
   showInfoToast,
   showLoadingToast,
+  showSuccessToast,
 } from '@/components/ui/toast';
 
 import { BytemdEditor } from '@/components/bytemd';
@@ -174,7 +175,7 @@ export const CreateBlogForm = () => {
                         }
 
                         if (url) {
-                          showErrorToast('上传成功');
+                          showSuccessToast('上传成功');
                         }
 
                         setCover(url ?? '');
