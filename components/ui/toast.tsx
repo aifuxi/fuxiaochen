@@ -24,7 +24,7 @@ export const showSuccessToast = (msg: Message, opts?: ToastOptions) => {
       <IconSolarCheckCircle className="text-xl text-green-500 dark:text-green-600" />
     ),
     className:
-      'border-2 border-green-500 dark:border-green-500 !bg-green-50 dark:!bg-green-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
+      'border !shadow !shadow-green-500/50 border-green-500 !text-primary dark:!text-primary-foreground dark:border-green-500 !bg-green-50 dark:!bg-green-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };
 
@@ -35,7 +35,7 @@ export const showInfoToast = (msg: Message, opts?: ToastOptions) => {
       <IconSolarInfoCircle className="text-xl text-blue-500 dark:text-blue-600" />
     ),
     className:
-      'border-2 border-blue-500 dark:border-blue-500 !bg-blue-50 dark:!bg-blue-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
+      'border !shadow !shadow-blue-500/50 border-blue-500 !text-primary dark:!text-primary-foreground dark:border-blue-500 !bg-blue-50 dark:!bg-blue-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };
 
@@ -46,7 +46,7 @@ export const showWarningToast = (msg: Message, opts?: ToastOptions) => {
       <IconSolarDangerTriangle className="text-xl text-yellow-500 dark:text-yellow-600" />
     ),
     className:
-      'border-2 border-yellow-500 dark:border-yellow-500 !bg-yellow-50 dark:!bg-yellow-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
+      'border !shadow !shadow-yellow-500/50 border-yellow-500 !text-primary dark:!text-primary-foreground dark:border-yellow-500 !bg-yellow-50 dark:!bg-yellow-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };
 
@@ -57,7 +57,7 @@ export const showErrorToast = (msg: Message, opts?: ToastOptions) => {
       <IconSolarDangerCircle className="text-xl text-red-500 dark:text-red-600" />
     ),
     className:
-      'border-2 border-red-500 dark:border-red-500 !bg-red-50 dark:!bg-red-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
+      'border !shadow !shadow-red-500/50 border-red-500 !text-primary dark:!text-primary-foreground dark:border-red-500 !bg-red-50 dark:!bg-red-50 !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };
 
@@ -65,7 +65,8 @@ export const showLoadingToast = (msg: Message, opts?: ToastOptions) => {
   return toast(msg, {
     ...opts,
     icon: <IconSolarRestartLinear className="text-xl animate-spin" />,
-    className: 'bg-foreground !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
+    className:
+      'bg-foreground border !text-primary dark:!text-primary-foreground !shadow  !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });
 };
 
