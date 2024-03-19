@@ -27,7 +27,7 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
         <div className="text-sm flex flex-row items-center text-muted-foreground">
           <div>{blog.author ? blog.author : NICKNAME}</div>
           <span className="mx-2">·</span>
-          <span>{toSimpleDateString(blog.createdAt)}</span>
+          <span>发布于{toSimpleDateString(blog.createdAt)}</span>
         </div>
         <BytemdViewer body={blog.body || ''} />
       </article>
