@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { PATHS } from '@/constants';
-import { toSimpleDateString } from '@/lib/utils';
+import { toFromNow } from '@/lib/utils';
 
 import { type Snippet } from '../types';
 
@@ -43,7 +43,7 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
           <TooltipContent>{snippet.description}</TooltipContent>
         </Tooltip>
         <div className="text-sm text-muted-foreground">
-          {toSimpleDateString(snippet.createdAt)}
+          {toFromNow(snippet.createdAt)}
         </div>
         <div className="flex flex-row gap-2">
           {snippet.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}

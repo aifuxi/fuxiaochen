@@ -36,7 +36,7 @@ import {
 } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
 import { useGetAllTags } from '@/features/tag';
-import { isAdmin, toSlashDateString } from '@/lib/utils';
+import { isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -162,8 +162,10 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                       <Badge key={tag.id}>{tag.name}</Badge>
                     ))}
                   </div>
-                  <div className="col-span-6 flex-1 flex items-end justify-end text-muted-foreground">
-                    {toSlashDateString(note.createdAt)}
+                  <div className="col-span-6 tracking-wide flex-1 flex items-end justify-end text-sm text-muted-foreground">
+                    <span>{toSlashDateString(note.createdAt)}</span>
+                    <span className="mx-2">·</span>
+                    <span>{toFromNow(note.createdAt)}</span>
                   </div>
                 </div>
                 <div className="absolute right-2 top-2 space-x-2">

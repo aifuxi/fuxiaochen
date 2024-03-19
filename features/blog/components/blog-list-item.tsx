@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 
 import { NICKNAME, PATHS } from '@/constants';
-import { toSimpleDateString } from '@/lib/utils';
+import { toFromNow } from '@/lib/utils';
 
 import { type Blog } from '../types';
 
@@ -46,7 +46,7 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
         <div className="text-sm text-muted-foreground">
           {blog.author ? blog.author : NICKNAME}
           <span className="mx-2">·</span>
-          {toSimpleDateString(blog.createdAt)}
+          {toFromNow(blog.createdAt)}
         </div>
         <div className="flex flex-row gap-2">
           {blog.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}

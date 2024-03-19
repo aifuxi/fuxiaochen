@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 
-import { toSimpleDateString } from '@/lib/utils';
+import { toFromNow } from '@/lib/utils';
 
 import { type Snippet } from '../types';
 
@@ -17,7 +17,7 @@ export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
       <article>
         <h1 className="mb-4 text-4xl font-extrabold ">{snippet.title}</h1>
         <div className="text-sm flex flex-row items-center text-muted-foreground mb-4">
-          <span>发布于{toSimpleDateString(snippet.createdAt)}</span>
+          <span>发布于 {toFromNow(snippet.createdAt)}</span>
         </div>
         <BytemdViewer body={snippet.body || ''} />
       </article>
