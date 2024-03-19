@@ -1,4 +1,4 @@
-.PHONY: run_all run_mysql8 db_dump db_dump_data
+.PHONY: run_all run_mysql8 db_dump db_dump_data pm2_start pm2_reload pm2_stop
 
 # MySQL 容器名称，使用 docker compose启动的时候，这个【容器名称会变动】
 # 使用 docker container ls 查看
@@ -35,3 +35,15 @@ reload:
 # 停止在后台启动的Caddy
 stop:
 	caddy stop --config ./Caddyfile
+
+# pm2 启动 next.js 项目，服务的进程名为 next
+pm2_start:
+	pm2 start npm --name "next" -- start
+
+# pm2 重新加载服务 next
+pm2_reload:
+	pm2 reload next
+
+# pm2 停止上面启动的服务 next
+pm2_stop:
+	pm2 stop next
