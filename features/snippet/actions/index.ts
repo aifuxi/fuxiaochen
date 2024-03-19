@@ -191,6 +191,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
       slug: result.data.slug,
       description: result.data.description,
       body: result.data.body,
+      published: result.data.published,
       tags: {
         connect: result.data.tags
           ? result.data.tags.map((tagID) => ({ id: tagID }))
@@ -263,6 +264,7 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
       description: result.data.description,
       slug: result.data.slug,
       body: result.data.body,
+      published: result.data.published,
       tags: {
         connect: needConnect?.length
           ? needConnect.map((tagID) => ({ id: tagID }))
