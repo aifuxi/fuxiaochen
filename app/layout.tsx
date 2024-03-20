@@ -31,6 +31,11 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           type="image/svg+xml"
           href="/images/fuxiaochen-dark.svg"
         />
+        {/* Google Search Console 验证 */}
+        <meta
+          name="google-site-verification"
+          content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
+        />
       </head>
       <body className="debug-screens scroll-smooth overflow-x-clip">
         <TooltipProvider>
