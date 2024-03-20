@@ -23,6 +23,9 @@ dependencies:
   '@bytemd/plugin-highlight-ssr':
     specifier: ^1.21.0
     version: 1.21.0(bytemd@1.21.0)
+  '@bytemd/plugin-medium-zoom':
+    specifier: ^1.21.0
+    version: 1.21.0(bytemd@1.21.0)
   '@bytemd/plugin-mermaid':
     specifier: ^1.21.0
     version: 1.21.0(bytemd@1.21.0)
@@ -565,6 +568,15 @@ packages:
     dependencies:
       bytemd: 1.21.0
       rehype-highlight: 6.0.0
+    dev: false
+
+  /@bytemd/plugin-medium-zoom@1.21.0(bytemd@1.21.0):
+    resolution: {integrity: sha512-7x8iuw3eKfYyjDIcDa5EIa399db6SEk9Y2ntaZoJvJAf02ASXOZHwBht9PYredoPEjXgZS6awJ5Adr/fM/QJ4A==}
+    peerDependencies:
+      bytemd: ^1.5.0
+    dependencies:
+      bytemd: 1.21.0
+      medium-zoom: 1.1.0
     dev: false
 
   /@bytemd/plugin-mermaid@1.21.0(bytemd@1.21.0):
@@ -6487,6 +6499,10 @@ packages:
     resolution: {integrity: sha512-V4Zn/ncyN1QNSqSBxTrMOLpjr+IKdHl2v3KVLoWmDPscP4r9GcCi71gjgvUV1SFSKh92AjAG4peFuBl2/YgCJg==}
     dependencies:
       '@types/mdast': 3.0.11
+    dev: false
+
+  /medium-zoom@1.1.0:
+    resolution: {integrity: sha512-ewyDsp7k4InCUp3jRmwHBRFGyjBimKps/AJLjRSox+2q/2H4p/PNpQf+pwONWlJiOudkBXtbdmVbFjqyybfTmQ==}
     dev: false
 
   /meow@8.1.2:

@@ -4,8 +4,7 @@ import gemoji from '@bytemd/plugin-gemoji';
 import gfm from '@bytemd/plugin-gfm';
 import gfm_zhHans from '@bytemd/plugin-gfm/lib/locales/zh_Hans.json';
 import highlightSSR from '@bytemd/plugin-highlight-ssr';
-import mermaid from '@bytemd/plugin-mermaid';
-import mermaid_zhHans from '@bytemd/plugin-mermaid/lib/locales/zh_Hans.json';
+import mediumZoom from '@bytemd/plugin-medium-zoom';
 import { type EditorProps } from '@bytemd/react';
 import { merge } from 'lodash-es';
 
@@ -15,9 +14,9 @@ export const plugins = [
   breaks(),
   frontmatter(),
   gemoji(),
+  mediumZoom(),
   gfm({ locale: gfm_zhHans }),
   highlightSSR(),
-  mermaid({ locale: mermaid_zhHans }),
   modifyHrefTargetPlugin(),
   codeBlockPlugin(),
 ];

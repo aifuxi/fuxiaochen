@@ -23,7 +23,7 @@
 }
 
 .medium-zoom-image--opened {
-  @apply z-20;
+  @apply z-30;
 }
 
 .medium-zoom-overlay {
