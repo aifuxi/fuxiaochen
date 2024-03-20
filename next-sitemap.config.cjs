@@ -16,6 +16,5 @@ module.exports = {
         disallow: ['/admin/', '/auth/'],
       },
     ],
-    additionalSitemaps: [`${siteUrl}/server-sitemap.xml`],
   },
 };
