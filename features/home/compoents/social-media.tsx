@@ -1,8 +1,9 @@
 import {
   IconBaranGithub,
   IconBrandBilibili,
-  IconLogoGmail,
   IconLogoJuejin,
+  IconSkillGmailDark,
+  IconSkillGmailLight,
 } from '@/components/icons';
 
 import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
@@ -18,7 +19,12 @@ export const socialMediaList: Array<{
     link: GITHUB_PAGE,
   },
   {
-    icon: <IconLogoGmail className="text-lg" />,
+    icon: (
+      <>
+        <IconSkillGmailDark className="text-lg dark:hidden" />
+        <IconSkillGmailLight className="text-lg hidden dark:inline-block" />
+      </>
+    ),
     label: 'Gmail',
     link: `mailto:${EMAIL}`,
   },

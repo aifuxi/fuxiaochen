@@ -22,8 +22,6 @@ export const IconSkillTailwindcssLight = ({
     <span
       {...props}
       className={cn('icon-[skill-icons--tailwindcss-light]', className)}
-    >
-      Bilibili
-    </span>
+    ></span>
   );
 };
