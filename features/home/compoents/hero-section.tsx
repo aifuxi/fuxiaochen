@@ -20,7 +20,7 @@ export const HeroSection = () => {
   const getDelay = () => (delay += 200);
 
   return (
-    <div className="md:min-w-screen-md gap-5 flex flex-col justify-center min-h-full px-6">
+    <div className="max-w-screen-md 2xl:max-w-6xl  gap-5 flex flex-col justify-center min-h-full px-6 md:px-10">
       <p
         className="text-2xl md:text-5xl tracking-widest animate-fade-up animate-ease-in-out"
         style={{
