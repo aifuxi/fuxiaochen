@@ -140,10 +140,12 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   <FormItem>
                     <FormLabel>内容</FormLabel>
                     <FormControl>
-                      <BytemdEditor
-                        body={field.value}
-                        setContent={field.onChange}
-                      />
+                      <div id="create-note-editor">
+                        <BytemdEditor
+                          body={field.value}
+                          setContent={field.onChange}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
