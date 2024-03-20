@@ -28,11 +28,11 @@ export const SignOutButton = () => {
       <AlertDialogTrigger asChild>
         <Button
           className={cn(
-            '!w-full text-lg text-primary-foreground bg-muted-foreground/10 hover:bg-muted-foreground/20',
+            'lg:!w-full text-lg text-primary-foreground bg-muted-foreground/10 hover:bg-muted-foreground/20',
           )}
         >
-          <IconSolarLogout2 className="mr-2 text-2xl" />
-          退出登录
+          <IconSolarLogout2 className="lg:mr-2 lg:text-2xl" />
+          <span className="hidden lg:inline-block">退出登录</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

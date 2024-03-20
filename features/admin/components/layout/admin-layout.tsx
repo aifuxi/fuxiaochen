@@ -21,7 +21,7 @@ export const AdminLayout = async ({ children }: React.PropsWithChildren) => {
       <div className="flex bg-black dark:bg-white">
         <Sidenav />
 
-        <section className="flex-1 bg-background rounded-tl-[2.5em] overflow-clip">
+        <section className="flex-1 bg-background lg:rounded-tl-[2.5em] overflow-clip">
           {children}
         </section>
       </div>

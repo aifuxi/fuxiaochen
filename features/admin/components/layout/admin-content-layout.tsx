@@ -32,7 +32,7 @@ export const AdminContentLayout = ({
       >
         {pageHeader}
       </div>
-      <ScrollArea className="px-12 animate-fade h-[calc(100vh-174px)]">
+      <ScrollArea className="px-4 lg:px-12 animate-fade h-[calc(100vh-174px)]">
         {children}
       </ScrollArea>
 

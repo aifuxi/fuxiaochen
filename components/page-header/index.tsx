@@ -58,7 +58,7 @@ export const PageHeader = ({
         {PATH_DESCRIPTION_MAP[labelLink]}
       </p>
 
-      <div className="absolute bottom-4 right-4">{action}</div>
+      <div className="absolute bottom-0 right-0">{action}</div>
     </div>
   );
 };
