@@ -22,7 +22,7 @@ export const HeroSection = () => {
   return (
     <div className="min-w-screen-md gap-5 flex flex-col justify-center min-h-full ">
       <p
-        className="text-5xl tracking-widest animate-fade-down"
+        className="text-5xl tracking-widest animate-fade-up animate-ease-in-out"
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -32,7 +32,7 @@ export const HeroSection = () => {
       <strong
         className={cn(
           `text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
-          'animate-fade-down',
+          'animate-fade-up animate-ease-in-out',
         )}
         style={{
           WebkitTextFillColor: 'transparent',
@@ -42,7 +42,7 @@ export const HeroSection = () => {
         {NICKNAME}
       </strong>
       <div
-        className={cn('animate-fade-down')}
+        className={cn('animate-fade-up animate-ease-in-out')}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -50,7 +50,10 @@ export const HeroSection = () => {
         <TypeIntro />
       </div>
       <p
-        className={cn('text-5xl tracking-widest', 'animate-fade-down')}
+        className={cn(
+          'text-5xl tracking-widest',
+          'animate-fade-up animate-ease-in-out',
+        )}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -64,7 +67,7 @@ export const HeroSection = () => {
       <p
         className={cn(
           'text-2xl text-muted-foreground tracking-widest',
-          'animate-fade-down',
+          'animate-fade-up animate-ease-in-out',
         )}
         style={{
           animationDelay: `${getDelay()}ms`,
@@ -73,7 +76,7 @@ export const HeroSection = () => {
         我在这个网站记录我的成长，努力 💪 成为一个更好的程序员。
       </p>
       <div
-        className={cn('flex space-x-4', 'animate-fade-down')}
+        className={cn('flex space-x-4', 'animate-fade-up animate-ease-in-out')}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -93,7 +96,7 @@ export const HeroSection = () => {
       </div>
 
       <ul
-        className={cn('flex space-x-4', 'animate-fade-down')}
+        className={cn('flex space-x-4', 'animate-fade-up animate-ease-in-out')}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
