@@ -36,25 +36,25 @@ export const Footer = () => {
           </NextLink>
         </li>
       </ul>
-      <div className="w-full text-sm flex items-center justify-center space-x-2 ">
+      <div className="w-full text-sm flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-2 ">
         <span>Copyringht &copy; {new Date().getFullYear()}</span>
-        <span>·</span>
+        <span className="hidden sm:inline-block">·</span>
         <span>{NICKNAME}</span>
-        <span>·</span>
+        <span className="hidden sm:inline-block">·</span>
         <NextLink
           target="_blank"
           aria-label={BEI_AN_NUMBER}
           href={BEI_AN_LINK}
-          className="px-0"
+          className="px-0 py-0 h-5 md:h-10 font-normal md:font-medium"
         >
           {BEI_AN_NUMBER}
         </NextLink>
-        <span>·</span>
+        <span className="hidden sm:inline-block">·</span>
         <NextLink
           target="_blank"
           aria-label={GONG_AN_NUMBER}
           href={GONG_AN_LINK}
-          className="px-0"
+          className="px-0 py-0 h-5 md:h-10 font-normal md:font-medium"
         >
           <Image
             width={18}
