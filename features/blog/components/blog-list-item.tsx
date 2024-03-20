@@ -28,7 +28,7 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
       <div className="grid gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
-            <h3 className="text-2xl font-semibold line-clamp-1">
+            <h3 className="text-lg md:text-2xl font-semibold line-clamp-1">
               {blog.title}
             </h3>
           </TooltipTrigger>

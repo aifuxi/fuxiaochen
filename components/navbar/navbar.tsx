@@ -34,7 +34,7 @@ export const Navbar = () => {
         (scroll?.top ?? 0) > 60 && 'bg-background/50 border-b border-border/50',
       )}
     >
-      <div className="w-full flex items-center h-16 p-4 sm:p-8 max-w-screen-xl">
+      <div className="w-full flex items-center h-16 p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
         <NextLink
           href={PATHS.SITE_HOME}
           className={cn('mr-4 hidden sm:flex')}
