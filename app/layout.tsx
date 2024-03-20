@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html suppressHydrationWarning lang="zh-CN">
+    <html suppressHydrationWarning lang="zh-CN" className="scroll-smooth">
       <head>
         <link
           rel="icon"
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           href="/images/fuxiaochen-dark.svg"
         />
       </head>
-      <body className="debug-screens">
+      <body className="debug-screens scroll-smooth">
         <TooltipProvider>
           <NextThemeProvider attribute="class">
             {children}
