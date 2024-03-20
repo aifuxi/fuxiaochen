@@ -88,7 +88,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
         />
       }
     >
-      <div className="w-[65ch] mx-auto grid gap-4">
+      <div className="lg:w-[65ch] mx-auto grid gap-4 p-1">
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
@@ -156,7 +156,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
           </Button>
         </div>
 
-        <ul className="grid gap-4 w-[65ch]  mx-auto">
+        <ul className="grid gap-4 w-full lg:w-[65ch]  mx-auto">
           {getNotesQuery.loading
             ? Array.from({ length: 4 }).map((_, idx) => (
                 <li key={idx}>
@@ -164,8 +164,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                 </li>
               ))
             : data.map((note) => (
-                <li key={note.id}>
-                  <div className="border rounded-lg px-6 relative pb-6">
+                <li key={note.id} className="w-full">
+                  <div className="w-full border rounded-lg px-6 relative pb-6">
                     <BytemdViewer body={note.body || ''} />
                     <div className="grid grid-cols-12">
                       <div className="col-span-6 flex flex-wrap gap-2 mb-1">
@@ -174,8 +174,10 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                         ))}
                       </div>
                       <div className="col-span-6 tracking-wide flex-1 flex items-end justify-end text-sm text-muted-foreground">
-                        <span>{toSlashDateString(note.createdAt)}</span>
-                        <span className="mx-2">·</span>
+                        <span className="hidden lg:inline-block">
+                          {toSlashDateString(note.createdAt)}
+                        </span>
+                        <span className="mx-2 hidden lg:inline-block">·</span>
                         <span>{toFromNow(note.createdAt)}</span>
                       </div>
                     </div>

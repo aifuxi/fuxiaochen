@@ -63,7 +63,7 @@ export const Sidebar = () => {
     <Link
       key={el.link}
       href={el.link}
-      className={cn('flex items-center min-w-full space-x-4')}
+      className={cn('flex items-center justify-center min-w-full lg:space-x-4')}
     >
       <Button
         size="icon"
@@ -74,7 +74,8 @@ export const Sidebar = () => {
       </Button>
       <span
         className={cn(
-          'text-base transition-all text-primary-foreground font-medium',
+          'text-base transition-all text-primary-foreground font-medium ',
+          'hidden lg:inline-block',
           pathname === el.link ? 'font-semibold' : '',
         )}
       >
