@@ -13,7 +13,7 @@ export default function Page() {
     <div className="h-screen grid place-items-center">
       <div className="grid gap-8">
         <IllustrationNotFound className="w-[320px] h-[320px]" />
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight text-center">
+        <h3 className="text-2xl font-semibold tracking-tight text-center">
           页面未找到
         </h3>
         <Button asChild>
