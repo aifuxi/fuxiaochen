@@ -47,7 +47,7 @@
 }
 
 .markdown-body pre > code {
-  @apply mt-10 !whitespace-break-spaces;
+  @apply mt-10 !whitespace-pre-wrap !break-all;
 }
 
 .markdown-body pre > .copy-code-button {
