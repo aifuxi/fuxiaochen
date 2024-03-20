@@ -9,12 +9,34 @@ import {
   GONG_AN_LINK,
   GONG_AN_NUMBER,
   NICKNAME,
+  PATHS,
+  PATHS_MAP,
 } from '@/constants';
 
 export const Footer = () => {
   return (
-    <footer className="w-full flex flex-col  space-y-2 py-8 max-w-screen-xl mx-auto text-muted-foreground">
-      <div className="w-full text-sm flex items-center space-x-2 ">
+    <footer className="w-full flex flex-col py-8 max-w-screen-xl mx-auto text-muted-foreground">
+      <ul className="flex space-x-2 items-center justify-center">
+        {navItems.map((el, idx) => (
+          <li key={el.link}>
+            {Boolean(idx) && <span className="mr-2">·</span>}
+            <NextLink aria-label={el.label} href={el.link} className="px-0">
+              {el.label}
+            </NextLink>
+          </li>
+        ))}
+        <li>
+          <span className="mr-2">·</span>
+          <NextLink
+            aria-label={PATHS_MAP[PATHS.SITEMAP]}
+            href={PATHS.SITEMAP}
+            className="px-0"
+          >
+            {PATHS_MAP[PATHS.SITEMAP]}
+          </NextLink>
+        </li>
+      </ul>
+      <div className="w-full text-sm flex items-center justify-center space-x-2 ">
         <span>Copyringht &copy; {new Date().getFullYear()}</span>
         <span>·</span>
         <span>{NICKNAME}</span>
@@ -44,17 +66,6 @@ export const Footer = () => {
           <span>{GONG_AN_NUMBER}</span>
         </NextLink>
       </div>
-
-      <ul className="flex space-x-2 items-center">
-        {navItems.map((el, idx) => (
-          <li key={el.link}>
-            {Boolean(idx) && <span className="mr-2">·</span>}
-            <NextLink aria-label={el.label} href={el.link} className="px-0">
-              {el.label}
-            </NextLink>
-          </li>
-        ))}
-      </ul>
     </footer>
   );
 };
