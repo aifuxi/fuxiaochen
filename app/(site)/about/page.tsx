@@ -42,7 +42,7 @@ export default function Page() {
             animationDelay: `${getDelay()}ms`,
           }}
         >
-          <h2>我的技术栈</h2>
+          <h2>我的技能</h2>
         </div>
 
         <div
@@ -98,6 +98,7 @@ export default function Page() {
               、 Caddy （配置超简单，无需手动配置 HTTPS 证书），反向代理 + 配置
               HTTPS + 开启 HTTP2
             </li>
+            <li>Figma，会一点，用来画画图标，制作博客封面非常方便</li>
           </ul>
         </div>
 
