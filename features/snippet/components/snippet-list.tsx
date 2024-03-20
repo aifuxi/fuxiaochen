@@ -22,8 +22,14 @@ export const SnippetList = ({ snippets }: SnippetListProps) => {
 
   return (
     <ul className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-      {snippets.map((el) => (
-        <li key={el.id}>
+      {snippets.map((el, idx) => (
+        <li
+          key={el.id}
+          className="animate-fade-up animate-ease-in-out"
+          style={{
+            animationDelay: `${(idx + 1) * 200}ms`,
+          }}
+        >
           <SnippetListItem snippet={el} />
         </li>
       ))}
