@@ -1,4 +1,3 @@
-// import NextPWA from 'next-pwa';
 import NextBundleAnalyzer from '@next/bundle-analyzer';
 
 const withBundleAnalyzer = NextBundleAnalyzer({
@@ -39,10 +38,4 @@ const config = {
   },
 };
 
-// const withPWA = NextPWA({
-//   dest: 'public',
-//   disable: process.env.NODE_ENV === 'development',
-// });
-
-// export default withBundleAnalyzer(withPWA(config));
 export default withBundleAnalyzer(config);
