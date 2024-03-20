@@ -41,6 +41,9 @@ dependencies:
   '@iconify-json/logos':
     specifier: ^1.1.42
     version: 1.1.42
+  '@iconify-json/skill-icons':
+    specifier: ^1.1.8
+    version: 1.1.8
   '@iconify-json/solar':
     specifier: ^1.1.9
     version: 1.1.9
@@ -2165,6 +2168,12 @@ packages:
 
   /@iconify-json/logos@1.1.42:
     resolution: {integrity: sha512-/f+frtPm3m3Z30oy8Pk+QqRDkbmAiIaWGPl5CmsCXm15MVfvw9a/V/gD7WzdyuSGAZcFuQaqbHXj92y/n+2ifg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
+
+  /@iconify-json/skill-icons@1.1.8:
+    resolution: {integrity: sha512-pzgiS7bVDyyff9HNXQkkwZSaSc36TVQYhXMr6tBu/XmAreXdj4xdkTRpPcnwtHlhHwsI4NDCe/l3QiWavqsbkw==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false
