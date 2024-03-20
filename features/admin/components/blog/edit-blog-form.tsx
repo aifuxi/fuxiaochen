@@ -100,7 +100,7 @@ export const EditBlogForm = () => {
           </Button>
         </div>
 
-        <div className="grid gap-4 pb-24">
+        <div className="grid gap-4 pb-24 px-1">
           <FormField
             control={form.control}
             name="title"
