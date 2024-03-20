@@ -2,6 +2,32 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
+import {
+  IconLogoCentOS,
+  IconLogoRockyLinux,
+  IconSkillCSS,
+  IconSkillDebianDark,
+  IconSkillDebianLight,
+  IconSkillDocker,
+  IconSkillFigmaDark,
+  IconSkillFigmaLight,
+  IconSkillGolang,
+  IconSkillHTML,
+  IconSkillJavaScript,
+  IconSkillMysqlDark,
+  IconSkillMysqlLight,
+  IconSkillNextjsDark,
+  IconSkillNextjsLight,
+  IconSkillNginx,
+  IconSkillNodejsDark,
+  IconSkillNodejsLight,
+  IconSkillPrisma,
+  IconSkillReactDark,
+  IconSkillReactLight,
+  IconSkillTailwindcssDark,
+  IconSkillTailwindcssLight,
+  IconSkillTypeScript,
+} from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
 
 import { NICKNAME, PATHS } from '@/constants';
@@ -53,9 +79,30 @@ export default function Page() {
         >
           <h3>前端</h3>
           <ul>
-            <li>HTML + CSS + JavaScript，熟练使用</li>
             <li>
-              TypeScript + React + Next.js + ahooks + Tailwind CSS，熟练使用
+              <IconSkillHTML className="mx-1 translate-y-0.5" /> HTML +
+              <IconSkillCSS className="mx-1 translate-y-0.5" />
+              CSS + <IconSkillJavaScript className="mx-1 translate-y-0.5" />
+              JavaScript ，熟练使用
+            </li>
+            <li>
+              <IconSkillTypeScript className="mx-1 translate-y-0.5" />
+              TypeScript +
+              <>
+                <IconSkillReactDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillReactLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              React +
+              <>
+                <IconSkillNextjsDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillNextjsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Next.js + ahooks +
+              <>
+                <IconSkillTailwindcssDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillTailwindcssLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Tailwind CSS，熟练使用
             </li>
           </ul>
         </div>
@@ -67,9 +114,30 @@ export default function Page() {
         >
           <h3>后端</h3>
           <ul>
-            <li>Node.js，能简单 CRUD 水平</li>
-            <li>Next.js + Prisma + MySQL 搞全栈开发</li>
-            <li>Golang，非常感兴趣，目前能简单 CRUD，还在努力学习中</li>
+            <li>
+              <>
+                <IconSkillNodejsDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillNodejsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Node.js，能简单 CRUD 水平
+            </li>
+            <li>
+              <>
+                <IconSkillNextjsDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillNextjsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Next.js + <IconSkillPrisma className="mx-1 translate-y-0.5" />
+              Prisma +
+              <>
+                <IconSkillMysqlDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillMysqlLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              MySQL 搞全栈开发
+            </li>
+            <li>
+              <IconSkillGolang className="mx-1 translate-y-0.5" />
+              Golang，非常感兴趣，目前能简单 CRUD，还在努力学习中
+            </li>
           </ul>
         </div>
         <div
@@ -83,22 +151,39 @@ export default function Page() {
             <li>
               Zsh + Oh My Zsh + iTerm2 + Mononoki Nerd Font Mono，舒服的很
             </li>
-            <li>用过 CentOS、 Debian、Rocky Linux （最近使用）</li>
             <li>
-              Docker +{' '}
+              用过 <IconLogoCentOS className="mx-1 translate-y-0.5" />
+              CentOS、
+              <>
+                <IconSkillDebianDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillDebianLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Debian、
+              <IconLogoRockyLinux className="mx-1 translate-y-0.5" />
+              Rocky Linux （最近使用）
+            </li>
+            <li>
+              <IconSkillDocker className="mx-1 translate-y-0.5" />
+              Docker +
               <span className="line-through">Docker Desktop 太卡了</span>+
               Orbstack，Docker 本地起数据库服务是真的方便
             </li>
             <li>
               使用
               <span className="line-through">
-                {' '}
-                NGINX （相比 Caddy 配置有烦）
+                <IconSkillNginx className="mx-1 translate-y-0.5" />
+                NGINX （相比 Caddy 配置有点麻烦）
               </span>
               、 Caddy （配置超简单，无需手动配置 HTTPS 证书），反向代理 + 配置
               HTTPS + 开启 HTTP2
             </li>
-            <li>Figma，会一点，用来画画图标，制作博客封面非常方便</li>
+            <li>
+              <>
+                <IconSkillFigmaDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillFigmaLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Figma，会一点，用来画画图标，制作博客封面非常方便
+            </li>
           </ul>
         </div>
 
@@ -112,7 +197,9 @@ export default function Page() {
           <ul>
             <li>
               MacBook Pro 14-inch M3 Max：64G + 2TB，
-              <span className="line-through">赚的几个子全花电子产品上去了</span>
+              <span className="line-through">
+                赚的几个窝囊费全花电子产品上去了
+              </span>
               🙃
             </li>
             <li>微星（msi） GP76：64G + 1TB + RTX3070</li>
