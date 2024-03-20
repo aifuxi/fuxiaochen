@@ -38,9 +38,9 @@ export const Footer = () => {
       </ul>
       <div className="w-full text-sm flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-2 ">
         <span>Copyringht &copy; {new Date().getFullYear()}</span>
-        <span className="hidden sm:inline-block">·</span>
-        <span>{NICKNAME}</span>
-        <span className="hidden sm:inline-block">·</span>
+        <span className="hidden md:inline-block">·</span>
+        <span className="hidden md:inline-block">{NICKNAME}</span>
+        <span className="hidden md:inline-block">·</span>
         <NextLink
           target="_blank"
           aria-label={BEI_AN_NUMBER}
@@ -49,7 +49,7 @@ export const Footer = () => {
         >
           {BEI_AN_NUMBER}
         </NextLink>
-        <span className="hidden sm:inline-block">·</span>
+        <span className="hidden md:inline-block">·</span>
         <NextLink
           target="_blank"
           aria-label={GONG_AN_NUMBER}

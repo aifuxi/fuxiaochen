@@ -14,7 +14,7 @@ type BlogDetailProps = {
 
 export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
   return (
-    <div className="max-w-screen-md 2xl:max-w-6xl mx-auto pb-24 grid gap-9 px-6 pt-12">
+    <div className="md:max-w-screen-md 2xl:max-w-6xl md:px-0 md:mx-auto py-12 md:py-24 grid gap-9 px-6">
       <article>
         {blog.cover && (
           <img
@@ -23,7 +23,9 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
             className="max-w-screen-md 2xl:max-w-6xl h-auto mb-16 w-full"
           />
         )}
-        <h1 className="mb-4 text-4xl font-extrabold ">{blog.title}</h1>
+        <h1 className="mb-4 text-2xl md:text-4xl font-extrabold ">
+          {blog.title}
+        </h1>
         <div className="text-sm flex flex-row items-center text-muted-foreground">
           <div>{blog.author ? blog.author : NICKNAME}</div>
           <span className="mx-2">·</span>
@@ -34,7 +36,7 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
 
       <div className="flex flex-wrap gap-2">
         {blog.tags?.map((el) => (
-          <Badge key={el.id} className="px-5 py-2 text-base">
+          <Badge key={el.id} className="md:px-5 md:py-2 md:text-base">
             {el.name}
           </Badge>
         ))}

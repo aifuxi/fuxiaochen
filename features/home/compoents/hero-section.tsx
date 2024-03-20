@@ -20,9 +20,9 @@ export const HeroSection = () => {
   const getDelay = () => (delay += 200);
 
   return (
-    <div className="min-w-screen-md gap-5 flex flex-col justify-center min-h-full ">
+    <div className="md:min-w-screen-md gap-5 flex flex-col justify-center min-h-full px-6">
       <p
-        className="text-5xl tracking-widest animate-fade-up animate-ease-in-out"
+        className="text-2xl md:text-5xl tracking-widest animate-fade-up animate-ease-in-out"
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -31,7 +31,7 @@ export const HeroSection = () => {
       </p>
       <strong
         className={cn(
-          `text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
+          `text-5xl md:text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
           'animate-fade-up animate-ease-in-out',
         )}
         style={{
@@ -51,7 +51,7 @@ export const HeroSection = () => {
       </div>
       <p
         className={cn(
-          'text-5xl tracking-widest',
+          'text-2xl md:text-5xl tracking-widest',
           'animate-fade-up animate-ease-in-out',
         )}
         style={{
@@ -66,7 +66,7 @@ export const HeroSection = () => {
       </p>
       <p
         className={cn(
-          'text-2xl text-muted-foreground tracking-widest',
+          'text-base md:text-2xl text-muted-foreground tracking-widest',
           'animate-fade-up animate-ease-in-out',
         )}
         style={{
