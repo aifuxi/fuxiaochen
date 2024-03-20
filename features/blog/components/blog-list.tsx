@@ -22,8 +22,14 @@ export const BlogList = ({ blogs }: BlogListProps) => {
 
   return (
     <ul className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-      {blogs.map((el) => (
-        <li key={el.id}>
+      {blogs.map((el, idx) => (
+        <li
+          key={el.id}
+          className="animate-fade-up animate-ease-in-out"
+          style={{
+            animationDelay: `${(idx + 1) * 200}ms`,
+          }}
+        >
           <BlogListItem blog={el} />
         </li>
       ))}
