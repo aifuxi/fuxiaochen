@@ -20,10 +20,13 @@ import { useDeleteBlog } from '@/features/blog';
 
 type DeleteBlogButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const DeleteBlogButton = ({ id, refresh }: DeleteBlogButtonProps) => {
+export const DeleteBlogButton = ({
+  id,
+  refreshAsync,
+}: DeleteBlogButtonProps) => {
   const deleteBlogQuery = useDeleteBlog();
 
   return (
@@ -46,8 +49,8 @@ export const DeleteBlogButton = ({ id, refresh }: DeleteBlogButtonProps) => {
     </AlertDialog>
   );
 
-  function handleDelete() {
+  async function handleDelete() {
     deleteBlogQuery.run(id);
-    refresh();
+    await refreshAsync();
   }
 };

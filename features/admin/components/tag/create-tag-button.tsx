@@ -42,9 +42,9 @@ import {
 import { toSlug } from '@/lib/utils';
 
 type CreateTagButtonProps = {
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
-export const CreateTagButton = ({ refresh }: CreateTagButtonProps) => {
+export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<CreateTagDTO>({
     resolver: zodResolver(createTagSchema),
@@ -157,10 +157,10 @@ export const CreateTagButton = ({ refresh }: CreateTagButtonProps) => {
     </Dialog>
   );
 
-  function handleSubmit(values: CreateTagDTO) {
-    createTagQuery.run(values);
+  async function handleSubmit(values: CreateTagDTO) {
+    await createTagQuery.runAsync(values);
     setOpen(false);
-    refresh();
+    await refreshAsync();
   }
 
   function handleFormatSlug() {

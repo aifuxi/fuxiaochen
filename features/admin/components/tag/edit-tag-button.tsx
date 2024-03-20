@@ -49,10 +49,10 @@ import { toSlug } from '@/lib/utils';
 
 type EditTagButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const EditTagButton = ({ id, refresh }: EditTagButtonProps) => {
+export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateTagDTO>({
     resolver: zodResolver(updateTagSchema),
@@ -199,10 +199,10 @@ export const EditTagButton = ({ id, refresh }: EditTagButtonProps) => {
     </Dialog>
   );
 
-  function handleSubmit(values: UpdateTagDTO) {
-    updateTagQuery.run(values);
+  async function handleSubmit(values: UpdateTagDTO) {
+    await updateTagQuery.runAsync(values);
     setOpen(false);
-    refresh();
+    await refreshAsync();
   }
 
   function handleFormatSlug() {

@@ -9,10 +9,10 @@ export const useCreateBlog = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('博客创建成功');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`博客创建失败: ${error.message}`);
     },
   });
 };

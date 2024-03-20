@@ -9,10 +9,10 @@ export const useUpdateSnippet = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('片段已更新');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`片段更新: ${error.message}`);
     },
   });
 };
@@ -22,10 +22,10 @@ export const useToggleSnippetPublish = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('片段发布状态已更新');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`片段发布状态更新失败: ${error.message}`);
     },
   });
 };

@@ -9,10 +9,10 @@ export const useCreateTag = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('标签已创建');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`标签创建失败: ${error.message}`);
     },
   });
 };

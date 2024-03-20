@@ -9,10 +9,10 @@ export const useCreateSnippet = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('片段已创建');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`片段创建失败: ${error.message}`);
     },
   });
 };

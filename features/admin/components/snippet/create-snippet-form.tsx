@@ -157,7 +157,7 @@ export const CreateSnippetForm = () => {
                       />
                     </div>
 
-                    <CreateTagButton refresh={getTagsQuery.refresh} />
+                    <CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -185,8 +185,8 @@ export const CreateSnippetForm = () => {
     </Form>
   );
 
-  function handleSubmit(values: CreateSnippetDTO) {
-    createSnippetQuery.run(values);
+  async function handleSubmit(values: CreateSnippetDTO) {
+    await createSnippetQuery.runAsync(values);
     router.push(PATHS.ADMIN_SNIPPET);
   }
 

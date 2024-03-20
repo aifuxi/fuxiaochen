@@ -7,20 +7,20 @@ import { useToggleBlogPublish } from '@/features/blog';
 type ToggleBlogPublishSwitchProps = {
   id: string;
   published: boolean;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
 export const ToggleBlogPublishSwitch = ({
   id,
   published,
-  refresh,
+  refreshAsync,
 }: ToggleBlogPublishSwitchProps) => {
   const toggleBlogPublishQuery = useToggleBlogPublish();
 
   return <Switch checked={published} onCheckedChange={handleCheckedChange} />;
 
-  function handleCheckedChange() {
+  async function handleCheckedChange() {
     toggleBlogPublishQuery.run(id);
-    refresh();
+    await refreshAsync();
   }
 };
