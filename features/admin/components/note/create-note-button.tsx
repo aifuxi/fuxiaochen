@@ -38,10 +38,10 @@ import { useGetAllTags } from '@/features/tag';
 import { CreateTagButton } from '../tag';
 
 type CreateNoteButtonProps = {
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const CreateNoteButton = ({ refresh }: CreateNoteButtonProps) => {
+export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<CreateNoteDTO>({
     resolver: zodResolver(createNoteSchema),
@@ -105,7 +105,9 @@ export const CreateNoteButton = ({ refresh }: CreateNoteButtonProps) => {
                           />
                         </div>
 
-                        <CreateTagButton refresh={getTagsQuery.refresh} />
+                        <CreateTagButton
+                          refreshAsync={getTagsQuery.refreshAsync}
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -167,9 +169,9 @@ export const CreateNoteButton = ({ refresh }: CreateNoteButtonProps) => {
     </Dialog>
   );
 
-  function handleSubmit(values: CreateNoteDTO) {
-    createNoteQuery.run(values);
+  async function handleSubmit(values: CreateNoteDTO) {
+    await createNoteQuery.runAsync(values);
     setOpen(false);
-    refresh();
+    await refreshAsync();
   }
 };

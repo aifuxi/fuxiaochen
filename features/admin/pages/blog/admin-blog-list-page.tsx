@@ -169,7 +169,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           <ToggleBlogPublishSwitch
             id={row.original.id}
             published={row.original.published}
-            refresh={getBlogsQuery.refresh}
+            refreshAsync={getBlogsQuery.refreshAsync}
           />
         );
       },
@@ -239,7 +239,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
             </Tooltip>
             <DeleteBlogButton
               id={row.original.id}
-              refresh={getBlogsQuery.refresh}
+              refreshAsync={getBlogsQuery.refreshAsync}
             />
           </div>
         );

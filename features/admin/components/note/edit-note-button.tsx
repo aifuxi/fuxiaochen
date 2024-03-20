@@ -40,10 +40,10 @@ import { CreateTagButton } from '../tag';
 
 type EditNoteButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const EditNoteButton = ({ id, refresh }: EditNoteButtonProps) => {
+export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<UpdateNoteDTO>({
     resolver: zodResolver(updateNoteSchema),
@@ -106,7 +106,9 @@ export const EditNoteButton = ({ id, refresh }: EditNoteButtonProps) => {
                           />
                         </div>
 
-                        <CreateTagButton refresh={getTagsQuery.refresh} />
+                        <CreateTagButton
+                          refreshAsync={getTagsQuery.refreshAsync}
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -168,9 +170,9 @@ export const EditNoteButton = ({ id, refresh }: EditNoteButtonProps) => {
     </Dialog>
   );
 
-  function handleSubmit(values: UpdateNoteDTO) {
-    updateNoteQuery.run(values);
+  async function handleSubmit(values: UpdateNoteDTO) {
+    await updateNoteQuery.runAsync(values);
     setOpen(false);
-    refresh();
+    await refreshAsync();
   }
 };

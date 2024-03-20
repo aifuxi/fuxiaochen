@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 
 import { BytemdViewer } from '@/components/bytemd';
 import {
@@ -81,7 +82,9 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
       pageHeader={
         <PageHeader
           breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]}
-          action={<CreateNoteButton refresh={getNotesQuery.refresh} />}
+          action={
+            <CreateNoteButton refreshAsync={getNotesQuery.refreshAsync} />
+          }
         />
       }
     >
@@ -154,58 +157,66 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
         </div>
 
         <ul className="grid gap-4 w-[65ch]  mx-auto">
-          {data.map((note) => (
-            <li key={note.id}>
-              <div className="border rounded-lg px-6 relative pb-6">
-                <BytemdViewer body={note.body || ''} />
-                <div className="grid grid-cols-12">
-                  <div className="col-span-6 flex flex-wrap gap-2 mb-1">
-                    {note.tags?.map((tag) => (
-                      <Badge key={tag.id}>{tag.name}</Badge>
-                    ))}
+          {getNotesQuery.loading
+            ? Array.from({ length: 4 }).map((_, idx) => (
+                <li key={idx}>
+                  <Skeleton className="h-[200px] w-full rounded-lg" />
+                </li>
+              ))
+            : data.map((note) => (
+                <li key={note.id}>
+                  <div className="border rounded-lg px-6 relative pb-6">
+                    <BytemdViewer body={note.body || ''} />
+                    <div className="grid grid-cols-12">
+                      <div className="col-span-6 flex flex-wrap gap-2 mb-1">
+                        {note.tags?.map((tag) => (
+                          <Badge key={tag.id}>{tag.name}</Badge>
+                        ))}
+                      </div>
+                      <div className="col-span-6 tracking-wide flex-1 flex items-end justify-end text-sm text-muted-foreground">
+                        <span>{toSlashDateString(note.createdAt)}</span>
+                        <span className="mx-2">·</span>
+                        <span>{toFromNow(note.createdAt)}</span>
+                      </div>
+                    </div>
+                    <div className="absolute right-2 top-2 space-x-2">
+                      <ToggleNotePublishButton
+                        id={note.id}
+                        published={note.published}
+                        refreshAsync={getNotesQuery.refreshAsync}
+                      />
+                      <EditNoteButton
+                        id={note.id}
+                        refreshAsync={getNotesQuery.refreshAsync}
+                      />
+                      <DeleteNoteButton
+                        id={note.id}
+                        refreshAsync={getNotesQuery.refreshAsync}
+                      />
+                    </div>
                   </div>
-                  <div className="col-span-6 tracking-wide flex-1 flex items-end justify-end text-sm text-muted-foreground">
-                    <span>{toSlashDateString(note.createdAt)}</span>
-                    <span className="mx-2">·</span>
-                    <span>{toFromNow(note.createdAt)}</span>
-                  </div>
-                </div>
-                <div className="absolute right-2 top-2 space-x-2">
-                  <ToggleNotePublishButton
-                    id={note.id}
-                    published={note.published}
-                    refresh={getNotesQuery.refresh}
-                  />
-                  <EditNoteButton
-                    id={note.id}
-                    refresh={getNotesQuery.refresh}
-                  />
-                  <DeleteNoteButton
-                    id={note.id}
-                    refresh={getNotesQuery.refresh}
-                  />
-                </div>
-              </div>
-            </li>
-          ))}
+                </li>
+              ))}
         </ul>
 
-        <div className="flex items-center justify-betweens">
-          {pageCount > 1 && (
-            <PaginationInfo
-              total={getNotesQuery.data?.total}
-              params={{ ...params }}
-            />
-          )}
-          <div className="flex-1 flex items-center justify-end">
-            <Pagination
-              total={getNotesQuery.data?.total}
-              params={{ ...params }}
-              updateParams={updateParams}
-              showSizeChanger
-            />
+        {!getNotesQuery.loading && (
+          <div className="flex items-center justify-betweens">
+            {pageCount > 1 && (
+              <PaginationInfo
+                total={getNotesQuery.data?.total}
+                params={{ ...params }}
+              />
+            )}
+            <div className="flex-1 flex items-center justify-end">
+              <Pagination
+                total={getNotesQuery.data?.total}
+                params={{ ...params }}
+                updateParams={updateParams}
+                showSizeChanger
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </AdminContentLayout>
   );

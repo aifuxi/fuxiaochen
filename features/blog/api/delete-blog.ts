@@ -9,10 +9,10 @@ export const useDeleteBlog = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('博客已删除');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`博客删除失败: ${error.message}`);
     },
   });
 };

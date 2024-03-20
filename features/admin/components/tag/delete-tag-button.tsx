@@ -23,10 +23,10 @@ import { useDeleteTag } from '@/features/tag';
 
 type DeleteTagButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const DeleteTagButton = ({ id, refresh }: DeleteTagButtonProps) => {
+export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   const deleteTagQuery = useDeleteTag();
 
   return (
@@ -57,8 +57,8 @@ export const DeleteTagButton = ({ id, refresh }: DeleteTagButtonProps) => {
     </AlertDialog>
   );
 
-  function handleDeleteTag() {
-    deleteTagQuery.run(id);
-    refresh();
+  async function handleDeleteTag() {
+    await deleteTagQuery.runAsync(id);
+    await refreshAsync();
   }
 };

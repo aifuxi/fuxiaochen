@@ -160,7 +160,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
           <ToggleSnippetPublishSwitch
             id={row.original.id}
             published={row.original.published}
-            refresh={getSnippetsQuery.refresh}
+            refreshAsync={getSnippetsQuery.refreshAsync}
           />
         );
       },
@@ -231,7 +231,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
             </Tooltip>
             <DeleteSnippetButton
               id={record.id}
-              refresh={getSnippetsQuery.refresh}
+              refreshAsync={getSnippetsQuery.refreshAsync}
             />
           </div>
         );

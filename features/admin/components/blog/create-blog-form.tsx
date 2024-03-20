@@ -240,7 +240,7 @@ export const CreateBlogForm = () => {
                       />
                     </div>
 
-                    <CreateTagButton refresh={getTagsQuery.refresh} />
+                    <CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />
                   </div>
                 </FormControl>
                 <FormMessage />

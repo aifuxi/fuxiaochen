@@ -20,12 +20,12 @@ import { useDeleteSnippet } from '@/features/snippet';
 
 type DeleteSnippetButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
 export const DeleteSnippetButton = ({
   id,
-  refresh,
+  refreshAsync,
 }: DeleteSnippetButtonProps) => {
   const deleteSnippetQuery = useDeleteSnippet();
 
@@ -51,8 +51,8 @@ export const DeleteSnippetButton = ({
     </AlertDialog>
   );
 
-  function handleDelete() {
-    deleteSnippetQuery.run(id);
-    refresh();
+  async function handleDelete() {
+    await deleteSnippetQuery.runAsync(id);
+    await refreshAsync();
   }
 };

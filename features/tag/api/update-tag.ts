@@ -9,10 +9,10 @@ export const useUpdateTag = () => {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('操作成功');
+      showSuccessToast('标签已更新');
     },
     onError(error) {
-      showErrorToast(`操作失败: ${error.message}`);
+      showErrorToast(`标签更新失败: ${error.message}`);
     },
   });
 };

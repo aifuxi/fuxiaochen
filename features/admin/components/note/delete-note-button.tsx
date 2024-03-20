@@ -23,10 +23,13 @@ import { useDeleteNote } from '@/features/note';
 
 type DeleteNoteButtonProps = {
   id: string;
-  refresh: () => void;
+  refreshAsync: () => Promise<unknown>;
 };
 
-export const DeleteNoteButton = ({ id, refresh }: DeleteNoteButtonProps) => {
+export const DeleteNoteButton = ({
+  id,
+  refreshAsync,
+}: DeleteNoteButtonProps) => {
   const deleteNoteQuery = useDeleteNote();
 
   return (
@@ -57,8 +60,8 @@ export const DeleteNoteButton = ({ id, refresh }: DeleteNoteButtonProps) => {
     </AlertDialog>
   );
 
-  function handleDeleteNote() {
-    deleteNoteQuery.run(id);
-    refresh();
+  async function handleDeleteNote() {
+    await deleteNoteQuery.runAsync(id);
+    await refreshAsync();
   }
 };
