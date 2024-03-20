@@ -32,7 +32,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           href="/images/fuxiaochen-dark.svg"
         />
       </head>
-      <body className="debug-screens scroll-smooth">
+      <body className="debug-screens scroll-smooth overflow-x-clip">
         <TooltipProvider>
           <NextThemeProvider attribute="class">
             {children}
