@@ -15,3 +15,4 @@ export * from './icon-skill-prisma';
 export * from './icon-skill-react';
 export * from './icon-skill-tailwindcss';
 export * from './icon-skill-typescript';
+export * from './icon-skill-stackoverflow';
