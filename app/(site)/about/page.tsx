@@ -3,7 +3,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 import {
+  IconBaranGithub,
+  IconLogoBing,
   IconLogoCentOS,
+  IconLogoGoogle,
   IconLogoRockyLinux,
   IconSkillCSS,
   IconSkillDebianDark,
@@ -24,6 +27,8 @@ import {
   IconSkillPrisma,
   IconSkillReactDark,
   IconSkillReactLight,
+  IconSkillStackoverflowDark,
+  IconSkillStackoverflowLight,
   IconSkillTailwindcssDark,
   IconSkillTailwindcssLight,
   IconSkillTypeScript,
@@ -183,6 +188,20 @@ export default function Page() {
                 <IconSkillFigmaLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
               </>
               Figma，会一点，用来画画图标，制作博客封面非常方便
+            </li>
+            <li>
+              熟练使用 <IconLogoGoogle className="mx-1 translate-y-0.5" />
+              Google/
+              <IconLogoBing className="mx-1 translate-y-0.5" />
+              Bing 搜索
+              <span className="line-through ml-1">百度（浪费生命）</span> +{' '}
+              <IconBaranGithub className="mx-1 translate-y-1" />
+              GitHub +
+              <>
+                <IconSkillStackoverflowDark className="dark:hidden mx-1 translate-y-0.5" />
+                <IconSkillStackoverflowLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+              </>
+              Stack Overflow + Chat GPT 解决遇到的各种问题，复制粘贴我最行 🙋
             </li>
           </ul>
         </div>
