@@ -1,5 +1,11 @@
-.bytemd {
-  /* @apply !min-h-screen; */
+/* 创建、编辑笔记的编辑器高度 */
+#note-editor .bytemd {
+  @apply h-[50vh] min-h-[480px];
+}
+
+/* 创建、编辑博客、片段的编辑器高度 */
+#content-editor .bytemd {
+  @apply h-screen;
 }
 
 .bytemd .CodeMirror,

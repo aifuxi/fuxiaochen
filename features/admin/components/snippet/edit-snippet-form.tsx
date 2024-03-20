@@ -192,10 +192,12 @@ export const EditSnippetForm = () => {
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
-                  <BytemdEditor
-                    body={field.value}
-                    setContent={field.onChange}
-                  />
+                  <div id="content-editor">
+                    <BytemdEditor
+                      body={field.value}
+                      setContent={field.onChange}
+                    />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
