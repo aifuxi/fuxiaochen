@@ -56,15 +56,16 @@ const getImageInfo = async (filePath: string) => {
     info: typeInfo,
     isImage: Boolean(typeInfo),
     isGif: typeInfo ? typeInfo.ext === 'gif' : false,
+    isWebp: typeInfo ? typeInfo.ext === 'webp' : false,
   };
 };
 
 // 如果不是图片，原样返回，是图片返回压缩后的图片路径
 const compressImage = async (input: string): Promise<string> => {
   const inputFilePath = getFilePath(input);
-  const { isGif, isImage } = await getImageInfo(inputFilePath);
+  const { isGif, isImage, isWebp } = await getImageInfo(inputFilePath);
 
-  if (!isImage) {
+  if (!isImage || isWebp) {
     return input;
   }
   let animated = false;
