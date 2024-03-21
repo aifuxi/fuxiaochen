@@ -21,28 +21,20 @@ export const socialMediaList: Array<{
   {
     icon: (
       <>
-        <IconSkillGmailDark className="text-lg dark:hidden" />
-        <IconSkillGmailLight className="text-lg hidden dark:inline-block" />
+        <IconSkillGmailDark className="text-2xl dark:hidden" />
+        <IconSkillGmailLight className="text-2xl hidden dark:inline-block" />
       </>
     ),
     label: 'Gmail',
     link: `mailto:${EMAIL}`,
   },
   {
-    icon: (
-      <IconBrandBilibili
-        className={`text-2xl transition-colors hover:text-[#00AEEC]`}
-      />
-    ),
+    icon: <IconBrandBilibili className={`text-2xl text-[#00AEEC]`} />,
     label: 'Bilibili',
     link: BILIBILI_PAGE,
   },
   {
-    icon: (
-      <IconLogoJuejin
-        className={`text-2xl transition-colors hover:text-[#2985fc]`}
-      />
-    ),
+    icon: <IconLogoJuejin className={`text-2xl text-[#2985fc]`} />,
     label: '掘金',
     link: JUEJIN_PAGE,
   },
