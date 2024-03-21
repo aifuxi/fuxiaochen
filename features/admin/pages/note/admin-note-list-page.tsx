@@ -167,7 +167,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                 <li key={note.id} className="w-full">
                   <div className="w-full border rounded-lg px-6 relative pb-6">
                     <BytemdViewer body={note.body || ''} />
-                    <div className="grid grid-cols-12">
+                    <div className="grid grid-cols-12 pt-4">
                       <div className="col-span-6 flex flex-wrap gap-2 mb-1">
                         {note.tags?.map((tag) => (
                           <Badge key={tag.id}>{tag.name}</Badge>
