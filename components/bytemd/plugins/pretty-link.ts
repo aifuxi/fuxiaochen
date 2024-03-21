@@ -2,7 +2,6 @@
 // @ts-nocheck
 import type { BytemdPlugin } from 'bytemd';
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
-import { type Node } from 'unist';
 import { visit } from 'unist-util-visit';
 
 import { extractDomainFromUrl } from '@/utils';
@@ -39,8 +38,8 @@ const stackoverflowSvgNode = fromHtmlIsomorphic(
 export const prettyLinkPlugin = (): BytemdPlugin => {
   return {
     rehype: (process) =>
-      process.use(() => (tree: Node) => {
-        visit(tree, 'element', (node: Node) => {
+      process.use(() => (tree) => {
+        visit(tree, 'element', (node) => {
           if (node.tagName === 'a') {
             // 如果是以 # 开头，说明是hash，不做处理
             if (node.properties.href && node.properties.href.startsWith('#')) {

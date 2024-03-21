@@ -1,6 +1,5 @@
 import breaks from '@bytemd/plugin-breaks';
 import frontmatter from '@bytemd/plugin-frontmatter';
-import gemoji from '@bytemd/plugin-gemoji';
 import gfm from '@bytemd/plugin-gfm';
 import gfm_zhHans from '@bytemd/plugin-gfm/lib/locales/zh_Hans.json';
 import highlightSSR from '@bytemd/plugin-highlight-ssr';
@@ -13,7 +12,6 @@ import { codeBlockPlugin, prettyLinkPlugin } from './plugins';
 export const plugins = [
   breaks(),
   frontmatter(),
-  gemoji(),
   mediumZoom(),
   gfm({ locale: gfm_zhHans }),
   highlightSSR(),
