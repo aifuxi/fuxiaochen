@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { Highlight } from '@/components/highlight';
 import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
@@ -57,7 +58,7 @@ import {
   type Snippet,
   useGetSnippets,
 } from '@/features/snippet';
-import { type Tag, useGetAllTags } from '@/features/tag';
+import { useGetAllTags } from '@/features/tag';
 import { isAdmin, toSlashDateString } from '@/lib/utils';
 
 import {
@@ -78,7 +79,6 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
   const [inputParams, updateInputParams] = useSetState<
     Omit<GetSnippetsDTO, 'pageIndex' | 'pageSize'>
   >({
-    slug: undefined,
     title: undefined,
     published: undefined,
     tags: undefined,
@@ -126,6 +126,14 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
           <span>标题</span>
         </div>
       ),
+      cell: ({ row }) => {
+        return (
+          <Highlight
+            sourceString={row.original.title}
+            searchWords={params.title ? [params.title] : undefined}
+          />
+        );
+      },
     },
     {
       accessorKey: 'tags',
@@ -136,12 +144,12 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         </div>
       ),
       cell: ({ row }) => {
-        const tags: Tag[] = row.getValue('tags') ?? [];
-
         return (
           <div className="flex flex-wrap gap-2">
-            {tags.length
-              ? tags.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)
+            {row.original.tags?.length
+              ? row.original.tags.map((tag) => (
+                  <Badge key={tag.id}>{tag.name}</Badge>
+                ))
               : PLACEHODER_TEXT}
           </div>
         );
@@ -185,7 +193,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('createdAt'));
+        return toSlashDateString(row.original.createdAt);
       },
     },
     {
@@ -208,13 +216,12 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         </Button>
       ),
       cell({ row }) {
-        return toSlashDateString(row.getValue('updatedAt'));
+        return toSlashDateString(row.original.updatedAt);
       },
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        const record = row.original;
         return (
           <div className="flex gap-2 items-center">
             <Tooltip>
@@ -222,7 +229,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
                 <Button
                   size={'icon'}
                   variant="ghost"
-                  onClick={() => handleGoToEdit(record.id)}
+                  onClick={() => handleGoToEdit(row.original.id)}
                 >
                   <IconSolarPen className="text-base" />
                 </Button>
@@ -230,7 +237,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
               <TooltipContent>编辑</TooltipContent>
             </Tooltip>
             <DeleteSnippetButton
-              id={record.id}
+              id={row.original.id}
               refreshAsync={getSnippetsQuery.refreshAsync}
             />
           </div>
@@ -253,27 +260,13 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4">
+      <div className="grid gap-4 grid-cols-4 px-2 py-4">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
           onChange={(v) =>
             updateInputParams({
               title: v.target.value,
-            })
-          }
-          onKeyUp={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Input
-          placeholder="请输入slug"
-          value={inputParams.slug}
-          onChange={(v) =>
-            updateInputParams({
-              slug: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -357,7 +350,6 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
   function handleSearch() {
     updateParams({
       title: inputParams.title,
-      slug: inputParams.slug,
       published: inputParams.published,
       tags: inputParams.tags,
     });
@@ -366,13 +358,11 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
   function handleReset() {
     updateInputParams({
       title: '',
-      slug: '',
       tags: undefined,
       published: undefined,
     });
     updateParams({
       title: '',
-      slug: '',
       tags: undefined,
       published: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,

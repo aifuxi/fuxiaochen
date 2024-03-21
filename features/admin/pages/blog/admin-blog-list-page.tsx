@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { Highlight } from '@/components/highlight';
 import {
   IconSolarAddSquare,
   IconSolarCalendarMark,
@@ -75,7 +76,6 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
   const [inputParams, updateInputParams] = useSetState<
     Omit<GetBlogsDTO, 'pageIndex' | 'pageSize'>
   >({
-    slug: undefined,
     title: undefined,
     published: undefined,
     tags: undefined,
@@ -123,6 +123,14 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
           <span>标题</span>
         </div>
       ),
+      cell: ({ row }) => {
+        return (
+          <Highlight
+            sourceString={row.original.title}
+            searchWords={params.title ? [params.title] : undefined}
+          />
+        );
+      },
     },
     {
       accessorKey: 'author',
@@ -147,7 +155,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
       cell: ({ row }) => {
         return (
           <div className="flex flex-wrap gap-2">
-            {tags.length
+            {row.original.tags?.length
               ? row.original.tags.map((tag) => (
                   <Badge key={tag.id}>{tag.name}</Badge>
                 ))
@@ -261,7 +269,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4">
+      <div className="grid gap-4 grid-cols-4 px-2 py-4">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
@@ -276,20 +284,7 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
             }
           }}
         />
-        <Input
-          placeholder="请输入slug"
-          value={inputParams.slug}
-          onChange={(v) =>
-            updateInputParams({
-              slug: v.target.value,
-            })
-          }
-          onKeyUp={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
+
         <Combobox
           options={
             tags?.map((el) => ({
@@ -364,7 +359,6 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
   function handleSearch() {
     updateParams({
       title: inputParams.title,
-      slug: inputParams.slug,
       published: inputParams.published,
       tags: inputParams.tags,
     });
@@ -373,13 +367,11 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
   function handleReset() {
     updateInputParams({
       title: '',
-      slug: '',
       published: undefined,
       tags: undefined,
     });
     updateParams({
       title: '',
-      slug: '',
       published: undefined,
       tags: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
