@@ -8,16 +8,16 @@
 
 - PC端访问：https://fuxiaochen.com
 
-<img src="./public/images/pc-home-dark.png" alt="pc-home-dark" style="zoom:50%;" />
-<img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" style="zoom:50%;" />
-<img src="./public/images/pc-home.png" alt="pc-home" style="zoom:50%;" />
-<img src="./public/images/pc-admin.png" alt="ppc-admin" style="zoom:50%;" />
+<img src="./public/images/pc-home-dark.png" alt="pc-home-dark" style="max-width:75%;" />
+<img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" style="max-width:75%;" />
+<img src="./public/images/pc-home.png" alt="pc-home" style="max-width:75%;" />
+<img src="./public/images/pc-admin.png" alt="ppc-admin" style="max-width:75%;" />
 
 - 移动端扫描👇下面二维码访问：
 
-  <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" style="zoom:50%;" />
+  <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" style="max-width:25%;" />
 
-  <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" style="zoom:50%;" />
+  <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" style="max-width:50%;" />
 
 ## 启动项目
 
