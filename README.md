@@ -1,7 +1,23 @@
+# <div align="center">fuxiaochen</div>
 
-## 项目介绍
+## 简介
 
-使用 `Next.js` 构建的博客类型网站，主要使用以下技术：
+一个简单的个人博客网站，使用 Next.js + React 18 + TypeScript + Shadcn/ui + Tailwind CSS 开发
+
+## 预览
+
+- PC端访问：https://fuxiaochen.com
+
+<img src="./public/images/pc-home-dark.png" alt="pc-home-dark" style="zoom:50%;" />
+<img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" style="zoom:50%;" />
+<img src="./public/images/pc-home.png" alt="pc-home" style="zoom:50%;" />
+<img src="./public/images/pc-admin.png" alt="ppc-admin" style="zoom:50%;" />
+
+- 移动端扫描👇下面二维码访问：
+
+  <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" style="zoom:50%;" />
+
+  <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" style="zoom:50%;" />
 
 ## 启动项目
 
@@ -19,19 +35,9 @@ $ pnpm db:seed
 $ pnpm dev
 ```
 
-- **主页**：`http://localhost:6121`
-
-- **登录页**：`http://localhost:6121/sign-in`
-
-  - 初始管理员信息在 `.env.development` 中
-
-  - 初始管理员邮箱：`admin@admin.com`
-
-  - 初始管理员密码：`123456`
-
 ## 反馈
 
-提 issue
+欢迎给我反馈，欢迎提 Issue
 
 ## 部署
 
