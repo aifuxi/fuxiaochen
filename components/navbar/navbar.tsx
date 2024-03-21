@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
 import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
-import { IconBaranGithub, IconLogoFuXiaoChen } from '../icons';
+import { IconBarandGithub, IconLogoFuXiaoChen } from '../icons';
 import { NextLink } from '../next-link';
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
@@ -73,7 +73,7 @@ export const Navbar = () => {
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
             <Button variant="ghost" size={'icon'} aria-label="Github Icon">
-              <IconBaranGithub className="text-base" />
+              <IconBarandGithub className="text-base" />
             </Button>
           </Link>
         </div>

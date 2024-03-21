@@ -2,7 +2,7 @@ import React from 'react';
 
 import { cn } from '@/lib/utils';
 
-export const IconBaranGithub = ({
+export const IconBarandGithub = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLSpanElement>) => {

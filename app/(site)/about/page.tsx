@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 import {
-  IconBaranGithub,
+  IconBarandGithub,
   IconLogoBing,
   IconLogoCentOS,
   IconLogoGoogle,
@@ -195,7 +195,7 @@ export default function Page() {
               <IconLogoBing className="mx-1 translate-y-0.5" />
               Bing 搜索
               <span className="line-through ml-1">百度（浪费生命）</span> +{' '}
-              <IconBaranGithub className="mx-1 translate-y-1" />
+              <IconBarandGithub className="mx-1 translate-y-1" />
               GitHub +
               <>
                 <IconSkillStackoverflowDark className="dark:hidden mx-1 translate-y-0.5" />

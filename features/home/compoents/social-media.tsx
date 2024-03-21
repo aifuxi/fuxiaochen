@@ -1,5 +1,5 @@
 import {
-  IconBaranGithub,
+  IconBarandGithub,
   IconBrandBilibili,
   IconLogoJuejin,
   IconSkillGmailDark,
@@ -14,7 +14,7 @@ export const socialMediaList: Array<{
   link: string;
 }> = [
   {
-    icon: <IconBaranGithub className="text-2xl" />,
+    icon: <IconBarandGithub className="text-2xl" />,
     label: 'Github',
     link: GITHUB_PAGE,
   },
