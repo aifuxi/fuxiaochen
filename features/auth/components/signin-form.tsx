@@ -19,7 +19,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
 
-import { IconBaranGithub, IconSolarRestartLinear } from '@/components/icons';
+import { IconBarandGithub, IconSolarRestartLinear } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
 import { PATHS } from '@/constants';
@@ -109,7 +109,7 @@ export const SigninForm = () => {
             type="button"
             onClick={handleSignUpWithGithub}
           >
-            <IconBaranGithub className="mr-2 text-base" /> 使用 Github 登录
+            <IconBarandGithub className="mr-2 text-base" /> 使用 Github 登录
           </Button>
         </CardFooter>
       </form>

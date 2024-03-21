@@ -22,6 +22,10 @@
   @apply prose prose-zinc !w-full !max-w-full dark:prose-invert;
 }
 
+.markdown-body a {
+  @apply mx-1 inline-flex items-center gap-1 !no-underline;
+}
+
 .medium-zoom-image--opened {
   @apply z-30;
 }

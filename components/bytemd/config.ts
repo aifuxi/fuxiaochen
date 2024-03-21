@@ -8,7 +8,7 @@ import mediumZoom from '@bytemd/plugin-medium-zoom';
 import { type EditorProps } from '@bytemd/react';
 import { merge } from 'lodash-es';
 
-import { codeBlockPlugin, modifyHrefTargetPlugin } from './plugin';
+import { codeBlockPlugin, prettyLinkPlugin } from './plugins';
 
 export const plugins = [
   breaks(),
@@ -17,7 +17,7 @@ export const plugins = [
   mediumZoom(),
   gfm({ locale: gfm_zhHans }),
   highlightSSR(),
-  modifyHrefTargetPlugin(),
+  prettyLinkPlugin(),
   codeBlockPlugin(),
 ];
 
