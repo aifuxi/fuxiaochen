@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+import { Highlight } from '@/components/highlight';
 import {
   IconSolarBook,
   IconSolarCalendarMark,
@@ -62,7 +63,6 @@ export const AdminTagListPage = () => {
   const [inputParams, updateInputParams] = useSetState<
     Omit<GetTagsDTO, 'pageIndex' | 'pageSize'>
   >({
-    slug: undefined,
     name: undefined,
     type: undefined,
   });
@@ -104,6 +104,14 @@ export const AdminTagListPage = () => {
           <span>名称</span>
         </div>
       ),
+      cell: ({ row }) => {
+        return (
+          <Highlight
+            sourceString={row.original.name}
+            searchWords={params.name ? [params.name] : undefined}
+          />
+        );
+      },
     },
     {
       accessorKey: 'type',
@@ -246,27 +254,13 @@ export const AdminTagListPage = () => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4">
+      <div className="grid gap-4 grid-cols-4 px-2 py-4">
         <Input
           placeholder="请输入名称"
           value={inputParams.name}
           onChange={(v) =>
             updateInputParams({
               name: v.target.value,
-            })
-          }
-          onKeyUp={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-        />
-        <Input
-          placeholder="请输入slug"
-          value={inputParams.slug}
-          onChange={(v) =>
-            updateInputParams({
-              slug: v.target.value,
             })
           }
           onKeyUp={(e) => {
@@ -326,7 +320,6 @@ export const AdminTagListPage = () => {
   function handleSearch() {
     updateParams({
       name: inputParams.name,
-      slug: inputParams.slug,
       type: inputParams.type,
     });
   }
@@ -334,12 +327,10 @@ export const AdminTagListPage = () => {
   function handleReset() {
     updateInputParams({
       name: '',
-      slug: '',
       type: undefined,
     });
     updateParams({
       name: '',
-      slug: '',
       type: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
       order: 'desc',
