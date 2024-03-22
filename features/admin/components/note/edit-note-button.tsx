@@ -75,7 +75,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
           <IconSolarPen className="text-base" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>编辑笔记</DialogTitle>
         </DialogHeader>
