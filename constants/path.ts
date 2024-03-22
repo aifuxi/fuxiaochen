@@ -25,7 +25,6 @@ export const PATHS = {
 
   /** ************* AUTH ****************** */
   AUTH_SIGNIN: '/auth/signin',
-  AUTH_SIGNUP: '/auth/signup',
   NEXT_AUTH_SIGNIN: '/api/auth/signin',
 };
 
@@ -51,7 +50,6 @@ export const PATHS_MAP: Record<string, string> = {
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGNIN]: '登录',
-  [PATHS.AUTH_SIGNUP]: '注册',
 };
 
 export const PATH_DESCRIPTION_MAP: Record<string, string> = {
@@ -77,5 +75,4 @@ export const PATH_DESCRIPTION_MAP: Record<string, string> = {
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGNIN]: '登录',
-  [PATHS.AUTH_SIGNUP]: '注册',
 };
