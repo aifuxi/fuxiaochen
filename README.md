@@ -50,25 +50,126 @@
 
 - 集成后台管理功能，如博客、片段、标签、笔记管理等
 
-## 启动项目
+## 快速开始
+
+### 环境准备
+
+确保你已安装
+
+- Git
+- Pnpm
+- Node.js >= 20
+- Docker、Docker Compose
+
+### 获取项目代码
 
 ```shell
-# 1. 安装依赖
-$ pnpm i
+git clone https://github.com/aifuxi/fuxiaochen.git
+```
 
-# 2. 准备数据库
-$ pnpm db:push
+### 安装依赖
 
-# 3. 生成admin用户，默认相关配置在 .env.development 中
-$ pnpm db:seed
+在项目根目录下运行以下命令安装项目依赖：
 
-# 4. 启动开发环境
-$ pnpm dev
+```shell
+pnpm install
+```
+
+### 准备数据库
+
+开发环境，推荐使用 Docker Compose 启动一个 MySQL，项目已经准备好了一个 `docker-compose.yaml` 文件
+
+#### Mac 或者 Linux
+
+项目已经准备好了一个 `Makefile` 文件
+
+在项目根目录下运行
+
+```shell
+# Docker Compose 只启动 MySQL
+make run_mysql8
+
+# Docker Compose 启动全部服务
+make run_all
+```
+
+#### Windows
+
+在项目根目录下运行
+
+```shell
+# Docker Compose 只启动 MySQL
+docker-compose up -d mysql8
+
+# Docker Compose 启动全部服务
+docker-compose up -d
+```
+
+#### 更多
+
+更多信息可查看项目内的 `docker-compose.yaml` 和 `Makefile` 文件
+
+### 准备 env 文件和配置
+
+#### 配置 `.env` 文件
+
+> `.env` 文件主要是给 Prisma 用的，Prisma 读取 DATABASE_URL 进行数据库连接
+
+新建一个 `.env` 文件，在 `.env` 文件新增以下内容
+
+```.env
+# DATABASE_URL 格式为 mysql://用户名:用户密码@数据库IP:数据库端口/需要连接的数据库名
+# 根据实际情况进行修改
+DATABASE_URL="mysql://root:123456@127.0.0.1:3306/fuxiaochen"
+```
+
+#### 配置 `.env.development` 文件
+
+> `.env.development` 文件是开发环境的配置文件，Next.js 在开发模式会自动加载 .env.development 的内容
+
+复制一份 `.env.example`，重命名为 `.env.development`，根据自己实际情况修改以下字段
+
+Github 登录用，如果不用 Github 登录，可不配置
+
+- `AUTH_GITHUB_ID`：Github 授权应用 ID
+- `AUTH_GITHUB_SECRET`：Github 授权应用 secret
+
+Google 登录用，如果不用 Github 登录，可不配置
+
+- `AUTH_GOOGLE_ID`：Google 授权应用 ID
+- `AUTH_GOOGLE_SECRET`：Google 授权应用 secret
+
+必须配置
+
+- `NEXT_PUBLIC_ADMIN_EMAILS`：ADMIN 邮箱列表，只有配置在这里的邮箱，才允许在后台管理进行新增、修改、删除操作
+
+如何获取授权应用的 ID 和 secret，可以跟着小付哥（不是我）这篇文章来：[基于Next14+Auth5实现Github、Google、Gitee平台授权登录和邮箱密码登录](https://juejin.cn/post/7329736763060518931)
+
+### 启动开发服务器
+
+1. 创建表
+
+```shell
+pnpm db:push
+```
+
+2. 生成 Prisma 类型文件
+
+```shell
+pnpm db:gen
+```
+
+做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shipt + P，然后选 Reload Window），重新加载TypeScript类型文件
+
+3. 启动开发服务器
+
+```shell
+pnpm dev
 ```
 
 ## 反馈
 
-欢迎给我发邮件反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
+遇到任何问题，欢迎给我发邮件反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
 
 ## 部署
 
