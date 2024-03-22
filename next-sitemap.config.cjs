@@ -13,12 +13,15 @@ module.exports = {
         userAgent: '*',
       },
       {
+        userAgent: '*',
         disallow: ['/admin/', '/admin/*'],
       },
       {
+        userAgent: '*',
         disallow: ['/auth/', '/auth/*'],
       },
       {
+        userAgent: '*',
         allow: '/',
       },
     ],
