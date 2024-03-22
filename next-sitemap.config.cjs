@@ -11,9 +11,15 @@ module.exports = {
     policies: [
       {
         userAgent: '*',
+      },
+      {
+        disallow: ['/admin/', '/admin/*'],
+      },
+      {
+        disallow: ['/auth/', '/auth/*'],
+      },
+      {
         allow: '/',
-        // 不允许爬虫爬取admin页面
-        disallow: ['/admin/', '/auth/'],
       },
     ],
   },
