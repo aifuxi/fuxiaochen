@@ -74,7 +74,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
           创建笔记
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>创建笔记</DialogTitle>
         </DialogHeader>
@@ -140,7 +140,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   <FormItem>
                     <FormLabel>内容</FormLabel>
                     <FormControl>
-                      <div id="create-note-editor">
+                      <div id="note-editor">
                         <BytemdEditor
                           body={field.value}
                           setContent={field.onChange}

@@ -1,6 +1,6 @@
 /* 创建、编辑笔记的编辑器高度 */
 #note-editor .bytemd {
-  @apply h-[50vh] min-h-[480px];
+  @apply h-[60vh] min-h-[560px];
 }
 
 /* 创建、编辑博客、片段的编辑器高度 */
@@ -98,7 +98,7 @@
 
 /* 编辑器内图片链接样式 */
 .cm-string {
-  @apply !text-rose-500 dark:!text-rose-600;
+  @apply !break-all !text-rose-500 dark:!text-rose-600;
 }
 
 /* 编辑器内光标颜色 */
