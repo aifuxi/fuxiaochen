@@ -172,7 +172,7 @@ export const EditSnippetForm = () => {
                         }
                         multiple
                         clearable
-                        selectPlaceholder="请选择Blog标签（多选）"
+                        selectPlaceholder="请选择标签"
                         value={field.value}
                         onValueChange={field.onChange}
                       />
