@@ -32,15 +32,15 @@ export const codeBlockPlugin = (): BytemdPlugin => {
             node.children.push(copyBtnNode);
           }
 
-          visit(tree, 'element', (code) => {
+          visit(tree, 'element', (code, idx, parent) => {
             if (code.tagName === 'code') {
               const language = code.properties?.className
                 ?.filter((cs) => cs.startsWith('language'))[0]
                 ?.split('-')[1]
                 ?.split(':')[0];
 
-              if (language) {
-                node.properties['data-language'] = language;
+              if (language && !parent.properties['data-language']) {
+                parent.properties['data-language'] = language;
               }
             }
           });
