@@ -8,16 +8,14 @@
 
 - PC端访问：https://fuxiaochen.com
 
-<img src="./public/images/pc-home-dark.png" alt="pc-home-dark" style="max-width:75%;" />
-<img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" style="max-width:75%;" />
-<img src="./public/images/pc-home.png" alt="pc-home" style="max-width:75%;" />
-<img src="./public/images/pc-admin.png" alt="ppc-admin" style="max-width:75%;" />
+| <img src="./public/images/pc-home-dark.png" alt="pc-home-dark" /> | <img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" /> |
+| ------------- | ------------- |
+| <img src="./public/images/pc-home.png" alt="pc-home" /> | <img src="./public/images/pc-admin.png" alt="ppc-admin" /> |
 
 - 移动端扫描👇下面二维码访问：
 
-  <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" style="max-width:25%;" />
-
-  <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" style="max-width:50%;" />
+| <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" /> | <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" /> |
+| ------------- | ------------- |
 
 ## 启动项目
 
@@ -37,7 +35,7 @@ $ pnpm dev
 
 ## 反馈
 
-欢迎给我反馈，欢迎提 Issue
+欢迎给我反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
 
 ## 部署
 
