@@ -167,6 +167,27 @@ pnpm db:gen
 pnpm dev
 ```
 
+4. 预览
+
+- 访问前台: http://localhost:6121
+- 访问后台管理: http://localhost:6121/admin
+
+5. 查看数据库
+
+这里推荐使用 Prisma Studio 查看数据，你也可以使用数据库连接软件连接我们的数据库查看数据
+
+新开一个终端，在项目根目录下运行
+
+```shell
+pnpm db:studio
+```
+
+启动完后会自动打开浏览器，可以在线查看数据库内的数据
+
+### 自定义页面的信息
+
+你可能想修改页面中的信息，请修改 `constants/info.ts` 文件
+
 ## 反馈
 
 遇到任何问题，欢迎给我发邮件反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
