@@ -9,12 +9,12 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 
-import { IconBarandGithub, IconLogoGoogle } from '@/components/icons';
+import { IconBarandGithub } from '@/components/icons';
 import { NextLink } from '@/components/next-link';
 
 import { PATHS } from '@/constants';
 
-import { signinWithGithub, signinWithGoogle } from '../actions/signin';
+import { signinWithGithub } from '../actions/signin';
 
 export const SignInPage = () => {
   return (
@@ -46,14 +46,18 @@ export const SignInPage = () => {
                 </span>
               </div>
             </div>
-            <Button
+            {/* <Button
               variant="default"
-              className="!w-full"
+              className="!w-full !cursor-not-allowed"
               type="button"
+              disabled
               onClick={handleSigninWithGoogle}
             >
               <IconLogoGoogle className="mr-2 text-base" /> 使用 Google 登录
             </Button>
+            <p className="text-muted-foreground text-xs">
+              国内服务器无法访问 Google，登录没法用
+            </p> */}
           </div>
         </CardFooter>
       </Card>
@@ -63,7 +67,7 @@ export const SignInPage = () => {
   async function handleSigninWithGithub() {
     await signinWithGithub();
   }
-  async function handleSigninWithGoogle() {
-    await signinWithGoogle();
-  }
+  // async function handleSigninWithGoogle() {
+  //   await signinWithGoogle();
+  // }
 };
