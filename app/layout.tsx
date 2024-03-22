@@ -8,6 +8,7 @@ import { ReactHotToaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { BackToTop } from '@/components/back-to-top';
+import { Console } from '@/components/console';
 import { Favicon } from '@/components/favicon';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants';
@@ -45,6 +46,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             <BackToTop />
 
             <ReactHotToaster />
+
+            <Console />
 
             <Favicon />
           </NextThemeProvider>
