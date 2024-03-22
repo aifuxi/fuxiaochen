@@ -11,7 +11,7 @@ export const GITHUB_PAGE = 'https://github.com/aifuxi';
 export const SOURCE_CODE_GITHUB_PAGE = 'https://github.com/aifuxi/fuxiaochen';
 
 /** 掘金个人页 */
-export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494/posts';
+export const JUEJIN_PAGE = 'https://juejin.cn/user/2647279733052494';
 
 /** B站个人页 */
 export const BILIBILI_PAGE = 'https://space.bilibili.com/315542317';
