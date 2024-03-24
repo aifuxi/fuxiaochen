@@ -20,7 +20,7 @@ export const ToggleBlogPublishSwitch = ({
   return <Switch checked={published} onCheckedChange={handleCheckedChange} />;
 
   async function handleCheckedChange() {
-    toggleBlogPublishQuery.run(id);
+    await toggleBlogPublishQuery.runAsync(id);
     await refreshAsync();
   }
 };
