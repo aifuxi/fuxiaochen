@@ -207,6 +207,22 @@ pnpm db:studio
 
 ...待补充
 
+## 感谢
+
+本站开发时，借鉴了以下这些优秀网站（排名不分先后）的很多设计
+
+- [shadcn/ui](https://ui.shadcn.com/)
+
+- [薇尔薇](https://vio.vin/)
+
+- [小植同学](https://blog.xiaoztx.top/)
+
+- [掘金](https://juejin.cn/extension)
+
+- [Orbstack · Blog](https://orbstack.dev/blog)
+
+- [Shiro](https://github.com/Innei/Shiro)
+
 ## LICENCE
 
 MIT
