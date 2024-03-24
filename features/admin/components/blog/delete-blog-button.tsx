@@ -50,7 +50,7 @@ export const DeleteBlogButton = ({
   );
 
   async function handleDelete() {
-    deleteBlogQuery.run(id);
+    await deleteBlogQuery.runAsync(id);
     await refreshAsync();
   }
 };

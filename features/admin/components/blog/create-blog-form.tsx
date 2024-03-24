@@ -270,8 +270,8 @@ export const CreateBlogForm = () => {
     </Form>
   );
 
-  function handleSubmit(values: CreateBlogDTO) {
-    createBlogQuery.run(values);
+  async function handleSubmit(values: CreateBlogDTO) {
+    await createBlogQuery.runAsync(values);
     router.push(PATHS.ADMIN_BLOG);
   }
 

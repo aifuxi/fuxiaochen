@@ -289,8 +289,8 @@ export const EditBlogForm = () => {
     </Form>
   );
 
-  function handleSubmit(values: UpdateBlogDTO) {
-    updateBlogQuery.run(values);
+  async function handleSubmit(values: UpdateBlogDTO) {
+    await updateBlogQuery.runAsync(values);
     router.push(PATHS.ADMIN_BLOG);
   }
 
