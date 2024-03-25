@@ -8,7 +8,6 @@ export const useGetTags = (params: GetTagsDTO) => {
   return useRequest(() => getTags(params), {
     refreshDeps: [params],
     loadingDelay: 300,
-    refreshOnWindowFocus: true,
   });
 };
 
