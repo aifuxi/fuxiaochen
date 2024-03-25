@@ -7,6 +7,5 @@ export const useGetSnippets = (params: GetSnippetsDTO) => {
   return useRequest(() => getSnippets(params), {
     refreshDeps: [params],
     loadingDelay: 300,
-    refreshOnWindowFocus: true,
   });
 };

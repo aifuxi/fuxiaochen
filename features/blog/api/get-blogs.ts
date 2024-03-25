@@ -7,6 +7,5 @@ export const useGetBlogs = (params: GetBlogsDTO) => {
   return useRequest(() => getBlogs(params), {
     refreshDeps: [params],
     loadingDelay: 300,
-    refreshOnWindowFocus: true,
   });
 };
