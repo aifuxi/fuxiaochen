@@ -5,6 +5,7 @@ import React from 'react';
 import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
+import { isUndefined } from 'lodash-es';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -43,7 +44,7 @@ import {
   TAG_TYPE_MAP,
 } from '@/constants';
 import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
-import { toSlashDateString } from '@/lib/utils';
+import { cn, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -277,7 +278,11 @@ export const AdminTagListPage = () => {
           }
           value={inputParams.type}
         >
-          <SelectTrigger className="text-muted-foreground">
+          <SelectTrigger
+            className={cn({
+              'text-muted-foreground': isUndefined(inputParams.type),
+            })}
+          >
             <SelectValue placeholder="请选择类型" />
           </SelectTrigger>
           <SelectContent>

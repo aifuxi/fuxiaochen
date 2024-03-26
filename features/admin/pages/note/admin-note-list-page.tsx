@@ -4,6 +4,7 @@ import React from 'react';
 
 import { TagTypeEnum } from '@prisma/client';
 import { useSetState } from 'ahooks';
+import { isUndefined } from 'lodash-es';
 
 import { type WithSession } from '@/types';
 
@@ -37,7 +38,7 @@ import {
 } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
 import { useGetAllTags } from '@/features/tag';
-import { isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
+import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -112,7 +113,11 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
             }
             value={inputParams.published}
           >
-            <SelectTrigger className="text-muted-foreground">
+            <SelectTrigger
+              className={cn({
+                'text-muted-foreground': isUndefined(inputParams.published),
+              })}
+            >
               <SelectValue placeholder="请选择发布状态" />
             </SelectTrigger>
             <SelectContent>
