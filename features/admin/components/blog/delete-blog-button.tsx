@@ -4,8 +4,6 @@ import React from 'react';
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -14,7 +12,10 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 
-import { IconSolarTrashBinMinimalistic2 } from '@/components/icons';
+import {
+  IconMingcuteLoadingLine,
+  IconSolarTrashBinMinimalistic2,
+} from '@/components/icons';
 
 import { useDeleteBlog } from '@/features/blog';
 
@@ -27,23 +28,35 @@ export const DeleteBlogButton = ({
   id,
   refreshAsync,
 }: DeleteBlogButtonProps) => {
+  const [open, setOpen] = React.useState(false);
   const deleteBlogQuery = useDeleteBlog();
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="ghost">
+        <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
           <IconSolarTrashBinMinimalistic2 className="text-destructive text-base" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogTrigger>
-          <AlertDialogTitle>删除Blog</AlertDialogTitle>
-          <AlertDialogDescription>确定要删除该Blog吗？</AlertDialogDescription>
+          <AlertDialogTitle>删除博客</AlertDialogTitle>
+          <AlertDialogDescription>确定要删除该博客吗？</AlertDialogDescription>
         </AlertDialogTrigger>
         <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>删除</AlertDialogAction>
+          <Button
+            variant="outline"
+            disabled={deleteBlogQuery.loading}
+            onClick={() => setOpen(false)}
+          >
+            取消
+          </Button>
+          <Button onClick={handleDelete} disabled={deleteBlogQuery.loading}>
+            {deleteBlogQuery.loading && (
+              <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+            )}
+            删除
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
@@ -51,6 +64,7 @@ export const DeleteBlogButton = ({
 
   async function handleDelete() {
     await deleteBlogQuery.runAsync(id);
+    setOpen(false);
     await refreshAsync();
   }
 };

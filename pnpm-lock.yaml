@@ -38,6 +38,9 @@ dependencies:
   '@iconify-json/logos':
     specifier: ^1.1.42
     version: 1.1.42
+  '@iconify-json/mingcute':
+    specifier: ^1.1.17
+    version: 1.1.17
   '@iconify-json/skill-icons':
     specifier: ^1.1.8
     version: 1.1.8
@@ -1123,6 +1126,12 @@ packages:
 
   /@iconify-json/logos@1.1.42:
     resolution: {integrity: sha512-/f+frtPm3m3Z30oy8Pk+QqRDkbmAiIaWGPl5CmsCXm15MVfvw9a/V/gD7WzdyuSGAZcFuQaqbHXj92y/n+2ifg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
+
+  /@iconify-json/mingcute@1.1.17:
+    resolution: {integrity: sha512-WTKnn5OicUo18dE3rkJs00sUjOIAui8Ut9yZSXamRfjzmLxuX9FKqYQAbFXaV6lw0T4QwBQ8/y4ftaWl/1Entg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: false

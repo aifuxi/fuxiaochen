@@ -10,6 +10,6 @@ export const IconBrandBilibili = ({
     <span
       {...props}
       className={cn('icon-[fa6-brands--bilibili]', className)}
-    >Bilibili</span>
+    ></span>
   );
 };

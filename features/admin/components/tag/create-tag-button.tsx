@@ -31,7 +31,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { IconSolarAddSquare, IconSolarRestartLinear } from '@/components/icons';
+import {
+  IconMingcuteLoadingLine,
+  IconSolarAddSquare,
+} from '@/components/icons';
 
 import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
 import {
@@ -145,7 +148,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createTagQuery.loading && (
-                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
+                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
                   )}
                   创建
                 </Button>

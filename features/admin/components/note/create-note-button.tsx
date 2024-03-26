@@ -26,7 +26,10 @@ import {
 import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
-import { IconSolarAddSquare, IconSolarRestartLinear } from '@/components/icons';
+import {
+  IconMingcuteLoadingLine,
+  IconSolarAddSquare,
+} from '@/components/icons';
 
 import {
   type CreateNoteDTO,
@@ -159,7 +162,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createNoteQuery.loading && (
-                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
+                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
                   )}
                   创建
                 </Button>

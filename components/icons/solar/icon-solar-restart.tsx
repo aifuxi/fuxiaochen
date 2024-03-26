@@ -25,15 +25,3 @@ export const IconSolarRestart = ({
     ></span>
   );
 };
-
-export const IconSolarRestartLinear = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => {
-  return (
-    <span
-      {...props}
-      className={cn('icon-[solar--restart-linear]', className)}
-    ></span>
-  );
-};
