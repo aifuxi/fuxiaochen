@@ -23,7 +23,7 @@ export const Sidenav = async () => {
       <h4 className="hidden lg:block text-lg font-semibold tracking-tight mt-2 text-primary-foreground">
         {session?.user?.name ?? PLACEHODER_TEXT}
       </h4>
-      <div className="w-full flex-col flex items-center mt-24 space-y-8">
+      <div className="w-full flex-col flex items-center mt-24 space-y-4">
         <Sidebar />
       </div>
       <div className="mt-24 flex justify-center lg:grid w-full">
