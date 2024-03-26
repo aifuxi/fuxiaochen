@@ -26,7 +26,7 @@ import {
 import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
-import { IconSolarPen, IconSolarRestartLinear } from '@/components/icons';
+import { IconMingcuteLoadingLine, IconSolarPen } from '@/components/icons';
 
 import {
   type UpdateNoteDTO,
@@ -160,7 +160,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                   disabled={updateNoteQuery.loading}
                 >
                   {updateNoteQuery.loading && (
-                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
+                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
                   )}
                   保存
                 </Button>

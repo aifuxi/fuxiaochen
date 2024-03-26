@@ -6,11 +6,11 @@ import { type Message } from 'react-hook-form';
 import toast, { type ToastOptions, Toaster } from 'react-hot-toast';
 
 import {
+  IconMingcuteLoadingLine,
   IconSolarCheckCircle,
   IconSolarDangerCircle,
   IconSolarDangerTriangle,
   IconSolarInfoCircle,
-  IconSolarRestartLinear,
 } from '@/components/icons';
 
 export const ReactHotToaster = () => {
@@ -64,7 +64,7 @@ export const showErrorToast = (msg: Message, opts?: ToastOptions) => {
 export const showLoadingToast = (msg: Message, opts?: ToastOptions) => {
   return toast(msg, {
     ...opts,
-    icon: <IconSolarRestartLinear className="text-xl animate-spin" />,
+    icon: <IconMingcuteLoadingLine className="text-xl animate-spin" />,
     className:
       'bg-foreground border !text-primary dark:!text-primary-foreground !shadow  !rounded-2xl !font-semibold !px-3 !py-2 !text-sm',
   });

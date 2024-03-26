@@ -4,8 +4,6 @@ import React from 'react';
 
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -15,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 
 import {
-  IconSolarRestartLinear,
+  IconMingcuteLoadingLine,
   IconSolarTrashBinMinimalistic2,
 } from '@/components/icons';
 
@@ -30,12 +28,13 @@ export const DeleteNoteButton = ({
   id,
   refreshAsync,
 }: DeleteNoteButtonProps) => {
+  const [open, setOpen] = React.useState(false);
   const deleteNoteQuery = useDeleteNote();
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="outline">
+        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
           <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
         </Button>
       </AlertDialogTrigger>
@@ -45,16 +44,19 @@ export const DeleteNoteButton = ({
           <AlertDialogDescription>确定要删除该笔记吗？</AlertDialogDescription>
         </AlertDialogTrigger>
         <AlertDialogFooter>
-          <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleDeleteNote}
+          <Button
+            variant="outline"
             disabled={deleteNoteQuery.loading}
+            onClick={() => setOpen(false)}
           >
+            取消
+          </Button>
+          <Button onClick={handleDeleteNote} disabled={deleteNoteQuery.loading}>
             {deleteNoteQuery.loading && (
-              <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
+              <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
             )}
             删除
-          </AlertDialogAction>
+          </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

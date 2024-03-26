@@ -36,7 +36,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-import { IconSolarPen, IconSolarRestartLinear } from '@/components/icons';
+import { IconMingcuteLoadingLine, IconSolarPen } from '@/components/icons';
 
 import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
 import {
@@ -184,7 +184,7 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                   disabled={updateTagQuery.loading}
                 >
                   {updateTagQuery.loading && (
-                    <IconSolarRestartLinear className="mr-2 text-base animate-spin" />
+                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
                   )}
                   保存
                 </Button>
