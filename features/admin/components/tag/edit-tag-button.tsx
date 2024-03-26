@@ -45,7 +45,7 @@ import {
   useGetTag,
   useUpdateTag,
 } from '@/features/tag';
-import { toSlug } from '@/lib/utils';
+import { cn, toSlug } from '@/lib/utils';
 
 type EditTagButtonProps = {
   id: string;
@@ -160,7 +160,11 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormLabel>类型</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-muted-foreground">
+                        <SelectTrigger
+                          className={cn({
+                            'text-muted-foreground': !field.value,
+                          })}
+                        >
                           <SelectValue placeholder="标签类型" />
                         </SelectTrigger>
                       </FormControl>

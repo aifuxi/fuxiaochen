@@ -42,7 +42,7 @@ import {
   createTagSchema,
   useCreateTag,
 } from '@/features/tag';
-import { toSlug } from '@/lib/utils';
+import { cn, toSlug } from '@/lib/utils';
 
 type CreateTagButtonProps = {
   refreshAsync: () => Promise<unknown>;
@@ -119,12 +119,13 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>类型</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-muted-foreground">
+                        <SelectTrigger
+                          className={cn({
+                            'text-muted-foreground': !field.value,
+                          })}
+                        >
                           <SelectValue placeholder="请选择标签" />
                         </SelectTrigger>
                       </FormControl>

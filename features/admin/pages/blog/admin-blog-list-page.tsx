@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
+import { isUndefined } from 'lodash-es';
 
 import { type WithSession } from '@/types';
 
@@ -56,7 +57,7 @@ import {
 } from '@/constants';
 import { type Blog, type GetBlogsDTO, useGetBlogs } from '@/features/blog';
 import { useGetAllTags } from '@/features/tag';
-import { isAdmin, toSlashDateString } from '@/lib/utils';
+import { cn, isAdmin, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
@@ -309,7 +310,11 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
             }
             value={inputParams.published}
           >
-            <SelectTrigger className="text-muted-foreground">
+            <SelectTrigger
+              className={cn({
+                'text-muted-foreground': isUndefined(inputParams.published),
+              })}
+            >
               <SelectValue placeholder="请选择发布状态" />
             </SelectTrigger>
             <SelectContent>
