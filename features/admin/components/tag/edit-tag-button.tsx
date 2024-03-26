@@ -158,10 +158,7 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>类型</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="text-muted-foreground">
                           <SelectValue placeholder="标签类型" />
