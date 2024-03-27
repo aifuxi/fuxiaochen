@@ -161,7 +161,7 @@ export const Combobox = React.forwardRef(
               onValueChange={(e) => {
                 setSearch(e);
               }}
-              placeholder={props.searchPlaceholder ?? 'Search for an option'}
+              placeholder={props.searchPlaceholder ?? '请输入要搜索的内容'}
             />
             <CommandEmpty>{props.emptyText ?? 'No results found'}</CommandEmpty>
             <CommandGroup>
