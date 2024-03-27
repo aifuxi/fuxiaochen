@@ -81,12 +81,22 @@ export const handleMultipleSelect = (
 export const Combobox = React.forwardRef(
   (props: ComboboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     const [open, setOpen] = React.useState(false);
+    const [search, setSearch] = React.useState('');
 
     const tagMap = React.useMemo(() => {
       return new Map<string, string>(
         props?.options?.map((el) => [el.value, el.label]) ?? [],
       );
     }, [props?.options]);
+
+    const filteredOptions = React.useMemo(() => {
+      return props.options.filter((el) =>
+        el.label
+          .toLowerCase()
+          .trim()
+          .includes(search?.trim()?.toLowerCase()),
+      );
+    }, [props?.options, search]);
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -144,16 +154,20 @@ export const Combobox = React.forwardRef(
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="p-0">
-          <Command>
+          <Command shouldFilter={false}>
             <CommandInput
               ref={ref}
+              value={search}
+              onValueChange={(e) => {
+                setSearch(e);
+              }}
               placeholder={props.searchPlaceholder ?? 'Search for an option'}
             />
             <CommandEmpty>{props.emptyText ?? 'No results found'}</CommandEmpty>
             <CommandGroup>
               <ScrollArea>
                 <div className="max-h-60">
-                  {props?.options?.map((option) => (
+                  {filteredOptions?.map((option) => (
                     <CommandItem
                       key={option.value}
                       value={option.value.toLowerCase().trim()}
