@@ -255,7 +255,7 @@ export const AdminSnippetListPage = ({ session }: WithSession) => {
           action={
             <Button onClick={handleGoToCreate}>
               <IconSolarAddSquare className="mr-2 text-base" />
-              创建 Snippet
+              创建片段
             </Button>
           }
         />
