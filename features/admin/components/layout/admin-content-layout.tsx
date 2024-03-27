@@ -19,10 +19,11 @@ export const AdminContentLayout = ({
   pageHeader,
 }: AdminContentLayoutProps) => {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
-  const scroll = useScroll(scrollRef);
+
+  const scroll = useScroll(() => scrollRef?.current);
 
   return (
-    <div ref={scrollRef} className="w-full flex flex-col space-y-4 relative">
+    <div className="w-full flex flex-col space-y-4 relative">
       <div
         className={cn(
           'sticky top-0 bg-background p-12 pb-2 backdrop-blur-lg transition-[background-color,border-width]',
@@ -32,7 +33,10 @@ export const AdminContentLayout = ({
       >
         {pageHeader}
       </div>
-      <ScrollArea className="lg:px-12 animate-fade h-[calc(100vh-174px)]">
+      <ScrollArea
+        className="lg:px-12 animate-fade h-[calc(100vh-174px)]"
+        scrollAreaRef={scrollRef}
+      >
         {children}
       </ScrollArea>
 

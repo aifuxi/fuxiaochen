@@ -2,11 +2,11 @@
 
 import React from 'react';
 
-import { useBoolean, useScroll } from 'ahooks';
+import { useMemoizedFn, useScroll } from 'ahooks';
 
 import { Button } from '@/components/ui/button';
 
-import { cn, isBrowser } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 import { IconSolarAltArrowUpLinear } from '../icons';
 
@@ -14,32 +14,28 @@ type BackToTopProps = {
   scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
 };
 
-export const BackToTop = ({ scrollRef: scrollElement }: BackToTopProps) => {
-  const [visible, { setFalse, setTrue }] = useBoolean(false);
-  const [target] = React.useState(
-    isBrowser() && (scrollElement?.current ?? document.documentElement),
-  );
-  const scroll = useScroll(
-    () => scrollElement?.current ?? document.documentElement,
-  );
+export const BackToTop = ({ scrollRef }: BackToTopProps) => {
+  // 特别注意：useScroll 用的是 document 而不是 document.documentElement
+  // useScroll 如果设置的是 document.documentElement，scroll.top 一直为 0
+  const scroll = useScroll(() => scrollRef?.current || document);
 
-  React.useEffect(() => {
-    if ((scroll?.top ?? 0) > 100) {
-      setTrue();
-    } else {
-      setFalse();
+  const handleClick = useMemoizedFn(() => {
+    if (scrollRef?.current) {
+      scrollRef?.current.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
-  }, [scroll, setFalse, setTrue]);
+
+    // 这里回到顶部使用 document.documentElement，因为 document 上没有 scrollTo 这个方法
+    document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 
   return (
     <Button
-      className={cn('fixed bottom-8 right-8', !visible && 'hidden')}
+      className={cn('fixed bottom-8 right-8', {
+        hidden: (scroll?.top ?? 0) < 100,
+      })}
       size={'icon'}
-      onClick={() => {
-        if (target) {
-          target.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      }}
+      onClick={handleClick}
     >
       <IconSolarAltArrowUpLinear className="text-2xl" />
     </Button>
