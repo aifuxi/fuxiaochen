@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import { TagTypeEnum } from '@prisma/client';
 import { useSetState } from 'ahooks';
@@ -89,7 +90,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
         />
       }
     >
-      <div className="lg:w-[65ch] mx-auto grid gap-4 p-1">
+      <div className="grid gap-4 grid-cols-4 px-2 py-4">
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
@@ -150,7 +151,7 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
             });
           }}
         />
-        <div className="flex items-center space-x-4 justify-end">
+        <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <IconSolarMinimalisticMagnifer className="mr-2" />
             搜索
@@ -160,31 +161,40 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
             重置
           </Button>
         </div>
+      </div>
 
-        <ul className="grid gap-4 w-full lg:w-[65ch]  mx-auto">
+      <ResponsiveMasonry
+        columnsCountBreakPoints={{
+          // BreakPoints https://tailwindcss.com/docs/responsive-design
+          350: 1,
+          // lg
+          1024: 2,
+          // 2xl
+          1536: 3,
+        }}
+      >
+        <Masonry gutter="1rem">
           {getNotesQuery.loading
-            ? Array.from({ length: 4 }).map((_, idx) => (
-                <li key={idx}>
-                  <Skeleton className="h-[200px] w-full rounded-lg" />
-                </li>
+            ? Array.from({ length: 8 }).map((_, idx) => (
+                <div key={idx}>
+                  <Skeleton className="h-[400px] w-full rounded-lg" />
+                </div>
               ))
             : data.map((note) => (
-                <li key={note.id} className="w-full">
+                <div key={note.id} className="w-full">
                   <div className="w-full border rounded-lg px-6 relative pb-6">
                     <BytemdViewer body={note.body || ''} />
-                    <div className="grid grid-cols-12 pt-4">
-                      <div className="col-span-6 flex flex-wrap gap-2 mb-1">
-                        {note.tags?.map((tag) => (
-                          <Badge key={tag.id}>{tag.name}</Badge>
-                        ))}
-                      </div>
-                      <div className="col-span-6 tracking-wide flex-1 flex items-end justify-end text-sm text-muted-foreground">
-                        <span className="hidden lg:inline-block">
-                          {toSlashDateString(note.createdAt)}
-                        </span>
-                        <span className="mx-2 hidden lg:inline-block">·</span>
-                        <span>{toFromNow(note.createdAt)}</span>
-                      </div>
+                    <div className="flex justify-end gap-2 flex-wrap py-4">
+                      {note.tags?.map((tag) => (
+                        <Badge key={tag.id}>{tag.name}</Badge>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-end text-sm text-muted-foreground">
+                      <span className="hidden lg:inline-block">
+                        {toSlashDateString(note.createdAt)}
+                      </span>
+                      <span className="mx-2 hidden lg:inline-block">·</span>
+                      <span>{toFromNow(note.createdAt)}</span>
                     </div>
                     <div className="absolute right-2 top-2 space-x-2">
                       <ToggleNotePublishButton
@@ -202,29 +212,29 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
                       />
                     </div>
                   </div>
-                </li>
+                </div>
               ))}
-        </ul>
+        </Masonry>
+      </ResponsiveMasonry>
 
-        {!getNotesQuery.loading && (
-          <div className="flex items-center justify-betweens">
-            {pageCount > 1 && (
-              <PaginationInfo
-                total={getNotesQuery.data?.total}
-                params={{ ...params }}
-              />
-            )}
-            <div className="flex-1 flex items-center justify-end">
-              <Pagination
-                total={getNotesQuery.data?.total}
-                params={{ ...params }}
-                updateParams={updateParams}
-                showSizeChanger
-              />
-            </div>
+      {!getNotesQuery.loading && (
+        <div className="flex items-center justify-betweens">
+          {pageCount > 1 && (
+            <PaginationInfo
+              total={getNotesQuery.data?.total}
+              params={{ ...params }}
+            />
+          )}
+          <div className="flex-1 flex items-center justify-end">
+            <Pagination
+              total={getNotesQuery.data?.total}
+              params={{ ...params }}
+              updateParams={updateParams}
+              showSizeChanger
+            />
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </AdminContentLayout>
   );
 
