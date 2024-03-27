@@ -70,7 +70,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   }, [form, open]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
           <IconSolarAddSquare className="mr-2 text-base" />
