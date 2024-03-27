@@ -105,17 +105,22 @@ export const Combobox = React.forwardRef(
             role="combobox"
             variant="outline"
             aria-expanded={open}
-            className="w-full justify-between hover:bg-secondary/20 active:scale-100"
+            className="w-full inline-flex justify-between hover:bg-secondary/20 active:scale-100 whitespace-normal h-full"
           >
-            <span className="line-clamp-1 text-left font-normal text-muted-foreground">
+            <div
+              className={cn(
+                'w-full text-left font-normal text-muted-foreground flex flex-row flex-wrap gap-x-2 gap-y-1',
+                {
+                  'line-clamp-1': !props.multiple,
+                },
+              )}
+            >
               {/* 多选 */}
               {props.multiple &&
                 props.value &&
                 Boolean(props.value.length) &&
                 props.value?.map((el) => (
-                  <Badge key={el} className="mr-2">
-                    {tagMap.get(el)}
-                  </Badge>
+                  <Badge key={el}>{tagMap.get(el)}</Badge>
                 ))}
 
               {/* 单选 */}
@@ -128,7 +133,7 @@ export const Combobox = React.forwardRef(
               {/* 空态 */}
               {(!props.value || props.value.length === 0) &&
                 (props.selectPlaceholder ?? 'Select an option')}
-            </span>
+            </div>
             <div className="flex h-full items-center shrink-0">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
