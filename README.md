@@ -16,7 +16,7 @@
 - PC端预览：
 
   - 前台：https://fuxiaochen.com
-  - 后台管理：https://fuxiaochen.com/admin
+  - 后台管理：https://fuxiaochen.com/admin（Github登录）
 
 | <img src="./public/images/pc-home-dark.png" alt="pc-home-dark" /> | <img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" /> |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -141,7 +141,7 @@ Github 登录用，如果不用 Github 登录，可不配置
 - `AUTH_GITHUB_ID`：Github 授权应用 ID
 - `AUTH_GITHUB_SECRET`：Github 授权应用 secret
 
-Google 登录用，如果不用 Github 登录，可不配置
+Google 登录用，如果不用 Google 登录，可不配置
 
 - `AUTH_GOOGLE_ID`：Google 授权应用 ID
 - `AUTH_GOOGLE_SECRET`：Google 授权应用 secret
