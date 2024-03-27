@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { TagTypeEnum } from '@prisma/client';
@@ -12,7 +13,7 @@ import { isUndefined } from 'lodash-es';
 import { type WithSession } from '@/types';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Combobox } from '@/components/ui/combobox';
 import { DataTable } from '@/components/ui/data-table';
@@ -24,11 +25,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 
 import { Highlight } from '@/components/highlight';
 import {
@@ -234,18 +230,20 @@ export const AdminBlogListPage = ({ session }: WithSession) => {
       cell: ({ row }) => {
         return (
           <div className="flex gap-2 items-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size={'icon'}
-                  variant="ghost"
-                  onClick={() => handleGoToEdit(row.original.id)}
-                >
-                  <IconSolarPen className="text-base" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>编辑</TooltipContent>
-            </Tooltip>
+            <Link
+              className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+              href={`${PATHS.SITE_BLOG}/${row.original.slug}`}
+              target="_blank"
+            >
+              <IconSolarEyeBold className="text-base" />
+            </Link>
+            <Button
+              size={'icon'}
+              variant="ghost"
+              onClick={() => handleGoToEdit(row.original.id)}
+            >
+              <IconSolarPen className="text-base" />
+            </Button>
             <DeleteBlogButton
               id={row.original.id}
               refreshAsync={getBlogsQuery.refreshAsync}
