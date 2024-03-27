@@ -7,7 +7,6 @@ import { NextThemeProvider } from '@/providers';
 import { ReactHotToaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-import { BackToTop } from '@/components/back-to-top';
 import { Console } from '@/components/console';
 import { Favicon } from '@/components/favicon';
 
@@ -42,8 +41,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         <TooltipProvider>
           <NextThemeProvider attribute="class">
             {children}
-
-            <BackToTop />
 
             <ReactHotToaster />
 
