@@ -9,6 +9,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { Console } from '@/components/console';
 import { Favicon } from '@/components/favicon';
+import { Fingerprint } from '@/components/fingerprint';
 
 import { NICKNAME, SLOGAN, WEBSITE } from '@/constants';
 import '@/styles/global.css';
@@ -47,6 +48,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             <Console />
 
             <Favicon />
+
+            <Fingerprint />
           </NextThemeProvider>
         </TooltipProvider>
       </body>
