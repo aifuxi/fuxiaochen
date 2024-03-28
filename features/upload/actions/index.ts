@@ -1,6 +1,5 @@
 'use server';
 
-import cuid2 from '@paralleldrive/cuid2';
 import imageType, { minimumBytes } from 'image-type';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -14,6 +13,7 @@ import { isProduction } from '@/utils/env';
 import { ERROR_NO_PERMISSION } from '@/constants';
 import { noPermission } from '@/features/user';
 import { aliOSS } from '@/lib/ali-oss';
+import { createCuid } from '@/lib/cuid';
 
 const UPLOAD_DIR = 'uploads';
 const PUBLIC_DIR = 'public';
@@ -26,7 +26,7 @@ const saveFile = async (file: File) => {
   const fileArrayBuffer = await file.arrayBuffer();
   const fileExtension = path.extname(file.name);
   const fileNameWithouExtension = file.name.replace(fileExtension, '');
-  const baseURL = `/${UPLOAD_DIR}/${fileNameWithouExtension}-${cuid2.createId()}${fileExtension}`;
+  const baseURL = `/${UPLOAD_DIR}/${fileNameWithouExtension}-${createCuid()}${fileExtension}`;
   const filePath = getFilePath(baseURL);
 
   fs.writeFileSync(filePath, Buffer.from(fileArrayBuffer));
