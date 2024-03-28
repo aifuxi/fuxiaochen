@@ -17,8 +17,6 @@ import { cn } from '@/lib/utils';
 
 import { buttonVariants } from '../ui/button';
 
-export const revalidate = 60;
-
 export const Footer = async () => {
   const pv = await getPV();
   const uv = await getUV();
