@@ -5,3 +5,4 @@ export * from './regex';
 export * from './unknown';
 export * from './pagination';
 export * from './error';
+export * from './redis';
