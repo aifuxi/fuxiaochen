@@ -16,7 +16,7 @@
 - PC端预览：
 
   - 前台：https://fuxiaochen.com
-  - 后台管理：https://fuxiaochen.com/admin（Github登录）
+  - 后台管理（需Github登录）：https://fuxiaochen.com/admin
 
 | <img src="./public/images/pc-home-dark.png" alt="pc-home-dark" /> | <img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" /> |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------- |
