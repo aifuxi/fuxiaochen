@@ -1,3 +1,5 @@
+export const REDIS_KYE_PREFIX = 'fuxiaochen:';
+
 // PV 页面浏览量，表示网站或应用程序中被浏览的页面数量。每次用户加载或刷新一个页面，就会增加一次 PV。
 export const REDIS_PAGE_VIEW = 'page_view';
 
