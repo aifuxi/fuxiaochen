@@ -12,8 +12,17 @@ import {
   PATHS,
   PATHS_MAP,
 } from '@/constants';
+import { getPV, getUV } from '@/features/statistics';
+import { cn } from '@/lib/utils';
 
-export const Footer = () => {
+import { buttonVariants } from '../ui/button';
+
+export const revalidate = 60;
+
+export const Footer = async () => {
+  const pv = await getPV();
+  const uv = await getUV();
+
   return (
     <footer className="w-full flex flex-col py-8 max-w-screen-xl mx-auto text-muted-foreground">
       <ul className="flex space-x-2 items-center justify-center">
@@ -30,10 +39,32 @@ export const Footer = () => {
           <NextLink
             aria-label={PATHS_MAP[PATHS.SITEMAP]}
             href={PATHS.SITEMAP}
-            className="px-0"
+            className="px-0 "
           >
             {PATHS_MAP[PATHS.SITEMAP]}
           </NextLink>
+        </li>
+        <li>
+          <span className="mr-2">·</span>
+          <span
+            className={cn(
+              buttonVariants({ variant: 'link' }),
+              '!no-underline px-0 text-muted-foreground',
+            )}
+          >
+            PV：{pv || 0}
+          </span>
+        </li>
+        <li>
+          <span className="mr-2">·</span>
+          <span
+            className={cn(
+              buttonVariants({ variant: 'link' }),
+              '!no-underline px-0 text-muted-foreground',
+            )}
+          >
+            UV：{uv || 0}
+          </span>
         </li>
       </ul>
       <div className="w-full text-sm flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-2 ">
