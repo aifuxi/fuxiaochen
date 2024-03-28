@@ -4,7 +4,7 @@ import React from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
 import { TagTypeEnum } from '@prisma/client';
-import { useSetState } from 'ahooks';
+import { useRequest, useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
 
 import { type WithSession } from '@/types';
@@ -38,6 +38,7 @@ import {
   PUBLISHED_LABEL_MAP,
 } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
+import { getPV, recordPV } from '@/features/statistics';
 import { useGetAllTags } from '@/features/tag';
 import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
@@ -78,6 +79,9 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
   const tags = React.useMemo(() => {
     return getTagsQuery.data?.tags ?? [];
   }, [getTagsQuery]);
+
+  const recordPVQuery = useRequest(() => recordPV(), { manual: true });
+  const getPVQuery = useRequest(() => getPV());
 
   return (
     <AdminContentLayout
@@ -160,6 +164,8 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
             <IconSolarRestart className="mr-2" />
             重置
           </Button>
+          <Button onClick={handleRecord}>Record</Button>
+          <Button>{getPVQuery.data || 0}</Button>
         </div>
       </div>
 
@@ -260,5 +266,10 @@ export const AdminNoteListPage = ({ session }: WithSession) => {
       order: 'desc',
       orderBy: 'createdAt',
     });
+  }
+
+  async function handleRecord() {
+    await recordPVQuery.runAsync();
+    await getPVQuery.refreshAsync();
   }
 };
