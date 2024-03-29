@@ -23,6 +23,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
+import { IconMingcuteLoadingLine } from '@/components/icons';
 
 import { PATHS } from '@/constants';
 import { CreateTagButton } from '@/features/admin';
@@ -82,8 +83,12 @@ export const EditSnippetForm = () => {
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
             variant={'outline'}
+            disabled={updateSnippetQuery.loading}
             className="!w-full"
           >
+            {updateSnippetQuery.loading && (
+              <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+            )}
             保存
           </Button>
         </div>
