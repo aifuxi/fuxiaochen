@@ -2,17 +2,21 @@ import { Badge } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
+import { IconSolarEyeBold } from '@/components/icons';
 
 import { NICKNAME } from '@/constants';
 import { toFromNow } from '@/lib/utils';
+import { formatNum } from '@/utils';
 
+import { BlogEventTracking } from '../components/blog-event-tracking';
 import { type Blog } from '../types';
 
 type BlogDetailProps = {
   blog: Blog;
+  uv?: number;
 };
 
-export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
+export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
   return (
     <div className="md:max-w-screen-md 2xl:max-w-6xl md:px-0 md:mx-auto py-12 md:py-24 grid gap-9 px-6">
       <article>
@@ -30,6 +34,11 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
           <div>{blog.author ? blog.author : NICKNAME}</div>
           <span className="mx-2">·</span>
           <span>发布于 {toFromNow(blog.createdAt)}</span>
+          <span className="mx-2">·</span>
+          <div className="flex items-center space-x-1">
+            <IconSolarEyeBold />
+            <span>{formatNum(uv)} 人看过</span>
+          </div>
         </div>
         <BytemdViewer body={blog.body || ''} />
       </article>
@@ -42,6 +51,8 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
         ))}
       </div>
       <GoBack />
+
+      <BlogEventTracking blogID={blog.id} />
     </div>
   );
 };
