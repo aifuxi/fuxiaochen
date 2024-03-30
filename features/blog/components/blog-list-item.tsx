@@ -9,16 +9,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { IconSolarEyeBold } from '@/components/icons';
+
 import { NICKNAME, PATHS } from '@/constants';
 import { toFromNow } from '@/lib/utils';
+import { formatNum } from '@/utils';
 
 import { type Blog } from '../types';
 
 type BlogListItemProps = {
   blog: Blog;
+  uvMap?: Record<string, number>;
 };
 
-export const BlogListItem = ({ blog }: BlogListItemProps) => {
+export const BlogListItem = ({ blog, uvMap }: BlogListItemProps) => {
   return (
     <Link
       key={blog.id}
@@ -43,10 +47,15 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
           <TooltipContent>{blog.description}</TooltipContent>
         </Tooltip>
 
-        <div className="text-sm text-muted-foreground">
-          {blog.author ? blog.author : NICKNAME}
-          <span className="mx-2">·</span>
-          {toFromNow(blog.createdAt)}
+        <div className="text-sm text-muted-foreground flex items-center space-x-2">
+          <span>{blog.author ? blog.author : NICKNAME}</span>
+          <span>·</span>
+          <span>{toFromNow(blog.createdAt)}</span>
+          <span>·</span>
+          <div className="flex items-center space-x-1">
+            <IconSolarEyeBold />
+            <span>{formatNum(uvMap?.[blog.id])}</span>
+          </div>
         </div>
         <div className="flex flex-row gap-2">
           {blog.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}

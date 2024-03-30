@@ -50,6 +50,20 @@ export const getBlogUV = async (blogID?: string) => {
   return uv;
 };
 
+export const batchGetBlogUV = async (blogIDs?: string[]) => {
+  if (!blogIDs?.length) {
+    return;
+  }
+
+  const m = new Map<string, number>();
+  for (const id of blogIDs) {
+    const uv = await redis.scard(`${REDIS_BLOG_UNIQUE_VISITOR}:${id}`);
+    m.set(id, uv);
+  }
+
+  return m;
+};
+
 export const recordSnippetUV = async (snippetID?: string, cid?: string) => {
   if (!snippetID || !cid) {
     return;
@@ -63,4 +77,18 @@ export const getSnippetUV = async (snippetID?: string) => {
   }
   const uv = await redis.scard(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${snippetID}`);
   return uv;
+};
+
+export const batchGetSnippetUV = async (snippetIDs?: string[]) => {
+  if (!snippetIDs?.length) {
+    return;
+  }
+
+  const m = new Map<string, number>();
+  for (const id of snippetIDs) {
+    const uv = await redis.scard(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${id}`);
+    m.set(id, uv);
+  }
+
+  return m;
 };

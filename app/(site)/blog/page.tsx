@@ -6,7 +6,7 @@ import { BlogList, getPublishedBlogs } from '@/features/blog';
 export const revalidate = 60;
 
 export default async function Page() {
-  const { blogs } = await getPublishedBlogs();
+  const { blogs, uvMap } = await getPublishedBlogs();
 
   return (
     <div className="w-full flex flex-col justify-center px-6 md:max-w-screen-md  2xl:max-w-6xl  md:mx-auto pb-24 pt-8">
@@ -15,7 +15,7 @@ export default async function Page() {
         className="mb-9"
       />
 
-      <BlogList blogs={blogs} />
+      <BlogList blogs={blogs} uvMap={uvMap} />
     </div>
   );
 }

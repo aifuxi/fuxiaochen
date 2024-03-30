@@ -6,9 +6,10 @@ import { type Snippet } from '../types';
 
 type SnippetListProps = {
   snippets: Snippet[];
+  uvMap?: Record<string, number>;
 };
 
-export const SnippetList = ({ snippets }: SnippetListProps) => {
+export const SnippetList = ({ snippets, uvMap }: SnippetListProps) => {
   if (!snippets.length) {
     return (
       <div className="grid gap-8 place-content-center">
@@ -30,7 +31,7 @@ export const SnippetList = ({ snippets }: SnippetListProps) => {
             animationDelay: `${(idx + 1) * 200}ms`,
           }}
         >
-          <SnippetListItem snippet={el} />
+          <SnippetListItem snippet={el} uvMap={uvMap} />
         </li>
       ))}
     </ul>
