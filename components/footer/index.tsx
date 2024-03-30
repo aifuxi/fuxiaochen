@@ -14,6 +14,7 @@ import {
 } from '@/constants';
 import { getPV, getUV } from '@/features/statistics';
 import { cn } from '@/lib/utils';
+import { formatNum } from '@/utils';
 
 import { buttonVariants } from '../ui/button';
 
@@ -50,7 +51,7 @@ export const Footer = async () => {
               '!no-underline px-0 text-muted-foreground',
             )}
           >
-            PV：{pv || 0}
+            PV：{formatNum(pv)}
           </span>
         </li>
         <li>
@@ -61,7 +62,7 @@ export const Footer = async () => {
               '!no-underline px-0 text-muted-foreground',
             )}
           >
-            UV：{uv || 0}
+            UV：{formatNum(uv)}
           </span>
         </li>
       </ul>

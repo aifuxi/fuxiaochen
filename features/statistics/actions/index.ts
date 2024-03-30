@@ -1,6 +1,11 @@
 'use server';
 
-import { REDIS_PAGE_VIEW, REDIS_UNIQUE_VISITOR } from '@/constants';
+import {
+  REDIS_BLOG_UNIQUE_VISITOR,
+  REDIS_PAGE_VIEW,
+  REDIS_SNIPPET_UNIQUE_VISITOR,
+  REDIS_UNIQUE_VISITOR,
+} from '@/constants';
 import { redis } from '@/lib/redis';
 
 export const recordPV = async () => {
@@ -18,11 +23,44 @@ export const getPV = async () => {
   return pv;
 };
 
-export const recordUV = async (cid: string) => {
+export const recordUV = async (cid?: string) => {
+  if (!cid) {
+    return;
+  }
   await redis.sadd(REDIS_UNIQUE_VISITOR, cid);
 };
 
 export const getUV = async () => {
   const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
+  return uv;
+};
+
+export const recordBlogUV = async (blogID?: string, cid?: string) => {
+  if (!blogID || !cid) {
+    return;
+  }
+  await redis.sadd(`${REDIS_BLOG_UNIQUE_VISITOR}:${blogID}`, cid);
+};
+
+export const getBlogUV = async (blogID?: string) => {
+  if (!blogID) {
+    return;
+  }
+  const uv = await redis.scard(`${REDIS_BLOG_UNIQUE_VISITOR}:${blogID}`);
+  return uv;
+};
+
+export const recordSnippetUV = async (snippetID?: string, cid?: string) => {
+  if (!snippetID || !cid) {
+    return;
+  }
+  await redis.sadd(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${snippetID}`, cid);
+};
+
+export const getSnippetUV = async (snippetID?: string) => {
+  if (!snippetID) {
+    return;
+  }
+  const uv = await redis.scard(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${snippetID}`);
   return uv;
 };

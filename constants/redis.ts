@@ -5,3 +5,7 @@ export const REDIS_PAGE_VIEW = 'page_view';
 
 // UV 独立访客数，指在特定时间段内访问网站或应用程序的不同用户数量。每个独立用户都会被计算为一个 UV，无论他们访问了多少个页面。
 export const REDIS_UNIQUE_VISITOR = 'unique_visitor';
+
+export const REDIS_BLOG_UNIQUE_VISITOR = 'blog_unique_visitor';
+
+export const REDIS_SNIPPET_UNIQUE_VISITOR = 'snippet_unique_visitor';
