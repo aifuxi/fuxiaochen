@@ -9,16 +9,20 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
+import { IconSolarEyeBold } from '@/components/icons';
+
 import { PATHS } from '@/constants';
 import { toFromNow } from '@/lib/utils';
+import { formatNum } from '@/utils';
 
 import { type Snippet } from '../types';
 
 type SnippetListItemProps = {
   snippet: Snippet;
+  uvMap?: Record<string, number>;
 };
 
-export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
+export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
   return (
     <Link
       key={snippet.id}
@@ -42,8 +46,14 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
           </TooltipTrigger>
           <TooltipContent>{snippet.description}</TooltipContent>
         </Tooltip>
-        <div className="text-sm text-muted-foreground">
-          {toFromNow(snippet.createdAt)}
+
+        <div className="text-sm text-muted-foreground flex items-center space-x-2">
+          <span>{toFromNow(snippet.createdAt)}</span>
+          <span>·</span>
+          <div className="flex items-center space-x-1">
+            <IconSolarEyeBold />
+            <span>{formatNum(uvMap?.[snippet.id])}</span>
+          </div>
         </div>
         <div className="flex flex-row gap-2">
           {snippet.tags?.map((tag) => <Badge key={tag.id}>{tag.name}</Badge>)}

@@ -4,6 +4,7 @@ import { type Prisma } from '@prisma/client';
 import { isUndefined } from 'lodash-es';
 
 import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from '@/constants';
+import { batchGetSnippetUV } from '@/features/statistics';
 import { noPermission } from '@/features/user';
 import { prisma } from '@/lib/prisma';
 import { getSkip } from '@/utils';
@@ -105,24 +106,33 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
     skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
 
-  return { snippets, total };
+  return {
+    snippets,
+    total,
+  };
 };
 
-export const getAllSnippets = async () => {
+export const getPublishedSnippets = async () => {
   const total = await prisma.snippet.count({});
   const snippets = await prisma.snippet.findMany({
     orderBy: {
       createdAt: 'desc',
     },
-    where: {
-      published: true,
-    },
     include: {
       tags: true,
     },
+    where: {
+      published: true,
+    },
   });
 
-  return { snippets, total };
+  const m = await batchGetSnippetUV(snippets?.map((el) => el.id));
+
+  return {
+    snippets,
+    total,
+    uvMap: isUndefined(m) ? undefined : Object.fromEntries(m),
+  };
 };
 
 export const getSnippetByID = async (id: string) => {

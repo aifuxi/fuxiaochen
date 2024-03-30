@@ -1,12 +1,12 @@
 import { PageHeader } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
-import { SnippetList, getAllSnippets } from '@/features/snippet';
+import { SnippetList, getPublishedSnippets } from '@/features/snippet';
 
 export const revalidate = 60;
 
 export default async function Page() {
-  const { snippets } = await getAllSnippets();
+  const { snippets, uvMap } = await getPublishedSnippets();
 
   return (
     <div className="w-full flex flex-col justify-center px-6 md:max-w-screen-md 2xl:max-w-6xl md:px-0 md:mx-auto pb-24 pt-8">
@@ -15,7 +15,7 @@ export default async function Page() {
         className="mb-9"
       />
 
-      <SnippetList snippets={snippets} />
+      <SnippetList snippets={snippets} uvMap={uvMap} />
     </div>
   );
 }

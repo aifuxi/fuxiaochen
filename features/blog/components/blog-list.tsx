@@ -6,9 +6,10 @@ import { type Blog } from '../types';
 
 type BlogListProps = {
   blogs: Blog[];
+  uvMap?: Record<string, number>;
 };
 
-export const BlogList = ({ blogs }: BlogListProps) => {
+export const BlogList = ({ blogs, uvMap }: BlogListProps) => {
   if (!blogs.length) {
     return (
       <div className="grid gap-8 place-content-center">
@@ -30,7 +31,7 @@ export const BlogList = ({ blogs }: BlogListProps) => {
             animationDelay: `${(idx + 1) * 200}ms`,
           }}
         >
-          <BlogListItem blog={el} />
+          <BlogListItem blog={el} uvMap={uvMap} />
         </li>
       ))}
     </ul>
