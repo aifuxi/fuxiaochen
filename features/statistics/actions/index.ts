@@ -56,9 +56,14 @@ export const batchGetBlogUV = async (blogIDs?: string[]) => {
   }
 
   const m = new Map<string, number>();
-  for (const id of blogIDs) {
-    const uv = await redis.scard(`${REDIS_BLOG_UNIQUE_VISITOR}:${id}`);
-    m.set(id, uv);
+
+  const uvs = await Promise.all(
+    blogIDs.map((el) => redis.scard(`${REDIS_BLOG_UNIQUE_VISITOR}:${el}`)),
+  );
+  let idx = 0;
+  for (const uv of uvs) {
+    m.set(blogIDs[idx]!, uv);
+    idx++;
   }
 
   return m;
@@ -85,9 +90,16 @@ export const batchGetSnippetUV = async (snippetIDs?: string[]) => {
   }
 
   const m = new Map<string, number>();
-  for (const id of snippetIDs) {
-    const uv = await redis.scard(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${id}`);
-    m.set(id, uv);
+
+  const uvs = await Promise.all(
+    snippetIDs.map((el) =>
+      redis.scard(`${REDIS_SNIPPET_UNIQUE_VISITOR}:${el}`),
+    ),
+  );
+  let idx = 0;
+  for (const uv of uvs) {
+    m.set(snippetIDs[idx]!, uv);
+    idx++;
   }
 
   return m;
