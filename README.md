@@ -35,6 +35,8 @@
 
 - 使用 Prisma 简化数据库 CRUD 操作
 
+- 使用 Redis + ioredis 统计网站浏览量、博客和片段浏览量
+
 - 使用 Tailwind CSS + shadcn/ui 编写样式和组件
 
 - 使用 iconify 支持各种 svg 图标
@@ -96,6 +98,9 @@ pnpm install
 # Docker Compose 只启动 MySQL
 make run_mysql8
 
+# Docker Compose 只启动 Redis
+make run_redis
+
 # Docker Compose 启动全部服务
 make run_all
 ```
@@ -107,6 +112,9 @@ make run_all
 ```shell
 # Docker Compose 只启动 MySQL
 docker-compose up -d mysql8
+
+# Docker Compose 只启动 Redis
+docker-compose up -d redis
 
 # Docker Compose 启动全部服务
 docker-compose up -d
@@ -128,6 +136,10 @@ docker-compose up -d
 # DATABASE_URL 格式为 mysql://用户名:用户密码@数据库IP:数据库端口/需要连接的数据库名
 # 根据实际情况进行修改
 DATABASE_URL="mysql://root:123456@127.0.0.1:3306/fuxiaochen"
+
+# 根据实际情况进行修改
+REDIS_HOST="127.0.0.1"
+REDIS_PORT="6379"
 ```
 
 #### 配置 `.env.development` 文件
@@ -140,11 +152,6 @@ Github 登录用，如果不用 Github 登录，可不配置
 
 - `AUTH_GITHUB_ID`：Github 授权应用 ID
 - `AUTH_GITHUB_SECRET`：Github 授权应用 secret
-
-Google 登录用，如果不用 Google 登录，可不配置
-
-- `AUTH_GOOGLE_ID`：Google 授权应用 ID
-- `AUTH_GOOGLE_SECRET`：Google 授权应用 secret
 
 必须配置
 
@@ -195,6 +202,12 @@ pnpm db:studio
 
 你可能想修改页面中的信息，请修改 `constants/info.ts` 文件
 
+## 部署
+
+- 视频演示：[手摸手教你如何部署fuxiaochen博客网站](https://www.bilibili.com/video/BV1vz421f7Jr/?share_source=copy_web&vd_source=8b381d6ef205d4d72391e78af40279c0)
+
+- 部署文档：[手摸手教你如何部署fuxiaochen博客网站](https://fuxiaochen.com/blog/hand-to-hand-teaching-you-how-to-deploy-fuxiaochen-blog-site)
+
 ## 反馈
 
 遇到任何问题，欢迎给我发邮件反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
@@ -208,14 +221,6 @@ pnpm db:studio
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=Date" />
  </picture>
 </a>
-
-## 部署
-
-...待补充
-
-## 待补充
-
-...待补充
 
 ## 感谢
 
