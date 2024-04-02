@@ -72,7 +72,7 @@
 
 ### 获取项目代码
 
-```shell
+```bash
 git clone https://github.com/aifuxi/fuxiaochen.git
 ```
 
@@ -80,7 +80,7 @@ git clone https://github.com/aifuxi/fuxiaochen.git
 
 在项目根目录下运行以下命令安装项目依赖：
 
-```shell
+```bash
 pnpm install
 ```
 
@@ -94,7 +94,7 @@ pnpm install
 
 在项目根目录下运行
 
-```shell
+```bash
 # Docker Compose 只启动 MySQL
 make run_mysql8
 
@@ -109,7 +109,7 @@ make run_all
 
 在项目根目录下运行
 
-```shell
+```bash
 # Docker Compose 只启动 MySQL
 docker-compose up -d mysql8
 
@@ -163,21 +163,21 @@ Github 登录用，如果不用 Github 登录，可不配置
 
 1. 创建表
 
-```shell
+```bash
 pnpm db:push
 ```
 
 2. 生成 Prisma 类型文件
 
-```shell
+```bash
 pnpm db:gen
 ```
 
-做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shipt + P，然后选 Reload Window），重新加载TypeScript类型文件
+做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shift + P，然后选 Reload Window），重新加载TypeScript类型文件
 
 3. 启动开发服务器
 
-```shell
+```bash
 pnpm dev
 ```
 
@@ -192,7 +192,7 @@ pnpm dev
 
 新开一个终端，在项目根目录下运行
 
-```shell
+```bash
 pnpm db:studio
 ```
 
