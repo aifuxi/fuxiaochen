@@ -6,7 +6,25 @@ import {
   REDIS_SNIPPET_UNIQUE_VISITOR,
   REDIS_UNIQUE_VISITOR,
 } from '@/constants';
+import { prisma } from '@/lib/prisma';
 import { redis } from '@/lib/redis';
+
+export const getStatistics = async () => {
+  const blogCount = await prisma.blog.count({
+    where: { published: true },
+  });
+  const tagCount = await prisma.tag.count();
+
+  const snippetCount = await prisma.snippet.count({
+    where: { published: true },
+  });
+
+  const noteCount = await prisma.note.count({
+    where: { published: true },
+  });
+
+  return { blogCount, snippetCount, tagCount, noteCount };
+};
 
 export const recordPV = async () => {
   const pv = await redis.get(REDIS_PAGE_VIEW);
