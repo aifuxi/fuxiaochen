@@ -122,6 +122,7 @@ export const Pagination = ({
               value={`${params.pageSize}`}
               onValueChange={(value) => {
                 updateParams({
+                  pageIndex: 1,
                   pageSize: Number(value),
                 });
               }}
