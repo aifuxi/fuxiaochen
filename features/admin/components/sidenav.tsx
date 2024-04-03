@@ -50,10 +50,10 @@ export const Sidenav = () => {
         {session?.user?.name ?? PLACEHODER_TEXT}
       </h4>
       <Desc session={session} />
-      <div className="w-full flex-col flex items-center mt-24 space-y-4">
+      <div className="w-full flex-col flex items-center mt-6 2xl:mt-12 space-y-4">
         <Sidebar />
       </div>
-      <div className="mt-24 flex justify-center lg:grid w-full space-y-1">
+      <div className="flex justify-center lg:grid mt-6 2xl:mt-12 w-full space-y-2">
         <SignOutButton />
 
         <Button
