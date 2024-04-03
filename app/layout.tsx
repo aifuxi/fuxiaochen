@@ -39,8 +39,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens scroll-smooth overflow-x-clip">
-        <TooltipProvider>
-          <NextThemeProvider attribute="class">
+        <NextThemeProvider attribute="class">
+          <TooltipProvider>
             {children}
 
             <ReactHotToaster />
@@ -50,8 +50,8 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             <Favicon />
 
             <Fingerprint />
-          </NextThemeProvider>
-        </TooltipProvider>
+          </TooltipProvider>
+        </NextThemeProvider>
       </body>
     </html>
   );

@@ -2,6 +2,7 @@
 
 import React from 'react';
 
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -9,8 +10,6 @@ import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
-
-import { type WithSession } from '@/types';
 
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -61,7 +60,8 @@ import {
   ToggleBlogPublishSwitch,
 } from '../../components';
 
-export const AdminBlogListPage = ({ session }: WithSession) => {
+export const AdminBlogListPage = () => {
+  const { data: session } = useSession();
   const router = useRouter();
   const [params, updateParams] = useSetState<GetBlogsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,

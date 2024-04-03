@@ -3,11 +3,11 @@
 import React from 'react';
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
 
+import { useSession } from 'next-auth/react';
+
 import { TagTypeEnum } from '@prisma/client';
 import { useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
-
-import { type WithSession } from '@/types';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,8 @@ import {
   ToggleNotePublishButton,
 } from '../../components';
 
-export const AdminNoteListPage = ({ session }: WithSession) => {
+export const AdminNoteListPage = () => {
+  const { data: session } = useSession();
   const [params, updateParams] = useSetState<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
