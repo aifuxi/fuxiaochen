@@ -1,6 +1,9 @@
+'use client';
+
 import React from 'react';
 
 import { type Session } from 'next-auth';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,7 +14,6 @@ import { IconSolarArrowRightUpLinear } from '@/components/icons';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
 import { SignOutButton } from '@/features/auth';
-import { auth } from '@/lib/auth';
 import { isAdmin } from '@/lib/utils';
 
 import { Sidebar } from './sidebar';
@@ -32,8 +34,8 @@ const Desc = ({ session }: { session: Session | null }) => {
   );
 };
 
-export const Sidenav = async () => {
-  const session = await auth();
+export const Sidenav = () => {
+  const { data: session } = useSession();
 
   return (
     <aside className="w-16 lg:w-[256px] transition-all h-screen flex-col flex items-center justify-center py-12 bg-foreground">
