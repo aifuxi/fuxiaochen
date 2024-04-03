@@ -19,7 +19,11 @@ import { cn } from '@/lib/utils';
 import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
-import { IconBarandGithub, IconLogoFuXiaoChen } from '../icons';
+import {
+  IconBarandGithub,
+  IconLogoFuXiaoChen,
+  IconSolarUserHeartBold,
+} from '../icons';
 import { NextLink } from '../next-link';
 import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
@@ -70,10 +74,22 @@ export const Navbar = () => {
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
+            title={SOURCE_CODE_GITHUB_PAGE}
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
             <Button variant="ghost" size={'icon'} aria-label="Github Icon">
               <IconBarandGithub className="text-base" />
+            </Button>
+          </Link>
+          <Link
+            href={PATHS.ADMIN_HOME}
+            target="_blank"
+            rel="nofollow"
+            title="后台管理"
+            aria-label={PATHS.ADMIN_HOME}
+          >
+            <Button variant="ghost" size={'icon'} aria-label="后台管理">
+              <IconSolarUserHeartBold className="text-base" />
             </Button>
           </Link>
         </div>

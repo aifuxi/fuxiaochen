@@ -31,3 +31,4 @@ export * from './icon-solar-monitor';
 export * from './icon-solar-eye';
 export * from './icon-solar-note';
 export * from './icon-solar-shield';
+export * from './icon-solar-user';
