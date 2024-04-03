@@ -1,19 +1,8 @@
 import React from 'react';
 
-import { redirect } from 'next/navigation';
-
 import { SwitchTheme } from '@/components/switch-theme';
 
-import { PATHS } from '@/constants';
-import { auth } from '@/lib/auth';
-
-export const AuthLayout = async ({ children }: React.PropsWithChildren) => {
-  const session = await auth();
-
-  if (session?.user) {
-    redirect(PATHS.ADMIN_HOME);
-  }
-
+export const AuthLayout = ({ children }: React.PropsWithChildren) => {
   return (
     <>
       {children}
