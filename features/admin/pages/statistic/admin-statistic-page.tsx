@@ -1,29 +1,45 @@
 import React from 'react';
 
-import { IconSolarBook, IconSolarHashtagSquare } from '@/components/icons';
+import {
+  IconSolarBook,
+  IconSolarCodeSquare,
+  IconSolarHashtagSquare,
+  IconSolarNotesBold,
+} from '@/components/icons';
 import { PageHeader } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
+import { getStatistics } from '@/features/statistics';
 
-import { getStatistics } from '../../actions/statistics';
 import { AdminContentLayout } from '../../components';
 import { type StatisticsCardProps } from '../../types';
 
 export const AdminStatisticPage = async () => {
-  const { blogCount, tagCount } = await getStatistics();
+  const { blogCount, snippetCount, tagCount, noteCount } =
+    await getStatistics();
 
   const statistics: StatisticsCardProps[] = [
     {
-      title: 'Blog总数',
+      title: '博客',
       count: blogCount,
       icon: <IconSolarBook className="text-muted-foreground text-2xl" />,
     },
     {
-      title: '标签总数',
+      title: '片段',
+      count: snippetCount,
+      icon: <IconSolarCodeSquare className="text-muted-foreground text-2xl" />,
+    },
+    {
+      title: '标签',
       count: tagCount,
       icon: (
         <IconSolarHashtagSquare className="text-muted-foreground text-2xl" />
       ),
+    },
+    {
+      title: '笔记',
+      count: noteCount,
+      icon: <IconSolarNotesBold className="text-muted-foreground text-2xl" />,
     },
   ];
 
