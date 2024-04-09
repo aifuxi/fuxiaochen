@@ -18,7 +18,7 @@ type SnippetDetailProps = {
 export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
   return (
     <div className="md:max-w-screen-md 2xl:max-w-6xl md:px-0 md:mx-auto py-12 md:py-24 px-6 grid gap-9">
-      <article>
+      <article className="max-w-[678px] mx-auto">
         <h1 className="mb-4 text-2xl md:text-4xl font-extrabold ">
           {snippet.title}
         </h1>
