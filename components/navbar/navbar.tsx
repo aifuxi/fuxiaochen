@@ -68,7 +68,7 @@ export const Navbar = () => {
           </NavigationMenu>
         </div>
         <MobileNav />
-        <div className="flex flex-1 sm:flex-none justify-end items-center gap-1">
+        <div className="flex flex-1 sm:flex-none justify-end items-center gap-2">
           <SwitchTheme />
 
           <Link
@@ -77,7 +77,7 @@ export const Navbar = () => {
             title={SOURCE_CODE_GITHUB_PAGE}
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
-            <Button variant="ghost" size={'icon'} aria-label="Github Icon">
+            <Button variant="outline" size={'icon'} aria-label="Github Icon">
               <IconBarandGithub className="text-base" />
             </Button>
           </Link>
@@ -88,7 +88,7 @@ export const Navbar = () => {
             title="后台管理"
             aria-label={PATHS.ADMIN_HOME}
           >
-            <Button variant="ghost" size={'icon'} aria-label="后台管理">
+            <Button variant="outline" size={'icon'} aria-label="后台管理">
               <IconSolarUserHeartBold className="text-base" />
             </Button>
           </Link>
