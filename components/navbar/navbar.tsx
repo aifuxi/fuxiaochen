@@ -19,13 +19,8 @@ import { cn } from '@/lib/utils';
 import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
-import {
-  IconBarandGithub,
-  IconLogoFuXiaoChen,
-  IconSolarUserHeartBold,
-} from '../icons';
+import { IconBarandGithub, IconSolarUserHeartBold } from '../icons';
 import { NextLink } from '../next-link';
-import { SwitchTheme } from '../switch-theme';
 import { Button } from '../ui/button';
 
 export const Navbar = () => {
@@ -44,7 +39,11 @@ export const Navbar = () => {
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
-          <IconLogoFuXiaoChen />
+          <img
+            src={'/images/fuxiaochen-light.svg'}
+            className={cn('w-6 h-6')}
+            alt={WEBSITE}
+          />
           <span className="ml-2 font-semibold text-primary text-base">
             {WEBSITE}
           </span>
@@ -69,8 +68,6 @@ export const Navbar = () => {
         </div>
         <MobileNav />
         <div className="flex flex-1 sm:flex-none justify-end items-center gap-2">
-          <SwitchTheme />
-
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
