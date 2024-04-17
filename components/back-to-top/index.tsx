@@ -34,6 +34,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
       className={cn('fixed bottom-8 right-8', {
         hidden: (scroll?.top ?? 0) < 100,
       })}
+      variant="outline"
       size={'icon'}
       onClick={handleClick}
     >
