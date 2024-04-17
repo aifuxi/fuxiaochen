@@ -1,10 +1,13 @@
+import { SITE_URL } from '@/config';
+
 import { Badge } from '@/components/ui/badge';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { GoBack } from '@/components/go-back';
 import { IconSolarEyeBold } from '@/components/icons';
+import { PreviewQrCode } from '@/components/qr-code';
 
-import { NICKNAME } from '@/constants';
+import { NICKNAME, PATHS } from '@/constants';
 import { toFromNow } from '@/lib/utils';
 import { formatNum } from '@/utils';
 
@@ -19,6 +22,7 @@ type BlogDetailProps = {
 export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
   return (
     <div className="md:max-w-screen-md 2xl:max-w-6xl md:px-0 md:mx-auto py-12 md:py-24 grid gap-9 px-6">
+      <PreviewQrCode url={`${SITE_URL}/${PATHS.SITE_BLOG}/${blog.slug}`} />
       <article className="max-w-[678px] mx-auto">
         {blog.cover && (
           <img
