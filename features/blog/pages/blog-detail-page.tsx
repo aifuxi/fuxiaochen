@@ -43,14 +43,16 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
         <BytemdViewer body={blog.body || ''} />
       </article>
 
-      <div className="flex flex-wrap gap-2">
-        {blog.tags?.map((el) => (
-          <Badge key={el.id} className="md:px-5 md:py-2 md:text-base">
-            {el.name}
-          </Badge>
-        ))}
+      <div className="max-w-[678px] mx-auto w-full pl-6">
+        <div className="flex flex-wrap gap-2">
+          {blog.tags?.map((el) => (
+            <Badge key={el.id} className="md:px-2 md:py-1 md:text-sm">
+              {el.name}
+            </Badge>
+          ))}
+        </div>
+        <GoBack />
       </div>
-      <GoBack />
 
       <BlogEventTracking blogID={blog.id} />
     </div>
