@@ -161,9 +161,6 @@ dependencies:
   next-sitemap:
     specifier: ^4.2.3
     version: 4.2.3(next@14.1.4)
-  next-themes:
-    specifier: ^0.2.1
-    version: 0.2.1(next@14.1.4)(react-dom@18.2.0)(react@18.2.0)
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -6702,18 +6699,6 @@ packages:
       fast-glob: 3.3.2
       minimist: 1.2.8
       next: 14.1.4(react-dom@18.2.0)(react@18.2.0)
-    dev: false
-
-  /next-themes@0.2.1(next@14.1.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-B+AKNfYNIzh0vqQQKqQItTS8evEouKD7H5Hj3kmuPERwddR2TxvDSFZuTj6T7Jfn1oyeUyJMydPl1Bkxkh0W7A==}
-    peerDependencies:
-      next: '*'
-      react: '*'
-      react-dom: '*'
-    dependencies:
-      next: 14.1.4(react-dom@18.2.0)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /next@14.1.4(react-dom@18.2.0)(react@18.2.0):
