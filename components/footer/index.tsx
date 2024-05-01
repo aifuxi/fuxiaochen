@@ -24,11 +24,15 @@ export const Footer = async () => {
 
   return (
     <footer className="w-full flex flex-col py-8 max-w-screen-xl mx-auto text-muted-foreground">
-      <ul className="flex space-x-2 items-center justify-center">
+      <ul className="flex space-x-2 items-center justify-center text-sm">
         {navItems.map((el, idx) => (
           <li key={el.link}>
             {Boolean(idx) && <span className="mr-2">·</span>}
-            <NextLink aria-label={el.label} href={el.link} className="px-0">
+            <NextLink
+              aria-label={el.label}
+              href={el.link}
+              className="px-0 text-sm"
+            >
               {el.label}
             </NextLink>
           </li>
@@ -38,7 +42,7 @@ export const Footer = async () => {
           <NextLink
             aria-label={PATHS_MAP[PATHS.SITEMAP]}
             href={PATHS.SITEMAP}
-            className="px-0 "
+            className="px-0 text-sm"
           >
             {PATHS_MAP[PATHS.SITEMAP]}
           </NextLink>
@@ -48,7 +52,7 @@ export const Footer = async () => {
           <span
             className={cn(
               buttonVariants({ variant: 'link' }),
-              '!no-underline px-0 text-muted-foreground',
+              '!no-underline px-0 text-muted-foreground text-sm',
             )}
           >
             PV：{formatNum(pv)}
@@ -59,7 +63,7 @@ export const Footer = async () => {
           <span
             className={cn(
               buttonVariants({ variant: 'link' }),
-              '!no-underline px-0 text-muted-foreground',
+              '!no-underline px-0 text-muted-foreground text-sm',
             )}
           >
             UV：{formatNum(uv)}
