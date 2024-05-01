@@ -33,9 +33,8 @@ import {
   IconSkillTailwindcssLight,
   IconSkillTypeScript,
 } from '@/components/icons';
-import { PageHeader } from '@/components/page-header';
 
-import { NICKNAME, PATHS } from '@/constants';
+import { NICKNAME } from '@/constants';
 import { socialMediaList } from '@/features/home';
 
 export const revalidate = 60;
@@ -47,13 +46,9 @@ export default function Page() {
   const getDelay = () => (delay += 200);
 
   return (
-    <div className="w-full flex flex-col justify-center px-6 md:max-w-screen-md  2xl:max-w-6xl  md:mx-auto pb-24 pt-8">
-      <PageHeader
-        breadcrumbList={[PATHS.SITE_HOME, PATHS.SITE_ABOUT]}
-        className="mb-0"
-      />
-
-      <section className="prose dark:prose-invert prose-zinc  2xl:max-w-6xl">
+    <div className="w-full flex flex-col justify-center px-6 pb-24 pt-8">
+      <section className="prose dark:prose-invert prose-zinc max-w-[678px] mx-auto">
+        <h2 className="text-3xl md:text-4xl font-bold">关于</h2>
         <div
           className="animate-fade-up animate-ease-in-out"
           style={{
@@ -194,8 +189,8 @@ export default function Page() {
               Google/
               <IconLogoBing className="mx-1 translate-y-0.5" />
               Bing 搜索
-              <span className="line-through ml-1">百度（浪费生命）</span> +{' '}
-              <IconBarandGithub className="mx-1 translate-y-1" />
+              <span className="line-through ml-1">百度（浪费生命）</span> +
+              <IconBarandGithub className="mx-1 translate-y-0.5" />
               GitHub +
               <>
                 <IconSkillStackoverflowDark className="dark:hidden mx-1 translate-y-0.5" />
@@ -235,6 +230,7 @@ export default function Page() {
           }}
         >
           <h2>联系我</h2>
+          <p>你可以通过👇下面任意一种方式联系我</p>
           <ul className="!list-none flex space-x-4 items-center !pl-0 !mb-0">
             {socialMediaList.map((el) => (
               <li key={el.link}>
