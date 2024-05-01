@@ -28,7 +28,7 @@
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
     "@bytemd/plugin-medium-zoom": "^1.21.0",
     "@bytemd/react": "^1.21.0",
-    "@fontsource/poppins": "^5.0.12",
+    "@fontsource-variable/montserrat": "^5.0.19",
     "@hookform/resolvers": "^3.3.2",
     "@iconify-json/fa6-brands": "^1.1.18",
     "@iconify-json/logos": "^1.1.42",
