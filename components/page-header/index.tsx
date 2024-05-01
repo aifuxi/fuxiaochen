@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Link from 'next/link';
-
 import { PATHS_MAP, PATH_DESCRIPTION_MAP } from '@/constants';
 import { cn } from '@/lib/utils';
 
@@ -39,9 +37,7 @@ export const PageHeader = ({
           {linkList.map((el) => (
             <React.Fragment key={el}>
               <BreadcrumbItem>
-                <BreadcrumbLink>
-                  <Link href={el}>{PATHS_MAP[el]}</Link>
-                </BreadcrumbLink>
+                <BreadcrumbLink href={el}>{PATHS_MAP[el]}</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
             </React.Fragment>
