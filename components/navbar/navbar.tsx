@@ -3,17 +3,17 @@
 import React from 'react';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { useScroll } from 'ahooks';
 
 import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  navigationMenuTriggerStyle,
-} from '@/components/ui/navigation-menu';
-
-import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/constants';
+  LIGHT_LOGO,
+  NICKNAME,
+  PATHS,
+  SOURCE_CODE_GITHUB_PAGE,
+  WEBSITE,
+} from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { navItems } from './config';
@@ -25,6 +25,7 @@ import { Button } from '../ui/button';
 
 export const Navbar = () => {
   const scroll = useScroll(() => document);
+  const pathname = usePathname();
 
   return (
     <header
@@ -39,32 +40,25 @@ export const Navbar = () => {
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
-          <img
-            src={'/images/fuxiaochen-light.svg'}
-            className={cn('w-6 h-6')}
-            alt={WEBSITE}
-          />
+          <img src={LIGHT_LOGO} className={cn('w-6 h-6')} alt={WEBSITE} />
           <span className="ml-2 font-semibold text-primary text-base">
             {WEBSITE}
           </span>
         </NextLink>
-        <div className="h-16 flex-1 hidden sm:flex justify-end items-center gap-6 text-base font-medium mr-8">
-          <NavigationMenu className="list-none">
-            {navItems.map((el) => (
-              <NavigationMenuItem key={el.link}>
-                <Link href={el.link} legacyBehavior passHref>
-                  <NavigationMenuLink
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      'bg-transparent',
-                    )}
-                  >
-                    {el.label}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            ))}
-          </NavigationMenu>
+        <div className="h-16 flex-1 hidden sm:flex justify-end items-center text-base font-medium mr-8">
+          {navItems.map((el) => (
+            <Link
+              href={el.link}
+              key={el.link}
+              className={cn(
+                'font-normal text-sm text-muted-foreground transition-colors px-4 py-2',
+                'hover:font-semibold hover:text-primary ',
+                pathname === el.link && 'font-semibold text-primary',
+              )}
+            >
+              {el.label}
+            </Link>
+          ))}
         </div>
         <MobileNav />
         <div className="flex flex-1 sm:flex-none justify-end items-center gap-2">
