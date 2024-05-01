@@ -60,7 +60,7 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       fontFamily: {
-        sans: ['Poppins', 'PingFang', ...fontFamily.sans],
+        sans: ['Montserrat Variable', 'PingFang', ...fontFamily.sans],
         mono: [...fontFamily.mono],
       },
       keyframes: {

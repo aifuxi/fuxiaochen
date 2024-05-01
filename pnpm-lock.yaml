@@ -26,6 +26,9 @@ dependencies:
   '@bytemd/react':
     specifier: ^1.21.0
     version: 1.21.0(react@18.2.0)
+  '@fontsource-variable/montserrat':
+    specifier: ^5.0.19
+    version: 5.0.19
   '@fontsource/poppins':
     specifier: ^5.0.12
     version: 5.0.12
@@ -1116,6 +1119,10 @@ packages:
       '@floating-ui/dom': 1.4.4
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@fontsource-variable/montserrat@5.0.19:
+    resolution: {integrity: sha512-vOlVjdGock2yBOeBbg5qexPa1TJM/PS8Nx9YlF6DFEtFf/Y5ayDbZRvV/WPj8W2vk7/aDxUEtTAp/Qp8wK9hNQ==}
     dev: false
 
   /@fontsource/poppins@5.0.12:
