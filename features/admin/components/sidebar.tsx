@@ -64,23 +64,13 @@ export const Sidebar = () => {
       key={el.link}
       href={el.link}
       className={cn(
-        'flex transition-colors items-center lg:pl-4 lg:pr-14 lg:py-2 rounded-lg lg:space-x-4 lg:hover:bg-muted-foreground/20',
+        'w-full flex items-center space-x-4 px-4 py-2 rounded-lg',
+        'hover:bg-secondary',
+        pathname === el.link ? 'bg-secondary' : '',
       )}
     >
-      <Button
-        size="icon"
-        variant={pathname === el.link ? 'secondary' : 'default'}
-        className={cn(pathname === el.link ? '' : 'bg-muted-foreground/10')}
-      >
-        {el.icon}
-      </Button>
-      <span
-        className={cn(
-          'text-base transition-all text-primary-foreground font-medium ',
-          'hidden lg:inline-block',
-          pathname === el.link ? 'font-semibold' : '',
-        )}
-      >
+      {el.icon}
+      <span className={cn(pathname === el.link ? 'font-semibold' : '')}>
         {el.label}
       </span>
     </Link>

@@ -27,7 +27,7 @@ import {
   IconSolarMinimalisticMagnifer,
   IconSolarRestart,
 } from '@/components/icons';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 import { Pagination, PaginationInfo } from '@/components/pagination';
 
 import {
@@ -43,7 +43,6 @@ import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
-  CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
   ToggleNotePublishButton,
@@ -82,13 +81,8 @@ export const AdminNoteListPage = () => {
 
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
-          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]}
-          action={
-            <CreateNoteButton refreshAsync={getNotesQuery.refreshAsync} />
-          }
-        />
+      breadcrumb={
+        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
       }
     >
       <div className="grid gap-4 grid-cols-4 px-2 py-4 items-end">

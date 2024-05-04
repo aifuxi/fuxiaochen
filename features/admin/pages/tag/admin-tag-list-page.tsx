@@ -33,7 +33,7 @@ import {
   IconSolarTextField,
 } from '@/components/icons';
 import { IllustrationNoContent } from '@/components/illustrations';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -248,11 +248,8 @@ export const AdminTagListPage = () => {
 
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
-          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]}
-          action={<CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />}
-        />
+      breadcrumb={
+        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
       }
     >
       <div className="grid gap-4 grid-cols-4 px-2 py-4">

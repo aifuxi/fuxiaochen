@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { IllustrationConstruction } from '@/components/illustrations';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 
@@ -10,7 +10,7 @@ import { AdminContentLayout } from '../../components';
 export const AdminHomePage = () => {
   return (
     <AdminContentLayout
-      pageHeader={<PageHeader breadcrumbList={[PATHS.ADMIN_HOME]} />}
+      breadcrumb={<PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME]} />}
     >
       <div className="grid place-content-center mt-[18vh]">
         <IllustrationConstruction className="w-[320px] h-[320px]" />

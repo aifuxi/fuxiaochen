@@ -27,7 +27,6 @@ import {
 
 import { Highlight } from '@/components/highlight';
 import {
-  IconSolarAddSquare,
   IconSolarCalendarMark,
   IconSolarEyeBold,
   IconSolarMinimalisticMagnifer,
@@ -39,7 +38,7 @@ import {
   IconSolarTextField,
 } from '@/components/icons';
 import { IllustrationNoContent } from '@/components/illustrations';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -247,15 +246,9 @@ export const AdminSnippetListPage = () => {
 
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
+      breadcrumb={
+        <PageBreadcrumb
           breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_SNIPPET]}
-          action={
-            <Button onClick={handleGoToCreate}>
-              <IconSolarAddSquare className="mr-2 text-base" />
-              创建片段
-            </Button>
-          }
         />
       }
     >
