@@ -26,11 +26,7 @@ export const SignOutButton = () => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          className={cn(
-            'lg:!w-full  text-primary-foreground bg-muted-foreground/10 hover:bg-muted-foreground/20',
-          )}
-        >
+        <Button className={cn('lg:!w-full')}>
           <span className="hidden lg:inline-block">退出登录</span>
           <IconSolarLogout2 />
         </Button>

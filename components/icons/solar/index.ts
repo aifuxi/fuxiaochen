@@ -33,3 +33,4 @@ export * from './icon-solar-note';
 export * from './icon-solar-shield';
 export * from './icon-solar-user';
 export * from './icon-solar-rocket';
+export * from './icon-solar-settings';

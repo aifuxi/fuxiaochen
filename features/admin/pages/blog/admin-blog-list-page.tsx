@@ -27,7 +27,6 @@ import {
 
 import { Highlight } from '@/components/highlight';
 import {
-  IconSolarAddSquare,
   IconSolarCalendarMark,
   IconSolarEyeBold,
   IconSolarMinimalisticMagnifer,
@@ -39,7 +38,7 @@ import {
   IconSolarTextField,
 } from '@/components/icons';
 import { IllustrationNoContent } from '@/components/illustrations';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -256,16 +255,8 @@ export const AdminBlogListPage = () => {
 
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
-          breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]}
-          action={
-            <Button onClick={handleGoToCreate}>
-              <IconSolarAddSquare className="mr-2 text-base" />
-              创建博客
-            </Button>
-          }
-        />
+      breadcrumb={
+        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
       }
     >
       <div className="grid gap-4 grid-cols-4 px-2 py-4 items-end">

@@ -6,7 +6,7 @@ import {
   IconSolarHashtagSquare,
   IconSolarNotesBold,
 } from '@/components/icons';
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 import { getStatistics } from '@/features/statistics';
@@ -45,8 +45,8 @@ export const AdminStatisticPage = async () => {
 
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
+      breadcrumb={
+        <PageBreadcrumb
           breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_STATISTIC]}
         />
       }

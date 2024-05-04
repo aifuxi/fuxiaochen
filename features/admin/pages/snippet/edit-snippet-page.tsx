@@ -1,4 +1,4 @@
-import { PageHeader } from '@/components/page-header';
+import { PageBreadcrumb } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
 
@@ -7,8 +7,8 @@ import { AdminContentLayout, EditSnippetForm } from '../../components';
 export const EditSnippetPage = () => {
   return (
     <AdminContentLayout
-      pageHeader={
-        <PageHeader
+      breadcrumb={
+        <PageBreadcrumb
           breadcrumbList={[
             PATHS.ADMIN_HOME,
             PATHS.ADMIN_SNIPPET,
