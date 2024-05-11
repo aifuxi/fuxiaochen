@@ -20,6 +20,20 @@ export default {
     },
     extend: {
       colors: {
+        // 碧绿色
+        aqua: {
+          '50': '#ebfffc',
+          '100': '#cdfffb',
+          '200': '#a1fffc',
+          '300': '#60fffc',
+          '400': '#26f8f8',
+          '500': '#00dade',
+          '600': '#00afba',
+          '700': '#088a96',
+          '800': '#116e79',
+          '900': '#125b67',
+          '950': '#053d47',
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
