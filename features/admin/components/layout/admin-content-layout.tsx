@@ -6,13 +6,13 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 import {
-  BookCopy,
+  Book,
   CodeXml,
   Home,
   LineChart,
   PanelLeft,
+  ScrollIcon,
   Search,
-  StickyNote,
   Tags,
 } from 'lucide-react';
 
@@ -60,7 +60,7 @@ export const adminNavItems: Array<{
   {
     label: PATHS_MAP[PATHS.ADMIN_BLOG],
     link: PATHS.ADMIN_BLOG,
-    icon: <BookCopy className="h-5 w-5" />,
+    icon: <Book className="h-5 w-5" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_SNIPPET],
@@ -70,7 +70,7 @@ export const adminNavItems: Array<{
   {
     label: PATHS_MAP[PATHS.ADMIN_NOTE],
     link: PATHS.ADMIN_NOTE,
-    icon: <StickyNote className="h-5 w-5" />,
+    icon: <ScrollIcon className="h-5 w-5" />,
   },
 ];
 
@@ -110,18 +110,14 @@ export const AdminContentLayout = ({
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search..."
+            placeholder="搜索..."
             className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
           />
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="overflow-hidden rounded-full"
-            >
-              <Avatar className="w-9 h-9 border">
+            <Button variant="outline" size="icon" className="rounded-full">
+              <Avatar className="w-9 h-9">
                 <AvatarImage
                   src={session?.data?.user?.image ?? ''}
                   alt={session?.data?.user?.name ?? PLACEHODER_TEXT}

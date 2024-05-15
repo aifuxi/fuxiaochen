@@ -41,15 +41,9 @@ importers:
       '@iconify-json/logos':
         specifier: ^1.1.42
         version: 1.1.42
-      '@iconify-json/mingcute':
-        specifier: ^1.1.17
-        version: 1.1.17
       '@iconify-json/skill-icons':
         specifier: ^1.1.8
         version: 1.1.8
-      '@iconify-json/solar':
-        specifier: ^1.1.9
-        version: 1.1.9
       '@next/bundle-analyzer':
         specifier: ^14.1.3
         version: 14.1.3
@@ -631,14 +625,8 @@ packages:
   '@iconify-json/logos@1.1.42':
     resolution: {integrity: sha512-/f+frtPm3m3Z30oy8Pk+QqRDkbmAiIaWGPl5CmsCXm15MVfvw9a/V/gD7WzdyuSGAZcFuQaqbHXj92y/n+2ifg==}
 
-  '@iconify-json/mingcute@1.1.17':
-    resolution: {integrity: sha512-WTKnn5OicUo18dE3rkJs00sUjOIAui8Ut9yZSXamRfjzmLxuX9FKqYQAbFXaV6lw0T4QwBQ8/y4ftaWl/1Entg==}
-
   '@iconify-json/skill-icons@1.1.8':
     resolution: {integrity: sha512-pzgiS7bVDyyff9HNXQkkwZSaSc36TVQYhXMr6tBu/XmAreXdj4xdkTRpPcnwtHlhHwsI4NDCe/l3QiWavqsbkw==}
-
-  '@iconify-json/solar@1.1.9':
-    resolution: {integrity: sha512-BcWzZqA02BiQduYizqU/J4v4RNs0MkjZUGpMbejpozH8YQSt3+S/LfV6zfVRonx/2DhXTVSqiLa1abDRAZtojQ==}
 
   '@iconify/tailwind@0.1.4':
     resolution: {integrity: sha512-U7RzcU2fkwOfMDsGQ3mtpLIaApSnqb+vgcJJknPPbg8/NF5s7tI1o5otEMfcpnLGk4PbYB8bxmKTz7IJVUlU2Q==}
@@ -5409,15 +5397,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify-json/mingcute@1.1.17':
-    dependencies:
-      '@iconify/types': 2.0.0
-
   '@iconify-json/skill-icons@1.1.8':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/solar@1.1.9':
     dependencies:
       '@iconify/types': 2.0.0
 

@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { LoaderCircle, Trash } from 'lucide-react';
+
 import {
   AlertDialog,
   AlertDialogContent,
@@ -11,11 +13,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-
-import {
-  IconMingcuteLoadingLine,
-  IconSolarTrashBinMinimalistic2,
-} from '@/components/icons';
 
 import { useDeleteNote } from '@/features/note';
 
@@ -35,7 +32,7 @@ export const DeleteNoteButton = ({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
-          <IconSolarTrashBinMinimalistic2 className="text-base text-destructive" />
+          <Trash className="h-4 w-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -53,7 +50,7 @@ export const DeleteNoteButton = ({
           </Button>
           <Button onClick={handleDeleteNote} disabled={deleteNoteQuery.loading}>
             {deleteNoteQuery.loading && (
-              <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+              <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
             )}
             删除
           </Button>

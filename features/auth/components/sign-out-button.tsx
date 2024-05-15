@@ -1,5 +1,7 @@
 'use client';
 
+import { LogOut } from 'lucide-react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +13,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-
-import { IconSolarLogout2 } from '@/components/icons';
 
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,7 @@ export const SignOutButton = () => {
       <AlertDialogTrigger asChild>
         <Button className={cn('lg:!w-full')}>
           <span className="hidden lg:inline-block">退出登录</span>
-          <IconSolarLogout2 />
+          <LogOut className="w-3 h-3" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

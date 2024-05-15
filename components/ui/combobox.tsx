@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { Check, ChevronDown, X } from 'lucide-react';
+
 // 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
 // 根据自己需要做了部分修改
 import { cn } from '@/lib/utils';
@@ -17,12 +19,6 @@ import {
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 import { ScrollArea } from './scroll-area';
-
-import {
-  IconSolarAltArrowDownLinear,
-  IconSolarCheckCircle,
-  IconSolarCloseLinear,
-} from '../icons';
 
 export type ComboboxOption = {
   value: string;
@@ -137,9 +133,9 @@ export const Combobox = React.forwardRef(
             <div className="flex h-full items-center shrink-0">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
-                <IconSolarCloseLinear
+                <X
                   className={cn(
-                    'ml-2 text-base opacity-50 hover:opacity-80 transition-opacity',
+                    'ml-2 h-4 w-4 opacity-50 hover:opacity-80 transition-opacity',
                   )}
                   onClick={(e) => {
                     props.onValueChange?.([]);
@@ -149,9 +145,9 @@ export const Combobox = React.forwardRef(
                   }}
                 />
               )}
-              <IconSolarAltArrowDownLinear
+              <ChevronDown
                 className={cn(
-                  'ml-2 text-base rotate-0 opacity-50 transition-transform',
+                  'ml-2 h-4 w-4 shrink-0 rotate-0 opacity-50 transition-transform',
                   open && 'rotate-180',
                 )}
               />
@@ -193,7 +189,7 @@ export const Combobox = React.forwardRef(
                         }
                       }}
                     >
-                      <IconSolarCheckCircle
+                      <Check
                         className={cn(
                           'mr-2 text-base opacity-0',
                           !props.multiple &&

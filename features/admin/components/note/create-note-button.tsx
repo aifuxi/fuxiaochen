@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
+import { LoaderCircle, PlusSquare } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -26,10 +27,6 @@ import {
 import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
-import {
-  IconMingcuteLoadingLine,
-  IconSolarAddSquare,
-} from '@/components/icons';
 
 import {
   type CreateNoteDTO,
@@ -73,7 +70,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <IconSolarAddSquare className="mr-2 text-base" />
+          <PlusSquare className="mr-2 w-4 h-4" />
           创建笔记
         </Button>
       </DialogTrigger>
@@ -162,7 +159,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createNoteQuery.loading && (
-                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
                   )}
                   创建
                 </Button>

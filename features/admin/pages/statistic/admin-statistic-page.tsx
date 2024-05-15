@@ -1,11 +1,7 @@
 import React from 'react';
 
-import {
-  IconSolarBook,
-  IconSolarCodeSquare,
-  IconSolarHashtagSquare,
-  IconSolarNotesBold,
-} from '@/components/icons';
+import { Book, CodeXml, ScrollIcon, TagsIcon } from 'lucide-react';
+
 import { PageBreadcrumb } from '@/components/page-header';
 
 import { PATHS } from '@/constants';
@@ -22,24 +18,22 @@ export const AdminStatisticPage = async () => {
     {
       title: '博客',
       count: blogCount,
-      icon: <IconSolarBook className="text-muted-foreground text-2xl" />,
+      icon: <Book className="text-muted-foreground text-2xl" />,
     },
     {
       title: '片段',
       count: snippetCount,
-      icon: <IconSolarCodeSquare className="text-muted-foreground text-2xl" />,
+      icon: <CodeXml className="text-muted-foreground w-6 h-6" />,
     },
     {
       title: '标签',
       count: tagCount,
-      icon: (
-        <IconSolarHashtagSquare className="text-muted-foreground text-2xl" />
-      ),
+      icon: <TagsIcon className="text-muted-foreground w-6 h-6" />,
     },
     {
       title: '笔记',
       count: noteCount,
-      icon: <IconSolarNotesBold className="text-muted-foreground text-2xl" />,
+      icon: <ScrollIcon className="text-muted-foreground w-6 h-6" />,
     },
   ];
 

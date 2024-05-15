@@ -2,12 +2,9 @@
 
 import React from 'react';
 
-import { Button } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
 
-import {
-  IconSolarEyeClosedLinear,
-  IconSolarEyeLinear,
-} from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 import { useToggleNotePublish } from '@/features/note';
 
@@ -26,7 +23,7 @@ export const ToggleNotePublishButton = ({
 
   return (
     <Button size={'icon'} variant="outline" onClick={handleToggleNotePublish}>
-      {published ? <IconSolarEyeLinear /> : <IconSolarEyeClosedLinear />}
+      {published ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
     </Button>
   );
 
