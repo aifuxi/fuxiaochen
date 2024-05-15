@@ -22,7 +22,7 @@ export const BlogList = ({ blogs, uvMap }: BlogListProps) => {
   }
 
   return (
-    <ul className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
+    <ul className="grid grid-cols-1 md:grid-cols-2 gap-10">
       {blogs.map((el, idx) => (
         <li
           key={el.id}

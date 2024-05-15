@@ -65,6 +65,14 @@ export const toSlashDateString = (date: number | Date) => {
   return dayjs(date).locale('zh-cn').format('YYYY年M月D日 dddd HH:mm:ss');
 };
 
+export const prettyDate = (date: number | Date) => {
+  return dayjs(date).locale('zh-cn').format('M月 D，YYYY');
+};
+
+export const prettyDateWithWeekday = (date: number | Date) => {
+  return dayjs(date).locale('zh-cn').format('dddd，MMMM D YYYY');
+};
+
 export const isAdmin = (email?: string | null) => {
   if (!email || !ADMIN_EMAILS?.length) {
     return false;

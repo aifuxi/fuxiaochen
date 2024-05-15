@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation';
 import { useScroll } from 'ahooks';
 
 import {
+  DARK_FAVICON_URL,
   LIGHT_LOGO,
   NICKNAME,
   PATHS,
@@ -40,7 +41,16 @@ export const Navbar = () => {
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
-          <img src={LIGHT_LOGO} className={cn('w-6 h-6')} alt={WEBSITE} />
+          <img
+            src={LIGHT_LOGO}
+            className={cn('w-8 h-8 hidden dark:block')}
+            alt={WEBSITE}
+          />
+          <img
+            src={DARK_FAVICON_URL}
+            className={cn('w-8 h-8 dark:hidden')}
+            alt={WEBSITE}
+          />
           <span className="ml-2 font-semibold text-primary text-base">
             {WEBSITE}
           </span>

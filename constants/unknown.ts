@@ -43,3 +43,15 @@ export const STORAGE_KEY_EVENT_TRACKING_CUID = 'event_tracking_cuid';
 export const LIGHT_FAVICON_URL = '/images/fuxiaochen-light.svg';
 
 export const DARK_FAVICON_URL = '/images/fuxiaochen-dark.svg';
+
+type NavItem = {
+  link: string;
+  label: string;
+};
+
+export const navItems: NavItem[] = [
+  { label: '首页', link: '/' },
+  { label: '博客', link: '/blog' },
+  { label: '片段', link: '/snippet' },
+  { label: '关于', link: '/about' },
+];

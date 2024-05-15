@@ -25,8 +25,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     <html
       suppressHydrationWarning
       lang="zh-CN"
-      className="scroll-smooth dark"
-      style={{ colorScheme: 'dark' }}
     >
       <head>
         <link
