@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react';
 import { TagTypeEnum } from '@prisma/client';
 import { useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
+import { RotateCw, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,10 +24,6 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { BytemdViewer } from '@/components/bytemd';
-import {
-  IconSolarMinimalisticMagnifer,
-  IconSolarRestart,
-} from '@/components/icons';
 import { PageBreadcrumb } from '@/components/page-header';
 import { Pagination, PaginationInfo } from '@/components/pagination';
 
@@ -148,11 +145,11 @@ export const AdminNoteListPage = () => {
         />
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <IconSolarMinimalisticMagnifer className="mr-2" />
+            <Search className="h-4 w-4 mr-2" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <IconSolarRestart className="mr-2" />
+            <RotateCw className="h-4 w-4 mr-2" />
             重置
           </Button>
         </div>

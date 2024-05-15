@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
+import { LoaderCircle, PlusSquare } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -30,11 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-import {
-  IconMingcuteLoadingLine,
-  IconSolarAddSquare,
-} from '@/components/icons';
 
 import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
 import {
@@ -71,7 +67,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <IconSolarAddSquare className="mr-2 text-base" />
+          <PlusSquare className="mr-2 w-4 h-4 " />
           创建标签
         </Button>
       </DialogTrigger>
@@ -149,7 +145,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createTagQuery.loading && (
-                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
                   )}
                   创建
                 </Button>

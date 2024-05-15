@@ -6,6 +6,17 @@ import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
+import {
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  Book,
+  Calendar,
+  CodeXml,
+  RotateCw,
+  ScrollIcon,
+  Search,
+  TypeIcon,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -21,17 +32,6 @@ import {
 } from '@/components/ui/select';
 
 import { Highlight } from '@/components/highlight';
-import {
-  IconSolarBook,
-  IconSolarCalendarMark,
-  IconSolarCodeSquare,
-  IconSolarMinimalisticMagnifer,
-  IconSolarNotesBold,
-  IconSolarRestart,
-  IconSolarSortFromBottomToTopLinear,
-  IconSolarSortFromTopToBottomLinear,
-  IconSolarTextField,
-} from '@/components/icons';
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageBreadcrumb } from '@/components/page-header';
 
@@ -101,7 +101,7 @@ export const AdminTagListPage = () => {
       accessorKey: 'name',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarTextField className="text-sm" />
+          <TypeIcon className="w-4 h-4" />
           <span>名称</span>
         </div>
       ),
@@ -118,7 +118,7 @@ export const AdminTagListPage = () => {
       accessorKey: 'type',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarTextField className="text-sm" />
+          <TypeIcon className="w-4 h-4" />
           <span>类型</span>
         </div>
       ),
@@ -131,9 +131,9 @@ export const AdminTagListPage = () => {
 
         const iconMap = {
           [TagTypeEnum.ALL]: '',
-          [TagTypeEnum.BLOG]: <IconSolarBook className="text-sm" />,
-          [TagTypeEnum.NOTE]: <IconSolarNotesBold className="text-sm" />,
-          [TagTypeEnum.SNIPPET]: <IconSolarCodeSquare className="text-sm" />,
+          [TagTypeEnum.BLOG]: <Book className="w-4 h-4" />,
+          [TagTypeEnum.NOTE]: <ScrollIcon className="w-4 h-4" />,
+          [TagTypeEnum.SNIPPET]: <CodeXml className="w-4 h-4" />,
         };
 
         return (
@@ -148,7 +148,7 @@ export const AdminTagListPage = () => {
       accessorKey: '_count.blogs',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarBook className="text-sm" />
+          <Book className="w-4 h-4" />
           <span>博客</span>
         </div>
       ),
@@ -160,7 +160,7 @@ export const AdminTagListPage = () => {
       accessorKey: '_count.snippets',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarCodeSquare className="text-sm" />
+          <CodeXml className="w-4 h-4" />
           <span>片段</span>
         </div>
       ),
@@ -172,7 +172,7 @@ export const AdminTagListPage = () => {
       accessorKey: '_count.notes',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarNotesBold className="text-sm" />
+          <ScrollIcon className="w-4 h-4" />
           <span>笔记</span>
         </div>
       ),
@@ -189,13 +189,13 @@ export const AdminTagListPage = () => {
             handleOrderChange('createdAt');
           }}
         >
-          <IconSolarCalendarMark className="text-sm" />
+          <Calendar className="w-4 h-4" />
           <span className="mx-1">创建时间</span>
           {params.order === 'asc' && params.orderBy == 'createdAt' && (
-            <IconSolarSortFromBottomToTopLinear />
+            <ArrowUpNarrowWide className="w-4 h-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'createdAt' && (
-            <IconSolarSortFromTopToBottomLinear />
+            <ArrowDownNarrowWide className="w-4 h-4" />
           )}
         </Button>
       ),
@@ -212,13 +212,13 @@ export const AdminTagListPage = () => {
             handleOrderChange('updatedAt');
           }}
         >
-          <IconSolarCalendarMark className="text-sm" />
+          <Calendar className="w-4 h-4" />
           <span className="mx-1">更新时间</span>
           {params.order === 'asc' && params.orderBy == 'updatedAt' && (
-            <IconSolarSortFromBottomToTopLinear />
+            <ArrowUpNarrowWide className="w-4 h-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'updatedAt' && (
-            <IconSolarSortFromTopToBottomLinear />
+            <ArrowDownNarrowWide className="w-4 h-4" />
           )}
         </Button>
       ),
@@ -292,11 +292,11 @@ export const AdminTagListPage = () => {
         </Select>
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <IconSolarMinimalisticMagnifer className="mr-2" />
+            <Search className="h-4 w-4 mr-2" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <IconSolarRestart className="mr-2" />
+            <RotateCw className="h-4 w-4 mr-2" />
             重置
           </Button>
         </div>

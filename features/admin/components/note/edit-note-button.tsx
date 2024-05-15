@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
+import { LoaderCircle, Pen } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -26,7 +27,6 @@ import {
 import { Switch } from '@/components/ui/switch';
 
 import { BytemdEditor } from '@/components/bytemd';
-import { IconMingcuteLoadingLine, IconSolarPen } from '@/components/icons';
 
 import {
   type UpdateNoteDTO,
@@ -72,7 +72,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
-          <IconSolarPen className="text-base" />
+          <Pen className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
@@ -160,7 +160,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                   disabled={updateNoteQuery.loading}
                 >
                   {updateNoteQuery.loading && (
-                    <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
                   )}
                   保存
                 </Button>

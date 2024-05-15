@@ -10,6 +10,17 @@ import { TagTypeEnum } from '@prisma/client';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useSetState } from 'ahooks';
 import { isUndefined } from 'lodash-es';
+import {
+  ArrowDownNarrowWide,
+  ArrowUpNarrowWide,
+  Calendar,
+  Eye,
+  Pen,
+  RotateCw,
+  Search,
+  TagsIcon,
+  TypeIcon,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -26,17 +37,6 @@ import {
 } from '@/components/ui/select';
 
 import { Highlight } from '@/components/highlight';
-import {
-  IconSolarCalendarMark,
-  IconSolarEyeBold,
-  IconSolarMinimalisticMagnifer,
-  IconSolarPen,
-  IconSolarRestart,
-  IconSolarSortFromBottomToTopLinear,
-  IconSolarSortFromTopToBottomLinear,
-  IconSolarTag,
-  IconSolarTextField,
-} from '@/components/icons';
 import { IllustrationNoContent } from '@/components/illustrations';
 import { PageBreadcrumb } from '@/components/page-header';
 
@@ -115,7 +115,7 @@ export const AdminBlogListPage = () => {
       accessorKey: 'title',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarTextField className="text-sm" />
+          <TypeIcon className="w-4 h-4" />
           <span>标题</span>
         </div>
       ),
@@ -132,7 +132,7 @@ export const AdminBlogListPage = () => {
       accessorKey: 'author',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarTextField className="text-sm" />
+          <TypeIcon className="w-4 h-4" />
           <span>作者</span>
         </div>
       ),
@@ -144,7 +144,7 @@ export const AdminBlogListPage = () => {
       accessorKey: 'tags',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarTag className="text-sm" />
+          <TagsIcon className="w-4 h-4" />
           <span>标签</span>
         </div>
       ),
@@ -164,7 +164,7 @@ export const AdminBlogListPage = () => {
       accessorKey: 'published',
       header: () => (
         <div className="flex space-x-1 items-center">
-          <IconSolarEyeBold className="text-sm" />
+          <Eye className="w-4 h-4" />
           <span>发布状态</span>
         </div>
       ),
@@ -187,13 +187,13 @@ export const AdminBlogListPage = () => {
             handleOrderChange('createdAt');
           }}
         >
-          <IconSolarCalendarMark className="text-sm" />
+          <Calendar className="w-4 h-4" />
           <span className="mx-1">创建时间</span>
           {params.order === 'asc' && params.orderBy == 'createdAt' && (
-            <IconSolarSortFromBottomToTopLinear />
+            <ArrowUpNarrowWide className="w-4 h-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'createdAt' && (
-            <IconSolarSortFromTopToBottomLinear />
+            <ArrowDownNarrowWide className="w-4 h-4" />
           )}
         </Button>
       ),
@@ -210,13 +210,13 @@ export const AdminBlogListPage = () => {
             handleOrderChange('updatedAt');
           }}
         >
-          <IconSolarCalendarMark className="text-sm" />
+          <Calendar className="w-4 h-4" />
           <span className="mx-1">更新时间</span>
           {params.order === 'asc' && params.orderBy == 'updatedAt' && (
-            <IconSolarSortFromBottomToTopLinear />
+            <ArrowUpNarrowWide className="w-4 h-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'updatedAt' && (
-            <IconSolarSortFromTopToBottomLinear />
+            <ArrowDownNarrowWide className="w-4 h-4" />
           )}
         </Button>
       ),
@@ -234,14 +234,14 @@ export const AdminBlogListPage = () => {
               href={`${PATHS.SITE_BLOG}/${row.original.slug}`}
               target="_blank"
             >
-              <IconSolarEyeBold className="text-base" />
+              <Eye className="h-4 w-4" />
             </Link>
             <Button
               size={'icon'}
               variant="ghost"
               onClick={() => handleGoToEdit(row.original.id)}
             >
-              <IconSolarPen className="text-base" />
+              <Pen className="h-4 w-4" />
             </Button>
             <DeleteBlogButton
               id={row.original.id}
@@ -322,11 +322,11 @@ export const AdminBlogListPage = () => {
 
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <IconSolarMinimalisticMagnifer className="mr-2" />
+            <Search className="h-4 w-4 mr-2" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <IconSolarRestart className="mr-2" />
+            <RotateCw className="h-4 w-4 mr-2" />
             重置
           </Button>
         </div>

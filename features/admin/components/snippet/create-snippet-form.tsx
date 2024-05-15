@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
+import { LoaderCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -23,7 +24,6 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 
 import { BytemdEditor } from '@/components/bytemd';
-import { IconMingcuteLoadingLine } from '@/components/icons';
 
 import { PATHS } from '@/constants';
 import { CreateTagButton } from '@/features/admin';
@@ -69,7 +69,7 @@ export const CreateSnippetForm = () => {
             className="!w-full"
           >
             {createSnippetQuery.loading && (
-              <IconMingcuteLoadingLine className="mr-2 text-base animate-spin" />
+              <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
             )}
             创建
           </Button>
