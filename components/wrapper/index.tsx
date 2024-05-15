@@ -8,10 +8,9 @@ export const Wrapper = ({ className, children, ...props }: WrapperProps) => {
   return (
     <div
       {...props}
-      className={cn('max-w-screen-wrapper mx-auto', className)}
+      className={cn('max-w-screen-wrapper mx-auto border px-6', className)}
     >
       {children}
     </div>
   );
 };
-

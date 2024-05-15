@@ -18,7 +18,7 @@ type SnippetListItemProps = {
 export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
   return (
     <Link
-      href={`${PATHS.SITE_BLOG}/${snippet.slug}`}
+      href={`${PATHS.SITE_SNIPPET}/${snippet.slug}`}
       className={cn(
         'flex flex-col justify-between h-full text-primary px-6 py-4 transition-colors rounded-lg',
         'bg-transparent hover:bg-primary-foreground ',
