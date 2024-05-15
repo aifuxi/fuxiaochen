@@ -5,6 +5,8 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { MenuIcon } from 'lucide-react';
+
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Sheet,
@@ -20,8 +22,6 @@ import { cn } from '@/lib/utils';
 
 import { navItems } from './config';
 
-import { IconSolarDocumentText } from '../icons';
-
 export const MobileNav = () => {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
@@ -35,7 +35,7 @@ export const MobileNav = () => {
           aria-label="菜单"
           className={cn('sm:hidden')}
         >
-          <IconSolarDocumentText className="text-base" />
+          <MenuIcon className="w-4 h-4" />
         </Button>
       </SheetTrigger>
       <SheetContent side={'left'}>

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { useScroll } from 'ahooks';
+import { UserCog } from 'lucide-react';
 
 import {
   DARK_FAVICON_URL,
@@ -20,7 +21,7 @@ import { cn } from '@/lib/utils';
 import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
-import { IconBarandGithub, IconSolarUserHeartBold } from '../icons';
+import { IconBarandGithub } from '../icons';
 import { NextLink } from '../next-link';
 import { Button } from '../ui/button';
 
@@ -90,7 +91,7 @@ export const Navbar = () => {
             aria-label={PATHS.ADMIN_HOME}
           >
             <Button variant="outline" size={'icon'} aria-label="后台管理">
-              <IconSolarUserHeartBold className="text-base" />
+              <UserCog className="w-4 h-4" />
             </Button>
           </Link>
         </div>
