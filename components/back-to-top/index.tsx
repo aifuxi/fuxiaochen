@@ -3,12 +3,11 @@
 import React from 'react';
 
 import { useMemoizedFn, useScroll } from 'ahooks';
+import { ArrowUp } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
 import { cn } from '@/lib/utils';
-
-import { IconSolarAltArrowUpLinear } from '../icons';
 
 type BackToTopProps = {
   scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
@@ -38,7 +37,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
       size={'icon'}
       onClick={handleClick}
     >
-      <IconSolarAltArrowUpLinear className="text-2xl" />
+      <ArrowUp className="w-3 h-3" />
     </Button>
   );
 };
