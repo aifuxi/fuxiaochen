@@ -1,10 +1,4 @@
 fuxiaochen.com {
-	# 开启 gizp zstd 压缩
-	gzip zstd
-
-	# 自定义 HTTPS 证书
-	tls /root/secret/fuxiaochen.pem /root/secret/fuxiaochen.key
-
 	# 开启反向代理
 	reverse_proxy * localhost:3000
 }
