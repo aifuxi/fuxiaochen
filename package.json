@@ -70,7 +70,7 @@
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.378.0",
     "next": "14.2.3",
-    "next-auth": "5.0.0-beta.18",
+    "next-auth": "5.0.0-beta.16",
     "next-sitemap": "^4.2.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",

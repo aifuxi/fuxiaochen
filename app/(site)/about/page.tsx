@@ -47,7 +47,7 @@ export default function Page() {
 
   return (
     <div className="w-full flex flex-col justify-center px-6 pb-24 pt-8">
-      <section className="prose dark:prose-invert prose-zinc max-w-[678px] mx-auto">
+      <section className="prose dark:prose-invert prose-zinc w-screen-wrapper max-w-screen-wrapper mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold">关于</h2>
         <div
           className="animate-fade-up animate-ease-in-out"

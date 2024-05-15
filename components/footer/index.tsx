@@ -1,7 +1,7 @@
-import Image from 'next/image';
+import React from 'react';
 
-import { navItems } from '@/components/navbar/config';
-import { NextLink } from '@/components/next-link';
+import Image from 'next/image';
+import Link from 'next/link';
 
 import {
   BEI_AN_LINK,
@@ -11,61 +11,50 @@ import {
   NICKNAME,
   PATHS,
   PATHS_MAP,
+  REDIS_PAGE_VIEW,
+  REDIS_UNIQUE_VISITOR,
+  navItems,
 } from '@/constants';
-import { getPV, getUV } from '@/features/statistics';
-import { cn } from '@/lib/utils';
+import { redis } from '@/lib/redis';
 import { formatNum } from '@/utils';
 
-import { buttonVariants } from '../ui/button';
-
 export const Footer = async () => {
-  const pv = await getPV();
-  const uv = await getUV();
+  const pv = await redis.get(REDIS_PAGE_VIEW);
+  const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
 
   return (
-    <footer className="w-full flex flex-col py-8 max-w-screen-xl mx-auto text-muted-foreground">
+    <footer className="max-w-screen-wrapper w-full flex flex-col py-8 text-muted-foreground mx-auto">
       <ul className="flex space-x-2 items-center justify-center text-sm">
         {navItems.map((el, idx) => (
           <li key={el.link}>
             {Boolean(idx) && <span className="mr-2">·</span>}
-            <NextLink
-              aria-label={el.label}
+            <Link
               href={el.link}
-              className="px-0 text-sm"
+              className=" text-muted-foreground hover:text-primary transition-colors"
             >
               {el.label}
-            </NextLink>
+            </Link>
           </li>
         ))}
         <li>
           <span className="mr-2">·</span>
-          <NextLink
+          <Link
             aria-label={PATHS_MAP[PATHS.SITEMAP]}
             href={PATHS.SITEMAP}
-            className="px-0 text-sm"
+            className="text-muted-foreground hover:text-primary transition-colors"
           >
             {PATHS_MAP[PATHS.SITEMAP]}
-          </NextLink>
+          </Link>
         </li>
         <li>
           <span className="mr-2">·</span>
-          <span
-            className={cn(
-              buttonVariants({ variant: 'link' }),
-              '!no-underline px-0 text-muted-foreground text-sm',
-            )}
-          >
+          <span className="text-muted-foreground hover:text-primary transition-colors">
             PV：{formatNum(pv)}
           </span>
         </li>
         <li>
           <span className="mr-2">·</span>
-          <span
-            className={cn(
-              buttonVariants({ variant: 'link' }),
-              '!no-underline px-0 text-muted-foreground text-sm',
-            )}
-          >
+          <span className="hover:text-primary transition-colors">
             UV：{formatNum(uv)}
           </span>
         </li>
@@ -75,20 +64,20 @@ export const Footer = async () => {
         <span className="hidden md:inline-block">·</span>
         <span className="hidden md:inline-block">{NICKNAME}</span>
         <span className="hidden md:inline-block">·</span>
-        <NextLink
+        <Link
           target="_blank"
           aria-label={BEI_AN_NUMBER}
           href={BEI_AN_LINK}
-          className="px-0 py-0 h-5 md:h-10 font-normal md:font-medium"
+          className="flex items-center h-5 md:h-10 transition-colors text-muted-foreground hover:text-primary"
         >
           {BEI_AN_NUMBER}
-        </NextLink>
+        </Link>
         <span className="hidden md:inline-block">·</span>
-        <NextLink
+        <Link
           target="_blank"
           aria-label={GONG_AN_NUMBER}
           href={GONG_AN_LINK}
-          className="px-0 py-0 h-5 md:h-10 font-normal md:font-medium"
+          className="flex items-center h-5 md:h-10 transition-colors text-muted-foreground hover:text-primary"
         >
           <Image
             width={18}
@@ -98,7 +87,7 @@ export const Footer = async () => {
             className="mr-1 -translate-y-[1px]"
           />
           <span>{GONG_AN_NUMBER}</span>
-        </NextLink>
+        </Link>
       </div>
     </footer>
   );
