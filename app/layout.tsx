@@ -2,6 +2,8 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
+import { ThemeProvider } from '@/providers';
+
 import { ReactHotToaster } from '@/components/ui/toast';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
@@ -22,10 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html
-      suppressHydrationWarning
-      lang="zh-CN"
-    >
+    <html suppressHydrationWarning lang="zh-CN">
       <head>
         <link
           rel="icon"
@@ -39,15 +38,22 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens scroll-smooth overflow-x-clip">
-        <TooltipProvider>
-          {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            {children}
 
-          <ReactHotToaster />
+            <ReactHotToaster />
 
-          <Console />
+            <Console />
 
-          <Fingerprint />
-        </TooltipProvider>
+            <Fingerprint />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
