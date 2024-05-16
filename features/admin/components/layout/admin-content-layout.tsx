@@ -30,8 +30,10 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 import { BackToTop } from '@/components/back-to-top';
+import { ModeToggle } from '@/components/mode-toggle';
 
 import { PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/constants';
+import { SignoutDialog } from '@/features/auth';
 
 type AdminContentLayoutProps = {
   breadcrumb?: React.ReactNode;
@@ -80,6 +82,7 @@ export const AdminContentLayout = ({
 }: AdminContentLayoutProps) => {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const session = useSession();
+  const [signoutDialogOpen, setSignoutDialogOpen] = React.useState(false);
 
   return (
     <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
@@ -116,8 +119,8 @@ export const AdminContentLayout = ({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon" className="rounded-full">
-              <Avatar className="w-9 h-9">
+            <Button variant="outline" size="icon">
+              <Avatar className="w-9 h-9 rounded-lg border">
                 <AvatarImage
                   src={session?.data?.user?.image ?? ''}
                   alt={session?.data?.user?.name ?? PLACEHODER_TEXT}
@@ -134,9 +137,12 @@ export const AdminContentLayout = ({
             <DropdownMenuItem>Settings</DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSignoutDialogOpen(true)}>
+              退出登录
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <ModeToggle />
       </header>
       <main
         className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8"
@@ -146,6 +152,8 @@ export const AdminContentLayout = ({
       </main>
 
       <BackToTop scrollRef={scrollRef} />
+
+      <SignoutDialog open={signoutDialogOpen} setOpen={setSignoutDialogOpen} />
     </div>
   );
 };

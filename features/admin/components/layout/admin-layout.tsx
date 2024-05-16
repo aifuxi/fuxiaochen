@@ -13,6 +13,8 @@ import {
 } from '@radix-ui/react-tooltip';
 import { Settings } from 'lucide-react';
 
+import { buttonVariants } from '@/components/ui/button';
+
 import { cn } from '@/lib/utils';
 
 import { adminNavItems } from './admin-content-layout';
@@ -31,8 +33,10 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
                   <Link
                     href={el.link}
                     className={cn(
-                      'flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8',
-                      el.link === pathname ? 'bg-accent' : '',
+                      buttonVariants({
+                        variant: el.link === pathname ? 'default' : 'outline',
+                        size: 'icon',
+                      }),
                     )}
                   >
                     {el.icon}
@@ -47,7 +51,12 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                  className={cn(
+                    buttonVariants({
+                      variant: 'outline',
+                      size: 'icon',
+                    }),
+                  )}
                 >
                   <Settings className="h-5 w-5" />
                 </Link>
