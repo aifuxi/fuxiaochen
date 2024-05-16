@@ -11,22 +11,6 @@
 
 一个简单的个人博客网站，使用 Next.js + React 18 + TypeScript + Shadcn/ui + Tailwind CSS 开发
 
-## 预览
-
-- PC端预览：
-
-  - 前台：https://fuxiaochen.com
-  - 后台管理（需Github登录）：https://fuxiaochen.com/admin
-
-| <img src="./public/images/pc-home-dark.png" alt="pc-home-dark" /> | <img src="./public/images/pc-admin-dark.png" alt="pc-admin-dark" /> |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------- |
-| <img src="./public/images/pc-home.png" alt="pc-home" />           | <img src="./public/images/pc-admin.png" alt="ppc-admin" />          |
-
-- 移动端扫描👇下面二维码访问：
-
-| <img src="./public/images/qrcode_fuxiaochen.com.png" alt="qrcode_fuxiaochen.com" /> | <img src="./public/images/mobile-showcase.webp" alt="mobile-showcase" /> |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-
 ## 特性
 
 - 使用 Next.js v14 + React 18 hooks 进行构建，完美支持 SSR
@@ -237,6 +221,8 @@ pnpm db:studio
 - [Orbstack · Blog](https://orbstack.dev/blog)
 
 - [Shiro](https://github.com/Innei/Shiro)
+
+- [LobeHub](https://lobehub.com/zh/blog)
 
 ## LICENCE
 
