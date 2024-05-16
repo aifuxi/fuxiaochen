@@ -22,6 +22,7 @@ import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
 import { IconBarandGithub } from '../icons';
+import { ModeToggle } from '../mode-toggle';
 import { NextLink } from '../next-link';
 import { Button } from '../ui/button';
 
@@ -73,6 +74,7 @@ export const Navbar = () => {
         </div>
         <MobileNav />
         <div className="flex flex-1 sm:flex-none justify-end items-center gap-2">
+          <ModeToggle />
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
