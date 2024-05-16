@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -10,19 +12,22 @@ import {
 } from '@/components/ui/card';
 
 import { IconBarandGithub } from '@/components/icons';
-import { NextLink } from '@/components/next-link';
+import { ModeToggle } from '@/components/mode-toggle';
 
 import { PATHS } from '@/constants';
 
 import { signinWithGithub } from '../actions/signin';
 
 export const SignInPage = () => {
+  const router = useRouter();
+
   return (
     <div className="w-screen h-screen grid place-content-center">
       <Card className="w-[320px] py-4 rounded-3xl sm:w-full sm:max-w-none sm:min-w-[360px] relative animate-fade">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            登录 <NextLink href={PATHS.SITE_HOME}>回首页</NextLink>
+            <span>后台登录</span>
+            <ModeToggle />
           </CardTitle>
           <CardDescription>选择你喜欢的方式进行登录</CardDescription>
         </CardHeader>
@@ -46,18 +51,14 @@ export const SignInPage = () => {
                 </span>
               </div>
             </div>
-            {/* <Button
+            <Button
               variant="default"
-              className="!w-full !cursor-not-allowed"
+              className="!w-full"
               type="button"
-              disabled
-              onClick={handleSigninWithGoogle}
+              onClick={handleGoHome}
             >
-              <IconLogoGoogle className="mr-2 text-base" /> 使用 Google 登录
+              回首页
             </Button>
-            <p className="text-muted-foreground text-xs">
-              国内服务器无法访问 Google，登录没法用
-            </p> */}
           </div>
         </CardFooter>
       </Card>
@@ -67,7 +68,8 @@ export const SignInPage = () => {
   async function handleSigninWithGithub() {
     await signinWithGithub();
   }
-  // async function handleSigninWithGoogle() {
-  //   await signinWithGoogle();
-  // }
+
+  function handleGoHome() {
+    router.push(PATHS.SITE_HOME);
+  }
 };

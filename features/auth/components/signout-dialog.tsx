@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut } from 'lucide-react';
+import React from 'react';
 
 import {
   AlertDialog,
@@ -12,25 +12,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
-
-import { cn } from '@/lib/utils';
 
 import { signoutAndRedirect } from '../actions/signout';
 
-export const SignOutButton = () => {
+type Props = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const SignoutDialog = ({ open, setOpen }: Props) => {
   async function handleLogout() {
     await signoutAndRedirect();
+    setOpen(false);
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button className={cn('lg:!w-full')}>
-          <span className="hidden lg:inline-block">退出登录</span>
-          <LogOut className="w-3 h-3" />
-        </Button>
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogContent>
         <AlertDialogTrigger>
           <AlertDialogTitle>温馨提示</AlertDialogTitle>

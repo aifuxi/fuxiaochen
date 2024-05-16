@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { type SetState } from 'ahooks/lib/useSetState';
+import { Ellipsis } from 'lucide-react';
 
 import { PAGE_SIZE_OPTIONS } from '@/constants';
 
-import { IconSolarMenuDots } from '../icons';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import {
@@ -74,7 +74,7 @@ export const Pagination = ({
           paginationRange.map((pageNumber, i) =>
             pageNumber === '...' ? (
               <Button key={i} variant="ghost" className="!cursor-not-allowed">
-                <IconSolarMenuDots />
+                <Ellipsis className="w-3 h-3" />
               </Button>
             ) : (
               <Button

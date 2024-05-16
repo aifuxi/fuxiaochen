@@ -1,5 +1,5 @@
 export * from './components/auth-layout';
-export * from './components/sign-out-button';
+export * from './components/signout-dialog';
 
 export * from './pages/signin-page';
 
