@@ -47,32 +47,32 @@ export const adminNavItems: Array<{
   {
     label: PATHS_MAP[PATHS.ADMIN_HOME],
     link: PATHS.ADMIN_HOME,
-    icon: <Home className="h-5 w-5" />,
+    icon: <Home className="h-4 w-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_STATISTIC],
     link: PATHS.ADMIN_STATISTIC,
-    icon: <LineChart className="h-5 w-5" />,
+    icon: <LineChart className="h-4 w-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_TAG],
     link: PATHS.ADMIN_TAG,
-    icon: <Tags className="h-5 w-5" />,
+    icon: <Tags className="h-4 w-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_BLOG],
     link: PATHS.ADMIN_BLOG,
-    icon: <Book className="h-5 w-5" />,
+    icon: <Book className="h-4 w-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_SNIPPET],
     link: PATHS.ADMIN_SNIPPET,
-    icon: <CodeXml className="h-5 w-5" />,
+    icon: <CodeXml className="h-4 w-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_NOTE],
     link: PATHS.ADMIN_NOTE,
-    icon: <ScrollIcon className="h-5 w-5" />,
+    icon: <ScrollIcon className="h-4 w-4" />,
   },
 ];
 
@@ -85,12 +85,12 @@ export const AdminContentLayout = ({
   const [signoutDialogOpen, setSignoutDialogOpen] = React.useState(false);
 
   return (
-    <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+    <div className="flex-1 flex flex-col sm:gap-4 sm:py-4 sm:px-6">
       <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
-              <PanelLeft className="h-5 w-5" />
+              <PanelLeft className="h-4 w-4" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="sm:max-w-xs">
