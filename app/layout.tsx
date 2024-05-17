@@ -4,6 +4,8 @@ import { type Metadata } from 'next';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 
+import { NODE_ENV } from '@/config';
+
 import { ThemeProvider } from '@/providers';
 
 import { ReactHotToaster } from '@/components/ui/toast';
@@ -59,7 +61,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </body>
 
       {/* Google Analytics  */}
-      <GoogleAnalytics gaId="G-1MVP2JY3JG" />
+      {NODE_ENV === 'production' && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
     </html>
   );
 }
