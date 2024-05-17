@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, Pen } from 'lucide-react';
+import { LoaderCircle, Pen, Save } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -163,6 +163,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                     <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
                   )}
                   保存
+                  <Save className="w-4 h-4 ml-1" />
                 </Button>
               </div>
             </div>

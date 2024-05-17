@@ -19,7 +19,7 @@
 }
 
 .markdown-body {
-  @apply prose prose-zinc !w-full !max-w-full dark:prose-invert;
+  @apply prose prose-neutral !w-full !max-w-full dark:prose-invert;
 }
 
 .markdown-body a {
@@ -54,6 +54,10 @@
   @apply mt-10 !whitespace-pre-wrap !break-all;
 }
 
+.markdown-body p code {
+  @apply mx-2;
+}
+
 .markdown-body pre > .copy-code-button {
   @apply absolute right-4 top-0 z-[1] flex h-[40px] cursor-pointer items-center text-lg;
 }
@@ -69,6 +73,10 @@
 
 .markdown-body :where(h1, h2, h3, h4):hover .markdown-anchor {
   opacity: 1;
+}
+
+.markdown-body img {
+  @apply max-h-[40vh] rounded-lg border p-4;
 }
 
 /* 编辑器内标题样式 */
