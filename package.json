@@ -76,7 +76,6 @@
     "react-dom": "18.3.1",
     "react-hook-form": "^7.48.2",
     "react-hot-toast": "^2.4.1",
-    "react-qr-code": "^2.0.12",
     "react-responsive-masonry": "^2.2.0",
     "react-type-animation": "^3.2.0",
     "read-chunk": "^4.0.3",
