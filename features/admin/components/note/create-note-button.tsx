@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, PlusSquare } from 'lucide-react';
+import { LoaderCircle, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -70,7 +70,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <PlusSquare className="mr-2 w-4 h-4" />
+          <Plus className="mr-2 w-4 h-4" />
           创建笔记
         </Button>
       </DialogTrigger>

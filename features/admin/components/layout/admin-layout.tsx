@@ -31,7 +31,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
         <aside
           className={cn(
             'hidden flex-col border-r bg-background sm:flex transition-all',
-            open ? 'w-32' : 'w-14',
+            open ? 'w-36' : 'w-14',
           )}
         >
           <Link

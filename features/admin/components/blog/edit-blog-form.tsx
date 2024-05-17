@@ -8,6 +8,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TagTypeEnum } from '@prisma/client';
 import { isNil } from 'lodash-es';
+import { Save } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
@@ -97,6 +98,7 @@ export const EditBlogForm = () => {
             className="!w-full"
           >
             保存
+            <Save className="w-4 h-4 ml-1" />
           </Button>
         </div>
 
