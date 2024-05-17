@@ -35,7 +35,7 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(blog.createdAt)}</p>
         <p>{uv || PLACEHODER_TEXT}&nbsp;&nbsp;人浏览过</p>
       </div>
-      <h1 className="line-clamp-1 py-6 text-4xl font-semibold">{blog.title}</h1>
+      <h1 className="break-all py-6 text-4xl font-semibold">{blog.title}</h1>
 
       <p className="text-neutral-500 py-4">{blog.description}</p>
       <BytemdViewer body={blog.body || ''} />
