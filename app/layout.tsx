@@ -2,6 +2,8 @@ import React from 'react';
 
 import { type Metadata } from 'next';
 
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 import { ThemeProvider } from '@/providers';
 
 import { ReactHotToaster } from '@/components/ui/toast';
@@ -55,6 +57,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           </TooltipProvider>
         </ThemeProvider>
       </body>
+
+      {/* Google Analytics  */}
+      <GoogleAnalytics gaId="G-1MVP2JY3JG" />
     </html>
   );
 }
