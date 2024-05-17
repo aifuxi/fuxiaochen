@@ -82,7 +82,7 @@ export const AdminNoteListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 px-2 py-4 items-end">
+      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end">
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
