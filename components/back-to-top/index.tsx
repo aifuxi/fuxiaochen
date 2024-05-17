@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { useMemoizedFn, useScroll } from 'ahooks';
-import { ArrowUp } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -37,7 +37,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
       size={'icon'}
       onClick={handleClick}
     >
-      <ArrowUp className="w-3 h-3" />
+      <ChevronUp className="w-4 h-4" />
     </Button>
   );
 };
