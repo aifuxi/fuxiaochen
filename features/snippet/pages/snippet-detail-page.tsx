@@ -35,9 +35,7 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(snippet.createdAt)}</p>
         <p>{uv || PLACEHODER_TEXT}&nbsp;&nbsp;人浏览过</p>
       </div>
-      <h1 className="line-clamp-1 py-6 text-4xl font-semibold">
-        {snippet.title}
-      </h1>
+      <h1 className="break-all py-6 text-4xl font-semibold">{snippet.title}</h1>
 
       <p className="text-neutral-500 py-4">{snippet.description}</p>
       <BytemdViewer body={snippet.body || ''} />
