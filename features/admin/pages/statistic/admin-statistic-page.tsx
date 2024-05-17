@@ -46,7 +46,7 @@ export const AdminStatisticPage = async () => {
       }
     >
       <div className="flex-1">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
           {statistics.map((el) => (
             <div
               key={el.title}

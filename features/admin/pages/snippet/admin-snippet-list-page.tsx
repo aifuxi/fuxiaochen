@@ -252,7 +252,7 @@ export const AdminSnippetListPage = () => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 px-2 py-4 items-end">
+      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
