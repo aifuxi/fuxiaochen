@@ -84,11 +84,8 @@ export const AdminContentLayout = ({
   const [signoutDialogOpen, setSignoutDialogOpen] = React.useState(false);
 
   return (
-    <ScrollArea
-      ref={scrollRef}
-      className="flex-1 flex flex-col sm:gap-4 sm:py-4 sm:px-6 h-screen"
-    >
-      <header className="sticky top-0 z-10 flex justify-between h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <div className="flex-1 h-screen overflow-hidden">
+      <header className="fixed top-0 inset-x-0 z-10 flex justify-between h-14 items-center gap-4 border-b bg-background px-4 py-2 sm:static sm:h-auto sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
@@ -141,13 +138,13 @@ export const AdminContentLayout = ({
           </DropdownMenu>
         </div>
       </header>
-      <main className="flex-1 p-4 sm:px-6 sm:py-0" ref={scrollRef}>
+      <ScrollArea ref={scrollRef} className="h-screen px-6 pt-6">
         {children}
-      </main>
+      </ScrollArea>
 
       <BackToTop scrollRef={scrollRef} />
 
       <SignoutDialog open={signoutDialogOpen} setOpen={setSignoutDialogOpen} />
-    </ScrollArea>
+    </div>
   );
 };
