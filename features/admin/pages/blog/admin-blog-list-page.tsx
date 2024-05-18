@@ -16,6 +16,7 @@ import {
   Calendar,
   Eye,
   Pen,
+  Plus,
   RotateCw,
   Search,
   TagsIcon,
@@ -330,6 +331,10 @@ export const AdminBlogListPage = () => {
           <Button onClick={handleReset}>
             <RotateCw className="h-4 w-4 mr-2" />
             重置
+          </Button>
+          <Button onClick={handleGoToCreate}>
+            <Plus className="h-4 w-4 mr-2" />
+            创建博客
           </Button>
         </div>
       </div>

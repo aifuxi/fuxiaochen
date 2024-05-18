@@ -299,6 +299,7 @@ export const AdminTagListPage = () => {
             <RotateCw className="h-4 w-4 mr-2" />
             重置
           </Button>
+          <CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />
         </div>
       </div>
       <DataTable
