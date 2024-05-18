@@ -6,7 +6,7 @@ import { SessionProvider } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { PanelLeftClose, PanelRightClose, Settings } from 'lucide-react';
+import { PanelLeftClose, PanelRightClose } from 'lucide-react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 
@@ -94,18 +94,6 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
                 />
               )}
             </Button>
-
-            <Link
-              href="#"
-              className={cn(
-                buttonVariants({
-                  variant: 'outline',
-                  size: 'icon',
-                }),
-              )}
-            >
-              <Settings className="h-5 w-5" />
-            </Link>
           </nav>
         </aside>
 

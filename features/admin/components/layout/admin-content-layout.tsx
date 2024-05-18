@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 import { BackToTop } from '@/components/back-to-top';
@@ -83,7 +84,10 @@ export const AdminContentLayout = ({
   const [signoutDialogOpen, setSignoutDialogOpen] = React.useState(false);
 
   return (
-    <div className="flex-1 flex flex-col sm:gap-4 sm:py-4 sm:px-6 max-h-screen overflow-y-auto">
+    <ScrollArea
+      ref={scrollRef}
+      className="flex-1 flex flex-col sm:gap-4 sm:py-4 sm:px-6 h-screen"
+    >
       <header className="sticky top-0 z-10 flex justify-between h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
@@ -113,12 +117,12 @@ export const AdminContentLayout = ({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
-                <Avatar className="w-9 h-9">
+                <Avatar className="w-6 h-6 rounded-[8px]">
                   <AvatarImage
                     src={session?.data?.user?.image ?? ''}
                     alt={session?.data?.user?.name ?? PLACEHODER_TEXT}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="w-6 h-6 rounded-[8px]">
                     {session?.data?.user?.name ?? PLACEHODER_TEXT}
                   </AvatarFallback>
                 </Avatar>
@@ -144,6 +148,6 @@ export const AdminContentLayout = ({
       <BackToTop scrollRef={scrollRef} />
 
       <SignoutDialog open={signoutDialogOpen} setOpen={setSignoutDialogOpen} />
-    </div>
+    </ScrollArea>
   );
 };
