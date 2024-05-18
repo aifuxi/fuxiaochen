@@ -93,6 +93,7 @@
     "@commitlint/cli": "^17.6.3",
     "@commitlint/config-conventional": "^17.6.3",
     "@iconify/tailwind": "^0.1.4",
+    "@shikijs/transformers": "^1.5.2",
     "@tailwindcss/typography": "^0.5.9",
     "@tanstack/eslint-plugin-query": "^5.20.1",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
