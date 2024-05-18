@@ -230,7 +230,9 @@ export const AdminBlogListPage = () => {
         return (
           <div className="flex gap-2 items-center">
             <Link
-              className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}
+              className={cn(
+                buttonVariants({ variant: 'outline', size: 'icon' }),
+              )}
               href={`${PATHS.SITE_BLOG}/${row.original.slug}`}
               target="_blank"
             >
@@ -238,7 +240,7 @@ export const AdminBlogListPage = () => {
             </Link>
             <Button
               size={'icon'}
-              variant="ghost"
+              variant="outline"
               onClick={() => handleGoToEdit(row.original.id)}
             >
               <Pen className="h-4 w-4" />

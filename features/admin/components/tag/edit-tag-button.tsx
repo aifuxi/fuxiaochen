@@ -77,7 +77,11 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
       <DialogTrigger asChild>
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
+            <Button
+              size={'icon'}
+              variant="outline"
+              onClick={() => setOpen(true)}
+            >
               <Pen className="h-4 w-4" />
             </Button>
           </TooltipTrigger>

@@ -28,7 +28,7 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="ghost" onClick={() => setOpen(true)}>
+        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
           <Trash className="h-4 w-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
