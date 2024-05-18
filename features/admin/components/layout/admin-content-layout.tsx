@@ -126,12 +126,21 @@ export const AdminContentLayout = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>我的账号</DropdownMenuLabel>
+              <DropdownMenuLabel className="cursor-pointer">
+                我的账号
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>设置</DropdownMenuItem>
-              <DropdownMenuItem>帮助</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                设置
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                帮助
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setSignoutDialogOpen(true)}>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => setSignoutDialogOpen(true)}
+              >
                 退出登录
               </DropdownMenuItem>
             </DropdownMenuContent>
