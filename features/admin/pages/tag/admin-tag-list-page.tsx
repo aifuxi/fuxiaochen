@@ -252,7 +252,7 @@ export const AdminTagListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4 py-4">
+      <div className="grid gap-4 grid-cols-4 mb-4 py-4 px-1">
         <Input
           placeholder="请输入名称"
           value={inputParams.name}

@@ -11,8 +11,7 @@ import { isUndefined } from 'lodash-es';
 import { RotateCw, Search } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -79,7 +78,7 @@ export const AdminNoteListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end">
+      <div className="grid gap-4 grid-cols-4 py-4 items-end px-1">
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
@@ -123,23 +122,7 @@ export const AdminNoteListPage = () => {
             </SelectContent>
           </Select>
         )}
-        <Combobox
-          options={
-            tags?.map((el) => ({
-              label: el.name,
-              value: el.id,
-            })) ?? []
-          }
-          multiple
-          clearable
-          selectPlaceholder="请选择标签"
-          value={inputParams.tags}
-          onValueChange={(v) => {
-            updateInputParams({
-              tags: v,
-            });
-          }}
-        />
+
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
             <Search className="h-4 w-4 mr-2" />
@@ -151,6 +134,39 @@ export const AdminNoteListPage = () => {
           </Button>
           <CreateNoteButton refreshAsync={getNotesQuery.refreshAsync} />
         </div>
+      </div>
+
+      <div className="pb-4">
+        <ul className="flex gap-x-2 gap-y-2 flex-wrap">
+          {tags?.map((el) => (
+            <li key={el.id}>
+              <span
+                className={cn(
+                  'cursor-pointer',
+                  buttonVariants({
+                    variant: params.tags?.includes(el.id)
+                      ? 'default'
+                      : 'outline',
+                  }),
+                )}
+                onClick={() => {
+                  updateParams((draft) => {
+                    const s = new Set(draft.tags);
+                    if (s.has(el.id)) {
+                      s.delete(el.id);
+                    } else {
+                      s.add(el.id);
+                    }
+
+                    return { tags: [...s] };
+                  });
+                }}
+              >
+                {el.name}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <ResponsiveMasonry
