@@ -2,7 +2,11 @@
 import { type BytemdPlugin } from 'bytemd';
 import { load } from 'cheerio';
 import { isNil } from 'lodash-es';
-import { codeToHtml } from 'shiki';
+// 支持大部分语言高亮，体积更大
+import { codeToHtml } from 'shiki/bundle-full.mjs';
+
+// 仅支持部分语言高亮，体积更小
+// import { codeToHtml } from 'shiki/bundle-full.mjs';
 
 /**
  * 代码灵感来源：https://github.com/bytedance/bytemd/issues/34
