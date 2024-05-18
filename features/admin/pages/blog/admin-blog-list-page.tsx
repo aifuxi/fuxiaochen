@@ -261,7 +261,7 @@ export const AdminBlogListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end">
+      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end px-1">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
