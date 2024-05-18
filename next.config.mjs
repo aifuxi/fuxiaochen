@@ -38,6 +38,12 @@ const config = {
       },
     ],
   },
+  experimental: {
+    // 解决 next build 报错: Error [ERR_REQUIRE_ESM]: require() of ES Module shiki/dist/index.mjs not supported.
+    // 参考 issue: https://github.com/vercel/next.js/issues/64434#issuecomment-2082964050
+    // 参考 issue: https://github.com/vercel/next.js/issues/64434#issuecomment-2084270758
+    optimizePackageImports: ['shiki'],
+  },
 };
 
 export default withBundleAnalyzer(config);
