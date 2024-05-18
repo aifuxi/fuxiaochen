@@ -25,7 +25,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { BytemdViewer } from '@/components/bytemd';
 import { PageBreadcrumb } from '@/components/page-header';
-import { Pagination, PaginationInfo } from '@/components/pagination';
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -40,6 +39,7 @@ import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
 import {
   AdminContentLayout,
+  CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
   ToggleNotePublishButton,
@@ -63,9 +63,6 @@ export const AdminNoteListPage = () => {
   });
 
   const getNotesQuery = useGetNotes(params);
-  const pageCount = Math.ceil(
-    (getNotesQuery.data?.total ?? 0) / params.pageSize,
-  );
   const data = React.useMemo(
     () => getNotesQuery.data?.notes ?? [],
     [getNotesQuery],
@@ -152,6 +149,7 @@ export const AdminNoteListPage = () => {
             <RotateCw className="h-4 w-4 mr-2" />
             重置
           </Button>
+          <CreateNoteButton refreshAsync={getNotesQuery.refreshAsync} />
         </div>
       </div>
 
@@ -161,11 +159,9 @@ export const AdminNoteListPage = () => {
           350: 1,
           // lg
           1024: 2,
-          // 2xl
-          1536: 3,
         }}
       >
-        <Masonry gutter="1rem">
+        <Masonry gutter="1.5rem">
           {getNotesQuery.loading
             ? Array.from({ length: 8 }).map((_, idx) => (
                 <div key={idx}>
@@ -208,25 +204,6 @@ export const AdminNoteListPage = () => {
               ))}
         </Masonry>
       </ResponsiveMasonry>
-
-      {!getNotesQuery.loading && (
-        <div className="flex items-center justify-betweens">
-          {pageCount > 1 && (
-            <PaginationInfo
-              total={getNotesQuery.data?.total}
-              params={{ ...params }}
-            />
-          )}
-          <div className="flex-1 flex items-center justify-end">
-            <Pagination
-              total={getNotesQuery.data?.total}
-              params={{ ...params }}
-              updateParams={updateParams}
-              showSizeChanger
-            />
-          </div>
-        </div>
-      )}
     </AdminContentLayout>
   );
 
