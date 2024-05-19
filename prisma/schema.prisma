@@ -81,6 +81,8 @@ model Tag {
   snippets Snippet[]
   notes    Note[]
   type     TagTypeEnum @default(ALL)
+  icon     String?
+  iconDark String?
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
