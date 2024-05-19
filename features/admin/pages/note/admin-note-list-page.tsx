@@ -33,7 +33,7 @@ import {
   PUBLISHED_LABEL_MAP,
 } from '@/constants';
 import { type GetNotesDTO, useGetNotes } from '@/features/note';
-import { useGetAllTags } from '@/features/tag';
+import { TagPrefixIcon, useGetAllTags } from '@/features/tag';
 import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
 
 import {
@@ -41,7 +41,6 @@ import {
   CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
-  TagPrefixIcon,
   ToggleNotePublishButton,
 } from '../../components';
 

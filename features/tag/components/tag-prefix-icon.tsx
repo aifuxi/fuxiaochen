@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { type Tag } from '@/features/tag';
 import { cn } from '@/lib/utils';
+
+import { type Tag } from '../types';
 
 type TagPrefixIconProps = {
   tag: Pick<Tag, 'icon' | 'iconDark'>;

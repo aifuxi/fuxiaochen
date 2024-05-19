@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Calendar, Eye } from 'lucide-react';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
+import { TagPrefixIcon } from '@/features/tag';
 import { cn, prettyDate } from '@/lib/utils';
 import { formatNum } from '@/utils';
 
@@ -26,7 +27,10 @@ export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
     >
       <ul className="text-xs font-medium text-muted-foreground mb-1 flex space-x-4">
         {snippet.tags.map((tag) => (
-          <li key={tag.id}>#&nbsp;{tag.name}</li>
+          <li key={tag.id} className="flex items-center">
+            <span className="mr-1">#&nbsp;{tag.name}</span>
+            <TagPrefixIcon tag={tag} />
+          </li>
         ))}
       </ul>
       <h4 className="text-xl font-medium line-clamp-1 mb-2">{snippet.title}</h4>
