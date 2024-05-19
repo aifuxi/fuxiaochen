@@ -6,6 +6,7 @@ import { BytemdViewer } from '@/components/bytemd';
 import { Wrapper } from '@/components/wrapper';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
+import { TagList } from '@/features/tag';
 import { cn, prettyDateWithWeekday } from '@/lib/utils';
 
 import { BlogEventTracking } from '../components/blog-event-tracking';
@@ -39,6 +40,10 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
 
       <p className="text-neutral-500 py-4">{blog.description}</p>
       <BytemdViewer body={blog.body || ''} />
+
+      <div className="pt-4 pb-14">
+        <TagList tags={blog.tags} />
+      </div>
       <BlogEventTracking blogID={blog.id} />
     </Wrapper>
   );

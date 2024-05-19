@@ -6,6 +6,7 @@ import { BytemdViewer } from '@/components/bytemd';
 import { Wrapper } from '@/components/wrapper';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
+import { TagList } from '@/features/tag';
 import { cn, prettyDateWithWeekday } from '@/lib/utils';
 
 import { SnippetEventTracking } from '../components/snippet-event-tracking';
@@ -39,6 +40,9 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
 
       <p className="text-neutral-500 py-4">{snippet.description}</p>
       <BytemdViewer body={snippet.body || ''} />
+      <div className="pt-4 pb-14">
+        <TagList tags={snippet.tags} />
+      </div>
       <SnippetEventTracking snippetID={snippet.id} />
     </Wrapper>
   );
