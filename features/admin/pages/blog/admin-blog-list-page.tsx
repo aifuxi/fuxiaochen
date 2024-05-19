@@ -348,7 +348,7 @@ export const AdminBlogListPage = () => {
     updateParams({
       title: inputParams.title,
       published: inputParams.published,
-      tags: inputParams.tags,
+      tags: params.tags,
     });
   }
 
