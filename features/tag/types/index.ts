@@ -17,6 +17,8 @@ export const createTagSchema = z.object({
     TagTypeEnum.NOTE,
     TagTypeEnum.SNIPPET,
   ]),
+  icon: z.string().optional(),
+  iconDark: z.string().optional(),
 });
 
 export const updateTagSchema = createTagSchema.partial().extend({

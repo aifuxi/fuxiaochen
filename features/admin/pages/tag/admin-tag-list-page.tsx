@@ -12,6 +12,7 @@ import {
   Book,
   Calendar,
   CodeXml,
+  ImageIcon,
   RotateCw,
   ScrollIcon,
   Search,
@@ -141,6 +142,38 @@ export const AdminTagListPage = () => {
             {iconMap[originalType]}
             {typeLabel}
           </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'icon',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <ImageIcon className="w-4 h-4" />
+          <span>浅色图标</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return row.original.icon ? (
+          <img src={row.original.icon} className="w-6 h-6" alt="" />
+        ) : (
+          PLACEHODER_TEXT
+        );
+      },
+    },
+    {
+      accessorKey: 'iconDark',
+      header: () => (
+        <div className="flex space-x-1 items-center">
+          <ImageIcon className="w-4 h-4" />
+          <span>深色图标</span>
+        </div>
+      ),
+      cell: ({ row }) => {
+        return row.original.iconDark ? (
+          <img src={row.original.iconDark} className="w-6 h-6" alt="" />
+        ) : (
+          PLACEHODER_TEXT
         );
       },
     },
