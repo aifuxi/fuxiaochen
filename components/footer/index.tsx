@@ -11,59 +11,25 @@ import {
   NICKNAME,
   PATHS,
   PATHS_MAP,
+  SLOGAN,
   navItems,
 } from '@/constants';
 import { getSiteStatistics } from '@/features/statistics';
 import { cn } from '@/lib/utils';
 import { formatNum } from '@/utils';
 
-import { Logo } from '../logo';
 import { Wrapper } from '../wrapper';
 
 export const Footer = async () => {
   const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
 
   return (
-    <footer className="py-24">
+    <footer className="pt-12 pb-6 px-6">
       <Wrapper
         className={cn(
-          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[auto,1fr,1fr,1fr] gap-x-24 gap-y-8 text-sm text-muted-foreground',
+          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-24 gap-y-8 text-sm text-muted-foreground',
         )}
       >
-        <dl className="flex flex-col gap-3">
-          <dt className="flex space-x-2 items-center font-bold text-primary text-lg">
-            <Logo />
-            <span className="ml-2">{NICKNAME}</span>
-          </dt>
-          <dd>
-            &copy; {new Date().getFullYear()} {NICKNAME}
-          </dd>
-          <dd>
-            <Link
-              target="_blank"
-              aria-label={BEI_AN_NUMBER}
-              href={BEI_AN_LINK}
-              className="flex items-center transition-colors hover:text-primary hover:font-semibold"
-            >
-              {BEI_AN_NUMBER}
-            </Link>
-          </dd>
-          <dd>
-            <Link
-              target="_blank"
-              aria-label={GONG_AN_NUMBER}
-              href={GONG_AN_LINK}
-              className="flex items-center transition-colors hover:text-primary hover:font-semibold"
-            >
-              <img
-                src={ImageAssets.gongan}
-                alt={GONG_AN_NUMBER}
-                className="mr-1 -translate-y-[1px] w-[18px] h-[18px]"
-              />
-              <span>{GONG_AN_NUMBER}</span>
-            </Link>
-          </dd>
-        </dl>
         <dl className="flex flex-col gap-3">
           <dt className="text-primary font-semibold text-lg">导航</dt>
           {navItems.map((el) => (
@@ -101,6 +67,35 @@ export const Footer = async () => {
             总 <span>{formatNum(uv)}</span> 人访问（UV）
           </dd>
         </dl>
+      </Wrapper>
+
+      <Wrapper className="text-sm text-muted-foreground flex flex-col md:flex-row space-y-1 md:space-y-0 md:space-x-4 items-center justify-center pt-24">
+        <Link
+          target="_blank"
+          aria-label={GONG_AN_NUMBER}
+          href={GONG_AN_LINK}
+          className="flex items-center transition-colors hover:text-primary hover:font-semibold order-2 md:order-1"
+        >
+          <img
+            src={ImageAssets.gongan}
+            alt={GONG_AN_NUMBER}
+            className="mr-1 -translate-y-[1px] w-[18px] h-[18px]"
+          />
+          <span>{GONG_AN_NUMBER}</span>
+        </Link>
+
+        <Link
+          target="_blank"
+          aria-label={BEI_AN_NUMBER}
+          href={BEI_AN_LINK}
+          className="flex items-center transition-colors hover:text-primary hover:font-semibold order-1 md:order-2"
+        >
+          {BEI_AN_NUMBER}
+        </Link>
+        <div className="order-3">
+          &copy; {new Date().getFullYear()} {NICKNAME}&nbsp;&nbsp;·&nbsp;&nbsp;
+          {SLOGAN}
+        </div>
       </Wrapper>
     </footer>
   );
