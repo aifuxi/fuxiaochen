@@ -8,20 +8,14 @@ import { usePathname } from 'next/navigation';
 import { useScroll } from 'ahooks';
 import { UserCog } from 'lucide-react';
 
-import {
-  DARK_FAVICON_URL,
-  LIGHT_LOGO,
-  NICKNAME,
-  PATHS,
-  SOURCE_CODE_GITHUB_PAGE,
-  WEBSITE,
-} from '@/constants';
+import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { navItems } from './config';
 import { MobileNav } from './mobile-nav';
 
 import { IconBarandGithub } from '../icons';
+import { Logo } from '../logo';
 import { ModeToggle } from '../mode-toggle';
 import { NextLink } from '../next-link';
 import { Button } from '../ui/button';
@@ -43,16 +37,7 @@ export const Navbar = () => {
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
-          <img
-            src={LIGHT_LOGO}
-            className={cn('w-8 h-8 hidden dark:block')}
-            alt={WEBSITE}
-          />
-          <img
-            src={DARK_FAVICON_URL}
-            className={cn('w-8 h-8 dark:hidden')}
-            alt={WEBSITE}
-          />
+          <Logo />
           <span className="ml-2 font-semibold text-primary text-base">
             {WEBSITE}
           </span>

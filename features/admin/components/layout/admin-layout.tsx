@@ -10,13 +10,9 @@ import { PanelLeftClose, PanelRightClose } from 'lucide-react';
 
 import { Button, buttonVariants } from '@/components/ui/button';
 
-import {
-  DARK_FAVICON_URL,
-  LIGHT_LOGO,
-  NICKNAME,
-  PATHS,
-  WEBSITE,
-} from '@/constants';
+import { Logo } from '@/components/logo';
+
+import { NICKNAME, PATHS, WEBSITE } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { adminNavItems } from './admin-content-layout';
@@ -41,16 +37,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             )}
             aria-label={NICKNAME}
           >
-            <img
-              src={LIGHT_LOGO}
-              className={cn('w-8 h-8 hidden dark:block')}
-              alt={WEBSITE}
-            />
-            <img
-              src={DARK_FAVICON_URL}
-              className={cn('w-8 h-8 dark:hidden')}
-              alt={WEBSITE}
-            />
+            <Logo className="w-8 h-8" />
             {open && (
               <span className="ml-2 font-semibold text-primary text-base">
                 {WEBSITE}

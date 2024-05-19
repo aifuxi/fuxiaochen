@@ -1,10 +1,14 @@
 'use server';
 
+import dayjs from 'dayjs';
+
 import {
   REDIS_BLOG_UNIQUE_VISITOR,
   REDIS_PAGE_VIEW,
+  REDIS_PAGE_VIEW_TODAY,
   REDIS_SNIPPET_UNIQUE_VISITOR,
   REDIS_UNIQUE_VISITOR,
+  REDIS_UNIQUE_VISITOR_TODAY,
 } from '@/constants';
 import { prisma } from '@/lib/prisma';
 import { redis } from '@/lib/redis';
@@ -27,6 +31,9 @@ export const getStatistics = async () => {
 };
 
 export const recordPV = async () => {
+  const todayKey = dayjs().format('YYYY-MM-DD');
+  await redis.incr(`${REDIS_PAGE_VIEW_TODAY}:${todayKey}`);
+
   const pv = await redis.get(REDIS_PAGE_VIEW);
 
   if (pv) {
@@ -36,21 +43,29 @@ export const recordPV = async () => {
   }
 };
 
-export const getPV = async () => {
+export const getSiteStatistics = async () => {
+  // 总
   const pv = await redis.get(REDIS_PAGE_VIEW);
-  return pv;
+  const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
+
+  // 今日
+  const todayKey = dayjs().format('YYYY-MM-DD');
+  const todayPV = await redis.get(`${REDIS_PAGE_VIEW_TODAY}:${todayKey}`);
+  const todayUV = await redis.scard(
+    `${REDIS_UNIQUE_VISITOR_TODAY}:${todayKey}`,
+  );
+
+  return { pv, uv, todayUV, todayPV };
 };
 
 export const recordUV = async (cid?: string) => {
   if (!cid) {
     return;
   }
-  await redis.sadd(REDIS_UNIQUE_VISITOR, cid);
-};
 
-export const getUV = async () => {
-  const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
-  return uv;
+  const todayKey = dayjs().format('YYYY-MM-DD');
+  await redis.sadd(`${REDIS_UNIQUE_VISITOR_TODAY}:${todayKey}`, cid);
+  await redis.sadd(REDIS_UNIQUE_VISITOR, cid);
 };
 
 export const recordBlogUV = async (blogID?: string, cid?: string) => {
