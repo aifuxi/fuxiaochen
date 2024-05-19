@@ -198,7 +198,7 @@ export const AdminNoteListPage = () => {
   function handleSearch() {
     updateParams({
       body: inputParams.body,
-      tags: inputParams.tags,
+      tags: params.tags,
       published: inputParams.published,
     });
   }
