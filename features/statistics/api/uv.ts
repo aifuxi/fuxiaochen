@@ -3,7 +3,6 @@ import { useRequest } from 'ahooks';
 import {
   getBlogUV,
   getSnippetUV,
-  getUV,
   recordBlogUV,
   recordSnippetUV,
   recordUV,
@@ -11,10 +10,6 @@ import {
 
 export const useRecordUV = () => {
   return useRequest((cid: string) => recordUV(cid), { manual: true });
-};
-
-export const useGetUV = () => {
-  return useRequest(() => getUV());
 };
 
 export const useRecordBlogUV = () => {

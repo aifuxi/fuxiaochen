@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Image from 'next/image';
 import Link from 'next/link';
 
 import {
@@ -8,87 +7,101 @@ import {
   BEI_AN_NUMBER,
   GONG_AN_LINK,
   GONG_AN_NUMBER,
+  ImageAssets,
   NICKNAME,
   PATHS,
   PATHS_MAP,
-  REDIS_PAGE_VIEW,
-  REDIS_UNIQUE_VISITOR,
   navItems,
 } from '@/constants';
-import { redis } from '@/lib/redis';
+import { getSiteStatistics } from '@/features/statistics';
+import { cn } from '@/lib/utils';
 import { formatNum } from '@/utils';
 
+import { Logo } from '../logo';
+import { Wrapper } from '../wrapper';
+
 export const Footer = async () => {
-  const pv = await redis.get(REDIS_PAGE_VIEW);
-  const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
+  const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
 
   return (
-    <footer className="max-w-screen-wrapper w-full flex flex-col py-8 text-muted-foreground mx-auto">
-      <ul className="flex space-x-2 items-center justify-center text-sm">
-        {navItems.map((el, idx) => (
-          <li key={el.link}>
-            {Boolean(idx) && <span className="mr-2">·</span>}
+    <footer className="py-24">
+      <Wrapper
+        className={cn(
+          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-[auto,1fr,1fr,1fr] gap-x-24 gap-y-8 text-sm text-muted-foreground',
+        )}
+      >
+        <dl className="flex flex-col gap-3">
+          <dt className="flex space-x-2 items-center font-bold text-primary text-lg">
+            <Logo />
+            <span className="ml-2">{NICKNAME}</span>
+          </dt>
+          <dd>
+            &copy; {new Date().getFullYear()} {NICKNAME}
+          </dd>
+          <dd>
             <Link
-              href={el.link}
-              className=" text-muted-foreground hover:text-primary transition-colors"
+              target="_blank"
+              aria-label={BEI_AN_NUMBER}
+              href={BEI_AN_LINK}
+              className="flex items-center transition-colors hover:text-primary hover:font-semibold"
             >
-              {el.label}
+              {BEI_AN_NUMBER}
             </Link>
-          </li>
-        ))}
-        <li>
-          <span className="mr-2">·</span>
-          <Link
-            aria-label={PATHS_MAP[PATHS.SITEMAP]}
-            href={PATHS.SITEMAP}
-            className="text-muted-foreground hover:text-primary transition-colors"
-          >
-            {PATHS_MAP[PATHS.SITEMAP]}
-          </Link>
-        </li>
-        <li>
-          <span className="mr-2">·</span>
-          <span className="text-muted-foreground hover:text-primary transition-colors">
-            PV：{formatNum(pv)}
-          </span>
-        </li>
-        <li>
-          <span className="mr-2">·</span>
-          <span className="hover:text-primary transition-colors">
-            UV：{formatNum(uv)}
-          </span>
-        </li>
-      </ul>
-      <div className="w-full text-sm flex flex-col md:flex-row items-center justify-center space-y-1 md:space-y-0 md:space-x-2 ">
-        <span>Copyringht &copy; {new Date().getFullYear()}</span>
-        <span className="hidden md:inline-block">·</span>
-        <span className="hidden md:inline-block">{NICKNAME}</span>
-        <span className="hidden md:inline-block">·</span>
-        <Link
-          target="_blank"
-          aria-label={BEI_AN_NUMBER}
-          href={BEI_AN_LINK}
-          className="flex items-center h-5 md:h-10 transition-colors text-muted-foreground hover:text-primary"
-        >
-          {BEI_AN_NUMBER}
-        </Link>
-        <span className="hidden md:inline-block">·</span>
-        <Link
-          target="_blank"
-          aria-label={GONG_AN_NUMBER}
-          href={GONG_AN_LINK}
-          className="flex items-center h-5 md:h-10 transition-colors text-muted-foreground hover:text-primary"
-        >
-          <Image
-            width={18}
-            height={18}
-            src="/images/gongan.png"
-            alt={GONG_AN_NUMBER}
-            className="mr-1 -translate-y-[1px]"
-          />
-          <span>{GONG_AN_NUMBER}</span>
-        </Link>
-      </div>
+          </dd>
+          <dd>
+            <Link
+              target="_blank"
+              aria-label={GONG_AN_NUMBER}
+              href={GONG_AN_LINK}
+              className="flex items-center transition-colors hover:text-primary hover:font-semibold"
+            >
+              <img
+                src={ImageAssets.gongan}
+                alt={GONG_AN_NUMBER}
+                className="mr-1 -translate-y-[1px] w-[18px] h-[18px]"
+              />
+              <span>{GONG_AN_NUMBER}</span>
+            </Link>
+          </dd>
+        </dl>
+        <dl className="flex flex-col gap-3">
+          <dt className="text-primary font-semibold text-lg">导航</dt>
+          {navItems.map((el) => (
+            <dd key={el.link}>
+              <Link
+                href={el.link}
+                className="flex items-center transition-colors hover:font-semibold hover:text-primary"
+              >
+                {el.label}
+              </Link>
+            </dd>
+          ))}
+          <dd>
+            <Link
+              href={PATHS.SITEMAP}
+              className="hover:text-primary transition-colors hover:font-semibold"
+            >
+              {PATHS_MAP[PATHS.SITEMAP]}
+            </Link>
+          </dd>
+        </dl>
+        <dl className="flex flex-col gap-3">
+          <dt className="text-primary font-semibold text-lg">统计</dt>
+          <dd>
+            今日 <span>{formatNum(todayPV)}</span> 次浏览
+          </dd>
+          <dd>
+            今日 <span>{formatNum(todayUV)}</span> 人访问
+          </dd>
+
+          <dd>
+            总 <span>{formatNum(pv)}</span> 次浏览（PV）
+          </dd>
+          <dd>
+            总 <span>{formatNum(uv)}</span> 人访问（UV）
+          </dd>
+        </dl>
+      </Wrapper>
     </footer>
   );
 };

@@ -1,1 +1,5 @@
-export const LIGHT_LOGO = '/images/fuxiaochen-light.svg';
+export const ImageAssets = {
+  gongan: '/images/gongan.png',
+  logoLight: '/images/fuxiaochen-light.svg',
+  logoDark: '/images/fuxiaochen-dark.svg',
+};
