@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 
 import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
 import {
@@ -133,6 +134,32 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>浅色图标</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="请输入" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="iconDark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>深色图标</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="请输入" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

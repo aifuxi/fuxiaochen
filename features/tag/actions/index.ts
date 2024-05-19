@@ -129,6 +129,8 @@ export const createTag = async (params: CreateTagDTO) => {
       name: result.data.name,
       slug: result.data.slug,
       type: result.data.type,
+      icon: result.data.icon,
+      iconDark: result.data.iconDark,
     },
   });
 };
@@ -172,6 +174,8 @@ export const updateTag = async (params: UpdateTagDTO) => {
       name: result.data.name,
       slug: result.data.slug,
       type: result.data.type,
+      icon: result.data.icon,
+      iconDark: result.data.iconDark,
     },
     where: {
       id: result.data.id,

@@ -41,6 +41,7 @@ import {
   CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
+  TagPrefixIcon,
   ToggleNotePublishButton,
 } from '../../components';
 
@@ -139,31 +140,29 @@ export const AdminNoteListPage = () => {
       <div className="pb-4">
         <ul className="flex gap-x-2 gap-y-2 flex-wrap">
           {tags?.map((el) => (
-            <li key={el.id}>
-              <span
-                className={cn(
-                  'cursor-pointer',
-                  buttonVariants({
-                    variant: params.tags?.includes(el.id)
-                      ? 'default'
-                      : 'outline',
-                  }),
-                )}
-                onClick={() => {
-                  updateParams((draft) => {
-                    const s = new Set(draft.tags);
-                    if (s.has(el.id)) {
-                      s.delete(el.id);
-                    } else {
-                      s.add(el.id);
-                    }
+            <li
+              key={el.id}
+              className={cn(
+                'cursor-pointer',
+                buttonVariants({
+                  variant: params.tags?.includes(el.id) ? 'default' : 'outline',
+                }),
+              )}
+              onClick={() => {
+                updateParams((draft) => {
+                  const s = new Set(draft.tags);
+                  if (s.has(el.id)) {
+                    s.delete(el.id);
+                  } else {
+                    s.add(el.id);
+                  }
 
-                    return { tags: [...s] };
-                  });
-                }}
-              >
-                {el.name}
-              </span>
+                  return { tags: [...s] };
+                });
+              }}
+            >
+              <TagPrefixIcon tag={el} />
+              <span>{el.name}</span>
             </li>
           ))}
         </ul>

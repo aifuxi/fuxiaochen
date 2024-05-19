@@ -31,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Tooltip,
   TooltipContent,
@@ -67,6 +68,8 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
       form.setValue('name', tag.name);
       form.setValue('slug', tag.slug);
       form.setValue('type', tag.type);
+      form.setValue('icon', tag.icon || '');
+      form.setValue('iconDark', tag.iconDark || '');
       form.setValue('id', tag.id);
       form.clearErrors();
     }
@@ -179,6 +182,33 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                         ))}
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="icon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>浅色图标</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="请输入" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="iconDark"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>深色图标</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="请输入" {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

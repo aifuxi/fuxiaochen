@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE `Tag` ADD COLUMN `icon` VARCHAR(191) NULL,
-    ADD COLUMN `iconDark` VARCHAR(191) NULL;
