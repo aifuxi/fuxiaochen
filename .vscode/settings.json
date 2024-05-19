@@ -39,5 +39,8 @@
   "javascript.validate.enable": false,
   "[caddyfile]": {
     "editor.defaultFormatter": "matthewpi.caddyfile-support"
-  }
+  },
+  "window.autoDetectColorScheme": true,
+  "workbench.preferredLightColorTheme": "Vitesse Light",
+  "workbench.preferredDarkColorTheme": "Vitesse Light"
 }
