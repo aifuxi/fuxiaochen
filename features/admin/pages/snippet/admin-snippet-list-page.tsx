@@ -26,7 +26,6 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Combobox } from '@/components/ui/combobox';
 import { DataTable } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import {
@@ -60,6 +59,7 @@ import { cn, isAdmin, toSlashDateString } from '@/lib/utils';
 import {
   AdminContentLayout,
   DeleteSnippetButton,
+  SearchByTags,
   ToggleSnippetPublishSwitch,
 } from '../../components';
 
@@ -255,7 +255,7 @@ export const AdminSnippetListPage = () => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4 py-4 items-end px-1">
+      <div className="grid gap-4 grid-cols-4 py-4 items-end px-1">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
@@ -270,23 +270,7 @@ export const AdminSnippetListPage = () => {
             }
           }}
         />
-        <Combobox
-          options={
-            tags?.map((el) => ({
-              label: el.name,
-              value: el.id,
-            })) ?? []
-          }
-          multiple
-          clearable
-          selectPlaceholder="请选择标签"
-          value={inputParams.tags}
-          onValueChange={(v) => {
-            updateInputParams({
-              tags: v,
-            });
-          }}
-        />
+
         {isAdmin(session?.user?.email) && (
           <Select
             onValueChange={(v: PUBLISHED_ENUM) =>
@@ -330,6 +314,10 @@ export const AdminSnippetListPage = () => {
             创建片段
           </Button>
         </div>
+      </div>
+
+      <div className="pb-4">
+        <SearchByTags tags={tags} params={params} updateParams={updateParams} />
       </div>
 
       <DataTable
