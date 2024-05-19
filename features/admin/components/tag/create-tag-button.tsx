@@ -40,6 +40,7 @@ import {
   useCreateTag,
 } from '@/features/tag';
 import { cn, toSlug } from '@/lib/utils';
+import { convertSvgToDataUrl } from '@/utils';
 
 type CreateTagButtonProps = {
   refreshAsync: () => Promise<unknown>;
@@ -145,12 +146,23 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   <FormItem>
                     <FormLabel>浅色图标</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="请输入" {...field} />
+                      <Textarea
+                        placeholder="请输入一个svg字符串（会自动转换为data url）或者data
+                        url或者一个图片地址"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
+                    <Button
+                      type="button"
+                      onClick={() => handleFormatIcon('icon')}
+                    >
+                      转为Data Url
+                    </Button>
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="iconDark"
@@ -158,9 +170,19 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   <FormItem>
                     <FormLabel>深色图标</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="请输入" {...field} />
+                      <Textarea
+                        placeholder="请输入一个svg字符串（会自动转换为data url）或者data
+                        url或者一个图片地址"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
+                    <Button
+                      type="button"
+                      onClick={() => handleFormatIcon('iconDark')}
+                    >
+                      转为Data Url
+                    </Button>
                   </FormItem>
                 )}
               />
@@ -185,6 +207,13 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   );
 
   async function handleSubmit(values: CreateTagDTO) {
+    if (values.icon) {
+      values.icon = convertSvgToDataUrl(values.icon);
+    }
+    if (values.iconDark) {
+      values.iconDark = convertSvgToDataUrl(values.iconDark);
+    }
+
     await createTagQuery.runAsync(values);
     setOpen(false);
     await refreshAsync();
@@ -195,6 +224,22 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     if (tmp) {
       const formatted = toSlug(tmp);
       form.setValue('slug', formatted);
+    }
+  }
+
+  function handleFormatIcon(type: 'icon' | 'iconDark') {
+    if (type === 'icon') {
+      const tmp = form.getValues().icon?.trim();
+      if (tmp) {
+        const formatted = convertSvgToDataUrl(tmp);
+        form.setValue('icon', formatted);
+      }
+    } else if (type === 'iconDark') {
+      const tmp = form.getValues().iconDark?.trim();
+      if (tmp) {
+        const formatted = convertSvgToDataUrl(tmp);
+        form.setValue('iconDark', formatted);
+      }
     }
   }
 };
