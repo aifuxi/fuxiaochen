@@ -24,7 +24,7 @@ export const Footer = async () => {
   const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
 
   return (
-    <footer className="pt-12 pb-6 px-6">
+    <footer className="pt-12 pb-12 px-6">
       <Wrapper
         className={cn(
           'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-24 gap-y-8 text-sm text-muted-foreground',
