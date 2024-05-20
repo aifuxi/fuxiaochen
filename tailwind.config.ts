@@ -13,15 +13,32 @@ export default {
     './src/**/*.{ts,tsx}',
     './lib/**/*.{ts,tsx}',
   ],
+
   theme: {
+    screens: {
+      sm: '640px',
+      // => @media (min-width: 640px) { ... }
+
+      md: '768px',
+      // => @media (min-width: 768px) { ... }
+
+      lg: '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      // 基础版心
+      wrapper: '1200px',
+
+      xl: '1280px',
+      // => @media (min-width: 1280px) { ... }
+
+      '2xl': '1440px',
+      // => @media (min-width: 1440px) { ... }
+    },
     debugScreens: {
       position: ['bottom', 'right'],
       ignore: ['dark'],
     },
     extend: {
-      screens: {
-        wrapper: '1200px',
-      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
