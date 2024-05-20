@@ -21,9 +21,9 @@ export const formatNum = (n?: number | string | null) => {
   if (num < 10 ** 3) {
     return `${num}`;
   } else if (num >= 10 ** 3 && num < 10 ** 4) {
-    return `${formatDecimal(num / 10 ** 3)}k`;
+    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
   } else if (num >= 10 ** 4 && num < 10 ** 8) {
-    return `${formatDecimal(num / 10 ** 4)}w`;
+    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
   } else if (num >= 10 ** 8) {
     return `${formatDecimal(num / 10 ** 8)}亿`;
   }
