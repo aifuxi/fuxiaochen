@@ -22,7 +22,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
     GoogleProvider({ allowDangerousEmailAccountLinking: true }),
   ],
   pages: {
-    signIn: PATHS.AUTH_SIGNIN,
+    signIn: PATHS.AUTH_SIGN_IN,
   },
   debug: NODE_ENV === 'development',
   callbacks: {

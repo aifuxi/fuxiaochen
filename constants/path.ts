@@ -24,8 +24,8 @@ export const PATHS = {
   ADMIN_NOTE: '/admin/note',
 
   /** ************* AUTH ****************** */
-  AUTH_SIGNIN: '/auth/signin',
-  NEXT_AUTH_SIGNIN: '/api/auth/signin',
+  AUTH_SIGN_IN: '/auth/sign_in',
+  NEXT_AUTH_SIGN_IN: '/api/auth/sign_in',
 };
 
 export const PATHS_MAP: Record<string, string> = {
@@ -49,7 +49,7 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.ADMIN_NOTE]: '笔记',
 
   /** ************* AUTH ****************** */
-  [PATHS.AUTH_SIGNIN]: '登录',
+  [PATHS.AUTH_SIGN_IN]: '登录',
 };
 
 export const PATH_DESCRIPTION_MAP: Record<string, string> = {
@@ -74,5 +74,5 @@ export const PATH_DESCRIPTION_MAP: Record<string, string> = {
   [PATHS.ADMIN_NOTE]: '好记性不如烂笔头，灵感一闪',
 
   /** ************* AUTH ****************** */
-  [PATHS.AUTH_SIGNIN]: '登录',
+  [PATHS.AUTH_SIGN_IN]: '登录',
 };
