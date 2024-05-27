@@ -3,8 +3,8 @@
 import { PATHS } from '@/constants';
 import { signOut } from '@/lib/auth';
 
-export const signoutAndRedirect = async () => {
+export const signOutAndRedirect = async () => {
   await signOut({
-    redirectTo: PATHS.AUTH_SIGNIN,
+    redirectTo: PATHS.AUTH_SIGN_IN,
   });
 };

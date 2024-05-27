@@ -16,7 +16,7 @@ import { ModeToggle } from '@/components/mode-toggle';
 
 import { PATHS } from '@/constants';
 
-import { signinWithGithub } from '../actions/signin';
+import { signInWithGithub } from '../actions/sign-in';
 
 export const SignInPage = () => {
   const router = useRouter();
@@ -66,7 +66,7 @@ export const SignInPage = () => {
   );
 
   async function handleSigninWithGithub() {
-    await signinWithGithub();
+    await signInWithGithub();
   }
 
   function handleGoHome() {
