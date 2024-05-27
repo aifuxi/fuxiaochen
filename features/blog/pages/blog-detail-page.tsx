@@ -39,7 +39,15 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
       <h1 className="break-all py-6 text-4xl font-semibold">{blog.title}</h1>
 
       <p className="text-neutral-500 py-4">{blog.description}</p>
-      <BytemdViewer body={blog.body || ''} />
+
+      <div className="flex">
+        <div className="flex-1 pr-14 border-r border-r-border">
+          <BytemdViewer body={blog.body || ''} />
+        </div>
+        <div className="w-[280px] px-10 sticky top-24">
+          <div>目录</div>
+        </div>
+      </div>
 
       <div className="pt-4 pb-14">
         <TagList tags={blog.tags} />
