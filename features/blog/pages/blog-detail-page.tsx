@@ -56,7 +56,7 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
         </DetailSidebar>
       </div>
 
-      <div className="pt-4 pb-14">
+      <div className="pt-16 pb-14">
         <TagList tags={blog.tags} />
       </div>
       <BlogEventTracking blogID={blog.id} />

@@ -55,7 +55,7 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
           <MarkdownTOC />
         </DetailSidebar>
       </div>
-      <div className="pt-4 pb-14">
+      <div className="pt-16 pb-14">
         <TagList tags={snippet.tags} />
       </div>
       <SnippetEventTracking snippetID={snippet.id} />

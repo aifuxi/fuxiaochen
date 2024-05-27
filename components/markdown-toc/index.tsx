@@ -29,16 +29,20 @@ export const MarkdownTOC = () => {
     <div>
       <div>目录</div>
       <ul className="flex flex-col text-sm text-muted-foreground gap-2 pt-8">
-        {headerIds.map((el) => (
-          <li key={el}>
-            <Link
-              href={`#${el}`}
-              className="hover:text-primary transition-colors line-clamp-1 text-ellipsis"
-            >
-              {el}
-            </Link>
-          </li>
-        ))}
+        {headerIds.length > 0 ? (
+          headerIds.map((el) => (
+            <li key={el}>
+              <Link
+                href={`#${el}`}
+                className="hover:text-primary transition-colors line-clamp-1 text-ellipsis"
+              >
+                {el}
+              </Link>
+            </li>
+          ))
+        ) : (
+          <li>无目录</li>
+        )}
       </ul>
     </div>
   );
