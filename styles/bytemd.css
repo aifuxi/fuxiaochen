@@ -62,8 +62,16 @@
   @apply aspect-video w-full;
 }
 
-.markdown-body :where(h1, h2, h3, h4):hover .markdown-anchor {
-  opacity: 1;
+.markdown-body :where(h2, h3, h4, h5, h6) {
+  @apply flex scroll-mt-20 items-center;
+}
+
+.markdown-body :where(h2, h3, h4, h5, h6):hover .markdown-anchor {
+  @apply opacity-100;
+}
+
+.markdown-body :where(h2, h3, h4, h5, h6) .markdown-anchor {
+  @apply order-2 opacity-0 transition-opacity;
 }
 
 .markdown-body img {
