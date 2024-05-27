@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { MoveLeft } from 'lucide-react';
 
 import { BytemdViewer } from '@/components/bytemd';
+import { DetailSidebar } from '@/components/detail-sidebar';
+import { MarkdownTOC } from '@/components/markdown-toc';
 import { Wrapper } from '@/components/wrapper';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
@@ -19,7 +21,7 @@ type BlogDetailProps = {
 
 export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
   return (
-    <Wrapper className="flex flex-col min-h-screen pt-8">
+    <Wrapper className="flex flex-col pt-8">
       <div>
         <Link
           href={PATHS.SITE_BLOG}
@@ -41,12 +43,17 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
       <p className="text-neutral-500 py-4">{blog.description}</p>
 
       <div className="flex">
-        <div className="flex-1 pr-14 border-r border-r-border">
+        <div
+          className={cn(
+            'flex-1 pr-14',
+            'wrapper:border-r wrapper:border-r-border',
+          )}
+        >
           <BytemdViewer body={blog.body || ''} />
         </div>
-        <div className="w-[280px] px-10 sticky top-24">
-          <div>目录</div>
-        </div>
+        <DetailSidebar>
+          <MarkdownTOC />
+        </DetailSidebar>
       </div>
 
       <div className="pt-4 pb-14">
