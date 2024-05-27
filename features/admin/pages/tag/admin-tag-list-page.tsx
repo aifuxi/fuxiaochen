@@ -40,7 +40,7 @@ import {
   DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE,
   PATHS,
-  PLACEHODER_TEXT,
+  PLACEHOLDER_TEXT,
   TAG_TYPES,
   TAG_TYPE_MAP,
 } from '@/constants';
@@ -127,7 +127,7 @@ export const AdminTagListPage = () => {
         const originalType = row.original.type;
         const typeLabel = TAG_TYPE_MAP[originalType];
         if (!typeLabel) {
-          return PLACEHODER_TEXT;
+          return PLACEHOLDER_TEXT;
         }
 
         const iconMap = {
@@ -157,7 +157,7 @@ export const AdminTagListPage = () => {
         return row.original.icon ? (
           <img src={row.original.icon} className="w-6 h-6" alt="" />
         ) : (
-          PLACEHODER_TEXT
+          PLACEHOLDER_TEXT
         );
       },
     },
@@ -173,7 +173,7 @@ export const AdminTagListPage = () => {
         return row.original.iconDark ? (
           <img src={row.original.iconDark} className="w-6 h-6" alt="" />
         ) : (
-          PLACEHODER_TEXT
+          PLACEHOLDER_TEXT
         );
       },
     },
@@ -186,7 +186,7 @@ export const AdminTagListPage = () => {
         </div>
       ),
       cell({ row }) {
-        return row.original._count.blogs || PLACEHODER_TEXT;
+        return row.original._count.blogs || PLACEHOLDER_TEXT;
       },
     },
     {
@@ -198,7 +198,7 @@ export const AdminTagListPage = () => {
         </div>
       ),
       cell({ row }) {
-        return row.original._count.snippets || PLACEHODER_TEXT;
+        return row.original._count.snippets || PLACEHOLDER_TEXT;
       },
     },
     {
@@ -210,7 +210,7 @@ export const AdminTagListPage = () => {
         </div>
       ),
       cell({ row }) {
-        return row.original._count.snippets || PLACEHODER_TEXT;
+        return row.original._count.snippets || PLACEHOLDER_TEXT;
       },
     },
     {

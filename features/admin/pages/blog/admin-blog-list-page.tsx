@@ -45,7 +45,7 @@ import {
   DEFAULT_PAGE_SIZE,
   NICKNAME,
   PATHS,
-  PLACEHODER_TEXT,
+  PLACEHOLDER_TEXT,
   PUBLISHED_ENUM,
   PUBLISHED_LABEL_MAP,
 } from '@/constants';
@@ -156,7 +156,7 @@ export const AdminBlogListPage = () => {
               ? row.original.tags.map((tag) => (
                   <Badge key={tag.id}>{tag.name}</Badge>
                 ))
-              : PLACEHODER_TEXT}
+              : PLACEHOLDER_TEXT}
           </div>
         );
       },

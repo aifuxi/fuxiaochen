@@ -31,7 +31,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { BackToTop } from '@/components/back-to-top';
 import { ModeToggle } from '@/components/mode-toggle';
 
-import { PATHS, PATHS_MAP, PLACEHODER_TEXT } from '@/constants';
+import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from '@/constants';
 import { SignoutDialog } from '@/features/auth';
 
 type AdminContentLayoutProps = {
@@ -117,10 +117,10 @@ export const AdminContentLayout = ({
                 <Avatar className="w-6 h-6 rounded-[8px]">
                   <AvatarImage
                     src={session?.data?.user?.image ?? ''}
-                    alt={session?.data?.user?.name ?? PLACEHODER_TEXT}
+                    alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
                   />
                   <AvatarFallback className="w-6 h-6 rounded-[8px]">
-                    {session?.data?.user?.name ?? PLACEHODER_TEXT}
+                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
                   </AvatarFallback>
                 </Avatar>
               </Button>
