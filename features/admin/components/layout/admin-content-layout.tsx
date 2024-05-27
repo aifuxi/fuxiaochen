@@ -32,7 +32,7 @@ import { BackToTop } from '@/components/back-to-top';
 import { ModeToggle } from '@/components/mode-toggle';
 
 import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from '@/constants';
-import { SignoutDialog } from '@/features/auth';
+import { SignOutDialog } from '@/features/auth';
 
 type AdminContentLayoutProps = {
   breadcrumb?: React.ReactNode;
@@ -81,7 +81,7 @@ export const AdminContentLayout = ({
 }: AdminContentLayoutProps) => {
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const session = useSession();
-  const [signoutDialogOpen, setSignoutDialogOpen] = React.useState(false);
+  const [signOutDialogOpen, setSignOutDialogOpen] = React.useState(false);
 
   return (
     <div className="flex-1 h-screen overflow-hidden">
@@ -139,7 +139,7 @@ export const AdminContentLayout = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => setSignoutDialogOpen(true)}
+                onClick={() => setSignOutDialogOpen(true)}
               >
                 退出登录
               </DropdownMenuItem>
@@ -153,7 +153,7 @@ export const AdminContentLayout = ({
 
       <BackToTop scrollRef={scrollRef} />
 
-      <SignoutDialog open={signoutDialogOpen} setOpen={setSignoutDialogOpen} />
+      <SignOutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
     </div>
   );
 };
