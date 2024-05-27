@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { MoveLeft } from 'lucide-react';
 
 import { BytemdViewer } from '@/components/bytemd';
+import { DetailSidebar } from '@/components/detail-sidebar';
+import { MarkdownTOC } from '@/components/markdown-toc';
 import { Wrapper } from '@/components/wrapper';
 
 import { PATHS, PLACEHODER_TEXT } from '@/constants';
@@ -39,7 +41,20 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
       <h1 className="break-all py-6 text-4xl font-semibold">{snippet.title}</h1>
 
       <p className="text-neutral-500 py-4">{snippet.description}</p>
-      <BytemdViewer body={snippet.body || ''} />
+
+      <div className="flex">
+        <div
+          className={cn(
+            'flex-1 pr-14',
+            'wrapper:border-r wrapper:border-r-border',
+          )}
+        >
+          <BytemdViewer body={snippet.body || ''} />
+        </div>
+        <DetailSidebar>
+          <MarkdownTOC />
+        </DetailSidebar>
+      </div>
       <div className="pt-4 pb-14">
         <TagList tags={snippet.tags} />
       </div>
