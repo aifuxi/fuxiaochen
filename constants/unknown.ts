@@ -1,7 +1,7 @@
 import { TagTypeEnum } from '@prisma/client';
 
 /** 空数据文案 */
-export const PLACEHODER_TEXT = 'N/A';
+export const PLACEHOLDER_TEXT = 'N/A';
 
 export const ADMIN_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',');
 

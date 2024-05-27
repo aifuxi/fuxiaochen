@@ -7,7 +7,7 @@ import { DetailSidebar } from '@/components/detail-sidebar';
 import { MarkdownTOC } from '@/components/markdown-toc';
 import { Wrapper } from '@/components/wrapper';
 
-import { PATHS, PLACEHODER_TEXT } from '@/constants';
+import { PATHS, PLACEHOLDER_TEXT } from '@/constants';
 import { TagList } from '@/features/tag';
 import { cn, prettyDateWithWeekday } from '@/lib/utils';
 
@@ -36,7 +36,7 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
       </div>
       <div className="text-muted-foreground flex items-center space-x-4 pt-8 pb-4 text-sm">
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(snippet.createdAt)}</p>
-        <p>{uv || PLACEHODER_TEXT}&nbsp;&nbsp;人浏览过</p>
+        <p>{uv || PLACEHOLDER_TEXT}&nbsp;&nbsp;人浏览过</p>
       </div>
       <h1 className="break-all py-6 text-4xl font-semibold">{snippet.title}</h1>
 
