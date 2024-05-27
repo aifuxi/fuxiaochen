@@ -44,7 +44,7 @@ import {
   DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE,
   PATHS,
-  PLACEHODER_TEXT,
+  PLACEHOLDER_TEXT,
   PUBLISHED_ENUM,
   PUBLISHED_LABEL_MAP,
 } from '@/constants';
@@ -147,7 +147,7 @@ export const AdminSnippetListPage = () => {
               ? row.original.tags.map((tag) => (
                   <Badge key={tag.id}>{tag.name}</Badge>
                 ))
-              : PLACEHODER_TEXT}
+              : PLACEHOLDER_TEXT}
           </div>
         );
       },

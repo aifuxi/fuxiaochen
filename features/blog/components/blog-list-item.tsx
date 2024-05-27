@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { Calendar, Eye } from 'lucide-react';
 
-import { PATHS, PLACEHODER_TEXT } from '@/constants';
+import { PATHS, PLACEHOLDER_TEXT } from '@/constants';
 import { TagPrefixIcon } from '@/features/tag';
 import { cn, prettyDate } from '@/lib/utils';
 import { formatNum } from '@/utils';
@@ -49,7 +49,7 @@ export const BlogListItem = ({ blog, uvMap }: BlogListItemProps) => {
           <span>
             {formatNum(uvMap?.[blog.id])
               ? formatNum(uvMap?.[blog.id])
-              : PLACEHODER_TEXT}
+              : PLACEHOLDER_TEXT}
           </span>
         </div>
       </div>
