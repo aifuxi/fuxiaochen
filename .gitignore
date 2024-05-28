@@ -48,3 +48,5 @@ yarn-error.log*
 /public/uploads/*
 
 /sql/*.sql
+
+/meili_data
