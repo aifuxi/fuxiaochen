@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 /* Supports weights 100-900 */
-@import '@fontsource-variable/montserrat';
+@import "@fontsource-variable/montserrat";
 
-@import 'bytemd/dist/index.css';
-@import './bytemd.css';
+@import "bytemd/dist/index.css";
+@import "./bytemd.css";
 /* @import './github-light.css';
 @import './github-dark.css'; */
 
@@ -65,8 +65,8 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
+      "rlig" 1,
+      "calt" 1;
   }
 }
 /* 适配 shiki 深色模式 */

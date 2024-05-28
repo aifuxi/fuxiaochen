@@ -13,7 +13,7 @@
     "lint": "next lint",
     "prepare": "husky install",
     "lint:fix": "eslint --fix .",
-    "formate": "prettier --write --log-level warn \"*.{js,cjs,jsx,ts,tsx,yml,json,yaml,md}\" --ignore-path pnpm-lock.yaml",
+    "formate": "prettier --write . --log-level warn",
     "cz": "git cz",
     "db:gen": "prisma generate",
     "db:dev": "prisma migrate dev",

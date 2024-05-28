@@ -1,7 +1,7 @@
-import NextBundleAnalyzer from '@next/bundle-analyzer';
+import NextBundleAnalyzer from "@next/bundle-analyzer";
 
 const withBundleAnalyzer = NextBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: process.env.ANALYZE === "true",
 });
 
 /** @type {import("next").NextConfig} */
@@ -17,24 +17,24 @@ const config = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**.aliyuncs.com',
+        protocol: "https",
+        hostname: "**.aliyuncs.com",
       },
       {
-        protocol: 'http',
-        hostname: '**.aliyuncs.com',
+        protocol: "http",
+        hostname: "**.aliyuncs.com",
       },
       {
-        protocol: 'https',
-        hostname: 'placehold.co',
+        protocol: "https",
+        hostname: "placehold.co",
       },
       {
-        protocol: 'http',
-        hostname: 'placehold.co',
+        protocol: "http",
+        hostname: "placehold.co",
       },
       {
-        protocol: 'http',
-        hostname: 'localhost',
+        protocol: "http",
+        hostname: "localhost",
       },
     ],
   },
@@ -42,7 +42,7 @@ const config = {
     // 解决 next build 报错: Error [ERR_REQUIRE_ESM]: require() of ES Module shiki/dist/index.mjs not supported.
     // 参考 issue: https://github.com/vercel/next.js/issues/64434#issuecomment-2082964050
     // 参考 issue: https://github.com/vercel/next.js/issues/64434#issuecomment-2084270758
-    optimizePackageImports: ['shiki'],
+    optimizePackageImports: ["shiki"],
   },
 };
 
