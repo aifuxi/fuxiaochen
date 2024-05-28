@@ -37,7 +37,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
       size={'icon'}
       onClick={handleClick}
     >
-      <ChevronUp className="w-4 h-4" />
+      <ChevronUp className="size-4" />
     </Button>
   );
 };

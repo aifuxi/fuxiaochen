@@ -31,18 +31,18 @@ export const Navbar = () => {
         (scroll?.top ?? 0) > 60 && 'bg-background/50 border-b border-border/50',
       )}
     >
-      <div className="w-full flex items-center h-16 p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
+      <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
         <NextLink
           href={PATHS.SITE_HOME}
           className={cn('mr-4 hidden sm:flex')}
           aria-label={NICKNAME}
         >
           <Logo />
-          <span className="ml-2 font-semibold text-primary text-base">
+          <span className="ml-2 text-base font-semibold text-primary">
             {WEBSITE}
           </span>
         </NextLink>
-        <div className="h-16 flex-1 hidden sm:flex justify-end items-center text-base font-medium mr-8">
+        <div className="mr-8 hidden h-16 flex-1 items-center justify-end text-base font-medium sm:flex">
           {navItems.map((el) => (
             <Link
               href={el.link}
@@ -58,7 +58,7 @@ export const Navbar = () => {
           ))}
         </div>
         <MobileNav />
-        <div className="flex flex-1 sm:flex-none justify-end items-center gap-2">
+        <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none">
           <ModeToggle />
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
@@ -78,7 +78,7 @@ export const Navbar = () => {
             aria-label={PATHS.ADMIN_HOME}
           >
             <Button variant="outline" size={'icon'} aria-label="后台管理">
-              <UserCog className="w-4 h-4" />
+              <UserCog className="size-4" />
             </Button>
           </Link>
         </div>

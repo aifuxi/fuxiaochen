@@ -12,9 +12,9 @@ export const AdminHomePage = () => {
     <AdminContentLayout
       breadcrumb={<PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME]} />}
     >
-      <div className="grid place-content-center mt-[18vh]">
-        <IllustrationConstruction className="w-[320px] h-[320px]" />
-        <h3 className="text-2xl font-semibold tracking-tight text-center">
+      <div className="mt-[18vh] grid place-content-center">
+        <IllustrationConstruction className="size-[320px]" />
+        <h3 className="text-center text-2xl font-semibold tracking-tight">
           开发中
         </h3>
       </div>

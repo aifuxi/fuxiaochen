@@ -24,14 +24,14 @@ export const Footer = async () => {
   const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
 
   return (
-    <footer className="pt-12 pb-12 px-6">
+    <footer className="px-6 py-12">
       <Wrapper
         className={cn(
           'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-24 gap-y-8 text-sm text-muted-foreground',
         )}
       >
         <dl className="flex flex-col gap-3">
-          <dt className="text-primary font-semibold text-lg">导航</dt>
+          <dt className="text-lg font-semibold text-primary">导航</dt>
           {navItems.map((el) => (
             <dd key={el.link}>
               <Link
@@ -45,14 +45,14 @@ export const Footer = async () => {
           <dd>
             <Link
               href={PATHS.SITEMAP}
-              className="hover:text-primary transition-colors hover:font-semibold"
+              className="transition-colors hover:font-semibold hover:text-primary"
             >
               {PATHS_MAP[PATHS.SITEMAP]}
             </Link>
           </dd>
         </dl>
         <dl className="flex flex-col gap-3">
-          <dt className="text-primary font-semibold text-lg">统计</dt>
+          <dt className="text-lg font-semibold text-primary">统计</dt>
           <dd>
             今日 <span>{formatNum(todayPV)}</span> 次浏览
           </dd>
@@ -69,17 +69,17 @@ export const Footer = async () => {
         </dl>
       </Wrapper>
 
-      <Wrapper className="text-sm text-muted-foreground flex flex-col md:flex-row space-y-1 md:space-y-0 md:space-x-4 items-center justify-center pt-24">
+      <Wrapper className="flex flex-col items-center justify-center space-y-1 pt-24 text-sm text-muted-foreground md:flex-row md:space-x-4 md:space-y-0">
         <Link
           target="_blank"
           aria-label={GONG_AN_NUMBER}
           href={GONG_AN_LINK}
-          className="flex items-center transition-colors hover:text-primary hover:font-semibold order-2 md:order-1"
+          className="order-2 flex items-center transition-colors hover:font-semibold hover:text-primary md:order-1"
         >
           <img
             src={ImageAssets.gongan}
             alt={GONG_AN_NUMBER}
-            className="mr-1 -translate-y-[1px] w-[18px] h-[18px]"
+            className="mr-1 size-[18px] -translate-y-px"
           />
           <span>{GONG_AN_NUMBER}</span>
         </Link>
@@ -88,7 +88,7 @@ export const Footer = async () => {
           target="_blank"
           aria-label={BEI_AN_NUMBER}
           href={BEI_AN_LINK}
-          className="flex items-center transition-colors hover:text-primary hover:font-semibold order-1 md:order-2"
+          className="order-1 flex items-center transition-colors hover:font-semibold hover:text-primary md:order-2"
         >
           {BEI_AN_NUMBER}
         </Link>

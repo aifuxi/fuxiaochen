@@ -68,13 +68,13 @@ export const Pagination = ({
   }, [pageCount, params]);
 
   return (
-    <div className="flex items-center space-x-6 lg:space-x-8 py-4">
+    <div className="flex items-center space-x-6 py-4 lg:space-x-8">
       <div className="flex items-center space-x-2">
         {pageCount > 1 &&
           paginationRange.map((pageNumber, i) =>
             pageNumber === '...' ? (
               <Button key={i} variant="ghost" className="!cursor-not-allowed">
-                <Ellipsis className="w-3 h-3" />
+                <Ellipsis className="size-3" />
               </Button>
             ) : (
               <Button
@@ -96,7 +96,7 @@ export const Pagination = ({
           <div className="flex items-center space-x-2">
             跳转至
             <Input
-              className="w-12 mx-2"
+              className="mx-2 w-12"
               value={quickJumpPage}
               onChange={(e) => {
                 if (Number(e.target.value?.trim())) {
@@ -117,7 +117,7 @@ export const Pagination = ({
         )}
         {showSizeChanger && total > 0 && (
           <div className="flex items-center space-x-2">
-            <p className="text-sm font-medium whitespace-nowrap">每页条数</p>
+            <p className="whitespace-nowrap text-sm font-medium">每页条数</p>
             <Select
               value={`${params.pageSize}`}
               onValueChange={(value) => {
@@ -151,15 +151,15 @@ export const PaginationInfo = ({ params, total = 0 }: PaginationInfoProps) => {
   return (
     <p>
       显示第
-      <span className="font-semibold mx-1">
+      <span className="mx-1 font-semibold">
         {params.pageIndex === 1 ? 1 : (params.pageIndex - 1) * params.pageSize}
       </span>
       条-第
-      <span className="font-semibold mx-1">
+      <span className="mx-1 font-semibold">
         {Math.min(total, params.pageIndex * params.pageSize)}
       </span>
       条，共
-      <span className="font-semibold mx-1">{total}</span>条
+      <span className="mx-1 font-semibold">{total}</span>条
     </p>
   );
 };

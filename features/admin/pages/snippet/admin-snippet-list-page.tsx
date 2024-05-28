@@ -118,8 +118,8 @@ export const AdminSnippetListPage = () => {
     {
       accessorKey: 'title',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TypeIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TypeIcon className="size-4" />
           <span>标题</span>
         </div>
       ),
@@ -135,8 +135,8 @@ export const AdminSnippetListPage = () => {
     {
       accessorKey: 'tags',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TagsIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TagsIcon className="size-4" />
           <span>标签</span>
         </div>
       ),
@@ -155,8 +155,8 @@ export const AdminSnippetListPage = () => {
     {
       accessorKey: 'published',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <Eye className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <Eye className="size-4" />
           <span>发布状态</span>
         </div>
       ),
@@ -179,13 +179,13 @@ export const AdminSnippetListPage = () => {
             handleOrderChange('createdAt');
           }}
         >
-          <Calendar className="w-3 h-3" />
+          <Calendar className="size-3" />
           <span className="mx-1">创建时间</span>
           {params.order === 'asc' && params.orderBy == 'createdAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'createdAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -202,13 +202,13 @@ export const AdminSnippetListPage = () => {
             handleOrderChange('updatedAt');
           }}
         >
-          <Calendar className="w-3 h-3" />
+          <Calendar className="size-3" />
           <span className="mx-1">更新时间</span>
           {params.order === 'asc' && params.orderBy == 'updatedAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'updatedAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -220,7 +220,7 @@ export const AdminSnippetListPage = () => {
       id: 'actions',
       cell: ({ row }) => {
         return (
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Link
               className={cn(
                 buttonVariants({ variant: 'outline', size: 'icon' }),
@@ -228,14 +228,14 @@ export const AdminSnippetListPage = () => {
               href={`${PATHS.SITE_SNIPPET}/${row.original.slug}`}
               target="_blank"
             >
-              <Eye className="w-4 h-4" />
+              <Eye className="size-4" />
             </Link>
             <Button
               size={'icon'}
               variant="outline"
               onClick={() => handleGoToEdit(row.original.id)}
             >
-              <Pen className="h-4 w-4" />
+              <Pen className="size-4" />
             </Button>
             <DeleteSnippetButton
               id={row.original.id}
@@ -255,7 +255,7 @@ export const AdminSnippetListPage = () => {
         />
       }
     >
-      <div className="grid gap-4 grid-cols-4 py-4 items-end px-1">
+      <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
@@ -302,15 +302,15 @@ export const AdminSnippetListPage = () => {
         )}
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <Search className="h-4 w-4 mr-2" />
+            <Search className="mr-2 size-4" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <RotateCw className="h-4 w-4 mr-2" />
+            <RotateCw className="mr-2 size-4" />
             重置
           </Button>
           <Button onClick={handleGoToCreate}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 size-4" />
             创建片段
           </Button>
         </div>

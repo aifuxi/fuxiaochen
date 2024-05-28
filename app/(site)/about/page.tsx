@@ -46,9 +46,9 @@ export default function Page() {
   const getDelay = () => (delay += 200);
 
   return (
-    <div className="w-full flex flex-col justify-center px-6 pb-24 pt-8">
-      <section className="prose dark:prose-invert prose-neutral w-screen-wrapper max-w-screen-wrapper mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold">关于</h2>
+    <div className="flex w-full flex-col justify-center px-6 pb-24 pt-8">
+      <section className="w-screen-wrapper prose prose-neutral mx-auto max-w-screen-wrapper dark:prose-invert">
+        <h2 className="text-3xl font-bold md:text-4xl">关于</h2>
         <div
           className="animate-fade-up animate-ease-in-out"
           style={{
@@ -89,18 +89,18 @@ export default function Page() {
               <IconSkillTypeScript className="mx-1 translate-y-0.5" />
               TypeScript +
               <>
-                <IconSkillReactDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillReactLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillReactDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillReactLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               React +
               <>
-                <IconSkillNextjsDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillNextjsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillNextjsDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillNextjsLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Next.js + ahooks +
               <>
-                <IconSkillTailwindcssDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillTailwindcssLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillTailwindcssDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillTailwindcssLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Tailwind CSS，熟练使用
             </li>
@@ -116,21 +116,21 @@ export default function Page() {
           <ul>
             <li>
               <>
-                <IconSkillNodejsDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillNodejsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillNodejsDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillNodejsLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Node.js，能简单 CRUD 水平
             </li>
             <li>
               <>
-                <IconSkillNextjsDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillNextjsLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillNextjsDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillNextjsLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Next.js + <IconSkillPrisma className="mx-1 translate-y-0.5" />
               Prisma +
               <>
-                <IconSkillMysqlDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillMysqlLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillMysqlDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillMysqlLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               MySQL 搞全栈开发
             </li>
@@ -155,8 +155,8 @@ export default function Page() {
               用过 <IconLogoCentOS className="mx-1 translate-y-0.5" />
               CentOS、
               <>
-                <IconSkillDebianDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillDebianLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillDebianDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillDebianLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Debian、
               <IconLogoRockyLinux className="mx-1 translate-y-0.5" />
@@ -179,8 +179,8 @@ export default function Page() {
             </li>
             <li>
               <>
-                <IconSkillFigmaDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillFigmaLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillFigmaDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillFigmaLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Figma，会一点，用来画画图标，制作博客封面非常方便
             </li>
@@ -189,12 +189,12 @@ export default function Page() {
               Google/
               <IconLogoBing className="mx-1 translate-y-0.5" />
               Bing 搜索
-              <span className="line-through ml-1">百度（浪费生命）</span> +
+              <span className="ml-1 line-through">百度（浪费生命）</span> +
               <IconBarandGithub className="mx-1 translate-y-0.5" />
               GitHub +
               <>
-                <IconSkillStackoverflowDark className="dark:hidden mx-1 translate-y-0.5" />
-                <IconSkillStackoverflowLight className="hidden dark:inline-block mx-1 translate-y-0.5" />
+                <IconSkillStackoverflowDark className="mx-1 translate-y-0.5 dark:hidden" />
+                <IconSkillStackoverflowLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               Stack Overflow + Chat GPT 解决遇到的各种问题，复制粘贴我最行 🙋
             </li>
@@ -231,7 +231,7 @@ export default function Page() {
         >
           <h2>联系我</h2>
           <p>你可以通过👇下面任意一种方式联系我</p>
-          <ul className="!list-none flex space-x-4 items-center !pl-0 !mb-0">
+          <ul className="!mb-0 flex !list-none items-center space-x-4 !pl-0">
             {socialMediaList.map((el) => (
               <li key={el.link}>
                 <Button asChild variant="outline" size="icon">

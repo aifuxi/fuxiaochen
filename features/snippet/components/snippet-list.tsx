@@ -12,9 +12,9 @@ type SnippetListProps = {
 export const SnippetList = ({ snippets, uvMap }: SnippetListProps) => {
   if (!snippets.length) {
     return (
-      <div className="grid gap-8 place-content-center">
-        <IllustrationNoContent className="w-[30vh] h-[30vh]" />
-        <h3 className="text-2xl font-semibold tracking-tight text-center">
+      <div className="grid place-content-center gap-8">
+        <IllustrationNoContent className="size-[30vh]" />
+        <h3 className="text-center text-2xl font-semibold tracking-tight">
           暂无片段
         </h3>
       </div>
@@ -22,7 +22,7 @@ export const SnippetList = ({ snippets, uvMap }: SnippetListProps) => {
   }
 
   return (
-    <ul className="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <ul className="grid grid-cols-1 gap-10 md:grid-cols-2">
       {snippets.map((el, idx) => (
         <li
           key={el.id}

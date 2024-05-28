@@ -6,9 +6,9 @@ export const revalidate = 60;
 
 export default function Page() {
   return (
-    <div className="h-[calc(100vh-64px)] grid place-content-center relative">
+    <div className="relative grid h-[calc(100vh-64px)] place-content-center">
       <HeroSection />
-      <div className="grid place-content-center absolute bottom-8 md:bottom-12 inset-x-0">
+      <div className="absolute inset-x-0 bottom-8 grid place-content-center md:bottom-12">
         <IntroScrollMouse />
       </div>
     </div>

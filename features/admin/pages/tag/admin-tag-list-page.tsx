@@ -101,8 +101,8 @@ export const AdminTagListPage = () => {
     {
       accessorKey: 'name',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TypeIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TypeIcon className="size-4" />
           <span>名称</span>
         </div>
       ),
@@ -118,8 +118,8 @@ export const AdminTagListPage = () => {
     {
       accessorKey: 'type',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TypeIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TypeIcon className="size-4" />
           <span>类型</span>
         </div>
       ),
@@ -132,9 +132,9 @@ export const AdminTagListPage = () => {
 
         const iconMap = {
           [TagTypeEnum.ALL]: '',
-          [TagTypeEnum.BLOG]: <Book className="w-4 h-4" />,
-          [TagTypeEnum.NOTE]: <ScrollIcon className="w-4 h-4" />,
-          [TagTypeEnum.SNIPPET]: <CodeXml className="w-4 h-4" />,
+          [TagTypeEnum.BLOG]: <Book className="size-4" />,
+          [TagTypeEnum.NOTE]: <ScrollIcon className="size-4" />,
+          [TagTypeEnum.SNIPPET]: <CodeXml className="size-4" />,
         };
 
         return (
@@ -148,14 +148,14 @@ export const AdminTagListPage = () => {
     {
       accessorKey: 'icon',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <ImageIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <ImageIcon className="size-4" />
           <span>浅色图标</span>
         </div>
       ),
       cell: ({ row }) => {
         return row.original.icon ? (
-          <img src={row.original.icon} className="w-6 h-6" alt="" />
+          <img src={row.original.icon} className="size-6" alt="" />
         ) : (
           PLACEHOLDER_TEXT
         );
@@ -164,14 +164,14 @@ export const AdminTagListPage = () => {
     {
       accessorKey: 'iconDark',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <ImageIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <ImageIcon className="size-4" />
           <span>深色图标</span>
         </div>
       ),
       cell: ({ row }) => {
         return row.original.iconDark ? (
-          <img src={row.original.iconDark} className="w-6 h-6" alt="" />
+          <img src={row.original.iconDark} className="size-6" alt="" />
         ) : (
           PLACEHOLDER_TEXT
         );
@@ -180,8 +180,8 @@ export const AdminTagListPage = () => {
     {
       accessorKey: '_count.blogs',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <Book className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <Book className="size-4" />
           <span>博客</span>
         </div>
       ),
@@ -192,8 +192,8 @@ export const AdminTagListPage = () => {
     {
       accessorKey: '_count.snippets',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <CodeXml className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <CodeXml className="size-4" />
           <span>片段</span>
         </div>
       ),
@@ -204,8 +204,8 @@ export const AdminTagListPage = () => {
     {
       accessorKey: '_count.notes',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <ScrollIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <ScrollIcon className="size-4" />
           <span>笔记</span>
         </div>
       ),
@@ -222,13 +222,13 @@ export const AdminTagListPage = () => {
             handleOrderChange('createdAt');
           }}
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="size-4" />
           <span className="mx-1">创建时间</span>
           {params.order === 'asc' && params.orderBy == 'createdAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'createdAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -245,13 +245,13 @@ export const AdminTagListPage = () => {
             handleOrderChange('updatedAt');
           }}
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="size-4" />
           <span className="mx-1">更新时间</span>
           {params.order === 'asc' && params.orderBy == 'updatedAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'updatedAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -264,7 +264,7 @@ export const AdminTagListPage = () => {
       cell: ({ row }) => {
         const record = row.original;
         return (
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <EditTagButton
               id={record.id}
               refreshAsync={getTagsQuery.refreshAsync}
@@ -285,7 +285,7 @@ export const AdminTagListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 mb-4 py-4 px-1">
+      <div className="mb-4 grid grid-cols-4 gap-4 px-1 py-4">
         <Input
           placeholder="请输入名称"
           value={inputParams.name}
@@ -325,11 +325,11 @@ export const AdminTagListPage = () => {
         </Select>
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <Search className="h-4 w-4 mr-2" />
+            <Search className="mr-2 size-4" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <RotateCw className="h-4 w-4 mr-2" />
+            <RotateCw className="mr-2 size-4" />
             重置
           </Button>
           <CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />

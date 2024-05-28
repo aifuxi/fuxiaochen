@@ -72,7 +72,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
-          <Pen className="h-4 w-4" />
+          <Pen className="size-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
@@ -89,7 +89,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                   <FormItem>
                     <FormLabel>标签</FormLabel>
                     <FormControl>
-                      <div className="flex space-x-4 items-center">
+                      <div className="flex items-center space-x-4">
                         <div className="flex-1">
                           <Combobox
                             options={
@@ -160,10 +160,10 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                   disabled={updateNoteQuery.loading}
                 >
                   {updateNoteQuery.loading && (
-                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
+                    <LoaderCircle className="mr-2 size-4 animate-spin" />
                   )}
                   保存
-                  <Save className="w-4 h-4 ml-1" />
+                  <Save className="ml-1 size-4" />
                 </Button>
               </div>
             </div>
