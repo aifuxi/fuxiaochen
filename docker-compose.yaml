@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   mysql8:
     image: mysql:8
@@ -20,10 +20,10 @@ services:
     ports:
       - 3306:3306
     command: [
-        'mysqld',
+        "mysqld",
         # 设置字符编码
-        '--character-set-server=utf8mb4',
-        '--collation-server=utf8mb4_unicode_ci',
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
       ]
     networks:
       - my_network
@@ -31,7 +31,7 @@ services:
     image: redis:latest
     restart: unless-stopped
     ports:
-      - '6379:6379'
+      - "6379:6379"
     environment:
       - REDIS_PASSWORD=123456
     # 上面配置的密码
@@ -45,7 +45,7 @@ services:
     image: getmeili/meilisearch:v1.8
     restart: unless-stopped
     ports:
-      - '7700:7700'
+      - "7700:7700"
     environment:
       - MEILI_MASTER_KEY=1234567891011121314151617181920
       # - MEILI_ENV=production
