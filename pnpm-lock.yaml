@@ -303,6 +303,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: ^4.6.0
         version: 4.6.0(eslint@8.54.0)
+      eslint-plugin-tailwindcss:
+        specifier: ^3.17.0
+        version: 3.17.0(tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.3.3)(typescript@5.1.6)))
       husky:
         specifier: ^8.0.3
         version: 8.0.3
@@ -2479,6 +2482,12 @@ packages:
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
+
+  eslint-plugin-tailwindcss@3.17.0:
+    resolution: {integrity: sha512-Ofl7tNh57a3W8BKHstKZSkD2gSCEkw54ycwZ958IK9zUR8TiNYdp8b0WGoLWLeyOAbeF1VPVJFBnlkJeIM2kVg==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      tailwindcss: ^3.4.0
 
   eslint-scope@7.2.2:
     resolution: {integrity: sha512-dOt21O7lTMhDM+X9mB4GX+DZrZtCUJPL/wlcTqxyrx5IvO0IYtILdtrQGQp+8n5S0gwSVmOf9NQrjMOgfQZlIg==}
@@ -7686,6 +7695,12 @@ snapshots:
       resolve: 2.0.0-next.5
       semver: 6.3.1
       string.prototype.matchall: 4.0.11
+
+  eslint-plugin-tailwindcss@3.17.0(tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.3.3)(typescript@5.1.6))):
+    dependencies:
+      fast-glob: 3.3.2
+      postcss: 8.4.24
+      tailwindcss: 3.4.3(ts-node@10.9.1(@types/node@20.3.3)(typescript@5.1.6))
 
   eslint-scope@7.2.2:
     dependencies:

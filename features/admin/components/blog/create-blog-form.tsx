@@ -70,7 +70,7 @@ export const CreateBlogForm = () => {
   return (
     <Form {...form}>
       <form autoComplete="off">
-        <div className="fixed z-10 bottom-10 left-24 right-24 md:left-[20vw] md:right-[20vw]">
+        <div className="fixed inset-x-24 bottom-10 z-10 md:inset-x-[20vw]">
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
@@ -81,7 +81,7 @@ export const CreateBlogForm = () => {
           </Button>
         </div>
 
-        <div className="grid gap-4 pb-24 px-1">
+        <div className="grid gap-4 px-1 pb-24">
           <FormField
             control={form.control}
             name="title"
@@ -102,7 +102,7 @@ export const CreateBlogForm = () => {
               <FormItem>
                 <FormLabel>slug</FormLabel>
                 <FormControl>
-                  <div className="flex items-center w-full gap-4">
+                  <div className="flex w-full items-center gap-4">
                     <Input {...field} placeholder="请输入slug" />
                     <Button type="button" onClick={handleFormatSlug}>
                       格式化
@@ -223,7 +223,7 @@ export const CreateBlogForm = () => {
               <FormItem>
                 <FormLabel>标签</FormLabel>
                 <FormControl>
-                  <div className="grid grid-cols-12 gap-4 items-center">
+                  <div className="grid grid-cols-12 items-center gap-4">
                     <div className="col-span-10">
                       <Combobox
                         options={

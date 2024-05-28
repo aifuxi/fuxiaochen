@@ -18,22 +18,22 @@ export const AdminStatisticPage = async () => {
     {
       title: '博客',
       count: blogCount,
-      icon: <Book className="text-muted-foreground text-2xl" />,
+      icon: <Book className="text-2xl text-muted-foreground" />,
     },
     {
       title: '片段',
       count: snippetCount,
-      icon: <CodeXml className="text-muted-foreground w-6 h-6" />,
+      icon: <CodeXml className="size-6 text-muted-foreground" />,
     },
     {
       title: '标签',
       count: tagCount,
-      icon: <TagsIcon className="text-muted-foreground w-6 h-6" />,
+      icon: <TagsIcon className="size-6 text-muted-foreground" />,
     },
     {
       title: '笔记',
       count: noteCount,
-      icon: <ScrollIcon className="text-muted-foreground w-6 h-6" />,
+      icon: <ScrollIcon className="size-6 text-muted-foreground" />,
     },
   ];
 
@@ -46,14 +46,14 @@ export const AdminStatisticPage = async () => {
       }
     >
       <div className="flex-1">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-4">
+        <div className="mb-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {statistics.map((el) => (
             <div
               key={el.title}
-              className="border bg-card text-card-foreground rounded-lg"
+              className="rounded-lg border bg-card text-card-foreground"
             >
-              <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
-                <h3 className="tracking-tight font-medium">{el.title}</h3>
+              <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+                <h3 className="font-medium tracking-tight">{el.title}</h3>
                 {el.icon}
               </div>
               <div className="p-6 pt-0">

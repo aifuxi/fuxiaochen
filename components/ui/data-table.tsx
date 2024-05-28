@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>{renderContent()}</TableBody>
       </Table>
-      <div className="flex px-4 items-center">
+      <div className="flex items-center px-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {renderInfo()}
         </div>
@@ -108,7 +108,7 @@ export function DataTable<TData, TValue>({
             {Array.from({ length: columns.length }).map((__, index) => {
               return (
                 <TableCell key={index}>
-                  <Skeleton className="w-full h-4 rounded-[4px]" />
+                  <Skeleton className="h-4 w-full rounded-[4px]" />
                 </TableCell>
               );
             })}
@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
     return table.getRowModel().rows.map((row) => (
       <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
         {row.getVisibleCells().map((cell) => (
-          <TableCell key={cell.id} className="py-2 max-w-[300px] break-all">
+          <TableCell key={cell.id} className="max-w-[300px] break-all py-2">
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
         ))}
@@ -144,7 +144,7 @@ export function DataTable<TData, TValue>({
       return (
         <p>
           已选中
-          <span className="font-semibold mx-1">
+          <span className="mx-1 font-semibold">
             {table.getFilteredSelectedRowModel().rows.length}
           </span>
           行数据

@@ -22,17 +22,17 @@ export const SignInPage = () => {
   const router = useRouter();
 
   return (
-    <div className="w-screen h-screen grid place-content-center">
-      <Card className="w-[320px] py-4 rounded-3xl sm:w-full sm:max-w-none sm:min-w-[360px] relative animate-fade">
+    <div className="grid h-screen w-screen place-content-center">
+      <Card className="relative w-[320px] animate-fade rounded-3xl py-4 sm:w-full sm:min-w-[360px] sm:max-w-none">
         <CardHeader>
-          <CardTitle className="flex justify-between items-center">
+          <CardTitle className="flex items-center justify-between">
             <span>后台登录</span>
             <ModeToggle />
           </CardTitle>
           <CardDescription>选择你喜欢的方式进行登录</CardDescription>
         </CardHeader>
         <CardFooter>
-          <div className="w-full grid gap-4">
+          <div className="grid w-full gap-4">
             <Button
               variant="default"
               className="!w-full"

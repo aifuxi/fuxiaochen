@@ -14,7 +14,7 @@ type TagListProps = {
 
 export const TagList = ({ tags }: TagListProps) => {
   return (
-    <ul className="flex gap-x-2 gap-y-2 flex-wrap">
+    <ul className="flex flex-wrap gap-2">
       {tags?.map((el) => (
         <li
           key={el.id}

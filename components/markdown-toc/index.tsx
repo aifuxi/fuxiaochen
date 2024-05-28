@@ -28,13 +28,13 @@ export const MarkdownTOC = () => {
   return (
     <div>
       <div>目录</div>
-      <ul className="flex flex-col text-sm text-muted-foreground gap-2 pt-8">
+      <ul className="flex flex-col gap-2 pt-8 text-sm text-muted-foreground">
         {headerIds.length > 0 ? (
           headerIds.map((el) => (
             <li key={el}>
               <Link
                 href={`#${el}`}
-                className="hover:text-primary transition-colors line-clamp-1 text-ellipsis"
+                className="line-clamp-1 text-ellipsis transition-colors hover:text-primary"
               >
                 {el}
               </Link>

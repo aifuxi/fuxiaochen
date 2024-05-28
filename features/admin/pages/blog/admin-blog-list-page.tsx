@@ -115,8 +115,8 @@ export const AdminBlogListPage = () => {
     {
       accessorKey: 'title',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TypeIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TypeIcon className="size-4" />
           <span>标题</span>
         </div>
       ),
@@ -132,8 +132,8 @@ export const AdminBlogListPage = () => {
     {
       accessorKey: 'author',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TypeIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TypeIcon className="size-4" />
           <span>作者</span>
         </div>
       ),
@@ -144,8 +144,8 @@ export const AdminBlogListPage = () => {
     {
       accessorKey: 'tags',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <TagsIcon className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <TagsIcon className="size-4" />
           <span>标签</span>
         </div>
       ),
@@ -164,8 +164,8 @@ export const AdminBlogListPage = () => {
     {
       accessorKey: 'published',
       header: () => (
-        <div className="flex space-x-1 items-center">
-          <Eye className="w-4 h-4" />
+        <div className="flex items-center space-x-1">
+          <Eye className="size-4" />
           <span>发布状态</span>
         </div>
       ),
@@ -188,13 +188,13 @@ export const AdminBlogListPage = () => {
             handleOrderChange('createdAt');
           }}
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="size-4" />
           <span className="mx-1">创建时间</span>
           {params.order === 'asc' && params.orderBy == 'createdAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'createdAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -211,13 +211,13 @@ export const AdminBlogListPage = () => {
             handleOrderChange('updatedAt');
           }}
         >
-          <Calendar className="w-4 h-4" />
+          <Calendar className="size-4" />
           <span className="mx-1">更新时间</span>
           {params.order === 'asc' && params.orderBy == 'updatedAt' && (
-            <ArrowUpNarrowWide className="w-4 h-4" />
+            <ArrowUpNarrowWide className="size-4" />
           )}
           {params.order === 'desc' && params.orderBy == 'updatedAt' && (
-            <ArrowDownNarrowWide className="w-4 h-4" />
+            <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
       ),
@@ -229,7 +229,7 @@ export const AdminBlogListPage = () => {
       id: 'actions',
       cell: ({ row }) => {
         return (
-          <div className="flex gap-2 items-center">
+          <div className="flex items-center gap-2">
             <Link
               className={cn(
                 buttonVariants({ variant: 'outline', size: 'icon' }),
@@ -237,14 +237,14 @@ export const AdminBlogListPage = () => {
               href={`${PATHS.SITE_BLOG}/${row.original.slug}`}
               target="_blank"
             >
-              <Eye className="h-4 w-4" />
+              <Eye className="size-4" />
             </Link>
             <Button
               size={'icon'}
               variant="outline"
               onClick={() => handleGoToEdit(row.original.id)}
             >
-              <Pen className="h-4 w-4" />
+              <Pen className="size-4" />
             </Button>
             <DeleteBlogButton
               id={row.original.id}
@@ -262,7 +262,7 @@ export const AdminBlogListPage = () => {
         <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
       }
     >
-      <div className="grid gap-4 grid-cols-4 py-4 items-end px-1">
+      <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
@@ -308,15 +308,15 @@ export const AdminBlogListPage = () => {
 
         <div className="flex items-center space-x-4">
           <Button onClick={handleSearch}>
-            <Search className="h-4 w-4 mr-2" />
+            <Search className="mr-2 size-4" />
             搜索
           </Button>
           <Button onClick={handleReset}>
-            <RotateCw className="h-4 w-4 mr-2" />
+            <RotateCw className="mr-2 size-4" />
             重置
           </Button>
           <Button onClick={handleGoToCreate}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 size-4" />
             创建博客
           </Button>
         </div>

@@ -22,7 +22,7 @@ const config = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:@tanstack/eslint-plugin-query/recommended',
+    'plugin:tailwindcss/recommended',
   ],
   rules: {
     // These opinionated rules are enabled in stylistic-type-checked above.

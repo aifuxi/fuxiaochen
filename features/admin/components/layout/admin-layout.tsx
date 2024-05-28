@@ -37,9 +37,9 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             )}
             aria-label={NICKNAME}
           >
-            <Logo className="w-8 h-8" />
+            <Logo className="size-8" />
             {open && (
-              <span className="ml-2 font-semibold text-primary text-base">
+              <span className="ml-2 text-base font-semibold text-primary">
                 {WEBSITE}
               </span>
             )}
@@ -71,12 +71,12 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             <Button size={'icon'} variant={'outline'}>
               {open ? (
                 <PanelLeftClose
-                  className="h-5 w-5"
+                  className="size-5"
                   onClick={() => setOpen(false)}
                 />
               ) : (
                 <PanelRightClose
-                  className="h-5 w-5"
+                  className="size-5"
                   onClick={() => setOpen(true)}
                 />
               )}

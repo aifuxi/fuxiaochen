@@ -18,7 +18,7 @@ const ScrollArea = React.forwardRef<
     {...props}
   >
     <ScrollAreaPrimitive.Viewport
-      className="h-full w-full rounded-[inherit]"
+      className="size-full rounded-[inherit]"
       ref={scrollAreaRef}
     >
       {children}

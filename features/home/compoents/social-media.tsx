@@ -22,7 +22,7 @@ export const socialMediaList: Array<{
     icon: (
       <>
         <IconSkillGmailDark className="text-2xl dark:hidden" />
-        <IconSkillGmailLight className="text-2xl hidden dark:inline-block" />
+        <IconSkillGmailLight className="hidden text-2xl dark:inline-block" />
       </>
     ),
     label: 'Gmail',

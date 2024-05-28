@@ -29,7 +29,7 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
         <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
-          <Trash className="h-4 w-4 text-destructive" />
+          <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -47,7 +47,7 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
           </Button>
           <Button onClick={handleDeleteTag} disabled={deleteTagQuery.loading}>
             {deleteTagQuery.loading && (
-              <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
+              <LoaderCircle className="mr-2 size-4 animate-spin" />
             )}
             删除
           </Button>

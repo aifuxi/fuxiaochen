@@ -70,7 +70,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <Plus className="mr-2 w-4 h-4" />
+          <Plus className="mr-2 size-4" />
           创建笔记
         </Button>
       </DialogTrigger>
@@ -88,7 +88,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   <FormItem>
                     <FormLabel>标签</FormLabel>
                     <FormControl>
-                      <div className="flex space-x-4 items-center">
+                      <div className="flex items-center space-x-4">
                         <div className="flex-1">
                           <Combobox
                             options={
@@ -159,7 +159,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createNoteQuery.loading && (
-                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
+                    <LoaderCircle className="mr-2 size-4 animate-spin" />
                   )}
                   创建
                 </Button>

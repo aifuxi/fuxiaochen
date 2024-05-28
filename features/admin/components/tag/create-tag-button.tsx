@@ -69,7 +69,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
-          <Plus className="mr-2 w-4 h-4 " />
+          <Plus className="mr-2 size-4 " />
           创建标签
         </Button>
       </DialogTrigger>
@@ -100,7 +100,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   <FormItem>
                     <FormLabel>slug</FormLabel>
                     <FormControl>
-                      <div className="flex items-center w-full gap-4">
+                      <div className="flex w-full items-center gap-4">
                         <Input placeholder="请输入slug" {...field} />
                         <Button type="button" onClick={handleFormatSlug}>
                           格式化
@@ -194,7 +194,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
                   {createTagQuery.loading && (
-                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
+                    <LoaderCircle className="mr-2 size-4 animate-spin" />
                   )}
                   创建
                 </Button>
