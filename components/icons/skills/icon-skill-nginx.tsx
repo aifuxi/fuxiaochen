@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillNginx = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillNginx = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--nginx]', className)}
+      className={cn("icon-[skill-icons--nginx]", className)}
     ></span>
   );
 };

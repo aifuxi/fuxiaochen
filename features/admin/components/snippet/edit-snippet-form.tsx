@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from "next/navigation";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, Save } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { LoaderCircle, Save } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -18,23 +18,23 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
-import { PATHS } from '@/constants';
-import { CreateTagButton } from '@/features/admin';
+import { PATHS } from "@/constants";
+import { CreateTagButton } from "@/features/admin";
 import {
   type UpdateSnippetDTO,
   updateSnippetSchema,
   useGetSnippet,
   useUpdateSnippet,
-} from '@/features/snippet';
-import { useGetAllTags } from '@/features/tag';
-import { toSlug } from '@/lib/utils';
+} from "@/features/snippet";
+import { useGetAllTags } from "@/features/tag";
+import { toSlug } from "@/lib/utils";
 
 export const EditSnippetForm = () => {
   const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);
@@ -54,25 +54,25 @@ export const EditSnippetForm = () => {
   const form = useForm<UpdateSnippetDTO>({
     resolver: zodResolver(updateSnippetSchema),
     defaultValues: {
-      title: snippet?.title ?? '',
-      id: snippet?.id ?? '',
-      slug: snippet?.slug ?? '',
-      description: snippet?.description ?? '',
+      title: snippet?.title ?? "",
+      id: snippet?.id ?? "",
+      slug: snippet?.slug ?? "",
+      description: snippet?.description ?? "",
       published: snippet?.published ?? false,
-      body: snippet?.body ?? '',
+      body: snippet?.body ?? "",
 
       tags: snippet?.tags?.map((el) => el.id) ?? [],
     },
   });
 
   React.useEffect(() => {
-    form.setValue('title', snippet?.title ?? '');
-    form.setValue('id', snippet?.id ?? '');
-    form.setValue('slug', snippet?.slug ?? '');
-    form.setValue('description', snippet?.description ?? '');
-    form.setValue('body', snippet?.body ?? '');
-    form.setValue('published', snippet?.published ?? false);
-    form.setValue('tags', snippet?.tags?.map((el) => el.id) ?? []);
+    form.setValue("title", snippet?.title ?? "");
+    form.setValue("id", snippet?.id ?? "");
+    form.setValue("slug", snippet?.slug ?? "");
+    form.setValue("description", snippet?.description ?? "");
+    form.setValue("body", snippet?.body ?? "");
+    form.setValue("published", snippet?.published ?? false);
+    form.setValue("tags", snippet?.tags?.map((el) => el.id) ?? []);
   }, [snippet, form]);
 
   return (
@@ -82,7 +82,7 @@ export const EditSnippetForm = () => {
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
-            variant={'outline'}
+            variant={"outline"}
             disabled={updateSnippetQuery.loading}
             className="!w-full"
           >
@@ -220,7 +220,7 @@ export const EditSnippetForm = () => {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
+      form.setValue("slug", formatted);
     }
   }
 };

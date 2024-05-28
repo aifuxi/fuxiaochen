@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import Link from 'next/link';
+import Link from "next/link";
 
 import {
   BEI_AN_LINK,
@@ -13,12 +13,12 @@ import {
   PATHS_MAP,
   SLOGAN,
   navItems,
-} from '@/constants';
-import { getSiteStatistics } from '@/features/statistics';
-import { cn } from '@/lib/utils';
-import { formatNum } from '@/utils';
+} from "@/constants";
+import { getSiteStatistics } from "@/features/statistics";
+import { cn } from "@/lib/utils";
+import { formatNum } from "@/utils";
 
-import { Wrapper } from '../wrapper';
+import { Wrapper } from "../wrapper";
 
 export const Footer = async () => {
   const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
@@ -27,7 +27,7 @@ export const Footer = async () => {
     <footer className="px-6 py-12">
       <Wrapper
         className={cn(
-          'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-24 gap-y-8 text-sm text-muted-foreground',
+          "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-24 gap-y-8 text-sm text-muted-foreground",
         )}
       >
         <dl className="flex flex-col gap-3">

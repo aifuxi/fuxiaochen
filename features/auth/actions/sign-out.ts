@@ -1,7 +1,7 @@
-'use server';
+"use server";
 
-import { PATHS } from '@/constants';
-import { signOut } from '@/lib/auth';
+import { PATHS } from "@/constants";
+import { signOut } from "@/lib/auth";
 
 export const signOutAndRedirect = async () => {
   await signOut({

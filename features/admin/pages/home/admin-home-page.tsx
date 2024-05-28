@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import { IllustrationConstruction } from '@/components/illustrations';
-import { PageBreadcrumb } from '@/components/page-header';
+import { IllustrationConstruction } from "@/components/illustrations";
+import { PageBreadcrumb } from "@/components/page-header";
 
-import { PATHS } from '@/constants';
+import { PATHS } from "@/constants";
 
-import { AdminContentLayout } from '../../components';
+import { AdminContentLayout } from "../../components";
 
 export const AdminHomePage = () => {
   return (

@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconBarandGithub = ({
   className,
@@ -9,7 +9,7 @@ export const IconBarandGithub = ({
   return (
     <span
       {...props}
-      className={cn('icon-[fa6-brands--github]', className)}
+      className={cn("icon-[fa6-brands--github]", className)}
     ></span>
   );
 };

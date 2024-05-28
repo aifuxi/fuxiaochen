@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillStackoverflowDark = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillStackoverflowDark = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--stackoverflow-dark]', className)}
+      className={cn("icon-[skill-icons--stackoverflow-dark]", className)}
     ></span>
   );
 };
@@ -21,7 +21,7 @@ export const IconSkillStackoverflowLight = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--stackoverflow-light]', className)}
+      className={cn("icon-[skill-icons--stackoverflow-light]", className)}
     ></span>
   );
 };

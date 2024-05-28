@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import { type Metadata } from 'next';
+import { type Metadata } from "next";
 
-import { isNil } from 'lodash-es';
+import { isNil } from "lodash-es";
 
-import { WEBSITE } from '@/constants';
-import { getPlublishedBlogBySlug } from '@/features/blog';
+import { WEBSITE } from "@/constants";
+import { getPlublishedBlogBySlug } from "@/features/blog";
 
 export async function generateMetadata({
   params,
@@ -21,7 +21,7 @@ export async function generateMetadata({
   return {
     title: `${blog.title} - ${WEBSITE}`,
     description: blog.description,
-    keywords: blog.tags.map((el) => el.name).join(','),
+    keywords: blog.tags.map((el) => el.name).join(","),
   };
 }
 

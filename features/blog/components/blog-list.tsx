@@ -1,8 +1,8 @@
-import { IllustrationNoContent } from '@/components/illustrations';
+import { IllustrationNoContent } from "@/components/illustrations";
 
-import { BlogListItem } from './blog-list-item';
+import { BlogListItem } from "./blog-list-item";
 
-import { type Blog } from '../types';
+import { type Blog } from "../types";
 
 type BlogListProps = {
   blogs: Blog[];

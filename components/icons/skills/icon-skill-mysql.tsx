@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillMysqlDark = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillMysqlDark = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--mysql-dark]', className)}
+      className={cn("icon-[skill-icons--mysql-dark]", className)}
     ></span>
   );
 };
@@ -21,7 +21,7 @@ export const IconSkillMysqlLight = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--mysql-light]', className)}
+      className={cn("icon-[skill-icons--mysql-light]", className)}
     ></span>
   );
 };

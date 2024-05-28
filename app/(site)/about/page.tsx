@@ -1,6 +1,6 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 import {
   IconBarandGithub,
@@ -32,10 +32,10 @@ import {
   IconSkillTailwindcssDark,
   IconSkillTailwindcssLight,
   IconSkillTypeScript,
-} from '@/components/icons';
+} from "@/components/icons";
 
-import { NICKNAME } from '@/constants';
-import { socialMediaList } from '@/features/home';
+import { NICKNAME } from "@/constants";
+import { socialMediaList } from "@/features/home";
 
 export const revalidate = 60;
 

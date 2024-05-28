@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -17,30 +17,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   hideToast,
   showErrorToast,
   showInfoToast,
   showLoadingToast,
   showSuccessToast,
-} from '@/components/ui/toast';
+} from "@/components/ui/toast";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
-import { PATHS } from '@/constants';
-import { CreateTagButton } from '@/features/admin';
+import { PATHS } from "@/constants";
+import { CreateTagButton } from "@/features/admin";
 import {
   type CreateBlogDTO,
   createBlogSchema,
   useCreateBlog,
-} from '@/features/blog';
-import { useGetAllTags } from '@/features/tag';
-import { uploadFile } from '@/features/upload';
-import { toSlug } from '@/lib/utils';
+} from "@/features/blog";
+import { useGetAllTags } from "@/features/tag";
+import { uploadFile } from "@/features/upload";
+import { toSlug } from "@/lib/utils";
 
 export const CreateBlogForm = () => {
   const router = useRouter();
@@ -52,17 +52,17 @@ export const CreateBlogForm = () => {
 
   const createBlogQuery = useCreateBlog();
 
-  const [cover, setCover] = React.useState('');
+  const [cover, setCover] = React.useState("");
   const form = useForm<CreateBlogDTO>({
     resolver: zodResolver(createBlogSchema),
     defaultValues: {
-      title: '',
-      slug: '',
-      description: '',
-      body: '',
+      title: "",
+      slug: "",
+      description: "",
+      body: "",
       published: true,
-      cover: '',
-      author: '',
+      cover: "",
+      author: "",
       tags: [],
     },
   });
@@ -74,7 +74,7 @@ export const CreateBlogForm = () => {
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
-            variant={'outline'}
+            variant={"outline"}
             className="!w-full"
           >
             创建
@@ -135,7 +135,7 @@ export const CreateBlogForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     placeholder="请输入作者"
                   />
                 </FormControl>
@@ -152,7 +152,7 @@ export const CreateBlogForm = () => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     placeholder="请输入封面链接"
                   />
                 </FormControl>
@@ -164,8 +164,8 @@ export const CreateBlogForm = () => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const fd = new FormData();
-                        fd.append('file', file);
-                        const toastID = showLoadingToast('上传中');
+                        fd.append("file", file);
+                        const toastID = showLoadingToast("上传中");
                         const { url, error } = await uploadFile(fd);
                         hideToast(toastID);
 
@@ -175,13 +175,13 @@ export const CreateBlogForm = () => {
                         }
 
                         if (url) {
-                          showSuccessToast('上传成功');
+                          showSuccessToast("上传成功");
                         }
 
-                        setCover(url ?? '');
-                        form.setValue('cover', url ?? '');
+                        setCover(url ?? "");
+                        form.setValue("cover", url ?? "");
                       } else {
-                        showInfoToast('请选择一个文件');
+                        showInfoToast("请选择一个文件");
                       }
                     } catch (error) {
                       showErrorToast(error as string);
@@ -192,7 +192,7 @@ export const CreateBlogForm = () => {
                   <img
                     src={cover}
                     className="h-[300px] object-scale-down"
-                    alt={''}
+                    alt={""}
                   />
                 )}
               </FormItem>
@@ -279,7 +279,7 @@ export const CreateBlogForm = () => {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
+      form.setValue("slug", formatted);
     }
   }
 };

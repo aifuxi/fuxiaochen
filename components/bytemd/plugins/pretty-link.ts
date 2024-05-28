@@ -1,10 +1,10 @@
 /* eslint-disable */
 // @ts-nocheck
-import type { BytemdPlugin } from 'bytemd';
-import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
-import { visit } from 'unist-util-visit';
+import type { BytemdPlugin } from "bytemd";
+import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
+import { visit } from "unist-util-visit";
 
-import { extractDomainFromUrl } from '@/utils';
+import { extractDomainFromUrl } from "@/utils";
 
 // fromHtmlIsomorphic的作用是把一个html标签转换成对应的HAST，简化书写svg的过程
 // 超链接通用 svg icon node
@@ -39,23 +39,23 @@ export const prettyLinkPlugin = (): BytemdPlugin => {
   return {
     rehype: (process) =>
       process.use(() => (tree) => {
-        visit(tree, 'element', (node) => {
-          if (node.tagName === 'a') {
+        visit(tree, "element", (node) => {
+          if (node.tagName === "a") {
             // 如果是以 # 开头，说明是hash，不做处理
-            if (node.properties.href && node.properties.href.startsWith('#')) {
+            if (node.properties.href && node.properties.href.startsWith("#")) {
               return;
             }
-            node.properties.target = '_blank';
+            node.properties.target = "_blank";
             node.children.push(linkSvgNode);
 
             // 判断当前链接是哪种，是否为已知的网站，根据域名添加对应图标
             const host = extractDomainFromUrl(node.properties.href);
             const domainToSvgNodeMap = {
-              'bilibili.com': bilibiliSvgNode,
-              'juejin.cn': juejinSvgNode,
-              'github.com': githubSvgNode,
-              'youtube.com': ytSvgNode,
-              'stackoverflow.com': stackoverflowSvgNode,
+              "bilibili.com": bilibiliSvgNode,
+              "juejin.cn": juejinSvgNode,
+              "github.com": githubSvgNode,
+              "youtube.com": ytSvgNode,
+              "stackoverflow.com": stackoverflowSvgNode,
             };
             const svgNode = domainToSvgNodeMap[host];
             if (svgNode) {

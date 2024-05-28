@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { SessionProvider } from 'next-auth/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { SessionProvider } from "next-auth/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { PanelLeftClose, PanelRightClose } from 'lucide-react';
+import { PanelLeftClose, PanelRightClose } from "lucide-react";
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from "@/components/ui/button";
 
-import { Logo } from '@/components/logo';
+import { Logo } from "@/components/logo";
 
-import { NICKNAME, PATHS, WEBSITE } from '@/constants';
-import { cn } from '@/lib/utils';
+import { NICKNAME, PATHS, WEBSITE } from "@/constants";
+import { cn } from "@/lib/utils";
 
-import { adminNavItems } from './admin-content-layout';
+import { adminNavItems } from "./admin-content-layout";
 
 export const AdminLayout = ({ children }: React.PropsWithChildren) => {
   const pathname = usePathname();
@@ -26,14 +26,14 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
       <div className="flex min-h-screen w-full bg-muted/40">
         <aside
           className={cn(
-            'hidden flex-col border-r bg-background sm:flex transition-all',
-            open ? 'w-36' : 'w-14',
+            "hidden flex-col border-r bg-background sm:flex transition-all",
+            open ? "w-36" : "w-14",
           )}
         >
           <Link
             href={PATHS.SITE_HOME}
             className={cn(
-              'hidden sm:flex mt-[10vh] mb-[5vh] justify-center items-center whitespace-nowrap',
+              "hidden sm:flex mt-[10vh] mb-[5vh] justify-center items-center whitespace-nowrap",
             )}
             aria-label={NICKNAME}
           >
@@ -46,8 +46,8 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
           </Link>
           <nav
             className={cn(
-              'h-full flex flex-col items-center gap-4 sm:py-5',
-              open ? 'px-4' : 'px-2',
+              "h-full flex flex-col items-center gap-4 sm:py-5",
+              open ? "px-4" : "px-2",
             )}
           >
             {adminNavItems.map((el) => (
@@ -56,10 +56,10 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
                 href={el.link}
                 className={cn(
                   buttonVariants({
-                    variant: el.link === pathname ? 'default' : 'ghost',
-                    size: open ? 'default' : 'icon',
+                    variant: el.link === pathname ? "default" : "ghost",
+                    size: open ? "default" : "icon",
                   }),
-                  '!w-full transition-all',
+                  "!w-full transition-all",
                 )}
               >
                 {el.icon}
@@ -68,7 +68,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             ))}
           </nav>
           <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-            <Button size={'icon'} variant={'outline'}>
+            <Button size={"icon"} variant={"outline"}>
               {open ? (
                 <PanelLeftClose
                   className="size-5"

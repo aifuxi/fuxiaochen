@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-import { useMount } from 'ahooks';
-import { load } from 'cheerio';
+import { useMount } from "ahooks";
+import { load } from "cheerio";
 
 export const MarkdownTOC = () => {
   const [headerIds, setHeaderIds] = React.useState<string[]>([]);
 
   useMount(() => {
-    const markdownBodyElement = document.querySelector('.markdown-body')!;
+    const markdownBodyElement = document.querySelector(".markdown-body")!;
     const $ = load(markdownBodyElement.innerHTML);
-    const h2Elems = $('h2');
+    const h2Elems = $("h2");
     const ids = [];
     for (const h2 of h2Elems) {
       const id = h2.attribs.id;

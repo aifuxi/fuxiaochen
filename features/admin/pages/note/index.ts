@@ -1,1 +1,1 @@
-export * from './admin-note-list-page';
+export * from "./admin-note-list-page";

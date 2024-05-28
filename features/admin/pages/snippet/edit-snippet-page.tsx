@@ -1,8 +1,8 @@
-import { PageBreadcrumb } from '@/components/page-header';
+import { PageBreadcrumb } from "@/components/page-header";
 
-import { PATHS } from '@/constants';
+import { PATHS } from "@/constants";
 
-import { AdminContentLayout, EditSnippetForm } from '../../components';
+import { AdminContentLayout, EditSnippetForm } from "../../components";
 
 export const EditSnippetPage = () => {
   return (

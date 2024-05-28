@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { type Prisma } from '@prisma/client';
-import { isUndefined } from 'lodash-es';
+import { type Prisma } from "@prisma/client";
+import { isUndefined } from "lodash-es";
 
-import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from '@/constants';
-import { batchGetSnippetUV } from '@/features/statistics';
-import { noPermission } from '@/features/user';
-import { prisma } from '@/lib/prisma';
-import { getSkip } from '@/utils';
+import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from "@/constants";
+import { batchGetSnippetUV } from "@/features/statistics";
+import { noPermission } from "@/features/user";
+import { prisma } from "@/lib/prisma";
+import { getSkip } from "@/utils";
 
 import {
   type CreateSnippetDTO,
@@ -16,7 +16,7 @@ import {
   createSnippetSchema,
   getSnippetsSchema,
   updateSnippetSchema,
-} from '../types';
+} from "../types";
 
 export const isSnippetExistByID = async (id: string): Promise<boolean> => {
   const isExist = await prisma.snippet.findUnique({ where: { id } });
@@ -28,7 +28,7 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
   const result = await getSnippetsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -116,7 +116,7 @@ export const getPublishedSnippets = async () => {
   const total = await prisma.snippet.count({});
   const snippets = await prisma.snippet.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     include: {
       tags: true,
@@ -165,7 +165,7 @@ export const deleteSnippetByID = async (id: string) => {
   const isExist = await isSnippetExistByID(id);
 
   if (!isExist) {
-    throw new Error('Snippet不存在');
+    throw new Error("Snippet不存在");
   }
 
   await prisma.snippet.delete({
@@ -182,7 +182,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
   const result = await createSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -195,7 +195,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
 
   if (snippets.length) {
     // TODO: 记录日志
-    throw new Error('标题或者slug重复');
+    throw new Error("标题或者slug重复");
   }
 
   await prisma.snippet.create({
@@ -225,7 +225,7 @@ export const toggleSnippetPublished = async (id: string) => {
   });
 
   if (!snippet) {
-    throw new Error('片段不存在');
+    throw new Error("片段不存在");
   }
 
   await prisma.snippet.update({
@@ -245,7 +245,7 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
   const result = await updateSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -258,7 +258,7 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
   });
 
   if (!snippet) {
-    throw new Error('Snippet不存在');
+    throw new Error("Snippet不存在");
   }
 
   const snippetTagIDs = snippet?.tags.map((el) => el.id);

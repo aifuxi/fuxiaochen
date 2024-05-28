@@ -1,6 +1,6 @@
-import { useRequest } from 'ahooks';
+import { useRequest } from "ahooks";
 
-import { getBlogByID } from '../actions';
+import { getBlogByID } from "../actions";
 
 export const useGetBlog = (id: string, ready: boolean) => {
   return useRequest(() => getBlogByID(id), {

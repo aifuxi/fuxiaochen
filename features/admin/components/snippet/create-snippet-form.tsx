@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { LoaderCircle } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -18,22 +18,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
-import { PATHS } from '@/constants';
-import { CreateTagButton } from '@/features/admin';
+import { PATHS } from "@/constants";
+import { CreateTagButton } from "@/features/admin";
 import {
   type CreateSnippetDTO,
   createSnippetSchema,
   useCreateSnippet,
-} from '@/features/snippet';
-import { useGetAllTags } from '@/features/tag';
-import { toSlug } from '@/lib/utils';
+} from "@/features/snippet";
+import { useGetAllTags } from "@/features/tag";
+import { toSlug } from "@/lib/utils";
 
 export const CreateSnippetForm = () => {
   const router = useRouter();
@@ -48,11 +48,11 @@ export const CreateSnippetForm = () => {
   const form = useForm<CreateSnippetDTO>({
     resolver: zodResolver(createSnippetSchema),
     defaultValues: {
-      title: '',
-      slug: '',
-      description: '',
+      title: "",
+      slug: "",
+      description: "",
       published: true,
-      body: '',
+      body: "",
       tags: [],
     },
   });
@@ -64,7 +64,7 @@ export const CreateSnippetForm = () => {
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
-            variant={'outline'}
+            variant={"outline"}
             disabled={createSnippetQuery.loading}
             className="!w-full"
           >
@@ -201,7 +201,7 @@ export const CreateSnippetForm = () => {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
+      form.setValue("slug", formatted);
     }
   }
 };

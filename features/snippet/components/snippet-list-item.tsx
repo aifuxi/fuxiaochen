@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-import { Calendar, Eye } from 'lucide-react';
+import { Calendar, Eye } from "lucide-react";
 
-import { PATHS, PLACEHOLDER_TEXT } from '@/constants';
-import { TagPrefixIcon } from '@/features/tag';
-import { cn, prettyDate } from '@/lib/utils';
-import { formatNum } from '@/utils';
+import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
+import { TagPrefixIcon } from "@/features/tag";
+import { cn, prettyDate } from "@/lib/utils";
+import { formatNum } from "@/utils";
 
-import { type Snippet } from '../types';
+import { type Snippet } from "../types";
 
 type SnippetListItemProps = {
   snippet: Snippet;
@@ -21,8 +21,8 @@ export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
     <Link
       href={`${PATHS.SITE_SNIPPET}/${snippet.slug}`}
       className={cn(
-        'flex flex-col justify-between h-full text-primary px-6 py-4 transition-colors rounded-lg',
-        'bg-transparent hover:bg-primary-foreground ',
+        "flex flex-col justify-between h-full text-primary px-6 py-4 transition-colors rounded-lg",
+        "bg-transparent hover:bg-primary-foreground ",
       )}
     >
       <ul className="mb-1 flex space-x-4 text-xs font-medium text-muted-foreground">

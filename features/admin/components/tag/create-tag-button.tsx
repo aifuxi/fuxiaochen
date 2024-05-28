@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, Plus } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { LoaderCircle, Plus } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -22,25 +22,25 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
-import { TAG_TYPES, TAG_TYPE_MAP } from '@/constants';
+import { TAG_TYPES, TAG_TYPE_MAP } from "@/constants";
 import {
   type CreateTagDTO,
   createTagSchema,
   useCreateTag,
-} from '@/features/tag';
-import { cn, toSlug } from '@/lib/utils';
-import { convertSvgToDataUrl } from '@/utils';
+} from "@/features/tag";
+import { cn, toSlug } from "@/lib/utils";
+import { convertSvgToDataUrl } from "@/utils";
 
 type CreateTagButtonProps = {
   refreshAsync: () => Promise<unknown>;
@@ -50,8 +50,8 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   const form = useForm<CreateTagDTO>({
     resolver: zodResolver(createTagSchema),
     defaultValues: {
-      name: '',
-      slug: '',
+      name: "",
+      slug: "",
       type: TagTypeEnum.ALL,
     },
   });
@@ -121,7 +121,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                       <FormControl>
                         <SelectTrigger
                           className={cn({
-                            'text-muted-foreground': !field.value,
+                            "text-muted-foreground": !field.value,
                           })}
                         >
                           <SelectValue placeholder="请选择标签" />
@@ -155,7 +155,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                     <FormMessage />
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon('icon')}
+                      onClick={() => handleFormatIcon("icon")}
                     >
                       转为Data Url
                     </Button>
@@ -179,7 +179,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                     <FormMessage />
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon('iconDark')}
+                      onClick={() => handleFormatIcon("iconDark")}
                     >
                       转为Data Url
                     </Button>
@@ -223,22 +223,22 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
+      form.setValue("slug", formatted);
     }
   }
 
-  function handleFormatIcon(type: 'icon' | 'iconDark') {
-    if (type === 'icon') {
+  function handleFormatIcon(type: "icon" | "iconDark") {
+    if (type === "icon") {
       const tmp = form.getValues().icon?.trim();
       if (tmp) {
         const formatted = convertSvgToDataUrl(tmp);
-        form.setValue('icon', formatted);
+        form.setValue("icon", formatted);
       }
-    } else if (type === 'iconDark') {
+    } else if (type === "iconDark") {
       const tmp = form.getValues().iconDark?.trim();
       if (tmp) {
         const formatted = convertSvgToDataUrl(tmp);
-        form.setValue('iconDark', formatted);
+        form.setValue("iconDark", formatted);
       }
     }
   }

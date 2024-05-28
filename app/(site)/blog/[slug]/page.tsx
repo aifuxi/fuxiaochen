@@ -1,9 +1,9 @@
-import { notFound } from 'next/navigation';
+import { notFound } from "next/navigation";
 
-import { isNil } from 'lodash-es';
+import { isNil } from "lodash-es";
 
-import { BlogDetailPage, getPlublishedBlogBySlug } from '@/features/blog';
-import { getBlogUV } from '@/features/statistics';
+import { BlogDetailPage, getPlublishedBlogBySlug } from "@/features/blog";
+import { getBlogUV } from "@/features/statistics";
 
 export const revalidate = 60;
 
