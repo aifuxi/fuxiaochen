@@ -40,9 +40,26 @@ services:
       - fuxiaochen_redis_db:/data
     networks:
       - my_network
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.8
+    restart: unless-stopped
+    ports:
+      - '7700:7700'
+    environment:
+      - MEILI_MASTER_KEY=1234567891011121314151617181920
+      # - MEILI_ENV=production
+      # 开发环境可以进自带的页面查看数据，生产环境不可以
+      - MEILI_ENV=development
+    volumes:
+      - fuxiaochen_meilisearch_db:/data
+    networks:
+      - my_network
+
 volumes:
   fuxiaochen_mysql8_db:
   fuxiaochen_redis_db:
+  fuxiaochen_meilisearch_db:
 
 networks:
   my_network:
