@@ -1,15 +1,15 @@
-import { useRequest } from 'ahooks';
+import { useRequest } from "ahooks";
 
-import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
+import { showErrorToast, showSuccessToast } from "@/components/ui/toast";
 
-import { createNote } from '../actions';
+import { createNote } from "../actions";
 
 export const useCreateNote = () => {
   return useRequest(createNote, {
     manual: true,
     loadingDelay: 300,
     onSuccess() {
-      showSuccessToast('笔记创建成功');
+      showSuccessToast("笔记创建成功");
     },
     onError(error) {
       showErrorToast(`笔记创建失败: ${error.message}`);

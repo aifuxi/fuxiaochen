@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 import {
   AlertDialog,
@@ -11,9 +11,9 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
-import { signOutAndRedirect } from '../actions/sign-out';
+import { signOutAndRedirect } from "../actions/sign-out";
 
 type Props = {
   open: boolean;

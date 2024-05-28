@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillGolang = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillGolang = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--golang]', className)}
+      className={cn("icon-[skill-icons--golang]", className)}
     ></span>
   );
 };

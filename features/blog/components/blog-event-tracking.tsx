@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useAsyncEffect } from 'ahooks';
+import { useAsyncEffect } from "ahooks";
 
-import { useRecordBlogUV } from '@/features/statistics';
-import { useCuid } from '@/hooks';
-import { sleep } from '@/utils';
+import { useRecordBlogUV } from "@/features/statistics";
+import { useCuid } from "@/hooks";
+import { sleep } from "@/utils";
 
 export const BlogEventTracking = ({ blogID }: { blogID: string }) => {
   const recordBlogUVQuery = useRecordBlogUV();

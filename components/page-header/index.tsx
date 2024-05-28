@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { PATHS_MAP } from '@/constants';
+import { PATHS_MAP } from "@/constants";
 
 import {
   Breadcrumb,
@@ -9,7 +9,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '../ui/breadcrumb';
+} from "../ui/breadcrumb";
 
 type PageBreadcrumbProps = {
   breadcrumbList?: string[];

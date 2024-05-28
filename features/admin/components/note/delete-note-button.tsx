@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { LoaderCircle, Trash } from 'lucide-react';
+import { LoaderCircle, Trash } from "lucide-react";
 
 import {
   AlertDialog,
@@ -11,10 +11,10 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
-import { useDeleteNote } from '@/features/note';
+import { useDeleteNote } from "@/features/note";
 
 type DeleteNoteButtonProps = {
   id: string;
@@ -31,7 +31,7 @@ export const DeleteNoteButton = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
+        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
           <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>

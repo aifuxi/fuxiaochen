@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, Plus } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { LoaderCircle, Plus } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -23,19 +23,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
 import {
   type CreateNoteDTO,
   createNoteSchema,
   useCreateNote,
-} from '@/features/note';
-import { useGetAllTags } from '@/features/tag';
+} from "@/features/note";
+import { useGetAllTags } from "@/features/tag";
 
-import { CreateTagButton } from '../tag';
+import { CreateTagButton } from "../tag";
 
 type CreateNoteButtonProps = {
   refreshAsync: () => Promise<unknown>;
@@ -46,7 +46,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   const form = useForm<CreateNoteDTO>({
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
-      body: '',
+      body: "",
       published: true,
       tags: [],
     },

@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-import { IconBarandGithub } from '@/components/icons';
-import { ModeToggle } from '@/components/mode-toggle';
+import { IconBarandGithub } from "@/components/icons";
+import { ModeToggle } from "@/components/mode-toggle";
 
-import { PATHS } from '@/constants';
+import { PATHS } from "@/constants";
 
-import { signInWithGithub } from '../actions/sign-in';
+import { signInWithGithub } from "../actions/sign-in";
 
 export const SignInPage = () => {
   const router = useRouter();

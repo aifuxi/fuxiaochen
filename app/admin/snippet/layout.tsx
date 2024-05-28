@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
-import { type Metadata } from 'next';
+import { type Metadata } from "next";
 
-import { PATHS, PATHS_MAP } from '@/constants';
-import { getAdminPageTitle } from '@/utils';
+import { PATHS, PATHS_MAP } from "@/constants";
+import { getAdminPageTitle } from "@/utils";
 
 export const metadata: Metadata = {
   title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_SNIPPET]),

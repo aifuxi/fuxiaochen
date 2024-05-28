@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { LoaderCircle, Trash } from 'lucide-react';
+import { LoaderCircle, Trash } from "lucide-react";
 
 import {
   AlertDialog,
@@ -11,10 +11,10 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
-import { useDeleteTag } from '@/features/tag';
+import { useDeleteTag } from "@/features/tag";
 
 type DeleteTagButtonProps = {
   id: string;
@@ -28,7 +28,7 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
+        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
           <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>

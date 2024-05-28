@@ -1,17 +1,17 @@
-'use server';
+"use server";
 
-import { hashSync } from 'bcryptjs';
+import { hashSync } from "bcryptjs";
 
-import { ADMIN_EMAILS } from '@/constants';
-import { type SignupDTO, signupSchema } from '@/features/auth';
-import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { ADMIN_EMAILS } from "@/constants";
+import { type SignupDTO, signupSchema } from "@/features/auth";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 
 export const createUser = async (params: SignupDTO) => {
   const result = await signupSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -23,7 +23,7 @@ export const createUser = async (params: SignupDTO) => {
   });
 
   if (isExist) {
-    throw new Error('当前邮箱已注册！');
+    throw new Error("当前邮箱已注册！");
   }
 
   const hashedPassword = hashSync(result.data.password);

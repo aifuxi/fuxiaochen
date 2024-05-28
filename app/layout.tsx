@@ -1,21 +1,21 @@
-import React from 'react';
+import React from "react";
 
-import { type Metadata } from 'next';
+import { type Metadata } from "next";
 
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics } from "@next/third-parties/google";
 
-import { NODE_ENV } from '@/config';
+import { NODE_ENV } from "@/config";
 
-import { ThemeProvider } from '@/providers';
+import { ThemeProvider } from "@/providers";
 
-import { ReactHotToaster } from '@/components/ui/toast';
-import { TooltipProvider } from '@/components/ui/tooltip';
+import { ReactHotToaster } from "@/components/ui/toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { Console } from '@/components/console';
-import { Fingerprint } from '@/components/fingerprint';
+import { Console } from "@/components/console";
+import { Fingerprint } from "@/components/fingerprint";
 
-import { NICKNAME, SLOGAN, WEBSITE } from '@/constants';
-import '@/styles/global.css';
+import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
+import "@/styles/global.css";
 
 export const metadata: Metadata = {
   title: {
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </body>
 
       {/* Google Analytics  */}
-      {NODE_ENV === 'production' && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+      {NODE_ENV === "production" && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
     </html>
   );
 }

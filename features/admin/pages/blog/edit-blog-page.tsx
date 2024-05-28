@@ -1,8 +1,8 @@
-import { PageBreadcrumb } from '@/components/page-header';
+import { PageBreadcrumb } from "@/components/page-header";
 
-import { PATHS } from '@/constants';
+import { PATHS } from "@/constants";
 
-import { AdminContentLayout, EditBlogForm } from '../../components';
+import { AdminContentLayout, EditBlogForm } from "../../components";
 
 export const EditBlogPage = () => {
   return (

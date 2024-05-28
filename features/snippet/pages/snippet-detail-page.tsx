@@ -1,18 +1,18 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-import { MoveLeft } from 'lucide-react';
+import { MoveLeft } from "lucide-react";
 
-import { BytemdViewer } from '@/components/bytemd';
-import { DetailSidebar } from '@/components/detail-sidebar';
-import { MarkdownTOC } from '@/components/markdown-toc';
-import { Wrapper } from '@/components/wrapper';
+import { BytemdViewer } from "@/components/bytemd";
+import { DetailSidebar } from "@/components/detail-sidebar";
+import { MarkdownTOC } from "@/components/markdown-toc";
+import { Wrapper } from "@/components/wrapper";
 
-import { PATHS, PLACEHOLDER_TEXT } from '@/constants';
-import { TagList } from '@/features/tag';
-import { cn, prettyDateWithWeekday } from '@/lib/utils';
+import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
+import { TagList } from "@/features/tag";
+import { cn, prettyDateWithWeekday } from "@/lib/utils";
 
-import { SnippetEventTracking } from '../components/snippet-event-tracking';
-import { type Snippet } from '../types';
+import { SnippetEventTracking } from "../components/snippet-event-tracking";
+import { type Snippet } from "../types";
 
 type SnippetDetailProps = {
   snippet: Snippet;
@@ -26,8 +26,8 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
         <Link
           href={PATHS.SITE_BLOG}
           className={cn(
-            'text-sm flex items-center space-x-1 transition-colors py-2',
-            'text-muted-foreground hover:text-primary',
+            "text-sm flex items-center space-x-1 transition-colors py-2",
+            "text-muted-foreground hover:text-primary",
           )}
         >
           <MoveLeft className="size-3.5" />
@@ -45,11 +45,11 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
       <div className="flex">
         <div
           className={cn(
-            'flex-1 pr-14',
-            'wrapper:border-r wrapper:border-r-border',
+            "flex-1 pr-14",
+            "wrapper:border-r wrapper:border-r-border",
           )}
         >
-          <BytemdViewer body={snippet.body || ''} />
+          <BytemdViewer body={snippet.body || ""} />
         </div>
         <DetailSidebar>
           <MarkdownTOC />

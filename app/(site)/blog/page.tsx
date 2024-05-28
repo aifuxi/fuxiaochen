@@ -1,6 +1,6 @@
-import { Wrapper } from '@/components/wrapper';
+import { Wrapper } from "@/components/wrapper";
 
-import { BlogList, getPublishedBlogs } from '@/features/blog';
+import { BlogList, getPublishedBlogs } from "@/features/blog";
 
 export const revalidate = 60;
 

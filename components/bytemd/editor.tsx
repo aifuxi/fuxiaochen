@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { Editor, type EditorProps } from '@bytemd/react';
-import zh_Hans from 'bytemd/locales/zh_Hans.json';
+import { Editor, type EditorProps } from "@bytemd/react";
+import zh_Hans from "bytemd/locales/zh_Hans.json";
 
-import { uploadFile } from '@/features/upload';
+import { uploadFile } from "@/features/upload";
 
-import { plugins, sanitize } from './config';
+import { plugins, sanitize } from "./config";
 
 import {
   hideToast,
   showErrorToast,
   showLoadingToast,
   showSuccessToast,
-} from '../ui/toast';
+} from "../ui/toast";
 
 type BytemdEditorProps = {
   body?: string;
@@ -25,13 +25,13 @@ export const BytemdEditor = ({
   setContent,
   editorProps,
 }: BytemdEditorProps) => {
-  const handleUploadImages: EditorProps['uploadImages'] = async (files) => {
+  const handleUploadImages: EditorProps["uploadImages"] = async (files) => {
     const file = files[0];
     if (file) {
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append("file", file);
 
-      const toastID = showLoadingToast('上传中');
+      const toastID = showLoadingToast("上传中");
       const { url, error } = await uploadFile(fd);
       hideToast(toastID);
 
@@ -41,7 +41,7 @@ export const BytemdEditor = ({
       }
 
       if (url) {
-        showSuccessToast('上传成功');
+        showSuccessToast("上传成功");
         return [{ url }];
       }
 
@@ -53,7 +53,7 @@ export const BytemdEditor = ({
 
   return (
     <Editor
-      value={body ?? ''}
+      value={body ?? ""}
       plugins={plugins}
       placeholder="请输入内容..."
       sanitize={sanitize}

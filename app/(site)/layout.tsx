@@ -1,6 +1,6 @@
-import { BackToTop } from '@/components/back-to-top';
-import { Footer } from '@/components/footer';
-import { Navbar } from '@/components/navbar';
+import { BackToTop } from "@/components/back-to-top";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   return (

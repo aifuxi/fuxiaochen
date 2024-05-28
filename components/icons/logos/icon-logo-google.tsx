@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconLogoGoogle = ({
   className,
@@ -9,7 +9,7 @@ export const IconLogoGoogle = ({
   return (
     <span
       {...props}
-      className={cn('icon-[logos--google-icon]', className)}
+      className={cn("icon-[logos--google-icon]", className)}
     ></span>
   );
 };

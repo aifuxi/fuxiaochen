@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-import { DATABASE_URL, NODE_ENV } from '@/config';
+import { DATABASE_URL, NODE_ENV } from "@/config";
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
@@ -15,10 +15,10 @@ export const prisma =
   new PrismaClient({
     datasourceUrl: DATABASE_URL,
     log:
-      NODE_ENV === 'development'
+      NODE_ENV === "development"
         ? // ? ['query', 'info', 'warn', 'error']
-          ['warn', 'error']
+          ["warn", "error"]
         : undefined,
   });
 
-if (NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (NODE_ENV !== "production") globalForPrisma.prisma = prisma;

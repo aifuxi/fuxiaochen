@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillHTML = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillHTML = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--html]', className)}
+      className={cn("icon-[skill-icons--html]", className)}
     ></span>
   );
 };

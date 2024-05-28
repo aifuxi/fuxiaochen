@@ -1,21 +1,21 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { PUBLISHED_ENUM, REGEX } from '@/constants';
+import { PUBLISHED_ENUM, REGEX } from "@/constants";
 
-import { type getBlogs } from '../actions';
+import { type getBlogs } from "../actions";
 
 export const createBlogSchema = z.object({
-  title: z.string().min(1, { message: '长度不能少于1个字符' }),
+  title: z.string().min(1, { message: "长度不能少于1个字符" }),
   slug: z
     .string()
     .regex(REGEX.SLUG, {
-      message: '只允许输入数字、小写字母和中横线',
+      message: "只允许输入数字、小写字母和中横线",
     })
-    .min(1, { message: '长度不能少于1个字符' }),
-  description: z.string().min(1, { message: '长度不能少于1个字符' }),
+    .min(1, { message: "长度不能少于1个字符" }),
+  description: z.string().min(1, { message: "长度不能少于1个字符" }),
   cover: z.string().nullable().optional(),
   author: z.string().nullable().optional(),
-  body: z.string().min(1, { message: '长度不能少于1个字符' }),
+  body: z.string().min(1, { message: "长度不能少于1个字符" }),
   published: z.boolean().optional(),
   tags: z.string().array().optional(),
 });
@@ -37,12 +37,12 @@ export const getBlogsSchema = z.object({
   tags: z.string().array().optional(),
   pageIndex: z.number(),
   pageSize: z.number(),
-  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
-  order: z.enum(['asc', 'desc']).optional(),
+  orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
 });
 
 export type CreateBlogDTO = z.infer<typeof createBlogSchema>;
 export type UpdateBlogDTO = z.infer<typeof updateBlogSchema>;
 export type GetBlogsDTO = z.infer<typeof getBlogsSchema>;
 
-export type Blog = Awaited<ReturnType<typeof getBlogs>>['blogs'][number];
+export type Blog = Awaited<ReturnType<typeof getBlogs>>["blogs"][number];

@@ -1,4 +1,4 @@
-import cuid2 from '@paralleldrive/cuid2';
+import cuid2 from "@paralleldrive/cuid2";
 
 export const createCuid = () => {
   return cuid2.createId();

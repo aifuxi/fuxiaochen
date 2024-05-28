@@ -1,7 +1,7 @@
-import type { BytemdPlugin } from 'bytemd';
-import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypeSlug from 'rehype-slug';
+import type { BytemdPlugin } from "bytemd";
+import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import rehypeSlug from "rehype-slug";
 
 /**
  * 标题插件，给标题加上id，方便跳转
@@ -23,7 +23,7 @@ export function headingPlugin(): BytemdPlugin {
               properties: {
                 ariaHidden: true,
                 tabIndex: -1,
-                className: 'markdown-anchor',
+                className: "markdown-anchor",
               },
             },
           ],

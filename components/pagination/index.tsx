@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import { type SetState } from 'ahooks/lib/useSetState';
-import { Ellipsis } from 'lucide-react';
+import { type SetState } from "ahooks/lib/useSetState";
+import { Ellipsis } from "lucide-react";
 
-import { PAGE_SIZE_OPTIONS } from '@/constants';
+import { PAGE_SIZE_OPTIONS } from "@/constants";
 
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from "../ui/select";
 
 type PaginationProps = {
   total?: number;
@@ -39,7 +39,7 @@ export const Pagination = ({
   const pageCount = Math.ceil(total / params.pageSize);
   const delta = 3;
 
-  const [quickJumpPage, setQuickJumpPage] = React.useState('');
+  const [quickJumpPage, setQuickJumpPage] = React.useState("");
 
   // Memoize pagination range to avoid unnecessary re-renders
   const paginationRange = React.useMemo(() => {
@@ -53,10 +53,10 @@ export const Pagination = ({
     }
 
     if (Number(params.pageIndex) - delta > 2) {
-      range.unshift('...');
+      range.unshift("...");
     }
     if (Number(params.pageIndex) + delta < pageCount - 1) {
-      range.push('...');
+      range.push("...");
     }
 
     range.unshift(1);
@@ -72,7 +72,7 @@ export const Pagination = ({
       <div className="flex items-center space-x-2">
         {pageCount > 1 &&
           paginationRange.map((pageNumber, i) =>
-            pageNumber === '...' ? (
+            pageNumber === "..." ? (
               <Button key={i} variant="ghost" className="!cursor-not-allowed">
                 <Ellipsis className="size-3" />
               </Button>
@@ -80,7 +80,7 @@ export const Pagination = ({
               <Button
                 key={i}
                 variant={
-                  pageNumber === Number(params.pageIndex) ? 'outline' : 'ghost'
+                  pageNumber === Number(params.pageIndex) ? "outline" : "ghost"
                 }
                 onClick={() => {
                   updateParams({
@@ -104,11 +104,11 @@ export const Pagination = ({
                 }
               }}
               onKeyUp={(e) => {
-                if (e.key === 'Enter') {
+                if (e.key === "Enter") {
                   updateParams({
                     pageIndex: Math.min(Number(quickJumpPage), pageCount),
                   });
-                  setQuickJumpPage('');
+                  setQuickJumpPage("");
                 }
               }}
             />
@@ -145,7 +145,7 @@ export const Pagination = ({
   );
 };
 
-type PaginationInfoProps = Pick<PaginationProps, 'params' | 'total'>;
+type PaginationInfoProps = Pick<PaginationProps, "params" | "total">;
 
 export const PaginationInfo = ({ params, total = 0 }: PaginationInfoProps) => {
   return (
