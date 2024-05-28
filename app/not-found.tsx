@@ -10,10 +10,10 @@ import { PATHS } from '@/constants';
 
 export default function Page() {
   return (
-    <div className="h-screen grid place-items-center">
+    <div className="grid h-screen place-items-center">
       <div className="grid gap-8">
-        <IllustrationNotFound className="w-[320px] h-[320px]" />
-        <h3 className="text-2xl font-semibold tracking-tight text-center">
+        <IllustrationNotFound className="size-[320px]" />
+        <h3 className="text-center text-2xl font-semibold tracking-tight">
           页面未找到
         </h3>
         <Button asChild>

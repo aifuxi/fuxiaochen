@@ -101,7 +101,7 @@ export const Combobox = React.forwardRef(
             role="combobox"
             variant="outline"
             aria-expanded={open}
-            className="w-full inline-flex justify-between hover:bg-secondary/20 active:scale-100 whitespace-normal h-full"
+            className="inline-flex size-full justify-between whitespace-normal hover:bg-secondary/20 active:scale-100"
           >
             <div
               className={cn(
@@ -130,7 +130,7 @@ export const Combobox = React.forwardRef(
               {(!props.value || props.value.length === 0) &&
                 (props.selectPlaceholder ?? 'Select an option')}
             </div>
-            <div className="flex h-full items-center shrink-0">
+            <div className="flex h-full shrink-0 items-center">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
                 <X

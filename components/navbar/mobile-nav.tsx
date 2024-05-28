@@ -35,7 +35,7 @@ export const MobileNav = () => {
           aria-label="菜单"
           className={cn('sm:hidden')}
         >
-          <MenuIcon className="w-4 h-4" />
+          <MenuIcon className="size-4" />
         </Button>
       </SheetTrigger>
       <SheetContent side={'left'}>

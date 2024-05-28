@@ -23,7 +23,7 @@ export const ToggleNotePublishButton = ({
 
   return (
     <Button size={'icon'} variant="outline" onClick={handleToggleNotePublish}>
-      {published ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+      {published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
     </Button>
   );
 

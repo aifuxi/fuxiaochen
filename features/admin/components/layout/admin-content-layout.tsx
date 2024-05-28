@@ -46,32 +46,32 @@ export const adminNavItems: Array<{
   {
     label: PATHS_MAP[PATHS.ADMIN_HOME],
     link: PATHS.ADMIN_HOME,
-    icon: <Home className="h-4 w-4" />,
+    icon: <Home className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_STATISTIC],
     link: PATHS.ADMIN_STATISTIC,
-    icon: <LineChart className="h-4 w-4" />,
+    icon: <LineChart className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_TAG],
     link: PATHS.ADMIN_TAG,
-    icon: <Tags className="h-4 w-4" />,
+    icon: <Tags className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_BLOG],
     link: PATHS.ADMIN_BLOG,
-    icon: <Book className="h-4 w-4" />,
+    icon: <Book className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_SNIPPET],
     link: PATHS.ADMIN_SNIPPET,
-    icon: <CodeXml className="h-4 w-4" />,
+    icon: <CodeXml className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_NOTE],
     link: PATHS.ADMIN_NOTE,
-    icon: <ScrollIcon className="h-4 w-4" />,
+    icon: <ScrollIcon className="size-4" />,
   },
 ];
 
@@ -84,12 +84,12 @@ export const AdminContentLayout = ({
   const [signOutDialogOpen, setSignOutDialogOpen] = React.useState(false);
 
   return (
-    <div className="flex-1 h-screen overflow-hidden">
-      <header className="fixed top-0 inset-x-0 z-10 flex justify-between h-14 items-center gap-4 border-b bg-background px-4 py-2 sm:static sm:h-auto sm:px-6">
+    <div className="h-screen flex-1 overflow-hidden">
+      <header className="fixed inset-x-0 top-0 z-10 flex h-14 items-center justify-between gap-4 border-b bg-background px-4 py-2 sm:static sm:h-auto sm:px-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="icon" variant="outline" className="sm:hidden">
-              <PanelLeft className="h-4 w-4" />
+              <PanelLeft className="size-4" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="sm:max-w-xs">
@@ -109,17 +109,17 @@ export const AdminContentLayout = ({
         </Sheet>
         {breadcrumb}
 
-        <div className="flex space-x-4 items-center">
+        <div className="flex items-center space-x-4">
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
-                <Avatar className="w-6 h-6 rounded-[8px]">
+                <Avatar className="size-6 rounded-[8px]">
                   <AvatarImage
                     src={session?.data?.user?.image ?? ''}
                     alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
                   />
-                  <AvatarFallback className="w-6 h-6 rounded-[8px]">
+                  <AvatarFallback className="size-6 rounded-[8px]">
                     {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
                   </AvatarFallback>
                 </Avatar>

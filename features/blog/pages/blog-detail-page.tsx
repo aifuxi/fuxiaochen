@@ -30,17 +30,17 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
             'text-muted-foreground hover:text-primary',
           )}
         >
-          <MoveLeft className="w-3.5 h-3.5" />
+          <MoveLeft className="size-3.5" />
           <span>返回博客</span>
         </Link>
       </div>
-      <div className="text-muted-foreground flex items-center space-x-4 pt-8 pb-4 text-sm">
+      <div className="flex items-center space-x-4 pb-4 pt-8 text-sm text-muted-foreground">
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(blog.createdAt)}</p>
         <p>{uv || PLACEHOLDER_TEXT}&nbsp;&nbsp;人浏览过</p>
       </div>
       <h1 className="break-all py-6 text-4xl font-semibold">{blog.title}</h1>
 
-      <p className="text-neutral-500 py-4">{blog.description}</p>
+      <p className="py-4 text-neutral-500">{blog.description}</p>
 
       <div className="flex">
         <div
@@ -56,7 +56,7 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
         </DetailSidebar>
       </div>
 
-      <div className="pt-16 pb-14">
+      <div className="pb-14 pt-16">
         <TagList tags={blog.tags} />
       </div>
       <BlogEventTracking blogID={blog.id} />

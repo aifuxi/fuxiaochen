@@ -86,7 +86,7 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
               variant="outline"
               onClick={() => setOpen(true)}
             >
-              <Pen className="h-4 w-4" />
+              <Pen className="size-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>编辑</TooltipContent>
@@ -107,7 +107,7 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormLabel>id</FormLabel>
                     <FormControl>
                       {loading ? (
-                        <Skeleton className="w-full rounded-lg h-10" />
+                        <Skeleton className="h-10 w-full rounded-lg" />
                       ) : (
                         <Input {...field} disabled />
                       )}
@@ -124,7 +124,7 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormLabel>名称</FormLabel>
                     <FormControl>
                       {loading ? (
-                        <Skeleton className="w-full rounded-lg h-10" />
+                        <Skeleton className="h-10 w-full rounded-lg" />
                       ) : (
                         <Input
                           className="flex-1"
@@ -145,9 +145,9 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormLabel>slug</FormLabel>
                     <FormControl>
                       {loading ? (
-                        <Skeleton className="w-full rounded-lg h-10" />
+                        <Skeleton className="h-10 w-full rounded-lg" />
                       ) : (
-                        <div className="flex items-center w-full gap-4">
+                        <div className="flex w-full items-center gap-4">
                           <Input placeholder="请输入标签slug" {...field} />
                           <Button type="button" onClick={handleFormatSlug}>
                             格式化
@@ -242,10 +242,10 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                   disabled={updateTagQuery.loading}
                 >
                   {updateTagQuery.loading && (
-                    <LoaderCircle className="mr-2 w-4 h-4 animate-spin" />
+                    <LoaderCircle className="mr-2 size-4 animate-spin" />
                   )}
                   保存
-                  <Save className="w-4 h-4 ml-1" />
+                  <Save className="ml-1 size-4" />
                 </Button>
               </div>
             </div>

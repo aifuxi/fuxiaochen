@@ -41,7 +41,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
         />
       </head>
-      <body className="debug-screens scroll-smooth overflow-x-clip">
+      <body className="debug-screens overflow-x-clip scroll-smooth">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
