@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconLogoRockyLinux = ({
   className,
@@ -9,7 +9,7 @@ export const IconLogoRockyLinux = ({
   return (
     <span
       {...props}
-      className={cn('icon-[logos--rocky-linux-icon]', className)}
+      className={cn("icon-[logos--rocky-linux-icon]", className)}
     ></span>
   );
 };

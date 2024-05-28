@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 import {
   Book,
@@ -13,10 +13,10 @@ import {
   PanelLeft,
   ScrollIcon,
   Tags,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,15 +24,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-import { BackToTop } from '@/components/back-to-top';
-import { ModeToggle } from '@/components/mode-toggle';
+import { BackToTop } from "@/components/back-to-top";
+import { ModeToggle } from "@/components/mode-toggle";
 
-import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from '@/constants';
-import { SignOutDialog } from '@/features/auth';
+import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
+import { SignOutDialog } from "@/features/auth";
 
 type AdminContentLayoutProps = {
   breadcrumb?: React.ReactNode;
@@ -116,7 +116,7 @@ export const AdminContentLayout = ({
               <Button variant="outline" size="icon">
                 <Avatar className="size-6 rounded-[8px]">
                   <AvatarImage
-                    src={session?.data?.user?.image ?? ''}
+                    src={session?.data?.user?.image ?? ""}
                     alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
                   />
                   <AvatarFallback className="size-6 rounded-[8px]">

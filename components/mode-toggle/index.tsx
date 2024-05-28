@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { useTheme } from 'next-themes';
+import { useTheme } from "next-themes";
 
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
   const { setTheme } = useTheme();
@@ -28,19 +28,19 @@ export function ModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme('light')}
+          onClick={() => setTheme("light")}
         >
           浅色
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme('dark')}
+          onClick={() => setTheme("dark")}
         >
           深色
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme('system')}
+          onClick={() => setTheme("system")}
         >
           跟随系统
         </DropdownMenuItem>

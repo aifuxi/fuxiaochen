@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { Check, ChevronDown, X } from 'lucide-react';
+import { Check, ChevronDown, X } from "lucide-react";
 
 // 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
 // 根据自己需要做了部分修改
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
-import { Badge } from './badge';
-import { Button } from './button';
+import { Badge } from "./badge";
+import { Button } from "./button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from './command';
-import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { ScrollArea } from './scroll-area';
+} from "./command";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { ScrollArea } from "./scroll-area";
 
 export type ComboboxOption = {
   value: string;
@@ -54,7 +54,7 @@ export const handleSingleSelect = (
   option: ComboboxOption,
 ) => {
   if (props.clearable) {
-    props.onValueChange?.(option.value === props.value ? '' : option.value);
+    props.onValueChange?.(option.value === props.value ? "" : option.value);
   } else {
     props.onValueChange?.(option.value);
   }
@@ -77,7 +77,7 @@ export const handleMultipleSelect = (
 export const Combobox = React.forwardRef(
   (props: ComboboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
     const [open, setOpen] = React.useState(false);
-    const [search, setSearch] = React.useState('');
+    const [search, setSearch] = React.useState("");
 
     const tagMap = React.useMemo(() => {
       return new Map<string, string>(
@@ -105,9 +105,9 @@ export const Combobox = React.forwardRef(
           >
             <div
               className={cn(
-                'w-full text-left font-normal text-muted-foreground flex flex-row flex-wrap gap-x-2 gap-y-1',
+                "w-full text-left font-normal text-muted-foreground flex flex-row flex-wrap gap-x-2 gap-y-1",
                 {
-                  'line-clamp-1': !props.multiple,
+                  "line-clamp-1": !props.multiple,
                 },
               )}
             >
@@ -122,20 +122,20 @@ export const Combobox = React.forwardRef(
               {/* 单选 */}
               {!props.multiple &&
                 props.value &&
-                props.value !== '' &&
+                props.value !== "" &&
                 props?.options?.find((option) => option.value === props.value)
                   ?.label}
 
               {/* 空态 */}
               {(!props.value || props.value.length === 0) &&
-                (props.selectPlaceholder ?? 'Select an option')}
+                (props.selectPlaceholder ?? "Select an option")}
             </div>
             <div className="flex h-full shrink-0 items-center">
               {/* 多选时，显示清除全部按钮 */}
               {props.multiple && (
                 <X
                   className={cn(
-                    'ml-2 h-4 w-4 opacity-50 hover:opacity-80 transition-opacity',
+                    "ml-2 h-4 w-4 opacity-50 hover:opacity-80 transition-opacity",
                   )}
                   onClick={(e) => {
                     props.onValueChange?.([]);
@@ -147,8 +147,8 @@ export const Combobox = React.forwardRef(
               )}
               <ChevronDown
                 className={cn(
-                  'ml-2 h-4 w-4 shrink-0 rotate-0 opacity-50 transition-transform',
-                  open && 'rotate-180',
+                  "ml-2 h-4 w-4 shrink-0 rotate-0 opacity-50 transition-transform",
+                  open && "rotate-180",
                 )}
               />
             </div>
@@ -162,9 +162,9 @@ export const Combobox = React.forwardRef(
               onValueChange={(e) => {
                 setSearch(e);
               }}
-              placeholder={props.searchPlaceholder ?? '请输入要搜索的内容'}
+              placeholder={props.searchPlaceholder ?? "请输入要搜索的内容"}
             />
-            <CommandEmpty>{props.emptyText ?? 'No results found'}</CommandEmpty>
+            <CommandEmpty>{props.emptyText ?? "No results found"}</CommandEmpty>
             <CommandGroup>
               <ScrollArea>
                 <div className="max-h-60">
@@ -191,13 +191,13 @@ export const Combobox = React.forwardRef(
                     >
                       <Check
                         className={cn(
-                          'mr-2 text-base opacity-0',
+                          "mr-2 text-base opacity-0",
                           !props.multiple &&
                             props.value === option.value &&
-                            'opacity-100',
+                            "opacity-100",
                           props.multiple &&
                             props.value?.includes(option.value) &&
-                            'opacity-100',
+                            "opacity-100",
                         )}
                       />
                       {option.label}
@@ -213,4 +213,4 @@ export const Combobox = React.forwardRef(
   },
 );
 
-Combobox.displayName = 'Combobox';
+Combobox.displayName = "Combobox";

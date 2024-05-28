@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry';
+import React from "react";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
-import { useSession } from 'next-auth/react';
+import { useSession } from "next-auth/react";
 
-import { TagTypeEnum } from '@prisma/client';
-import { useSetState } from 'ahooks';
-import { isUndefined } from 'lodash-es';
-import { RotateCw, Search } from 'lucide-react';
+import { TagTypeEnum } from "@prisma/client";
+import { useSetState } from "ahooks";
+import { isUndefined } from "lodash-es";
+import { RotateCw, Search } from "lucide-react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import { BytemdViewer } from '@/components/bytemd';
-import { PageBreadcrumb } from '@/components/page-header';
+import { BytemdViewer } from "@/components/bytemd";
+import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -31,10 +31,10 @@ import {
   PATHS,
   PUBLISHED_ENUM,
   PUBLISHED_LABEL_MAP,
-} from '@/constants';
-import { type GetNotesDTO, useGetNotes } from '@/features/note';
-import { useGetAllTags } from '@/features/tag';
-import { cn, isAdmin, toFromNow, toSlashDateString } from '@/lib/utils';
+} from "@/constants";
+import { type GetNotesDTO, useGetNotes } from "@/features/note";
+import { useGetAllTags } from "@/features/tag";
+import { cn, isAdmin, toFromNow, toSlashDateString } from "@/lib/utils";
 
 import {
   AdminContentLayout,
@@ -43,19 +43,19 @@ import {
   EditNoteButton,
   SearchByTags,
   ToggleNotePublishButton,
-} from '../../components';
+} from "../../components";
 
 export const AdminNoteListPage = () => {
   const { data: session } = useSession();
   const [params, updateParams] = useSetState<GetNotesDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
-    order: 'desc',
-    orderBy: 'createdAt',
+    order: "desc",
+    orderBy: "createdAt",
   });
 
   const [inputParams, updateInputParams] = useSetState<
-    Omit<GetNotesDTO, 'pageIndex' | 'pageSize'>
+    Omit<GetNotesDTO, "pageIndex" | "pageSize">
   >({
     body: undefined,
     published: undefined,
@@ -89,7 +89,7 @@ export const AdminNoteListPage = () => {
             })
           }
           onKeyUp={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               handleSearch();
             }
           }}
@@ -105,7 +105,7 @@ export const AdminNoteListPage = () => {
           >
             <SelectTrigger
               className={cn({
-                'text-muted-foreground': isUndefined(inputParams.published),
+                "text-muted-foreground": isUndefined(inputParams.published),
               })}
             >
               <SelectValue placeholder="请选择发布状态" />
@@ -159,7 +159,7 @@ export const AdminNoteListPage = () => {
             : data.map((note) => (
                 <div key={note.id} className="w-full">
                   <div className="relative w-full rounded-lg border px-6 pb-6">
-                    <BytemdViewer body={note.body || ''} />
+                    <BytemdViewer body={note.body || ""} />
                     <div className="flex flex-wrap justify-end gap-2 py-4">
                       {note.tags?.map((tag) => (
                         <Badge key={tag.id}>{tag.name}</Badge>
@@ -208,17 +208,17 @@ export const AdminNoteListPage = () => {
 
   function handleReset() {
     updateInputParams({
-      body: '',
+      body: "",
       published: undefined,
       tags: undefined,
     });
     updateParams({
-      body: '',
+      body: "",
       published: undefined,
       tags: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: 'desc',
-      orderBy: 'createdAt',
+      order: "desc",
+      orderBy: "createdAt",
     });
   }
 };

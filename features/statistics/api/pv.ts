@@ -1,6 +1,6 @@
-import { useRequest } from 'ahooks';
+import { useRequest } from "ahooks";
 
-import { recordPV } from '../actions';
+import { recordPV } from "../actions";
 
 export const useRecordPV = () => {
   return useRequest(recordPV, { manual: true });

@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { type Prisma } from '@prisma/client';
-import { isUndefined } from 'lodash-es';
+import { type Prisma } from "@prisma/client";
+import { isUndefined } from "lodash-es";
 
-import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from '@/constants';
-import { batchGetBlogUV } from '@/features/statistics';
-import { noPermission } from '@/features/user';
-import { prisma } from '@/lib/prisma';
-import { getSkip } from '@/utils';
+import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from "@/constants";
+import { batchGetBlogUV } from "@/features/statistics";
+import { noPermission } from "@/features/user";
+import { prisma } from "@/lib/prisma";
+import { getSkip } from "@/utils";
 
 import {
   type CreateBlogDTO,
@@ -16,7 +16,7 @@ import {
   createBlogSchema,
   getBlogsSchema,
   updateBlogSchema,
-} from '../types';
+} from "../types";
 
 export const isBlogExistByID = async (id: string): Promise<boolean> => {
   const isExist = await prisma.blog.findUnique({ where: { id } });
@@ -28,7 +28,7 @@ export const getBlogs = async (params: GetBlogsDTO) => {
   const result = await getBlogsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -112,7 +112,7 @@ export const getBlogs = async (params: GetBlogsDTO) => {
 export const getPublishedBlogs = async () => {
   const blogs = await prisma.blog.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     include: {
       tags: true,
@@ -169,7 +169,7 @@ export const deleteBlogByID = async (id: string) => {
   const isExist = await isBlogExistByID(id);
 
   if (!isExist) {
-    throw new Error('Blog不存在');
+    throw new Error("Blog不存在");
   }
 
   await prisma.blog.delete({
@@ -186,7 +186,7 @@ export const createBlog = async (params: CreateBlogDTO) => {
   const result = await createBlogSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -199,7 +199,7 @@ export const createBlog = async (params: CreateBlogDTO) => {
 
   if (blogs.length) {
     // TODO: 记录日志
-    throw new Error('标题或者slug重复');
+    throw new Error("标题或者slug重复");
   }
 
   await prisma.blog.create({
@@ -231,7 +231,7 @@ export const toggleBlogPublished = async (id: string) => {
   });
 
   if (!blog) {
-    throw new Error('Blog不存在');
+    throw new Error("Blog不存在");
   }
 
   await prisma.blog.update({
@@ -251,7 +251,7 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
   const result = await updateBlogSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -264,7 +264,7 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
   });
 
   if (!blog) {
-    throw new Error('Blog不存在');
+    throw new Error("Blog不存在");
   }
 
   const blogTagIDs = blog?.tags.map((el) => el.id);

@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { type Prisma } from '@prisma/client';
-import { isUndefined } from 'lodash-es';
+import { type Prisma } from "@prisma/client";
+import { isUndefined } from "lodash-es";
 
-import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from '@/constants';
-import { noPermission } from '@/features/user';
-import { prisma } from '@/lib/prisma';
-import { getSkip } from '@/utils';
+import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from "@/constants";
+import { noPermission } from "@/features/user";
+import { prisma } from "@/lib/prisma";
+import { getSkip } from "@/utils";
 
 import {
   type CreateNoteDTO,
@@ -15,7 +15,7 @@ import {
   createNoteSchema,
   getNotesSchema,
   updateNoteSchema,
-} from '../types';
+} from "../types";
 
 export const isNoteExistByID = async (id: string): Promise<boolean> => {
   const isExist = await prisma.note.findUnique({ where: { id } });
@@ -27,7 +27,7 @@ export const getNotes = async (params: GetNotesDTO) => {
   const result = await getNotesSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -101,7 +101,7 @@ export const getAllNotes = async () => {
   const total = await prisma.note.count({});
   const notes = await prisma.note.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     include: {
       tags: true,
@@ -129,7 +129,7 @@ export const deleteNoteByID = async (id: string) => {
   const isExist = await isNoteExistByID(id);
 
   if (!isExist) {
-    throw new Error('Note不存在');
+    throw new Error("Note不存在");
   }
 
   await prisma.note.delete({
@@ -146,7 +146,7 @@ export const createNote = async (params: CreateNoteDTO) => {
   const result = await createNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -175,7 +175,7 @@ export const toggleNotePublished = async (id: string) => {
   });
 
   if (!note) {
-    throw new Error('笔记不存在');
+    throw new Error("笔记不存在");
   }
 
   await prisma.note.update({
@@ -195,7 +195,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   const result = await updateNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -208,7 +208,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   });
 
   if (!note) {
-    throw new Error('Note不存在');
+    throw new Error("Note不存在");
   }
 
   const noteTagIDs = note?.tags.map((el) => el.id);

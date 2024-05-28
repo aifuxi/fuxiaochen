@@ -1,8 +1,8 @@
-import { toNumber } from 'lodash-es';
+import { toNumber } from "lodash-es";
 
 const formatDecimal = (n: number) => {
   let num = n.toString();
-  const index = num.indexOf('.');
+  const index = num.indexOf(".");
   if (index !== -1) {
     num = num.substring(0, 1 + index + 1);
   } else {
@@ -13,7 +13,7 @@ const formatDecimal = (n: number) => {
 
 export const formatNum = (n?: number | string | null) => {
   if (!n) {
-    return '0';
+    return "0";
   }
 
   const num = toNumber(n);
@@ -21,9 +21,9 @@ export const formatNum = (n?: number | string | null) => {
   if (num < 10 ** 3) {
     return `${num}`;
   } else if (num >= 10 ** 3 && num < 10 ** 4) {
-    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    return num.toLocaleString("en-US", { maximumFractionDigits: 0 });
   } else if (num >= 10 ** 4 && num < 10 ** 8) {
-    return num.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    return num.toLocaleString("en-US", { maximumFractionDigits: 0 });
   } else if (num >= 10 ** 8) {
     return `${formatDecimal(num / 10 ** 8)}亿`;
   }

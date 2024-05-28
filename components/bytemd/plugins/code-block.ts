@@ -1,10 +1,10 @@
 /* eslint-disable */
 // @ts-nocheck
-import type { BytemdPlugin } from 'bytemd';
-import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic';
-import { visit } from 'unist-util-visit';
+import type { BytemdPlugin } from "bytemd";
+import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
+import { visit } from "unist-util-visit";
 
-import { copyToClipboard, isBrowser } from '@/lib/utils';
+import { copyToClipboard, isBrowser } from "@/lib/utils";
 
 const copyBtnNode = fromHtmlIsomorphic(`
 <div class="copy-code-button">
@@ -24,20 +24,20 @@ export const codeBlockPlugin = (): BytemdPlugin => {
   return {
     rehype: (process) =>
       process.use(() => (tree) => {
-        visit(tree, 'element', (node) => {
-          if (node.tagName === 'pre') {
+        visit(tree, "element", (node) => {
+          if (node.tagName === "pre") {
             node.children.push(copyBtnNode);
           }
 
-          visit(tree, 'element', (code, idx, parent) => {
-            if (code.tagName === 'code') {
+          visit(tree, "element", (code, idx, parent) => {
+            if (code.tagName === "code") {
               const language = code.properties?.className
-                ?.filter((cs) => cs.startsWith('language'))[0]
-                ?.split('-')[1]
-                ?.split(':')[0];
+                ?.filter((cs) => cs.startsWith("language"))[0]
+                ?.split("-")[1]
+                ?.split(":")[0];
 
-              if (language && !parent.properties['data-language']) {
-                parent.properties['data-language'] = language;
+              if (language && !parent.properties["data-language"]) {
+                parent.properties["data-language"] = language;
               }
             }
           });
@@ -50,16 +50,16 @@ export const codeBlockPlugin = (): BytemdPlugin => {
         return;
       }
 
-      const elements = markdownBody.querySelectorAll('.copy-code-button');
+      const elements = markdownBody.querySelectorAll(".copy-code-button");
       for (const element of elements) {
         // 点击按钮复制代码到粘贴板
-        element.addEventListener('click', () => {
-          let codeText = element.textContent ?? '';
+        element.addEventListener("click", () => {
+          let codeText = element.textContent ?? "";
           // 复制代码时去除开头的$符号，然后trim一下，一般是复制shell命令的代码块会用到
-          if (codeText.startsWith('$')) {
+          if (codeText.startsWith("$")) {
             codeText = codeText.slice(1).trim();
           }
-          copyToClipboard(element.parentElement?.textContent?.trim() || '');
+          copyToClipboard(element.parentElement?.textContent?.trim() || "");
 
           const tmp = element.innerHTML;
           element.innerHTML = clipboardCheckIcon + successTip;

@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { useMemoizedFn, useScroll } from 'ahooks';
-import { ChevronUp } from 'lucide-react';
+import { useMemoizedFn, useScroll } from "ahooks";
+import { ChevronUp } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 type BackToTopProps = {
   scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
@@ -20,21 +20,21 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
 
   const handleClick = useMemoizedFn(() => {
     if (scrollRef?.current) {
-      scrollRef?.current.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollRef?.current.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
     // 这里回到顶部使用 document.documentElement，因为 document 上没有 scrollTo 这个方法
-    document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
   });
 
   return (
     <Button
-      className={cn('fixed bottom-8 right-8', {
+      className={cn("fixed bottom-8 right-8", {
         hidden: (scroll?.top ?? 0) < 100,
       })}
       variant="outline"
-      size={'icon'}
+      size={"icon"}
       onClick={handleClick}
     >
       <ChevronUp className="size-4" />

@@ -1,14 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import { Book, CodeXml, ScrollIcon, TagsIcon } from 'lucide-react';
+import { Book, CodeXml, ScrollIcon, TagsIcon } from "lucide-react";
 
-import { PageBreadcrumb } from '@/components/page-header';
+import { PageBreadcrumb } from "@/components/page-header";
 
-import { PATHS } from '@/constants';
-import { getStatistics } from '@/features/statistics';
+import { PATHS } from "@/constants";
+import { getStatistics } from "@/features/statistics";
 
-import { AdminContentLayout } from '../../components';
-import { type StatisticsCardProps } from '../../types';
+import { AdminContentLayout } from "../../components";
+import { type StatisticsCardProps } from "../../types";
 
 export const AdminStatisticPage = async () => {
   const { blogCount, snippetCount, tagCount, noteCount } =
@@ -16,22 +16,22 @@ export const AdminStatisticPage = async () => {
 
   const statistics: StatisticsCardProps[] = [
     {
-      title: '博客',
+      title: "博客",
       count: blogCount,
       icon: <Book className="text-2xl text-muted-foreground" />,
     },
     {
-      title: '片段',
+      title: "片段",
       count: snippetCount,
       icon: <CodeXml className="size-6 text-muted-foreground" />,
     },
     {
-      title: '标签',
+      title: "标签",
       count: tagCount,
       icon: <TagsIcon className="size-6 text-muted-foreground" />,
     },
     {
-      title: '笔记',
+      title: "笔记",
       count: noteCount,
       icon: <ScrollIcon className="size-6 text-muted-foreground" />,
     },

@@ -1,16 +1,16 @@
-import { TagTypeEnum } from '@prisma/client';
-import { z } from 'zod';
+import { TagTypeEnum } from "@prisma/client";
+import { z } from "zod";
 
-import { REGEX } from '@/constants';
+import { REGEX } from "@/constants";
 
-import { type getTags } from '../actions';
+import { type getTags } from "../actions";
 
 export const createTagSchema = z.object({
-  name: z.string().min(1, { message: '长度不能少于1个字符' }),
+  name: z.string().min(1, { message: "长度不能少于1个字符" }),
   slug: z
     .string()
-    .regex(REGEX.SLUG, { message: '只允许输入数字、小写字母和中横线' })
-    .min(1, { message: '长度不能少于1个字符' }),
+    .regex(REGEX.SLUG, { message: "只允许输入数字、小写字母和中横线" })
+    .min(1, { message: "长度不能少于1个字符" }),
   type: z.enum([
     TagTypeEnum.ALL,
     TagTypeEnum.BLOG,
@@ -38,12 +38,12 @@ export const getTagsSchema = z.object({
     .optional(),
   pageIndex: z.number(),
   pageSize: z.number(),
-  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
-  order: z.enum(['asc', 'desc']).optional(),
+  orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
 });
 
 export type CreateTagDTO = z.infer<typeof createTagSchema>;
 export type UpdateTagDTO = z.infer<typeof updateTagSchema>;
 export type GetTagsDTO = z.infer<typeof getTagsSchema>;
 
-export type Tag = Awaited<ReturnType<typeof getTags>>['tags'][number];
+export type Tag = Awaited<ReturnType<typeof getTags>>["tags"][number];

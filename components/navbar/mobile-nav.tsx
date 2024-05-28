@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { MenuIcon } from 'lucide-react';
+import { MenuIcon } from "lucide-react";
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -15,12 +15,12 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 
-import { SLOGAN, WEBSITE } from '@/constants';
-import { cn } from '@/lib/utils';
+import { SLOGAN, WEBSITE } from "@/constants";
+import { cn } from "@/lib/utils";
 
-import { navItems } from './config';
+import { navItems } from "./config";
 
 export const MobileNav = () => {
   const pathname = usePathname();
@@ -30,15 +30,15 @@ export const MobileNav = () => {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
-          variant={'outline'}
-          size={'icon'}
+          variant={"outline"}
+          size={"icon"}
           aria-label="菜单"
-          className={cn('sm:hidden')}
+          className={cn("sm:hidden")}
         >
           <MenuIcon className="size-4" />
         </Button>
       </SheetTrigger>
-      <SheetContent side={'left'}>
+      <SheetContent side={"left"}>
         <SheetHeader>
           <SheetTitle>{WEBSITE}</SheetTitle>
           <SheetDescription>{SLOGAN}</SheetDescription>
@@ -50,9 +50,9 @@ export const MobileNav = () => {
               href={el.link}
               className={cn(
                 buttonVariants({
-                  variant: pathname === el.link ? 'default' : 'ghost',
+                  variant: pathname === el.link ? "default" : "ghost",
                 }),
-                'text-md px-4 py-2 flex gap-2 items-center !justify-start w-full',
+                "text-md px-4 py-2 flex gap-2 items-center !justify-start w-full",
               )}
               onClick={() => {
                 setOpen(false);

@@ -1,11 +1,11 @@
-'use server';
+"use server";
 
-import { type Prisma, TagTypeEnum } from '@prisma/client';
+import { type Prisma, TagTypeEnum } from "@prisma/client";
 
-import { ERROR_NO_PERMISSION } from '@/constants';
-import { noPermission } from '@/features/user';
-import { prisma } from '@/lib/prisma';
-import { getSkip } from '@/utils';
+import { ERROR_NO_PERMISSION } from "@/constants";
+import { noPermission } from "@/features/user";
+import { prisma } from "@/lib/prisma";
+import { getSkip } from "@/utils";
 
 import {
   type CreateTagDTO,
@@ -14,7 +14,7 @@ import {
   createTagSchema,
   getTagsSchema,
   updateTagSchema,
-} from '../types';
+} from "../types";
 
 export const isTagExistByID = async (id: string): Promise<boolean> => {
   const isExist = await prisma.tag.findUnique({ where: { id } });
@@ -26,7 +26,7 @@ export const getTags = async (params: GetTagsDTO) => {
   const result = await getTagsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -93,7 +93,7 @@ export const getAllTags = async (type?: TagTypeEnum) => {
   const total = await prisma.tag.count({ where: cond });
   const tags = await prisma.tag.findMany({
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     where: cond,
   });
@@ -108,7 +108,7 @@ export const createTag = async (params: CreateTagDTO) => {
   const result = await createTagSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
@@ -121,7 +121,7 @@ export const createTag = async (params: CreateTagDTO) => {
 
   if (tags.length) {
     // TODO: 记录日志
-    throw new Error('标签名称或者slug重复');
+    throw new Error("标签名称或者slug重复");
   }
 
   await prisma.tag.create({
@@ -142,7 +142,7 @@ export const deleteTagByID = async (id: string) => {
   const isExist = await isTagExistByID(id);
 
   if (!isExist) {
-    throw new Error('标签不存在');
+    throw new Error("标签不存在");
   }
 
   await prisma.tag.delete({
@@ -159,14 +159,14 @@ export const updateTag = async (params: UpdateTagDTO) => {
   const result = await updateTagSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(';');
+    const error = result.error.format()._errors?.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }
 
   const isExist = await isTagExistByID(result.data.id);
   if (!isExist) {
-    throw new Error('标签不存在');
+    throw new Error("标签不存在");
   }
 
   await prisma.tag.update({

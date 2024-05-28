@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
 import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { type SetState } from 'ahooks/lib/useSetState';
+} from "@tanstack/react-table";
+import { type SetState } from "ahooks/lib/useSetState";
 
 import {
   Table,
@@ -17,11 +17,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
-import { Skeleton } from './skeleton';
+import { Skeleton } from "./skeleton";
 
-import { Pagination, PaginationInfo } from '../pagination';
+import { Pagination, PaginationInfo } from "../pagination";
 
 type PaginationConfig = {
   pageIndex: number;
@@ -128,7 +128,7 @@ export function DataTable<TData, TValue>({
     }
 
     return table.getRowModel().rows.map((row) => (
-      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+      <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
         {row.getVisibleCells().map((cell) => (
           <TableCell key={cell.id} className="max-w-[300px] break-all py-2">
             {flexRender(cell.column.columnDef.cell, cell.getContext())}

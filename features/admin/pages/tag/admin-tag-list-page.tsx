@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { TagTypeEnum } from '@prisma/client';
-import { type ColumnDef } from '@tanstack/react-table';
-import { useSetState } from 'ahooks';
-import { isUndefined } from 'lodash-es';
+import { TagTypeEnum } from "@prisma/client";
+import { type ColumnDef } from "@tanstack/react-table";
+import { useSetState } from "ahooks";
+import { isUndefined } from "lodash-es";
 import {
   ArrowDownNarrowWide,
   ArrowUpNarrowWide,
@@ -17,24 +17,24 @@ import {
   ScrollIcon,
   Search,
   TypeIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DataTable } from '@/components/ui/data-table';
-import { Input } from '@/components/ui/input';
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import { Highlight } from '@/components/highlight';
-import { IllustrationNoContent } from '@/components/illustrations';
-import { PageBreadcrumb } from '@/components/page-header';
+import { Highlight } from "@/components/highlight";
+import { IllustrationNoContent } from "@/components/illustrations";
+import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -43,27 +43,27 @@ import {
   PLACEHOLDER_TEXT,
   TAG_TYPES,
   TAG_TYPE_MAP,
-} from '@/constants';
-import { type GetTagsDTO, type Tag, useGetTags } from '@/features/tag';
-import { cn, toSlashDateString } from '@/lib/utils';
+} from "@/constants";
+import { type GetTagsDTO, type Tag, useGetTags } from "@/features/tag";
+import { cn, toSlashDateString } from "@/lib/utils";
 
 import {
   AdminContentLayout,
   CreateTagButton,
   DeleteTagButton,
   EditTagButton,
-} from '../../components';
+} from "../../components";
 
 export const AdminTagListPage = () => {
   const [params, updateParams] = useSetState<GetTagsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
-    order: 'desc',
-    orderBy: 'createdAt',
+    order: "desc",
+    orderBy: "createdAt",
   });
 
   const [inputParams, updateInputParams] = useSetState<
-    Omit<GetTagsDTO, 'pageIndex' | 'pageSize'>
+    Omit<GetTagsDTO, "pageIndex" | "pageSize">
   >({
     name: undefined,
     type: undefined,
@@ -77,12 +77,12 @@ export const AdminTagListPage = () => {
 
   const columns: ColumnDef<Tag>[] = [
     {
-      id: 'select',
+      id: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
+            (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -99,7 +99,7 @@ export const AdminTagListPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: "name",
       header: () => (
         <div className="flex items-center space-x-1">
           <TypeIcon className="size-4" />
@@ -116,7 +116,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: 'type',
+      accessorKey: "type",
       header: () => (
         <div className="flex items-center space-x-1">
           <TypeIcon className="size-4" />
@@ -131,7 +131,7 @@ export const AdminTagListPage = () => {
         }
 
         const iconMap = {
-          [TagTypeEnum.ALL]: '',
+          [TagTypeEnum.ALL]: "",
           [TagTypeEnum.BLOG]: <Book className="size-4" />,
           [TagTypeEnum.NOTE]: <ScrollIcon className="size-4" />,
           [TagTypeEnum.SNIPPET]: <CodeXml className="size-4" />,
@@ -146,7 +146,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: 'icon',
+      accessorKey: "icon",
       header: () => (
         <div className="flex items-center space-x-1">
           <ImageIcon className="size-4" />
@@ -162,7 +162,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: 'iconDark',
+      accessorKey: "iconDark",
       header: () => (
         <div className="flex items-center space-x-1">
           <ImageIcon className="size-4" />
@@ -178,7 +178,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: '_count.blogs',
+      accessorKey: "_count.blogs",
       header: () => (
         <div className="flex items-center space-x-1">
           <Book className="size-4" />
@@ -190,7 +190,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: '_count.snippets',
+      accessorKey: "_count.snippets",
       header: () => (
         <div className="flex items-center space-x-1">
           <CodeXml className="size-4" />
@@ -202,7 +202,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: '_count.notes',
+      accessorKey: "_count.notes",
       header: () => (
         <div className="flex items-center space-x-1">
           <ScrollIcon className="size-4" />
@@ -214,20 +214,20 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: "createdAt",
       header: () => (
         <Button
           variant="ghost"
           onClick={() => {
-            handleOrderChange('createdAt');
+            handleOrderChange("createdAt");
           }}
         >
           <Calendar className="size-4" />
           <span className="mx-1">创建时间</span>
-          {params.order === 'asc' && params.orderBy == 'createdAt' && (
+          {params.order === "asc" && params.orderBy == "createdAt" && (
             <ArrowUpNarrowWide className="size-4" />
           )}
-          {params.order === 'desc' && params.orderBy == 'createdAt' && (
+          {params.order === "desc" && params.orderBy == "createdAt" && (
             <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
@@ -237,20 +237,20 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: "updatedAt",
       header: () => (
         <Button
           variant="ghost"
           onClick={() => {
-            handleOrderChange('updatedAt');
+            handleOrderChange("updatedAt");
           }}
         >
           <Calendar className="size-4" />
           <span className="mx-1">更新时间</span>
-          {params.order === 'asc' && params.orderBy == 'updatedAt' && (
+          {params.order === "asc" && params.orderBy == "updatedAt" && (
             <ArrowUpNarrowWide className="size-4" />
           )}
-          {params.order === 'desc' && params.orderBy == 'updatedAt' && (
+          {params.order === "desc" && params.orderBy == "updatedAt" && (
             <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
@@ -260,7 +260,7 @@ export const AdminTagListPage = () => {
       },
     },
     {
-      id: 'actions',
+      id: "actions",
       cell: ({ row }) => {
         const record = row.original;
         return (
@@ -295,7 +295,7 @@ export const AdminTagListPage = () => {
             })
           }
           onKeyUp={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               handleSearch();
             }
           }}
@@ -310,7 +310,7 @@ export const AdminTagListPage = () => {
         >
           <SelectTrigger
             className={cn({
-              'text-muted-foreground': isUndefined(inputParams.type),
+              "text-muted-foreground": isUndefined(inputParams.type),
             })}
           >
             <SelectValue placeholder="请选择类型" />
@@ -362,29 +362,29 @@ export const AdminTagListPage = () => {
 
   function handleReset() {
     updateInputParams({
-      name: '',
+      name: "",
       type: undefined,
     });
     updateParams({
-      name: '',
+      name: "",
       type: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: 'desc',
-      orderBy: 'createdAt',
+      order: "desc",
+      orderBy: "createdAt",
     });
   }
 
-  function handleOrderChange(orderBy: GetTagsDTO['orderBy']) {
+  function handleOrderChange(orderBy: GetTagsDTO["orderBy"]) {
     updateParams((prev) => {
       if (prev.orderBy !== orderBy) {
-        return { orderBy: orderBy, order: 'asc' };
+        return { orderBy: orderBy, order: "asc" };
       } else {
-        if (prev.order === 'desc') {
+        if (prev.order === "desc") {
           return { orderBy: undefined, order: undefined };
-        } else if (prev.order === 'asc') {
-          return { order: 'desc' };
+        } else if (prev.order === "asc") {
+          return { order: "desc" };
         } else {
-          return { order: 'asc' };
+          return { order: "asc" };
         }
       }
     });

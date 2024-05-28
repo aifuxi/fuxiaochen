@@ -1,4 +1,4 @@
-import { useRequest } from 'ahooks';
+import { useRequest } from "ahooks";
 
 import {
   getBlogUV,
@@ -6,7 +6,7 @@ import {
   recordBlogUV,
   recordSnippetUV,
   recordUV,
-} from '../actions';
+} from "../actions";
 
 export const useRecordUV = () => {
   return useRequest((cid: string) => recordUV(cid), { manual: true });

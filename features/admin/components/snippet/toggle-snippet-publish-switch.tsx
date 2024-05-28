@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Switch } from '@/components/ui/switch';
+import { Switch } from "@/components/ui/switch";
 
-import { useToggleSnippetPublish } from '@/features/snippet';
+import { useToggleSnippetPublish } from "@/features/snippet";
 
 type ToggleSnippetPublishSwitchProps = {
   id: string;

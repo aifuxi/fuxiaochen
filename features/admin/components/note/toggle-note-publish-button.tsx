@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { useToggleNotePublish } from '@/features/note';
+import { useToggleNotePublish } from "@/features/note";
 
 type ToggleNotePublishButtonProps = {
   id: string;
@@ -22,7 +22,7 @@ export const ToggleNotePublishButton = ({
   const toggleNotePublishQuery = useToggleNotePublish();
 
   return (
-    <Button size={'icon'} variant="outline" onClick={handleToggleNotePublish}>
+    <Button size={"icon"} variant="outline" onClick={handleToggleNotePublish}>
       {published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
     </Button>
   );

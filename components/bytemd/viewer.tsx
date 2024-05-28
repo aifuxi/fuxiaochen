@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { Viewer } from '@bytemd/react';
+import { Viewer } from "@bytemd/react";
 
-import { plugins, sanitize } from './config';
+import { plugins, sanitize } from "./config";
 
 type BytemdViewerProps = {
   body: string;

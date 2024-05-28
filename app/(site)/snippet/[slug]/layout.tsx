@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import { type Metadata } from 'next';
+import { type Metadata } from "next";
 
-import { isNil } from 'lodash-es';
+import { isNil } from "lodash-es";
 
-import { WEBSITE } from '@/constants';
-import { getSnippetBySlug } from '@/features/snippet';
+import { WEBSITE } from "@/constants";
+import { getSnippetBySlug } from "@/features/snippet";
 
 export async function generateMetadata({
   params,
@@ -21,7 +21,7 @@ export async function generateMetadata({
   return {
     title: `${snippet.title} - ${WEBSITE}`,
     description: snippet.description,
-    keywords: snippet.tags.map((el) => el.name).join(','),
+    keywords: snippet.tags.map((el) => el.name).join(","),
   };
 }
 

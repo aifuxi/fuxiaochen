@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconLogoGmail = ({
   className,
@@ -9,7 +9,7 @@ export const IconLogoGmail = ({
   return (
     <span
       {...props}
-      className={cn('icon-[logos--google-gmail]', className)}
+      className={cn("icon-[logos--google-gmail]", className)}
     ></span>
   );
 };

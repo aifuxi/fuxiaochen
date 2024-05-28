@@ -1,6 +1,6 @@
-import { Wrapper } from '@/components/wrapper';
+import { Wrapper } from "@/components/wrapper";
 
-import { SnippetList, getPublishedSnippets } from '@/features/snippet';
+import { SnippetList, getPublishedSnippets } from "@/features/snippet";
 
 export const revalidate = 60;
 

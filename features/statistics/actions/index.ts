@@ -1,6 +1,6 @@
-'use server';
+"use server";
 
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 import {
   REDIS_BLOG_UNIQUE_VISITOR,
@@ -9,9 +9,9 @@ import {
   REDIS_SNIPPET_UNIQUE_VISITOR,
   REDIS_UNIQUE_VISITOR,
   REDIS_UNIQUE_VISITOR_TODAY,
-} from '@/constants';
-import { prisma } from '@/lib/prisma';
-import { redis } from '@/lib/redis';
+} from "@/constants";
+import { prisma } from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 
 export const getStatistics = async () => {
   const blogCount = await prisma.blog.count({
@@ -31,7 +31,7 @@ export const getStatistics = async () => {
 };
 
 export const recordPV = async () => {
-  const todayKey = dayjs().format('YYYY-MM-DD');
+  const todayKey = dayjs().format("YYYY-MM-DD");
   await redis.incr(`${REDIS_PAGE_VIEW_TODAY}:${todayKey}`);
 
   const pv = await redis.get(REDIS_PAGE_VIEW);
@@ -49,7 +49,7 @@ export const getSiteStatistics = async () => {
   const uv = await redis.scard(REDIS_UNIQUE_VISITOR);
 
   // 今日
-  const todayKey = dayjs().format('YYYY-MM-DD');
+  const todayKey = dayjs().format("YYYY-MM-DD");
   const todayPV = await redis.get(`${REDIS_PAGE_VIEW_TODAY}:${todayKey}`);
   const todayUV = await redis.scard(
     `${REDIS_UNIQUE_VISITOR_TODAY}:${todayKey}`,
@@ -63,7 +63,7 @@ export const recordUV = async (cid?: string) => {
     return;
   }
 
-  const todayKey = dayjs().format('YYYY-MM-DD');
+  const todayKey = dayjs().format("YYYY-MM-DD");
   await redis.sadd(`${REDIS_UNIQUE_VISITOR_TODAY}:${todayKey}`, cid);
   await redis.sadd(REDIS_UNIQUE_VISITOR, cid);
 };

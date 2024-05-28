@@ -1,8 +1,8 @@
-import { type Metadata } from 'next';
+import { type Metadata } from "next";
 
-import { PATHS, PATHS_MAP } from '@/constants';
-import { AdminStatisticPage } from '@/features/admin';
-import { getAdminPageTitle } from '@/utils';
+import { PATHS, PATHS_MAP } from "@/constants";
+import { AdminStatisticPage } from "@/features/admin";
+import { getAdminPageTitle } from "@/utils";
 
 export const metadata: Metadata = {
   title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_STATISTIC]),

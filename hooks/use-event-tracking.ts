@@ -1,7 +1,7 @@
-import { useLocalStorageState } from 'ahooks';
+import { useLocalStorageState } from "ahooks";
 
-import { STORAGE_KEY_EVENT_TRACKING_CUID } from '@/constants';
-import { isCuid } from '@/lib/cuid';
+import { STORAGE_KEY_EVENT_TRACKING_CUID } from "@/constants";
+import { isCuid } from "@/lib/cuid";
 
 export const useCuid = () => {
   const [cuid, setCuid] = useLocalStorageState<string | undefined>(

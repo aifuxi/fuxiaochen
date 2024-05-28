@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { LoaderCircle, Pen, Save } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { LoaderCircle, Pen, Save } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -23,20 +23,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Switch } from '@/components/ui/switch';
+} from "@/components/ui/form";
+import { Switch } from "@/components/ui/switch";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
 import {
   type UpdateNoteDTO,
   updateNoteSchema,
   useGetNote,
   useUpdateNote,
-} from '@/features/note';
-import { useGetAllTags } from '@/features/tag';
+} from "@/features/note";
+import { useGetAllTags } from "@/features/tag";
 
-import { CreateTagButton } from '../tag';
+import { CreateTagButton } from "../tag";
 
 type EditNoteButtonProps = {
   id: string;
@@ -60,10 +60,10 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   React.useEffect(() => {
     if (open && data?.note) {
       const { note } = data;
-      form.setValue('body', note.body);
-      form.setValue('published', note.published);
-      form.setValue('tags', note?.tags?.map((el) => el.id) ?? []);
-      form.setValue('id', note.id);
+      form.setValue("body", note.body);
+      form.setValue("published", note.published);
+      form.setValue("tags", note?.tags?.map((el) => el.id) ?? []);
+      form.setValue("id", note.id);
       form.clearErrors();
     }
   }, [data, form, open]);
@@ -71,7 +71,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen} modal={false}>
       <DialogTrigger asChild>
-        <Button size={'icon'} variant="outline" onClick={() => setOpen(true)}>
+        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
           <Pen className="size-4" />
         </Button>
       </DialogTrigger>

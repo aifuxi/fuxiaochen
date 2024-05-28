@@ -1,4 +1,4 @@
-import { AdminTagListPage } from '@/features/admin';
+import { AdminTagListPage } from "@/features/admin";
 
 export default function Page() {
   return <AdminTagListPage />;

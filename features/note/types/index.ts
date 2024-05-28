@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-import { PUBLISHED_ENUM } from '@/constants';
+import { PUBLISHED_ENUM } from "@/constants";
 
-import { type getNotes } from '../actions';
+import { type getNotes } from "../actions";
 
 export const createNoteSchema = z.object({
-  body: z.string().min(1, { message: '长度不能少于1个字符' }),
+  body: z.string().min(1, { message: "长度不能少于1个字符" }),
   published: z.boolean().optional(),
   tags: z.string().array().optional(),
 });
@@ -27,12 +27,12 @@ export const getNotesSchema = z.object({
 
   pageIndex: z.number(),
   pageSize: z.number(),
-  orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
-  order: z.enum(['asc', 'desc']).optional(),
+  orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
 });
 
 export type CreateNoteDTO = z.infer<typeof createNoteSchema>;
 export type UpdateNoteDTO = z.infer<typeof updateNoteSchema>;
 export type GetNotesDTO = z.infer<typeof getNotesSchema>;
 
-export type Note = Awaited<ReturnType<typeof getNotes>>['notes'][number];
+export type Note = Awaited<ReturnType<typeof getNotes>>["notes"][number];

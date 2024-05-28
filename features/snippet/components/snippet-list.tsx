@@ -1,8 +1,8 @@
-import { IllustrationNoContent } from '@/components/illustrations';
+import { IllustrationNoContent } from "@/components/illustrations";
 
-import { SnippetListItem } from './snippet-list-item';
+import { SnippetListItem } from "./snippet-list-item";
 
-import { type Snippet } from '../types';
+import { type Snippet } from "../types";
 
 type SnippetListProps = {
   snippets: Snippet[];

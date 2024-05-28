@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 
-import { useAsyncEffect } from 'ahooks';
+import { useAsyncEffect } from "ahooks";
 
-import { useRecordPV, useRecordUV } from '@/features/statistics';
-import { useCuid } from '@/hooks';
-import { createCuid } from '@/lib/cuid';
-import { sleep } from '@/utils';
+import { useRecordPV, useRecordUV } from "@/features/statistics";
+import { useCuid } from "@/hooks";
+import { createCuid } from "@/lib/cuid";
+import { sleep } from "@/utils";
 
 export const Fingerprint = () => {
   const { cuid, setCuid } = useCuid();

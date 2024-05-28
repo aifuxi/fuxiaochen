@@ -1,8 +1,8 @@
-import { type TagTypeEnum } from '@prisma/client';
-import { useRequest } from 'ahooks';
+import { type TagTypeEnum } from "@prisma/client";
+import { useRequest } from "ahooks";
 
-import { getAllTags, getTags } from '../actions';
-import { type GetTagsDTO } from '../types';
+import { getAllTags, getTags } from "../actions";
+import { type GetTagsDTO } from "../types";
 
 export const useGetTags = (params: GetTagsDTO) => {
   return useRequest(() => getTags(params), {

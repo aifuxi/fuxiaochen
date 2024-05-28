@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React from "react";
+import { useForm } from "react-hook-form";
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter } from "next/navigation";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { TagTypeEnum } from '@prisma/client';
-import { isNil } from 'lodash-es';
-import { Save } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagTypeEnum } from "@prisma/client";
+import { isNil } from "lodash-es";
+import { Save } from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Combobox } from '@/components/ui/combobox';
+import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -19,31 +19,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   hideToast,
   showErrorToast,
   showInfoToast,
   showLoadingToast,
   showSuccessToast,
-} from '@/components/ui/toast';
+} from "@/components/ui/toast";
 
-import { BytemdEditor } from '@/components/bytemd';
+import { BytemdEditor } from "@/components/bytemd";
 
-import { PATHS } from '@/constants';
-import { CreateTagButton } from '@/features/admin';
+import { PATHS } from "@/constants";
+import { CreateTagButton } from "@/features/admin";
 import {
   type UpdateBlogDTO,
   updateBlogSchema,
   useGetBlog,
   useUpdateBlog,
-} from '@/features/blog';
-import { useGetAllTags } from '@/features/tag';
-import { uploadFile } from '@/features/upload';
-import { toSlug } from '@/lib/utils';
+} from "@/features/blog";
+import { useGetAllTags } from "@/features/tag";
+import { uploadFile } from "@/features/upload";
+import { toSlug } from "@/lib/utils";
 
 export const EditBlogForm = () => {
   const getTagsQuery = useGetAllTags(TagTypeEnum.BLOG);
@@ -64,27 +64,27 @@ export const EditBlogForm = () => {
   const form = useForm<UpdateBlogDTO>({
     resolver: zodResolver(updateBlogSchema),
     defaultValues: {
-      title: blog?.title ?? '',
-      id: blog?.id ?? '',
-      slug: blog?.slug ?? '',
-      description: blog?.description ?? '',
-      body: blog?.body ?? '',
+      title: blog?.title ?? "",
+      id: blog?.id ?? "",
+      slug: blog?.slug ?? "",
+      description: blog?.description ?? "",
+      body: blog?.body ?? "",
       published: blog?.published ?? true,
-      cover: blog?.cover ?? '',
-      author: blog?.author ?? '',
+      cover: blog?.cover ?? "",
+      author: blog?.author ?? "",
       tags: blog?.tags?.map((el) => el.id) ?? [],
     },
   });
 
   React.useEffect(() => {
-    form.setValue('title', blog?.title ?? '');
-    form.setValue('id', blog?.id ?? '');
-    form.setValue('slug', blog?.slug ?? '');
-    form.setValue('description', blog?.description ?? '');
-    form.setValue('body', blog?.body ?? '');
-    form.setValue('published', blog?.published ?? true);
-    form.setValue('cover', blog?.cover ?? '');
-    form.setValue('tags', blog?.tags?.map((el) => el.id) ?? []);
+    form.setValue("title", blog?.title ?? "");
+    form.setValue("id", blog?.id ?? "");
+    form.setValue("slug", blog?.slug ?? "");
+    form.setValue("description", blog?.description ?? "");
+    form.setValue("body", blog?.body ?? "");
+    form.setValue("published", blog?.published ?? true);
+    form.setValue("cover", blog?.cover ?? "");
+    form.setValue("tags", blog?.tags?.map((el) => el.id) ?? []);
   }, [blog, form]);
 
   return (
@@ -94,7 +94,7 @@ export const EditBlogForm = () => {
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
-            variant={'outline'}
+            variant={"outline"}
             className="!w-full"
           >
             保存
@@ -156,7 +156,7 @@ export const EditBlogForm = () => {
                 <FormControl>
                   <Input
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     placeholder="请输入作者"
                   />
                 </FormControl>
@@ -173,7 +173,7 @@ export const EditBlogForm = () => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    value={field.value ?? ''}
+                    value={field.value ?? ""}
                     placeholder="请输入封面链接"
                   />
                 </FormControl>
@@ -185,8 +185,8 @@ export const EditBlogForm = () => {
                       const file = e.target.files?.[0];
                       if (file) {
                         const fd = new FormData();
-                        fd.append('file', file);
-                        const toastID = showLoadingToast('上传中');
+                        fd.append("file", file);
+                        const toastID = showLoadingToast("上传中");
                         const { url, error } = await uploadFile(fd);
                         hideToast(toastID);
 
@@ -196,13 +196,13 @@ export const EditBlogForm = () => {
                         }
 
                         if (url) {
-                          showSuccessToast('上传成功');
+                          showSuccessToast("上传成功");
                         }
 
-                        setCover(url ?? '');
-                        form.setValue('cover', url ?? '');
+                        setCover(url ?? "");
+                        form.setValue("cover", url ?? "");
                       } else {
-                        showInfoToast('请选择一个文件');
+                        showInfoToast("请选择一个文件");
                       }
                     } catch (error) {
                       showErrorToast(error as string);
@@ -213,7 +213,7 @@ export const EditBlogForm = () => {
                   <img
                     src={cover}
                     className="h-[300px] object-scale-down"
-                    alt={''}
+                    alt={""}
                   />
                 )}
               </FormItem>
@@ -300,7 +300,7 @@ export const EditBlogForm = () => {
     const tmp = form.getValues().slug?.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
-      form.setValue('slug', formatted);
+      form.setValue("slug", formatted);
     }
   }
 };

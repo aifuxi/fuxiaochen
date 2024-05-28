@@ -1,13 +1,13 @@
-import { type ClassValue, clsx } from 'clsx';
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import slugify from 'slugify';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
+import relativeTime from "dayjs/plugin/relativeTime";
+import slugify from "slugify";
+import { twMerge } from "tailwind-merge";
 
-import { showErrorToast, showSuccessToast } from '@/components/ui/toast';
+import { showErrorToast, showSuccessToast } from "@/components/ui/toast";
 
-import { ADMIN_EMAILS } from '@/constants';
+import { ADMIN_EMAILS } from "@/constants";
 
 dayjs.extend(relativeTime);
 
@@ -17,7 +17,7 @@ export const cn = (...inputs: ClassValue[]) => {
 
 export const toSlug = (s: string) => {
   if (!s) {
-    return '';
+    return "";
   }
 
   return slugify(s, {
@@ -32,45 +32,45 @@ export const copyToClipboard = (text: string) => {
       // 去除首尾空白字符
       .writeText(text?.trim())
       .then(() => {
-        showSuccessToast('已复制到粘贴板');
+        showSuccessToast("已复制到粘贴板");
       })
       .catch((error) => {
         showErrorToast(error as string);
       });
   } else {
     // 以下代码来自：https://www.zhangxinxu.com/wordpress/2021/10/js-copy-paste-clipboard/
-    const textarea = document.createElement('textarea');
+    const textarea = document.createElement("textarea");
     document.body.appendChild(textarea);
     // 隐藏此输入框
-    textarea.style.position = 'fixed';
-    textarea.style.clip = 'rect(0 0 0 0)';
-    textarea.style.top = '10px';
+    textarea.style.position = "fixed";
+    textarea.style.clip = "rect(0 0 0 0)";
+    textarea.style.top = "10px";
     // 赋值，手动去除首尾空白字符
     textarea.value = text?.trim();
     // 选中
     textarea.select();
     // 复制
-    document.execCommand('copy', true);
-    showSuccessToast('已复制到粘贴板');
+    document.execCommand("copy", true);
+    showSuccessToast("已复制到粘贴板");
     // 移除输入框
     document.body.removeChild(textarea);
   }
 };
 
 export const toFromNow = (date: number | Date) => {
-  return dayjs(date).locale('zh-cn').fromNow();
+  return dayjs(date).locale("zh-cn").fromNow();
 };
 
 export const toSlashDateString = (date: number | Date) => {
-  return dayjs(date).locale('zh-cn').format('YYYY年M月D日 dddd HH:mm:ss');
+  return dayjs(date).locale("zh-cn").format("YYYY年M月D日 dddd HH:mm:ss");
 };
 
 export const prettyDate = (date: number | Date) => {
-  return dayjs(date).locale('zh-cn').format('M月 D，YYYY');
+  return dayjs(date).locale("zh-cn").format("M月 D，YYYY");
 };
 
 export const prettyDateWithWeekday = (date: number | Date) => {
-  return dayjs(date).locale('zh-cn').format('dddd，MMMM D YYYY');
+  return dayjs(date).locale("zh-cn").format("dddd，MMMM D YYYY");
 };
 
 export const isAdmin = (email?: string | null) => {
@@ -84,7 +84,7 @@ export const isBrowser = () => {
   // 代码来自：https://ahooks.js.org/zh-CN/guide/blog/ssr
   /* eslint-disable @typescript-eslint/prefer-optional-chain */
   return !!(
-    typeof window !== 'undefined' &&
+    typeof window !== "undefined" &&
     window.document &&
     window.document.createElement
   );

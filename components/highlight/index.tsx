@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 type HighlightProps = {
   className?: string;
@@ -19,7 +19,7 @@ type HighlightMarkProps = {
 export const HighlightMark = ({ text, className }: HighlightMarkProps) => {
   return (
     <span
-      className={cn('bg-green-300/20 dark:bg-green-100/30 mx-1', className)}
+      className={cn("bg-green-300/20 dark:bg-green-100/30 mx-1", className)}
     >
       {text}
     </span>
@@ -38,21 +38,21 @@ export const Highlight = ({
   }
 
   if (!sourceString?.trim()) {
-    return '';
+    return "";
   }
 
   // Chat GPT: 将正则表达式改为(${searchWords.join('|')})，这样可以将searchWords作为捕获组，从而在拆分后的数组中保留匹配到的searchWords
   const regex = new RegExp(
-    `(${searchWords.join('|')})`,
+    `(${searchWords.join("|")})`,
     // gi 全局匹配且不区分大小写
-    caseSensitive ? 'gi' : 'g',
+    caseSensitive ? "gi" : "g",
   );
 
   // 使用正则表达式将sourceString根据searchWords拆分成数组
   const splitArray = sourceString.split(regex);
 
   return (
-    <div className={cn('inline-flex items-center', className)}>
+    <div className={cn("inline-flex items-center", className)}>
       {splitArray.map((el, idx) => {
         if (
           searchWords.find((curr) => curr.toLowerCase() === el.toLowerCase())

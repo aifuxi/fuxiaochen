@@ -4,9 +4,9 @@ import {
   IconLogoJuejin,
   IconSkillGmailDark,
   IconSkillGmailLight,
-} from '@/components/icons';
+} from "@/components/icons";
 
-import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from '@/constants';
+import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from "@/constants";
 
 export const socialMediaList: Array<{
   icon: React.ReactNode;
@@ -15,7 +15,7 @@ export const socialMediaList: Array<{
 }> = [
   {
     icon: <IconBarandGithub className="text-2xl" />,
-    label: 'Github',
+    label: "Github",
     link: GITHUB_PAGE,
   },
   {
@@ -25,17 +25,17 @@ export const socialMediaList: Array<{
         <IconSkillGmailLight className="hidden text-2xl dark:inline-block" />
       </>
     ),
-    label: 'Gmail',
+    label: "Gmail",
     link: `mailto:${EMAIL}`,
   },
   {
     icon: <IconBrandBilibili className={`text-2xl text-[#00AEEC]`} />,
-    label: 'Bilibili',
+    label: "Bilibili",
     link: BILIBILI_PAGE,
   },
   {
     icon: <IconLogoJuejin className={`text-2xl text-[#2985fc]`} />,
-    label: '掘金',
+    label: "掘金",
     link: JUEJIN_PAGE,
   },
 ];

@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
-import { IllustrationNotFound } from '@/components/illustrations';
+import { IllustrationNotFound } from "@/components/illustrations";
 
-import { PATHS } from '@/constants';
+import { PATHS } from "@/constants";
 
 export default function Page() {
   return (

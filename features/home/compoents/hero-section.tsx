@@ -1,17 +1,17 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
-import { NICKNAME, PATHS } from '@/constants';
-import { TypeIntro } from '@/features/home';
-import { cn } from '@/lib/utils';
+import { NICKNAME, PATHS } from "@/constants";
+import { TypeIntro } from "@/features/home";
+import { cn } from "@/lib/utils";
 
-import { socialMediaList } from './social-media';
+import { socialMediaList } from "./social-media";
 
 export const HeroSection = () => {
   let delay = 0;
@@ -32,17 +32,17 @@ export const HeroSection = () => {
       <strong
         className={cn(
           `text-5xl md:text-8xl tracking-widest font-black  bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500`,
-          'animate-fade-up animate-ease-in-out',
+          "animate-fade-up animate-ease-in-out",
         )}
         style={{
-          WebkitTextFillColor: 'transparent',
+          WebkitTextFillColor: "transparent",
           animationDelay: `${getDelay()}ms`,
         }}
       >
         {NICKNAME}
       </strong>
       <div
-        className={cn('animate-fade-up animate-ease-in-out')}
+        className={cn("animate-fade-up animate-ease-in-out")}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
@@ -51,8 +51,8 @@ export const HeroSection = () => {
       </div>
       <p
         className={cn(
-          'text-2xl md:text-5xl tracking-widest',
-          'animate-fade-up animate-ease-in-out',
+          "text-2xl md:text-5xl tracking-widest",
+          "animate-fade-up animate-ease-in-out",
         )}
         style={{
           animationDelay: `${getDelay()}ms`,
@@ -66,8 +66,8 @@ export const HeroSection = () => {
       </p>
       <p
         className={cn(
-          'text-base md:text-2xl text-muted-foreground tracking-widest',
-          'animate-fade-up animate-ease-in-out',
+          "text-base md:text-2xl text-muted-foreground tracking-widest",
+          "animate-fade-up animate-ease-in-out",
         )}
         style={{
           animationDelay: `${getDelay()}ms`,
@@ -76,27 +76,27 @@ export const HeroSection = () => {
         我在这个网站记录我的成长，努力 💪 成为一个更好的程序员。
       </p>
       <div
-        className={cn('flex space-x-4', 'animate-fade-up animate-ease-in-out')}
+        className={cn("flex space-x-4", "animate-fade-up animate-ease-in-out")}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}
       >
         <Link
           href={PATHS.SITE_BLOG}
-          className={cn(buttonVariants({ variant: 'outline' }))}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           我的博客
         </Link>
         <Link
           href={PATHS.SITE_ABOUT}
-          className={cn(buttonVariants({ variant: 'outline' }))}
+          className={cn(buttonVariants({ variant: "outline" }))}
         >
           关于我
         </Link>
       </div>
 
       <ul
-        className={cn('flex space-x-4', 'animate-fade-up animate-ease-in-out')}
+        className={cn("flex space-x-4", "animate-fade-up animate-ease-in-out")}
         style={{
           animationDelay: `${getDelay()}ms`,
         }}

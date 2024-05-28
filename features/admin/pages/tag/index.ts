@@ -1,1 +1,1 @@
-export * from './admin-tag-list-page';
+export * from "./admin-tag-list-page";

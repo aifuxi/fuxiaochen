@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export const IconSkillGmailDark = ({
   className,
@@ -9,7 +9,7 @@ export const IconSkillGmailDark = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--gmail-dark]', className)}
+      className={cn("icon-[skill-icons--gmail-dark]", className)}
     ></span>
   );
 };
@@ -21,7 +21,7 @@ export const IconSkillGmailLight = ({
   return (
     <span
       {...props}
-      className={cn('icon-[skill-icons--gmail-light]', className)}
+      className={cn("icon-[skill-icons--gmail-light]", className)}
     ></span>
   );
 };

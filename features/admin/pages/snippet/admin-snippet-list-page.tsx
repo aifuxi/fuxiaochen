@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import React from 'react';
+import React from "react";
 
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { TagTypeEnum } from '@prisma/client';
-import { type ColumnDef } from '@tanstack/react-table';
-import { useSetState } from 'ahooks';
-import { isUndefined } from 'lodash-es';
+import { TagTypeEnum } from "@prisma/client";
+import { type ColumnDef } from "@tanstack/react-table";
+import { useSetState } from "ahooks";
+import { isUndefined } from "lodash-es";
 import {
   ArrowDownNarrowWide,
   ArrowUpNarrowWide,
@@ -21,24 +21,24 @@ import {
   Search,
   TagsIcon,
   TypeIcon,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { DataTable } from '@/components/ui/data-table';
-import { Input } from '@/components/ui/input';
+import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
-import { Highlight } from '@/components/highlight';
-import { IllustrationNoContent } from '@/components/illustrations';
-import { PageBreadcrumb } from '@/components/page-header';
+import { Highlight } from "@/components/highlight";
+import { IllustrationNoContent } from "@/components/illustrations";
+import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -47,21 +47,21 @@ import {
   PLACEHOLDER_TEXT,
   PUBLISHED_ENUM,
   PUBLISHED_LABEL_MAP,
-} from '@/constants';
+} from "@/constants";
 import {
   type GetSnippetsDTO,
   type Snippet,
   useGetSnippets,
-} from '@/features/snippet';
-import { useGetAllTags } from '@/features/tag';
-import { cn, isAdmin, toSlashDateString } from '@/lib/utils';
+} from "@/features/snippet";
+import { useGetAllTags } from "@/features/tag";
+import { cn, isAdmin, toSlashDateString } from "@/lib/utils";
 
 import {
   AdminContentLayout,
   DeleteSnippetButton,
   SearchByTags,
   ToggleSnippetPublishSwitch,
-} from '../../components';
+} from "../../components";
 
 export const AdminSnippetListPage = () => {
   const { data: session } = useSession();
@@ -69,12 +69,12 @@ export const AdminSnippetListPage = () => {
   const [params, updateParams] = useSetState<GetSnippetsDTO>({
     pageIndex: DEFAULT_PAGE_INDEX,
     pageSize: DEFAULT_PAGE_SIZE,
-    order: 'desc',
-    orderBy: 'createdAt',
+    order: "desc",
+    orderBy: "createdAt",
   });
 
   const [inputParams, updateInputParams] = useSetState<
-    Omit<GetSnippetsDTO, 'pageIndex' | 'pageSize'>
+    Omit<GetSnippetsDTO, "pageIndex" | "pageSize">
   >({
     title: undefined,
     published: undefined,
@@ -94,12 +94,12 @@ export const AdminSnippetListPage = () => {
 
   const columns: ColumnDef<Snippet>[] = [
     {
-      id: 'select',
+      id: "select",
       header: ({ table }) => (
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
+            (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -116,7 +116,7 @@ export const AdminSnippetListPage = () => {
       enableHiding: false,
     },
     {
-      accessorKey: 'title',
+      accessorKey: "title",
       header: () => (
         <div className="flex items-center space-x-1">
           <TypeIcon className="size-4" />
@@ -133,7 +133,7 @@ export const AdminSnippetListPage = () => {
       },
     },
     {
-      accessorKey: 'tags',
+      accessorKey: "tags",
       header: () => (
         <div className="flex items-center space-x-1">
           <TagsIcon className="size-4" />
@@ -153,7 +153,7 @@ export const AdminSnippetListPage = () => {
       },
     },
     {
-      accessorKey: 'published',
+      accessorKey: "published",
       header: () => (
         <div className="flex items-center space-x-1">
           <Eye className="size-4" />
@@ -171,20 +171,20 @@ export const AdminSnippetListPage = () => {
       },
     },
     {
-      accessorKey: 'createdAt',
+      accessorKey: "createdAt",
       header: () => (
         <Button
           variant="ghost"
           onClick={() => {
-            handleOrderChange('createdAt');
+            handleOrderChange("createdAt");
           }}
         >
           <Calendar className="size-3" />
           <span className="mx-1">创建时间</span>
-          {params.order === 'asc' && params.orderBy == 'createdAt' && (
+          {params.order === "asc" && params.orderBy == "createdAt" && (
             <ArrowUpNarrowWide className="size-4" />
           )}
-          {params.order === 'desc' && params.orderBy == 'createdAt' && (
+          {params.order === "desc" && params.orderBy == "createdAt" && (
             <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
@@ -194,20 +194,20 @@ export const AdminSnippetListPage = () => {
       },
     },
     {
-      accessorKey: 'updatedAt',
+      accessorKey: "updatedAt",
       header: () => (
         <Button
           variant="ghost"
           onClick={() => {
-            handleOrderChange('updatedAt');
+            handleOrderChange("updatedAt");
           }}
         >
           <Calendar className="size-3" />
           <span className="mx-1">更新时间</span>
-          {params.order === 'asc' && params.orderBy == 'updatedAt' && (
+          {params.order === "asc" && params.orderBy == "updatedAt" && (
             <ArrowUpNarrowWide className="size-4" />
           )}
-          {params.order === 'desc' && params.orderBy == 'updatedAt' && (
+          {params.order === "desc" && params.orderBy == "updatedAt" && (
             <ArrowDownNarrowWide className="size-4" />
           )}
         </Button>
@@ -217,13 +217,13 @@ export const AdminSnippetListPage = () => {
       },
     },
     {
-      id: 'actions',
+      id: "actions",
       cell: ({ row }) => {
         return (
           <div className="flex items-center gap-2">
             <Link
               className={cn(
-                buttonVariants({ variant: 'outline', size: 'icon' }),
+                buttonVariants({ variant: "outline", size: "icon" }),
               )}
               href={`${PATHS.SITE_SNIPPET}/${row.original.slug}`}
               target="_blank"
@@ -231,7 +231,7 @@ export const AdminSnippetListPage = () => {
               <Eye className="size-4" />
             </Link>
             <Button
-              size={'icon'}
+              size={"icon"}
               variant="outline"
               onClick={() => handleGoToEdit(row.original.id)}
             >
@@ -265,7 +265,7 @@ export const AdminSnippetListPage = () => {
             })
           }
           onKeyUp={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               handleSearch();
             }
           }}
@@ -282,7 +282,7 @@ export const AdminSnippetListPage = () => {
           >
             <SelectTrigger
               className={cn({
-                'text-muted-foreground': isUndefined(inputParams.published),
+                "text-muted-foreground": isUndefined(inputParams.published),
               })}
             >
               <SelectValue placeholder="请选择发布状态" />
@@ -348,31 +348,31 @@ export const AdminSnippetListPage = () => {
 
   function handleReset() {
     updateInputParams({
-      title: '',
+      title: "",
       tags: undefined,
       published: undefined,
     });
     updateParams({
-      title: '',
+      title: "",
       tags: undefined,
       published: undefined,
       pageIndex: DEFAULT_PAGE_INDEX,
-      order: 'desc',
-      orderBy: 'createdAt',
+      order: "desc",
+      orderBy: "createdAt",
     });
   }
 
-  function handleOrderChange(orderBy: GetSnippetsDTO['orderBy']) {
+  function handleOrderChange(orderBy: GetSnippetsDTO["orderBy"]) {
     updateParams((prev) => {
       if (prev.orderBy !== orderBy) {
-        return { orderBy: orderBy, order: 'asc' };
+        return { orderBy: orderBy, order: "asc" };
       } else {
-        if (prev.order === 'desc') {
+        if (prev.order === "desc") {
           return { orderBy: undefined, order: undefined };
-        } else if (prev.order === 'asc') {
-          return { order: 'desc' };
+        } else if (prev.order === "asc") {
+          return { order: "desc" };
         } else {
-          return { order: 'asc' };
+          return { order: "asc" };
         }
       }
     });
