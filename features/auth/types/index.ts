@@ -8,9 +8,9 @@ export const signupSchema = z.object({
 
 export type SignupDTO = z.infer<typeof signupSchema>;
 
-export const signinSchema = z.object({
+export const signInSchema = z.object({
   email: z.string().email().min(1, { message: "长度不能少于1个字符" }),
   password: z.string().min(1, { message: "长度不能少于1个字符" }),
 });
 
-export type SigninDTO = z.infer<typeof signinSchema>;
+export type SignInDTO = z.infer<typeof signInSchema>;

@@ -28,72 +28,32 @@ export const getBlogs = async (params: GetBlogsDTO) => {
   const result = await getBlogsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
-    throw new Error(error);
+    throw new Error(result.error.format()._errors?.join(";") || "");
   }
 
-  // 无权限，只能查看已发布的blog
+  const cond: Prisma.BlogWhereInput = {
+    OR: [
+      ...(result.data.title?.trim()
+        ? [{ title: { contains: result.data.title.trim() } }]
+        : []),
+      ...(result.data.slug?.trim()
+        ? [{ slug: { contains: result.data.slug.trim() } }]
+        : []),
+      ...(result.data.tags?.length
+        ? [{ tags: { some: { id: { in: result.data.tags } } } }]
+        : []),
+    ],
+  };
+
   const published = await noPermission();
-  const cond: Prisma.BlogWhereInput = {};
-  // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
   if (published || !isUndefined(result.data.published)) {
-    const searchPublished: boolean | undefined =
-      PUBLISHED_MAP[result.data.published!];
-
-    if (!isUndefined(searchPublished)) {
-      cond.published = searchPublished;
-    }
-
-    if (published) {
-      cond.published = published;
-    }
-  }
-  if (result.data.title?.trim()) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          title: {
-            contains: result.data.title?.trim(),
-          },
-        },
-      ],
-    ];
-  }
-  if (result.data.slug?.trim()) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          slug: {
-            contains: result.data.slug?.trim(),
-          },
-        },
-      ],
-    ];
-  }
-  if (result.data.tags?.length) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          tags: {
-            some: {
-              id: {
-                in: result.data.tags,
-              },
-            },
-          },
-        },
-      ],
-    ];
+    cond.published = PUBLISHED_MAP[result.data.published!] || published;
   }
 
-  const sort: Prisma.BlogOrderByWithRelationInput = {};
-  if (result.data.orderBy && result.data.order) {
-    sort[result.data.orderBy] = result.data.order;
-  }
+  const sort: Prisma.BlogOrderByWithRelationInput | undefined =
+    result.data.orderBy && result.data.order
+      ? { [result.data.orderBy]: result.data.order }
+      : undefined;
 
   const total = await prisma.blog.count({ where: cond });
   const blogs = await prisma.blog.findMany({
@@ -187,35 +147,40 @@ export const createBlog = async (params: CreateBlogDTO) => {
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
+  const { title, slug, description, body, published, cover, author, tags } =
+    result.data;
+
   const blogs = await prisma.blog.findMany({
     where: {
-      OR: [{ title: result.data.title }, { slug: result.data.slug }],
+      OR: [
+        { title },
+        { slug },
+        ...(tags?.map((tagID) => ({ tags: { some: { id: tagID } } })) || []),
+      ],
     },
   });
 
   if (blogs.length) {
-    // TODO: 记录日志
     throw new Error("标题或者slug重复");
   }
 
   await prisma.blog.create({
     data: {
-      title: result.data.title,
-      slug: result.data.slug,
-      description: result.data.description,
-      body: result.data.body,
-      published: result.data.published,
-      cover: result.data.cover,
-      author: result.data.author,
-      tags: {
-        connect: result.data.tags
-          ? result.data.tags.map((tagID) => ({ id: tagID }))
-          : undefined,
-      },
+      title,
+      slug,
+      description,
+      body,
+      published,
+      cover,
+      author,
+      tags: tags
+        ? {
+            connect: tags.map((tagID) => ({ id: tagID })),
+          }
+        : undefined,
     },
   });
 };
@@ -252,14 +217,14 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
+  const { id, title, description, slug, cover, author, body, published, tags } =
+    result.data;
+
   const blog = await prisma.blog.findUnique({
-    where: {
-      id: result.data.id,
-    },
+    where: { id },
     include: { tags: true },
   });
 
@@ -267,36 +232,28 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
     throw new Error("Blog不存在");
   }
 
-  const blogTagIDs = blog?.tags.map((el) => el.id);
-  // 新增的 tags
-  const needConnect = result.data.tags?.filter(
-    (el) => !blogTagIDs?.includes(el),
-  );
-  // 需要移除的 tags
-  const needDisconnect = blog?.tags
-    .filter((el) => !result.data.tags?.includes(el.id))
-    ?.map((el) => el.id);
+  const blogTags = new Set(blog.tags.map((el) => el.id));
+  const tagsToConnect = tags
+    ?.filter((tagID) => !blogTags.has(tagID))
+    .map((tagID) => ({ id: tagID }));
+  const tagsToDisconnect = Array.from(blogTags)
+    .filter((tagID) => !tags?.includes(tagID))
+    .map((tagID) => ({ id: tagID }));
 
   await prisma.blog.update({
+    where: { id },
     data: {
-      title: result.data.title,
-      description: result.data.description,
-      slug: result.data.slug,
-      cover: result.data.cover,
-      author: result.data.author,
-      body: result.data.body,
-      published: result.data.published,
+      title: title ?? blog.title,
+      description: description ?? blog.description,
+      slug: slug ?? blog.slug,
+      cover: cover ?? blog.cover,
+      author: author ?? blog.author,
+      body: body ?? blog.body,
+      published: published ?? blog.published,
       tags: {
-        connect: needConnect?.length
-          ? needConnect.map((tagID) => ({ id: tagID }))
-          : undefined,
-        disconnect: needDisconnect?.length
-          ? needDisconnect.map((tagID) => ({ id: tagID }))
-          : undefined,
+        connect: tagsToConnect?.length ? tagsToConnect : undefined,
+        disconnect: tagsToDisconnect?.length ? tagsToDisconnect : undefined,
       },
-    },
-    where: {
-      id: result.data.id,
     },
   });
 };

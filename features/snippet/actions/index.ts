@@ -29,65 +29,24 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
-  // 无权限，只能查看已发布的
-  const published = await noPermission();
   const cond: Prisma.SnippetWhereInput = {};
-  // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
-  if (published || !isUndefined(result.data.published)) {
-    const searchPublished: boolean | undefined =
-      PUBLISHED_MAP[result.data.published!];
-
+  if (result.data.title?.trim()) {
+    cond.title = { contains: result.data.title.trim() };
+  }
+  if (result.data.slug?.trim()) {
+    cond.slug = { contains: result.data.slug.trim() };
+  }
+  if (result.data.tags?.length) {
+    cond.tags = { some: { id: { in: result.data.tags } } };
+  }
+  if ((await noPermission()) || !isUndefined(result.data.published)) {
+    const searchPublished = PUBLISHED_MAP[result.data.published!];
     if (!isUndefined(searchPublished)) {
       cond.published = searchPublished;
     }
-
-    if (published) {
-      cond.published = published;
-    }
-  }
-  if (result.data.title?.trim()) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          title: {
-            contains: result.data.title?.trim(),
-          },
-        },
-      ],
-    ];
-  }
-  if (result.data.slug?.trim()) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          slug: {
-            contains: result.data.slug?.trim(),
-          },
-        },
-      ],
-    ];
-  }
-  if (result.data.tags?.length) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          tags: {
-            some: {
-              id: {
-                in: result.data.tags,
-              },
-            },
-          },
-        },
-      ],
-    ];
   }
 
   const sort: Prisma.SnippetOrderByWithRelationInput = {};
@@ -97,19 +56,14 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
 
   const total = await prisma.snippet.count({ where: cond });
   const snippets = await prisma.snippet.findMany({
-    include: {
-      tags: true,
-    },
-    orderBy: sort,
+    include: { tags: true },
     where: cond,
+    orderBy: sort,
     take: result.data.pageSize,
     skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
 
-  return {
-    snippets,
-    total,
-  };
+  return { snippets, total };
 };
 
 export const getPublishedSnippets = async () => {
@@ -183,32 +137,24 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
-  const snippets = await prisma.snippet.findMany({
+  const existingSnippets = await prisma.snippet.findMany({
     where: {
       OR: [{ title: result.data.title }, { slug: result.data.slug }],
     },
   });
 
-  if (snippets.length) {
-    // TODO: 记录日志
+  if (existingSnippets.length) {
     throw new Error("标题或者slug重复");
   }
 
   await prisma.snippet.create({
     data: {
-      title: result.data.title,
-      slug: result.data.slug,
-      description: result.data.description,
-      body: result.data.body,
-      published: result.data.published,
+      ...result.data,
       tags: {
-        connect: result.data.tags
-          ? result.data.tags.map((tagID) => ({ id: tagID }))
-          : undefined,
+        connect: result.data.tags?.map((tagID) => ({ id: tagID })) || [],
       },
     },
   });
@@ -245,33 +191,11 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
   const result = await updateSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
-    throw new Error(error);
+    throw new Error(result.error.format()._errors?.join(";"));
   }
 
-  const snippet = await prisma.snippet.findUnique({
-    where: {
-      id: result.data.id,
-    },
-    include: { tags: true },
-  });
-
-  if (!snippet) {
-    throw new Error("Snippet不存在");
-  }
-
-  const snippetTagIDs = snippet?.tags.map((el) => el.id);
-  // 新增的 tags
-  const needConnect = result.data.tags?.filter(
-    (el) => !snippetTagIDs?.includes(el),
-  );
-  // 需要移除的 tags
-  const needDisconnect = snippet?.tags
-    .filter((el) => !result.data.tags?.includes(el.id))
-    ?.map((el) => el.id);
-
-  await prisma.snippet.update({
+  const snippet = await prisma.snippet.update({
+    where: { id: result.data.id },
     data: {
       title: result.data.title,
       description: result.data.description,
@@ -279,16 +203,15 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
       body: result.data.body,
       published: result.data.published,
       tags: {
-        connect: needConnect?.length
-          ? needConnect.map((tagID) => ({ id: tagID }))
-          : undefined,
-        disconnect: needDisconnect?.length
-          ? needDisconnect.map((tagID) => ({ id: tagID }))
-          : undefined,
+        set: result.data.tags?.map((el) => {
+          return { id: el };
+        }),
       },
     },
-    where: {
-      id: result.data.id,
-    },
+    include: { tags: true },
   });
+
+  if (!snippet) {
+    throw new Error("Snippet不存在");
+  }
 };
