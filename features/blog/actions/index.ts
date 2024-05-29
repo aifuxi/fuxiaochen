@@ -55,6 +55,10 @@ export const getBlogs = async (params: GetBlogsDTO) => {
       ? { [result.data.orderBy]: result.data.order }
       : undefined;
 
+  if (!cond.OR?.length) {
+    delete cond.OR;
+  }
+
   const total = await prisma.blog.count({ where: cond });
   const blogs = await prisma.blog.findMany({
     include: {
@@ -110,7 +114,7 @@ export const getBlogByID = async (id: string) => {
   return { blog };
 };
 
-export const getPlublishedBlogBySlug = async (slug: string) => {
+export const getPublishedBlogBySlug = async (slug: string) => {
   const blog = await prisma.blog.findUnique({
     where: { slug, published: true },
     include: {
