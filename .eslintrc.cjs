@@ -10,7 +10,7 @@ const config = {
       typescript: {},
     },
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "check-file"],
   extends: [
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended-type-checked",
@@ -73,6 +73,16 @@ const config = {
     "import/default": "off",
     "import/no-named-as-default-member": "off",
     "import/no-named-as-default": "off",
+
+    "check-file/filename-naming-convention": [
+      "error",
+      {
+        "**/*.{ts,tsx}": "KEBAB_CASE",
+      },
+      {
+        ignoreMiddleExtensions: true,
+      },
+    ],
   },
   ignorePatterns: [
     "node_modules",
