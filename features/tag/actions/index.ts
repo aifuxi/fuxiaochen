@@ -82,7 +82,6 @@ export const getAllTags = async (type?: TagTypeEnum) => {
     orderBy: {
       createdAt: "desc",
     },
-    take: -1,
   });
 
   const total = tags.length;

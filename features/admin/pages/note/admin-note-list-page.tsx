@@ -192,9 +192,6 @@ export const AdminNoteListPage = () => {
               ))}
         </Masonry>
       </ResponsiveMasonry>
-
-      {/* padding */}
-      <div className="h-32"></div>
     </AdminContentLayout>
   );
 

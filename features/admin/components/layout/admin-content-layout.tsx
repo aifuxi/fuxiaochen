@@ -149,6 +149,9 @@ export const AdminContentLayout = ({
       </header>
       <ScrollArea ref={scrollRef} className="h-screen px-6 pt-6">
         {children}
+
+        {/* padding */}
+        <div className="h-32"></div>
       </ScrollArea>
 
       <BackToTop scrollRef={scrollRef} />

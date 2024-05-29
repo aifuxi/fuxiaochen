@@ -5,14 +5,14 @@ import { type Metadata } from "next";
 import { isNil } from "lodash-es";
 
 import { WEBSITE } from "@/constants";
-import { getPlublishedBlogBySlug } from "@/features/blog";
+import { getPublishedBlogBySlug } from "@/features/blog";
 
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const { blog } = await getPlublishedBlogBySlug(params.slug);
+  const { blog } = await getPublishedBlogBySlug(params.slug);
 
   if (isNil(blog)) {
     return {};
