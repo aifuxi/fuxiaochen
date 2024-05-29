@@ -1,7 +1,6 @@
 "use server";
 
 import { type Prisma } from "@prisma/client";
-import { isUndefined } from "lodash-es";
 
 import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from "@/constants";
 import { noPermission } from "@/features/user";
@@ -28,60 +27,25 @@ export const getNotes = async (params: GetNotesDTO) => {
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
-  // 无权限，只能查看已发布的
-  const published = await noPermission();
   const cond: Prisma.NoteWhereInput = {};
-  // TODO: 想个办法优化一下，这个写法太啰嗦了，好多 if
-  if (published || !isUndefined(result.data.published)) {
-    const searchPublished: boolean | undefined =
-      PUBLISHED_MAP[result.data.published!];
-
-    if (!isUndefined(searchPublished)) {
-      cond.published = searchPublished;
-    }
-
-    if (published) {
-      cond.published = published;
-    }
+  if (result.data.published) {
+    cond.published = PUBLISHED_MAP[result.data.published];
   }
   if (result.data.body?.trim()) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          body: {
-            contains: result.data.body?.trim(),
-          },
-        },
-      ],
-    ];
+    cond.body = { contains: result.data.body.trim() };
   }
-
   if (result.data.tags?.length) {
-    cond.OR = [
-      ...(cond.OR ?? []),
-      ...[
-        {
-          tags: {
-            some: {
-              id: {
-                in: result.data.tags,
-              },
-            },
-          },
-        },
-      ],
-    ];
+    cond.tags = { some: { id: { in: result.data.tags } } };
   }
 
-  const sort: Prisma.NoteOrderByWithRelationInput = {};
-  if (result.data.orderBy && result.data.order) {
-    sort[result.data.orderBy] = result.data.order;
-  }
+  const sort = result.data.orderBy
+    ? {
+        [result.data.orderBy]: result.data.order,
+      }
+    : undefined;
 
   const total = await prisma.note.count({ where: cond });
   const notes = await prisma.note.findMany({
@@ -143,22 +107,14 @@ export const createNote = async (params: CreateNoteDTO) => {
   if (await noPermission()) {
     throw ERROR_NO_PERMISSION;
   }
-  const result = await createNoteSchema.safeParseAsync(params);
-
-  if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
-    throw new Error(error);
-  }
+  const { body, published, tags } = await createNoteSchema.parseAsync(params);
 
   await prisma.note.create({
     data: {
-      body: result.data.body,
-      published: result.data.published,
+      body,
+      published,
       tags: {
-        connect: result.data.tags
-          ? result.data.tags.map((tagID) => ({ id: tagID }))
-          : undefined,
+        connect: tags?.map((tagID) => ({ id: tagID })) || [],
       },
     },
   });
@@ -192,18 +148,18 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   if (await noPermission()) {
     throw ERROR_NO_PERMISSION;
   }
+
   const result = await updateNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
     const error = result.error.format()._errors?.join(";");
-    // TODO: 记录日志
     throw new Error(error);
   }
 
+  const { id, body, published, tags } = result.data;
+
   const note = await prisma.note.findUnique({
-    where: {
-      id: result.data.id,
-    },
+    where: { id },
     include: { tags: true },
   });
 
@@ -211,31 +167,23 @@ export const updateNote = async (params: UpdateNoteDTO) => {
     throw new Error("Note不存在");
   }
 
-  const noteTagIDs = note?.tags.map((el) => el.id);
-  // 新增的 tags
-  const needConnect = result.data.tags?.filter(
-    (el) => !noteTagIDs?.includes(el),
-  );
-  // 需要移除的 tags
-  const needDisconnect = note?.tags
-    .filter((el) => !result.data.tags?.includes(el.id))
-    ?.map((el) => el.id);
+  const noteTagIDs = note.tags.map(({ id }) => id);
+  const connectTags = tags
+    ?.filter((tagID) => !noteTagIDs.includes(tagID))
+    ?.map((id) => ({ id }));
+  const disconnectTags = note.tags
+    .filter(({ id }) => !tags?.includes(id))
+    .map(({ id }) => ({ id }));
 
   await prisma.note.update({
+    where: { id },
     data: {
-      body: result.data.body,
-      published: result.data.published,
+      body,
+      published,
       tags: {
-        connect: needConnect?.length
-          ? needConnect.map((tagID) => ({ id: tagID }))
-          : undefined,
-        disconnect: needDisconnect?.length
-          ? needDisconnect.map((tagID) => ({ id: tagID }))
-          : undefined,
+        connect: connectTags?.length ? connectTags : undefined,
+        disconnect: disconnectTags?.length ? disconnectTags : undefined,
       },
-    },
-    where: {
-      id: result.data.id,
     },
   });
 };

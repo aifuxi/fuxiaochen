@@ -14,18 +14,18 @@ import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 
 export const getStatistics = async () => {
-  const blogCount = await prisma.blog.count({
-    where: { published: true },
-  });
-  const tagCount = await prisma.tag.count();
-
-  const snippetCount = await prisma.snippet.count({
-    where: { published: true },
-  });
-
-  const noteCount = await prisma.note.count({
-    where: { published: true },
-  });
+  const [blogCount, snippetCount, tagCount, noteCount] = await Promise.all([
+    prisma.blog.count({
+      where: { published: true },
+    }),
+    prisma.snippet.count({
+      where: { published: true },
+    }),
+    prisma.tag.count(),
+    prisma.note.count({
+      where: { published: true },
+    }),
+  ]);
 
   return { blogCount, snippetCount, tagCount, noteCount };
 };
