@@ -23,27 +23,32 @@ export const isTagExistByID = async (id: string): Promise<boolean> => {
 };
 
 export const getTags = async (params: GetTagsDTO) => {
-  const parsedParams = await getTagsSchema.parseAsync(params);
+  const result = await getTagsSchema.safeParseAsync(params);
+
+  if (!result.success) {
+    const error = result.error.format()._errors?.join(";");
+    throw new Error(error);
+  }
 
   const where: Prisma.TagWhereInput = {};
 
-  if (parsedParams.type) {
-    where.type = parsedParams.type;
+  if (result.data.type) {
+    where.type = result.data.type;
   }
 
-  if (parsedParams.name) {
+  if (result.data.name) {
     where.OR = [
       {
         name: {
-          contains: parsedParams.name.trim(),
+          contains: result.data.name.trim(),
         },
       },
     ];
   }
 
   const orderBy: Prisma.TagOrderByWithRelationInput = {};
-  if (parsedParams.orderBy && parsedParams.order) {
-    orderBy[parsedParams.orderBy] = parsedParams.order;
+  if (result.data.orderBy && result.data.order) {
+    orderBy[result.data.orderBy] = result.data.order;
   }
 
   const [tags, total] = await Promise.all([
@@ -56,8 +61,8 @@ export const getTags = async (params: GetTagsDTO) => {
         snippets: true,
         _count: true,
       },
-      take: parsedParams.pageSize,
-      skip: getSkip(parsedParams.pageIndex, parsedParams.pageSize),
+      take: result.data.pageSize,
+      skip: getSkip(result.data.pageIndex, result.data.pageSize),
     }),
     prisma.tag.count({ where }),
   ]);
