@@ -14,4 +14,9 @@ export const redis =
     keyPrefix: REDIS_KYE_PREFIX,
   });
 
+redis.on("error", (err) => {
+  // eslint-disable-next-line no-console
+  console.log("redis error: ", err);
+});
+
 if (NODE_ENV !== "production") globalForRedis.redis = redis;
