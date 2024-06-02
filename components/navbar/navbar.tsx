@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { navItems } from "./config";
 import { MobileNav } from "./mobile-nav";
 
-import { IconBarandGithub } from "../icons";
+import { IconBrandGithub } from "../icons";
 import { Logo } from "../logo";
 import { ModeToggle } from "../mode-toggle";
 import { NextLink } from "../next-link";
@@ -67,7 +67,7 @@ export const Navbar = () => {
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
             <Button variant="outline" size={"icon"} aria-label="Github Icon">
-              <IconBarandGithub className="text-base" />
+              <IconBrandGithub className="text-base" />
             </Button>
           </Link>
           <Link
