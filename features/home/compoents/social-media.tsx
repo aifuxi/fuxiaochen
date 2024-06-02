@@ -1,6 +1,6 @@
 import {
-  IconBarandGithub,
   IconBrandBilibili,
+  IconBrandGithub,
   IconLogoJuejin,
   IconSkillGmailDark,
   IconSkillGmailLight,
@@ -14,7 +14,7 @@ export const socialMediaList: Array<{
   link: string;
 }> = [
   {
-    icon: <IconBarandGithub className="text-2xl" />,
+    icon: <IconBrandGithub className="text-2xl" />,
     label: "Github",
     link: GITHUB_PAGE,
   },

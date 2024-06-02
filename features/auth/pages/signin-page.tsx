@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { IconBarandGithub } from "@/components/icons";
+import { IconBrandGithub } from "@/components/icons";
 import { ModeToggle } from "@/components/mode-toggle";
 
 import { PATHS } from "@/constants";
@@ -39,7 +39,7 @@ export const SignInPage = () => {
               type="button"
               onClick={handleSigninWithGithub}
             >
-              <IconBarandGithub className="mr-2 text-base" /> 使用 Github 登录
+              <IconBrandGithub className="mr-2 text-base" /> 使用 Github 登录
             </Button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
