@@ -18,6 +18,7 @@ import { IconBrandGithub } from "../icons";
 import { Logo } from "../logo";
 import { ModeToggle } from "../mode-toggle";
 import { NextLink } from "../next-link";
+import { SearchIcon } from "../search-bar";
 import { Button } from "../ui/button";
 
 export const Navbar = () => {
@@ -60,6 +61,7 @@ export const Navbar = () => {
         <MobileNav />
         <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none">
           <ModeToggle />
+          <SearchIcon />
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
