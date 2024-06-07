@@ -67,7 +67,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   }, [form, open]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal={false}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)}>
           <Plus className="mr-2 size-4" />
