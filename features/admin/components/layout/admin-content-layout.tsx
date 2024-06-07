@@ -33,6 +33,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 
 import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
+import { isAdmin } from "@/lib/utils";
 
 import { SettingsModal } from "../settings";
 
@@ -164,7 +165,12 @@ export const AdminContentLayout = ({
 
       <SignOutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
 
-      <SettingsModal open={settingsModalOpen} setOpen={setSettingsModalOpen} />
+      {isAdmin(session?.data?.user?.email) && (
+        <SettingsModal
+          open={settingsModalOpen}
+          setOpen={setSettingsModalOpen}
+        />
+      )}
     </div>
   );
 };
