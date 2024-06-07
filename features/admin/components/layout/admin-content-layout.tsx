@@ -34,6 +34,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
 
+import { SettingsModal } from "../settings";
+
 type AdminContentLayoutProps = {
   breadcrumb?: React.ReactNode;
 } & React.PropsWithChildren;
@@ -82,6 +84,7 @@ export const AdminContentLayout = ({
   const scrollRef = React.useRef<HTMLDivElement | null>(null);
   const session = useSession();
   const [signOutDialogOpen, setSignOutDialogOpen] = React.useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = React.useState(false);
 
   return (
     <div className="h-screen flex-1 overflow-hidden">
@@ -130,7 +133,10 @@ export const AdminContentLayout = ({
                 我的账号
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => setSettingsModalOpen(true)}
+              >
                 设置
               </DropdownMenuItem>
               <DropdownMenuItem className="cursor-pointer">
@@ -157,6 +163,8 @@ export const AdminContentLayout = ({
       <BackToTop scrollRef={scrollRef} />
 
       <SignOutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
+
+      <SettingsModal open={settingsModalOpen} setOpen={setSettingsModalOpen} />
     </div>
   );
 };
