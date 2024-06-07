@@ -86,7 +86,7 @@ export const SearchIcon = () => {
   }, [resp]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal={false}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={() => setOpen(true)} size={"icon"} variant={"outline"}>
           <Search className="size-4" />

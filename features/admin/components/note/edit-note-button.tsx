@@ -69,7 +69,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   }, [data, form, open]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal={false}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
           <Pen className="size-4" />
