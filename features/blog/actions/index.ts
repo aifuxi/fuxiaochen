@@ -167,11 +167,7 @@ export const createBlog = async (params: CreateBlogDTO) => {
 
   const blogs = await prisma.blog.findMany({
     where: {
-      OR: [
-        { title },
-        { slug },
-        ...(tags?.map((tagID) => ({ tags: { some: { id: tagID } } })) || []),
-      ],
+      OR: [{ title }, { slug }],
     },
   });
 
