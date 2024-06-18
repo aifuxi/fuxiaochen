@@ -45,8 +45,8 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
       <div className="flex">
         <div
           className={cn(
-            "flex-1 pr-14",
-            "wrapper:border-r wrapper:border-r-border",
+            "flex-1",
+            "wrapper:border-r wrapper:border-r-border wrapper:pr-14",
           )}
         >
           <BytemdViewer body={blog.body || ""} />
