@@ -12,7 +12,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 
 import { Logo } from "@/components/logo";
 
-import { NICKNAME, PATHS, WEBSITE } from "@/constants";
+import { NICKNAME, PATHS } from "@/constants";
 import { cn } from "@/lib/utils";
 
 import { adminNavItems } from "./admin-content-layout";
@@ -31,7 +31,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
           )}
         >
           <Link
-            href={PATHS.SITE_HOME}
+            href={PATHS.ADMIN_HOME}
             className={cn(
               "hidden sm:flex mt-[10vh] mb-[5vh] justify-center items-center whitespace-nowrap",
             )}
@@ -40,7 +40,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             <Logo className="size-8" />
             {open && (
               <span className="ml-2 text-base font-semibold text-primary">
-                {WEBSITE}
+                后台管理
               </span>
             )}
           </Link>
