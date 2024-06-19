@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { PageBreadcrumb } from "@/components/page-header";
 
 import { PATHS } from "@/constants";
-import { cn } from "@/lib/utils";
+import { cn, sayHi } from "@/lib/utils";
 
 import { AdminContentLayout } from "../../components";
 
@@ -24,7 +24,7 @@ export const AdminHomePage = () => {
       breadcrumb={<PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME]} />}
     >
       <div className="mt-[18vh] grid place-content-center gap-4">
-        <h2 className="text-3xl font-medium">晚上好~ 欢迎使用后台管理系统</h2>
+        <h2 className="text-3xl font-medium">{sayHi()} 欢迎使用后台管理系统</h2>
         <p className="text-lg text-muted-foreground">你可能想 🤔</p>
 
         <div className="flex space-x-4">
