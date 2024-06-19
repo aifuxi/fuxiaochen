@@ -10,25 +10,7 @@ import {
   REDIS_UNIQUE_VISITOR,
   REDIS_UNIQUE_VISITOR_TODAY,
 } from "@/constants";
-import { prisma } from "@/lib/prisma";
 import { redis } from "@/lib/redis";
-
-export const getStatistics = async () => {
-  const [blogCount, snippetCount, tagCount, noteCount] = await Promise.all([
-    prisma.blog.count({
-      where: { published: true },
-    }),
-    prisma.snippet.count({
-      where: { published: true },
-    }),
-    prisma.tag.count(),
-    prisma.note.count({
-      where: { published: true },
-    }),
-  ]);
-
-  return { blogCount, snippetCount, tagCount, noteCount };
-};
 
 export const recordPV = async () => {
   const todayKey = dayjs().format("YYYY-MM-DD");

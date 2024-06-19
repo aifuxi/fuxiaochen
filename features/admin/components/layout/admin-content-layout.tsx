@@ -5,18 +5,10 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
-import {
-  Book,
-  CodeXml,
-  Home,
-  LineChart,
-  PanelLeft,
-  ScrollIcon,
-  Tags,
-} from "lucide-react";
+import { Book, CodeXml, Home, PanelLeft, ScrollIcon, Tags } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +25,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 
 import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
-import { isAdmin } from "@/lib/utils";
+import { cn, isAdmin } from "@/lib/utils";
 
 import { SettingsModal } from "../settings";
 
@@ -50,11 +42,6 @@ export const adminNavItems: Array<{
     label: PATHS_MAP[PATHS.ADMIN_HOME],
     link: PATHS.ADMIN_HOME,
     icon: <Home className="size-4" />,
-  },
-  {
-    label: PATHS_MAP[PATHS.ADMIN_STATISTIC],
-    link: PATHS.ADMIN_STATISTIC,
-    icon: <LineChart className="size-4" />,
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_TAG],
@@ -117,17 +104,21 @@ export const AdminContentLayout = ({
           <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Avatar className="size-6 rounded-[8px]">
-                  <AvatarImage
-                    src={session?.data?.user?.image ?? ""}
-                    alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                  />
-                  <AvatarFallback className="size-6 rounded-[8px]">
-                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
+              <Avatar
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                  "cursor-pointer",
+                )}
+              >
+                <AvatarImage
+                  src={session?.data?.user?.image ?? ""}
+                  className="!size-6 rounded-[8px]"
+                  alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                />
+                <AvatarFallback className="line-clamp-1 size-6 text-ellipsis rounded-[8px]">
+                  {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                </AvatarFallback>
+              </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel className="cursor-pointer">
