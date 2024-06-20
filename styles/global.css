@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 /* Supports weights 100-900 */
-@import "@fontsource-variable/montserrat";
+@import "@fontsource-variable/ubuntu-sans";
+@import "@fontsource/ubuntu-mono";
 
 @import "bytemd/dist/index.css";
 @import "./bytemd.css";
+@import "./github.css";
+@import "./github-dark.css";
 
 @layer base {
   :root {

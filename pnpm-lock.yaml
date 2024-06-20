@@ -20,15 +20,21 @@ importers:
       '@bytemd/plugin-gfm':
         specifier: ^1.21.0
         version: 1.21.0(bytemd@1.21.0)
+      '@bytemd/plugin-highlight-ssr':
+        specifier: ^1.21.0
+        version: 1.21.0(bytemd@1.21.0)
       '@bytemd/plugin-medium-zoom':
         specifier: ^1.21.0
         version: 1.21.0(bytemd@1.21.0)
       '@bytemd/react':
         specifier: ^1.21.0
         version: 1.21.0(react@18.3.1)
-      '@fontsource-variable/montserrat':
-        specifier: ^5.0.19
-        version: 5.0.19
+      '@fontsource-variable/ubuntu-sans':
+        specifier: ^5.0.1
+        version: 5.0.1
+      '@fontsource/ubuntu-mono':
+        specifier: ^5.0.20
+        version: 5.0.20
       '@hookform/resolvers':
         specifier: ^3.3.2
         version: 3.3.2(react-hook-form@7.48.2(react@18.3.1))
@@ -140,6 +146,9 @@ importers:
       hast-util-from-html-isomorphic:
         specifier: ^2.0.0
         version: 2.0.0
+      highlight.js:
+        specifier: ^11.9.0
+        version: 11.9.0
       image-type:
         specifier: ^5.2.0
         version: 5.2.0
@@ -149,6 +158,9 @@ importers:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      lowlight:
+        specifier: ^3.1.0
+        version: 3.1.0
       lucide-react:
         specifier: ^0.378.0
         version: 0.378.0(react@18.3.1)
@@ -194,15 +206,15 @@ importers:
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
+      rehype-highlight:
+        specifier: ^7.0.0
+        version: 7.0.0
       rehype-slug:
         specifier: ^6.0.0
         version: 6.0.0
       sharp:
         specifier: ^0.32.2
         version: 0.32.2
-      shiki:
-        specifier: ^1.5.2
-        version: 1.5.2
       slugify:
         specifier: ^1.6.6
         version: 1.6.6
@@ -234,9 +246,6 @@ importers:
       '@iconify/tailwind':
         specifier: ^0.1.4
         version: 0.1.4
-      '@shikijs/transformers':
-        specifier: ^1.5.2
-        version: 1.5.2
       '@tailwindcss/typography':
         specifier: ^0.5.9
         version: 0.5.9(tailwindcss@3.4.3(ts-node@10.9.1(@types/node@20.3.3)(typescript@5.1.6)))
@@ -487,6 +496,11 @@ packages:
     peerDependencies:
       bytemd: ^1.5.0
 
+  '@bytemd/plugin-highlight-ssr@1.21.0':
+    resolution: {integrity: sha512-iUf94WgFRH4o6eUJ00Y7lIUUkPWu+uk422n5uMXmhTOmg60YlS9EpiEMjOL81Xe5xjSFwDnxZJTHzHq8eW4gkQ==}
+    peerDependencies:
+      bytemd: ^1.5.0
+
   '@bytemd/plugin-medium-zoom@1.21.0':
     resolution: {integrity: sha512-7x8iuw3eKfYyjDIcDa5EIa399db6SEk9Y2ntaZoJvJAf02ASXOZHwBht9PYredoPEjXgZS6awJ5Adr/fM/QJ4A==}
     peerDependencies:
@@ -631,8 +645,11 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@fontsource-variable/montserrat@5.0.19':
-    resolution: {integrity: sha512-vOlVjdGock2yBOeBbg5qexPa1TJM/PS8Nx9YlF6DFEtFf/Y5ayDbZRvV/WPj8W2vk7/aDxUEtTAp/Qp8wK9hNQ==}
+  '@fontsource-variable/ubuntu-sans@5.0.1':
+    resolution: {integrity: sha512-HTTi7A1LS/w8RIW1+iR+12jrpwVcMlscbpjNAvrYkcktsUcl+IRrvjCopSda4G3uWZNzrtqprC32WDn79M+Q0Q==}
+
+  '@fontsource/ubuntu-mono@5.0.20':
+    resolution: {integrity: sha512-DR//BlexvmRZIV+j4AQLKIAEso5McT+3CiDqyJkuRAwUK6QzCnTt8fAB5+TKj3R/ww92nYDZpnb3KTjoozmgXg==}
 
   '@hookform/resolvers@3.3.2':
     resolution: {integrity: sha512-Tw+GGPnBp+5DOsSg4ek3LCPgkBOuOgS5DsDV7qsWNH9LZc433kgsWICjlsh2J9p04H2K66hsXPPb9qn9ILdUtA==}
@@ -1386,12 +1403,6 @@ packages:
 
   '@rushstack/eslint-patch@1.10.2':
     resolution: {integrity: sha512-hw437iINopmQuxWPSUEvqE56NCPsiU8N4AYtfHmJFckclktzK9YQJieD3XkDCDH4OjL+C7zgPUh73R/nrcHrqw==}
-
-  '@shikijs/core@1.5.2':
-    resolution: {integrity: sha512-wSAOgaz48GmhILFElMCeQypSZmj6Ru6DttOOtl3KNkdJ17ApQuGNCfzpk4cClasVrnIu45++2DBwG4LNMQAfaA==}
-
-  '@shikijs/transformers@1.5.2':
-    resolution: {integrity: sha512-/Sh64rKOFGMQLCvtHeL1Y7EExdq8LLxcdVkvoGx2aMHsYMOn8DckYl2gYKMHRBu/YUt1C38/Amd1Jdh48tWHgw==}
 
   '@swc/counter@0.1.3':
     resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
@@ -2898,6 +2909,9 @@ packages:
   hast-util-heading-rank@3.0.0:
     resolution: {integrity: sha512-EJKb8oMUXVHcWZTDepnr+WNbfnXKFNf9duMesmr4S8SXTJBJ9M4Yok08pu9vxdJwdlGRhVumk9mEhkEvKGifwA==}
 
+  hast-util-is-element@2.1.3:
+    resolution: {integrity: sha512-O1bKah6mhgEq2WtVMk+Ta5K7pPMqsBBlmzysLdcwKVrqzZQ0CHqUPiIVspNhAG1rvxpvJjtGee17XfauZYKqVA==}
+
   hast-util-is-element@3.0.0:
     resolution: {integrity: sha512-Val9mnv2IWpLbNPqc/pUem+a7Ipj2aHacCwgNfTiK0vJKl0LF+4Ba4+v1oPHFpf3bLYmreq0/l3Gud9S5OH42g==}
 
@@ -2922,6 +2936,12 @@ packages:
   hast-util-to-string@3.0.0:
     resolution: {integrity: sha512-OGkAxX1Ua3cbcW6EJ5pT/tslVb90uViVkcJ4ZZIMW/R33DX/AkcJcRrPebPwJkHYwlDHXz4aIwvAAaAdtrACFA==}
 
+  hast-util-to-text@3.1.2:
+    resolution: {integrity: sha512-tcllLfp23dJJ+ju5wCCZHVpzsQQ43+moJbqVX3jNWPB7z/KFC4FyZD6R7y94cHL6MQ33YtMZL8Z0aIXXI4XFTw==}
+
+  hast-util-to-text@4.0.2:
+    resolution: {integrity: sha512-KK6y/BN8lbaq654j7JgBydev7wuNMcID54lkRav1P0CaE1e47P72AWWPiGKXTJU271ooYzcvTAn/Zt0REnvc7A==}
+
   hast-util-whitespace@2.0.1:
     resolution: {integrity: sha512-nAxA0v8+vXSBDt3AnRUNjyRIQ0rD+ntpbAp4LnPkumc5M9yUbSMa4XDU9Q6etY4f1Wp4bNgvc1yjiZtsTTrSng==}
 
@@ -2930,6 +2950,14 @@ packages:
 
   hastscript@8.0.0:
     resolution: {integrity: sha512-dMOtzCEd3ABUeSIISmrETiKuyydk1w0pa+gE/uormcTpSYuaNJPbX1NU3JLyscSLjwAQM8bWMhhIlnCqnRvDTw==}
+
+  highlight.js@11.8.0:
+    resolution: {integrity: sha512-MedQhoqVdr0U6SSnWPzfiadUcDHfN/Wzq25AkXiQv9oiOO/sG0S7XkvpFIqWBl9Yq1UYyYOOVORs5UW2XlPyzg==}
+    engines: {node: '>=12.0.0'}
+
+  highlight.js@11.9.0:
+    resolution: {integrity: sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==}
+    engines: {node: '>=12.0.0'}
 
   homedir-polyfill@1.0.3:
     resolution: {integrity: sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==}
@@ -3415,6 +3443,12 @@ packages:
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
+
+  lowlight@2.9.0:
+    resolution: {integrity: sha512-OpcaUTCLmHuVuBcyNckKfH5B0oA4JUavb/M/8n9iAvanJYNQkrVm4pvyX0SUaqkBG4dnWHKt7p50B3ngAG2Rfw==}
+
+  lowlight@3.1.0:
+    resolution: {integrity: sha512-CEbNVoSikAxwDMDPjXlqlFYiZLkDJHwyGu/MfOsJnF3d7f3tds5J3z8s/l9TMXhzfsJCCJEAsD78842mwmg0PQ==}
 
   lru-cache@10.2.2:
     resolution: {integrity: sha512-9hp3Vp2/hFQUiIwKo8XCeFVnrg8Pk3TYNPIR7tJADKi5YfcF7vEaK7avFHTlSy3kOKYaJQaalfEo6YuXdceBOQ==}
@@ -4304,6 +4338,12 @@ packages:
   rehype-autolink-headings@7.1.0:
     resolution: {integrity: sha512-rItO/pSdvnvsP4QRB1pmPiNHUskikqtPojZKJPPPAVx9Hj8i8TwMBhofrrAYRhYOOBZH9tgmG5lPqDLuIWPWmw==}
 
+  rehype-highlight@6.0.0:
+    resolution: {integrity: sha512-q7UtlFicLhetp7K48ZgZiJgchYscMma7XjzX7t23bqEJF8m6/s+viXQEe4oHjrATTIZpX7RG8CKD7BlNZoh9gw==}
+
+  rehype-highlight@7.0.0:
+    resolution: {integrity: sha512-QtobgRgYoQaK6p1eSr2SD1i61f7bjF2kZHAQHxeCHAuJf7ZUDMvQ7owDq9YTkmar5m5TSUol+2D3bp3KfJf/oA==}
+
   rehype-raw@6.1.1:
     resolution: {integrity: sha512-d6AKtisSRtDRX4aSPsJGTfnzrX2ZkHQLE5kiUuGOeEoLpbEulFF4hj0mLPbsa+7vmguDKOVVEQdHKDSwoaIDsQ==}
 
@@ -4483,9 +4523,6 @@ packages:
   shebang-regex@3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
-
-  shiki@1.5.2:
-    resolution: {integrity: sha512-fpPbuSaatinmdGijE7VYUD3hxLozR3ZZ+iAx8Iy2X6REmJGyF5hQl94SgmiUNTospq346nXUVZx0035dyGvIVw==}
 
   side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
@@ -4915,6 +4952,12 @@ packages:
   unified@11.0.4:
     resolution: {integrity: sha512-apMPnyLjAX+ty4OrNap7yumyVAMlKx5IWU2wlzzUdYJO9A8f1p9m/gywF/GM2ZDFcjQPrx59Mc90KwmxsoklxQ==}
 
+  unist-util-find-after@4.0.1:
+    resolution: {integrity: sha512-QO/PuPMm2ERxC6vFXEPtmAutOopy5PknD+Oq64gGwxKtk4xwo9Z97t9Av1obPmGU0IyTa6EKYUfTrK2QJS3Ozw==}
+
+  unist-util-find-after@5.0.0:
+    resolution: {integrity: sha512-amQa0Ep2m6hE2g72AugUItjbuM8X8cGQnFoHk0pGfrFeT9GZhzN5SW8nRsiGKK7Aif4CrACPENkA6P/Lw6fHGQ==}
+
   unist-util-generated@2.0.1:
     resolution: {integrity: sha512-qF72kLmPxAw0oN2fwpWIqbXAVyEqUzDHMsbtPvOudIlUzXYFIeQIuxXQCRCFh22B7cixvU0MG7m3MW8FTq/S+A==}
 
@@ -5314,6 +5357,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@bytemd/plugin-highlight-ssr@1.21.0(bytemd@1.21.0)':
+    dependencies:
+      bytemd: 1.21.0
+      rehype-highlight: 6.0.0
+
   '@bytemd/plugin-medium-zoom@1.21.0(bytemd@1.21.0)':
     dependencies:
       bytemd: 1.21.0
@@ -5529,7 +5577,9 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@fontsource-variable/montserrat@5.0.19': {}
+  '@fontsource-variable/ubuntu-sans@5.0.1': {}
+
+  '@fontsource/ubuntu-mono@5.0.20': {}
 
   '@hookform/resolvers@3.3.2(react-hook-form@7.48.2(react@18.3.1))':
     dependencies:
@@ -6359,12 +6409,6 @@ snapshots:
       '@babel/runtime': 7.22.5
 
   '@rushstack/eslint-patch@1.10.2': {}
-
-  '@shikijs/core@1.5.2': {}
-
-  '@shikijs/transformers@1.5.2':
-    dependencies:
-      shiki: 1.5.2
 
   '@swc/counter@0.1.3': {}
 
@@ -8286,6 +8330,11 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
+  hast-util-is-element@2.1.3:
+    dependencies:
+      '@types/hast': 2.3.4
+      '@types/unist': 2.0.6
+
   hast-util-is-element@3.0.0:
     dependencies:
       '@types/hast': 3.0.4
@@ -8343,6 +8392,20 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
+  hast-util-to-text@3.1.2:
+    dependencies:
+      '@types/hast': 2.3.4
+      '@types/unist': 2.0.6
+      hast-util-is-element: 2.1.3
+      unist-util-find-after: 4.0.1
+
+  hast-util-to-text@4.0.2:
+    dependencies:
+      '@types/hast': 3.0.4
+      '@types/unist': 3.0.2
+      hast-util-is-element: 3.0.0
+      unist-util-find-after: 5.0.0
+
   hast-util-whitespace@2.0.1: {}
 
   hastscript@7.2.0:
@@ -8360,6 +8423,10 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 6.2.0
       space-separated-tokens: 2.0.2
+
+  highlight.js@11.8.0: {}
+
+  highlight.js@11.9.0: {}
 
   homedir-polyfill@1.0.3:
     dependencies:
@@ -8813,6 +8880,18 @@ snapshots:
   loose-envify@1.4.0:
     dependencies:
       js-tokens: 4.0.0
+
+  lowlight@2.9.0:
+    dependencies:
+      '@types/hast': 2.3.4
+      fault: 2.0.1
+      highlight.js: 11.8.0
+
+  lowlight@3.1.0:
+    dependencies:
+      '@types/hast': 3.0.4
+      devlop: 1.1.0
+      highlight.js: 11.9.0
 
   lru-cache@10.2.2: {}
 
@@ -9826,6 +9905,22 @@ snapshots:
       unified: 11.0.4
       unist-util-visit: 5.0.0
 
+  rehype-highlight@6.0.0:
+    dependencies:
+      '@types/hast': 2.3.4
+      hast-util-to-text: 3.1.2
+      lowlight: 2.9.0
+      unified: 10.1.2
+      unist-util-visit: 4.1.2
+
+  rehype-highlight@7.0.0:
+    dependencies:
+      '@types/hast': 3.0.4
+      hast-util-to-text: 4.0.2
+      lowlight: 3.1.0
+      unist-util-visit: 5.0.0
+      vfile: 6.0.1
+
   rehype-raw@6.1.1:
     dependencies:
       '@types/hast': 2.3.4
@@ -10052,10 +10147,6 @@ snapshots:
       shebang-regex: 3.0.0
 
   shebang-regex@3.0.0: {}
-
-  shiki@1.5.2:
-    dependencies:
-      '@shikijs/core': 1.5.2
 
   side-channel@1.0.4:
     dependencies:
@@ -10563,6 +10654,16 @@ snapshots:
       is-plain-obj: 4.1.0
       trough: 2.1.0
       vfile: 6.0.1
+
+  unist-util-find-after@4.0.1:
+    dependencies:
+      '@types/unist': 2.0.6
+      unist-util-is: 5.2.1
+
+  unist-util-find-after@5.0.0:
+    dependencies:
+      '@types/unist': 3.0.2
+      unist-util-is: 6.0.0
 
   unist-util-generated@2.0.1: {}
 

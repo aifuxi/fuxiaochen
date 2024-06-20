@@ -80,8 +80,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Montserrat Variable", "PingFang", ...fontFamily.sans],
-        mono: [...fontFamily.mono],
+        sans: ["Ubuntu Sans Variable", "PingFang", ...fontFamily.sans],
+        mono: ["Ubuntu Mono", ...fontFamily.mono],
       },
       keyframes: {
         "accordion-down": {
