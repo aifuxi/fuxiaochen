@@ -50,12 +50,25 @@
   border-radius: 10px;
 }
 
-.markdown-body pre > code {
-  @apply mt-10 !whitespace-pre-wrap !break-all;
-}
-
 .markdown-body p code {
   @apply mx-2;
+}
+
+.markdown-body pre {
+  @apply relative !my-0 !rounded-lg !p-0 text-primary;
+}
+
+.markdown-body pre > code {
+  @apply mx-2 mt-14 !whitespace-pre-wrap !break-all text-base;
+}
+
+.markdown-body pre > .copy-code-button {
+  @apply absolute right-4 top-0 z-[1] flex h-[40px] cursor-pointer items-center text-lg transition-opacity ease-in-out;
+}
+
+.markdown-body pre::after {
+  content: attr(data-language);
+  @apply absolute  inset-x-0 top-0 border-b border-b-muted-foreground/20 px-4 py-2 text-primary;
 }
 
 .markdown-body iframe {
@@ -75,7 +88,7 @@
 }
 
 .markdown-body img {
-  @apply max-h-[40vh] rounded-lg border p-4;
+  @apply mx-auto max-h-[40vh] rounded-lg border p-4;
 }
 
 /* 编辑器内标题样式 */
