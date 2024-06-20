@@ -16,6 +16,7 @@ const config = {
     "^react",
     "^next",
     "<THIRD_PARTY_MODULES>",
+    "highlight.js*",
     "@/app/(.*)",
     "@/config",
     "@/types",
