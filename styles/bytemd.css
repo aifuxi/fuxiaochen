@@ -93,37 +93,37 @@
 
 /* 编辑器内标题样式 */
 .cm-header {
-  @apply !text-pink-500 dark:!text-pink-600;
+  @apply !text-[#005cc5] dark:!text-[#79b8ff];
 }
 
 /* 编辑器内列表项样式 */
 .cm-variable-2 {
-  @apply !text-cyan-500 dark:!text-cyan-600;
+  @apply !text-[#24292e] dark:!text-[#e1e4e8];
 }
 
 /* 编辑器内代码块样式 */
 .cm-comment {
-  @apply !text-orange-500 dark:!text-orange-600;
+  @apply !text-[#032f62] dark:!text-[#9ecbff];
 }
 
-/* 编辑器内代码块样式 */
+/* 编辑器内引用样式 */
 .cm-quote {
-  @apply !text-green-500 dark:!text-green-600;
+  @apply !text-[#22863a] dark:!text-[#85e89d];
 }
 
 /* 编辑器内链接样式 */
 .cm-link {
-  @apply !text-blue-500 dark:!text-blue-600;
+  @apply !text-[#22863a] dark:!text-[#85e89d];
 }
 
 /* 编辑器内图片链接样式 */
 .cm-string {
-  @apply !break-all !text-rose-500 dark:!text-rose-600;
+  @apply !break-all !text-[#24292e] dark:!text-[#e1e4e8];
 }
 
 /* 编辑器内光标颜色 */
 .CodeMirror-cursor {
-  @apply !border-l-2 !border-l-foreground;
+  @apply !border-l-2 !border-l-[#204085] dark:!border-l-[#cee0fd];
 }
 
 /* 编辑器内显示行数 */
