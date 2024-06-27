@@ -3,14 +3,9 @@
 import { type Prisma } from "@prisma/client";
 import { isUndefined } from "lodash-es";
 
-import {
-  ERROR_NO_PERMISSION,
-  MEILISEARCH_INDEX_SNIPPETS,
-  PUBLISHED_MAP,
-} from "@/constants";
+import { ERROR_NO_PERMISSION, PUBLISHED_MAP } from "@/constants";
 import { batchGetSnippetUV } from "@/features/statistics";
 import { noPermission } from "@/features/user";
-import { meilisearchClient } from "@/lib/meilisearch";
 import { prisma } from "@/lib/prisma";
 import { getSkip } from "@/utils";
 
@@ -132,9 +127,6 @@ export const deleteSnippetByID = async (id: string) => {
       id,
     },
   });
-
-  // 同步删除 meilisearch里的 document
-  await meilisearchClient.index(MEILISEARCH_INDEX_SNIPPETS).deleteDocument(id);
 };
 
 export const createSnippet = async (params: CreateSnippetDTO) => {
@@ -158,7 +150,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
     throw new Error("标题或者slug重复");
   }
 
-  const snippet = await prisma.snippet.create({
+  await prisma.snippet.create({
     data: {
       ...result.data,
       tags: {
@@ -166,11 +158,6 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
       },
     },
   });
-
-  // 同步在 meilisearch 里创建 document
-  await meilisearchClient
-    .index(MEILISEARCH_INDEX_SNIPPETS)
-    .addDocuments([snippet]);
 };
 
 export const toggleSnippetPublished = async (id: string) => {
@@ -187,7 +174,7 @@ export const toggleSnippetPublished = async (id: string) => {
     throw new Error("片段不存在");
   }
 
-  const updated = await prisma.snippet.update({
+  await prisma.snippet.update({
     data: {
       published: !snippet.published,
     },
@@ -195,11 +182,6 @@ export const toggleSnippetPublished = async (id: string) => {
       id,
     },
   });
-
-  // 同步更新在 meilisearch 里的document
-  await meilisearchClient
-    .index(MEILISEARCH_INDEX_SNIPPETS)
-    .updateDocuments([updated]);
 };
 
 export const updateSnippet = async (params: UpdateSnippetDTO) => {
@@ -232,9 +214,4 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
   if (!snippet) {
     throw new Error("Snippet不存在");
   }
-
-  // 同步更新在 meilisearch 里的document
-  await meilisearchClient
-    .index(MEILISEARCH_INDEX_SNIPPETS)
-    .updateDocuments([snippet]);
 };
