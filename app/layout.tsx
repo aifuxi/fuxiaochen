@@ -12,6 +12,7 @@ import { ReactHotToaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { Console } from "@/components/console";
+import { Favicon } from "@/components/favicon";
 import { Fingerprint } from "@/components/fingerprint";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <TooltipProvider>
             {children}
 
+            <Favicon />
             <ReactHotToaster />
 
             <Console />
