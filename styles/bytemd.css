@@ -96,6 +96,11 @@
   @apply mx-auto max-h-[40vh] rounded-lg border p-4;
 }
 
+/* 修复存在表格时，表格宽度溢出的问题 */
+.markdown-body table thead th {
+  @apply break-all;
+}
+
 /* 编辑器内标题样式 */
 .cm-header {
   @apply !text-[#005cc5] dark:!text-[#79b8ff];
