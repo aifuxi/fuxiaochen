@@ -64,7 +64,7 @@
 }
 
 .markdown-body pre > code {
-  @apply mx-2 mt-14 !whitespace-pre-wrap !break-all text-base;
+  @apply mx-2 mt-14 !whitespace-pre-wrap !break-words text-base;
 }
 
 .markdown-body pre > .copy-code-button {
