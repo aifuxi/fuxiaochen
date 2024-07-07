@@ -29,12 +29,6 @@ importers:
       '@bytemd/react':
         specifier: ^1.21.0
         version: 1.21.0(react@18.3.1)
-      '@fontsource-variable/ubuntu-sans':
-        specifier: ^5.0.1
-        version: 5.0.1
-      '@fontsource/ubuntu-mono':
-        specifier: ^5.0.20
-        version: 5.0.20
       '@hookform/resolvers':
         specifier: ^3.3.2
         version: 3.3.2(react-hook-form@7.48.2(react@18.3.1))
@@ -641,12 +635,6 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
-
-  '@fontsource-variable/ubuntu-sans@5.0.1':
-    resolution: {integrity: sha512-HTTi7A1LS/w8RIW1+iR+12jrpwVcMlscbpjNAvrYkcktsUcl+IRrvjCopSda4G3uWZNzrtqprC32WDn79M+Q0Q==}
-
-  '@fontsource/ubuntu-mono@5.0.20':
-    resolution: {integrity: sha512-DR//BlexvmRZIV+j4AQLKIAEso5McT+3CiDqyJkuRAwUK6QzCnTt8fAB5+TKj3R/ww92nYDZpnb3KTjoozmgXg==}
 
   '@hookform/resolvers@3.3.2':
     resolution: {integrity: sha512-Tw+GGPnBp+5DOsSg4ek3LCPgkBOuOgS5DsDV7qsWNH9LZc433kgsWICjlsh2J9p04H2K66hsXPPb9qn9ILdUtA==}
@@ -1898,11 +1886,8 @@ packages:
     resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
     engines: {node: '>=6'}
 
-  caniuse-lite@1.0.30001571:
-    resolution: {integrity: sha512-tYq/6MoXhdezDLFZuCO/TKboTzuQ/xR5cFdgXPfDtM7/kchBO3b4VWghE/OAi/DV7tTdhmLjZiZBZi1fA/GheQ==}
-
-  caniuse-lite@1.0.30001614:
-    resolution: {integrity: sha512-jmZQ1VpmlRwHgdP1/uiKzgiAuGOfLEJsYFP4+GBou/QQ4U6IOJCB4NP1c+1p9RGLpwObcT94jA5/uO+F1vBbog==}
+  caniuse-lite@1.0.30001640:
+    resolution: {integrity: sha512-lA4VMpW0PSUrFnkmVuEKBUovSWKhj7puyCg8StBChgu298N1AtuF1sKWEvfDuimSEDbhlb/KqPKC3fs1HbuQUA==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -5550,10 +5535,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@fontsource-variable/ubuntu-sans@5.0.1': {}
-
-  '@fontsource/ubuntu-mono@5.0.20': {}
-
   '@hookform/resolvers@3.3.2(react-hook-form@7.48.2(react@18.3.1))':
     dependencies:
       react-hook-form: 7.48.2(react@18.3.1)
@@ -6883,7 +6864,7 @@ snapshots:
   autoprefixer@10.4.14(postcss@8.4.24):
     dependencies:
       browserslist: 4.21.9
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001640
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -6939,7 +6920,7 @@ snapshots:
 
   browserslist@4.21.9:
     dependencies:
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001640
       electron-to-chromium: 1.4.449
       node-releases: 2.0.12
       update-browserslist-db: 1.0.11(browserslist@4.21.9)
@@ -7007,9 +6988,7 @@ snapshots:
 
   camelcase@5.3.1: {}
 
-  caniuse-lite@1.0.30001571: {}
-
-  caniuse-lite@1.0.30001614: {}
+  caniuse-lite@1.0.30001640: {}
 
   ccount@2.0.1: {}
 
@@ -9313,7 +9292,7 @@ snapshots:
       '@next/env': 14.2.3
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001614
+      caniuse-lite: 1.0.30001640
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.3.1
