@@ -60,8 +60,7 @@ export const HeroSection = () => {
       >
         喜欢
         <span className={`font-semibold text-[#00d8ff]`}>React</span>、
-        <span className={`font-semibold text-[#007acc]`}>TypeScript</span>和
-        <span className={`font-semibold text-[#00b4e0]`}>Golang</span>
+        <span className={`font-semibold text-[#007acc]`}>TypeScript</span>
         <span className="ml-4">\owo/ ~</span>
       </p>
       <p

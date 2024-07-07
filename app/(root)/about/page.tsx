@@ -14,7 +14,6 @@ import {
   IconSkillDocker,
   IconSkillFigmaDark,
   IconSkillFigmaLight,
-  IconSkillGolang,
   IconSkillHTML,
   IconSkillJavaScript,
   IconSkillMysqlDark,
@@ -133,10 +132,6 @@ export default function Page() {
                 <IconSkillMysqlLight className="mx-1 hidden translate-y-0.5 dark:inline-block" />
               </>
               MySQL 搞全栈开发
-            </li>
-            <li>
-              <IconSkillGolang className="mx-1 translate-y-0.5" />
-              Golang，非常感兴趣，目前能简单 CRUD，还在努力学习中
             </li>
           </ul>
         </div>
