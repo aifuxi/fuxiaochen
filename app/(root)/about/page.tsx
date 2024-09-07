@@ -144,7 +144,7 @@ export default function Page() {
           <h3>其它</h3>
           <ul>
             <li>
-              Zsh + Oh My Zsh + iTerm2 + Mononoki Nerd Font Mono，舒服的很
+              Zsh + Oh My Zsh + iTerm2 + JetBrainsMono Nerd Font Mono，舒服的很
             </li>
             <li>
               用过 <IconLogoCentOS className="mx-1 translate-y-0.5" />
