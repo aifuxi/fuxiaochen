@@ -7,19 +7,17 @@ import { DetailSidebar } from "@/components/detail-sidebar";
 import { MarkdownTOC } from "@/components/markdown-toc";
 import { Wrapper } from "@/components/wrapper";
 
-import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
+import { PATHS } from "@/constants";
 import { TagList } from "@/features/tag";
 import { cn, prettyDateWithWeekday } from "@/lib/utils";
 
-import { SnippetEventTracking } from "../components/snippet-event-tracking";
 import { type Snippet } from "../types";
 
 type SnippetDetailProps = {
   snippet: Snippet;
-  uv?: number;
 };
 
-export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
+export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
   return (
     <Wrapper className="flex min-h-screen flex-col pt-8">
       <div>
@@ -36,7 +34,6 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
       </div>
       <div className="flex items-center space-x-4 pb-4 pt-8 text-sm text-muted-foreground">
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(snippet.createdAt)}</p>
-        <p>{uv || PLACEHOLDER_TEXT}&nbsp;&nbsp;人浏览过</p>
       </div>
       <h1 className="break-all py-6 text-4xl font-semibold">{snippet.title}</h1>
 
@@ -58,7 +55,6 @@ export const SnippetDetailPage = ({ snippet, uv = 0 }: SnippetDetailProps) => {
       <div className="pb-14 pt-16">
         <TagList tags={snippet.tags} />
       </div>
-      <SnippetEventTracking snippetID={snippet.id} />
     </Wrapper>
   );
 };

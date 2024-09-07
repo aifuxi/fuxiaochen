@@ -2,21 +2,19 @@ import React from "react";
 
 import Link from "next/link";
 
-import { Calendar, Eye } from "lucide-react";
+import { Calendar } from "lucide-react";
 
-import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
+import { PATHS } from "@/constants";
 import { TagPrefixIcon } from "@/features/tag";
 import { cn, prettyDate } from "@/lib/utils";
-import { formatNum } from "@/utils";
 
 import { type Blog } from "../types";
 
 type BlogListItemProps = {
   blog: Blog;
-  uvMap?: Record<string, number>;
 };
 
-export const BlogListItem = ({ blog, uvMap }: BlogListItemProps) => {
+export const BlogListItem = ({ blog }: BlogListItemProps) => {
   return (
     <Link
       href={`${PATHS.SITE_BLOG}/${blog.slug}`}
@@ -43,14 +41,6 @@ export const BlogListItem = ({ blog, uvMap }: BlogListItemProps) => {
           <time dateTime={blog.createdAt.toISOString()}>
             {prettyDate(blog.createdAt)}
           </time>
-        </div>
-        <div className="flex h-5 items-center space-x-1">
-          <Eye className="size-3" />
-          <span>
-            {formatNum(uvMap?.[blog.id])
-              ? formatNum(uvMap?.[blog.id])
-              : PLACEHOLDER_TEXT}
-          </span>
         </div>
       </div>
     </Link>
