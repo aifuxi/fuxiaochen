@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-import GoogleProvider from "next-auth/providers/google";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
@@ -12,15 +11,11 @@ import { prisma } from "./prisma";
 
 export const { handlers, auth, signOut, signIn } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  providers: [GithubProvider],
   // 解决这个错误：Error: PrismaClient is not configured to run in Vercel Edge Functions or Edge Middleware.
   // 参考：https://github.com/prisma/prisma/issues/21310#issuecomment-1840428931
   session: { strategy: "jwt" },
   trustHost: true,
-  providers: [
-    // 允许多个account关联同一个user（email相同）
-    GithubProvider({ allowDangerousEmailAccountLinking: true }),
-    GoogleProvider({ allowDangerousEmailAccountLinking: true }),
-  ],
   pages: {
     signIn: PATHS.AUTH_SIGN_IN,
   },
