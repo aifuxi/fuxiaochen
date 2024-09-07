@@ -12,7 +12,6 @@ import { ReactHotToaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { Console } from "@/components/console";
-import { Favicon } from "@/components/favicon";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
@@ -31,10 +30,23 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     <html suppressHydrationWarning lang="zh-CN">
       <head>
         <link
-          rel="icon"
-          type="image/svg+xml"
-          href="/images/fuxiaochen-dark.svg"
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
         />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
         {/* Google Search Console 验证 */}
         <meta
           name="google-site-verification"
@@ -51,7 +63,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <TooltipProvider>
             {children}
 
-            <Favicon />
             <ReactHotToaster />
 
             <Console />
