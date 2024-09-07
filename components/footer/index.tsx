@@ -14,15 +14,11 @@ import {
   SLOGAN,
   navItems,
 } from "@/constants";
-import { getSiteStatistics } from "@/features/statistics";
 import { cn } from "@/lib/utils";
-import { formatNum } from "@/utils";
 
 import { Wrapper } from "../wrapper";
 
-export const Footer = async () => {
-  const { pv, uv, todayPV, todayUV } = await getSiteStatistics();
-
+export const Footer = () => {
   return (
     <footer className="px-6 py-12">
       <Wrapper
@@ -49,22 +45,6 @@ export const Footer = async () => {
             >
               {PATHS_MAP[PATHS.SITEMAP]}
             </Link>
-          </dd>
-        </dl>
-        <dl className="flex flex-col gap-3">
-          <dt className="text-lg font-semibold text-primary">统计</dt>
-          <dd>
-            今日 <span>{formatNum(todayPV)}</span> 次浏览
-          </dd>
-          <dd>
-            今日 <span>{formatNum(todayUV)}</span> 人访问
-          </dd>
-
-          <dd>
-            总 <span>{formatNum(pv)}</span> 次浏览（PV）
-          </dd>
-          <dd>
-            总 <span>{formatNum(uv)}</span> 人访问（UV）
           </dd>
         </dl>
       </Wrapper>

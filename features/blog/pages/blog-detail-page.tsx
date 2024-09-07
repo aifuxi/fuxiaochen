@@ -11,7 +11,6 @@ import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
 import { TagList } from "@/features/tag";
 import { cn, prettyDateWithWeekday } from "@/lib/utils";
 
-import { BlogEventTracking } from "../components/blog-event-tracking";
 import { type Blog } from "../types";
 
 type BlogDetailProps = {
@@ -59,7 +58,6 @@ export const BlogDetailPage = ({ blog, uv = 0 }: BlogDetailProps) => {
       <div className="pb-14 pt-16">
         <TagList tags={blog.tags} />
       </div>
-      <BlogEventTracking blogID={blog.id} />
     </Wrapper>
   );
 };

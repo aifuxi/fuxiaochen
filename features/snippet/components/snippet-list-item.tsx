@@ -2,21 +2,19 @@ import React from "react";
 
 import Link from "next/link";
 
-import { Calendar, Eye } from "lucide-react";
+import { Calendar } from "lucide-react";
 
-import { PATHS, PLACEHOLDER_TEXT } from "@/constants";
+import { PATHS } from "@/constants";
 import { TagPrefixIcon } from "@/features/tag";
 import { cn, prettyDate } from "@/lib/utils";
-import { formatNum } from "@/utils";
 
 import { type Snippet } from "../types";
 
 type SnippetListItemProps = {
   snippet: Snippet;
-  uvMap?: Record<string, number>;
 };
 
-export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
+export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
   return (
     <Link
       href={`${PATHS.SITE_SNIPPET}/${snippet.slug}`}
@@ -43,14 +41,6 @@ export const SnippetListItem = ({ snippet, uvMap }: SnippetListItemProps) => {
           <time dateTime={snippet.createdAt.toISOString()}>
             {prettyDate(snippet.createdAt)}
           </time>
-        </div>
-        <div className="flex h-5 items-center space-x-1">
-          <Eye className="size-3" />
-          <span>
-            {formatNum(uvMap?.[snippet.id])
-              ? formatNum(uvMap?.[snippet.id])
-              : PLACEHOLDER_TEXT}
-          </span>
         </div>
       </div>
     </Link>
