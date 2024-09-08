@@ -37,9 +37,6 @@ export const PUBLISHED_MAP = {
   [PUBLISHED_ENUM.NO_PUBLISHED]: false,
 };
 
-//  埋点信息cuid Local Storage key，使用 cuid 作为用户唯一标识
-export const STORAGE_KEY_EVENT_TRACKING_CUID = "event_tracking_cuid";
-
 type NavItem = {
   link: string;
   label: string;
