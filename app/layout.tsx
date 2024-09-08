@@ -1,10 +1,11 @@
 import React from "react";
 
 import { type Metadata } from "next";
+import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import { NODE_ENV } from "@/config";
+import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
 
 import { ThemeProvider } from "@/providers";
 
@@ -15,6 +16,7 @@ import { Console } from "@/components/console";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
+import { isProduction } from "@/utils";
 
 export const metadata: Metadata = {
   title: {
@@ -71,7 +73,15 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </body>
 
       {/* Google Analytics  */}
-      {NODE_ENV === "production" && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+
+      {/* umami 统计 */}
+      <Script
+        id="umami"
+        src={NEXT_PUBLIC_UMAMI_URL}
+        async
+        data-website-id={NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+      />
     </html>
   );
 }
