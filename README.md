@@ -17,13 +17,9 @@
 
 - 使用 Next.js v14 + React 18 hooks 进行构建，完美支持 SSR
 
-- 使用 Meilisearch 支持博客和片段的全文搜索
-
 - 使用 TypeScript 编写，提供类型安全性和更好的开发体验
 
 - 使用 Prisma 简化数据库 CRUD 操作
-
-- 使用 Redis + ioredis 统计网站浏览量、博客和片段浏览量
 
 - 使用 Tailwind CSS + shadcn/ui 编写样式和组件
 
@@ -124,10 +120,6 @@ docker-compose up -d
 # DATABASE_URL 格式为 mysql://用户名:用户密码@数据库IP:数据库端口/需要连接的数据库名
 # 根据实际情况进行修改
 DATABASE_URL="mysql://root:123456@127.0.0.1:3306/fuxiaochen"
-
-# 根据实际情况进行修改
-REDIS_HOST="127.0.0.1"
-REDIS_PORT="6379"
 ```
 
 #### 配置 `.env.development` 文件
@@ -146,12 +138,6 @@ Github 登录用，如果不用 Github 登录，可不配置
 - `NEXT_PUBLIC_ADMIN_EMAILS`：ADMIN 邮箱列表，只有配置在这里的邮箱，才允许在后台管理进行新增、修改、删除操作
 
 如何获取授权应用的 ID 和 secret，可以跟着小付哥（不是我）这篇文章来：[基于Next14+Auth5实现Github、Google、Gitee平台授权登录和邮箱密码登录](https://juejin.cn/post/7329736763060518931)
-
-- `NEXT_PUBLIC_MEILISEARCH_HOST`：Meilisearch 服务地址
-
-- `NEXT_PUBLIC_MEILISEARCH_KEY`：Meilisearch 服务 Master key
-
-Meilisearch 是一个类似 Elasticsearch 的搜索引擎，更轻量，对机器要求比于 Elasticsearch 低很多，点这里 [Meilisearch](https://www.meilisearch.com/) 查看更多 Meilisearch 的信息
 
 ### 启动开发服务器
 
