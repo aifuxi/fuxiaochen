@@ -66,25 +66,10 @@
       "calt" 1;
   }
 }
-/* 适配 shiki 深色模式 */
-html.dark .shiki,
-html.dark .shiki span {
-  color: var(--shiki-dark) !important;
-  background-color: var(--shiki-dark-bg) !important;
-  font-style: var(--shiki-dark-font-style) !important;
-  font-weight: var(--shiki-dark-font-weight) !important;
-  text-decoration: var(--shiki-dark-text-decoration) !important;
-}
 
 /* 选中文本样式 */
-::selection,
-.search-result__item em {
+::selection {
   color: rgb(0, 0, 0);
   background: rgb(255, 239, 92);
   -webkit-text-fill-color: unset !important;
-}
-
-/* 搜索结果 */
-.search-result__item em {
-  @apply mx-1 font-normal not-italic;
 }
