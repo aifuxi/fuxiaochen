@@ -24,7 +24,7 @@
 }
 
 .markdown-body {
-  @apply prose prose-neutral !w-full !max-w-full dark:prose-invert;
+  @apply prose prose-neutral dark:prose-invert;
 }
 
 .markdown-body a {
