@@ -12,7 +12,7 @@ type SnippetDetailProps = {
 
 export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
   return (
-    <Wrapper className="flex !max-w-prose flex-col !px-0 pt-8">
+    <Wrapper className="flex !max-w-prose flex-col pt-8 md:!px-0">
       <h1 className="mb-6 break-all text-4xl font-semibold">{snippet.title}</h1>
 
       <p className="mb-6 text-neutral-500">{snippet.description}</p>
