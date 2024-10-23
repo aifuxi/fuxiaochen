@@ -7,11 +7,10 @@ import { isNil } from "lodash-es";
 import { WEBSITE } from "@/constants";
 import { getSnippetBySlug } from "@/features/snippet";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const params = await props.params;
   const { snippet } = await getSnippetBySlug(params.slug);
 
   if (isNil(snippet)) {
