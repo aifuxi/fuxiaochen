@@ -58,7 +58,6 @@
     "ali-oss": "^6.20.0",
     "bcryptjs": "^2.4.3",
     "bytemd": "^1.21.0",
-    "cheerio": "1.0.0-rc.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "cmdk": "^0.2.0",
