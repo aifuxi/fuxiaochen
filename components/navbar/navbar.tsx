@@ -27,8 +27,9 @@ export const Navbar = () => {
   return (
     <header
       className={cn(
-        "w-full sticky top-0 backdrop-blur transition-[background-color,border-width] border-x-0  flex justify-center z-10",
+        "w-full sticky top-0 backdrop-blur transition-all border-x-0  flex justify-center z-10",
         (scroll?.top ?? 0) > 60 && "bg-background/50 border-b border-border/50",
+        { "-translate-y-20": (scroll?.top ?? 0) > 200 },
       )}
     >
       <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
