@@ -7,11 +7,10 @@ import { isNil } from "lodash-es";
 import { WEBSITE } from "@/constants";
 import { getPublishedBlogBySlug } from "@/features/blog";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
+export async function generateMetadata(props: {
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const params = await props.params;
   const { blog } = await getPublishedBlogBySlug(params.slug);
 
   if (isNil(blog)) {
