@@ -118,6 +118,16 @@ export default {
         "cursor-blink": "cursor-blink 0.6s step-end infinite alternate",
         "intro-scroll": "intro-scroll 3s ease infinite",
       },
+      maxWidth: {
+        "detail-content": "812px",
+      },
+      typography: () => ({
+        DEFAULT: {
+          css: {
+            maxWidth: "812px",
+          },
+        },
+      }),
     },
   },
   plugins: [
