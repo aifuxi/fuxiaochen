@@ -37,7 +37,14 @@
     "editor.defaultFormatter": "Prisma.prisma"
   },
   "javascript.validate.enable": false,
-  "[caddyfile]": {
-    "editor.defaultFormatter": "matthewpi.caddyfile-support"
-  }
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "cva\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]",
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
+  ]
 }

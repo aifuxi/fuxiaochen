@@ -12,7 +12,5 @@
     "meganrogge.template-string-converter",
     "formulahendry.auto-rename-tag",
     "formulahendry.auto-close-tag",
-    "matthewpi.caddyfile-support",
-    "antfu.theme-vitesse"
   ]
 }
