@@ -5,7 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useScroll } from "ahooks";
+import { useScroll, useThrottle } from "ahooks";
 import { UserCog } from "lucide-react";
 
 import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants";
@@ -23,13 +23,39 @@ import { Button } from "../ui/button";
 export const Navbar = () => {
   const scroll = useScroll(() => document);
   const pathname = usePathname();
+  const [previousScrollTop, setPreviousScrollTop] = React.useState(0);
+  const throttledPreviousScrollTop = useThrottle(previousScrollTop, {
+    wait: 500,
+  });
+
+  const [isHideHeader, setIsHideHeader] = React.useState(false);
+  const throttledIsHideHeader = useThrottle(isHideHeader, { wait: 500 });
+
+  React.useEffect(() => {
+    const _top = scroll?.top ?? 0;
+
+    if (_top - throttledPreviousScrollTop < 0) {
+      // 向上滚动时，显示导航栏
+      setIsHideHeader(false);
+    } else {
+      setIsHideHeader(true);
+    }
+
+    if (_top) {
+      setPreviousScrollTop(_top);
+    }
+  }, [scroll?.top]);
 
   return (
     <header
       className={cn(
         "w-full sticky top-0 backdrop-blur transition-all border-x-0  flex justify-center z-10",
-        (scroll?.top ?? 0) > 60 && "bg-background/50 border-b border-border/50",
-        { "-translate-y-20": (scroll?.top ?? 0) > 200 },
+        throttledPreviousScrollTop > 60 &&
+          "bg-background/50 border-b border-border/50",
+        {
+          "-translate-y-20":
+            throttledPreviousScrollTop > 300 ? throttledIsHideHeader : false,
+        },
       )}
     >
       <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
