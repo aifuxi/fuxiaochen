@@ -80,8 +80,7 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        // Avenir 字体 Mac 自带
-        sans: ["Avenir Next", "Avenir", ...fontFamily.sans],
+        sans: ["Gilroy", ...fontFamily.sans],
         mono: [...fontFamily.mono],
       },
       keyframes: {
