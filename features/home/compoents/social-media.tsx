@@ -14,27 +14,27 @@ export const socialMediaList: Array<{
   link: string;
 }> = [
   {
-    icon: <IconBrandGithub className="text-2xl" />,
+    icon: <IconBrandGithub className="text-base" />,
     label: "Github",
     link: GITHUB_PAGE,
   },
   {
     icon: (
       <>
-        <IconSkillGmailDark className="text-2xl dark:hidden" />
-        <IconSkillGmailLight className="hidden text-2xl dark:inline-block" />
+        <IconSkillGmailDark className="text-base dark:hidden" />
+        <IconSkillGmailLight className="hidden text-base dark:inline-block" />
       </>
     ),
     label: "Gmail",
     link: `mailto:${EMAIL}`,
   },
   {
-    icon: <IconBrandBilibili className={`text-2xl text-[#00AEEC]`} />,
+    icon: <IconBrandBilibili className={`text-base text-[#00AEEC]`} />,
     label: "Bilibili",
     link: BILIBILI_PAGE,
   },
   {
-    icon: <IconLogoJuejin className={`text-2xl text-[#2985fc]`} />,
+    icon: <IconLogoJuejin className={`text-base text-[#2985fc]`} />,
     label: "掘金",
     link: JUEJIN_PAGE,
   },
