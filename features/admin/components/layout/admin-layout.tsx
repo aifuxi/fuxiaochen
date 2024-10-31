@@ -42,7 +42,7 @@ import {
 } from "@/components/ui/sidebar";
 
 import { Logo } from "@/components/logo";
-import { PageBreadcrumb } from "@/components/page-header";
+import { PageBreadcrumb } from "@/components/page-breadcrumb";
 
 import {
   PATHS,
