@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import * as React from "react";
 
 import { TagTypeEnum } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
