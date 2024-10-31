@@ -23,12 +23,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { BytemdViewer } from "@/components/bytemd";
-import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE,
-  PATHS,
   PUBLISHED_ENUM,
   PUBLISHED_LABEL_MAP,
 } from "@/constants";
@@ -37,7 +35,6 @@ import { useGetAllTags } from "@/features/tag";
 import { cn, isAdmin, toFromNow, toSlashDateString } from "@/lib/utils";
 
 import {
-  AdminContentLayout,
   CreateNoteButton,
   DeleteNoteButton,
   EditNoteButton,
@@ -74,11 +71,7 @@ export const AdminNoteListPage = () => {
   }, [getTagsQuery]);
 
   return (
-    <AdminContentLayout
-      breadcrumb={
-        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE]} />
-      }
-    >
+    <>
       <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
         <Input
           placeholder="请输入内容"
@@ -192,7 +185,7 @@ export const AdminNoteListPage = () => {
               ))}
         </Masonry>
       </ResponsiveMasonry>
-    </AdminContentLayout>
+    </>
   );
 
   function handleSearch() {

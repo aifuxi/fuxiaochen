@@ -28,13 +28,13 @@ export const PageBreadcrumb = ({ breadcrumbList }: PageBreadcrumbProps) => {
       <BreadcrumbList>
         {linkList.map((el) => (
           <React.Fragment key={el}>
-            <BreadcrumbItem>
+            <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink href={el}>{PATHS_MAP[el]}</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
           </React.Fragment>
         ))}
-        <BreadcrumbItem>
+        <BreadcrumbItem className="hidden md:block">
           <BreadcrumbPage>{PATHS_MAP[labelLink]}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

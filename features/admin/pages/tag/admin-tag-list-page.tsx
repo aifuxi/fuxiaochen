@@ -34,12 +34,10 @@ import {
 
 import { Highlight } from "@/components/highlight";
 import { IllustrationNoContent } from "@/components/illustrations";
-import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
   DEFAULT_PAGE_SIZE,
-  PATHS,
   PLACEHOLDER_TEXT,
   TAG_TYPES,
   TAG_TYPE_MAP,
@@ -48,7 +46,6 @@ import { type GetTagsDTO, type Tag, useGetTags } from "@/features/tag";
 import { cn, toSlashDateString } from "@/lib/utils";
 
 import {
-  AdminContentLayout,
   CreateTagButton,
   DeleteTagButton,
   EditTagButton,
@@ -280,11 +277,7 @@ export const AdminTagListPage = () => {
   ];
 
   return (
-    <AdminContentLayout
-      breadcrumb={
-        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_TAG]} />
-      }
-    >
+    <>
       <div className="mb-4 grid grid-cols-4 gap-4 px-1 py-4">
         <Input
           placeholder="请输入名称"
@@ -350,7 +343,7 @@ export const AdminTagListPage = () => {
           </div>
         }
       />
-    </AdminContentLayout>
+    </>
   );
 
   function handleSearch() {
