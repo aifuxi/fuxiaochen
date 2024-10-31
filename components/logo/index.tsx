@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 import { ImageAssets, WEBSITE } from "@/constants";
 import { cn } from "@/lib/utils";

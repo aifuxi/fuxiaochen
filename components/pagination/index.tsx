@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 
 import { type SetState } from "ahooks/lib/useSetState";
 import { Ellipsis } from "lucide-react";

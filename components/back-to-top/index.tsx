@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import * as React from "react";
 
 import { useMemoizedFn, useScroll } from "ahooks";
 import { ChevronUp } from "lucide-react";
