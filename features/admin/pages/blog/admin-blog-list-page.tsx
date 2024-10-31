@@ -38,7 +38,6 @@ import {
 
 import { Highlight } from "@/components/highlight";
 import { IllustrationNoContent } from "@/components/illustrations";
-import { PageBreadcrumb } from "@/components/page-header";
 
 import {
   DEFAULT_PAGE_INDEX,
@@ -54,7 +53,6 @@ import { useGetAllTags } from "@/features/tag";
 import { cn, isAdmin, toSlashDateString } from "@/lib/utils";
 
 import {
-  AdminContentLayout,
   DeleteBlogButton,
   SearchByTags,
   ToggleBlogPublishSwitch,
@@ -257,11 +255,7 @@ export const AdminBlogListPage = () => {
   ];
 
   return (
-    <AdminContentLayout
-      breadcrumb={
-        <PageBreadcrumb breadcrumbList={[PATHS.ADMIN_HOME, PATHS.ADMIN_BLOG]} />
-      }
-    >
+    <>
       <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
         <Input
           placeholder="请输入标题"
@@ -341,7 +335,7 @@ export const AdminBlogListPage = () => {
           </div>
         }
       />
-    </AdminContentLayout>
+    </>
   );
 
   function handleSearch() {
