@@ -11,11 +11,11 @@
 ![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
 [![Blog](https://img.shields.io/badge/-fuxiaochen.com-0ea5e9?style=for-the-badge&logo=Bloglovin&logoColor=white&label=个人博客)](https://fuxiaochen.com/)
 
-一个简单的个人博客网站，使用 Next.js + React 18 + TypeScript + Shadcn/ui + Tailwind CSS 开发
+一个简单的个人博客网站，使用 Next.js + React 19 + TypeScript + Shadcn/ui + Tailwind CSS 开发
 
 ## 特性
 
-- 使用 Next.js v14 + React 18 hooks 进行构建，完美支持 SSR
+- 使用 Next.js v15 + React 19 hooks 进行构建，完美支持 SSR
 
 - 使用 TypeScript 编写，提供类型安全性和更好的开发体验
 
@@ -31,7 +31,7 @@
 
 - 使用 next-sitemap 生成全站 sitemap ，SEO 友好
 
-- 使用最新的 next-auth v5 支持 Github 和 Google 登录后台管理
+- 使用最新的 next-auth v5 支持 Github登录后台管理
 
 - 使用 ahooks 提升开发效率
 
@@ -82,9 +82,6 @@ pnpm install
 # Docker Compose 只启动 MySQL
 make run_mysql8
 
-# Docker Compose 只启动 Redis
-make run_redis
-
 # Docker Compose 启动全部服务
 make run_all
 ```
@@ -96,9 +93,6 @@ make run_all
 ```bash
 # Docker Compose 只启动 MySQL
 docker-compose up -d mysql8
-
-# Docker Compose 只启动 Redis
-docker-compose up -d redis
 
 # Docker Compose 启动全部服务
 docker-compose up -d

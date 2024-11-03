@@ -165,12 +165,10 @@ export default function Page() {
             </li>
             <li>
               使用
-              <span className="line-through">
+              <span>
                 <IconSkillNginx className="mx-1 translate-y-0.5" />
-                NGINX （相比 Caddy 配置有点麻烦）
+                NGINX 配置 反向代理 + HTTPS + 开启 HTTP2
               </span>
-              、 Caddy （配置超简单，无需手动配置 HTTPS 证书），反向代理 + 配置
-              HTTPS + 开启 HTTP2
             </li>
             <li>
               <>
