@@ -44,13 +44,7 @@ import {
 import { Logo } from "@/components/logo";
 import { PageBreadcrumb } from "@/components/page-breadcrumb";
 
-import {
-  PATHS,
-  PATHS_MAP,
-  PLACEHOLDER_TEXT,
-  SLOGAN,
-  WEBSITE,
-} from "@/constants";
+import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT, WEBSITE } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
 
 export const adminNavItems: Array<{
@@ -138,7 +132,6 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{WEBSITE}</span>
-                    <span className="truncate text-xs">{SLOGAN}</span>
                   </div>
                 </a>
               </SidebarMenuButton>
