@@ -90,8 +90,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Gilroy", ...fontFamily.sans],
-        mono: [...fontFamily.mono],
+        sans: ["Geist", ...fontFamily.sans],
+        mono: ["GeistMono", ...fontFamily.mono],
       },
       keyframes: {
         "accordion-down": {
