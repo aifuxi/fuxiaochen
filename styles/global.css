@@ -96,8 +96,11 @@
 }
 
 @font-face {
-  font-family: "Gilroy";
-  src: url("/fonts/Gilroy-Extrabold.woff2") format("woff2");
-  font-weight: 800;
-  font-style: normal;
+  font-family: "Geist";
+  src: url("/fonts/Geist[wght].woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "GeistMono";
+  src: url("/fonts/GeistMono[wght].woff2") format("woff2");
 }
