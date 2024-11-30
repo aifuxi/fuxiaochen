@@ -72,29 +72,14 @@ pnpm install
 
 开发环境，推荐使用 Docker Compose 启动一个 MySQL，项目已经准备好了一个 `docker-compose.yaml` 文件
 
-#### Mac 或者 Linux
-
-项目已经准备好了一个 `Makefile` 文件
-
-在项目根目录下运行
-
-```bash
-# Docker Compose 只启动 MySQL
-make run_mysql8
-
-# Docker Compose 启动全部服务
-make run_all
-```
-
-#### Windows
-
 在项目根目录下运行
 
 ```bash
 # Docker Compose 只启动 MySQL
 docker-compose up -d mysql8
 
-# Docker Compose 启动全部服务
+# 或者
+# Docker Compose 启动全部服务（MySQL 和 Umami）
 docker-compose up -d
 ```
 
@@ -106,9 +91,11 @@ docker-compose up -d
 
 #### 配置 `.env` 文件
 
-> `.env` 文件主要是给 Prisma 用的，Prisma 读取 DATABASE_URL 进行数据库连接
+> `.env` 文件用来配置各种项目中需要的配置
 
-新建一个 `.env` 文件，在 `.env` 文件新增以下内容
+复制一份 `.env.example`，重命名为 `.env`，根据自己实际情况修改以下字段
+
+- `DATABASE_URL`
 
 ```.env
 # DATABASE_URL 格式为 mysql://用户名:用户密码@数据库IP:数据库端口/需要连接的数据库名
@@ -116,13 +103,7 @@ docker-compose up -d
 DATABASE_URL="mysql://root:123456@127.0.0.1:3306/fuxiaochen"
 ```
 
-#### 配置 `.env.development` 文件
-
-> `.env.development` 文件是开发环境的配置文件，Next.js 在开发模式会自动加载 .env.development 的内容
-
-复制一份 `.env.example`，重命名为 `.env.development`，根据自己实际情况修改以下字段
-
-Github 登录用，如果不用 Github 登录，可不配置
+Github 登录用
 
 - `AUTH_GITHUB_ID`：Github 授权应用 ID
 - `AUTH_GITHUB_SECRET`：Github 授权应用 secret
@@ -147,7 +128,7 @@ pnpm db:push
 pnpm db:gen
 ```
 
-做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shift + P，然后选 Reload Window），重新加载TypeScript类型文件
+做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shift + P，然后选 【Developer: Reload Window】），重新加载 VS Code
 
 3. 启动开发服务器
 
@@ -175,12 +156,6 @@ pnpm db:studio
 ### 自定义页面的信息
 
 你可能想修改页面中的信息，请修改 `constants/info.ts` 文件
-
-## 部署
-
-- 视频演示：[手摸手教你如何部署fuxiaochen博客网站](https://www.bilibili.com/video/BV1vz421f7Jr/?share_source=copy_web&vd_source=8b381d6ef205d4d72391e78af40279c0)
-
-- 部署文档：[手摸手教你如何部署fuxiaochen博客网站](https://fuxiaochen.com/blog/hand-to-hand-teaching-you-how-to-deploy-fuxiaochen-blog-site)
 
 ## 反馈
 
