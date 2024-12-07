@@ -1,16 +1,10 @@
 {
   "recommendations": [
     "editorconfig.editorconfig",
-    "usernamehw.errorlens",
-    "dsznajder.es7-react-js-snippets",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "prisma.prisma",
     "bradlc.vscode-tailwindcss",
-    "jgclark.vscode-todo-highlight",
-    "meganrogge.template-string-converter",
-    "formulahendry.auto-rename-tag",
-    "formulahendry.auto-close-tag",
   ]
 }
