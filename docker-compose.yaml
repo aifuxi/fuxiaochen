@@ -1,8 +1,7 @@
-version: "3"
 services:
   mysql8:
     image: mysql:8
-    restart: unless-stopped
+    restart: always
     environment:
       # 方法一：设置时区为上海
       - TZ=Asia/Shanghai
@@ -13,10 +12,7 @@ services:
       # 设置root账户密码
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
-      - fuxiaochen_mysql8_db:/data/db
-    # 和本机共享网络，设置了host模式的网络，就不需要暴露端口了，因为是和主机共享了
-    # network_mode: 'host'
-    # 设置了host模式的网络，就不需要暴露端口了，因为是和主机共享了
+      - fuxiaochen-mysql8-db:/data/db
     ports:
       - 3306:3306
     command: [
@@ -25,8 +21,6 @@ services:
         "--character-set-server=utf8mb4",
         "--collation-server=utf8mb4_unicode_ci",
       ]
-    networks:
-      - my_network
 
   umami:
     image: ghcr.io/umami-software/umami:postgresql-latest
@@ -52,7 +46,7 @@ services:
       POSTGRES_USER: umami
       POSTGRES_PASSWORD: umami
     volumes:
-      - umami-db-data:/var/lib/postgresql/data
+      - fuxiaochen-umami-db-data:/var/lib/postgresql/data
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -61,9 +55,10 @@ services:
       retries: 5
 
 volumes:
-  fuxiaochen_mysql8_db:
-  umami-db-data:
+  fuxiaochen-mysql8-db:
+  fuxiaochen-umami-db-data:
 
+# 默认网络的驱动为 bridge, 所有服务使用桥接网络模式
 networks:
-  my_network:
+  default:
     driver: bridge
