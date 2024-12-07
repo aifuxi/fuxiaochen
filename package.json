@@ -15,10 +15,11 @@
     "lint:fix": "eslint --fix --quiet",
     "format": "prettier --write . --log-level warn",
     "commit": "cz",
-    "db:gen": "prisma generate",
+    "db:generate": "prisma generate",
     "db:dev": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:update": "npm run db:generate && npm run db:push"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",

@@ -40,7 +40,7 @@ const deleteFile = async (input: string) => {
   return new Promise((resolve, reject) => {
     fs.unlink(filePath, (error) => {
       if (error) {
-        reject(error.message);
+        reject(new Error(error.message));
       }
       resolve("");
     });
@@ -88,7 +88,7 @@ const compressImage = async (input: string): Promise<string> => {
       .toFile(outputFilePath, (error) => {
         if (error) {
           // TODO: 记录日志
-          reject(error.message);
+          reject(new Error(error.message));
         } else {
           resolve(output);
         }

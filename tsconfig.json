@@ -3,7 +3,7 @@
     /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "target": "es2022",
+    "target": "ESNext",
     "allowJs": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -16,7 +16,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "ES2022"
+      "ESNext"
     ],
     "noEmit": true,
     "module": "ESNext",
@@ -32,8 +32,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
-      ]
+        "./src/*"
+      ],
     }
   },
   "include": [
