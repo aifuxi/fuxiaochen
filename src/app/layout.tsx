@@ -1,22 +1,13 @@
 import * as React from "react";
 
 import { type Metadata } from "next";
-import Script from "next/script";
 
-import { GoogleAnalytics } from "@next/third-parties/google";
-
-import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
-
-import { ThemeProvider } from "@/providers";
-
-import { ReactHotToaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { Console } from "@/components/console";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
-import { isProduction } from "@/utils";
 
 export const metadata: Metadata = {
   title: {
@@ -55,33 +46,16 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
         />
       </head>
-      <body className="debug-screens overflow-x-clip scroll-smooth">
+      <body className="debug-screens antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            {children}
-
-            <ReactHotToaster />
-
-            <Console />
-          </TooltipProvider>
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
-
-      {/* Google Analytics  */}
-      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
-
-      {/* umami 统计 */}
-      <Script
-        id="umami"
-        src={NEXT_PUBLIC_UMAMI_URL}
-        async
-        data-website-id={NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      />
     </html>
   );
 }
