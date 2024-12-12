@@ -2,8 +2,10 @@ import * as React from "react";
 
 import { type Metadata } from "next";
 
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import QueryProvider from "@/components/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
@@ -53,7 +55,12 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>{children}</TooltipProvider>
+          <QueryProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster />
+            </TooltipProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

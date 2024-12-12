@@ -1,12 +1,10 @@
-import { type Metadata } from "next";
-
-import { PATHS, PATHS_MAP } from "@/constants/path";
-import { getAdminPageTitle } from "@/utils";
-
-export const metadata: Metadata = {
-  title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_HOME]),
-};
+import { SignOutButton } from "./_components/sign-out-button";
 
 export default function Page() {
-  return <div>Admin Page</div>;
+  return (
+    <div>
+      Admin Page
+      <SignOutButton />
+    </div>
+  );
 }

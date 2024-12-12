@@ -1,4 +1,4 @@
-import { NICKNAME } from ".";
+import { NICKNAME } from "./info";
 
 export const PATHS = {
   /** ************* SITE ****************** */

@@ -1,6 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoolean } from "ahooks";
@@ -19,6 +23,7 @@ import { Input } from "@/components/ui/input";
 
 import { NICKNAME } from "@/constants/info";
 
+import { useLogin } from "../api";
 import { type LoginRequestType, loginSchema } from "../schema";
 
 export function LoginCard() {
@@ -27,15 +32,32 @@ export function LoginCard() {
   const form = useForm<LoginRequestType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "test@test.com",
+      password: "123456",
     },
   });
+  const [errorMsg, setErrorMsg] = useState("");
+  const router = useRouter();
+  const { mutate } = useLogin();
 
-  function handleSubmit(_values: LoginRequestType) {
-    // console.log("_values", _values);
-
-    void 0;
+  function handleSubmit(values: LoginRequestType) {
+    setErrorMsg("");
+    mutate(values, {
+      async onSuccess() {
+        try {
+          await signIn("credentials", {
+            ...values,
+            redirect: false,
+          });
+          router.push("/admin");
+        } catch (error) {
+          setErrorMsg(error as string);
+        }
+      },
+      onError(error) {
+        setErrorMsg(error.message);
+      },
+    });
   }
 
   return (
@@ -100,6 +122,9 @@ export function LoginCard() {
           >
             登录
           </Button>
+          {Boolean(errorMsg) && (
+            <p className="text-center text-sm text-destructive">{errorMsg}</p>
+          )}
         </div>
       </form>
     </Form>

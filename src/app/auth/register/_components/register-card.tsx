@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoolean } from "ahooks";
 import { Eye, EyeClosed } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +21,7 @@ import { Input } from "@/components/ui/input";
 
 import { NICKNAME } from "@/constants/info";
 
+import { useRegister } from "../api";
 import { type RegisterRequestType, registerSchema } from "../schema";
 
 export function RegisterCard() {
@@ -27,16 +30,25 @@ export function RegisterCard() {
   const form = useForm<RegisterRequestType>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      name: "test",
+      email: "test@test.com",
+      password: "123456",
     },
   });
+  const [errorMsg, setErrorMsg] = useState("");
 
-  function handleSubmit(_values: RegisterRequestType) {
-    // console.log("_values", _values);
+  const { mutate } = useRegister();
 
-    void 0;
+  function handleSubmit(values: RegisterRequestType) {
+    setErrorMsg("");
+    mutate(values, {
+      onSuccess() {
+        toast.success("注册成功！");
+      },
+      onError(error) {
+        setErrorMsg(error.message);
+      },
+    });
   }
 
   return (
@@ -45,6 +57,7 @@ export function RegisterCard() {
         <div className="grid w-[400px] gap-6">
           <img src="/images/fuxiaochen-logo.svg" className="mx-auto size-12" />
           <h1 className="text-center text-2xl font-bold">{NICKNAME}</h1>
+
           <div className="grid gap-2">
             <FormField
               control={form.control}
@@ -116,6 +129,9 @@ export function RegisterCard() {
           >
             注册
           </Button>
+          {Boolean(errorMsg) && (
+            <p className="text-center text-sm text-destructive">{errorMsg}</p>
+          )}
         </div>
       </form>
     </Form>

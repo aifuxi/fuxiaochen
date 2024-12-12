@@ -1,16 +1,22 @@
+"server only";
+
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 import { ZodError } from "zod";
 
-import { getUserByEmail } from "@/app/auth/login/action";
 import { loginSchema } from "@/app/auth/login/schema";
+
+import { getUserByEmail } from "@/services/user";
 
 import { comparePassword } from "./bcrypt";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
+  },
+  pages: {
+    signIn: "/auth/login",
   },
   providers: [
     Credentials({
@@ -20,7 +26,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         email: {},
         password: {},
       },
-      authorize: async (credentials, _request) => {
+      authorize: async (credentials) => {
         try {
           const { email, password } = await loginSchema.parseAsync(credentials);
 

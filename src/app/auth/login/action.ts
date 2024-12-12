@@ -1,13 +1,32 @@
-"user server";
+"use server";
 
-import { db } from "@/lib/prisma";
+import { comparePassword } from "@/lib/bcrypt";
+import { createErrorResponse, createSuccessResponse } from "@/lib/response";
+import { getUserByEmail } from "@/services/user";
 
-export async function getUserByEmail(email: string) {
-  if (!email) {
-    return null;
+import { type LoginRequestType, loginSchema } from "./schema";
+
+export async function login(data: LoginRequestType) {
+  try {
+    const { email, password } = await loginSchema.parseAsync(data);
+
+    const userByEmail = await getUserByEmail(email);
+
+    if (!userByEmail) {
+      throw new Error("邮箱或密码错误");
+    }
+
+    const isCorrectPassword = await comparePassword(
+      password,
+      userByEmail.password,
+    );
+
+    if (!isCorrectPassword) {
+      throw new Error("邮箱或密码错误");
+    }
+
+    return createSuccessResponse(null);
+  } catch (error) {
+    return createErrorResponse(error);
   }
-
-  const user = await db.user.findUnique({ where: { email } });
-
-  return user;
 }
