@@ -19,20 +19,21 @@ import { Input } from "@/components/ui/input";
 
 import { NICKNAME } from "@/constants/info";
 
-import { type LoginRequestType, loginSchema } from "../schema";
+import { type RegisterRequestType, registerSchema } from "../schema";
 
-export function LoginCard() {
+export function RegisterCard() {
   const [passwordVisible, { toggle: togglePasswordVisible }] =
     useBoolean(false);
-  const form = useForm<LoginRequestType>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterRequestType>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  function handleSubmit(_values: LoginRequestType) {
+  function handleSubmit(_values: RegisterRequestType) {
     // console.log("_values", _values);
 
     void 0;
@@ -44,6 +45,21 @@ export function LoginCard() {
         <div className="grid w-[400px] gap-6">
           <img src="/images/fuxiaochen-logo.svg" className="mx-auto size-12" />
           <h1 className="text-center text-2xl font-bold">{NICKNAME}</h1>
+          <div className="grid gap-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>昵称</FormLabel>
+                  <FormControl>
+                    <Input placeholder="请输入昵称" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="grid gap-2">
             <FormField
               control={form.control}
@@ -98,7 +114,7 @@ export function LoginCard() {
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
           >
-            登录
+            注册
           </Button>
         </div>
       </form>

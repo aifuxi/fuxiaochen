@@ -5,86 +5,42 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 使用 sqlite 作为数据库
-// datasource db {
-//   provider = "sqlite"
-//   url      = env("DATABASE_URL")
-// }
-
 // 使用 mysql 作为数据库
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+enum Role {
+  // 管理员
+  ADMIN
+  // 普通用户
+  USER
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  password      String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-}
+  name     String  @unique
+  password String
+  email    String  @unique
+  image    String?
+  role     Role    @default(USER)
+  banned   Boolean @default(false)
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-}
-
-enum TagTypeEnum {
-  // 通用
-  ALL
-  // 仅用于blog
-  BLOG
-  // 仅用于片段
-  SNIPPET
-  // 仅用于笔记
-  NOTE
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tag {
-  name     String      @unique
-  slug     String      @unique
+  name     String    @unique
+  slug     String    @unique
   blogs    Blog[]
   snippets Snippet[]
   notes    Note[]
-  type     TagTypeEnum @default(ALL)
-  icon     String?     @db.Text
-  iconDark String?     @db.Text
+  icon     String?   @db.Text
+  iconDark String?   @db.Text
 
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -95,11 +51,10 @@ model Blog {
   description String
   body        String  @db.Text
   cover       String?
-  author      String?
   published   Boolean @default(false)
   tags        Tag[]
 
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -112,7 +67,7 @@ model Snippet {
   published   Boolean @default(false)
   tags        Tag[]
 
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -122,7 +77,7 @@ model Note {
   published Boolean @default(false)
   tags      Tag[]
 
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

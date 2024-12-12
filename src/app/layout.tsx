@@ -6,7 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { ThemeProvider } from "@/components/theme-provider";
 
-import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
+import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import "@/styles/global.css";
 
 export const metadata: Metadata = {

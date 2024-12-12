@@ -1,6 +1,6 @@
 import { type Metadata } from "next";
 
-import { PATHS, PATHS_MAP } from "@/constants";
+import { PATHS, PATHS_MAP } from "@/constants/path";
 import { getAdminPageTitle } from "@/utils";
 
 export const metadata: Metadata = {

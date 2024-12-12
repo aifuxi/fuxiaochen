@@ -6,10 +6,10 @@ import { PrismaClient } from "@prisma/client";
 // Learn more:
 // https://pris.ly/d/help/next-js-best-practices
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+const globalForPrisma = global as unknown as { db: PrismaClient };
 
-export const prisma =
-  globalForPrisma.prisma ||
+export const db =
+  globalForPrisma.db ||
   new PrismaClient({
     datasourceUrl: process.env.DATABASE_URL,
     log:
@@ -19,4 +19,4 @@ export const prisma =
         : undefined,
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.db = db;

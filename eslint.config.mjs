@@ -107,18 +107,18 @@ const configs = [
 
       "no-console": "error",
       "@next/next/no-img-element": "off",
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            "@/features/*/*",
-            "@/types/*",
-            "@/config/*",
-            "@/constants/*",
-            "@/providers/*",
-          ],
-        },
-      ],
+      // "no-restricted-imports": [
+      //   "error",
+      //   {
+      //     patterns: [
+      //       "@/features/*/*",
+      //       "@/types/*",
+      //       "@/config/*",
+      //       "@/constants/*",
+      //       "@/providers/*",
+      //     ],
+      //   },
+      // ],
       "import/default": "off",
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",

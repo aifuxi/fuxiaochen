@@ -19,6 +19,7 @@
     "db:dev": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
+    "db:push-force": "prisma db push --force-reset",
     "db:update": "npm run db:generate && npm run db:push"
   },
   "dependencies": {
