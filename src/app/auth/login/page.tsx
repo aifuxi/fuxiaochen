@@ -1,11 +1,11 @@
 import React from "react";
 
-import { LoginCard } from "./_components/login-card";
+import { LoginForm } from "./_components/login-form";
 
 const Page = () => {
   return (
     <div className="grid h-screen w-screen place-content-center">
-      <LoginCard />
+      <LoginForm />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { NICKNAME } from "@/constants/info";
 
 import { Navbar } from "./_components/navbar";
-import { ProfileEntry } from "./_components/profile-entry";
+import { ProfileDropdown } from "./_components/profile-dropdown";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   return (
@@ -19,7 +19,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
           </Link>
           <Navbar />
           <div className="flex items-center">
-            <ProfileEntry />
+            <ProfileDropdown />
           </div>
         </header>
         <main className="flex-1 p-6">{children}</main>

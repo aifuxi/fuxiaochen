@@ -3,12 +3,10 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoolean } from "ahooks";
 import { Eye, EyeClosed } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,36 +21,29 @@ import { Input } from "@/components/ui/input";
 
 import { NICKNAME } from "@/constants/info";
 
-import { useLogin } from "../api";
-import { type LoginRequestType, loginSchema } from "../schema";
+import { useRegister } from "../api";
+import { type RegisterRequestType, registerSchema } from "../schema";
 
-export function LoginCard() {
+export function RegisterForm() {
   const [passwordVisible, { toggle: togglePasswordVisible }] =
     useBoolean(false);
-  const form = useForm<LoginRequestType>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<RegisterRequestType>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "test",
       email: "test@test.com",
       password: "123456",
     },
   });
   const [errorMsg, setErrorMsg] = useState("");
-  const router = useRouter();
-  const { mutate } = useLogin();
 
-  function handleSubmit(values: LoginRequestType) {
+  const { mutate } = useRegister();
+
+  function handleSubmit(values: RegisterRequestType) {
     setErrorMsg("");
     mutate(values, {
-      async onSuccess() {
-        try {
-          await signIn("credentials", {
-            ...values,
-            redirect: false,
-          });
-          router.push("/admin");
-        } catch (error) {
-          setErrorMsg(error as string);
-        }
+      onSuccess() {
+        toast.success("注册成功！");
       },
       onError(error) {
         setErrorMsg(error.message);
@@ -66,6 +57,22 @@ export function LoginCard() {
         <div className="grid w-[400px] gap-6">
           <img src="/images/fuxiaochen-logo.svg" className="mx-auto size-12" />
           <h1 className="text-center text-2xl font-bold">{NICKNAME}</h1>
+
+          <div className="grid gap-2">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>昵称</FormLabel>
+                  <FormControl>
+                    <Input placeholder="请输入昵称" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
           <div className="grid gap-2">
             <FormField
               control={form.control}
@@ -120,7 +127,7 @@ export function LoginCard() {
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
           >
-            登录
+            注册
           </Button>
           {Boolean(errorMsg) && (
             <p className="text-center text-sm text-destructive">{errorMsg}</p>

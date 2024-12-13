@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export const ProfileEntry = () => {
+export const ProfileDropdown = () => {
   const session = useSession();
 
   return (
