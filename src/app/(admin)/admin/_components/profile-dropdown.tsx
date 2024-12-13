@@ -16,11 +16,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { useConfirm } from "@/hooks/use-confirm";
+
 export const ProfileDropdown = () => {
   const session = useSession();
+  const [SignOutDialog, confirmSignOut] = useConfirm({
+    title: "提示",
+    description: "确定要退出登录吗？",
+  });
+
+  const handleSignOut = async () => {
+    const ok = await confirmSignOut();
+    if (!ok) {
+      return;
+    }
+    await signOut({ redirectTo: "/auth/login" });
+  };
 
   return (
     <div>
+      <SignOutDialog />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -36,7 +51,7 @@ export const ProfileDropdown = () => {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="text-destructive"
-            onClick={() => signOut({ redirectTo: "/auth/login" })}
+            onClick={handleSignOut}
           >
             <LogOut />
             <span>退出登录</span>
