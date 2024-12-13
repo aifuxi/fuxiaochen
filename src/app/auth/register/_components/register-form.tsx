@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoolean } from "ahooks";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, LoaderCircle } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -21,7 +25,7 @@ import { Input } from "@/components/ui/input";
 
 import { NICKNAME } from "@/constants/info";
 
-import { useRegister } from "../api";
+import { useCheckAdminUserExist, useRegister } from "../api";
 import { type RegisterRequestType, registerSchema } from "../schema";
 
 export function RegisterForm() {
@@ -37,13 +41,36 @@ export function RegisterForm() {
   });
   const [errorMsg, setErrorMsg] = useState("");
 
-  const { mutate } = useRegister();
+  const router = useRouter();
+  const { mutate, isPending: registerLoading } = useRegister();
+  const { data, isPending } = useCheckAdminUserExist();
+
+  const loading = useMemo(() => {
+    return registerLoading || isPending;
+  }, [registerLoading, isPending]);
+
+  const buttonLabel = useMemo(() => {
+    if (data?.data) {
+      return "注册";
+    } else {
+      return "注册为管理员";
+    }
+  }, [data]);
 
   function handleSubmit(values: RegisterRequestType) {
     setErrorMsg("");
     mutate(values, {
-      onSuccess() {
+      async onSuccess() {
         toast.success("注册成功！");
+        try {
+          await signIn("credentials", {
+            ...values,
+            redirect: false,
+          });
+          router.push("/admin");
+        } catch (error) {
+          setErrorMsg(error as string);
+        }
       },
       onError(error) {
         setErrorMsg(error.message);
@@ -126,9 +153,15 @@ export function RegisterForm() {
             className="w-full"
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
+            disabled={loading}
           >
-            注册
+            {loading ? <LoaderCircle className="animate-spin" /> : buttonLabel}
           </Button>
+          <div className="flex justify-end">
+            <Link href="/auth/register" className="text-xs underline">
+              已有账户？去登录
+            </Link>
+          </div>
           {Boolean(errorMsg) && (
             <p className="text-center text-sm text-destructive">{errorMsg}</p>
           )}

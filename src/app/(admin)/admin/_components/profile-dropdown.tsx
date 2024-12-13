@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 import { CircleUserRound, LogOut, User } from "lucide-react";
 
@@ -34,7 +34,10 @@ export const ProfileDropdown = () => {
             <User />
             <span>个人资料</span>
           </DropdownMenuItem>
-          <DropdownMenuItem className="text-destructive">
+          <DropdownMenuItem
+            className="text-destructive"
+            onClick={() => signOut({ redirectTo: "/auth/login" })}
+          >
             <LogOut />
             <span>退出登录</span>
           </DropdownMenuItem>

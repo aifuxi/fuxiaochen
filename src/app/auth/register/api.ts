@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { register } from "./action";
+import { checkAdminUserExist, register } from "./action";
 import { type RegisterRequestType } from "./schema";
 
 type RegisterResponseType = Awaited<ReturnType<typeof register>>;
@@ -22,4 +22,24 @@ export function useRegister() {
   });
 
   return mutation;
+}
+
+type CheckAdminUserExistResponseType = Awaited<
+  ReturnType<typeof checkAdminUserExist>
+>;
+
+export function useCheckAdminUserExist() {
+  const query = useQuery<CheckAdminUserExistResponseType, Error>({
+    queryKey: ["checkAdminUserExist"],
+    queryFn: async () => {
+      const resp = await checkAdminUserExist();
+
+      if (resp.code) {
+        throw Error(resp.msg as string);
+      }
+      return resp;
+    },
+  });
+
+  return query;
 }

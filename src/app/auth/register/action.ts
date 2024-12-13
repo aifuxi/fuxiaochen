@@ -5,7 +5,11 @@ import { Role } from "@prisma/client";
 import { hashPassword } from "@/lib/bcrypt";
 import { db } from "@/lib/prisma";
 import { createErrorResponse, createSuccessResponse } from "@/lib/response";
-import { getUserByEmail, getUserByName } from "@/services/user";
+import {
+  getFirstAdminUser,
+  getUserByEmail,
+  getUserByName,
+} from "@/services/user";
 
 import { type RegisterRequestType, registerSchema } from "./schema";
 
@@ -26,16 +30,31 @@ export async function register(data: RegisterRequestType) {
     }
 
     const hashedPassword = await hashPassword(password);
+    const adminUser = await getFirstAdminUser();
+    let role: Role = Role.USER;
+    // 不存在管理员用户时，注册当前用户为管理员
+    if (!adminUser) {
+      role = Role.ADMIN;
+    }
     const user = await db.user.create({
       data: {
         email,
         password: hashedPassword,
         name: name,
-        role: Role.ADMIN,
+        role,
       },
     });
 
     return createSuccessResponse(user);
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function checkAdminUserExist() {
+  try {
+    const adminUser = await getFirstAdminUser();
+    return createSuccessResponse(Boolean(adminUser));
   } catch (error) {
     return createErrorResponse(error);
   }

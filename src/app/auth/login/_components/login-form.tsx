@@ -4,11 +4,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBoolean } from "ahooks";
-import { Eye, EyeClosed } from "lucide-react";
+import { Eye, EyeClosed, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +39,7 @@ export function LoginForm() {
   });
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   function handleSubmit(values: LoginRequestType) {
     setErrorMsg("");
@@ -115,13 +116,20 @@ export function LoginForm() {
               )}
             />
           </div>
+
           <Button
             className="w-full"
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
+            disabled={isPending}
           >
-            登录
+            {isPending ? <LoaderCircle className="animate-spin" /> : "登录"}
           </Button>
+          <div className="flex justify-end">
+            <Link href="/auth/register" className="text-xs underline">
+              没有账户？去注册
+            </Link>
+          </div>
           {Boolean(errorMsg) && (
             <p className="text-center text-sm text-destructive">{errorMsg}</p>
           )}
