@@ -22,7 +22,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
             <ProfileDropdown />
           </div>
         </header>
-        <main className="flex-1 p-6">{children}</main>
+        <main className="flex-1">{children}</main>
       </div>
     </SessionProvider>
   );
