@@ -10,7 +10,7 @@ export async function login(data: LoginRequestType) {
   try {
     const { email, password } = await loginSchema.parseAsync(data);
 
-    const userByEmail = await getUserByEmail(email);
+    const userByEmail = await getUserByEmail(email, { withPassword: true });
 
     if (!userByEmail) {
       throw new Error("邮箱或密码错误");

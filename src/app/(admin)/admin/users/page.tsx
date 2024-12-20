@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./_components/columns";
+import { CreateUserSheet } from "./_components/create-user-sheet";
 import { DataTable } from "./_components/data-table";
+import { UpdateUserSheet } from "./_components/update-user-sheet";
 import { useGetUsers } from "./api";
+import { useCreateUserSheet } from "./hooks/use-create-user-sheet";
 import { type GetUsersRequestType } from "./schema";
 
 export default function Page() {
@@ -16,6 +19,7 @@ export default function Page() {
     pageSize: 10,
   });
   const { data } = useGetUsers(pagination);
+  const { openSheet } = useCreateUserSheet();
 
   const handlePageChange = (page: number) => {
     setPagination({ ...pagination, page });
@@ -23,9 +27,11 @@ export default function Page() {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-y-6 pt-9">
+      <CreateUserSheet />
+      <UpdateUserSheet />
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-medium">用户</h2>
-        <Button>创建用户</Button>
+        <Button onClick={openSheet}>创建用户</Button>
       </div>
 
       <div className="flex items-center gap-6">

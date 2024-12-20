@@ -92,6 +92,7 @@
     "next-auth": "5.0.0-beta.25",
     "next-sitemap": "^4.2.3",
     "next-themes": "^0.3.0",
+    "nuqs": "^2.2.3",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hook-form": "^7.53.1",

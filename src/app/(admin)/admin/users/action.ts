@@ -6,8 +6,23 @@ import { getSkip } from "@/utils/pagination";
 
 import { db } from "@/lib/prisma";
 import { createErrorResponse, createSuccessResponse } from "@/lib/response";
+import {
+  createUserByValues,
+  deleteUserById,
+  getUserByEmail,
+  getUserById,
+  getUserByName,
+  updateUserByValues,
+} from "@/services/user";
 
-import { type GetUsersRequestType, getUsersSchema } from "./schema";
+import {
+  type CreateUserRequestType,
+  type GetUsersRequestType,
+  type UpdateUserRequestType,
+  createUserSchema,
+  getUsersSchema,
+  updateUserSchema,
+} from "./schema";
 
 export async function getUsers(data: GetUsersRequestType) {
   try {
@@ -39,6 +54,91 @@ export async function getUsers(data: GetUsersRequestType) {
       }),
     ]);
     return createSuccessResponse({ users, total });
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function deleteUser(id: number) {
+  try {
+    const user = await getUserById(id);
+
+    if (!user) {
+      return createErrorResponse("用户不存在");
+    }
+    const deleteUser = await deleteUserById(user.id);
+    return createSuccessResponse({ user: deleteUser });
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function createUser(data: CreateUserRequestType) {
+  try {
+    const { email, password, name, role } =
+      await createUserSchema.parseAsync(data);
+
+    const userByEmail = await getUserByEmail(email);
+
+    if (userByEmail) {
+      throw new Error("邮箱已注册");
+    }
+
+    const userByName = await getUserByName(name);
+
+    if (userByName) {
+      throw new Error("昵称已存在");
+    }
+
+    const user = await createUserByValues({
+      email,
+      name,
+      role,
+      password,
+    });
+
+    return createSuccessResponse(user);
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function updateUser(data: UpdateUserRequestType) {
+  try {
+    const { email, name, role } = await updateUserSchema.parseAsync(data);
+
+    const userByEmail = await getUserByEmail(email);
+
+    if (!userByEmail) {
+      throw new Error("用户不存在");
+    }
+
+    const userByName = await getUserByName(name);
+
+    if (userByName && userByName.email !== email) {
+      throw new Error("昵称已存在");
+    }
+
+    const user = await updateUserByValues({
+      email,
+      name,
+      role,
+    });
+
+    return createSuccessResponse(user);
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function getUser(email: string) {
+  try {
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      return createErrorResponse("用户不存在");
+    }
+    return createSuccessResponse(user);
   } catch (error) {
     return createErrorResponse(error);
   }

@@ -30,7 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         try {
           const { email, password } = await loginSchema.parseAsync(credentials);
 
-          const user = await getUserByEmail(email);
+          const user = await getUserByEmail(email, { withPassword: true });
 
           if (!user) {
             throw new Error("邮箱或密码错误");

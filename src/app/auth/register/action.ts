@@ -2,10 +2,9 @@
 
 import { Role } from "@prisma/client";
 
-import { hashPassword } from "@/lib/bcrypt";
-import { db } from "@/lib/prisma";
 import { createErrorResponse, createSuccessResponse } from "@/lib/response";
 import {
+  createUserByValues,
   getFirstAdminUser,
   getUserByEmail,
   getUserByName,
@@ -29,20 +28,17 @@ export async function register(data: RegisterRequestType) {
       throw new Error("昵称已存在");
     }
 
-    const hashedPassword = await hashPassword(password);
     const adminUser = await getFirstAdminUser();
     let role: Role = Role.USER;
     // 不存在管理员用户时，注册当前用户为管理员
     if (!adminUser) {
       role = Role.ADMIN;
     }
-    const user = await db.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        name: name,
-        role,
-      },
+    const user = await createUserByValues({
+      email,
+      name,
+      role,
+      password,
     });
 
     return createSuccessResponse(user);
