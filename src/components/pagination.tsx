@@ -48,8 +48,11 @@ export const Pagination = ({
   return (
     <div className="flex justify-between">
       <div className="text-sm">
-        显示第 {page} 条-第 {page * pageSize} 条，共 {total} 条
+        {total === 0
+          ? null
+          : `显示第 ${page} 条-第 ${page * pageSize} 条，共 ${total} 条`}
       </div>
+
       <div className="flex justify-end gap-2">
         <Button
           variant="outline"

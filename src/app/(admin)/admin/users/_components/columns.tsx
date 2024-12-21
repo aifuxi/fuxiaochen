@@ -1,10 +1,13 @@
 "use client";
 
-import { type User } from "@prisma/client";
+import { Role, type User } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 
-import { localFormatDistanceToNow } from "@/utils/date";
+import { Badge } from "@/components/ui/badge";
 
+import { CreateTimeTooltip } from "@/components/create-time-tooltip";
+
+import { BannedSwitch } from "./banned-switch";
 import { UserActions } from "./user-actions";
 
 export const columns: ColumnDef<User>[] = [
@@ -19,16 +22,29 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "role",
     header: "角色",
+    cell: ({ row }) => {
+      const { role } = row.original;
+      if (role === Role.ADMIN) {
+        return <Badge variant="default">管理员</Badge>;
+      }
+      if (role === Role.USER) {
+        return <Badge variant="outline">普通用户</Badge>;
+      }
+    },
   },
   {
     accessorKey: "banned",
     header: "状态",
+    cell: ({ row }) => {
+      const { banned, id } = row.original;
+      return <BannedSwitch banned={banned} id={id} />;
+    },
   },
   {
     accessorKey: "createdAt",
     header: "创建时间",
     cell: ({ row }) => {
-      return localFormatDistanceToNow(row.original.createdAt);
+      return <CreateTimeTooltip date={row.original.createdAt} />;
     },
   },
   {

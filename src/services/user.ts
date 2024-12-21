@@ -4,6 +4,7 @@ import { Role } from "@prisma/client";
 
 import {
   type CreateUserRequestType,
+  type UpdateUserBannedRequestType,
   type UpdateUserRequestType,
 } from "@/app/(admin)/admin/users/schema";
 
@@ -33,6 +34,29 @@ export async function getUserByEmail(
   return user;
 }
 
+export async function getUserById(
+  id: number,
+  options?: {
+    withPassword?: boolean;
+  },
+) {
+  if (!id) {
+    return null;
+  }
+
+  const { withPassword = false } = options ?? {};
+
+  const user = await db.user.findUnique({
+    where: { id },
+  });
+
+  if (!withPassword && user) {
+    user.password = "";
+  }
+
+  return user;
+}
+
 export async function getUserByName(name: string) {
   if (!name) {
     return null;
@@ -45,12 +69,6 @@ export async function getUserByName(name: string) {
 
 export async function getFirstAdminUser() {
   const user = await db.user.findFirst({ where: { role: Role.ADMIN } });
-
-  return user;
-}
-
-export async function getUserById(id: number) {
-  const user = await db.user.findUnique({ where: { id } });
 
   return user;
 }
@@ -83,6 +101,21 @@ export async function updateUserByValues(values: UpdateUserRequestType) {
     data: {
       name: values.name,
       role: values.role,
+    },
+  });
+
+  return user;
+}
+
+export async function updateUserBannedByValues(
+  values: UpdateUserBannedRequestType,
+) {
+  const user = await db.user.update({
+    where: {
+      id: values.id,
+    },
+    data: {
+      banned: values.banned,
     },
   });
 

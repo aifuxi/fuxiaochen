@@ -11,7 +11,7 @@ import { ProfileDropdown } from "./_components/profile-dropdown";
 export default function Layout({ children }: React.PropsWithChildren) {
   return (
     <SessionProvider>
-      <div className="flex flex-col">
+      <div className="flex h-screen flex-col">
         <header className="flex h-16 items-center border-b border-solid px-5">
           <Link href="/" className="flex items-center">
             <img src="/images/fuxiaochen-logo.svg" className="mr-2 size-8" />
@@ -22,7 +22,9 @@ export default function Layout({ children }: React.PropsWithChildren) {
             <ProfileDropdown />
           </div>
         </header>
-        <main className="flex-1">{children}</main>
+        <main className="h-[100vh-64px] flex-1 overflow-y-auto">
+          {children}
+        </main>
       </div>
     </SessionProvider>
   );

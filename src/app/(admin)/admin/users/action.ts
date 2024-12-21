@@ -12,12 +12,14 @@ import {
   getUserByEmail,
   getUserById,
   getUserByName,
+  updateUserBannedByValues,
   updateUserByValues,
 } from "@/services/user";
 
 import {
   type CreateUserRequestType,
   type GetUsersRequestType,
+  type UpdateUserBannedRequestType,
   type UpdateUserRequestType,
   createUserSchema,
   getUsersSchema,
@@ -28,20 +30,17 @@ export async function getUsers(data: GetUsersRequestType) {
   try {
     const { page, pageSize, name, email } =
       await getUsersSchema.parseAsync(data);
-    const where: Prisma.UserWhereInput = {
-      OR: [
-        {
-          name: {
-            contains: name?.trim() ?? "",
-          },
-        },
-        {
-          email: {
-            contains: email?.trim() ?? "",
-          },
-        },
-      ],
-    };
+    const where: Prisma.UserWhereInput = {};
+
+    if (name?.trim()) {
+      where.name = {
+        contains: name?.trim() ?? "",
+      };
+    }
+
+    if (email?.trim()) {
+      where.email = email?.trim();
+    }
 
     const [users, total] = await Promise.all([
       db.user.findMany({
@@ -123,6 +122,27 @@ export async function updateUser(data: UpdateUserRequestType) {
       email,
       name,
       role,
+    });
+
+    return createSuccessResponse(user);
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
+export async function updateUserBanned(data: UpdateUserBannedRequestType) {
+  try {
+    const { id, banned } = data;
+
+    const userById = await getUserById(id);
+
+    if (!userById) {
+      throw new Error("用户不存在");
+    }
+
+    const user = await updateUserBannedByValues({
+      id,
+      banned,
     });
 
     return createSuccessResponse(user);

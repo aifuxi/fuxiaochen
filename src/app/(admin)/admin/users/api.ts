@@ -6,10 +6,12 @@ import {
   getUser,
   getUsers,
   updateUser,
+  updateUserBanned,
 } from "./action";
 import {
   type CreateUserRequestType,
   type GetUsersRequestType,
+  type UpdateUserBannedRequestType,
   type UpdateUserRequestType,
 } from "./schema";
 
@@ -79,6 +81,29 @@ export function useUpdateUser() {
   >({
     mutationFn: async (json) => {
       const resp = await updateUser(json);
+
+      if (resp.code) {
+        throw Error(resp.msg as string);
+      }
+      return resp;
+    },
+  });
+
+  return mutation;
+}
+
+type UpdateUserBannedResponseType = Awaited<
+  ReturnType<typeof updateUserBanned>
+>;
+
+export function useUpdateUserBanned() {
+  const mutation = useMutation<
+    UpdateUserBannedResponseType,
+    Error,
+    UpdateUserBannedRequestType
+  >({
+    mutationFn: async (json) => {
+      const resp = await updateUserBanned(json);
 
       if (resp.code) {
         throw Error(resp.msg as string);
