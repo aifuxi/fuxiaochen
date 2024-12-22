@@ -6,6 +6,7 @@ import { hashPassword } from "./bcrypt";
 const prisma = new PrismaClient();
 async function main() {
   await seedUsers();
+  await seedCategories();
   await seedTags();
 }
 
@@ -38,6 +39,22 @@ async function seedTags() {
   const result = await prisma.tag.createMany({ data: tags });
 
   console.log("标签模拟数据插入完毕", result);
+}
+
+async function seedCategories() {
+  const categories: Prisma.CategoryCreateManyInput[] = [];
+
+  for (let i = 0; i < 5; i++) {
+    categories.push({
+      name: `测试分类${i}`,
+      slug: `category-slug${i}`,
+      description: "我是分类描述",
+    });
+  }
+
+  const result = await prisma.category.createMany({ data: categories });
+
+  console.log("分类模拟数据插入完毕", result);
 }
 
 main()

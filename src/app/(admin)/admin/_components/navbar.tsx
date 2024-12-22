@@ -13,12 +13,16 @@ const navItems = [
     link: "/admin",
   },
   {
-    label: "文章",
-    link: "/admin/blogs",
+    label: "分类",
+    link: "/admin/categories",
   },
   {
     label: "标签",
     link: "/admin/tags",
+  },
+  {
+    label: "文章",
+    link: "/admin/blogs",
   },
   {
     label: "片段",
