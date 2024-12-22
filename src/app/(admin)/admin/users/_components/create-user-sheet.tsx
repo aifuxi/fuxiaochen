@@ -26,7 +26,7 @@ import {
 
 import { getQueryClient } from "@/lib/get-query-client";
 
-import { useCreateUser } from "../api";
+import { GET_USERS_KEY, useCreateUser } from "../api";
 import { useCreateUserSheet } from "../hooks/use-create-user-sheet";
 import { type CreateUserRequestType, createUserSchema } from "../schema";
 
@@ -50,7 +50,7 @@ export const CreateUserSheet = () => {
         toast.success("创建成功");
         void closeSheet();
         void queryClient.invalidateQueries({
-          queryKey: ["getUsers"],
+          queryKey: [GET_USERS_KEY],
         });
       },
       onError: (error) => {

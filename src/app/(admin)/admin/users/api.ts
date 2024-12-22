@@ -17,9 +17,11 @@ import {
 
 type GetUsersResponseType = Awaited<ReturnType<typeof getUsers>>;
 
+export const GET_USERS_KEY = "getUsers";
+
 export function useGetUsers(data: GetUsersRequestType) {
   const query = useQuery<GetUsersResponseType, Error>({
-    queryKey: ["getUsers", data],
+    queryKey: [GET_USERS_KEY, data],
     queryFn: async () => {
       const resp = await getUsers(data);
 

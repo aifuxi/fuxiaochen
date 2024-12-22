@@ -15,7 +15,7 @@ import {
 import { useConfirm } from "@/hooks/use-confirm";
 import { getQueryClient } from "@/lib/get-query-client";
 
-import { useDeleteUser } from "../api";
+import { GET_USERS_KEY, useDeleteUser } from "../api";
 import { useUpdateUserSheet } from "../hooks/use-update-user-sheet";
 
 type Props = {
@@ -47,7 +47,7 @@ export const UserActions = ({ userId, email }: Props) => {
         toast.success("删除成功");
 
         void queryClient.invalidateQueries({
-          queryKey: ["getUsers"],
+          queryKey: [GET_USERS_KEY],
         });
       },
       onError: (error) => {

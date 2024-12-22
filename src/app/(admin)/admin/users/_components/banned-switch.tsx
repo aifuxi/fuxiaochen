@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 
 import { getQueryClient } from "@/lib/get-query-client";
 
-import { useUpdateUserBanned } from "../api";
+import { GET_USERS_KEY, useUpdateUserBanned } from "../api";
 
 type Props = {
   banned: boolean;
@@ -25,7 +25,7 @@ export const BannedSwitch = ({ banned, id }: Props) => {
           toast.success("修改成功");
 
           void queryClient.invalidateQueries({
-            queryKey: ["getUsers"],
+            queryKey: [GET_USERS_KEY],
           });
         },
         onError: (error) => {

@@ -27,7 +27,7 @@ import {
 
 import { getQueryClient } from "@/lib/get-query-client";
 
-import { useGetUser, useUpdateUser } from "../api";
+import { GET_USERS_KEY, useGetUser, useUpdateUser } from "../api";
 import { useUpdateUserSheet } from "../hooks/use-update-user-sheet";
 import { type UpdateUserRequestType, updateUserSchema } from "../schema";
 
@@ -61,7 +61,7 @@ export const UpdateUserSheet = () => {
         toast.success("更新成功");
         void closeSheet();
         void queryClient.invalidateQueries({
-          queryKey: ["getUsers"],
+          queryKey: [GET_USERS_KEY],
         });
       },
       onError: (error) => {

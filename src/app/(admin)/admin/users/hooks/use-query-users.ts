@@ -7,7 +7,7 @@ export const useQueryUsers = () => {
   const [queryStates, setQueryStates] = useQueryStates({
     page: parseAsInteger.withDefault(1).withOptions({ clearOnDefault: true }),
     pageSize: parseAsInteger
-      .withDefault(7)
+      .withDefault(10)
       .withOptions({ clearOnDefault: true }),
     name: parseAsString.withDefault("").withOptions({
       shallow: false,

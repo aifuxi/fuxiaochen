@@ -31,7 +31,7 @@ export default function Page() {
   const { openSheet } = useCreateUserSheet();
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col gap-y-6 pt-9">
+    <div className="mx-auto flex max-w-7xl flex-col gap-y-6 py-9">
       <CreateUserSheet />
       <UpdateUserSheet />
       <div className="flex items-center justify-between">
