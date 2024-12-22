@@ -31,14 +31,30 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Category {
+  name        String    @unique
+  slug        String    @unique
+  description String
+  blogs       Blog[]
+  snippets    Snippet[]
+  notes       Note[]
+  icon        String?   @db.Text
+  iconDark    String?   @db.Text
+
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Tag {
-  name     String    @unique
-  slug     String    @unique
-  blogs    Blog[]
-  snippets Snippet[]
-  notes    Note[]
-  icon     String?   @db.Text
-  iconDark String?   @db.Text
+  name        String    @unique
+  slug        String    @unique
+  description String
+  blogs       Blog[]
+  snippets    Snippet[]
+  notes       Note[]
+  icon        String?   @db.Text
+  iconDark    String?   @db.Text
 
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -57,6 +73,9 @@ model Blog {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
 }
 
 model Snippet {
@@ -67,9 +86,11 @@ model Snippet {
   published   Boolean @default(false)
   tags        Tag[]
 
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 }
 
 model Note {
@@ -77,7 +98,9 @@ model Note {
   published Boolean @default(false)
   tags      Tag[]
 
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 }
