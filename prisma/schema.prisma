@@ -74,8 +74,8 @@ model Blog {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId Int?
 }
 
 model Snippet {
