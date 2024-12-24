@@ -22,7 +22,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
             <ProfileDropdown />
           </div>
         </header>
-        <main className="h-[100vh-64px] flex-1 overflow-y-auto">
+        <main className="h-[calc(100vh-64px)] flex-1 overflow-y-auto">
           {children}
         </main>
       </div>

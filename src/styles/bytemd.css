@@ -1,16 +1,5 @@
-/* 创建、编辑笔记的编辑器高度 */
-#note-editor .bytemd {
-  @apply h-[60vh] min-h-[560px];
-}
-
-/* 创建、编辑博客、片段的编辑器高度 */
-#content-editor .bytemd {
-  @apply h-screen;
-}
-
-/* 编辑器编辑区域的最大宽度 */
-.bytemd-editor .CodeMirror .CodeMirror-lines {
-  @apply !max-w-[80vw];
+.bytemd-wrapper .bytemd {
+  @apply h-[calc(100vh-128px)];
 }
 
 .bytemd .CodeMirror,
@@ -41,18 +30,6 @@
 
 .markdown-body pre {
   @apply relative !my-0 whitespace-break-spaces !rounded-xl border !bg-background/50 text-primary;
-}
-
-.markdown-body code::-webkit-scrollbar {
-  @apply h-1.5 w-1.5;
-}
-
-.markdown-body code::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground) / 0.2);
-
-  /* 滚动条圆角 需要同时设置 background-clip: padding-box;和border-radius */
-  background-clip: padding-box;
-  border-radius: 10px;
 }
 
 .markdown-body pre {
@@ -132,7 +109,7 @@
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
 /* ByteMD editor overrides	*/
 .bytemd {
-  @apply !rounded-xl !border-border !bg-background !text-foreground;
+  @apply !border-border !bg-background !text-foreground;
 }
 
 .bytemd-toolbar {

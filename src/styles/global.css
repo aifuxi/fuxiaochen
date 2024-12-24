@@ -3,7 +3,6 @@
 @import "./github.css";
 @import "./github-dark.css";
 
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -94,11 +93,12 @@
 }
 
 * {
-  border-color: hsl(var(--border))
+  border-color: hsl(var(--border));
 }
 
 html {
-  scroll-behavior: smooth
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
@@ -107,30 +107,31 @@ body {
   color: hsl(var(--foreground));
   font-synthesis-weight: none;
   text-rendering: optimizeLegibility;
+  height: 100%;
 }
 
-@supports (font: -apple-system-body) and (-webkit-appearance:none) {
-  @media (min-width:1800px) {
-      [data-wrapper] {
-          border-top-width:1px
-      }
+@supports (font: -apple-system-body) and (-webkit-appearance: none) {
+  @media (min-width: 1800px) {
+    [data-wrapper] {
+      border-top-width: 1px;
+    }
   }
 }
 
 ::-webkit-scrollbar {
-  width: 5px
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--border));
-  border-radius: 5px
+  border-radius: 5px;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent
+  scrollbar-color: hsl(var(--border)) transparent;
 }
