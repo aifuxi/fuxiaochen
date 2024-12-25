@@ -1,6 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { createTag, deleteTag, getTag, getTags, updateTag } from "./action";
+import {
+  createTag,
+  deleteTag,
+  getAllTags,
+  getTag,
+  getTags,
+  updateTag,
+} from "./action";
 import {
   type CreateTagRequestType,
   type GetTagsRequestType,
@@ -16,6 +23,24 @@ export function useGetTags(data: GetTagsRequestType) {
     queryKey: [GET_TAGS_KEY, data],
     queryFn: async () => {
       const resp = await getTags(data);
+
+      if (resp.code) {
+        throw Error(resp.msg as string);
+      }
+      return resp;
+    },
+  });
+
+  return query;
+}
+
+type GetAllTagsResponseType = Awaited<ReturnType<typeof getAllTags>>;
+
+export function useGetAllTags() {
+  const query = useQuery<GetAllTagsResponseType, Error>({
+    queryKey: [GET_TAGS_KEY, "all"],
+    queryFn: async () => {
+      const resp = await getAllTags();
 
       if (resp.code) {
         throw Error(resp.msg as string);

@@ -50,6 +50,15 @@ export async function getTags(data: GetTagsRequestType) {
   }
 }
 
+export async function getAllTags() {
+  try {
+    const tags = await db.tag.findMany();
+    return createSuccessResponse({ tags });
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
 export async function getTag(id: number) {
   try {
     const tag = await getTagById(id);

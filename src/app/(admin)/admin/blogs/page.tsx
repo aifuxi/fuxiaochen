@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -20,11 +22,15 @@ export default function Page() {
     title: queryStates.title,
   });
 
+  const router = useRouter();
+
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-y-6 py-9">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-medium">文章</h2>
-        <Button>创建文章</Button>
+        <Button onClick={() => router.push("/admin/blogs/create")}>
+          创建文章
+        </Button>
       </div>
       <div className="flex items-center gap-6">
         <Input

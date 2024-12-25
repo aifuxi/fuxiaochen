@@ -10,9 +10,13 @@ import { BytemdEditor } from "@/components/bytemd";
 
 import { mockMarkdown } from "./mock-markdown";
 
+import { CreateBlogSheet } from "../_components/create-blog-sheet";
+import { useCreateBlogSheet } from "../hooks/use-create-blog-sheet";
+
 export default function Page() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState(mockMarkdown);
+  const { openSheet, isOpen } = useCreateBlogSheet();
 
   useMount(() => {
     document.body.style.overflowY = "hidden";
@@ -29,9 +33,10 @@ export default function Page() {
         />
 
         <div className="flex h-full flex-col justify-center px-6">
-          <Button>发布</Button>
+          <Button onClick={() => openSheet()}>发布</Button>
         </div>
       </div>
+      {isOpen && <CreateBlogSheet title={title} body={body} />}
       <div className="bytemd-wrapper">
         <BytemdEditor setBody={setBody} body={body} />
       </div>

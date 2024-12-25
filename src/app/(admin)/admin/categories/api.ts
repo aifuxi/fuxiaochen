@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   createCategory,
   deleteCategory,
+  getAllCategories,
   getCategories,
   getCategory,
   updateCategory,
@@ -22,6 +23,26 @@ export function useGetCategories(data: GetCategoriesRequestType) {
     queryKey: [GET_CATEGORIES_KEY, data],
     queryFn: async () => {
       const resp = await getCategories(data);
+
+      if (resp.code) {
+        throw Error(resp.msg as string);
+      }
+      return resp;
+    },
+  });
+
+  return query;
+}
+
+type GetAllCategoriesResponseType = Awaited<
+  ReturnType<typeof getAllCategories>
+>;
+
+export function useGetAllCategories() {
+  const query = useQuery<GetAllCategoriesResponseType, Error>({
+    queryKey: [GET_CATEGORIES_KEY, "all"],
+    queryFn: async () => {
+      const resp = await getAllCategories();
 
       if (resp.code) {
         throw Error(resp.msg as string);

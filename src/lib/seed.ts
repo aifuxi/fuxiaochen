@@ -5,8 +5,8 @@ import { hashPassword } from "./bcrypt";
 
 const prisma = new PrismaClient();
 async function main() {
-  await seedUsers();
-  await seedCategories();
+  // await seedUsers();
+  // await seedCategories();
   await seedTags();
 }
 
@@ -28,7 +28,7 @@ async function seedUsers() {
 
 async function seedTags() {
   const tags: Prisma.TagCreateManyInput[] = [];
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 10; i++) {
     tags.push({
       name: `测试标签${i}`,
       slug: `tag-slug${i}`,

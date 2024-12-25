@@ -50,6 +50,15 @@ export async function getCategories(data: GetCategoriesRequestType) {
   }
 }
 
+export async function getAllCategories() {
+  try {
+    const categories = await db.category.findMany();
+    return createSuccessResponse({ categories });
+  } catch (error) {
+    return createErrorResponse(error);
+  }
+}
+
 export async function getCategory(id: number) {
   try {
     const category = await getCategoryById(id);
