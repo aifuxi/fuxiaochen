@@ -255,8 +255,8 @@ export const AdminBlogListPage = () => {
   ];
 
   return (
-    <>
-      <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
+    <div className="flex flex-col gap-y-6 p-6">
+      <div className="grid grid-cols-4 items-end gap-4 px-1">
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
@@ -316,9 +316,7 @@ export const AdminBlogListPage = () => {
         </div>
       </div>
 
-      <div className="pb-4">
-        <SearchByTags tags={tags} params={params} updateParams={updateParams} />
-      </div>
+      <SearchByTags tags={tags} params={params} updateParams={updateParams} />
 
       <DataTable
         columns={columns}
@@ -335,7 +333,7 @@ export const AdminBlogListPage = () => {
           </div>
         }
       />
-    </>
+    </div>
   );
 
   function handleSearch() {

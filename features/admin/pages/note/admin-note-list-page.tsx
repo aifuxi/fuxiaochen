@@ -71,8 +71,8 @@ export const AdminNoteListPage = () => {
   }, [getTagsQuery]);
 
   return (
-    <>
-      <div className="grid grid-cols-4 items-end gap-4 px-1 py-4">
+    <div className="flex flex-col gap-y-6 p-6">
+      <div className="grid grid-cols-4 items-end gap-4 px-1">
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
@@ -130,9 +130,7 @@ export const AdminNoteListPage = () => {
         </div>
       </div>
 
-      <div className="pb-4">
-        <SearchByTags tags={tags} params={params} updateParams={updateParams} />
-      </div>
+      <SearchByTags tags={tags} params={params} updateParams={updateParams} />
 
       <ResponsiveMasonry
         columnsCountBreakPoints={{
@@ -185,7 +183,7 @@ export const AdminNoteListPage = () => {
               ))}
         </Masonry>
       </ResponsiveMasonry>
-    </>
+    </div>
   );
 
   function handleSearch() {

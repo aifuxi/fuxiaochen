@@ -136,7 +136,7 @@
 }
 
 .bytemd-toolbar {
-  @apply !rounded-none !border-border !bg-background;
+  @apply !rounded-xl !border-border !bg-background;
 }
 
 .CodeMirror {
