@@ -277,8 +277,8 @@ export const AdminTagListPage = () => {
   ];
 
   return (
-    <>
-      <div className="mb-4 grid grid-cols-4 gap-4 px-1 py-4">
+    <div className="flex flex-col gap-y-6 p-6">
+      <div className="grid grid-cols-4 gap-4 px-1">
         <Input
           placeholder="请输入名称"
           value={inputParams.name}
@@ -343,7 +343,7 @@ export const AdminTagListPage = () => {
           </div>
         }
       />
-    </>
+    </div>
   );
 
   function handleSearch() {

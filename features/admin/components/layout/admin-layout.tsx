@@ -3,20 +3,13 @@
 import * as React from "react";
 
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import {
-  Book,
-  ChevronsUpDown,
-  CodeXml,
-  Home,
-  LogOut,
-  ScrollIcon,
-  Tags,
-} from "lucide-react";
+import { Book, CodeXml, Home, LogOut, ScrollIcon, Tags } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Collapsible } from "@/components/ui/collapsible";
+import { buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,27 +18,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
 
-import { Logo } from "@/components/logo";
-import { PageBreadcrumb } from "@/components/page-breadcrumb";
-
-import { PATHS, PATHS_MAP, PLACEHOLDER_TEXT, WEBSITE } from "@/constants";
+import { NICKNAME, PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
+import { cn } from "@/lib/utils";
 
 export const adminNavItems: Array<{
   label?: string;
@@ -120,134 +96,83 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
   const pathname = usePathname();
 
   return (
-    <SidebarProvider>
-      <Sidebar variant="inset">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <a href={PATHS.SITE_HOME} target="_blank" rel="noreferrer">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Logo />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{WEBSITE}</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup>
-            <SidebarMenu>
-              {adminNavItems
-                .filter((el) => !el?.hidden)
-                .map((item) => (
-                  <Collapsible key={item.link} asChild>
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        asChild
-                        tooltip={item.label}
-                        isActive={item.link === pathname}
-                      >
-                        <a href={item.link}>
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  </Collapsible>
-                ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        </SidebarContent>
-        <SidebarFooter>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                  >
-                    <Avatar className="size-8 rounded-lg">
-                      <AvatarImage
-                        src={session?.data?.user?.image ?? ""}
-                        alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                      />
-                      <AvatarFallback className="rounded-lg">FC</AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                      </span>
-                      <span className="truncate text-xs">
-                        {session?.data?.user?.email ?? PLACEHOLDER_TEXT}
-                      </span>
-                    </div>
-                    <ChevronsUpDown className="ml-auto size-4" />
-                  </SidebarMenuButton>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                >
-                  <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="size-8 rounded-lg">
-                        <AvatarImage
-                          src={session?.data?.user?.image ?? ""}
-                          alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                        />
-                        <AvatarFallback className="rounded-lg">
-                          {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-semibold">
-                          {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
-                        </span>
-                        <span className="truncate text-xs">
-                          {session?.data?.user?.email ?? PLACEHOLDER_TEXT}
-                        </span>
-                      </div>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="cursor-pointer"
-                    onClick={() => setSignOutDialogOpen(true)}
-                  >
-                    <LogOut className="size-4" />
-                    退出登录
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      </Sidebar>
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <PageBreadcrumb
-              breadcrumbList={
-                adminNavItems.find((el) => el.link === pathname)?.breadcrumbs
-              }
-            />
-          </div>
-        </header>
-        <ScrollArea className="flex max-h-[calc(100vh-4rem-1rem)] flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </ScrollArea>
-      </SidebarInset>
+    <div className="relative flex flex-col">
+      <header className="sticky inset-x-0 top-0 z-20 flex h-16 items-center border-b bg-background/50 px-5 backdrop-blur">
+        <Link href="/" className="flex items-center">
+          <img
+            src="/images/fuxiaochen-logo.svg"
+            className="mr-2 size-8 rounded-md border "
+          />
+          <span className="text-base font-semibold">{NICKNAME}后台管理</span>
+        </Link>
+        <nav className="flex h-full flex-1 items-center gap-8 px-10">
+          {adminNavItems
+            .filter((el) => !el.hidden)
+            .map((el) => (
+              <Link
+                key={el.link}
+                href={el.link}
+                className={cn(
+                  buttonVariants({
+                    variant: pathname === el.link ? "default" : "ghost",
+                  }),
+                )}
+              >
+                {el.label}
+              </Link>
+            ))}
+        </nav>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Avatar className="size-8 rounded-lg">
+              <AvatarImage
+                src={session?.data?.user?.image ?? ""}
+                alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+              />
+              <AvatarFallback className="rounded-lg">FC</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            side="bottom"
+            align="end"
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="p-0 font-normal">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <Avatar className="size-8 rounded-lg">
+                  <AvatarImage
+                    src={session?.data?.user?.image ?? ""}
+                    alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">
+                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                  </span>
+                  <span className="truncate text-xs">
+                    {session?.data?.user?.email ?? PLACEHOLDER_TEXT}
+                  </span>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => setSignOutDialogOpen(true)}
+            >
+              <LogOut className="size-4" />
+              退出登录
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </header>
+      <main className="flex-1">{children}</main>
 
       <SignOutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
-    </SidebarProvider>
+    </div>
   );
 };

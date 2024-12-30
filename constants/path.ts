@@ -39,14 +39,14 @@ export const PATHS_MAP: Record<string, string> = {
   /** ************* ADMIN ****************** */
   [PATHS.ADMIN_HOME]: "首页",
   [PATHS.ADMIN_STATISTIC]: "统计",
-  [PATHS.ADMIN_BLOG]: "博客管理",
+  [PATHS.ADMIN_BLOG]: "博客",
   [PATHS.ADMIN_BLOG_CREATE]: "创建博客",
   [PATHS.ADMIN_BLOG_EDIT]: "编辑博客",
-  [PATHS.ADMIN_SNIPPET]: "片段管理",
+  [PATHS.ADMIN_SNIPPET]: "片段",
   [PATHS.ADMIN_SNIPPET_CREATE]: "创建片段",
   [PATHS.ADMIN_SNIPPET_EDIT]: "编辑片段",
-  [PATHS.ADMIN_TAG]: "标签管理",
-  [PATHS.ADMIN_NOTE]: "笔记管理",
+  [PATHS.ADMIN_TAG]: "标签",
+  [PATHS.ADMIN_NOTE]: "笔记",
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGN_IN]: "登录",
