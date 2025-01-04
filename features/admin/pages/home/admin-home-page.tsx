@@ -8,7 +8,7 @@ import { PATHS } from "@/constants";
 import { cn } from "@/lib/utils";
 
 export const AdminHomePage = () => {
-  const guessList: Array<{ label: string; link: string }> = [
+  const guessList: { label: string; link: string }[] = [
     { label: "创建标签", link: PATHS.ADMIN_TAG },
     { label: "创建博客", link: PATHS.ADMIN_BLOG },
     { label: "创建片段", link: PATHS.ADMIN_SNIPPET },

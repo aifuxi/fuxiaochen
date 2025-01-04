@@ -8,11 +8,11 @@ import {
 
 import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE, JUEJIN_PAGE } from "@/constants";
 
-export const socialMediaList: Array<{
+export const socialMediaList: {
   icon: React.ReactNode;
   label: string;
   link: string;
-}> = [
+}[] = [
   {
     icon: <IconBrandGithub className="text-base" />,
     label: "Github",

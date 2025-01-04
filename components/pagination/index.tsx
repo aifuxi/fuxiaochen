@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "../ui/select";
 
-type PaginationProps = {
+interface PaginationProps {
   total?: number;
   params: {
     pageIndex: number;
@@ -27,7 +27,7 @@ type PaginationProps = {
   }>;
   showSizeChanger?: boolean;
   showQuickJumper?: boolean;
-};
+}
 
 export const Pagination = ({
   params,
@@ -99,8 +99,8 @@ export const Pagination = ({
               className="mx-2 w-12"
               value={quickJumpPage}
               onChange={(e) => {
-                if (Number(e.target.value?.trim())) {
-                  setQuickJumpPage(`${Number(e.target.value?.trim())}`);
+                if (Number(e.target.value.trim())) {
+                  setQuickJumpPage(`${Number(e.target.value.trim())}`);
                 }
               }}
               onKeyUp={(e) => {

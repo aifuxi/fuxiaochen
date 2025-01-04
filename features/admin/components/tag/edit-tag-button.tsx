@@ -48,10 +48,10 @@ import {
 import { cn, toSlug } from "@/lib/utils";
 import { convertSvgToDataUrl } from "@/utils";
 
-type EditTagButtonProps = {
+interface EditTagButtonProps {
   id: string;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
@@ -69,8 +69,8 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
       form.setValue("name", tag.name);
       form.setValue("slug", tag.slug);
       form.setValue("type", tag.type);
-      form.setValue("icon", tag.icon || "");
-      form.setValue("iconDark", tag.iconDark || "");
+      form.setValue("icon", tag.icon ?? "");
+      form.setValue("iconDark", tag.iconDark ?? "");
       form.setValue("id", tag.id);
       form.clearErrors();
     }
@@ -84,7 +84,9 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
             <Button
               size={"icon"}
               variant="outline"
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+              }}
             >
               <Pen className="size-4" />
             </Button>
@@ -204,7 +206,9 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormMessage></FormMessage>
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon("icon")}
+                      onClick={() => {
+                        handleFormatIcon("icon");
+                      }}
                     >
                       转为Data Url
                     </Button>
@@ -227,7 +231,9 @@ export const EditTagButton = ({ id, refreshAsync }: EditTagButtonProps) => {
                     <FormMessage />
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon("iconDark")}
+                      onClick={() => {
+                        handleFormatIcon("iconDark");
+                      }}
                     >
                       转为Data Url
                     </Button>

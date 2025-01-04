@@ -14,11 +14,11 @@ import {
   showSuccessToast,
 } from "../ui/toast";
 
-type BytemdEditorProps = {
+interface BytemdEditorProps {
   body?: string;
   setContent: (body: string) => void;
   editorProps?: Partial<EditorProps>;
-};
+}
 
 export const BytemdEditor = ({
   body,
@@ -57,7 +57,9 @@ export const BytemdEditor = ({
       plugins={plugins}
       placeholder="请输入内容..."
       sanitize={sanitize}
-      onChange={(v) => setContent(v)}
+      onChange={(v) => {
+        setContent(v);
+      }}
       uploadImages={handleUploadImages}
       locale={zh_Hans}
       editorConfig={{

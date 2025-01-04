@@ -226,12 +226,10 @@ export const CreateBlogForm = () => {
                   <div className="grid grid-cols-12 items-center gap-4">
                     <div className="col-span-10">
                       <Combobox
-                        options={
-                          tags?.map((el) => ({
-                            label: el.name,
-                            value: el.id,
-                          })) ?? []
-                        }
+                        options={tags.map((el) => ({
+                          label: el.name,
+                          value: el.id,
+                        }))}
                         multiple
                         clearable
                         selectPlaceholder="请选择标签"
@@ -276,7 +274,7 @@ export const CreateBlogForm = () => {
   }
 
   function handleFormatSlug() {
-    const tmp = form.getValues().slug?.trim();
+    const tmp = form.getValues().slug.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
       form.setValue("slug", formatted);

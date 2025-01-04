@@ -17,7 +17,7 @@ export const JUEJIN_PAGE = "https://juejin.cn/user/2647279733052494";
 export const BILIBILI_PAGE = "https://space.bilibili.com/315542317";
 
 /** 网站名称 */
-export const WEBSITE = `${NICKNAME}`;
+export const WEBSITE = NICKNAME;
 
 /** Slogan */
 export const SLOGAN = "努力做一个更好的程序员";

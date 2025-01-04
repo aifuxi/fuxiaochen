@@ -7,10 +7,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-type Props = {
+interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
 export const SettingsModal = ({ open, setOpen }: Props) => {
   return (

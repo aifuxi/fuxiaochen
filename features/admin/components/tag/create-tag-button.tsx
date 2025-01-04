@@ -42,9 +42,9 @@ import {
 import { cn, toSlug } from "@/lib/utils";
 import { convertSvgToDataUrl } from "@/utils";
 
-type CreateTagButtonProps = {
+interface CreateTagButtonProps {
   refreshAsync: () => Promise<unknown>;
-};
+}
 export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
   const form = useForm<CreateTagDTO>({
@@ -68,7 +68,11 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Plus className="mr-2 size-4 " />
           创建标签
         </Button>
@@ -155,7 +159,9 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                     <FormMessage />
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon("icon")}
+                      onClick={() => {
+                        handleFormatIcon("icon");
+                      }}
                     >
                       转为Data Url
                     </Button>
@@ -179,7 +185,9 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                     <FormMessage />
                     <Button
                       type="button"
-                      onClick={() => handleFormatIcon("iconDark")}
+                      onClick={() => {
+                        handleFormatIcon("iconDark");
+                      }}
                     >
                       转为Data Url
                     </Button>
@@ -220,7 +228,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
   }
 
   function handleFormatSlug() {
-    const tmp = form.getValues().slug?.trim();
+    const tmp = form.getValues().slug.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
       form.setValue("slug", formatted);

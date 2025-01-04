@@ -20,12 +20,12 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { ScrollArea } from "./scroll-area";
 
-export type ComboboxOption = {
+export interface ComboboxOption {
   value: string;
   label: string;
-};
+}
 
-type ComboboxPropsSingle = {
+interface ComboboxPropsSingle {
   options: ComboboxOption[];
   emptyText?: string;
   clearable?: boolean;
@@ -34,9 +34,9 @@ type ComboboxPropsSingle = {
   multiple?: false;
   value?: string;
   onValueChange?: (value: string) => void;
-};
+}
 
-type ComboboxPropsMultiple = {
+interface ComboboxPropsMultiple {
   options: ComboboxOption[];
   emptyText?: string;
   clearable?: boolean;
@@ -45,7 +45,7 @@ type ComboboxPropsMultiple = {
   multiple: true;
   value?: string[];
   onValueChange?: (value: string[]) => void;
-};
+}
 
 export type ComboboxProps = ComboboxPropsSingle | ComboboxPropsMultiple;
 
@@ -81,18 +81,15 @@ export const Combobox = React.forwardRef(
 
     const tagMap = React.useMemo(() => {
       return new Map<string, string>(
-        props?.options?.map((el) => [el.value, el.label]) ?? [],
+        props.options.map((el) => [el.value, el.label]) ?? [],
       );
-    }, [props?.options]);
+    }, [props.options]);
 
     const filteredOptions = React.useMemo(() => {
       return props.options.filter((el) =>
-        el.label
-          .toLowerCase()
-          .trim()
-          .includes(search?.trim()?.toLowerCase()),
+        el.label.toLowerCase().trim().includes(search.trim().toLowerCase()),
       );
-    }, [props?.options, search]);
+    }, [props.options, search]);
 
     return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -115,7 +112,7 @@ export const Combobox = React.forwardRef(
               {props.multiple &&
                 props.value &&
                 Boolean(props.value.length) &&
-                props.value?.map((el) => (
+                props.value.map((el) => (
                   <Badge key={el}>{tagMap.get(el)}</Badge>
                 ))}
 
@@ -123,7 +120,7 @@ export const Combobox = React.forwardRef(
               {!props.multiple &&
                 props.value &&
                 props.value !== "" &&
-                props?.options?.find((option) => option.value === props.value)
+                props.options.find((option) => option.value === props.value)
                   ?.label}
 
               {/* 空态 */}
@@ -168,12 +165,12 @@ export const Combobox = React.forwardRef(
             <CommandGroup>
               <ScrollArea>
                 <div className="max-h-60">
-                  {filteredOptions?.map((option) => (
+                  {filteredOptions.map((option) => (
                     <CommandItem
                       key={option.value}
                       value={option.value.toLowerCase().trim()}
                       onSelect={(selectedValue) => {
-                        const option = props?.options?.find(
+                        const option = props.options.find(
                           (option) =>
                             option.value.toLowerCase().trim() === selectedValue,
                         );

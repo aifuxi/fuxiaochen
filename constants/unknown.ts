@@ -37,10 +37,10 @@ export const PUBLISHED_MAP = {
   [PUBLISHED_ENUM.NO_PUBLISHED]: false,
 };
 
-type NavItem = {
+interface NavItem {
   link: string;
   label: string;
-};
+}
 
 export const navItems: NavItem[] = [
   { label: "首页", link: "/" },

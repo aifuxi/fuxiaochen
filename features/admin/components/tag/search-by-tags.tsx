@@ -7,11 +7,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { type Tag, TagPrefixIcon } from "@/features/tag";
 import { cn } from "@/lib/utils";
 
-type SearchByTagsProps = {
+interface SearchByTagsProps {
   tags?: Pick<Tag, "id" | "name" | "icon" | "iconDark">[];
   params: { tags?: string[] };
   updateParams: SetState<{ tags: string[] }>;
-};
+}
 
 export const SearchByTags = ({
   tags,

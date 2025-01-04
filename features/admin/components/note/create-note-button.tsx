@@ -37,9 +37,9 @@ import { useGetAllTags } from "@/features/tag";
 
 import { CreateTagButton } from "../tag";
 
-type CreateNoteButtonProps = {
+interface CreateNoteButtonProps {
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
@@ -69,7 +69,11 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button onClick={() => setOpen(true)}>
+        <Button
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Plus className="mr-2 size-4" />
           创建笔记
         </Button>
@@ -92,7 +96,7 @@ export const CreateNoteButton = ({ refreshAsync }: CreateNoteButtonProps) => {
                         <div className="flex-1">
                           <Combobox
                             options={
-                              tags?.map((el) => ({
+                              tags.map((el) => ({
                                 label: el.name,
                                 value: el.id,
                               })) ?? []

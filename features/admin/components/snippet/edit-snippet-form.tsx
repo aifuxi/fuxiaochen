@@ -61,7 +61,7 @@ export const EditSnippetForm = () => {
       published: snippet?.published ?? false,
       body: snippet?.body ?? "",
 
-      tags: snippet?.tags?.map((el) => el.id) ?? [],
+      tags: snippet?.tags.map((el) => el.id) ?? [],
     },
   });
 
@@ -72,7 +72,7 @@ export const EditSnippetForm = () => {
     form.setValue("description", snippet?.description ?? "");
     form.setValue("body", snippet?.body ?? "");
     form.setValue("published", snippet?.published ?? false);
-    form.setValue("tags", snippet?.tags?.map((el) => el.id) ?? []);
+    form.setValue("tags", snippet?.tags.map((el) => el.id) ?? []);
   }, [snippet, form]);
 
   return (
@@ -168,7 +168,7 @@ export const EditSnippetForm = () => {
                     <div className="col-span-10">
                       <Combobox
                         options={
-                          tags?.map((el) => ({
+                          tags.map((el) => ({
                             label: el.name,
                             value: el.id,
                           })) ?? []

@@ -23,13 +23,13 @@ import { NICKNAME, PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
 import { SignOutDialog } from "@/features/auth";
 import { cn } from "@/lib/utils";
 
-export const adminNavItems: Array<{
+export const adminNavItems: {
   label?: string;
   link: string;
   icon?: React.ReactNode;
   breadcrumbs?: string[];
   hidden?: boolean;
-}> = [
+}[] = [
   {
     label: PATHS_MAP[PATHS.ADMIN_HOME],
     link: PATHS.ADMIN_HOME,
@@ -126,8 +126,8 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
           <DropdownMenuTrigger>
             <Avatar className="size-8 rounded-lg">
               <AvatarImage
-                src={session?.data?.user?.image ?? ""}
-                alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                src={session.data?.user?.image ?? ""}
+                alt={session.data?.user?.name ?? PLACEHOLDER_TEXT}
               />
               <AvatarFallback className="rounded-lg">FC</AvatarFallback>
             </Avatar>
@@ -142,19 +142,19 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
                   <AvatarImage
-                    src={session?.data?.user?.image ?? ""}
-                    alt={session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                    src={session.data?.user?.image ?? ""}
+                    alt={session.data?.user?.name ?? PLACEHOLDER_TEXT}
                   />
                   <AvatarFallback className="rounded-lg">
-                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                    {session.data?.user?.name ?? PLACEHOLDER_TEXT}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {session?.data?.user?.name ?? PLACEHOLDER_TEXT}
+                    {session.data?.user?.name ?? PLACEHOLDER_TEXT}
                   </span>
                   <span className="truncate text-xs">
-                    {session?.data?.user?.email ?? PLACEHOLDER_TEXT}
+                    {session.data?.user?.email ?? PLACEHOLDER_TEXT}
                   </span>
                 </div>
               </div>
@@ -162,7 +162,9 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => setSignOutDialogOpen(true)}
+              onClick={() => {
+                setSignOutDialogOpen(true);
+              }}
             >
               <LogOut className="size-4" />
               退出登录

@@ -9,18 +9,18 @@ import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 
-type BackToTopProps = {
+interface BackToTopProps {
   scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
-};
+}
 
 export const BackToTop = ({ scrollRef }: BackToTopProps) => {
   // 特别注意：useScroll 用的是 document 而不是 document.documentElement
   // useScroll 如果设置的是 document.documentElement，scroll.top 一直为 0
-  const scroll = useScroll(() => scrollRef?.current || document);
+  const scroll = useScroll(() => scrollRef?.current ?? document);
 
   const handleClick = useMemoizedFn(() => {
     if (scrollRef?.current) {
-      scrollRef?.current.scrollTo({ top: 0, behavior: "smooth" });
+      scrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 

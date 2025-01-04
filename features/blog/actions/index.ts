@@ -27,7 +27,7 @@ export const getBlogs = async (params: GetBlogsDTO) => {
   const result = await getBlogsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    throw new Error(result.error.format()._errors?.join(";") || "");
+    throw new Error(result.error.format()._errors.join(";") || "");
   }
 
   const cond: Prisma.BlogWhereInput = {
@@ -46,7 +46,7 @@ export const getBlogs = async (params: GetBlogsDTO) => {
 
   const published = await noPermission();
   if (published || !isUndefined(result.data.published)) {
-    cond.published = PUBLISHED_MAP[result.data.published!] || published;
+    cond.published = PUBLISHED_MAP[result.data.published!] ?? published;
   }
 
   const sort: Prisma.BlogOrderByWithRelationInput | undefined =
@@ -146,7 +146,7 @@ export const createBlog = async (params: CreateBlogDTO) => {
   const result = await createBlogSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -212,7 +212,7 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
   const result = await updateBlogSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -248,7 +248,7 @@ export const updateBlog = async (params: UpdateBlogDTO) => {
       published: published ?? blog.published,
       tags: {
         connect: tagsToConnect?.length ? tagsToConnect : undefined,
-        disconnect: tagsToDisconnect?.length ? tagsToDisconnect : undefined,
+        disconnect: tagsToDisconnect.length ? tagsToDisconnect : undefined,
       },
     },
   });

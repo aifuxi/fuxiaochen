@@ -76,11 +76,11 @@ export const AdminNoteListPage = () => {
         <Input
           placeholder="请输入内容"
           value={inputParams.body}
-          onChange={(v) =>
+          onChange={(v) => {
             updateInputParams({
               body: v.target.value,
-            })
-          }
+            });
+          }}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
               handleSearch();
@@ -89,11 +89,11 @@ export const AdminNoteListPage = () => {
         />
         {isAdmin(session?.user?.email) && (
           <Select
-            onValueChange={(v: PUBLISHED_ENUM) =>
+            onValueChange={(v: PUBLISHED_ENUM) => {
               updateInputParams({
                 published: v,
-              })
-            }
+              });
+            }}
             value={inputParams.published}
           >
             <SelectTrigger
@@ -152,7 +152,7 @@ export const AdminNoteListPage = () => {
                   <div className="relative w-full rounded-lg border px-6 pb-6">
                     <BytemdViewer body={note.body || ""} />
                     <div className="flex flex-wrap justify-end gap-2 py-4">
-                      {note.tags?.map((tag) => (
+                      {note.tags.map((tag) => (
                         <Badge key={tag.id}>{tag.name}</Badge>
                       ))}
                     </div>

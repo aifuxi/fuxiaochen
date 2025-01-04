@@ -10,9 +10,9 @@ import { cn, prettyDate } from "@/lib/utils";
 
 import { type Blog } from "../types";
 
-type BlogListItemProps = {
+interface BlogListItemProps {
   blog: Blog;
-};
+}
 
 export const BlogListItem = ({ blog }: BlogListItemProps) => {
   return (

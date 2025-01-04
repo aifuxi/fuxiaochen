@@ -27,7 +27,7 @@ export const getSnippets = async (params: GetSnippetsDTO) => {
   const result = await getSnippetsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -132,7 +132,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
   const result = await createSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -150,7 +150,7 @@ export const createSnippet = async (params: CreateSnippetDTO) => {
     data: {
       ...result.data,
       tags: {
-        connect: result.data.tags?.map((tagID) => ({ id: tagID })) || [],
+        connect: result.data.tags?.map((tagID) => ({ id: tagID })) ?? [],
       },
     },
   });
@@ -187,7 +187,7 @@ export const updateSnippet = async (params: UpdateSnippetDTO) => {
   const result = await updateSnippetSchema.safeParseAsync(params);
 
   if (!result.success) {
-    throw new Error(result.error.format()._errors?.join(";"));
+    throw new Error(result.error.format()._errors.join(";"));
   }
 
   const snippet = await prisma.snippet.update({

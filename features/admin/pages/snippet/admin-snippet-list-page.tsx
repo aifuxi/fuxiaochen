@@ -99,14 +99,18 @@ export const AdminSnippetListPage = () => {
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value);
+          }}
           aria-label="Select all"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+          }}
           aria-label="Select row"
         />
       ),
@@ -141,7 +145,7 @@ export const AdminSnippetListPage = () => {
       cell: ({ row }) => {
         return (
           <div className="flex flex-wrap gap-2">
-            {row.original.tags?.length
+            {row.original.tags.length
               ? row.original.tags.map((tag) => (
                   <Badge key={tag.id}>{tag.name}</Badge>
                 ))
@@ -231,7 +235,9 @@ export const AdminSnippetListPage = () => {
             <Button
               size={"icon"}
               variant="outline"
-              onClick={() => handleGoToEdit(row.original.id)}
+              onClick={() => {
+                handleGoToEdit(row.original.id);
+              }}
             >
               <Pen className="size-4" />
             </Button>
@@ -251,11 +257,11 @@ export const AdminSnippetListPage = () => {
         <Input
           placeholder="请输入标题"
           value={inputParams.title}
-          onChange={(v) =>
+          onChange={(v) => {
             updateInputParams({
               title: v.target.value,
-            })
-          }
+            });
+          }}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
               handleSearch();
@@ -265,11 +271,11 @@ export const AdminSnippetListPage = () => {
 
         {isAdmin(session?.user?.email) && (
           <Select
-            onValueChange={(v: PUBLISHED_ENUM) =>
+            onValueChange={(v: PUBLISHED_ENUM) => {
               updateInputParams({
                 published: v,
-              })
-            }
+              });
+            }}
             value={inputParams.published}
           >
             <SelectTrigger

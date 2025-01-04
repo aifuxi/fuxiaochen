@@ -4,11 +4,11 @@ import { Switch } from "@/components/ui/switch";
 
 import { useToggleSnippetPublish } from "@/features/snippet";
 
-type ToggleSnippetPublishSwitchProps = {
+interface ToggleSnippetPublishSwitchProps {
   id: string;
   published: boolean;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const ToggleSnippetPublishSwitch = ({
   id,

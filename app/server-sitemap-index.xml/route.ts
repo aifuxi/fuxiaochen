@@ -27,14 +27,14 @@ export async function GET() {
   const blogsSitemaps = blogs.map((item): ISitemapField => {
     return {
       loc: `${SITE_URL}${PATHS.SITE_BLOG}/${item.slug}`,
-      lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
+      lastmod: new Date(item.updatedAt).toISOString(),
       changefreq: "hourly",
     };
   });
   const snippetsSitemaps = snippets.map((item): ISitemapField => {
     return {
       loc: `${SITE_URL}${PATHS.SITE_SNIPPET}/${item.slug}`,
-      lastmod: new Date(item.updatedAt ?? item.createdAt).toISOString(),
+      lastmod: new Date(item.updatedAt).toISOString(),
       changefreq: "hourly",
     };
   });

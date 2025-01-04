@@ -2,19 +2,19 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-type HighlightProps = {
+interface HighlightProps {
   className?: string;
   highlightMarkClassName?: string;
   sourceString: string;
   searchWords?: string[];
   // 是否大小写敏感
   caseSensitive?: boolean;
-};
+}
 
-type HighlightMarkProps = {
+interface HighlightMarkProps {
   text: string;
   className?: string;
-};
+}
 
 export const HighlightMark = ({ text, className }: HighlightMarkProps) => {
   return (
@@ -37,7 +37,7 @@ export const Highlight = ({
     return sourceString;
   }
 
-  if (!sourceString?.trim()) {
+  if (!sourceString.trim()) {
     return "";
   }
 

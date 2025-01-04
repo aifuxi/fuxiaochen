@@ -26,7 +26,7 @@ export const getTags = async (params: GetTagsDTO) => {
   const result = await getTagsSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 

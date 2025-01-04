@@ -8,9 +8,9 @@ import { TagPrefixIcon } from "./tag-prefix-icon";
 
 import { type Tag } from "../types";
 
-type TagListProps = {
+interface TagListProps {
   tags?: Pick<Tag, "id" | "name" | "icon" | "iconDark">[];
-};
+}
 
 export const TagList = ({ tags }: TagListProps) => {
   return (
