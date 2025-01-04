@@ -162,11 +162,5 @@
   },
   "engines": {
     "node": ">= 20"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.1",
-      "@types/react-dom": "19.0.2"
-    }
   }
 }
