@@ -1,10 +1,10 @@
 import { PATHS, PATHS_MAP } from "@/constants";
 
-export const navItems: Array<{
+export const navItems: {
   label?: string;
   link: string;
   external?: boolean;
-}> = [
+}[] = [
   {
     label: PATHS_MAP[PATHS.SITE_HOME],
     link: PATHS.SITE_HOME,

@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 
 import { useToggleNotePublish } from "@/features/note";
 
-type ToggleNotePublishButtonProps = {
+interface ToggleNotePublishButtonProps {
   id: string;
   published: boolean;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const ToggleNotePublishButton = ({
   id,

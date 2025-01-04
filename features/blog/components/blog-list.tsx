@@ -4,9 +4,9 @@ import { BlogListItem } from "./blog-list-item";
 
 import { type Blog } from "../types";
 
-type BlogListProps = {
+interface BlogListProps {
   blogs: Blog[];
-};
+}
 
 export const BlogList = ({ blogs }: BlogListProps) => {
   if (!blogs.length) {

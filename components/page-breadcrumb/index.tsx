@@ -11,9 +11,9 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 
-type PageBreadcrumbProps = {
+interface PageBreadcrumbProps {
   breadcrumbList?: string[];
-};
+}
 
 export const PageBreadcrumb = ({ breadcrumbList }: PageBreadcrumbProps) => {
   if (!breadcrumbList?.length) {

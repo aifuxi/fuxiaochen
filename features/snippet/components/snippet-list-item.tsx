@@ -10,9 +10,9 @@ import { cn, prettyDate } from "@/lib/utils";
 
 import { type Snippet } from "../types";
 
-type SnippetListItemProps = {
+interface SnippetListItemProps {
   snippet: Snippet;
-};
+}
 
 export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
   return (

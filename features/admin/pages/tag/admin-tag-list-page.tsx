@@ -81,14 +81,18 @@ export const AdminTagListPage = () => {
             table.getIsAllPageRowsSelected() ||
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          onCheckedChange={(value) => {
+            table.toggleAllPageRowsSelected(!!value);
+          }}
           aria-label="Select all"
         />
       ),
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value);
+          }}
           aria-label="Select row"
         />
       ),
@@ -282,11 +286,11 @@ export const AdminTagListPage = () => {
         <Input
           placeholder="请输入名称"
           value={inputParams.name}
-          onChange={(v) =>
+          onChange={(v) => {
             updateInputParams({
               name: v.target.value,
-            })
-          }
+            });
+          }}
           onKeyUp={(e) => {
             if (e.key === "Enter") {
               handleSearch();
@@ -294,11 +298,11 @@ export const AdminTagListPage = () => {
           }}
         />
         <Select
-          onValueChange={(v: TagTypeEnum) =>
+          onValueChange={(v: TagTypeEnum) => {
             updateInputParams({
               type: v,
-            })
-          }
+            });
+          }}
           value={inputParams.type}
         >
           <SelectTrigger

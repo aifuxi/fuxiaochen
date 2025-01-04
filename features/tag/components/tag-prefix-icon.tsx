@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 import { type Tag } from "../types";
 
-type TagPrefixIconProps = {
+interface TagPrefixIconProps {
   tag: Pick<Tag, "icon" | "iconDark">;
   className?: string;
-};
+}
 
 export const TagPrefixIcon = ({ tag, className }: TagPrefixIconProps) => {
   return (

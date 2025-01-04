@@ -16,10 +16,10 @@ import { Button } from "@/components/ui/button";
 
 import { useDeleteBlog } from "@/features/blog";
 
-type DeleteBlogButtonProps = {
+interface DeleteBlogButtonProps {
   id: string;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const DeleteBlogButton = ({
   id,
@@ -31,7 +31,13 @@ export const DeleteBlogButton = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
+        <Button
+          size={"icon"}
+          variant="outline"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
@@ -44,7 +50,9 @@ export const DeleteBlogButton = ({
           <Button
             variant="outline"
             disabled={deleteBlogQuery.loading}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+            }}
           >
             取消
           </Button>

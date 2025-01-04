@@ -22,7 +22,7 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
   debug: NODE_ENV === "development",
   callbacks: {
     session({ session, token }) {
-      if (session.user && token?.sub) {
+      if (session.user && token.sub) {
         session.user.id = token.sub;
       }
       return session;

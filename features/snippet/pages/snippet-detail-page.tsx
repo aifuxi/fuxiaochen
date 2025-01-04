@@ -6,9 +6,9 @@ import { prettyDateWithWeekday } from "@/lib/utils";
 
 import { type Snippet } from "../types";
 
-type SnippetDetailProps = {
+interface SnippetDetailProps {
   snippet: Snippet;
-};
+}
 
 export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
   return (

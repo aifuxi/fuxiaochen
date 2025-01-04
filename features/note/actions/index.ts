@@ -26,7 +26,7 @@ export const getNotes = async (params: GetNotesDTO) => {
   const result = await getNotesSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -114,7 +114,7 @@ export const createNote = async (params: CreateNoteDTO) => {
       body,
       published,
       tags: {
-        connect: tags?.map((tagID) => ({ id: tagID })) || [],
+        connect: tags?.map((tagID) => ({ id: tagID })) ?? [],
       },
     },
   });
@@ -152,7 +152,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   const result = await updateNoteSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     throw new Error(error);
   }
 
@@ -170,7 +170,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
   const noteTagIDs = note.tags.map(({ id }) => id);
   const connectTags = tags
     ?.filter((tagID) => !noteTagIDs.includes(tagID))
-    ?.map((id) => ({ id }));
+    .map((id) => ({ id }));
   const disconnectTags = note.tags
     .filter(({ id }) => !tags?.includes(id))
     .map(({ id }) => ({ id }));
@@ -182,7 +182,7 @@ export const updateNote = async (params: UpdateNoteDTO) => {
       published,
       tags: {
         connect: connectTags?.length ? connectTags : undefined,
-        disconnect: disconnectTags?.length ? disconnectTags : undefined,
+        disconnect: disconnectTags.length ? disconnectTags : undefined,
       },
     },
   });

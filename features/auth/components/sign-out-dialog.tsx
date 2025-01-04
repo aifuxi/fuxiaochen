@@ -15,10 +15,10 @@ import {
 
 import { signOutAndRedirect } from "../actions/sign-out";
 
-type Props = {
+interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+}
 
 export const SignOutDialog = ({ open, setOpen }: Props) => {
   async function handleLogout() {

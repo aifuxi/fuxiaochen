@@ -16,10 +16,10 @@ import { Button } from "@/components/ui/button";
 
 import { useDeleteNote } from "@/features/note";
 
-type DeleteNoteButtonProps = {
+interface DeleteNoteButtonProps {
   id: string;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const DeleteNoteButton = ({
   id,
@@ -31,7 +31,13 @@ export const DeleteNoteButton = ({
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
+        <Button
+          size={"icon"}
+          variant="outline"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
@@ -44,7 +50,9 @@ export const DeleteNoteButton = ({
           <Button
             variant="outline"
             disabled={deleteNoteQuery.loading}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+            }}
           >
             取消
           </Button>

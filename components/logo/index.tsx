@@ -3,9 +3,9 @@ import * as React from "react";
 import { ImageAssets, WEBSITE } from "@/constants";
 import { cn } from "@/lib/utils";
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 export const Logo = ({ className }: Props) => {
   return (

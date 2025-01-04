@@ -28,19 +28,25 @@ export function ModeToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme("light")}
+          onClick={() => {
+            setTheme("light");
+          }}
         >
           浅色
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme("dark")}
+          onClick={() => {
+            setTheme("dark");
+          }}
         >
           深色
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          onClick={() => setTheme("system")}
+          onClick={() => {
+            setTheme("system");
+          }}
         >
           跟随系统
         </DropdownMenuItem>

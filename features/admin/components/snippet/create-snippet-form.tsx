@@ -149,7 +149,7 @@ export const CreateSnippetForm = () => {
                     <div className="col-span-10">
                       <Combobox
                         options={
-                          tags?.map((el) => ({
+                          tags.map((el) => ({
                             label: el.name,
                             value: el.id,
                           })) ?? []
@@ -198,7 +198,7 @@ export const CreateSnippetForm = () => {
   }
 
   function handleFormatSlug() {
-    const tmp = form.getValues().slug?.trim();
+    const tmp = form.getValues().slug.trim();
     if (tmp) {
       const formatted = toSlug(tmp);
       form.setValue("slug", formatted);

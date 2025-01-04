@@ -18,7 +18,7 @@ export const convertSvgToDataUrl = (svgString?: string) => {
     return "";
   }
 
-  if (!svgString?.startsWith("<svg")) {
+  if (!svgString.startsWith("<svg")) {
     return svgString;
   }
 

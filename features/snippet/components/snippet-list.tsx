@@ -4,9 +4,9 @@ import { SnippetListItem } from "./snippet-list-item";
 
 import { type Snippet } from "../types";
 
-type SnippetListProps = {
+interface SnippetListProps {
   snippets: Snippet[];
-};
+}
 
 export const SnippetList = ({ snippets }: SnippetListProps) => {
   if (!snippets.length) {

@@ -4,11 +4,11 @@ import { Switch } from "@/components/ui/switch";
 
 import { useToggleBlogPublish } from "@/features/blog";
 
-type ToggleBlogPublishSwitchProps = {
+interface ToggleBlogPublishSwitchProps {
   id: string;
   published: boolean;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const ToggleBlogPublishSwitch = ({
   id,

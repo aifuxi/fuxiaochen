@@ -16,10 +16,10 @@ import { Button } from "@/components/ui/button";
 
 import { useDeleteTag } from "@/features/tag";
 
-type DeleteTagButtonProps = {
+interface DeleteTagButtonProps {
   id: string;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
@@ -28,7 +28,13 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
+        <Button
+          size={"icon"}
+          variant="outline"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Trash className="size-4 text-destructive" />
         </Button>
       </AlertDialogTrigger>
@@ -41,7 +47,9 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
           <Button
             variant="outline"
             disabled={deleteTagQuery.loading}
-            onClick={() => setOpen(false)}
+            onClick={() => {
+              setOpen(false);
+            }}
           >
             取消
           </Button>

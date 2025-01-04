@@ -38,10 +38,10 @@ import { useGetAllTags } from "@/features/tag";
 
 import { CreateTagButton } from "../tag";
 
-type EditNoteButtonProps = {
+interface EditNoteButtonProps {
   id: string;
   refreshAsync: () => Promise<unknown>;
-};
+}
 
 export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
@@ -62,7 +62,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
       const { note } = data;
       form.setValue("body", note.body);
       form.setValue("published", note.published);
-      form.setValue("tags", note?.tags?.map((el) => el.id) ?? []);
+      form.setValue("tags", note.tags.map((el) => el.id) ?? []);
       form.setValue("id", note.id);
       form.clearErrors();
     }
@@ -71,7 +71,13 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"icon"} variant="outline" onClick={() => setOpen(true)}>
+        <Button
+          size={"icon"}
+          variant="outline"
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
           <Pen className="size-4" />
         </Button>
       </DialogTrigger>
@@ -93,7 +99,7 @@ export const EditNoteButton = ({ id, refreshAsync }: EditNoteButtonProps) => {
                         <div className="flex-1">
                           <Combobox
                             options={
-                              tags?.map((el) => ({
+                              tags.map((el) => ({
                                 label: el.name,
                                 value: el.id,
                               })) ?? []

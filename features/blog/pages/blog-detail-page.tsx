@@ -6,9 +6,9 @@ import { prettyDateWithWeekday } from "@/lib/utils";
 
 import { type Blog } from "../types";
 
-type BlogDetailProps = {
+interface BlogDetailProps {
   blog: Blog;
-};
+}
 
 export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
   return (

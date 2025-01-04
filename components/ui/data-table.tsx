@@ -23,10 +23,10 @@ import { Skeleton } from "./skeleton";
 
 import { Pagination, PaginationInfo } from "../pagination";
 
-type PaginationConfig = {
+interface PaginationConfig {
   pageIndex: number;
   pageSize: number;
-};
+}
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -117,7 +117,7 @@ export function DataTable<TData, TValue>({
       });
     }
 
-    if (!table.getRowModel().rows?.length && !loading) {
+    if (!table.getRowModel().rows.length && !loading) {
       return (
         <TableRow>
           <TableCell colSpan={columns.length} className="h-24 text-center">

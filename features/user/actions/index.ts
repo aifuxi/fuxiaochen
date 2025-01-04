@@ -11,7 +11,7 @@ export const createUser = async (params: SignupDTO) => {
   const result = await signupSchema.safeParseAsync(params);
 
   if (!result.success) {
-    const error = result.error.format()._errors?.join(";");
+    const error = result.error.format()._errors.join(";");
     // TODO: 记录日志
     throw new Error(error);
   }

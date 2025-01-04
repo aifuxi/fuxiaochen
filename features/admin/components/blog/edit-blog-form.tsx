@@ -72,7 +72,7 @@ export const EditBlogForm = () => {
       published: blog?.published ?? true,
       cover: blog?.cover ?? "",
       author: blog?.author ?? "",
-      tags: blog?.tags?.map((el) => el.id) ?? [],
+      tags: blog?.tags.map((el) => el.id) ?? [],
     },
   });
 
@@ -84,7 +84,7 @@ export const EditBlogForm = () => {
     form.setValue("body", blog?.body ?? "");
     form.setValue("published", blog?.published ?? true);
     form.setValue("cover", blog?.cover ?? "");
-    form.setValue("tags", blog?.tags?.map((el) => el.id) ?? []);
+    form.setValue("tags", blog?.tags.map((el) => el.id) ?? []);
   }, [blog, form]);
 
   return (
@@ -248,7 +248,7 @@ export const EditBlogForm = () => {
                     <div className="col-span-10">
                       <Combobox
                         options={
-                          tags?.map((el) => ({
+                          tags.map((el) => ({
                             label: el.name,
                             value: el.id,
                           })) ?? []

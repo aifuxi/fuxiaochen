@@ -30,7 +30,7 @@ export const copyToClipboard = (text: string) => {
   if (navigator.clipboard) {
     navigator.clipboard
       // 去除首尾空白字符
-      .writeText(text?.trim())
+      .writeText(text.trim())
       .then(() => {
         showSuccessToast("已复制到粘贴板");
       })
@@ -46,7 +46,7 @@ export const copyToClipboard = (text: string) => {
     textarea.style.clip = "rect(0 0 0 0)";
     textarea.style.top = "10px";
     // 赋值，手动去除首尾空白字符
-    textarea.value = text?.trim();
+    textarea.value = text.trim();
     // 选中
     textarea.select();
     // 复制
