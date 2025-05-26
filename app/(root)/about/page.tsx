@@ -36,24 +36,12 @@ import {
 import { NICKNAME } from "@/constants";
 import { socialMediaList } from "@/features/home";
 
-export const revalidate = 60;
-
 export default function Page() {
-  let delay = 0;
-
-  // 每次调用，增加延时
-  const getDelay = () => (delay += 200);
-
   return (
     <div className="flex w-full flex-col justify-center px-6 pb-24 pt-8">
-      <section className="w-screen-wrapper prose prose-neutral mx-auto max-w-screen-wrapper dark:prose-invert">
+      <section className="prose mx-auto dark:prose-invert">
         <h2 className="text-3xl font-bold md:text-4xl">关于</h2>
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h2>我是谁</h2>
           <p>
             Hi~ 我是{NICKNAME}
@@ -61,21 +49,11 @@ export default function Page() {
           </p>
         </div>
 
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h2>我的技能</h2>
         </div>
 
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h3>前端</h3>
           <ul>
             <li>
@@ -105,12 +83,7 @@ export default function Page() {
             </li>
           </ul>
         </div>
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h3>后端</h3>
           <ul>
             <li>
@@ -135,12 +108,7 @@ export default function Page() {
             </li>
           </ul>
         </div>
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h3>其它</h3>
           <ul>
             <li>
@@ -194,12 +162,7 @@ export default function Page() {
           </ul>
         </div>
 
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h2>我的设备</h2>
           <ul>
             <li>
@@ -216,12 +179,7 @@ export default function Page() {
           </ul>
         </div>
 
-        <div
-          className="animate-fade-up animate-ease-in-out"
-          style={{
-            animationDelay: `${getDelay()}ms`,
-          }}
-        >
+        <div>
           <h2>联系我</h2>
           <p>你可以通过👇下面任意一种方式联系我</p>
           <ul className="!mb-0 flex !list-none items-center space-x-4 !pl-0">

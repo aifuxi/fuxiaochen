@@ -33,13 +33,13 @@
   "include": [
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "next.config.mjs",
+    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
     "eslint.config.mjs",
     ".prettierrc.cjs",
     ".commitlintrc.cjs",
-    "postcss.config.cjs",
+    "postcss.config.mjs",
     "next-sitemap.config.cjs"
   ],
   "exclude": ["node_modules"]

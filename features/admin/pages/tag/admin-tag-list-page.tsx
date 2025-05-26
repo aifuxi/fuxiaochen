@@ -22,7 +22,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -32,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { DataTable } from "@/components/data-table";
 import { Highlight } from "@/components/highlight";
 import { IllustrationNoContent } from "@/components/illustrations";
 
@@ -43,7 +43,8 @@ import {
   TAG_TYPE_MAP,
 } from "@/constants";
 import { type GetTagsDTO, type Tag, useGetTags } from "@/features/tag";
-import { cn, toSlashDateString } from "@/lib/utils";
+import { toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   CreateTagButton,

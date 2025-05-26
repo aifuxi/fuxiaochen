@@ -10,7 +10,6 @@ import { TagTypeEnum } from "@prisma/client";
 import { LoaderCircle, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -24,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 import { BytemdEditor } from "@/components/bytemd";
+import { Combobox } from "@/components/combobox";
 
 import { PATHS } from "@/constants";
 import { CreateTagButton } from "@/features/admin";
@@ -34,7 +34,7 @@ import {
   useUpdateSnippet,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
 
 export const EditSnippetForm = () => {
   const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);

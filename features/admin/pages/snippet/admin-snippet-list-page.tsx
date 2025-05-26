@@ -26,7 +26,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { DataTable } from "@/components/data-table";
 import { Highlight } from "@/components/highlight";
 import { IllustrationNoContent } from "@/components/illustrations";
 
@@ -53,7 +53,8 @@ import {
   useGetSnippets,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { cn, isAdmin, toSlashDateString } from "@/lib/utils";
+import { isAdmin, toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   DeleteSnippetButton,

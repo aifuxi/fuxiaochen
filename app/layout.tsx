@@ -9,10 +9,10 @@ import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
 
 import { ThemeProvider } from "@/providers";
 
-import { ReactHotToaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { Console } from "@/components/console";
+import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <TooltipProvider>
             {children}
 
-            <ReactHotToaster />
+            <ToasterComponent />
 
             <Console />
           </TooltipProvider>

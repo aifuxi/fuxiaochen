@@ -4,21 +4,25 @@ import * as React from "react";
 
 import { Check, ChevronDown, X } from "lucide-react";
 
-// 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
-// 根据自己需要做了部分修改
-import { cn } from "@/lib/utils";
-
-import { Badge } from "./badge";
-import { Button } from "./button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "./command";
-import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { ScrollArea } from "./scroll-area";
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+// 源代码来自：https://github.com/shadcn-ui/ui/issues/927#issuecomment-1788084995
+// 根据自己需要做了部分修改
+import { cn } from "@/lib/utils";
 
 export interface ComboboxOption {
   value: string;

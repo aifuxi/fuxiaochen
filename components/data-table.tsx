@@ -19,9 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Skeleton } from "./skeleton";
-
-import { Pagination, PaginationInfo } from "../pagination";
+import { Pagination, PaginationInfo } from "@/components/pagination";
+import { Skeleton } from "@/components/skeleton";
 
 interface PaginationConfig {
   pageIndex: number;

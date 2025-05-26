@@ -2,7 +2,7 @@ import { BytemdViewer } from "@/components/bytemd";
 import { Wrapper } from "@/components/wrapper";
 
 import { TagList } from "@/features/tag";
-import { prettyDateWithWeekday } from "@/lib/utils";
+import { prettyDateWithWeekday } from "@/lib/common";
 
 import { type Blog } from "../types";
 

@@ -8,7 +8,6 @@ import { TagTypeEnum } from "@prisma/client";
 import { LoaderCircle, Pen, Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Dialog,
   DialogContent,
@@ -27,6 +26,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 
 import { BytemdEditor } from "@/components/bytemd";
+import { Combobox } from "@/components/combobox";
 
 import {
   type UpdateNoteDTO,

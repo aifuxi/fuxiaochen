@@ -10,7 +10,6 @@ import { TagTypeEnum } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -24,6 +23,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
 import { BytemdEditor } from "@/components/bytemd";
+import { Combobox } from "@/components/combobox";
 
 import { PATHS } from "@/constants";
 import { CreateTagButton } from "@/features/admin";
@@ -33,7 +33,7 @@ import {
   useCreateSnippet,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
 
 export const CreateSnippetForm = () => {
   const router = useRouter();

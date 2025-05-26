@@ -8,7 +8,7 @@ services:
       # - SET_CONTAINER_TIMEZONE=true # 方法二： 设置时区为上海
       # - CONTAINER_TIMEZONE=Asia/Shanghai # 方法二： 设置时区为上海
       # mysql启动时自动创建数据库
-      - MYSQL_DATABASE=fuxiaochen
+      - MYSQL_DATABASE=my_blog
       # 设置root账户密码
       - MYSQL_ROOT_PASSWORD=123456
     volumes:
