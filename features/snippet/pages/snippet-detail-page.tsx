@@ -1,5 +1,4 @@
 import { BytemdViewer } from "@/components/bytemd";
-import { Wrapper } from "@/components/wrapper";
 
 import { TagList } from "@/features/tag";
 import { prettyDateWithWeekday } from "@/lib/common";
@@ -12,7 +11,7 @@ interface SnippetDetailProps {
 
 export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
   return (
-    <Wrapper className="mx-auto flex !max-w-detail-content flex-col pt-8 md:!px-0">
+    <div className="mx-auto flex flex-col pt-8 md:!px-0">
       <h1 className="mb-6 break-all text-4xl font-semibold">{snippet.title}</h1>
 
       <p className="mb-6 text-neutral-500">{snippet.description}</p>
@@ -25,6 +24,6 @@ export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
       <div className="pb-14 pt-16">
         <TagList tags={snippet.tags} />
       </div>
-    </Wrapper>
+    </div>
   );
 };

@@ -1,5 +1,4 @@
 import { BytemdViewer } from "@/components/bytemd";
-import { Wrapper } from "@/components/wrapper";
 
 import { TagList } from "@/features/tag";
 import { prettyDateWithWeekday } from "@/lib/common";
@@ -12,7 +11,7 @@ interface BlogDetailProps {
 
 export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
   return (
-    <Wrapper className="mx-auto flex !max-w-detail-content flex-col pt-8 md:!px-0">
+    <div className="mx-auto flex flex-col pt-8 md:!px-0">
       <h1 className="mb-6 break-all text-4xl font-semibold">{blog.title}</h1>
 
       <p className="mb-6 text-neutral-500">{blog.description}</p>
@@ -25,6 +24,6 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
       <div className="pb-14 pt-16">
         <TagList tags={blog.tags} />
       </div>
-    </Wrapper>
+    </div>
   );
 };
