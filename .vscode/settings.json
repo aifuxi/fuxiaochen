@@ -2,7 +2,17 @@
   "search.exclude": {
     "/node_modules": true,
     "dist": true,
-    "pnpm-lock.yaml": true
+    "pnpm-lock.yaml": true,
+    "yarn.lock": true,
+    "package-lock.json": true,
+    "build": true,
+    "public": true,
+    ".next": true,
+    "out": true,
+    ".git": true,
+    ".DS_Store": true,
+    "bun.lockb": true,
+    "bun.lock": true,
   },
   "files.autoSave": "onFocusChange",
   "editor.formatOnSave": true,
