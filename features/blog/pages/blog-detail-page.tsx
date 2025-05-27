@@ -11,7 +11,7 @@ interface BlogDetailProps {
 
 export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
   return (
-    <div className="mx-auto flex flex-col pt-8 md:!px-0">
+    <div className="grid justify-center pt-8 md:!px-0">
       <h1 className="mb-6 break-all text-4xl font-semibold">{blog.title}</h1>
 
       <p className="mb-6 text-neutral-500">{blog.description}</p>

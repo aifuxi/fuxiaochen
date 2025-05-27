@@ -11,7 +11,7 @@ interface SnippetDetailProps {
 
 export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
   return (
-    <div className="mx-auto flex flex-col pt-8 md:!px-0">
+    <div className="grid justify-center pt-8 md:!px-0 max">
       <h1 className="mb-6 break-all text-4xl font-semibold">{snippet.title}</h1>
 
       <p className="mb-6 text-neutral-500">{snippet.description}</p>

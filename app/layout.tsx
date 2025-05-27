@@ -11,7 +11,6 @@ import { ThemeProvider } from "@/providers";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { Console } from "@/components/console";
 import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -66,8 +65,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             {children}
 
             <ToasterComponent />
-
-            <Console />
           </TooltipProvider>
         </ThemeProvider>
       </body>
