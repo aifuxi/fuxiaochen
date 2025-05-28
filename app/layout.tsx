@@ -7,10 +7,9 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
 
-import { ThemeProvider } from "@/providers";
-
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import { NextThemesProvider } from "@/components/providers";
 import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -55,7 +54,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens overflow-x-clip scroll-smooth">
-        <ThemeProvider
+        <NextThemesProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
@@ -66,7 +65,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
 
             <ToasterComponent />
           </TooltipProvider>
-        </ThemeProvider>
+        </NextThemesProvider>
       </body>
 
       {/* Google Analytics  */}
