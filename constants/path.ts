@@ -7,6 +7,7 @@ export const PATHS = {
   SITE_SNIPPET: "/snippet",
   SITE_ABOUT: "/about",
   SITEMAP: "/sitemap.xml",
+  ERROR: "/error",
 
   /** ************* ADMIN ****************** */
   ADMIN_HOME: "/admin",
@@ -26,6 +27,18 @@ export const PATHS = {
   /** ************* AUTH ****************** */
   AUTH_SIGN_IN: "/auth/sign_in",
   NEXT_AUTH_SIGN_IN: "/api/auth/sign_in",
+  AUTH_CALLBACK: "/auth/callback",
+
+  /** ************* Dashboard ****************** */
+  DASHBOARD: "/dashboard",
+  DASHBOARD_SIGN_IN: "/dashboard/sign-in",
+  DASHBOARD_HOME: "/dashboard/home",
+  DASHBOARD_BLOG: "/dashboard/blog",
+  DASHBOARD_SNIPPET: "/dashboard/snippet",
+  DASHBOARD_NOTE: "/dashboard/note",
+  DASHBOARD_TAG: "/dashboard/tag",
+  DASHBOARD_STATISTIC: "/dashboard/statistic",
+  DASHBOARD_SETTING: "/dashboard/setting",
 };
 
 export const PATHS_MAP: Record<string, string> = {

@@ -69,15 +69,15 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+      {/* {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />} */}
 
       {/* umami 统计 */}
-      <Script
+      {/* <Script
         id="umami"
         src={NEXT_PUBLIC_UMAMI_URL}
         async
         data-website-id={NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      />
+      /> */}
     </html>
   );
 }
