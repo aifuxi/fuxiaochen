@@ -3,37 +3,35 @@ import GithubProvider from "next-auth/providers/github";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
 
-import { NODE_ENV } from "@/config";
-
-import { PATHS } from "@/constants";
+import { DASHBOARD_WHITE_LIST, INTERNAL_PATHS } from "@/constants/path";
 
 import { prisma } from "./prisma";
 
 export const { handlers, auth, signOut, signIn } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [GithubProvider],
-  // 解决这个错误：Error: PrismaClient is not configured to run in Vercel Edge Functions or Edge Middleware.
-  // 参考：https://github.com/prisma/prisma/issues/21310#issuecomment-1840428931
-  session: { strategy: "jwt" },
-  trustHost: true,
   pages: {
-    signIn: PATHS.AUTH_SIGN_IN,
+    signIn: INTERNAL_PATHS.DASHBOARD_SIGN_IN,
   },
-  debug: NODE_ENV === "development",
+  debug: process.env.NODE_ENV === "development",
+  session: { strategy: "jwt" },
   callbacks: {
-    session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
-      }
-      return session;
-    },
-    authorized({ request, auth }) {
-      // 将来用作 Next.js middleware，如果是访问后台页面，校验是否登录
-      if (request.nextUrl.pathname.startsWith(PATHS.ADMIN_HOME)) {
-        return !!auth?.user;
+    authorized({ auth, request: { nextUrl } }) {
+      // 是否已登录
+      const isLoggedIn = !!auth?.user;
+
+      // 是否在 Dashboard 页面
+      const isOnDashboard =
+        nextUrl.pathname.startsWith(INTERNAL_PATHS.DASHBOARD) &&
+        !DASHBOARD_WHITE_LIST.includes(nextUrl.pathname);
+
+      if (isOnDashboard) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
+      } else if (isLoggedIn) {
+        return Response.redirect(new URL(INTERNAL_PATHS.DASHBOARD, nextUrl));
       }
 
-      // 其它路径直接放行
       return true;
     },
   },

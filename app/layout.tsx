@@ -1,29 +1,11 @@
 import * as React from "react";
 
-import { type Metadata } from "next";
-import Script from "next/script";
-
-import { GoogleAnalytics } from "@next/third-parties/google";
-
-import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
-
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { NextThemesProvider } from "@/components/providers";
 import { ToasterComponent } from "@/components/toast";
 
-import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
-import { isProduction } from "@/utils";
-
-export const metadata: Metadata = {
-  title: {
-    template: `%s - ${WEBSITE}`,
-    default: WEBSITE,
-  },
-  description: SLOGAN,
-  keywords: NICKNAME,
-};
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
@@ -47,11 +29,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           href="/favicon-16x16.png"
         />
         <link rel="manifest" href="/site.webmanifest" />
-        {/* Google Search Console 验证 */}
-        <meta
-          name="google-site-verification"
-          content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
-        />
       </head>
       <body className="debug-screens overflow-x-clip scroll-smooth">
         <NextThemesProvider
@@ -62,22 +39,10 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         >
           <TooltipProvider>
             {children}
-
             <ToasterComponent />
           </TooltipProvider>
         </NextThemesProvider>
       </body>
-
-      {/* Google Analytics  */}
-      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
-
-      {/* umami 统计 */}
-      <Script
-        id="umami"
-        src={NEXT_PUBLIC_UMAMI_URL}
-        async
-        data-website-id={NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      />
     </html>
   );
 }

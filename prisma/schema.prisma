@@ -1,39 +1,49 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-// 使用 sqlite 作为数据库
-// datasource db {
-//   provider = "sqlite"
-//   url      = env("DATABASE_URL")
-// }
-
-// 使用 mysql 作为数据库
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+generator client {
+  provider = "prisma-client-js"
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  username      String?         @unique
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -41,48 +51,46 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+  user         User     @relation(fields: [userId], references: [id])
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  password      String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model VerificationToken {
   identifier String
-  token      String   @unique
+  token      String
   expires    DateTime
 
   @@unique([identifier, token])
 }
 
-enum TagTypeEnum {
-  // 通用
-  ALL
-  // 仅用于blog
-  BLOG
-  // 仅用于片段
-  SNIPPET
-  // 仅用于笔记
-  NOTE
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
 
 model Tag {
-  name     String      @unique
-  slug     String      @unique
+  name     String    @unique
+  slug     String    @unique
   blogs    Blog[]
   snippets Snippet[]
   notes    Note[]
-  type     TagTypeEnum @default(ALL)
-  icon     String?     @db.Text
-  iconDark String?     @db.Text
+  icon     String?   @db.Text
+  iconDark String?   @db.Text
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())

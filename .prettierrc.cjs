@@ -17,14 +17,14 @@ const config = {
     "^next",
     "<THIRD_PARTY_MODULES>",
     "highlight.js*",
-    "@/app/(.*)",
-    "@/config",
-    "@/types",
-    "@/providers",
+
+    "@/actions/(.*)",
+    "@/lib/(.*)",
+    "@/utils/(.*)",
+
     "@/components/ui/(.*)",
     "@/components/(.*)",
-    "@/libs/(.*)",
-    "@/utils/(.*)",
+
     "@/.*",
     "^./(.*)",
     "^../(.*)",

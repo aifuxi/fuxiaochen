@@ -20,6 +20,7 @@ next-env.d.ts
 .env.production
 .env.development
 .env.staging
+.env.local
 .env
 
 # production
