@@ -4,7 +4,6 @@
     "usernamehw.errorlens",
     "dsznajder.es7-react-js-snippets",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "prisma.prisma",
     "bradlc.vscode-tailwindcss",
@@ -12,6 +11,7 @@
     "meganrogge.template-string-converter",
     "formulahendry.auto-rename-tag",
     "formulahendry.auto-close-tag",
-    "foxundermoon.shell-format"
+    "foxundermoon.shell-format",
+    "maattdd.gitless"
   ]
 }
