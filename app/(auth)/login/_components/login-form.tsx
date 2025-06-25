@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function SignInForm({
+export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {

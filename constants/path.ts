@@ -7,11 +7,7 @@ export const INTERNAL_PATHS = {
 
   /** Dashboard - 首页 */
   DASHBOARD: "/dashboard",
-  /** Dashboard - 登录页 */
-  DASHBOARD_SIGN_IN: "/dashboard/sign-in",
-};
 
-/**
- * Dashboard 白名单，无需校验权限
- */
-export const DASHBOARD_WHITE_LIST = [INTERNAL_PATHS.DASHBOARD_SIGN_IN];
+  /** auth - 登录页 */
+  LOGIN: "/login",
+};
