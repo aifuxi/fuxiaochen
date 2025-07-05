@@ -11,7 +11,7 @@
     "lint": "next lint",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "build:analyzer": "cross-env ANALYZE=true next build",
-    "prepare": "husky install",
+    "prepare": "husky",
     "lint:fix": "eslint --fix --quiet .",
     "format": "prettier --write --log-level warn .",
     "commit": "cz",
@@ -140,7 +140,7 @@
   },
   "lint-staged": {
     "./**/*.{js,cjs,mjs,jsx,ts,tsx}": [
-      "pnpm lint:fix"
+      "npm lint:fix"
     ]
   },
   "config": {
