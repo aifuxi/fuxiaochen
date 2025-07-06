@@ -53,7 +53,8 @@ import {
   useGetSnippets,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { cn, isAdmin, toSlashDateString } from "@/lib/utils";
+import { isAdmin, toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   DeleteSnippetButton,

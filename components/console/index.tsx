@@ -1,8 +1,7 @@
 "use client";
 
-/* eslint-disable no-console */
 import { ASCII_ART_FONT, NICKNAME, SOURCE_CODE_GITHUB_PAGE } from "@/constants";
-import { isBrowser } from "@/lib/utils";
+import { isBrowser } from "@/lib/common";
 
 const fontFamily =
   'font-family: Poppins, PingFang SC, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";';

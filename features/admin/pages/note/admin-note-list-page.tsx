@@ -32,7 +32,8 @@ import {
 } from "@/constants";
 import { type GetNotesDTO, useGetNotes } from "@/features/note";
 import { useGetAllTags } from "@/features/tag";
-import { cn, isAdmin, toFromNow, toSlashDateString } from "@/lib/utils";
+import { isAdmin, toFromNow, toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   CreateNoteButton,

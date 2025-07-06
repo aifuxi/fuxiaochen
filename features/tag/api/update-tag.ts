@@ -1,6 +1,6 @@
 import { useRequest } from "ahooks";
 
-import { showErrorToast, showSuccessToast } from "@/components/ui/toast";
+import { showErrorToast, showSuccessToast } from "@/components/toast";
 
 import { updateTag } from "../actions";
 

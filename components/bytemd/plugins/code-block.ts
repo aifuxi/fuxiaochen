@@ -4,7 +4,7 @@ import type { BytemdPlugin } from "bytemd";
 import { fromHtmlIsomorphic } from "hast-util-from-html-isomorphic";
 import { visit } from "unist-util-visit";
 
-import { copyToClipboard, isBrowser } from "@/lib/utils";
+import { copyToClipboard, isBrowser } from "@/lib/common";
 
 const copyBtnNode = fromHtmlIsomorphic(`
 <div class="copy-code-button">

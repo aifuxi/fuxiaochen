@@ -23,15 +23,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+
+import { BytemdEditor } from "@/components/bytemd";
 import {
   hideToast,
   showErrorToast,
   showInfoToast,
   showLoadingToast,
   showSuccessToast,
-} from "@/components/ui/toast";
-
-import { BytemdEditor } from "@/components/bytemd";
+} from "@/components/toast";
 
 import { PATHS } from "@/constants";
 import { CreateTagButton } from "@/features/admin";
@@ -43,7 +43,7 @@ import {
 } from "@/features/blog";
 import { useGetAllTags } from "@/features/tag";
 import { uploadFile } from "@/features/upload";
-import { toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
 
 export const EditBlogForm = () => {
   const getTagsQuery = useGetAllTags(TagTypeEnum.BLOG);

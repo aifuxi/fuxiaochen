@@ -3,16 +3,16 @@
 import { Editor, type EditorProps } from "@bytemd/react";
 import zh_Hans from "bytemd/locales/zh_Hans.json";
 
-import { uploadFile } from "@/features/upload";
-
-import { plugins, sanitize } from "./config";
-
 import {
   hideToast,
   showErrorToast,
   showLoadingToast,
   showSuccessToast,
-} from "../ui/toast";
+} from "@/components/toast";
+
+import { uploadFile } from "@/features/upload";
+
+import { plugins, sanitize } from "./config";
 
 interface BytemdEditorProps {
   body?: string;

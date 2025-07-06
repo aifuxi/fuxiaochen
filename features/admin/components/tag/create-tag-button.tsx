@@ -39,7 +39,8 @@ import {
   createTagSchema,
   useCreateTag,
 } from "@/features/tag";
-import { cn, toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
+import { cn } from "@/lib/utils";
 import { convertSvgToDataUrl } from "@/utils";
 
 interface CreateTagButtonProps {

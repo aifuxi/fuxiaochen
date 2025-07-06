@@ -6,7 +6,8 @@ import { Calendar } from "lucide-react";
 
 import { PATHS } from "@/constants";
 import { TagPrefixIcon } from "@/features/tag";
-import { cn, prettyDate } from "@/lib/utils";
+import { prettyDate } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import { type Snippet } from "../types";
 

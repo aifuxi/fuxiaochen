@@ -43,7 +43,8 @@ import {
   TAG_TYPE_MAP,
 } from "@/constants";
 import { type GetTagsDTO, type Tag, useGetTags } from "@/features/tag";
-import { cn, toSlashDateString } from "@/lib/utils";
+import { toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   CreateTagButton,
