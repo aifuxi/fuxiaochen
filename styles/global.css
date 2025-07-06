@@ -5,6 +5,11 @@
 @plugin "@iconify/tailwind4";
 @plugin "tailwindcss-debug-screens";
 
+@import "bytemd/dist/index.css";
+@import "./bytemd.css";
+@import "./github.css";
+@import "./github-dark.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
