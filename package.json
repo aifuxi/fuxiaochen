@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.2",
+    "@bprogress/next": "^3.2.12",
     "@bytemd/plugin-breaks": "^1.21.0",
     "@bytemd/plugin-frontmatter": "^1.21.0",
     "@bytemd/plugin-gfm": "^1.21.0",
