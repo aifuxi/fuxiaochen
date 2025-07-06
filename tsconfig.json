@@ -13,7 +13,11 @@
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
     /* Bundled projects */
-    "lib": ["dom", "dom.iterable", "ES2022"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "ES2022"
+    ],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
@@ -27,7 +31,9 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -39,8 +45,10 @@
     "eslint.config.mjs",
     ".prettierrc.cjs",
     ".commitlintrc.cjs",
-    "postcss.config.cjs",
+    "postcss.config.mjs",
     "next-sitemap.config.cjs"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
