@@ -28,18 +28,8 @@ export const Navbar = () => {
     wait: 500,
   });
 
-  const [isHideHeader, setIsHideHeader] = React.useState(false);
-  const throttledIsHideHeader = useThrottle(isHideHeader, { wait: 500 });
-
   React.useEffect(() => {
     const _top = scroll?.top ?? 0;
-
-    if (_top - throttledPreviousScrollTop < 0) {
-      // 向上滚动时，显示导航栏
-      setIsHideHeader(false);
-    } else {
-      setIsHideHeader(true);
-    }
 
     if (_top) {
       setPreviousScrollTop(_top);
@@ -52,10 +42,6 @@ export const Navbar = () => {
         "w-full sticky top-0 backdrop-blur transition-all border-x-0  flex justify-center z-10",
         throttledPreviousScrollTop > 60 &&
           "bg-background/50 border-b border-border/50",
-        {
-          "-translate-y-20":
-            throttledPreviousScrollTop > 300 ? throttledIsHideHeader : false,
-        },
       )}
     >
       <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">

@@ -5,6 +5,11 @@
 @plugin "@iconify/tailwind4";
 @plugin "tailwindcss-debug-screens";
 
+/* @tailwindcss/typography 自定义 prose 的最大宽度 */
+@utility prose {
+  max-width: 720px !important;
+}
+
 @import "bytemd/dist/index.css";
 @import "./bytemd.css";
 @import "./github.css";
@@ -53,8 +58,8 @@
 }
 
 :root {
-  --radius: 0.5rem;
-  /* --radius: 0.625rem; */
+  /* --radius: 0.5rem; */
+  --radius: 0.625rem;
   /* --radius: 0rem; */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);

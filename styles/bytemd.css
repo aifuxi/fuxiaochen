@@ -36,11 +36,11 @@
 }
 
 .medium-zoom-overlay {
-  @apply z-20 !bg-background;
+  @apply !bg-background z-20;
 }
 
 .markdown-body pre {
-  @apply relative !my-0 whitespace-break-spaces !rounded-xl border !bg-background/50 text-primary;
+  @apply !bg-background/50 text-primary relative !my-0 whitespace-break-spaces !rounded-xl border;
 }
 
 .markdown-body code::-webkit-scrollbar {
@@ -132,11 +132,11 @@
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
 /* ByteMD editor overrides	*/
 .bytemd {
-  @apply !rounded-xl !border-border !bg-background !text-foreground;
+  @apply !border-border !bg-background !text-foreground !rounded-xl;
 }
 
 .bytemd-toolbar {
-  @apply !rounded-xl !border-border !bg-background;
+  @apply !border-border !bg-background !rounded-xl;
 }
 
 .CodeMirror {
@@ -152,5 +152,5 @@
 }
 
 .bytemd-toolbar-icon {
-  @apply transition-all duration-100 hover:!bg-accent;
+  @apply hover:!bg-accent transition-all duration-100;
 }
