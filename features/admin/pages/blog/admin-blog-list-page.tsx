@@ -50,7 +50,8 @@ import {
 } from "@/constants";
 import { type Blog, type GetBlogsDTO, useGetBlogs } from "@/features/blog";
 import { useGetAllTags } from "@/features/tag";
-import { cn, isAdmin, toSlashDateString } from "@/lib/utils";
+import { isAdmin, toSlashDateString } from "@/lib/common";
+import { cn } from "@/lib/utils";
 
 import {
   DeleteBlogButton,

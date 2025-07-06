@@ -33,7 +33,7 @@ import {
   useCreateSnippet,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
 
 export const CreateSnippetForm = () => {
   const router = useRouter();
