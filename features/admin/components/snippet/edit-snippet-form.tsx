@@ -34,7 +34,7 @@ import {
   useUpdateSnippet,
 } from "@/features/snippet";
 import { useGetAllTags } from "@/features/tag";
-import { toSlug } from "@/lib/utils";
+import { toSlug } from "@/lib/common";
 
 export const EditSnippetForm = () => {
   const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);
