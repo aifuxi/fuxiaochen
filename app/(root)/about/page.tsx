@@ -32,6 +32,7 @@ import {
   IconSkillTailwindcssLight,
   IconSkillTypeScript,
 } from "@/components/icons";
+import { Wrapper } from "@/components/wrapper";
 
 import { NICKNAME } from "@/constants";
 import { socialMediaList } from "@/features/home";
@@ -40,8 +41,8 @@ export const revalidate = 60;
 
 export default function Page() {
   return (
-    <div className="flex w-full flex-col justify-center px-6 pb-24 pt-8">
-      <section className="prose prose-neutral mx-auto  dark:prose-invert">
+    <Wrapper>
+      <section className="prose prose-neutral mx-auto dark:prose-invert">
         <h2 className="text-3xl font-bold md:text-4xl">关于</h2>
         <div>
           <h2>我是谁</h2>
@@ -197,6 +198,6 @@ export default function Page() {
           </ul>
         </div>
       </section>
-    </div>
+    </Wrapper>
   );
 }
