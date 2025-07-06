@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/providers";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import { BProgressProvider } from "@/components/b-progress-provider";
 import { Console } from "@/components/console";
 import { ToasterComponent } from "@/components/toast";
 
@@ -62,13 +63,15 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           enableSystem
           disableTransitionOnChange
         >
-          <TooltipProvider>
-            {children}
+          <BProgressProvider>
+            <TooltipProvider>
+              {children}
 
-            <Console />
+              <Console />
 
-            <ToasterComponent />
-          </TooltipProvider>
+              <ToasterComponent />
+            </TooltipProvider>
+          </BProgressProvider>
         </ThemeProvider>
       </body>
 
