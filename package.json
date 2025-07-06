@@ -80,7 +80,6 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.60.0",
-    "react-hot-toast": "^2.4.1",
     "react-responsive-masonry": "^2.2.0",
     "react-type-animation": "^3.2.0",
     "read-chunk": "^4.0.3",
