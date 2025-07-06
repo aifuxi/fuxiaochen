@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { NICKNAME, PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
-import { SignOutDialog } from "@/features/auth";
+import { LogoutDialog } from "@/features/auth";
 import { cn } from "@/lib/utils";
 
 export const adminNavItems: {
@@ -174,7 +174,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
       </header>
       <main className="flex-1">{children}</main>
 
-      <SignOutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
+      <LogoutDialog open={signOutDialogOpen} setOpen={setSignOutDialogOpen} />
     </div>
   );
 };

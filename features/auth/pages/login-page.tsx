@@ -16,9 +16,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 
 import { PATHS } from "@/constants";
 
-import { signInWithGithub } from "../actions/sign-in";
-
-export const SignInPage = () => {
+export const LoginPage = () => {
   const router = useRouter();
 
   return (
@@ -37,7 +35,7 @@ export const SignInPage = () => {
               variant="default"
               className="!w-full"
               type="button"
-              onClick={handleSignInWithGithub}
+              onClick={handleSignIn}
             >
               <IconBrandGithub className="mr-2 text-base" /> 使用 Github 登录
             </Button>
@@ -65,9 +63,7 @@ export const SignInPage = () => {
     </div>
   );
 
-  async function handleSignInWithGithub() {
-    await signInWithGithub();
-  }
+  async function handleSignIn() {}
 
   function handleGoHome() {
     router.push(PATHS.SITE_HOME);

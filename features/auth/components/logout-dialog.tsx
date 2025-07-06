@@ -13,16 +13,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { signOutAndRedirect } from "../actions/sign-out";
-
 interface Props {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const SignOutDialog = ({ open, setOpen }: Props) => {
+export const LogoutDialog = ({ open, setOpen }: Props) => {
   async function handleLogout() {
-    await signOutAndRedirect();
     setOpen(false);
   }
 

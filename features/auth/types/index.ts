@@ -1,16 +1,16 @@
 import { z } from "zod";
 
-export const signupSchema = z.object({
+export const registerSchema = z.object({
   name: z.string().min(1, { message: "长度不能少于1个字符" }),
   email: z.string().email().min(1, { message: "长度不能少于1个字符" }),
   password: z.string().min(1, { message: "长度不能少于1个字符" }),
 });
 
-export type SignupDTO = z.infer<typeof signupSchema>;
+export type RegisterRequest = z.infer<typeof registerSchema>;
 
-export const signInSchema = z.object({
+export const loginSchema = z.object({
   email: z.string().email().min(1, { message: "长度不能少于1个字符" }),
   password: z.string().min(1, { message: "长度不能少于1个字符" }),
 });
 
-export type SignInDTO = z.infer<typeof signInSchema>;
+export type LoginRequest = z.infer<typeof loginSchema>;
