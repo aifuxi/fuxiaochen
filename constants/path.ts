@@ -25,6 +25,7 @@ export const PATHS = {
 
   /** ************* AUTH ****************** */
   AUTH_LOGIN: "/auth/login",
+  AUTH_REGISTER: "/auth/register",
 };
 
 export const PATHS_MAP: Record<string, string> = {
@@ -49,6 +50,7 @@ export const PATHS_MAP: Record<string, string> = {
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_LOGIN]: "登录",
+  [PATHS.AUTH_REGISTER]: "注册",
 };
 
 export const PATH_DESCRIPTION_MAP: Record<string, string> = {
@@ -74,4 +76,5 @@ export const PATH_DESCRIPTION_MAP: Record<string, string> = {
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_LOGIN]: "登录",
+  [PATHS.AUTH_REGISTER]: "注册",
 };

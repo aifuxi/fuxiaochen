@@ -5,124 +5,89 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// 使用 sqlite 作为数据库
-// datasource db {
-//   provider = "sqlite"
-//   url      = env("DATABASE_URL")
-// }
-
-// 使用 mysql 作为数据库
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  password      String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-}
+  nickname String  @db.VarChar(255)
+  password String  @db.VarChar(255)
+  email    String  @unique @db.VarChar(255)
+  image    String? @db.VarChar(2183)
+  role     String  @db.VarChar(255)
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(0)
 
-  @@unique([identifier, token])
-}
-
-enum TagTypeEnum {
-  // 通用
-  ALL
-  // 仅用于blog
-  BLOG
-  // 仅用于片段
-  SNIPPET
-  // 仅用于笔记
-  NOTE
+  @@map("user")
 }
 
 model Tag {
-  name     String      @unique
-  slug     String      @unique
+  name        String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  iconInLight String? @map("icon_in_light") @db.Text
+  iconInDark  String? @map("icon_in_dark") @db.Text
+
   blogs    Blog[]
   snippets Snippet[]
   notes    Note[]
-  type     TagTypeEnum @default(ALL)
-  icon     String?     @db.Text
-  iconDark String?     @db.Text
 
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(0)
+
+  @@map("tag")
 }
 
 model Blog {
-  title       String  @unique
-  slug        String  @unique
-  description String
+  name        String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String  @db.VarChar(500)
   body        String  @db.Text
-  cover       String?
-  author      String?
+  cover       String? @db.VarChar(2183)
   published   Boolean @default(false)
-  tags        Tag[]
 
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  tags Tag[]
+
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(0)
+
+  @@map("blog")
 }
 
 model Snippet {
-  title       String  @unique
-  slug        String  @unique
-  description String
+  title       String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String  @db.VarChar(500)
   body        String  @db.Text
   published   Boolean @default(false)
-  tags        Tag[]
 
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  tags Tag[]
+
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(0)
+
+  @@map("snippet")
 }
 
 model Note {
   body      String  @db.Text
   published Boolean @default(false)
-  tags      Tag[]
 
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  tags Tag[]
+
+  id        String    @id @default(cuid()) @db.VarChar(255)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(0)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamp(0)
+
+  @@map("note")
 }

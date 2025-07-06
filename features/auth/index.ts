@@ -4,4 +4,6 @@ export * from "./components/logout-dialog";
 
 export * from "./pages/login-page";
 
-export * from "./schemas";
+export * from "./pages/register-page";
+
+export * from "./api/auth";

@@ -2,19 +2,19 @@ import Link from "next/link";
 
 import { PATHS } from "@/constants";
 
-import { LoginForm } from "../components/login-form";
+import { RegisterForm } from "../components/register-form";
 
-export function LoginPage() {
+export function RegisterPage() {
   return (
     <>
-      <div className="text-muted-foreground text-base">欢迎回来 </div>
-      <LoginForm />
+      <div className="text-muted-foreground text-base">注册新账号</div>
+      <RegisterForm />
       <div className="flex justify-end">
         <Link
-          href={PATHS.AUTH_REGISTER}
+          href={PATHS.AUTH_LOGIN}
           className="text-muted-foreground underline text-sm hover:text-secondary-foreground"
         >
-          没有账号？去注册
+          已有账号？去登录
         </Link>
       </div>
     </>

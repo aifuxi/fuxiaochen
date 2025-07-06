@@ -16,18 +16,19 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { login } from "../api/auth";
-import { LoginRequest, loginSchema } from "../api/auth";
+import { RegisterRequest, registerSchema } from "../api/auth";
 
-export function LoginForm() {
-  const form = useForm<LoginRequest>({
-    resolver: zodResolver(loginSchema),
+export function RegisterForm() {
+  const form = useForm<RegisterRequest>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
-      email: "test@test.com",
-      password: "123456",
+      nickname: "",
+      email: "",
+      password: "",
     },
   });
 
-  function onSubmit(values: LoginRequest) {
+  function onSubmit(values: RegisterRequest) {
     login(values).then((res) => {
       console.log(res.data);
     });
@@ -42,6 +43,19 @@ export function LoginForm() {
           autoComplete="off"
           autoCapitalize="off"
         >
+          <FormField
+            control={form.control}
+            name="nickname"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>昵称</FormLabel>
+                <FormControl>
+                  <Input placeholder="请输入昵称" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="email"

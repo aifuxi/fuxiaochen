@@ -46,7 +46,8 @@
     ".prettierrc.cjs",
     ".commitlintrc.cjs",
     "postcss.config.mjs",
-    "next-sitemap.config.cjs"
+    "next-sitemap.config.cjs",
+    "typings.d.ts"
   ],
   "exclude": [
     "node_modules"
