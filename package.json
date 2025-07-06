@@ -90,8 +90,6 @@
     "slugify": "^1.6.6",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.6",
-    "tailwindcss-animated": "^1.0.1",
     "unist-util-visit": "^5.0.0",
     "vaul": "^1.1.2",
     "zod": "^3.25.74"
