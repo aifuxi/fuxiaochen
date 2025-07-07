@@ -7,10 +7,11 @@ import { createErrorResponse, createResponse } from "@/lib/response";
 export async function POST(req: Request) {
   const jsonBody = await getJsonBody(req);
 
-  const result = loginSchema.safeParse(jsonBody);
+  const result = await loginSchema.safeParseAsync(jsonBody);
 
   if (result.error) {
     const msg = getErrorMessages(result.error);
+
     return createErrorResponse(ERROR_BAD_REQUEST, String(msg));
   }
 

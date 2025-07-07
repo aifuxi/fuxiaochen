@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { login } from "../api/auth";
+import { register } from "../api/auth";
 import { RegisterRequest, registerSchema } from "../api/auth";
 
 export function RegisterForm() {
@@ -29,7 +29,7 @@ export function RegisterForm() {
   });
 
   function onSubmit(values: RegisterRequest) {
-    login(values).then((res) => {
+    register(values).then((res) => {
       console.log(res.data);
     });
   }
