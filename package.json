@@ -13,6 +13,7 @@
     "build:analyzer": "cross-env ANALYZE=true next build",
     "prepare": "husky",
     "lint:fix": "eslint --fix --quiet .",
+    "lint:inspector": "eslint --inspect-config",
     "format": "prettier --write --log-level warn .",
     "commit": "cz",
     "db:gen": "prisma generate",
