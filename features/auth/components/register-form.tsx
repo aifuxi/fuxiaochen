@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { register } from "../api/auth";
-import { RegisterRequest, registerSchema } from "../api/auth";
+import { type RegisterRequest, register, registerSchema } from "../api/auth";
 
 export function RegisterForm() {
   const form = useForm<RegisterRequest>({
@@ -35,7 +34,12 @@ export function RegisterForm() {
   }
 
   return (
-    <div className="w-[320px] px-4 sm:w-[400px]">
+    <div
+      className={`
+        w-[320px] px-4
+        sm:w-[400px]
+      `}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

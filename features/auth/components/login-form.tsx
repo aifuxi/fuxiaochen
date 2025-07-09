@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { login } from "../api/auth";
-import { LoginRequest, loginSchema } from "../api/auth";
+import { type LoginRequest, login, loginSchema } from "../api/auth";
 
 export function LoginForm() {
   const form = useForm<LoginRequest>({
@@ -34,7 +33,12 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-[320px] px-4 sm:w-[400px]">
+    <div
+      className={`
+        w-[320px] px-4
+        sm:w-[400px]
+      `}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

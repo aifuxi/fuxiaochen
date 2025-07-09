@@ -20,8 +20,8 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
     <Link
       href={`${PATHS.SITE_BLOG}/${blog.slug}`}
       className={cn(
-        "flex flex-col justify-between h-full text-primary px-6 py-4 transition-colors rounded-lg",
-        "bg-transparent hover:bg-primary-foreground ",
+        "flex h-full flex-col justify-between rounded-lg px-6 py-4 text-primary transition-colors",
+        "bg-transparent hover:bg-primary-foreground",
       )}
     >
       <ul className="mb-1 flex space-x-4 text-xs font-medium text-muted-foreground">

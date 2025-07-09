@@ -164,7 +164,7 @@ export const AdminNoteListPage = () => {
                       <span className="mx-2 hidden lg:inline-block">·</span>
                       <span>{toFromNow(note.createdAt)}</span>
                     </div>
-                    <div className="absolute right-2 top-2 space-x-2">
+                    <div className="absolute top-2 right-2 space-x-2">
                       <ToggleNotePublishButton
                         id={note.id}
                         published={note.published}

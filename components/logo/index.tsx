@@ -12,12 +12,12 @@ export const Logo = ({ className }: Props) => {
     <>
       <img
         src={ImageAssets.logoLight}
-        className={cn("w-8 h-8 hidden dark:block", className)}
+        className={cn("hidden h-8 w-8 dark:block", className)}
         alt={WEBSITE}
       />
       <img
         src={ImageAssets.logoDark}
-        className={cn("w-8 h-8 dark:hidden", className)}
+        className={cn("h-8 w-8 dark:hidden", className)}
         alt={WEBSITE}
       />
     </>

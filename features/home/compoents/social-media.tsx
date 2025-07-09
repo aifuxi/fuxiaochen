@@ -21,8 +21,18 @@ export const socialMediaList: {
   {
     icon: (
       <>
-        <IconSkillGmailDark className="text-base dark:hidden" />
-        <IconSkillGmailLight className="hidden text-base dark:inline-block" />
+        <IconSkillGmailDark
+          className={`
+            text-base
+            dark:hidden
+          `}
+        />
+        <IconSkillGmailLight
+          className={`
+            hidden text-base
+            dark:inline-block
+          `}
+        />
       </>
     ),
     label: "Gmail",

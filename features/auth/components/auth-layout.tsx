@@ -6,8 +6,8 @@ import { ImageAssets, WEBSITE } from "@/constants";
 
 export const AuthLayout = ({ children }: React.PropsWithChildren) => {
   return (
-    <div className="min-h-svh grid place-content-center">
-      <div className="flex flex-col justify-center items-center gap-4">
+    <div className="grid min-h-svh place-content-center">
+      <div className="flex flex-col items-center justify-center gap-4">
         <Image src={ImageAssets.logo} width={48} height={48} alt="" />
         <h2 className="text-2xl font-bold">{WEBSITE}</h2>
         {children}

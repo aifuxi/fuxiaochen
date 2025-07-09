@@ -42,7 +42,7 @@ export const revalidate = 60;
 export default function Page() {
   return (
     <Wrapper>
-      <section className="prose prose-neutral mx-auto dark:prose-invert">
+      <section className="mx-auto prose prose-neutral dark:prose-invert">
         <h2 className="text-3xl font-bold md:text-4xl">关于</h2>
         <div>
           <h2>我是谁</h2>

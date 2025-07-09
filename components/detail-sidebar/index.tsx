@@ -10,8 +10,8 @@ export const DetailSidebar = ({ children }: DetailSidebarProps) => {
   return (
     <div
       className={cn(
-        "hidden h-fit pl-10 pr-4 py-10 sticky top-24",
-        "wrapper:block wrapper:w-[200px] ",
+        "sticky top-24 hidden h-fit py-10 pr-4 pl-10",
+        "wrapper:block wrapper:w-[200px]",
         "2xl:w-[240px]",
       )}
     >

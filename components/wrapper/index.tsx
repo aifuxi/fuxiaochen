@@ -6,7 +6,7 @@ interface WrapperProps
 
 export const Wrapper = ({ className, children, ...props }: WrapperProps) => {
   return (
-    <div {...props} className={cn("mx-auto px-6 max-w-[1200px]", className)}>
+    <div {...props} className={cn("mx-auto max-w-[1200px] px-6", className)}>
       {children}
     </div>
   );

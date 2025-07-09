@@ -101,7 +101,7 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
         <Link href="/" className="flex items-center">
           <img
             src="/images/fuxiaochen-logo.svg"
-            className="mr-2 size-8 rounded-md border "
+            className="mr-2 size-8 rounded-md border"
           />
           <span className="text-base font-semibold">{NICKNAME}后台管理</span>
         </Link>

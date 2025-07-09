@@ -102,7 +102,7 @@ export const Combobox = React.forwardRef(
           >
             <div
               className={cn(
-                "w-full text-left font-normal text-muted-foreground flex flex-row flex-wrap gap-x-2 gap-y-1",
+                "flex w-full flex-row flex-wrap gap-x-2 gap-y-1 text-left font-normal text-muted-foreground",
                 {
                   "line-clamp-1": !props.multiple,
                 },
@@ -132,7 +132,7 @@ export const Combobox = React.forwardRef(
               {props.multiple && (
                 <X
                   className={cn(
-                    "ml-2 h-4 w-4 opacity-50 hover:opacity-80 transition-opacity",
+                    "ml-2 h-4 w-4 opacity-50 transition-opacity hover:opacity-80",
                   )}
                   onClick={(e) => {
                     props.onValueChange?.([]);

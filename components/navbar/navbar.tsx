@@ -39,9 +39,9 @@ export const Navbar = () => {
   return (
     <header
       className={cn(
-        "w-full sticky top-0 backdrop-blur transition-all border-x-0  flex justify-center z-10",
+        "sticky top-0 z-10 flex w-full justify-center border-x-0 backdrop-blur transition-all",
         throttledPreviousScrollTop > 60 &&
-          "bg-background/50 border-b border-border/50",
+          "border-b border-border/50 bg-background/50",
       )}
     >
       <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
@@ -61,8 +61,8 @@ export const Navbar = () => {
               href={el.link}
               key={el.link}
               className={cn(
-                "font-normal text-sm text-muted-foreground transition-colors px-4 py-2",
-                "hover:font-semibold hover:text-primary ",
+                "px-4 py-2 text-sm font-normal text-muted-foreground transition-colors",
+                "hover:font-semibold hover:text-primary",
                 pathname === el.link && "font-semibold text-primary",
               )}
             >

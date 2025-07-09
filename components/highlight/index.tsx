@@ -19,7 +19,7 @@ interface HighlightMarkProps {
 export const HighlightMark = ({ text, className }: HighlightMarkProps) => {
   return (
     <span
-      className={cn("bg-green-300/20 dark:bg-green-100/30 mx-1", className)}
+      className={cn("mx-1 bg-green-300/20 dark:bg-green-100/30", className)}
     >
       {text}
     </span>

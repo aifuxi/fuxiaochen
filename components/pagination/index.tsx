@@ -117,7 +117,7 @@ export const Pagination = ({
         )}
         {showSizeChanger && total > 0 && (
           <div className="flex items-center space-x-2">
-            <p className="whitespace-nowrap text-sm font-medium">每页条数</p>
+            <p className="text-sm font-medium whitespace-nowrap">每页条数</p>
             <Select
               value={`${params.pageSize}`}
               onValueChange={(value) => {
