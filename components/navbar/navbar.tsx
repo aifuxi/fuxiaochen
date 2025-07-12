@@ -46,7 +46,7 @@ export const Navbar = () => {
     >
       <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
         <NextLink
-          href={PATHS.SITE_HOME}
+          href={PATHS.HOME}
           className={cn("mr-4 hidden sm:flex")}
           aria-label={NICKNAME}
         >
@@ -84,11 +84,11 @@ export const Navbar = () => {
             </Button>
           </Link>
           <Link
-            href={PATHS.ADMIN_HOME}
+            href={PATHS.DASHBOARD}
             target="_blank"
             rel="nofollow"
             title="后台管理"
-            aria-label={PATHS.ADMIN_HOME}
+            aria-label={PATHS.DASHBOARD}
           >
             <Button variant="outline" size={"icon"} aria-label="后台管理">
               <UserCog className="size-4" />

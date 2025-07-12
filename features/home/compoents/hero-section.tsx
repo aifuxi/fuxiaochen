@@ -45,13 +45,13 @@ export const HeroSection = () => {
       </p>
       <div className={cn("flex space-x-4")}>
         <Link
-          href={PATHS.SITE_BLOG}
+          href={PATHS.BLOG}
           className={cn(buttonVariants({ variant: "outline" }))}
         >
           我的博客
         </Link>
         <Link
-          href={PATHS.SITE_ABOUT}
+          href={PATHS.ABOUT}
           className={cn(buttonVariants({ variant: "outline" }))}
         >
           关于我

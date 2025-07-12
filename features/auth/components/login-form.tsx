@@ -42,7 +42,7 @@ export function LoginForm() {
     mutate(values, {
       onSuccess(data) {
         setToken(data.token);
-        router.push(PATHS.SITE_HOME);
+        router.push(PATHS.DASHBOARD);
       },
       onError(error) {
         showErrorToast(error?.message);

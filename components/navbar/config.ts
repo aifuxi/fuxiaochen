@@ -6,19 +6,19 @@ export const navItems: {
   external?: boolean;
 }[] = [
   {
-    label: PATHS_MAP[PATHS.SITE_HOME],
-    link: PATHS.SITE_HOME,
+    label: PATHS_MAP[PATHS.HOME],
+    link: PATHS.HOME,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_BLOG],
-    link: PATHS.SITE_BLOG,
+    label: PATHS_MAP[PATHS.BLOG],
+    link: PATHS.BLOG,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_SNIPPET],
-    link: PATHS.SITE_SNIPPET,
+    label: PATHS_MAP[PATHS.SNIPPET],
+    link: PATHS.SNIPPET,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_ABOUT],
-    link: PATHS.SITE_ABOUT,
+    label: PATHS_MAP[PATHS.ABOUT],
+    link: PATHS.ABOUT,
   },
 ];
