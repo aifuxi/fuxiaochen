@@ -40,7 +40,7 @@
 }
 
 .markdown-body pre {
-  @apply !bg-background/50 text-primary relative !my-0 whitespace-break-spaces !rounded-xl border;
+  @apply !bg-background/50 text-primary relative !my-0 !rounded-xl border whitespace-break-spaces;
 }
 
 .markdown-body code::-webkit-scrollbar {
