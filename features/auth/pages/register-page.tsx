@@ -12,7 +12,10 @@ export function RegisterPage() {
       <div className="flex justify-end">
         <Link
           href={PATHS.AUTH_LOGIN}
-          className="text-sm text-muted-foreground underline hover:text-secondary-foreground"
+          className={`
+            text-sm text-muted-foreground underline
+            hover:text-secondary-foreground
+          `}
         >
           已有账号？去登录
         </Link>

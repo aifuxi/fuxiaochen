@@ -6,4 +6,4 @@ export * from "./pages/login-page";
 
 export * from "./pages/register-page";
 
-export * from "./api/auth";
+export * from "./schema";

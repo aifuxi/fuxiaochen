@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { request } from "@/lib/request";
-
 export const registerSchema = z.object({
   nickname: z
     .string()
@@ -18,16 +16,6 @@ export const registerSchema = z.object({
     .max(18, { message: "至多18个字符" }),
 });
 
-export type RegisterRequest = z.infer<typeof registerSchema>;
-
-export interface RegisterResponse {
-  email: string;
-}
-
-export function register(data: RegisterRequest) {
-  return request.post<RegisterResponse>("/api/auth/register", data);
-}
-
 export const loginSchema = z.object({
   email: z
     .string()
@@ -39,13 +27,3 @@ export const loginSchema = z.object({
     .min(6, { message: "至少6个字符" })
     .max(18, { message: "至多18个字符" }),
 });
-
-export type LoginRequest = z.infer<typeof loginSchema>;
-
-export interface LoginResponse {
-  token: string;
-}
-
-export function login(data: LoginRequest) {
-  return request.post<LoginResponse>("/api/auth/login", data);
-}

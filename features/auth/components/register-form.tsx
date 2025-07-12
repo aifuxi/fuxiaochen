@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { type RegisterRequest, register, registerSchema } from "../api/auth";
+import { type RegisterRequest } from "../api";
+import { registerSchema } from "../schema";
 
 export function RegisterForm() {
   const form = useForm<RegisterRequest>({
@@ -27,11 +28,7 @@ export function RegisterForm() {
     },
   });
 
-  function onSubmit(values: RegisterRequest) {
-    register(values).then((res) => {
-      console.log(res.data);
-    });
-  }
+  function onSubmit(_values: RegisterRequest) {}
 
   return (
     <div
