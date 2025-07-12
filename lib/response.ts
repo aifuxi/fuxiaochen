@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { type BaseResponse } from "@/types";
+
 import { ERROR_SUCCESS } from "@/constants";
 
 export function createResponse(data: unknown) {

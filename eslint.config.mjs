@@ -41,6 +41,7 @@ export default defineConfig([
         // 全局变量配置
         ...globals.browser,
         ...globals.node,
+        React: true,
       },
     },
   },
@@ -116,7 +117,18 @@ export default defineConfig([
         },
       ],
 
-      "no-console": "error",
+      "no-console": "warn",
+      "no-unused-vars": [
+        "error",
+        {
+          vars: "all",
+          // 不校验函数参数是否使用
+          args: "none",
+          caughtErrors: "all",
+          ignoreRestSiblings: false,
+          reportUsedIgnorePattern: false,
+        },
+      ],
       "@next/next/no-img-element": "off",
 
       "no-restricted-imports": [
