@@ -2,6 +2,7 @@ import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import eslintPluginNext from "@next/eslint-plugin-next";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import eslintParserTypeScript from "@typescript-eslint/parser";
 import checkFile from "eslint-plugin-check-file";
@@ -33,6 +34,7 @@ export default defineConfig([
   ]),
   eslintPluginNext.flatConfig.recommended,
   eslintPluginNext.flatConfig.coreWebVitals,
+  ...pluginQuery.configs["flat/recommended"],
   {
     languageOptions: {
       globals: {

@@ -13,6 +13,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { BProgressProvider } from "@/components/b-progress-provider";
 import { Console } from "@/components/console";
+import { QueryProvider } from "@/components/query-provider";
 import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -57,22 +58,24 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens overflow-x-clip scroll-smooth">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <BProgressProvider>
-            <TooltipProvider>
-              {children}
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <BProgressProvider>
+              <TooltipProvider>
+                {children}
 
-              <Console />
+                <Console />
 
-              <ToasterComponent />
-            </TooltipProvider>
-          </BProgressProvider>
-        </ThemeProvider>
+                <ToasterComponent />
+              </TooltipProvider>
+            </BProgressProvider>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
 
       {/* Google Analytics  */}
