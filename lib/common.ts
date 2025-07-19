@@ -3,8 +3,6 @@ import "dayjs/locale/zh-cn";
 import relativeTime from "dayjs/plugin/relativeTime";
 import slugify from "slugify";
 
-import { showErrorToast, showSuccessToast } from "@/components/toast";
-
 import { ADMIN_EMAILS } from "@/constants";
 
 dayjs.extend(relativeTime);
@@ -26,10 +24,12 @@ export const copyToClipboard = (text: string) => {
       // 去除首尾空白字符
       .writeText(text.trim())
       .then(() => {
-        showSuccessToast("已复制到粘贴板");
+        // TODO: 优化提示
+        console.log("已复制到粘贴板");
       })
       .catch((error) => {
-        showErrorToast(error as string);
+        // TODO: 优化提示
+        console.error(error as string);
       });
   } else {
     // 以下代码来自：https://www.zhangxinxu.com/wordpress/2021/10/js-copy-paste-clipboard/
@@ -45,7 +45,8 @@ export const copyToClipboard = (text: string) => {
     textarea.select();
     // 复制
     document.execCommand("copy", true);
-    showSuccessToast("已复制到粘贴板");
+    // TODO: 优化提示
+    console.log("已复制到粘贴板");
     // 移除输入框
     document.body.removeChild(textarea);
   }

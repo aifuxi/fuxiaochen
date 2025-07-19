@@ -7,11 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { HeroUIProvider } from "@heroui/react";
 import { QueryClientProvider } from "@tanstack/react-query";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
-
 import { getQueryClient } from "@/lib/get-query-client";
-
-import { ToasterComponent } from "./toast";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
@@ -32,10 +28,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
               options={{ showSpinner: true }}
               shallowRouting
             >
-              <TooltipProvider>
-                {children}
-                <ToasterComponent />
-              </TooltipProvider>
+              {children}
             </ProgressProvider>
           </HeroUIProvider>
         </ThemeProvider>
