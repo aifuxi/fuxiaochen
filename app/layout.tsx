@@ -4,13 +4,7 @@ import { type Metadata } from "next";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import { ThemeProvider } from "@/providers";
-
-import { TooltipProvider } from "@/components/ui/tooltip";
-
-import { BProgressProvider } from "@/components/b-progress-provider";
-import { QueryProvider } from "@/components/query-provider";
-import { ToasterComponent } from "@/components/toast";
+import { Providers } from "@/components/providers";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
@@ -54,21 +48,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens overflow-x-clip scroll-smooth">
-        <QueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <BProgressProvider>
-              <TooltipProvider>
-                {children}
-                <ToasterComponent />
-              </TooltipProvider>
-            </BProgressProvider>
-          </ThemeProvider>
-        </QueryProvider>
+        <Providers>{children}</Providers>
       </body>
 
       {/* Google Analytics  */}

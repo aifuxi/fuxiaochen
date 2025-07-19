@@ -30,6 +30,7 @@
     "@bytemd/plugin-highlight-ssr": "^1.21.0",
     "@bytemd/plugin-medium-zoom": "^1.21.0",
     "@bytemd/react": "^1.21.0",
+    "@heroui/react": "^2.8.1",
     "@hookform/resolvers": "^5.1.1",
     "@iconify-json/fa6-brands": "^1.1.18",
     "@iconify-json/logos": "^1.1.42",
