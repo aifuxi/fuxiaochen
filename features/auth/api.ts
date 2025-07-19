@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { type z } from "zod";
 
 import { request } from "@/lib/request";
@@ -22,4 +23,18 @@ export interface LoginResponse {
 
 export function login(data: LoginRequest): Promise<LoginResponse> {
   return request.post("/api/auth/login", data);
+}
+
+export function useAuthLogin() {
+  return useMutation({
+    mutationKey: ["auth/login"],
+    mutationFn: login,
+  });
+}
+
+export function useAuthRegister() {
+  return useMutation({
+    mutationKey: ["auth/register"],
+    mutationFn: register,
+  });
 }

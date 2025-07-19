@@ -24,8 +24,7 @@ export const PATHS = {
   DASHBOARD_NOTE: "/dashboard/note",
 
   /** ************* AUTH ****************** */
-  AUTH_LOGIN: "/auth/login",
-  AUTH_REGISTER: "/auth/register",
+  SIGN_IN: "/sign-in",
 };
 
 export const PATHS_MAP: Record<string, string> = {
@@ -49,8 +48,7 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.DASHBOARD_NOTE]: "笔记",
 
   /** ************* AUTH ****************** */
-  [PATHS.AUTH_LOGIN]: "登录",
-  [PATHS.AUTH_REGISTER]: "注册",
+  [PATHS.SIGN_IN]: "登录",
 };
 
 export const PATH_DESCRIPTION_MAP: Record<string, string> = {
@@ -75,6 +73,5 @@ export const PATH_DESCRIPTION_MAP: Record<string, string> = {
   [PATHS.DASHBOARD_NOTE]: "好记性不如烂笔头，灵感一闪",
 
   /** ************* AUTH ****************** */
-  [PATHS.AUTH_LOGIN]: "登录",
-  [PATHS.AUTH_REGISTER]: "注册",
+  [PATHS.SIGN_IN]: "登录",
 };
