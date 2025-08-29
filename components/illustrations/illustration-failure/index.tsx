@@ -10,11 +10,23 @@ export function IllustrationFailure(props: React.SVGProps<SVGSVGElement>) {
     <>
       <IllustrationFailureDark
         {...props}
-        className={cn(props.className, "hidden dark:block")}
+        className={cn(
+          props.className,
+          `
+            hidden
+            dark:block
+          `,
+        )}
       />
       <IllustrationFailureLight
         {...props}
-        className={cn(props.className, "block dark:hidden")}
+        className={cn(
+          props.className,
+          `
+            block
+            dark:hidden
+          `,
+        )}
       />
     </>
   );

@@ -6,8 +6,6 @@ import path from "node:path";
 import { readChunk } from "read-chunk";
 import sharp from "sharp";
 
-import { OSS_UPLOAD_DIR } from "@/config";
-
 import { isProduction } from "@/utils/env";
 
 import { ERROR_NO_PERMISSION } from "@/constants";
@@ -101,7 +99,7 @@ const uploadToOSS = async (input: string) => {
   const fileName = path.basename(inputFilePath);
   const buffer = fs.readFileSync(inputFilePath);
   const { name } = await aliOSS.put(
-    `${OSS_UPLOAD_DIR}/${fileName}`,
+    `${process.env.OSS_UPLOAD_DIR}/${fileName}`,
     Buffer.from(buffer),
   );
   let url = aliOSS.generateObjectUrl(name);

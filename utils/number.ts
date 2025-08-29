@@ -1,4 +1,4 @@
-import { toNumber } from "lodash-es";
+import { toNumber } from "es-toolkit/compat";
 
 const formatDecimal = (n: number) => {
   let num = n.toString();

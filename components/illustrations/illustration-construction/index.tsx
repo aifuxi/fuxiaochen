@@ -10,11 +10,23 @@ export function IllustrationConstruction(props: React.SVGProps<SVGSVGElement>) {
     <>
       <IllustrationConstructionDark
         {...props}
-        className={cn(props.className, "hidden dark:block")}
+        className={cn(
+          props.className,
+          `
+            hidden
+            dark:block
+          `,
+        )}
       />
       <IllustrationConstructionLight
         {...props}
-        className={cn(props.className, "block dark:hidden")}
+        className={cn(
+          props.className,
+          `
+            block
+            dark:hidden
+          `,
+        )}
       />
     </>
   );

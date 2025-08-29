@@ -10,11 +10,23 @@ export function IllustrationNoAccess(props: React.SVGProps<SVGSVGElement>) {
     <>
       <IllustrationNoAccessDark
         {...props}
-        className={cn(props.className, "hidden dark:block")}
+        className={cn(
+          props.className,
+          `
+            hidden
+            dark:block
+          `,
+        )}
       />
       <IllustrationNoAccessLight
         {...props}
-        className={cn(props.className, "block dark:hidden")}
+        className={cn(
+          props.className,
+          `
+            block
+            dark:hidden
+          `,
+        )}
       />
     </>
   );

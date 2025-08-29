@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { isNil } from "lodash-es";
+import { isNil } from "es-toolkit";
 
 import { BlogDetailPage, getPublishedBlogBySlug } from "@/features/blog";
 

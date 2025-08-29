@@ -24,8 +24,8 @@ export const PATHS = {
   ADMIN_NOTE: "/admin/note",
 
   /** ************* AUTH ****************** */
-  AUTH_SIGN_IN: "/auth/sign_in",
-  NEXT_AUTH_SIGN_IN: "/api/auth/sign_in",
+  AUTH_SIGN_IN: "/auth/sign-in",
+  AUTH_SIGN_UP: "/auth/sign-up",
 };
 
 export const PATHS_MAP: Record<string, string> = {

@@ -52,7 +52,7 @@ export const MobileNav = () => {
                 buttonVariants({
                   variant: pathname === el.link ? "default" : "ghost",
                 }),
-                "text-md px-4 py-2 flex gap-2 items-center !justify-start w-full",
+                "flex w-full items-center !justify-start gap-2 px-4 py-2",
               )}
               onClick={() => {
                 setOpen(false);
