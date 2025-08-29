@@ -1,47 +1,186 @@
-import { includeIgnoreFile } from "@eslint/compat";
+import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
-import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
-import eslintPluginCheckFile from "eslint-plugin-check-file";
-import eslintPluginPrettier from "eslint-plugin-prettier";
-import { defineConfig } from "eslint/config";
+import js from "@eslint/js";
+import eslintPluginNext from "@next/eslint-plugin-next";
+import typescriptEslint from "@typescript-eslint/eslint-plugin";
+import eslintParserTypeScript from "@typescript-eslint/parser";
+import checkFile from "eslint-plugin-check-file";
+import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
 import { fileURLToPath } from "node:url";
 import { dirname } from "path";
 
+import eslintPluginBetterTailwindcss from "eslint-plugin-better-tailwindcss";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const gitignorePath = fileURLToPath(new URL(".gitignore", import.meta.url));
+
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
 export default defineConfig([
-  // 来自.gitignore文件的忽略规则，.gitignore中忽略的文件或文件夹，eslint也忽略
-  includeIgnoreFile(gitignorePath),
-
-  // next 官方推荐的规则
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
-
+  globalIgnores([
+    "**/.next",
+    "**/node_modules",
+    "**/dist",
+    "**/build",
+    "**/public",
+    "**/.gitignore",
+    "**/pnpm-lock.yaml",
+  ]),
+  eslintPluginNext.flatConfig.recommended,
+  eslintPluginNext.flatConfig.coreWebVitals,
   {
-    plugins: {
-      eslintPluginCheckFile,
-      eslintPluginPrettier,
+    languageOptions: {
+      globals: {
+        // 全局变量配置
+        ...globals.browser,
+        ...globals.node,
+        React: "readonly",
+        ReactDOM: "readonly",
+      },
     },
   },
-
   {
+    files: ["**/*.{ts,tsx,cts,mts}"],
+    languageOptions: {
+      parser: eslintParserTypeScript,
+
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
+    },
+
     settings: {
-      "import-x/resolver-next": [
-        createTypeScriptImportResolver({
-          alwaysTryTypes: true, // Always try to resolve types under `<root>@types` directory even if it doesn't contain any source code, like `@types/unist`
+      react: {
+        version: "detect",
+      },
 
-          bun: true, // Resolve Bun modules (https://github.com/import-js/eslint-import-resolver-typescript#bun)
+      "import/resolver": {
+        typescript: {},
+      },
+    },
 
-          // Choose from one of the "project" configs below or omit to use <root>/tsconfig.json or <root>/jsconfig.json by default
+    plugins: {
+      "@typescript-eslint": typescriptEslint,
+      "check-file": checkFile,
+    },
 
-          // Use <root>/path/to/folder/tsconfig.json or <root>/path/to/folder/jsconfig.json
-          project: "tsconfig.json",
-        }),
+    extends: fixupConfigRules(
+      compat.extends(
+        "eslint:recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings",
+        "plugin:import/typescript",
+        "plugin:react/recommended",
+        "plugin:prettier/recommended",
+        "plugin:react-hooks/recommended",
+      ),
+    ),
+
+    rules: {
+      "prettier/prettier": "error",
+      // 禁用这个规则，使用 @typescript-eslint/no-unused-vars 作为替代
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-restricted-types": "off",
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/prefer-nullish-coalescing": "warn",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+      "react/prop-types": "off",
+
+      "@typescript-eslint/consistent-type-imports": [
+        "warn",
+        {
+          prefer: "type-imports",
+          fixStyle: "inline-type-imports",
+        },
       ],
+
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+
+      "@typescript-eslint/no-misused-promises": [
+        2,
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
+
+      "no-console": "error",
+      "@next/next/no-img-element": "off",
+
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            "@/features/*/*",
+            "@/types/*",
+            "@/config/*",
+            "@/constants/*",
+            "@/providers/*",
+          ],
+        },
+      ],
+
+      "import/default": "off",
+      "import/no-named-as-default-member": "off",
+      "import/no-named-as-default": "off",
+
+      "check-file/filename-naming-convention": [
+        "error",
+        {
+          "**/*.{ts,tsx}": "KEBAB_CASE",
+        },
+        {
+          ignoreMiddleExtensions: true,
+        },
+      ],
+    },
+  },
+  {
+    files: ["**/*.{jsx,tsx}"],
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      "better-tailwindcss": eslintPluginBetterTailwindcss,
+    },
+    rules: {
+      // enable all recommended rules to report a warning
+      ...eslintPluginBetterTailwindcss.configs["recommended-warn"].rules,
+      // enable all recommended rules to report an error
+      ...eslintPluginBetterTailwindcss.configs["recommended-error"].rules,
+
+      // or configure rules individually
+      "better-tailwindcss/enforce-consistent-line-wrapping": [
+        "warn",
+        { printWidth: 100 },
+      ],
+    },
+    settings: {
+      "better-tailwindcss": {
+        // tailwindcss 4: the path to the entry file of the css based tailwind config (eg: `src/global.css`)
+        entryPoint: "styles/global.css",
+        // tailwindcss 3: the path to the tailwind config file (eg: `tailwind.config.js`)
+        // tailwindConfig: "tailwind.config.js",
+      },
     },
   },
 ]);

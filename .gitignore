@@ -53,3 +53,5 @@ yarn-error.log*
 /meili_data
 
 .idea
+*storybook.log
+storybook-static

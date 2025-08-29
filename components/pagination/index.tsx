@@ -68,7 +68,12 @@ export const Pagination = ({
   }, [pageCount, params]);
 
   return (
-    <div className="flex items-center space-x-6 py-4 lg:space-x-8">
+    <div
+      className={`
+        flex items-center space-x-6 py-4
+        lg:space-x-8
+      `}
+    >
       <div className="flex items-center space-x-2">
         {pageCount > 1 &&
           paginationRange.map((pageNumber, i) =>
@@ -117,7 +122,7 @@ export const Pagination = ({
         )}
         {showSizeChanger && total > 0 && (
           <div className="flex items-center space-x-2">
-            <p className="whitespace-nowrap text-sm font-medium">每页条数</p>
+            <p className="text-sm font-medium whitespace-nowrap">每页条数</p>
             <Select
               value={`${params.pageSize}`}
               onValueChange={(value) => {

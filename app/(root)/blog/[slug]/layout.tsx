@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { type Metadata } from "next";
 
-import { isNil } from "lodash-es";
+import { isNil } from "es-toolkit";
 
 import { WEBSITE } from "@/constants";
 import { getPublishedBlogBySlug } from "@/features/blog";

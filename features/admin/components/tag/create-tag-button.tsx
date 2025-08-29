@@ -74,7 +74,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
             setOpen(true);
           }}
         >
-          <Plus className="mr-2 size-4 " />
+          <Plus className="mr-2 size-4" />
           创建标签
         </Button>
       </DialogTrigger>

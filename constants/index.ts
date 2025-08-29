@@ -1,5 +1,3 @@
-export * from "./ascii";
-
 export * from "./info";
 
 export * from "./path";

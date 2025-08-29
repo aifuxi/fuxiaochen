@@ -4,16 +4,12 @@ import gfm from "@bytemd/plugin-gfm";
 import gfm_zhHans from "@bytemd/plugin-gfm/lib/locales/zh_Hans.json";
 import highlightSSR from "@bytemd/plugin-highlight-ssr";
 import mediumZoom from "@bytemd/plugin-medium-zoom";
-import { type EditorProps } from "@bytemd/react";
-import { merge } from "lodash-es";
 import { common } from "lowlight";
 
 // highlight需要额外扩充的高亮语言
 import asciidoc from "highlight.js/lib/languages/asciidoc";
 import dart from "highlight.js/lib/languages/dart";
 import nginx from "highlight.js/lib/languages/nginx";
-
-import { headingPlugin, prettyLinkPlugin } from "./plugins";
 
 export const plugins = [
   breaks(),
@@ -34,28 +30,4 @@ export const plugins = [
       asciidoc: asciidoc, // asciidoc高亮, 控制台输出信息高亮
     },
   }),
-  prettyLinkPlugin(),
-  headingPlugin(),
 ];
-
-export const sanitize: EditorProps["sanitize"] = (schema) => {
-  const customerSchema = merge(schema, {
-    tagNames: ["iframe"],
-    attributes: {
-      iframe: [
-        "src",
-        "style",
-        "title",
-        "all",
-        "sandbox",
-        "scrolling",
-        "border",
-        "frameborder",
-        "framespacing",
-        "allowfullscreen",
-      ],
-    },
-  } as typeof schema);
-
-  return customerSchema;
-};

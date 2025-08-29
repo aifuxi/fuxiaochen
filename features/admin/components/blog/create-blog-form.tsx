@@ -70,7 +70,12 @@ export const CreateBlogForm = () => {
   return (
     <Form {...form}>
       <form autoComplete="off">
-        <div className="fixed inset-x-24 bottom-10 z-10 md:inset-x-[20vw]">
+        <div
+          className={`
+            fixed inset-x-24 bottom-10 z-10
+            md:inset-x-[20vw]
+          `}
+        >
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}

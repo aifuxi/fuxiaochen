@@ -8,16 +8,20 @@ import { usePathname } from "next/navigation";
 import { useScroll, useThrottle } from "ahooks";
 import { UserCog } from "lucide-react";
 
-import { NICKNAME, PATHS, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants";
+import {
+  ImageAssets,
+  NICKNAME,
+  PATHS,
+  SOURCE_CODE_GITHUB_PAGE,
+  WEBSITE,
+} from "@/constants";
 import { cn } from "@/lib/utils";
 
 import { navItems } from "./config";
 import { MobileNav } from "./mobile-nav";
 
 import { IconBrandGithub } from "../icons";
-import { Logo } from "../logo";
 import { ModeToggle } from "../mode-toggle";
-import { NextLink } from "../next-link";
 import { Button } from "../ui/button";
 
 export const Navbar = () => {
@@ -39,30 +43,45 @@ export const Navbar = () => {
   return (
     <header
       className={cn(
-        "w-full sticky top-0 backdrop-blur transition-all border-x-0  flex justify-center z-10",
+        "sticky top-0 z-10 flex w-full justify-center border-x-0 backdrop-blur transition-all",
         throttledPreviousScrollTop > 60 &&
-          "bg-background/50 border-b border-border/50",
+          "border-b border-border/50 bg-background/50",
       )}
     >
-      <div className="flex h-16 w-full items-center p-4 sm:p-8 md:max-w-screen-md 2xl:max-w-screen-xl">
-        <NextLink
+      <div
+        className={`
+          flex h-16 w-full items-center p-4
+          sm:p-8
+          md:max-w-screen-md
+          2xl:max-w-screen-xl
+        `}
+      >
+        <Link
           href={PATHS.SITE_HOME}
-          className={cn("mr-4 hidden sm:flex")}
+          className={cn(`
+            mr-4 hidden
+            sm:flex
+          `)}
           aria-label={NICKNAME}
         >
-          <Logo />
+          <img src={ImageAssets.logo} className="size-8" alt={WEBSITE} />
           <span className="ml-2 text-base font-semibold text-primary">
             {WEBSITE}
           </span>
-        </NextLink>
-        <div className="mr-8 hidden h-16 flex-1 items-center justify-end text-base font-medium sm:flex">
+        </Link>
+        <div
+          className={`
+            mr-8 hidden h-16 flex-1 items-center justify-end text-base font-medium
+            sm:flex
+          `}
+        >
           {navItems.map((el) => (
             <Link
               href={el.link}
               key={el.link}
               className={cn(
-                "font-normal text-sm text-muted-foreground transition-colors px-4 py-2",
-                "hover:font-semibold hover:text-primary ",
+                "px-4 py-2 text-sm font-normal text-muted-foreground transition-colors",
+                "hover:font-semibold hover:text-primary",
                 pathname === el.link && "font-semibold text-primary",
               )}
             >
@@ -71,7 +90,12 @@ export const Navbar = () => {
           ))}
         </div>
         <MobileNav />
-        <div className="flex flex-1 items-center justify-end gap-2 sm:flex-none">
+        <div
+          className={`
+            flex flex-1 items-center justify-end gap-2
+            sm:flex-none
+          `}
+        >
           <ModeToggle />
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}

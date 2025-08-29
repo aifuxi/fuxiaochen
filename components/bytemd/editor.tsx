@@ -12,7 +12,7 @@ import {
 
 import { uploadFile } from "@/features/upload";
 
-import { plugins, sanitize } from "./config";
+import { plugins } from "./config";
 
 interface BytemdEditorProps {
   body?: string;
@@ -56,7 +56,6 @@ export const BytemdEditor = ({
       value={body ?? ""}
       plugins={plugins}
       placeholder="请输入内容..."
-      sanitize={sanitize}
       onChange={(v) => {
         setContent(v);
       }}

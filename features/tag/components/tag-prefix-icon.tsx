@@ -15,14 +15,26 @@ export const TagPrefixIcon = ({ tag, className }: TagPrefixIconProps) => {
       {tag.icon && (
         <img
           src={tag.icon}
-          className={cn("w-4 h-4 mr-1 hidden dark:inline-flex", className)}
+          className={cn(
+            `
+              mr-1 hidden h-4 w-4
+              dark:inline-flex
+            `,
+            className,
+          )}
           alt=""
         />
       )}
       {tag.iconDark && (
         <img
           src={tag.iconDark}
-          className={cn("w-4 h-4 mr-1 dark:hidden", className)}
+          className={cn(
+            `
+              mr-1 h-4 w-4
+              dark:hidden
+            `,
+            className,
+          )}
           alt=""
         />
       )}

@@ -19,7 +19,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { NICKNAME, PATHS, PATHS_MAP, PLACEHOLDER_TEXT } from "@/constants";
+import {
+  ImageAssets,
+  NICKNAME,
+  PATHS,
+  PATHS_MAP,
+  PLACEHOLDER_TEXT,
+} from "@/constants";
 import { SignOutDialog } from "@/features/auth";
 import { cn } from "@/lib/utils";
 
@@ -97,12 +103,14 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
 
   return (
     <div className="relative flex flex-col">
-      <header className="sticky inset-x-0 top-0 z-20 flex h-16 items-center border-b bg-background/50 px-5 backdrop-blur">
-        <Link href="/" className="flex items-center">
-          <img
-            src="/images/fuxiaochen-logo.svg"
-            className="mr-2 size-8 rounded-md border "
-          />
+      <header
+        className={`
+          sticky inset-x-0 top-0 z-20 flex h-16 items-center border-b bg-background/50 px-5
+          backdrop-blur
+        `}
+      >
+        <Link href={PATHS.SITE_HOME} className="flex items-center">
+          <img src={ImageAssets.logo} className="mr-2 size-8 border" />
           <span className="text-base font-semibold">{NICKNAME}后台管理</span>
         </Link>
         <nav className="flex h-full flex-1 items-center gap-8 px-10">
