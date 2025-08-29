@@ -7,7 +7,7 @@ import { useParams, useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TagTypeEnum } from "@prisma/client";
-import { isNil } from "lodash-es";
+import { isNil } from "es-toolkit";
 import { Save } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -90,7 +90,12 @@ export const EditBlogForm = () => {
   return (
     <Form {...form}>
       <form autoComplete="off">
-        <div className="fixed inset-x-24 bottom-10 z-10 md:inset-x-[20vw]">
+        <div
+          className={`
+            fixed inset-x-24 bottom-10 z-10
+            md:inset-x-[20vw]
+          `}
+        >
           <Button
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}

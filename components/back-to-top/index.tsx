@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface BackToTopProps {
-  scrollRef?: React.MutableRefObject<HTMLDivElement | null>;
+  scrollRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export const BackToTop = ({ scrollRef }: BackToTopProps) => {
@@ -30,7 +30,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
 
   return (
     <Button
-      className={cn("fixed bottom-8 right-8", {
+      className={cn("fixed right-8 bottom-8", {
         hidden: (scroll?.top ?? 0) < 100,
       })}
       variant="outline"

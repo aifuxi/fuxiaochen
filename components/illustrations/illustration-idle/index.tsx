@@ -10,11 +10,23 @@ export function IllustrationIdle(props: React.SVGProps<SVGSVGElement>) {
     <>
       <IllustrationIdleDark
         {...props}
-        className={cn(props.className, "hidden dark:block")}
+        className={cn(
+          props.className,
+          `
+            hidden
+            dark:block
+          `,
+        )}
       />
       <IllustrationIdleLight
         {...props}
-        className={cn(props.className, "block dark:hidden")}
+        className={cn(
+          props.className,
+          `
+            block
+            dark:hidden
+          `,
+        )}
       />
     </>
   );

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -17,13 +18,19 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { PATHS } from "@/constants";
 
 import { signInWithGithub } from "../actions/sign-in";
+import { SignInForm } from "../components/sign-in-form";
 
 export const SignInPage = () => {
   const router = useRouter();
 
   return (
     <div className="grid h-screen w-screen place-content-center">
-      <Card className="relative w-[320px] animate-fade rounded-3xl py-4 sm:w-full sm:min-w-[360px] sm:max-w-none">
+      <Card
+        className={`
+          relative w-[320px] rounded-3xl py-4
+          sm:w-full sm:max-w-none sm:min-w-[360px]
+        `}
+      >
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>后台登录</span>
@@ -31,16 +38,11 @@ export const SignInPage = () => {
           </CardTitle>
           <CardDescription>选择你喜欢的方式进行登录</CardDescription>
         </CardHeader>
+        <CardContent>
+          <SignInForm />
+        </CardContent>
         <CardFooter>
           <div className="grid w-full gap-4">
-            <Button
-              variant="default"
-              className="!w-full"
-              type="button"
-              onClick={handleSignInWithGithub}
-            >
-              <IconBrandGithub className="mr-2 text-base" /> 使用 Github 登录
-            </Button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
@@ -52,7 +54,15 @@ export const SignInPage = () => {
               </div>
             </div>
             <Button
-              variant="default"
+              variant="outline"
+              className="!w-full"
+              type="button"
+              onClick={handleSignInWithGithub}
+            >
+              <IconBrandGithub className="mr-2 text-base" /> 使用 Github 登录
+            </Button>
+            <Button
+              variant="secondary"
               className="!w-full"
               type="button"
               onClick={handleGoHome}

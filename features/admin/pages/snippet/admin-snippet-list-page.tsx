@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { TagTypeEnum } from "@prisma/client";
 import { type ColumnDef } from "@tanstack/react-table";
 import { useSetState } from "ahooks";
-import { isUndefined } from "lodash-es";
+import { isUndefined } from "es-toolkit";
 import {
   ArrowDownNarrowWide,
   ArrowUpNarrowWide,
@@ -36,7 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { Highlight } from "@/components/highlight";
 import { IllustrationNoContent } from "@/components/illustrations";
 
 import {
@@ -127,12 +126,7 @@ export const AdminSnippetListPage = () => {
         </div>
       ),
       cell: ({ row }) => {
-        return (
-          <Highlight
-            sourceString={row.original.title}
-            searchWords={params.title ? [params.title] : undefined}
-          />
-        );
+        return row.original.title;
       },
     },
     {

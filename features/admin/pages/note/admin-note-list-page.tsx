@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 import { TagTypeEnum } from "@prisma/client";
 import { useSetState } from "ahooks";
-import { isUndefined } from "lodash-es";
+import { isUndefined } from "es-toolkit";
 import { RotateCw, Search } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -158,13 +158,25 @@ export const AdminNoteListPage = () => {
                       ))}
                     </div>
                     <div className="flex items-center justify-end text-sm text-muted-foreground">
-                      <span className="hidden lg:inline-block">
+                      <span
+                        className={`
+                          hidden
+                          lg:inline-block
+                        `}
+                      >
                         {toSlashDateString(note.createdAt)}
                       </span>
-                      <span className="mx-2 hidden lg:inline-block">·</span>
+                      <span
+                        className={`
+                          mx-2 hidden
+                          lg:inline-block
+                        `}
+                      >
+                        ·
+                      </span>
                       <span>{toFromNow(note.createdAt)}</span>
                     </div>
-                    <div className="absolute right-2 top-2 space-x-2">
+                    <div className="absolute top-2 right-2 space-x-2">
                       <ToggleNotePublishButton
                         id={note.id}
                         published={note.published}

@@ -130,7 +130,7 @@ export function DataTable<TData, TValue>({
     return table.getRowModel().rows.map((row) => (
       <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
         {row.getVisibleCells().map((cell) => (
-          <TableCell key={cell.id} className="max-w-[300px] break-all py-2">
+          <TableCell key={cell.id} className="max-w-[300px] py-2 break-all">
             {flexRender(cell.column.columnDef.cell, cell.getContext())}
           </TableCell>
         ))}

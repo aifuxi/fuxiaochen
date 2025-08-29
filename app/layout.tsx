@@ -5,14 +5,11 @@ import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import { NEXT_PUBLIC_UMAMI_URL, NEXT_PUBLIC_UMAMI_WEBSITE_ID } from "@/config";
-
 import { ThemeProvider } from "@/providers";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { BProgressProvider } from "@/components/b-progress-provider";
-import { Console } from "@/components/console";
 import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -66,9 +63,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           <BProgressProvider>
             <TooltipProvider>
               {children}
-
-              <Console />
-
               <ToasterComponent />
             </TooltipProvider>
           </BProgressProvider>
@@ -79,12 +73,14 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
 
       {/* umami 统计 */}
-      <Script
-        id="umami"
-        src={NEXT_PUBLIC_UMAMI_URL}
-        async
-        data-website-id={NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      />
+      {isProduction() && (
+        <Script
+          id="umami"
+          src={process.env.NEXT_PUBLIC_UMAMI_URL}
+          async
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+        />
+      )}
     </html>
   );
 }

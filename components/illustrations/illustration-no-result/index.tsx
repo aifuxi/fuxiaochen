@@ -10,11 +10,23 @@ export function IllustrationNoResult(props: React.SVGProps<SVGSVGElement>) {
     <>
       <IllustrationNoResultDark
         {...props}
-        className={cn(props.className, "hidden dark:block")}
+        className={cn(
+          props.className,
+          `
+            hidden
+            dark:block
+          `,
+        )}
       />
       <IllustrationNoResultLight
         {...props}
-        className={cn(props.className, "block dark:hidden")}
+        className={cn(
+          props.className,
+          `
+            block
+            dark:hidden
+          `,
+        )}
       />
     </>
   );
