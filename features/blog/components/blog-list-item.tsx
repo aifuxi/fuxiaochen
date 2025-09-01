@@ -20,14 +20,13 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
     <Link
       href={`${PATHS.SITE_BLOG}/${blog.slug}`}
       className={cn(
-        "flex h-full flex-col justify-between rounded-lg px-6 py-4 text-primary transition-colors",
         `
-          bg-transparent
-          hover:bg-primary-foreground
+          flex h-full flex-col justify-between rounded-lg px-6 py-4 transition-all
+          hover:bg-accent hover:text-accent-foreground
         `,
       )}
     >
-      <ul className="mb-1 flex space-x-4 text-xs font-medium text-muted-foreground">
+      <ul className="mb-1 flex space-x-4 text-xs font-medium">
         {blog.tags.map((tag) => (
           <li key={tag.id} className="flex items-center">
             <span className="mr-1">#&nbsp;{tag.name}</span>
