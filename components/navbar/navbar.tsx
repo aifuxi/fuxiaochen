@@ -63,9 +63,9 @@ export const Navbar = () => {
               href={el.link}
               key={el.link}
               className={cn(
-                "px-4 py-2 text-sm font-normal transition-colors",
-                "hover:font-semibold hover:text-ring",
-                pathname === el.link && "font-semibold text-ring",
+                "px-4 py-2 text-sm font-normal text-muted-foreground transition-colors",
+                "hover:font-semibold hover:text-foreground",
+                pathname === el.link && "font-semibold text-foreground",
               )}
             >
               {el.label}
