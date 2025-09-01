@@ -23,7 +23,7 @@ export const SnippetList = ({ snippets }: SnippetListProps) => {
   return (
     <ul
       className={`
-        grid grid-cols-1 gap-10
+        grid grid-cols-1 gap-4 gap-y-8
         md:grid-cols-2
       `}
     >
