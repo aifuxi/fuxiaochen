@@ -6,6 +6,7 @@
 @plugin "tailwindcss-debug-screens";
 
 
+@import "@fontsource-variable/outfit";
 @import "bytemd/dist/index.css";
 @import "./bytemd.css";
 @import "./github.css";
@@ -56,7 +57,7 @@
   --sidebar-accent-foreground: oklch(0.2435 0 0);
   --sidebar-border: oklch(0.9037 0 0);
   --sidebar-ring: oklch(0.8348 0.1302 160.9080);
-  --font-sans: Outfit, sans-serif;
+  --font-sans: 'Outfit Variable', sans-serif;
   --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono: monospace;
   --radius: 0.5rem;
@@ -105,10 +106,6 @@
   --sidebar-accent-foreground: oklch(0.9851 0 0);
   --sidebar-border: oklch(0.2809 0 0);
   --sidebar-ring: oklch(0.8003 0.1821 151.7110);
-  --font-sans: Outfit, sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-  --font-mono: monospace;
-  --radius: 0.5rem;
   --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.09);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.09);
   --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 1px 2px -1px hsl(0 0% 0% / 0.17);
@@ -194,10 +191,6 @@ body {
   font-feature-settings:
     "rlig" 1,
     "calt" 1;
-}
-@font-face {
-  font-family: "Outfit";
-  src: url("/fonts/outfit-latin-wght-normal.woff2") format("woff2");
 }
 
 ::-webkit-scrollbar {
