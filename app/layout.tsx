@@ -18,7 +18,7 @@ import { isProduction } from "@/utils";
 
 export const metadata: Metadata = {
   title: {
-    template: `%s - ${WEBSITE}`,
+    template: `%s | ${WEBSITE}`,
     default: WEBSITE,
   },
   description: SLOGAN,
