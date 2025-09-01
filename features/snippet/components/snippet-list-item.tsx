@@ -20,14 +20,13 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
     <Link
       href={`${PATHS.SITE_SNIPPET}/${snippet.slug}`}
       className={cn(
-        "flex h-full flex-col justify-between rounded-lg px-6 py-4 text-primary transition-colors",
         `
-          bg-transparent
-          hover:bg-primary-foreground
+          flex h-full flex-col justify-between rounded-lg px-6 py-4 transition-all
+          hover:bg-accent hover:text-accent-foreground
         `,
       )}
     >
-      <ul className="mb-1 flex space-x-4 text-xs font-medium text-muted-foreground">
+      <ul className="mb-1 flex space-x-4 text-xs font-medium">
         {snippet.tags.map((tag) => (
           <li key={tag.id} className="flex items-center">
             <span className="mr-1">#&nbsp;{tag.name}</span>

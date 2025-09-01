@@ -5,7 +5,6 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useScroll, useThrottle } from "ahooks";
 import { UserCog } from "lucide-react";
 
 import {
@@ -25,27 +24,13 @@ import { ModeToggle } from "../mode-toggle";
 import { Button } from "../ui/button";
 
 export const Navbar = () => {
-  const scroll = useScroll(() => document);
   const pathname = usePathname();
-  const [previousScrollTop, setPreviousScrollTop] = React.useState(0);
-  const throttledPreviousScrollTop = useThrottle(previousScrollTop, {
-    wait: 500,
-  });
-
-  React.useEffect(() => {
-    const _top = scroll?.top ?? 0;
-
-    if (_top) {
-      setPreviousScrollTop(_top);
-    }
-  }, [scroll?.top]);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-10 flex w-full justify-center border-x-0 backdrop-blur transition-all",
-        throttledPreviousScrollTop > 60 &&
-          "border-b border-border/50 bg-background/50",
+        "border-b border-border/50 bg-background/50",
       )}
     >
       <div
@@ -60,14 +45,12 @@ export const Navbar = () => {
           href={PATHS.SITE_HOME}
           className={cn(`
             mr-4 hidden
-            sm:flex
+            sm:flex sm:items-center
           `)}
           aria-label={NICKNAME}
         >
           <img src={ImageAssets.logo} className="size-8" alt={WEBSITE} />
-          <span className="ml-2 text-base font-semibold text-primary">
-            {WEBSITE}
-          </span>
+          <span className="ml-2 text-base font-semibold">{WEBSITE}</span>
         </Link>
         <div
           className={`
@@ -80,9 +63,9 @@ export const Navbar = () => {
               href={el.link}
               key={el.link}
               className={cn(
-                "px-4 py-2 text-sm font-normal text-muted-foreground transition-colors",
-                "hover:font-semibold hover:text-primary",
-                pathname === el.link && "font-semibold text-primary",
+                "px-4 py-2 text-sm font-normal transition-colors",
+                "hover:font-semibold hover:text-ring",
+                pathname === el.link && "font-semibold text-ring",
               )}
             >
               {el.label}
