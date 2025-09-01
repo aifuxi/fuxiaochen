@@ -27,7 +27,7 @@ export const Footer = () => {
           href={GONG_AN_LINK}
           className={`
             order-2 flex items-center transition-colors
-            hover:font-semibold hover:text-primary
+            hover:text-primary
             md:order-1
           `}
         >
@@ -45,7 +45,7 @@ export const Footer = () => {
           href={BEI_AN_LINK}
           className={`
             order-1 flex items-center transition-colors
-            hover:font-semibold hover:text-primary
+            hover:text-primary
             md:order-2
           `}
         >
