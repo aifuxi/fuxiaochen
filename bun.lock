@@ -12,7 +12,7 @@
         "@bytemd/plugin-highlight-ssr": "^1.21.0",
         "@bytemd/plugin-medium-zoom": "^1.21.0",
         "@bytemd/react": "^1.21.0",
-        "@fontsource-variable/outfit": "^5.2.6",
+        "@fontsource-variable/inter": "^5.2.6",
         "@hookform/resolvers": "^5.2.1",
         "@iconify-json/fa6-brands": "^1.1.18",
         "@iconify-json/logos": "^1.1.42",
@@ -253,7 +253,7 @@
 
     "@floating-ui/utils": ["@floating-ui/utils@0.2.10", "https://registry.npmmirror.com/@floating-ui/utils/-/utils-0.2.10.tgz", {}, "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="],
 
-    "@fontsource-variable/outfit": ["@fontsource-variable/outfit@5.2.6", "https://registry.npmmirror.com/@fontsource-variable/outfit/-/outfit-5.2.6.tgz", {}, "sha512-0wNlmsinE4taUgmRySxld13//NtnGwN58mBegexyhYuFqiQG/4Ho+5CCkiFxXijnojmCiaBaKkYt72LDwZHiKg=="],
+    "@fontsource-variable/inter": ["@fontsource-variable/inter@5.2.6", "https://registry.npmmirror.com/@fontsource-variable/inter/-/inter-5.2.6.tgz", {}, "sha512-jks/bficUPQ9nn7GvXvHtlQIPudW7Wx8CrlZoY8bhxgeobNxlQan8DclUJuYF2loYRrGpfrhCIZZspXYysiVGg=="],
 
     "@hookform/resolvers": ["@hookform/resolvers@5.2.1", "https://registry.npmmirror.com/@hookform/resolvers/-/resolvers-5.2.1.tgz", { "dependencies": { "@standard-schema/utils": "^0.3.0" }, "peerDependencies": { "react-hook-form": "^7.55.0" } }, "sha512-u0+6X58gkjMcxur1wRWokA7XsiiBJ6aK17aPZxhkoYiK5J+HcTx0Vhu9ovXe6H+dVpO6cjrn2FkJTryXEMlryQ=="],
 
