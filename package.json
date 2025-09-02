@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build": "next build",
+    "build": "cross-env NODE_ENV=production next build",
     "lint": "next lint",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "build:analyzer": "cross-env ANALYZE=true next build",
