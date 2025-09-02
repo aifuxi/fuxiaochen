@@ -42,7 +42,7 @@ export default function Page() {
   return (
     <section
       className={`
-        mx-auto prose pt-8 prose-neutral
+        mx-auto prose pt-8 prose-zinc
         dark:prose-invert
       `}
     >
