@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import Link from "next/link";
 
 import {
@@ -15,6 +17,8 @@ import { PATHS } from "@/constants";
 import { SignUpForm } from "../components/sign-up-form";
 
 export const SignUpPage = () => {
+  const [isPending, startTransition] = React.useTransition();
+
   return (
     <div className="grid h-screen w-screen place-content-center">
       <Card
@@ -27,7 +31,7 @@ export const SignUpPage = () => {
           <CardTitle>注册</CardTitle>
         </CardHeader>
         <CardContent>
-          <SignUpForm />
+          <SignUpForm isPending={isPending} startTransition={startTransition} />
 
           <CardDescription className="mt-4 text-right">
             已经有账户了？
