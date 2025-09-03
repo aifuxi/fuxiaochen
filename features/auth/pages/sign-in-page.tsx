@@ -80,8 +80,10 @@ export const SignInPage = () => {
     </div>
   );
 
-  async function handleSignInWithGithub() {
-    await signInWithGithub();
+  function handleSignInWithGithub() {
+    startTransition(async () => {
+      await signInWithGithub();
+    });
   }
 
   function handleGoHome() {
