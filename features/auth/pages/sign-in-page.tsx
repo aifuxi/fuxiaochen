@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -22,6 +24,7 @@ import { SignInForm } from "../components/sign-in-form";
 
 export const SignInPage = () => {
   const router = useRouter();
+  const [isPending, startTransition] = React.useTransition();
 
   return (
     <div className="grid h-screen w-screen place-content-center">
@@ -39,7 +42,7 @@ export const SignInPage = () => {
           <CardDescription>选择你喜欢的方式进行登录</CardDescription>
         </CardHeader>
         <CardContent>
-          <SignInForm />
+          <SignInForm isPending={isPending} startTransition={startTransition} />
         </CardContent>
         <CardFooter>
           <div className="grid w-full gap-4">
@@ -57,6 +60,7 @@ export const SignInPage = () => {
               variant="outline"
               className="!w-full"
               type="button"
+              disabled={isPending}
               onClick={handleSignInWithGithub}
             >
               <IconBrandGithub className="mr-2 text-base" /> 使用 Github 登录
@@ -65,6 +69,7 @@ export const SignInPage = () => {
               variant="secondary"
               className="!w-full"
               type="button"
+              disabled={isPending}
               onClick={handleGoHome}
             >
               回首页

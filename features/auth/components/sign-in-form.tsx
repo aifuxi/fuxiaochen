@@ -1,3 +1,4 @@
+import * as React from "react";
 import { useForm } from "react-hook-form";
 
 import { signIn } from "next-auth/react";
@@ -27,7 +28,12 @@ const FormSchema = z.object({
   password: z.string().min(6, { message: "密码最少需要6位" }),
 });
 
-export function SignInForm() {
+interface Props {
+  isPending: boolean;
+  startTransition: React.TransitionStartFunction;
+}
+
+export function SignInForm({ isPending, startTransition }: Props) {
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -37,18 +43,20 @@ export function SignInForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const result = await signIn("credentials", {
-      ...data,
-      redirect: false,
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    startTransition(async () => {
+      const result = await signIn("credentials", {
+        ...data,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        showErrorToast(result.error);
+        return;
+      }
+
+      router.replace(PATHS.ADMIN_HOME);
     });
-
-    if (result?.error) {
-      showErrorToast(result.error);
-      return;
-    }
-
-    router.replace(PATHS.ADMIN_HOME);
   }
 
   return (
@@ -61,6 +69,7 @@ export function SignInForm() {
         <FormField
           control={form.control}
           name="email"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>邮箱</FormLabel>
@@ -74,6 +83,7 @@ export function SignInForm() {
         <FormField
           control={form.control}
           name="password"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>密码</FormLabel>
@@ -84,8 +94,8 @@ export function SignInForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          登录
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "登录中..." : "登录"}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           还没有账号？

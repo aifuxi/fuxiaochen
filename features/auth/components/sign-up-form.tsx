@@ -30,7 +30,12 @@ const FormSchema = z.object({
   password: z.string().min(6, { message: "密码最少需要6位" }),
 });
 
-export function SignUpForm() {
+interface Props {
+  isPending: boolean;
+  startTransition: React.TransitionStartFunction;
+}
+
+export function SignUpForm({ isPending, startTransition }: Props) {
   const router = useRouter();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,14 +46,16 @@ export function SignUpForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const res = await signUpWithEmail(data);
-    if (res.success) {
-      showSuccessToast(res.success);
-      router.push(PATHS.ADMIN_HOME);
-    } else {
-      showErrorToast(res.error);
-    }
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    startTransition(async () => {
+      const res = await signUpWithEmail(data);
+      if (res.success) {
+        showSuccessToast(res.success);
+        router.push(PATHS.ADMIN_HOME);
+      } else {
+        showErrorToast(res.error);
+      }
+    });
   }
 
   return (
@@ -61,6 +68,7 @@ export function SignUpForm() {
         <FormField
           control={form.control}
           name="name"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>用户名</FormLabel>
@@ -74,6 +82,7 @@ export function SignUpForm() {
         <FormField
           control={form.control}
           name="email"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>邮箱</FormLabel>
@@ -87,6 +96,7 @@ export function SignUpForm() {
         <FormField
           control={form.control}
           name="password"
+          disabled={isPending}
           render={({ field }) => (
             <FormItem>
               <FormLabel>密码</FormLabel>
@@ -97,8 +107,8 @@ export function SignUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          注册
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? "注册中..." : "注册"}
         </Button>
       </form>
     </Form>
