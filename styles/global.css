@@ -1,7 +1,9 @@
 @import "tailwindcss";
+@import "./prose.css";
+
 @import "tw-animate-css";
 
-@plugin "@tailwindcss/typography";
+/* @plugin "@tailwindcss/typography"; */
 @plugin "@iconify/tailwind4";
 @plugin "tailwindcss-debug-screens";
 
@@ -12,8 +14,17 @@
 @import "./github-dark.css";
 
 /* @tailwindcss/typography 自定义 prose 的最大宽度 */
-@utility prose {
+/* @utility prose {
   max-width: 720px !important;
+} */
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @theme {
@@ -173,4 +184,47 @@ body {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* 参考代码：https://github.com/jnsahaj/tweakcn/blob/main/app/globals.css */
+/* View Transition Wave Effect 波浪动画效果 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  /* Ensure the outgoing view (old theme) is beneath */
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  /* Ensure the incoming view (new theme) is always on top */
+  z-index: 1;
+}
+
+@keyframes reveal {
+  from {
+    /* Use CSS variables for the origin, defaulting to center if not set */
+    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
+    opacity: 0.7;
+  }
+  to {
+    /* Use CSS variables for the origin, defaulting to center if not set */
+    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
+    opacity: 1;
+  }
+}
+
+::view-transition-new(root) {
+  /* Apply the reveal animation */
+  animation: reveal 0.4s ease-in-out forwards;
 }

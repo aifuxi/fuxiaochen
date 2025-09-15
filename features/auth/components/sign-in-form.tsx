@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,10 @@ import { PATHS } from "@/constants";
 
 const FormSchema = z.object({
   email: z.string().email({ message: "请输入有效的邮箱地址" }),
-  password: z.string().min(6, { message: "密码最少需要6位" }),
+  password: z
+    .string()
+    .min(6, { message: "密码最少需要6位" })
+    .max(20, { message: "密码最多20位" }),
 });
 
 interface Props {
@@ -95,7 +99,13 @@ export function SignInForm({ isPending, startTransition }: Props) {
           )}
         />
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? "登录中..." : "登录"}
+          {isPending ? (
+            <>
+              登录中... <LoaderCircle className="ml-2 animate-spin" />
+            </>
+          ) : (
+            "登录"
+          )}
         </Button>
         <p className="text-center text-sm text-muted-foreground">
           还没有账号？

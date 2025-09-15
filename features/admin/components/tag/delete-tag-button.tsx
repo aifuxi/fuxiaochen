@@ -18,12 +18,12 @@ import { useDeleteTag } from "@/features/tag";
 
 interface DeleteTagButtonProps {
   id: string;
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
 
-export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
+export const DeleteTagButton = ({ id, onSuccess }: DeleteTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
-  const deleteTagQuery = useDeleteTag();
+  const mutation = useDeleteTag(id);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -35,7 +35,7 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
             setOpen(true);
           }}
         >
-          <Trash className="size-4 text-destructive" />
+          <Trash className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -46,17 +46,15 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
         <AlertDialogFooter>
           <Button
             variant="outline"
-            disabled={deleteTagQuery.loading}
+            disabled={mutation.isMutating}
             onClick={() => {
               setOpen(false);
             }}
           >
             取消
           </Button>
-          <Button onClick={handleDeleteTag} disabled={deleteTagQuery.loading}>
-            {deleteTagQuery.loading && (
-              <LoaderCircle className="mr-2 size-4 animate-spin" />
-            )}
+          <Button onClick={handleDeleteTag} disabled={mutation.isMutating}>
+            {mutation.isMutating && <LoaderCircle className="animate-spin" />}
             删除
           </Button>
         </AlertDialogFooter>
@@ -65,8 +63,8 @@ export const DeleteTagButton = ({ id, refreshAsync }: DeleteTagButtonProps) => {
   );
 
   async function handleDeleteTag() {
-    await deleteTagQuery.runAsync(id);
+    await mutation.trigger();
     setOpen(false);
-    await refreshAsync();
+    onSuccess?.();
   }
 };

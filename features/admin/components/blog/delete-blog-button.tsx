@@ -18,15 +18,12 @@ import { useDeleteBlog } from "@/features/blog";
 
 interface DeleteBlogButtonProps {
   id: string;
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
 
-export const DeleteBlogButton = ({
-  id,
-  refreshAsync,
-}: DeleteBlogButtonProps) => {
+export const DeleteBlogButton = ({ id, onSuccess }: DeleteBlogButtonProps) => {
   const [open, setOpen] = React.useState(false);
-  const deleteBlogQuery = useDeleteBlog();
+  const mutation = useDeleteBlog(id);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -38,7 +35,7 @@ export const DeleteBlogButton = ({
             setOpen(true);
           }}
         >
-          <Trash className="size-4 text-destructive" />
+          <Trash className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -49,17 +46,15 @@ export const DeleteBlogButton = ({
         <AlertDialogFooter>
           <Button
             variant="outline"
-            disabled={deleteBlogQuery.loading}
+            disabled={mutation.isMutating}
             onClick={() => {
               setOpen(false);
             }}
           >
             取消
           </Button>
-          <Button onClick={handleDelete} disabled={deleteBlogQuery.loading}>
-            {deleteBlogQuery.loading && (
-              <LoaderCircle className="mr-2 size-4 animate-spin" />
-            )}
+          <Button onClick={handleDelete} disabled={mutation.isMutating}>
+            {mutation.isMutating && <LoaderCircle className="animate-spin" />}
             删除
           </Button>
         </AlertDialogFooter>
@@ -68,8 +63,8 @@ export const DeleteBlogButton = ({
   );
 
   async function handleDelete() {
-    await deleteBlogQuery.runAsync(id);
+    await mutation.trigger();
     setOpen(false);
-    await refreshAsync();
+    onSuccess?.();
   }
 };

@@ -8,9 +8,10 @@ import sharp from "sharp";
 
 import { isProduction } from "@/utils/env";
 
-import { ERROR_NO_PERMISSION } from "@/constants";
-import { noPermission } from "@/features/user";
+import { ERROR_MESSAGE_MAP } from "@/constants";
+import { noAdminPermission } from "@/features/user";
 import { aliOSS } from "@/lib/ali-oss";
+import { createResp } from "@/lib/common";
 import { createCuid } from "@/lib/cuid";
 
 const UPLOAD_DIR = "uploads";
@@ -73,9 +74,9 @@ const compressImage = async (input: string): Promise<string> => {
 
   const fileName = path.basename(inputFilePath);
   const fileExtension = path.extname(fileName);
-  const fileNameWithouExtension = fileName.replace(fileExtension, "");
+  const fileNameWithoutExtension = fileName.replace(fileExtension, "");
 
-  const newFileName = `${fileNameWithouExtension}.webp`;
+  const newFileName = `${fileNameWithoutExtension}.webp`;
   const output = `/${UPLOAD_DIR}/${newFileName}`;
   const outputFilePath = getFilePath(output);
 
@@ -115,9 +116,8 @@ const uploadToOSS = async (input: string) => {
 export const uploadFile = async (
   formData: FormData,
 ): Promise<{ error?: string; url?: string }> => {
-  if (await noPermission()) {
-    // throw ERROR_NO_PERMISSION;
-    return { error: ERROR_NO_PERMISSION.message };
+  if (await noAdminPermission()) {
+    return createResp({ error: ERROR_MESSAGE_MAP.noPermission });
   }
   // Get file from formData
   const file = formData.get("file") as File;

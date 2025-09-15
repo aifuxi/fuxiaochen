@@ -1,13 +1,10 @@
-import dayjs from "dayjs";
-import "dayjs/locale/zh-cn";
-import relativeTime from "dayjs/plugin/relativeTime";
+import { format, formatDistanceToNow, getHours, toDate } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import slugify from "slugify";
 
+import { type BaseResponse } from "@/types";
+
 import { showErrorToast, showSuccessToast } from "@/components/toast";
-
-import { ADMIN_EMAILS } from "@/constants";
-
-dayjs.extend(relativeTime);
 
 export const toSlug = (s: string) => {
   if (!s) {
@@ -52,20 +49,32 @@ export const copyToClipboard = (text: string) => {
 };
 
 export const toFromNow = (date: number | Date) => {
-  return dayjs(date).locale("zh-cn").fromNow();
+  return formatDistanceToNow(date, { locale: zhCN });
 };
 
 export const toSlashDateString = (date: number | Date) => {
-  return dayjs(date).locale("zh-cn").format("YYYY年M月D日 dddd HH:mm:ss");
+  return format(date, "yyyy年MM月dd日 HH:mm:ss");
 };
 
 export const prettyDate = (date: number | Date) => {
-  return dayjs(date).locale("zh-cn").format("M月 D，YYYY");
+  return format(date, "MM月 dd，yyyy");
 };
+
+export function toDateString(date: number | Date) {
+  return format(toDate(date), "yyyy年MM月dd日");
+}
+
+export function toTimeString(date: number | Date) {
+  return format(toDate(date), "HH:mm");
+}
+
+export function toDateTimeString(date: number | Date) {
+  return format(toDate(date), "yyyy/MM/dd HH:mm:ss");
+}
 
 /* 根据当前时间显示不同的问候语 */
 export const sayHi = () => {
-  const hour = dayjs().hour();
+  const hour = getHours(new Date());
 
   if (hour < 6) {
     return "凌晨好~";
@@ -85,14 +94,7 @@ export const sayHi = () => {
 };
 
 export const prettyDateWithWeekday = (date: number | Date) => {
-  return dayjs(date).locale("zh-cn").format("dddd，MMMM D YYYY");
-};
-
-export const isAdmin = (email?: string | null) => {
-  if (!email || !ADMIN_EMAILS?.length) {
-    return false;
-  }
-  return ADMIN_EMAILS.includes(email);
+  return format(date, "yyyy年MM月dd日, eeee", { locale: zhCN });
 };
 
 export const isBrowser = () => {
@@ -104,3 +106,16 @@ export const isBrowser = () => {
     window.document.createElement
   );
 };
+
+export function createResp<T>({ data, error, message }: BaseResponse<T>) {
+  return {
+    data,
+    error,
+    message,
+    timestamp: new Date().toString(),
+  };
+}
+
+export function createResponse<T>({ data, error, message }: BaseResponse<T>) {
+  return Response.json(createResp({ data, error, message }));
+}

@@ -1,9 +1,13 @@
-import { EditBlogForm } from "../../components";
+import {
+  AdminContentLayout,
+  EditBlogForm,
+  EditBlogPageHeader,
+} from "../../components";
 
 export const EditBlogPage = () => {
   return (
-    <div className="p-6">
+    <AdminContentLayout header={<EditBlogPageHeader />}>
       <EditBlogForm />
-    </div>
+    </AdminContentLayout>
   );
 };

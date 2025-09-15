@@ -6,10 +6,17 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Book, CodeXml, Home, LogOut, ScrollIcon, Tags } from "lucide-react";
+import {
+  Book,
+  CodeXml,
+  Home,
+  LogOut,
+  ScrollIcon,
+  Tags,
+  User,
+} from "lucide-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +25,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { ModeToggle } from "@/components/mode-toggle";
 
 import {
   ImageAssets,
@@ -65,6 +74,12 @@ export const adminNavItems: {
     link: PATHS.ADMIN_NOTE,
     icon: <ScrollIcon className="size-4" />,
     breadcrumbs: [PATHS.ADMIN_HOME, PATHS.ADMIN_NOTE],
+  },
+  {
+    label: PATHS_MAP[PATHS.ADMIN_USER],
+    link: PATHS.ADMIN_USER,
+    icon: <User className="size-4" />,
+    breadcrumbs: [PATHS.ADMIN_HOME, PATHS.ADMIN_USER],
   },
   {
     label: PATHS_MAP[PATHS.ADMIN_BLOG_CREATE],
@@ -130,55 +145,46 @@ export const AdminLayout = ({ children }: React.PropsWithChildren) => {
               </Link>
             ))}
         </nav>
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Avatar className="size-8 rounded-lg">
-              <AvatarImage
-                src={session.data?.user?.image ?? ""}
-                alt={session.data?.user?.name ?? PLACEHOLDER_TEXT}
-              />
-              <AvatarFallback className="rounded-lg">FC</AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            side="bottom"
-            align="end"
-            sideOffset={4}
-          >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="size-8 rounded-lg">
-                  <AvatarImage
-                    src={session.data?.user?.image ?? ""}
-                    alt={session.data?.user?.name ?? PLACEHOLDER_TEXT}
-                  />
-                  <AvatarFallback className="rounded-lg">
-                    {session.data?.user?.name ?? PLACEHOLDER_TEXT}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    {session.data?.user?.name ?? PLACEHOLDER_TEXT}
-                  </span>
-                  <span className="truncate text-xs">
-                    {session.data?.user?.email ?? PLACEHOLDER_TEXT}
-                  </span>
-                </div>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => {
-                setSignOutDialogOpen(true);
-              }}
+
+        <div className="flex items-center gap-2">
+          <ModeToggle variant="ghost" />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <User />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+              side="bottom"
+              align="end"
+              sideOffset={4}
             >
-              <LogOut className="size-4" />
-              退出登录
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {session.data?.user?.name ?? PLACEHOLDER_TEXT}
+                    </span>
+                    <span className="truncate text-xs">
+                      {session.data?.user?.email ?? PLACEHOLDER_TEXT}
+                    </span>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => {
+                  setSignOutDialogOpen(true);
+                }}
+              >
+                <LogOut />
+                退出登录
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </header>
       <main className="flex-1">{children}</main>
 

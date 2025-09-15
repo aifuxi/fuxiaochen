@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { PUBLISHED_ENUM } from "@/constants";
+import { type BaseResponse, type DbNote, type DbTag } from "@/types";
 
-import { type getNotes } from "../actions";
+import { PUBLISHED_ENUM } from "@/constants";
 
 export const createNoteSchema = z.object({
   body: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -25,14 +25,33 @@ export const getNotesSchema = z.object({
     .optional(),
   tags: z.string().array().optional(),
 
-  pageIndex: z.number(),
-  pageSize: z.number(),
+  pageIndex: z.coerce.number(),
+  pageSize: z.coerce.number(),
   orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
 });
 
-export type CreateNoteDTO = z.infer<typeof createNoteSchema>;
-export type UpdateNoteDTO = z.infer<typeof updateNoteSchema>;
-export type GetNotesDTO = z.infer<typeof getNotesSchema>;
+export type CreateNoteRequest = z.infer<typeof createNoteSchema>;
+export type UpdateNoteRequest = z.infer<typeof updateNoteSchema>;
+export type GetNotesRequest = z.infer<typeof getNotesSchema>;
 
-export type Note = Awaited<ReturnType<typeof getNotes>>["notes"][number];
+export type Note = DbNote & {
+  tags: DbTag[];
+};
+
+export type GetNotesData = {
+  notes: Note[];
+  total: number;
+};
+
+export type GetNotesResponse = BaseResponse<GetNotesData>;
+
+export type GetNoteData = Note;
+
+export type CreateNoteData = Note;
+
+export type CreateNoteResponse = BaseResponse<Note>;
+
+export type UpdateNoteData = Note;
+
+export type UpdateNoteResponse = BaseResponse<UpdateNoteData>;

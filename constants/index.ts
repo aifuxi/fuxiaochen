@@ -11,3 +11,7 @@ export * from "./pagination";
 export * from "./error";
 
 export * from "./assets";
+
+export * from "./permission";
+
+export * from "./event";

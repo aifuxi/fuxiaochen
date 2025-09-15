@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-import { PUBLISHED_ENUM, REGEX } from "@/constants";
+import { type BaseResponse, type DbBlog, type DbTag } from "@/types";
 
-import { type getBlogs } from "../actions";
+import { PUBLISHED_ENUM, REGEX } from "@/constants";
 
 export const createBlogSchema = z.object({
   title: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -35,14 +35,33 @@ export const getBlogsSchema = z.object({
     ])
     .optional(),
   tags: z.string().array().optional(),
-  pageIndex: z.number(),
-  pageSize: z.number(),
+  pageIndex: z.coerce.number(),
+  pageSize: z.coerce.number(),
   orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
 });
 
-export type CreateBlogDTO = z.infer<typeof createBlogSchema>;
-export type UpdateBlogDTO = z.infer<typeof updateBlogSchema>;
-export type GetBlogsDTO = z.infer<typeof getBlogsSchema>;
+export type CreateBlogRequest = z.infer<typeof createBlogSchema>;
+export type UpdateBlogRequest = z.infer<typeof updateBlogSchema>;
+export type GetBlogsRequest = z.infer<typeof getBlogsSchema>;
 
-export type Blog = Awaited<ReturnType<typeof getBlogs>>["blogs"][number];
+export type Blog = DbBlog & {
+  tags: DbTag[];
+};
+
+export type GetBlogsData = {
+  blogs: Blog[];
+  total: number;
+};
+
+export type GetBlogsResponse = BaseResponse<GetBlogsData>;
+
+export type GetBlogData = Blog;
+
+export type CreateBlogData = Blog;
+
+export type CreateBlogResponse = BaseResponse<Blog>;
+
+export type UpdateBlogData = Blog;
+
+export type UpdateBlogResponse = BaseResponse<UpdateBlogData>;

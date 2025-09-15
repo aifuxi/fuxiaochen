@@ -38,13 +38,11 @@ export const SnippetListItem = ({ snippet }: SnippetListItemProps) => {
       <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
         {snippet.description}
       </p>
-      <div className="flex space-x-2 text-xs text-muted-foreground">
-        <div className="flex h-5 items-center space-x-1">
-          <Calendar className="size-3" />
-          <time dateTime={snippet.createdAt.toISOString()}>
-            {prettyDate(snippet.createdAt)}
-          </time>
-        </div>
+      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+        <Calendar className="size-3" />
+        <time dateTime={snippet.createdAt.toISOString()}>
+          {prettyDate(snippet.createdAt)}
+        </time>
       </div>
     </Link>
   );
