@@ -1,9 +1,13 @@
-import { CreateBlogForm } from "../../components";
+import {
+  AdminContentLayout,
+  CreateBlogForm,
+  CreateBlogPageHeader,
+} from "../../components";
 
 export const CreateBlogPage = () => {
   return (
-    <div className="p-6">
+    <AdminContentLayout header={<CreateBlogPageHeader />}>
       <CreateBlogForm />
-    </div>
+    </AdminContentLayout>
   );
 };

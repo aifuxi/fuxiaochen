@@ -6,11 +6,9 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TagTypeEnum } from "@prisma/client";
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -26,26 +24,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { BytemdEditor } from "@/components/bytemd";
 
 import { PATHS } from "@/constants";
-import { CreateTagButton } from "@/features/admin";
 import {
-  type CreateSnippetDTO,
+  type CreateSnippetRequest,
   createSnippetSchema,
   useCreateSnippet,
 } from "@/features/snippet";
-import { useGetAllTags } from "@/features/tag";
 import { toSlug } from "@/lib/common";
 
 export const CreateSnippetForm = () => {
   const router = useRouter();
 
-  const getTagsQuery = useGetAllTags(TagTypeEnum.SNIPPET);
-  const tags = React.useMemo(() => {
-    return getTagsQuery.data?.tags ?? [];
-  }, [getTagsQuery]);
+  const mutation = useCreateSnippet();
 
-  const createSnippetQuery = useCreateSnippet();
-
-  const form = useForm<CreateSnippetDTO>({
+  const form = useForm<CreateSnippetRequest>({
     resolver: zodResolver(createSnippetSchema),
     defaultValues: {
       title: "",
@@ -70,12 +61,10 @@ export const CreateSnippetForm = () => {
             type="button"
             onClick={() => form.handleSubmit(handleSubmit)()}
             variant={"outline"}
-            disabled={createSnippetQuery.loading}
+            disabled={mutation.isMutating}
             className="!w-full"
           >
-            {createSnippetQuery.loading && (
-              <LoaderCircle className="mr-2 size-4 animate-spin" />
-            )}
+            {mutation.isMutating && <LoaderCircle className="animate-spin" />}
             创建
           </Button>
         </div>
@@ -145,43 +134,12 @@ export const CreateSnippetForm = () => {
           />
           <FormField
             control={form.control}
-            name="tags"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>标签</FormLabel>
-                <FormControl>
-                  <div className="grid grid-cols-12 items-center gap-4">
-                    <div className="col-span-10">
-                      <Combobox
-                        options={
-                          tags.map((el) => ({
-                            label: el.name,
-                            value: el.id,
-                          })) ?? []
-                        }
-                        multiple
-                        clearable
-                        selectPlaceholder="请选择标签"
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      />
-                    </div>
-
-                    <CreateTagButton refreshAsync={getTagsQuery.refreshAsync} />
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
             name="body"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>内容</FormLabel>
                 <FormControl>
-                  <div id="content-editor">
+                  <div>
                     <BytemdEditor
                       body={field.value}
                       setContent={field.onChange}
@@ -197,8 +155,8 @@ export const CreateSnippetForm = () => {
     </Form>
   );
 
-  async function handleSubmit(values: CreateSnippetDTO) {
-    await createSnippetQuery.runAsync(values);
+  async function handleSubmit(values: CreateSnippetRequest) {
+    await mutation.trigger(values);
     router.push(PATHS.ADMIN_SNIPPET);
   }
 

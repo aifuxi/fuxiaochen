@@ -18,15 +18,12 @@ import { useDeleteNote } from "@/features/note";
 
 interface DeleteNoteButtonProps {
   id: string;
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
 
-export const DeleteNoteButton = ({
-  id,
-  refreshAsync,
-}: DeleteNoteButtonProps) => {
+export const DeleteNoteButton = ({ id, onSuccess }: DeleteNoteButtonProps) => {
   const [open, setOpen] = React.useState(false);
-  const deleteNoteQuery = useDeleteNote();
+  const mutation = useDeleteNote(id);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -49,17 +46,15 @@ export const DeleteNoteButton = ({
         <AlertDialogFooter>
           <Button
             variant="outline"
-            disabled={deleteNoteQuery.loading}
+            disabled={mutation.isMutating}
             onClick={() => {
               setOpen(false);
             }}
           >
             取消
           </Button>
-          <Button onClick={handleDeleteNote} disabled={deleteNoteQuery.loading}>
-            {deleteNoteQuery.loading && (
-              <LoaderCircle className="mr-2 size-4 animate-spin" />
-            )}
+          <Button onClick={handleDeleteTag} disabled={mutation.isMutating}>
+            {mutation.isMutating && <LoaderCircle className="animate-spin" />}
             删除
           </Button>
         </AlertDialogFooter>
@@ -67,8 +62,9 @@ export const DeleteNoteButton = ({
     </AlertDialog>
   );
 
-  async function handleDeleteNote() {
-    await deleteNoteQuery.runAsync(id);
-    await refreshAsync();
+  async function handleDeleteTag() {
+    await mutation.trigger();
+    setOpen(false);
+    onSuccess?.();
   }
 };

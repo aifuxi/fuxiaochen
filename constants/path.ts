@@ -22,6 +22,7 @@ export const PATHS = {
 
   ADMIN_TAG: "/admin/tag",
   ADMIN_NOTE: "/admin/note",
+  ADMIN_USER: "/admin/user",
 
   /** ************* AUTH ****************** */
   AUTH_SIGN_IN: "/auth/sign-in",
@@ -47,6 +48,7 @@ export const PATHS_MAP: Record<string, string> = {
   [PATHS.ADMIN_SNIPPET_EDIT]: "编辑片段",
   [PATHS.ADMIN_TAG]: "标签",
   [PATHS.ADMIN_NOTE]: "笔记",
+  [PATHS.ADMIN_USER]: "用户",
 
   /** ************* AUTH ****************** */
   [PATHS.AUTH_SIGN_IN]: "登录",

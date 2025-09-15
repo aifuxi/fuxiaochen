@@ -40,20 +40,9 @@ export const revalidate = 60;
 
 export default function Page() {
   return (
-    <section
-      className={`
-        mx-auto prose pt-8 prose-zinc
-        dark:prose-invert
-      `}
-    >
-      <h2
-        className={`
-          text-3xl font-bold
-          md:text-4xl
-        `}
-      >
-        关于
-      </h2>
+    // eslint-disable-next-line better-tailwindcss/no-unregistered-classes
+    <section className={`prose mx-auto pt-8`}>
+      <h2 className="!my-4">关于</h2>
       <div>
         <h2>我是谁</h2>
         <p>
@@ -63,7 +52,7 @@ export default function Page() {
       </div>
 
       <div>
-        <h2>我的技能</h2>
+        <h2 className="!my-4">我的技能</h2>
       </div>
 
       <div>

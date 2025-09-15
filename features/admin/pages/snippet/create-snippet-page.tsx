@@ -1,9 +1,13 @@
-import { CreateSnippetForm } from "../../components";
+import {
+  AdminContentLayout,
+  CreateSnippetForm,
+  CreateSnippetPageHeader,
+} from "../../components";
 
 export const CreateSnippetPage = () => {
   return (
-    <div className="p-6">
+    <AdminContentLayout header={<CreateSnippetPageHeader />}>
       <CreateSnippetForm />
-    </div>
+    </AdminContentLayout>
   );
 };

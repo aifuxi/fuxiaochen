@@ -20,7 +20,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { PATHS } from "@/constants";
 
 import { signInWithGithub } from "../actions/sign-in";
-import { SignInForm } from "../components/sign-in-form";
+import { SignInForm } from "../components";
 
 export const SignInPage = () => {
   const router = useRouter();

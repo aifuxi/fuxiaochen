@@ -1,8 +1,9 @@
+import { type Snippet as DbSnippet, type Tag as DbTag } from "@prisma/client";
 import { z } from "zod";
 
-import { PUBLISHED_ENUM, REGEX } from "@/constants";
+import { type BaseResponse } from "@/types";
 
-import { type getSnippets } from "../actions";
+import { PUBLISHED_ENUM, REGEX } from "@/constants";
 
 export const createSnippetSchema = z.object({
   title: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -33,16 +34,33 @@ export const getSnippetsSchema = z.object({
     ])
     .optional(),
   tags: z.string().array().optional(),
-  pageIndex: z.number(),
-  pageSize: z.number(),
+  pageIndex: z.coerce.number(),
+  pageSize: z.coerce.number(),
   orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
 });
 
-export type CreateSnippetDTO = z.infer<typeof createSnippetSchema>;
-export type UpdateSnippetDTO = z.infer<typeof updateSnippetSchema>;
-export type GetSnippetsDTO = z.infer<typeof getSnippetsSchema>;
+export type CreateSnippetRequest = z.infer<typeof createSnippetSchema>;
+export type UpdateSnippetRequest = z.infer<typeof updateSnippetSchema>;
+export type GetSnippetsRequest = z.infer<typeof getSnippetsSchema>;
 
-export type Snippet = Awaited<
-  ReturnType<typeof getSnippets>
->["snippets"][number];
+export type Snippet = DbSnippet & {
+  tags: DbTag[];
+};
+
+export type GetSnippetsData = {
+  snippets: Snippet[];
+  total: number;
+};
+
+export type GetSnippetsResponse = BaseResponse<GetSnippetsData>;
+
+export type GetSnippetData = Snippet;
+
+export type CreateSnippetData = Snippet;
+
+export type CreateSnippetResponse = BaseResponse<Snippet>;
+
+export type UpdateSnippetData = Snippet;
+
+export type UpdateSnippetResponse = BaseResponse<UpdateSnippetData>;

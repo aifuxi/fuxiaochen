@@ -20,7 +20,7 @@ export const BlogDetailPage = ({ blog }: BlogDetailProps) => {
       <h1 className="mb-6 text-4xl font-semibold break-all">{blog.title}</h1>
 
       <p className="mb-6 text-muted-foreground">{blog.description}</p>
-      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+      <div className="mb-6 flex items-center space-x-4 text-sm text-muted-foreground">
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(blog.createdAt)}</p>
       </div>
 

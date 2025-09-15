@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import { LoaderCircle } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,9 +23,13 @@ interface Props {
 }
 
 export const SignOutDialog = ({ open, setOpen }: Props) => {
+  const [isPending, startTransition] = React.useTransition();
+
   async function handleLogout() {
-    await signOutAndRedirect();
-    setOpen(false);
+    startTransition(async () => {
+      await signOutAndRedirect();
+      setOpen(false);
+    });
   }
 
   return (
@@ -35,7 +41,10 @@ export const SignOutDialog = ({ open, setOpen }: Props) => {
         </AlertDialogTrigger>
         <AlertDialogFooter>
           <AlertDialogCancel>取消</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogout}>确定</AlertDialogAction>
+          <AlertDialogAction onClick={handleLogout}>
+            确定
+            {isPending && <LoaderCircle className="ml-2 animate-spin" />}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

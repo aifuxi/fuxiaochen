@@ -14,7 +14,7 @@ import {
 
 import { PATHS } from "@/constants";
 
-import { SignUpForm } from "../components/sign-up-form";
+import { SignUpForm } from "../components";
 
 export const SignUpPage = () => {
   const [isPending, startTransition] = React.useTransition();

@@ -1,9 +1,15 @@
 import { TagTypeEnum } from "@prisma/client";
 import { z } from "zod";
 
-import { REGEX } from "@/constants";
+import {
+  type BaseResponse,
+  type DbBlog,
+  type DbNote,
+  type DbSnippet,
+  type DbTag,
+} from "@/types";
 
-import { type getTags } from "../actions";
+import { REGEX } from "@/constants";
 
 export const createTagSchema = z.object({
   name: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -36,14 +42,40 @@ export const getTagsSchema = z.object({
       TagTypeEnum.SNIPPET,
     ])
     .optional(),
-  pageIndex: z.number(),
-  pageSize: z.number(),
+  pageIndex: z.coerce.number(),
+  pageSize: z.coerce.number(),
   orderBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
 });
 
-export type CreateTagDTO = z.infer<typeof createTagSchema>;
-export type UpdateTagDTO = z.infer<typeof updateTagSchema>;
-export type GetTagsDTO = z.infer<typeof getTagsSchema>;
+export type CreateTagRequest = z.infer<typeof createTagSchema>;
+export type UpdateTagRequest = z.infer<typeof updateTagSchema>;
+export type GetTagsRequest = z.infer<typeof getTagsSchema>;
 
-export type Tag = Awaited<ReturnType<typeof getTags>>["tags"][number];
+export type Tag = DbTag & {
+  _count: {
+    blogs: number;
+    snippets: number;
+    notes: number;
+  };
+  blogs: DbBlog[];
+  snippets: DbSnippet[];
+  notes: DbNote[];
+};
+
+export type GetTagsData = {
+  tags: Tag[];
+  total: number;
+};
+
+export type GetTagsResponse = BaseResponse<GetTagsData>;
+
+export type GetTagData = Tag;
+
+export type CreateTagData = Tag;
+
+export type CreateTagResponse = BaseResponse<Tag>;
+
+export type UpdateTagData = Tag;
+
+export type UpdateTagResponse = BaseResponse<UpdateTagData>;

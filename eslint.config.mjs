@@ -130,7 +130,7 @@ export default defineConfig([
             "@/types/*",
             "@/config/*",
             "@/constants/*",
-            "@/providers/*",
+            "../components/*",
           ],
         },
       ],

@@ -5,7 +5,8 @@ import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 
-import { PATHS } from "@/constants";
+import { PATHS, ROLES } from "@/constants";
+import { hasAdminUser } from "@/features/user";
 
 import { prisma } from "./prisma";
 
@@ -54,6 +55,22 @@ export const { handlers, auth, signOut, signIn } = NextAuth({
   },
   debug: process.env.NODE_ENV === "development",
   callbacks: {
+    async jwt({ token, user, account }) {
+      // 如果是GitHub登录并且是第一次登录
+      if (account?.provider === "github" && user) {
+        // 检查管理员用户是否已经存在
+        const adminUserExist = await hasAdminUser();
+        // 无管理员时，第一个注册用户为管理员
+        const role = adminUserExist ? ROLES.visitor : ROLES.admin;
+
+        // 更新用户角色
+        await prisma.user.update({
+          where: { email: user.email! },
+          data: { role },
+        });
+      }
+      return token;
+    },
     session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub;

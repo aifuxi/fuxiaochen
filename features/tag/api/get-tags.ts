@@ -2,13 +2,19 @@ import { type TagTypeEnum } from "@prisma/client";
 import { useRequest } from "ahooks";
 
 import { getAllTags, getTags } from "../actions";
-import { type GetTagsDTO } from "../types";
+import { type GetTagsRequest } from "../types";
 
-export const useGetTags = (params: GetTagsDTO) => {
-  return useRequest(() => getTags(params), {
-    refreshDeps: [params],
-    loadingDelay: 300,
-  });
+export const useGetTags = (params: GetTagsRequest) => {
+  return useRequest(
+    async () => {
+      const res = await getTags(params);
+      return res.data;
+    },
+    {
+      loadingDelay: 300,
+      refreshDeps: [params.name, params.pageIndex, params.pageSize],
+    },
+  );
 };
 
 export const useGetAllTags = (type?: TagTypeEnum) => {

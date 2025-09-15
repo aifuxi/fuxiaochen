@@ -1,13 +1,15 @@
+"use client";
+
 import * as React from "react";
 
 import { SessionProvider } from "next-auth/react";
 
-import { AdminLayout } from "@/features/admin";
+import { AdminLayoutV2 } from "@/features/admin";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   return (
     <SessionProvider>
-      <AdminLayout>{children}</AdminLayout>
+      <AdminLayoutV2>{children}</AdminLayoutV2>
     </SessionProvider>
   );
 }

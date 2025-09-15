@@ -18,15 +18,15 @@ import { useDeleteSnippet } from "@/features/snippet";
 
 interface DeleteSnippetButtonProps {
   id: string;
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
 
 export const DeleteSnippetButton = ({
   id,
-  refreshAsync,
+  onSuccess,
 }: DeleteSnippetButtonProps) => {
   const [open, setOpen] = React.useState(false);
-  const deleteSnippetQuery = useDeleteSnippet();
+  const mutation = useDeleteSnippet(id);
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
@@ -38,7 +38,7 @@ export const DeleteSnippetButton = ({
             setOpen(true);
           }}
         >
-          <Trash className="size-4 text-destructive" />
+          <Trash className="text-destructive" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -49,17 +49,15 @@ export const DeleteSnippetButton = ({
         <AlertDialogFooter>
           <Button
             variant="outline"
-            disabled={deleteSnippetQuery.loading}
+            disabled={mutation.isMutating}
             onClick={() => {
               setOpen(false);
             }}
           >
             取消
           </Button>
-          <Button onClick={handleDelete} disabled={deleteSnippetQuery.loading}>
-            {deleteSnippetQuery.loading && (
-              <LoaderCircle className="mr-2 size-4 animate-spin" />
-            )}
+          <Button onClick={handleDelete} disabled={mutation.isMutating}>
+            {mutation.isMutating && <LoaderCircle className="animate-spin" />}
             删除
           </Button>
         </AlertDialogFooter>
@@ -68,8 +66,8 @@ export const DeleteSnippetButton = ({
   );
 
   async function handleDelete() {
-    await deleteSnippetQuery.runAsync(id);
+    await mutation.trigger();
     setOpen(false);
-    await refreshAsync();
+    onSuccess?.();
   }
 };

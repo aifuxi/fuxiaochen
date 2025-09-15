@@ -4,12 +4,12 @@ import { type Metadata } from "next";
 import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
-
-import { ThemeProvider } from "@/providers";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { BProgressProvider } from "@/components/b-progress-provider";
+import { GlobalPubSub } from "@/components/global-pub-sub";
+import { BProgressProvider, ThemeProvider } from "@/components/providers";
 import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -53,20 +53,18 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
         />
       </head>
-      <body className="debug-screens overflow-x-clip scroll-smooth">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <BProgressProvider>
-            <TooltipProvider>
-              {children}
-              <ToasterComponent />
-            </TooltipProvider>
-          </BProgressProvider>
-        </ThemeProvider>
+      <body className="debug-screens scroll-smooth">
+        <NuqsAdapter>
+          <ThemeProvider attribute="class" enableColorScheme enableSystem>
+            <BProgressProvider>
+              <TooltipProvider>
+                {children}
+                <ToasterComponent />
+                <GlobalPubSub />
+              </TooltipProvider>
+            </BProgressProvider>
+          </ThemeProvider>
+        </NuqsAdapter>
       </body>
 
       {/* Google Analytics  */}

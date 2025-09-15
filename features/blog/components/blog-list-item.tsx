@@ -38,13 +38,11 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
       <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
         {blog.description}
       </p>
-      <div className="flex space-x-2 text-xs text-muted-foreground">
-        <div className="flex h-5 items-center space-x-1">
-          <Calendar className="size-3" />
-          <time dateTime={blog.createdAt.toISOString()}>
-            {prettyDate(blog.createdAt)}
-          </time>
-        </div>
+      <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+        <Calendar className="size-3" />
+        <time dateTime={blog.createdAt.toISOString()}>
+          {prettyDate(blog.createdAt)}
+        </time>
       </div>
     </Link>
   );
