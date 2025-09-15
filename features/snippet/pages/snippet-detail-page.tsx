@@ -20,7 +20,7 @@ export const SnippetDetailPage = ({ snippet }: SnippetDetailProps) => {
       <h1 className="mb-6 text-4xl font-semibold break-all">{snippet.title}</h1>
 
       <p className="mb-6 text-muted-foreground">{snippet.description}</p>
-      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+      <div className="mb-6 flex items-center space-x-4 text-sm text-muted-foreground">
         <p>发布于&nbsp;&nbsp;{prettyDateWithWeekday(snippet.createdAt)}</p>
       </div>
 

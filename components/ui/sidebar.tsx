@@ -444,7 +444,7 @@ function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="sidebar-group"
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn("relative flex w-full min-w-0 flex-col p-4", className)}
       {...props}
     />
   );
@@ -528,7 +528,7 @@ function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
     <ul
       data-slot="sidebar-menu"
       data-sidebar="menu"
-      className={cn("flex w-full min-w-0 flex-col gap-1", className)}
+      className={cn("flex w-full min-w-0 flex-col gap-2", className)}
       {...props}
     />
   );
@@ -547,7 +547,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
 
 const sidebarMenuButtonVariants = cva(
   `
-    peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm
+    peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-4 text-left text-sm
     ring-sidebar-ring outline-hidden transition-[width,height,padding]
     group-has-data-[sidebar=menu-action]/menu-item:pr-8
     group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2!
@@ -573,10 +573,10 @@ const sidebarMenuButtonVariants = cva(
         `,
       },
       size: {
-        default: "h-8 text-sm",
-        sm: "h-7 text-xs",
+        default: "h-12 text-sm",
+        sm: "h-11 text-xs",
         lg: `
-          h-12 text-sm
+          h-16 text-sm
           group-data-[collapsible=icon]:p-0!
         `,
       },
@@ -655,7 +655,7 @@ function SidebarMenuAction({
       data-sidebar="menu-action"
       className={cn(
         `
-          absolute top-1.5 right-1 flex aspect-square w-5 items-center justify-center rounded-md p-0
+          absolute top-1.5 right-4 flex aspect-square w-5 items-center justify-center rounded-md p-0
           text-sidebar-foreground ring-sidebar-ring outline-hidden transition-transform
           peer-hover/menu-button:text-sidebar-accent-foreground
           hover:bg-sidebar-accent hover:text-sidebar-accent-foreground
@@ -668,7 +668,7 @@ function SidebarMenuAction({
           md:after:hidden
         `,
         "peer-data-[size=sm]/menu-button:top-1",
-        "peer-data-[size=default]/menu-button:top-1.5",
+        "peer-data-[size=default]/menu-button:top-3.5",
         "peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
         showOnHover &&
@@ -805,7 +805,7 @@ function SidebarMenuSubButton({
       data-active={isActive}
       className={cn(
         `
-          flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2
+          flex h-10 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-6 py-2
           text-sidebar-foreground ring-sidebar-ring outline-hidden
           hover:bg-sidebar-accent hover:text-sidebar-accent-foreground
           focus-visible:ring-2

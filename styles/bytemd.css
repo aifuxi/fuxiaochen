@@ -1,16 +1,5 @@
-/* 创建、编辑笔记的编辑器高度 */
-#note-editor .bytemd {
-  @apply h-[60vh] min-h-[560px];
-}
-
-/* 创建、编辑博客、片段的编辑器高度 */
-#content-editor .bytemd {
-  @apply h-screen;
-}
-
-/* 编辑器编辑区域的最大宽度 */
-.bytemd-editor .CodeMirror .CodeMirror-lines {
-  @apply !max-w-[80vw];
+.bytemd {
+  @apply h-[calc(100vh-58px)];
 }
 
 .bytemd .CodeMirror,
@@ -23,65 +12,12 @@
   @apply !z-10 !h-screen;
 }
 
-.markdown-body {
-  @apply prose prose-neutral dark:prose-invert;
-}
-
-.markdown-body a {
-  @apply mx-1 inline-flex items-center gap-1 !no-underline;
-}
-
 .medium-zoom-image--opened {
   @apply z-30;
 }
 
 .medium-zoom-overlay {
   @apply !bg-background z-20;
-}
-
-.markdown-body pre {
-  @apply !bg-background/50 text-primary relative !my-0 whitespace-break-spaces !rounded-xl border;
-}
-
-.markdown-body code::-webkit-scrollbar {
-  @apply h-1.5 w-1.5;
-}
-
-.markdown-body code::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground) / 0.2);
-
-  /* 滚动条圆角 需要同时设置 background-clip: padding-box;和border-radius */
-  background-clip: padding-box;
-  border-radius: 10px;
-}
-
-.markdown-body pre {
-  @apply relative !rounded-lg;
-}
-
-.markdown-body iframe {
-  @apply aspect-video w-full;
-}
-
-.markdown-body :where(h2, h3, h4, h5, h6) {
-  @apply flex scroll-mt-20 items-center;
-}
-
-.markdown-body :where(h2, h3, h4, h5, h6):hover .markdown-anchor {
-  @apply opacity-100;
-}
-
-.markdown-body :where(h2, h3, h4, h5, h6) .markdown-anchor {
-  @apply order-2 opacity-0 transition-opacity;
-}
-
-.markdown-body img {
-  @apply mx-auto max-h-[40vh] rounded-lg border p-4;
-}
-
-/* 修复存在表格时，表格宽度溢出的问题 */
-.markdown-body table thead th {
-  @apply break-all;
 }
 
 /* 编辑器内标题样式 */
@@ -132,11 +68,11 @@
 /* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
 /* ByteMD editor overrides	*/
 .bytemd {
-  @apply !border-border !bg-background !text-foreground !rounded-xl;
+  @apply !border-border !bg-background !text-foreground !rounded-t-xl;
 }
 
 .bytemd-toolbar {
-  @apply !border-border !bg-background !rounded-xl;
+  @apply !border-border !bg-background !rounded-t-xl py-4;
 }
 
 .CodeMirror {

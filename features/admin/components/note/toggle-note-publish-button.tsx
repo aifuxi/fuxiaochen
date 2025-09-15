@@ -11,24 +11,24 @@ import { useToggleNotePublish } from "@/features/note";
 interface ToggleNotePublishButtonProps {
   id: string;
   published: boolean;
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
 
 export const ToggleNotePublishButton = ({
   id,
   published,
-  refreshAsync,
+  onSuccess,
 }: ToggleNotePublishButtonProps) => {
-  const toggleNotePublishQuery = useToggleNotePublish();
+  const mutation = useToggleNotePublish(id);
 
   return (
-    <Button size={"icon"} variant="outline" onClick={handleToggleNotePublish}>
-      {published ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+    <Button size={"icon"} variant="outline" onClick={handleCheckedChange}>
+      {published ? <Eye /> : <EyeOff />}
     </Button>
   );
 
-  async function handleToggleNotePublish() {
-    await toggleNotePublishQuery.runAsync(id);
-    await refreshAsync();
+  async function handleCheckedChange() {
+    mutation.trigger();
+    onSuccess?.();
   }
 };

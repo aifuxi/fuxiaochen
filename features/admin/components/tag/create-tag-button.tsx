@@ -35,7 +35,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { TAG_TYPES, TAG_TYPE_MAP } from "@/constants";
 import {
-  type CreateTagDTO,
+  type CreateTagRequest,
   createTagSchema,
   useCreateTag,
 } from "@/features/tag";
@@ -44,11 +44,11 @@ import { cn } from "@/lib/utils";
 import { convertSvgToDataUrl } from "@/utils";
 
 interface CreateTagButtonProps {
-  refreshAsync: () => Promise<unknown>;
+  onSuccess?: () => void;
 }
-export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
+export const CreateTagButton = ({ onSuccess }: CreateTagButtonProps) => {
   const [open, setOpen] = React.useState(false);
-  const form = useForm<CreateTagDTO>({
+  const form = useForm<CreateTagRequest>({
     resolver: zodResolver(createTagSchema),
     defaultValues: {
       name: "",
@@ -57,10 +57,10 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     },
   });
 
-  const createTagQuery = useCreateTag();
+  const mutation = useCreateTag();
 
   React.useEffect(() => {
-    if (open) {
+    if (!open) {
       form.reset();
       form.clearErrors();
     }
@@ -74,7 +74,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
             setOpen(true);
           }}
         >
-          <Plus className="mr-2 size-4" />
+          <Plus />
           创建标签
         </Button>
       </DialogTrigger>
@@ -196,14 +196,23 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
                 )}
               />
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-4">
                 <Button
                   type="button"
-                  disabled={createTagQuery.loading}
+                  variant="outline"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="button"
+                  disabled={mutation.isMutating}
                   onClick={() => form.handleSubmit(handleSubmit)()}
                 >
-                  {createTagQuery.loading && (
-                    <LoaderCircle className="mr-2 size-4 animate-spin" />
+                  {mutation.isMutating && (
+                    <LoaderCircle className="animate-spin" />
                   )}
                   创建
                 </Button>
@@ -215,7 +224,7 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
     </Dialog>
   );
 
-  async function handleSubmit(values: CreateTagDTO) {
+  async function handleSubmit(values: CreateTagRequest) {
     if (values.icon) {
       values.icon = convertSvgToDataUrl(values.icon);
     }
@@ -223,9 +232,9 @@ export const CreateTagButton = ({ refreshAsync }: CreateTagButtonProps) => {
       values.iconDark = convertSvgToDataUrl(values.iconDark);
     }
 
-    await createTagQuery.runAsync(values);
+    await mutation.trigger(values);
     setOpen(false);
-    await refreshAsync();
+    onSuccess?.();
   }
 
   function handleFormatSlug() {

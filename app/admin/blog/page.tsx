@@ -1,5 +1,8 @@
 import { AdminBlogListPage } from "@/features/admin";
+import { noAdminPermission } from "@/features/user";
 
-export default function Page() {
-  return <AdminBlogListPage />;
+export default async function Page() {
+  const status = await noAdminPermission();
+
+  return <AdminBlogListPage isAdmin={!status} />;
 }

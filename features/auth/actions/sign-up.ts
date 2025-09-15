@@ -3,7 +3,10 @@
 import { hash } from "bcryptjs";
 import { z } from "zod";
 
+import { ERROR_MESSAGE_MAP, ROLES, ROLE_LABEL_MAP } from "@/constants";
+import { hasAdminUser } from "@/features/user";
 import { signIn } from "@/lib/auth";
+import { createResp } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 
 const signUpSchema = z.object({
@@ -16,7 +19,7 @@ export async function signUpWithEmail(values: z.infer<typeof signUpSchema>) {
   const validatedFields = signUpSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    return { error: "Invalid fields!" };
+    return createResp({ error: ERROR_MESSAGE_MAP.paramsError });
   }
 
   const { name, email, password } = validatedFields.data;
@@ -27,14 +30,20 @@ export async function signUpWithEmail(values: z.infer<typeof signUpSchema>) {
   });
 
   if (existingUser) {
-    return { error: "Email already in use!" };
+    return createResp({ error: ERROR_MESSAGE_MAP.signUpEmailExists });
   }
+
+  const adminUserExist = await hasAdminUser();
+
+  // 无管理员时，第一个注册用户为管理员
+  const role = adminUserExist ? ROLES.visitor : ROLES.admin;
 
   await prisma.user.create({
     data: {
       name,
       email,
       password: hashedPassword,
+      role,
     },
   });
 
@@ -44,5 +53,7 @@ export async function signUpWithEmail(values: z.infer<typeof signUpSchema>) {
     redirect: false,
   });
 
-  return { success: "User created successfully!" };
+  return createResp({
+    message: `${ERROR_MESSAGE_MAP.signUpSuccess} 你当前的角色为【${ROLE_LABEL_MAP[role]}】`,
+  });
 }

@@ -8,11 +8,12 @@ export const useUpdateTag = () => {
   return useRequest(updateTag, {
     manual: true,
     loadingDelay: 300,
-    onSuccess() {
-      showSuccessToast("标签已更新");
-    },
-    onError(error) {
-      showErrorToast(`标签更新失败: ${error.message}`);
+    onSuccess(resp) {
+      if (resp?.error) {
+        showErrorToast(`标签更新失败: ${resp.error}`);
+        return;
+      }
+      showSuccessToast("标签更新成功");
     },
   });
 };
