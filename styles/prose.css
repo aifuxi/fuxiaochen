@@ -5,23 +5,23 @@
   @apply text-foreground max-w-[720px];
 
   & h1:not(.not-prose h1) {
-    @apply scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl;
+    @apply scroll-m-20 text-2xl font-extrabold tracking-tight;
   }
 
   & h2:not(.not-prose h2) {
-    @apply mt-12 scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+    @apply mt-12 scroll-m-20 pb-2 text-2xl font-semibold tracking-tight first:mt-0;
   }
 
   & h3:not(.not-prose h3) {
-    @apply mt-12 scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0;
-  }
-
-  & h4:not(.not-prose h4) {
     @apply mt-12 scroll-m-20 text-xl font-semibold tracking-tight first:mt-0;
   }
 
-  & h5:not(.not-prose h5) {
+  & h4:not(.not-prose h4) {
     @apply mt-12 scroll-m-20 text-lg font-semibold tracking-tight first:mt-0;
+  }
+
+  & h5:not(.not-prose h5) {
+    @apply mt-12 scroll-m-20 text-base font-semibold tracking-tight first:mt-0;
   }
 
   & h6:not(.not-prose h6) {

@@ -3,15 +3,6 @@
 import { Editor, type EditorProps } from "@bytemd/react";
 import zh_Hans from "bytemd/locales/zh_Hans.json";
 
-import {
-  hideToast,
-  showErrorToast,
-  showLoadingToast,
-  showSuccessToast,
-} from "@/components/toast";
-
-import { uploadFile } from "@/features/upload";
-
 import { plugins } from "./config";
 
 interface BytemdEditorProps {
@@ -25,32 +16,6 @@ export const BytemdEditor = ({
   setContent,
   editorProps,
 }: BytemdEditorProps) => {
-  const handleUploadImages: EditorProps["uploadImages"] = async (files) => {
-    const file = files[0];
-    if (file) {
-      const fd = new FormData();
-      fd.append("file", file);
-
-      const toastID = showLoadingToast("上传中");
-      const { url, error } = await uploadFile(fd);
-      hideToast(toastID);
-
-      if (error) {
-        showErrorToast(error);
-        return [];
-      }
-
-      if (url) {
-        showSuccessToast("上传成功");
-        return [{ url }];
-      }
-
-      return [];
-    } else {
-      return [];
-    }
-  };
-
   return (
     <Editor
       value={body ?? ""}
@@ -59,7 +24,6 @@ export const BytemdEditor = ({
       onChange={(v) => {
         setContent(v);
       }}
-      uploadImages={handleUploadImages}
       locale={zh_Hans}
       editorConfig={{
         ...editorProps,

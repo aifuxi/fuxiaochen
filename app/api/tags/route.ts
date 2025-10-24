@@ -1,9 +1,11 @@
-import { type Prisma } from "@prisma/client";
 import { z } from "zod";
 
+import { noAdminPermission } from "@/app/actions";
+
+import { createTagSchema, getTagsSchema } from "@/types/tag";
+
 import { ERROR_MESSAGE_MAP } from "@/constants";
-import { createTagSchema, getTagsSchema } from "@/features/tag";
-import { noAdminPermission } from "@/features/user";
+import { type Prisma } from "@/generated/prisma";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 import { getSkip } from "@/utils";
@@ -20,10 +22,6 @@ export async function GET(request: Request) {
 
   const where: Prisma.TagWhereInput = {};
 
-  if (result.data.type) {
-    where.type = result.data.type;
-  }
-
   if (result.data.name) {
     where.OR = [
       {
@@ -34,19 +32,14 @@ export async function GET(request: Request) {
     ];
   }
 
-  const orderBy: Prisma.TagOrderByWithRelationInput = {};
-  if (result.data.orderBy && result.data.order) {
-    orderBy[result.data.orderBy] = result.data.order;
-  }
-
   const [tags, total] = await Promise.all([
     prisma.tag.findMany({
-      orderBy,
+      orderBy: {
+        createdAt: "desc",
+      },
       where,
       include: {
         blogs: true,
-        notes: true,
-        snippets: true,
         _count: true,
       },
       take: result.data.pageSize,
@@ -71,15 +64,15 @@ export async function POST(request: Request) {
     return createResponse({ error });
   }
 
-  const { name, slug, type, icon, iconDark } = result.data;
+  const { name, slug, icon, iconDark } = result.data;
 
   const [existingTagByName, existingTagBySlug] = await Promise.all([
-    prisma.tag.findFirst({
+    prisma.tag.findUnique({
       where: {
         name,
       },
     }),
-    prisma.tag.findFirst({
+    prisma.tag.findUnique({
       where: {
         slug,
       },
@@ -95,7 +88,7 @@ export async function POST(request: Request) {
   }
 
   const data = await prisma.tag.create({
-    data: { name, slug, type, icon, iconDark },
+    data: { name, slug, icon, iconDark },
   });
 
   return createResponse({ data });

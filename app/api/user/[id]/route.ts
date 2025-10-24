@@ -1,7 +1,10 @@
 import { z } from "zod";
 
+import { noAdminPermission } from "@/app/actions";
+
+import { updateUserSchema } from "@/types/user";
+
 import { ERROR_MESSAGE_MAP } from "@/constants";
-import { noAdminPermission, updateUserSchema } from "@/features/user";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 
@@ -18,9 +21,6 @@ export async function GET(
   const user = await prisma.user.findUnique({
     where: {
       id,
-    },
-    omit: {
-      password: true,
     },
   });
 
@@ -44,9 +44,6 @@ export async function PUT(
   const user = await prisma.user.findUnique({
     where: {
       id,
-    },
-    omit: {
-      password: true,
     },
   });
 
@@ -89,9 +86,6 @@ export async function DELETE(
   const user = await prisma.user.findUnique({
     where: {
       id,
-    },
-    omit: {
-      password: true,
     },
   });
 

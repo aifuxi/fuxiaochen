@@ -1,90 +1,27 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import GithubProvider from "next-auth/providers/github";
+import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
+import { nextCookies } from "better-auth/next-js";
 
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import bcrypt from "bcryptjs";
+import { PrismaClient } from "@/generated/prisma";
 
-import { PATHS, ROLES } from "@/constants";
-import { hasAdminUser } from "@/features/user";
+const prisma = new PrismaClient();
 
-import { prisma } from "./prisma";
-
-export const { handlers, auth, signOut, signIn } = NextAuth({
-  adapter: PrismaAdapter(prisma),
-  providers: [
-    GithubProvider,
-    CredentialsProvider({
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials.password) {
-          return null;
-        }
-
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email as string,
-          },
-        });
-
-        if (!user || !user.password) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password,
-        );
-
-        if (isValid) {
-          return user;
-        }
-
-        return null;
-      },
-    }),
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, {
+    provider: "mysql",
+  }),
+  emailAndPassword: {
+    enabled: true,
+    minPasswordLength: 6,
+    maxPasswordLength: 20,
+  },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+  },
+  plugins: [
+    nextCookies(), // 这个插件必须放在最后 make sure this is the last plugin in the array
   ],
-  // 解决这个错误：Error: PrismaClient is not configured to run in Vercel Edge Functions or Edge Middleware.
-  // 参考：https://github.com/prisma/prisma/issues/21310#issuecomment-1840428931
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: PATHS.AUTH_SIGN_IN,
-  },
-  debug: process.env.NODE_ENV === "development",
-  callbacks: {
-    async jwt({ token, user, account }) {
-      // 如果是GitHub登录并且是第一次登录
-      if (account?.provider === "github" && user) {
-        // 检查管理员用户是否已经存在
-        const adminUserExist = await hasAdminUser();
-        // 无管理员时，第一个注册用户为管理员
-        const role = adminUserExist ? ROLES.visitor : ROLES.admin;
-
-        // 更新用户角色
-        await prisma.user.update({
-          where: { email: user.email! },
-          data: { role },
-        });
-      }
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user && token.sub) {
-        session.user.id = token.sub;
-      }
-      return session;
-    },
-    authorized({ request, auth }) {
-      // 将来用作 Next.js middleware，如果是访问后台页面，校验是否登录
-      if (request.nextUrl.pathname.startsWith(PATHS.ADMIN_HOME)) {
-        return !!auth?.user;
-      }
-
-      // 其它路径直接放行
-      return true;
-    },
-  },
 });

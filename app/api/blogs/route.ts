@@ -1,10 +1,12 @@
-import { type Prisma } from "@prisma/client";
 import { isUndefined } from "es-toolkit";
 import { z } from "zod";
 
+import { noAdminPermission } from "@/app/actions";
+
+import { createBlogSchema, getBlogsSchema } from "@/types/blog";
+
 import { ERROR_MESSAGE_MAP, PUBLISHED_MAP } from "@/constants";
-import { createBlogSchema, getBlogsSchema } from "@/features/blog";
-import { noAdminPermission } from "@/features/user";
+import { type Prisma } from "@/generated/prisma";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 import { getSkip } from "@/utils";
@@ -12,7 +14,10 @@ import { getSkip } from "@/utils";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   let query = Object.fromEntries(url.searchParams);
-  const result = await getBlogsSchema.safeParseAsync(query);
+  const result = await getBlogsSchema.safeParseAsync({
+    ...query,
+    tags: query.tags?.split(",") ?? [],
+  });
 
   if (!result.success) {
     const error = z.prettifyError(result.error);
@@ -26,8 +31,11 @@ export async function GET(request: Request) {
   if (result.data.slug?.trim()) {
     cond.slug = { contains: result.data.slug.trim() };
   }
-  if (result.data.tags?.length) {
+  if (result.data.tags?.filter(Boolean)?.length) {
     cond.tags = { some: { id: { in: result.data.tags } } };
+  }
+  if (result.data.category) {
+    cond.category = { id: result.data.category };
   }
   if ((await noAdminPermission()) || !isUndefined(result.data.published)) {
     const searchPublished = PUBLISHED_MAP[result.data.published!];
@@ -36,16 +44,13 @@ export async function GET(request: Request) {
     }
   }
 
-  const sort: Prisma.BlogOrderByWithRelationInput = {};
-  if (result.data.orderBy && result.data.order) {
-    sort[result.data.orderBy] = result.data.order;
-  }
-
   const total = await prisma.blog.count({ where: cond });
   const blogs = await prisma.blog.findMany({
-    include: { tags: true },
+    include: { tags: true, category: true },
     where: cond,
-    orderBy: sort,
+    orderBy: {
+      createdAt: "desc",
+    },
     take: result.data.pageSize,
     skip: getSkip(result.data.pageIndex, result.data.pageSize),
   });
@@ -67,10 +72,10 @@ export async function POST(request: Request) {
   }
 
   const [existingByTitle, existingBySlug] = await Promise.all([
-    prisma.blog.findFirst({
+    prisma.blog.findUnique({
       where: { title: result.data.title },
     }),
-    prisma.blog.findFirst({
+    prisma.blog.findUnique({
       where: { slug: result.data.slug },
     }),
   ]);
@@ -83,12 +88,24 @@ export async function POST(request: Request) {
     return createResponse({ error: ERROR_MESSAGE_MAP.blogSlugExists });
   }
 
+  const tagsParams = result.data.tags?.map((tagID) => ({ id: tagID })) ?? [];
+  const categoryParams = result.data.category
+    ? { connect: { id: result.data.category } }
+    : undefined;
+
   const data = await prisma.blog.create({
     data: {
-      ...result.data,
-      tags: {
-        connect: result.data.tags?.map((tagID) => ({ id: tagID })) ?? [],
-      },
+      title: result.data.title,
+      slug: result.data.slug,
+      description: result.data.description,
+      published: result.data.published,
+      body: result.data.body,
+      tags: tagsParams.length
+        ? {
+            connect: tagsParams,
+          }
+        : undefined,
+      category: categoryParams,
     },
   });
 

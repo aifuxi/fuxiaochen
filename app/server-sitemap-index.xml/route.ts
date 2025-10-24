@@ -14,28 +14,14 @@ export async function GET() {
       published: true,
     },
   });
-  const snippets = await prisma.snippet.findMany({
-    select: {
-      slug: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
 
   const blogsSitemaps = blogs.map((item): ISitemapField => {
     return {
-      loc: `${PATHS.SITE_BLOG}/${item.slug}`,
-      lastmod: new Date(item.updatedAt).toISOString(),
-      changefreq: "hourly",
-    };
-  });
-  const snippetsSitemaps = snippets.map((item): ISitemapField => {
-    return {
-      loc: `${PATHS.SITE_SNIPPET}/${item.slug}`,
+      loc: `${PATHS.BLOG}/${item.slug}`,
       lastmod: new Date(item.updatedAt).toISOString(),
       changefreq: "hourly",
     };
   });
 
-  return getServerSideSitemap([...blogsSitemaps, ...snippetsSitemaps]);
+  return getServerSideSitemap([...blogsSitemaps]);
 }
