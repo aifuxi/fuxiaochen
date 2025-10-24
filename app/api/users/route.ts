@@ -1,13 +1,12 @@
-import { type Prisma } from "@prisma/client";
-import { hashSync } from "bcryptjs";
 import { z } from "zod";
 
+import { noAdminPermission } from "@/app/actions";
+
+import { createUserSchema, getUsersSchema } from "@/types/user";
+
 import { ERROR_MESSAGE_MAP } from "@/constants";
-import {
-  createUserSchema,
-  getUsersSchema,
-  noAdminPermission,
-} from "@/features/user";
+import { type Prisma } from "@/generated/prisma";
+import { auth } from "@/lib/auth";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 import { getSkip } from "@/utils";
@@ -19,7 +18,10 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   let query = Object.fromEntries(url.searchParams);
-  const result = await getUsersSchema.safeParseAsync(query);
+  const result = await getUsersSchema.safeParseAsync({
+    ...query,
+    roles: query.roles?.split(",") ?? [],
+  });
 
   if (!result.success) {
     const error = z.prettifyError(result.error);
@@ -36,21 +38,21 @@ export async function GET(request: Request) {
     cond.name = { contains: result.data.name.trim() };
   }
 
-  const sort = result.data.orderBy
-    ? {
-        [result.data.orderBy]: result.data.order,
-      }
-    : undefined;
+  const validRoles = result.data.roles?.filter(Boolean) ?? [];
+  if (validRoles.length) {
+    cond.role = {
+      in: validRoles,
+    };
+  }
 
   const total = await prisma.user.count({ where: cond });
   const users = await prisma.user.findMany({
-    orderBy: sort,
+    orderBy: {
+      createdAt: "desc",
+    },
     where: cond,
     take: result.data.pageSize,
     skip: getSkip(result.data.pageIndex, result.data.pageSize),
-    omit: {
-      password: true,
-    },
   });
 
   return createResponse({
@@ -84,16 +86,17 @@ export async function POST(request: Request) {
     return createResponse({ error: ERROR_MESSAGE_MAP.signUpEmailExists });
   }
 
-  const hashedPassword = hashSync(result.data.password);
-  const user = await prisma.user.create({
-    data: {
-      name: result.data.name,
-      password: hashedPassword,
+  await auth.api.signUpEmail({
+    body: {
       email: result.data.email,
-      role: result.data.role,
+      password: result.data.password,
+      name: result.data.name,
     },
-    omit: {
-      password: true,
+  });
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: result.data.email,
     },
   });
 

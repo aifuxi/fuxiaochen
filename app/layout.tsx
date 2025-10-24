@@ -4,7 +4,6 @@ import { type Metadata } from "next";
 import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -54,17 +53,15 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         />
       </head>
       <body className="debug-screens scroll-smooth">
-        <NuqsAdapter>
-          <ThemeProvider attribute="class" enableColorScheme enableSystem>
-            <BProgressProvider>
-              <TooltipProvider>
-                {children}
-                <ToasterComponent />
-                <GlobalPubSub />
-              </TooltipProvider>
-            </BProgressProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
+        <ThemeProvider attribute="class" enableColorScheme enableSystem>
+          <BProgressProvider>
+            <TooltipProvider>
+              {children}
+              <ToasterComponent />
+              <GlobalPubSub />
+            </TooltipProvider>
+          </BProgressProvider>
+        </ThemeProvider>
       </body>
 
       {/* Google Analytics  */}

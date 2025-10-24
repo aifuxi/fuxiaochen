@@ -1,6 +1,6 @@
 import { IntroScrollMouse } from "@/components/intro-scroll-mouse";
 
-import { HeroSection } from "@/features/home";
+import { HeroSection } from "./components/hero-section";
 
 export const revalidate = 60;
 

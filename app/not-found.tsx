@@ -17,7 +17,7 @@ export default function Page() {
           页面未找到
         </h3>
         <Button asChild>
-          <Link href={PATHS.SITE_HOME}>返回首页</Link>
+          <Link href={PATHS.HOME}>返回首页</Link>
         </Button>
       </div>
     </div>

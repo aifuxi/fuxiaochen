@@ -1,4 +1,4 @@
-import { PATHS, PATHS_MAP } from "@/constants";
+import { PATHS } from "@/constants";
 
 export const navItems: {
   label?: string;
@@ -6,19 +6,27 @@ export const navItems: {
   external?: boolean;
 }[] = [
   {
-    label: PATHS_MAP[PATHS.SITE_HOME],
-    link: PATHS.SITE_HOME,
+    label: "首页",
+    link: PATHS.HOME,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_BLOG],
-    link: PATHS.SITE_BLOG,
+    label: "博客",
+    link: PATHS.BLOGS,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_SNIPPET],
-    link: PATHS.SITE_SNIPPET,
+    label: "分类",
+    link: PATHS.CATEGORIES,
   },
   {
-    label: PATHS_MAP[PATHS.SITE_ABOUT],
-    link: PATHS.SITE_ABOUT,
+    label: "标签",
+    link: PATHS.TAGS,
+  },
+  {
+    label: "归档",
+    link: PATHS.ARCHIVES,
+  },
+  {
+    label: "关于",
+    link: PATHS.ABOUT,
   },
 ];

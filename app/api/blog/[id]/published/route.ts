@@ -1,5 +1,6 @@
+import { noAdminPermission } from "@/app/actions";
+
 import { ERROR_MESSAGE_MAP } from "@/constants";
-import { noAdminPermission } from "@/features/user";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 

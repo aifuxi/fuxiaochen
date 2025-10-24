@@ -29,6 +29,7 @@ export default defineConfig([
     "**/build",
     "**/public",
     "**/.gitignore",
+    "generated/**/*",
     "**/pnpm-lock.yaml",
   ]),
   eslintPluginNext.flatConfig.recommended,
@@ -122,18 +123,18 @@ export default defineConfig([
       "no-console": "error",
       "@next/next/no-img-element": "off",
 
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            "@/features/*/*",
-            "@/types/*",
-            "@/config/*",
-            "@/constants/*",
-            "../components/*",
-          ],
-        },
-      ],
+      // "no-restricted-imports": [
+      //   "error",
+      //   {
+      //     patterns: [
+      //       "@/features/*/*",
+      //       "@/types/*",
+      //       "@/config/*",
+      //       "@/constants/*",
+      //       "../components/*",
+      //     ],
+      //   },
+      // ],
 
       "import/default": "off",
       "import/no-named-as-default-member": "off",

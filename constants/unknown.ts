@@ -1,21 +1,5 @@
-import { TagTypeEnum } from "@prisma/client";
-
 /** 空数据文案 */
 export const PLACEHOLDER_TEXT = "-";
-
-export const TAG_TYPES = [
-  TagTypeEnum.ALL,
-  TagTypeEnum.BLOG,
-  TagTypeEnum.NOTE,
-  TagTypeEnum.SNIPPET,
-];
-
-export const TAG_TYPE_MAP = {
-  [TagTypeEnum.ALL]: "通用",
-  [TagTypeEnum.BLOG]: "博客",
-  [TagTypeEnum.NOTE]: "笔记",
-  [TagTypeEnum.SNIPPET]: "片段",
-};
 
 export enum PUBLISHED_ENUM {
   ALL = "all",
