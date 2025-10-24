@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+import { noAdminPermission } from "@/app/actions";
+
+import { updateBlogSchema } from "@/types/blog";
+
 import { ERROR_MESSAGE_MAP } from "@/constants";
-import { updateBlogSchema } from "@/features/blog";
-import { noAdminPermission } from "@/features/user";
 import { createResponse } from "@/lib/common";
 import { prisma } from "@/lib/prisma";
 
@@ -10,10 +12,6 @@ export async function GET(
   _: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  if (await noAdminPermission()) {
-    return createResponse({ error: ERROR_MESSAGE_MAP.noPermission });
-  }
-
   const { id } = await params;
 
   const blog = await prisma.blog.findUnique({
@@ -22,6 +20,7 @@ export async function GET(
     },
     include: {
       tags: true,
+      category: true,
     },
   });
 
@@ -74,8 +73,15 @@ export async function PUT(
           return { id: el };
         }),
       },
+      category: result.data.category
+        ? {
+            connect: {
+              id: result.data.category,
+            },
+          }
+        : undefined,
     },
-    include: { tags: true },
+    include: { tags: true, category: true },
   });
 
   return createResponse({ data: newBlog });

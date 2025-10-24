@@ -2,10 +2,8 @@ import * as React from "react";
 
 import { type Metadata } from "next";
 
-import { PATHS, PATHS_MAP } from "@/constants";
-
 export const metadata: Metadata = {
-  title: PATHS_MAP[PATHS.AUTH_SIGN_IN],
+  title: "登录",
 };
 
 export default function Layout({ children }: React.PropsWithChildren) {

@@ -21,10 +21,10 @@ export const ERROR_MESSAGE_MAP = {
   noteTitleExists: "笔记标题已存在",
   noteSlugExists: "笔记 slug 已存在",
 
-  snippetNotExist: "代码片段不存在",
-  snippetExists: "代码片段已存在",
-  snippetTitleExists: "代码片段标题已存在",
-  snippetSlugExists: "代码片段 slug 已存在",
+  categoryNotExist: "分类不存在",
+  categoryExists: "分类已存在",
+  categoryNameExists: "分类名称已存在",
+  categorySlugExists: "分类 slug 已存在",
 
   userNotExist: "用户不存在",
   userExists: "用户已存在",

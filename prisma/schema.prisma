@@ -3,125 +3,121 @@
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
-// 使用 mysql 作为数据库
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+// 标签
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Tag {
+  name     String  @unique
+  slug     String  @unique
+  blogs    Blog[]
+  icon     String?
+  iconDark String?
 
-  @@unique([provider, providerAccountId])
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tag")
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// 分类
+
+model Category {
+  name  String @unique
+  slug  String @unique
+  blogs Blog[]
+
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("category")
+}
+
+// 博客
+
+model Blog {
+  title       String    @unique
+  slug        String    @unique
+  description String
+  body        String
+  cover       String?
+  published   Boolean   @default(false)
+  tags        Tag[]
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog")
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  password      String?
-  email         String?   @unique
-  emailVerified DateTime?
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
   image         String?
-  role          String?
+  role          String    @default("visitor")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  accounts Account[]
-  sessions Session[]
+  @@unique([email])
+  @@map("user")
 }
 
-model VerificationToken {
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
   identifier String
-  token      String   @unique
-  expires    DateTime
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
-  @@unique([identifier, token])
-}
-
-enum TagTypeEnum {
-  // 通用
-  ALL
-  // 仅用于blog
-  BLOG
-  // 仅用于片段
-  SNIPPET
-  // 仅用于笔记
-  NOTE
-}
-
-model Tag {
-  name     String      @unique
-  slug     String      @unique
-  blogs    Blog[]
-  snippets Snippet[]
-  notes    Note[]
-  type     TagTypeEnum @default(ALL)
-  icon     String?     @db.Text
-  iconDark String?     @db.Text
-
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Blog {
-  title       String  @unique
-  slug        String  @unique
-  description String
-  body        String  @db.Text
-  cover       String?
-  author      String?
-  published   Boolean @default(false)
-  tags        Tag[]
-
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Snippet {
-  title       String  @unique
-  slug        String  @unique
-  description String
-  body        String  @db.Text
-  published   Boolean @default(false)
-  tags        Tag[]
-
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Note {
-  body      String  @db.Text
-  published Boolean @default(false)
-  tags      Tag[]
-
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("verification")
 }

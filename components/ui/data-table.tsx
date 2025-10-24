@@ -8,6 +8,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { LoaderCircle } from "lucide-react";
 
 import {
   Table,
@@ -94,6 +95,18 @@ export function DataTable<TData, TValue>({
   );
 
   function renderContent() {
+    if (loading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24">
+            <div className="flex items-center justify-center">
+              <LoaderCircle className="size-8 animate-spin" />
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    }
+
     if (!table.getRowModel().rows.length && !loading) {
       return (
         <TableRow>

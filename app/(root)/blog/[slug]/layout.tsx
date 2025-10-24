@@ -5,7 +5,8 @@ import { type Metadata } from "next";
 import { isNil } from "es-toolkit";
 
 import { WEBSITE } from "@/constants";
-import { getPublishedBlogBySlug } from "@/features/blog";
+
+import { getPublishedBlogBySlug } from "../actions";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;

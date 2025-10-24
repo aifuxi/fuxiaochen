@@ -2,11 +2,8 @@ import * as React from "react";
 
 import { type Metadata } from "next";
 
-import { PATHS, PATHS_MAP } from "@/constants";
-import { getAdminPageTitle } from "@/utils";
-
 export const metadata: Metadata = {
-  title: getAdminPageTitle(PATHS_MAP[PATHS.ADMIN_BLOG]),
+  title: "博客管理",
 };
 
 export default function Layout({ children }: React.PropsWithChildren) {

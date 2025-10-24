@@ -55,3 +55,6 @@ yarn-error.log*
 .idea
 *storybook.log
 storybook-static
+
+# prisma 生成的文件
+/generated

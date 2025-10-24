@@ -42,7 +42,7 @@ export const Navbar = () => {
         `}
       >
         <Link
-          href={PATHS.SITE_HOME}
+          href={PATHS.HOME}
           className={cn(`
             mr-4 hidden
             sm:flex sm:items-center
@@ -79,14 +79,14 @@ export const Navbar = () => {
             sm:flex-none
           `}
         >
-          <ModeToggle />
+          <ModeToggle variant="ghost" aria-label="切换主题" />
           <Link
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
             title={SOURCE_CODE_GITHUB_PAGE}
             aria-label={SOURCE_CODE_GITHUB_PAGE}
           >
-            <Button variant="outline" size={"icon"} aria-label="Github Icon">
+            <Button variant="ghost" size={"icon"} aria-label="Github Icon">
               <IconBrandGithub className="text-base" />
             </Button>
           </Link>
@@ -97,7 +97,7 @@ export const Navbar = () => {
             title="后台管理"
             aria-label={PATHS.ADMIN_HOME}
           >
-            <Button variant="outline" size={"icon"} aria-label="后台管理">
+            <Button variant="ghost" size={"icon"} aria-label="后台管理">
               <UserCog className="size-4" />
             </Button>
           </Link>

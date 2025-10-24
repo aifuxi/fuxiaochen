@@ -2,7 +2,7 @@ import { format, formatDistanceToNow, getHours, toDate } from "date-fns";
 import { zhCN } from "date-fns/locale";
 import slugify from "slugify";
 
-import { type BaseResponse } from "@/types";
+import { type BaseResponse } from "@/types/base";
 
 import { showErrorToast, showSuccessToast } from "@/components/toast";
 
@@ -49,11 +49,11 @@ export const copyToClipboard = (text: string) => {
 };
 
 export const toFromNow = (date: number | Date) => {
-  return formatDistanceToNow(date, { locale: zhCN });
+  return formatDistanceToNow(date, { locale: zhCN, addSuffix: true });
 };
 
-export const toSlashDateString = (date: number | Date) => {
-  return format(date, "yyyy年MM月dd日 HH:mm:ss");
+export const toSlashDate = (date: number | Date) => {
+  return format(date, "yyyy/MM/dd");
 };
 
 export const prettyDate = (date: number | Date) => {
@@ -62,6 +62,10 @@ export const prettyDate = (date: number | Date) => {
 
 export function toDateString(date: number | Date) {
   return format(toDate(date), "yyyy年MM月dd日");
+}
+
+export function toYYYYMMDD(date: number | Date) {
+  return format(toDate(date), "yyyy-MM-dd");
 }
 
 export function toTimeString(date: number | Date) {
@@ -118,4 +122,45 @@ export function createResp<T>({ data, error, message }: BaseResponse<T>) {
 
 export function createResponse<T>({ data, error, message }: BaseResponse<T>) {
   return Response.json(createResp({ data, error, message }));
+}
+
+export function countWordsByRegex(markdownText: string) {
+  // 简单的正则表达式，用于去除标题、加粗、斜体等标记
+  let plainText = markdownText
+    .replace(/```.*?```/gs, "") // 去除代码块
+    .replace(/!\[.*?\]\(.*?\)/g, "") // 去除图片
+    .replace(/\[.*?\]\(.*?\)/g, "$1") // 去除链接，保留链接文字
+    .replace(/#+\s/g, "") // 去除标题
+    .replace(/\*{1,2}(.*?)\*{1,2}/g, "$1") // 去除加粗和斜体
+    .replace(/`/g, ""); // 去除行内代码
+
+  // 统计字符数（中文字符和英文字符都算一个）
+  return plainText.replace(/\s/g, "").length;
+}
+
+/**
+ * 统计阅读时长（假设300字/分钟）
+ * @param markdownText 包含Markdown格式的文本
+ * @returns 阅读时长（分钟）
+ */
+export function calculateReadTime(markdownText: string) {
+  const wordCount = countWordsByRegex(markdownText);
+  const readTimeInMinutes = wordCount / 300;
+  return Math.ceil(readTimeInMinutes);
+}
+
+/**
+ * 判断是否更新（假设更新时间和创建时间相差超过5分钟）
+ * @param createdAt 创建时间
+ * @param updatedAt 更新时间
+ * @returns 是否更新
+ */
+export function checkUpdate({
+  createdAt,
+  updatedAt,
+}: {
+  createdAt: Date;
+  updatedAt: Date;
+}) {
+  return updatedAt.getTime() - createdAt.getTime() > 1000 * 60 * 5;
 }

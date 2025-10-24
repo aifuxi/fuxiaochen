@@ -34,7 +34,8 @@ import {
 } from "@/components/icons";
 
 import { NICKNAME } from "@/constants";
-import { socialMediaList } from "@/features/home";
+
+import { socialMediaList } from "../components/hero-section";
 
 export const revalidate = 60;
 
@@ -42,7 +43,7 @@ export default function Page() {
   return (
     // eslint-disable-next-line better-tailwindcss/no-unregistered-classes
     <section className={`prose mx-auto pt-8`}>
-      <h2 className="!my-4">关于</h2>
+      <h1 className="!my-4">关于</h1>
       <div>
         <h2>我是谁</h2>
         <p>
