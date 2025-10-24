@@ -9,7 +9,7 @@
     "dev:turbo": "next dev --turbopack",
     "dev:db": "prisma migrate dev && prisma generate",
     "start": "next start",
-    "build": "cross-env NODE_ENV=production next build",
+    "build": "cross-env NODE_ENV=production next build --turbopack",
     "lint": "next lint",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "build:analyzer": "cross-env ANALYZE=true next build",
