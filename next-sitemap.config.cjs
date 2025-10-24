@@ -4,7 +4,7 @@ const siteUrl = process.env.SITE_URL || "https://fuxiaochen.com";
 module.exports = {
   siteUrl,
   // 以下路由不生成sitemap
-  exclude: ["/admin/*", "/auth/*", "/api/*", "/server-sitemap.xml"],
+  exclude: ["/admin", "/admin/*", "/auth/*", "/api/*", "/server-sitemap.xml"],
   generateRobotsTxt: true, // (optional)
   // ...other options
   robotsTxtOptions: {
