@@ -2,12 +2,7 @@ import { z } from "zod";
 
 import { REGEX } from "@/constants";
 
-import {
-  type BaseResponse,
-  type DbBlog,
-  type DbCategory,
-  type DbNote,
-} from "./base";
+import { type BaseResponse, type DbBlog, type DbCategory } from "./base";
 
 export const createCategorySchema = z.object({
   name: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -39,7 +34,6 @@ export type Category = DbCategory & {
     blogs: number;
   };
   blogs: DbBlog[];
-  notes: DbNote[];
 };
 
 export type GetCategoriesData = {

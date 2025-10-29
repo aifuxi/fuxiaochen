@@ -2,12 +2,7 @@ import { z } from "zod";
 
 import { REGEX } from "@/constants";
 
-import {
-  type BaseResponse,
-  type DbBlog,
-  type DbNote,
-  type DbTag,
-} from "./base";
+import { type BaseResponse, type DbBlog, type DbTag } from "./base";
 
 export const createTagSchema = z.object({
   name: z.string().min(1, { message: "长度不能少于1个字符" }),
@@ -39,11 +34,8 @@ export type GetTagsRequest = z.infer<typeof getTagsSchema>;
 export type Tag = DbTag & {
   _count: {
     blogs: number;
-    snippets: number;
-    notes: number;
   };
   blogs: DbBlog[];
-  notes: DbNote[];
 };
 
 export type GetTagsData = {

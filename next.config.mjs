@@ -38,6 +38,7 @@ const config = {
       },
     ],
   },
+  output: 'standalone',
 };
 
 export default withBundleAnalyzer(config);
