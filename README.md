@@ -1,194 +1,86 @@
-# <div align="center">fuxiaochen</div>
 
-**本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
+# fuxiaochen.com
 
-## 简介
+这是一个使用 Next.js 构建的现代化、高性能的个人博客项目。
 
-![Next.js](https://img.shields.io/badge/Next.js-000?logo=nextdotjs&logoColor=fff&style=for-the-badge)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
-[![Blog](https://img.shields.io/badge/-fuxiaochen.com-0ea5e9?style=for-the-badge&logo=Bloglovin&logoColor=white&label=个人博客)](https://fuxiaochen.com/)
+## ✨ 功能特性
 
-一个简单的个人博客网站，使用 Next.js + React 19 + TypeScript + Shadcn/ui + Tailwind CSS 开发
+- **SSR 支持**: 基于 Next.js 15 和 React 19 构建，提供出色的 SEO 和性能。
+- **类型安全**: 全量使用 TypeScript 编写，保证代码的健壮性。
+- **现代化 UI**: 使用 Tailwind CSS 和 shadcn/ui 构建，提供美观、一致的 UI 体验。
+- **数据库**: 使用 Prisma 和 SQLite 进行数据持久化，简化数据库操作。
+- **用户认证**: 集成 `better-auth`，支持邮箱/密码和 GitHub 登录。
+- **Markdown 编辑器**: 内置 Bytemd 编辑器，支持丰富的 Markdown 功能。
+- **主题切换**: 支持明暗主题切换。
+- **SEO 优化**: 自动生成 Sitemap，提升搜索引擎排名。
 
-## 特性
+## 🚀 快速开始
 
-- 使用 Next.js v15 + React 19 hooks 进行构建，完美支持 SSR
+### 环境要求
 
-- 使用 TypeScript 编写，提供类型安全性和更好的开发体验
-
-- 使用 Prisma 简化数据库 CRUD 操作
-
-- 使用 Tailwind CSS + shadcn/ui 编写样式和组件
-
-- 使用 iconify 支持各种 svg 图标
-
-- 使用 Bytemd 实现 Markdown 的编写和预览，自己编写 Bytemd 插件优化 Markdown 的预览
-
-- 使用 next-theme 支持明暗主题切换
-
-- 使用 next-sitemap 生成全站 sitemap ，SEO 友好
-
-- 使用最新的 next-auth v5 支持 Github登录后台管理
-
-- 使用 ahooks 提升开发效率
-
-- 图片上传后使用 sharp 压缩图片成 webp 格式，减小图片体积
-
-- 图片上传到阿里云 OSS，加快访问图片访问速度
-
-- 响应式设计，对部分屏幕尺寸和设备进行适配
-
-- 集成后台管理功能，如博客、片段、标签、笔记管理等
-
-## 快速开始
-
-### 环境准备
-
-确保你已安装
-
-- Git
-- Pnpm
 - Node.js >= 20
-- Docker、Docker Compose
+- pnpm
+- Git
 
-### 获取项目代码
+### 项目安装
 
-```bash
-git clone https://github.com/aifuxi/fuxiaochen.git
-```
+1.  **克隆仓库**
 
-### 安装依赖
+    ```bash
+    git clone https://github.com/aifuxi/fuxiaochen.git
+    cd fuxiaochen
+    ```
 
-在项目根目录下运行以下命令安装项目依赖：
+2.  **安装依赖**
 
-```bash
-pnpm install
-```
+    ```bash
+    pnpm install
+    ```
 
-### 准备数据库
+3.  **配置环境变量**
 
-开发环境，推荐使用 Docker Compose 启动一个 MySQL，项目已经准备好了一个 `docker-compose.yaml` 文件
+    复制 `.env.example` 文件为 `.env`，并根据需要修改其中的配置。
 
-在项目根目录下运行
+    ```bash
+    cp .env.example .env
+    ```
 
-```bash
-# Docker Compose 只启动 MySQL
-docker-compose up -d mysql8
+    - `DATABASE_URL`: 数据库连接字符串（默认为 `file:./prisma/db.sqlite`）。
+    - `GITHUB_CLIENT_ID` 和 `GITHUB_CLIENT_SECRET`: 用于 GitHub 登录的凭证。
 
-# 或者
-# Docker Compose 启动全部服务（MySQL 和 Umami）
-docker-compose up -d
-```
+4.  **数据库初始化**
 
-#### 更多
+    ```bash
+    pnpm db:push
+    ```
 
-更多信息可查看项目内的 `docker-compose.yaml` 和 `Makefile` 文件
+5.  **启动项目**
 
-### 准备 env 文件和配置
+    ```bash
+    pnpm dev
+    ```
 
-#### 配置 `.env` 文件
+## 🛠️ 可用脚本
 
-> `.env` 文件用来配置各种项目中需要的配置
+| 命令 | 描述 |
+| :--- | :--- |
+| `pnpm dev` | 启动开发服务器 |
+| `pnpm build` | 构建生产版本 |
+| `pnpm start` | 启动生产服务器 |
+| `pnpm lint` | 检查代码风格 |
+| `pnpm format` | 格式化代码 |
+| `pnpm db:push` | 同步 Prisma schema 到数据库 |
+| `pnpm db:gen` | 生成 Prisma Client |
+| `pnpm db:studio` | 启动 Prisma Studio |
 
-复制一份 `.env.example`，重命名为 `.env`，根据自己实际情况修改以下字段
+## 🎨 自定义
 
-- `DATABASE_URL`
+你可以在 `constants/info.ts` 文件中修改网站的元数据，如站点名称、作者等。
 
-```.env
-# DATABASE_URL 格式为 mysql://用户名:用户密码@数据库IP:数据库端口/需要连接的数据库名
-# 根据实际情况进行修改
-DATABASE_URL="mysql://root:123456@127.0.0.1:3306/fuxiaochen"
-```
+## 🤝 贡献
 
-Github 登录用
+欢迎通过 [Issues](https://github.com/aifuxi/fuxiaochen/issues) 或 Pull Requests 为项目做出贡献。
 
-- `AUTH_GITHUB_ID`：Github 授权应用 ID
-- `AUTH_GITHUB_SECRET`：Github 授权应用 secret
+## 📄 许可证
 
-必须配置
-
-- `NEXT_PUBLIC_ADMIN_EMAILS`：ADMIN 邮箱列表，只有配置在这里的邮箱，才允许在后台管理进行新增、修改、删除操作
-
-如何获取授权应用的 ID 和 secret，可以跟着小付哥（不是我）这篇文章来：[基于Next14+Auth5实现Github、Google、Gitee平台授权登录和邮箱密码登录](https://juejin.cn/post/7329736763060518931)
-
-### 启动开发服务器
-
-1. 创建表
-
-```bash
-pnpm db:push
-```
-
-2. 生成 Prisma 类型文件
-
-```bash
-pnpm db:gen
-```
-
-做了这一步后，重启一下 VS Code（Ctrl/Cmd + Shift + P，然后选 【Developer: Reload Window】），重新加载 VS Code
-
-3. 启动开发服务器
-
-```bash
-pnpm dev
-```
-
-4. 预览
-
-- 访问前台: http://localhost:6121
-- 访问后台管理: http://localhost:6121/admin
-
-5. 查看数据库
-
-这里推荐使用 Prisma Studio 查看数据，你也可以使用数据库连接软件连接我们的数据库查看数据
-
-新开一个终端，在项目根目录下运行
-
-```bash
-pnpm db:studio
-```
-
-启动完后会自动打开浏览器，可以在线查看数据库内的数据
-
-### 自定义页面的信息
-
-你可能想修改页面中的信息，请修改 `constants/info.ts` 文件
-
-## 反馈
-
-遇到任何问题，欢迎给我发邮件反馈，欢迎提 [Issue](https://github.com/aifuxi/fuxiaochen/issues)
-
-## Star History
-
-<a href="https://star-history.com/#aifuxi/fuxiaochen&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=Date" />
- </picture>
-</a>
-
-## 感谢
-
-本站开发时，借鉴了以下这些优秀网站（排名不分先后）的很多设计
-
-- [shadcn/ui](https://ui.shadcn.com/)
-
-- [薇尔薇](https://vio.vin/)
-
-- [小植同学](https://blog.xiaoztx.top/)
-
-- [掘金](https://juejin.cn/extension)
-
-- [Orbstack · Blog](https://orbstack.dev/blog)
-
-- [Shiro](https://github.com/Innei/Shiro)
-
-- [LobeHub](https://lobehub.com/zh/blog)
-
-## LICENCE
-
-MIT
+本项目基于 [MIT](LICENSE) 许可证发布。
