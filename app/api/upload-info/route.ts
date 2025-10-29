@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         "Content-Type": result.data.contentType,
       }, // 请根据实际发送的请求头设置此处的请求头
     },
-    `upload-test/${result.data.filename}`,
+    `${process.env.OSS_UPLOAD_DIR}/${result.data.filename}`,
   );
 
   return createResponse({
