@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(request.url);
-  let query = Object.fromEntries(url.searchParams);
+  const query = Object.fromEntries(url.searchParams);
   const result = await getUsersSchema.safeParseAsync({
     ...query,
     roles: query.roles?.split(",") ?? [],

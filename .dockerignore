@@ -23,3 +23,6 @@ out
 
 # vercel
 .vercel
+
+# pm2 日志文件
+/logs

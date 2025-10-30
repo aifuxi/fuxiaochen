@@ -5,9 +5,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "dev:turbo": "next dev --turbopack",
-    "dev:db": "prisma migrate dev && prisma generate",
+    "dev": "next dev --turbopack",
+    "dev:prepare-db": "prisma migrate dev && prisma generate",
     "start": "next start",
     "build": "cross-env NODE_ENV=production next build --turbopack",
     "lint": "next lint",
@@ -23,7 +22,16 @@
     "db:dev": "prisma migrate dev",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
-    "db:migrate": "tsx prisma/migrate.ts"
+    "db:migrate": "tsx prisma/migrate.ts",
+    "docker:build": "docker build -t fuxiaochen-nextjs .",
+    "docker:run": "docker run -p 3000:3000 fuxiaochen-nextjs",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:stop": "pm2 stop ecosystem.config.cjs",
+    "pm2:restart": "pm2 restart ecosystem.config.cjs",
+    "pm2:reload": "pm2 reload ecosystem.config.cjs",
+    "pm2:logs": "pm2 logs ecosystem.config.cjs",
+    "pm2:status": "pm2 status ecosystem.config.cjs",
+    "pm2:delete": "pm2 delete ecosystem.config.cjs"
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",
@@ -108,7 +116,7 @@
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.30.1",
     "@iconify/tailwind4": "^1.0.6",
-    "@next/eslint-plugin-next": "15.5.5",
+    "@next/eslint-plugin-next": "16.0.1",
     "@tailwindcss/postcss": "^4.1.11",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/ali-oss": "^6.16.11",
@@ -126,7 +134,8 @@
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^9.17.0",
-    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-next": "^16.0.1",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-better-tailwindcss": "^3.4.4",
     "eslint-plugin-check-file": "^3.3.0",
@@ -144,7 +153,8 @@
     "tailwindcss": "^4.1.11",
     "tailwindcss-debug-screens": "^3.0.1",
     "tw-animate-css": "^1.3.5",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "typescript-eslint": "^8.46.2"
   },
   "lint-staged": {
     "./**/*.{js,cjs,mjs,jsx,ts,tsx}": [

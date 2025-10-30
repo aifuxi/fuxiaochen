@@ -5,7 +5,7 @@ import { getSessionCookie } from "better-auth/cookies";
 
 import { PATHS } from "./constants";
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
 
   // THIS IS NOT SECURE!

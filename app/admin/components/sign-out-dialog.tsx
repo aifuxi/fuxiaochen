@@ -29,7 +29,7 @@ export const SignOutDialog = ({ open, setOpen }: Props) => {
   const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
 
-  async function handleLogout() {
+  function handleLogout() {
     startTransition(async () => {
       await authClient.signOut({
         fetchOptions: {

@@ -58,7 +58,7 @@ export const BytemdEditor = ({
           const results = await Promise.all(promises);
           hideToast();
           return results.flat();
-        } catch (error) {
+        } catch (error: any) {
           hideToast();
           showErrorToast("图片上传失败" + error);
           return [];

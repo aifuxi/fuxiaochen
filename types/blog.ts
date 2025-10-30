@@ -53,7 +53,7 @@ export type GetBlogsRequest = z.infer<typeof getBlogsSchema>;
 
 export type Blog = DbBlog & {
   tags: DbTag[];
-  category?: DbCategory;
+  category?: DbCategory | null;
 };
 
 export type GetBlogsData = {
