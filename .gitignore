@@ -58,3 +58,6 @@ storybook-static
 
 # prisma 生成的文件
 /generated
+
+# pm2 日志文件
+/logs

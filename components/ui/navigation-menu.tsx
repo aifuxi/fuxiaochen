@@ -62,14 +62,14 @@ function NavigationMenuItem({
 
 const navigationMenuTriggerStyle = cva(
   `
-    group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2
-    text-sm font-medium transition-[color,box-shadow] outline-none
+    group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium
+    transition-[color,box-shadow] outline-none
     hover:bg-accent hover:text-accent-foreground
     focus:bg-accent focus:text-accent-foreground
     focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1
     disabled:pointer-events-none disabled:opacity-50
-    data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground
-    data-[state=open]:hover:bg-accent data-[state=open]:focus:bg-accent
+    data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground data-[state=open]:hover:bg-accent
+    data-[state=open]:focus:bg-accent
   `,
 );
 
@@ -115,17 +115,13 @@ function NavigationMenuContent({
           md:absolute md:w-auto
         `,
         `
-          group-data-[viewport=false]/navigation-menu:top-full
-          group-data-[viewport=false]/navigation-menu:mt-1.5
+          group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5
           group-data-[viewport=false]/navigation-menu:overflow-hidden
-          group-data-[viewport=false]/navigation-menu:rounded-md
-          group-data-[viewport=false]/navigation-menu:border
+          group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border
           group-data-[viewport=false]/navigation-menu:bg-popover
           group-data-[viewport=false]/navigation-menu:text-popover-foreground
-          group-data-[viewport=false]/navigation-menu:shadow
-          group-data-[viewport=false]/navigation-menu:duration-200
-          **:data-[slot=navigation-menu-link]:focus:ring-0
-          **:data-[slot=navigation-menu-link]:focus:outline-none
+          group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200
+          **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none
           group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out
           group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0
           group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95
@@ -154,8 +150,8 @@ function NavigationMenuViewport({
         data-slot="navigation-menu-viewport"
         className={cn(
           `
-            origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)]
-            w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow
+            origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden
+            rounded-md border bg-popover text-popover-foreground shadow
             data-[state=closed]:animate-out data-[state=closed]:zoom-out-95
             data-[state=open]:animate-in data-[state=open]:zoom-in-90
             md:w-[var(--radix-navigation-menu-viewport-width)]
@@ -181,8 +177,8 @@ function NavigationMenuLink({
           hover:bg-accent hover:text-accent-foreground
           focus:bg-accent focus:text-accent-foreground
           focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1
-          data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground
-          data-[active=true]:hover:bg-accent data-[active=true]:focus:bg-accent
+          data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground data-[active=true]:hover:bg-accent
+          data-[active=true]:focus:bg-accent
           [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground
         `,
         className,

@@ -68,11 +68,9 @@ function DrawerContent({
             data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b
           `,
           `
-            data-[vaul-drawer-direction=bottom]:inset-x-0
-            data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24
-            data-[vaul-drawer-direction=bottom]:max-h-[80vh]
-            data-[vaul-drawer-direction=bottom]:rounded-t-lg
-            data-[vaul-drawer-direction=bottom]:border-t
+            data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0
+            data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh]
+            data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t
           `,
           `
             data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0

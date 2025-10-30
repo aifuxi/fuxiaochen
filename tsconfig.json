@@ -41,6 +41,7 @@
     ".commitlintrc.cjs",
     "postcss.config.mjs",
     "next-sitemap.config.cjs",
+    "ecosystem.config.cjs",
     ".storybook/*.ts",
     ".storybook/*.tsx"
   ],

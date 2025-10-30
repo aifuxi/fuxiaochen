@@ -126,7 +126,7 @@ export function createResponse<T>({ data, error, message }: BaseResponse<T>) {
 
 export function countWordsByRegex(markdownText: string) {
   // 简单的正则表达式，用于去除标题、加粗、斜体等标记
-  let plainText = markdownText
+  const plainText = markdownText
     .replace(/```.*?```/gs, "") // 去除代码块
     .replace(/!\[.*?\]\(.*?\)/g, "") // 去除图片
     .replace(/\[.*?\]\(.*?\)/g, "$1") // 去除链接，保留链接文字

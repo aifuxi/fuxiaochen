@@ -106,10 +106,7 @@ export const Combobox = React.forwardRef(
           >
             <div
               className={cn(
-                `
-                  flex w-full flex-row flex-wrap gap-x-2 gap-y-1 text-left font-normal
-                  text-muted-foreground
-                `,
+                `flex w-full flex-row flex-wrap gap-x-2 gap-y-1 text-left font-normal text-muted-foreground`,
                 {
                   "line-clamp-1": !props.multiple,
                 },

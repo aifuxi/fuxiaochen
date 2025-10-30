@@ -45,9 +45,7 @@ function RadioGroupItem({
         className="relative flex items-center justify-center"
       >
         <CircleIcon
-          className={`
-            absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary
-          `}
+          className={`absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary`}
         />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>

@@ -26,8 +26,8 @@ export default async function Page() {
             key={el.id}
             href={`${PATHS.CATEGORY}/${el.slug}`}
             className={`
-              flex items-center justify-between rounded-2xl border border-solid border-border px-6
-              py-8 text-4xl font-medium
+              flex items-center justify-between rounded-2xl border border-solid border-border px-6 py-8 text-4xl
+              font-medium
             `}
           >
             <span>{el.name}</span>

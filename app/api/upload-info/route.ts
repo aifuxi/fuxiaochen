@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(request.url);
-  let query = Object.fromEntries(url.searchParams);
+  const query = Object.fromEntries(url.searchParams);
   const result = await getUploadInfoSchema.safeParseAsync(query);
 
   if (!result.success) {
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     return createResponse({ error });
   }
 
-  // @ts-ignore
+  // @ts-expect-error 忽略类型错误，因为 aliOSS 库的类型定义有问题 实际有这个方法
   const signatureUrl = await aliOSS.signatureUrlV4(
     "PUT",
     3600,

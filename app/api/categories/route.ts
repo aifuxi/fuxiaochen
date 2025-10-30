@@ -12,7 +12,7 @@ import { getSkip } from "@/utils";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  let query = Object.fromEntries(url.searchParams);
+  const query = Object.fromEntries(url.searchParams);
   const result = await getCategoriesSchema.safeParseAsync(query);
 
   if (!result.success) {

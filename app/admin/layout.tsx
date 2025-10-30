@@ -58,8 +58,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
     <div className="flex h-screen flex-col">
       <header
         className={`
-          sticky inset-x-0 top-0 z-[5] flex h-16 shrink-0 items-center gap-2 bg-background/50 px-5
-          backdrop-blur
+          sticky inset-x-0 top-0 z-[5] flex h-16 shrink-0 items-center gap-2 bg-background/50 px-5 backdrop-blur
         `}
       >
         <Image
