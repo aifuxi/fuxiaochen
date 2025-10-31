@@ -17,7 +17,7 @@
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
@@ -32,6 +32,7 @@
   },
   "include": [
     ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
     "next-env.d.ts",
     "next.config.mjs",
     "**/*.ts",

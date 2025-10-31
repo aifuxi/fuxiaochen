@@ -90,6 +90,7 @@ export function DataTable<TData, TValue>({
       <DataTablePagination
         table={table}
         onPaginationChange={pagination.onPaginationChange}
+        total={total}
       />
     </div>
   );
