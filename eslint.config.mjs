@@ -4,6 +4,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 // @ts-expect-error 忽略类型错误，因为 next 库的类型定义有问题 实际有这个方法
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
+import checkFile from "eslint-plugin-check-file";
 import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import tseslint from "typescript-eslint";
@@ -96,5 +97,44 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-argument": "warn",
       "@typescript-eslint/no-floating-promises": "warn",
     },
+  },
+
+  // 检查文件命名
+  {
+    files: [
+      "app/**/*",
+      "components/**/*",
+      "pages/**/*",
+      "styles/**/*",
+      "constants/**/*",
+      "utils/**/*",
+      "hooks/**/*",
+      "types/**/*",
+      "lib/**/*",
+    ],
+    plugins: {
+      "check-file": checkFile,
+    },
+    rules: {
+      "check-file/filename-naming-convention": [
+        "error",
+        {
+          "**/*.{ts,tsx,js,jsx,cjs,mjs,mts}": "KEBAB_CASE",
+        },
+        {
+          // 忽略中间扩展名，例如：`index.module.css` `eslint.config.mjs` `aa.bb.cc`
+          ignoreMiddleExtensions: true,
+        },
+      ],
+    },
+    ignores: [
+      "node_modules/*",
+      "public/*",
+      ".husky/*",
+      ".next/*",
+      ".vscode/*",
+      "generated/**/*",
+      "*.md",
+    ],
   },
 ]);

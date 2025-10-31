@@ -20,17 +20,23 @@ import {
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
   onPaginationChange: (pageIndex: number, pageSize: number) => void;
+  total?: number;
 }
 
 export function DataTablePagination<TData>({
   table,
   onPaginationChange,
+  total,
 }: DataTablePaginationProps<TData>) {
+  const currentPageIndex = table.getState().pagination.pageIndex;
+  const currentPageSize = table.getState().pagination.pageSize;
+  const currentPageTotal = currentPageSize * currentPageIndex;
+
   return (
     <div className="flex items-center justify-between p-4">
       <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+        显示第 {currentPageIndex} 页，共 {currentPageTotal} 条，共{" "}
+        {total ?? "-"} 条
       </div>
       <div
         className={`
@@ -39,7 +45,6 @@ export function DataTablePagination<TData>({
         `}
       >
         <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium">Rows per page</p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -59,8 +64,8 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex} of {table.getPageCount()}
+        <div className="flex items-center justify-center text-sm font-medium">
+          第 {currentPageIndex} 页，共 {table.getPageCount()} 页
         </div>
         <div className="flex items-center space-x-2">
           <Button
