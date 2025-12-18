@@ -91,7 +91,7 @@ body {
   --accent-foreground: oklch(0 0 0);
   --destructive: oklch(0.63 0.19 23.03);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.92 0 0);
+  --border: oklch(0% 0 0 / 0.078);
   --input: oklch(0.94 0 0);
   --ring: oklch(0 0 0);
   --chart-1: oklch(0.81 0.17 75.35);
@@ -112,8 +112,7 @@ body {
     "Times New Roman", "Georgia", "Palatino", "Palatino Linotype", "STSong",
     "SimSun", serif;
   --font-mono:
-    "Sarasa Term SC Nerd", "SF Mono", "Menlo", "Monaco", "Source Code Pro",
-    "Courier New", monospace;
+    "SF Mono", "Menlo", "Monaco", "Source Code Pro", "Courier New", monospace;
   --radius: 0.5rem;
   --shadow-x: 0px;
   --shadow-y: 1px;
@@ -155,7 +154,7 @@ body {
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.69 0.2 23.91);
   --destructive-foreground: oklch(0 0 0);
-  --border: oklch(0.26 0 0);
+  --border: oklch(100% 0 0 / 0.141);
   --input: oklch(0.32 0 0);
   --ring: oklch(0.72 0 0);
   --chart-1: oklch(0.81 0.17 75.35);
