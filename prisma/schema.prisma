@@ -17,8 +17,8 @@ model Tag {
   name     String  @unique
   slug     String  @unique
   blogs    Blog[]
-  icon     String?
-  iconDark String?
+  icon     String? @db.Text
+  iconDark String? @db.Text
 
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -47,7 +47,7 @@ model Blog {
   title       String    @unique
   slug        String    @unique
   description String
-  body        String
+  body        String    @db.Text
   cover       String?
   published   Boolean   @default(false)
   tags        Tag[]
