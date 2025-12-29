@@ -1,52 +1,5 @@
 import { format, formatDistanceToNow, getHours, toDate } from "date-fns";
 import { zhCN } from "date-fns/locale";
-import slugify from "slugify";
-
-import { type BaseResponse } from "@/types/base";
-
-import { showErrorToast, showSuccessToast } from "@/components/toast";
-
-export const toSlug = (s: string) => {
-  if (!s) {
-    return "";
-  }
-
-  return slugify(s, {
-    lower: true,
-  });
-};
-
-export const copyToClipboard = (text: string) => {
-  // 实测 Clipboard API 在 iPhone 上不支持，可恶！
-  if (navigator.clipboard) {
-    navigator.clipboard
-      // 去除首尾空白字符
-      .writeText(text.trim())
-      .then(() => {
-        showSuccessToast("已复制到粘贴板");
-      })
-      .catch((error) => {
-        showErrorToast(error as string);
-      });
-  } else {
-    // 以下代码来自：https://www.zhangxinxu.com/wordpress/2021/10/js-copy-paste-clipboard/
-    const textarea = document.createElement("textarea");
-    document.body.appendChild(textarea);
-    // 隐藏此输入框
-    textarea.style.position = "fixed";
-    textarea.style.clip = "rect(0 0 0 0)";
-    textarea.style.top = "10px";
-    // 赋值，手动去除首尾空白字符
-    textarea.value = text.trim();
-    // 选中
-    textarea.select();
-    // 复制
-    document.execCommand("copy", true);
-    showSuccessToast("已复制到粘贴板");
-    // 移除输入框
-    document.body.removeChild(textarea);
-  }
-};
 
 export const toFromNow = (date: number | Date) => {
   return formatDistanceToNow(date, { locale: zhCN, addSuffix: true });
@@ -111,19 +64,6 @@ export const isBrowser = () => {
   );
 };
 
-export function createResp<T>({ data, error, message }: BaseResponse<T>) {
-  return {
-    data,
-    error,
-    message,
-    timestamp: new Date().toString(),
-  };
-}
-
-export function createResponse<T>({ data, error, message }: BaseResponse<T>) {
-  return Response.json(createResp({ data, error, message }));
-}
-
 export function countWordsByRegex(markdownText: string) {
   // 简单的正则表达式，用于去除标题、加粗、斜体等标记
   const plainText = markdownText
@@ -159,8 +99,11 @@ export function checkUpdate({
   createdAt,
   updatedAt,
 }: {
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }) {
-  return updatedAt.getTime() - createdAt.getTime() > 1000 * 60 * 5;
+  return (
+    new Date(updatedAt).getTime() - new Date(createdAt).getTime() >
+    1000 * 60 * 5
+  );
 }

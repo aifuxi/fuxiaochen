@@ -4,7 +4,7 @@ import { isNil } from "es-toolkit";
 
 import { BlogList } from "@/app/(root)/blogs/components/blog-list";
 
-import { getTagBySlug } from "../actions";
+import { getTagDetail } from "@/api/tag";
 
 export const revalidate = 60;
 
@@ -12,7 +12,8 @@ export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  const { tag } = await getTagBySlug(params.slug);
+  const resp = await getTagDetail(params.slug);
+  const tag = resp.data;
 
   if (isNil(tag)) {
     return notFound();
@@ -30,10 +31,10 @@ export default async function Page(props: {
       </h2>
 
       <div className="pb-8 text-sm text-muted-foreground">
-        共计{tag.blogs.length}篇博客
+        共计{tag?.blogs?.length || 0}篇博客
       </div>
 
-      <BlogList blogs={tag.blogs} />
+      <BlogList blogs={tag?.blogs || []} />
     </div>
   );
 }

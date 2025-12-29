@@ -1,6 +1,6 @@
-import { type Blog } from "@/types/blog";
-
 import { IllustrationNoContent } from "@/components/illustrations";
+
+import { type Blog } from "@/api/blog";
 
 import { BlogListItem } from "./blog-list-item";
 

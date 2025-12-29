@@ -4,8 +4,7 @@ import Link from "next/link";
 
 import { Calendar, TagIcon } from "lucide-react";
 
-import { type Blog } from "@/types/blog";
-
+import { type Blog } from "@/api/blog";
 import { PATHS } from "@/constants";
 import { checkUpdate, toFromNow } from "@/lib/common";
 import { cn } from "@/lib/utils";
@@ -43,12 +42,12 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
         )}
         <div className="flex items-center gap-1">
           <Calendar className="size-3" />
-          <time dateTime={blog.createdAt.toISOString()}>
+          <time dateTime={new Date(blog.createdAt).toISOString()}>
             {toFromNow(blog.createdAt)}
           </time>
           {showUpdate && (
             <time
-              dateTime={blog.updatedAt.toISOString()}
+              dateTime={new Date(blog.updatedAt).toISOString()}
               className="text-muted-foreground/70"
             >
               （更新于{toFromNow(blog.updatedAt)}）
@@ -56,30 +55,9 @@ export const BlogListItem = ({ blog }: BlogListItemProps) => {
           )}
         </div>
         <ul className="flex flex-wrap items-center gap-4">
-          {blog.tags.map((tag) => (
+          {blog?.tags?.map((tag) => (
             <li key={tag.id} className="flex items-center gap-1">
-              {tag.icon && (
-                <img
-                  src={tag.icon}
-                  alt={tag.name}
-                  className={`
-                    hidden size-3
-                    dark:inline-flex
-                  `}
-                />
-              )}
-              {tag.iconDark && (
-                <img
-                  src={tag.iconDark}
-                  alt={tag.name}
-                  className={`
-                    inline-flex size-3
-                    dark:hidden
-                  `}
-                />
-              )}
-              {/* 没有图标时，使用默认图标 */}
-              {!tag.icon && !tag.iconDark && <TagIcon className="size-3" />}
+              <TagIcon className="size-3" />
               <span>{tag.name}</span>
             </li>
           ))}

@@ -1,13 +1,17 @@
 import Link from "next/link";
 
+import { getCategoryList } from "@/api/category";
 import { PATHS } from "@/constants/path";
-
-import { getAllCategories } from "./actions";
 
 export const revalidate = 60;
 
 export default async function Page() {
-  const { categories } = await getAllCategories();
+  const resp = await getCategoryList({
+    page: 1,
+    pageSize: 10000,
+  });
+
+  const { lists = [] } = resp.data;
 
   return (
     <div className="mx-auto flex min-h-screen max-w-wrapper flex-col px-6 pt-8 pb-24">
@@ -21,7 +25,7 @@ export default async function Page() {
       </h2>
 
       <div className="grid grid-cols-2 gap-8">
-        {categories.map((el) => (
+        {lists.map((el) => (
           <Link
             key={el.id}
             href={`${PATHS.CATEGORY}/${el.slug}`}
@@ -32,7 +36,7 @@ export default async function Page() {
           >
             <span>{el.name}</span>
             <span className="text-sm text-muted-foreground">
-              共{el.blogs.length}篇博客
+              共{el?.blogs?.length || 0}篇博客
             </span>
           </Link>
         ))}

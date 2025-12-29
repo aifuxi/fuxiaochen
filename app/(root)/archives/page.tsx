@@ -2,22 +2,24 @@ import Link from "next/link";
 
 import { BookText } from "lucide-react";
 
-import { getPublishedBlogs } from "@/app/(root)/blogs/actions";
-
-import { type Blog } from "@/types/blog";
-
+import { type Blog, getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
 import { toYYYYMMDD } from "@/lib/common";
 
 export const revalidate = 60;
 
 export default async function Page() {
-  const { blogs = [], total = 0 } = await getPublishedBlogs();
+  const resp = await getBlogList({
+    page: 1,
+    pageSize: 10000,
+  });
+
+  const { lists = [], total = 0 } = resp.data;
 
   // 根据博客的创建年份分组，年份从到大小排序，年份中月份也从到大小排序
-  const groupedBlogs = blogs.reduce((acc, blog) => {
-    const year = blog.createdAt.getFullYear();
-    const month = blog.createdAt.getMonth() + 1;
+  const groupedBlogs = lists.reduce((acc, blog) => {
+    const year = new Date(blog.createdAt).getFullYear();
+    const month = new Date(blog.createdAt).getMonth() + 1;
     if (!acc.has(year)) {
       acc.set(year, new Map<number, Blog[]>());
     }

@@ -4,7 +4,7 @@ import { isNil } from "es-toolkit";
 
 import { BlogList } from "@/app/(root)/blogs/components/blog-list";
 
-import { getCategoryBySlug } from "../actions";
+import { getCategoryDetail } from "@/api/category";
 
 export const revalidate = 60;
 
@@ -12,7 +12,8 @@ export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  const { category } = await getCategoryBySlug(params.slug);
+  const resp = await getCategoryDetail(params.slug);
+  const category = resp.data;
 
   if (isNil(category)) {
     return notFound();
@@ -30,10 +31,10 @@ export default async function Page(props: {
       </h2>
 
       <div className="pb-8 text-sm text-muted-foreground">
-        共计{category.blogs.length}篇博客
+        共计{category?.blogs?.length || 0}篇博客
       </div>
 
-      <BlogList blogs={category.blogs} />
+      <BlogList blogs={category?.blogs || []} />
     </div>
   );
 }

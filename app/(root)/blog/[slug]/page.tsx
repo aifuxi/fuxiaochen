@@ -4,12 +4,11 @@ import { notFound } from "next/navigation";
 import { isNil } from "es-toolkit";
 import { Calendar, Clock, InboxIcon, TagIcon } from "lucide-react";
 
-import { BytemdViewer } from "@/components/bytemd";
+import BytemdViewer from "@/components/bytemd";
 
+import { getBlogDetail } from "@/api/blog";
 import { PATHS } from "@/constants";
 import { calculateReadTime, checkUpdate, toSlashDate } from "@/lib/common";
-
-import { getPublishedBlogBySlug } from "../actions";
 
 export const revalidate = 60;
 
@@ -17,13 +16,14 @@ export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
-  const { blog } = await getPublishedBlogBySlug(params.slug);
+  const resp = await getBlogDetail(params.slug);
+  const blog = resp.data;
 
   if (isNil(blog)) {
     return notFound();
   }
 
-  const readMinutes = calculateReadTime(blog.body);
+  const readMinutes = calculateReadTime(blog.content);
   const showUpdate = checkUpdate({
     createdAt: blog.createdAt,
     updatedAt: blog.updatedAt,
@@ -68,10 +68,10 @@ export default async function Page(props: {
         {blog.description}
       </blockquote>
 
-      <BytemdViewer body={blog.body || ""} />
+      <BytemdViewer body={blog.content || ""} />
 
       <ul className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-        {blog.tags.map((tag) => (
+        {blog?.tags?.map((tag) => (
           <li key={tag.id} className="flex items-center gap-1">
             <Link
               className={`
@@ -80,28 +80,7 @@ export default async function Page(props: {
               `}
               href={`${PATHS.TAG}/${tag?.slug}`}
             >
-              {tag.icon && (
-                <img
-                  src={tag.icon}
-                  alt={tag.name}
-                  className={`
-                    hidden size-3
-                    dark:inline-flex
-                  `}
-                />
-              )}
-              {tag.iconDark && (
-                <img
-                  src={tag.iconDark}
-                  alt={tag.name}
-                  className={`
-                    inline-flex size-3
-                    dark:hidden
-                  `}
-                />
-              )}
-              {/* 没有图标时，使用默认图标 */}
-              {!tag.icon && !tag.iconDark && <TagIcon className="size-3" />}
+              <TagIcon className="size-3" />
               <span>{tag.name}</span>
             </Link>
           </li>
