@@ -7,7 +7,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { GlobalPubSub } from "@/components/global-pub-sub";
 import { BProgressProvider, ThemeProvider } from "@/components/providers";
 import { ToasterComponent } from "@/components/toast";
 
@@ -58,7 +57,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
             <TooltipProvider>
               {children}
               <ToasterComponent />
-              <GlobalPubSub />
             </TooltipProvider>
           </BProgressProvider>
         </ThemeProvider>

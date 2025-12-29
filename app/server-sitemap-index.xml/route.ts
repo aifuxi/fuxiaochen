@@ -1,21 +1,17 @@
 import { type ISitemapField, getServerSideSitemap } from "next-sitemap";
 
+import { getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
-import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const blogs = await prisma.blog.findMany({
-    select: {
-      slug: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-    where: {
-      published: true,
-    },
+  const resp = await getBlogList({
+    page: 1,
+    pageSize: 10000,
   });
 
-  const blogsSitemaps = blogs.map((item): ISitemapField => {
+  const { lists = [] } = resp.data;
+
+  const blogsSitemaps = lists.map((item): ISitemapField => {
     return {
       loc: `${PATHS.BLOG}/${item.slug}`,
       lastmod: new Date(item.updatedAt).toISOString(),
