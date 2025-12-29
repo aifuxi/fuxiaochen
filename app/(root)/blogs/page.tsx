@@ -1,10 +1,16 @@
-import { getPublishedBlogs } from "./actions";
+import { getBlogList } from "@/api/blog";
+
 import { BlogList } from "./components/blog-list";
 
 export const revalidate = 60;
 
 export default async function Page() {
-  const { blogs } = await getPublishedBlogs();
+  const resp = await getBlogList({
+    page: 1,
+    pageSize: 10000,
+  });
+
+  const { lists = [] } = resp.data;
 
   return (
     <div className="mx-auto flex min-h-screen max-w-wrapper flex-col px-6 pt-8 pb-24">
@@ -17,7 +23,7 @@ export default async function Page() {
         博客
       </h2>
 
-      <BlogList blogs={blogs} />
+      <BlogList blogs={lists} />
     </div>
   );
 }

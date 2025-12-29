@@ -1,11 +1,7 @@
 "use client";
 
-import * as React from "react";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-import { UserCog } from "lucide-react";
 
 import {
   ImageAssets,
@@ -88,17 +84,6 @@ export const Navbar = () => {
           >
             <Button variant="ghost" size={"icon"} aria-label="Github Icon">
               <IconBrandGithub className="text-base" />
-            </Button>
-          </Link>
-          <Link
-            href={PATHS.ADMIN_HOME}
-            target="_blank"
-            rel="nofollow"
-            title="后台管理"
-            aria-label={PATHS.ADMIN_HOME}
-          >
-            <Button variant="ghost" size={"icon"} aria-label="后台管理">
-              <UserCog className="size-4" />
             </Button>
           </Link>
         </div>
