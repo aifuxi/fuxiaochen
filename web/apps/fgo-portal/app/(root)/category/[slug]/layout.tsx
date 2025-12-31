@@ -4,13 +4,14 @@ import { type Metadata } from "next";
 
 import { isNil } from "es-toolkit";
 
-import { getCategoryBySlug } from "../actions";
+import { getCategoryDetail } from "@/api/category";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const params = await props.params;
-  const { category } = await getCategoryBySlug(params.slug);
+  const resp = await getCategoryDetail(params.slug);
+  const category = resp.data;
 
   if (isNil(category)) {
     return {};
