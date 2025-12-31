@@ -1,10 +1,13 @@
 {
   "name": "fgo",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:portal": "pnpm --filter \"@fgo/portal\" dev",
+    "dev:admin": "pnpm --filter \"@fgo/admin\" dev",
+    "build:portal": "pnpm --filter \"@fgo/portal\" build",
+    "build:admin": "pnpm --filter \"@fgo/admin\" build"
   },
   "keywords": [],
   "author": "",
