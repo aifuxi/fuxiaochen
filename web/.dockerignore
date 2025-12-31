@@ -1,0 +1,37 @@
+# VCS
+.git
+.gitignore
+.svn
+
+# Editors
+.vscode
+.idea
+.DS_Store
+
+# Dependencies and caches
+node_modules
+**/node_modules
+.pnpm-store
+**/.pnpm-store
+.pnp
+.pnp.js
+**/.cache
+**/.tmp
+
+# Build outputs
+**/.next
+**/dist
+**/build
+**/out
+**/*.tsbuildinfo
+**/logs
+**/.vercel
+
+# Env files
+**/.env
+**/.env.*
+
+# Project-specific ignores
+apps/fgo-portal/prisma/*.sqlite
+apps/fgo-portal/public/uploads/*
+
