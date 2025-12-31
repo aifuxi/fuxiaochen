@@ -1,0 +1,3 @@
+# fgo
+
+go demo
