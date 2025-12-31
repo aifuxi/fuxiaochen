@@ -1,0 +1,53 @@
+server:
+  # 服务监听主机地址
+  host: "127.0.0.1"
+  # 服务监听端口
+  port: 8080
+  # 运行模式: "debug" (开发模式) 或 "release" (生产模式)
+  mode: "debug"
+  # 应用版本号
+  version: "0.0.1"
+
+database:
+  # 数据库主机地址
+  host: "127.0.0.1"
+  # 数据库端口
+  port: 8306
+  # 数据库用户名
+  user: "root"
+  # 数据库密码
+  password: "123456"
+  # 数据库名称
+  dbname: "fgo"
+
+jwt:
+  # JWT 签名密钥，生产环境请修改为复杂字符串
+  secret: "your_jwt_secret_key"
+  # Token 过期时间（小时）
+  expire: 24
+
+log:
+  # 日志级别: debug, info, warn, error, dpanic, panic, fatal
+  level: "debug"
+  # 日志文件路径
+  filename: "logs/fgo.log"
+  # 每个日志文件保存的最大尺寸 单位：M
+  max_size: 10
+  # 文件最多保存多少天
+  max_age: 90
+  # 日志文件最多保存多少个备份
+  max_backups: 5
+  # 是否压缩
+  compress: false
+
+oss:
+  # 阿里云 OSS 访问密钥 ID
+  access_key_id: "your_access_key_id"
+  # 阿里云 OSS 访问密钥 Secret
+  access_key_secret: "your_access_key_secret"
+  # 阿里云 OSS 区域
+  region: "your_region"
+  # 阿里云 OSS 存储桶名称
+  bucket: "your_bucket"
+  # 阿里云 OSS 上传目录
+  upload_dir: "your_upload_dir"
