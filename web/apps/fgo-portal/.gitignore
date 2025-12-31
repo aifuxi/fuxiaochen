@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-node_modules
+/node_modules
 /.pnp
 .pnp.js
 
@@ -12,7 +12,7 @@ node_modules
 /prisma/*.sqlite
 
 # next.js
-.next/
+/.next/
 /out/
 next-env.d.ts
 
@@ -39,3 +39,24 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# next-sitemap在build生成的文件
+/public/robots.txt
+/public/*.xml
+
+# 本地上传的文件
+/public/uploads/*
+
+/sql/*.sql
+
+/meili_data
+
+.idea
+*storybook.log
+storybook-static
+
+# prisma 生成的文件
+/generated
+
+# pm2 日志文件
+/logs
