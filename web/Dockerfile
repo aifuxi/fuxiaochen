@@ -9,17 +9,17 @@ RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
 # Workspace manifests
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 # App manifest for better install cache
-COPY apps/fgo-portal/package.json apps/fgo-portal/package.json
+COPY apps/fuxiaochen-portal/package.json apps/fuxiaochen-portal/package.json
 
 # Install only the portal's dependencies
-RUN pnpm --filter "@fgo/portal" install --frozen-lockfile
+RUN pnpm --filter "fuxiaochen-portal" install --frozen-lockfile
 
 # ----------------------------
 # Build
 # ----------------------------
 FROM deps AS builder
 WORKDIR /work
-COPY apps/fgo-portal/ apps/fgo-portal/
+COPY apps/fuxiaochen-portal/ apps/fuxiaochen-portal/
 
 # umami js 文件地址
 ENV NEXT_PUBLIC_UMAMI_URL="umami-js-src"
@@ -31,7 +31,7 @@ ENV NEXT_PUBLIC_UMAMI_WEBSIT_ID="umami-website-id"
 ENV NEXT_PUBLIC_API_URL="http://host.docker.internal:8080"
 
 # Build Next.js (standalone output is enabled in next.config.mjs)
-RUN pnpm --filter "@fgo/portal" build
+RUN pnpm --filter "fuxiaochen-portal" build
 
 # ----------------------------
 # Runtime image
@@ -44,12 +44,12 @@ ENV PORT=3000
 WORKDIR /app
 
 # Copy the minimal standalone server produced by Next.js
-COPY --from=builder /work/apps/fgo-portal/.next/standalone ./
-COPY --from=builder /work/apps/fgo-portal/.next/static ./apps/fgo-portal/.next/static
-COPY --from=builder /work/apps/fgo-portal/public ./apps/fgo-portal/public
+COPY --from=builder /work/apps/fuxiaochen-portal/.next/standalone ./
+COPY --from=builder /work/apps/fuxiaochen-portal/.next/static ./apps/fuxiaochen-portal/.next/static
+COPY --from=builder /work/apps/fuxiaochen-portal/public ./apps/fuxiaochen-portal/public
 
 # Expose port and run the server
 EXPOSE 3000
-WORKDIR /app/apps/fgo-portal
+WORKDIR /app/apps/fuxiaochen-portal
 CMD ["node", "server.js"]
 
