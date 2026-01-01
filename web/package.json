@@ -1,13 +1,13 @@
 {
-  "name": "fgo",
+  "name": "fuxiaochen",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:portal": "pnpm --filter \"@fgo/portal\" dev",
-    "dev:admin": "pnpm --filter \"@fgo/admin\" dev",
-    "build:portal": "pnpm --filter \"@fgo/portal\" build",
-    "build:admin": "pnpm --filter \"@fgo/admin\" build"
+    "dev:portal": "pnpm --filter fuxiaochen-portal dev",
+    "dev:admin": "pnpm --filter fuxiaochen-admin dev",
+    "build:portal": "pnpm --filter fuxiaochen-portal build",
+    "build:admin": "pnpm --filter fuxiaochen-admin build"
   },
   "keywords": [],
   "author": "",
