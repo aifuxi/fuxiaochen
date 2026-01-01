@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -142,12 +142,16 @@ export const HeroSection = () => {
         {socialMediaList.map((el) => (
           <li key={el.link}>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Button asChild variant="outline" size="icon">
-                  <Link href={el.link} target="_blank">
-                    {el.icon}
-                  </Link>
-                </Button>
+              <TooltipTrigger>
+                <Link
+                  href={el.link}
+                  target="_blank"
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "icon" }),
+                  )}
+                >
+                  {el.icon}
+                </Link>
               </TooltipTrigger>
               <TooltipContent>{el.label}</TooltipContent>
             </Tooltip>

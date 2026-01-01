@@ -8,7 +8,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { BProgressProvider, ThemeProvider } from "@/components/providers";
-import { ToasterComponent } from "@/components/toast";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
@@ -54,10 +53,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <body className="debug-screens scroll-smooth">
         <ThemeProvider attribute="class" enableColorScheme enableSystem>
           <BProgressProvider>
-            <TooltipProvider>
-              {children}
-              <ToasterComponent />
-            </TooltipProvider>
+            <TooltipProvider>{children}</TooltipProvider>
           </BProgressProvider>
         </ThemeProvider>
       </body>
