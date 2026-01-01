@@ -2,6 +2,7 @@
   "name": "fuxiaochen",
   "version": "0.0.1",
   "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "dev:portal": "pnpm --filter fuxiaochen-portal dev",

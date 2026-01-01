@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 import {
   IconBrandGithub,
@@ -34,6 +34,7 @@ import {
 } from "@/components/icons";
 
 import { NICKNAME } from "@/constants";
+import { cn } from "@/lib/utils";
 
 import { socialMediaList } from "../components/hero-section";
 
@@ -48,7 +49,7 @@ export default function Page() {
         <h2>我是谁</h2>
         <p>
           Hi~ 我是{NICKNAME}
-          ，一名前端开发工程师，2020年大专毕业，喜欢 Coding 和打游戏
+          ，一名前端开发工程师，2020 年大专毕业，喜欢 Coding 和打游戏
         </p>
       </div>
 
@@ -63,7 +64,7 @@ export default function Page() {
             <IconSkillHTML className="mx-1 translate-y-0.5" /> HTML +
             <IconSkillCSS className="mx-1 translate-y-0.5" />
             CSS + <IconSkillJavaScript className="mx-1 translate-y-0.5" />
-            JavaScript ，熟练使用
+            JavaScript，熟练使用
           </li>
           <li>
             <IconSkillTypeScript className="mx-1 translate-y-0.5" />
@@ -196,7 +197,7 @@ export default function Page() {
             </>
             Debian、
             <IconLogoRockyLinux className="mx-1 translate-y-0.5" />
-            Rocky Linux （最近使用）
+            Rocky Linux（最近使用）
           </li>
           <li>
             <IconSkillDocker className="mx-1 translate-y-0.5" />
@@ -258,16 +259,16 @@ export default function Page() {
         <h2>我的设备</h2>
         <ul>
           <li>
-            MacBook Pro 14-inch M3 Max：64G + 2TB，
+            MacBook Pro 14-inch M3 Max: 64G + 2TB,
             <span className="line-through">
               赚的几个窝囊费全花电子产品上去了
             </span>
             🙃
           </li>
-          <li>微星（msi） GP76：64G + 1TB + RTX3070</li>
-          <li>LG 27英寸 4K</li>
+          <li>微星（msi）GP76:64G + 1TB + RTX3070</li>
+          <li>LG 27 英寸 4K</li>
           <li>键盘：珂芝（KIZI）K75</li>
-          <li>鼠标：罗技（G）PRO 2代</li>
+          <li>鼠标：罗技（G）PRO 2 代</li>
         </ul>
       </div>
 
@@ -277,11 +278,15 @@ export default function Page() {
         <ul className="!mb-0 flex !list-none items-center space-x-4 !pl-0">
           {socialMediaList.map((el) => (
             <li key={el.link}>
-              <Button asChild variant="outline" size="icon">
-                <Link href={el.link} target="_blank">
-                  {el.icon}
-                </Link>
-              </Button>
+              <Link
+                href={el.link}
+                target="_blank"
+                className={cn(
+                  buttonVariants({ variant: "outline", size: "icon" }),
+                )}
+              >
+                {el.icon}
+              </Link>
             </li>
           ))}
         </ul>

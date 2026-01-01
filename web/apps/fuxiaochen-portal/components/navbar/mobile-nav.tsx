@@ -5,7 +5,8 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { MenuIcon } from "lucide-react";
+import { MenuSquareIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -28,16 +29,18 @@ export const MobileNav = () => {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
-        <Button
-          variant={"outline"}
-          size={"icon"}
-          aria-label="菜单"
-          className={cn("sm:hidden")}
-        >
-          <MenuIcon className="size-4" />
-        </Button>
-      </SheetTrigger>
+      <SheetTrigger
+        render={() => (
+          <Button
+            variant={"outline"}
+            size={"icon"}
+            aria-label="菜单"
+            className={cn("sm:hidden")}
+          >
+            <HugeiconsIcon icon={MenuSquareIcon} className="size-4" />
+          </Button>
+        )}
+      ></SheetTrigger>
       <SheetContent side={"left"}>
         <SheetHeader>
           <SheetTitle>{WEBSITE}</SheetTitle>

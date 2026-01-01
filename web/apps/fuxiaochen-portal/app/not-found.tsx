@@ -14,7 +14,7 @@ export default function Page() {
         <h3 className="text-center text-2xl font-semibold tracking-tight">
           页面未找到
         </h3>
-        <Button asChild>
+        <Button>
           <Link href={PATHS.HOME}>返回首页</Link>
         </Button>
       </div>
