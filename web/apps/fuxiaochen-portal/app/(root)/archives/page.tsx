@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-import { BookText } from "lucide-react";
+import { Book02Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 import { type Blog, getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
@@ -65,7 +66,7 @@ export default async function Page() {
                       hover:text-primary
                     `}
                   >
-                    <BookText className="mr-2 size-4" />
+                    <HugeiconsIcon icon={Book02Icon} className="mr-2 size-4" />
 
                     <Link
                       href={`${PATHS.BLOG}/${blog.slug}`}

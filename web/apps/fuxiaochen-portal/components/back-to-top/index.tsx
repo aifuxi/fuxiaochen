@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { CircleArrowUp01Icon } from "@hugeicons/core-free-icons";
+import { ArrowUp02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { useMemoizedFn, useScroll } from "ahooks";
 
@@ -38,7 +38,7 @@ export const BackToTop = ({ scrollRef }: BackToTopProps) => {
       size={"icon"}
       onClick={handleClick}
     >
-      <HugeiconsIcon icon={CircleArrowUp01Icon} className="size-4" />
+      <HugeiconsIcon icon={ArrowUp02Icon} className="size-4" />
     </Button>
   );
 };
