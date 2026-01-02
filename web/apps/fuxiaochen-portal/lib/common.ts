@@ -1,6 +1,12 @@
 import { format, formatDistanceToNow, getHours, toDate } from "date-fns";
 import { zhCN } from "date-fns/locale";
 
+export const formattedDate = (date: number | Date) => {
+  return format(toDate(date), "MMM dd, yyyy", {
+    locale: zhCN,
+  });
+};
+
 export const toFromNow = (date: number | Date) => {
   return formatDistanceToNow(date, { locale: zhCN, addSuffix: true });
 };
@@ -10,11 +16,11 @@ export const toSlashDate = (date: number | Date) => {
 };
 
 export const prettyDate = (date: number | Date) => {
-  return format(date, "MM月 dd，yyyy");
+  return format(date, "MM 月 dd，yyyy");
 };
 
 export function toDateString(date: number | Date) {
-  return format(toDate(date), "yyyy年MM月dd日");
+  return format(toDate(date), "yyyy 年 MM 月 dd 日");
 }
 
 export function toYYYYMMDD(date: number | Date) {
@@ -51,7 +57,7 @@ export const sayHi = () => {
 };
 
 export const prettyDateWithWeekday = (date: number | Date) => {
-  return format(date, "yyyy年MM月dd日, eeee", { locale: zhCN });
+  return format(date, "yyyy 年 MM 月 dd 日，eeee", { locale: zhCN });
 };
 
 export const isBrowser = () => {
@@ -79,8 +85,8 @@ export function countWordsByRegex(markdownText: string) {
 }
 
 /**
- * 统计阅读时长（假设300字/分钟）
- * @param markdownText 包含Markdown格式的文本
+ * 统计阅读时长（假设 300 字/分钟）
+ * @param markdownText 包含 Markdown 格式的文本
  * @returns 阅读时长（分钟）
  */
 export function calculateReadTime(markdownText: string) {
@@ -90,7 +96,7 @@ export function calculateReadTime(markdownText: string) {
 }
 
 /**
- * 判断是否更新（假设更新时间和创建时间相差超过5分钟）
+ * 判断是否更新（假设更新时间和创建时间相差超过 5 分钟）
  * @param createdAt 创建时间
  * @param updatedAt 更新时间
  * @returns 是否更新

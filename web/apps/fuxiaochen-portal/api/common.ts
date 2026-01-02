@@ -7,8 +7,8 @@ export interface CommonResponse<T> {
 
 export interface CommonModel {
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListReq {

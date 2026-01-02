@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { isNil } from "es-toolkit";
 
-import { BlogList } from "@/app/(root)/blogs/components/blog-list";
+import { BlogGrid } from "@/components/blog-grid";
 
 import { getCategoryDetail } from "@/api/category";
 
@@ -20,21 +20,17 @@ export default async function Page(props: {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-wrapper flex-col px-6 pt-8 pb-24">
-      <h2
-        className={`
-          flex items-center pb-8 text-3xl font-bold
-          md:text-4xl
-        `}
-      >
-        分类 <span className="mx-3">|</span> {category.name}
-      </h2>
+    <div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="mb-12">
+          <h1 className="mb-4 text-4xl font-bold">{category.name}</h1>
+          <p className="text-lg text-muted-foreground">
+            分类「{category.name}」下共计 {category?.blogs?.length || 0} 篇博客
+          </p>
+        </div>
 
-      <div className="pb-8 text-sm text-muted-foreground">
-        共计{category?.blogs?.length || 0}篇博客
+        <BlogGrid blogs={category?.blogs || []} />
       </div>
-
-      <BlogList blogs={category?.blogs || []} />
     </div>
   );
 }
