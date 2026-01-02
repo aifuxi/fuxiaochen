@@ -1,91 +1,56 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-import {
-  ImageAssets,
-  NICKNAME,
-  PATHS,
-  SOURCE_CODE_GITHUB_PAGE,
-  WEBSITE,
-} from "@/constants";
-import { cn } from "@/lib/utils";
+import { ImageAssets, WEBSITE } from "@/constants";
 
 import { navItems } from "./config";
-import { MobileNav } from "./mobile-nav";
 
 import { IconBrandGithub } from "../icons";
 import { ModeToggle } from "../mode-toggle";
 import { Button } from "../ui/button";
 
 export const Navbar = () => {
-  const pathname = usePathname();
-
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-10 flex w-full justify-center border-x-0 backdrop-blur transition-all",
-        "border-b border-border/50 bg-background/50",
-      )}
-    >
-      <div
-        className={`
-          flex h-16 w-full items-center p-4
-          sm:p-8
-          md:max-w-screen-md
-          2xl:max-w-screen-xl
-        `}
-      >
-        <Link
-          href={PATHS.HOME}
-          className={cn(`
-            mr-4 hidden
-            sm:flex sm:items-center
-          `)}
-          aria-label={NICKNAME}
-        >
-          <img src={ImageAssets.logo} className="size-8" alt={WEBSITE} />
-          <span className="ml-2 text-base font-semibold">{WEBSITE}</span>
-        </Link>
-        <div
-          className={`
-            mr-8 hidden h-16 flex-1 items-center justify-end text-base font-medium
-            sm:flex
-          `}
-        >
-          {navItems.map((el) => (
-            <Link
-              href={el.link}
-              key={el.link}
-              className={cn(
-                "px-4 py-2 text-sm font-normal text-muted-foreground transition-colors",
-                "hover:font-semibold hover:text-foreground",
-                pathname === el.link && "font-semibold text-foreground",
-              )}
-            >
-              {el.label}
-            </Link>
-          ))}
-        </div>
-        <MobileNav />
-        <div
-          className={`
-            flex flex-1 items-center justify-end gap-2
-            sm:flex-none
-          `}
-        >
-          <ModeToggle variant="ghost" aria-label="切换主题" />
-          <Link
-            href={SOURCE_CODE_GITHUB_PAGE}
-            target="_blank"
-            title={SOURCE_CODE_GITHUB_PAGE}
-            aria-label={SOURCE_CODE_GITHUB_PAGE}
-          >
-            <Button variant="ghost" size={"icon"} aria-label="Github Icon">
-              <IconBrandGithub className="text-base" />
-            </Button>
+    <header className="border-b border-border bg-card">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded bg-primary">
+              <img
+                src={ImageAssets.logo}
+                className="size-8 rounded-md"
+                alt={WEBSITE}
+              />
+            </div>
+            <span className="text-xl font-bold">{WEBSITE}</span>
           </Link>
+
+          <nav
+            className={`
+              hidden items-center gap-8
+              md:flex
+            `}
+          >
+            {navItems.map((item) => (
+              <Link
+                key={item.link}
+                href={item.link}
+                className={`
+                  text-sm text-muted-foreground transition-colors
+                  hover:text-foreground
+                `}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <ModeToggle variant="ghost" aria-label="切换主题" />
+
+            <Button variant="ghost" size="icon" className="text-base">
+              <IconBrandGithub />
+            </Button>
+          </div>
         </div>
       </div>
     </header>
