@@ -6,10 +6,6 @@ export const navItems: {
   external?: boolean;
 }[] = [
   {
-    label: "首页",
-    link: PATHS.HOME,
-  },
-  {
     label: "博客",
     link: PATHS.BLOGS,
   },
