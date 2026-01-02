@@ -1,6 +1,6 @@
-import { getBlogList } from "@/api/blog";
+import { BlogGrid } from "@/components/blog-grid";
 
-import { BlogList } from "./components/blog-list";
+import { getBlogList } from "@/api/blog";
 
 export const revalidate = 60;
 
@@ -13,17 +13,14 @@ export default async function Page() {
   const { lists = [] } = resp.data;
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-wrapper flex-col px-6 pt-8 pb-24">
-      <h2
-        className={`
-          pb-8 text-3xl font-bold
-          md:text-4xl
-        `}
-      >
-        博客
-      </h2>
-
-      <BlogList blogs={lists} />
+    <div className="container mx-auto px-4 py-16">
+      <div className="mb-12">
+        <h1 className="mb-4 text-4xl font-bold">博客</h1>
+        <p className="text-lg text-muted-foreground">
+          踩坑和学习记录，沉淀可借鉴的经验
+        </p>
+      </div>
+      <BlogGrid blogs={lists} />
     </div>
   );
 }
