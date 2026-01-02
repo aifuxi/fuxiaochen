@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { isNil } from "es-toolkit";
 
-import { BlogList } from "@/app/(root)/blogs/components/blog-list";
+import { BlogGrid } from "@/components/blog-grid";
 
 import { getTagDetail } from "@/api/tag";
 
@@ -20,21 +20,17 @@ export default async function Page(props: {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-wrapper flex-col px-6 pt-8 pb-24">
-      <h2
-        className={`
-          flex items-center pb-8 text-3xl font-bold
-          md:text-4xl
-        `}
-      >
-        标签 <span className="mx-3">|</span> {tag.name}
-      </h2>
+    <div>
+      <div className="container mx-auto px-4 py-16">
+        <div className="mb-12">
+          <h1 className="mb-4 text-4xl font-bold">{tag.name}</h1>
+          <p className="text-lg text-muted-foreground">
+            标签「{tag.name}」下共计 {tag?.blogs?.length || 0} 篇博客
+          </p>
+        </div>
 
-      <div className="pb-8 text-sm text-muted-foreground">
-        共计{tag?.blogs?.length || 0}篇博客
+        <BlogGrid blogs={tag?.blogs || []} />
       </div>
-
-      <BlogList blogs={tag?.blogs || []} />
     </div>
   );
 }

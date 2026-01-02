@@ -5,7 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { type Blog, getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
-import { toYYYYMMDD } from "@/lib/common";
+import { formattedDate, toYYYYMMDD } from "@/lib/common";
 
 export const revalidate = 60;
 
@@ -32,13 +32,14 @@ export default async function Page() {
   }, new Map<number, Map<number, Blog[]>>());
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col pt-8">
-      <h1 className="mb-8 text-4xl font-bold">归档</h1>
-
-      <p className="mb-8 text-sm text-muted-foreground">
-        嗯... 目前共计 <span className="font-bold">{total}</span> 篇博客。
-        继续努力！
-      </p>
+    <div className="container mx-auto max-w-3xl px-4 py-16">
+      <div className="mb-12">
+        <h1 className="mb-4 text-4xl font-bold">归档</h1>
+        <p className="text-lg text-muted-foreground">
+          嗯... 目前共计 <span className="font-medium">{total}</span> 篇博客。
+          继续努力！
+        </p>
+      </div>
 
       {[...groupedBlogs.keys()].map((year) => (
         <div key={year}>
@@ -76,7 +77,7 @@ export default async function Page() {
                         {blog.title}
                       </div>
                       <div className="w-20 text-xs text-muted-foreground">
-                        {toYYYYMMDD(blog.createdAt)}
+                        {formattedDate(new Date(blog.createdAt))}
                       </div>
                     </Link>
                   </li>
