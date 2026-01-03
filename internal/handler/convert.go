@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
 )
 
 func convertCategoryResp(category model.Category) dto.CategoryResp {

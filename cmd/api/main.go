@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/aifuxi/fgo/config"
-	"github.com/aifuxi/fgo/pkg/db"
-	"github.com/aifuxi/fgo/pkg/logger"
-	"github.com/aifuxi/fgo/pkg/upload"
-	"github.com/aifuxi/fgo/router"
+	"github.com/aifuxi/fuxiaochen-api/config"
+	"github.com/aifuxi/fuxiaochen-api/pkg/db"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/pkg/upload"
+	"github.com/aifuxi/fuxiaochen-api/router"
 	"github.com/gin-gonic/gin"
 )
 

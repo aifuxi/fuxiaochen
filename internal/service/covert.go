@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
 )
 
 func convertToUserResp(u model.User) dto.UserResp {

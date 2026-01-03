@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/aifuxi/fgo/internal/model/dto"
-	"github.com/aifuxi/fgo/internal/service"
-	"github.com/aifuxi/fgo/pkg/response"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/service"
+	"github.com/aifuxi/fuxiaochen-api/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

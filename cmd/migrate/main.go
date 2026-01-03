@@ -4,10 +4,10 @@ import (
 	"log"
 	"slices"
 
-	"github.com/aifuxi/fgo/config"
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/pkg/db"
-	"github.com/aifuxi/fgo/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/config"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/pkg/db"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
 	"golang.org/x/crypto/bcrypt"
 )
 

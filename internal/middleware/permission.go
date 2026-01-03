@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/aifuxi/fgo/internal/service"
-	"github.com/aifuxi/fgo/pkg/response"
+	"github.com/aifuxi/fuxiaochen-api/internal/service"
+	"github.com/aifuxi/fuxiaochen-api/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

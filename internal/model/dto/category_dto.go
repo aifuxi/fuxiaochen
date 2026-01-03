@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/aifuxi/fgo/internal/model"
+import "github.com/aifuxi/fuxiaochen-api/internal/model"
 
 type CategoryCreateReq struct {
 	Name        string `json:"name" binding:"required"`

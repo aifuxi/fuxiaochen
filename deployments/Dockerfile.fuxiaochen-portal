@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.6
-
 FROM node:20-slim AS deps
 WORKDIR /work
 ENV NODE_ENV=production
@@ -7,9 +5,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
 
 # Workspace manifests
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY web/pnpm-workspace.yaml web/pnpm-lock.yaml web/package.json ./
 # App manifest for better install cache
-COPY apps/fuxiaochen-portal/package.json apps/fuxiaochen-portal/package.json
+COPY web/apps/fuxiaochen-portal/package.json apps/fuxiaochen-portal/package.json
 
 # Install only the portal's dependencies
 RUN pnpm --filter "fuxiaochen-portal" install --frozen-lockfile
@@ -19,16 +17,19 @@ RUN pnpm --filter "fuxiaochen-portal" install --frozen-lockfile
 # ----------------------------
 FROM deps AS builder
 WORKDIR /work
-COPY apps/fuxiaochen-portal/ apps/fuxiaochen-portal/
+COPY web/apps/fuxiaochen-portal/ apps/fuxiaochen-portal/
 
 # umami js 文件地址
-ENV NEXT_PUBLIC_UMAMI_URL="umami-js-src"
+ENV NEXT_PUBLIC_UMAMI_URL="https://umami.fuxiaochen.com/script.js"
 
 # umami 需要统计的website id
-ENV NEXT_PUBLIC_UMAMI_WEBSIT_ID="umami-website-id"
+ENV NEXT_PUBLIC_UMAMI_WEBSIT_ID="94aa01eb-4393-4599-b246-52703aff2b8d"
 
 # api 接口地址
 ENV NEXT_PUBLIC_API_URL="http://host.docker.internal:8080"
+
+# 网站地址
+ENV SITE_URL="https://fuxiaochen.com"
 
 # Build Next.js (standalone output is enabled in next.config.mjs)
 RUN pnpm --filter "fuxiaochen-portal" build
@@ -52,4 +53,3 @@ COPY --from=builder /work/apps/fuxiaochen-portal/public ./apps/fuxiaochen-portal
 EXPOSE 3000
 WORKDIR /app/apps/fuxiaochen-portal
 CMD ["node", "server.js"]
-

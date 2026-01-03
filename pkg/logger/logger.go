@@ -3,7 +3,7 @@ package logger
 import (
 	"os"
 
-	"github.com/aifuxi/fgo/config"
+	"github.com/aifuxi/fuxiaochen-api/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
