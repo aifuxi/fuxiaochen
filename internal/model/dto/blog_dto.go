@@ -46,3 +46,11 @@ type BlogUpdateReq struct {
 	CategoryID  int64            `json:"categoryID,string"`
 	TagIDs      StringInt64Slice `json:"tagIDs"`
 }
+
+type BlogPublishedReq struct {
+	Published bool `json:"published"`
+}
+
+type BlogFeaturedReq struct {
+	Featured bool `json:"featured"`
+}
