@@ -28,6 +28,9 @@ func (h *PublicBlogHandler) List(ctx *gin.Context) {
 			Page:     req.Page,
 			PageSize: req.PageSize,
 		},
+		// 只返回已发布的博客
+		PublishedStatus: "published",
+		FeaturedStatus:  req.FeaturedStatus,
 	})
 
 	if err != nil {
@@ -53,6 +56,11 @@ func (h *PublicBlogHandler) FindBySlug(ctx *gin.Context) {
 
 	if err != nil {
 		response.BusinessError(ctx, err.Error())
+		return
+	}
+
+	if !blog.Published {
+		response.BusinessError(ctx, "blog not published")
 		return
 	}
 
