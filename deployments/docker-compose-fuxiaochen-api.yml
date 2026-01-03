@@ -1,0 +1,15 @@
+services:
+  fuxiaochen-api:
+    image: ghcr.io/aifuxi/fuxiaochen-api:latest
+    container_name: fuxiaochen-api
+    restart: always
+    # ports:
+    #   - "8080:8080"
+    network_mode: "host"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - 你的配置文件的目录:/app/config:ro
+      - 你的日志目录:/app/logs
+
+
