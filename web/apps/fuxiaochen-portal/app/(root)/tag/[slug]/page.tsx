@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { isNil } from "es-toolkit";
 
-import { BlogGrid } from "@/components/blog-grid";
+import { BlogGrid } from "@/components/blog/blog-grid";
 
 import { getTagDetail } from "@/api/tag";
 

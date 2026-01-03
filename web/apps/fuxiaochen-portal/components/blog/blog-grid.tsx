@@ -11,12 +11,13 @@ import { calculateReadTime, formattedDate } from "@/lib/common";
 
 interface Props {
   blogs: Blog[];
+  title?: string;
 }
 
-export function BlogGrid({ blogs }: Props) {
+export function BlogGrid({ blogs, title = "最新博客" }: Props) {
   return (
     <section>
-      <h2 className="mb-8 text-2xl font-bold">最新博客</h2>
+      <h2 className="mb-8 text-2xl font-bold">{title}</h2>
 
       <div
         className={`
