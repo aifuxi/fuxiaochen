@@ -1,0 +1,11 @@
+name: Build and Publish image to Github
+on:
+  [workflow_dispatch]
+
+jobs:
+  test_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: log
+        run: |
+          echo "hell github"
