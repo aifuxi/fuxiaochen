@@ -17,7 +17,9 @@ export interface Blog extends CommonModel {
   tags?: Tag[];
 }
 
-export type BlogListReq = ListReq;
+export interface BlogListReq extends ListReq {
+  featuredStatus?: "featured" | "unfeatured";
+}
 
 export interface BlogListResp {
   total: number;

@@ -1,4 +1,4 @@
-import { BlogGrid } from "@/components/blog-grid";
+import { BlogGrid } from "@/components/blog/blog-grid";
 
 import { getBlogList } from "@/api/blog";
 
