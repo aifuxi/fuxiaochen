@@ -32,6 +32,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.11.0",
     "sass": "^1.97.1",
+    "slugify": "^1.6.6",
     "tailwindcss": "^4.1.18",
     "zustand": "^5.0.9"
   },
