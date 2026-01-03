@@ -56,6 +56,7 @@ export default function BlogCreateForm({ id }: Props) {
 				description: resp?.data?.description,
 				content: resp?.data?.content,
 				published: resp?.data?.published,
+				featured: resp?.data?.featured,
 				categoryID: resp?.data?.categoryID,
 				tagIDs: resp?.data?.tags?.map((tag) => tag?.id) ?? [],
 				cover: resp?.data?.cover,
@@ -91,6 +92,7 @@ export default function BlogCreateForm({ id }: Props) {
 					description: "",
 					content: "",
 					published: true,
+					featured: false,
 				}}
 			>
 				<Form.Input
@@ -149,7 +151,14 @@ export default function BlogCreateForm({ id }: Props) {
 					field="published"
 					label="是否发布"
 					size="large"
-					rules={[{ required: true, message: "请输入别名" }]}
+					rules={[{ required: true, message: "请选择是否发布" }]}
+				></Form.Switch>
+
+				<Form.Switch
+					field="featured"
+					label="是否设为精选"
+					size="large"
+					rules={[{ required: true, message: "请选择是否精选" }]}
 				></Form.Switch>
 
 				<BytemdField
