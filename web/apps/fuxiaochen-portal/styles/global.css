@@ -9,6 +9,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
+@import "./github.css";
+@import "./github-dark.css";
 @import "./prose.css";
 
 @custom-variant dark (&:is(.dark *));
