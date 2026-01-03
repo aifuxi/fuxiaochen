@@ -36,6 +36,7 @@ export interface BlogCreateReq {
 	cover?: string;
 	content: string;
 	published: boolean;
+	featured: boolean;
 	categoryID?: string;
 	tagIDs?: string[];
 }
