@@ -1,4 +1,5 @@
 import eslint from "@eslint/js";
+import * as parser from "@typescript-eslint/parser";
 // @ts-expect-error 忽略类型错误，因为 next 库的类型定义有问题 实际有这个方法
 import nextVitals from "eslint-config-next/core-web-vitals";
 // @ts-expect-error 忽略类型错误，因为 next 库的类型定义有问题 实际有这个方法
@@ -19,7 +20,7 @@ export default defineConfig([
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        programs: [parser.createProgram("tsconfig.json")],
       },
       globals: {
         // 全局变量配置
