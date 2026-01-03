@@ -1,4 +1,4 @@
-name: Build and Publish API Image
+name: 构建 fuxiaochen-api 镜像
 
 on:
   push:

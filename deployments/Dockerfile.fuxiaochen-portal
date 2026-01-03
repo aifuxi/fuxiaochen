@@ -20,16 +20,20 @@ WORKDIR /work
 COPY web/apps/fuxiaochen-portal/ apps/fuxiaochen-portal/
 
 # umami js 文件地址
-ENV NEXT_PUBLIC_UMAMI_URL="https://umami.fuxiaochen.com/script.js"
+ARG NEXT_PUBLIC_UMAMI_URL
+ENV NEXT_PUBLIC_UMAMI_URL=$NEXT_PUBLIC_UMAMI_URL
 
 # umami 需要统计的website id
-ENV NEXT_PUBLIC_UMAMI_WEBSIT_ID="94aa01eb-4393-4599-b246-52703aff2b8d"
+ARG NEXT_PUBLIC_UMAMI_WEBSIT_ID
+ENV NEXT_PUBLIC_UMAMI_WEBSIT_ID=$NEXT_PUBLIC_UMAMI_WEBSIT_ID
 
 # api 接口地址
-ENV NEXT_PUBLIC_API_URL="http://host.docker.internal:8080"
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # 网站地址
-ENV SITE_URL="https://fuxiaochen.com"
+ARG SITE_URL
+ENV SITE_URL=$SITE_URL
 
 # Build Next.js (standalone output is enabled in next.config.mjs)
 RUN pnpm --filter "fuxiaochen-portal" build

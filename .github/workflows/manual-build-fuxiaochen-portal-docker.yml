@@ -1,12 +1,12 @@
-name: Manual Build Portal Image
+name: 手动构建 fuxiaochen-portal 镜像
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Docker image tag (e.g. v1.0.0)'
+        description: "Docker image tag (e.g. v1.0.0)"
         required: true
-        default: 'latest'
+        default: "latest"
 
 env:
   REGISTRY: ghcr.io
@@ -37,3 +37,8 @@ jobs:
           file: deployments/Dockerfile.fuxiaochen-portal
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          build-args: |
+            NEXT_PUBLIC_UMAMI_URL=${{ vars.NEXT_PUBLIC_UMAMI_URL }}
+            NEXT_PUBLIC_UMAMI_WEBSIT_ID=${{ vars.NEXT_PUBLIC_UMAMI_WEBSIT_ID }}
+            NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            SITE_URL=${{ vars.SITE_URL }}
