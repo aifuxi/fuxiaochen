@@ -70,6 +70,7 @@ func (s *blogService) Create(ctx context.Context, req dto.BlogCreateReq) error {
 		CategoryID:  req.CategoryID,
 		Tags:        tags,
 		Published:   req.Published,
+		Featured:    req.Featured,
 	}
 
 	return s.repo.Create(ctx, blog)
@@ -86,12 +87,23 @@ func (s *blogService) List(ctx context.Context, req dto.BlogListReq) ([]model.Bl
 		*published = false
 	}
 
+	var featured *bool
+	switch req.FeaturedStatus {
+	case "featured":
+		featured = new(bool)
+		*featured = true
+	case "unfeatured":
+		featured = new(bool)
+		*featured = false
+	}
+
 	return s.repo.List(ctx, repository.BlogListOption{
 		Page:       req.Page,
 		PageSize:   req.PageSize,
 		Title:      req.Title,
 		Slug:       req.Slug,
 		Published:  published,
+		Featured:   featured,
 		SortBy:     req.SortBy,
 		Order:      req.Order,
 		CategoryID: req.CategoryID,
@@ -183,6 +195,8 @@ func (s *blogService) UpdateByID(ctx context.Context, id int64, req *dto.BlogUpd
 	blog.Content = req.Content
 	blog.CategoryID = req.CategoryID
 	blog.Tags = tags
+	blog.Published = req.Published
+	blog.Featured = req.Featured
 
 	return s.repo.Update(ctx, *blog)
 }

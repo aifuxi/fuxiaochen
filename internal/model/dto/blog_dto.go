@@ -11,6 +11,7 @@ type BlogCreateReq struct {
 	Cover       string           `json:"cover"`
 	Content     string           `json:"content" binding:"required"`
 	Published   bool             `json:"published"`
+	Featured    bool             `json:"featured"`
 	CategoryID  int64            `json:"categoryID,string"`
 	TagIDs      StringInt64Slice `json:"tagIDs"`
 }
@@ -20,6 +21,7 @@ type BlogListReq struct {
 	Title           string           `json:"title" form:"title" binding:"omitempty"`
 	Slug            string           `json:"slug" form:"slug" binding:"omitempty"`
 	PublishedStatus string           `json:"publishedStatus" form:"published" binding:"omitempty,oneof=published unpublished"`
+	FeaturedStatus  string           `json:"featuredStatus" form:"featured" binding:"omitempty,oneof=featured unfeatured"`
 	CategoryID      int64            `json:"categoryID,string" form:"categoryID" binding:"omitempty"`
 	TagIDs          StringInt64Slice `json:"tagIDs" form:"tagIDs" binding:"omitempty"`
 }
@@ -40,6 +42,7 @@ type BlogUpdateReq struct {
 	Cover       string           `json:"cover"`
 	Content     string           `json:"content" binding:"required"`
 	Published   bool             `json:"published"`
+	Featured    bool             `json:"featured"`
 	CategoryID  int64            `json:"categoryID,string"`
 	TagIDs      StringInt64Slice `json:"tagIDs"`
 }

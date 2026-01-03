@@ -19,6 +19,7 @@ type BlogListOption struct {
 	CategoryID int64
 	TagIDs     []int64
 	Published  *bool
+	Featured   *bool
 }
 
 type BlogRepository interface {
@@ -102,6 +103,10 @@ func (r *blogRepo) List(ctx context.Context, option BlogListOption) ([]model.Blo
 
 	if option.Published != nil {
 		query = query.Where("published = ?", *option.Published)
+	}
+
+	if option.Featured != nil {
+		query = query.Where("featured = ?", *option.Featured)
 	}
 
 	// Count total records with filters but without pagination
