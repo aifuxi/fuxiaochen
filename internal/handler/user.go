@@ -1,12 +1,12 @@
 package handler
 
 import (
-    "strings"
+	"strings"
 
-    "github.com/aifuxi/fgo/internal/model/dto"
-    "github.com/aifuxi/fgo/internal/service"
-    "github.com/aifuxi/fgo/pkg/response"
-    "github.com/gin-gonic/gin"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/service"
+	"github.com/aifuxi/fuxiaochen-api/pkg/response"
+	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
@@ -66,23 +66,23 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Logout(ctx *gin.Context) {
-    authHeader := ctx.GetHeader("Authorization")
-    if authHeader == "" {
-        response.Unauthorized(ctx, "Authorization header is required")
-        return
-    }
+	authHeader := ctx.GetHeader("Authorization")
+	if authHeader == "" {
+		response.Unauthorized(ctx, "Authorization header is required")
+		return
+	}
 
-    parts := strings.SplitN(authHeader, " ", 2)
-    if !(len(parts) == 2 && parts[0] == "Bearer") {
-        response.Unauthorized(ctx, "Authorization header format must be Bearer {token}")
-        return
-    }
+	parts := strings.SplitN(authHeader, " ", 2)
+	if !(len(parts) == 2 && parts[0] == "Bearer") {
+		response.Unauthorized(ctx, "Authorization header format must be Bearer {token}")
+		return
+	}
 
-    if err := h.svc.Logout(ctx, parts[1]); err != nil {
-        response.BusinessError(ctx, err.Error())
-        return
-    }
-    response.Success(ctx, nil)
+	if err := h.svc.Logout(ctx, parts[1]); err != nil {
+		response.BusinessError(ctx, err.Error())
+		return
+	}
+	response.Success(ctx, nil)
 }
 
 func (h *UserHandler) List(ctx *gin.Context) {

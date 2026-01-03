@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aifuxi/fgo/config"
-	"github.com/aifuxi/fgo/internal/model/dto"
-	"github.com/aifuxi/fgo/pkg/logger"
-	"github.com/aifuxi/fgo/pkg/upload"
+	"github.com/aifuxi/fuxiaochen-api/config"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/pkg/upload"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 )
 
@@ -44,4 +44,3 @@ func (s *uploadService) UploadPresign(ctx context.Context, req *dto.UploadPresig
 		UploadURL:     result.URL,
 	}, nil
 }
-

@@ -4,31 +4,31 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/internal/model/dto"
-	"github.com/aifuxi/fgo/internal/repository"
-	"github.com/aifuxi/fgo/pkg/auth"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/repository"
+	"github.com/aifuxi/fuxiaochen-api/pkg/auth"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService interface {
-    Register(ctx context.Context, req dto.UserRegisterReq) error
-    Create(ctx context.Context, req dto.UserCreateReq) error
-    Login(ctx context.Context, req dto.UserLoginReq) (string, error)
-    Logout(ctx context.Context, token string) error
-    Update(ctx context.Context, id int64, req dto.UserUpdateReq) error
-    Info(ctx context.Context, id int64) (*dto.UserResp, error)
-    List(ctx context.Context, req dto.UserListReq) (*dto.UserListResp, error)
-    FindByID(ctx context.Context, id int64) (*dto.UserResp, error)
-    DeleteByID(ctx context.Context, id int64) error
-    BanByID(ctx context.Context, id int64, ban bool) error
-    UpdatePasswordByID(ctx context.Context, id int64, password string) error
+	Register(ctx context.Context, req dto.UserRegisterReq) error
+	Create(ctx context.Context, req dto.UserCreateReq) error
+	Login(ctx context.Context, req dto.UserLoginReq) (string, error)
+	Logout(ctx context.Context, token string) error
+	Update(ctx context.Context, id int64, req dto.UserUpdateReq) error
+	Info(ctx context.Context, id int64) (*dto.UserResp, error)
+	List(ctx context.Context, req dto.UserListReq) (*dto.UserListResp, error)
+	FindByID(ctx context.Context, id int64) (*dto.UserResp, error)
+	DeleteByID(ctx context.Context, id int64) error
+	BanByID(ctx context.Context, id int64, ban bool) error
+	UpdatePasswordByID(ctx context.Context, id int64, password string) error
 }
 
 type userService struct {
-    repo     repository.UserRepository
-    roleRepo repository.RoleRepository
-    tokenRepo repository.TokenRepository
+	repo      repository.UserRepository
+	roleRepo  repository.RoleRepository
+	tokenRepo repository.TokenRepository
 }
 
 var (
@@ -40,7 +40,7 @@ var (
 )
 
 func NewUserService(repo repository.UserRepository, roleRepo repository.RoleRepository, tokenRepo repository.TokenRepository) UserService {
-    return &userService{repo: repo, roleRepo: roleRepo, tokenRepo: tokenRepo}
+	return &userService{repo: repo, roleRepo: roleRepo, tokenRepo: tokenRepo}
 }
 
 func (s *userService) Register(ctx context.Context, req dto.UserRegisterReq) error {
@@ -135,22 +135,22 @@ func (s *userService) Login(ctx context.Context, req dto.UserLoginReq) (string, 
 		return "", ErrUserBanned
 	}
 
-    // Generate token
-    token, err := auth.GenerateToken(user.ID)
-    if err != nil {
-        return "", err
-    }
+	// Generate token
+	token, err := auth.GenerateToken(user.ID)
+	if err != nil {
+		return "", err
+	}
 
-    // Persist token for session control
-    if err := s.tokenRepo.Create(ctx, model.Token{Token: token, UserID: user.ID}); err != nil {
-        return "", err
-    }
+	// Persist token for session control
+	if err := s.tokenRepo.Create(ctx, model.Token{Token: token, UserID: user.ID}); err != nil {
+		return "", err
+	}
 
-    return token, nil
+	return token, nil
 }
 
 func (s *userService) Logout(ctx context.Context, token string) error {
-    return s.tokenRepo.DeleteByToken(ctx, token)
+	return s.tokenRepo.DeleteByToken(ctx, token)
 }
 
 func (s *userService) Update(ctx context.Context, id int64, req dto.UserUpdateReq) error {

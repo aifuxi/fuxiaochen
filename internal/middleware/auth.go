@@ -3,9 +3,9 @@ package middleware
 import (
 	"strings"
 
-	"github.com/aifuxi/fgo/internal/repository"
-	"github.com/aifuxi/fgo/pkg/auth"
-	"github.com/aifuxi/fgo/pkg/response"
+	"github.com/aifuxi/fuxiaochen-api/internal/repository"
+	"github.com/aifuxi/fuxiaochen-api/pkg/auth"
+	"github.com/aifuxi/fuxiaochen-api/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

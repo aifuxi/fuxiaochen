@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/aifuxi/fgo/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 

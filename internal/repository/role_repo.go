@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aifuxi/fgo/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"gorm.io/gorm"
 )
 

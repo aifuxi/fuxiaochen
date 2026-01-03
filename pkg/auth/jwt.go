@@ -3,7 +3,7 @@ package auth
 import (
 	"time"
 
-	"github.com/aifuxi/fgo/config"
+	"github.com/aifuxi/fuxiaochen-api/config"
 	"github.com/golang-jwt/jwt/v5"
 )
 

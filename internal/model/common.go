@@ -3,7 +3,7 @@ package model
 import (
 	"time"
 
-	"github.com/aifuxi/fgo/pkg/snowflake"
+	"github.com/aifuxi/fuxiaochen-api/pkg/snowflake"
 	"gorm.io/gorm"
 )
 

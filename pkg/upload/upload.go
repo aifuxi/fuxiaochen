@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"github.com/aifuxi/fgo/config"
+	"github.com/aifuxi/fuxiaochen-api/config"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss"
 	"github.com/aliyun/alibabacloud-oss-go-sdk-v2/oss/credentials"
 )

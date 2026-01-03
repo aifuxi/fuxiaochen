@@ -1,0 +1,50 @@
+# Version Control
+.git
+.gitignore
+.github
+
+# IDE & Editors
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+*.swn
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Node.js / Web
+**/node_modules
+**/.pnpm-store
+**/dist
+**/build
+**/out
+**/.next
+**/.vercel
+**/*.tsbuildinfo
+**/coverage
+**/.turbo
+
+# Go
+vendor
+fgo
+*.exe
+*.test
+*.out
+*.prof
+
+# Local Environment & Secrets
+.env
+.env.*
+*.local
+config/*.local.yml
+
+# Temporary Files
+tmp
+temp

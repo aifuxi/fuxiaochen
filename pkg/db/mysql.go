@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/aifuxi/fgo/config"
-	"github.com/aifuxi/fgo/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/config"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	glogger "gorm.io/gorm/logger"

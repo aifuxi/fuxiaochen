@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"github.com/aifuxi/fgo/internal/handler"
-	"github.com/aifuxi/fgo/internal/middleware"
-	"github.com/aifuxi/fgo/internal/repository"
-	"github.com/aifuxi/fgo/internal/service"
+	"github.com/aifuxi/fuxiaochen-api/internal/handler"
+	"github.com/aifuxi/fuxiaochen-api/internal/middleware"
+	"github.com/aifuxi/fuxiaochen-api/internal/repository"
+	"github.com/aifuxi/fuxiaochen-api/internal/service"
 	"github.com/gin-gonic/gin"
 )
 

@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/aifuxi/fgo/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
 )
 
 type UserRegisterReq struct {

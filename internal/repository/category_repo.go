@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/pkg/logger"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
 	"gorm.io/gorm"
 )
 

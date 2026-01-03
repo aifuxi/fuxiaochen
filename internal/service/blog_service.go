@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/aifuxi/fgo/internal/model"
-	"github.com/aifuxi/fgo/internal/model/dto"
-	"github.com/aifuxi/fgo/internal/repository"
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
+	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
+	"github.com/aifuxi/fuxiaochen-api/internal/repository"
 )
 
 type BlogService interface {
