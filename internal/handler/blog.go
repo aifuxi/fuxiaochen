@@ -113,3 +113,49 @@ func (h *BlogHandler) UpdateByID(ctx *gin.Context) {
 
 	response.Success(ctx, nil)
 }
+
+func (h *BlogHandler) PublishedByID(ctx *gin.Context) {
+	var idReq dto.BlogFindByIDReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		response.ParamError(ctx, err.Error())
+		return
+	}
+
+	var req dto.BlogPublishedReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ParamError(ctx, err.Error())
+		return
+	}
+
+	err := h.svc.PublishedByID(ctx, idReq.ID, req.Published)
+
+	if err != nil {
+		response.BusinessError(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}
+
+func (h *BlogHandler) FeaturedByID(ctx *gin.Context) {
+	var idReq dto.BlogFindByIDReq
+	if err := ctx.ShouldBindUri(&idReq); err != nil {
+		response.ParamError(ctx, err.Error())
+		return
+	}
+
+	var req dto.BlogFeaturedReq
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.ParamError(ctx, err.Error())
+		return
+	}
+
+	err := h.svc.FeaturedByID(ctx, idReq.ID, req.Featured)
+
+	if err != nil {
+		response.BusinessError(ctx, err.Error())
+		return
+	}
+
+	response.Success(ctx, nil)
+}

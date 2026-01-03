@@ -30,6 +30,8 @@ type BlogRepository interface {
 	List(ctx context.Context, option BlogListOption) ([]model.Blog, int64, error)
 	DeleteByID(ctx context.Context, id int64) error
 	Update(ctx context.Context, blog model.Blog) error
+	PublishedByID(ctx context.Context, id int64, published bool) error
+	FeaturedByID(ctx context.Context, id int64, featured bool) error
 }
 
 type blogRepo struct {
@@ -175,4 +177,16 @@ func (r *blogRepo) FindByTitle(ctx context.Context, title string) (*model.Blog, 
 
 func (r *blogRepo) DeleteByID(ctx context.Context, id int64) error {
 	return r.db.WithContext(ctx).Delete(&model.Blog{}, id).Error
+}
+
+func (r *blogRepo) PublishedByID(ctx context.Context, id int64, published bool) error {
+	return r.db.WithContext(ctx).Model(&model.Blog{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"published": published,
+	}).Error
+}
+
+func (r *blogRepo) FeaturedByID(ctx context.Context, id int64, featured bool) error {
+	return r.db.WithContext(ctx).Model(&model.Blog{}).Where("id = ?", id).Updates(map[string]interface{}{
+		"featured": featured,
+	}).Error
 }
