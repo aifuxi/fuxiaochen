@@ -67,12 +67,12 @@ func (r *blogRepo) Update(ctx context.Context, blog model.Blog) error {
 		}
 
 		// 更新基本字段
-		if err := tx.Model(&model.Blog{}).Updates(&blog).Error; err != nil {
+		if err := tx.Model(&blog).Updates(blog).Error; err != nil {
 			return err
 		}
 
 		// 更新标签关联
-		if err := tx.Model(&model.Blog{}).Association("Tags").Replace(blog.Tags); err != nil {
+		if err := tx.Model(&blog).Association("Tags").Replace(blog.Tags); err != nil {
 			return err
 		}
 
