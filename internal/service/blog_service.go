@@ -16,6 +16,8 @@ type BlogService interface {
 	FindBySlug(ctx context.Context, slug string) (*model.Blog, error)
 	UpdateByID(ctx context.Context, id int64, req *dto.BlogUpdateReq) error
 	DeleteByID(ctx context.Context, id int64) error
+	PublishedByID(ctx context.Context, id int64, published bool) error
+	FeaturedByID(ctx context.Context, id int64, featured bool) error
 }
 
 type blogService struct {
@@ -199,4 +201,30 @@ func (s *blogService) UpdateByID(ctx context.Context, id int64, req *dto.BlogUpd
 	blog.Featured = req.Featured
 
 	return s.repo.Update(ctx, *blog)
+}
+
+func (s *blogService) PublishedByID(ctx context.Context, id int64, published bool) error {
+	// Check if blog exists
+	blog, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if blog == nil {
+		return ErrBlogNotFound
+	}
+
+	return s.repo.PublishedByID(ctx, id, published)
+}
+
+func (s *blogService) FeaturedByID(ctx context.Context, id int64, featured bool) error {
+	// Check if blog exists
+	blog, err := s.repo.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if blog == nil {
+		return ErrBlogNotFound
+	}
+
+	return s.repo.FeaturedByID(ctx, id, featured)
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterBlogRoutes(api *gin.RouterGroup, svc service.UserService,tokenRepo repository.TokenRepository) {
+func RegisterBlogRoutes(api *gin.RouterGroup, svc service.UserService, tokenRepo repository.TokenRepository) {
 	h := handler.NewBlogHandler(service.NewBlogService(repository.NewBlogRepository(db.GetDB())))
 
 	routes := api.Group("/blogs")
@@ -22,5 +22,7 @@ func RegisterBlogRoutes(api *gin.RouterGroup, svc service.UserService,tokenRepo 
 		routes.GET("/:id", middleware.RequirePermissions(svc, model.PermissionAdminAll, model.PermissionBlogView), h.FindByID)
 		routes.PUT("/:id", middleware.RequirePermissions(svc, model.PermissionAdminAll, model.PermissionBlogUpdate), h.UpdateByID)
 		routes.DELETE("/:id", middleware.RequirePermissions(svc, model.PermissionAdminAll, model.PermissionBlogDelete), h.DeleteByID)
+		routes.PATCH("/:id/published", middleware.RequirePermissions(svc, model.PermissionAdminAll, model.PermissionBlogUpdate), h.PublishedByID)
+		routes.PATCH("/:id/featured", middleware.RequirePermissions(svc, model.PermissionAdminAll, model.PermissionBlogUpdate), h.FeaturedByID)
 	}
 }
