@@ -33,8 +33,6 @@ import {
 import { NICKNAME } from "@/constants";
 import { cn } from "@/lib/utils";
 
-import { socialMediaList } from "../components/hero-section";
-
 export const revalidate = 60;
 
 export default function Page() {
@@ -226,26 +224,6 @@ export default function Page() {
               <li>LG 27 英寸 4K</li>
               <li>键盘：珂芝（KIZI）K75</li>
               <li>鼠标：罗技（G）PRO 2 代</li>
-            </ul>
-          </div>
-
-          <div>
-            <h2>联系我</h2>
-            <p>你可以通过👇下面任意一种方式联系我</p>
-            <ul className="mb-0! flex list-none! items-center space-x-4 pl-0!">
-              {socialMediaList.map((el) => (
-                <li key={el.link}>
-                  <Link
-                    href={el.link}
-                    target="_blank"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "icon" }),
-                    )}
-                  >
-                    {el.icon}
-                  </Link>
-                </li>
-              ))}
             </ul>
           </div>
         </div>
