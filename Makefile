@@ -31,7 +31,7 @@ build-portal:
 	--build-arg NEXT_PUBLIC_UMAMI_URL="your_umami_url" \
 	--build-arg NEXT_PUBLIC_UMAMI_WEBSITE_ID="your_umami_website_id" \
 	--build-arg NEXT_PUBLIC_API_URL="http://localhost:8080" \
-	--build-arg SITE_URL="http://localhost:3000" \
+	--build-arg NEXT_PUBLIC_SITE_URL="http://localhost:3000" \
 	.
 
 .PHONY: dev migrate mysql build-portal
