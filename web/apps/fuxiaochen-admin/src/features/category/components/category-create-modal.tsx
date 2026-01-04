@@ -5,7 +5,6 @@ import {
 	createCategory,
 	getCategoryDetail,
 	updateCategory,
-	type CategoryCreateReq,
 } from "@/api/category";
 import { useRequest } from "ahooks";
 import { showSuccessToast } from "@/libs/toast";
@@ -13,6 +12,7 @@ import { useRef } from "react";
 import type { SemiFormApi } from "@/types/semi";
 import { slugValidatorRule } from "@/utils/validator";
 import { toSlug } from "@/libs/slug";
+import type { CategoryCreateReq } from "fuxiaochen-types";
 
 interface Props {
 	onSuccess?: () => void;

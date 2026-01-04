@@ -1,21 +1,6 @@
+import type { Blog, CommonResponse, ListReq } from "fuxiaochen-types";
+
 import request from "@/lib/request";
-
-import type { Category } from "./category";
-import type { CommonModel, CommonResponse, ListReq } from "./common";
-import type { Tag } from "./tag";
-
-export interface Blog extends CommonModel {
-  title: string;
-  slug: string;
-  description: string;
-  cover?: string;
-  content: string;
-  published: boolean;
-  publishedAt?: string;
-  categoryID: string;
-  category?: Category;
-  tags?: Tag[];
-}
 
 export interface BlogListReq extends ListReq {
   featuredStatus?: "featured" | "unfeatured";

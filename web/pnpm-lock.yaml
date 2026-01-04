@@ -61,6 +61,9 @@ importers:
       es-toolkit:
         specifier: ^1.43.0
         version: 1.43.0
+      fuxiaochen-types:
+        specifier: workspace:*
+        version: link:../../packages/fuxiaochen-types
       pubsub-js:
         specifier: ^1.9.5
         version: 1.9.5
@@ -203,6 +206,9 @@ importers:
       es-toolkit:
         specifier: ^1.39.10
         version: 1.43.0
+      fuxiaochen-types:
+        specifier: workspace:*
+        version: link:../../packages/fuxiaochen-types
       globals:
         specifier: ^16.3.0
         version: 16.5.0
@@ -364,123 +370,7 @@ importers:
         specifier: ^8.46.2
         version: 8.51.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
 
-  apps/fxiaochen-admin:
-    dependencies:
-      '@bytemd/plugin-breaks':
-        specifier: ^1.22.0
-        version: 1.22.0(bytemd@1.22.0)
-      '@bytemd/plugin-gfm':
-        specifier: ^1.22.0
-        version: 1.22.0(bytemd@1.22.0)
-      '@bytemd/plugin-highlight':
-        specifier: ^1.22.0
-        version: 1.22.0(bytemd@1.22.0)
-      '@bytemd/react':
-        specifier: ^1.22.0
-        version: 1.22.0(react@19.2.0)
-      '@douyinfe/semi-icons':
-        specifier: ^2.89.1
-        version: 2.90.1(react@19.2.0)
-      '@douyinfe/semi-icons-lab':
-        specifier: ^2.89.1
-        version: 2.90.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@douyinfe/semi-illustrations':
-        specifier: ^2.89.1
-        version: 2.90.1(react@19.2.0)
-      '@douyinfe/semi-ui-19':
-        specifier: ^2.89.1
-        version: 2.90.1(@floating-ui/dom@1.7.4)(@tiptap/suggestion@3.14.0(@tiptap/core@3.14.0(@tiptap/pm@3.14.0))(@tiptap/pm@3.14.0))(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@ebay/nice-modal-react':
-        specifier: ^1.2.13
-        version: 1.2.13(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@semi-bot/semi-theme-fgo':
-        specifier: 0.0.3
-        version: 0.0.3
-      '@tailwindcss/vite':
-        specifier: ^4.1.18
-        version: 4.1.18(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.1)(tsx@4.21.0)(yaml@2.8.2))
-      ahooks:
-        specifier: ^3.9.6
-        version: 3.9.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      axios:
-        specifier: ^1.13.2
-        version: 1.13.2
-      bytemd:
-        specifier: ^1.22.0
-        version: 1.22.0
-      date-fns:
-        specifier: ^4.1.0
-        version: 4.1.0
-      date-fns-tz:
-        specifier: ^3.2.0
-        version: 3.2.0(date-fns@4.1.0)
-      es-toolkit:
-        specifier: ^1.43.0
-        version: 1.43.0
-      pubsub-js:
-        specifier: ^1.9.5
-        version: 1.9.5
-      react:
-        specifier: ^19.2.0
-        version: 19.2.0
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.0(react@19.2.0)
-      react-router-dom:
-        specifier: ^7.11.0
-        version: 7.11.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      sass:
-        specifier: ^1.97.1
-        version: 1.97.1
-      tailwindcss:
-        specifier: ^4.1.18
-        version: 4.1.18
-      zustand:
-        specifier: ^5.0.9
-        version: 5.0.9(@types/react@19.2.7)(react@19.2.0)(use-sync-external-store@1.6.0(react@19.2.0))
-    devDependencies:
-      '@eslint/js':
-        specifier: ^9.39.1
-        version: 9.39.2
-      '@types/node':
-        specifier: ^24.10.1
-        version: 24.10.4
-      '@types/pubsub-js':
-        specifier: ^1.8.6
-        version: 1.8.6
-      '@types/react':
-        specifier: ^19.2.5
-        version: 19.2.7
-      '@types/react-dom':
-        specifier: ^19.2.3
-        version: 19.2.3(@types/react@19.2.7)
-      '@vitejs/plugin-react':
-        specifier: ^5.1.1
-        version: 5.1.2(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.1)(tsx@4.21.0)(yaml@2.8.2))
-      babel-plugin-react-compiler:
-        specifier: ^1.0.0
-        version: 1.0.0
-      eslint:
-        specifier: ^9.39.1
-        version: 9.39.2(jiti@2.6.1)
-      eslint-plugin-react-hooks:
-        specifier: ^7.0.1
-        version: 7.0.1(eslint@9.39.2(jiti@2.6.1))
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.24
-        version: 0.4.26(eslint@9.39.2(jiti@2.6.1))
-      globals:
-        specifier: ^16.5.0
-        version: 16.5.0
-      typescript:
-        specifier: ~5.9.3
-        version: 5.9.3
-      typescript-eslint:
-        specifier: ^8.46.4
-        version: 8.51.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
-      vite:
-        specifier: ^7.2.4
-        version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2)(sass@1.97.1)(tsx@4.21.0)(yaml@2.8.2)
+  packages/fuxiaochen-types: {}
 
 packages:
 

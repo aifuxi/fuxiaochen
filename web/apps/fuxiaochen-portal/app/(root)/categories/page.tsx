@@ -30,7 +30,7 @@ export default async function Page() {
             md:grid-cols-2
           `}
         >
-          {lists.map((category) => {
+          {lists?.map((category) => {
             return (
               <Link
                 key={category.slug}

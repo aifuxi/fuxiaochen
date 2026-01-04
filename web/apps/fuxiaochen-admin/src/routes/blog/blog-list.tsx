@@ -10,7 +10,7 @@ import {
 	IconSearch,
 } from "@douyinfe/semi-icons";
 import { useRequest, useSetState } from "ahooks";
-import { getBlogList, type Blog, type BlogListReq } from "@/api/blog";
+import { getBlogList } from "@/api/blog";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toModifiedISO8601 } from "@/libs/date";
@@ -24,10 +24,11 @@ import type {
 } from "@/types/semi";
 import BlogFeaturedChanger from "@/features/blog/components/blog-featured-changer";
 import BlogPublishedChanger from "@/features/blog/components/blog-published-changer";
+import type { BlogListReq, Blog } from "fuxiaochen-types";
 
 type FormValues = Pick<BlogListReq, "title" | "slug">;
 
-export default function BlogList() {
+export default function BlogListPage() {
 	const navigate = useNavigate();
 
 	const [req, setReq] = useSetState<BlogListReq>({

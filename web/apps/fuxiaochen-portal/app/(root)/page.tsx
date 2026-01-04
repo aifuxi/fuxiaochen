@@ -22,8 +22,6 @@ export default async function Page() {
   const recentBlogs = recentBlogResp?.data?.lists?.slice(0, 6) || [];
   const featuredBlogs = featuredBlogResp?.data?.lists.slice(0, 1) || [];
 
-  console.log("recentBlogs", recentBlogs.length);
-
   return (
     <div className="min-h-[calc(100vh-64px)]">
       <BlogHero />
