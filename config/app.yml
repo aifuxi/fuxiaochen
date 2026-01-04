@@ -6,7 +6,7 @@ server:
   # 运行模式: "debug" (开发模式) 或 "release" (生产模式)
   mode: "debug"
   # 应用版本号
-  version: "0.0.1"
+  version: "v0.0.2"
 
 database:
   # 数据库主机地址
@@ -30,7 +30,7 @@ log:
   # 日志级别: debug, info, warn, error, dpanic, panic, fatal
   level: "debug"
   # 日志文件路径
-  filename: "logs/fgo.log"
+  filename: "logs/app.log"
   # 每个日志文件保存的最大尺寸 单位：M
   max_size: 10
   # 文件最多保存多少天

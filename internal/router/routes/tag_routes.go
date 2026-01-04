@@ -6,13 +6,10 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"github.com/aifuxi/fuxiaochen-api/internal/repository"
 	"github.com/aifuxi/fuxiaochen-api/internal/service"
-	"github.com/aifuxi/fuxiaochen-api/pkg/db"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterTagRoutes(api *gin.RouterGroup, svc service.UserService, tokenRepo repository.TokenRepository) {
-	h := handler.NewTagHandler(service.NewTagService(repository.NewTagRepository(db.GetDB())))
-
+func RegisterTagRoutes(api *gin.RouterGroup, h *handler.TagHandler, svc service.UserService, tokenRepo repository.TokenRepository) {
 	routes := api.Group("/tags")
 	routes.Use(middleware.Auth(tokenRepo))
 	{

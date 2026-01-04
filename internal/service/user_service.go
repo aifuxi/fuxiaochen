@@ -8,7 +8,7 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/model/dto"
 	"github.com/aifuxi/fuxiaochen-api/internal/repository"
 	"github.com/aifuxi/fuxiaochen-api/pkg/auth"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/aifuxi/fuxiaochen-api/pkg/password"
 )
 
 type UserService interface {
@@ -54,7 +54,7 @@ func (s *userService) Register(ctx context.Context, req dto.UserRegisterReq) err
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	hashedPassword, err := password.Hash(req.Password)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (s *userService) Create(ctx context.Context, req dto.UserCreateReq) error {
 	}
 
 	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	hashedPassword, err := password.Hash(req.Password)
 	if err != nil {
 		return err
 	}
@@ -126,8 +126,7 @@ func (s *userService) Login(ctx context.Context, req dto.UserLoginReq) (string, 
 	}
 
 	// Verify password
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if err != nil {
+	if !password.Compare(user.Password, req.Password) {
 		return "", ErrInvalidEmailOrPassword
 	}
 
@@ -263,7 +262,7 @@ func (s *userService) BanByID(ctx context.Context, id int64, ban bool) error {
 	return s.repo.BanByID(ctx, id, ban)
 }
 
-func (s *userService) UpdatePasswordByID(ctx context.Context, id int64, password string) error {
+func (s *userService) UpdatePasswordByID(ctx context.Context, id int64, pwd string) error {
 	user, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return err
@@ -272,10 +271,10 @@ func (s *userService) UpdatePasswordByID(ctx context.Context, id int64, password
 		return ErrUserNotFound
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword, err := password.Hash(pwd)
 	if err != nil {
 		return err
 	}
 
-	return s.repo.UpdatePasswordByID(ctx, id, string(hashedPassword))
+	return s.repo.UpdatePasswordByID(ctx, id, hashedPassword)
 }
