@@ -6,10 +6,10 @@ import {
   Clock01Icon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { Blog } from "fuxiaochen-types";
 
 import { Badge } from "@/components/ui/badge";
 
-import { Blog } from "@/api/blog";
 import { PATHS } from "@/constants";
 import { calculateReadTime, formattedDate } from "@/lib/common";
 

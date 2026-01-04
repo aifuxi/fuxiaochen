@@ -1,31 +1,12 @@
+import type {
+  CommonResponse,
+  Tag,
+  TagCreateReq,
+  TagListReq,
+  TagListResp,
+} from "fuxiaochen-types";
+
 import request from "@/lib/request";
-
-import { type Blog } from "./blog";
-import type { CommonModel, CommonResponse, ListReq } from "./common";
-
-export interface Tag extends CommonModel {
-  name: string;
-  slug: string;
-  description: string;
-  blogs?: Blog[];
-  blogCount?: number;
-}
-
-export interface TagListReq extends ListReq {
-  name?: string;
-  slug?: string;
-}
-
-export interface TagListResp {
-  total: number;
-  lists: Tag[];
-}
-
-export interface TagCreateReq {
-  name: string;
-  slug: string;
-  description?: string;
-}
 
 const API_BASE_PATH = "/api/v1/public/tags";
 

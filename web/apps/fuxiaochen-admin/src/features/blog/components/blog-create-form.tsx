@@ -1,9 +1,4 @@
-import {
-	createBlog,
-	getBlogDetail,
-	updateBlog,
-	type BlogCreateReq,
-} from "@/api/blog";
+import { createBlog, getBlogDetail, updateBlog } from "@/api/blog";
 import type { SemiFormApi } from "@/types/semi";
 import { Button, Form, Spin } from "@douyinfe/semi-ui-19";
 import { useRef } from "react";
@@ -18,6 +13,7 @@ import { ROUTES } from "@/constants/route";
 import BytemdField from "@/components/bytemd-field";
 import { slugValidatorRule } from "@/utils/validator";
 import { toSlug } from "@/libs/slug";
+import type { BlogCreateReq } from "fuxiaochen-types";
 
 interface Props {
 	id?: string;

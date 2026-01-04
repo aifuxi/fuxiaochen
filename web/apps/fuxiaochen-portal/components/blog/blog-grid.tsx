@@ -2,10 +2,10 @@ import Link from "next/link";
 
 import { Calendar04Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { Blog } from "fuxiaochen-types";
 
 import { Badge } from "@/components/ui/badge";
 
-import { type Blog } from "@/api/blog";
 import { PATHS } from "@/constants/path";
 import { calculateReadTime, formattedDate } from "@/lib/common";
 

@@ -1,25 +1,11 @@
+import type {
+  Category,
+  CategoryListReq,
+  CategoryListResp,
+  CommonResponse,
+} from "fuxiaochen-types";
+
 import request from "@/lib/request";
-
-import { type Blog } from "./blog";
-import type { CommonModel, CommonResponse, ListReq } from "./common";
-
-export interface Category extends CommonModel {
-  name: string;
-  slug: string;
-  description: string;
-  blogs?: Blog[];
-  blogCount?: number;
-}
-
-export interface CategoryListReq extends ListReq {
-  name?: string;
-  slug?: string;
-}
-
-export interface CategoryListResp {
-  total: number;
-  lists: Category[];
-}
 
 const API_BASE_PATH = "/api/v1/public/categories";
 

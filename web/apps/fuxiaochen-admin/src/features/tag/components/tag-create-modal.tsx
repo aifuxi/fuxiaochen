@@ -1,18 +1,14 @@
 import NiceModal from "@ebay/nice-modal-react";
 import NiceSemiModal from "@/components/nice-semi-modal";
 import { Button, Form, Spin } from "@douyinfe/semi-ui-19";
-import {
-	createTag,
-	getTagDetail,
-	updateTag,
-	type TagCreateReq,
-} from "@/api/tag";
+import { createTag, getTagDetail, updateTag } from "@/api/tag";
 import { useRequest } from "ahooks";
 import { showSuccessToast } from "@/libs/toast";
 import { useRef } from "react";
 import type { SemiFormApi } from "@/types/semi";
 import { slugValidatorRule } from "@/utils/validator";
 import { toSlug } from "@/libs/slug";
+import type { TagCreateReq } from "fuxiaochen-types";
 
 interface Props {
 	onSuccess?: () => void;

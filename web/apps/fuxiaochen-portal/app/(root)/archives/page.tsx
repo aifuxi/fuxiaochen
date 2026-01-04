@@ -2,10 +2,11 @@ import Link from "next/link";
 
 import { Book02Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { Blog } from "fuxiaochen-types";
 
-import { type Blog, getBlogList } from "@/api/blog";
+import { getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
-import { formattedDate, toYYYYMMDD } from "@/lib/common";
+import { formattedDate } from "@/lib/common";
 
 export const revalidate = 60;
 

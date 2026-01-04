@@ -1,6 +1,6 @@
 import { Button, Empty, Form, Layout, Typography } from "@douyinfe/semi-ui-19";
 import { useNavigate } from "react-router-dom";
-import { login, type LoginRequest } from "@/api/auth";
+import { login } from "@/api/auth";
 import { setToken } from "@/utils/token";
 import { useRequest } from "ahooks";
 import {
@@ -12,6 +12,7 @@ import { ROUTES } from "@/constants/route";
 import ThemeModeChanger from "@/components/theme-mode-changer";
 import { getUserInfo } from "@/api/user";
 import useUserStore from "@/stores/use-user-store";
+import type { LoginRequest } from "fuxiaochen-types";
 
 export default function Login() {
 	const navigate = useNavigate();
