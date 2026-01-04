@@ -1,3 +1,4 @@
+import { Blog } from "./blog";
 import type { CommonModel, ListReq } from "./common";
 
 export interface Tag extends CommonModel {
@@ -5,6 +6,7 @@ export interface Tag extends CommonModel {
 	slug: string;
 	description: string;
 	blogCount: number;
+	blogs?: Blog[];
 }
 
 export interface TagListReq extends ListReq {
