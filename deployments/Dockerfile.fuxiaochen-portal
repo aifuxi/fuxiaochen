@@ -9,6 +9,9 @@ COPY web/pnpm-workspace.yaml web/pnpm-lock.yaml web/package.json ./
 # App manifest for better install cache
 COPY web/apps/fuxiaochen-portal/package.json apps/fuxiaochen-portal/package.json
 
+# pnpm monorepo 项目 必须 必须 必须 拷贝所有子包（关键！缺失则无法解析本地包）
+COPY web/packages/ packages/
+
 # Install only the portal's dependencies
 RUN pnpm --filter "fuxiaochen-portal" install --frozen-lockfile
 
