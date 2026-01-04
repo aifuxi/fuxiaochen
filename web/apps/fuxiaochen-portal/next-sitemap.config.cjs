@@ -1,4 +1,4 @@
-const siteUrl = process.env.SITE_URL || "https://fuxiaochen.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://fuxiaochen.com";
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -16,6 +16,9 @@ module.exports = {
         userAgent: "*",
         allow: "/",
       },
+    ],
+    additionalSitemaps: [
+      `${siteUrl}/server-sitemap.xml`, // <==== Add here
     ],
   },
 };
