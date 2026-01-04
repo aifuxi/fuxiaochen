@@ -13,7 +13,7 @@ export async function GET() {
 
   const blogsSitemaps = lists.map((item): ISitemapField => {
     return {
-      loc: `${PATHS.BLOG}/${item.slug}`,
+      loc: `${process.env.NEXT_PUBLIC_SITE_URL}/${PATHS.BLOG}/${item.slug}`,
       lastmod: new Date(item.updatedAt).toISOString(),
       changefreq: "hourly",
     };
