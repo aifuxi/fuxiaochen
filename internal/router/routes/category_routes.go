@@ -6,13 +6,10 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"github.com/aifuxi/fuxiaochen-api/internal/repository"
 	"github.com/aifuxi/fuxiaochen-api/internal/service"
-	"github.com/aifuxi/fuxiaochen-api/pkg/db"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterCategoryRoutes(api *gin.RouterGroup, svc service.UserService, tokenRepo repository.TokenRepository) {
-	h := handler.NewCategoryHandler(service.NewCategoryService(repository.NewCategoryRepository(db.GetDB())))
-
+func RegisterCategoryRoutes(api *gin.RouterGroup, h *handler.CategoryHandler, svc service.UserService, tokenRepo repository.TokenRepository) {
 	routes := api.Group("/categories")
 	routes.Use(middleware.Auth(tokenRepo))
 	{

@@ -9,9 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterUserRoutes(api *gin.RouterGroup, svc service.UserService, tokenRepo repository.TokenRepository) {
-	h := handler.NewUserHandler(svc)
-
+func RegisterUserRoutes(api *gin.RouterGroup, h *handler.UserHandler, svc service.UserService, tokenRepo repository.TokenRepository) {
 	routes := api.Group("/users")
 	routes.Use(middleware.Auth(tokenRepo))
 	{

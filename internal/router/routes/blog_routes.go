@@ -6,13 +6,10 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"github.com/aifuxi/fuxiaochen-api/internal/repository"
 	"github.com/aifuxi/fuxiaochen-api/internal/service"
-	"github.com/aifuxi/fuxiaochen-api/pkg/db"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterBlogRoutes(api *gin.RouterGroup, svc service.UserService, tokenRepo repository.TokenRepository) {
-	h := handler.NewBlogHandler(service.NewBlogService(repository.NewBlogRepository(db.GetDB())))
-
+func RegisterBlogRoutes(api *gin.RouterGroup, h *handler.BlogHandler, svc service.UserService, tokenRepo repository.TokenRepository) {
 	routes := api.Group("/blogs")
 	routes.Use(middleware.Auth(tokenRepo))
 	{

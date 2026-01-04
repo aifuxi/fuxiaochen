@@ -8,7 +8,7 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"github.com/aifuxi/fuxiaochen-api/pkg/db"
 	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/aifuxi/fuxiaochen-api/pkg/password"
 )
 
 func main() {
@@ -121,8 +121,7 @@ func main() {
 		Password: "123456",
 	}
 
-	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(defaultAdmin.Password), bcrypt.DefaultCost)
+	hashedPassword, err := password.Hash(defaultAdmin.Password)
 	if err != nil {
 		logger.Sugar.Fatalf("Failed to hash default admin password: %v", err)
 	}

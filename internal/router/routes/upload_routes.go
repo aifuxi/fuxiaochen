@@ -4,13 +4,10 @@ import (
 	"github.com/aifuxi/fuxiaochen-api/internal/handler"
 	"github.com/aifuxi/fuxiaochen-api/internal/middleware"
 	"github.com/aifuxi/fuxiaochen-api/internal/repository"
-	"github.com/aifuxi/fuxiaochen-api/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterUploadRoutes(api *gin.RouterGroup, tokenRepo repository.TokenRepository) {
-	h := handler.NewUploadHandler(service.NewUploadService())
-
+func RegisterUploadRoutes(api *gin.RouterGroup, h *handler.UploadHandler, tokenRepo repository.TokenRepository) {
 	routes := api.Group("/upload")
 	routes.Use(middleware.Auth(tokenRepo))
 	{

@@ -5,10 +5,11 @@ import (
 	"log"
 
 	"github.com/aifuxi/fuxiaochen-api/config"
+	"github.com/aifuxi/fuxiaochen-api/internal/app"
+	"github.com/aifuxi/fuxiaochen-api/internal/router"
 	"github.com/aifuxi/fuxiaochen-api/pkg/db"
 	"github.com/aifuxi/fuxiaochen-api/pkg/logger"
 	"github.com/aifuxi/fuxiaochen-api/pkg/upload"
-	"github.com/aifuxi/fuxiaochen-api/router"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,12 +29,13 @@ func main() {
 
 	upload.Init(config.AppConfig.OSS)
 
-	router := router.Init(config.AppConfig.Server.Version)
+	container := app.NewContainer()
+	router := router.Init(config.AppConfig.Server.Version, container)
 
 	addr := fmt.Sprintf("%s:%d", config.AppConfig.Server.Host, config.AppConfig.Server.Port)
 
 	// 打印应用版本号
-	logger.Sugar.Infof("FGO API Server v%s is running on %s \n", config.AppConfig.Server.Version, addr)
+	logger.Sugar.Infof("API Server %s is running on %s \n", config.AppConfig.Server.Version, addr)
 
 	if err := router.Run(addr); err != nil {
 		logger.Sugar.Fatalf("Failed to run server: %v", err)
