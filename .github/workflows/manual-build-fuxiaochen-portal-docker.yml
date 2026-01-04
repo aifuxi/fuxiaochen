@@ -41,4 +41,4 @@ jobs:
             NEXT_PUBLIC_UMAMI_URL=${{ vars.NEXT_PUBLIC_UMAMI_URL }}
             NEXT_PUBLIC_UMAMI_WEBSIT_ID=${{ vars.NEXT_PUBLIC_UMAMI_WEBSIT_ID }}
             NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
-            SITE_URL=${{ vars.SITE_URL }}
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}

@@ -35,8 +35,8 @@ ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 # 网站地址
-ARG SITE_URL
-ENV SITE_URL=$SITE_URL
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
 # Build Next.js (standalone output is enabled in next.config.mjs)
 RUN pnpm --filter "fuxiaochen-portal" build
