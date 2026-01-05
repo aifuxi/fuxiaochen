@@ -11,7 +11,7 @@ mysql:
 	docker run -d \
 	--name fgo-mysql \
 	--restart always \
-	-p 8306:3306 \
+	--network host \
 	-v fgo-mysql-data:/var/lib/mysql \
 	-e MYSQL_ROOT_PASSWORD="123456" \
 	-e MYSQL_DATABASE="fgo" \
@@ -25,7 +25,7 @@ mysql:
 build-portal:
 	DOCKER_BUILDKIT=1 \
 	docker build \
-	--network=host \
+	--network host \
 	-t fuxiaochen-portal:latest \
 	-f deployments/Dockerfile.fuxiaochen-portal \
 	--build-arg NEXT_PUBLIC_UMAMI_URL="your_umami_url" \
@@ -36,4 +36,29 @@ build-portal:
 	--build-arg NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT="your_google_search_console_content" \
 	.
 
-.PHONY: dev migrate mysql build-portal
+# 本地构建 api
+build-api:
+	DOCKER_BUILDKIT=1 \
+	docker build \
+	--network host \
+	-t fuxiaochen-api:latest \
+	-f deployments/Dockerfile.fuxiaochen-api \
+	.
+
+# 本地运行 api (for 测试)
+run-api:
+	docker run -d \
+	--name fuxiaochen-api \
+	--restart always \
+	--network host \
+	fuxiaochen-api:latest
+
+# 本地运行 portal
+run-portal:
+	docker run -d \
+	--name fuxiaochen-portal \
+	--restart always \
+	--network host \
+	fuxiaochen-portal:latest
+
+.PHONY: dev migrate mysql build-portal build-api

@@ -6,13 +6,13 @@ server:
   # 运行模式: "debug" (开发模式) 或 "release" (生产模式)
   mode: "debug"
   # 应用版本号
-  version: "v0.0.2"
+  version: "v0.0.5"
 
 database:
   # 数据库主机地址
   host: "127.0.0.1"
   # 数据库端口
-  port: 8306
+  port: 3306
   # 数据库用户名
   user: "root"
   # 数据库密码
