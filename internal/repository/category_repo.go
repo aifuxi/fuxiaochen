@@ -51,8 +51,6 @@ func (r *categoryRepo) List(ctx context.Context, option CategoryListOption) ([]m
 
 	query := r.db.WithContext(ctx).Model(&model.Category{})
 
-	logger.GetLoggerWithSkip(1).Infof("CategoryRepository.List: %v", option)
-
 	if option.WithBlog {
 		query = query.Preload("Blogs")
 	}
