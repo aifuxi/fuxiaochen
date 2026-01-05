@@ -47,7 +47,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         {/* Google Search Console 验证 */}
         <meta
           name="google-site-verification"
-          content="DTiRVawomypV2iRoz9UUw2P0wAxnPs-kffJl6MNevdM"
+          content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
         />
       </head>
       <body className="debug-screens scroll-smooth font-sans antialiased">
@@ -59,7 +59,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+      )}
 
       {/* umami 统计 */}
       {isProduction() && (
