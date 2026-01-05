@@ -17,7 +17,6 @@ type Response struct {
 
 // Success 成功
 func Success(ctx *gin.Context, data any) {
-	logger.GetLoggerWithSkip(1).Infof("Success: %v", data)
 	ctx.JSON(http.StatusOK, Response{
 		Code:      0,
 		Message:   "ok",
