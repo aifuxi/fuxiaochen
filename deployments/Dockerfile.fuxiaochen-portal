@@ -46,6 +46,13 @@ ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=$NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
 ARG NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT
 ENV NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT=$NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT
 
+# 自定义 NEXT_SERVER_ACTIONS_ENCRYPTION_KEY，修复重新部署Next.js项目时server actions 加密问题，报错信息像下面这样
+# Error: Failed to find Server Action "x". This request might be from an older or newer deployment.
+# Read more: https://nextjs.org/docs/messages/failed-to-find-server-action
+# 可以使用 openssl rand -base64 32 生成一个 32 字节的随机字符串
+ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+ENV NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=$NEXT_SERVER_ACTIONS_ENCRYPTION_KEY
+
 # Build Next.js (standalone output is enabled in next.config.mjs)
 RUN pnpm --filter "fuxiaochen-portal" build
 
