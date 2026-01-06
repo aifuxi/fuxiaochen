@@ -27,6 +27,7 @@ export function ModeToggle({
         variant={variant ?? "outline"}
         size="icon"
         onClick={handleThemeToggle}
+        className="cursor-pointer"
       >
         <HugeiconsIcon
           icon={Sun03Icon}
