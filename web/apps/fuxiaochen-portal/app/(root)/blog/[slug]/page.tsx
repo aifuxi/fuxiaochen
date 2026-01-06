@@ -50,11 +50,11 @@ export default async function Page(props: {
               <Badge variant="outline">{blog?.category?.name}</Badge>
             </div>
 
-            <h1 className="mb-4 text-4xl leading-tight font-bold">
+            <h1 className="mb-4 text-4xl leading-tight font-bold break-all">
               {blog.title}
             </h1>
 
-            <p className="mb-6 text-lg text-muted-foreground">
+            <p className="mb-6 text-lg text-muted-foreground break-all">
               {blog.description}
             </p>
 

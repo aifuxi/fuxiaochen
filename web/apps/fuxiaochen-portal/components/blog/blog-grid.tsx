@@ -55,13 +55,13 @@ export function BlogGrid({ blogs, title = "最新博客" }: Props) {
               <h3
                 className={`
                   mb-3 text-xl font-bold transition-colors
-                  group-hover:text-primary
+                  group-hover:text-primary break-all
                 `}
               >
                 {blog.title}
               </h3>
 
-              <p className="mb-4 flex-grow text-sm leading-relaxed text-muted-foreground">
+              <p className="mb-4 break-all flex-grow text-sm leading-relaxed text-muted-foreground">
                 {blog.description}
               </p>
 
@@ -70,7 +70,7 @@ export function BlogGrid({ blogs, title = "最新博客" }: Props) {
                   <Badge
                     key={tag.id}
                     variant="outline"
-                    className="font-mono text-xs"
+                    className="font-mono text-xs break-all"
                   >
                     {tag.name}
                   </Badge>
