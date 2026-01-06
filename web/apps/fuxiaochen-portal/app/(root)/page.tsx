@@ -4,8 +4,6 @@ import { FeaturedPost } from "@/components/blog/featured-post";
 
 import { getBlogList } from "@/api/blog";
 
-export const revalidate = 60;
-
 export default async function Page() {
   const [recentBlogResp, featuredBlogResp] = await Promise.all([
     getBlogList({
@@ -19,8 +17,8 @@ export default async function Page() {
     }),
   ]);
 
-  const recentBlogs = recentBlogResp?.data?.lists?.slice(0, 6) || [];
-  const featuredBlogs = featuredBlogResp?.data?.lists.slice(0, 1) || [];
+  const recentBlogs = recentBlogResp?.lists?.slice(0, 6) || [];
+  const featuredBlogs = featuredBlogResp?.lists.slice(0, 1) || [];
 
   return (
     <div className="min-h-[calc(100vh-64px)]">

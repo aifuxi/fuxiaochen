@@ -6,15 +6,13 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { getTagList } from "@/api/tag";
 import { PATHS } from "@/constants";
 
-export const revalidate = 60;
-
 export default async function Page() {
   const resp = await getTagList({
     page: 1,
     pageSize: 10000,
   });
 
-  const { lists = [] } = resp.data;
+  const { lists = [] } = resp;
 
   return (
     <div>
