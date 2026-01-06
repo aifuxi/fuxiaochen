@@ -1,12 +1,18 @@
 import Link from "next/link";
 
-import { ImageAssets, WEBSITE } from "@/constants";
+import {
+  GITHUB_PAGE,
+  ImageAssets,
+  SOURCE_CODE_GITHUB_PAGE,
+  WEBSITE,
+} from "@/constants";
+import { cn } from "@/lib/utils";
 
 import { navItems } from "./config";
 
 import { IconBrandGithub } from "../icons";
 import { ModeToggle } from "../mode-toggle";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 
 export const Navbar = () => {
   return (
@@ -45,9 +51,12 @@ export const Navbar = () => {
           <div className="flex items-center gap-4">
             <ModeToggle variant="ghost" aria-label="切换主题" />
 
-            <Button variant="ghost" size="icon" className="text-base">
-              <IconBrandGithub />
-            </Button>
+            <Link
+              href={SOURCE_CODE_GITHUB_PAGE}
+              className={cn(buttonVariants({ size: "icon", variant: "ghost" }))}
+            >
+              <IconBrandGithub className="size-5" />
+            </Link>
           </div>
         </div>
       </div>
