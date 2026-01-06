@@ -107,7 +107,6 @@ export function CategoryField(props: CategoryFieldProps) {
 			extraText={
 				<div className="inline-flex items-center">
 					<Button
-						link
 						theme="borderless"
 						icon={<IconRefresh />}
 						onClick={() => {
