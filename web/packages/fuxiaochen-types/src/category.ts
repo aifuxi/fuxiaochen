@@ -1,4 +1,4 @@
-import { Blog } from "./blog";
+import type { Blog } from "./blog";
 import type { CommonModel, ListReq } from "./common";
 
 export interface Category extends CommonModel {
