@@ -53,6 +53,7 @@ export const Navbar = () => {
 
             <Link
               href={SOURCE_CODE_GITHUB_PAGE}
+              target="_blank"
               className={cn(buttonVariants({ size: "icon", variant: "ghost" }))}
             >
               <IconBrandGithub className="size-5" />
