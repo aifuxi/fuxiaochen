@@ -6,14 +6,12 @@ import { BlogGrid } from "@/components/blog/blog-grid";
 
 import { getTagDetail } from "@/api/tag";
 
-export const revalidate = 60;
-
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
   const resp = await getTagDetail(params.slug);
-  const tag = resp.data;
+  const tag = resp;
 
   if (isNil(tag)) {
     return notFound();

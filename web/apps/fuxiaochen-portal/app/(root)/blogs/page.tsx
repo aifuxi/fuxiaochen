@@ -2,15 +2,13 @@ import { BlogGrid } from "@/components/blog/blog-grid";
 
 import { getBlogList } from "@/api/blog";
 
-export const revalidate = 60;
-
 export default async function Page() {
   const resp = await getBlogList({
     page: 1,
     pageSize: 10000,
   });
 
-  const { lists = [] } = resp.data;
+  const { lists = [] } = resp;
 
   return (
     <div className="container mx-auto px-4 py-16">

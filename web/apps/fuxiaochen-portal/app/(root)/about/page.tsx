@@ -33,8 +33,6 @@ import {
 import { NICKNAME } from "@/constants";
 import { cn } from "@/lib/utils";
 
-export const revalidate = 60;
-
 export default function Page() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-16">

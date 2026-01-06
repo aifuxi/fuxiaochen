@@ -18,14 +18,12 @@ import { PATHS } from "@/constants";
 import { formattedDate } from "@/lib/common";
 import { calculateReadTime } from "@/lib/common";
 
-export const revalidate = 60;
-
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
   const resp = await getBlogDetail(params.slug);
-  const blog = resp.data;
+  const blog = resp;
 
   if (isNil(blog)) {
     return notFound();

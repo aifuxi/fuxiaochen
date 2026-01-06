@@ -9,7 +9,7 @@ export async function GET() {
     pageSize: 10000,
   });
 
-  const { lists = [] } = resp.data;
+  const { lists = [] } = resp;
 
   const blogsSitemaps = lists.map((item): ISitemapField => {
     return {

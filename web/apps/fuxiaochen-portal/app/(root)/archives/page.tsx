@@ -8,15 +8,13 @@ import { getBlogList } from "@/api/blog";
 import { PATHS } from "@/constants";
 import { formattedDate } from "@/lib/common";
 
-export const revalidate = 60;
-
 export default async function Page() {
   const resp = await getBlogList({
     page: 1,
     pageSize: 10000,
   });
 
-  const { lists = [], total = 0 } = resp.data;
+  const { lists = [], total = 0 } = resp;
 
   // 根据博客的创建年份分组，年份从到大小排序，年份中月份也从到大小排序
   const groupedBlogs = lists.reduce((acc, blog) => {

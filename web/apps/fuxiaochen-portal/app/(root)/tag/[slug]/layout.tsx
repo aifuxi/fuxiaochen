@@ -11,7 +11,7 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const params = await props.params;
   const resp = await getTagDetail(params.slug);
-  const tag = resp.data;
+  const tag = resp;
 
   if (isNil(tag)) {
     return {};

@@ -12,7 +12,7 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const params = await props.params;
   const resp = await getBlogDetail(params.slug);
-  const blog = resp.data;
+  const blog = resp;
 
   if (isNil(blog)) {
     return {};

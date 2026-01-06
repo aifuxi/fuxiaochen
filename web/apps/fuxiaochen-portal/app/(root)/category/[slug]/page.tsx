@@ -6,14 +6,12 @@ import { BlogGrid } from "@/components/blog/blog-grid";
 
 import { getCategoryDetail } from "@/api/category";
 
-export const revalidate = 60;
-
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
   const params = await props.params;
   const resp = await getCategoryDetail(params.slug);
-  const category = resp.data;
+  const category = resp;
 
   if (isNil(category)) {
     return notFound();
