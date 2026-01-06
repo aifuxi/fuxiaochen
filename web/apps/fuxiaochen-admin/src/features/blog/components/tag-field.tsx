@@ -106,7 +106,6 @@ export function TagField(props: TagFieldProps) {
 			extraText={
 				<div className="inline-flex items-center">
 					<Button
-						link
 						theme="borderless"
 						icon={<IconRefresh />}
 						onClick={() => {
