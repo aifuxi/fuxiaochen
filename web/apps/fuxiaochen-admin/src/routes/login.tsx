@@ -10,35 +10,19 @@ import {
 import { showSuccessToast } from "@/libs/toast";
 import { ROUTES } from "@/constants/route";
 import ThemeModeChanger from "@/components/theme-mode-changer";
-import { getUserInfo } from "@/api/user";
-import useUserStore from "@/stores/use-user-store";
 import type { LoginRequest } from "fuxiaochen-types";
 
 export default function Login() {
 	const navigate = useNavigate();
-	const setUserInfo = useUserStore((s) => s.setUserInfo);
-
-	const { run: runGetUserInfo, loading: loadingGetUserInfo } = useRequest(
-		getUserInfo,
-		{
-			manual: true,
-			onSuccess(res) {
-				setUserInfo(res.data);
-				navigate(ROUTES.Home.href);
-				showSuccessToast("登录成功");
-			},
-		}
-	);
 
 	const { loading, run } = useRequest(login, {
 		manual: true,
 		onSuccess(res) {
 			setToken(res.data.token);
-			runGetUserInfo();
+			navigate(ROUTES.Home.href);
+			showSuccessToast("登录成功");
 		},
 	});
-
-	const finalLoading = loading || loadingGetUserInfo;
 
 	return (
 		<Layout className="relative h-svh flex flex-col">
@@ -66,7 +50,7 @@ export default function Login() {
 					<Typography.Title heading={2}>后台登录</Typography.Title>
 
 					<Form<LoginRequest>
-						disabled={finalLoading}
+						disabled={loading}
 						layout="vertical"
 						className="w-2xs"
 						onSubmit={(values) => {
@@ -111,7 +95,7 @@ export default function Login() {
 								htmlType="submit"
 								size="large"
 								block
-								loading={finalLoading}
+								loading={loading}
 							>
 								登录
 							</Button>
