@@ -118,7 +118,7 @@ export default function MainLayout() {
 					]}
 					header={{
 						logo: <IconSemiLogo style={{ fontSize: 36 }} />,
-						text: "Semi Design",
+						text: "FXC 运营后台",
 					}}
 					footer={{
 						collapseButton: true,
