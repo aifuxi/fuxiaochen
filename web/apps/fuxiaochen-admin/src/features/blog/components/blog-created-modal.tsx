@@ -1,7 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 import NiceModal from "@ebay/nice-modal-react";
+
 import NiceSemiModal from "@/components/nice-semi-modal";
 
-import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/route";
 
 interface Props {

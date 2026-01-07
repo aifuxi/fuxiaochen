@@ -1,6 +1,7 @@
-import useThemeMode, { Theme } from "@/hooks/use-theme-mode";
 import { IconMoon, IconSun } from "@douyinfe/semi-icons";
 import { Button, Tooltip } from "@douyinfe/semi-ui-19";
+
+import useThemeMode, { Theme } from "@/hooks/use-theme-mode";
 
 export default function ThemeModeChanger() {
   const { themeMode, toggleThemeMode } = useThemeMode();

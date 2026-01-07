@@ -1,8 +1,11 @@
 import NiceModal from "@ebay/nice-modal-react";
-import NiceSemiModal from "@/components/nice-semi-modal";
-import { deleteBlog } from "@/api/blog";
 import { useRequest } from "ahooks";
+
+import NiceSemiModal from "@/components/nice-semi-modal";
+
 import { showSuccessToast } from "@/libs/toast";
+
+import { deleteBlog } from "@/api/blog";
 
 interface Props {
   onSuccess?: () => void;
@@ -39,4 +42,3 @@ const BlogDeleteModal = NiceModal.create(({ onSuccess, blogID }: Props) => {
 });
 
 export default BlogDeleteModal;
-

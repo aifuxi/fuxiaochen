@@ -1,11 +1,17 @@
-import NiceModal from "@ebay/nice-modal-react";
-import NiceSemiModal from "@/components/nice-semi-modal";
-import { Form, Spin } from "@douyinfe/semi-ui-19";
-import { createUser, getUserDetail, updateUser } from "@/api/user";
-import { useRequest } from "ahooks";
-import { showSuccessToast } from "@/libs/toast";
 import { useRef } from "react";
+
+import { Form, Spin } from "@douyinfe/semi-ui-19";
+import NiceModal from "@ebay/nice-modal-react";
+import { useRequest } from "ahooks";
+
 import type { SemiFormApi } from "@/types/semi";
+
+import NiceSemiModal from "@/components/nice-semi-modal";
+
+import { showSuccessToast } from "@/libs/toast";
+
+import { createUser, getUserDetail, updateUser } from "@/api/user";
+
 import { RoleField } from "./role-field";
 
 interface Props {

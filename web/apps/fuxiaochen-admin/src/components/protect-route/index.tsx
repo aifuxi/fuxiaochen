@@ -1,13 +1,14 @@
 import {
-  PERMISSION_CODES,
-  type PermissionCode,
-} from "@/constants/permission-codes";
-import useUserStore from "@/stores/use-user-store";
-import {
   IllustrationNoAccess,
   IllustrationNoAccessDark,
 } from "@douyinfe/semi-illustrations";
 import { Empty } from "@douyinfe/semi-ui-19";
+
+import {
+  PERMISSION_CODES,
+  type PermissionCode,
+} from "@/constants/permission-codes";
+import useUserStore from "@/stores/use-user-store";
 
 interface Props extends React.PropsWithChildren {
   /**
@@ -40,12 +41,12 @@ export default function ProtectRoute({
 
   const hasSomePermission =
     requireSomePermissionCodesTemp?.some((item) =>
-      permissionCodes.includes(item)
+      permissionCodes.includes(item),
     ) ?? false;
 
   const hasEveryPermission =
     requireAllPermissionCodes?.every((item) =>
-      permissionCodes.includes(item)
+      permissionCodes.includes(item),
     ) ?? false;
 
   if (!userInfo || (!hasSomePermission && !hasEveryPermission)) {

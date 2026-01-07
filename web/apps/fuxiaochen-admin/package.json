@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "lint:fix": "eslint --fix --quiet --concurrency auto .",
+    "format": "prettier --write --log-level warn .",
     "preview": "vite preview"
   },
   "dependencies": {

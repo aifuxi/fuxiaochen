@@ -1,7 +1,9 @@
+import { useSearchParams } from "react-router-dom";
+
 import ContentLayout from "@/components/content-layout";
+
 import { ROUTES } from "@/constants/route";
 import BlogCreateForm from "@/features/blog/components/blog-create-form";
-import { useSearchParams } from "react-router-dom";
 
 export default function BlogCreate() {
   // 从 query中取出id字段

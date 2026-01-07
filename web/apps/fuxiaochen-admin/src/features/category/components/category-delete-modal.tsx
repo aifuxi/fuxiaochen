@@ -1,8 +1,11 @@
 import NiceModal from "@ebay/nice-modal-react";
-import NiceSemiModal from "@/components/nice-semi-modal";
-import { deleteCategory } from "@/api/category";
 import { useRequest } from "ahooks";
+
+import NiceSemiModal from "@/components/nice-semi-modal";
+
 import { showSuccessToast } from "@/libs/toast";
+
+import { deleteCategory } from "@/api/category";
 
 interface Props {
   onSuccess?: () => void;
@@ -38,7 +41,7 @@ const CategoryDeleteModal = NiceModal.create(
         你确定要删除该分类吗？
       </NiceSemiModal>
     );
-  }
+  },
 );
 
 export default CategoryDeleteModal;
