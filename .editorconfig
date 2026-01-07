@@ -17,3 +17,16 @@ indent_style = tab
 [*.{json,yml,yaml,md}]
 indent_style = space
 indent_size = 2
+
+[*.{js,ts,jsx,tsx,css,scss,less}]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+# Makefile 里面缩进必须使用tab且大小必须为4个空格
+[Makefile]
+indent_style = tab
+indent_size = 4
