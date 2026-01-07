@@ -1,22 +1,17 @@
 import Link from "next/link";
 
-import {
-  GITHUB_PAGE,
-  ImageAssets,
-  SOURCE_CODE_GITHUB_PAGE,
-  WEBSITE,
-} from "@/constants";
+import { ImageAssets, SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants";
 import { cn } from "@/lib/utils";
 
 import { navItems } from "./config";
 
 import { IconBrandGithub } from "../icons";
 import { ModeToggle } from "../mode-toggle";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 
 export const Navbar = () => {
   return (
-    <header className="border-b border-border bg-card sticky top-0 z-10">
+    <header className="sticky top-0 z-10 border-b border-border bg-card">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

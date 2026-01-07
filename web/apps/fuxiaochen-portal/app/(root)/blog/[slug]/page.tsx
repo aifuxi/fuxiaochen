@@ -54,7 +54,7 @@ export default async function Page(props: {
               {blog.title}
             </h1>
 
-            <p className="mb-6 text-lg text-muted-foreground break-all">
+            <p className="mb-6 text-lg break-all text-muted-foreground">
               {blog.description}
             </p>
 

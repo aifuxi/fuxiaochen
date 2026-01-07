@@ -1,7 +1,3 @@
-import Link from "next/link";
-
-import { buttonVariants } from "@/components/ui/button";
-
 import {
   IconBrandGithub,
   IconGo,
@@ -31,7 +27,6 @@ import {
 } from "@/components/icons";
 
 import { NICKNAME } from "@/constants";
-import { cn } from "@/lib/utils";
 
 export default function Page() {
   return (

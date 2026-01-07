@@ -26,7 +26,7 @@ export function FeaturedPost({ blogs }: Props) {
 
   return (
     <section className="mb-16">
-      <div className="flex items-center justify-between mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <h2 className="text-2xl font-bold">精选博客</h2>
         <Badge variant="secondary" className="font-mono text-xs">
           最新
@@ -34,29 +34,29 @@ export function FeaturedPost({ blogs }: Props) {
       </div>
 
       <Link href={`${PATHS.BLOG}/${featuredBlog.slug}`} className="group block">
-        <article className="bg-card border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-colors">
-          <div className="grid md:grid-cols-2 gap-8 p-8">
+        <article className="overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-primary/50">
+          <div className="grid gap-8 p-8 md:grid-cols-2">
             <div className="flex flex-col justify-center">
-              <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
+              <div className="mb-4 flex items-center gap-4 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={Calendar04Icon} className="w-4 h-4" />
+                  <HugeiconsIcon icon={Calendar04Icon} className="h-4 w-4" />
                   {formattedDate(new Date(featuredBlog.createdAt))}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={Clock01Icon} className="w-4 h-4" />
+                  <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4" />
                   预计阅读 {calculateReadTime(featuredBlog.content)} 分钟
                 </span>
               </div>
 
-              <h3 className="text-3xl font-bold mb-4 group-hover:text-primary transition-colors">
+              <h3 className="mb-4 text-3xl font-bold transition-colors group-hover:text-primary">
                 {featuredBlog.title}
               </h3>
 
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              <p className="mb-6 leading-relaxed text-muted-foreground">
                 {featuredBlog.description}
               </p>
 
-              <div className="flex items-center gap-3 flex-wrap mb-6">
+              <div className="mb-6 flex flex-wrap items-center gap-3">
                 {featuredBlog?.tags?.map((tag) => (
                   <Badge key={tag.id} variant="outline" className="font-mono">
                     {tag.name}
@@ -64,18 +64,18 @@ export function FeaturedPost({ blogs }: Props) {
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 text-primary font-medium">
+              <div className="flex items-center gap-2 font-medium text-primary">
                 查看详情
                 <HugeiconsIcon
                   icon={ArrowUpRight02Icon}
-                  className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
                 />
               </div>
             </div>
 
-            <div className="bg-secondary rounded-lg p-8 flex items-center justify-center">
-              <div className="w-full aspect-square bg-muted/30 rounded-lg border border-border flex items-center justify-center">
-                <pre className="text-xs font-mono text-muted-foreground">
+            <div className="flex items-center justify-center rounded-lg bg-secondary p-8">
+              <div className="flex aspect-square w-full items-center justify-center rounded-lg border border-border bg-muted/30">
+                <pre className="font-mono text-xs text-muted-foreground">
                   {`<Component>
   <Component.Header />
   <Component.Body />
