@@ -188,7 +188,6 @@ export function IllustrationFailureDark(props: React.SVGProps<SVGSVGElement>) {
       />
       <mask
         id="mask_failure_dark_130_527"
-         
         mask-type="alpha"
         maskUnits="userSpaceOnUse"
         x={101}
