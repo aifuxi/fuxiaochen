@@ -86,7 +86,7 @@
 }
 
 .bytemd-status {
-  @apply border-none border-t-semi-border!;
+  @apply border-t-semi-border! border-none;
 }
 
 .bytemd-toolbar-icon {

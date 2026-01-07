@@ -1,14 +1,19 @@
 import { createBrowserRouter } from "react-router-dom";
+
+import NiceModal from "@ebay/nice-modal-react";
+
 import MainLayout from "@/components/main-layout";
-import Login from "@/routes/login";
-import Index from "@/routes";
+
+import BlogCreate from "@/routes/blog/blog-create";
+import BlogList from "@/routes/blog/blog-list";
 import Category from "@/routes/category";
+import Login from "@/routes/login";
 import Tag from "@/routes/tag";
 import User from "@/routes/user";
-import NiceModal from "@ebay/nice-modal-react";
-import BlogList from "@/routes/blog/blog-list";
-import BlogCreate from "@/routes/blog/blog-create";
+
 import { ROUTES } from "@/constants/route";
+import Index from "@/routes";
+
 import ProtectRoute from "./components/protect-route";
 import { PERMISSION_CODES } from "./constants/permission-codes";
 

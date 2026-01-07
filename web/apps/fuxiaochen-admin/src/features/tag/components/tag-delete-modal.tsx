@@ -1,8 +1,11 @@
 import NiceModal from "@ebay/nice-modal-react";
-import NiceSemiModal from "@/components/nice-semi-modal";
-import { deleteTag } from "@/api/tag";
 import { useRequest } from "ahooks";
+
+import NiceSemiModal from "@/components/nice-semi-modal";
+
 import { showSuccessToast } from "@/libs/toast";
+
+import { deleteTag } from "@/api/tag";
 
 interface Props {
   onSuccess?: () => void;

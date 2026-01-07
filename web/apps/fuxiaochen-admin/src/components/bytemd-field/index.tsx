@@ -1,10 +1,12 @@
-import gfm from "@bytemd/plugin-gfm";
 import breaks from "@bytemd/plugin-breaks";
+import gfm from "@bytemd/plugin-gfm";
 import highlight from "@bytemd/plugin-highlight";
 import { Editor } from "@bytemd/react";
 import { withField } from "@douyinfe/semi-ui-19";
-import { uploadFile } from "@/api/upload";
+
 import { showErrorToast, showSuccessToast } from "@/libs/toast";
+
+import { uploadFile } from "@/api/upload";
 
 const plugins = [gfm(), breaks(), highlight()];
 

@@ -18,7 +18,7 @@ indent_style = tab
 indent_style = space
 indent_size = 2
 
-[*.{js,ts,jsx,tsx,css,scss,less}]
+[*.{js,cjs,mjs,ts,mts,jsx,tsx,css,scss,less}]
 indent_style = space
 indent_size = 2
 end_of_line = lf

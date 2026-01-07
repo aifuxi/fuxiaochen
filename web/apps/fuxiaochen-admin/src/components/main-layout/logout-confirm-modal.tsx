@@ -1,12 +1,16 @@
+import { useNavigate } from "react-router-dom";
+
 import NiceModal from "@ebay/nice-modal-react";
+import { useRequest } from "ahooks";
+
 import NiceSemiModal from "@/components/nice-semi-modal";
 
 import { showSuccessToast } from "@/libs/toast";
+
 import { setToken } from "@/utils/token";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/constants/route";
-import { useRequest } from "ahooks";
+
 import { logout } from "@/api/user";
+import { ROUTES } from "@/constants/route";
 import useUserStore from "@/stores/use-user-store";
 
 const LogoutConfirmModal = NiceModal.create(() => {

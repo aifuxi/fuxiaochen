@@ -1,19 +1,19 @@
 /** 代码来自 https://github.com/fx1422/semi-theme-vite-plugin/blob/master/src/index.ts
  * 做了一些修改，使其能适配 @douyinfe/semi-ui-19
  */
-
 import * as FS from "fs";
 import { platform } from "os";
 import * as Path from "path";
 import type { Importer } from "sass";
-import { compileString, Logger } from "sass";
+import { Logger, compileString } from "sass";
 import { pathToFileURL } from "url";
+
 // 使用更灵活的类型定义避免版本冲突
 interface VitePlugin {
   name: string;
   enforce?: "pre" | "post";
   load?: (
-    id: string
+    id: string,
   ) => string | null | undefined | Promise<string | null | undefined>;
   [key: string]: unknown;
 }
@@ -60,7 +60,7 @@ export default function SemiPlugin({
       if (
         // ** 这里需要匹配到 @douyinfe/semi-ui-19，才能正确加载主题 **
         /@douyinfe\/semi-(ui|ui-19|icons|foundation)\/lib\/.+\.css$/.test(
-          filePath
+          filePath,
         )
       ) {
         const scssFilePath = filePath.replace(/\.css$/, ".scss");
@@ -91,7 +91,7 @@ export default function SemiPlugin({
                         const nodeModulesPath = Path.join(
                           currentDir,
                           "node_modules",
-                          packagePath
+                          packagePath,
                         );
                         if (FS.existsSync(nodeModulesPath)) {
                           return pathToFileURL(nodeModulesPath);
@@ -104,7 +104,7 @@ export default function SemiPlugin({
                       const rootNodeModulesPath = Path.join(
                         projectRoot,
                         "node_modules",
-                        packagePath
+                        packagePath,
                       );
                       if (FS.existsSync(rootNodeModulesPath)) {
                         return pathToFileURL(rootNodeModulesPath);
@@ -115,7 +115,7 @@ export default function SemiPlugin({
 
                     const resolvedFilePath = Path.resolve(
                       Path.dirname(scssFilePath),
-                      url
+                      url,
                     );
 
                     if (FS.existsSync(resolvedFilePath)) {
@@ -127,7 +127,7 @@ export default function SemiPlugin({
                 } as unknown as Importer,
               ],
               logger: Logger.silent,
-            }
+            },
           );
           return result.css;
         } catch (error) {
@@ -217,7 +217,7 @@ function convertMapToString(map: Record<string, string | number>): string {
 
 function normalizePath(id: string): string {
   return Path.posix.normalize(
-    platform() === "win32" ? id.replace(/\\/g, "/") : id
+    platform() === "win32" ? id.replace(/\\/g, "/") : id,
   );
 }
 

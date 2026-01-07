@@ -1,7 +1,9 @@
+import { useState } from "react";
+
 import { Form, useFieldApi } from "@douyinfe/semi-ui-19";
 import { useMount, useRequest } from "ahooks";
+
 import { getRoleDetail, getRoleList } from "@/api/role";
-import { useState } from "react";
 
 interface OptionItemType {
   value: string;
@@ -28,11 +30,11 @@ export function RoleField(props: RoleFieldProps) {
             ({ data }): OptionItemType => ({
               label: data?.name,
               value: data?.id,
-            })
-          )
+            }),
+          ),
         );
       },
-    }
+    },
   );
 
   const { loading, run } = useRequest(
@@ -49,14 +51,14 @@ export function RoleField(props: RoleFieldProps) {
         if (resp?.data?.lists) {
           setOptions(
             resp.data.lists.map(
-              (el): OptionItemType => ({ label: el.name, value: el.id })
-            )
+              (el): OptionItemType => ({ label: el.name, value: el.id }),
+            ),
           );
         } else {
           setOptions([]);
         }
       },
-    }
+    },
   );
 
   useMount(() => {

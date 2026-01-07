@@ -1,8 +1,10 @@
-import { defineConfig, loadEnv } from "vite";
-import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import path from "path";
-import { fileURLToPath } from "url"; // 导入 ES 模块的路径解析方法
+import { fileURLToPath } from "url";
+import { defineConfig, loadEnv } from "vite";
+
+// 导入 ES 模块的路径解析方法
 import semiThemePlugin from "./src/semi-theme-plugin";
 
 // 1. 生成当前文件的绝对路径（替代 __dirname）

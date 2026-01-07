@@ -1,11 +1,16 @@
-import NiceModal from "@ebay/nice-modal-react";
-import NiceSemiModal from "@/components/nice-semi-modal";
-import { Form } from "@douyinfe/semi-ui-19";
-import { updateUserPassword } from "@/api/user";
-import { useRequest } from "ahooks";
-import { showSuccessToast } from "@/libs/toast";
 import { useRef } from "react";
+
+import { Form } from "@douyinfe/semi-ui-19";
+import NiceModal from "@ebay/nice-modal-react";
+import { useRequest } from "ahooks";
+
 import type { SemiFormApi } from "@/types/semi";
+
+import NiceSemiModal from "@/components/nice-semi-modal";
+
+import { showSuccessToast } from "@/libs/toast";
+
+import { updateUserPassword } from "@/api/user";
 
 interface Props {
   onSuccess?: () => void;

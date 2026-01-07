@@ -1,12 +1,13 @@
 import ReactDOM from "react-dom/client";
+import { RouterProvider } from "react-router-dom";
+
+import { ConfigProvider, Toast } from "@douyinfe/semi-ui-19";
 import PubSub from "pubsub-js";
 
-import "./index.css";
-
 import { TOPIC_API_ERROR } from "@/constants/event-topics";
-import { ConfigProvider, Toast } from "@douyinfe/semi-ui-19";
-import { RouterProvider } from "react-router-dom";
 import router from "@/router";
+
+import "./index.css";
 
 // 全局配置 Toast 组件
 Toast.config({
@@ -24,6 +25,6 @@ if (!rootElement?.innerHTML) {
   root.render(
     <ConfigProvider>
       <RouterProvider router={router} />
-    </ConfigProvider>
+    </ConfigProvider>,
   );
 }

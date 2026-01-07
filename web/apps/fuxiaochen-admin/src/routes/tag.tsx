@@ -1,296 +1,296 @@
-import { ROUTES } from "@/constants/route";
-import ContentLayout from "@/components/content-layout";
-import { Button, Form, Table } from "@douyinfe/semi-ui-19";
-import {
-	IconDelete,
-	IconEdit,
-	IconEyeOpened,
-	IconPlusCircle,
-	IconRefresh2,
-	IconSearch,
-} from "@douyinfe/semi-icons";
-import { useRequest, useSetState } from "ahooks";
-import { getTagList } from "@/api/tag";
-import NiceModal from "@ebay/nice-modal-react";
-import TagCreateModal from "@/features/tag/components/tag-create-modal";
-
 import { useRef } from "react";
 
-import { toModifiedISO8601 } from "@/libs/date";
-import TagDeleteModal from "@/features/tag/components/tag-delete-modal";
-import type {
-	SemiFormApi,
-	SemiTableColumnProps,
-	SemiTableOnChange,
-} from "@/types/semi";
+import {
+  IconDelete,
+  IconEdit,
+  IconEyeOpened,
+  IconPlusCircle,
+  IconRefresh2,
+  IconSearch,
+} from "@douyinfe/semi-icons";
+import { Button, Form, Table } from "@douyinfe/semi-ui-19";
+import NiceModal from "@ebay/nice-modal-react";
+import { useRequest, useSetState } from "ahooks";
 import { isNumber } from "es-toolkit/compat";
 import type { Tag, TagListReq } from "fuxiaochen-types";
+
+import type {
+  SemiFormApi,
+  SemiTableColumnProps,
+  SemiTableOnChange,
+} from "@/types/semi";
+
+import ContentLayout from "@/components/content-layout";
+
+import { toModifiedISO8601 } from "@/libs/date";
+
+import { getTagList } from "@/api/tag";
+import { ROUTES } from "@/constants/route";
+import TagCreateModal from "@/features/tag/components/tag-create-modal";
+import TagDeleteModal from "@/features/tag/components/tag-delete-modal";
 
 type FormValues = Pick<TagListReq, "name" | "slug">;
 
 export default function TagListPage() {
-	const [req, setReq] = useSetState<TagListReq>({
-		page: 1,
-		pageSize: 10,
-	});
+  const [req, setReq] = useSetState<TagListReq>({
+    page: 1,
+    pageSize: 10,
+  });
 
-	const formRef = useRef<SemiFormApi<FormValues>>(null);
+  const formRef = useRef<SemiFormApi<FormValues>>(null);
 
-	const { data, loading, refresh } = useRequest(() => getTagList(req), {
-		refreshDeps: [
-			req.page,
-			req.pageSize,
-			req.name,
-			req.slug,
-			req.sortBy,
-			req.order,
-		],
-	});
+  const { data, loading, refresh } = useRequest(() => getTagList(req), {
+    refreshDeps: [
+      req.page,
+      req.pageSize,
+      req.name,
+      req.slug,
+      req.sortBy,
+      req.order,
+    ],
+  });
 
-	const columns: SemiTableColumnProps<Tag>[] = [
-		{
-			title: "标签名称",
-			width: 200,
-			ellipsis: true,
-			render: (_, record) => record.name,
-		},
-		{
-			title: "标签别名",
-			width: 200,
-			ellipsis: true,
-			render: (_, record) => record.slug,
-		},
-		{
-			title: "标签描述",
-			width: 200,
-			ellipsis: true,
-			render: (_, record) => record.description,
-		},
-		{
-			title: "博客数量",
-			width: 100,
-			ellipsis: true,
-			render: (_, record) => record.blogCount,
-		},
-		{
-			title: "创建时间",
-			width: 200,
-			ellipsis: true,
-			dataIndex: "createdAt",
-			sorter: true,
-			sortOrder:
-				req.sortBy === "createdAt"
-					? req.order === "asc"
-						? "ascend"
-						: "descend"
-					: false,
-			render: (_, record) => toModifiedISO8601(record.createdAt),
-		},
-		{
-			title: "更新时间",
-			width: 200,
-			ellipsis: true,
-			dataIndex: "updatedAt",
-			sorter: true,
-			sortOrder:
-				req.sortBy === "updatedAt"
-					? req.order === "asc"
-						? "ascend"
-						: "descend"
-					: false,
-			render: (_, record) => toModifiedISO8601(record.updatedAt),
-		},
-		{
-			title: "操作",
-			width: 300,
-			fixed: "right",
-			render: (_, record) => {
-				return (
-					<div className="flex gap-4">
-						<Button
-							icon={<IconEdit />}
-							onClick={() => {
-								NiceModal.show(TagCreateModal, {
-									tagID: record.id,
-									onSuccess: refresh,
-								});
-							}}
-						>
-							编辑
-						</Button>
-						<Button type="secondary" icon={<IconEyeOpened />}>
-							查看
-						</Button>
-						<Button
-							icon={<IconDelete />}
-							type="danger"
-							onClick={() => {
-								NiceModal.show(TagDeleteModal, {
-									tagID: record.id,
-									onSuccess: refresh,
-								});
-							}}
-						>
-							删除
-						</Button>
-					</div>
-				);
-			},
-		},
-	];
+  const columns: SemiTableColumnProps<Tag>[] = [
+    {
+      title: "标签名称",
+      width: 200,
+      ellipsis: true,
+      render: (_, record) => record.name,
+    },
+    {
+      title: "标签别名",
+      width: 200,
+      ellipsis: true,
+      render: (_, record) => record.slug,
+    },
+    {
+      title: "标签描述",
+      width: 200,
+      ellipsis: true,
+      render: (_, record) => record.description,
+    },
+    {
+      title: "博客数量",
+      width: 100,
+      ellipsis: true,
+      render: (_, record) => record.blogCount,
+    },
+    {
+      title: "创建时间",
+      width: 200,
+      ellipsis: true,
+      dataIndex: "createdAt",
+      sorter: true,
+      sortOrder:
+        req.sortBy === "createdAt"
+          ? req.order === "asc"
+            ? "ascend"
+            : "descend"
+          : false,
+      render: (_, record) => toModifiedISO8601(record.createdAt),
+    },
+    {
+      title: "更新时间",
+      width: 200,
+      ellipsis: true,
+      dataIndex: "updatedAt",
+      sorter: true,
+      sortOrder:
+        req.sortBy === "updatedAt"
+          ? req.order === "asc"
+            ? "ascend"
+            : "descend"
+          : false,
+      render: (_, record) => toModifiedISO8601(record.updatedAt),
+    },
+    {
+      title: "操作",
+      width: 300,
+      fixed: "right",
+      render: (_, record) => {
+        return (
+          <div className="flex gap-4">
+            <Button
+              icon={<IconEdit />}
+              onClick={() => {
+                NiceModal.show(TagCreateModal, {
+                  tagID: record.id,
+                  onSuccess: refresh,
+                });
+              }}
+            >
+              编辑
+            </Button>
+            <Button type="secondary" icon={<IconEyeOpened />}>
+              查看
+            </Button>
+            <Button
+              icon={<IconDelete />}
+              type="danger"
+              onClick={() => {
+                NiceModal.show(TagDeleteModal, {
+                  tagID: record.id,
+                  onSuccess: refresh,
+                });
+              }}
+            >
+              删除
+            </Button>
+          </div>
+        );
+      },
+    },
+  ];
 
-	const handleSubmit = () => {
-		formRef.current?.submitForm();
-	};
+  const handleSubmit = () => {
+    formRef.current?.submitForm();
+  };
 
-	const handleReset = () => {
-		formRef.current?.reset();
-	};
+  const handleReset = () => {
+    formRef.current?.reset();
+  };
 
-	const handleTableChange: SemiTableOnChange = ({ pagination, sorter }) => {
-		setReq((prev) => {
-			const next = { ...prev };
+  const handleTableChange: SemiTableOnChange = ({ pagination, sorter }) => {
+    setReq((prev) => {
+      const next = { ...prev };
 
-			if (pagination) {
-				const { currentPage, pageSize } = pagination;
-				if (pageSize && pageSize !== prev.pageSize) {
-					next.pageSize = pageSize;
-					next.page = 1;
-				} else if (isNumber(currentPage) && currentPage !== prev.page) {
-					next.page = currentPage;
-				}
-			}
+      if (pagination) {
+        const { currentPage, pageSize } = pagination;
+        if (pageSize && pageSize !== prev.pageSize) {
+          next.pageSize = pageSize;
+          next.page = 1;
+        } else if (isNumber(currentPage) && currentPage !== prev.page) {
+          next.page = currentPage;
+        }
+      }
 
-			if (sorter && !Array.isArray(sorter)) {
-				const singleSorter = sorter;
+      if (sorter && !Array.isArray(sorter)) {
+        const singleSorter = sorter;
 
-				if (!singleSorter.sortOrder) {
-					next.sortBy = undefined;
-					next.order = undefined;
-				} else {
-					const field = (singleSorter.sortField ??
-						singleSorter.dataIndex) as string;
+        if (!singleSorter.sortOrder) {
+          next.sortBy = undefined;
+          next.order = undefined;
+        } else {
+          const field = (singleSorter.sortField ??
+            singleSorter.dataIndex) as string;
 
-					if (field === "createdAt" || field === "updatedAt") {
-						next.sortBy = field;
-						next.order =
-							singleSorter.sortOrder === "ascend"
-								? "asc"
-								: "desc";
-						next.page = 1;
-					}
-				}
-			}
+          if (field === "createdAt" || field === "updatedAt") {
+            next.sortBy = field;
+            next.order = singleSorter.sortOrder === "ascend" ? "asc" : "desc";
+            next.page = 1;
+          }
+        }
+      }
 
-			return next;
-		});
-	};
+      return next;
+    });
+  };
 
-	return (
-		<ContentLayout
-			title="标签"
-			routes={[
-				{
-					href: ROUTES.Home.href,
-					name: ROUTES.Home.name,
-				},
-				{
-					href: ROUTES.Tag.href,
-					name: ROUTES.Tag.name,
-				},
-			]}
-		>
-			<div className="flex flex-col gap-6 pt-4">
-				<div className="flex gap-4 ">
-					<Form<FormValues>
-						getFormApi={(formApi) => (formRef.current = formApi)}
-						disabled={loading}
-						layout="horizontal"
-						labelPosition="inset"
-						className="w-full"
-						onSubmit={(values) => {
-							setReq((pre) => ({
-								...pre,
-								name: values.name?.trim(),
-								slug: values.slug?.trim(),
-								page: 1,
-							}));
-						}}
-						onReset={() => {
-							setReq((pre) => ({
-								...pre,
-								page: 1,
-								name: undefined,
-								slug: undefined,
-							}));
-						}}
-					>
-						<Form.Input
-							field="name"
-							label="标签名称"
-							size="large"
-							showClear
-							placeholder="请输入标签名称"
-							onEnterPress={handleSubmit}
-						></Form.Input>
-						<Form.Input
-							field="slug"
-							label="标签别名"
-							size="large"
-							showClear
-							placeholder="请输入标签别名"
-							onEnterPress={handleSubmit}
-						></Form.Input>
-						<Form.Slot noLabel>
-							<div className="flex gap-4 items-center h-10">
-								<Button
-									type="primary"
-									theme="solid"
-									icon={<IconSearch />}
-									onClick={handleSubmit}
-								>
-									搜索
-								</Button>
-								<Button
-									type="primary"
-									icon={<IconRefresh2 />}
-									onClick={handleReset}
-								>
-									重置
-								</Button>
-							</div>
-						</Form.Slot>
-					</Form>
+  return (
+    <ContentLayout
+      title="标签"
+      routes={[
+        {
+          href: ROUTES.Home.href,
+          name: ROUTES.Home.name,
+        },
+        {
+          href: ROUTES.Tag.href,
+          name: ROUTES.Tag.name,
+        },
+      ]}
+    >
+      <div className="flex flex-col gap-6 pt-4">
+        <div className="flex gap-4 ">
+          <Form<FormValues>
+            getFormApi={(formApi) => (formRef.current = formApi)}
+            disabled={loading}
+            layout="horizontal"
+            labelPosition="inset"
+            className="w-full"
+            onSubmit={(values) => {
+              setReq((pre) => ({
+                ...pre,
+                name: values.name?.trim(),
+                slug: values.slug?.trim(),
+                page: 1,
+              }));
+            }}
+            onReset={() => {
+              setReq((pre) => ({
+                ...pre,
+                page: 1,
+                name: undefined,
+                slug: undefined,
+              }));
+            }}
+          >
+            <Form.Input
+              field="name"
+              label="标签名称"
+              size="large"
+              showClear
+              placeholder="请输入标签名称"
+              onEnterPress={handleSubmit}
+            ></Form.Input>
+            <Form.Input
+              field="slug"
+              label="标签别名"
+              size="large"
+              showClear
+              placeholder="请输入标签别名"
+              onEnterPress={handleSubmit}
+            ></Form.Input>
+            <Form.Slot noLabel>
+              <div className="flex gap-4 items-center h-10">
+                <Button
+                  type="primary"
+                  theme="solid"
+                  icon={<IconSearch />}
+                  onClick={handleSubmit}
+                >
+                  搜索
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<IconRefresh2 />}
+                  onClick={handleReset}
+                >
+                  重置
+                </Button>
+              </div>
+            </Form.Slot>
+          </Form>
 
-					<Button
-						type="primary"
-						theme="solid"
-						icon={<IconPlusCircle />}
-						onClick={() => {
-							NiceModal.show(TagCreateModal, {
-								onSuccess: refresh,
-							});
-						}}
-					>
-						创建新标签
-					</Button>
-				</div>
+          <Button
+            type="primary"
+            theme="solid"
+            icon={<IconPlusCircle />}
+            onClick={() => {
+              NiceModal.show(TagCreateModal, {
+                onSuccess: refresh,
+              });
+            }}
+          >
+            创建新标签
+          </Button>
+        </div>
 
-				<div className="flex flex-col">
-					<Table
-						columns={columns}
-						loading={loading}
-						dataSource={data?.data?.lists ?? []}
-						pagination={{
-							total: data?.data?.total ?? 0,
-							pageSize: req.pageSize,
-							currentPage: req.page,
-							showSizeChanger: true,
-						}}
-						onChange={handleTableChange}
-					/>
-				</div>
-			</div>
-		</ContentLayout>
-	);
+        <div className="flex flex-col">
+          <Table
+            columns={columns}
+            loading={loading}
+            dataSource={data?.data?.lists ?? []}
+            pagination={{
+              total: data?.data?.total ?? 0,
+              pageSize: req.pageSize,
+              currentPage: req.page,
+              showSizeChanger: true,
+            }}
+            onChange={handleTableChange}
+          />
+        </div>
+      </div>
+    </ContentLayout>
+  );
 }
