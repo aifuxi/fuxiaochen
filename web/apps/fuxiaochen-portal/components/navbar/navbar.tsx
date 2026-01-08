@@ -15,11 +15,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div
-              className={`flex h-8 w-8 items-center justify-center overflow-hidden rounded-md bg-primary`}
-            >
-              <img src={ImageAssets.logo} className="size-8" alt={WEBSITE} />
-            </div>
+            <img src={ImageAssets.logo} className="size-9" alt={WEBSITE} />
             <span className="text-xl font-bold">{WEBSITE}</span>
           </Link>
 
