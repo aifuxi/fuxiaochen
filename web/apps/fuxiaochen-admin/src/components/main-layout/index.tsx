@@ -11,7 +11,6 @@ import {
   IconHelpCircle,
   IconHome,
   IconList,
-  IconSemiLogo,
   IconUser,
 } from "@douyinfe/semi-icons";
 import {
@@ -119,7 +118,7 @@ export default function MainLayout() {
             },
           ]}
           header={{
-            logo: <IconSemiLogo style={{ fontSize: 36 }} />,
+            logo: <img src="/fuxiaochen-logo.svg" alt="" className="size-9 inline-flex" />,
             text: "FXC 运营后台",
           }}
           footer={{
