@@ -1,14 +1,24 @@
 package router
 
 import (
+	"time"
+
 	"github.com/aifuxi/fuxiaochen-api/internal/app"
 	"github.com/aifuxi/fuxiaochen-api/internal/router/routes"
 	"github.com/aifuxi/fuxiaochen-api/pkg/response"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
-func Init(version string, c *app.Container) *gin.Engine {
-	router := gin.Default()
+func Init(version string, c *app.Container, logger *zap.Logger) *gin.Engine {
+	router := gin.New()
+
+	router.Use(ginzap.Ginzap(logger, time.RFC3339, true))
+
+	// Logs all panic to error log
+	//   - stack means whether output the stack info.
+	router.Use(ginzap.RecoveryWithZap(logger, true))
 
 	router.GET("/health", func(c *gin.Context) {
 		response.Success(c, gin.H{

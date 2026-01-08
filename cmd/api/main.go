@@ -30,7 +30,7 @@ func main() {
 	upload.Init(config.AppConfig.OSS)
 
 	container := app.NewContainer()
-	router := router.Init(config.AppConfig.Server.Version, container)
+	router := router.Init(config.AppConfig.Server.Version, container, logger.Log)
 
 	addr := fmt.Sprintf("%s:%d", config.AppConfig.Server.Host, config.AppConfig.Server.Port)
 
