@@ -3,14 +3,13 @@ import { useRef } from "react";
 import {
   IconDelete,
   IconEdit,
-  IconLock,
   IconPlusCircle,
   IconRefresh2,
   IconSearch,
 } from "@douyinfe/semi-icons";
-import { Button, Form, Table, Tag } from "@douyinfe/semi-ui-19";
+import { Button, Form, Table } from "@douyinfe/semi-ui-19";
 import NiceModal from "@ebay/nice-modal-react";
-import type { UserListReq, UserResp } from "fuxiaochen-types";
+import type { Changelog, ChangelogListReq } from "fuxiaochen-types";
 
 import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
@@ -19,70 +18,34 @@ import ContentLayout from "@/components/content-layout";
 import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
-import { getUserList } from "@/api/user";
+import { getChangelogList } from "@/api/changelog";
 import { ROUTES } from "@/constants/route";
-import UserBanChanger from "@/features/user/components/user-ban-changer";
-import UserCreateModal from "@/features/user/components/user-create-modal";
-import UserDeleteModal from "@/features/user/components/user-delete-modal";
-import UserPasswordModal from "@/features/user/components/user-password-modal";
+import ChangelogCreateModal from "@/features/changelog/components/changelog-create-modal";
+import ChangelogDeleteModal from "@/features/changelog/components/changelog-delete-modal";
 
-type FormValues = Pick<UserListReq, "nickname" | "email">;
+type FormValues = Pick<ChangelogListReq, "version">;
 
-export default function UserPage() {
+export default function ChangelogListPage() {
   const formRef = useRef<SemiFormApi<FormValues>>(null);
 
-  const { tableProps, search, refresh } = useSemiTable(getUserList, {
+  const { tableProps, search, refresh } = useSemiTable(getChangelogList, {
     formApi: formRef,
   });
 
   const { submit, reset } = search;
 
-  const columns: SemiTableColumnProps<UserResp>[] = [
+  const columns: SemiTableColumnProps<Changelog>[] = [
     {
-      title: "昵称",
+      title: "版本号",
       width: 150,
       ellipsis: true,
-      render: (_, record) => record.nickname,
+      render: (_, record) => record.version,
     },
     {
-      title: "邮箱",
-      width: 200,
+      title: "更新内容",
+      width: 400,
       ellipsis: true,
-      render: (_, record) => record.email,
-    },
-    {
-      title: "角色",
-      width: 200,
-      render: (_, record) => {
-        return (
-          <div className="flex gap-2 flex-wrap">
-            {record.roles?.map((role) => (
-              <Tag key={role.id} color="blue">
-                {role.name}
-              </Tag>
-            ))}
-          </div>
-        );
-      },
-    },
-    {
-      title: "禁用状态",
-      width: 200,
-      ellipsis: true,
-      render: (_, record) => (
-        <UserBanChanger
-          currentBanned={record.banned}
-          userID={record.id}
-          onSuccess={refresh}
-        />
-      ),
-    },
-    {
-      title: "禁用时间",
-      width: 200,
-      ellipsis: true,
-      render: (_, record) =>
-        record.bannedAt ? toModifiedISO8601(record.bannedAt) : "-",
+      render: (_, record) => record.content,
     },
     {
       title: "创建时间",
@@ -102,7 +65,7 @@ export default function UserPage() {
     },
     {
       title: "操作",
-      width: 360,
+      width: 200,
       fixed: "right",
       render: (_, record) => {
         return (
@@ -110,8 +73,8 @@ export default function UserPage() {
             <Button
               icon={<IconEdit />}
               onClick={() => {
-                NiceModal.show(UserCreateModal, {
-                  userID: record.id,
+                NiceModal.show(ChangelogCreateModal, {
+                  changelogID: record.id,
                   onSuccess: refresh,
                 });
               }}
@@ -119,23 +82,11 @@ export default function UserPage() {
               编辑
             </Button>
             <Button
-              icon={<IconLock />}
-              type="secondary"
-              onClick={() => {
-                NiceModal.show(UserPasswordModal, {
-                  userID: record.id,
-                  onSuccess: refresh,
-                });
-              }}
-            >
-              更新密码
-            </Button>
-            <Button
               icon={<IconDelete />}
               type="danger"
               onClick={() => {
-                NiceModal.show(UserDeleteModal, {
-                  userID: record.id,
+                NiceModal.show(ChangelogDeleteModal, {
+                  changelogID: record.id,
                   onSuccess: refresh,
                 });
               }}
@@ -150,15 +101,15 @@ export default function UserPage() {
 
   return (
     <ContentLayout
-      title="用户管理"
+      title="更新日志"
       routes={[
         {
           href: ROUTES.Home.href,
           name: ROUTES.Home.name,
         },
         {
-          href: ROUTES.User?.href ?? "/user",
-          name: ROUTES.User?.name ?? "用户",
+          href: ROUTES.Changelog.href,
+          name: ROUTES.Changelog.name,
         },
       ]}
     >
@@ -174,19 +125,11 @@ export default function UserPage() {
             onReset={reset}
           >
             <Form.Input
-              field="nickname"
-              label="昵称"
+              field="version"
+              label="版本号"
               size="large"
               showClear
-              placeholder="请输入昵称"
-              onEnterPress={submit}
-            ></Form.Input>
-            <Form.Input
-              field="email"
-              label="邮箱"
-              size="large"
-              showClear
-              placeholder="请输入邮箱"
+              placeholder="请输入版本号"
               onEnterPress={submit}
             ></Form.Input>
             <Form.Slot noLabel>
@@ -215,12 +158,12 @@ export default function UserPage() {
             theme="solid"
             icon={<IconPlusCircle />}
             onClick={() => {
-              NiceModal.show(UserCreateModal, {
+              NiceModal.show(ChangelogCreateModal, {
                 onSuccess: refresh,
               });
             }}
           >
-            创建新用户
+            创建更新日志
           </Button>
         </div>
 

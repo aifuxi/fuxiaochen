@@ -10,15 +10,9 @@ import {
 } from "@douyinfe/semi-icons";
 import { Button, Form, Table } from "@douyinfe/semi-ui-19";
 import NiceModal from "@ebay/nice-modal-react";
-import { useRequest, useSetState } from "ahooks";
-import { isNumber } from "es-toolkit/compat";
 import type { Category, CategoryListReq } from "fuxiaochen-types";
 
-import type {
-  SemiFormApi,
-  SemiTableColumnProps,
-  SemiTableOnChange,
-} from "@/types/semi";
+import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
@@ -28,27 +22,18 @@ import { getCategoryList } from "@/api/category";
 import { ROUTES } from "@/constants/route";
 import CategoryCreateModal from "@/features/category/components/category-create-modal";
 import CategoryDeleteModal from "@/features/category/components/category-delete-modal";
+import { useSemiTable } from "@/hooks/use-semi-table";
 
 type FormValues = Pick<CategoryListReq, "name" | "slug">;
 
 export default function CategoryListPage() {
-  const [req, setReq] = useSetState<CategoryListReq>({
-    page: 1,
-    pageSize: 10,
-  });
-
   const formRef = useRef<SemiFormApi<FormValues>>(null);
 
-  const { data, loading, refresh } = useRequest(() => getCategoryList(req), {
-    refreshDeps: [
-      req.page,
-      req.pageSize,
-      req.name,
-      req.slug,
-      req.sortBy,
-      req.order,
-    ],
+  const { tableProps, search, refresh } = useSemiTable(getCategoryList, {
+    formApi: formRef,
   });
+
+  const { submit, reset } = search;
 
   const columns: SemiTableColumnProps<Category>[] = [
     {
@@ -81,12 +66,6 @@ export default function CategoryListPage() {
       ellipsis: true,
       dataIndex: "createdAt",
       sorter: true,
-      sortOrder:
-        req.sortBy === "createdAt"
-          ? req.order === "asc"
-            ? "ascend"
-            : "descend"
-          : false,
       render: (_, record) => toModifiedISO8601(record.createdAt),
     },
     {
@@ -95,12 +74,6 @@ export default function CategoryListPage() {
       ellipsis: true,
       dataIndex: "updatedAt",
       sorter: true,
-      sortOrder:
-        req.sortBy === "updatedAt"
-          ? req.order === "asc"
-            ? "ascend"
-            : "descend"
-          : false,
       render: (_, record) => toModifiedISO8601(record.updatedAt),
     },
     {
@@ -142,50 +115,6 @@ export default function CategoryListPage() {
     },
   ];
 
-  const handleSubmit = () => {
-    formRef.current?.submitForm();
-  };
-
-  const handleReset = () => {
-    formRef.current?.reset();
-  };
-
-  const handleTableChange: SemiTableOnChange = ({ pagination, sorter }) => {
-    setReq((prev) => {
-      const next = { ...prev };
-
-      if (pagination) {
-        const { currentPage, pageSize } = pagination;
-        if (pageSize && pageSize !== prev.pageSize) {
-          next.pageSize = pageSize;
-          next.page = 1;
-        } else if (isNumber(currentPage) && currentPage !== prev.page) {
-          next.page = currentPage;
-        }
-      }
-
-      if (sorter && !Array.isArray(sorter)) {
-        const singleSorter = sorter;
-
-        if (!singleSorter.sortOrder) {
-          next.sortBy = undefined;
-          next.order = undefined;
-        } else {
-          const field = (singleSorter.sortField ??
-            singleSorter.dataIndex) as string;
-
-          if (field === "createdAt" || field === "updatedAt") {
-            next.sortBy = field;
-            next.order = singleSorter.sortOrder === "ascend" ? "asc" : "desc";
-            next.page = 1;
-          }
-        }
-      }
-
-      return next;
-    });
-  };
-
   return (
     <ContentLayout
       title="分类"
@@ -204,26 +133,12 @@ export default function CategoryListPage() {
         <div className="flex gap-4 ">
           <Form<FormValues>
             getFormApi={(formApi) => (formRef.current = formApi)}
-            disabled={loading}
+            disabled={tableProps.loading}
             layout="horizontal"
             labelPosition="inset"
             className="w-full"
-            onSubmit={(values) => {
-              setReq((pre) => ({
-                ...pre,
-                name: values.name?.trim(),
-                slug: values.slug?.trim(),
-                page: 1,
-              }));
-            }}
-            onReset={() => {
-              setReq((pre) => ({
-                ...pre,
-                page: 1,
-                name: undefined,
-                slug: undefined,
-              }));
-            }}
+            onSubmit={submit}
+            onReset={reset}
           >
             <Form.Input
               field="name"
@@ -231,7 +146,7 @@ export default function CategoryListPage() {
               size="large"
               showClear
               placeholder="请输入分类名称"
-              onEnterPress={handleSubmit}
+              onEnterPress={submit}
             ></Form.Input>
             <Form.Input
               field="slug"
@@ -239,7 +154,7 @@ export default function CategoryListPage() {
               size="large"
               showClear
               placeholder="请输入分类别名"
-              onEnterPress={handleSubmit}
+              onEnterPress={submit}
             ></Form.Input>
             <Form.Slot noLabel>
               <div className="flex gap-4 items-center h-10">
@@ -247,15 +162,11 @@ export default function CategoryListPage() {
                   type="primary"
                   theme="solid"
                   icon={<IconSearch />}
-                  onClick={handleSubmit}
+                  onClick={submit}
                 >
                   搜索
                 </Button>
-                <Button
-                  type="primary"
-                  icon={<IconRefresh2 />}
-                  onClick={handleReset}
-                >
+                <Button type="primary" icon={<IconRefresh2 />} onClick={reset}>
                   重置
                 </Button>
               </div>
@@ -280,15 +191,7 @@ export default function CategoryListPage() {
           <Table
             rowKey={(r) => r?.id ?? ""}
             columns={columns}
-            loading={loading}
-            dataSource={data?.data?.lists ?? []}
-            pagination={{
-              total: data?.data?.total ?? 0,
-              pageSize: req.pageSize,
-              currentPage: req.page,
-              showSizeChanger: true,
-            }}
-            onChange={handleTableChange}
+            {...tableProps}
           />
         </div>
       </div>

@@ -31,4 +31,8 @@ export const ROUTES = {
     href: "/blog/create",
     name: "创建博客",
   },
+  Changelog: {
+    href: "/changelog",
+    name: "更新日志",
+  },
 } as const;
