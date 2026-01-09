@@ -109,8 +109,6 @@ export function useSemiTable<TData, TParams extends any[]>(
     // Handle pagination
     if (newPagination) {
       const { currentPage, pageSize } = newPagination;
-      console.log("newPagination", newPagination, pageSize);
-
       if (pageSize && pageSize !== pagination.pageSize) {
         nextPagination = { current: 1, pageSize };
       } else if (currentPage && currentPage !== pagination.current) {
@@ -140,6 +138,9 @@ export function useSemiTable<TData, TParams extends any[]>(
     runWithParams(nextPagination, nextSorter, formValues);
   };
 
+  // 添加一个 ref 来跟踪是否正在执行 reset
+  const isResetting = useRef(false);
+
   // Search actions
   const submit = useMemoizedFn(() => {
     // Reset to page 1 on search
@@ -150,24 +151,30 @@ export function useSemiTable<TData, TParams extends any[]>(
   });
 
   const reset = useMemoizedFn(() => {
-    formApi?.current?.reset();
-    // Reset pagination and sorter
-    const nextPagination = { current: 1, pageSize: defaultPageSize };
-    const nextSorter = { sortBy: undefined, order: undefined };
-    setPagination(nextPagination);
-    setSorter(nextSorter);
+    // 防止重复执行
+    if (isResetting.current) return;
+    isResetting.current = true;
 
-    // In Semi Form, reset() resets values to initialValues.
-    // We get the values after reset.
-    // Note: getValues might return old values if called immediately in some cases,
-    // but typically reset() is sync for internal state update.
-    // However, if we want to be sure, we might need to rely on the fact that form reset
-    // should have cleared the fields or set them to defaults.
-    // For now we assume getValues() gets the reset values.
-    // const formValues = formApi?.current?.getValues() || {};
-    // console.log(">> form values", formValues);
-    // submit();
-    // runWithParams(nextPagination, nextSorter, formValues);
+    try {
+      formApi?.current?.reset();
+      // Reset pagination and sorter
+      const nextPagination = { current: 1, pageSize: defaultPageSize };
+      const nextSorter = { sortBy: undefined, order: undefined };
+      setPagination(nextPagination);
+      setSorter(nextSorter);
+
+      // 使用微任务而不是 setTimeout，以确保在当前事件循环结束后执行
+      Promise.resolve().then(() => {
+        const formValues = formApi?.current?.getValues() || {};
+        runWithParams(nextPagination, nextSorter, formValues);
+        // 重置标志
+        isResetting.current = false;
+      });
+    } catch (error) {
+      // 确保在出错时也重置标志
+      isResetting.current = false;
+      throw error;
+    }
   });
 
   // Calculate total from data
