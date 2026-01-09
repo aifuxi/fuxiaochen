@@ -9,10 +9,12 @@ import (
 
 type Container struct {
 	// Repositories
-	TokenRepo repository.TokenRepository
+	TokenRepo     repository.TokenRepository
+	ChangelogRepo repository.ChangelogRepository
 
 	// Services
-	UserService service.UserService
+	UserService      service.UserService
+	ChangelogService service.ChangelogService
 
 	// Handlers
 	AuthHandler           *handler.UserHandler
@@ -21,6 +23,7 @@ type Container struct {
 	BlogHandler           *handler.BlogHandler
 	CategoryHandler       *handler.CategoryHandler
 	TagHandler            *handler.TagHandler
+	ChangelogHandler      *handler.ChangelogHandler
 	UploadHandler         *handler.UploadHandler
 	PublicBlogHandler     *handler.PublicBlogHandler
 	PublicCategoryHandler *handler.PublicCategoryHandler
@@ -37,12 +40,14 @@ func NewContainer() *Container {
 	blogRepo := repository.NewBlogRepository(dbConn)
 	categoryRepo := repository.NewCategoryRepository(dbConn)
 	tagRepo := repository.NewTagRepository(dbConn)
+	changelogRepo := repository.NewChangelogRepository(dbConn)
 
 	// Services
 	userService := service.NewUserService(userRepo, roleRepo, tokenRepo)
 	blogService := service.NewBlogService(blogRepo)
 	categoryService := service.NewCategoryService(categoryRepo)
 	tagService := service.NewTagService(tagRepo)
+	changelogService := service.NewChangelogService(changelogRepo)
 	roleService := service.NewRoleService(roleRepo)
 	uploadService := service.NewUploadService()
 
@@ -52,6 +57,7 @@ func NewContainer() *Container {
 	blogHandler := handler.NewBlogHandler(blogService)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 	tagHandler := handler.NewTagHandler(tagService)
+	changelogHandler := handler.NewChangelogHandler(changelogService)
 	uploadHandler := handler.NewUploadHandler(uploadService)
 
 	publicBlogHandler := handler.NewPublicBlogHandler(blogService)
@@ -67,6 +73,7 @@ func NewContainer() *Container {
 		BlogHandler:           blogHandler,
 		CategoryHandler:       categoryHandler,
 		TagHandler:            tagHandler,
+		ChangelogHandler:      changelogHandler,
 		UploadHandler:         uploadHandler,
 		PublicBlogHandler:     publicBlogHandler,
 		PublicCategoryHandler: publicCategoryHandler,

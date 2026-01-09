@@ -33,6 +33,7 @@ func Init(version string, c *app.Container, logger *zap.Logger) *gin.Engine {
 	routes.RegisterUserRoutes(apiV1, c.UserHandler, c.UserService, c.TokenRepo)
 	routes.RegisterRoleRoutes(apiV1, c.RoleHandler, c.UserService, c.TokenRepo)
 	routes.RegisterTagRoutes(apiV1, c.TagHandler, c.UserService, c.TokenRepo)
+	routes.RegisterChangelogRoutes(apiV1, c.ChangelogHandler, c.UserService, c.TokenRepo)
 	routes.RegisterBlogRoutes(apiV1, c.BlogHandler, c.UserService, c.TokenRepo)
 	routes.RegisterCategoryRoutes(apiV1, c.CategoryHandler, c.UserService, c.TokenRepo)
 	routes.RegisterUploadRoutes(apiV1, c.UploadHandler, c.TokenRepo)
