@@ -126,13 +126,7 @@ export default function MainLayout() {
             },
           ]}
           header={{
-            logo: (
-              <img
-                src="/fuxiaochen-logo.svg"
-                alt=""
-                className="size-9 inline-flex"
-              />
-            ),
+            logo: <img src="/logo.svg" alt="" className="size-9 inline-flex" />,
             text: "FXC 运营后台",
           }}
           footer={{
