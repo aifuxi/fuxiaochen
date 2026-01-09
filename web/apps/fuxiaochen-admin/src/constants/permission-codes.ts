@@ -30,6 +30,12 @@ export const PERMISSION_CODES = {
   PermissionCategoryCreate: "category:create",
   PermissionCategoryUpdate: "category:update",
   PermissionCategoryDelete: "category:delete",
+
+  PermissionChangelogList: "changelog:list",
+  PermissionChangelogView: "changelog:view",
+  PermissionChangelogCreate: "changelog:create",
+  PermissionChangelogUpdate: "changelog:update",
+  PermissionChangelogDelete: "changelog:delete",
 } as const;
 
 export type PermissionCode =

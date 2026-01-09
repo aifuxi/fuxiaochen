@@ -109,6 +109,14 @@ export default function MainLayout() {
               ],
             },
             {
+              itemKey: ROUTES.Changelog.href,
+              text: ROUTES.Changelog.name,
+              icon: <IconList size="large" />,
+              onClick: () => {
+                navigate(ROUTES.Changelog.href);
+              },
+            },
+            {
               itemKey: ROUTES.User.href,
               text: ROUTES.User.name,
               icon: <IconUser size="large" />,
@@ -118,7 +126,13 @@ export default function MainLayout() {
             },
           ]}
           header={{
-            logo: <img src="/fuxiaochen-logo.svg" alt="" className="size-9 inline-flex" />,
+            logo: (
+              <img
+                src="/fuxiaochen-logo.svg"
+                alt=""
+                className="size-9 inline-flex"
+              />
+            ),
             text: "FXC 运营后台",
           }}
           footer={{

@@ -10,18 +10,13 @@ import {
 } from "@douyinfe/semi-icons";
 import { Button, Form, Table } from "@douyinfe/semi-ui-19";
 import NiceModal from "@ebay/nice-modal-react";
-import { useRequest, useSetState } from "ahooks";
-import { isNumber } from "es-toolkit/compat";
 import type { Tag, TagListReq } from "fuxiaochen-types";
 
-import type {
-  SemiFormApi,
-  SemiTableColumnProps,
-  SemiTableOnChange,
-} from "@/types/semi";
+import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
+import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
 import { getTagList } from "@/api/tag";
@@ -32,23 +27,13 @@ import TagDeleteModal from "@/features/tag/components/tag-delete-modal";
 type FormValues = Pick<TagListReq, "name" | "slug">;
 
 export default function TagListPage() {
-  const [req, setReq] = useSetState<TagListReq>({
-    page: 1,
-    pageSize: 10,
-  });
-
   const formRef = useRef<SemiFormApi<FormValues>>(null);
 
-  const { data, loading, refresh } = useRequest(() => getTagList(req), {
-    refreshDeps: [
-      req.page,
-      req.pageSize,
-      req.name,
-      req.slug,
-      req.sortBy,
-      req.order,
-    ],
+  const { tableProps, search, refresh } = useSemiTable(getTagList, {
+    formApi: formRef,
   });
+
+  const { submit, reset } = search;
 
   const columns: SemiTableColumnProps<Tag>[] = [
     {
@@ -81,12 +66,6 @@ export default function TagListPage() {
       ellipsis: true,
       dataIndex: "createdAt",
       sorter: true,
-      sortOrder:
-        req.sortBy === "createdAt"
-          ? req.order === "asc"
-            ? "ascend"
-            : "descend"
-          : false,
       render: (_, record) => toModifiedISO8601(record.createdAt),
     },
     {
@@ -95,12 +74,6 @@ export default function TagListPage() {
       ellipsis: true,
       dataIndex: "updatedAt",
       sorter: true,
-      sortOrder:
-        req.sortBy === "updatedAt"
-          ? req.order === "asc"
-            ? "ascend"
-            : "descend"
-          : false,
       render: (_, record) => toModifiedISO8601(record.updatedAt),
     },
     {
@@ -142,50 +115,6 @@ export default function TagListPage() {
     },
   ];
 
-  const handleSubmit = () => {
-    formRef.current?.submitForm();
-  };
-
-  const handleReset = () => {
-    formRef.current?.reset();
-  };
-
-  const handleTableChange: SemiTableOnChange = ({ pagination, sorter }) => {
-    setReq((prev) => {
-      const next = { ...prev };
-
-      if (pagination) {
-        const { currentPage, pageSize } = pagination;
-        if (pageSize && pageSize !== prev.pageSize) {
-          next.pageSize = pageSize;
-          next.page = 1;
-        } else if (isNumber(currentPage) && currentPage !== prev.page) {
-          next.page = currentPage;
-        }
-      }
-
-      if (sorter && !Array.isArray(sorter)) {
-        const singleSorter = sorter;
-
-        if (!singleSorter.sortOrder) {
-          next.sortBy = undefined;
-          next.order = undefined;
-        } else {
-          const field = (singleSorter.sortField ??
-            singleSorter.dataIndex) as string;
-
-          if (field === "createdAt" || field === "updatedAt") {
-            next.sortBy = field;
-            next.order = singleSorter.sortOrder === "ascend" ? "asc" : "desc";
-            next.page = 1;
-          }
-        }
-      }
-
-      return next;
-    });
-  };
-
   return (
     <ContentLayout
       title="标签"
@@ -204,26 +133,12 @@ export default function TagListPage() {
         <div className="flex gap-4 ">
           <Form<FormValues>
             getFormApi={(formApi) => (formRef.current = formApi)}
-            disabled={loading}
+            disabled={tableProps.loading}
             layout="horizontal"
             labelPosition="inset"
             className="w-full"
-            onSubmit={(values) => {
-              setReq((pre) => ({
-                ...pre,
-                name: values.name?.trim(),
-                slug: values.slug?.trim(),
-                page: 1,
-              }));
-            }}
-            onReset={() => {
-              setReq((pre) => ({
-                ...pre,
-                page: 1,
-                name: undefined,
-                slug: undefined,
-              }));
-            }}
+            onSubmit={submit}
+            onReset={reset}
           >
             <Form.Input
               field="name"
@@ -231,7 +146,7 @@ export default function TagListPage() {
               size="large"
               showClear
               placeholder="请输入标签名称"
-              onEnterPress={handleSubmit}
+              onEnterPress={submit}
             ></Form.Input>
             <Form.Input
               field="slug"
@@ -239,7 +154,7 @@ export default function TagListPage() {
               size="large"
               showClear
               placeholder="请输入标签别名"
-              onEnterPress={handleSubmit}
+              onEnterPress={submit}
             ></Form.Input>
             <Form.Slot noLabel>
               <div className="flex gap-4 items-center h-10">
@@ -247,14 +162,14 @@ export default function TagListPage() {
                   type="primary"
                   theme="solid"
                   icon={<IconSearch />}
-                  onClick={handleSubmit}
+                  onClick={submit}
                 >
                   搜索
                 </Button>
                 <Button
                   type="primary"
                   icon={<IconRefresh2 />}
-                  onClick={handleReset}
+                  onClick={reset}
                 >
                   重置
                 </Button>
@@ -278,16 +193,9 @@ export default function TagListPage() {
 
         <div className="flex flex-col">
           <Table
+            rowKey={(r) => r?.id ?? ""}
             columns={columns}
-            loading={loading}
-            dataSource={data?.data?.lists ?? []}
-            pagination={{
-              total: data?.data?.total ?? 0,
-              pageSize: req.pageSize,
-              currentPage: req.page,
-              showSizeChanger: true,
-            }}
-            onChange={handleTableChange}
+            {...tableProps}
           />
         </div>
       </div>

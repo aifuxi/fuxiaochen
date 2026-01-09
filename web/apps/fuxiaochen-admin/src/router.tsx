@@ -7,6 +7,7 @@ import MainLayout from "@/components/main-layout";
 import BlogCreate from "@/routes/blog/blog-create";
 import BlogList from "@/routes/blog/blog-list";
 import Category from "@/routes/category";
+import Changelog from "@/routes/changelog";
 import Login from "@/routes/login";
 import Tag from "@/routes/tag";
 import User from "@/routes/user";
@@ -53,6 +54,18 @@ const router = createBrowserRouter([
             requireSomePermissionCodes={[PERMISSION_CODES.PermissionTagList]}
           >
             <Tag />
+          </ProtectRoute>
+        ),
+      },
+      {
+        path: ROUTES.Changelog.href,
+        element: (
+          <ProtectRoute
+            requireSomePermissionCodes={[
+              PERMISSION_CODES.PermissionChangelogList,
+            ]}
+          >
+            <Changelog />
           </ProtectRoute>
         ),
       },
