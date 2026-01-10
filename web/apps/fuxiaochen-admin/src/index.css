@@ -133,6 +133,10 @@ body,
   @apply bg-semi-bg-0 text-semi-text-0 font-sans;
 }
 
+#root  [class^="semi-"] {
+  @apply font-sans;
+}
+
 /* ========== 基础样式（默认/亮色模式） ========== */
 /* 1. Webkit 内核（Chrome/Edge/Safari）- 全局滚动条 */
 ::-webkit-scrollbar {

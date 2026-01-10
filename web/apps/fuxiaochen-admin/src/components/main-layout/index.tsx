@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   IconArticle,
   IconBell,
+  IconClock,
   IconEdit,
   IconExit,
   IconFolderOpen,
@@ -111,7 +112,7 @@ export default function MainLayout() {
             {
               itemKey: ROUTES.Changelog.href,
               text: ROUTES.Changelog.name,
-              icon: <IconList size="large" />,
+              icon: <IconClock size="large" />,
               onClick: () => {
                 navigate(ROUTES.Changelog.href);
               },
