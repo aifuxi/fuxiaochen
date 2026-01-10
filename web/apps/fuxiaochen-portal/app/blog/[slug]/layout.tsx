@@ -5,7 +5,6 @@ import { type Metadata } from "next";
 import { isNil } from "es-toolkit";
 
 import { getBlogDetail } from "@/api/blog";
-import { WEBSITE } from "@/constants";
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -19,7 +18,7 @@ export async function generateMetadata(props: {
   }
 
   return {
-    title: `${blog.title} - ${WEBSITE}`,
+    title: `${blog.title}`,
     description: blog.description,
     keywords: blog?.tags?.map((el) => el.name).join(","),
   };
