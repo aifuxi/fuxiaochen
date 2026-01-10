@@ -69,14 +69,14 @@ export function BlogGrid({ blogs, title = "最新博客" }: Props) {
 
                 <h3
                   className={`
-                    mb-3 text-xl font-bold break-all transition-colors
+                    mb-3 text-xl font-bold break-all transition-colors line-clamp-2
                     group-hover:text-primary
                   `}
                 >
                   {blog.title}
                 </h3>
 
-                <p className="mb-4 flex-grow text-sm leading-relaxed break-all text-muted-foreground">
+                <p className="mb-4 flex-grow text-sm leading-relaxed break-all text-muted-foreground line-clamp-2">
                   {blog.description}
                 </p>
 
