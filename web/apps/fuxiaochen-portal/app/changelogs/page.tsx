@@ -35,41 +35,49 @@ export default async function ChangelogPage() {
 
         {/* Timeline */}
         <div className="relative">
-          {/* Timeline line */}
-          <div
-            className={`absolute top-0 bottom-0 left-8 w-0.5 bg-linear-to-b from-primary to-primary/20`}
-          />
+          {!lists?.length ? (
+            <div className="text-center text-muted-foreground">
+              暂无更新日志
+            </div>
+          ) : (
+            <>
+              {/* Timeline line */}
+              <div
+                className={`absolute top-0 bottom-0 left-8 w-0.5 bg-linear-to-b from-primary to-primary/20`}
+              />
 
-          {/* Changelog entries */}
-          <div className="space-y-8">
-            {lists?.map((entry, index) => (
-              <div key={index} className={`relative pl-20`}>
-                {/* Timeline dot and date */}
-                <div
-                  className={`absolute top-1 left-0 flex h-16 w-16 items-center justify-center`}
-                >
-                  <div className="relative z-10 h-4 w-4 rounded-full border-4 border-background bg-primary" />
-                </div>
+              {/* Changelog entries */}
+              <div className="space-y-8">
+                {lists?.map((entry, index) => (
+                  <div key={index} className={`relative pl-20`}>
+                    {/* Timeline dot and date */}
+                    <div
+                      className={`absolute top-1 left-0 flex h-16 w-16 items-center justify-center`}
+                    >
+                      <div className="relative z-10 h-4 w-4 rounded-full border-4 border-background bg-primary" />
+                    </div>
 
-                {/* Entry card */}
-                <div
-                  className={`
-                    rounded-lg border border-border bg-card p-6 transition-colors
-                    hover:border-primary/50
-                  `}
-                >
-                  <BytemdViewer body={entry.content || ""} />
+                    {/* Entry card */}
+                    <div
+                      className={`
+                        rounded-lg border border-border bg-card p-6 transition-colors
+                        hover:border-primary/50
+                      `}
+                    >
+                      <BytemdViewer body={entry.content || ""} />
 
-                  <div
-                    className={`pt-6 text-xs font-medium whitespace-nowrap text-muted-foreground`}
-                  >
-                    发布于&nbsp;
-                    {formattedDate(new Date(entry.date || entry.createdAt))}
+                      <div
+                        className={`pt-6 text-xs font-medium whitespace-nowrap text-muted-foreground`}
+                      >
+                        发布于&nbsp;
+                        {formattedDate(new Date(entry.date || entry.createdAt))}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
 
         {/* Footer CTA */}
