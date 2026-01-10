@@ -7,3 +7,7 @@ export function getToken() {
 export function setToken(token: string) {
   localStorage.setItem(TOKEN_KEY, token);
 }
+
+export function getBearerToken() {
+  return `Bearer ${getToken() ?? ""}`;
+}

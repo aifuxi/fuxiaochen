@@ -5,6 +5,8 @@ import request from "@/libs/request";
 
 const API_BASE_PATH = "/api/v1/upload";
 
+export const API_UPLOAD_PATH = `${API_BASE_PATH}/presign`;
+
 export async function uploadFile(file: File) {
   const res = await request.post<CommonResponse<PresignUploadInfoResp>>(
     `${API_BASE_PATH}/presign`,
