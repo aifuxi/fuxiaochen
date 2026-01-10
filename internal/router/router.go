@@ -43,6 +43,7 @@ func Init(version string, c *app.Container, logger *zap.Logger) *gin.Engine {
 	routes.RegisterPublicBlogRoutes(publicApiV1, c.PublicBlogHandler)
 	routes.RegisterPublicCategoryRoutes(publicApiV1, c.PublicCategoryHandler)
 	routes.RegisterPublicTagRoutes(publicApiV1, c.PublicTagHandler)
+	routes.RegisterPublicChangelogRoutes(publicApiV1, c.PublicChangelogHandler)
 
 	return router
 }
