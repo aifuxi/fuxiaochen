@@ -1,7 +1,5 @@
 import eslint from "@eslint/js";
-// @ts-expect-error 忽略类型错误，因为 next 库的类型定义有问题 实际有这个方法
 import nextVitals from "eslint-config-next/core-web-vitals";
-// @ts-expect-error 忽略类型错误，因为 next 库的类型定义有问题 实际有这个方法
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import checkFile from "eslint-plugin-check-file";
