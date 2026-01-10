@@ -12,12 +12,13 @@
 @import "./github.css";
 @import "./github-dark.css";
 @import "./prose.css";
+@import "./font.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
+  --font-sans: "Space Grotesk Variable","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-mono: Menlo,Monaco,Consolas,"Courier New",monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
