@@ -22,6 +22,10 @@ export const navItems: {
     link: PATHS.ARCHIVES,
   },
   {
+    label: "更新日志",
+    link: PATHS.CHANGELOGS,
+  },
+  {
     label: "关于",
     link: PATHS.ABOUT,
   },
