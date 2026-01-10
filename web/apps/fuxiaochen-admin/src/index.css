@@ -2,6 +2,7 @@
 
 @import "bytemd/dist/index.css";
 @import "./styles/bytemd.css";
+@import "./styles/font.css";
 
 /* tailwindcss 自定义变体：dark 模式 */
 @custom-variant dark (&:where([theme-mode=dark], [theme-mode=dark] *));
@@ -119,14 +120,10 @@
   --radius-semi-full: var(--semi-border-radius-full);
 
   --font-sans:
-    "HarmonyOS Sans", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue",
-    Helvetica, Arial, sans-serif;
-  --font-serif:
-    "Times New Roman", "Georgia", "Palatino", "Palatino Linotype", "STSong",
-    "SimSun", serif;
-  --font-mono:
-    "SF Mono", "Menlo", "Monaco", "Source Code Pro", "Courier New", monospace;
+    "Space Grotesk Variable", "Inter", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 html,
