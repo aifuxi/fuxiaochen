@@ -1,10 +1,11 @@
-import type { BlogCreateReq } from "fuxiaochen-types";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
+import type { FormBlogCreateReq } from "@/types/semi";
+
 interface BlogDraftStore {
-  draft: BlogCreateReq | null;
-  setDraft: (draft: BlogCreateReq | null) => void;
+  draft: FormBlogCreateReq | null;
+  setDraft: (draft: FormBlogCreateReq | null) => void;
   clearDraft: () => void;
 }
 

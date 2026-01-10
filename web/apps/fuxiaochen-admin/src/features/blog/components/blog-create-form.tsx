@@ -5,9 +5,8 @@ import { Banner, Button, Form, Spin, Typography } from "@douyinfe/semi-ui-19";
 import NiceModal from "@ebay/nice-modal-react";
 import { useRequest } from "ahooks";
 import { isEmpty } from "es-toolkit/compat";
-import type { BlogCreateReq } from "fuxiaochen-types";
 
-import type { SemiFormApi } from "@/types/semi";
+import type { FormBlogCreateReq, SemiFormApi } from "@/types/semi";
 
 import BytemdField from "@/components/bytemd-field";
 
@@ -20,6 +19,7 @@ import { createBlog, getBlogDetail, updateBlog } from "@/api/blog";
 import { ROUTES } from "@/constants/route";
 import useBlogDraftStore from "@/stores/use-blog-draft-store";
 
+import BlogCoverUpload from "./blog-cover-upload";
 import BlogCreatedModal from "./blog-created-modal";
 import { CategoryField } from "./category-field";
 import { TagField } from "./tag-field";
@@ -29,7 +29,7 @@ interface Props {
 }
 
 export default function BlogCreateForm({ id }: Props) {
-  const formRef = useRef<SemiFormApi<BlogCreateReq>>(null);
+  const formRef = useRef<SemiFormApi<FormBlogCreateReq>>(null);
   const navigate = useNavigate();
   const draft = useBlogDraftStore((s) => s.draft);
   const setDraft = useBlogDraftStore((s) => s.setDraft);
@@ -69,7 +69,17 @@ export default function BlogCreateForm({ id }: Props) {
         featured: resp?.data?.featured,
         categoryID: resp?.data?.categoryID,
         tagIDs: resp?.data?.tags?.map((tag) => tag?.id) ?? [],
-        cover: resp?.data?.cover,
+        cover: resp?.data?.cover
+          ? [
+              {
+                name: resp?.data?.cover,
+                url: resp?.data?.cover,
+                status: "success",
+                size: "unknown",
+                uid: "123",
+              },
+            ]
+          : [],
       });
     },
   });
@@ -109,17 +119,17 @@ export default function BlogCreateForm({ id }: Props) {
             />
           </div>
         )}
-        <Form<BlogCreateReq>
+        <Form<FormBlogCreateReq>
           getFormApi={(formApi) => (formRef.current = formApi)}
           layout="vertical"
           disabled={loading || detailLoading || updateLoading}
           className="w-full"
           onSubmit={(values) => {
             if (id) {
-              updateRun(id, values);
+              updateRun(id, { ...values, cover: values.cover?.[0]?.url });
               return;
             }
-            run(values);
+            run({ ...values, cover: values.cover?.[0]?.url });
           }}
           initValues={{
             title: "",
@@ -168,6 +178,7 @@ export default function BlogCreateForm({ id }: Props) {
             placeholder="请输入描述"
             rules={[{ required: true, message: "请输入描述" }]}
           ></Form.TextArea>
+          <BlogCoverUpload />
           <CategoryField
             field="categoryID"
             label="分类"
