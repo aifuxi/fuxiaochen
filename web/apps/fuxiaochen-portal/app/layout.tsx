@@ -7,6 +7,9 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import { BackToTop } from "@/components/back-to-top";
+import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import { BProgressProvider, ThemeProvider } from "@/components/providers";
 
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
@@ -36,7 +39,12 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <body className="debug-screens scroll-smooth font-sans antialiased">
         <ThemeProvider attribute="class" enableColorScheme enableSystem>
           <BProgressProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              <Navbar />
+              <main className="min-h-[calc(100vh-190px)]">{children}</main>
+              <Footer />
+              <BackToTop />
+            </TooltipProvider>
           </BProgressProvider>
         </ThemeProvider>
       </body>
