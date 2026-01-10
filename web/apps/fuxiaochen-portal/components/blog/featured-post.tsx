@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -10,7 +11,7 @@ import type { Blog } from "fuxiaochen-types";
 
 import { Badge } from "@/components/ui/badge";
 
-import { PATHS } from "@/constants";
+import { ImageAssets, PATHS } from "@/constants";
 import { calculateReadTime, formattedDate } from "@/lib/common";
 
 type Props = {
@@ -73,15 +74,17 @@ export function FeaturedPost({ blogs }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center justify-center rounded-lg bg-secondary p-8">
-              <div className="flex aspect-square w-full items-center justify-center rounded-lg border border-border bg-muted/30">
-                <pre className="font-mono text-xs text-muted-foreground">
-                  {`<Component>
-  <Component.Header />
-  <Component.Body />
-  <Component.Footer />
-</Component>`}
-                </pre>
+            <div className="flex items-center justify-center rounded-lg bg-secondary">
+              <div className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-muted/30">
+                <Image
+                  src={featuredBlog.cover || ImageAssets.coverPlaceholder}
+                  alt={featuredBlog.title}
+                  fill
+                  className={`
+                                    object-cover transition-transform duration-300
+                                    group-hover:scale-105
+                                  `}
+                />
               </div>
             </div>
           </div>

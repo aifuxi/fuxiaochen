@@ -30,7 +30,6 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     <html suppressHydrationWarning lang="zh-CN">
       <head>
         <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-        {/* Google Search Console 验证 */}
         <meta
           name="google-site-verification"
           content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
