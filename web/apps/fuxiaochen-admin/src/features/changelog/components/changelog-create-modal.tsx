@@ -7,6 +7,7 @@ import type { ChangelogCreateReq } from "fuxiaochen-types";
 
 import type { SemiFormApi } from "@/types/semi";
 
+import BytemdField from "@/components/bytemd-field";
 import NiceSemiModal from "@/components/nice-semi-modal";
 
 import { showSuccessToast } from "@/libs/toast";
@@ -56,6 +57,7 @@ const ChangelogCreateModal = NiceModal.create(
         onSuccess(resp) {
           formRef.current?.setValues({
             version: resp?.data?.version,
+            date: (resp?.data?.date ?? 0 > 0) ? resp?.data?.date : undefined,
             content: resp?.data?.content,
           });
         },
@@ -86,6 +88,9 @@ const ChangelogCreateModal = NiceModal.create(
               if (changelogID) {
                 updateRun(changelogID, {
                   version: values.version,
+                  date: values.date
+                    ? new Date(values.date).getTime()
+                    : undefined,
                   content: values.content,
                 });
                 return;
@@ -93,6 +98,7 @@ const ChangelogCreateModal = NiceModal.create(
 
               run({
                 version: values.version,
+                date: values.date ? new Date(values.date).getTime() : undefined,
                 content: values.content,
               });
             }}
@@ -105,14 +111,20 @@ const ChangelogCreateModal = NiceModal.create(
               placeholder="请输入版本号，如 v1.0.0"
               rules={[{ required: true, message: "请输入版本号" }]}
             ></Form.Input>
-            <Form.TextArea
-              field="content"
-              label="更新内容"
+            <Form.DatePicker
+              field="date"
+              label="手动指定时间"
+              size="large"
               showClear
-              placeholder="请输入更新内容"
-              rules={[{ required: true, message: "请输入更新内容" }]}
-              autosize={{ minRows: 4, maxRows: 10 }}
-            ></Form.TextArea>
+              className="w-full"
+            ></Form.DatePicker>
+            <BytemdField
+              field="content"
+              label="本次更新的内容"
+              showClear
+              placeholder="请输入本次更新的内容"
+              rules={[{ required: true, message: "请输入本次更新的内容" }]}
+            ></BytemdField>
           </Form>
         </Spin>
       </NiceSemiModal>

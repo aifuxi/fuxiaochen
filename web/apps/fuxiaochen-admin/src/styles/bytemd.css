@@ -1,5 +1,5 @@
 .bytemd {
-  @apply h-[calc(100vh-58px)] font-sans;
+  @apply h-[50vh] font-sans;
 }
 
 .bytemd .CodeMirror {
@@ -67,7 +67,7 @@
   @apply border-r-semi-border! bg-semi-bg-0!;
 }
 
-/* 下面代码的灵感来自这个Issue: https://github.com/pd4d10/hashmd/issues/40 */
+/* 下面代码的灵感来自这个 Issue: https://github.com/pd4d10/hashmd/issues/40 */
 /* ByteMD editor overrides	*/
 .bytemd {
   @apply border-semi-border! bg-semi-bg-0! text-semi-text-0! rounded-semi-small!;

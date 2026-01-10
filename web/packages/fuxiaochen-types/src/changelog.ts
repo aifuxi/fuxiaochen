@@ -3,6 +3,7 @@ import type { CommonModel, ListReq } from "./common";
 export interface Changelog extends CommonModel {
   version: string;
   content: string;
+  date?: number;
 }
 
 export interface ChangelogListReq extends ListReq {
@@ -17,4 +18,5 @@ export interface ChangelogListResp {
 export interface ChangelogCreateReq {
   version: string;
   content: string;
+  date?: number;
 }
