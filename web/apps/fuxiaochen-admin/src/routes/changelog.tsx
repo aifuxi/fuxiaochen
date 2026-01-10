@@ -15,13 +15,13 @@ import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
-import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
 import { getChangelogList } from "@/api/changelog";
 import { ROUTES } from "@/constants/route";
 import ChangelogCreateModal from "@/features/changelog/components/changelog-create-modal";
 import ChangelogDeleteModal from "@/features/changelog/components/changelog-delete-modal";
+import { useSemiTable } from "@/hooks/use-semi-table";
 
 type FormValues = Pick<ChangelogListReq, "version">;
 
@@ -46,6 +46,15 @@ export default function ChangelogListPage() {
       width: 400,
       ellipsis: true,
       render: (_, record) => record.content,
+    },
+    {
+      title: " 手动指定时间",
+      width: 200,
+      ellipsis: true,
+      dataIndex: "date",
+      sorter: true,
+      render: (_, record) =>
+        record.date ? toModifiedISO8601(record.date) : "-",
     },
     {
       title: "创建时间",
@@ -142,11 +151,7 @@ export default function ChangelogListPage() {
                 >
                   搜索
                 </Button>
-                <Button
-                  type="primary"
-                  icon={<IconRefresh2 />}
-                  onClick={reset}
-                >
+                <Button type="primary" icon={<IconRefresh2 />} onClick={reset}>
                   重置
                 </Button>
               </div>
