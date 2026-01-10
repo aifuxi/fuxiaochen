@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Calendar04Icon, Clock01Icon } from "@hugeicons/core-free-icons";
@@ -6,6 +7,7 @@ import type { Blog } from "fuxiaochen-types";
 
 import { Badge } from "@/components/ui/badge";
 
+import { ImageAssets } from "@/constants";
 import { PATHS } from "@/constants/path";
 import { calculateReadTime, formattedDate } from "@/lib/common";
 
@@ -38,43 +40,57 @@ export function BlogGrid({ blogs, title = "最新博客" }: Props) {
                 hover:border-primary/50
               `}
             >
-              <div className="mb-4 flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon
-                    icon={Calendar04Icon}
-                    className="h-3.5 w-3.5"
-                  />
-                  {formattedDate(new Date(blog.createdAt))}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
-                  预计阅读 {calculateReadTime(blog.content)} 分钟
-                </span>
+              <div className="relative h-48 w-full overflow-hidden rounded-md bg-muted">
+                <Image
+                  src={blog.cover || ImageAssets.coverPlaceholder}
+                  alt={blog.title}
+                  fill
+                  className={`
+                    object-cover transition-transform duration-300
+                    group-hover:scale-105
+                  `}
+                />
               </div>
 
-              <h3
-                className={`
-                  mb-3 text-xl font-bold break-all transition-colors
-                  group-hover:text-primary
-                `}
-              >
-                {blog.title}
-              </h3>
+              <div className="flex flex-grow flex-col p-6">
+                <div className="mb-4 flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <HugeiconsIcon
+                      icon={Calendar04Icon}
+                      className="h-3.5 w-3.5"
+                    />
+                    {formattedDate(new Date(blog.createdAt))}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <HugeiconsIcon icon={Clock01Icon} className="h-3.5 w-3.5" />
+                    预计阅读 {calculateReadTime(blog.content)} 分钟
+                  </span>
+                </div>
 
-              <p className="mb-4 flex-grow text-sm leading-relaxed break-all text-muted-foreground">
-                {blog.description}
-              </p>
+                <h3
+                  className={`
+                    mb-3 text-xl font-bold break-all transition-colors
+                    group-hover:text-primary
+                  `}
+                >
+                  {blog.title}
+                </h3>
 
-              <div className="flex flex-wrap items-center gap-2">
-                {blog?.tags?.map((tag) => (
-                  <Badge
-                    key={tag.id}
-                    variant="outline"
-                    className="font-mono text-xs break-all"
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
+                <p className="mb-4 flex-grow text-sm leading-relaxed break-all text-muted-foreground">
+                  {blog.description}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {blog?.tags?.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant="outline"
+                      className="font-mono text-xs break-all"
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </article>
           </Link>
