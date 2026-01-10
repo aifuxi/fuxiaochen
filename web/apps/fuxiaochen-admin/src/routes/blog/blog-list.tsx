@@ -9,7 +9,7 @@ import {
   IconRefresh2,
   IconSearch,
 } from "@douyinfe/semi-icons";
-import { Button, Form, Table } from "@douyinfe/semi-ui-19";
+import { Button, Form, Image, Table } from "@douyinfe/semi-ui-19";
 import NiceModal from "@ebay/nice-modal-react";
 import type { Blog, BlogListReq } from "fuxiaochen-types";
 
@@ -17,14 +17,15 @@ import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
-import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
 import { getBlogList } from "@/api/blog";
+import { ASSETS } from "@/constants/assets";
 import { ROUTES } from "@/constants/route";
 import BlogDeleteModal from "@/features/blog/components/blog-delete-modal";
 import BlogFeaturedChanger from "@/features/blog/components/blog-featured-changer";
 import BlogPublishedChanger from "@/features/blog/components/blog-published-changer";
+import { useSemiTable } from "@/hooks/use-semi-table";
 
 type FormValues = Pick<BlogListReq, "title" | "slug">;
 
@@ -44,6 +45,17 @@ export default function BlogListPage() {
       width: 260,
       ellipsis: true,
       render: (_, record) => record.title,
+    },
+    {
+      title: "封面",
+      width: 260,
+      render: (_, record) => (
+        <Image
+          width={240}
+          height={135}
+          src={record.cover || ASSETS.CoverPlaceholder}
+        />
+      ),
     },
     {
       title: "别名",
@@ -182,11 +194,7 @@ export default function BlogListPage() {
                 >
                   搜索
                 </Button>
-                <Button
-                  type="primary"
-                  icon={<IconRefresh2 />}
-                  onClick={reset}
-                >
+                <Button type="primary" icon={<IconRefresh2 />} onClick={reset}>
                   重置
                 </Button>
               </div>

@@ -48,6 +48,7 @@ export default defineConfig([
           ignoreRestSiblings: true,
         },
       ],
+      "@typescript-eslint/prefer-nullish-coalescing": "warn",
     },
   },
 ]);
