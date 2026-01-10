@@ -5,10 +5,12 @@ import "github.com/aifuxi/fuxiaochen-api/internal/model"
 type ChangelogCreateReq struct {
 	Version string `json:"version" binding:"required"`
 	Content string `json:"content" binding:"required"`
+	Date    int    `json:"date"`
 }
 
 type ChangelogListReq struct {
 	ListReq
+	Version string `form:"version" binding:"omitempty"`
 }
 
 type ChangelogResp struct {
@@ -27,4 +29,5 @@ type ChangelogFindByIDReq struct {
 type ChangelogUpdateReq struct {
 	Version string `json:"version" binding:"required"`
 	Content string `json:"content" binding:"required"`
+	Date    int    `json:"date"`
 }

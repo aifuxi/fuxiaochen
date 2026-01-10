@@ -33,6 +33,7 @@ func (s *changelogService) Create(ctx context.Context, req dto.ChangelogCreateRe
 	changelog := model.Changelog{
 		Version: req.Version,
 		Content: req.Content,
+		Date:    req.Date,
 	}
 
 	createdChangelog, err := s.changelogRepo.Create(ctx, changelog)
@@ -45,6 +46,7 @@ func (s *changelogService) Create(ctx context.Context, req dto.ChangelogCreateRe
 
 func (s *changelogService) List(ctx context.Context, req dto.ChangelogListReq) ([]model.Changelog, int64, error) {
 	changelogs, total, err := s.changelogRepo.List(ctx, repository.ChangelogListOption{
+		Version:  req.Version,
 		Page:     req.Page,
 		PageSize: req.PageSize,
 		SortBy:   req.SortBy,
@@ -79,6 +81,7 @@ func (s *changelogService) UpdateByID(ctx context.Context, id int64, req dto.Cha
 	changelog := model.Changelog{
 		Version: req.Version,
 		Content: req.Content,
+		Date:    req.Date,
 	}
 
 	updatedChangelog, err := s.changelogRepo.UpdateByID(ctx, id, changelog)

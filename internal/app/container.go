@@ -17,17 +17,18 @@ type Container struct {
 	ChangelogService service.ChangelogService
 
 	// Handlers
-	AuthHandler           *handler.UserHandler
-	UserHandler           *handler.UserHandler
-	RoleHandler           *handler.RoleHandler
-	BlogHandler           *handler.BlogHandler
-	CategoryHandler       *handler.CategoryHandler
-	TagHandler            *handler.TagHandler
-	ChangelogHandler      *handler.ChangelogHandler
-	UploadHandler         *handler.UploadHandler
-	PublicBlogHandler     *handler.PublicBlogHandler
-	PublicCategoryHandler *handler.PublicCategoryHandler
-	PublicTagHandler      *handler.PublicTagHandler
+	AuthHandler            *handler.UserHandler
+	UserHandler            *handler.UserHandler
+	RoleHandler            *handler.RoleHandler
+	BlogHandler            *handler.BlogHandler
+	CategoryHandler        *handler.CategoryHandler
+	TagHandler             *handler.TagHandler
+	ChangelogHandler       *handler.ChangelogHandler
+	UploadHandler          *handler.UploadHandler
+	PublicBlogHandler      *handler.PublicBlogHandler
+	PublicCategoryHandler  *handler.PublicCategoryHandler
+	PublicTagHandler       *handler.PublicTagHandler
+	PublicChangelogHandler *handler.PublicChangelogHandler
 }
 
 func NewContainer() *Container {
@@ -63,20 +64,22 @@ func NewContainer() *Container {
 	publicBlogHandler := handler.NewPublicBlogHandler(blogService)
 	publicCategoryHandler := handler.NewPublicCategoryHandler(categoryService)
 	publicTagHandler := handler.NewPublicTagHandler(tagService)
+	publicChangelogHandler := handler.NewPublicChangelogHandler(changelogService)
 
 	return &Container{
-		TokenRepo:             tokenRepo,
-		UserService:           userService,
-		AuthHandler:           userHandler, // Auth uses UserHandler
-		UserHandler:           userHandler,
-		RoleHandler:           roleHandler,
-		BlogHandler:           blogHandler,
-		CategoryHandler:       categoryHandler,
-		TagHandler:            tagHandler,
-		ChangelogHandler:      changelogHandler,
-		UploadHandler:         uploadHandler,
-		PublicBlogHandler:     publicBlogHandler,
-		PublicCategoryHandler: publicCategoryHandler,
-		PublicTagHandler:      publicTagHandler,
+		TokenRepo:              tokenRepo,
+		UserService:            userService,
+		AuthHandler:            userHandler, // Auth uses UserHandler
+		UserHandler:            userHandler,
+		RoleHandler:            roleHandler,
+		BlogHandler:            blogHandler,
+		CategoryHandler:        categoryHandler,
+		TagHandler:             tagHandler,
+		ChangelogHandler:       changelogHandler,
+		UploadHandler:          uploadHandler,
+		PublicBlogHandler:      publicBlogHandler,
+		PublicCategoryHandler:  publicCategoryHandler,
+		PublicTagHandler:       publicTagHandler,
+		PublicChangelogHandler: publicChangelogHandler,
 	}
 }

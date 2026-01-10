@@ -9,6 +9,7 @@ import (
 )
 
 type ChangelogListOption struct {
+	Version  string
 	Page     int
 	PageSize int
 	SortBy   string
@@ -56,6 +57,9 @@ func (r *changelogRepository) List(ctx context.Context, option ChangelogListOpti
 	var total int64
 
 	query := r.db.WithContext(ctx).Model(&model.Changelog{})
+	if option.Version != "" {
+		query = query.Where("version LIKE ?", "%"+option.Version+"%")
+	}
 
 	if err := query.Count(&total).Error; err != nil {
 		return nil, 0, err
