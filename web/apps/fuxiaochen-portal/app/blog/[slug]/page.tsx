@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -14,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import BytemdViewer from "@/components/bytemd";
 
 import { getBlogDetail } from "@/api/blog";
-import { PATHS } from "@/constants";
+import { ImageAssets, PATHS } from "@/constants";
 import { formattedDate } from "@/lib/common";
 import { calculateReadTime } from "@/lib/common";
 
@@ -46,6 +47,18 @@ export default async function Page(props: {
         </Link>
         <div>
           <header className="mb-8">
+            <div className="relative h-96 w-full overflow-hidden rounded-2xl bg-muted mb-6 group">
+              <Image
+                src={blog.cover || ImageAssets.coverPlaceholder}
+                alt={blog.title}
+                fill
+                className={`
+                                object-cover transition-transform duration-300
+                                group-hover:scale-105
+                              `}
+              />
+            </div>
+
             <div className="mb-4 flex items-center gap-2">
               <Badge variant="outline">{blog?.category?.name}</Badge>
             </div>
