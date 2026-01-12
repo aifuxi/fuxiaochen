@@ -5,7 +5,7 @@ export function BlogHero() {
     <section className="border-b border-border bg-card py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl">
-          <div className="mb-6 inline-block rounded-full border border-primary/20 bg-primary/10 px-3 py-1 font-mono text-xs text-primary">
+          <div className="mb-6 inline-block rounded-full border border-primary/20 px-3 py-1 font-mono text-xs text-primary">
             一个 React + TypeScript + Go 爱好者
           </div>
           <h1 className="mb-6 text-3xl leading-tight font-bold text-balance md:text-5xl">
