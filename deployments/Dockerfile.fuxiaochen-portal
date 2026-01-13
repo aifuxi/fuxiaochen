@@ -1,4 +1,4 @@
-FROM node:20-slim AS deps
+FROM node:24-slim AS deps
 WORKDIR /work
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
