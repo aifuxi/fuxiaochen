@@ -1,67 +1,28 @@
-import * as React from "react";
+import { Metadata } from "next";
 
-import { type Metadata } from "next";
-import Script from "next/script";
+import { BackToTop } from "@/components/cyberpunk/back-to-top";
+import { NeonHeader } from "@/components/cyberpunk/neon-header";
 
-import { GoogleAnalytics } from "@next/third-parties/google";
-
-import { TooltipProvider } from "@/components/ui/tooltip";
-
-import { BackToTop } from "@/components/back-to-top";
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-import { BProgressProvider, ThemeProvider } from "@/components/providers";
-
-import { NICKNAME, SLOGAN, WEBSITE } from "@/constants";
 import "@/styles/global.css";
-import { isProduction } from "@/utils";
 
 export const metadata: Metadata = {
-  title: {
-    template: `%s | ${WEBSITE}`,
-    default: WEBSITE,
-  },
-  description: SLOGAN,
-  keywords: NICKNAME,
+  title: "Cyberpunk Portal",
+  description: "A futuristic cyberpunk portfolio and blog",
 };
 
-export default function RootLayout({ children }: React.PropsWithChildren) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html suppressHydrationWarning lang="zh-CN">
-      <head>
-        <link rel="icon" type="image/svg+xml" href="/images/logo.svg" />
-        <meta
-          name="google-site-verification"
-          content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
-        />
-      </head>
-      <body className="debug-screens scroll-smooth font-sans antialiased">
-        <ThemeProvider attribute="class" enableColorScheme enableSystem>
-          <BProgressProvider>
-            <TooltipProvider>
-              <Navbar />
-              <main className="min-h-[calc(100vh-190px)]">{children}</main>
-              <Footer />
-              <BackToTop />
-            </TooltipProvider>
-          </BProgressProvider>
-        </ThemeProvider>
+    <html lang="en">
+      <body className="antialiased selection:bg-neon-cyan selection:text-cyber-black">
+        <div className="scanlines" />
+        <NeonHeader />
+        <main className="relative min-h-screen">{children}</main>
+        <BackToTop />
       </body>
-
-      {/* Google Analytics  */}
-      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
-      )}
-
-      {/* umami 统计 */}
-      {isProduction() && (
-        <Script
-          id="umami"
-          src={process.env.NEXT_PUBLIC_UMAMI_URL}
-          async
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-        />
-      )}
     </html>
   );
 }

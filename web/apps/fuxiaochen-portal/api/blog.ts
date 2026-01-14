@@ -4,6 +4,10 @@ import request from "@/lib/request";
 
 export interface BlogListReq extends ListReq {
   featuredStatus?: "featured" | "unfeatured";
+  /** category slug */
+  category?: string;
+  /** tag slugs */
+  tags?: string[];
 }
 
 export interface BlogListResp {
