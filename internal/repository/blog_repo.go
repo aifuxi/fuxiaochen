@@ -10,16 +10,18 @@ import (
 )
 
 type BlogListOption struct {
-	Page       int
-	PageSize   int
-	Title      string
-	Slug       string
-	SortBy     string
-	Order      string
-	CategoryID int64
-	TagIDs     []int64
-	Published  *bool
-	Featured   *bool
+	Page         int
+	PageSize     int
+	Title        string
+	Slug         string
+	SortBy       string
+	Order        string
+	CategoryID   int64
+	TagIDs       []int64
+	CategorySlug string
+	TagSlugs     []string
+	Published    *bool
+	Featured     *bool
 }
 
 type BlogRepository interface {
@@ -91,8 +93,20 @@ func (r *blogRepo) List(ctx context.Context, option BlogListOption) ([]model.Blo
 		query = query.Where("category_id = ?", option.CategoryID)
 	}
 
+	if option.CategorySlug != "" {
+		query = query.Joins("JOIN categories ON categories.id = blogs.category_id").
+			Where("categories.slug = ?", option.CategorySlug)
+	}
+
 	if len(option.TagIDs) > 0 {
 		query = query.Where("blog_tags.tag_id IN ?", option.TagIDs)
+	}
+
+	if len(option.TagSlugs) > 0 {
+		query = query.Joins("JOIN blog_tags ON blog_tags.blog_id = blogs.id").
+			Joins("JOIN tags ON tags.id = blog_tags.tag_id").
+			Where("tags.slug IN ?", option.TagSlugs).
+			Group("blogs.id")
 	}
 
 	if option.Title != "" {

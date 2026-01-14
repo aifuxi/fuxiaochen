@@ -100,16 +100,18 @@ func (s *blogService) List(ctx context.Context, req dto.BlogListReq) ([]model.Bl
 	}
 
 	return s.repo.List(ctx, repository.BlogListOption{
-		Page:       req.Page,
-		PageSize:   req.PageSize,
-		Title:      req.Title,
-		Slug:       req.Slug,
-		Published:  published,
-		Featured:   featured,
-		SortBy:     req.SortBy,
-		Order:      req.Order,
-		CategoryID: req.CategoryID,
-		TagIDs:     req.TagIDs,
+		Page:         req.Page,
+		PageSize:     req.PageSize,
+		Title:        req.Title,
+		Slug:         req.Slug,
+		Published:    published,
+		Featured:     featured,
+		SortBy:       req.SortBy,
+		Order:        req.Order,
+		CategoryID:   req.CategoryID,
+		TagIDs:       req.TagIDs,
+		CategorySlug: req.CategorySlug,
+		TagSlugs:     req.TagSlugs,
 	})
 }
 
