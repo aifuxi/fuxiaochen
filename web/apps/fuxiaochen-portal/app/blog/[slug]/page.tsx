@@ -1,111 +1,140 @@
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import {
-  ArrowLeft02Icon,
-  Calendar04Icon,
-  Clock01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { isNil } from "es-toolkit";
+import { format } from "date-fns";
 
-import { Badge } from "@/components/ui/badge";
-
-import BytemdViewer from "@/components/bytemd";
+import BlogContent from "@/components/blog/blog-content";
+import { TableOfContents } from "@/components/blog/table-of-contents";
 
 import { getBlogDetail } from "@/api/blog";
-import { ImageAssets, PATHS } from "@/constants";
-import { formattedDate } from "@/lib/common";
-import { calculateReadTime } from "@/lib/common";
 
-export default async function Page(props: {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const blog = await getBlogDetail(slug);
+    if (!blog) return { title: "Blog Not Found" };
+    return {
+      title: `${blog.title} | FuXiaochen`,
+      description: blog.description || blog.title,
+    };
+  } catch (error) {
+    return { title: "Blog Not Found" };
+  }
+}
+
+export default async function BlogDetailPage({
+  params,
+}: {
   params: Promise<{ slug: string }>;
 }) {
-  const params = await props.params;
-  const resp = await getBlogDetail(params.slug);
-  const blog = resp;
-
-  if (isNil(blog)) {
-    return notFound();
+  const { slug } = await params;
+  let blog;
+  try {
+    blog = await getBlogDetail(slug);
+  } catch (error) {
+    console.error("Failed to fetch blog detail:", error);
+    notFound();
   }
 
-  const readMinutes = calculateReadTime(blog.content);
+  if (!blog) {
+    notFound();
+  }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <article className="mx-auto max-w-3xl">
-        <Link
-          href={PATHS.BLOGS}
-          className={`
-            mb-8 flex items-center gap-2 text-primary
-            hover:underline
-          `}
-        >
-          <HugeiconsIcon icon={ArrowLeft02Icon} className="h-4 w-4" />
-          返回博客列表
-        </Link>
-        <div>
-          <header className="mb-8">
-            <div className="relative h-96 w-full overflow-hidden rounded-2xl bg-muted mb-6 group">
+    <div className="min-h-screen bg-cyber-black text-white font-body selection:bg-neon-magenta selection:text-black">
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] pointer-events-none bg-[length:100%_2px,3px_100%] animate-scanline" />
+
+      <main className="pt-24 pb-20 relative z-10">
+        {/* Hero Section */}
+        <div className="relative w-full h-[50vh] min-h-[400px] mb-12">
+          <div className="absolute inset-0 bg-cyber-gray/50">
+            {blog.cover ? (
               <Image
-                src={blog.cover || ImageAssets.coverPlaceholder}
+                src={blog.cover}
                 alt={blog.title}
                 fill
-                className={`
-                                object-cover transition-transform duration-300
-                                group-hover:scale-105
-                              `}
+                className="object-cover opacity-60"
+                priority
               />
-            </div>
-
-            <div className="mb-4 flex items-center gap-2">
-              <Badge variant="outline">{blog?.category?.name}</Badge>
-            </div>
-
-            <h1 className="mb-4 text-4xl leading-tight font-bold break-all">
-              {blog.title}
-            </h1>
-
-            <p className="mb-6 text-lg break-all text-muted-foreground">
-              {blog.description}
-            </p>
-
-            <div
-              className={`
-                flex flex-wrap items-center gap-6 border-t border-b border-border py-4 text-sm text-muted-foreground
-              `}
-            >
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={Calendar04Icon} className="h-4 w-4" />
-                <span>{formattedDate(new Date(blog.createdAt))}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={Clock01Icon} className="h-4 w-4" />
-                <span>预计阅读 {readMinutes} 分钟</span>
-              </div>
-            </div>
-          </header>
-
-          <div className="my-8 leading-relaxed text-foreground">
-            <BytemdViewer body={blog.content || ""} />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-cyber-gray to-black opacity-60" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/80 to-transparent" />
           </div>
 
-          <footer className="mt-12 border-t border-border pt-8">
-            <div className="flex flex-wrap gap-2">
-              {blog?.tags?.map((tag) => (
-                <Badge
-                  key={tag.id}
-                  variant="outline"
-                  className="font-mono text-xs"
-                >
-                  {tag.name}
-                </Badge>
-              ))}
+          <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-12 relative z-20">
+            <div className="max-w-4xl mx-auto w-full">
+              <div className="flex gap-4 mb-6 flex-wrap">
+                {blog.tags?.map((tag) => (
+                  <span
+                    key={tag.id || tag.name}
+                    className="text-sm font-bold uppercase tracking-wider text-neon-cyan border border-neon-cyan/30 px-3 py-1 rounded bg-neon-cyan/5 backdrop-blur-sm shadow-[0_0_10px_rgba(0,255,255,0.2)]"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+                {blog.category && (
+                  <span className="text-sm font-bold uppercase tracking-wider text-neon-purple border border-neon-purple/30 px-3 py-1 rounded bg-neon-purple/5 backdrop-blur-sm shadow-[0_0_10px_rgba(123,97,255,0.2)]">
+                    {blog.category.name}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                {blog.title}
+              </h1>
+
+              <div className="flex items-center gap-6 text-gray-400 font-mono text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse" />
+                  {blog.publishedAt
+                    ? format(new Date(blog.publishedAt), "MMMM dd, yyyy")
+                    : "Draft"}
+                </span>
+                {/* Reading time could be calculated if needed */}
+              </div>
             </div>
-          </footer>
+          </div>
         </div>
-      </article>
+
+        {/* Content Section */}
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+            <div className="glass-panel p-8 md:p-12 rounded-2xl relative overflow-hidden h-fit">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-magenta opacity-50" />
+
+              <BlogContent content={blog.content} />
+
+              {/* Footer / Navigation */}
+              <div className="mt-16 pt-8 border-t border-white/10 flex justify-between items-center">
+                <Link
+                  href="/blog"
+                  className="text-gray-400 hover:text-neon-cyan transition-colors flex items-center gap-2 group"
+                >
+                  <span className="group-hover:-translate-x-1 transition-transform">
+                    ←
+                  </span>{" "}
+                  Back to Blog
+                </Link>
+
+                <div className="flex gap-4">
+                  {/* Share buttons could go here */}
+                </div>
+              </div>
+            </div>
+
+            <div className="hidden lg:block">
+              <TableOfContents />
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

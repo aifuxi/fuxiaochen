@@ -1,3 +1,5 @@
+import queryString from "query-string";
+
 class APIServiceClient {
   /**
    * 封装内部的 fetch 方法
@@ -8,8 +10,11 @@ class APIServiceClient {
     path: string,
     config?: Omit<RequestInit, "method"> & { params?: Record<string, any> },
   ): Promise<T> {
-    const search = new URLSearchParams(config?.params ?? {});
-    const query = search.toString().length ? `?${search.toString()}` : "";
+    const search = queryString.stringify(config?.params ?? {});
+    const query = search.length ? `?${search}` : "";
+
+    console.log(`query: ${query}`);
+    console.log(`config?.params: ${JSON.stringify(config?.params)}`);
 
     const { params: _, ...restConfig } = config ?? {};
 
@@ -17,7 +22,7 @@ class APIServiceClient {
       `${process.env.NEXT_PUBLIC_API_URL}${path}${query}`,
       {
         method: "GET",
-        next: { revalidate: 3600 }, // 缓存 1 小时 (3600 秒)
+        cache: "no-store",
         ...restConfig,
       },
     );
