@@ -53,9 +53,9 @@ export default function AboutPage() {
                 <div className="space-y-1">
                   <h1
                     className="text-4xl md:text-6xl font-bold font-display uppercase tracking-wider text-white glitch-text"
-                    data-text="Fu_Xiaochen"
+                    data-text="付小晨"
                   >
-                    Fu_Xiaochen
+                    付小晨
                   </h1>
                   <p className="text-neon-cyan font-mono text-lg tracking-widest">
                     /// FRONTEND_ENGINEER_CLASS
@@ -63,23 +63,22 @@ export default function AboutPage() {
                 </div>
 
                 <p className="text-gray-300 max-w-2xl leading-relaxed text-lg">
-                  Frontend developer since 2020. Enthusiast of{" "}
+                  自 2020 年以来的前端开发人员。热衷于{" "}
                   <span className="text-neon-cyan">React</span>,{" "}
-                  <span className="text-neon-cyan">Go</span>, and{" "}
-                  <span className="text-neon-cyan">TypeScript</span>. Passionate
-                  about coding, gaming, and building immersive digital
-                  experiences.
+                  <span className="text-neon-cyan">Go</span>, 和{" "}
+                  <span className="text-neon-cyan">TypeScript</span>
+                  。热爱编程、游戏，并致力于构建沉浸式的数字体验。
                 </p>
 
                 <div className="flex flex-wrap gap-4 justify-center md:justify-start pt-4">
                   <div className="px-4 py-2 bg-neon-cyan/10 border border-neon-cyan/30 rounded text-neon-cyan font-mono text-sm">
-                    EXP: 4+ YEARS
+                    经验：4+ 年
                   </div>
                   <div className="px-4 py-2 bg-neon-purple/10 border border-neon-purple/30 rounded text-neon-purple font-mono text-sm">
-                    LOC: SHENZHEN
+                    位置：上海
                   </div>
                   <div className="px-4 py-2 bg-neon-magenta/10 border border-neon-magenta/30 rounded text-neon-magenta font-mono text-sm">
-                    STATUS: ONLINE
+                    状态：在线
                   </div>
                 </div>
               </div>
@@ -91,13 +90,13 @@ export default function AboutPage() {
           {/* Skills Matrix */}
           <section className="glass-panel p-8 rounded-2xl border border-neon-purple/20">
             <h3 className="text-2xl font-bold text-neon-purple mb-8 flex items-center gap-3">
-              <span className="text-xl">⚡</span> NEURAL_IMPLANTS (Skills)
+              <span className="text-xl">⚡</span> 神经植入 (技能)
             </h3>
 
             <div className="space-y-8">
               <div>
                 <h4 className="text-sm font-mono text-gray-500 mb-3 uppercase tracking-wider">
-                  Frontend_Modules
+                  前端模块 / Frontend_Modules
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {frontendSkills.map((skill) => (
@@ -114,7 +113,7 @@ export default function AboutPage() {
 
               <div>
                 <h4 className="text-sm font-mono text-gray-500 mb-3 uppercase tracking-wider">
-                  Backend_Protocols
+                  后端协议 / Backend_Protocols
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {backendSkills.map((skill) => (
@@ -131,7 +130,7 @@ export default function AboutPage() {
 
               <div>
                 <h4 className="text-sm font-mono text-gray-500 mb-3 uppercase tracking-wider">
-                  System_Tools
+                  系统工具 / System_Tools
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {systemTools.map((tool, i) => (
@@ -151,7 +150,7 @@ export default function AboutPage() {
           {/* Equipment */}
           <section className="glass-panel p-8 rounded-2xl border border-neon-magenta/20">
             <h3 className="text-2xl font-bold text-neon-magenta mb-8 flex items-center gap-3">
-              <span className="text-xl">🖥️</span> HARDWARE_LOADOUT
+              <span className="text-xl">🖥️</span> 硬件装备 / HARDWARE_LOADOUT
             </h3>
 
             <div className="space-y-6 relative">
@@ -160,23 +159,27 @@ export default function AboutPage() {
 
               {[
                 {
-                  label: "Mainframe",
+                  label: "主机 / Mainframe",
                   value: "MacBook Pro 14-inch M3 Max",
                   icon: "💻",
                 },
-                { label: "Combat_Unit", value: "MSI GP76 RTX3070", icon: "🎮" },
                 {
-                  label: "Visual_Interface",
+                  label: "战斗单元 / Combat_Unit",
+                  value: "MSI GP76 RTX3070",
+                  icon: "🎮",
+                },
+                {
+                  label: "视觉接口 / Visual_Interface",
                   value: 'LG 27" 4K Display',
                   icon: "👁️",
                 },
                 {
-                  label: "Input_Matrix_A",
+                  label: "输入矩阵 A / Input_Matrix_A",
                   value: "KIZI K75 Keyboard",
                   icon: "⌨️",
                 },
                 {
-                  label: "Input_Matrix_B",
+                  label: "输入矩阵 B / Input_Matrix_B",
                   value: "Logitech G PRO 2 Mouse",
                   icon: "🖱️",
                 },
@@ -201,7 +204,7 @@ export default function AboutPage() {
         {/* Footer quote or something */}
         <div className="mt-20 text-center">
           <p className="text-gray-500 font-mono text-sm">
-            /// END_OF_FILE: PROFILE_DATA
+            /// END_OF_FILE: PROFILE_DATA 档案结束：个人资料
           </p>
         </div>
       </main>

@@ -75,7 +75,7 @@ function PaginationPrevious({
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label="转到上一页"
       size="default"
       className={cn("pl-1.5!", className)}
       {...props}
@@ -85,7 +85,7 @@ function PaginationPrevious({
         strokeWidth={2}
         data-icon="inline-start"
       />
-      <span className="hidden sm:block">Previous</span>
+      <span className="hidden sm:block">上一页 / Previous</span>
     </PaginationLink>
   );
 }
@@ -96,12 +96,12 @@ function PaginationNext({
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label="转到下一页"
       size="default"
       className={cn("pr-1.5!", className)}
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
+      <span className="hidden sm:block">下一页 / Next</span>
       <HugeiconsIcon
         icon={ArrowRight01Icon}
         strokeWidth={2}
@@ -126,7 +126,7 @@ function PaginationEllipsis({
       {...props}
     >
       <HugeiconsIcon icon={MoreHorizontalCircle01Icon} strokeWidth={2} />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">更多页码 / More pages</span>
     </span>
   );
 }

@@ -23,8 +23,8 @@
 }
 
 @theme {
-  --font-display: "Orbitron", sans-serif;
-  --font-body: "Exo 2", sans-serif;
+  --font-display: "Orbitron", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: "Exo 2", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
   --color-neon-cyan: #00ffff;
   --color-neon-purple: #7b61ff;
