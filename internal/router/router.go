@@ -20,6 +20,9 @@ func Init(version string, c *app.Container, logger *zap.Logger) *gin.Engine {
 	//   - stack means whether output the stack info.
 	router.Use(ginzap.RecoveryWithZap(logger, true))
 
+	// 全局延迟中间件：所有接口都等待 x 秒后执行
+	// router.Use(middleware.DelayMiddleware(5 * time.Second))
+
 	router.GET("/health", func(c *gin.Context) {
 		response.Success(c, gin.H{
 			"status":  "ok",

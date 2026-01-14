@@ -31,6 +31,8 @@ func (h *PublicBlogHandler) List(ctx *gin.Context) {
 		// 只返回已发布的博客
 		PublishedStatus: "published",
 		FeaturedStatus:  req.FeaturedStatus,
+		CategorySlug:    req.CategorySlug,
+		TagSlugs:        req.TagSlugs,
 	})
 
 	if err != nil {
