@@ -32,7 +32,7 @@ func main() {
 	container := app.NewContainer()
 	router := router.Init(config.AppConfig.Server.Version, container, logger.Log)
 
-	addr := fmt.Sprintf("%s:%d", config.AppConfig.Server.Host, config.AppConfig.Server.Port)
+	addr := fmt.Sprintf(":%d", config.AppConfig.Server.Port)
 
 	// 打印应用版本号
 	logger.Sugar.Infof("API Server %s is running on %s \n", config.AppConfig.Server.Version, addr)
