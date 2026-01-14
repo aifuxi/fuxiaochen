@@ -5,10 +5,11 @@
 本项目 `fuxiaochen` 是一个全栈应用，包含 Go 语言编写的后端 API 服务，以及采用 Monorepo 管理的前端应用集合。
 
 ### 核心架构
+
 - **Backend**: Go (Gin) + MySQL (Gorm)
 - **Frontend Monorepo**: pnpm workspace
-    - **Admin**: React + Vite + Semi UI
-    - **Portal**: Next.js + Tailwind CSS + Shadcn UI
+  - **Admin**: React + Vite + Semi UI
+  - **Portal**: Next.js + Tailwind CSS + Shadcn UI
 
 ## 2. 目录结构
 
@@ -40,6 +41,7 @@
 ## 3. 后端架构 (Backend)
 
 ### 技术栈
+
 - **框架**: Gin Web Framework
 - **ORM**: GORM
 - **数据库**: MySQL
@@ -49,12 +51,15 @@
 - **对象存储**: 阿里云 OSS
 
 ### 架构模式
+
 采用经典的三层分层架构：
+
 1.  **Handler Layer (`internal/handler`)**: 处理 HTTP 请求，参数校验，调用 Service 层，返回响应。
 2.  **Service Layer (`internal/service`)**: 核心业务逻辑，事务控制，调用 Repository 层。
 3.  **Repository Layer (`internal/repository`)**: 负责数据的 CRUD 操作，直接与数据库交互。
 
 ### 开发规范
+
 - **错误处理**: 统一使用 `pkg/response` 包进行响应封装。
 - **依赖注入**: 在 `main.go` 中手动组装 Handler、Service 和 Repository 依赖。
 - **配置**: 通过 `config/app.yml` (或环境变量) 进行配置。
@@ -64,6 +69,7 @@
 前端项目采用 **pnpm monorepo** 架构，统一管理依赖和构建流程。
 
 ### Admin (`web/apps/fuxiaochen-admin`)
+
 - **类型**: Single Page Application (SPA)
 - **构建工具**: Vite
 - **框架**: React 19
@@ -73,38 +79,46 @@
 - **样式**: Tailwind CSS + Sass
 
 ### Portal (`web/apps/fuxiaochen-portal`)
+
 - **类型**: Server Side Rendering (SSR)
 - **框架**: Next.js 16 (App Router)
-- **UI 组件库**: Radix UI + Shadcn UI
-- **样式**: Tailwind CSS
-- **图标**: Iconify
+- **设计风格**: Cyberpunk / Futuristic (赛博朋克/未来主义)
+- **UI 组件库**: Shadcn UI + Custom Cyberpunk Components
+- **样式**: Tailwind CSS v4 (with CSS Variables)
+- **字体**: Orbitron (Display), Exo 2 (Body)
+- **核心视觉元素**:
+  - **配色**: Neon Cyan, Neon Purple, Cyber Black
+  - **特效**: Glassmorphism (毛玻璃), Glitch (故障艺术), Scanlines (扫描线), Neon Glow (霓虹光晕)
+- **图标**: Iconify + Skill Icons
 
 ## 5. 构建与命令
 
 ### 后端
+
 - **启动开发服务器**: `make dev`
 - **运行数据库迁移**: `make migrate`
 
 ### 前端
+
 前端命令应在 `web/` 目录下执行，无需进入具体子目录。
 
 - **安装依赖**:
-    ```bash
-    cd web && pnpm install
-    ```
+  ```bash
+  cd web && pnpm install
+  ```
 - **启动 Admin**:
-    ```bash
-    cd web && pnpm dev:admin
-    ```
+  ```bash
+  cd web && pnpm dev:admin
+  ```
 - **启动 Portal**:
-    ```bash
-    cd web && pnpm dev:portal
-    ```
+  ```bash
+  cd web && pnpm dev:portal
+  ```
 - **构建项目**:
-    ```bash
-    cd web && pnpm build:admin   # 构建 Admin
-    cd web && pnpm build:portal  # 构建 Portal
-    ```
+  ```bash
+  cd web && pnpm build:admin   # 构建 Admin
+  cd web && pnpm build:portal  # 构建 Portal
+  ```
 
 ## 6. 代码规范
 
