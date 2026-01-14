@@ -24,6 +24,8 @@ type BlogListReq struct {
 	FeaturedStatus  string           `json:"featuredStatus" form:"featured" binding:"omitempty,oneof=featured unfeatured"`
 	CategoryID      int64            `json:"categoryID,string" form:"categoryID" binding:"omitempty"`
 	TagIDs          StringInt64Slice `json:"tagIDs" form:"tagIDs" binding:"omitempty"`
+	CategorySlug    string           `json:"categorySlug" form:"categorySlug" binding:"omitempty"`
+	TagSlugs        []string         `json:"tagSlugs" form:"tagSlugs" binding:"omitempty"`
 }
 
 type BlogListResp struct {
