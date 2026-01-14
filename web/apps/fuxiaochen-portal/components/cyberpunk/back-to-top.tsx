@@ -39,7 +39,7 @@ export function BackToTop() {
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none",
       )}
-      aria-label="Back to top"
+      aria-label="回到顶部"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

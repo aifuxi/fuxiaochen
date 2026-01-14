@@ -46,12 +46,12 @@ export default async function ChangelogPage({
             className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tighter uppercase font-display glitch-text inline-block"
             data-text="System_Logs"
           >
-            System_Logs
+            系统日志 / System_Logs
           </h1>
           <p className="text-neon-purple/80 font-mono text-lg mt-4">
-            /// TRACKING_SYSTEM_EVOLUTION
+            /// TRACKING_SYSTEM_EVOLUTION... 追踪系统演进
             <br />
-            /// VERSION_HISTORY_ARCHIVE
+            /// VERSION_HISTORY_ARCHIVE... 版本历史档案
           </p>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-purple/20 blur-[100px] rounded-full pointer-events-none -z-10" />
         </div>
@@ -75,7 +75,7 @@ export default async function ChangelogPage({
                     <span className="text-gray-500 font-mono text-sm uppercase tracking-wide">
                       {log.date
                         ? format(new Date(log.date), "yyyy-MM-dd")
-                        : "Unknown Date"}
+                        : "未知日期"}
                     </span>
                   </div>
 
@@ -87,10 +87,10 @@ export default async function ChangelogPage({
             ) : (
               <div className="text-center py-20">
                 <h3 className="text-2xl font-bold text-gray-500 mb-2">
-                  No Logs Found
+                  未发现日志 / No Logs Found
                 </h3>
                 <p className="text-gray-600">
-                  System archives appear to be empty.
+                  系统档案似乎为空。 / System archives appear to be empty.
                 </p>
               </div>
             )}
