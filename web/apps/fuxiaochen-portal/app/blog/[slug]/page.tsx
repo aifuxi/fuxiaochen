@@ -18,13 +18,13 @@ export async function generateMetadata({
   const { slug } = await params;
   try {
     const blog = await getBlogDetail(slug);
-    if (!blog) return { title: "Blog Not Found" };
+    if (!blog) return { title: "未找到博客 / Blog Not Found" };
     return {
       title: `${blog.title} | FuXiaochen`,
       description: blog.description || blog.title,
     };
   } catch (error) {
-    return { title: "Blog Not Found" };
+    return { title: "未找到博客 / Blog Not Found" };
   }
 }
 
@@ -94,8 +94,8 @@ export default async function BlogDetailPage({
                 <span className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse" />
                   {blog.publishedAt
-                    ? format(new Date(blog.publishedAt), "MMMM dd, yyyy")
-                    : "Draft"}
+                    ? format(new Date(blog.publishedAt), "yyyy年MM月dd日")
+                    : "草稿 / Draft"}
                 </span>
                 {/* Reading time could be calculated if needed */}
               </div>
@@ -120,7 +120,7 @@ export default async function BlogDetailPage({
                   <span className="group-hover:-translate-x-1 transition-transform">
                     ←
                   </span>{" "}
-                  Back to Blog
+                  返回博客 / Back to Blog
                 </Link>
 
                 <div className="flex gap-4">

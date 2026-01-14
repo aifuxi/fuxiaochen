@@ -67,7 +67,7 @@ export function NeonBlogCard({
 
         <CardFooter className="pt-4 border-t border-white/5 relative z-10">
           <span className="text-xs font-bold text-neon-purple uppercase tracking-widest group-hover:translate-x-2 transition-transform duration-300 flex items-center gap-2">
-            Read Protocol <span className="text-lg">›</span>
+            阅读协议 / Read Protocol <span className="text-lg">›</span>
           </span>
         </CardFooter>
       </Card>

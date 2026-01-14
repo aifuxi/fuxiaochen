@@ -21,7 +21,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const currentPage = Number(params.page) || 1;
   const categorySlug = params.category;
   const tagSlug = params.tag;
-  const pageSize = 9;
+  const pageSize = 10;
 
   // 1. Fetch Categories and Tags for sidebar display
   const [categoriesData, tagsData] = await Promise.all([
@@ -40,12 +40,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tighter uppercase font-display glitch-text"
             data-text="Transmission_Log"
           >
-            Transmission_Log
+            传输日志 / Transmission_Log
           </h1>
           <p className="text-neon-cyan/80 font-mono text-lg max-w-2xl">
-            /// ACCESSING_SECURE_ARCHIVES
+            /// ACCESSING_SECURE_ARCHIVES... 正在访问安全档案
             <br />
-            /// DECRYPTING_LATEST_PROTOCOLS...
+            /// DECRYPTING_LATEST_PROTOCOLS... 正在解密最新协议...
           </p>
           <div className="absolute -top-10 -right-10 w-64 h-64 bg-neon-purple/20 blur-[100px] rounded-full pointer-events-none" />
         </div>
@@ -57,14 +57,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="glass-panel p-6 rounded-xl border border-white/10">
               <h3 className="text-neon-cyan font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
-                System_Categories
+                系统分类 / System_Categories
               </h3>
               <div className="space-y-2">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
                   className={`block px-3 py-2 rounded transition-all duration-300 ${!categorySlug ? "bg-neon-cyan/10 text-neon-cyan border-l-2 border-neon-cyan" : "text-gray-400 hover:text-white hover:bg-white/5"}`}
                 >
-                  All_Systems
+                  所有系统 / All_Systems
                 </Link>
                 {categoriesData.lists.map((cat) => (
                   <Link
@@ -85,7 +85,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="glass-panel p-6 rounded-xl border border-white/10">
               <h3 className="text-neon-purple font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
                 <span className="w-2 h-2 bg-neon-purple rounded-full animate-pulse" />
-                Data_Tags
+                数据标签 / Data_Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Link
@@ -94,7 +94,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   }
                   className={`text-xs uppercase px-2 py-1 rounded border transition-all duration-300 ${!tagSlug ? "border-neon-purple text-neon-purple bg-neon-purple/10" : "border-white/10 text-gray-500 hover:border-neon-purple/50 hover:text-white"}`}
                 >
-                  ALL
+                  全部 / ALL
                 </Link>
                 {tagsData.lists.map((tag) => (
                   <Link

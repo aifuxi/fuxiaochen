@@ -66,7 +66,7 @@ export function TableOfContents() {
     <div className="sticky top-32 space-y-4 max-h-[calc(100vh-9rem)] overflow-y-auto pr-2 custom-scrollbar">
       <div className="flex items-center gap-2 text-neon-cyan font-display font-bold uppercase tracking-wider text-sm mb-4">
         <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
-        Table of Contents
+        目录 / Table of Contents
       </div>
       <nav className="relative">
         <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10" />
