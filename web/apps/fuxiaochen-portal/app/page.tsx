@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+import { BlogListItemSkeleton } from "@/components/blog/blog-list-skeleton";
 import { AboutMe } from "@/components/cyberpunk/about-me";
 import { Changelog } from "@/components/cyberpunk/changelog";
 import { GlitchHero } from "@/components/cyberpunk/glitch-hero";
@@ -6,6 +9,47 @@ import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
 import { getBlogList } from "@/api/blog";
 
 export const revalidate = 3600; // Revalidate every hour
+
+function BlogListSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <BlogListItemSkeleton key={i} />
+      ))}
+    </div>
+  );
+}
+
+async function BlogList() {
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const { lists: blogs } = await getBlogList({
+    page: 1,
+    pageSize: 6,
+    featuredStatus: "featured",
+    order: "desc",
+    sortBy: "createdAt",
+  });
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {blogs.map((blog) => (
+        <NeonBlogCard
+          key={blog.id}
+          title={blog.title}
+          excerpt={blog.description}
+          tags={blog.tags?.map((t) => t.name) || []}
+          date={
+            blog.publishedAt
+              ? new Date(blog.publishedAt).toLocaleDateString()
+              : ""
+          }
+          slug={blog.slug}
+          cover={blog.cover}
+        />
+      ))}
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const { lists: blogs } = await getBlogList({
@@ -36,23 +80,9 @@ export default async function HomePage() {
 
           <div className="h-px bg-gradient-to-r from-neon-cyan to-transparent opacity-50" />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogs.map((blog) => (
-              <NeonBlogCard
-                key={blog.id}
-                title={blog.title}
-                excerpt={blog.description}
-                tags={blog.tags?.map((t) => t.name) || []}
-                date={
-                  blog.publishedAt
-                    ? new Date(blog.publishedAt).toLocaleDateString()
-                    : ""
-                }
-                slug={blog.slug}
-                cover={blog.cover}
-              />
-            ))}
-          </div>
+          <Suspense fallback={<BlogListSkeleton />}>
+            <BlogList />
+          </Suspense>
         </section>
 
         {/* Info Grid */}
