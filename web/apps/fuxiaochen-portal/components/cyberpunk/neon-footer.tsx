@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import {
   BEI_AN_LINK,
   BEI_AN_NUMBER,
@@ -26,7 +24,7 @@ export function NeonFooter() {
 
         {/* Filing Information */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6 text-xs text-gray-600">
-          <Link
+          <a
             href={BEI_AN_LINK}
             target="_blank"
             rel="noopener noreferrer"
@@ -34,8 +32,8 @@ export function NeonFooter() {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-gray-600" />
             {BEI_AN_NUMBER}
-          </Link>
-          <Link
+          </a>
+          <a
             href={GONG_AN_LINK}
             target="_blank"
             rel="noopener noreferrer"
@@ -44,7 +42,7 @@ export function NeonFooter() {
             {/* Police Icon placeholder or just text */}
             <span className="w-1.5 h-1.5 rounded-full bg-gray-600" />
             {GONG_AN_NUMBER}
-          </Link>
+          </a>
         </div>
       </div>
     </footer>
