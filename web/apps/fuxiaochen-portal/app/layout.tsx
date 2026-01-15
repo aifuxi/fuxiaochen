@@ -7,9 +7,8 @@ import { NeonHeader } from "@/components/cyberpunk/neon-header";
 import "@/styles/global.css";
 
 export const metadata: Metadata = {
-  title: "付小晨 | 赛博空间 / FuXiaochen | Cyberpunk Space",
-  description:
-    "付小晨的个人数字终端，展示项目、博客与技术思考。 / A futuristic digital terminal showcasing projects and transmissions by FuXiaochen.",
+  title: "付小晨",
+  description: "付小晨的个人数字终端，展示项目、博客与技术思考。",
 };
 
 export default function RootLayout({
@@ -22,7 +21,7 @@ export default function RootLayout({
       <body
         className={`antialiased bg-cyber-black text-white selection:bg-neon-cyan selection:text-black`}
       >
-        <div className="fixed inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none opacity-20" />
+        <div className="fixed inset-0 bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none opacity-20" />
         <div className="fixed inset-0 bg-cyber-black/50 pointer-events-none" />
 
         <NeonHeader />

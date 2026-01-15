@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function AboutPage() {
   const frontendSkills = [
     { name: "HTML", icon: "icon-[skill-icons--html]" },
