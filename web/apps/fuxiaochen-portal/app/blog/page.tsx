@@ -30,39 +30,39 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-cyber-black text-white font-body selection:bg-neon-cyan selection:text-black">
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] pointer-events-none bg-[length:100%_2px,3px_100%] animate-scanline" />
+    <div className="min-h-screen bg-cyber-black font-body text-white selection:bg-neon-cyan selection:text-black">
+      <div className="pointer-events-none fixed inset-0 z-[100] animate-scanline bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
 
-      <main className="pt-32 pb-20 max-w-7xl mx-auto px-4">
+      <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
-        <div className="mb-16 relative">
+        <div className="relative mb-16">
           <h1
-            className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tighter uppercase font-display glitch-text"
+            className="glitch-text mb-4 font-display text-5xl font-bold tracking-tighter text-white uppercase md:text-7xl"
             data-text="Transmission_Log"
           >
             传输日志 / Transmission_Log
           </h1>
-          <p className="text-neon-cyan/80 font-mono text-lg max-w-2xl">
+          <p className="max-w-2xl font-mono text-lg text-neon-cyan/80">
             /// ACCESSING_SECURE_ARCHIVES... 正在访问安全档案
             <br />
             /// DECRYPTING_LATEST_PROTOCOLS... 正在解密最新协议...
           </p>
-          <div className="absolute -top-10 -right-10 w-64 h-64 bg-neon-purple/20 blur-[100px] rounded-full pointer-events-none" />
+          <div className="pointer-events-none absolute -top-10 -right-10 h-64 w-64 rounded-full bg-neon-purple/20 blur-[100px]" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
           {/* Sidebar / Filters */}
-          <aside className="lg:col-span-1 space-y-8 lg:sticky lg:top-32 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto custom-scrollbar pr-1">
+          <aside className="custom-scrollbar space-y-8 pr-1 lg:sticky lg:top-32 lg:col-span-1 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto">
             {/* Categories */}
-            <div className="glass-panel p-6 rounded-xl border border-white/10">
-              <h3 className="text-neon-cyan font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
+            <div className="glass-panel rounded-xl border border-white/10 p-6">
+              <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-cyan uppercase">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
                 系统分类 / System_Categories
               </h3>
               <div className="space-y-2">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
-                  className={`block px-3 py-2 rounded transition-all duration-300 ${!categorySlug ? "bg-neon-cyan/10 text-neon-cyan border-l-2 border-neon-cyan" : "text-gray-400 hover:text-white hover:bg-white/5"}`}
+                  className={`block rounded px-3 py-2 transition-all duration-300 ${!categorySlug ? "border-l-2 border-neon-cyan bg-neon-cyan/10 text-neon-cyan" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
                 >
                   所有系统 / All_Systems
                 </Link>
@@ -70,10 +70,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   <Link
                     key={cat.id}
                     href={`/blog?category=${cat.slug}${tagSlug ? `&tag=${tagSlug}` : ""}`}
-                    className={`block px-3 py-2 rounded transition-all duration-300 ${categorySlug === cat.slug ? "bg-neon-cyan/10 text-neon-cyan border-l-2 border-neon-cyan" : "text-gray-400 hover:text-white hover:bg-white/5"}`}
+                    className={`block rounded px-3 py-2 transition-all duration-300 ${categorySlug === cat.slug ? "border-l-2 border-neon-cyan bg-neon-cyan/10 text-neon-cyan" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}
                   >
                     {cat.name}{" "}
-                    <span className="text-xs opacity-50 ml-1">
+                    <span className="ml-1 text-xs opacity-50">
                       [{cat.blogCount}]
                     </span>
                   </Link>
@@ -82,9 +82,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             </div>
 
             {/* Tags */}
-            <div className="glass-panel p-6 rounded-xl border border-white/10">
-              <h3 className="text-neon-purple font-bold uppercase tracking-wider mb-4 flex items-center gap-2">
-                <span className="w-2 h-2 bg-neon-purple rounded-full animate-pulse" />
+            <div className="glass-panel rounded-xl border border-white/10 p-6">
+              <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-purple uppercase">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-neon-purple" />
                 数据标签 / Data_Tags
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -92,7 +92,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   href={
                     categorySlug ? `/blog?category=${categorySlug}` : "/blog"
                   }
-                  className={`text-xs uppercase px-2 py-1 rounded border transition-all duration-300 ${!tagSlug ? "border-neon-purple text-neon-purple bg-neon-purple/10" : "border-white/10 text-gray-500 hover:border-neon-purple/50 hover:text-white"}`}
+                  className={`rounded border px-2 py-1 text-xs uppercase transition-all duration-300 ${!tagSlug ? "border-neon-purple bg-neon-purple/10 text-neon-purple" : "border-white/10 text-gray-500 hover:border-neon-purple/50 hover:text-white"}`}
                 >
                   全部 / ALL
                 </Link>
@@ -100,7 +100,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   <Link
                     key={tag.id}
                     href={`/blog?tag=${tag.slug}${categorySlug ? `&category=${categorySlug}` : ""}`}
-                    className={`text-xs uppercase px-2 py-1 rounded border transition-all duration-300 ${tagSlug === tag.slug ? "border-neon-purple text-neon-purple bg-neon-purple/10" : "border-white/10 text-gray-500 hover:border-neon-purple/50 hover:text-white"}`}
+                    className={`rounded border px-2 py-1 text-xs uppercase transition-all duration-300 ${tagSlug === tag.slug ? "border-neon-purple bg-neon-purple/10 text-neon-purple" : "border-white/10 text-gray-500 hover:border-neon-purple/50 hover:text-white"}`}
                   >
                     #{tag.name}
                   </Link>

@@ -3,18 +3,15 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import prettier from "eslint-config-prettier/flat";
 import checkFile from "eslint-plugin-check-file";
-import { defineConfig, globalIgnores } from "eslint/config";
+import { defineConfig } from "eslint/config";
 import globals from "globals";
-import tseslint from "typescript-eslint";
 
 import eslintPluginBetterTailwindcss from "eslint-plugin-better-tailwindcss";
 
 export default defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  eslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
   {
+    files: ["**/*.{ts,tsx}"],
+    extends: [nextTs, nextVitals, eslint.configs.recommended],
     languageOptions: {
       parserOptions: {
         projectService: true, // 自动处理 tsconfig 查找
@@ -42,27 +39,8 @@ export default defineConfig([
         "warn",
         { printWidth: 120 },
       ],
-    },
-    settings: {
-      "better-tailwindcss": {
-        // tailwindcss 4: the path to the entry file of the css based tailwind config (eg: `src/global.css`)
-        entryPoint: "styles/global.css",
-      },
-    },
-  },
-  prettier,
-  globalIgnores([
-    "**/.next",
-    "**/node_modules",
-    "**/dist",
-    "**/build",
-    "**/public",
-    "**/.gitignore",
-    "generated/**/*",
-    "**/pnpm-lock.yaml",
-  ]),
-  {
-    rules: {
+      "no-unused-vars": "off",
+      "better-tailwindcss/no-unregistered-classes": "warn",
       "@typescript-eslint/no-unsafe-member-access": "warn",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
@@ -80,13 +58,17 @@ export default defineConfig([
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          args: "after-used",
+          args: "all",
           argsIgnorePattern: "^_",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
         },
       ],
       "@typescript-eslint/no-misused-promises": [
-        2,
+        "error",
         {
           checksVoidReturn: {
             attributes: false,
@@ -95,9 +77,16 @@ export default defineConfig([
       ],
       "@typescript-eslint/no-unsafe-argument": "warn",
       "@typescript-eslint/no-floating-promises": "warn",
+      "react/jsx-no-comment-textnodes": "warn",
+    },
+    settings: {
+      "better-tailwindcss": {
+        // tailwindcss 4: the path to the entry file of the css based tailwind config (eg: `src/global.css`)
+        entryPoint: "styles/global.css",
+      },
     },
   },
-
+  prettier,
   // 检查文件命名
   {
     files: [

@@ -34,43 +34,43 @@ export default async function ChangelogPage({
   const totalPages = Math.ceil(changelogData.total / pageSize);
 
   return (
-    <div className="min-h-screen bg-cyber-black text-white font-body selection:bg-neon-cyan selection:text-black">
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] pointer-events-none bg-[length:100%_2px,3px_100%] animate-scanline" />
+    <div className="min-h-screen bg-cyber-black font-body text-white selection:bg-neon-cyan selection:text-black">
+      <div className="pointer-events-none fixed inset-0 z-[100] animate-scanline bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
 
-      <main className="pt-32 pb-20 max-w-4xl mx-auto px-4">
+      <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
-        <div className="mb-16 relative text-center">
+        <div className="relative mb-16 text-center">
           <h1
-            className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tighter uppercase font-display glitch-text inline-block"
+            className="glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase md:text-7xl"
             data-text="System_Logs"
           >
             系统日志 / System_Logs
           </h1>
-          <p className="text-neon-purple/80 font-mono text-lg mt-4">
+          <p className="mt-4 font-mono text-lg text-neon-purple/80">
             /// TRACKING_SYSTEM_EVOLUTION... 追踪系统演进
             <br />
             /// VERSION_HISTORY_ARCHIVE... 版本历史档案
           </p>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-neon-purple/20 blur-[100px] rounded-full pointer-events-none -z-10" />
+          <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-purple/20 blur-[100px]" />
         </div>
 
         {/* Changelog Timeline */}
-        <div className="glass-panel p-8 md:p-12 rounded-2xl border border-neon-purple/20 relative">
+        <div className="glass-panel relative rounded-2xl border border-neon-purple/20 p-8 md:p-12">
           {/* Timeline Line */}
-          <div className="absolute left-8 md:left-12 top-12 bottom-12 w-px bg-gradient-to-b from-neon-purple/0 via-neon-purple/50 to-neon-purple/0" />
+          <div className="absolute top-12 bottom-12 left-8 w-px bg-gradient-to-b from-neon-purple/0 via-neon-purple/50 to-neon-purple/0 md:left-12" />
 
           <div className="space-y-12">
             {changelogData.lists.length > 0 ? (
               changelogData.lists.map((log) => (
-                <div key={log.id} className="relative pl-8 md:pl-12 group">
+                <div key={log.id} className="group relative pl-8 md:pl-12">
                   {/* Timeline Dot */}
-                  <div className="absolute left-[-5px] md:left-[-5px] top-2 w-3 h-3 rounded-full bg-cyber-black border-2 border-neon-purple shadow-[0_0_10px_var(--color-neon-purple)] group-hover:bg-neon-purple transition-colors duration-300 z-10" />
+                  <div className="absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-neon-purple bg-cyber-black shadow-[0_0_10px_var(--color-neon-purple)] transition-colors duration-300 group-hover:bg-neon-purple md:left-[-5px]" />
 
-                  <div className="flex flex-col md:flex-row md:items-baseline gap-4 mb-3">
-                    <span className="text-neon-cyan font-mono text-xl font-bold bg-neon-cyan/10 px-3 py-1 rounded border border-neon-cyan/20 shadow-[0_0_10px_rgba(0,255,255,0.1)]">
+                  <div className="mb-3 flex flex-col gap-4 md:flex-row md:items-baseline">
+                    <span className="rounded border border-neon-cyan/20 bg-neon-cyan/10 px-3 py-1 font-mono text-xl font-bold text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]">
                       {log.version}
                     </span>
-                    <span className="text-gray-500 font-mono text-sm uppercase tracking-wide">
+                    <span className="font-mono text-sm tracking-wide text-gray-500 uppercase">
                       {log.date
                         ? format(new Date(log.date), "yyyy-MM-dd")
                         : "未知日期"}
@@ -83,8 +83,8 @@ export default async function ChangelogPage({
                 </div>
               ))
             ) : (
-              <div className="text-center py-20">
-                <h3 className="text-2xl font-bold text-gray-500 mb-2">
+              <div className="py-20 text-center">
+                <h3 className="mb-2 text-2xl font-bold text-gray-500">
                   未发现日志 / No Logs Found
                 </h3>
                 <p className="text-gray-600">
@@ -104,7 +104,7 @@ export default async function ChangelogPage({
                   <PaginationItem>
                     <PaginationPrevious
                       href={`/changelog?page=${currentPage - 1}`}
-                      className="text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10 border-none"
+                      className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
                     />
                   </PaginationItem>
                 )}
@@ -117,8 +117,8 @@ export default async function ChangelogPage({
                         isActive={currentPage === page}
                         className={
                           currentPage === page
-                            ? "bg-neon-cyan text-black border-neon-cyan"
-                            : "text-gray-400 hover:text-white hover:bg-white/10 border-transparent"
+                            ? "border-neon-cyan bg-neon-cyan text-black"
+                            : "border-transparent text-gray-400 hover:bg-white/10 hover:text-white"
                         }
                       >
                         {page}
@@ -131,7 +131,7 @@ export default async function ChangelogPage({
                   <PaginationItem>
                     <PaginationNext
                       href={`/changelog?page=${currentPage + 1}`}
-                      className="text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10 border-none"
+                      className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
                     />
                   </PaginationItem>
                 )}

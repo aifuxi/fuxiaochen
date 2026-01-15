@@ -49,21 +49,21 @@ export function BackToTop() {
     <button
       onClick={scrollToTop}
       className={cn(
-        "fixed bottom-8 right-8 z-50 group cursor-pointer!",
+        "group fixed right-8 bottom-8 z-50 cursor-pointer!",
         "transition-all duration-500 ease-out",
         isVisible
-          ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-8 pointer-events-none",
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-8 opacity-0",
       )}
       aria-label="回到顶部 / Back to Top"
     >
       {/* Glow Effect Background */}
-      <div className="absolute inset-0 rounded-full bg-neon-cyan/5 blur-md group-hover:bg-neon-cyan/20 transition-all duration-300" />
+      <div className="absolute inset-0 rounded-full bg-neon-cyan/5 blur-md transition-all duration-300 group-hover:bg-neon-cyan/20" />
 
-      <div className="relative flex items-center justify-center w-14 h-14 rounded-full bg-black/80 backdrop-blur-md border border-white/10 shadow-[0_0_20px_rgba(0,0,0,0.5)] group-hover:shadow-[0_0_25px_rgba(0,255,255,0.4)] group-hover:border-neon-cyan/50 transition-all duration-300">
+      <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-black/80 shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 group-hover:border-neon-cyan/50 group-hover:shadow-[0_0_25px_rgba(0,255,255,0.4)]">
         {/* Progress Ring SVG */}
         <svg
-          className="absolute inset-0 w-full h-full -rotate-90 transform"
+          className="absolute inset-0 h-full w-full -rotate-90 transform"
           viewBox="0 0 56 56"
         >
           {/* Track */}
@@ -92,7 +92,7 @@ export function BackToTop() {
         </svg>
 
         {/* Icon */}
-        <div className="relative z-10 text-neon-cyan group-hover:text-white transition-colors duration-300 group-hover:-translate-y-1 transform">
+        <div className="relative z-10 transform text-neon-cyan transition-colors duration-300 group-hover:-translate-y-1 group-hover:text-white">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -109,14 +109,14 @@ export function BackToTop() {
         </div>
 
         {/* Tech Decor Dots */}
-        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-0.5 h-1 bg-neon-cyan/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0.5 h-1 bg-neon-cyan/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-0.5 bg-neon-cyan/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-0.5 bg-neon-cyan/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute top-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute bottom-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute top-1/2 left-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute top-1/2 right-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
 
       {/* Label Tooltip (Optional, shows on hover) */}
-      <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-3 py-1 bg-black/80 border border-neon-cyan/30 text-neon-cyan text-xs font-mono uppercase tracking-wider rounded opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap backdrop-blur-sm translate-x-2 group-hover:translate-x-0 pointer-events-none">
+      <span className="pointer-events-none absolute top-1/2 right-full mr-4 translate-x-2 -translate-y-1/2 rounded border border-neon-cyan/30 bg-black/80 px-3 py-1 font-mono text-xs tracking-wider whitespace-nowrap text-neon-cyan uppercase opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
         TOP
       </span>
     </button>
