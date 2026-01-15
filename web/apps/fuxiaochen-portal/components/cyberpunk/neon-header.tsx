@@ -6,11 +6,14 @@ export function NeonHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-40 px-4 py-6">
       <nav className="glass-panel mx-auto max-w-7xl rounded-full px-8 py-4 flex items-center justify-between shadow-[0_0_20px_rgba(0,0,0,0.5)]">
-        <div className="text-xl md:text-2xl font-bold text-neon-cyan tracking-widest uppercase flex items-center gap-2">
+        <Link
+          href="/"
+          className="text-xl md:text-2xl font-bold text-neon-cyan tracking-widest uppercase flex items-center gap-2"
+        >
           <span className="w-2 h-2 bg-neon-magenta rounded-full animate-pulse" />
           {WEBSITE}
           <span className="text-neon-magenta">.OS</span>
-        </div>
+        </Link>
         <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide">
           <Link
             href="/"
