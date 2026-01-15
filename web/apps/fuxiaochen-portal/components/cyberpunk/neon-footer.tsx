@@ -1,13 +1,20 @@
+import { getChangelogList } from "@/api/changelog";
 import {
   BEI_AN_LINK,
   BEI_AN_NUMBER,
   GONG_AN_LINK,
   GONG_AN_NUMBER,
-  WEBSITE,
 } from "@/constants/info";
 
-export function NeonFooter() {
+export async function NeonFooter() {
   const currentYear = new Date().getFullYear();
+  const { lists: changelogs } = await getChangelogList({
+    page: 1,
+    pageSize: 1,
+    order: "desc",
+    sortBy: "createdAt",
+  });
+  const version = changelogs[0]?.version || "unknown";
 
   return (
     <footer className="border-t border-white/10 py-12 mt-20 bg-black/50 backdrop-blur-md relative overflow-hidden">
@@ -15,10 +22,12 @@ export function NeonFooter() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neon-cyan/50 to-transparent opacity-50" />
 
       <div className="max-w-7xl mx-auto px-4 text-center space-y-4">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 text-sm font-mono tracking-widest text-gray-500">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 text-sm tracking-widest text-gray-500">
           <p>
-            © {currentYear} {WEBSITE}.OS{" "}
-            <span className="text-neon-cyan">//</span> SYSTEM ONLINE 系统在线
+            © {currentYear} PORTAL.OS
+            <span className="text-neon-cyan">//</span> Version
+            {version} <span className="text-neon-cyan"> // </span>
+            SYSTEM ONLINE 系统在线
           </p>
         </div>
 
