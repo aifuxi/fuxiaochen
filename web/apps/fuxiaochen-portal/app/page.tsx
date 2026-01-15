@@ -81,14 +81,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t border-white/10 py-12 mt-20 bg-black/50 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-gray-500 text-sm font-mono tracking-widest">
-            © 2024 PORTAL.OS // SYSTEM ONLINE 系统在线
-          </p>
-        </div>
-      </footer>
     </>
   );
 }

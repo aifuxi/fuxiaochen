@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { BackToTop } from "@/components/cyberpunk/back-to-top";
+import { NeonFooter } from "@/components/cyberpunk/neon-footer";
 import { NeonHeader } from "@/components/cyberpunk/neon-header";
 
 import "@/styles/global.css";
@@ -26,6 +27,8 @@ export default function RootLayout({
 
         <NeonHeader />
         {children}
+
+        <NeonFooter />
         <BackToTop />
 
         {/* CRT Scanline Effect */}
