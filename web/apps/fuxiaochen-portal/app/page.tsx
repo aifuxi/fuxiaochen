@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 
 import { BlogListItemSkeleton } from "@/components/blog/blog-list-skeleton";
-import { AboutMe } from "@/components/cyberpunk/about-me";
-import { Changelog } from "@/components/cyberpunk/changelog";
 import { GlitchHero } from "@/components/cyberpunk/glitch-hero";
 import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
 
@@ -91,20 +89,6 @@ export default function HomePage() {
           <Suspense fallback={<BlogListSkeleton />}>
             <BlogList />
           </Suspense>
-        </section>
-
-        {/* Info Grid */}
-        <section
-          id="about"
-          className={`
-            grid grid-cols-1 gap-8
-            lg:grid-cols-2
-          `}
-        >
-          <AboutMe />
-          <div id="changelog">
-            <Changelog />
-          </div>
         </section>
       </main>
     </>
