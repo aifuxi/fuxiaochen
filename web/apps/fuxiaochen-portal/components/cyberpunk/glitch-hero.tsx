@@ -9,7 +9,7 @@ export async function GlitchHero() {
   });
   const version = changelogs[0]?.version || "unknown";
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(123,97,255,0.05),transparent_60%)]" />
 
       {/* Grid Background */}
@@ -22,35 +22,35 @@ export async function GlitchHero() {
         }}
       />
 
-      <div className="text-center z-10 space-y-8 px-4">
-        <div className="inline-block border border-neon-cyan/30 px-4 py-1 rounded-full bg-neon-cyan/5 backdrop-blur-sm mb-4">
-          <span className="text-neon-cyan text-xs tracking-[0.2em] uppercase">
+      <div className="z-10 space-y-8 px-4 text-center">
+        <div className="mb-4 inline-block rounded-full border border-neon-cyan/30 bg-neon-cyan/5 px-4 py-1 backdrop-blur-sm">
+          <span className="text-xs tracking-[0.2em] text-neon-cyan uppercase">
             系统版本 / System Version {version}
           </span>
         </div>
 
-        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-br from-neon-cyan via-white to-neon-magenta relative">
+        <h1 className="relative bg-gradient-to-br from-neon-cyan via-white to-neon-magenta bg-clip-text text-6xl font-black tracking-tighter text-transparent uppercase md:text-8xl lg:text-9xl">
           <span className="relative z-10">
             赛博
             <br />
             原住民
           </span>
-          <span className="absolute inset-0 text-neon-cyan opacity-30 blur-sm animate-pulse z-0">
+          <span className="absolute inset-0 z-0 animate-pulse text-neon-cyan opacity-30 blur-sm">
             赛博
             <br />
             原住民
           </span>
         </h1>
 
-        <p className="text-neon-purple text-lg md:text-2xl tracking-[0.5em] uppercase font-light max-w-2xl mx-auto leading-relaxed">
+        <p className="mx-auto max-w-2xl text-lg leading-relaxed font-light tracking-[0.5em] text-neon-purple uppercase md:text-2xl">
           探索数字前沿 / Exploring the digital frontier
         </p>
 
-        <div className="pt-12 flex flex-col md:flex-row gap-6 justify-center">
-          <button className="px-10 py-4 bg-neon-cyan/10 border border-neon-cyan text-neon-cyan font-bold uppercase tracking-widest hover:bg-neon-cyan hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:shadow-[0_0_40px_rgba(0,255,255,0.6)] clip-path-polygon">
+        <div className="flex flex-col justify-center gap-6 pt-12 md:flex-row">
+          <button className="clip-path-polygon border border-neon-cyan bg-neon-cyan/10 px-10 py-4 font-bold tracking-widest text-neon-cyan uppercase shadow-[0_0_20px_rgba(0,255,255,0.3)] transition-all duration-300 hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_40px_rgba(0,255,255,0.6)]">
             进入矩阵 / Enter Matrix
           </button>
-          <button className="px-10 py-4 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/5 transition-all duration-300 hover:border-white/40">
+          <button className="border border-white/20 px-10 py-4 font-bold tracking-widest text-white uppercase transition-all duration-300 hover:border-white/40 hover:bg-white/5">
             查看协议 / View Protocol
           </button>
         </div>

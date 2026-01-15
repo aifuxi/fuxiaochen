@@ -16,6 +16,7 @@ export default function copyCodePlugin(): BytemdPlugin {
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="check-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
         `;
 
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         button.addEventListener("click", async () => {
           const code = pre.querySelector("code")?.innerText;
           if (code) {
