@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 interface ErrorViewProps {
   code: string;
@@ -11,8 +10,6 @@ interface ErrorViewProps {
 }
 
 export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
-  const router = useRouter();
-
   const handleRefresh = () => {
     if (onRetry) {
       onRetry();
@@ -22,7 +19,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center relative overflow-hidden">
+    <div className="relative flex min-h-[80vh] items-center justify-center overflow-hidden">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,0,0,0.05),transparent_60%)]" />
       <div
@@ -34,41 +31,66 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
         }}
       />
 
-      <div className="text-center z-10 space-y-8 px-4 max-w-3xl mx-auto">
+      <div className="z-10 mx-auto max-w-3xl space-y-8 px-4 text-center">
         {/* Error Code Glitch Effect */}
         <div className="relative">
-          <h1 className="text-9xl md:text-[12rem] font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-800 tracking-tighter opacity-20 select-none">
+          <h1
+            className={`
+              bg-gradient-to-b from-white to-gray-800 bg-clip-text text-9xl font-black tracking-tighter text-transparent
+              opacity-20 select-none
+              md:text-[12rem]
+            `}
+          >
             {code}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <h2 className="text-4xl md:text-6xl font-bold text-neon-cyan uppercase tracking-widest bg-black/50 backdrop-blur-sm px-8 py-4 border border-neon-cyan/30">
+            <h2
+              className={`
+                border border-neon-cyan/30 bg-black/50 px-8 py-4 text-4xl font-bold tracking-widest text-neon-cyan
+                uppercase backdrop-blur-sm
+                md:text-6xl
+              `}
+            >
               {title}
             </h2>
           </div>
         </div>
 
         <div className="space-y-4">
-          <p className="text-red-400 font-mono text-sm tracking-[0.2em] uppercase animate-pulse">
+          <p className="animate-pulse font-mono text-sm tracking-[0.2em] text-red-400 uppercase">
             /// SYSTEM_ALERT: {message}
           </p>
-          <p className="text-gray-500 font-mono text-xs">
+          <p className="font-mono text-xs text-gray-500">
             ERROR_TRACE_ID: XXXX-XXXX-XXXX-XXXX
             <br />
             TIMESTAMP: {new Date().toISOString()}
           </p>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row gap-6 justify-center">
+        <div
+          className={`
+            flex flex-col justify-center gap-6 pt-8
+            md:flex-row
+          `}
+        >
           <button
             onClick={handleRefresh}
-            className="px-8 py-3 bg-neon-cyan/10 border border-neon-cyan text-neon-cyan font-bold uppercase tracking-widest hover:bg-neon-cyan hover:text-black transition-all duration-300 shadow-[0_0_15px_rgba(0,255,255,0.2)] hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] cursor-pointer"
+            className={`
+              cursor-pointer border border-neon-cyan bg-neon-cyan/10 px-8 py-3 font-bold tracking-widest text-neon-cyan
+              uppercase shadow-[0_0_15px_rgba(0,255,255,0.2)] transition-all duration-300
+              hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]
+            `}
           >
             重启系统 / REBOOT
           </button>
 
           <Link
             href="/"
-            className="px-8 py-3 border border-white/20 text-white font-bold uppercase tracking-widest hover:bg-white/5 transition-all duration-300 hover:border-white/40 flex items-center justify-center gap-2 cursor-pointer"
+            className={`
+              flex cursor-pointer items-center justify-center gap-2 border border-white/20 px-8 py-3 font-bold
+              tracking-widest text-white uppercase transition-all duration-300
+              hover:border-white/40 hover:bg-white/5
+            `}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

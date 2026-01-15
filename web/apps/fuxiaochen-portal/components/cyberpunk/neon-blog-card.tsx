@@ -27,46 +27,46 @@ export function NeonBlogCard({
 }: BlogCardProps) {
   return (
     <Link href={`/blog/${slug}`} className="block h-full">
-      <Card className="bg-cyber-gray/40 border-white/5 backdrop-blur-sm hover:border-neon-cyan/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.1)] transition-all duration-500 group overflow-hidden relative h-full flex flex-col rounded-xl pt-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <Card className="group relative flex h-full flex-col overflow-hidden rounded-xl border-white/5 bg-cyber-gray/40 pt-0 backdrop-blur-sm transition-all duration-500 hover:border-neon-cyan/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.1)]">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
-        <div className="relative w-full h-48 overflow-hidden border-b border-white/5 bg-black/50">
+        <div className="relative h-48 w-full overflow-hidden border-b border-white/5 bg-black/50">
           <Image
             src={cover || "/images/placeholder.avif"}
             alt={title}
             fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-cyber-gray/80 to-transparent opacity-60" />
         </div>
 
-        <CardHeader className="pb-2 relative z-10">
-          <div className="flex justify-between items-start mb-4">
-            <div className="flex gap-2 flex-wrap">
+        <CardHeader className="relative z-10 pb-2">
+          <div className="mb-4 flex items-start justify-between">
+            <div className="flex flex-wrap gap-2">
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] uppercase tracking-wider text-neon-cyan border border-neon-cyan/30 px-2 py-0.5 rounded-sm bg-neon-cyan/5"
+                  className="rounded-sm border border-neon-cyan/30 bg-neon-cyan/5 px-2 py-0.5 text-[10px] tracking-wider text-neon-cyan uppercase"
                 >
                   {tag}
                 </span>
               ))}
             </div>
-            <span className="text-xs text-gray-500 font-mono">{date}</span>
+            <span className="font-mono text-xs text-gray-500">{date}</span>
           </div>
-          <h3 className="text-xl font-bold text-white group-hover:text-neon-cyan transition-colors duration-300 line-clamp-2 leading-tight">
+          <h3 className="line-clamp-2 text-xl leading-tight font-bold text-white transition-colors duration-300 group-hover:text-neon-cyan">
             {title}
           </h3>
         </CardHeader>
 
-        <CardContent className="flex-grow relative z-10">
-          <p className="text-gray-400 text-sm line-clamp-3 leading-relaxed">
+        <CardContent className="relative z-10 flex-grow">
+          <p className="line-clamp-3 text-sm leading-relaxed text-gray-400">
             {excerpt}
           </p>
         </CardContent>
 
-        <CardFooter className="pt-4 border-t border-white/5 relative z-10">
-          <span className="text-xs font-bold text-neon-purple uppercase tracking-widest group-hover:translate-x-2 transition-transform duration-300 flex items-center gap-2">
+        <CardFooter className="relative z-10 border-t border-white/5 pt-4">
+          <span className="flex items-center gap-2 text-xs font-bold tracking-widest text-neon-purple uppercase transition-transform duration-300 group-hover:translate-x-2">
             阅读协议 / Read Protocol <span className="text-lg">›</span>
           </span>
         </CardFooter>

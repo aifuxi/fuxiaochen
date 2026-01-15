@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,7 +23,7 @@ export async function generateMetadata({
       title: `${blog.title} | FuXiaochen`,
       description: blog.description || blog.title,
     };
-  } catch (error) {
+  } catch (_error) {
     return { title: "未找到博客 / Blog Not Found" };
   }
 }
@@ -47,12 +47,23 @@ export default async function BlogDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-cyber-black text-white font-body selection:bg-neon-magenta selection:text-black">
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-[100] pointer-events-none bg-[length:100%_2px,3px_100%] animate-scanline" />
+    <div
+      className={`
+        min-h-screen bg-cyber-black font-body text-white
+        selection:bg-neon-magenta selection:text-black
+      `}
+    >
+      <div
+        className={`
+          pointer-events-none fixed inset-0 z-[100] animate-scanline
+          bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]
+          bg-[length:100%_2px,3px_100%]
+        `}
+      />
 
-      <main className="pt-24 pb-20 relative z-10">
+      <main className="relative z-10 pt-24 pb-20">
         {/* Hero Section */}
-        <div className="relative w-full h-[50vh] min-h-[400px] mb-12">
+        <div className="relative mb-12 h-[50vh] min-h-[400px] w-full">
           <div className="absolute inset-0 bg-cyber-gray/50">
             {blog.cover ? (
               <Image
@@ -63,38 +74,53 @@ export default async function BlogDetailPage({
                 priority
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-cyber-gray to-black opacity-60" />
+              <div className="h-full w-full bg-gradient-to-br from-cyber-gray to-black opacity-60" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/80 to-transparent" />
           </div>
 
-          <div className="container mx-auto px-4 h-full flex flex-col justify-end pb-12 relative z-20">
-            <div className="max-w-4xl mx-auto w-full">
-              <div className="flex gap-4 mb-6 flex-wrap">
+          <div className="relative z-20 container mx-auto flex h-full flex-col justify-end px-4 pb-12">
+            <div className="mx-auto w-full max-w-4xl">
+              <div className="mb-6 flex flex-wrap gap-4">
                 {blog.tags?.map((tag) => (
                   <span
                     key={tag.id || tag.name}
-                    className="text-sm font-bold uppercase tracking-wider text-neon-cyan border border-neon-cyan/30 px-3 py-1 rounded bg-neon-cyan/5 backdrop-blur-sm shadow-[0_0_10px_rgba(0,255,255,0.2)]"
+                    className={`
+                      rounded border border-neon-cyan/30 bg-neon-cyan/5 px-3 py-1 text-sm font-bold tracking-wider
+                      text-neon-cyan uppercase shadow-[0_0_10px_rgba(0,255,255,0.2)] backdrop-blur-sm
+                    `}
                   >
                     {tag.name}
                   </span>
                 ))}
                 {blog.category && (
-                  <span className="text-sm font-bold uppercase tracking-wider text-neon-purple border border-neon-purple/30 px-3 py-1 rounded bg-neon-purple/5 backdrop-blur-sm shadow-[0_0_10px_rgba(123,97,255,0.2)]">
+                  <span
+                    className={`
+                      rounded border border-neon-purple/30 bg-neon-purple/5 px-3 py-1 text-sm font-bold tracking-wider
+                      text-neon-purple uppercase shadow-[0_0_10px_rgba(123,97,255,0.2)] backdrop-blur-sm
+                    `}
+                  >
                     {blog.category.name}
                   </span>
                 )}
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-6 leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+              <h1
+                className={`
+                  mb-6 font-display text-4xl leading-tight font-bold text-white
+                  drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]
+                  md:text-5xl
+                  lg:text-6xl
+                `}
+              >
                 {blog.title}
               </h1>
 
-              <div className="flex items-center gap-6 text-gray-400 font-mono text-sm">
+              <div className="flex items-center gap-6 font-mono text-sm text-gray-400">
                 <span className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-neon-magenta animate-pulse" />
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-neon-magenta" />
                   {blog.publishedAt
-                    ? format(new Date(blog.publishedAt), "yyyy年MM月dd日")
+                    ? format(new Date(blog.publishedAt), "yyyy 年 MM 月 dd 日")
                     : "草稿 / Draft"}
                 </span>
                 {/* Reading time could be calculated if needed */}
@@ -105,19 +131,42 @@ export default async function BlogDetailPage({
 
         {/* Content Section */}
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-            <div className="glass-panel p-8 md:p-12 rounded-2xl relative overflow-hidden h-fit">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-magenta opacity-50" />
+          <div
+            className={`
+              grid grid-cols-1 gap-8
+              lg:grid-cols-[1fr_300px]
+            `}
+          >
+            <div
+              className={`
+                glass-panel relative h-fit overflow-hidden rounded-2xl p-8
+                md:p-12
+              `}
+            >
+              <div
+                className={`
+                  absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-magenta
+                  opacity-50
+                `}
+              />
 
               <BlogContent content={blog.content} />
 
               {/* Footer / Navigation */}
-              <div className="mt-16 pt-8 border-t border-white/10 flex justify-between items-center">
+              <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-8">
                 <Link
                   href="/blog"
-                  className="text-gray-400 hover:text-neon-cyan transition-colors flex items-center gap-2 group"
+                  className={`
+                    group flex items-center gap-2 text-gray-400 transition-colors
+                    hover:text-neon-cyan
+                  `}
                 >
-                  <span className="group-hover:-translate-x-1 transition-transform">
+                  <span
+                    className={`
+                      transition-transform
+                      group-hover:-translate-x-1
+                    `}
+                  >
                     ←
                   </span>{" "}
                   返回博客 / Back to Blog
@@ -129,7 +178,12 @@ export default async function BlogDetailPage({
               </div>
             </div>
 
-            <div className="hidden lg:block">
+            <div
+              className={`
+                hidden
+                lg:block
+              `}
+            >
               <TableOfContents />
             </div>
           </div>

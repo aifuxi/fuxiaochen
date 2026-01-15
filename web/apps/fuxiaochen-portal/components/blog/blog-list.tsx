@@ -42,7 +42,7 @@ export async function BlogList({
   return (
     <>
       {blogsData.lists.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="animate-in fade-in slide-in-from-bottom-4 mb-12 grid grid-cols-1 gap-6 duration-500 md:grid-cols-2">
           {blogsData.lists.map((blog) => (
             <NeonBlogCard
               key={blog.id}
@@ -60,17 +60,17 @@ export async function BlogList({
           ))}
         </div>
       ) : (
-        <div className="text-center py-20 glass-panel rounded-xl border-white/10 border-dashed border-2 flex flex-col items-center justify-center animate-in fade-in zoom-in-95 duration-300">
-          <h3 className="text-2xl font-bold text-gray-500 mb-2">
+        <div className="glass-panel animate-in fade-in zoom-in-95 flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-white/10 py-20 text-center duration-300">
+          <h3 className="mb-2 text-2xl font-bold text-gray-500">
             未发现传输内容 / No Transmissions Found
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6 text-gray-600">
             尝试调整您的信号过滤器。 / Try adjusting your signal filters.
           </p>
           {(category || tag) && (
             <Link
               href="/blog"
-              className="px-6 py-2 border border-neon-cyan/50 text-neon-cyan rounded hover:bg-neon-cyan/10 hover:shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all duration-300 font-mono text-sm uppercase tracking-wider flex items-center gap-2"
+              className="flex items-center gap-2 rounded border border-neon-cyan/50 px-6 py-2 font-mono text-sm tracking-wider text-neon-cyan uppercase transition-all duration-300 hover:bg-neon-cyan/10 hover:shadow-[0_0_10px_rgba(0,255,255,0.2)]"
             >
               <span className="text-lg">↺</span> 重置信号 / Reset_Signal
             </Link>
@@ -91,7 +91,7 @@ export async function BlogList({
                         ? `/blog?page=${page - 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
                         : "#"
                     }
-                    className="text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10 border-none"
+                    className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
                   />
                 </PaginationItem>
               )}
@@ -104,8 +104,8 @@ export async function BlogList({
                       isActive={currentPage === page}
                       className={
                         currentPage === page
-                          ? "bg-neon-cyan text-black border-neon-cyan"
-                          : "text-gray-400 hover:text-white hover:bg-white/10 border-transparent"
+                          ? "border-neon-cyan bg-neon-cyan text-black"
+                          : "border-transparent text-gray-400 hover:bg-white/10 hover:text-white"
                       }
                     >
                       {page}
@@ -122,7 +122,7 @@ export async function BlogList({
                         ? `/blog?page=${page + 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
                         : "#"
                     }
-                    className="text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10 border-none"
+                    className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
                   />
                 </PaginationItem>
               )}

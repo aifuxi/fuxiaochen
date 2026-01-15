@@ -19,10 +19,10 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="dark scroll-smooth">
       <body
-        className={`antialiased bg-cyber-black text-white selection:bg-neon-cyan selection:text-black`}
+        className={`bg-cyber-black text-white antialiased selection:bg-neon-cyan selection:text-black`}
       >
-        <div className="fixed inset-0 bg-center mask-[linear-gradient(180deg,white,rgba(255,255,255,0))] pointer-events-none opacity-20" />
-        <div className="fixed inset-0 bg-cyber-black/50 pointer-events-none" />
+        <div className="pointer-events-none fixed inset-0 mask-[linear-gradient(180deg,white,rgba(255,255,255,0))] bg-center opacity-20" />
+        <div className="pointer-events-none fixed inset-0 bg-cyber-black/50" />
 
         <NeonHeader />
         {children}
@@ -31,7 +31,7 @@ export default function RootLayout({
         <BackToTop />
 
         {/* CRT Scanline Effect */}
-        <div className="fixed inset-0 pointer-events-none z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-[0.03]" />
+        <div className="pointer-events-none fixed inset-0 z-50 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%] opacity-[0.03]" />
       </body>
     </html>
   );

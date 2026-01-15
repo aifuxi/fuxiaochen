@@ -63,13 +63,13 @@ export function TableOfContents() {
   if (headings.length === 0) return null;
 
   return (
-    <div className="sticky top-32 space-y-4 max-h-[calc(100vh-9rem)] overflow-y-auto pr-2 custom-scrollbar">
-      <div className="flex items-center gap-2 text-neon-cyan font-display font-bold uppercase tracking-wider text-sm mb-4">
-        <span className="w-2 h-2 bg-neon-cyan rounded-full animate-pulse" />
+    <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
+      <div className="mb-4 flex items-center gap-2 font-display text-sm font-bold tracking-wider text-neon-cyan uppercase">
+        <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
         目录 / Table of Contents
       </div>
       <nav className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-[1px] bg-white/10" />
+        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-white/10" />
         <ul className="space-y-1">
           {headings.map((heading, index) => (
             <li key={`${heading.id}-${index}`} className="relative">
@@ -83,11 +83,11 @@ export function TableOfContents() {
                   setActiveId(heading.id);
                 }}
                 className={cn(
-                  "block pl-4 py-1 text-sm transition-all duration-300 border-l-2",
+                  "block border-l-2 py-1 pl-4 text-sm transition-all duration-300",
                   heading.level === 3 && "pl-8",
                   activeId === heading.id
-                    ? "text-neon-cyan border-neon-cyan bg-neon-cyan/5 font-medium shadow-[0_0_10px_rgba(0,255,255,0.1)]"
-                    : "text-gray-500 border-transparent hover:text-gray-300 hover:border-white/20",
+                    ? "border-neon-cyan bg-neon-cyan/5 font-medium text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]"
+                    : "border-transparent text-gray-500 hover:border-white/20 hover:text-gray-300",
                 )}
               >
                 {heading.text}

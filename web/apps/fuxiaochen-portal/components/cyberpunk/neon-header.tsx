@@ -6,48 +6,48 @@ import { ConnectDialog } from "./connect-dialog";
 
 export function NeonHeader() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 px-4 py-6">
-      <nav className="glass-panel mx-auto max-w-7xl rounded-full px-8 py-4 flex items-center justify-between shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+    <header className="fixed top-0 right-0 left-0 z-40 px-4 py-6">
+      <nav className="glass-panel mx-auto flex max-w-7xl items-center justify-between rounded-full px-8 py-4 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
         <Link
           href="/"
-          className="text-xl md:text-2xl font-bold text-neon-cyan tracking-widest uppercase flex items-center gap-2"
+          className="flex items-center gap-2 text-xl font-bold tracking-widest text-neon-cyan uppercase md:text-2xl"
         >
-          <span className="w-2 h-2 bg-neon-magenta rounded-full animate-pulse" />
+          <span className="h-2 w-2 animate-pulse rounded-full bg-neon-magenta" />
           {WEBSITE}
           <span className="text-neon-magenta">.OS</span>
         </Link>
-        <div className="hidden md:flex gap-8 text-sm font-medium tracking-wide">
+        <div className="hidden gap-8 text-sm font-medium tracking-wide md:flex">
           <Link
             href="/"
-            className="text-gray-300 hover:text-neon-cyan transition-colors duration-300"
+            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
           >
             首页 / Home
           </Link>
           <Link
             href="/blog"
-            className="text-gray-300 hover:text-neon-cyan transition-colors duration-300"
+            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
           >
             博客 / Blog
           </Link>
           <Link
             href="/changelog"
-            className="text-gray-300 hover:text-neon-cyan transition-colors duration-300"
+            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
           >
             日志 / Changelog
           </Link>
           <Link
             href="/about"
-            className="text-gray-300 hover:text-neon-cyan transition-colors duration-300"
+            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
           >
             关于 / About
           </Link>
         </div>
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden items-center gap-4 md:flex">
           <a
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 text-gray-400 hover:text-white transition-colors duration-300 hover:bg-white/10 rounded-full"
+            className="rounded-full p-2 text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-white"
             aria-label="GitHub Source Code"
           >
             <svg
