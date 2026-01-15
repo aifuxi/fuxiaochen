@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { NeonHeader } from "@/components/cyberpunk/neon-header";
 
 export default function BlogLoading() {
   return (
