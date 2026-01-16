@@ -18,9 +18,9 @@ type UserLoginReq struct {
 }
 
 type UserUpdateReq struct {
-	Nickname string           `json:"nickname" binding:"required"`
-	Email    string           `json:"email" binding:"required,email"`
-	RoleIDs  StringInt64Slice `json:"roleIDs"`
+	Nickname string `json:"nickname" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Role     string `json:"role"`
 }
 
 type UserListReq struct {
@@ -31,11 +31,11 @@ type UserListReq struct {
 
 type UserResp struct {
 	model.CommonModel
-	Nickname string        `json:"nickname"`
-	Email    string        `json:"email"`
-	Roles    []*model.Role `json:"roles,omitempty"`
-	Banned   bool          `gorm:"default:false;comment:是否禁用" json:"banned"`
-	BannedAt *time.Time    `gorm:"comment:禁用时间" json:"bannedAt,omitempty"`
+	Nickname string     `json:"nickname"`
+	Email    string     `json:"email"`
+	Role     string     `json:"role"`
+	Banned   bool       `gorm:"default:false;comment:是否禁用" json:"banned"`
+	BannedAt *time.Time `gorm:"comment:禁用时间" json:"bannedAt,omitempty"`
 }
 
 type UserListResp struct {
@@ -48,10 +48,10 @@ type UserFindByIDReq struct {
 }
 
 type UserCreateReq struct {
-	Nickname string           `json:"nickname" binding:"required"`
-	Email    string           `json:"email" binding:"required,email"`
-	Password string           `json:"password" binding:"required,min=6"`
-	RoleIDs  StringInt64Slice `json:"roleIDs" binding:"required,min=1"`
+	Nickname string `json:"nickname" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+	Role     string `json:"role" binding:"required"`
 }
 
 type UserBanReq struct {

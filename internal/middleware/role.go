@@ -1,17 +1,13 @@
 package middleware
 
 import (
+	"github.com/aifuxi/fuxiaochen-api/internal/model"
 	"github.com/aifuxi/fuxiaochen-api/internal/service"
 	"github.com/aifuxi/fuxiaochen-api/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
-func RequirePermissions(userService service.UserService, permissions ...string) gin.HandlerFunc {
-	permissionSet := make(map[string]struct{}, len(permissions))
-	for _, p := range permissions {
-		permissionSet[p] = struct{}{}
-	}
-
+func RequireAdmin(userService service.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		v, ok := c.Get("userID")
 		if !ok {
@@ -34,21 +30,8 @@ func RequirePermissions(userService service.UserService, permissions ...string) 
 			return
 		}
 
-		hasPermission := false
-		for _, role := range user.Roles {
-			for _, permission := range role.Permissions {
-				if _, ok := permissionSet[permission.Code]; ok {
-					hasPermission = true
-					break
-				}
-			}
-			if hasPermission {
-				break
-			}
-		}
-
-		if !hasPermission {
-			response.Forbidden(c, "permission denied")
+		if user.Role != model.RoleAdmin {
+			response.Forbidden(c, "admin access required")
 			c.Abort()
 			return
 		}

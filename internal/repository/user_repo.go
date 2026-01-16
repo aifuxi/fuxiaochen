@@ -36,35 +36,11 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 func (r *userRepo) Create(ctx context.Context, user model.User) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(&user).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Model(&user).Association("Roles").Replace(user.Roles); err != nil {
-			return err
-		}
-
-		return nil
-	})
+	return r.db.WithContext(ctx).Create(&user).Error
 }
 
 func (r *userRepo) Update(ctx context.Context, user model.User) error {
-	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Updates(&model.User{
-			CommonModel: model.CommonModel{ID: user.ID},
-			Nickname:    user.Nickname,
-			Email:       user.Email,
-		}).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Model(&user).Association("Roles").Replace(user.Roles); err != nil {
-			return err
-		}
-
-		return nil
-	})
+	return r.db.WithContext(ctx).Save(&user).Error
 }
 
 func (r *userRepo) List(ctx context.Context, option UserListOption) ([]model.User, int64, error) {
@@ -85,7 +61,7 @@ func (r *userRepo) List(ctx context.Context, option UserListOption) ([]model.Use
 		return nil, 0, err
 	}
 
-	err := query.Preload("Roles").Preload("Roles.Permissions").
+	err := query.
 		Offset((option.Page - 1) * option.PageSize).
 		Limit(option.PageSize).
 		Find(&users).Error
@@ -98,7 +74,7 @@ func (r *userRepo) List(ctx context.Context, option UserListOption) ([]model.Use
 
 func (r *userRepo) FindByID(ctx context.Context, id int64) (*model.User, error) {
 	var user model.User
-	if err := r.db.WithContext(ctx).Preload("Roles").Preload("Roles.Permissions").First(&user, id).Error; err != nil {
+	if err := r.db.WithContext(ctx).First(&user, id).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
@@ -109,7 +85,7 @@ func (r *userRepo) FindByID(ctx context.Context, id int64) (*model.User, error) 
 
 func (r *userRepo) FindByEmail(ctx context.Context, email string) (*model.User, error) {
 	var user model.User
-	if err := r.db.WithContext(ctx).Preload("Roles").Preload("Roles.Permissions").Where("email = ?", email).First(&user).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}

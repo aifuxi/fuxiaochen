@@ -10,7 +10,7 @@ func convertToUserResp(u model.User) dto.UserResp {
 		CommonModel: u.CommonModel,
 		Nickname:    u.Nickname,
 		Email:       u.Email,
-		Roles:       u.Roles,
+		Role:        u.Role,
 		Banned:      u.Banned,
 		BannedAt:    u.BannedAt,
 	}
