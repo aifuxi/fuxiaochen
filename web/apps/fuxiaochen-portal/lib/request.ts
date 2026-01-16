@@ -13,9 +13,6 @@ class APIServiceClient {
     const search = queryString.stringify(config?.params ?? {});
     const query = search.length ? `?${search}` : "";
 
-    console.log(`query: ${query}`);
-    console.log(`config?.params: ${JSON.stringify(config?.params)}`);
-
     const { params: _, ...restConfig } = config ?? {};
 
     const resp = await fetch(
@@ -31,4 +28,6 @@ class APIServiceClient {
   }
 }
 
-export default new APIServiceClient();
+const request = new APIServiceClient();
+
+export default request;

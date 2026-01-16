@@ -16,15 +16,16 @@ import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
-import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
 import { getUserList } from "@/api/user";
+import { ROLE_CODES, roleCodeMap } from "@/constants/role-codes";
 import { ROUTES } from "@/constants/route";
 import UserBanChanger from "@/features/user/components/user-ban-changer";
 import UserCreateModal from "@/features/user/components/user-create-modal";
 import UserDeleteModal from "@/features/user/components/user-delete-modal";
 import UserPasswordModal from "@/features/user/components/user-password-modal";
+import { useSemiTable } from "@/hooks/use-semi-table";
 
 type FormValues = Pick<UserListReq, "nickname" | "email">;
 
@@ -55,13 +56,9 @@ export default function UserPage() {
       width: 200,
       render: (_, record) => {
         return (
-          <div className="flex gap-2 flex-wrap">
-            {record.roles?.map((role) => (
-              <Tag key={role.id} color="blue">
-                {role.name}
-              </Tag>
-            ))}
-          </div>
+          <Tag color={record.role === ROLE_CODES.Admin ? "red" : "blue"}>
+            {roleCodeMap[record.role]}
+          </Tag>
         );
       },
     },
@@ -199,11 +196,7 @@ export default function UserPage() {
                 >
                   搜索
                 </Button>
-                <Button
-                  type="primary"
-                  icon={<IconRefresh2 />}
-                  onClick={reset}
-                >
+                <Button type="primary" icon={<IconRefresh2 />} onClick={reset}>
                   重置
                 </Button>
               </div>

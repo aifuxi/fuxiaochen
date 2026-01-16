@@ -11,8 +11,7 @@ import NiceSemiModal from "@/components/nice-semi-modal";
 import { showSuccessToast } from "@/libs/toast";
 
 import { createUser, getUserDetail, updateUser } from "@/api/user";
-
-import { RoleField } from "./role-field";
+import { type RoleCode, roleCodeOptions } from "@/constants/role-codes";
 
 interface Props {
   onSuccess?: () => void;
@@ -23,7 +22,7 @@ interface FormValues {
   nickname: string;
   email: string;
   password?: string;
-  roleIDs: string[];
+  role: RoleCode;
 }
 
 const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {
@@ -52,11 +51,10 @@ const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {
   const { loading: detailLoading } = useRequest(() => getUserDetail(userID!), {
     ready: Boolean(userID),
     onSuccess(resp) {
-      const roleIDs = resp?.data?.roles?.map((r) => r.id) ?? [];
       formRef.current?.setValues({
         nickname: resp?.data?.nickname,
         email: resp?.data?.email,
-        roleIDs: roleIDs,
+        role: resp?.data?.role,
       });
     },
   });
@@ -86,7 +84,7 @@ const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {
               updateRun(userID, {
                 nickname: values.nickname,
                 email: values.email,
-                roleIDs: values.roleIDs,
+                role: values.role,
               });
               return;
             }
@@ -95,7 +93,7 @@ const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {
               nickname: values.nickname,
               email: values.email,
               password: values.password!,
-              roleIDs: values.roleIDs || [],
+              role: values.role,
             });
           }}
         >
@@ -133,13 +131,13 @@ const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {
               ]}
             ></Form.Input>
           )}
-          <RoleField
-            field="roleIDs"
+          <Form.Select
+            field="role"
             label="角色"
-            multiple
             showClear
             placeholder="请选择角色"
             rules={[{ required: true, message: "请选择角色" }]}
+            optionList={roleCodeOptions}
           />
         </Form>
       </Spin>

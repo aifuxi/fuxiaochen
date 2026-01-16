@@ -1,56 +1,57 @@
+import type { RoleCode } from "@/constants/role-codes";
+
 import type { CommonModel, ListReq } from "./common";
-import type { Role } from "./role";
 
 export interface UserRegisterReq {
-	nickname: string;
-	email: string;
-	password: string;
+  nickname: string;
+  email: string;
+  password: string;
 }
 
 export interface UserLoginReq {
-	email: string;
-	password: string;
+  email: string;
+  password: string;
 }
 
 export interface UserUpdateReq {
-	nickname?: string;
-	email?: string;
-	roleIDs?: string[];
+  nickname?: string;
+  email?: string;
+  role?: RoleCode;
 }
 
 export interface UserUpdatePasswordReq {
-	password: string;
+  password: string;
 }
 
 export interface UserListReq extends ListReq {
-	nickname?: string;
-	email?: string;
+  nickname?: string;
+  email?: string;
 }
 
 export interface UserResp extends CommonModel {
-	nickname: string;
-	email: string;
-	roles?: Role[];
-	banned: boolean;
-	bannedAt?: string;
+  nickname: string;
+  email: string;
+  role: RoleCode;
+  banned: boolean;
+  bannedAt?: string;
 }
 
 export interface UserListResp {
-	total: string;
-	lists: UserResp[];
+  total: string;
+  lists: UserResp[];
 }
 
 export interface UserFindByIDReq {
-	id: string;
+  id: string;
 }
 
 export interface UserCreateReq {
-	nickname: string;
-	email: string;
-	password: string;
-	roleIDs: string[];
+  nickname: string;
+  email: string;
+  password: string;
+  role: RoleCode;
 }
 
 export interface UserUpdateBanReq {
-	ban: boolean;
+  ban: boolean;
 }
