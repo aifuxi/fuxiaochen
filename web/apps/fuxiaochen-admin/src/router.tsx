@@ -16,7 +16,6 @@ import { ROUTES } from "@/constants/route";
 import Index from "@/routes";
 
 import ProtectRoute from "./components/protect-route";
-import { PERMISSION_CODES } from "./constants/permission-codes";
 
 const router = createBrowserRouter([
   {
@@ -38,11 +37,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.Category.href,
         element: (
-          <ProtectRoute
-            requireSomePermissionCodes={[
-              PERMISSION_CODES.PermissionCategoryList,
-            ]}
-          >
+          <ProtectRoute>
             <Category />
           </ProtectRoute>
         ),
@@ -50,9 +45,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.Tag.href,
         element: (
-          <ProtectRoute
-            requireSomePermissionCodes={[PERMISSION_CODES.PermissionTagList]}
-          >
+          <ProtectRoute>
             <Tag />
           </ProtectRoute>
         ),
@@ -60,11 +53,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.Changelog.href,
         element: (
-          <ProtectRoute
-            requireSomePermissionCodes={[
-              PERMISSION_CODES.PermissionChangelogList,
-            ]}
-          >
+          <ProtectRoute>
             <Changelog />
           </ProtectRoute>
         ),
@@ -72,9 +61,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.User.href,
         element: (
-          <ProtectRoute
-            requireAllPermissionCodes={[PERMISSION_CODES.PermissionAdminAll]}
-          >
+          <ProtectRoute requireAdmin>
             <User />
           </ProtectRoute>
         ),
@@ -82,9 +69,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.BlogList.href,
         element: (
-          <ProtectRoute
-            requireSomePermissionCodes={[PERMISSION_CODES.PermissionBlogList]}
-          >
+          <ProtectRoute>
             <BlogList />
           </ProtectRoute>
         ),
@@ -92,14 +77,7 @@ const router = createBrowserRouter([
       {
         path: ROUTES.BlogCreate.href,
         element: (
-          <ProtectRoute
-            requireSomePermissionCodes={[
-              PERMISSION_CODES.PermissionBlogCreate,
-              PERMISSION_CODES.PermissionBlogUpdate,
-              PERMISSION_CODES.PermissionBlogList,
-              PERMISSION_CODES.PermissionBlogView,
-            ]}
-          >
+          <ProtectRoute>
             <BlogCreate />
           </ProtectRoute>
         ),

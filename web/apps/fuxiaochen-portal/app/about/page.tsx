@@ -6,7 +6,6 @@ export default function AboutPage() {
     { name: "TypeScript", icon: "icon-[skill-icons--typescript]" },
     { name: "React", icon: "icon-[skill-icons--react-dark]" },
     { name: "Next.js", icon: "icon-[skill-icons--nextjs-dark]" },
-    { name: "ahooks", icon: "icon-[skill-icons--react-dark]" }, // Fallback to React icon
     { name: "Tailwind CSS", icon: "icon-[skill-icons--tailwindcss-dark]" },
   ];
 
@@ -21,8 +20,6 @@ export default function AboutPage() {
     { name: "Linux (Debian/CentOS)", icon: "icon-[skill-icons--linux-dark]" },
     { name: "Docker", icon: "icon-[skill-icons--docker]" },
     { name: "NGINX (Proxy/SSL)", icon: "icon-[skill-icons--nginx]" },
-    { name: "Figma", icon: "icon-[skill-icons--figma-dark]" },
-    { name: "AI Assistance", icon: "icon-[skill-icons--github-dark]" }, // Using GitHub icon for Copilot/AI
   ];
 
   return (
@@ -103,7 +100,7 @@ export default function AboutPage() {
                 <div className="space-y-1">
                   <h1
                     className={`
-                      glitch-text font-display text-4xl font-bold tracking-wider text-white uppercase
+                      glitch-text mb-4 font-display text-4xl font-bold tracking-wider text-white uppercase
                       md:text-6xl
                     `}
                     data-text="付小晨"
@@ -117,8 +114,8 @@ export default function AboutPage() {
 
                 <p className="max-w-2xl text-lg leading-relaxed text-gray-300">
                   自 2020 年以来的前端开发人员。热衷于{" "}
-                  <span className="text-neon-cyan">React</span>,{" "}
-                  <span className="text-neon-cyan">Go</span>, 和{" "}
+                  <span className="text-neon-cyan">React</span>、
+                  <span className="text-neon-cyan">Go</span> 和{" "}
                   <span className="text-neon-cyan">TypeScript</span>
                   。热爱编程、游戏，并致力于构建沉浸式的数字体验。
                 </p>
@@ -134,7 +131,7 @@ export default function AboutPage() {
                       rounded border border-neon-cyan/30 bg-neon-cyan/10 px-4 py-2 font-mono text-sm text-neon-cyan
                     `}
                   >
-                    经验：4+ 年
+                    经验：5+ 年
                   </div>
                   <div
                     className={`

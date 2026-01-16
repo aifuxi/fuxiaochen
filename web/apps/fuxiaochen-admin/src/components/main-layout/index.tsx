@@ -128,7 +128,7 @@ export default function MainLayout() {
           ]}
           header={{
             logo: <img src="/logo.svg" alt="" className="size-9 inline-flex" />,
-            text: "FXC 运营后台",
+            text: "付小晨后台",
           }}
           footer={{
             collapseButton: true,
@@ -158,9 +158,7 @@ export default function MainLayout() {
                     <Dropdown.Menu>
                       <Dropdown.Item>
                         <div className="flex items-center gap-4">
-                          <Avatar color="blue" size="small">
-                            {userInfo?.nickname}
-                          </Avatar>
+                          <Avatar size="small">{userInfo?.nickname}</Avatar>
                           <div>
                             <Typography.Text strong>
                               {userInfo?.nickname}
@@ -183,9 +181,7 @@ export default function MainLayout() {
                   }
                 >
                   <div>
-                    <Avatar color="blue" size="small">
-                      {userInfo?.nickname}
-                    </Avatar>
+                    <Avatar size="small">{userInfo?.nickname}</Avatar>
                   </div>
                 </Dropdown>
               </div>
@@ -199,11 +195,10 @@ export default function MainLayout() {
         </Content>
         <Footer className="flex justify-between p-5 text-semi-text-2 bg-[rgba(var(--semi-grey-0),1)]">
           <span className="flex items-center">
-            <span>Copyright © 2025 fgo. All Rights Reserved. </span>
-          </span>
-          <span>
-            <span className="mr-6">平台客服</span>
-            <span>反馈建议</span>
+            <span>
+              Copyright © {new Date().getFullYear()} 付小晨。All Rights
+              Reserved.
+            </span>
           </span>
         </Footer>
       </Layout>
