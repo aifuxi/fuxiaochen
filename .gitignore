@@ -33,3 +33,6 @@ logs/
 
 # Env
 .env
+
+
+node_modules/
