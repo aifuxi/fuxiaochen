@@ -27,7 +27,6 @@ type UserService interface {
 
 type userService struct {
 	repo      repository.UserRepository
-	roleRepo  repository.RoleRepository
 	tokenRepo repository.TokenRepository
 }
 
@@ -39,8 +38,8 @@ var (
 	ErrUserBanned             = errors.New("user banned")
 )
 
-func NewUserService(repo repository.UserRepository, roleRepo repository.RoleRepository, tokenRepo repository.TokenRepository) UserService {
-	return &userService{repo: repo, roleRepo: roleRepo, tokenRepo: tokenRepo}
+func NewUserService(repo repository.UserRepository, tokenRepo repository.TokenRepository) UserService {
+	return &userService{repo: repo, tokenRepo: tokenRepo}
 }
 
 func (s *userService) Register(ctx context.Context, req dto.UserRegisterReq) error {
@@ -59,22 +58,11 @@ func (s *userService) Register(ctx context.Context, req dto.UserRegisterReq) err
 		return err
 	}
 
-	// Find visitor role
-	visitorRole, err := s.roleRepo.FindByCode(ctx, model.RoleCodeVisitor)
-	if err != nil {
-		return err
-	}
-	if visitorRole == nil {
-		return ErrVisitorRoleNotFound
-	}
-
 	user := &model.User{
 		Nickname: req.Nickname,
 		Email:    req.Email,
 		Password: string(hashedPassword),
-		Roles: []*model.Role{
-			visitorRole,
-		},
+		Role:     model.RoleVisitor,
 	}
 
 	return s.repo.Create(ctx, *user)
@@ -96,20 +84,11 @@ func (s *userService) Create(ctx context.Context, req dto.UserCreateReq) error {
 		return err
 	}
 
-	var roles []*model.Role
-	for _, roleID := range req.RoleIDs {
-		role, err := s.roleRepo.FindByID(ctx, roleID, false)
-		if err != nil {
-			return err
-		}
-		roles = append(roles, role)
-	}
-
 	user := &model.User{
 		Nickname: req.Nickname,
 		Email:    req.Email,
 		Password: string(hashedPassword),
-		Roles:    roles,
+		Role:     req.Role,
 	}
 
 	return s.repo.Create(ctx, *user)
@@ -176,14 +155,8 @@ func (s *userService) Update(ctx context.Context, id int64, req dto.UserUpdateRe
 		user.Nickname = req.Nickname
 	}
 
-	if len(req.RoleIDs) > 0 {
-		var roles []*model.Role
-		for _, roleID := range req.RoleIDs {
-			roles = append(roles, &model.Role{
-				CommonModel: model.CommonModel{ID: roleID},
-			})
-		}
-		user.Roles = roles
+	if req.Role != "" {
+		user.Role = req.Role
 	}
 
 	return s.repo.Update(ctx, *user)
@@ -235,7 +208,7 @@ func (s *userService) FindByID(ctx context.Context, id int64) (*dto.UserResp, er
 		CommonModel: user.CommonModel,
 		Nickname:    user.Nickname,
 		Email:       user.Email,
-		Roles:       user.Roles,
+		Role:        user.Role,
 	}, nil
 }
 

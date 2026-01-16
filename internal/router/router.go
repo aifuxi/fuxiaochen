@@ -34,7 +34,6 @@ func Init(version string, c *app.Container, logger *zap.Logger) *gin.Engine {
 
 	routes.RegisterAuthRoutes(apiV1, c.AuthHandler)
 	routes.RegisterUserRoutes(apiV1, c.UserHandler, c.UserService, c.TokenRepo)
-	routes.RegisterRoleRoutes(apiV1, c.RoleHandler, c.UserService, c.TokenRepo)
 	routes.RegisterTagRoutes(apiV1, c.TagHandler, c.UserService, c.TokenRepo)
 	routes.RegisterChangelogRoutes(apiV1, c.ChangelogHandler, c.UserService, c.TokenRepo)
 	routes.RegisterBlogRoutes(apiV1, c.BlogHandler, c.UserService, c.TokenRepo)

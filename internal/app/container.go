@@ -19,7 +19,6 @@ type Container struct {
 	// Handlers
 	AuthHandler            *handler.UserHandler
 	UserHandler            *handler.UserHandler
-	RoleHandler            *handler.RoleHandler
 	BlogHandler            *handler.BlogHandler
 	CategoryHandler        *handler.CategoryHandler
 	TagHandler             *handler.TagHandler
@@ -36,7 +35,6 @@ func NewContainer() *Container {
 
 	// Repositories
 	userRepo := repository.NewUserRepository(dbConn)
-	roleRepo := repository.NewRoleRepository(dbConn)
 	tokenRepo := repository.NewTokenRepository(dbConn)
 	blogRepo := repository.NewBlogRepository(dbConn)
 	categoryRepo := repository.NewCategoryRepository(dbConn)
@@ -44,17 +42,15 @@ func NewContainer() *Container {
 	changelogRepo := repository.NewChangelogRepository(dbConn)
 
 	// Services
-	userService := service.NewUserService(userRepo, roleRepo, tokenRepo)
+	userService := service.NewUserService(userRepo, tokenRepo)
 	blogService := service.NewBlogService(blogRepo)
 	categoryService := service.NewCategoryService(categoryRepo)
 	tagService := service.NewTagService(tagRepo)
 	changelogService := service.NewChangelogService(changelogRepo)
-	roleService := service.NewRoleService(roleRepo)
 	uploadService := service.NewUploadService()
 
 	// Handlers
 	userHandler := handler.NewUserHandler(userService)
-	roleHandler := handler.NewRoleHandler(roleService)
 	blogHandler := handler.NewBlogHandler(blogService)
 	categoryHandler := handler.NewCategoryHandler(categoryService)
 	tagHandler := handler.NewTagHandler(tagService)
@@ -71,7 +67,6 @@ func NewContainer() *Container {
 		UserService:            userService,
 		AuthHandler:            userHandler, // Auth uses UserHandler
 		UserHandler:            userHandler,
-		RoleHandler:            roleHandler,
 		BlogHandler:            blogHandler,
 		CategoryHandler:        categoryHandler,
 		TagHandler:             tagHandler,
