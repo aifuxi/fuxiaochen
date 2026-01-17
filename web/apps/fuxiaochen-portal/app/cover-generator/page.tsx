@@ -31,7 +31,7 @@ export default function CoverGeneratorPage() {
   // State
   const [title, setTitle] = useState("CYBERPUNK COVER");
   const [subtitle, setSubtitle] = useState("Next-Gen Generator");
-  const [author, setAuthor] = useState("@fuxiaochen");
+  const [author, setAuthor] = useState("@fuxiaochen.com");
   const [bgStyle, setBgStyle] = useState("neon-grid"); // neon-grid, circuit, matrix, gradient-1, gradient-2
   const [showGlitch, setShowGlitch] = useState(true);
   const [showBorder, setShowBorder] = useState(true);
@@ -142,10 +142,33 @@ export default function CoverGeneratorPage() {
   return (
     <div
       className={`
-        min-h-screen bg-cyber-black px-4 pt-24 pb-12
+        min-h-screen bg-cyber-black px-4 pt-32 pb-12
         md:px-8
       `}
     >
+      {/* Header Section */}
+      <div className="relative mb-16 text-center">
+        <h1
+          className={`
+            glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase
+            md:text-7xl
+          `}
+          data-text="Cover_Generator"
+        >
+          封面生成器 / Cover_Generator
+        </h1>
+        <p className="mt-4 font-mono text-lg text-neon-purple/80">
+          /// INITIALIZING_NEURAL_FABRICATOR... 初始化神经构造机
+          <br />
+          /// VISUAL_DATA_SYNTHESIS... 视觉数据合成
+        </p>
+        <div
+          className={`
+            pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full
+            bg-neon-purple/20 blur-[100px]
+          `}
+        />
+      </div>
       <div
         className={`
           mx-auto grid max-w-7xl grid-cols-1 gap-8

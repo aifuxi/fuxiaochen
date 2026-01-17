@@ -1,0 +1,16 @@
+{
+  "tailwindCSS.classFunctions": [
+    "cva",
+    "cx",
+    "cn",
+    "twMege"
+  ],
+  // 开启保存时为所有提供程序（包括 ESLint、Prettier 等）启用自动修复
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/*.next": true,
+  }
+}
