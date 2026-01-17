@@ -3,51 +3,88 @@ import Link from "next/link";
 import { SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants/info";
 
 import { ConnectDialog } from "./connect-dialog";
+import { MobileMenu } from "./mobile-menu";
 
 export function NeonHeader() {
   return (
     <header className="fixed top-0 right-0 left-0 z-40 px-4 py-6">
-      <nav className="glass-panel mx-auto flex max-w-7xl items-center justify-between rounded-full px-8 py-4 shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+      <nav className={`
+        glass-panel mx-auto flex max-w-7xl items-center justify-between rounded-full px-8 py-4
+        shadow-[0_0_20px_rgba(0,0,0,0.5)]
+      `}>
         <Link
           href="/"
-          className="flex items-center gap-2 text-xl font-bold tracking-widest text-neon-cyan uppercase md:text-2xl"
+          className={`
+            flex items-center gap-2 text-xl font-bold tracking-widest text-neon-cyan uppercase
+            md:text-2xl
+          `}
         >
           <span className="h-2 w-2 animate-pulse rounded-full bg-neon-magenta" />
           {WEBSITE}
           <span className="text-neon-magenta">.OS</span>
         </Link>
-        <div className="hidden gap-8 text-sm font-medium tracking-wide md:flex">
+        <div className={`
+          hidden gap-8 text-sm font-medium tracking-wide
+          md:flex
+        `}>
           <Link
             href="/"
-            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
+            className={`
+              text-gray-300 transition-colors duration-300
+              hover:text-neon-cyan
+            `}
           >
             首页 / Home
           </Link>
           <Link
             href="/blog"
-            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
+            className={`
+              text-gray-300 transition-colors duration-300
+              hover:text-neon-cyan
+            `}
           >
             博客 / Blog
           </Link>
           <Link
             href="/changelog"
-            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
+            className={`
+              text-gray-300 transition-colors duration-300
+              hover:text-neon-cyan
+            `}
           >
             日志 / Changelog
           </Link>
           <Link
+            href="/cover-generator"
+            className={`
+              text-gray-300 transition-colors duration-300
+              hover:text-neon-cyan
+            `}
+          >
+            工具 / Tools
+          </Link>
+          <Link
             href="/about"
-            className="text-gray-300 transition-colors duration-300 hover:text-neon-cyan"
+            className={`
+              text-gray-300 transition-colors duration-300
+              hover:text-neon-cyan
+            `}
           >
             关于 / About
           </Link>
         </div>
-        <div className="hidden items-center gap-4 md:flex">
+        <div className={`
+          hidden items-center gap-4
+          md:flex
+        `}>
           <a
             href={SOURCE_CODE_GITHUB_PAGE}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full p-2 text-gray-400 transition-colors duration-300 hover:bg-white/10 hover:text-white"
+            className={`
+              rounded-full p-2 text-gray-400 transition-colors duration-300
+              hover:bg-white/10 hover:text-white
+            `}
             aria-label="GitHub Source Code"
           >
             <svg
@@ -65,6 +102,7 @@ export function NeonHeader() {
           </a>
           <ConnectDialog />
         </div>
+        <MobileMenu />
       </nav>
     </header>
   );

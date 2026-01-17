@@ -34,14 +34,24 @@ export default async function ChangelogPage({
   const totalPages = Math.ceil(changelogData.total / pageSize);
 
   return (
-    <div className="min-h-screen bg-cyber-black font-body text-white selection:bg-neon-cyan selection:text-black">
-      <div className="pointer-events-none fixed inset-0 z-[100] animate-scanline bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+    <div className={`
+      min-h-screen bg-cyber-black font-body text-white
+      selection:bg-neon-cyan selection:text-black
+    `}>
+      <div className={`
+        pointer-events-none fixed inset-0 z-[100] animate-scanline
+        bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]
+        bg-[length:100%_2px,3px_100%]
+      `} />
 
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 text-center">
           <h1
-            className="glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase md:text-7xl"
+            className={`
+              glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase
+              md:text-7xl
+            `}
             data-text="System_Logs"
           >
             系统日志 / System_Logs
@@ -51,23 +61,47 @@ export default async function ChangelogPage({
             <br />
             /// VERSION_HISTORY_ARCHIVE... 版本历史档案
           </p>
-          <div className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-purple/20 blur-[100px]" />
+          <div className={`
+            pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full
+            bg-neon-purple/20 blur-[100px]
+          `} />
         </div>
 
         {/* Changelog Timeline */}
-        <div className="glass-panel relative rounded-2xl border border-neon-purple/20 p-8 md:p-12">
+        <div className={`
+          glass-panel relative rounded-2xl border border-neon-purple/20 p-8
+          md:p-12
+        `}>
           {/* Timeline Line */}
-          <div className="absolute top-12 bottom-12 left-8 w-px bg-gradient-to-b from-neon-purple/0 via-neon-purple/50 to-neon-purple/0 md:left-12" />
+          <div className={`
+            absolute top-12 bottom-12 left-8 w-px bg-gradient-to-b from-neon-purple/0 via-neon-purple/50
+            to-neon-purple/0
+            md:left-12
+          `} />
 
           <div className="space-y-12">
             {changelogData.lists.length > 0 ? (
               changelogData.lists.map((log) => (
-                <div key={log.id} className="group relative pl-8 md:pl-12">
+                <div key={log.id} className={`
+                  group relative pl-8
+                  md:pl-12
+                `}>
                   {/* Timeline Dot */}
-                  <div className="absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-neon-purple bg-cyber-black shadow-[0_0_10px_var(--color-neon-purple)] transition-colors duration-300 group-hover:bg-neon-purple md:left-[-5px]" />
+                  <div className={`
+                    absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-neon-purple bg-cyber-black
+                    shadow-[0_0_10px_var(--color-neon-purple)] transition-colors duration-300
+                    group-hover:bg-neon-purple
+                    md:left-[-5px]
+                  `} />
 
-                  <div className="mb-3 flex flex-col gap-4 md:flex-row md:items-baseline">
-                    <span className="rounded border border-neon-cyan/20 bg-neon-cyan/10 px-3 py-1 font-mono text-xl font-bold text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]">
+                  <div className={`
+                    mb-3 flex flex-col gap-4
+                    md:flex-row md:items-baseline
+                  `}>
+                    <span className={`
+                      rounded border border-neon-cyan/20 bg-neon-cyan/10 px-3 py-1 font-mono text-xl font-bold
+                      text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]
+                    `}>
                       {log.version}
                     </span>
                     <span className="font-mono text-sm tracking-wide text-gray-500 uppercase">
@@ -104,7 +138,10 @@ export default async function ChangelogPage({
                   <PaginationItem>
                     <PaginationPrevious
                       href={`/changelog?page=${currentPage - 1}`}
-                      className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
+                      className={`
+                        border-none text-neon-cyan
+                        hover:bg-neon-cyan/10 hover:text-neon-cyan
+                      `}
                     />
                   </PaginationItem>
                 )}
@@ -118,7 +155,10 @@ export default async function ChangelogPage({
                         className={
                           currentPage === page
                             ? "border-neon-cyan bg-neon-cyan text-black"
-                            : "border-transparent text-gray-400 hover:bg-white/10 hover:text-white"
+                            : `
+                              border-transparent text-gray-400
+                              hover:bg-white/10 hover:text-white
+                            `
                         }
                       >
                         {page}
@@ -131,7 +171,10 @@ export default async function ChangelogPage({
                   <PaginationItem>
                     <PaginationNext
                       href={`/changelog?page=${currentPage + 1}`}
-                      className="border-none text-neon-cyan hover:bg-neon-cyan/10 hover:text-neon-cyan"
+                      className={`
+                        border-none text-neon-cyan
+                        hover:bg-neon-cyan/10 hover:text-neon-cyan
+                      `}
                     />
                   </PaginationItem>
                 )}

@@ -31,6 +31,7 @@ export default function RootLayout({
         className={`
           bg-cyber-black text-white antialiased
           selection:bg-neon-cyan selection:text-black
+          ${isProduction() ? "" : "debug-screens"}
         `}
       >
         <div
