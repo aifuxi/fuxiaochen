@@ -3,7 +3,6 @@ import { useRef } from "react";
 import {
   IconDelete,
   IconEdit,
-  IconEyeOpened,
   IconPlusCircle,
   IconRefresh2,
   IconSearch,
@@ -16,13 +15,13 @@ import type { SemiFormApi, SemiTableColumnProps } from "@/types/semi";
 
 import ContentLayout from "@/components/content-layout";
 
-import { useSemiTable } from "@/hooks/use-semi-table";
 import { toModifiedISO8601 } from "@/libs/date";
 
 import { getTagList } from "@/api/tag";
 import { ROUTES } from "@/constants/route";
 import TagCreateModal from "@/features/tag/components/tag-create-modal";
 import TagDeleteModal from "@/features/tag/components/tag-delete-modal";
+import { useSemiTable } from "@/hooks/use-semi-table";
 
 type FormValues = Pick<TagListReq, "name" | "slug">;
 
@@ -94,9 +93,6 @@ export default function TagListPage() {
             >
               编辑
             </Button>
-            <Button type="secondary" icon={<IconEyeOpened />}>
-              查看
-            </Button>
             <Button
               icon={<IconDelete />}
               type="danger"
@@ -166,11 +162,7 @@ export default function TagListPage() {
                 >
                   搜索
                 </Button>
-                <Button
-                  type="primary"
-                  icon={<IconRefresh2 />}
-                  onClick={reset}
-                >
+                <Button type="primary" icon={<IconRefresh2 />} onClick={reset}>
                   重置
                 </Button>
               </div>
