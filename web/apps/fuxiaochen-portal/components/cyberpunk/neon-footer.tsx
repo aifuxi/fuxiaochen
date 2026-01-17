@@ -18,7 +18,7 @@ export async function NeonFooter() {
     order: "desc",
     sortBy: "createdAt",
   });
-  const version = changelogs[0]?.version || "unknown";
+  const version = changelogs?.[0]?.version || "unknown";
 
   return (
     <footer className="relative mt-20 overflow-hidden border-t border-white/10 bg-black/50 py-12 backdrop-blur-md">

@@ -26,13 +26,13 @@ export default async function ChangelogPage({
   const currentPage = Number(params.page) || 1;
   const pageSize = 10;
 
-  const changelogData = await getChangelogList({
+  const { lists, total } = await getChangelogList({
     page: currentPage,
     pageSize: pageSize,
   });
 
-  const totalPages = Math.ceil(changelogData.total / pageSize);
-
+  const totalPages = Math.ceil(total / pageSize);
+  const changelogs = lists || [];
   return (
     <div
       className={`
@@ -90,8 +90,8 @@ export default async function ChangelogPage({
           />
 
           <div className="space-y-12">
-            {changelogData.lists.length > 0 ? (
-              changelogData.lists.map((log) => (
+            {changelogs.length > 0 ? (
+              changelogs.map((log) => (
                 <div
                   key={log.id}
                   className={`

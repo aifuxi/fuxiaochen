@@ -30,23 +30,26 @@ export async function BlogList({
 }: BlogListProps) {
   const currentPage = Number(page) || 1;
 
-  const blogsData = await getBlogList({
+  const { lists, total } = await getBlogList({
     page: currentPage,
     pageSize,
     category,
     tags: tag ? [tag] : undefined,
   });
 
-  const totalPages = Math.ceil(blogsData.total / pageSize);
+  const totalPages = Math.ceil(total / pageSize);
+  const blogs = lists || [];
 
   return (
     <>
-      {blogsData.lists.length > 0 ? (
-        <div className={`
-          animate-in fade-in slide-in-from-bottom-4 mb-12 grid grid-cols-1 gap-6 duration-500
-          md:grid-cols-2
-        `}>
-          {blogsData.lists.map((blog) => (
+      {blogs.length > 0 ? (
+        <div
+          className={`
+            animate-in fade-in slide-in-from-bottom-4 mb-12 grid grid-cols-1 gap-6 duration-500
+            md:grid-cols-2
+          `}
+        >
+          {blogs.map((blog) => (
             <NeonBlogCard
               key={blog.id}
               title={blog.title}
@@ -63,10 +66,12 @@ export async function BlogList({
           ))}
         </div>
       ) : (
-        <div className={`
-          glass-panel animate-in fade-in zoom-in-95 flex flex-col items-center justify-center rounded-xl border-2
-          border-dashed border-white/10 py-20 text-center duration-300
-        `}>
+        <div
+          className={`
+            glass-panel animate-in fade-in zoom-in-95 flex flex-col items-center justify-center rounded-xl border-2
+            border-dashed border-white/10 py-20 text-center duration-300
+          `}
+        >
           <h3 className="mb-2 text-2xl font-bold text-gray-500">
             未发现传输内容 / No Transmissions Found
           </h3>

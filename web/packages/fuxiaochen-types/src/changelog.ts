@@ -12,7 +12,7 @@ export interface ChangelogListReq extends ListReq {
 
 export interface ChangelogListResp {
   total: number;
-  lists: Changelog[];
+  lists: Changelog[] | null;
 }
 
 export interface ChangelogCreateReq {

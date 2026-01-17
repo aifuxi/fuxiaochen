@@ -25,13 +25,15 @@ function BlogListSkeleton() {
 }
 
 async function BlogList() {
-  const { lists: blogs } = await getBlogList({
+  const { lists } = await getBlogList({
     page: 1,
     pageSize: 6,
     featuredStatus: "featured",
     order: "desc",
     sortBy: "createdAt",
   });
+
+  const blogs = lists || [];
 
   return (
     <div
