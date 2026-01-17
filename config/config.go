@@ -2,70 +2,65 @@ package config
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Server   ServerConfig   `mapstructure:",squash"`
-	Database DatabaseConfig `mapstructure:",squash"`
-	JWT      JWTConfig      `mapstructure:",squash"`
-	Log      LogConfig      `mapstructure:",squash"`
-	OSS      OSSConfig      `mapstructure:",squash"`
+	Server   ServerConfig   `mapstructure:"server"`
+	Database DatabaseConfig `mapstructure:"database"`
+	JWT      JWTConfig      `mapstructure:"jwt"`
+	Log      LogConfig      `mapstructure:"log"`
+	OSS      OSSConfig      `mapstructure:"oss"`
 }
 
 type ServerConfig struct {
-	Port    int    `mapstructure:"SERVER_PORT"`
-	Mode    string `mapstructure:"SERVER_MODE"`
-	Version string `mapstructure:"SERVER_VERSION"`
+	Host    string `mapstructure:"host"`
+	Port    int    `mapstructure:"port"`
+	Mode    string `mapstructure:"mode"`
+	Version string `mapstructure:"version"`
 }
 
 type DatabaseConfig struct {
-	Host     string `mapstructure:"DATABASE_HOST"`
-	Port     int    `mapstructure:"DATABASE_PORT"`
-	User     string `mapstructure:"DATABASE_USER"`
-	Password string `mapstructure:"DATABASE_PASSWORD"`
-	DBName   string `mapstructure:"DATABASE_DBNAME"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	User     string `mapstructure:"user"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"dbname"`
 }
 
 type JWTConfig struct {
-	Secret string `mapstructure:"JWT_SECRET"`
-	Expire int    `mapstructure:"JWT_EXPIRE"`
+	Secret string `mapstructure:"secret"`
+	Expire int    `mapstructure:"expire"`
 }
 
 type LogConfig struct {
-	Level      string `mapstructure:"LOG_LEVEL"`
-	Filename   string `mapstructure:"LOG_FILENAME"`
-	MaxSize    int    `mapstructure:"LOG_MAX_SIZE"`
-	MaxAge     int    `mapstructure:"LOG_MAX_AGE"`
-	MaxBackups int    `mapstructure:"LOG_MAX_BACKUPS"`
-	Compress   bool   `mapstructure:"LOG_COMPRESS"`
+	Level      string `mapstructure:"level"`
+	Filename   string `mapstructure:"filename"`
+	MaxSize    int    `mapstructure:"max_size"`
+	MaxAge     int    `mapstructure:"max_age"`
+	MaxBackups int    `mapstructure:"max_backups"`
+	Compress   bool   `mapstructure:"compress"`
 }
 
 type OSSConfig struct {
-	AccessKeyID     string `mapstructure:"OSS_ACCESS_KEY_ID"`
-	AccessKeySecret string `mapstructure:"OSS_ACCESS_KEY_SECRET"`
-	Region          string `mapstructure:"OSS_REGION"`
-	Bucket          string `mapstructure:"OSS_BUCKET"`
-	UploadDir       string `mapstructure:"OSS_UPLOAD_DIR"`
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	AccessKeySecret string `mapstructure:"access_key_secret"`
+	Region          string `mapstructure:"region"`
+	Bucket          string `mapstructure:"bucket"`
+	UploadDir       string `mapstructure:"upload_dir"`
 }
 
 var AppConfig *Config
 
 func Init() error {
-	viper.SetConfigType("env")
-	// Allow reading from environment variables (important if .env is missing or overridden)
-	viper.AutomaticEnv()
+	viper.SetConfigName("app")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath("config")
+	viper.AddConfigPath(".")
 
-	configFiles := []string{".env", "stack.env"}
-	for _, file := range configFiles {
-		if _, err := os.Stat(file); err == nil {
-			viper.SetConfigFile(file)
-			if err := viper.MergeInConfig(); err != nil {
-				return fmt.Errorf("error reading config file %s: %w", file, err)
-			}
-		}
+	if err := viper.ReadInConfig(); err != nil {
+		return fmt.Errorf("error reading config file: %w", err)
 	}
 
 	if err := viper.Unmarshal(&AppConfig); err != nil {
