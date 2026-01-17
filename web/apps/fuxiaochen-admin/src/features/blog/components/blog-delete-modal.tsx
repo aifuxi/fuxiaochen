@@ -20,6 +20,7 @@ const BlogDeleteModal = NiceModal.create(({ onSuccess, blogID }: Props) => {
     onSuccess() {
       onSuccess?.();
       showSuccessToast("删除成功");
+      modal.remove();
     },
   });
 
