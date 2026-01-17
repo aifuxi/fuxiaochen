@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/viper"
 )
@@ -53,17 +54,17 @@ type OSSConfig struct {
 var AppConfig *Config
 
 func Init() error {
-	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-
 	// Allow reading from environment variables (important if .env is missing or overridden)
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
-		// It's okay if config file doesn't exist, we might be relying on env vars
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return fmt.Errorf("error reading config file: %w", err)
+	configFiles := []string{".env", "stack.env"}
+	for _, file := range configFiles {
+		if _, err := os.Stat(file); err == nil {
+			viper.SetConfigFile(file)
+			if err := viper.MergeInConfig(); err != nil {
+				return fmt.Errorf("error reading config file %s: %w", file, err)
+			}
 		}
 	}
 
