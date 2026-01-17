@@ -5,7 +5,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN corepack enable && corepack prepare pnpm@10.27.0 --activate
 
 # Workspace manifests
-COPY web/pnpm-workspace.yaml web/pnpm-lock.yaml web/package.json ./
+COPY web/pnpm-workspace.yaml web/pnpm-lock.yaml web/package.json web/.prettierrc.cjs ./
 # App manifest for better install cache
 COPY web/apps/fuxiaochen-portal/package.json apps/fuxiaochen-portal/package.json
 
