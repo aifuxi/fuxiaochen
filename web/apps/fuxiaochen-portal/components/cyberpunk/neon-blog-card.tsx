@@ -8,6 +8,8 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
+import { ImageAssets } from "@/constants";
+
 interface BlogCardProps {
   title: string;
   excerpt: string;
@@ -27,20 +29,24 @@ export function NeonBlogCard({
 }: BlogCardProps) {
   return (
     <Link href={`/blog/${slug}`} className="block h-full">
-      <Card className={`
-        group relative flex h-full flex-col overflow-hidden rounded-xl border-white/5 bg-cyber-gray/40 pt-0
-        backdrop-blur-sm transition-all duration-500
-        hover:border-neon-cyan/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.1)]
-      `}>
-        <div className={`
-          pointer-events-none absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0
-          transition-opacity duration-500
-          group-hover:opacity-100
-        `} />
+      <Card
+        className={`
+          group relative flex h-full flex-col overflow-hidden rounded-xl border-white/5 bg-cyber-gray/40 pt-0
+          backdrop-blur-sm transition-all duration-500
+          hover:border-neon-cyan/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.1)]
+        `}
+      >
+        <div
+          className={`
+            pointer-events-none absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0
+            transition-opacity duration-500
+            group-hover:opacity-100
+          `}
+        />
 
         <div className="relative h-48 w-full overflow-hidden border-b border-white/5 bg-black/50">
           <Image
-            src={cover || "/images/placeholder.avif"}
+            src={cover || ImageAssets.coverPlaceholder}
             alt={title}
             fill
             className={`
@@ -68,10 +74,12 @@ export function NeonBlogCard({
             </div>
             <span className="font-mono text-xs text-gray-500">{date}</span>
           </div>
-          <h3 className={`
-            line-clamp-2 text-xl leading-tight font-bold text-white transition-colors duration-300
-            group-hover:text-neon-cyan
-          `}>
+          <h3
+            className={`
+              line-clamp-2 text-xl leading-tight font-bold text-white transition-colors duration-300
+              group-hover:text-neon-cyan
+            `}
+          >
             {title}
           </h3>
         </CardHeader>
@@ -83,11 +91,13 @@ export function NeonBlogCard({
         </CardContent>
 
         <CardFooter className="relative z-10 border-t border-white/5 pt-4">
-          <span className={`
-            flex items-center gap-2 text-xs font-bold tracking-widest text-neon-purple uppercase transition-transform
-            duration-300
-            group-hover:translate-x-2
-          `}>
+          <span
+            className={`
+              flex items-center gap-2 text-xs font-bold tracking-widest text-neon-purple uppercase transition-transform
+              duration-300
+              group-hover:translate-x-2
+            `}
+          >
             阅读协议 / Read Protocol <span className="text-lg">›</span>
           </span>
         </CardFooter>
