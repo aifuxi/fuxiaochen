@@ -15,39 +15,39 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port    int    `mapstructure:"server_port"`
-	Mode    string `mapstructure:"server_mode"`
-	Version string `mapstructure:"server_version"`
+	Port    int    `mapstructure:"SERVER_PORT"`
+	Mode    string `mapstructure:"SERVER_MODE"`
+	Version string `mapstructure:"SERVER_VERSION"`
 }
 
 type DatabaseConfig struct {
-	Host     string `mapstructure:"database_host"`
-	Port     int    `mapstructure:"database_port"`
-	User     string `mapstructure:"database_user"`
-	Password string `mapstructure:"database_password"`
-	DBName   string `mapstructure:"database_dbname"`
+	Host     string `mapstructure:"DATABASE_HOST"`
+	Port     int    `mapstructure:"DATABASE_PORT"`
+	User     string `mapstructure:"DATABASE_USER"`
+	Password string `mapstructure:"DATABASE_PASSWORD"`
+	DBName   string `mapstructure:"DATABASE_DBNAME"`
 }
 
 type JWTConfig struct {
-	Secret string `mapstructure:"jwt_secret"`
-	Expire int    `mapstructure:"jwt_expire"`
+	Secret string `mapstructure:"JWT_SECRET"`
+	Expire int    `mapstructure:"JWT_EXPIRE"`
 }
 
 type LogConfig struct {
-	Level      string `mapstructure:"log_level"`
-	Filename   string `mapstructure:"log_filename"`
-	MaxSize    int    `mapstructure:"log_max_size"`
-	MaxAge     int    `mapstructure:"log_max_age"`
-	MaxBackups int    `mapstructure:"log_max_backups"`
-	Compress   bool   `mapstructure:"log_compress"`
+	Level      string `mapstructure:"LOG_LEVEL"`
+	Filename   string `mapstructure:"LOG_FILENAME"`
+	MaxSize    int    `mapstructure:"LOG_MAX_SIZE"`
+	MaxAge     int    `mapstructure:"LOG_MAX_AGE"`
+	MaxBackups int    `mapstructure:"LOG_MAX_BACKUPS"`
+	Compress   bool   `mapstructure:"LOG_COMPRESS"`
 }
 
 type OSSConfig struct {
-	AccessKeyID     string `mapstructure:"oss_access_key_id"`
-	AccessKeySecret string `mapstructure:"oss_access_key_secret"`
-	Region          string `mapstructure:"oss_region"`
-	Bucket          string `mapstructure:"oss_bucket"`
-	UploadDir       string `mapstructure:"oss_upload_dir"`
+	AccessKeyID     string `mapstructure:"OSS_ACCESS_KEY_ID"`
+	AccessKeySecret string `mapstructure:"OSS_ACCESS_KEY_SECRET"`
+	Region          string `mapstructure:"OSS_REGION"`
+	Bucket          string `mapstructure:"OSS_BUCKET"`
+	UploadDir       string `mapstructure:"OSS_UPLOAD_DIR"`
 }
 
 var AppConfig *Config
