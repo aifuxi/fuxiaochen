@@ -11,7 +11,7 @@ import NiceSemiModal from "@/components/nice-semi-modal";
 import { showSuccessToast } from "@/libs/toast";
 
 import { createUser, getUserDetail, updateUser } from "@/api/user";
-import { type RoleCode, roleCodeOptions } from "@/constants/role-codes";
+import { roleCodeOptions } from "@/constants/role-codes";
 
 interface Props {
   onSuccess?: () => void;
@@ -22,7 +22,7 @@ interface FormValues {
   nickname: string;
   email: string;
   password?: string;
-  role: RoleCode;
+  role: string;
 }
 
 const UserCreateModal = NiceModal.create(({ onSuccess, userID }: Props) => {

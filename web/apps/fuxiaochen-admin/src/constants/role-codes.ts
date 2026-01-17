@@ -12,7 +12,7 @@ export const roleCodeOptions = Object.entries(ROLE_CODES).map(
   }),
 );
 
-export const roleCodeMap: Record<RoleCode, string> = {
+export const roleCodeMap: Record<string, string> = {
   [ROLE_CODES.Admin]: "管理员",
   [ROLE_CODES.Visitor]: "访客",
 };
