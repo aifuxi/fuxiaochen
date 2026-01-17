@@ -1,4 +1,9 @@
-import type { Blog, CommonResponse, ListReq } from "fuxiaochen-types";
+import type {
+  Blog,
+  BlogListResp,
+  CommonResponse,
+  ListReq,
+} from "fuxiaochen-types";
 
 import request from "@/lib/request";
 
@@ -8,11 +13,6 @@ export interface BlogListReq extends ListReq {
   category?: string;
   /** tag slugs */
   tags?: string[];
-}
-
-export interface BlogListResp {
-  total: number;
-  lists: Blog[];
 }
 
 const API_BASE_PATH = "/api/v1/public/blogs";

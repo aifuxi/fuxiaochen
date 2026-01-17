@@ -9,7 +9,7 @@ export async function GlitchHero() {
     order: "desc",
     sortBy: "createdAt",
   });
-  const version = changelogs[0]?.version || "unknown";
+  const version = changelogs?.[0]?.version || "unknown";
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(123,97,255,0.05),transparent_60%)]" />

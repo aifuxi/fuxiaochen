@@ -36,7 +36,7 @@ export interface UserResp extends CommonModel {
 
 export interface UserListResp {
   total: string;
-  lists: UserResp[];
+  lists: UserResp[] | null;
 }
 
 export interface UserFindByIDReq {
