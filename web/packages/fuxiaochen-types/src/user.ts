@@ -1,5 +1,3 @@
-import type { RoleCode } from "@/constants/role-codes";
-
 import type { CommonModel, ListReq } from "./common";
 
 export interface UserRegisterReq {
@@ -16,7 +14,7 @@ export interface UserLoginReq {
 export interface UserUpdateReq {
   nickname?: string;
   email?: string;
-  role?: RoleCode;
+  role?: string;
 }
 
 export interface UserUpdatePasswordReq {
@@ -31,7 +29,7 @@ export interface UserListReq extends ListReq {
 export interface UserResp extends CommonModel {
   nickname: string;
   email: string;
-  role: RoleCode;
+  role: string;
   banned: boolean;
   bannedAt?: string;
 }
@@ -49,7 +47,7 @@ export interface UserCreateReq {
   nickname: string;
   email: string;
   password: string;
-  role: RoleCode;
+  role: string;
 }
 
 export interface UserUpdateBanReq {
