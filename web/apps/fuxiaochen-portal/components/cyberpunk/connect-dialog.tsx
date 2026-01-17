@@ -73,7 +73,11 @@ export function ConnectDialog() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-full border border-neon-purple px-6 py-2 text-xs font-bold tracking-widest text-neon-purple uppercase shadow-[0_0_10px_rgba(123,97,255,0.2)] transition-all duration-300 hover:bg-neon-purple/20 hover:shadow-[0_0_20px_rgba(123,97,255,0.4)]"
+        className={`
+          rounded-full border border-neon-purple px-6 py-2 text-xs font-bold tracking-widest text-neon-purple uppercase
+          shadow-[0_0_10px_rgba(123,97,255,0.2)] transition-all duration-300
+          hover:bg-neon-purple/20 hover:shadow-[0_0_20px_rgba(123,97,255,0.4)]
+        `}
       >
         建立连接 / Connect
       </button>
@@ -87,7 +91,10 @@ export function ConnectDialog() {
               onClick={() => setIsOpen(false)}
             />
 
-            <div className="animate-in fade-in zoom-in relative w-full max-w-md space-y-8 rounded-xl border border-neon-purple/50 bg-black/90 p-8 shadow-[0_0_50px_rgba(123,97,255,0.2)] duration-300">
+            <div className={`
+              animate-in fade-in zoom-in relative w-full max-w-md space-y-8 rounded-xl border border-neon-purple/50
+              bg-black/90 p-8 shadow-[0_0_50px_rgba(123,97,255,0.2)] duration-300
+            `}>
               {/* Header */}
               <div className="space-y-2 text-center">
                 <h3 className="text-2xl font-bold tracking-wider text-white uppercase">
@@ -106,14 +113,25 @@ export function ConnectDialog() {
                     href={link.url}
                     target="_blank"
                     className={cn(
-                      "group flex flex-col items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-4 transition-all duration-300 hover:bg-white/10",
+                      `
+                        group flex flex-col items-center gap-3 rounded-lg border border-white/10 bg-white/5 p-4
+                        transition-all duration-300
+                        hover:bg-white/10
+                      `,
                       link.color,
                     )}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 transition-transform duration-300 group-hover:scale-110">
+                    <div className={`
+                      flex h-10 w-10 items-center justify-center rounded-full bg-black/50 transition-transform
+                      duration-300
+                      group-hover:scale-110
+                    `}>
                       {link.icon}
                     </div>
-                    <span className="text-xs font-medium text-gray-400 group-hover:text-white">
+                    <span className={`
+                      text-xs font-medium text-gray-400
+                      group-hover:text-white
+                    `}>
                       {link.name}
                     </span>
                   </a>
@@ -134,13 +152,21 @@ export function ConnectDialog() {
 
               <a
                 href={`mailto:${EMAIL}`}
-                className="group flex w-full items-center justify-center gap-2 rounded-lg border border-neon-purple/30 bg-neon-purple/10 py-3 text-sm font-bold tracking-wider text-neon-purple uppercase transition-all duration-300 hover:bg-neon-purple/20"
+                className={`
+                  group flex w-full items-center justify-center gap-2 rounded-lg border border-neon-purple/30
+                  bg-neon-purple/10 py-3 text-sm font-bold tracking-wider text-neon-purple uppercase transition-all
+                  duration-300
+                  hover:bg-neon-purple/20
+                `}
               >
                 <svg
                   role="img"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  className={`
+                    h-4 w-4 transition-transform duration-300
+                    group-hover:translate-x-1
+                  `}
                 >
                   <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
                 </svg>
@@ -150,7 +176,10 @@ export function ConnectDialog() {
               {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-2 right-4 text-xl text-gray-500 hover:text-white"
+                className={`
+                  absolute top-2 right-4 text-xl text-gray-500
+                  hover:text-white
+                `}
               >
                 ×
               </button>

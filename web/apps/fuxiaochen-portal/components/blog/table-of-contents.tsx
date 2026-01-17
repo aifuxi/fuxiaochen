@@ -64,7 +64,9 @@ export function TableOfContents() {
 
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
-      <div className="mb-4 flex items-center gap-2 font-display text-sm font-bold tracking-wider text-neon-cyan uppercase">
+      <div className={`
+        mb-4 flex items-center gap-2 font-display text-sm font-bold tracking-wider text-neon-cyan uppercase
+      `}>
         <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
         目录 / Table of Contents
       </div>
@@ -87,7 +89,10 @@ export function TableOfContents() {
                   heading.level === 3 && "pl-8",
                   activeId === heading.id
                     ? "border-neon-cyan bg-neon-cyan/5 font-medium text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]"
-                    : "border-transparent text-gray-500 hover:border-white/20 hover:text-gray-300",
+                    : `
+                      border-transparent text-gray-500
+                      hover:border-white/20 hover:text-gray-300
+                    `,
                 )}
               >
                 {heading.text}

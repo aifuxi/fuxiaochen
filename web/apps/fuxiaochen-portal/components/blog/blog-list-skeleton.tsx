@@ -2,7 +2,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function BlogListSkeleton() {
   return (
-    <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+    <div className={`
+      mb-12 grid grid-cols-1 gap-6
+      md:grid-cols-2
+    `}>
       {[...Array(6)].map((_, i) => (
         <div
           key={i}

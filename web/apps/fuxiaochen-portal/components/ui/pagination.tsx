@@ -85,7 +85,10 @@ function PaginationPrevious({
         strokeWidth={2}
         data-icon="inline-start"
       />
-      <span className="hidden sm:block">上一页 / Previous</span>
+      <span className={`
+        hidden
+        sm:block
+      `}>上一页 / Previous</span>
     </PaginationLink>
   );
 }
@@ -101,7 +104,10 @@ function PaginationNext({
       className={cn("pr-1.5!", className)}
       {...props}
     >
-      <span className="hidden sm:block">下一页 / Next</span>
+      <span className={`
+        hidden
+        sm:block
+      `}>下一页 / Next</span>
       <HugeiconsIcon
         icon={ArrowRight01Icon}
         strokeWidth={2}
@@ -120,7 +126,10 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4",
+        `
+          flex size-8 items-center justify-center
+          [&_svg:not([class*='size-'])]:size-4
+        `,
         className,
       )}
       {...props}

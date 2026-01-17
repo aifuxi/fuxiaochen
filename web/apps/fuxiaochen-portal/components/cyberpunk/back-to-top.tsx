@@ -58,9 +58,16 @@ export function BackToTop() {
       aria-label="回到顶部 / Back to Top"
     >
       {/* Glow Effect Background */}
-      <div className="absolute inset-0 rounded-full bg-neon-cyan/5 blur-md transition-all duration-300 group-hover:bg-neon-cyan/20" />
+      <div className={`
+        absolute inset-0 rounded-full bg-neon-cyan/5 blur-md transition-all duration-300
+        group-hover:bg-neon-cyan/20
+      `} />
 
-      <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-black/80 shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300 group-hover:border-neon-cyan/50 group-hover:shadow-[0_0_25px_rgba(0,255,255,0.4)]">
+      <div className={`
+        relative flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-black/80
+        shadow-[0_0_20px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-300
+        group-hover:border-neon-cyan/50 group-hover:shadow-[0_0_25px_rgba(0,255,255,0.4)]
+      `}>
         {/* Progress Ring SVG */}
         <svg
           className="absolute inset-0 h-full w-full -rotate-90 transform"
@@ -92,7 +99,10 @@ export function BackToTop() {
         </svg>
 
         {/* Icon */}
-        <div className="relative z-10 transform text-neon-cyan transition-colors duration-300 group-hover:-translate-y-1 group-hover:text-white">
+        <div className={`
+          relative z-10 transform text-neon-cyan transition-colors duration-300
+          group-hover:-translate-y-1 group-hover:text-white
+        `}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -109,14 +119,32 @@ export function BackToTop() {
         </div>
 
         {/* Tech Decor Dots */}
-        <div className="absolute top-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="absolute bottom-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="absolute top-1/2 left-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        <div className="absolute top-1/2 right-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className={`
+          absolute top-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300
+          group-hover:opacity-100
+        `} />
+        <div className={`
+          absolute bottom-1 left-1/2 h-1 w-0.5 -translate-x-1/2 bg-neon-cyan/50 opacity-0 transition-opacity
+          duration-300
+          group-hover:opacity-100
+        `} />
+        <div className={`
+          absolute top-1/2 left-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300
+          group-hover:opacity-100
+        `} />
+        <div className={`
+          absolute top-1/2 right-1 h-0.5 w-1 -translate-y-1/2 bg-neon-cyan/50 opacity-0 transition-opacity duration-300
+          group-hover:opacity-100
+        `} />
       </div>
 
       {/* Label Tooltip (Optional, shows on hover) */}
-      <span className="pointer-events-none absolute top-1/2 right-full mr-4 translate-x-2 -translate-y-1/2 rounded border border-neon-cyan/30 bg-black/80 px-3 py-1 font-mono text-xs tracking-wider whitespace-nowrap text-neon-cyan uppercase opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+      <span className={`
+        pointer-events-none absolute top-1/2 right-full mr-4 translate-x-2 -translate-y-1/2 rounded border
+        border-neon-cyan/30 bg-black/80 px-3 py-1 font-mono text-xs tracking-wider whitespace-nowrap text-neon-cyan
+        uppercase opacity-0 backdrop-blur-sm transition-all duration-300
+        group-hover:translate-x-0 group-hover:opacity-100
+      `}>
         TOP
       </span>
     </button>

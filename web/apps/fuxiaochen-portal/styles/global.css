@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@iconify/tailwind4";
+@plugin "tailwindcss-debug-screens";
 
 /* exo-2-latin-wght-normal */
 @font-face {
@@ -45,6 +46,14 @@
 
   --animate-glitch: glitch 1s linear infinite;
   --animate-scanline: scanline 8s linear infinite;
+  --breakpoint-*: initial;
+  --breakpoint-xs: 360px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+  --breakpoint-3xl: 1920px;
 }
 
 @layer base {

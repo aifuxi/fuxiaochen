@@ -3,21 +3,34 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function BlogLoading() {
   return (
     <div className="min-h-screen bg-cyber-black font-body text-white">
-      <div className="pointer-events-none fixed inset-0 z-[100] animate-scanline bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]" />
+      <div className={`
+        pointer-events-none fixed inset-0 z-[100] animate-scanline
+        bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]
+        bg-[length:100%_2px,3px_100%]
+      `} />
 
       <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16">
-          <Skeleton className="mb-4 h-16 w-3/4 rounded-lg bg-white/5 md:w-1/2" />
+          <Skeleton className={`
+            mb-4 h-16 w-3/4 rounded-lg bg-white/5
+            md:w-1/2
+          `} />
           <div className="space-y-2">
             <Skeleton className="h-6 w-1/3 rounded bg-white/5" />
             <Skeleton className="h-6 w-1/4 rounded bg-white/5" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
+        <div className={`
+          grid grid-cols-1 gap-12
+          lg:grid-cols-4
+        `}>
           {/* Sidebar Skeletons */}
-          <aside className="space-y-8 lg:col-span-1">
+          <aside className={`
+            space-y-8
+            lg:col-span-1
+          `}>
             <div className="glass-panel rounded-xl border border-white/10 p-6">
               <Skeleton className="mb-6 h-6 w-1/2 rounded bg-white/5" />
               <div className="space-y-3">
@@ -39,7 +52,10 @@ export default function BlogLoading() {
 
           {/* Blog Grid Skeletons */}
           <div className="lg:col-span-3">
-            <div className="mb-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div className={`
+              mb-12 grid grid-cols-1 gap-6
+              md:grid-cols-2
+            `}>
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}

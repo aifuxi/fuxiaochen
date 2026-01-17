@@ -36,7 +36,7 @@ export default defineConfig([
 
       // or configure rules individually
       "better-tailwindcss/enforce-consistent-line-wrapping": [
-        "warn",
+        "error",
         { printWidth: 120 },
       ],
       "no-unused-vars": "off",
