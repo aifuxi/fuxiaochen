@@ -6,8 +6,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { Cancel01Icon, Menu01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+import { MenuIcon, XIcon } from "lucide-react";
 
 import { SOURCE_CODE_GITHUB_PAGE } from "@/constants/info";
 import { cn } from "@/lib/utils";
@@ -41,7 +40,7 @@ export function MobileMenu() {
         `}
         aria-label="Open Menu"
       >
-        <HugeiconsIcon icon={Menu01Icon} strokeWidth={2} />
+        <MenuIcon />
         <span className="sr-only">Open Menu</span>
       </button>
 
@@ -61,7 +60,7 @@ export function MobileMenu() {
                 `}
                 aria-label="Close Menu"
               >
-                <HugeiconsIcon icon={Cancel01Icon} strokeWidth={2} />
+                <XIcon />
                 <span className="sr-only">Close</span>
               </button>
             </div>

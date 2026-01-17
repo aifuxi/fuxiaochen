@@ -1,13 +1,12 @@
 import * as React from "react";
 
 import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  MoreHorizontalCircle01Icon,
-} from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MoreHorizontalIcon,
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { type Button, buttonVariants } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 
@@ -30,7 +29,7 @@ function PaginationContent({
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
+      className={cn("flex flex-row items-center gap-1", className)}
       {...props}
     />
   );
@@ -52,19 +51,18 @@ function PaginationLink({
   ...props
 }: PaginationLinkProps) {
   return (
-    <Button
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
+    <a
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
+      className={cn(
+        buttonVariants({
+          variant: isActive ? "outline" : "ghost",
+          size,
+        }),
+        className,
+      )}
+      {...props}
     />
   );
 }
@@ -77,18 +75,24 @@ function PaginationPrevious({
     <PaginationLink
       aria-label="转到上一页"
       size="default"
-      className={cn("pl-1.5!", className)}
+      className={cn(
+        `
+        gap-1 px-2.5
+        sm:pl-2.5
+      `,
+        className,
+      )}
       {...props}
     >
-      <HugeiconsIcon
-        icon={ArrowLeft01Icon}
-        strokeWidth={2}
-        data-icon="inline-start"
-      />
-      <span className={`
+      <ChevronLeftIcon />
+      <span
+        className={`
         hidden
         sm:block
-      `}>上一页 / Previous</span>
+      `}
+      >
+        上一页 / Previous
+      </span>
     </PaginationLink>
   );
 }
@@ -101,18 +105,24 @@ function PaginationNext({
     <PaginationLink
       aria-label="转到下一页"
       size="default"
-      className={cn("pr-1.5!", className)}
+      className={cn(
+        `
+        gap-1 px-2.5
+        sm:pr-2.5
+      `,
+        className,
+      )}
       {...props}
     >
-      <span className={`
+      <span
+        className={`
         hidden
         sm:block
-      `}>下一页 / Next</span>
-      <HugeiconsIcon
-        icon={ArrowRight01Icon}
-        strokeWidth={2}
-        data-icon="inline-end"
-      />
+      `}
+      >
+        下一页 / Next
+      </span>
+      <ChevronRightIcon />
     </PaginationLink>
   );
 }
@@ -125,16 +135,10 @@ function PaginationEllipsis({
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
-      className={cn(
-        `
-          flex size-8 items-center justify-center
-          [&_svg:not([class*='size-'])]:size-4
-        `,
-        className,
-      )}
+      className={cn("flex size-9 items-center justify-center", className)}
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalCircle01Icon} strokeWidth={2} />
+      <MoreHorizontalIcon className="size-4" />
       <span className="sr-only">更多页码 / More pages</span>
     </span>
   );
@@ -143,9 +147,9 @@ function PaginationEllipsis({
 export {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
   PaginationLink,
-  PaginationNext,
+  PaginationItem,
   PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
 };
