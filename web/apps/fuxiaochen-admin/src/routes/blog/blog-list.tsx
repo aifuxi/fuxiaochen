@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import {
   IconDelete,
   IconEdit,
-  IconEyeOpened,
   IconPlusCircle,
   IconRefresh2,
   IconSearch,
@@ -121,9 +120,6 @@ export default function BlogListPage() {
               }}
             >
               编辑
-            </Button>
-            <Button type="secondary" icon={<IconEyeOpened />}>
-              查看
             </Button>
             <Button
               icon={<IconDelete />}
