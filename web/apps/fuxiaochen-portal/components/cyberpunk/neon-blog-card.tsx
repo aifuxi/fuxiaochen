@@ -8,8 +8,6 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 
-import { ImageAssets } from "@/constants";
-
 interface BlogCardProps {
   title: string;
   excerpt: string;
@@ -46,7 +44,7 @@ export function NeonBlogCard({
 
         <div className="relative h-48 w-full overflow-hidden border-b border-white/5 bg-black/50">
           <Image
-            src={cover || ImageAssets.coverPlaceholder}
+            src={cover || "/images/cyberpunk-cover-1768641392857.avif"}
             alt={title}
             fill
             className={`

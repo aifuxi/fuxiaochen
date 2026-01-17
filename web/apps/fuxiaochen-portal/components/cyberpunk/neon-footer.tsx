@@ -1,7 +1,6 @@
 import Image from "next/image";
 
 import { getChangelogList } from "@/api/changelog";
-import { ImageAssets } from "@/constants/assets";
 import {
   BEI_AN_LINK,
   BEI_AN_NUMBER,
@@ -74,7 +73,7 @@ export async function NeonFooter() {
           >
             <span className="h-1.5 w-1.5 rounded-full bg-gray-600" />
             <Image
-              src={ImageAssets.gongan}
+              src="/images/gongan.png"
               alt={GONG_AN_NUMBER}
               width={12}
               height={12}
