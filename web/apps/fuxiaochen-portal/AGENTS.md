@@ -31,7 +31,7 @@ This document defines the specialized AI agents (roles) for the `fuxiaochen-port
 - **Design System**: Maintaining the Cyberpunk aesthetic (Neon Cyan/Purple, Glitch effects, Glassmorphism).
 - **Tailwind CSS v4**: Using modern Tailwind features, CSS variables, and clean utility class composition.
 - **Component Library**: Customizing **Shadcn UI** components in `components/ui` to fit the theme.
-- **Visual Effects**: Developing custom effects in `components/cyberpunk` (e.g., Glitch Hero, Neon Cards, Scanlines).
+- **Visual Effects**: Developing custom effects in `components/cyberpunk` (e.g., Glitch Hero, Neon Cards).
 - **Responsiveness**: Ensuring a seamless experience across mobile, tablet, and desktop.
 
 **Key Files:**

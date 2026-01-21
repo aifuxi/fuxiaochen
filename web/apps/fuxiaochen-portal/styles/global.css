@@ -48,7 +48,6 @@
   --color-cyber-text: #e0e0ff;
 
   --animate-glitch: glitch 1s linear infinite;
-  --animate-scanline: scanline 8s linear infinite;
 }
 
 @layer base {
@@ -117,25 +116,6 @@
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-
-  .scanlines {
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0),
-      rgba(255, 255, 255, 0) 50%,
-      rgba(0, 0, 0, 0.2) 50%,
-      rgba(0, 0, 0, 0.2)
-    );
-    background-size: 100% 4px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    pointer-events: none;
-    z-index: 50;
-    opacity: 0.6;
-  }
 }
 
 @keyframes glitch {
@@ -149,15 +129,6 @@
   }
   62% {
     transform: translate(0, 0) skew(5deg);
-  }
-}
-
-@keyframes scanline {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(100%);
   }
 }
 

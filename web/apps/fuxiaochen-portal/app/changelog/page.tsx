@@ -40,14 +40,6 @@ export default async function ChangelogPage({
         selection:bg-neon-cyan selection:text-black
       `}
     >
-      <div
-        className={`
-          pointer-events-none fixed inset-0 z-[100] animate-scanline
-          bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]
-          bg-[length:100%_2px,3px_100%]
-        `}
-      />
-
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 text-center">
