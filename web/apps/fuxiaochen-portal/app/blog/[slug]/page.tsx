@@ -53,9 +53,9 @@ export default async function BlogDetailPage({
         selection:bg-neon-magenta selection:text-black
       `}
     >
-      <main className="relative z-10 pt-24 pb-20">
+      <main className="relative z-10 pb-20">
         {/* Hero Section */}
-        <div className="relative mb-12 h-[50vh] min-h-[400px] w-full">
+        <div className="relative mb-12 h-[50vh] min-h-[400px] w-full pt-32">
           <div className="absolute inset-0 bg-cyber-gray/50">
             {blog.cover ? (
               <Image
