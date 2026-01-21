@@ -46,7 +46,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <div className="relative mb-16">
           <h1
             className={`
-              glitch-text mb-4 font-display text-5xl font-bold tracking-tighter break-all text-white uppercase
+              glitch-text mb-4 font-display text-4xl font-bold tracking-tighter break-all text-white uppercase
               md:text-7xl
             `}
             data-text="Transmission_Log"
@@ -60,7 +60,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </p>
           <div
             className={`
-              pointer-events-none absolute -top-10 -right-10 h-64 w-64 rounded-full bg-neon-purple/20 blur-[100px]
+              pointer-events-none absolute -top-10 -right-10 hidden h-64 w-64 rounded-full bg-neon-purple/20
+              blur-[100px]
+              md:block
             `}
           />
         </div>
