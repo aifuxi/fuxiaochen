@@ -16,16 +16,17 @@ export const metadata: Metadata = {
     template: `%s | ${WEBSITE}`,
     default: WEBSITE,
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1.0,
-    maximumScale: 1.0,
-    minimumScale: 1.0,
-    userScalable: false, // 禁止用户缩放
-    viewportFit: "cover", // 适配刘海屏/挖孔屏
-  },
   description: SLOGAN,
   keywords: NICKNAME,
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+  maximumScale: 1.0,
+  minimumScale: 1.0,
+  userScalable: false, // 禁止用户缩放
+  viewportFit: "cover", // 适配刘海屏/挖孔屏
 };
 
 export default function RootLayout({
