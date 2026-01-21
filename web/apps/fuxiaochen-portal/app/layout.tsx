@@ -16,6 +16,14 @@ export const metadata: Metadata = {
     template: `%s | ${WEBSITE}`,
     default: WEBSITE,
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1.0,
+    maximumScale: 1.0,
+    minimumScale: 1.0,
+    userScalable: false, // 禁止用户缩放
+    viewportFit: "cover", // 适配刘海屏/挖孔屏
+  },
   description: SLOGAN,
   keywords: NICKNAME,
 };
@@ -47,16 +55,6 @@ export default function RootLayout({
 
         <NeonFooter />
         <BackToTop />
-
-        {/* CRT Scanline Effect */}
-        <div
-          className={`
-            pointer-events-none fixed inset-0 z-50
-            bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))]
-            bg-[length:100%_2px,3px_100%]
-            opacity-[0.03]
-          `}
-        />
       </body>
 
       {/* Google Analytics  */}

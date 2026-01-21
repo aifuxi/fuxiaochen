@@ -446,15 +446,6 @@ export default function CoverGeneratorPage() {
                 <div className="h-[1px] w-12 bg-white/30" />
               </div>
             </div>
-
-            {/* Scanline Overlay */}
-            <div
-              className={`
-                pointer-events-none absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)]
-                bg-[size:100%_4px]
-                opacity-10
-              `}
-            />
           </div>
         </div>
       </div>
