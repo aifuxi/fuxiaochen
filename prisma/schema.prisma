@@ -1,0 +1,85 @@
+datasource db {
+    provider = "mysql"
+}
+
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+model Blog {
+    id        BigInt    @id
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    title       String    @unique @db.VarChar(255)
+    slug        String    @unique @db.VarChar(255)
+    description String    @db.Text
+    cover       String?   @db.VarChar(255)
+    content     String    @db.LongText
+    published   Boolean   @default(false)
+    publishedAt DateTime? @map("published_at")
+    featured    Boolean   @default(false)
+
+    categoryId BigInt   @map("category_id")
+    category   Category @relation(fields: [categoryId], references: [id])
+
+    tags BlogTag[]
+
+    @@map("blogs")
+}
+
+model Category {
+    id        BigInt    @id
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String  @unique @db.VarChar(255)
+    slug        String  @unique @db.VarChar(255)
+    description String? @db.VarChar(255)
+
+    blogs Blog[]
+
+    @@map("categories")
+}
+
+model Tag {
+    id        BigInt    @id
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    name        String  @unique @db.VarChar(255)
+    slug        String  @unique @db.VarChar(255)
+    description String? @db.VarChar(255)
+
+    blogs BlogTag[]
+
+    @@map("tags")
+}
+
+model BlogTag {
+    blogId BigInt @map("blog_id")
+    tagId  BigInt @map("tag_id")
+
+    blog Blog @relation(fields: [blogId], references: [id])
+    tag  Tag  @relation(fields: [tagId], references: [id])
+
+    @@id([blogId, tagId])
+    @@map("blog_tags")
+}
+
+model Changelog {
+    id        BigInt    @id
+    createdAt DateTime  @default(now()) @map("created_at")
+    updatedAt DateTime  @updatedAt @map("updated_at")
+    deletedAt DateTime? @map("deleted_at")
+
+    version String  @db.VarChar(50)
+    content String  @db.Text
+    date    BigInt? @default(0)
+
+    @@map("changelogs")
+}
