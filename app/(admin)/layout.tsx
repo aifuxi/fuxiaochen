@@ -7,6 +7,8 @@ import { FileText, LayoutDashboard, Settings, Tag } from "lucide-react";
 import { WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
 
+import { UserNav } from "./user-nav";
+
 export default async function AdminLayout({
   children,
 }: {
@@ -68,20 +70,14 @@ export default async function AdminLayout({
         </nav>
 
         <div className="absolute bottom-0 w-full border-t border-neon-cyan/20 p-4">
-          <div className="flex items-center gap-3 rounded-lg bg-white/5 p-3">
-            <div className="h-10 w-10 rounded-full bg-neon-purple/20 p-0.5">
-              <div className="h-full w-full rounded-full bg-neon-purple/50" />
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <p className="truncate text-sm font-bold text-white">
-                {session.user.name}
-              </p>
-              <p className="truncate text-xs text-gray-500">
-                {/* @ts-expect-error - role exists in DB but maybe not in types yet */}
-                {session.user.role || "visitor"}
-              </p>
-            </div>
-          </div>
+          <UserNav
+            user={{
+              name: session.user.name,
+              // @ts-expect-error - role exists in DB but maybe not in types yet
+              role: session.user.role || "visitor",
+              image: session.user.image,
+            }}
+          />
         </div>
       </aside>
 
