@@ -2,7 +2,14 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { FileText, LayoutDashboard, Settings, Tag } from "lucide-react";
+import {
+  FileText,
+  FolderTree,
+  LayoutDashboard,
+  Settings,
+  Tag,
+  Users,
+} from "lucide-react";
 
 import { WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
@@ -28,8 +35,10 @@ export default async function AdminLayout({
 
   const navItems = [
     { href: "/admin/dashboard", label: "仪表盘", icon: LayoutDashboard },
+    { href: "/admin/categories", label: "分类管理", icon: FolderTree },
     { href: "/admin/tags", label: "标签管理", icon: Tag },
     { href: "/admin/blogs", label: "博客管理", icon: FileText },
+    { href: "/admin/users", label: "用户管理", icon: Users },
     { href: "/admin/settings", label: "系统设置", icon: Settings },
   ];
 
