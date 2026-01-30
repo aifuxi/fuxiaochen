@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
-import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
@@ -11,7 +9,7 @@ import * as z from "zod";
 
 import { createTagAction, updateTagAction } from "@/app/actions/tag";
 
-import { Tag } from "@/types/tag";
+import { type Tag } from "@/types/tag";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -53,7 +51,6 @@ export function TagDialog({
   trigger,
   onSuccess,
 }: TagDialogProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -64,6 +61,16 @@ export function TagDialog({
       description: tag?.description || "",
     },
   });
+
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        name: tag?.name || "",
+        slug: tag?.slug || "",
+        description: tag?.description || "",
+      });
+    }
+  }, [tag, open, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setLoading(true);
