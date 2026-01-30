@@ -22,10 +22,9 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  // TODO: Add strict role check when UI logic is ready
-  // if (session.user.role !== "admin") {
-  //   return <AccessDenied />
-  // }
+  if (session.user.role !== "admin") {
+    redirect("/");
+  }
 
   const navItems = [
     { href: "/admin/dashboard", label: "仪表盘", icon: LayoutDashboard },
@@ -73,7 +72,6 @@ export default async function AdminLayout({
           <UserNav
             user={{
               name: session.user.name,
-              // @ts-expect-error - role exists in DB but maybe not in types yet
               role: session.user.role || "visitor",
               image: session.user.image,
             }}
