@@ -10,7 +10,7 @@ import useSWR from "swr";
 
 import { getTagsAction } from "@/app/actions/tag";
 
-import { Tag, TagListReq } from "@/types/tag";
+import { type Tag, type TagListReq } from "@/types/tag";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
+import { Pagination } from "@/components/cyberpunk/pagination";
 
 import { DeleteAlert } from "./delete-alert";
 import { TagDialog } from "./tag-dialog";
@@ -78,6 +80,12 @@ export default function TagManagementPage() {
       params.set("sortBy", field);
       params.set("order", "desc");
     }
+    router.push(`?${params.toString()}`);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", newPage.toString());
     router.push(`?${params.toString()}`);
   };
 
@@ -232,7 +240,10 @@ export default function TagManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(tag)}
-                        className="text-gray-400 hover:text-neon-cyan"
+                        className={`
+                          text-gray-400
+                          hover:text-neon-cyan
+                        `}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -240,7 +251,10 @@ export default function TagManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openDelete(tag.id)}
-                        className="text-gray-400 hover:text-red-500"
+                        className={`
+                          text-gray-400
+                          hover:text-red-500
+                        `}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -252,6 +266,13 @@ export default function TagManagementPage() {
           </TableBody>
         </Table>
       </div>
+
+      <Pagination
+        currentPage={page}
+        pageSize={pageSize}
+        total={data?.total || 0}
+        onPageChange={handlePageChange}
+      />
 
       <TagDialog
         open={dialogOpen}

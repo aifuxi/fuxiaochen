@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
-
 import { Loader2 } from "lucide-react";
 
 import { deleteTagAction } from "@/app/actions/tag";
@@ -32,7 +30,6 @@ export function DeleteAlert({
   onOpenChange,
   onSuccess,
 }: DeleteAlertProps) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -53,7 +50,7 @@ export function DeleteAlert({
       <AlertDialogContent className="border-neon-magenta/20 bg-black/90 text-white">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-neon-magenta">
-            确认删除?
+            确认删除？
           </AlertDialogTitle>
           <AlertDialogDescription className="text-gray-400">
             此操作无法撤销。该标签将被永久删除。
