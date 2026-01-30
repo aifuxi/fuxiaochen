@@ -16,15 +16,14 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => {
+        after: async (user) => {
           const userCount = await prisma.user.count();
-          console.log("userCount", userCount);
-          return {
-            data: {
-              ...user,
-              role: userCount === 0 ? "admin" : "visitor",
-            },
-          };
+          if (userCount === 1) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { role: "admin" },
+            });
+          }
         },
       },
     },
