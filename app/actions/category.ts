@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { CategoryCreateReq, CategoryListReq } from "@/types/category";
+import { type CategoryCreateReq, type CategoryListReq } from "@/types/category";
 
 import { categoryStore } from "@/stores/category";
 
@@ -30,7 +30,7 @@ export async function getCategoryByIdAction(id: string) {
 export async function createCategoryAction(data: CategoryCreateReq) {
   try {
     const result = await categoryStore.create(data);
-    revalidatePath("/categories");
+    revalidatePath("/admin/categories");
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -43,7 +43,7 @@ export async function updateCategoryAction(
 ) {
   try {
     const result = await categoryStore.update(id, data);
-    revalidatePath("/categories");
+    revalidatePath("/admin/categories");
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -53,7 +53,7 @@ export async function updateCategoryAction(
 export async function deleteCategoryAction(id: string) {
   try {
     await categoryStore.delete(id);
-    revalidatePath("/categories");
+    revalidatePath("/admin/categories");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
