@@ -23,9 +23,15 @@ interface DeleteAlertProps {
   id: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export function DeleteAlert({ id, open, onOpenChange }: DeleteAlertProps) {
+export function DeleteAlert({
+  id,
+  open,
+  onOpenChange,
+  onSuccess,
+}: DeleteAlertProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +40,7 @@ export function DeleteAlert({ id, open, onOpenChange }: DeleteAlertProps) {
     try {
       await deleteTagAction(id);
       onOpenChange(false);
-      router.refresh();
+      onSuccess?.();
     } catch (error) {
       console.error(error);
     } finally {

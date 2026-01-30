@@ -30,7 +30,7 @@ export async function getTagByIdAction(id: string) {
 export async function createTagAction(data: TagCreateReq) {
   try {
     const result = await tagStore.create(data);
-    revalidatePath("/tags");
+    revalidatePath("/admin/tags");
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -40,7 +40,7 @@ export async function createTagAction(data: TagCreateReq) {
 export async function updateTagAction(id: string, data: Partial<TagCreateReq>) {
   try {
     const result = await tagStore.update(id, data);
-    revalidatePath("/tags");
+    revalidatePath("/admin/tags");
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -50,7 +50,7 @@ export async function updateTagAction(id: string, data: Partial<TagCreateReq>) {
 export async function deleteTagAction(id: string) {
   try {
     await tagStore.delete(id);
-    revalidatePath("/tags");
+    revalidatePath("/admin/tags");
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
