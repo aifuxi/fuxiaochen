@@ -18,6 +18,7 @@ export const auth = betterAuth({
       create: {
         before: async (user) => {
           const userCount = await prisma.user.count();
+          console.log("userCount", userCount);
           return {
             data: {
               ...user,
