@@ -1,35 +1,37 @@
 # AGENTS.md
 
-## 1. 项目概览 (Project Overview)
+## 项目概览 (Project Overview)
 
-`fuxiaochen-portal` 是一个基于 Next.js 16.1 (App Router) 的个人博客/门户系统。
+`fuxiaochen` 是一个基于 Next.js 16.1 (App Router) 的个人博客/门户系统。
 该项目集成了现代化的前端技术栈和后端 API 服务，旨在提供一个高性能、美观且易于管理的个人展示平台。
 
-**主要技术栈:**
+**主要技术栈：**
 
 - **Framework**: Next.js 16.1.1 (React 19)
 - **Database**: MySQL/MariaDB (via Prisma ORM)
 - **Styling**: Tailwind CSS 4, Radix UI, Lucide React
 - **Editor**: Bytemd (Markdown 编辑器)
 - **State/Utils**: ahooks, date-fns, zod, react-hook-form, sonner
+- **Data Fetching**: swr
+- **Package Manager**: pnpm
 - **Deployment**: PM2, Docker (Support implied)
 
-## 2. 构建与命令 (Build & Commands)
+## 构建与命令 (Build & Commands)
 
-| 命令                | 说明                                           |
-| ------------------- | ---------------------------------------------- |
-| `npm run dev`       | 启动开发服务器                                 |
-| `npm run build`     | 构建生产版本 (standalone output)               |
-| `npm run start`     | 启动生产服务器                                 |
-| `npm run lint`      | 运行 ESLint 检查                               |
-| `npm run lint:fix`  | 自动修复 ESLint 问题                           |
-| `npm run format`    | 使用 Prettier 格式化代码                       |
-| `npm run db:dev`    | 运行 Prisma 迁移 (Dev)                         |
-| `npm run db:gen`    | 生成 Prisma Client (输出至 `generated/prisma`) |
-| `npm run db:seed`   | 填充数据库种子数据                             |
-| `npm run pm2:start` | 使用 PM2 启动应用                              |
+| 命令             | 说明                                           |
+| ---------------- | ---------------------------------------------- |
+| `pnpm dev`       | 启动开发服务器                                 |
+| `pnpm build`     | 构建生产版本 (standalone output)               |
+| `pnpm start`     | 启动生产服务器                                 |
+| `pnpm lint`      | 运行 ESLint 检查                               |
+| `pnpm lint:fix`  | 自动修复 ESLint 问题                           |
+| `pnpm format`    | 使用 Prettier 格式化代码                       |
+| `pnpm db:dev`    | 运行 Prisma 迁移 (Dev)                         |
+| `pnpm db:gen`    | 生成 Prisma Client (输出至 `generated/prisma`) |
+| `pnpm db:seed`   | 填充数据库种子数据                             |
+| `pnpm pm2:start` | 使用 PM2 启动应用                              |
 
-## 3. 代码规范 (Code Style)
+## 代码规范 (Code Style)
 
 项目遵循严格的代码规范，确保代码质量和一致性。
 
@@ -39,15 +41,18 @@
 - **Commits**: 使用 Commitlint 和 Conventional Commits 规范 (feat, fix, docs, style, refactor, etc.)。
 - **Imports**: 使用绝对路径别名 `@/*` 引用项目根目录文件。
 - **Styling**: Tailwind CSS 类名排序 (via `prettier-plugin-tailwindcss`)。
+- **Naming Conventions**:
+  - **Files**: Kebab Case (e.g., `my-file.ts`, `user-profile.tsx`).
+  - **Components**: Pascal Case (e.g., `MyComponent`, `UserProfile`).
+  - **Variables/Functions**: lowerCamelCase (e.g., `myVariable`, `fetchUserData`).
 
-## 4. 架构与目录 (Architecture & Directory)
+## 架构与目录 (Architecture & Directory)
 
 ### 核心目录结构
 
 - **app/**: Next.js App Router 路由。
   - `(portal)/`: 前台页面 (Blog, About, Changelog)。
-  - `admin/`: 后台管理页面。
-  - `api/v1/`: RESTful API 路由 (Blogs, Categories, Tags, Upload)。
+  - `admin/`: 后台管理页面 (优先使用 Client Components)。
 - **components/**: UI 组件库。
   - `ui/`: 基础 UI 组件 (封装 Radix UI)。
   - `blog/`: 博客相关业务组件。
@@ -59,37 +64,48 @@
 - **prisma/**: 数据库 Schema (`schema.prisma`) 和迁移文件。
 - **types/**: 全局 TypeScript 类型定义。
 
+### Server Action 设计规范 (Interface-First)
+
+项目采用接口优先 (Interface-First) 模式设计 Server Actions，以解耦业务逻辑与数据访问层。
+
+1.  **Interface (`stores/<module>/interface.ts`)**:
+    - 定义 Store 接口 (e.g., `IChangelogStore`)。
+    - 声明 CRUD 及业务方法。
+2.  **Implementation (`stores/<module>/store.ts`)**:
+    - 实现 Store 接口。
+    - 处理 Prisma 调用及数据转换。
+    - 导出单例实例 (e.g., `changelogStore`)。
+3.  **Action (`app/actions/<module>.ts`)**:
+    - 标记 `'use server'`。
+    - 调用 Store 实例方法。
+    - 统一错误处理 (`try/catch`) 和返回格式 (`{ success, data, error }`)。
+    - 负责缓存更新 (`revalidatePath`)。
+
 ### 数据流
 
-- **Frontend**: 组件通过 `lib/api-client.ts` 发起请求 -> `app/api/**` 路由处理。
-- **Backend**: API 路由通过 Prisma Client (`lib/prisma.ts`) 访问数据库。
-- **Validation**: API 请求和表单提交使用 `zod` 进行数据校验。
+- **General**: 发送请求优先使用 **Server Actions** (替代 API Routes)。
+- **Portal**: 优先使用 Server Components，直接调用 Server Actions。
+- **Admin**: Client Components 直接调用 Server Actions 进行数据交互。
+- **Backend**: Server Actions 通过 Store Interface (`stores/**`) 访问数据库。
+- **Validation**: 请求和表单提交使用 `zod` 进行数据校验。
 
-## 5. 测试 (Testing)
+## 安全 (Security)
 
-_目前项目尚未集成自动化测试框架 (Jest/Vitest)。_
-
-建议的测试实践:
-
-- **Unit Testing**: 对 `lib/utils.ts` 和纯逻辑 hooks 添加单元测试。
-- **Integration Testing**: 对关键 API 路由 (`app/api/**`) 进行集成测试。
-
-## 6. 安全 (Security)
-
-- **环境变量**: 敏感信息 (数据库凭证, API Keys) 通过 `.env` 管理，禁止提交到版本控制。
+- **认证与授权**: 使用 Better Auth 进行用户认证和会话管理 (`User`, `Session`, `Account` tables)。
+- **环境变量**: 敏感信息 (数据库凭证，API Keys, Auth Secrets) 通过 `.env` 管理，禁止提交到版本控制。
 - **API 安全**:
-  - 所有写操作 API 应包含权限验证 (Admin middleware 待确认/完善)。
+  - 所有写操作 API/Actions 应包含权限验证。
   - 文件上传使用预签名 URL (`upload/presign`) 模式，避免服务器直接处理大文件。
 - **输入验证**: 使用 `zod` 对所有用户输入进行严格校验，防止注入攻击。
 - **ORM 安全**: Prisma 自动处理 SQL 注入防护。
 
-## 7. 配置 (Configuration)
+## 配置 (Configuration)
 
 - **Environment**: 依赖 `.env` 文件配置数据库连接 (`DATABASE_URL`) 和其他服务密钥。
 - **Next.js**: `next.config.mjs` 配置了 `standalone` 输出和图片域名白名单。
 - **Tailwind**: `postcss.config.mjs` 和 Tailwind v4 配置。
 
-## 8. UI/UX 规范 (Cyberpunk Design System)
+## UI/UX 规范 (Cyberpunk Design System)
 
 项目采用沉浸式 Cyberpunk 风格，遵循以下设计规范。
 
@@ -144,8 +160,8 @@ _目前项目尚未集成自动化测试框架 (Jest/Vitest)。_
 
 - **Hover States**: 所有可交互元素必须有光效或颜色变化反馈，过渡时间 `duration-300` 或 `duration-500`。
 - **Buttons**:
-  - 主要按钮: 霓虹边框 + 背景，悬停填充霓虹色。
-  - 次要按钮: 半透明边框，悬停变亮。
+  - 主要按钮：霓虹边框 + 背景，悬停填充霓虹色。
+  - 次要按钮：半透明边框，悬停变亮。
 - **Cursor**: 保持默认光标或使用自定义准星光标 (如有)。
 
 ### 交付检查 (Pre-Delivery Checklist)
