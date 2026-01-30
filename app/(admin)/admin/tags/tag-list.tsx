@@ -6,8 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
+import useSWR from "swr";
 
-import { Tag } from "@/types/tag";
+import { getTagsAction } from "@/app/actions/tag";
+
+import { Tag, TagListReq } from "@/types/tag";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,25 +27,32 @@ import {
 import { DeleteAlert } from "./delete-alert";
 import { TagDialog } from "./tag-dialog";
 
-interface TagManagementPageProps {
-  initialData: {
-    lists: Tag[];
-    total: number;
-  };
-}
+const fetcher = async (params: TagListReq) => {
+  const res = await getTagsAction(params);
+  if (!res.success) throw new Error(res.error);
+  return res.data;
+};
 
-export default function TagManagementPage({
-  initialData,
-}: TagManagementPageProps) {
+export default function TagManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [data, setData] = useState(initialData);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<Tag | undefined>(undefined);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string>("");
 
-  const handleSearch = async (e: React.FormEvent<HTMLFormElement>) => {
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 10;
+  const name = searchParams.get("name") || undefined;
+  const sortBy = (searchParams.get("sortBy") as any) || "createdAt";
+  const order = (searchParams.get("order") as any) || "desc";
+
+  const { data, isLoading, mutate } = useSWR(
+    { page, pageSize, name, sortBy, order },
+    fetcher,
+  );
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const query = formData.get("query") as string;
@@ -50,12 +60,10 @@ export default function TagManagementPage({
     const params = new URLSearchParams(searchParams);
     if (query) {
       params.set("name", query);
-      // For simplicity in this demo, we use the same query for slug too via server action logic modification or multiple params
-      // But server action findAll checks name OR slug if we modify store, currently it checks name.
-      // Let's stick to name search for now as per store implementation, or update store to check both.
     } else {
       params.delete("name");
     }
+    params.set("page", "1"); // Reset to page 1 on search
     router.push(`?${params.toString()}`);
   };
 
@@ -88,6 +96,8 @@ export default function TagManagementPage({
     setDialogOpen(true);
   };
 
+  const tags = data?.lists || [];
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -115,7 +125,7 @@ export default function TagManagementPage({
             <Input
               name="query"
               placeholder="搜索标签名称..."
-              defaultValue={searchParams.get("name") || ""}
+              defaultValue={name || ""}
               className={`
                 border-white/10 bg-white/5 pl-9
                 focus:border-neon-cyan focus:ring-neon-cyan/20
@@ -169,7 +179,16 @@ export default function TagManagementPage({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.lists.length === 0 ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="h-24 text-center text-gray-500"
+                >
+                  加载中...
+                </TableCell>
+              </TableRow>
+            ) : tags.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -179,7 +198,7 @@ export default function TagManagementPage({
                 </TableCell>
               </TableRow>
             ) : (
-              data.lists.map((tag) => (
+              tags.map((tag) => (
                 <TableRow
                   key={tag.id}
                   className={`
@@ -213,10 +232,7 @@ export default function TagManagementPage({
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(tag)}
-                        className={`
-                          h-8 w-8 text-neon-cyan
-                          hover:bg-neon-cyan/10 hover:text-neon-cyan
-                        `}
+                        className="text-gray-400 hover:text-neon-cyan"
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -224,10 +240,7 @@ export default function TagManagementPage({
                         variant="ghost"
                         size="icon"
                         onClick={() => openDelete(tag.id)}
-                        className={`
-                          h-8 w-8 text-neon-magenta
-                          hover:bg-neon-magenta/10 hover:text-neon-magenta
-                        `}
+                        className="text-gray-400 hover:text-red-500"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -244,12 +257,14 @@ export default function TagManagementPage({
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         tag={editingTag}
+        onSuccess={() => mutate()}
       />
 
       <DeleteAlert
+        id={deletingId}
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
-        id={deletingId}
+        onSuccess={() => mutate()}
       />
     </div>
   );

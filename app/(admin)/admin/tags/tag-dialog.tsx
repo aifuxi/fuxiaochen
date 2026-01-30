@@ -43,6 +43,7 @@ interface TagDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   trigger?: React.ReactNode;
+  onSuccess?: () => void;
 }
 
 export function TagDialog({
@@ -50,6 +51,7 @@ export function TagDialog({
   open,
   onOpenChange,
   trigger,
+  onSuccess,
 }: TagDialogProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -73,7 +75,7 @@ export function TagDialog({
       }
       onOpenChange(false);
       form.reset();
-      router.refresh();
+      onSuccess?.();
     } catch (error) {
       console.error(error);
     } finally {
