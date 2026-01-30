@@ -1,0 +1,13 @@
+{
+  // 搜索时排除的目录和文件
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true
+  },
+  "eslint.codeActionsOnSave.mode": "all",
+  // 保存时格式化代码
+  "editor.formatOnSave": true,
+  // 配置tailwindcss的类函数
+  "tailwindCSS.classFunctions": ["cva", "cx", "twMerge", "cn", "cs"]
+}

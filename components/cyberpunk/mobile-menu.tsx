@@ -23,11 +23,11 @@ export function MobileMenu() {
   }, [pathname]);
 
   const links = [
-    { href: "/", label: "首页 / Home" },
-    { href: "/blog", label: "博客 / Blog" },
-    { href: "/changelog", label: "日志 / Changelog" },
-    { href: "/cover-generator", label: "工具 / Tools" },
-    { href: "/about", label: "关于 / About" },
+    { href: "/", label: "首页" },
+    { href: "/blog", label: "博客" },
+    { href: "/changelog", label: "日志" },
+    { href: "/cover-generator", label: "工具" },
+    { href: "/about", label: "关于" },
   ];
 
   return (
@@ -50,7 +50,7 @@ export function MobileMenu() {
             {/* Header */}
             <div className="flex items-center justify-between border-b border-white/10 p-6">
               <span className="text-xl font-bold tracking-widest text-neon-cyan uppercase">
-                系统导航 / MENU
+                系统导航
               </span>
               <button
                 onClick={() => setIsOpen(false)}
@@ -90,9 +90,7 @@ export function MobileMenu() {
             {/* Footer Actions */}
             <div className="space-y-6 border-t border-white/10 p-8">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-sm text-gray-500">
-                  SOURCE_CODE
-                </span>
+                <span className="font-mono text-sm text-gray-500">源代码</span>
                 <a
                   href={SOURCE_CODE_GITHUB_PAGE}
                   target="_blank"

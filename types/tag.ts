@@ -12,6 +12,8 @@ export interface Tag extends CommonModel {
 export interface TagListReq extends ListReq {
   name?: string;
   slug?: string;
+  sortBy?: "createdAt" | "updatedAt";
+  order?: "asc" | "desc";
 }
 
 export interface TagListResp {

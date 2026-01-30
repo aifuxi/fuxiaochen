@@ -155,12 +155,12 @@ export default function CoverGeneratorPage() {
           `}
           data-text="Cover_Generator"
         >
-          封面生成器 / Cover_Generator
+          封面生成器
         </h1>
         <p className="mt-4 font-mono text-lg text-neon-purple/80">
-          /// INITIALIZING_NEURAL_FABRICATOR... 初始化神经构造机
+          /// 初始化神经构造机...
           <br />
-          /// VISUAL_DATA_SYNTHESIS... 视觉数据合成
+          /// 视觉数据合成...
         </p>
         <div
           className={`
@@ -186,18 +186,18 @@ export default function CoverGeneratorPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-neon-cyan">
                 <RefreshCw className="h-5 w-5" />
-                Generator Settings
+                生成设置
               </CardTitle>
-              <CardDescription>Customize your cyberpunk cover</CardDescription>
+              <CardDescription>定制您的赛博朋克封面</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Text Settings */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm font-bold tracking-wider text-gray-400 uppercase">
-                  <Type className="h-4 w-4" /> Text
+                  <Type className="h-4 w-4" /> 文本
                 </div>
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>标题</Label>
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -211,7 +211,7 @@ export default function CoverGeneratorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Subtitle</Label>
+                  <Label>副标题</Label>
                   <Input
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
@@ -225,7 +225,7 @@ export default function CoverGeneratorPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Author/Tag</Label>
+                  <Label>作者/标签</Label>
                   <Input
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
@@ -243,10 +243,10 @@ export default function CoverGeneratorPage() {
               {/* Visual Settings */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-sm font-bold tracking-wider text-gray-400 uppercase">
-                  <ImageIcon className="h-4 w-4" /> Visuals
+                  <ImageIcon className="h-4 w-4" /> 视觉
                 </div>
                 <div className="space-y-2">
-                  <Label>Background Style</Label>
+                  <Label>背景风格</Label>
                   <Select
                     value={bgStyle}
                     onValueChange={(val) => val && setBgStyle(val)}
@@ -269,7 +269,7 @@ export default function CoverGeneratorPage() {
                           focus:bg-neon-cyan/10 focus:text-neon-cyan
                         `}
                       >
-                        Neon Grid
+                        霓虹网格
                       </SelectItem>
                       <SelectItem
                         value="circuit"
@@ -278,7 +278,7 @@ export default function CoverGeneratorPage() {
                           focus:bg-neon-cyan/10 focus:text-neon-cyan
                         `}
                       >
-                        Circuit Board
+                        电路板
                       </SelectItem>
                       <SelectItem
                         value="gradient-1"
@@ -287,7 +287,7 @@ export default function CoverGeneratorPage() {
                           focus:bg-neon-cyan/10 focus:text-neon-cyan
                         `}
                       >
-                        Cyber Gradient A
+                        赛博渐变 A
                       </SelectItem>
                       <SelectItem
                         value="gradient-2"
@@ -296,7 +296,7 @@ export default function CoverGeneratorPage() {
                           focus:bg-neon-cyan/10 focus:text-neon-cyan
                         `}
                       >
-                        Cyber Gradient B
+                        赛博渐变 B
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -308,7 +308,7 @@ export default function CoverGeneratorPage() {
                     hover:border-white/10
                   `}
                 >
-                  <Label className="cursor-pointer">Glitch Effect</Label>
+                  <Label className="cursor-pointer">故障效果</Label>
                   <Switch
                     checked={showGlitch}
                     onCheckedChange={setShowGlitch}
@@ -325,7 +325,7 @@ export default function CoverGeneratorPage() {
                     hover:border-white/10
                   `}
                 >
-                  <Label className="cursor-pointer">Neon Border</Label>
+                  <Label className="cursor-pointer">霓虹边框</Label>
                   <Switch
                     checked={showBorder}
                     onCheckedChange={setShowBorder}
@@ -346,10 +346,10 @@ export default function CoverGeneratorPage() {
                 disabled={loading}
               >
                 {loading ? (
-                  "GENERATING..."
+                  "生成中..."
                 ) : (
                   <>
-                    <Download className="mr-2 h-4 w-4" /> EXPORT COVER
+                    <Download className="mr-2 h-4 w-4" /> 导出封面
                   </>
                 )}
               </Button>

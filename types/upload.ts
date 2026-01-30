@@ -5,9 +5,7 @@ export interface PresignUploadInfoResp {
   signedHeaders: Record<string, string>;
 }
 
-
 export interface UploadFileResp {
   url: string;
   name: string;
 }
-
