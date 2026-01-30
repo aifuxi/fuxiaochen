@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { FileText, LayoutDashboard, Settings, Tag } from "lucide-react";
 
+import { WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
 
 export default async function AdminLayout({
@@ -40,7 +41,8 @@ export default async function AdminLayout({
             href="/"
             className="text-xl font-bold tracking-widest text-neon-cyan uppercase"
           >
-            NEXUS<span className="text-neon-purple">.ADMIN</span>
+            {WEBSITE}
+            <span className="text-neon-purple">.ADMIN</span>
           </Link>
         </div>
 
@@ -75,7 +77,7 @@ export default async function AdminLayout({
                 {session.user.name}
               </p>
               <p className="truncate text-xs text-gray-500">
-                {/* @ts-ignore - role exists in DB but maybe not in types yet */}
+                {/* @ts-expect-error - role exists in DB but maybe not in types yet */}
                 {session.user.role || "visitor"}
               </p>
             </div>
@@ -92,12 +94,12 @@ export default async function AdminLayout({
           `}
         >
           <h1 className="text-lg font-bold tracking-wider text-white uppercase">
-            控制台 / CONSOLE
+            控制台
           </h1>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-2 text-xs text-neon-cyan">
               <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-              SYSTEM ONLINE
+              系统在线
             </span>
           </div>
         </header>
