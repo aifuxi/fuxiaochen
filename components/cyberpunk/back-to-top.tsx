@@ -55,7 +55,7 @@ export function BackToTop() {
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-8 opacity-0",
       )}
-      aria-label="回到顶部 / Back to Top"
+      aria-label="回到顶部"
     >
       {/* Glow Effect Background */}
       <div
@@ -162,7 +162,7 @@ export function BackToTop() {
           group-hover:translate-x-0 group-hover:opacity-100
         `}
       >
-        TOP
+        顶部
       </span>
     </button>
   );

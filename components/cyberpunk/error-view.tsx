@@ -58,7 +58,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
 
         <div className="space-y-4">
           <p className="animate-pulse font-mono text-sm tracking-[0.2em] text-red-400 uppercase">
-            /// SYSTEM_ALERT: {message}
+            /// 系统警报: {message}
           </p>
           <p className="font-mono text-xs text-gray-500">
             ERROR_TRACE_ID: XXXX-XXXX-XXXX-XXXX
@@ -81,7 +81,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
               hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]
             `}
           >
-            重启系统 / REBOOT
+            重启系统
           </button>
 
           <Link
@@ -106,7 +106,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
               <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               <polyline points="9 22 9 12 15 12 15 22" />
             </svg>
-            返回基地 / HOME
+            返回首页
           </Link>
         </div>
       </div>

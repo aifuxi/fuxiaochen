@@ -100,7 +100,7 @@ export default function AboutPage() {
                     付小晨
                   </h1>
                   <p className="font-mono text-lg tracking-widest text-neon-cyan">
-                    /// FRONTEND_ENGINEER_CLASS
+                    /// 前端工程师
                   </p>
                 </div>
 
@@ -162,7 +162,7 @@ export default function AboutPage() {
             <div className="space-y-8">
               <div>
                 <h4 className="mb-3 font-mono text-sm tracking-wider text-gray-500 uppercase">
-                  前端模块 / Frontend_Modules
+                  前端模块
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {frontendSkills.map((skill) => (
@@ -188,7 +188,7 @@ export default function AboutPage() {
 
               <div>
                 <h4 className="mb-3 font-mono text-sm tracking-wider text-gray-500 uppercase">
-                  后端协议 / Backend_Protocols
+                  后端协议
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {backendSkills.map((skill) => (
@@ -214,7 +214,7 @@ export default function AboutPage() {
 
               <div>
                 <h4 className="mb-3 font-mono text-sm tracking-wider text-gray-500 uppercase">
-                  系统工具 / System_Tools
+                  系统工具
                 </h4>
                 <div
                   className={`
@@ -244,7 +244,7 @@ export default function AboutPage() {
           {/* Equipment */}
           <section className="glass-panel rounded-2xl border border-neon-magenta/20 p-8">
             <h3 className="mb-8 flex items-center gap-3 text-2xl font-bold text-neon-magenta">
-              <span className="text-xl">🖥️</span> 硬件装备 / HARDWARE_LOADOUT
+              <span className="text-xl">🖥️</span> 硬件装备
             </h3>
 
             <div className="relative space-y-6">
@@ -253,27 +253,27 @@ export default function AboutPage() {
 
               {[
                 {
-                  label: "主机 / Mainframe",
+                  label: "主机",
                   value: "MacBook Pro 14-inch M3 Max",
                   icon: "💻",
                 },
                 {
-                  label: "战斗单元 / Combat_Unit",
+                  label: "战斗单元",
                   value: "MSI GP76 RTX3070",
                   icon: "🎮",
                 },
                 {
-                  label: "视觉接口 / Visual_Interface",
+                  label: "视觉接口",
                   value: 'LG 27" 4K Display',
                   icon: "👁️",
                 },
                 {
-                  label: "输入矩阵 A / Input_Matrix_A",
+                  label: "输入矩阵 A",
                   value: "KIZI K75 Keyboard",
                   icon: "⌨️",
                 },
                 {
-                  label: "输入矩阵 B / Input_Matrix_B",
+                  label: "输入矩阵 B",
                   value: "Logitech G PRO 2 Mouse",
                   icon: "🖱️",
                 },
@@ -309,7 +309,7 @@ export default function AboutPage() {
         {/* Footer quote or something */}
         <div className="mt-20 text-center">
           <p className="font-mono text-sm text-gray-500">
-            /// END_OF_FILE: PROFILE_DATA 档案结束：个人资料
+            /// 档案结束：个人资料
           </p>
         </div>
       </main>

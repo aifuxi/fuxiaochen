@@ -2,11 +2,11 @@ import { Suspense } from "react";
 
 import Link from "next/link";
 
+import { getCategoriesAction } from "@/app/actions/category";
+import { getTagsAction } from "@/app/actions/tag";
+
 import { BlogList } from "@/components/blog/blog-list";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
-
-import { getCategoryList } from "@/api/category";
-import { getTagList } from "@/api/tag";
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -24,9 +24,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   const pageSize = 10;
 
   // 1. Fetch Categories and Tags for sidebar display
-  const [categoriesData, tagsData] = await Promise.all([
-    getCategoryList({ page: 1, pageSize: 100 }),
-    getTagList({ page: 1, pageSize: 100 }),
+  const [{ data: categoriesData }, { data: tagsData }] = await Promise.all([
+    getCategoriesAction({ page: 1, pageSize: 100 }),
+    getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
   console.log("categoriesData", JSON.stringify(categoriesData));
@@ -54,12 +54,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             `}
             data-text="Transmission_Log"
           >
-            传输日志 / Transmission_Log
+            传输日志
           </h1>
           <p className="max-w-2xl font-mono text-lg text-neon-cyan/80">
-            /// ACCESSING_SECURE_ARCHIVES... 正在访问安全档案
+            /// 正在访问安全档案...
             <br />
-            /// DECRYPTING_LATEST_PROTOCOLS... 正在解密最新协议...
+            /// 正在解密最新协议...
           </p>
           <div
             className={`
@@ -87,7 +87,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="glass-panel rounded-xl border border-white/10 p-6">
               <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-cyan uppercase">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-                系统分类 / System_Categories
+                系统分类
               </h3>
               <div className="space-y-2">
                 <Link
@@ -104,7 +104,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     }
                   `}
                 >
-                  所有系统 / All_Systems
+                  所有分类
                 </Link>
                 {categoriesData?.lists?.map((cat) => (
                   <Link
@@ -135,7 +135,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             <div className="glass-panel rounded-xl border border-white/10 p-6">
               <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-purple uppercase">
                 <span className="h-2 w-2 animate-pulse rounded-full bg-neon-purple" />
-                数据标签 / Data_Tags
+                数据标签
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Link
@@ -154,14 +154,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     }
                   `}
                 >
-                  全部 / ALL
+                  全部
                 </Link>
                 {tagsData?.lists?.map((tag) => (
                   <Link
                     key={tag.id}
                     href={`/blog?tag=${tag.slug}${categorySlug ? `&category=${categorySlug}` : ""}`}
                     className={`
-                      rounded border px-2 py-1 text-xs uppercase transition-all duration-300
+                      rounded border px-2 py-1 text-xs transition-all duration-300
                       ${
                         tagSlug === tag.slug
                           ? `border-neon-purple bg-neon-purple/10 text-neon-purple`

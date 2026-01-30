@@ -5,10 +5,10 @@ import { notFound } from "next/navigation";
 
 import { format } from "date-fns";
 
+import { getBlogBySlugAction } from "@/app/actions/blog";
+
 import BlogContent from "@/components/blog/blog-content";
 import { TableOfContents } from "@/components/blog/table-of-contents";
-
-import { getBlogDetail } from "@/api/blog";
 
 export async function generateMetadata({
   params,
@@ -17,14 +17,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const blog = await getBlogDetail(slug);
-    if (!blog) return { title: "未找到博客 / Blog Not Found" };
+    const { data: blog } = await getBlogBySlugAction(slug);
+    if (!blog) return { title: "未找到博客" };
     return {
       title: `${blog.title} | FuXiaochen`,
       description: blog.description || blog.title,
     };
   } catch (_error) {
-    return { title: "未找到博客 / Blog Not Found" };
+    return { title: "未找到博客" };
   }
 }
 
@@ -36,7 +36,8 @@ export default async function BlogDetailPage({
   const { slug } = await params;
   let blog;
   try {
-    blog = await getBlogDetail(slug);
+    const { data } = await getBlogBySlugAction(slug);
+    blog = data;
   } catch (error) {
     console.error("Failed to fetch blog detail:", error);
     notFound();
@@ -79,7 +80,7 @@ export default async function BlogDetailPage({
                     key={tag.id || tag.name}
                     className={`
                       rounded border border-neon-cyan/30 bg-neon-cyan/5 px-3 py-1 text-sm font-bold tracking-wider
-                      text-neon-cyan uppercase shadow-[0_0_10px_rgba(0,255,255,0.2)] backdrop-blur-sm
+                      text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.2)] backdrop-blur-sm
                     `}
                   >
                     {tag.name}
@@ -89,7 +90,7 @@ export default async function BlogDetailPage({
                   <span
                     className={`
                       rounded border border-neon-purple/30 bg-neon-purple/5 px-3 py-1 text-sm font-bold tracking-wider
-                      text-neon-purple uppercase shadow-[0_0_10px_rgba(123,97,255,0.2)] backdrop-blur-sm
+                      text-neon-purple shadow-[0_0_10px_rgba(123,97,255,0.2)] backdrop-blur-sm
                     `}
                   >
                     {blog.category.name}
@@ -113,7 +114,7 @@ export default async function BlogDetailPage({
                   <span className="h-2 w-2 animate-pulse rounded-full bg-neon-magenta" />
                   {blog.publishedAt
                     ? format(new Date(blog.publishedAt), "yyyy 年 MM 月 dd 日")
-                    : "草稿 / Draft"}
+                    : "草稿"}
                 </span>
                 {/* Reading time could be calculated if needed */}
               </div>
@@ -161,7 +162,7 @@ export default async function BlogDetailPage({
                   >
                     ←
                   </span>{" "}
-                  返回博客 / Back to Blog
+                  返回博客
                 </Link>
 
                 <div className="flex gap-4">

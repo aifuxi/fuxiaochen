@@ -79,7 +79,7 @@ export function ConnectDialog() {
           hover:bg-neon-purple/20 hover:shadow-[0_0_20px_rgba(123,97,255,0.4)]
         `}
       >
-        建立连接 / Connect
+        建立连接
       </button>
 
       {/* Modal Overlay */}
@@ -103,7 +103,7 @@ export function ConnectDialog() {
                   建立 <span className="text-neon-purple">连接</span>
                 </h3>
                 <p className="font-mono text-xs tracking-widest text-gray-400">
-                  /// ESTABLISHING_SECURE_LINK...
+                  /// 正在建立安全连接...
                 </p>
               </div>
 
@@ -151,7 +151,7 @@ export function ConnectDialog() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-black px-2 font-mono text-gray-500">
-                    Or Send Email
+                    或者发送邮件
                   </span>
                 </div>
               </div>
