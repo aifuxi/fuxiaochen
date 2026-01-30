@@ -1,14 +1,15 @@
 import Link from "next/link";
 
-import { getChangelogList } from "@/api/changelog";
+import { getChangelogsAction } from "@/app/actions/changelog";
 
 export async function GlitchHero() {
-  const { lists: changelogs } = await getChangelogList({
+  const { data } = await getChangelogsAction({
     page: 1,
     pageSize: 1,
     order: "desc",
     sortBy: "createdAt",
   });
+  const changelogs = data?.lists;
   const version = changelogs?.[0]?.version || "unknown";
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
@@ -31,7 +32,7 @@ export async function GlitchHero() {
           `}
         >
           <span className="text-xs tracking-[0.2em] text-neon-cyan uppercase">
-            系统版本 / System Version {version}
+            系统版本 {version}
           </span>
         </div>
 
@@ -61,7 +62,7 @@ export async function GlitchHero() {
             md:text-2xl
           `}
         >
-          探索数字前沿 / Exploring the digital frontier
+          探索数字前沿
         </p>
 
         <div
@@ -78,7 +79,7 @@ export async function GlitchHero() {
               hover:bg-neon-cyan hover:text-black hover:shadow-[0_0_40px_rgba(0,255,255,0.6)]
             `}
           >
-            进入博客 / Enter Blog
+            进入博客
           </Link>
           <Link
             href="/changelog"
@@ -88,7 +89,7 @@ export async function GlitchHero() {
               hover:border-white/40 hover:bg-white/5
             `}
           >
-            查看日志 / View Changelog
+            查看日志
           </Link>
         </div>
       </div>

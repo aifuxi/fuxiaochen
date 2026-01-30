@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { format } from "date-fns";
 
+import { getBlogsAction } from "@/app/actions/blog";
+
 import {
   Pagination,
   PaginationContent,
@@ -12,8 +14,6 @@ import {
 } from "@/components/ui/pagination";
 
 import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
-
-import { getBlogList } from "@/api/blog";
 
 interface BlogListProps {
   page: number;
@@ -30,15 +30,18 @@ export async function BlogList({
 }: BlogListProps) {
   const currentPage = Number(page) || 1;
 
-  const { lists, total } = await getBlogList({
+  const { data } = await getBlogsAction({
     page: currentPage,
     pageSize,
-    category,
-    tags: tag ? [tag] : undefined,
+    categoryId: category,
+    tagId: tag,
   });
 
+  const lists = data?.lists || [];
+  const total = data?.total || 0;
+
   const totalPages = Math.ceil(total / pageSize);
-  const blogs = lists || [];
+  const blogs = lists;
 
   return (
     <>

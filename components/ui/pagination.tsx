@@ -91,7 +91,7 @@ function PaginationPrevious({
           sm:block
         `}
       >
-        上一页 / Previous
+        上一页
       </span>
     </PaginationLink>
   );
@@ -120,7 +120,7 @@ function PaginationNext({
           sm:block
         `}
       >
-        下一页 / Next
+        下一页
       </span>
       <ChevronRightIcon />
     </PaginationLink>
@@ -139,7 +139,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">更多页码 / More pages</span>
+      <span className="sr-only">更多页码</span>
     </span>
   );
 }

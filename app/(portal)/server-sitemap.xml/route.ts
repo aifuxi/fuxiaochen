@@ -1,14 +1,14 @@
 import { type ISitemapField, getServerSideSitemap } from "next-sitemap";
 
-import { getBlogList } from "@/api/blog";
+import { getBlogsAction } from "@/app/actions/blog";
 
 export async function GET() {
-  const { lists } = await getBlogList({
+  const { data } = await getBlogsAction({
     page: 1,
     pageSize: 10000,
   });
 
-  const blogs = lists || [];
+  const blogs = data?.lists || [];
 
   const blogsSitemaps = blogs.map((item): ISitemapField => {
     return {

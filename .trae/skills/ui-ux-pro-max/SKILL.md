@@ -2,6 +2,7 @@
 name: ui-ux-pro-max
 description: UI/UX design intelligence with searchable database
 ---
+
 # ui-ux-pro-max
 
 Comprehensive design guide for web and mobile applications. Contains 67 styles, 96 color palettes, 57 font pairings, 99 UX guidelines, and 25 chart types across 13 technology stacks. Searchable database with priority-based recommendations.
@@ -17,16 +18,19 @@ python3 --version || python --version
 If Python is not installed, install it based on user's OS:
 
 **macOS:**
+
 ```bash
 brew install python3
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update && sudo apt install python3
 ```
 
 **Windows:**
+
 ```powershell
 winget install Python.Python.3.12
 ```
@@ -40,6 +44,7 @@ When user requests UI/UX work (design, build, create, implement, review, fix, im
 ### Step 1: Analyze User Requirements
 
 Extract key information from user request:
+
 - **Product type**: SaaS, e-commerce, portfolio, dashboard, landing page, etc.
 - **Style keywords**: minimal, playful, professional, elegant, dark mode, etc.
 - **Industry**: healthcare, fintech, gaming, education, etc.
@@ -54,12 +59,14 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<product_type> <industry> <keywo
 ```
 
 This command:
+
 1. Searches 5 domains in parallel (product, style, color, landing, typography)
 2. Applies reasoning rules from `ui-reasoning.csv` to select best matches
 3. Returns complete design system: pattern, style, colors, typography, effects
 4. Includes anti-patterns to avoid
 
 **Example:**
+
 ```bash
 python3 skills/ui-ux-pro-max/scripts/search.py "beauty spa wellness service" --design-system -p "Serenity Spa"
 ```
@@ -73,18 +80,22 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persi
 ```
 
 This creates:
+
 - `design-system/MASTER.md` — Global Source of Truth with all design rules
 - `design-system/pages/` — Folder for page-specific overrides
 
 **With page-specific override:**
+
 ```bash
 python3 skills/ui-ux-pro-max/scripts/search.py "<query>" --design-system --persist -p "Project Name" --page "dashboard"
 ```
 
 This also creates:
+
 - `design-system/pages/dashboard.md` — Page-specific deviations from Master
 
 **How hierarchical retrieval works:**
+
 1. When building a specific page (e.g., "Checkout"), first check `design-system/pages/checkout.md`
 2. If the page file exists, its rules **override** the Master file
 3. If not, use `design-system/MASTER.md` exclusively
@@ -99,13 +110,13 @@ python3 skills/ui-ux-pro-max/scripts/search.py "<keyword>" --domain <domain> [-n
 
 **When to use detailed searches:**
 
-| Need | Domain | Example |
-|------|--------|---------|
-| More style options | `style` | `--domain style "glassmorphism dark"` |
-| Chart recommendations | `chart` | `--domain chart "real-time dashboard"` |
-| UX best practices | `ux` | `--domain ux "animation accessibility"` |
-| Alternative fonts | `typography` | `--domain typography "elegant luxury"` |
-| Landing structure | `landing` | `--domain landing "hero social-proof"` |
+| Need                  | Domain       | Example                                 |
+| --------------------- | ------------ | --------------------------------------- |
+| More style options    | `style`      | `--domain style "glassmorphism dark"`   |
+| Chart recommendations | `chart`      | `--domain chart "real-time dashboard"`  |
+| UX best practices     | `ux`         | `--domain ux "animation accessibility"` |
+| Alternative fonts     | `typography` | `--domain typography "elegant luxury"`  |
+| Landing structure     | `landing`    | `--domain landing "hero social-proof"`  |
 
 ### Step 4: Stack Guidelines (Default: html-tailwind)
 
@@ -123,32 +134,32 @@ Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`
 
 ### Available Domains
 
-| Domain | Use For | Example Keywords |
-|--------|---------|------------------|
-| `product` | Product type recommendations | SaaS, e-commerce, portfolio, healthcare, beauty, service |
-| `style` | UI styles, colors, effects | glassmorphism, minimalism, dark mode, brutalism |
-| `typography` | Font pairings, Google Fonts | elegant, playful, professional, modern |
-| `color` | Color palettes by product type | saas, ecommerce, healthcare, beauty, fintech, service |
-| `landing` | Page structure, CTA strategies | hero, hero-centric, testimonial, pricing, social-proof |
-| `chart` | Chart types, library recommendations | trend, comparison, timeline, funnel, pie |
-| `ux` | Best practices, anti-patterns | animation, accessibility, z-index, loading |
-| `react` | React/Next.js performance | waterfall, bundle, suspense, memo, rerender, cache |
-| `web` | Web interface guidelines | aria, focus, keyboard, semantic, virtualize |
-| `prompt` | AI prompts, CSS keywords | (style name) |
+| Domain       | Use For                              | Example Keywords                                         |
+| ------------ | ------------------------------------ | -------------------------------------------------------- |
+| `product`    | Product type recommendations         | SaaS, e-commerce, portfolio, healthcare, beauty, service |
+| `style`      | UI styles, colors, effects           | glassmorphism, minimalism, dark mode, brutalism          |
+| `typography` | Font pairings, Google Fonts          | elegant, playful, professional, modern                   |
+| `color`      | Color palettes by product type       | saas, ecommerce, healthcare, beauty, fintech, service    |
+| `landing`    | Page structure, CTA strategies       | hero, hero-centric, testimonial, pricing, social-proof   |
+| `chart`      | Chart types, library recommendations | trend, comparison, timeline, funnel, pie                 |
+| `ux`         | Best practices, anti-patterns        | animation, accessibility, z-index, loading               |
+| `react`      | React/Next.js performance            | waterfall, bundle, suspense, memo, rerender, cache       |
+| `web`        | Web interface guidelines             | aria, focus, keyboard, semantic, virtualize              |
+| `prompt`     | AI prompts, CSS keywords             | (style name)                                             |
 
 ### Available Stacks
 
-| Stack | Focus |
-|-------|-------|
-| `html-tailwind` | Tailwind utilities, responsive, a11y (DEFAULT) |
-| `react` | State, hooks, performance, patterns |
-| `nextjs` | SSR, routing, images, API routes |
-| `vue` | Composition API, Pinia, Vue Router |
-| `svelte` | Runes, stores, SvelteKit |
-| `swiftui` | Views, State, Navigation, Animation |
-| `react-native` | Components, Navigation, Lists |
-| `flutter` | Widgets, State, Layout, Theming |
-| `shadcn` | shadcn/ui components, theming, forms, patterns |
+| Stack             | Focus                                                 |
+| ----------------- | ----------------------------------------------------- |
+| `html-tailwind`   | Tailwind utilities, responsive, a11y (DEFAULT)        |
+| `react`           | State, hooks, performance, patterns                   |
+| `nextjs`          | SSR, routing, images, API routes                      |
+| `vue`             | Composition API, Pinia, Vue Router                    |
+| `svelte`          | Runes, stores, SvelteKit                              |
+| `swiftui`         | Views, State, Navigation, Animation                   |
+| `react-native`    | Components, Navigation, Lists                         |
+| `flutter`         | Widgets, State, Layout, Theming                       |
+| `shadcn`          | shadcn/ui components, theming, forms, patterns        |
 | `jetpack-compose` | Composables, Modifiers, State Hoisting, Recomposition |
 
 ---
@@ -158,6 +169,7 @@ Available stacks: `html-tailwind`, `react`, `nextjs`, `vue`, `svelte`, `swiftui`
 **User request:** "Làm landing page cho dịch vụ chăm sóc da chuyên nghiệp"
 
 ### Step 1: Analyze Requirements
+
 - Product type: Beauty/Spa service
 - Style keywords: elegant, professional, soft
 - Industry: Beauty/Wellness
@@ -222,37 +234,37 @@ These are frequently overlooked issues that make UI look unprofessional:
 
 ### Icons & Visual Elements
 
-| Rule | Do | Don't |
-|------|----|----- |
-| **No emoji icons** | Use SVG icons (Heroicons, Lucide, Simple Icons) | Use emojis like 🎨 🚀 ⚙️ as UI icons |
-| **Stable hover states** | Use color/opacity transitions on hover | Use scale transforms that shift layout |
-| **Correct brand logos** | Research official SVG from Simple Icons | Guess or use incorrect logo paths |
-| **Consistent icon sizing** | Use fixed viewBox (24x24) with w-6 h-6 | Mix different icon sizes randomly |
+| Rule                       | Do                                              | Don't                                  |
+| -------------------------- | ----------------------------------------------- | -------------------------------------- |
+| **No emoji icons**         | Use SVG icons (Heroicons, Lucide, Simple Icons) | Use emojis like 🎨 🚀 ⚙️ as UI icons   |
+| **Stable hover states**    | Use color/opacity transitions on hover          | Use scale transforms that shift layout |
+| **Correct brand logos**    | Research official SVG from Simple Icons         | Guess or use incorrect logo paths      |
+| **Consistent icon sizing** | Use fixed viewBox (24x24) with w-6 h-6          | Mix different icon sizes randomly      |
 
 ### Interaction & Cursor
 
-| Rule | Do | Don't |
-|------|----|----- |
-| **Cursor pointer** | Add `cursor-pointer` to all clickable/hoverable cards | Leave default cursor on interactive elements |
-| **Hover feedback** | Provide visual feedback (color, shadow, border) | No indication element is interactive |
-| **Smooth transitions** | Use `transition-colors duration-200` | Instant state changes or too slow (>500ms) |
+| Rule                   | Do                                                    | Don't                                        |
+| ---------------------- | ----------------------------------------------------- | -------------------------------------------- |
+| **Cursor pointer**     | Add `cursor-pointer` to all clickable/hoverable cards | Leave default cursor on interactive elements |
+| **Hover feedback**     | Provide visual feedback (color, shadow, border)       | No indication element is interactive         |
+| **Smooth transitions** | Use `transition-colors duration-200`                  | Instant state changes or too slow (>500ms)   |
 
 ### Light/Dark Mode Contrast
 
-| Rule | Do | Don't |
-|------|----|----- |
-| **Glass card light mode** | Use `bg-white/80` or higher opacity | Use `bg-white/10` (too transparent) |
-| **Text contrast light** | Use `#0F172A` (slate-900) for text | Use `#94A3B8` (slate-400) for body text |
-| **Muted text light** | Use `#475569` (slate-600) minimum | Use gray-400 or lighter |
-| **Border visibility** | Use `border-gray-200` in light mode | Use `border-white/10` (invisible) |
+| Rule                      | Do                                  | Don't                                   |
+| ------------------------- | ----------------------------------- | --------------------------------------- |
+| **Glass card light mode** | Use `bg-white/80` or higher opacity | Use `bg-white/10` (too transparent)     |
+| **Text contrast light**   | Use `#0F172A` (slate-900) for text  | Use `#94A3B8` (slate-400) for body text |
+| **Muted text light**      | Use `#475569` (slate-600) minimum   | Use gray-400 or lighter                 |
+| **Border visibility**     | Use `border-gray-200` in light mode | Use `border-white/10` (invisible)       |
 
 ### Layout & Spacing
 
-| Rule | Do | Don't |
-|------|----|----- |
-| **Floating navbar** | Add `top-4 left-4 right-4` spacing | Stick navbar to `top-0 left-0 right-0` |
-| **Content padding** | Account for fixed navbar height | Let content hide behind fixed elements |
-| **Consistent max-width** | Use same `max-w-6xl` or `max-w-7xl` | Mix different container widths |
+| Rule                     | Do                                  | Don't                                  |
+| ------------------------ | ----------------------------------- | -------------------------------------- |
+| **Floating navbar**      | Add `top-4 left-4 right-4` spacing  | Stick navbar to `top-0 left-0 right-0` |
+| **Content padding**      | Account for fixed navbar height     | Let content hide behind fixed elements |
+| **Consistent max-width** | Use same `max-w-6xl` or `max-w-7xl` | Mix different container widths         |
 
 ---
 
@@ -261,6 +273,7 @@ These are frequently overlooked issues that make UI look unprofessional:
 Before delivering UI code, verify these items:
 
 ### Visual Quality
+
 - [ ] No emojis used as icons (use SVG instead)
 - [ ] All icons from consistent icon set (Heroicons/Lucide)
 - [ ] Brand logos are correct (verified from Simple Icons)
@@ -268,24 +281,28 @@ Before delivering UI code, verify these items:
 - [ ] Use theme colors directly (bg-primary) not var() wrapper
 
 ### Interaction
+
 - [ ] All clickable elements have `cursor-pointer`
 - [ ] Hover states provide clear visual feedback
 - [ ] Transitions are smooth (150-300ms)
 - [ ] Focus states visible for keyboard navigation
 
 ### Light/Dark Mode
+
 - [ ] Light mode text has sufficient contrast (4.5:1 minimum)
 - [ ] Glass/transparent elements visible in light mode
 - [ ] Borders visible in both modes
 - [ ] Test both modes before delivery
 
 ### Layout
+
 - [ ] Floating elements have proper spacing from edges
 - [ ] No content hidden behind fixed navbars
 - [ ] Responsive at 375px, 768px, 1024px, 1440px
 - [ ] No horizontal scroll on mobile
 
 ### Accessibility
+
 - [ ] All images have alt text
 - [ ] Form inputs have labels
 - [ ] Color is not the only indicator

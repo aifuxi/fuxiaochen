@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 
+import { getBlogsAction } from "@/app/actions/blog";
+
 import { BlogListItemSkeleton } from "@/components/blog/blog-list-skeleton";
 import { GlitchHero } from "@/components/cyberpunk/glitch-hero";
 import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
-
-import { getBlogList } from "@/api/blog";
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -25,15 +25,14 @@ function BlogListSkeleton() {
 }
 
 async function BlogList() {
-  const { lists } = await getBlogList({
+  const { data } = await getBlogsAction({
     page: 1,
     pageSize: 6,
-    featuredStatus: "featured",
     order: "desc",
     sortBy: "createdAt",
   });
 
-  const blogs = lists || [];
+  const blogs = data?.lists || [];
 
   return (
     <div
@@ -81,7 +80,7 @@ export default function HomePage() {
                 最新 <span className="text-neon-cyan">发布</span>
               </h2>
               <p className="font-mono text-sm text-gray-400">
-                /// ACCESSING_ARCHIVES... [READING_DATA_STREAM]
+                /// 正在访问档案库...【读取数据流】
               </p>
             </div>
           </div>

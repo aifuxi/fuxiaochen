@@ -1,6 +1,7 @@
 import Image from "next/image";
 
-import { getChangelogList } from "@/api/changelog";
+import { getChangelogsAction } from "@/app/actions/changelog";
+
 import {
   BEI_AN_LINK,
   BEI_AN_NUMBER,
@@ -11,12 +12,16 @@ import {
 
 export async function NeonFooter() {
   const currentYear = new Date().getFullYear();
-  const { lists: changelogs } = await getChangelogList({
+
+  const { data } = await getChangelogsAction({
     page: 1,
     pageSize: 1,
     order: "desc",
     sortBy: "createdAt",
   });
+
+  const changelogs = data?.lists || [];
+
   const version = changelogs?.[0]?.version || "unknown";
 
   return (
@@ -39,7 +44,7 @@ export async function NeonFooter() {
           <p>
             © {currentYear} {WEBSITE}.OS {version}
             <span className="mx-2 text-neon-cyan">//</span>
-            系统在线 SYSTEM ONLINE
+            系统在线
           </p>
         </div>
 

@@ -38,7 +38,7 @@ export function NeonHeader() {
               hover:text-neon-cyan
             `}
           >
-            首页 / Home
+            首页
           </Link>
           <Link
             href="/blog"
@@ -47,7 +47,7 @@ export function NeonHeader() {
               hover:text-neon-cyan
             `}
           >
-            博客 / Blog
+            博客
           </Link>
           <Link
             href="/changelog"
@@ -56,7 +56,7 @@ export function NeonHeader() {
               hover:text-neon-cyan
             `}
           >
-            日志 / Changelog
+            日志
           </Link>
           <Link
             href="/cover-generator"
@@ -65,7 +65,7 @@ export function NeonHeader() {
               hover:text-neon-cyan
             `}
           >
-            工具 / Tools
+            工具
           </Link>
           <Link
             href="/about"
@@ -74,7 +74,7 @@ export function NeonHeader() {
               hover:text-neon-cyan
             `}
           >
-            关于 / About
+            关于
           </Link>
         </div>
         <div

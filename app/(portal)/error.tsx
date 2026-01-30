@@ -19,8 +19,8 @@ export default function Error({
   return (
     <ErrorView
       code="500"
-      title="SYSTEM_FAILURE"
-      message="NEURAL_LINK_DISRUPTED // 神经连接中断"
+      title="系统故障"
+      message="神经连接中断"
       onRetry={() => reset()}
     />
   );

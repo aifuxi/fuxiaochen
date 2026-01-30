@@ -68,7 +68,7 @@ export function TableOfContents() {
         className={`mb-4 flex items-center gap-2 font-display text-sm font-bold tracking-wider text-neon-cyan uppercase`}
       >
         <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-        目录 / Table of Contents
+        目录
       </div>
       <nav className="relative">
         <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-white/10" />

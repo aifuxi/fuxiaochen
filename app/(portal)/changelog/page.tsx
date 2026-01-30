@@ -1,5 +1,7 @@
 import { format } from "date-fns";
 
+import { getChangelogsAction } from "@/app/actions/changelog";
+
 import {
   Pagination,
   PaginationContent,
@@ -10,8 +12,6 @@ import {
 } from "@/components/ui/pagination";
 
 import BlogContent from "@/components/blog/blog-content";
-
-import { getChangelogList } from "@/api/changelog";
 
 interface ChangelogPageProps {
   searchParams: Promise<{
@@ -26,13 +26,16 @@ export default async function ChangelogPage({
   const currentPage = Number(params.page) || 1;
   const pageSize = 10;
 
-  const { lists, total } = await getChangelogList({
+  const { data } = await getChangelogsAction({
     page: currentPage,
     pageSize: pageSize,
   });
 
+  const lists = data?.lists || [];
+  const total = data?.total || 0;
+
   const totalPages = Math.ceil(total / pageSize);
-  const changelogs = lists || [];
+  const changelogs = lists;
   return (
     <div
       className={`
@@ -50,12 +53,12 @@ export default async function ChangelogPage({
             `}
             data-text="System_Logs"
           >
-            系统日志 / System_Logs
+            系统日志
           </h1>
           <p className="mt-4 font-mono text-lg text-neon-purple/80">
-            /// TRACKING_SYSTEM_EVOLUTION... 追踪系统演进
+            /// 追踪系统演进...
             <br />
-            /// VERSION_HISTORY_ARCHIVE... 版本历史档案
+            /// 版本历史档案...
           </p>
           <div
             className={`
@@ -116,9 +119,10 @@ export default async function ChangelogPage({
                       {log.version}
                     </span>
                     <span className="font-mono text-sm tracking-wide text-gray-500 uppercase">
-                      {log.date
-                        ? format(new Date(log.date), "yyyy-MM-dd")
-                        : "未知日期"}
+                      {format(
+                        new Date(log.date || log.createdAt),
+                        "yyyy-MM-dd",
+                      )}
                     </span>
                   </div>
 
