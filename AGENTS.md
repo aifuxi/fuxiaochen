@@ -23,8 +23,7 @@
 | `pnpm dev`       | 启动开发服务器                                 |
 | `pnpm build`     | 构建生产版本 (standalone output)               |
 | `pnpm start`     | 启动生产服务器                                 |
-| `pnpm lint`      | 运行 ESLint 检查                               |
-| `pnpm lint:fix`  | 自动修复 ESLint 问题                           |
+| `pnpm lint:fix`  | 运行 ESLint 检查并自动修复 ESLint 问题         |
 | `pnpm format`    | 使用 Prettier 格式化代码                       |
 | `pnpm db:dev`    | 运行 Prisma 迁移 (Dev)                         |
 | `pnpm db:gen`    | 生成 Prisma Client (输出至 `generated/prisma`) |
