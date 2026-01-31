@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-
 import { getTagsAction } from "@/app/actions/tag";
-
 import { type Tag, type TagListReq } from "@/types/tag";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Pagination } from "@/components/cyberpunk/pagination";
-
 import { DeleteAlert } from "./delete-alert";
 import { TagDialog } from "./tag-dialog";
 
@@ -35,7 +28,12 @@ const fetcher = async (params: TagListReq) => {
   return res.data;
 };
 
-export default function TagManagementPage() {
+interface TagManagementPageProps {
+  role?: string;
+}
+
+export default function TagManagementPage({ role }: TagManagementPageProps) {
+  const isAdmin = role === "admin";
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -112,15 +110,17 @@ export default function TagManagementPage() {
         <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
           标签列表
         </h2>
-        <Button
-          onClick={openCreate}
-          className={`
-            bg-neon-cyan text-black
-            hover:bg-cyan-400
-          `}
-        >
-          <Plus className="mr-2 h-4 w-4" /> 新建标签
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={openCreate}
+            className={`
+              bg-neon-cyan text-black
+              hover:bg-cyan-400
+            `}
+          >
+            <Plus className="mr-2 h-4 w-4" /> 新建标签
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -235,30 +235,32 @@ export default function TagManagementPage() {
                     {format(new Date(tag.updatedAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEdit(tag)}
-                        className={`
-                          text-gray-400
-                          hover:text-neon-cyan
-                        `}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(tag.id)}
-                        className={`
-                          text-gray-400
-                          hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {isAdmin && (
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEdit(tag)}
+                          className={`
+                            text-gray-400
+                            hover:text-neon-cyan
+                          `}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openDelete(tag.id)}
+                          className={`
+                            text-gray-400
+                            hover:text-red-500
+                          `}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

@@ -1,9 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import { BlogCreateReq, BlogListReq } from "@/types/blog";
-
+import { checkAdmin } from "@/lib/auth-guard";
 import { blogStore } from "@/stores/blog";
 
 export async function getBlogsAction(params?: BlogListReq) {
@@ -41,6 +40,7 @@ export async function getBlogBySlugAction(slug: string) {
 
 export async function createBlogAction(data: BlogCreateReq) {
   try {
+    await checkAdmin();
     const result = await blogStore.create(data);
     revalidatePath("/blog");
     return { success: true, data: result };
@@ -54,6 +54,7 @@ export async function updateBlogAction(
   data: Partial<BlogCreateReq>,
 ) {
   try {
+    await checkAdmin();
     const result = await blogStore.update(id, data);
     revalidatePath("/blog");
     return { success: true, data: result };
@@ -64,6 +65,7 @@ export async function updateBlogAction(
 
 export async function deleteBlogAction(id: string) {
   try {
+    await checkAdmin();
     await blogStore.delete(id);
     revalidatePath("/blog");
     return { success: true };
@@ -74,6 +76,7 @@ export async function deleteBlogAction(id: string) {
 
 export async function toggleBlogPublishAction(id: string) {
   try {
+    await checkAdmin();
     const result = await blogStore.togglePublish(id);
     revalidatePath("/blog");
     return { success: true, data: result };
@@ -84,6 +87,7 @@ export async function toggleBlogPublishAction(id: string) {
 
 export async function toggleBlogFeatureAction(id: string) {
   try {
+    await checkAdmin();
     const result = await blogStore.toggleFeature(id);
     revalidatePath("/blog");
     return { success: true, data: result };
