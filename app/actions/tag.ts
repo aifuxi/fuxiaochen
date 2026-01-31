@@ -1,9 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
-import { TagCreateReq, TagListReq } from "@/types/tag";
-
+import { type TagCreateReq, type TagListReq } from "@/types/tag";
+import { checkAdmin } from "@/lib/auth-guard";
 import { tagStore } from "@/stores/tag";
 
 export async function getTagsAction(params?: TagListReq) {
@@ -29,6 +28,7 @@ export async function getTagByIdAction(id: string) {
 
 export async function createTagAction(data: TagCreateReq) {
   try {
+    await checkAdmin();
     const result = await tagStore.create(data);
     revalidatePath("/admin/tags");
     return { success: true, data: result };
@@ -39,6 +39,7 @@ export async function createTagAction(data: TagCreateReq) {
 
 export async function updateTagAction(id: string, data: Partial<TagCreateReq>) {
   try {
+    await checkAdmin();
     const result = await tagStore.update(id, data);
     revalidatePath("/admin/tags");
     return { success: true, data: result };
@@ -49,6 +50,7 @@ export async function updateTagAction(id: string, data: Partial<TagCreateReq>) {
 
 export async function deleteTagAction(id: string) {
   try {
+    await checkAdmin();
     await tagStore.delete(id);
     revalidatePath("/admin/tags");
     return { success: true };
