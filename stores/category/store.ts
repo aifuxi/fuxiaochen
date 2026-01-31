@@ -4,10 +4,7 @@ import {
   CategoryListReq,
   CategoryListResp,
 } from "@/types/category";
-
-import { generateId } from "@/lib/id";
 import { prisma } from "@/lib/prisma";
-
 import { ICategoryStore } from "./interface";
 
 export class CategoryStore implements ICategoryStore {
@@ -15,7 +12,6 @@ export class CategoryStore implements ICategoryStore {
     const { name, slug, description } = data;
     const category = await prisma.category.create({
       data: {
-        id: generateId(),
         name,
         slug,
         description,
@@ -30,7 +26,7 @@ export class CategoryStore implements ICategoryStore {
     data: Partial<CategoryCreateReq>,
   ): Promise<Category | null> {
     const category = await prisma.category.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data,
     });
 
@@ -39,14 +35,14 @@ export class CategoryStore implements ICategoryStore {
 
   async delete(id: string): Promise<void> {
     await prisma.category.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: { deletedAt: new Date() },
     });
   }
 
   async findById(id: string): Promise<Category | null> {
     const category = await prisma.category.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
     });
 
     if (!category) return null;

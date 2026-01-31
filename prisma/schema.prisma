@@ -8,7 +8,7 @@ generator client {
 }
 
 model Blog {
-  id        BigInt    @id
+  id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -22,7 +22,7 @@ model Blog {
   publishedAt DateTime? @map("published_at")
   featured    Boolean   @default(false)
 
-  categoryId BigInt   @map("category_id")
+  categoryId String   @map("category_id")
   category   Category @relation(fields: [categoryId], references: [id])
 
   tags BlogTag[]
@@ -31,7 +31,7 @@ model Blog {
 }
 
 model Category {
-  id        BigInt    @id
+  id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -46,7 +46,7 @@ model Category {
 }
 
 model Tag {
-  id        BigInt    @id
+  id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -61,8 +61,8 @@ model Tag {
 }
 
 model BlogTag {
-  blogId BigInt @map("blog_id")
-  tagId  BigInt @map("tag_id")
+  blogId String @map("blog_id")
+  tagId  String @map("tag_id")
 
   blog Blog @relation(fields: [blogId], references: [id])
   tag  Tag  @relation(fields: [tagId], references: [id])
@@ -72,14 +72,14 @@ model BlogTag {
 }
 
 model Changelog {
-  id        BigInt    @id
+  id        String    @id @default(cuid())
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  version String  @db.VarChar(50)
-  content String  @db.Text
-  date    BigInt? @default(0)
+  version String    @db.VarChar(50)
+  content String    @db.Text
+  date    DateTime?
 
   @@map("changelogs")
 }
@@ -93,7 +93,6 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
   role          Role      @default(visitor)
-  password      String?   @db.Text
   sessions      Session[]
   accounts      Account[]
 
