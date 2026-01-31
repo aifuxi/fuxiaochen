@@ -4,10 +4,7 @@ import {
   ChangelogListReq,
   ChangelogListResp,
 } from "@/types/changelog";
-
-import { generateId } from "@/lib/id";
 import { prisma } from "@/lib/prisma";
-
 import { IChangelogStore } from "./interface";
 
 export class ChangelogStore implements IChangelogStore {
@@ -15,7 +12,6 @@ export class ChangelogStore implements IChangelogStore {
     const { version, content, date } = data;
     const changelog = await prisma.changelog.create({
       data: {
-        id: generateId(),
         version,
         content,
         date: date || 0,
@@ -30,7 +26,7 @@ export class ChangelogStore implements IChangelogStore {
     data: Partial<ChangelogCreateReq>,
   ): Promise<Changelog | null> {
     const changelog = await prisma.changelog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data,
     });
 
@@ -39,14 +35,14 @@ export class ChangelogStore implements IChangelogStore {
 
   async delete(id: string): Promise<void> {
     await prisma.changelog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: { deletedAt: new Date() },
     });
   }
 
   async findById(id: string): Promise<Changelog | null> {
     const changelog = await prisma.changelog.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
     });
 
     if (!changelog) return null;

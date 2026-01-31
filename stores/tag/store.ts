@@ -1,8 +1,5 @@
 import { Tag, TagCreateReq, TagListReq, TagListResp } from "@/types/tag";
-
-import { generateId } from "@/lib/id";
 import { prisma } from "@/lib/prisma";
-
 import { ITagStore } from "./interface";
 
 export class TagStore implements ITagStore {
@@ -10,7 +7,6 @@ export class TagStore implements ITagStore {
     const { name, slug, description } = data;
     const tag = await prisma.tag.create({
       data: {
-        id: generateId(),
         name,
         slug,
         description,
@@ -22,7 +18,7 @@ export class TagStore implements ITagStore {
 
   async update(id: string, data: Partial<TagCreateReq>): Promise<Tag | null> {
     const tag = await prisma.tag.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data,
     });
 
@@ -31,14 +27,14 @@ export class TagStore implements ITagStore {
 
   async delete(id: string): Promise<void> {
     await prisma.tag.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: { deletedAt: new Date() },
     });
   }
 
   async findById(id: string): Promise<Tag | null> {
     const tag = await prisma.tag.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
     });
 
     if (!tag) return null;
