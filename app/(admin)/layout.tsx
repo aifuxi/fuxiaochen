@@ -1,7 +1,6 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-
 import {
   FileText,
   FolderTree,
@@ -10,10 +9,8 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-
 import { WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
-
 import { UserNav } from "./user-nav";
 
 export default async function AdminLayout({
@@ -27,10 +24,6 @@ export default async function AdminLayout({
 
   if (!session) {
     redirect("/login");
-  }
-
-  if (session.user.role !== "admin") {
-    redirect("/");
   }
 
   const navItems = [

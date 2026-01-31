@@ -93,6 +93,7 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
   role          Role      @default(visitor)
+  password      String?
   sessions      Session[]
   accounts      Account[]
 
