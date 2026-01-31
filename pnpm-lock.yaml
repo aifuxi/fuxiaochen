@@ -149,9 +149,6 @@ importers:
       rehype-highlight:
         specifier: ^7.0.0
         version: 7.0.2
-      snowflakify:
-        specifier: ^1.0.7
-        version: 1.0.7
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4835,10 +4832,6 @@ packages:
   slice-ansi@7.1.2:
     resolution: {integrity: sha512-iOBWFgUX7caIZiuutICxVgX1SdxwAVFFKwt1EvMYYec/NWO5meOJ6K5uQxhrYBdQJne4KxiqZc+KptFOWFSI9w==}
     engines: {node: '>=18'}
-
-  snowflakify@1.0.7:
-    resolution: {integrity: sha512-HMXpuKb1ZM5wRo2drLIXuiGS6UqJLAT+laRWJ3kmMF8u/Xx1S/YN9NnzONyXyLbZ/dbyFpwX5zBdzmd44JAmyQ==}
-    engines: {node: '>=14.5.0'}
 
   sonner@2.0.7:
     resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}
@@ -10324,8 +10317,6 @@ snapshots:
     dependencies:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
-
-  snowflakify@1.0.7: {}
 
   sonner@2.0.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
