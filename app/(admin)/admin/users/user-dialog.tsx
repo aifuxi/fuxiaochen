@@ -120,7 +120,10 @@ export function UserDialog({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="border-white/10 bg-white/5 text-white focus:border-neon-cyan/50">
+                      <SelectTrigger className={`
+                        border-white/10 bg-white/5 text-white
+                        focus:border-neon-cyan/50
+                      `}>
                         <SelectValue placeholder="选择角色" />
                       </SelectTrigger>
                     </FormControl>
@@ -137,7 +140,10 @@ export function UserDialog({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-neon-cyan text-black hover:bg-cyan-400"
+                className={`
+                  w-full bg-neon-cyan text-black
+                  hover:bg-cyan-400
+                `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 保存

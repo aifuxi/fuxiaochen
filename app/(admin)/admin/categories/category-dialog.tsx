@@ -119,7 +119,10 @@ export function CategoryDialog({
                   <FormControl>
                     <Input
                       placeholder="分类名称"
-                      className="border-white/10 bg-white/5 text-white focus:border-neon-cyan/50"
+                      className={`
+                        border-white/10 bg-white/5 text-white
+                        focus:border-neon-cyan/50
+                      `}
                       {...field}
                     />
                   </FormControl>
@@ -136,7 +139,10 @@ export function CategoryDialog({
                   <FormControl>
                     <Input
                       placeholder="URL 标识"
-                      className="border-white/10 bg-white/5 text-white focus:border-neon-cyan/50"
+                      className={`
+                        border-white/10 bg-white/5 text-white
+                        focus:border-neon-cyan/50
+                      `}
                       {...field}
                     />
                   </FormControl>
@@ -153,7 +159,10 @@ export function CategoryDialog({
                   <FormControl>
                     <Textarea
                       placeholder="分类描述"
-                      className="resize-none border-white/10 bg-white/5 text-white focus:border-neon-cyan/50"
+                      className={`
+                        resize-none border-white/10 bg-white/5 text-white
+                        focus:border-neon-cyan/50
+                      `}
                       {...field}
                     />
                   </FormControl>
@@ -165,7 +174,10 @@ export function CategoryDialog({
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-neon-cyan text-black hover:bg-cyan-400"
+                className={`
+                  w-full bg-neon-cyan text-black
+                  hover:bg-cyan-400
+                `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 保存
