@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-
 import { Github, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
@@ -22,7 +19,7 @@ export default function LoginPage() {
     try {
       await authClient.signIn.social({
         provider: "github",
-        callbackURL: "/",
+        callbackURL: "/admin",
       });
     } catch (_error) {
       toast.error("Login failed");
@@ -40,7 +37,7 @@ export default function LoginPage() {
           email,
           password,
           name,
-          callbackURL: "/",
+          callbackURL: "/admin",
         });
         if (error) {
           toast.error(error.message || "注册失败");
@@ -52,7 +49,7 @@ export default function LoginPage() {
         const { error } = await authClient.signIn.email({
           email,
           password,
-          callbackURL: "/",
+          callbackURL: "/admin",
         });
         if (error) {
           toast.error(error.message || "登录失败");
@@ -185,7 +182,9 @@ export default function LoginPage() {
                 <div className="w-full border-t border-white/10"></div>
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#12121a] px-2 text-gray-500">Or continue with</span>
+                <span className="bg-[#12121a] px-2 text-gray-500">
+                  Or continue with
+                </span>
               </div>
             </div>
 
@@ -216,9 +215,7 @@ export default function LoginPage() {
                   hover:text-neon-cyan
                 `}
               >
-                {isSignUp
-                  ? "已有账号？点击登录"
-                  : "没有账号？点击注册"}
+                {isSignUp ? "已有账号？点击登录" : "没有账号？点击注册"}
               </button>
             </div>
           </div>

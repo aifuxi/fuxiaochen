@@ -1,11 +1,17 @@
+import { headers } from "next/headers";
 import Link from "next/link";
 
 import { SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants/info";
+import { auth } from "@/lib/auth";
 
 import { ConnectDialog } from "./connect-dialog";
 import { MobileMenu } from "./mobile-menu";
 
-export function NeonHeader() {
+export async function NeonHeader() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
   return (
     <header className="fixed top-0 right-0 left-0 z-40 px-4 py-6">
       <nav
@@ -107,8 +113,31 @@ export function NeonHeader() {
             </svg>
           </a>
           <ConnectDialog />
+          {session ? (
+            <Link
+              href="/admin"
+              className={`
+                rounded-full border border-neon-cyan/50 px-6 py-2 text-xs font-bold tracking-widest text-neon-cyan
+                uppercase shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all duration-300
+                hover:bg-neon-cyan/20 hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]
+              `}
+            >
+              后台
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className={`
+                rounded-full border border-neon-cyan/50 px-6 py-2 text-xs font-bold tracking-widest text-neon-cyan
+                uppercase shadow-[0_0_10px_rgba(0,255,255,0.2)] transition-all duration-300
+                hover:bg-neon-cyan/20 hover:shadow-[0_0_20px_rgba(0,255,255,0.4)]
+              `}
+            >
+              登录
+            </Link>
+          )}
         </div>
-        <MobileMenu />
+        <MobileMenu user={session?.user} />
       </nav>
     </header>
   );
