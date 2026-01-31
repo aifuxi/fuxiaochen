@@ -26,6 +26,27 @@ class APIServiceClient {
 
     return resp.json() as Promise<T>;
   }
+
+  public async post<T>(
+    path: string,
+    body?: any,
+    config?: Omit<RequestInit, "method" | "body">,
+  ): Promise<T> {
+    const resp = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${path}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...config?.headers,
+        },
+        body: JSON.stringify(body),
+        ...config,
+      },
+    );
+
+    return resp.json() as Promise<T>;
+  }
 }
 
 const request = new APIServiceClient();

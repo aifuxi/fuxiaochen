@@ -1,21 +1,17 @@
 "use client";
 
 import { useState } from "react";
-
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-
 import {
   getBlogsAction,
   toggleBlogFeatureAction,
   toggleBlogPublishAction,
 } from "@/app/actions/blog";
-
-import { type Blog, type BlogListReq } from "@/types/blog";
-
+import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,10 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Pagination } from "@/components/cyberpunk/pagination";
-
-import { BlogDialog } from "./blog-dialog";
 import { DeleteAlert } from "./delete-alert";
 
 const fetcher = async (params: BlogListReq) => {
@@ -43,8 +36,6 @@ const fetcher = async (params: BlogListReq) => {
 export default function BlogManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<Blog | undefined>(undefined);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string>("");
 
@@ -94,19 +85,9 @@ export default function BlogManagementPage() {
     router.push(`?${params.toString()}`);
   };
 
-  const openEdit = (blog: Blog) => {
-    setEditingBlog(blog);
-    setDialogOpen(true);
-  };
-
   const openDelete = (id: string) => {
     setDeletingId(id);
     setDeleteOpen(true);
-  };
-
-  const openCreate = () => {
-    setEditingBlog(undefined);
-    setDialogOpen(true);
   };
 
   const handleTogglePublish = async (id: string) => {
@@ -127,15 +108,16 @@ export default function BlogManagementPage() {
         <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
           文章列表
         </h2>
-        <Button
-          onClick={openCreate}
-          className={`
-            bg-neon-cyan text-black
-            hover:bg-cyan-400
-          `}
-        >
-          <Plus className="mr-2 h-4 w-4" /> 新建文章
-        </Button>
+        <Link href="/admin/blogs/new">
+          <Button
+            className={`
+              bg-neon-cyan text-black
+              hover:bg-cyan-400
+            `}
+          >
+            <Plus className="mr-2 h-4 w-4" /> 新建文章
+          </Button>
+        </Link>
       </div>
 
       <div className="flex items-center gap-4">
@@ -256,7 +238,7 @@ export default function BlogManagementPage() {
                   <TableCell>
                     <Switch
                       checked={blog.published}
-                      onCheckedChange={() => handleTogglePublish(blog.id)}
+                      onCheckedChange={() => void handleTogglePublish(blog.id)}
                     />
                   </TableCell>
                   <TableCell>
@@ -270,17 +252,18 @@ export default function BlogManagementPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEdit(blog)}
-                        className={`
-                          text-neon-cyan
-                          hover:bg-neon-cyan/10 hover:text-neon-cyan
-                        `}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
+                      <Link href={`/admin/blogs/${blog.id}`}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className={`
+                            text-neon-cyan
+                            hover:bg-neon-cyan/10 hover:text-neon-cyan
+                          `}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </Link>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -309,13 +292,6 @@ export default function BlogManagementPage() {
           onPageChange={handlePageChange}
         />
       )}
-
-      <BlogDialog
-        blog={editingBlog}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onSuccess={() => mutate()}
-      />
 
       <DeleteAlert
         id={deletingId}
