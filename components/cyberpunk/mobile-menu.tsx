@@ -13,7 +13,14 @@ import { cn } from "@/lib/utils";
 
 import { ConnectDialog } from "./connect-dialog";
 
-export function MobileMenu() {
+interface MobileMenuProps {
+  user?: {
+    name: string;
+    image?: string | null;
+  } | null;
+}
+
+export function MobileMenu({ user }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
@@ -28,6 +35,9 @@ export function MobileMenu() {
     { href: "/changelog", label: "日志" },
     { href: "/cover-generator", label: "工具" },
     { href: "/about", label: "关于" },
+    ...(user
+      ? [{ href: "/admin", label: "后台" }]
+      : [{ href: "/login", label: "登录" }]),
   ];
 
   return (
