@@ -1,17 +1,7 @@
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  FileText,
-  FolderTree,
-  LayoutDashboard,
-  Settings,
-  Tag,
-  Users,
-} from "lucide-react";
-import { WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
-import { UserNav } from "./user-nav";
+import { AdminSidebar } from "./admin-sidebar";
 
 export default async function AdminLayout({
   children,
@@ -26,60 +16,15 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const navItems = [
-    { href: "/admin/dashboard", label: "仪表盘", icon: LayoutDashboard },
-    { href: "/admin/categories", label: "分类管理", icon: FolderTree },
-    { href: "/admin/tags", label: "标签管理", icon: Tag },
-    { href: "/admin/blogs", label: "博客管理", icon: FileText },
-    { href: "/admin/users", label: "用户管理", icon: Users },
-    { href: "/admin/settings", label: "系统设置", icon: Settings },
-  ];
-
   return (
     <div className="flex min-h-screen bg-cyber-black font-mono text-gray-300">
-      {/* Sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-50 w-64 border-r border-neon-cyan/20 bg-black/90 backdrop-blur-xl">
-        <div className="flex h-16 items-center border-b border-neon-cyan/20 px-6">
-          <Link
-            href="/"
-            className="text-xl font-bold tracking-widest text-neon-cyan uppercase"
-          >
-            {WEBSITE}
-            <span className="text-neon-purple">.ADMIN</span>
-          </Link>
-        </div>
-
-        <nav className="space-y-1 p-4">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`
-                group flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-300
-                hover:bg-neon-cyan/10 hover:text-neon-cyan hover:shadow-[0_0_15px_rgba(0,255,255,0.2)]
-              `}
-            >
-              <item.icon
-                className={`
-                  h-5 w-5 transition-transform
-                  group-hover:scale-110
-                `}
-              />
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="absolute bottom-0 w-full border-t border-neon-cyan/20 p-4">
-          <UserNav
-            user={{
-              name: session.user.name,
-              role: session.user.role || "visitor",
-              image: session.user.image,
-            }}
-          />
-        </div>
-      </aside>
+      <AdminSidebar
+        user={{
+          name: session.user.name,
+          role: session.user.role || "visitor",
+          image: session.user.image,
+        }}
+      />
 
       {/* Main Content */}
       <main className="ml-64 flex-1">
