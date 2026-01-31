@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import { format } from "date-fns";
-import { ArrowUpDown, Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
+import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 
 import { getCategoriesAction } from "@/app/actions/category";
@@ -96,7 +96,10 @@ export default function CategoryManagementPage() {
             setEditingCategory(undefined);
             setDialogOpen(true);
           }}
-          className="bg-neon-cyan text-black hover:bg-cyan-400"
+          className={`
+            bg-neon-cyan text-black
+            hover:bg-cyan-400
+          `}
         >
           <Plus className="mr-2 h-4 w-4" />
           新增分类
@@ -106,12 +109,15 @@ export default function CategoryManagementPage() {
       <div className="flex items-center gap-4">
         <form onSubmit={handleSearch} className="flex-1">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <Input
               name="query"
               placeholder="搜索分类..."
               defaultValue={name}
-              className="border-white/10 bg-white/5 pl-10 text-white focus:border-neon-cyan/50"
+              className={`
+                border-white/10 bg-white/5 pl-10 text-white
+                focus:border-neon-cyan/50
+              `}
             />
           </div>
         </form>
@@ -120,7 +126,12 @@ export default function CategoryManagementPage() {
       <div className="rounded-md border border-neon-cyan/20 bg-black/50 backdrop-blur-sm">
         <Table>
           <TableHeader>
-            <TableRow className="border-white/10 hover:bg-white/5">
+            <TableRow
+              className={`
+                border-white/10
+                hover:bg-white/5
+              `}
+            >
               <TableHead className="text-neon-cyan">名称</TableHead>
               <TableHead className="text-neon-cyan">Slug</TableHead>
               <TableHead className="text-neon-cyan">描述</TableHead>
@@ -152,7 +163,10 @@ export default function CategoryManagementPage() {
               data?.lists?.map((category) => (
                 <TableRow
                   key={category.id}
-                  className="border-white/10 hover:bg-white/5"
+                  className={`
+                    border-white/10
+                    hover:bg-white/5
+                  `}
                 >
                   <TableCell className="font-medium text-white">
                     {category.name}
@@ -180,7 +194,10 @@ export default function CategoryManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(category)}
-                        className="text-gray-400 hover:text-neon-cyan hover:bg-neon-cyan/10"
+                        className={`
+                          text-gray-400
+                          hover:bg-neon-cyan/10 hover:text-neon-cyan
+                        `}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -188,7 +205,10 @@ export default function CategoryManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openDelete(category.id)}
-                        className="text-gray-400 hover:text-red-500 hover:bg-red-500/10"
+                        className={`
+                          text-gray-400
+                          hover:bg-red-500/10 hover:text-red-500
+                        `}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
