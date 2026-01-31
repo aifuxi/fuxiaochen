@@ -6,7 +6,6 @@ import {
   FileText,
   FolderTree,
   LayoutDashboard,
-  Settings,
   Tag,
   Users,
 } from "lucide-react";
@@ -19,7 +18,6 @@ const navItems = [
   { href: "/admin/tags", label: "标签管理", icon: Tag },
   { href: "/admin/blogs", label: "博客管理", icon: FileText },
   { href: "/admin/users", label: "用户管理", icon: Users },
-  { href: "/admin/settings", label: "系统设置", icon: Settings },
 ];
 
 interface AdminSidebarProps {
