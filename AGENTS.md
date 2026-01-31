@@ -51,13 +51,12 @@
 
 - **app/**: Next.js App Router 路由。
   - `(portal)/`: 前台页面 (Blog, About, Changelog)。
-  - `admin/`: 后台管理页面 (优先使用 Client Components)。
+  - `(admin)/`: 后台管理页面 (优先使用 Client Components)。
 - **components/**: UI 组件库。
   - `ui/`: 基础 UI 组件 (封装 Radix UI)。
   - `blog/`: 博客相关业务组件。
   - `cyberpunk/`: 特色主题组件。
 - **lib/**: 核心工具库。
-  - `api-client.ts`: 统一的 API 请求客户端 (Fetch wrapper with error handling)。
   - `prisma.ts`: Prisma 数据库实例配置。
   - `utils.ts`: 通用工具函数。
 - **prisma/**: 数据库 Schema (`schema.prisma`) 和迁移文件。
