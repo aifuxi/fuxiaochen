@@ -41,10 +41,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import copyCodePlugin from "@/components/blog/plugin-copy-code";
 import headingsPlugin from "@/components/blog/plugin-headings";
+import { NeonSwitch } from "@/components/cyberpunk/neon-switch";
 import "bytemd/dist/index.css";
 
 const plugins = [
@@ -374,7 +374,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                     </FormLabel>
                   </div>
                   <FormControl>
-                    <Switch
+                    <NeonSwitch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -397,7 +397,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                     </FormLabel>
                   </div>
                   <FormControl>
-                    <Switch
+                    <NeonSwitch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />

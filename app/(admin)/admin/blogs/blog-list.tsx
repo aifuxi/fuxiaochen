@@ -16,7 +16,7 @@ import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { NeonSwitch } from "@/components/cyberpunk/neon-switch";
 import {
   Table,
   TableBody,
@@ -252,14 +252,14 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Switch
+                    <NeonSwitch
                       checked={blog.published}
                       disabled={!isAdmin}
                       onCheckedChange={() => void handleTogglePublish(blog.id)}
                     />
                   </TableCell>
                   <TableCell>
-                    <Switch
+                    <NeonSwitch
                       checked={blog.featured}
                       disabled={!isAdmin}
                       onCheckedChange={() => void handleToggleFeature(blog.id)}
