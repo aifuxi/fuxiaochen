@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { format } from "date-fns";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-
 import { getCategoriesAction } from "@/app/actions/category";
-
 import { type Category, type CategoryListReq } from "@/types/category";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Pagination } from "@/components/cyberpunk/pagination";
-
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
 
@@ -35,7 +28,14 @@ const fetcher = async (params: CategoryListReq) => {
   return res.data;
 };
 
-export default function CategoryManagementPage() {
+interface CategoryManagementPageProps {
+  role?: string;
+}
+
+export default function CategoryManagementPage({
+  role,
+}: CategoryManagementPageProps) {
+  const isAdmin = role === "admin";
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -91,19 +91,21 @@ export default function CategoryManagementPage() {
           </h2>
           <p className="text-gray-400">管理博客文章的分类体系</p>
         </div>
-        <Button
-          onClick={() => {
-            setEditingCategory(undefined);
-            setDialogOpen(true);
-          }}
-          className={`
-            bg-neon-cyan text-black
-            hover:bg-cyan-400
-          `}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          新增分类
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={() => {
+              setEditingCategory(undefined);
+              setDialogOpen(true);
+            }}
+            className={`
+              bg-neon-cyan text-black
+              hover:bg-cyan-400
+            `}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            新增分类
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -189,30 +191,32 @@ export default function CategoryManagementPage() {
                     {format(new Date(category.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEdit(category)}
-                        className={`
-                          text-gray-400
-                          hover:bg-neon-cyan/10 hover:text-neon-cyan
-                        `}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(category.id)}
-                        className={`
-                          text-gray-400
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    {isAdmin && (
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEdit(category)}
+                          className={`
+                            text-gray-400
+                            hover:bg-neon-cyan/10 hover:text-neon-cyan
+                          `}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openDelete(category.id)}
+                          className={`
+                            text-gray-400
+                            hover:bg-red-500/10 hover:text-red-500
+                          `}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))

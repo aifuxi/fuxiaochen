@@ -1,8 +1,10 @@
-import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { notFound, redirect } from "next/navigation";
 
 import { getBlogByIdAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
+import { auth } from "@/lib/auth";
 
 import { BlogForm } from "../blog-form";
 
@@ -11,6 +13,14 @@ interface EditBlogPageProps {
 }
 
 export default async function EditBlogPage({ params }: EditBlogPageProps) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (session?.user?.role !== "admin") {
+    redirect("/admin/blogs");
+  }
+
   const { id } = await params;
   const [blogRes, categoriesRes, tagsRes] = await Promise.all([
     getBlogByIdAction(id),

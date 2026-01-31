@@ -1,87 +1,87 @@
 datasource db {
-    provider = "mysql"
+  provider = "mysql"
 }
 
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 model Blog {
-    id        BigInt    @id
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  id        BigInt    @id
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    title       String    @unique @db.VarChar(255)
-    slug        String    @unique @db.VarChar(255)
-    description String    @db.Text
-    cover       String?   @db.VarChar(255)
-    content     String    @db.LongText
-    published   Boolean   @default(false)
-    publishedAt DateTime? @map("published_at")
-    featured    Boolean   @default(false)
+  title       String    @unique @db.VarChar(255)
+  slug        String    @unique @db.VarChar(255)
+  description String    @db.Text
+  cover       String?   @db.VarChar(255)
+  content     String    @db.LongText
+  published   Boolean   @default(false)
+  publishedAt DateTime? @map("published_at")
+  featured    Boolean   @default(false)
 
-    categoryId BigInt   @map("category_id")
-    category   Category @relation(fields: [categoryId], references: [id])
+  categoryId BigInt   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
 
-    tags BlogTag[]
+  tags BlogTag[]
 
-    @@map("blogs")
+  @@map("blogs")
 }
 
 model Category {
-    id        BigInt    @id
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  id        BigInt    @id
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    name        String  @unique @db.VarChar(255)
-    slug        String  @unique @db.VarChar(255)
-    description String? @db.VarChar(255)
+  name        String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String? @db.VarChar(255)
 
-    blogs Blog[]
+  blogs Blog[]
 
-    @@map("categories")
+  @@map("categories")
 }
 
 model Tag {
-    id        BigInt    @id
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  id        BigInt    @id
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    name        String  @unique @db.VarChar(255)
-    slug        String  @unique @db.VarChar(255)
-    description String? @db.VarChar(255)
+  name        String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String? @db.VarChar(255)
 
-    blogs BlogTag[]
+  blogs BlogTag[]
 
-    @@map("tags")
+  @@map("tags")
 }
 
 model BlogTag {
-    blogId BigInt @map("blog_id")
-    tagId  BigInt @map("tag_id")
+  blogId BigInt @map("blog_id")
+  tagId  BigInt @map("tag_id")
 
-    blog Blog @relation(fields: [blogId], references: [id])
-    tag  Tag  @relation(fields: [tagId], references: [id])
+  blog Blog @relation(fields: [blogId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
 
-    @@id([blogId, tagId])
-    @@map("blog_tags")
+  @@id([blogId, tagId])
+  @@map("blog_tags")
 }
 
 model Changelog {
-    id        BigInt    @id
-    createdAt DateTime  @default(now()) @map("created_at")
-    updatedAt DateTime  @updatedAt @map("updated_at")
-    deletedAt DateTime? @map("deleted_at")
+  id        BigInt    @id
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
 
-    version String  @db.VarChar(50)
-    content String  @db.Text
-    date    BigInt? @default(0)
+  version String  @db.VarChar(50)
+  content String  @db.Text
+  date    BigInt? @default(0)
 
-    @@map("changelogs")
+  @@map("changelogs")
 }
 
 model User {
@@ -89,11 +89,11 @@ model User {
   name          String
   email         String
   emailVerified Boolean
-  image         String?
+  image         String?   @db.Text
   createdAt     DateTime
   updatedAt     DateTime
   role          Role      @default(visitor)
-  password      String?
+  password      String?   @db.Text
   sessions      Session[]
   accounts      Account[]
 
@@ -127,9 +127,9 @@ model Account {
   providerId            String
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String?
@@ -142,8 +142,8 @@ model Account {
 
 model Verification {
   id         String    @id @default(cuid())
-  identifier String
-  value      String
+  identifier String    @db.Text
+  value      String    @db.Text
   expiresAt  DateTime
   createdAt  DateTime?
   updatedAt  DateTime?

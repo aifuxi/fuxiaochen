@@ -1,9 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import { type CategoryCreateReq, type CategoryListReq } from "@/types/category";
-
+import { checkAdmin } from "@/lib/auth-guard";
 import { categoryStore } from "@/stores/category";
 
 export async function getCategoriesAction(params?: CategoryListReq) {
@@ -29,6 +28,7 @@ export async function getCategoryByIdAction(id: string) {
 
 export async function createCategoryAction(data: CategoryCreateReq) {
   try {
+    await checkAdmin();
     const result = await categoryStore.create(data);
     revalidatePath("/admin/categories");
     return { success: true, data: result };
@@ -42,6 +42,7 @@ export async function updateCategoryAction(
   data: Partial<CategoryCreateReq>,
 ) {
   try {
+    await checkAdmin();
     const result = await categoryStore.update(id, data);
     revalidatePath("/admin/categories");
     return { success: true, data: result };
@@ -52,6 +53,7 @@ export async function updateCategoryAction(
 
 export async function deleteCategoryAction(id: string) {
   try {
+    await checkAdmin();
     await categoryStore.delete(id);
     revalidatePath("/admin/categories");
     return { success: true };

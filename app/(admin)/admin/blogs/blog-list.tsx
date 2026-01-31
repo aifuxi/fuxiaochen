@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 import {
   getBlogsAction,
@@ -33,7 +34,12 @@ const fetcher = async (params: BlogListReq) => {
   return res.data;
 };
 
-export default function BlogManagementPage() {
+interface BlogManagementPageProps {
+  role?: string;
+}
+
+export default function BlogManagementPage({ role }: BlogManagementPageProps) {
+  const isAdmin = role === "admin";
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -91,11 +97,19 @@ export default function BlogManagementPage() {
   };
 
   const handleTogglePublish = async (id: string) => {
+    if (!isAdmin) {
+      toast.error("无权限");
+      return;
+    }
     await toggleBlogPublishAction(id);
     mutate();
   };
 
   const handleToggleFeature = async (id: string) => {
+    if (!isAdmin) {
+      toast.error("无权限");
+      return;
+    }
     await toggleBlogFeatureAction(id);
     mutate();
   };
@@ -108,16 +122,18 @@ export default function BlogManagementPage() {
         <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
           文章列表
         </h2>
-        <Link href="/admin/blogs/new">
-          <Button
-            className={`
-              bg-neon-cyan text-black
-              hover:bg-cyan-400
-            `}
-          >
-            <Plus className="mr-2 h-4 w-4" /> 新建文章
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link href="/admin/blogs/new">
+            <Button
+              className={`
+                bg-neon-cyan text-black
+                hover:bg-cyan-400
+              `}
+            >
+              <Plus className="mr-2 h-4 w-4" /> 新建文章
+            </Button>
+          </Link>
+        )}
       </div>
 
       <div className="flex items-center gap-4">
@@ -238,12 +254,14 @@ export default function BlogManagementPage() {
                   <TableCell>
                     <Switch
                       checked={blog.published}
+                      disabled={!isAdmin}
                       onCheckedChange={() => void handleTogglePublish(blog.id)}
                     />
                   </TableCell>
                   <TableCell>
                     <Switch
                       checked={blog.featured}
+                      disabled={!isAdmin}
                       onCheckedChange={() => void handleToggleFeature(blog.id)}
                     />
                   </TableCell>
@@ -251,31 +269,33 @@ export default function BlogManagementPage() {
                     {format(new Date(blog.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Link href={`/admin/blogs/${blog.id}`}>
+                    {isAdmin && (
+                      <div className="flex justify-end gap-2">
+                        <Link href={`/admin/blogs/${blog.id}`}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`
+                              text-neon-cyan
+                              hover:bg-neon-cyan/10 hover:text-neon-cyan
+                            `}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="icon"
+                          onClick={() => openDelete(blog.id)}
                           className={`
-                            text-neon-cyan
-                            hover:bg-neon-cyan/10 hover:text-neon-cyan
+                            text-red-500
+                            hover:bg-red-500/10 hover:text-red-500
                           `}
                         >
-                          <Edit className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      </Link>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(blog.id)}
-                        className={`
-                          text-red-500
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
