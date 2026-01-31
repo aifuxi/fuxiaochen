@@ -1,10 +1,12 @@
-import { Blog, BlogCreateReq, BlogListReq, BlogListResp } from "@/types/blog";
-
-import { Prisma } from "@/generated/prisma/client";
-import { generateId } from "@/lib/id";
+import {
+  type Blog,
+  type BlogCreateReq,
+  type BlogListReq,
+  type BlogListResp,
+} from "@/types/blog";
+import { type Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-
-import { IBlogStore } from "./interface";
+import { type IBlogStore } from "./interface";
 
 export class BlogStore implements IBlogStore {
   async create(data: BlogCreateReq): Promise<Blog> {
@@ -22,7 +24,6 @@ export class BlogStore implements IBlogStore {
 
     const blog = await prisma.blog.create({
       data: {
-        id: generateId(),
         title,
         slug,
         description,
@@ -32,13 +33,13 @@ export class BlogStore implements IBlogStore {
         featured: featured || false,
         publishedAt: published ? new Date() : null,
         category: {
-          connect: { id: BigInt(categoryId) },
+          connect: { id: categoryId },
         },
         tags: tags
           ? {
               create: tags.map((tagId) => ({
                 tag: {
-                  connect: { id: BigInt(tagId) },
+                  connect: { id: tagId },
                 },
               })),
             }
@@ -64,28 +65,28 @@ export class BlogStore implements IBlogStore {
 
     if (categoryId) {
       updateData.category = {
-        connect: { id: BigInt(categoryId) },
+        connect: { id: categoryId },
       };
     }
 
     if (tags) {
       // First delete existing tags
       await prisma.blogTag.deleteMany({
-        where: { blogId: BigInt(id) },
+        where: { blogId: id },
       });
 
       // Then create new ones
       updateData.tags = {
         create: tags.map((tagId) => ({
           tag: {
-            connect: { id: BigInt(tagId) },
+            connect: { id: tagId },
           },
         })),
       };
     }
 
     const blog = await prisma.blog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: updateData,
       include: {
         category: true,
@@ -102,14 +103,14 @@ export class BlogStore implements IBlogStore {
 
   async delete(id: string): Promise<void> {
     await prisma.blog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: { deletedAt: new Date() },
     });
   }
 
   async findById(id: string): Promise<Blog | null> {
     const blog = await prisma.blog.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
       include: {
         category: true,
         tags: {
@@ -161,12 +162,12 @@ export class BlogStore implements IBlogStore {
     if (featured !== undefined) where.featured = featured;
     if (featuredStatus === "featured") where.featured = true;
     if (featuredStatus === "unfeatured") where.featured = false;
-    if (categoryId) where.categoryId = BigInt(categoryId);
+    if (categoryId) where.categoryId = categoryId;
 
     if (tagId) {
       where.tags = {
         some: {
-          tagId: BigInt(tagId),
+          tagId: tagId,
         },
       };
     }
@@ -197,13 +198,13 @@ export class BlogStore implements IBlogStore {
 
   async togglePublish(id: string): Promise<Blog | null> {
     const blog = await prisma.blog.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
     });
 
     if (!blog) return null;
 
     const updatedBlog = await prisma.blog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: {
         published: !blog.published,
         publishedAt: !blog.published ? new Date() : null,
@@ -223,13 +224,13 @@ export class BlogStore implements IBlogStore {
 
   async toggleFeature(id: string): Promise<Blog | null> {
     const blog = await prisma.blog.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: id },
     });
 
     if (!blog) return null;
 
     const updatedBlog = await prisma.blog.update({
-      where: { id: BigInt(id) },
+      where: { id: id },
       data: {
         featured: !blog.featured,
       },

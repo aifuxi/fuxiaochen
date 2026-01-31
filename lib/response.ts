@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
 
-// Handle BigInt serialization
-(BigInt.prototype as any).toJSON = function () {
-  return this.toString();
-};
-
 export interface ResponseData {
   code: number;
   message: string;

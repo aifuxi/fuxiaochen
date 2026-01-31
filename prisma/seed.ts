@@ -3,7 +3,6 @@ import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import { PrismaClient } from "../generated/prisma/client";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -44,7 +43,7 @@ async function main() {
   console.log("Seeding Categories...");
   for (const cat of categoriesData.data.lists) {
     await prisma.category.upsert({
-      where: { id: BigInt(cat.id) },
+      where: { id: cat.id },
       update: {
         name: cat.name,
         slug: cat.slug,
@@ -52,7 +51,7 @@ async function main() {
         updatedAt: new Date(cat.updatedAt),
       },
       create: {
-        id: BigInt(cat.id),
+        id: cat.id,
         name: cat.name,
         slug: cat.slug,
         description: cat.description,
@@ -67,7 +66,7 @@ async function main() {
   console.log("Seeding Tags...");
   for (const tag of tagsData.data.lists) {
     await prisma.tag.upsert({
-      where: { id: BigInt(tag.id) },
+      where: { id: tag.id },
       update: {
         name: tag.name,
         slug: tag.slug,
@@ -75,7 +74,7 @@ async function main() {
         updatedAt: new Date(tag.updatedAt),
       },
       create: {
-        id: BigInt(tag.id),
+        id: tag.id,
         name: tag.name,
         slug: tag.slug,
         description: tag.description,
@@ -106,11 +105,11 @@ async function main() {
 
     // Let's try nested write with deleteMany + create
     const tagIds = blog.tags
-      ? blog.tags.map((t: any) => ({ tagId: BigInt(t.id) }))
+      ? blog.tags.map((t: any) => ({ tagId: t.id }))
       : [];
 
     await prisma.blog.upsert({
-      where: { id: BigInt(blog.id) },
+      where: { id: blog.id },
       update: {
         title: blog.title,
         slug: blog.slug,
@@ -121,7 +120,7 @@ async function main() {
         publishedAt: publishedAt,
         featured: blog.featured,
         updatedAt: new Date(blog.updatedAt),
-        categoryId: BigInt(blog.categoryID),
+        categoryId: blog.categoryID,
         tags: {
           deleteMany: {}, // Remove all existing relationships
           create: tagIds.map((t: any) => ({
@@ -130,7 +129,7 @@ async function main() {
         },
       },
       create: {
-        id: BigInt(blog.id),
+        id: blog.id,
         title: blog.title,
         slug: blog.slug,
         description: blog.description,
@@ -141,7 +140,7 @@ async function main() {
         featured: blog.featured,
         createdAt: new Date(blog.createdAt),
         updatedAt: new Date(blog.updatedAt),
-        categoryId: BigInt(blog.categoryID),
+        categoryId: blog.categoryID,
         tags: {
           create: tagIds.map((t: any) => ({
             tag: { connect: { id: t.tagId } },
@@ -156,18 +155,18 @@ async function main() {
   console.log("Seeding Changelogs...");
   for (const log of changelogsData.data.lists) {
     await prisma.changelog.upsert({
-      where: { id: BigInt(log.id) },
+      where: { id: log.id },
       update: {
         version: log.version,
         content: log.content,
-        date: log.date ? BigInt(log.date) : 0,
+        date: log.date ? new Date(log.date) : null,
         updatedAt: new Date(log.updatedAt),
       },
       create: {
-        id: BigInt(log.id),
+        id: log.id,
         version: log.version,
         content: log.content,
-        date: log.date ? BigInt(log.date) : 0,
+        date: log.date ? new Date(log.date) : null,
         createdAt: new Date(log.createdAt),
         updatedAt: new Date(log.updatedAt),
       },
