@@ -13,6 +13,7 @@ import { ChevronsUpDown, Loader2 } from "lucide-react";
 import * as z from "zod";
 import "highlight.js/styles/atom-one-dark.css";
 import { createBlogAction, updateBlogAction } from "@/app/actions/blog";
+import { getPresignUploadInfo } from "@/app/actions/upload";
 import { type Blog } from "@/types/blog";
 import { type Category } from "@/types/category";
 import { type Tag } from "@/types/tag";
@@ -347,6 +348,53 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                     <Editor
                       value={field.value}
                       plugins={plugins}
+                      uploadImages={async (files) => {
+                        const result = await Promise.all(
+                          files.map(
+                            async (
+                              file,
+                            ): Promise<
+                              {
+                                url: string;
+                                name: string;
+                                title: string;
+                                alt: string;
+                              }[]
+                            > => {
+                              const presignRes = await getPresignUploadInfo(
+                                file.name,
+                              );
+
+                              if (!presignRes.success || !presignRes.data) {
+                                return [];
+                              }
+
+                              const { uploadUrl, signedHeaders, name, url } =
+                                presignRes.data || {};
+
+                              const res = await fetch(uploadUrl, {
+                                method: "PUT",
+                                headers: signedHeaders,
+                                body: files[0],
+                              });
+
+                              if (res.ok) {
+                                return [
+                                  {
+                                    url: url || "",
+                                    name: name || "",
+                                    title: name || "",
+                                    alt: name || "",
+                                  },
+                                ];
+                              }
+                              return [];
+                            },
+                          ),
+                        );
+
+                        return result.flat();
+                      }}
                       onChange={(v) => {
                         field.onChange(v);
                       }}

@@ -1,11 +1,11 @@
 import {
-  Changelog,
-  ChangelogCreateReq,
-  ChangelogListReq,
-  ChangelogListResp,
+  type Changelog,
+  type ChangelogCreateReq,
+  type ChangelogListReq,
+  type ChangelogListResp,
 } from "@/types/changelog";
 import { prisma } from "@/lib/prisma";
-import { IChangelogStore } from "./interface";
+import { type IChangelogStore } from "./interface";
 
 export class ChangelogStore implements IChangelogStore {
   async create(data: ChangelogCreateReq): Promise<Changelog> {
@@ -14,7 +14,7 @@ export class ChangelogStore implements IChangelogStore {
       data: {
         version,
         content,
-        date: date || 0,
+        date: date ? new Date(date) : null,
       },
     });
 
@@ -27,7 +27,10 @@ export class ChangelogStore implements IChangelogStore {
   ): Promise<Changelog | null> {
     const changelog = await prisma.changelog.update({
       where: { id: id },
-      data,
+      data: {
+        ...data,
+        date: data.date ? new Date(data.date) : null,
+      },
     });
 
     return this.mapToDomain(changelog);

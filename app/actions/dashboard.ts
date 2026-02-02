@@ -1,46 +1,13 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { dashboardStore } from "@/stores/dashboard";
 
 export async function getDashboardStatsAction() {
   try {
-    const [
-      blogCount,
-      publishedBlogCount,
-      categoryCount,
-      tagCount,
-      userCount,
-      recentBlogs,
-    ] = await Promise.all([
-      prisma.blog.count(),
-      prisma.blog.count({ where: { published: true } }),
-      prisma.category.count(),
-      prisma.tag.count(),
-      prisma.user.count(),
-      prisma.blog.findMany({
-        take: 5,
-        orderBy: { createdAt: "desc" },
-        include: {
-          category: true,
-          tags: {
-            include: {
-              tag: true,
-            },
-          },
-        },
-      }),
-    ]);
-
+    const result = await dashboardStore.getDashboardStats();
     return {
       success: true,
-      data: {
-        blogCount,
-        publishedBlogCount,
-        categoryCount,
-        tagCount,
-        userCount,
-        recentBlogs,
-      },
+      data: result,
     };
   } catch (error) {
     console.error("Failed to fetch dashboard stats:", error);

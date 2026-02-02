@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { ChangelogCreateReq, ChangelogListReq } from "@/types/changelog";
+import { type ChangelogCreateReq, type ChangelogListReq } from "@/types/changelog";
 
 import { changelogStore } from "@/stores/changelog";
 

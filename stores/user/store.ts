@@ -1,13 +1,13 @@
 import {
-  User,
-  UserListReq,
-  UserListResp,
-  UserUpdateReq,
+  type User,
+  type UserListReq,
+  type UserListResp,
+  type UserUpdateReq,
 } from "@/types/user";
 
 import { prisma } from "@/lib/prisma";
 
-import { IUserStore } from "./interface";
+import { type IUserStore } from "./interface";
 
 export class UserStore implements IUserStore {
   async update(id: string, data: UserUpdateReq): Promise<User | null> {

@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import { format } from "date-fns";
 import {
   ArrowRight,
@@ -8,17 +7,10 @@ import {
   Tag as TagIcon,
   Users,
 } from "lucide-react";
-
 import { getDashboardStatsAction } from "@/app/actions/dashboard";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -88,11 +80,13 @@ export default async function DashboardPage() {
         </h2>
       </div>
 
-      <div className={`
-        grid gap-6
-        md:grid-cols-2
-        lg:grid-cols-4
-      `}>
+      <div
+        className={`
+          grid gap-6
+          md:grid-cols-2
+          lg:grid-cols-4
+        `}
+      >
         {stats.map((stat) => (
           <Link key={stat.title} href={stat.href}>
             <Card
@@ -105,16 +99,20 @@ export default async function DashboardPage() {
                 <CardTitle className="text-sm font-medium text-gray-400">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className={`
-                  h-4 w-4
-                  ${stat.color}
-                `} />
+                <stat.icon
+                  className={`
+                    h-4 w-4
+                    ${stat.color}
+                  `}
+                />
               </CardHeader>
               <CardContent>
-                <div className={`
-                  text-2xl font-bold
-                  ${stat.color}
-                `}>
+                <div
+                  className={`
+                    text-2xl font-bold
+                    ${stat.color}
+                  `}
+                >
                   {stat.value}
                 </div>
                 {stat.description && (
@@ -145,10 +143,12 @@ export default async function DashboardPage() {
 
         <Table>
           <TableHeader>
-            <TableRow className={`
-              border-white/10
-              hover:bg-white/5
-            `}>
+            <TableRow
+              className={`
+                border-white/10
+                hover:bg-white/5
+              `}
+            >
               <TableHead className="text-neon-purple">标题</TableHead>
               <TableHead className="text-neon-purple">分类</TableHead>
               <TableHead className="text-neon-purple">标签</TableHead>
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {blog.tags && blog.tags.length > 0
-                        ? blog.tags.map(({ tag }) => (
+                        ? blog.tags.map((tag) => (
                             <Badge
                               key={tag.id}
                               variant="secondary"
