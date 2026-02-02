@@ -1,8 +1,8 @@
 import {
-  Changelog,
-  ChangelogCreateReq,
-  ChangelogListReq,
-  ChangelogListResp,
+  type Changelog,
+  type ChangelogCreateReq,
+  type ChangelogListReq,
+  type ChangelogListResp,
 } from "@/types/changelog";
 
 export interface IChangelogStore {

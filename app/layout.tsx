@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
-
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
 import "@/styles/global.css";
@@ -33,6 +31,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="dark scroll-smooth">
+      {/* Google Search Console 验证 */}
+      {isProduction() &&
+        process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (
+          <meta
+            name="google-site-verification"
+            content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
+          />
+        )}
       <body
         className={`
           bg-cyber-black text-white antialiased
@@ -45,17 +51,21 @@ export default function RootLayout({
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && <GoogleAnalytics gaId="G-1MVP2JY3JG" />}
+      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
+      )}
 
       {/* umami 统计 */}
-      {isProduction() && (
-        <Script
-          id="umami"
-          src={process.env.NEXT_PUBLIC_UMAMI_URL}
-          async
-          data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-        />
-      )}
+      {isProduction() &&
+        process.env.NEXT_PUBLIC_UMAMI_URL &&
+        process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script
+            id="umami"
+            src={process.env.NEXT_PUBLIC_UMAMI_URL}
+            async
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+          />
+        )}
     </html>
   );
 }

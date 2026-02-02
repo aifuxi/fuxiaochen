@@ -5,7 +5,6 @@ import prettier from "eslint-config-prettier/flat";
 import checkFile from "eslint-plugin-check-file";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
-
 import eslintPluginBetterTailwindcss from "eslint-plugin-better-tailwindcss";
 
 export default defineConfig([
@@ -49,7 +48,7 @@ export default defineConfig([
       "no-console": "warn",
       "@next/next/no-img-element": "off",
       "@typescript-eslint/consistent-type-imports": [
-        "warn",
+        "error",
         {
           prefer: "type-imports",
           fixStyle: "inline-type-imports",

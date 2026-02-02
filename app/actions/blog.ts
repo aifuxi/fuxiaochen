@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { BlogCreateReq, BlogListReq } from "@/types/blog";
+import { type BlogCreateReq, type BlogListReq } from "@/types/blog";
 import { checkAdmin } from "@/lib/auth-guard";
 import { blogStore } from "@/stores/blog";
 

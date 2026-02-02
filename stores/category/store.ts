@@ -1,11 +1,11 @@
 import {
-  Category,
-  CategoryCreateReq,
-  CategoryListReq,
-  CategoryListResp,
+  type Category,
+  type CategoryCreateReq,
+  type CategoryListReq,
+  type CategoryListResp,
 } from "@/types/category";
 import { prisma } from "@/lib/prisma";
-import { ICategoryStore } from "./interface";
+import { type ICategoryStore } from "./interface";
 
 export class CategoryStore implements ICategoryStore {
   async create(data: CategoryCreateReq): Promise<Category> {
