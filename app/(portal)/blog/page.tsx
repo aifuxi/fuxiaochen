@@ -1,10 +1,7 @@
 import { Suspense } from "react";
-
 import Link from "next/link";
-
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
-
 import { BlogList } from "@/components/blog/blog-list";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
 
@@ -28,9 +25,6 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     getCategoriesAction({ page: 1, pageSize: 100 }),
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
-
-  console.log("categoriesData", JSON.stringify(categoriesData));
-  console.log("tagsData", JSON.stringify(tagsData));
 
   return (
     <div

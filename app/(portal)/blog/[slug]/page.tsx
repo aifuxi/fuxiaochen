@@ -2,11 +2,8 @@ import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { format } from "date-fns";
-
 import { getBlogBySlugAction } from "@/app/actions/blog";
-
 import BlogContent from "@/components/blog/blog-content";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 
@@ -132,7 +129,7 @@ export default async function BlogDetailPage({
           >
             <div
               className={`
-                glass-panel relative h-fit overflow-hidden rounded-2xl p-8
+                glass-panel relative h-fit overflow-hidden rounded-md p-8
                 md:p-12
               `}
             >

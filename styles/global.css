@@ -48,6 +48,15 @@
   --color-cyber-text: #e0e0ff;
 
   --animate-glitch: glitch 1s linear infinite;
+
+  --radius: 0px;
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
