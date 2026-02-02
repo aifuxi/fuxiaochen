@@ -1,8 +1,8 @@
 import {
-  Category,
-  CategoryCreateReq,
-  CategoryListReq,
-  CategoryListResp,
+  type Category,
+  type CategoryCreateReq,
+  type CategoryListReq,
+  type CategoryListResp,
 } from "@/types/category";
 
 export interface ICategoryStore {

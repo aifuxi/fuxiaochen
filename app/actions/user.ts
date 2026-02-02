@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { UserListReq, UserUpdateReq } from "@/types/user";
+import { type UserListReq, type UserUpdateReq } from "@/types/user";
 import { checkAdmin } from "@/lib/auth-guard";
 import { userStore } from "@/stores/user";
 

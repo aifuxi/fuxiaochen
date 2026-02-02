@@ -1,6 +1,6 @@
-import { Tag, TagCreateReq, TagListReq, TagListResp } from "@/types/tag";
+import { type Tag, type TagCreateReq, type TagListReq, type TagListResp } from "@/types/tag";
 import { prisma } from "@/lib/prisma";
-import { ITagStore } from "./interface";
+import { type ITagStore } from "./interface";
 
 export class TagStore implements ITagStore {
   async create(data: TagCreateReq): Promise<Tag> {

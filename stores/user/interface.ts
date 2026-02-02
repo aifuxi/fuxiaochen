@@ -1,8 +1,8 @@
 import {
-  User,
-  UserListReq,
-  UserListResp,
-  UserUpdateReq,
+  type User,
+  type UserListReq,
+  type UserListResp,
+  type UserUpdateReq,
 } from "@/types/user";
 
 export interface IUserStore {

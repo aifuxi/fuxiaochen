@@ -1,4 +1,4 @@
-import { Tag, TagCreateReq, TagListReq, TagListResp } from "@/types/tag";
+import { type Tag, type TagCreateReq, type TagListReq, type TagListResp } from "@/types/tag";
 
 export interface ITagStore {
   create(data: TagCreateReq): Promise<Tag>;

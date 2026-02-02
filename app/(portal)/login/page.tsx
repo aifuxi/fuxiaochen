@@ -37,7 +37,6 @@ export default function LoginPage() {
           email,
           password,
           name,
-          callbackURL: "/admin",
         });
         if (error) {
           toast.error(error.message || "注册失败");
@@ -45,6 +44,8 @@ export default function LoginPage() {
           return;
         }
         toast.success("注册成功");
+        setLoading(false);
+        setIsSignUp(false);
       } else {
         const { error } = await authClient.signIn.email({
           email,
