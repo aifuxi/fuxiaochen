@@ -1,7 +1,5 @@
 import { format } from "date-fns";
-
 import { getChangelogsAction } from "@/app/actions/changelog";
-
 import {
   Pagination,
   PaginationContent,
@@ -10,7 +8,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
 import BlogContent from "@/components/blog/blog-content";
 
 interface ChangelogPageProps {
@@ -71,7 +68,7 @@ export default async function ChangelogPage({
         {/* Changelog Timeline */}
         <div
           className={`
-            glass-panel relative rounded-2xl border border-neon-purple/20 p-8
+            glass-panel relative rounded-md border border-neon-purple/20 p-8
             md:p-12
           `}
         >

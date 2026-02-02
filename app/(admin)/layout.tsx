@@ -48,7 +48,7 @@ export default async function AdminLayout({
         <div className="p-8">
           <div
             className={`
-              relative min-h-[calc(100vh-8rem)] overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-6
+              relative min-h-[calc(100vh-8rem)] overflow-hidden rounded-md border border-white/5 bg-white/5 p-6
               backdrop-blur-sm
             `}
           >
