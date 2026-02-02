@@ -16,7 +16,7 @@ export default function ChangelogLoading() {
         {/* Changelog Timeline */}
         <div
           className={`
-            glass-panel relative rounded-2xl border border-white/10 p-8
+            glass-panel relative rounded-md border border-white/10 p-8
             md:p-12
           `}
         >

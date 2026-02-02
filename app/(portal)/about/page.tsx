@@ -154,7 +154,7 @@ export default function AboutPage() {
           `}
         >
           {/* Skills Matrix */}
-          <section className="glass-panel rounded-2xl border border-neon-purple/20 p-8">
+          <section className="glass-panel rounded-md border border-neon-purple/20 p-8">
             <h3 className="mb-8 flex items-center gap-3 text-2xl font-bold text-neon-purple">
               <span className="text-xl">⚡</span> 神经植入 (技能)
             </h3>
@@ -242,7 +242,7 @@ export default function AboutPage() {
           </section>
 
           {/* Equipment */}
-          <section className="glass-panel rounded-2xl border border-neon-magenta/20 p-8">
+          <section className="glass-panel rounded-md border border-neon-magenta/20 p-8">
             <h3 className="mb-8 flex items-center gap-3 text-2xl font-bold text-neon-magenta">
               <span className="text-xl">🖥️</span> 硬件装备
             </h3>
