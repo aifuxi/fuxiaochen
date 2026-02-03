@@ -1,6 +1,8 @@
-# fuxiaochen.com - 赛博朋克风格个人博客系统
+# fuxiaochen
 
-基于 Next.js 16.1 (App Router) 构建的高性能个人博客/门户系统，采用沉浸式赛博朋克设计风格。
+基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用沉浸式赛博朋克设计风格。
+
+**本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
 
 ## 功能特性
 
@@ -58,32 +60,38 @@ pnpm install
 
 ### 环境配置
 
-创建 `.env` 文件：
+参考 `.env.example` 文件配置环境变量。
 
-```env
-# 数据库
-DATABASE_URL="mysql://user:password@localhost:3306/fuxiaochen"
+```
+$ cp .env.example .env
+```
 
-# Auth
-AUTH_SECRET="your-auth-secret"
+```shell
+# Database 必须配置
+DATABASE_HOST="localhost"
+DATABASE_PORT="3306"
+DATABASE_USER="root"
+DATABASE_PASSWORD="your_password"
+DATABASE_NAME="fuxiaochen_dev"
+DATABASE_URL="mysql://root:your_password@localhost:3306/fuxiaochen_dev"
 
-# OSS (可选)
-OSS_ACCESS_KEY_ID="your-access-key"
-OSS_ACCESS_KEY_SECRET="your-secret"
-OSS_BUCKET="your-bucket"
-OSS_REGION="oss-cn-hangzhou"
+# Better Auth 必须配置
+GITHUB_CLIENT_ID="your_github_client_id"
+GITHUB_CLIENT_SECRET="your_github_client_secret"
+BETTER_AUTH_SECRET="your_better_auth_secret"
+BETTER_AUTH_URL="http://localhost:3000"
 ```
 
 ### 数据库初始化
 
 ```bash
-# 生成 Prisma Client
+# 1. 生成 Prisma Client
 pnpm db:gen
 
-# 运行迁移
-pnpm db:dev
+# 2. 运行迁移
+pnpm db:push
 
-# 填充种子数据
+# 3. 填充种子数据(可选)
 pnpm db:seed
 ```
 
