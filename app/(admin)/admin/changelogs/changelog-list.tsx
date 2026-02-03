@@ -80,16 +80,18 @@ export default function ChangelogManagementPage({
           </h1>
           <p className="mt-2 text-gray-400">管理系统更新日志</p>
         </div>
-        <Button
-          onClick={handleCreate}
-          className={`
-            border border-neon-cyan bg-neon-cyan/10 text-neon-cyan
-            hover:bg-neon-cyan hover:text-black
-          `}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          新建日志
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={handleCreate}
+            className={`
+              border border-neon-cyan bg-neon-cyan/10 text-neon-cyan
+              hover:bg-neon-cyan hover:text-black
+            `}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            新建日志
+          </Button>
+        )}
       </div>
 
       {/* Search and Filter */}
@@ -112,10 +114,12 @@ export default function ChangelogManagementPage({
       <div className="rounded-lg border border-white/10 bg-black/40 backdrop-blur-md">
         <Table>
           <TableHeader>
-            <TableRow className={`
-              border-white/10
-              hover:bg-white/5
-            `}>
+            <TableRow
+              className={`
+                border-white/10
+                hover:bg-white/5
+              `}
+            >
               <TableHead className="text-neon-purple">版本</TableHead>
               <TableHead className="text-neon-purple">发布日期</TableHead>
               <TableHead className="text-neon-purple">内容预览</TableHead>
