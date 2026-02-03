@@ -1,9 +1,6 @@
 import Link from "next/link";
-
 import { format } from "date-fns";
-
 import { getBlogsAction } from "@/app/actions/blog";
-
 import {
   Pagination,
   PaginationContent,
@@ -12,7 +9,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
 import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
 
 interface BlogListProps {
@@ -76,11 +72,9 @@ export async function BlogList({
           `}
         >
           <h3 className="mb-2 text-2xl font-bold text-gray-500">
-            未发现传输内容 / No Transmissions Found
+            未发现传输内容
           </h3>
-          <p className="mb-6 text-gray-600">
-            尝试调整您的信号过滤器。 / Try adjusting your signal filters.
-          </p>
+          <p className="mb-6 text-gray-600">尝试调整您的信号过滤器</p>
           {(category || tag) && (
             <Link
               href="/blog"
@@ -90,7 +84,7 @@ export async function BlogList({
                 hover:bg-neon-cyan/10 hover:shadow-[0_0_10px_rgba(0,255,255,0.2)]
               `}
             >
-              <span className="text-lg">↺</span> 重置信号 / Reset_Signal
+              <span className="text-lg">↺</span> 重置信号
             </Link>
           )}
         </div>

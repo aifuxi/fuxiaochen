@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
+import { ChevronRight } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -44,7 +44,7 @@ export function NeonBlogCard({
 
         <div className="relative h-48 w-full overflow-hidden border-b border-white/5 bg-black/50">
           <Image
-            src={cover || "/images/cyberpunk-cover-1768641392857.avif"}
+            src={cover || "/images/placeholder.avif"}
             alt={title}
             fill
             className={`
@@ -96,7 +96,8 @@ export function NeonBlogCard({
               group-hover:translate-x-2
             `}
           >
-            阅读协议 / Read Protocol <span className="text-lg">›</span>
+            查看详情
+            <ChevronRight className="size-3" />
           </span>
         </CardFooter>
       </Card>
