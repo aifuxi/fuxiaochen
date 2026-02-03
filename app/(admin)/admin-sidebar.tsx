@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Clock9,
   FileText,
   FolderTree,
   LayoutDashboard,
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/admin/categories", label: "分类管理", icon: FolderTree },
   { href: "/admin/tags", label: "标签管理", icon: Tag },
   { href: "/admin/blogs", label: "博客管理", icon: FileText },
+  { href: "/admin/changelogs", label: "日志管理", icon: Clock9 },
   { href: "/admin/users", label: "用户管理", icon: Users },
 ];
 
