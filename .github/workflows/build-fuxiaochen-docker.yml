@@ -7,6 +7,9 @@ on:
         description: "Docker image tag (e.g. v1.0.0)"
         required: true
         default: "latest"
+  push:
+    tags:
+      - "v*"
 
 env:
   REGISTRY: ghcr.io
@@ -30,30 +33,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            # 手动触发时使用输入的 version
+            type=raw,value=${{ inputs.version }},enable=${{ github.event_name == 'workflow_dispatch' }}
+            # Tag 推送时使用 git tag
+            type=ref,event=tag
+            # Tag 推送时自动标记 latest (如果符合语义化版本)
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.version }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            DATABASE_HOST=${{ vars.DATABASE_HOST }}
-            DATABASE_PORT=${{ vars.DATABASE_PORT }}
-            DATABASE_USER=${{ vars.DATABASE_USER }}
-            DATABASE_PASSWORD=${{ vars.DATABASE_PASSWORD }}
-            DATABASE_DBNAME=${{ vars.DATABASE_DBNAME }}
-            DATABASE_NAME=${{ vars.DATABASE_NAME }}
-            DATABASE_URL=${{ vars.DATABASE_URL }}
-            OSS_ACCESS_KEY_ID=${{ vars.OSS_ACCESS_KEY_ID }}
-            OSS_ACCESS_KEY_SECRET=${{ vars.OSS_ACCESS_KEY_SECRET }}
-            OSS_REGION=${{ vars.OSS_REGION }}
-            OSS_BUCKET=${{ vars.OSS_BUCKET }}
-            OSS_UPLOAD_DIR=${{ vars.OSS_UPLOAD_DIR }}
-            GITHUB_CLIENT_ID=${{ vars.GITHUB_CLIENT_ID }}
-            GITHUB_CLIENT_SECRET=${{ vars.GITHUB_CLIENT_SECRET }}
-            BETTER_AUTH_SECRET=${{ vars.BETTER_AUTH_SECRET }}
-            BETTER_AUTH_URL=${{ vars.BETTER_AUTH_URL }}
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
             NEXT_PUBLIC_UMAMI_URL=${{ vars.NEXT_PUBLIC_UMAMI_URL }}
             NEXT_PUBLIC_UMAMI_WEBSITE_ID=${{ vars.NEXT_PUBLIC_UMAMI_WEBSITE_ID }}
             NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${{ vars.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID }}
