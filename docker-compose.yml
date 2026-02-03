@@ -1,43 +1,36 @@
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: fuxiaochen:latest
     container_name: fuxiaochen
     restart: unless-stopped
     ports:
       - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - fuxiaochen-network
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:lts
+    container_name: mariadb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
     environment:
-      # Database
-      - DATABASE_HOST=${DATABASE_HOST}
-      - DATABASE_PORT=${DATABASE_PORT}
-      - DATABASE_USER=${DATABASE_USER}
-      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-      - DATABASE_DBNAME=${DATABASE_DBNAME}
-      - DATABASE_NAME=${DATABASE_NAME}
-      - DATABASE_URL=${DATABASE_URL}
-      # OSS
-      - OSS_ACCESS_KEY_ID=${OSS_ACCESS_KEY_ID}
-      - OSS_ACCESS_KEY_SECRET=${OSS_ACCESS_KEY_SECRET}
-      - OSS_REGION=${OSS_REGION}
-      - OSS_BUCKET=${OSS_BUCKET}
-      - OSS_UPLOAD_DIR=${OSS_UPLOAD_DIR}
-      # Better Auth
-      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
-      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
-      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
-      - BETTER_AUTH_URL=${BETTER_AUTH_URL}
-      # Umami
-      - NEXT_PUBLIC_UMAMI_URL=${NEXT_PUBLIC_UMAMI_URL}
-      - NEXT_PUBLIC_UMAMI_WEBSITE_ID=${NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-      # Google Analytics
-      - NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=${NEXT_PUBLIC_GOOGLE_ANALYTICS_ID}
-      - NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT=${NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
-      # Site URL
-      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+      - MARIADB_ROOT_PASSWORD=123456
+      - MARIADB_DATABASE=fuxiaochen
+      - TZ=Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - fuxiaochen-network
 
 networks:
   fuxiaochen-network:
     driver: bridge
+
+volumes:
+  mysql_data:
