@@ -14,11 +14,9 @@ export default async function Page() {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center space-y-4 text-center">
         <h2 className="text-3xl font-bold tracking-widest text-neon-magenta uppercase">
-          Access Denied
+          拒绝访问
         </h2>
-        <p className="text-gray-400">
-          You do not have permission to view this page.
-        </p>
+        <p className="text-gray-400">没有权限查看此页面</p>
       </div>
     );
   }

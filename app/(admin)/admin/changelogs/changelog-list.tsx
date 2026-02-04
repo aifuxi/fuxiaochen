@@ -19,14 +19,7 @@ import {
 import { ChangelogDialog } from "./changelog-dialog";
 import { DeleteAlert } from "./delete-alert";
 
-interface ChangelogManagementPageProps {
-  role?: string;
-}
-
-export default function ChangelogManagementPage({
-  role,
-}: ChangelogManagementPageProps) {
-  const isAdmin = role === "admin";
+export default function ChangelogManagementPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
@@ -80,18 +73,16 @@ export default function ChangelogManagementPage({
           </h1>
           <p className="mt-2 text-gray-400">管理系统更新日志</p>
         </div>
-        {isAdmin && (
-          <Button
-            onClick={handleCreate}
-            className={`
-              border border-neon-cyan bg-neon-cyan/10 text-neon-cyan
-              hover:bg-neon-cyan hover:text-black
-            `}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            新建日志
-          </Button>
-        )}
+        <Button
+          onClick={handleCreate}
+          className={`
+            border border-neon-cyan bg-neon-cyan/10 text-neon-cyan
+            hover:bg-neon-cyan hover:text-black
+          `}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          新建日志
+        </Button>
       </div>
 
       {/* Search and Filter */}
@@ -175,33 +166,29 @@ export default function ChangelogManagementPage({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(changelog)}
-                          className={`
-                            text-gray-400
-                            hover:bg-neon-cyan/10 hover:text-neon-cyan
-                          `}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(changelog)}
+                        className={`
+                          text-gray-400
+                          hover:bg-neon-cyan/10 hover:text-neon-cyan
+                        `}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
 
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(changelog)}
-                          className={`
-                            text-gray-400
-                            hover:bg-neon-magenta/10 hover:text-neon-magenta
-                          `}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(changelog)}
+                        className={`
+                          text-gray-400
+                          hover:bg-neon-magenta/10 hover:text-neon-magenta
+                        `}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>

@@ -2,15 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
-
 import { createTagAction, updateTagAction } from "@/app/actions/tag";
-
 import { type Tag } from "@/types/tag";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -76,14 +73,17 @@ export function TagDialog({
     setLoading(true);
     try {
       if (tag) {
-        await updateTagAction(tag.id, values);
+        const res = await updateTagAction(tag.id, values);
+        if (!res.success) throw new Error(res.error);
       } else {
-        await createTagAction(values);
+        const res = await createTagAction(values);
+        if (!res.success) throw new Error(res.error);
       }
       onOpenChange(false);
       form.reset();
       onSuccess?.();
     } catch (error) {
+      toast.error(`${error}`);
       console.error(error);
     } finally {
       setLoading(false);

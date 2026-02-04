@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
 import { Loader2 } from "lucide-react";
-
+import { toast } from "sonner";
 import { deleteCategoryAction } from "@/app/actions/category";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,11 +33,15 @@ export function DeleteAlert({
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await deleteCategoryAction(id);
+      const res = await deleteCategoryAction(id);
+      if (!res.success) {
+        throw new Error(res.error);
+      }
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`);
     } finally {
       setLoading(false);
     }
