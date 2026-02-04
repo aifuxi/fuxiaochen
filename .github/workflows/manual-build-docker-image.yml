@@ -1,15 +1,11 @@
-name: 构建 fuxiaochen 镜像
+name: 手动构建 fuxiaochen 镜像
 
-on:
-  push:
-    tags:
-      - "v*"
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Docker image tag (e.g. v1.0.0)"
-        required: true
-        default: "latest"
+workflow_dispatch:
+  inputs:
+    version:
+      description: "Docker image tag (e.g. v1.0.0)"
+      required: true
+      default: "latest"
 
 env:
   REGISTRY: ghcr.io
