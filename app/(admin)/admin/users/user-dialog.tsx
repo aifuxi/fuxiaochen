@@ -2,15 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
-
 import { updateUserAction } from "@/app/actions/user";
-
 import { type User } from "@/types/user";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -76,11 +73,13 @@ export function UserDialog({
     if (!user) return; // Should not happen as we only support edit for now
     setLoading(true);
     try {
-      await updateUserAction(user.id, values);
+      const res = await updateUserAction(user.id, values);
+      if (!res.success) throw new Error(res.error);
       onOpenChange(false);
       form.reset();
       onSuccess?.();
     } catch (error) {
+      toast.error(`${error}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -97,9 +96,7 @@ export function UserDialog({
         `}
       >
         <DialogHeader>
-          <DialogTitle className="text-neon-cyan">
-            编辑用户角色
-          </DialogTitle>
+          <DialogTitle className="text-neon-cyan">编辑用户角色</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -120,10 +117,12 @@ export function UserDialog({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className={`
-                        border-white/10 bg-white/5 text-white
-                        focus:border-neon-cyan/50
-                      `}>
+                      <SelectTrigger
+                        className={`
+                          border-white/10 bg-white/5 text-white
+                          focus:border-neon-cyan/50
+                        `}
+                      >
                         <SelectValue placeholder="选择角色" />
                       </SelectTrigger>
                     </FormControl>

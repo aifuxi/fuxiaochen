@@ -28,12 +28,7 @@ const fetcher = async (params: TagListReq) => {
   return res.data;
 };
 
-interface TagManagementPageProps {
-  role?: string;
-}
-
-export default function TagManagementPage({ role }: TagManagementPageProps) {
-  const isAdmin = role === "admin";
+export default function TagManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -110,17 +105,15 @@ export default function TagManagementPage({ role }: TagManagementPageProps) {
         <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
           标签列表
         </h2>
-        {isAdmin && (
-          <Button
-            onClick={openCreate}
-            className={`
-              bg-neon-cyan text-black
-              hover:bg-cyan-400
-            `}
-          >
-            <Plus className="mr-2 h-4 w-4" /> 新建标签
-          </Button>
-        )}
+        <Button
+          onClick={openCreate}
+          className={`
+            bg-neon-cyan text-black
+            hover:bg-cyan-400
+          `}
+        >
+          <Plus className="mr-2 h-4 w-4" /> 新建标签
+        </Button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -235,32 +228,30 @@ export default function TagManagementPage({ role }: TagManagementPageProps) {
                     {format(new Date(tag.updatedAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
-                    {isAdmin && (
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEdit(tag)}
-                          className={`
-                            text-gray-400
-                            hover:text-neon-cyan
-                          `}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openDelete(tag.id)}
-                          className={`
-                            text-gray-400
-                            hover:text-red-500
-                          `}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(tag)}
+                        className={`
+                          text-gray-400
+                          hover:text-neon-cyan
+                        `}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openDelete(tag.id)}
+                        className={`
+                          text-gray-400
+                          hover:text-red-500
+                        `}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

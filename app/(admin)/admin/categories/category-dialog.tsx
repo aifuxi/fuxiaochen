@@ -2,18 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
-
 import {
   createCategoryAction,
   updateCategoryAction,
 } from "@/app/actions/category";
-
 import { type Category } from "@/types/category";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -80,15 +77,22 @@ export function CategoryDialog({
     setLoading(true);
     try {
       if (category) {
-        await updateCategoryAction(category.id, values);
+        const res = await updateCategoryAction(category.id, values);
+        if (!res.success) {
+          throw new Error(res.error);
+        }
       } else {
-        await createCategoryAction(values);
+        const res = await createCategoryAction(values);
+        if (!res.success) {
+          throw new Error(res.error);
+        }
       }
       onOpenChange(false);
       form.reset();
       onSuccess?.();
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`);
     } finally {
       setLoading(false);
     }

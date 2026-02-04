@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
 import { Loader2 } from "lucide-react";
-
+import { toast } from "sonner";
 import { deleteUserAction } from "@/app/actions/user";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,10 +33,12 @@ export function DeleteAlert({
   const handleDelete = async () => {
     setLoading(true);
     try {
-      await deleteUserAction(id);
+      const res = await deleteUserAction(id);
+      if (!res.success) throw new Error(res.error);
       onOpenChange(false);
       onSuccess?.();
     } catch (error) {
+      toast.error(`${error}`);
       console.error(error);
     } finally {
       setLoading(false);

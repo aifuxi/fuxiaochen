@@ -10,6 +10,7 @@ import mediumZoom from "@bytemd/plugin-medium-zoom";
 import { Editor } from "@bytemd/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
 import "highlight.js/styles/atom-one-dark.css";
 import { createBlogAction, updateBlogAction } from "@/app/actions/blog";
@@ -98,14 +99,21 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
     setLoading(true);
     try {
       if (initialData) {
-        await updateBlogAction(initialData.id, values);
+        const res = await updateBlogAction(initialData.id, values);
+        if (!res.success) {
+          throw new Error(res.error);
+        }
       } else {
-        await createBlogAction(values);
+        const res = await createBlogAction(values);
+        if (!res.success) {
+          throw new Error(res.error);
+        }
       }
       router.push("/admin/blogs");
       router.refresh();
     } catch (error) {
       console.error(error);
+      toast.error(`${error}`);
     } finally {
       setLoading(false);
     }
@@ -366,6 +374,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                               );
 
                               if (!presignRes.success || !presignRes.data) {
+                                toast.error(`${presignRes.error}`);
                                 return [];
                               }
 

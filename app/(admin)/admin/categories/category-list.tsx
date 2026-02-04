@@ -28,14 +28,7 @@ const fetcher = async (params: CategoryListReq) => {
   return res.data;
 };
 
-interface CategoryManagementPageProps {
-  role?: string;
-}
-
-export default function CategoryManagementPage({
-  role,
-}: CategoryManagementPageProps) {
-  const isAdmin = role === "admin";
+export default function CategoryManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -91,21 +84,19 @@ export default function CategoryManagementPage({
           </h2>
           <p className="text-gray-400">管理博客文章的分类体系</p>
         </div>
-        {isAdmin && (
-          <Button
-            onClick={() => {
-              setEditingCategory(undefined);
-              setDialogOpen(true);
-            }}
-            className={`
-              bg-neon-cyan text-black
-              hover:bg-cyan-400
-            `}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            新增分类
-          </Button>
-        )}
+        <Button
+          onClick={() => {
+            setEditingCategory(undefined);
+            setDialogOpen(true);
+          }}
+          className={`
+            bg-neon-cyan text-black
+            hover:bg-cyan-400
+          `}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          新增分类
+        </Button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -191,32 +182,30 @@ export default function CategoryManagementPage({
                     {format(new Date(category.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
-                    {isAdmin && (
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEdit(category)}
-                          className={`
-                            text-gray-400
-                            hover:bg-neon-cyan/10 hover:text-neon-cyan
-                          `}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openDelete(category.id)}
-                          className={`
-                            text-gray-400
-                            hover:bg-red-500/10 hover:text-red-500
-                          `}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(category)}
+                        className={`
+                          text-gray-400
+                          hover:bg-neon-cyan/10 hover:text-neon-cyan
+                        `}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openDelete(category.id)}
+                        className={`
+                          text-gray-400
+                          hover:bg-red-500/10 hover:text-red-500
+                        `}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

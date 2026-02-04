@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
-
-import { createChangelogAction, updateChangelogAction } from "@/app/actions/changelog";
-
+import {
+  createChangelogAction,
+  updateChangelogAction,
+} from "@/app/actions/changelog";
 import { type Changelog } from "@/types/changelog";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -58,7 +58,9 @@ export function ChangelogDialog({
     defaultValues: {
       version: changelog?.version || "",
       content: changelog?.content || "",
-      date: changelog?.date ? new Date(changelog.date).toISOString().split('T')[0] : "",
+      date: changelog?.date
+        ? new Date(changelog.date).toISOString().split("T")[0]
+        : "",
     },
   });
 
@@ -67,7 +69,9 @@ export function ChangelogDialog({
       form.reset({
         version: changelog?.version || "",
         content: changelog?.content || "",
-        date: changelog?.date ? new Date(changelog.date).toISOString().split('T')[0] : "",
+        date: changelog?.date
+          ? new Date(changelog.date).toISOString().split("T")[0]
+          : "",
       });
     }
   }, [changelog, open, form]);
@@ -82,14 +86,17 @@ export function ChangelogDialog({
       };
 
       if (changelog) {
-        await updateChangelogAction(changelog.id, payload);
+        const res = await updateChangelogAction(changelog.id, payload);
+        if (!res.success) throw new Error(res.error);
       } else {
-        await createChangelogAction(payload);
+        const res = await createChangelogAction(payload);
+        if (!res.success) throw new Error(res.error);
       }
       onOpenChange(false);
       form.reset();
       onSuccess?.();
     } catch (error) {
+      toast.error(`${error}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -132,7 +139,7 @@ export function ChangelogDialog({
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="date"
               render={({ field }) => (
