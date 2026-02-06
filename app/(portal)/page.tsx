@@ -71,10 +71,10 @@ export default function HomePage() {
           `}>
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
-                Latest <span className="text-[var(--accent-color)]">Thoughts</span>
+                最新 <span className="text-[var(--accent-color)]">文章</span>
               </h2>
               <p className="text-[var(--text-color-secondary)]">
-                Exploring technology, design, and everything in between.
+                探索技术、设计以及两者之间的一切。
               </p>
             </div>
 
@@ -85,7 +85,7 @@ export default function HomePage() {
                 hover:text-[var(--accent-color)]/80
               `}
             >
-              View Archives <ArrowRight className={`
+              查看归档 <ArrowRight className={`
                 h-4 w-4 transition-transform
                 group-hover:translate-x-1
               `} />
