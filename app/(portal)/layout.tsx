@@ -1,6 +1,6 @@
-import { BackToTop } from "@/components/cyberpunk/back-to-top";
-import { NeonFooter } from "@/components/cyberpunk/neon-footer";
-import { NeonHeader } from "@/components/cyberpunk/neon-header";
+import { BackToTop } from "@/components/ui/back-to-top";
+import { Footer } from "@/components/layout/footer";
+import { Header } from "@/components/layout/header";
 
 export default function PortalLayout({
   children,
@@ -9,9 +9,9 @@ export default function PortalLayout({
 }>) {
   return (
     <>
-      <NeonHeader />
+      <Header />
       {children}
-      <NeonFooter />
+      <Footer />
       <BackToTop />
     </>
   );

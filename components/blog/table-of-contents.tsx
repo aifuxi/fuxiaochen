@@ -64,14 +64,14 @@ export function TableOfContents() {
 
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
-      <div
-        className={`mb-4 flex items-center gap-2 font-display text-sm font-bold tracking-wider text-neon-cyan uppercase`}
-      >
-        <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-        目录
+      <div className={`
+        mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-[var(--accent-color)] uppercase
+      `}>
+        <div className="h-2 w-2 rounded-full bg-[var(--accent-color)]" />
+        Contents
       </div>
       <nav className="relative">
-        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-white/10" />
+        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-[var(--glass-border)]" />
         <ul className="space-y-1">
           {headings.map((heading, index) => (
             <li key={`${heading.id}-${index}`} className="relative">
@@ -88,11 +88,11 @@ export function TableOfContents() {
                   "block border-l-2 py-1 pl-4 text-sm transition-all duration-300",
                   heading.level === 3 && "pl-8",
                   activeId === heading.id
-                    ? "border-neon-cyan bg-neon-cyan/5 font-medium text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]"
+                    ? "border-[var(--accent-color)] bg-[var(--accent-color)]/5 font-medium text-[var(--accent-color)]"
                     : `
-                      border-transparent text-gray-500
-                      hover:border-white/20 hover:text-gray-300
-                    `,
+                      border-transparent text-[var(--text-color-secondary)]
+                      hover:border-[var(--glass-border)] hover:text-[var(--text-color)]
+                    `
                 )}
               >
                 {heading.text}

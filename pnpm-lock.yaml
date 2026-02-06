@@ -113,6 +113,9 @@ importers:
       es-toolkit:
         specifier: ^1.39.10
         version: 1.44.0
+      framer-motion:
+        specifier: ^12.33.0
+        version: 12.33.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       globals:
         specifier: ^16.3.0
         version: 16.5.0
@@ -3164,6 +3167,20 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
+  framer-motion@12.33.0:
+    resolution: {integrity: sha512-ca8d+rRPcDP5iIF+MoT3WNc0KHJMjIyFAbtVLvM9eA7joGSpeqDfiNH/kCs1t4CHi04njYvWyj0jS4QlEK/rJQ==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   fs-extra@9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
     engines: {node: '>=10'}
@@ -4180,6 +4197,12 @@ packages:
   modern-tar@0.7.3:
     resolution: {integrity: sha512-4W79zekKGyYU4JXVmB78DOscMFaJth2gGhgfTl2alWE4rNe3nf4N2pqenQ0rEtIewrnD79M687Ouba3YGTLOvg==}
     engines: {node: '>=18.0.0'}
+
+  motion-dom@12.33.0:
+    resolution: {integrity: sha512-XRPebVypsl0UM+7v0Hr8o9UAj0S2djsQWRdHBd5iVouVpMrQqAI0C/rDAT3QaYnXnHuC5hMcwDHCboNeyYjPoQ==}
+
+  motion-utils@12.29.2:
+    resolution: {integrity: sha512-G3kc34H2cX2gI63RqU+cZq+zWRRPSsNIOjpdl9TN4AQwC4sgwYPl/Q/Obf/d53nOm569T0fYK+tcoSV50BWx8A==}
 
   mri@1.2.0:
     resolution: {integrity: sha512-tzzskb3bG8LvYGFF/mDTpq3jpI6Q9wc3LEmBaghu+DdCssd1FakN7Bc0hVNmEyGq1bq3RgfkCb3cmQLpNPOroA==}
@@ -8567,6 +8590,15 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
+  framer-motion@12.33.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+    dependencies:
+      motion-dom: 12.33.0
+      motion-utils: 12.29.2
+      tslib: 2.8.1
+    optionalDependencies:
+      react: 19.2.3
+      react-dom: 19.2.3(react@19.2.3)
+
   fs-extra@9.1.0:
     dependencies:
       at-least-node: 1.0.0
@@ -9739,6 +9771,12 @@ snapshots:
       ufo: 1.6.3
 
   modern-tar@0.7.3: {}
+
+  motion-dom@12.33.0:
+    dependencies:
+      motion-utils: 12.29.2
+
+  motion-utils@12.29.2: {}
 
   mri@1.2.0: {}
 

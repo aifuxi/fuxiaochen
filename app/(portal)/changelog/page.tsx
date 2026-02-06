@@ -9,6 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import BlogContent from "@/components/blog/blog-content";
+import { GlassCard } from "@/components/ui/glass-card";
 
 interface ChangelogPageProps {
   searchParams: Promise<{
@@ -34,111 +35,62 @@ export default async function ChangelogPage({
   const totalPages = Math.ceil(total / pageSize);
   const changelogs = lists;
   return (
-    <div
-      className={`
-        min-h-screen bg-cyber-black font-body text-white
-        selection:bg-neon-cyan selection:text-black
-      `}
-    >
+    <div className="min-h-screen bg-[var(--bg-color)]">
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
-        <div className="relative mb-16 text-center">
-          <h1
-            className={`
-              glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase
-              md:text-7xl
-            `}
-            data-text="System_Logs"
-          >
-            系统日志
+        <div className="relative mb-16 space-y-4">
+          <h1 className={`
+            text-4xl font-bold tracking-tight text-[var(--text-color)]
+            md:text-5xl
+          `}>
+            Changelog
           </h1>
-          <p className="mt-4 font-mono text-lg text-neon-purple/80">
-            /// 追踪系统演进...
-            <br />
-            /// 版本历史档案...
+          <p className="max-w-2xl text-lg text-[var(--text-color-secondary)]">
+            Tracking the evolution and updates of the platform.
           </p>
-          <div
-            className={`
-              pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2
-              rounded-full bg-neon-purple/20 blur-[100px]
-            `}
-          />
         </div>
 
         {/* Changelog Timeline */}
-        <div
-          className={`
-            glass-panel relative rounded-md border border-neon-purple/20 p-8
-            md:p-12
-          `}
-        >
-          {/* Timeline Line */}
-          <div
-            className={`
-              absolute top-12 bottom-12 left-8 w-px bg-gradient-to-b from-neon-purple/0 via-neon-purple/50
-              to-neon-purple/0
-              md:left-12
-            `}
-          />
-
-          <div className="space-y-12">
-            {changelogs.length > 0 ? (
-              changelogs.map((log) => (
-                <div
-                  key={log.id}
-                  className={`
-                    group relative pl-8
-                    md:pl-12
-                  `}
-                >
-                  {/* Timeline Dot */}
-                  <div
-                    className={`
-                      absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-neon-purple bg-cyber-black
-                      shadow-[0_0_10px_var(--color-neon-purple)] transition-colors duration-300
-                      group-hover:bg-neon-purple
-                      md:left-[-5px]
-                    `}
-                  />
-
-                  <div
-                    className={`
-                      mb-3 flex flex-col gap-4
-                      md:flex-row md:items-baseline
-                    `}
-                  >
-                    <span
-                      className={`
-                        rounded border border-neon-cyan/20 bg-neon-cyan/10 px-3 py-1 font-mono text-xl font-bold
-                        text-neon-cyan shadow-[0_0_10px_rgba(0,255,255,0.1)]
-                      `}
-                    >
+        <div className="space-y-8">
+          {changelogs.length > 0 ? (
+            changelogs.map((log) => (
+              <GlassCard key={log.id} className="p-8">
+                <div className={`
+                  mb-6 flex flex-col gap-4 border-b border-[var(--glass-border)] pb-4
+                  md:flex-row md:items-baseline md:justify-between
+                `}>
+                  <div className="flex items-center gap-3">
+                    <span className={`
+                      inline-flex items-center rounded-full bg-[var(--accent-color)]/10 px-3 py-1 text-sm font-medium
+                      text-[var(--accent-color)]
+                    `}>
                       {log.version}
                     </span>
-                    <span className="font-mono text-sm tracking-wide text-gray-500 uppercase">
-                      {format(
-                        new Date(log.date || log.createdAt),
-                        "yyyy-MM-dd",
-                      )}
-                    </span>
-                  </div>
-
-                  <div className="text-gray-300/90">
-                    <BlogContent content={log.content} />
+                    <time className="text-sm text-[var(--text-color-secondary)]">
+                      {format(new Date(log.date || log.createdAt), "yyyy-MM-dd")}
+                    </time>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="py-20 text-center">
-                <h3 className="mb-2 text-2xl font-bold text-gray-500">
-                  未发现日志 / No Logs Found
-                </h3>
-                <p className="text-gray-600">
-                  系统档案似乎为空。 / System archives appear to be empty.
-                </p>
-              </div>
-            )}
-          </div>
+
+                <div className={`
+                  prose prose-gray
+                  dark:prose-invert
+                  max-w-none
+                `}>
+                  <BlogContent content={log.content} />
+                </div>
+              </GlassCard>
+            ))
+          ) : (
+            <GlassCard className="py-20 text-center">
+              <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
+                No logs found
+              </h3>
+              <p className="text-[var(--text-color-secondary)]">
+                The changelog is currently empty.
+              </p>
+            </GlassCard>
+          )}
         </div>
 
         {/* Pagination */}
@@ -151,8 +103,8 @@ export default async function ChangelogPage({
                     <PaginationPrevious
                       href={`/changelog?page=${currentPage - 1}`}
                       className={`
-                        border-none text-neon-cyan
-                        hover:bg-neon-cyan/10 hover:text-neon-cyan
+                        hover:bg-[var(--glass-bg)]
+                        dark:text-gray-400 dark:hover:text-white
                       `}
                     />
                   </PaginationItem>
@@ -166,10 +118,13 @@ export default async function ChangelogPage({
                         isActive={currentPage === page}
                         className={
                           currentPage === page
-                            ? "border-neon-cyan bg-neon-cyan text-black"
+                            ? `
+                              bg-[var(--accent-color)] text-white
+                              hover:bg-[var(--accent-color)]/90
+                            `
                             : `
-                              border-transparent text-gray-400
-                              hover:bg-white/10 hover:text-white
+                              hover:bg-[var(--glass-bg)]
+                              dark:text-gray-400 dark:hover:text-white
                             `
                         }
                       >
@@ -184,8 +139,8 @@ export default async function ChangelogPage({
                     <PaginationNext
                       href={`/changelog?page=${currentPage + 1}`}
                       className={`
-                        border-none text-neon-cyan
-                        hover:bg-neon-cyan/10 hover:text-neon-cyan
+                        hover:bg-[var(--glass-bg)]
+                        dark:text-gray-400 dark:hover:text-white
                       `}
                     />
                   </PaginationItem>

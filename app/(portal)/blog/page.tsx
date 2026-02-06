@@ -4,6 +4,7 @@ import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
 import { BlogList } from "@/components/blog/blog-list";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
+import { GlassCard } from "@/components/ui/glass-card";
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -27,141 +28,117 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   ]);
 
   return (
-    <div
-      className={`
-        min-h-screen bg-cyber-black font-body text-white
-        selection:bg-neon-cyan selection:text-black
-      `}
-    >
-      <main
-        className={`
-          mx-auto max-w-full px-4 pt-32 pb-20
-          lg:max-w-7xl
-        `}
-      >
+    <div className="min-h-screen bg-[var(--bg-color)]">
+      <main className={`
+        mx-auto max-w-full px-4 pt-32 pb-20
+        lg:max-w-7xl
+      `}>
         {/* Header Section */}
-        <div className="relative mb-16">
-          <h1
-            className={`
-              glitch-text mb-4 font-display text-4xl font-bold tracking-tighter break-all text-white uppercase
-              md:text-7xl
-            `}
-            data-text="Transmission_Log"
-          >
-            传输日志
+        <div className="relative mb-16 space-y-4">
+          <h1 className={`
+            text-4xl font-bold tracking-tight text-[var(--text-color)]
+            md:text-5xl
+          `}>
+            Blog Archive
           </h1>
-          <p className="max-w-2xl font-mono text-lg text-neon-cyan/80">
-            /// 正在访问安全档案...
-            <br />
-            /// 正在解密最新协议...
+          <p className="max-w-2xl text-lg text-[var(--text-color-secondary)]">
+            Explore thoughts, tutorials, and insights on software development.
           </p>
-          <div
-            className={`
-              pointer-events-none absolute -top-10 -right-10 hidden h-64 w-64 rounded-full bg-neon-purple/20
-              blur-[100px]
-              md:block
-            `}
-          />
         </div>
 
-        <div
-          className={`
-            grid grid-cols-1 gap-12
-            lg:grid-cols-4
-          `}
-        >
+        <div className={`
+          grid grid-cols-1 gap-12
+          lg:grid-cols-4
+        `}>
           {/* Sidebar / Filters */}
-          <aside
-            className={`
-              custom-scrollbar space-y-8 pr-1
-              lg:sticky lg:top-32 lg:col-span-1 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto
-            `}
-          >
+          <aside className={`
+            custom-scrollbar space-y-8
+            lg:sticky lg:top-32 lg:col-span-1 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto
+          `}>
             {/* Categories */}
-            <div className="glass-panel rounded-xl border border-white/10 p-6">
-              <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-cyan uppercase">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-                系统分类
+            <GlassCard className="p-6">
+              <h3 className="mb-4 font-bold text-[var(--text-color)]">
+                Categories
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
                   className={`
-                    block rounded px-3 py-2 transition-all duration-300
+                    block rounded-lg px-3 py-2 text-sm transition-all duration-200
                     ${
                       !categorySlug
-                        ? `border-l-2 border-neon-cyan bg-neon-cyan/10 text-neon-cyan`
+                        ? "bg-[var(--accent-color)] font-medium text-white"
                         : `
-                          text-gray-400
-                          hover:bg-white/5 hover:text-white
+                          text-[var(--text-color-secondary)]
+                          hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
                         `
                     }
                   `}
                 >
-                  所有分类
+                  All Categories
                 </Link>
                 {categoriesData?.lists?.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/blog?category=${cat.slug}${tagSlug ? `&tag=${tagSlug}` : ""}`}
                     className={`
-                      block rounded px-3 py-2 transition-all duration-300
+                      flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all duration-200
                       ${
                         categorySlug === cat.slug
-                          ? `border-l-2 border-neon-cyan bg-neon-cyan/10 text-neon-cyan`
+                          ? "bg-[var(--accent-color)] font-medium text-white"
                           : `
-                            text-gray-400
-                            hover:bg-white/5 hover:text-white
+                            text-[var(--text-color-secondary)]
+                            hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
                           `
                       }
                     `}
                   >
-                    {cat.name}{" "}
-                    <span className="ml-1 text-xs opacity-50">
-                      [{cat.blogCount}]
+                    <span>{cat.name}</span>
+                    <span className={`
+                      text-xs
+                      ${categorySlug === cat.slug ? "opacity-80" : "opacity-50"}
+                    `}>
+                      {cat.blogCount}
                     </span>
                   </Link>
                 ))}
               </div>
-            </div>
+            </GlassCard>
 
             {/* Tags */}
-            <div className="glass-panel rounded-xl border border-white/10 p-6">
-              <h3 className="mb-4 flex items-center gap-2 font-bold tracking-wider text-neon-purple uppercase">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-neon-purple" />
-                数据标签
+            <GlassCard className="p-6">
+              <h3 className="mb-4 font-bold text-[var(--text-color)]">
+                Tags
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href={
-                    categorySlug ? `/blog?category=${categorySlug}` : "/blog"
-                  }
+                  href={categorySlug ? `/blog?category=${categorySlug}` : "/blog"}
                   className={`
-                    rounded border px-2 py-1 text-xs uppercase transition-all duration-300
+                    rounded-full px-3 py-1 text-xs transition-all duration-200
                     ${
                       !tagSlug
-                        ? `border-neon-purple bg-neon-purple/10 text-neon-purple`
+                        ? "bg-[var(--accent-color)] text-white"
                         : `
-                          border-white/10 text-gray-500
-                          hover:border-neon-purple/50 hover:text-white
+                          bg-[var(--glass-border)] text-[var(--text-color-secondary)]
+                          hover:bg-[var(--glass-border)] hover:text-[var(--text-color)] hover:brightness-95
                         `
                     }
                   `}
                 >
-                  全部
+                  All
                 </Link>
                 {tagsData?.lists?.map((tag) => (
                   <Link
                     key={tag.id}
                     href={`/blog?tag=${tag.slug}${categorySlug ? `&category=${categorySlug}` : ""}`}
                     className={`
-                      rounded border px-2 py-1 text-xs transition-all duration-300
+                      rounded-full px-3 py-1 text-xs transition-all duration-200
                       ${
                         tagSlug === tag.slug
-                          ? `border-neon-purple bg-neon-purple/10 text-neon-purple`
+                          ? "bg-[var(--accent-color)] text-white"
                           : `
-                            border-white/10 text-gray-500
-                            hover:border-neon-purple/50 hover:text-white
+                            bg-[var(--glass-border)] text-[var(--text-color-secondary)]
+                            hover:bg-[var(--glass-border)] hover:text-[var(--text-color)] hover:brightness-95
                           `
                       }
                     `}
@@ -170,7 +147,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   </Link>
                 ))}
               </div>
-            </div>
+            </GlassCard>
           </aside>
 
           {/* Blog Grid */}

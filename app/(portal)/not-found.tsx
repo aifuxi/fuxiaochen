@@ -1,5 +1,5 @@
-import { ErrorView } from "@/components/cyberpunk/error-view";
+import { ErrorView } from "@/components/ui/error-view";
 
 export default function NotFound() {
-  return <ErrorView code="404" title="信号丢失" message="目标坐标无效" />;
+  return <ErrorView code="404" title="Page Not Found" message="The page you are looking for does not exist." />;
 }

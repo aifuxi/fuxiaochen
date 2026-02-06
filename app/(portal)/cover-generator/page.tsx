@@ -1,18 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-
 import { toPng } from "html-to-image";
 import { Download, Image as ImageIcon, RefreshCw, Type } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,11 +21,11 @@ export default function CoverGeneratorPage() {
   const [loading, setLoading] = useState(false);
 
   // State
-  const [title, setTitle] = useState("CYBERPUNK COVER");
-  const [subtitle, setSubtitle] = useState("Next-Gen Generator");
-  const [author, setAuthor] = useState("@fuxiaochen.com");
-  const [bgStyle, setBgStyle] = useState("neon-grid"); // neon-grid, circuit, matrix, gradient-1, gradient-2
-  const [showGlitch, setShowGlitch] = useState(true);
+  const [title, setTitle] = useState("LIQUID GLASS");
+  const [subtitle, setSubtitle] = useState("Design System");
+  const [author, setAuthor] = useState("@fuxiaochen");
+  const [bgStyle, setBgStyle] = useState("gradient-1");
+  const [showGlitch, setShowGlitch] = useState(false);
   const [showBorder, setShowBorder] = useState(true);
 
   const handleDownload = async () => {
@@ -45,7 +37,7 @@ export default function CoverGeneratorPage() {
         cacheBust: true,
       });
       const link = document.createElement("a");
-      link.download = `cyberpunk-cover-${Date.now()}.png`;
+      link.download = `cover-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -62,59 +54,30 @@ export default function CoverGeneratorPage() {
       case "neon-grid":
         return (
           <>
+            <div className={`
+              ${base}
+              bg-[#000]
+            `} />
             <div
               className={`
                 ${base}
-                bg-cyber-black
-              `}
-            />
-            <div
-              className={`
-                ${base}
-                bg-[linear-gradient(rgba(0,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.05)_1px,transparent_1px)]
-                [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_20%,transparent_100%)]
+                bg-[linear-gradient(rgba(0,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,255,0.1)_1px,transparent_1px)]
                 bg-[size:40px_40px]
-              `}
-            />
-            <div
-              className={`
-                ${base}
-                bg-gradient-to-t from-cyber-black via-transparent to-transparent
               `}
             />
           </>
         );
       case "circuit":
-        return (
-          <>
-            <div
-              className={`
-                ${base}
-                bg-[#050510]
-              `}
-            />
-            <div
-              className={`
-                ${base}
-                bg-[radial-gradient(#7b61ff_1px,transparent_1px)]
-                [background-size:20px_20px]
-                opacity-20
-              `}
-            />
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%237b61ff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")`,
-              }}
-            />
-          </>
-        );
+        return <div className={`
+          ${base}
+          bg-[#1a1a2e] opacity-80
+        `} />;
       case "gradient-1":
         return (
           <div
             className={`
               ${base}
-              bg-gradient-to-br from-purple-900 via-gray-900 to-cyan-900
+              bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800
             `}
           />
         );
@@ -123,332 +86,218 @@ export default function CoverGeneratorPage() {
           <div
             className={`
               ${base}
-              bg-gradient-to-tr from-black via-slate-900 to-indigo-900
+              bg-gradient-to-tr from-emerald-500 via-teal-600 to-cyan-700
             `}
           />
         );
       default:
-        return (
-          <div
-            className={`
-              ${base}
-              bg-cyber-black
-            `}
-          />
-        );
+        return <div className={`
+          ${base}
+          bg-gray-900
+        `} />;
     }
   };
 
   return (
-    <div
-      className={`
-        min-h-screen bg-cyber-black px-4 pt-32 pb-12
-        md:px-8
-      `}
-    >
-      {/* Header Section */}
-      <div className="relative mb-16 text-center">
-        <h1
-          className={`
-            glitch-text mb-4 inline-block font-display text-5xl font-bold tracking-tighter text-white uppercase
-            md:text-7xl
-          `}
-          data-text="Cover_Generator"
-        >
-          封面生成器
-        </h1>
-        <p className="mt-4 font-mono text-lg text-neon-purple/80">
-          /// 初始化神经构造机...
-          <br />
-          /// 视觉数据合成...
-        </p>
-        <div
-          className={`
-            pointer-events-none absolute top-1/2 left-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full
-            bg-neon-purple/20 blur-[100px]
-          `}
-        />
-      </div>
-      <div
-        className={`
+    <div className="min-h-screen bg-[var(--bg-color)]">
+      <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
+        {/* Header Section */}
+        <div className="relative mb-16 space-y-4 text-center">
+          <h1 className={`
+            text-4xl font-bold tracking-tight text-[var(--text-color)]
+            md:text-5xl
+          `}>
+            Cover Generator
+          </h1>
+          <p className="mx-auto max-w-xl text-lg text-[var(--text-color-secondary)]">
+            Create beautiful cover images for your blog posts or social media.
+          </p>
+        </div>
+
+        <div className={`
           mx-auto grid max-w-7xl grid-cols-1 gap-8
           lg:grid-cols-3
-        `}
-      >
-        {/* Controls Panel */}
-        <div
-          className={`
-            space-y-6
-            lg:col-span-1
-          `}
-        >
-          <Card className="border-white/10 bg-cyber-gray/40 backdrop-blur-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neon-cyan">
+        `}>
+          {/* Controls Panel */}
+          <div className="lg:col-span-1">
+            <GlassCard className="space-y-6 p-6">
+              <div className="flex items-center gap-2 font-semibold text-[var(--text-color)]">
                 <RefreshCw className="h-5 w-5" />
-                生成设置
-              </CardTitle>
-              <CardDescription>定制您的赛博朋克封面</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+                <span>Configuration</span>
+              </div>
+
               {/* Text Settings */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm font-bold tracking-wider text-gray-400 uppercase">
-                  <Type className="h-4 w-4" /> 文本
+                <div className={`
+                  flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)] uppercase
+                `}>
+                  <Type className="h-3 w-3" /> Text
                 </div>
                 <div className="space-y-2">
-                  <Label>标题</Label>
+                  <Label>Title</Label>
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className={`
-                      border-white/10 bg-black/40 font-mono text-sm text-neon-cyan transition-all duration-300
-                      placeholder:text-gray-600
-                      hover:border-white/20
-                      focus:border-neon-cyan focus:shadow-[0_0_15px_rgba(0,255,255,0.15)] focus:ring-1
-                      focus:ring-neon-cyan/50
-                    `}
+                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>副标题</Label>
+                  <Label>Subtitle</Label>
                   <Input
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
-                    className={`
-                      border-white/10 bg-black/40 font-mono text-sm text-neon-cyan transition-all duration-300
-                      placeholder:text-gray-600
-                      hover:border-white/20
-                      focus:border-neon-cyan focus:shadow-[0_0_15px_rgba(0,255,255,0.15)] focus:ring-1
-                      focus:ring-neon-cyan/50
-                    `}
+                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>作者/标签</Label>
+                  <Label>Author / Tag</Label>
                   <Input
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className={`
-                      border-white/10 bg-black/40 font-mono text-sm text-neon-cyan transition-all duration-300
-                      placeholder:text-gray-600
-                      hover:border-white/20
-                      focus:border-neon-cyan focus:shadow-[0_0_15px_rgba(0,255,255,0.15)] focus:ring-1
-                      focus:ring-neon-cyan/50
-                    `}
+                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
                   />
                 </div>
               </div>
 
               {/* Visual Settings */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 text-sm font-bold tracking-wider text-gray-400 uppercase">
-                  <ImageIcon className="h-4 w-4" /> 视觉
+                <div className={`
+                  flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)] uppercase
+                `}>
+                  <ImageIcon className="h-3 w-3" /> Visuals
                 </div>
                 <div className="space-y-2">
-                  <Label>背景风格</Label>
+                  <Label>Background</Label>
                   <Select
                     value={bgStyle}
                     onValueChange={(val) => val && setBgStyle(val)}
                   >
-                    <SelectTrigger
-                      className={`
-                        border-white/10 bg-black/40 font-mono text-sm text-neon-cyan transition-all duration-300
-                        hover:border-white/20
-                        focus:border-neon-cyan focus:shadow-[0_0_15px_rgba(0,255,255,0.15)] focus:ring-1
-                        focus:ring-neon-cyan/50
-                      `}
-                    >
+                    <SelectTrigger className="border-[var(--glass-border)] bg-[var(--glass-bg)]">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border-neon-cyan/30 bg-cyber-black text-gray-300">
-                      <SelectItem
-                        value="neon-grid"
-                        className={`
-                          cursor-pointer
-                          focus:bg-neon-cyan/10 focus:text-neon-cyan
-                        `}
-                      >
-                        霓虹网格
-                      </SelectItem>
-                      <SelectItem
-                        value="circuit"
-                        className={`
-                          cursor-pointer
-                          focus:bg-neon-cyan/10 focus:text-neon-cyan
-                        `}
-                      >
-                        电路板
-                      </SelectItem>
-                      <SelectItem
-                        value="gradient-1"
-                        className={`
-                          cursor-pointer
-                          focus:bg-neon-cyan/10 focus:text-neon-cyan
-                        `}
-                      >
-                        赛博渐变 A
-                      </SelectItem>
-                      <SelectItem
-                        value="gradient-2"
-                        className={`
-                          cursor-pointer
-                          focus:bg-neon-cyan/10 focus:text-neon-cyan
-                        `}
-                      >
-                        赛博渐变 B
-                      </SelectItem>
+                    <SelectContent>
+                      <SelectItem value="gradient-1">Blue/Purple Gradient</SelectItem>
+                      <SelectItem value="gradient-2">Teal/Cyan Gradient</SelectItem>
+                      <SelectItem value="neon-grid">Neon Grid</SelectItem>
+                      <SelectItem value="circuit">Dark Circuit</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div
-                  className={`
-                    flex items-center justify-between rounded-lg border border-white/5 bg-black/20 p-3 transition-colors
-                    hover:border-white/10
-                  `}
-                >
-                  <Label className="cursor-pointer">故障效果</Label>
+                <div className={`
+                  flex items-center justify-between rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)]
+                  p-3
+                `}>
+                  <Label className="cursor-pointer">Glitch Effect</Label>
                   <Switch
                     checked={showGlitch}
                     onCheckedChange={setShowGlitch}
-                    className={`
-                      data-[state=checked]:bg-neon-cyan
-                      data-[state=unchecked]:bg-white/10
-                    `}
                   />
                 </div>
 
-                <div
-                  className={`
-                    flex items-center justify-between rounded-lg border border-white/5 bg-black/20 p-3 transition-colors
-                    hover:border-white/10
-                  `}
-                >
-                  <Label className="cursor-pointer">霓虹边框</Label>
+                <div className={`
+                  flex items-center justify-between rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)]
+                  p-3
+                `}>
+                  <Label className="cursor-pointer">Border Frame</Label>
                   <Switch
                     checked={showBorder}
                     onCheckedChange={setShowBorder}
-                    className={`
-                      data-[state=checked]:bg-neon-cyan
-                      data-[state=unchecked]:bg-white/10
-                    `}
                   />
                 </div>
               </div>
 
               <Button
                 className={`
-                  w-full bg-neon-cyan font-bold tracking-widest text-black
-                  hover:bg-cyan-400
+                  w-full bg-[var(--accent-color)] text-white
+                  hover:opacity-90
                 `}
                 onClick={handleDownload}
                 disabled={loading}
               >
                 {loading ? (
-                  "生成中..."
+                  "Generating..."
                 ) : (
                   <>
-                    <Download className="mr-2 h-4 w-4" /> 导出封面
+                    <Download className="mr-2 h-4 w-4" /> Export Image
                   </>
                 )}
               </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </GlassCard>
+          </div>
 
-        {/* Preview Panel */}
-        <div
-          className={`
-            flex items-center justify-center rounded-xl border border-white/5 bg-black/20 p-4
-            lg:col-span-2 lg:p-12
-          `}
-        >
-          <div
-            ref={previewRef}
-            className={`
-              relative flex aspect-[16/9] w-full flex-col items-center justify-center overflow-hidden
-              ${showBorder ? "border-2 border-neon-cyan shadow-[0_0_20px_rgba(0,255,255,0.3)]" : ""}
-            `}
-          >
-            {/* Background Layer */}
-            {getBackgroundStyle()}
-
-            {/* Glitch Overlay */}
-            {showGlitch && (
+          {/* Preview Panel */}
+          <div className="lg:col-span-2">
+            <div className={`
+              flex items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4
+              lg:p-12
+            `}>
               <div
-                className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")`,
-                }}
-              />
-            )}
-
-            {/* Content Layer */}
-            <div
-              className={`
-                relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center
-                backdrop-blur-[2px]
-              `}
-            >
-              {/* Decorative Elements */}
-              <div className="absolute top-6 left-6 h-24 w-24 rounded-tl-xl border-t-2 border-l-2 border-white/30" />
-              <div className="absolute right-6 bottom-6 h-24 w-24 rounded-br-xl border-r-2 border-b-2 border-white/30" />
-              <div className="absolute top-6 right-6 flex gap-2">
-                <div className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
-                <div className="h-2 w-2 animate-pulse rounded-full bg-neon-purple delay-75" />
-                <div className="h-2 w-2 animate-pulse rounded-full bg-neon-magenta delay-150" />
-              </div>
-
-              {/* Main Text */}
-              <h1
+                ref={previewRef}
                 className={`
-                  mb-4 bg-gradient-to-r from-neon-cyan via-white to-neon-purple bg-clip-text text-5xl font-bold
-                  tracking-tighter text-transparent uppercase
-                  md:text-7xl
-                  ${showGlitch ? "animate-pulse" : ""}
+                  relative flex aspect-[16/9] w-full flex-col items-center justify-center overflow-hidden
+                  ${showBorder ? "border-8 border-white/20" : ""}
                 `}
-                style={{
-                  textShadow: showGlitch
-                    ? "2px 2px 0px rgba(0,255,255,0.5), -2px -2px 0px rgba(123,97,255,0.5)"
-                    : "none",
-                  fontFamily: "var(--font-display)",
-                }}
               >
-                {title}
-              </h1>
+                {/* Background Layer */}
+                {getBackgroundStyle()}
 
-              {/* Subtitle */}
-              <div className="relative">
-                <p
-                  className={`
-                    text-xl font-light tracking-[0.2em] text-neon-purple uppercase
-                    md:text-2xl
-                  `}
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {subtitle}
-                </p>
-                <div
-                  className={`
-                    absolute -bottom-2 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-neon-cyan
-                    to-transparent opacity-50
-                  `}
-                />
-              </div>
+                {/* Glitch Overlay */}
+                {showGlitch && (
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay"
+                    style={{
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")`,
+                    }}
+                  />
+                )}
 
-              {/* Author/Footer */}
-              <div className="absolute bottom-8 flex items-center gap-3">
-                <div className="h-[1px] w-12 bg-white/30" />
-                <span className="font-mono text-sm tracking-widest text-gray-400 uppercase">
-                  {author}
-                </span>
-                <div className="h-[1px] w-12 bg-white/30" />
+                {/* Content Layer */}
+                <div className={`
+                  relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center
+                  backdrop-blur-[0px]
+                `}>
+
+                  {/* Main Text */}
+                  <h1
+                    className={`
+                      mb-4 text-6xl font-black tracking-tighter text-white uppercase drop-shadow-lg
+                      md:text-8xl
+                      ${showGlitch ? "animate-pulse" : ""}
+                    `}
+                    style={{ fontFamily: "sans-serif" }}
+                  >
+                    {title}
+                  </h1>
+
+                  {/* Subtitle */}
+                  <div className="relative">
+                    <p className={`
+                      text-2xl font-light tracking-[0.2em] text-white/90 uppercase
+                      md:text-3xl
+                    `}>
+                      {subtitle}
+                    </p>
+                  </div>
+
+                  {/* Author/Footer */}
+                  <div className="absolute bottom-8 flex items-center gap-3">
+                    <div className="h-[1px] w-12 bg-white/50" />
+                    <span className="font-mono text-sm tracking-widest text-white/80 uppercase">
+                      {author}
+                    </span>
+                    <div className="h-[1px] w-12 bg-white/50" />
+                  </div>
+                </div>
               </div>
             </div>
+
+            <p className="mt-4 text-center text-sm text-[var(--text-color-secondary)]">
+              Preview shown at lower resolution. Export will be high quality (2x).
+            </p>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
