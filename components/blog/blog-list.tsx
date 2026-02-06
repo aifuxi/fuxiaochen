@@ -57,7 +57,7 @@ export async function BlogList({
               date={
                 blog.publishedAt
                   ? format(new Date(blog.publishedAt), "yyyy-MM-dd")
-                  : "Draft"
+                  : "草稿"
               }
               slug={blog.slug}
               cover={blog.cover}
@@ -69,10 +69,10 @@ export async function BlogList({
           flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
         `}>
           <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
-            No posts found
+            暂无文章
           </h3>
           <p className="mb-6 text-[var(--text-color-secondary)]">
-            Try adjusting your filters or search criteria.
+            尝试调整筛选条件或稍后再试。
           </p>
           {(category || tag) && (
             <Link
@@ -83,7 +83,7 @@ export async function BlogList({
                 hover:border-[var(--accent-color)] hover:bg-[var(--accent-color)] hover:text-white
               `}
             >
-              <RotateCcw className="h-4 w-4" /> Reset Filters
+              <RotateCcw className="h-4 w-4" /> 重置筛选
             </Link>
           )}
         </GlassCard>
@@ -91,64 +91,75 @@ export async function BlogList({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-16">
-          <Pagination>
+        <div className="mt-16 flex justify-center">
+          <Pagination className={`
+            w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
+          `}>
             <PaginationContent>
-              {currentPage > 1 && (
-                <PaginationItem>
-                  <PaginationPrevious
-                    href={
-                      page > 1
-                        ? `/blog?page=${page - 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
-                        : "#"
-                    }
-                    className={`
-                      hover:text-[var(--accent-color)]
-                      dark:text-white
-                    `}
-                  />
-                </PaginationItem>
-              )}
+              <PaginationItem>
+                <PaginationPrevious
+                  href={
+                    page > 1
+                      ? `/blog?page=${page - 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
+                      : "#"
+                  }
+                  aria-disabled={page <= 1}
+                  className={
+                    page <= 1
+                      ? "pointer-events-none opacity-50"
+                      : `
+                        transition-colors
+                        hover:bg-gray-100 hover:text-[var(--accent-color)]
+                        dark:hover:bg-[var(--accent-color)]/10
+                      `
+                  }
+                />
+              </PaginationItem>
 
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <PaginationItem key={page}>
+                (p) => (
+                  <PaginationItem key={p}>
                     <PaginationLink
-                      href={`/blog?page=${page}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`}
-                      isActive={currentPage === page}
+                      href={`/blog?page=${p}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`}
+                      isActive={currentPage === p}
                       className={
-                        currentPage === page
+                        currentPage === p
                           ? `
-                            bg-[var(--accent-color)] text-white
-                            hover:bg-[var(--accent-color)]/90
+                            border-transparent bg-[var(--accent-color)] text-white shadow-sm
+                            hover:bg-[var(--accent-color)]/90 hover:text-white
                           `
                           : `
-                            hover:bg-[var(--glass-bg)]
-                            dark:text-gray-400 dark:hover:text-white
+                            transition-colors
+                            hover:bg-gray-100 hover:text-[var(--accent-color)]
+                            dark:hover:bg-[var(--accent-color)]/10
                           `
                       }
                     >
-                      {page}
+                      {p}
                     </PaginationLink>
                   </PaginationItem>
                 ),
               )}
 
-              {currentPage < totalPages && (
-                <PaginationItem>
-                  <PaginationNext
-                    href={
-                      page < totalPages
-                        ? `/blog?page=${page + 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
-                        : "#"
-                    }
-                    className={`
-                      hover:text-[var(--accent-color)]
-                      dark:text-white
-                    `}
-                  />
-                </PaginationItem>
-              )}
+              <PaginationItem>
+                <PaginationNext
+                  href={
+                    page < totalPages
+                      ? `/blog?page=${page + 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
+                      : "#"
+                  }
+                  aria-disabled={page >= totalPages}
+                  className={
+                    page >= totalPages
+                      ? "pointer-events-none opacity-50"
+                      : `
+                        transition-colors
+                        hover:bg-gray-100 hover:text-[var(--accent-color)]
+                        dark:hover:bg-[var(--accent-color)]/10
+                      `
+                  }
+                />
+              </PaginationItem>
             </PaginationContent>
           </Pagination>
         </div>

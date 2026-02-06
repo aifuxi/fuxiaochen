@@ -39,10 +39,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             text-4xl font-bold tracking-tight text-[var(--text-color)]
             md:text-5xl
           `}>
-            Blog Archive
+            博客归档
           </h1>
           <p className="max-w-2xl text-lg text-[var(--text-color-secondary)]">
-            Explore thoughts, tutorials, and insights on software development.
+            探索关于软件开发、设计和技术的思考与教程。
           </p>
         </div>
 
@@ -58,16 +58,16 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {/* Categories */}
             <GlassCard className="p-6">
               <h3 className="mb-4 font-bold text-[var(--text-color)]">
-                Categories
+                分类
               </h3>
               <div className="space-y-1">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
                   className={`
-                    block rounded-lg px-3 py-2 text-sm transition-all duration-200
+                    block rounded-2xl px-3 py-2 text-sm transition-all duration-200
                     ${
                       !categorySlug
-                        ? "bg-[var(--accent-color)] font-medium text-white"
+                        ? "bg-[var(--accent-color)] font-medium text-white shadow-md"
                         : `
                           text-[var(--text-color-secondary)]
                           hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
@@ -75,17 +75,17 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     }
                   `}
                 >
-                  All Categories
+                  全部
                 </Link>
                 {categoriesData?.lists?.map((cat) => (
                   <Link
                     key={cat.id}
                     href={`/blog?category=${cat.slug}${tagSlug ? `&tag=${tagSlug}` : ""}`}
                     className={`
-                      flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-all duration-200
+                      flex items-center justify-between rounded-2xl px-3 py-2 text-sm transition-all duration-200
                       ${
                         categorySlug === cat.slug
-                          ? "bg-[var(--accent-color)] font-medium text-white"
+                          ? "bg-[var(--accent-color)] font-medium text-white shadow-md"
                           : `
                             text-[var(--text-color-secondary)]
                             hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
@@ -108,37 +108,39 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {/* Tags */}
             <GlassCard className="p-6">
               <h3 className="mb-4 font-bold text-[var(--text-color)]">
-                Tags
+                标签
               </h3>
               <div className="flex flex-wrap gap-2">
                 <Link
                   href={categorySlug ? `/blog?category=${categorySlug}` : "/blog"}
                   className={`
-                    rounded-full px-3 py-1 text-xs transition-all duration-200
+                    rounded-full border border-transparent px-3 py-1 text-xs transition-all duration-200
                     ${
                       !tagSlug
-                        ? "bg-[var(--accent-color)] text-white"
+                        ? "bg-[var(--accent-color)] text-white shadow-sm"
                         : `
                           bg-[var(--glass-border)] text-[var(--text-color-secondary)]
-                          hover:bg-[var(--glass-border)] hover:text-[var(--text-color)] hover:brightness-95
+                          hover:border-[var(--glass-border)] hover:bg-[var(--glass-border)]
+                          hover:text-[var(--text-color)] hover:brightness-95
                         `
                     }
                   `}
                 >
-                  All
+                  全部
                 </Link>
                 {tagsData?.lists?.map((tag) => (
                   <Link
                     key={tag.id}
                     href={`/blog?tag=${tag.slug}${categorySlug ? `&category=${categorySlug}` : ""}`}
                     className={`
-                      rounded-full px-3 py-1 text-xs transition-all duration-200
+                      rounded-full border border-transparent px-3 py-1 text-xs transition-all duration-200
                       ${
                         tagSlug === tag.slug
-                          ? "bg-[var(--accent-color)] text-white"
+                          ? "bg-[var(--accent-color)] text-white shadow-sm"
                           : `
                             bg-[var(--glass-border)] text-[var(--text-color-secondary)]
-                            hover:bg-[var(--glass-border)] hover:text-[var(--text-color)] hover:brightness-95
+                            hover:border-[var(--glass-border)] hover:bg-[var(--glass-border)]
+                            hover:text-[var(--text-color)] hover:brightness-95
                           `
                       }
                     `}

@@ -53,13 +53,6 @@
   --color-cyber-gray: #12121e;
 }
 
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
 @layer base {
   :root {
     --bg-color: var(--color-bg-light);
