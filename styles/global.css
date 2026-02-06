@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@plugin "@iconify/tailwind4" {
+  prefixes: skill-icons;
+}
+
 /* exo-2-latin-wght-normal */
 @font-face {
   font-family: "Exo 2";
