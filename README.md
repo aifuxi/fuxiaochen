@@ -1,6 +1,6 @@
 # fuxiaochen
 
-基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用沉浸式赛博朋克设计风格。
+基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用现代化的 Liquid Glass 设计语言。
 
 **本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
 
@@ -139,7 +139,6 @@ fuxiaochen/
 ├── components/             # 组件库
 │   ├── ui/                 # 基础 UI 组件
 │   ├── blog/               # 博客业务组件
-│   └── cyberpunk/          # 赛博朋克主题组件
 ├── lib/                    # 核心工具库
 ├── stores/                 # Store 实现 (Interface-First)
 │   └── */                  # 各模块 Store
@@ -190,16 +189,15 @@ MySQL/MariaDB
 | 变量/函数 | lowerCamelCase | `fetchBlogData` |
 | 类型      | Pascal Case    | `IBlogStore`    |
 
-### 样式规范
+### 样式规范 (Liquid Glass)
 
-项目采用赛博朋克设计风格：
+项目采用现代化的 **Liquid Glass (液态玻璃)** 设计风格：
 
-- **主色调**：Neon Cyan (`#00ffff`)
-- **次色调**：Neon Purple (`#7b61ff`)
-- **背景色**：Cyber Black (`#050510`)
-- **字体**：
-  - 标题：Orbitron
-  - 正文：Exo 2
+- **核心配色**：
+  - Light: `#f2f4f7` (背景) / `#0056b3` (强调)
+  - Dark: `#121212` (背景) / `#1a6dbf` (强调)
+- **视觉特性**：背景模糊 (`backdrop-blur`)、大圆角 (`24px`)、药丸状按钮。
+- **字体**：系统原生字体栈 (Apple 系统风格)。
 
 ## 部署
 

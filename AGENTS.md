@@ -55,7 +55,6 @@
 - **components/**: UI 组件库。
   - `ui/`: 基础 UI 组件 (封装 Radix UI)。
   - `blog/`: 博客相关业务组件。
-  - `cyberpunk/`: 特色主题组件。
 - **lib/**: 核心工具库。
   - `prisma.ts`: Prisma 数据库实例配置。
   - `utils.ts`: 通用工具函数。
@@ -103,69 +102,42 @@
 - **Next.js**: `next.config.mjs` 配置了 `standalone` 输出和图片域名白名单。
 - **Tailwind**: `postcss.config.mjs` 和 Tailwind v4 配置。
 
-## UI/UX 规范 (Cyberpunk Design System)
+## UI/UX 规范 (Liquid Glass Design System)
 
-项目采用沉浸式 Cyberpunk 风格，遵循以下设计规范。
+项目采用现代化 "Liquid Glass" (液态玻璃) 设计语言，强调通透感、层级深度和流动的交互体验。
+
+### 核心设计理念
+
+- **Glassmorphism**: 大量使用背景模糊 (`backdrop-blur`) 和半透明色彩，模拟玻璃质感。
+- **Depth**: 通过柔和的阴影和多层背景叠加，创造自然的视觉深度。
+- **Fluidity**: 所有的交互（如主题切换、悬停、导航）都应具备流畅的过渡效果。
 
 ### 核心配色 (Color Palette)
 
-| 角色             | 变量名称               | HEX       | 用途                     |
-| ---------------- | ---------------------- | --------- | ------------------------ |
-| **Neon Cyan**    | `--color-neon-cyan`    | `#00ffff` | 主强调色，链接，按钮高亮 |
-| **Neon Purple**  | `--color-neon-purple`  | `#7b61ff` | 次级强调色，引用，边框   |
-| **Neon Magenta** | `--color-neon-magenta` | `#ff00ff` | 强调文本，代码块         |
-| **Cyber Black**  | `--color-cyber-black`  | `#050510` | 页面背景                 |
-| **Cyber Dark**   | `--color-cyber-dark`   | `#0d0d0d` | 面板深色背景             |
-| **Cyber Gray**   | `--color-cyber-gray`   | `#1a1a2e` | 卡片背景，次级背景       |
-| **Cyber Text**   | `--color-cyber-text`   | `#e0e0ff` | 正文文本                 |
+| 角色 | 变量名称 | Light Mode | Dark Mode |
+| :--- | :--- | :--- | :--- |
+| **Background** | `--bg-color` | `#f2f4f7` | `#121212` |
+| **Accent** | `--accent-color` | `#0056b3` | `#1a6dbf` |
+| **Primary Text** | `--text-color` | `#1d1d1f` | `#f5f5f7` |
+| **Secondary Text** | `--text-color-secondary` | `#6e6e73` | `#8e8e93` |
+| **Glass Background** | `--glass-bg` | `rgba(255, 255, 255, 0.95)` | `rgba(30, 30, 30, 0.9)` |
+| **Glass Border** | `--glass-border` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.1)` |
 
 ### 字体排印 (Typography)
 
-- **Display Font**: `Orbitron` (用于标题 h1-h6) - 科技感，几何风格。
-- **Body Font**: `Exo 2` (用于正文) - 易读性与未来感兼备。
-- **Letter Spacing**: 标题和按钮常使用宽字间距 (`tracking-widest`, `tracking-[0.5em]`)。
-- **Uppercase**: 关键标签和按钮文字通常使用全大写 (`uppercase`)。
+- **Font Family**: 采用 Apple 风格的系统字体栈：`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`。
+- **Weights**: 正文使用 `Regular (400)`，重要标签使用 `Semibold (600)`，标题使用 `Bold (700)`。
+- **Optimization**: 启用 `antialiased` 以获得更平滑的字体渲染。
 
-### 组件样式 (Component Styles)
+### 组件设计准则
 
-#### 1. 玻璃拟态 (Glassmorphism)
-
-使用深色玻璃效果构建面板和卡片：
-
-```css
-.glass-panel {
-  background: rgba(13, 13, 13, 0.7);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-```
-
-#### 2. 霓虹光效 (Neon Glow)
-
-通过 `text-shadow` 和 `box-shadow` 模拟发光：
-
-- **Text Glow**: `text-shadow: 0 0 5px var(--color-neon-cyan), 0 0 10px var(--color-neon-cyan);`
-- **Box Glow**: `box-shadow: 0 0 5px var(--color-neon-cyan), inset 0 0 5px var(--color-neon-cyan);`
-- **Hover Effect**: 悬停时增强光晕扩散范围 (e.g., `shadow-[0_0_40px_rgba(0,255,255,0.6)]`)。
-
-#### 3. 装饰元素
-
-- **网格背景**: 使用线性渐变创建赛博空间网格背景。
-- **Glitch 效果**: 关键标题使用 CSS 动画实现故障抖动效果。
-- **边框**: 细微的半透明边框 (`border-white/5`)，悬停时变亮 (`border-neon-cyan/50`)。
-
-### 交互规范 (Interaction)
-
-- **Hover States**: 所有可交互元素必须有光效或颜色变化反馈，过渡时间 `duration-300` 或 `duration-500`。
-- **Buttons**:
-  - 主要按钮：霓虹边框 + 背景，悬停填充霓虹色。
-  - 次要按钮：半透明边框，悬停变亮。
-- **Cursor**: 保持默认光标或使用自定义准星光标 (如有)。
-
-### 交付检查 (Pre-Delivery Checklist)
-
-1. [ ] **Theme**: 确保背景色为 `#050510` (Cyber Black)，而非纯黑。
-2. [ ] **Fonts**: 标题必须使用 `Orbitron`，正文使用 `Exo 2`。
-3. [ ] **Contrast**: 检查霓虹色文字在深色背景上的可读性。
-4. [ ] **Effects**: 确保 Glitch 和光晕动画不影响页面性能 (使用 `transform`, `opacity`)。
-5. [ ] **Responsive**: 移动端适配时注意大号标题 (`text-9xl`) 的缩放。
+1.  **圆角 (Border Radius)**:
+    *   卡片与大型容器: `1.5rem` (24px)。
+    *   按钮与药丸标签: `9999px` (Full Circle)。
+2.  **玻璃效 (Effects)**:
+    *   悬浮面板必须包含 `backdrop-blur: 10px` 和 `saturate: 150%`。
+    *   边框应使用极低透明度的配色 (`var(--glass-border)`)。
+3.  **动画与过渡**:
+    *   全局切换过度时间为 `0.3s ease-out`。
+    *   卡片悬停效果：向上平移 `2px` 并增强阴影。
+    *   页面入场效果：支持 `fade-in` 和 `slide-up (20px)` 动画。
