@@ -1,32 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-@plugin "@iconify/tailwind4";
-@plugin "tailwindcss-debug-screens";
-
 /* exo-2-latin-wght-normal */
 @font-face {
   font-family: "Exo 2";
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/exo-2:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-/* orbitron-latin-wght-normal */
-@font-face {
-  font-family: "Orbitron";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 400 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/orbitron:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/exo-2:vf@latest/latin-wght-normal.woff2) format("woff2-variations");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
     U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
@@ -34,22 +15,42 @@
 }
 
 @theme {
-  --font-display:
-    "Orbitron", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-body:
-    "Exo 2", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  /* System font stack for native feel - Apple Style */
+  --font-display: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 
-  --color-neon-cyan: #00ffff;
-  --color-neon-purple: #7b61ff;
+  /* Color Palette - Liquid Glass */
+  --color-bg-light: #f2f4f7;
+  --color-text-light: #1d1d1f;
+  --color-text-secondary-light: #6e6e73;
+  --color-accent-light: #0056b3;
+  --color-glass-bg-light: rgba(255, 255, 255, 0.85);
+  --glass-bg-light: rgba(255, 255, 255, 0.85);
+  /* Fallback */
+  --color-glass-border-light: rgba(0, 0, 0, 0.05);
+
+  --color-bg-dark: #121212;
+  --color-text-dark: #f5f5f7;
+  --color-text-secondary-dark: #8e8e93;
+  --color-accent-dark: #1a6dbf;
+  --color-glass-bg-dark: rgba(30, 30, 30, 0.8);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.1);
+
+  /* Design Tokens */
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+  --transition-fluid: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Legacy Cyberpunk Theme (For Admin Panel Support) */
+  --color-neon-cyan: #00f3ff;
+  --color-neon-purple: #bc13fe;
   --color-neon-magenta: #ff00ff;
   --color-cyber-black: #050510;
-  --color-cyber-dark: #0d0d0d;
-  --color-cyber-gray: #1a1a2e;
-  --color-cyber-text: #e0e0ff;
-
-  --animate-glitch: glitch 1s linear infinite;
-
-  --radius: 0px;
+  --color-cyber-gray: #12121e;
 }
 
 @theme inline {
@@ -60,246 +61,139 @@
 }
 
 @layer base {
+  :root {
+    --bg-color: var(--color-bg-light);
+    --text-color: var(--color-text-light);
+    --text-color-secondary: var(--color-text-secondary-light);
+    --accent-color: var(--color-accent-light);
+    --glass-bg: var(--color-glass-bg-light);
+    --glass-border: var(--color-glass-border-light);
+  }
+
+  .dark {
+    --bg-color: var(--color-bg-dark);
+    --text-color: var(--color-text-dark);
+    --text-color-secondary: var(--color-text-secondary-dark);
+    --accent-color: var(--color-accent-dark);
+    --glass-bg: var(--color-glass-bg-dark);
+    --glass-border: var(--color-glass-border-dark);
+  }
+
+  * {
+    border-color: var(--glass-border);
+  }
+
   body {
-    background-color: var(--color-cyber-black);
-    color: var(--color-cyber-text);
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-family: var(--font-body);
     overflow-x: hidden;
-  }
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-display);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
-@layer utilities {
-  .text-neon-cyan {
-    color: var(--color-neon-cyan);
-    text-shadow:
-      0 0 5px var(--color-neon-cyan),
-      0 0 10px var(--color-neon-cyan);
+/* Glass Panel Effect */
+.glass-panel {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Card Utilities */
+.card-glass {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  @apply rounded-2xl overflow-hidden;
+}
+
+.card-glass:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Text Utilities */
+.text-secondary {
+  color: var(--text-color-secondary);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+/* Button Utilities */
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300;
+  background-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+  @apply opacity-90 -translate-y-0.5 shadow-lg;
+}
+
+/* Custom Scrollbar */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
 
-  .text-neon-purple {
-    color: var(--color-neon-purple);
-    text-shadow:
-      0 0 5px var(--color-neon-purple),
-      0 0 10px var(--color-neon-purple);
+  ::-webkit-scrollbar-track {
+    background: transparent;
   }
 
-  .text-neon-green {
-    color: var(--color-neon-green);
-    text-shadow:
-      0 0 5px var(--color-neon-green),
-      0 0 10px var(--color-neon-green);
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full;
   }
 
-  .text-neon-magenta {
-    color: var(--color-neon-magenta);
-    text-shadow:
-      0 0 5px var(--color-neon-magenta),
-      0 0 10px var(--color-neon-magenta);
-  }
-
-  .box-neon-cyan {
-    box-shadow:
-      0 0 5px var(--color-neon-cyan),
-      inset 0 0 5px var(--color-neon-cyan);
-    border: 1px solid var(--color-neon-cyan);
-  }
-
-  .box-neon-purple {
-    box-shadow:
-      0 0 5px var(--color-neon-purple),
-      inset 0 0 5px var(--color-neon-purple);
-    border: 1px solid var(--color-neon-purple);
-  }
-
-  .glass-panel {
-    background: rgba(13, 13, 13, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-600;
   }
 }
 
-@keyframes glitch {
-  2%,
-  64% {
-    transform: translate(2px, 0) skew(0deg);
-  }
-  4%,
-  60% {
-    transform: translate(-2px, 0) skew(0deg);
-  }
-  62% {
-    transform: translate(0, 0) skew(5deg);
-  }
-}
-
-/* Blog Content Styles */
+/* Markdown Content Styling Override */
 .blog-content {
-  @apply text-lg leading-relaxed text-gray-300;
-}
-
-.blog-content .markdown-body {
-  background-color: transparent !important;
-  color: inherit !important;
-  font-family: inherit !important;
+  @apply text-lg leading-relaxed;
+  color: var(--text-color-secondary);
 }
 
 .blog-content h1,
 .blog-content h2,
-.blog-content h3,
-.blog-content h4,
-.blog-content h5,
-.blog-content h6 {
-  @apply font-display mt-10 mb-6 font-bold text-white;
-  scroll-margin-top: 100px;
-}
-
-.blog-content h1 {
-  @apply text-neon-cyan text-4xl;
-}
-.blog-content h2 {
-  @apply border-b border-white/10 pb-3 text-3xl;
-}
 .blog-content h3 {
-  @apply text-neon-purple text-2xl;
-}
-.blog-content h4 {
-  @apply text-xl;
+  @apply font-bold mt-8 mb-4;
+  color: var(--text-color);
 }
 
 .blog-content p {
-  @apply mb-6 leading-7;
-}
-.blog-content ul {
-  @apply mb-6 ml-6 list-outside list-disc;
-}
-.blog-content ol {
-  @apply mb-6 ml-6 list-outside list-decimal;
-}
-.blog-content li {
-  @apply mb-2 pl-2;
+  @apply mb-6;
 }
 
 .blog-content a {
-  @apply text-neon-cyan relative no-underline transition-colors duration-300;
-}
-.blog-content a:hover {
-  @apply text-neon-purple;
-}
-.blog-content a::after {
-  content: "";
-  @apply bg-neon-purple absolute bottom-0 left-0 h-[1px] w-0 transition-all duration-300;
-}
-.blog-content a:hover::after {
-  @apply w-full;
-}
-
-.blog-content blockquote {
-  @apply border-neon-purple relative my-8 rounded-r border-l-4 bg-white/5 p-6 text-gray-400 italic;
-}
-.blog-content blockquote::before {
-  content: '"';
-  @apply absolute top-2 left-2 font-serif text-4xl leading-none text-white/10;
-}
-
-.blog-content code {
-  @apply text-neon-magenta rounded border border-white/10 bg-white/10 px-1.5 py-0.5 font-mono text-sm;
-}
-
-.blog-content pre {
-  @apply relative mb-8 overflow-hidden rounded-lg border border-white/10 bg-[#1e1e2e] p-0 shadow-lg;
-}
-/* Override bytemd/highlightjs styles if needed */
-.blog-content pre code {
-  @apply block overflow-x-auto bg-transparent p-6 text-sm leading-relaxed;
+  @apply hover:underline decoration-2 underline-offset-4 transition-colors;
+  color: var(--accent-color);
 }
 
 .blog-content img {
-  @apply mx-auto my-8 h-auto max-w-full rounded-xl border border-white/10 shadow-2xl transition-transform duration-500 hover:scale-[1.01];
+  @apply rounded-xl border border-white/10 shadow-lg my-8;
 }
 
-.blog-content table {
-  @apply mb-8 w-full border-collapse text-sm;
-}
-.blog-content th {
-  @apply text-neon-cyan border border-white/10 bg-white/5 p-3 text-left font-bold;
-}
-.blog-content td {
-  @apply border border-white/10 p-3;
-}
-.blog-content tr:hover td {
-  @apply bg-white/5;
+.blog-content pre {
+  @apply rounded-xl p-4 my-6 overflow-x-auto text-sm;
+  background-color: #1e1e1e;
+  /* Consistent dark code block even in light mode for readability */
+  color: #e4e4e7;
 }
 
-.blog-content hr {
-  @apply my-12 border-white/10;
+.blog-content code {
+  @apply font-mono text-sm px-1.5 py-0.5 rounded;
+  color: var(--accent-color);
+  background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
 }
 
-/* Custom scrollbar for pre blocks */
-.blog-content pre code::-webkit-scrollbar {
-  height: 8px;
-}
-.blog-content pre code::-webkit-scrollbar-track {
-  @apply bg-black/20;
-}
-.blog-content pre code::-webkit-scrollbar-thumb {
-  @apply rounded bg-white/20 hover:bg-white/30;
-}
-
-/* Copy Code Button Styles */
-.copy-code-btn {
-  @apply absolute top-2 right-2 z-10 flex h-7 w-7 cursor-pointer items-center justify-center rounded-md border border-transparent bg-white/5 text-gray-400 transition-all duration-200;
-}
-
-.blog-content pre:hover .copy-code-btn {
-  @apply opacity-100;
-}
-
-.copy-code-btn:hover {
-  @apply bg-white/10 text-white shadow-[0_0_10px_rgba(0,255,255,0.2)];
-  border-color: rgba(0, 255, 255, 0.3);
-}
-
-.copy-code-btn.copied {
-  border-color: rgba(57, 255, 20, 0.3);
-  background-color: rgba(57, 255, 20, 0.05);
-  color: var(--color-neon-green);
-  text-shadow:
-    0 0 5px var(--color-neon-green),
-    0 0 10px var(--color-neon-green);
-}
-
-.copy-code-btn .check-icon {
-  display: none;
-}
-
-.copy-code-btn.copied .copy-icon {
-  display: none;
-}
-
-.copy-code-btn.copied .check-icon {
-  display: block;
-}
-
-/* Custom Scrollbar for TOC and other scrollable areas */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 255, 0.2);
-  border-radius: 2px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 255, 0.4);
+.blog-content pre code {
+  @apply bg-transparent text-inherit p-0;
 }

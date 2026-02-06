@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
+import { ThemeProvider } from "@/components/theme-provider";
 import "@/styles/global.css";
 
 export const metadata: Metadata = {
@@ -30,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="dark scroll-smooth">
+    <html lang="zh-CN" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <link
           rel="apple-touch-icon"
@@ -61,13 +62,20 @@ export default function RootLayout({
       </head>
       <body
         className={`
-          bg-cyber-black text-white antialiased
-          selection:bg-neon-cyan selection:text-black
+          bg-[var(--bg-color)] text-[var(--text-color)] antialiased
+          selection:bg-[var(--accent-color)] selection:text-white
           ${isProduction() ? "" : "debug-screens"}
         `}
       >
-        {children}
-        <Toaster richColors position="top-center" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster richColors position="top-center" />
+        </ThemeProvider>
       </body>
 
       {/* Google Analytics  */}

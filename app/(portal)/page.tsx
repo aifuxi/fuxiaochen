@@ -1,22 +1,20 @@
 import { Suspense } from "react";
-
 import { getBlogsAction } from "@/app/actions/blog";
-
 import { BlogListItemSkeleton } from "@/components/blog/blog-list-skeleton";
-import { GlitchHero } from "@/components/cyberpunk/glitch-hero";
-import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
+import { Hero } from "@/components/portal/hero";
+import { BlogCard } from "@/components/blog/blog-card";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const revalidate = 3600; // Revalidate every hour
 
 function BlogListSkeleton() {
   return (
-    <div
-      className={`
-        grid grid-cols-1 gap-8
-        md:grid-cols-2
-        lg:grid-cols-3
-      `}
-    >
+    <div className={`
+      grid grid-cols-1 gap-8
+      md:grid-cols-2
+      lg:grid-cols-3
+    `}>
       {Array.from({ length: 6 }).map((_, i) => (
         <BlogListItemSkeleton key={i} />
       ))}
@@ -35,15 +33,13 @@ async function BlogList() {
   const blogs = data?.lists || [];
 
   return (
-    <div
-      className={`
-        grid grid-cols-1 gap-8
-        md:grid-cols-2
-        lg:grid-cols-3
-      `}
-    >
+    <div className={`
+      grid grid-cols-1 gap-8
+      md:grid-cols-2
+      lg:grid-cols-3
+    `}>
       {blogs.map((blog) => (
-        <NeonBlogCard
+        <BlogCard
           key={blog.id}
           title={blog.title}
           excerpt={blog.description}
@@ -64,28 +60,37 @@ async function BlogList() {
 export default function HomePage() {
   return (
     <>
-      <GlitchHero />
+      <Hero />
 
-      <main className="mx-auto max-w-7xl space-y-32 px-4 pb-20">
+      <main className="mx-auto max-w-7xl px-4 pb-20">
         {/* Blog Section */}
         <section id="blog" className="space-y-12">
-          <div
-            className={`
-              flex flex-col justify-between gap-6
-              md:flex-row md:items-end
-            `}
-          >
+          <div className={`
+            flex flex-col justify-between gap-6
+            md:flex-row md:items-end
+          `}>
             <div className="space-y-2">
-              <h2 className="text-4xl font-bold tracking-wider text-white uppercase">
-                最新 <span className="text-neon-cyan">发布</span>
+              <h2 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
+                Latest <span className="text-[var(--accent-color)]">Thoughts</span>
               </h2>
-              <p className="font-mono text-sm text-gray-400">
-                /// 正在访问档案库...【读取数据流】
+              <p className="text-[var(--text-color-secondary)]">
+                Exploring technology, design, and everything in between.
               </p>
             </div>
-          </div>
 
-          <div className="h-px bg-gradient-to-r from-neon-cyan to-transparent opacity-50" />
+            <Link
+              href="/blog"
+              className={`
+                group inline-flex items-center gap-1 font-medium text-[var(--accent-color)] transition-colors
+                hover:text-[var(--accent-color)]/80
+              `}
+            >
+              View Archives <ArrowRight className={`
+                h-4 w-4 transition-transform
+                group-hover:translate-x-1
+              `} />
+            </Link>
+          </div>
 
           <Suspense fallback={<BlogListSkeleton />}>
             <BlogList />

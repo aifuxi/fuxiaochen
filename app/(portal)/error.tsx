@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { ErrorView } from "@/components/cyberpunk/error-view";
+import { ErrorView } from "@/components/ui/error-view";
 
 export default function Error({
   error,
@@ -19,8 +19,8 @@ export default function Error({
   return (
     <ErrorView
       code="500"
-      title="系统故障"
-      message="神经连接中断"
+      title="Something went wrong"
+      message="We encountered an unexpected error."
       onRetry={() => reset()}
     />
   );

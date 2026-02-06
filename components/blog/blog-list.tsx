@@ -9,7 +9,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { NeonBlogCard } from "@/components/cyberpunk/neon-blog-card";
+import { BlogCard } from "@/components/blog/blog-card";
+import { GlassCard } from "@/components/ui/glass-card";
+import { RotateCcw } from "lucide-react";
 
 interface BlogListProps {
   page: number;
@@ -42,14 +44,12 @@ export async function BlogList({
   return (
     <>
       {blogs.length > 0 ? (
-        <div
-          className={`
-            mb-12 grid animate-in grid-cols-1 gap-6 duration-500 fade-in slide-in-from-bottom-4
-            md:grid-cols-2
-          `}
-        >
+        <div className={`
+          mb-12 grid animate-in grid-cols-1 gap-8 duration-500 fade-in slide-in-from-bottom-4
+          md:grid-cols-2
+        `}>
           {blogs.map((blog) => (
-            <NeonBlogCard
+            <BlogCard
               key={blog.id}
               title={blog.title}
               excerpt={blog.description}
@@ -57,7 +57,7 @@ export async function BlogList({
               date={
                 blog.publishedAt
                   ? format(new Date(blog.publishedAt), "yyyy-MM-dd")
-                  : "未发布 / Unpublished"
+                  : "Draft"
               }
               slug={blog.slug}
               cover={blog.cover}
@@ -65,29 +65,28 @@ export async function BlogList({
           ))}
         </div>
       ) : (
-        <div
-          className={`
-            glass-panel flex animate-in flex-col items-center justify-center rounded-xl border-2 border-dashed
-            border-white/10 py-20 text-center duration-300 zoom-in-95 fade-in
-          `}
-        >
-          <h3 className="mb-2 text-2xl font-bold text-gray-500">
-            未发现传输内容
+        <GlassCard className={`
+          flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
+        `}>
+          <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
+            No posts found
           </h3>
-          <p className="mb-6 text-gray-600">尝试调整您的信号过滤器</p>
+          <p className="mb-6 text-[var(--text-color-secondary)]">
+            Try adjusting your filters or search criteria.
+          </p>
           {(category || tag) && (
             <Link
               href="/blog"
               className={`
-                flex items-center gap-2 rounded border border-neon-cyan/50 px-6 py-2 font-mono text-sm tracking-wider
-                text-neon-cyan uppercase transition-all duration-300
-                hover:bg-neon-cyan/10 hover:shadow-[0_0_10px_rgba(0,255,255,0.2)]
+                inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] px-6 py-2 text-sm
+                font-medium transition-colors
+                hover:border-[var(--accent-color)] hover:bg-[var(--accent-color)] hover:text-white
               `}
             >
-              <span className="text-lg">↺</span> 重置信号
+              <RotateCcw className="h-4 w-4" /> Reset Filters
             </Link>
           )}
-        </div>
+        </GlassCard>
       )}
 
       {/* Pagination */}
@@ -104,8 +103,8 @@ export async function BlogList({
                         : "#"
                     }
                     className={`
-                      border-none text-neon-cyan
-                      hover:bg-neon-cyan/10 hover:text-neon-cyan
+                      hover:text-[var(--accent-color)]
+                      dark:text-white
                     `}
                   />
                 </PaginationItem>
@@ -119,10 +118,13 @@ export async function BlogList({
                       isActive={currentPage === page}
                       className={
                         currentPage === page
-                          ? "border-neon-cyan bg-neon-cyan text-black"
+                          ? `
+                            bg-[var(--accent-color)] text-white
+                            hover:bg-[var(--accent-color)]/90
+                          `
                           : `
-                            border-transparent text-gray-400
-                            hover:bg-white/10 hover:text-white
+                            hover:bg-[var(--glass-bg)]
+                            dark:text-gray-400 dark:hover:text-white
                           `
                       }
                     >
@@ -141,8 +143,8 @@ export async function BlogList({
                         : "#"
                     }
                     className={`
-                      border-none text-neon-cyan
-                      hover:bg-neon-cyan/10 hover:text-neon-cyan
+                      hover:text-[var(--accent-color)]
+                      dark:text-white
                     `}
                   />
                 </PaginationItem>
