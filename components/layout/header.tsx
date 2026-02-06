@@ -26,25 +26,25 @@ export function Header() {
             transition-colors
             hover:text-[var(--accent-color)]
           `}>
-            Home
+            首页
           </Link>
           <Link href="/blog" className={`
             transition-colors
             hover:text-[var(--accent-color)]
           `}>
-            Blog
+            博客
           </Link>
           <Link href="/about" className={`
             transition-colors
             hover:text-[var(--accent-color)]
           `}>
-            About
+            关于我
           </Link>
           <Link href="/changelog" className={`
             transition-colors
             hover:text-[var(--accent-color)]
           `}>
-            Changelog
+            更新日志
           </Link>
         </div>
 

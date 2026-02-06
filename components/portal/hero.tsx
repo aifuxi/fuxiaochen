@@ -15,9 +15,9 @@ export function Hero() {
           text-5xl font-bold tracking-tight text-[var(--text-color)]
           md:text-7xl
         `}>
-          Exploration & <br />
+          探索 <br />
           <span className="bg-gradient-to-r from-[var(--accent-color)] to-purple-500 bg-clip-text text-transparent">
-            Digital Creation
+            数字创造
           </span>
         </h1>
 
@@ -25,21 +25,20 @@ export function Hero() {
           mx-auto max-w-2xl text-lg leading-relaxed text-[var(--text-color-secondary)]
           md:text-xl
         `}>
-          Sharing thoughts on frontend development, design systems, and modern web architecture.
-          Built with Next.js 16 and Liquid Glass aesthetics.
+          分享关于前端开发、设计系统和现代 Web 架构的思考。
+          基于 Next.js 16 和 Liquid Glass 美学构建。
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
           <Link
             href="/blog"
             className={`
-              group relative inline-flex items-center gap-2 rounded-full bg-[var(--text-color)] px-8 py-3 text-white
-              transition-transform
-              hover:-translate-y-1 hover:shadow-lg
-              dark:text-black
+              group relative inline-flex items-center gap-2 rounded-full bg-[var(--accent-color)] px-8 py-3 text-white
+              shadow-lg transition-all duration-300
+              hover:-translate-y-1 hover:opacity-90 hover:shadow-xl
             `}
           >
-            Start Reading
+            开始阅读
             <ArrowRight className={`
               h-4 w-4 transition-transform
               group-hover:translate-x-1
@@ -48,13 +47,13 @@ export function Hero() {
           <Link
             href="/about"
             className={`
-              inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-8
-              py-3 text-[var(--text-color)] backdrop-blur-md transition-all
-              hover:bg-black/5
-              dark:hover:bg-white/10
+              inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/50 px-8 py-3
+              text-[var(--text-color)] backdrop-blur-md transition-all duration-300
+              hover:bg-white/80 hover:shadow-md
+              dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)] dark:hover:bg-white/10
             `}
           >
-            About Me
+            关于我
           </Link>
         </div>
       </div>
