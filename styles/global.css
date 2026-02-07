@@ -5,20 +5,6 @@
   prefixes: skill-icons;
 }
 
-/* exo-2-latin-wght-normal */
-@font-face {
-  font-family: "Exo 2";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/exo-2:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
 @theme {
   /* System font stack for native feel - Apple Style */
   --font-display:
@@ -55,13 +41,6 @@
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
   --transition-fluid: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Legacy Cyberpunk Theme (For Admin Panel Support) */
-  --color-neon-cyan: #00f3ff;
-  --color-neon-purple: #bc13fe;
-  --color-neon-magenta: #ff00ff;
-  --color-cyber-black: #050510;
-  --color-cyber-gray: #12121e;
 }
 
 @layer base {
@@ -165,47 +144,4 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-600;
   }
-}
-
-/* Markdown Content Styling Override */
-.blog-content {
-  @apply text-lg leading-relaxed;
-  color: var(--text-color-secondary);
-}
-
-.blog-content h1,
-.blog-content h2,
-.blog-content h3 {
-  @apply font-bold mt-8 mb-4;
-  color: var(--text-color);
-}
-
-.blog-content p {
-  @apply mb-6;
-}
-
-.blog-content a {
-  @apply hover:underline decoration-2 underline-offset-4 transition-colors;
-  color: var(--accent-color);
-}
-
-.blog-content img {
-  @apply rounded-xl border border-white/10 shadow-lg my-8;
-}
-
-.blog-content pre {
-  @apply rounded-xl p-4 my-6 overflow-x-auto text-sm;
-  background-color: #1e1e1e;
-  /* Consistent dark code block even in light mode for readability */
-  color: #e4e4e7;
-}
-
-.blog-content code {
-  @apply font-mono text-sm px-1.5 py-0.5 rounded;
-  color: var(--accent-color);
-  background-color: color-mix(in srgb, var(--accent-color), transparent 90%);
-}
-
-.blog-content pre code {
-  @apply bg-transparent text-inherit p-0;
 }
