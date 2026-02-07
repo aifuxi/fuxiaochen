@@ -10,8 +10,8 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
         `
           file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium
           placeholder:text-muted-foreground
-          h-10 w-full min-w-0 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50 px-3 py-1 text-base
-          text-[var(--text-color)] shadow-sm backdrop-blur-sm transition-all duration-300 outline-none
+          h-10 w-full min-w-0 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50 px-3 py-1
+          text-base text-[var(--text-color)] shadow-sm backdrop-blur-sm transition-all duration-300 outline-none
           selection:bg-[var(--accent-color)] selection:text-white
           hover:border-[var(--accent-color)]/30 hover:bg-[var(--glass-bg)]
           focus-visible:border-[var(--accent-color)] focus-visible:ring-4 focus-visible:ring-[var(--accent-color)]/20
