@@ -37,15 +37,16 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         `
-          border-input flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm
-          whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none
           data-[placeholder]:text-muted-foreground
           [&_svg:not([class*='text-'])]:text-muted-foreground
-          focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
-          aria-invalid:ring-destructive/20 aria-invalid:border-destructive
-          dark:aria-invalid:ring-destructive/40 dark:bg-input/30 dark:hover:bg-input/50
+          flex w-fit items-center justify-between gap-2 rounded-xl border border-[var(--glass-border)]
+          bg-[var(--glass-bg)]/50 px-3 py-2 text-sm whitespace-nowrap text-[var(--text-color)] shadow-sm
+          backdrop-blur-sm transition-all duration-300 outline-none
+          hover:border-[var(--accent-color)]/30 hover:bg-[var(--glass-bg)]
+          focus-visible:border-[var(--accent-color)] focus-visible:ring-4 focus-visible:ring-[var(--accent-color)]/20
           disabled:cursor-not-allowed disabled:opacity-50
-          data-[size=default]:h-9
+          aria-invalid:border-red-500 aria-invalid:ring-red-500/20
+          data-[size=default]:h-10
           data-[size=sm]:h-8
           *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex
           *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2
@@ -77,9 +78,9 @@ function SelectContent({
         data-slot="select-content"
         className={cn(
           `
-            bg-popover text-popover-foreground relative z-50 max-h-(--radix-select-content-available-height)
-            min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md
-            border shadow-md
+            glass-panel relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem]
+            origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl
+            text-[var(--text-color)] shadow-lg
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -139,10 +140,10 @@ function SelectItem({
       data-slot="select-item"
       className={cn(
         `
-          focus:bg-accent focus:text-accent-foreground
           [&_svg:not([class*='text-'])]:text-muted-foreground
-          relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden
-          select-none
+          relative flex w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-2 text-sm outline-hidden
+          transition-colors duration-200 select-none
+          focus:bg-[var(--accent-color)]/10 focus:text-[var(--accent-color)]
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
           [&_svg]:pointer-events-none [&_svg]:shrink-0
           [&_svg:not([class*='size-'])]:size-4

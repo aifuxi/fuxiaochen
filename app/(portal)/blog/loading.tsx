@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogLoading() {
   return (
-    <div className="min-h-screen bg-cyber-black font-body text-white">
+    <div className="bg-cyber-black min-h-screen font-body text-white">
       <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16">

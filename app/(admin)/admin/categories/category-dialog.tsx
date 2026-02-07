@@ -101,16 +101,9 @@ export function CategoryDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent
-        className={`
-          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-md
-          sm:max-w-[425px]
-        `}
-      >
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[var(--text-color)]">
-            {category ? "编辑分类" : "新增分类"}
-          </DialogTitle>
+          <DialogTitle>{category ? "编辑分类" : "新增分类"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -123,14 +116,7 @@ export function CategoryDialog({
                     名称
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="分类名称"
-                      className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                      `}
-                      {...field}
-                    />
+                    <Input placeholder="分类名称" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-500" />
                 </FormItem>
@@ -145,14 +131,7 @@ export function CategoryDialog({
                     Slug
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="URL 标识"
-                      className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                      `}
-                      {...field}
-                    />
+                    <Input placeholder="URL 标识" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-500" />
                 </FormItem>
@@ -169,10 +148,7 @@ export function CategoryDialog({
                   <FormControl>
                     <Textarea
                       placeholder="分类描述"
-                      className={`
-                        resize-none border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                      `}
+                      className="resize-none"
                       {...field}
                     />
                   </FormControl>

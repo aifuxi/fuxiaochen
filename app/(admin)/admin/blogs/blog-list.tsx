@@ -149,20 +149,10 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
               name="query"
               placeholder="搜索文章标题..."
               defaultValue={title || ""}
-              className={`
-                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
-                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-              `}
+              className="pl-9"
             />
           </div>
-          <Button
-            type="submit"
-            variant="secondary"
-            className={`
-              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
-            `}
-          >
+          <Button type="submit" variant="secondary">
             搜索
           </Button>
         </form>
@@ -249,12 +239,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
-                      <Badge
-                        variant="outline"
-                        className="border-[var(--accent-color)]/50 text-[var(--accent-color)]"
-                      >
-                        {blog.category.name}
-                      </Badge>
+                      <Badge variant="outline">{blog.category.name}</Badge>
                     ) : (
                       "-"
                     )}

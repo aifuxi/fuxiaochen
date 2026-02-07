@@ -35,7 +35,7 @@ function TooltipTrigger({
 
 function TooltipContent({
   className,
-  sideOffset = 0,
+  sideOffset = 4,
   children,
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
@@ -46,8 +46,8 @@ function TooltipContent({
         sideOffset={sideOffset}
         className={cn(
           `
-            bg-foreground text-background z-50 w-fit origin-(--radix-tooltip-content-transform-origin) animate-in
-            rounded-md px-3 py-1.5 text-xs text-balance fade-in-0 zoom-in-95
+            glass-panel z-50 w-fit origin-(--radix-tooltip-content-transform-origin) animate-in rounded-lg px-3 py-1.5
+            text-xs text-balance text-[var(--text-color)] shadow-lg fade-in-0 zoom-in-95
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -59,11 +59,6 @@ function TooltipContent({
         {...props}
       >
         {children}
-        <TooltipPrimitive.Arrow
-          className={`
-            bg-foreground fill-foreground z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]
-          `}
-        />
       </TooltipPrimitive.Content>
     </TooltipPrimitive.Portal>
   );

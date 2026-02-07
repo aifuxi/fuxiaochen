@@ -19,23 +19,20 @@ const buttonVariants = cva(
           hover:opacity-90 hover:shadow-lg
         `,
         secondary: `
-          bg-gray-100 text-[var(--text-color)]
-          hover:bg-gray-200
-          dark:bg-gray-800 dark:hover:bg-gray-700
+          border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-sm
+          hover:bg-[var(--glass-bg)]/80
         `,
         ghost: `
           text-[var(--text-color)]
-          hover:bg-gray-100
-          dark:hover:bg-gray-800
+          hover:bg-[var(--glass-bg)]/50
         `,
         glass: `
-          glass-panel
-          hover:bg-white/10
-          dark:hover:bg-white/5
+          glass-panel text-[var(--text-color)]
+          hover:bg-[var(--glass-bg)]/80
         `,
         outline: `
           border border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
-          hover:bg-[var(--glass-bg)]
+          hover:bg-[var(--glass-bg)]/50
         `,
       },
       size: {

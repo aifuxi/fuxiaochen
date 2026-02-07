@@ -47,26 +47,15 @@ export function DeleteAlert({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent
-        className={`border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-xl`}
-      >
+      <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-[var(--text-color)]">
-            确认删除？
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-[var(--text-color-secondary)]">
+          <AlertDialogTitle>确认删除？</AlertDialogTitle>
+          <AlertDialogDescription>
             此操作无法撤销。该日志将被永久删除。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
-            className={`
-              border-[var(--glass-border)] bg-transparent text-[var(--text-color-secondary)]
-              hover:bg-[var(--glass-bg)] hover:text-[var(--text-color)]
-            `}
-          >
-            取消
-          </AlertDialogCancel>
+          <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={loading}

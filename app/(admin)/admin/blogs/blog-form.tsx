@@ -135,18 +135,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color)]">
-                    标题
-                  </FormLabel>
+                  <FormLabel>标题</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                      `}
-                      placeholder="文章标题"
-                    />
+                    <Input {...field} placeholder="文章标题" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,18 +148,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color)]">
-                    Slug
-                  </FormLabel>
+                  <FormLabel>Slug</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                      `}
-                      placeholder="article-slug"
-                    />
+                    <Input {...field} placeholder="article-slug" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,16 +163,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[var(--text-color)]">描述</FormLabel>
+                <FormLabel>描述</FormLabel>
                 <FormControl>
-                  <Textarea
-                    {...field}
-                    className={`
-                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                    `}
-                    placeholder="文章简短描述..."
-                  />
+                  <Textarea {...field} placeholder="文章简短描述..." />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,33 +183,20 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color)]">
-                    分类
-                  </FormLabel>
+                  <FormLabel>分类</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                     value={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger
-                        className={`
-                          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                          focus:ring-[var(--accent-color)]/20
-                        `}
-                      >
+                      <SelectTrigger>
                         <SelectValue placeholder="选择分类" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent
-                      className={`border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]`}
-                    >
+                    <SelectContent>
                       {categories.map((category) => (
-                        <SelectItem
-                          key={category.id}
-                          value={category.id}
-                          className="focus:bg-[var(--accent-color)]/20 focus:text-[var(--accent-color)]"
-                        >
+                        <SelectItem key={category.id} value={category.id}>
                           {category.name}
                         </SelectItem>
                       ))}
@@ -250,9 +212,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="tags"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-[var(--text-color)]">
-                    标签
-                  </FormLabel>
+                  <FormLabel>标签</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -260,14 +220,10 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                           variant="outline"
                           role="combobox"
                           className={`
-                            justify-between border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                            hover:bg-[var(--glass-bg)]/80
-                            ${!field.value?.length && "text-[var(--text-color-secondary)]"}
+                            justify-between
+                            ${!field.value?.length && "text-muted-foreground"}
                           `}
                         >
-                          {`
-
-                    `}
                           {field.value?.length
                             ? `${field.value.length} 个已选`
                             : "选择标签"}
@@ -275,10 +231,8 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent
-                      className={`w-75 border-[var(--glass-border)] bg-[var(--glass-bg)] p-0 text-[var(--text-color)]`}
-                    >
-                      <ScrollArea className="h-75 p-4">
+                    <PopoverContent className="w-[200px] p-0">
+                      <ScrollArea className="h-[200px] p-4">
                         <div className="space-y-2">
                           {tags.map((tag) => (
                             <div
@@ -300,10 +254,6 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                                         ),
                                       );
                                 }}
-                                className={`
-                                  border-[var(--text-color-secondary)]
-                                  data-[state=checked]:bg-[var(--accent-color)] data-[state=checked]:text-white
-                                `}
                               />
                               <label
                                 htmlFor={tag.id}
@@ -345,16 +295,10 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="cover"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[var(--text-color)]">
-                  封面图 URL
-                </FormLabel>
+                <FormLabel>封面图 URL</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    className={`
-                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                    `}
                     placeholder="https://example.com/image.png"
                   />
                 </FormControl>
@@ -462,16 +406,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               control={form.control}
               name="featured"
               render={({ field }) => (
-                <FormItem
-                  className={`
-                    flex flex-row items-center justify-between rounded-lg border border-[var(--glass-border)]
-                    bg-[var(--glass-bg)] p-4
-                  `}
-                >
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base text-[var(--text-color)]">
-                      精选
-                    </FormLabel>
+                    <FormLabel className="text-base">精选</FormLabel>
                   </div>
                   <FormControl>
                     <Switch
@@ -489,10 +426,6 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               type="button"
               variant="outline"
               onClick={() => router.push("/admin/blogs")}
-              className={`
-                border-[var(--glass-border)] text-[var(--text-color-secondary)]
-                hover:bg-[var(--glass-bg)] hover:text-[var(--text-color)]
-              `}
             >
               取消
             </Button>

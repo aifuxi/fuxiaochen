@@ -35,10 +35,14 @@
 
   /* Design Tokens */
   --radius-2xl: 1.5rem;
+  --radius-xl: 1rem;
+  --radius-lg: 0.75rem;
+  --radius-md: 0.5rem;
   --radius-full: 9999px;
 
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 
   --transition-fluid: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -51,6 +55,7 @@
     --accent-color: var(--color-accent-light);
     --glass-bg: var(--color-glass-bg-light);
     --glass-border: var(--color-glass-border-light);
+    --glass-blur: 12px;
   }
 
   .dark {

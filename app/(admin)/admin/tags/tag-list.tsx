@@ -134,20 +134,10 @@ export default function TagManagementPage() {
               name="query"
               placeholder="搜索标签名称..."
               defaultValue={name || ""}
-              className={`
-                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
-                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-              `}
+              className="pl-9"
             />
           </div>
-          <Button
-            type="submit"
-            variant="secondary"
-            className={`
-              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
-            `}
-          >
+          <Button type="submit" variant="secondary">
             搜索
           </Button>
         </form>
@@ -160,28 +150,21 @@ export default function TagManagementPage() {
         >
           <Plus className="mr-2 h-4 w-4" /> 新建标签
         </Button>
+        {`
+
+
+          `}
       </GlassCard>
 
       <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
-            <TableRow
-              className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]
-              `}
-            >
-              <TableHead className="text-[var(--text-color-secondary)]">
-                名称
-              </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
-                Slug
-              </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
-                文章数
-              </TableHead>
+            <TableRow>
+              <TableHead>名称</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead>文章数</TableHead>
               <TableHead
-                className="cursor-pointer text-[var(--text-color-secondary)]"
+                className="cursor-pointer"
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center gap-1">
@@ -189,16 +172,14 @@ export default function TagManagementPage() {
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer text-[var(--text-color-secondary)]"
+                className="cursor-pointer"
                 onClick={() => handleSort("updatedAt")}
               >
                 <div className="flex items-center gap-1">
                   更新时间 <ArrowUpDown className="h-3 w-3" />
                 </div>
               </TableHead>
-              <TableHead className="text-right text-[var(--text-color-secondary)]">
-                操作
-              </TableHead>
+              <TableHead className="text-right">操作</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -222,13 +203,7 @@ export default function TagManagementPage() {
               </TableRow>
             ) : (
               tags.map((tag) => (
-                <TableRow
-                  key={tag.id}
-                  className={`
-                    border-[var(--glass-border)]
-                    hover:bg-[var(--glass-bg)]
-                  `}
-                >
+                <TableRow key={tag.id}>
                   <TableCell className="font-medium text-[var(--text-color)]">
                     {tag.name}
                   </TableCell>

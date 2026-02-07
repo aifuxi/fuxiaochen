@@ -119,10 +119,7 @@ export default function ChangelogManagementPage() {
               name="query"
               placeholder="搜索版本号..."
               defaultValue={version}
-              className={`
-                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
-                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-              `}
+              className="pl-9"
             />
           </div>
           <Button
@@ -151,12 +148,7 @@ export default function ChangelogManagementPage() {
       <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
-            <TableRow
-              className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]
-              `}
-            >
+            <TableRow>
               <TableHead className="text-[var(--text-color-secondary)]">
                 版本
               </TableHead>
@@ -225,14 +217,9 @@ export default function ChangelogManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(changelog)}
-                        className={`
-                          text-[var(--text-color-secondary)]
-                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
-                        `}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-
                       <Button
                         variant="ghost"
                         size="icon"

@@ -89,12 +89,7 @@ export function UserDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent
-        className={`
-          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-xl
-          sm:max-w-[425px]
-        `}
-      >
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-[var(--text-color)]">
             编辑用户角色
@@ -119,26 +114,19 @@ export function UserDialog({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
-                    角色
-                  </FormLabel>
+                  <FormLabel>角色</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger
-                        className={`
-                          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                          focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-                        `}
-                      >
+                      <SelectTrigger>
                         <SelectValue placeholder="选择角色" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className={`
-                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                    `}>
+                    <SelectContent
+                      className={`border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]`}
+                    >
                       <SelectItem value="visitor">Visitor</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
