@@ -42,10 +42,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       <div className="flex h-16 items-center border-b border-[var(--glass-border)] px-6">
         <Link
           href="/"
+          target="_blank"
           className="text-xl font-bold tracking-tight text-[var(--text-color)] uppercase"
         >
-          {WEBSITE}
-          <span className="text-[var(--accent-color)]">后台管理</span>
+          <span className="text-[var(--accent-color)]">{WEBSITE}</span>
+          后台管理
         </Link>
       </div>
 
