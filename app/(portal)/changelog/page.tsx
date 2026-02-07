@@ -104,19 +104,7 @@ export default async function ChangelogPage({
                     md:p-8
                   `}
                 >
-                  <div
-                    className={`
-                      prose prose-gray
-                      dark:prose-invert
-                      prose-headings:font-bold prose-headings:text-[var(--text-color)]
-                      prose-p:text-[var(--text-color-secondary)]
-                      prose-a:text-[var(--accent-color)]
-                      prose-ul:list-disc prose-ul:pl-4
-                      max-w-none
-                    `}
-                  >
-                    <BlogContent content={log.content} />
-                  </div>
+                  <BlogContent content={log.content} />
                 </GlassCard>
               </div>
             ))
