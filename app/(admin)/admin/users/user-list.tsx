@@ -100,31 +100,29 @@ export default function UserManagementPage() {
           sm:flex-row sm:items-center sm:justify-between
         `}
       >
-        <form onSubmit={handleSearch} className="flex-1">
-          <div className="relative max-w-sm">
+        <form
+          onSubmit={handleSearch}
+          className="flex flex-1 items-center gap-2"
+        >
+          <div className="relative max-w-sm flex-1">
             <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
             <Input
               name="query"
               placeholder="搜索用户..."
               defaultValue={name}
-              className={`
-                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9 text-[var(--text-color)]
-                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-              `}
+              className="pl-9"
             />
           </div>
+          <Button type="submit" variant="secondary">
+            搜索
+          </Button>
         </form>
       </GlassCard>
 
       <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
-            <TableRow
-              className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]
-              `}
-            >
+            <TableRow>
               <TableHead className="text-[var(--text-color-secondary)]">
                 用户
               </TableHead>
@@ -163,13 +161,7 @@ export default function UserManagementPage() {
               </TableRow>
             ) : (
               data?.lists?.map((user) => (
-                <TableRow
-                  key={user.id}
-                  className={`
-                    border-[var(--glass-border)]
-                    hover:bg-[var(--glass-bg)]
-                  `}
-                >
+                <TableRow key={user.id}>
                   <TableCell className="font-medium text-[var(--text-color)]">
                     <div className="flex items-center gap-2">
                       {user.image && (
@@ -187,14 +179,7 @@ export default function UserManagementPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant="outline"
-                      className={`
-                        ${
-                          user.role === "admin"
-                            ? "border-[var(--accent-color)] text-[var(--accent-color)]"
-                            : "border-[var(--glass-border)] text-[var(--text-color-secondary)]"
-                        }
-                      `}
+                      variant={user.role === "admin" ? "default" : "secondary"}
                     >
                       {user.role}
                     </Badge>

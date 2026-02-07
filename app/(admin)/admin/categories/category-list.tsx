@@ -110,20 +110,10 @@ export default function CategoryManagementPage() {
               name="query"
               placeholder="搜索分类..."
               defaultValue={name}
-              className={`
-                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
-                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
-              `}
+              className="pl-9"
             />
           </div>
-          <Button
-            type="submit"
-            variant="secondary"
-            className={`
-              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
-            `}
-          >
+          <Button type="submit" variant="secondary">
             搜索
           </Button>
         </form>
@@ -145,12 +135,7 @@ export default function CategoryManagementPage() {
       <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
-            <TableRow
-              className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]
-              `}
-            >
+            <TableRow>
               <TableHead className="text-[var(--text-color-secondary)]">
                 名称
               </TableHead>
@@ -192,13 +177,7 @@ export default function CategoryManagementPage() {
               </TableRow>
             ) : (
               data?.lists?.map((category) => (
-                <TableRow
-                  key={category.id}
-                  className={`
-                    border-[var(--glass-border)]
-                    hover:bg-[var(--glass-bg)]
-                  `}
-                >
+                <TableRow key={category.id}>
                   <TableCell className="font-medium text-[var(--text-color)]">
                     {category.name}
                   </TableCell>
@@ -225,10 +204,6 @@ export default function CategoryManagementPage() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(category)}
-                        className={`
-                          text-[var(--text-color-secondary)]
-                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
-                        `}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>

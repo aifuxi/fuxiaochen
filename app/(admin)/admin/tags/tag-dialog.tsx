@@ -93,16 +93,9 @@ export function TagDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent
-        className={`
-          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-md
-          sm:max-w-[425px]
-        `}
-      >
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold tracking-tight text-[var(--text-color)]">
-            {tag ? "编辑标签" : "新建标签"}
-          </DialogTitle>
+          <DialogTitle>{tag ? "编辑标签" : "新建标签"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

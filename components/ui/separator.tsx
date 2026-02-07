@@ -17,7 +17,7 @@ function Separator({
       orientation={orientation}
       className={cn(
         `
-          bg-border shrink-0
+          shrink-0 bg-[var(--glass-border)]
           data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full
           data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px
         `,

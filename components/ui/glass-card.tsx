@@ -15,7 +15,7 @@ export function GlassCard({
   return (
     <div
       className={cn(
-        "glass-panel rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-6 shadow-sm",
+        "glass-panel rounded-2xl p-6 shadow-sm",
         variant === "hover" &&
           `
             transition-all duration-300

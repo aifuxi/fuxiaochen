@@ -37,7 +37,7 @@ function DrawerOverlay({
       data-slot="drawer-overlay"
       className={cn(
         `
-          fixed inset-0 z-50 bg-black/50
+          fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
           data-[state=closed]:animate-out data-[state=closed]:fade-out-0
           data-[state=open]:animate-in data-[state=open]:fade-in-0
         `,
@@ -59,16 +59,16 @@ function DrawerContent({
       <DrawerPrimitive.Content
         data-slot="drawer-content"
         className={cn(
-          "group/drawer-content bg-background fixed z-50 flex h-auto flex-col",
+          "group/drawer-content glass-panel fixed z-50 flex h-auto flex-col text-[var(--text-color)]",
           `
             data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0
             data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh]
-            data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b
+            data-[vaul-drawer-direction=top]:rounded-b-2xl data-[vaul-drawer-direction=top]:border-b
           `,
           `
             data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0
             data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh]
-            data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t
+            data-[vaul-drawer-direction=bottom]:rounded-t-2xl data-[vaul-drawer-direction=bottom]:border-t
           `,
           `
             data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0
@@ -86,7 +86,7 @@ function DrawerContent({
       >
         <div
           className={`
-            bg-muted mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full
+            mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full bg-[var(--text-color-secondary)]/20
             group-data-[vaul-drawer-direction=bottom]/drawer-content:block
           `}
         />

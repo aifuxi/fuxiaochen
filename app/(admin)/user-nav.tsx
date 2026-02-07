@@ -81,24 +81,15 @@ export function UserNav({ user }: UserNavProps) {
             <LogOut className="h-4 w-4" />
           </Button>
         </AlertDialogTrigger>
-        <AlertDialogContent className="border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl">
+        <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[var(--text-color)]">
-              确认退出登录？
-            </AlertDialogTitle>
+            <AlertDialogTitle>确认退出登录？</AlertDialogTitle>
             <AlertDialogDescription className="text-[var(--text-color-secondary)]">
               您将退出当前账号，需要重新登录才能访问后台管理系统。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel
-              className={`
-                border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
-                hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
-              `}
-            >
-              取消
-            </AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
               className={`

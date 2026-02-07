@@ -36,7 +36,7 @@ function SheetOverlay({
       data-slot="sheet-overlay"
       className={cn(
         `
-          fixed inset-0 z-50 bg-black/50
+          fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
           data-[state=closed]:animate-out data-[state=closed]:fade-out-0
           data-[state=open]:animate-in data-[state=open]:fade-in-0
         `,
@@ -62,7 +62,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           `
-            bg-background fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out
+            glass-panel fixed z-50 flex flex-col gap-4 text-[var(--text-color)] shadow-2xl transition ease-in-out
             data-[state=closed]:animate-out data-[state=closed]:duration-300
             data-[state=open]:animate-in data-[state=open]:duration-500
           `,

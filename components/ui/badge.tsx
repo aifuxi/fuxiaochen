@@ -9,29 +9,29 @@ const badgeVariants = cva(
     aria-invalid:ring-destructive/20 aria-invalid:border-destructive
     dark:aria-invalid:ring-destructive/40
     inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs
-    font-medium whitespace-nowrap transition-[color,box-shadow]
+    font-medium whitespace-nowrap transition-[color,box-shadow,background-color]
     [&>svg]:pointer-events-none [&>svg]:size-3
   `,
   {
     variants: {
       variant: {
         default: `
-          bg-primary text-primary-foreground border-transparent
-          [a&]:hover:bg-primary/90
+          border-transparent bg-[var(--accent-color)] text-white shadow-sm
+          [a&]:hover:bg-[var(--accent-color)]/90
         `,
         secondary: `
-          bg-secondary text-secondary-foreground border-transparent
-          [a&]:hover:bg-secondary/90
+          border-transparent bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-sm
+          [a&]:hover:bg-[var(--glass-bg)]/80
         `,
         destructive: `
-          bg-destructive border-transparent text-white
+          bg-destructive border-transparent text-white shadow-sm
           [a&]:hover:bg-destructive/90
           focus-visible:ring-destructive/20
           dark:focus-visible:ring-destructive/40 dark:bg-destructive/60
         `,
         outline: `
-          text-foreground
-          [a&]:hover:bg-accent [a&]:hover:text-accent-foreground
+          border-[var(--glass-border)] text-[var(--text-color)] backdrop-blur-sm
+          [a&]:hover:bg-[var(--glass-bg)] [a&]:hover:text-[var(--text-color)]
         `,
       },
     },
