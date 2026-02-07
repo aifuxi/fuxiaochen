@@ -49,20 +49,20 @@ export function DeleteAlert({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="border-neon-magenta/20 bg-black/90 text-white">
+      <AlertDialogContent className="border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-neon-magenta">
+          <AlertDialogTitle className="text-[var(--text-color)]">
             确认删除？
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-400">
+          <AlertDialogDescription className="text-[var(--text-color-secondary)]">
             此操作无法撤销。该文章将被永久删除。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
             className={`
-              border-white/20 bg-transparent text-gray-300
-              hover:bg-white/10 hover:text-white
+              border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
+              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
             `}
           >
             取消
@@ -71,8 +71,8 @@ export function DeleteAlert({
             onClick={handleDelete}
             disabled={loading}
             className={`
-              hover:bg-magenta-600
-              bg-neon-magenta text-white
+              bg-red-500 text-white
+              hover:bg-red-600
             `}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

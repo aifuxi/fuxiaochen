@@ -9,6 +9,7 @@ import { getUsersAction } from "@/app/actions/user";
 import { type User, type UserListReq } from "@/types/user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -18,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pagination } from "@/components/cyberpunk/pagination";
+import { DataTablePagination } from "@/components/admin/data-table-pagination";
 import { DeleteAlert } from "./delete-alert";
 import { UserDialog } from "./user-dialog";
 
@@ -57,6 +58,13 @@ export default function UserManagementPage() {
     router.push(`?${params.toString()}`);
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", newPageSize.toString());
+    params.set("page", "1"); // Reset to page 1
+    router.push(`?${params.toString()}`);
+  };
+
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(searchParams);
     params.set("page", newPage.toString());
@@ -74,47 +82,64 @@ export default function UserManagementPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">
+          <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
             用户管理
           </h2>
-          <p className="text-gray-400">管理系统用户及权限</p>
+          <p className="text-[var(--text-color-secondary)]">
+            管理系统用户及权限
+          </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <GlassCard
+        className={`
+          flex flex-col gap-4 p-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <form onSubmit={handleSearch} className="flex-1">
-          <div className="relative">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
+          <div className="relative max-w-sm">
+            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
             <Input
               name="query"
               placeholder="搜索用户..."
               defaultValue={name}
               className={`
-                border-white/10 bg-white/5 pl-10 text-white
-                focus:border-neon-cyan/50
+                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9 text-[var(--text-color)]
+                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
               `}
             />
           </div>
         </form>
-      </div>
+      </GlassCard>
 
-      <div className="rounded-md border border-neon-cyan/20 bg-black/50 backdrop-blur-sm">
+      <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow
               className={`
-                border-white/10
-                hover:bg-white/5
+                border-[var(--glass-border)]
+                hover:bg-[var(--glass-bg)]
               `}
             >
-              <TableHead className="text-neon-cyan">用户</TableHead>
-              <TableHead className="text-neon-cyan">邮箱</TableHead>
-              <TableHead className="text-neon-cyan">角色</TableHead>
-              <TableHead className="text-neon-cyan">注册时间</TableHead>
-              <TableHead className="text-right text-neon-cyan">操作</TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                用户
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                邮箱
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                角色
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                注册时间
+              </TableHead>
+              <TableHead className="text-right text-[var(--text-color-secondary)]">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,7 +147,7 @@ export default function UserManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-gray-400"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                 </TableCell>
@@ -131,7 +156,7 @@ export default function UserManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-gray-400"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   暂无数据
                 </TableCell>
@@ -141,11 +166,11 @@ export default function UserManagementPage() {
                 <TableRow
                   key={user.id}
                   className={`
-                    border-white/10
-                    hover:bg-white/5
+                    border-[var(--glass-border)]
+                    hover:bg-[var(--glass-bg)]
                   `}
                 >
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-[var(--text-color)]">
                     <div className="flex items-center gap-2">
                       {user.image && (
                         <img
@@ -157,22 +182,24 @@ export default function UserManagementPage() {
                       {user.name}
                     </div>
                   </TableCell>
-                  <TableCell className="text-gray-400">{user.email}</TableCell>
+                  <TableCell className="text-[var(--text-color-secondary)]">
+                    {user.email}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
                       className={`
                         ${
                           user.role === "admin"
-                            ? "border-neon-purple text-neon-purple"
-                            : "border-gray-500 text-gray-400"
+                            ? "border-[var(--accent-color)] text-[var(--accent-color)]"
+                            : "border-[var(--glass-border)] text-[var(--text-color-secondary)]"
                         }
                       `}
                     >
                       {user.role}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-[var(--text-color-secondary)]">
                     {format(new Date(user.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
@@ -182,8 +209,8 @@ export default function UserManagementPage() {
                         size="icon"
                         onClick={() => openEdit(user)}
                         className={`
-                          text-gray-400
-                          hover:bg-neon-cyan/10 hover:text-neon-cyan
+                          text-[var(--text-color-secondary)]
+                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
                         `}
                       >
                         <Edit className="h-4 w-4" />
@@ -193,7 +220,7 @@ export default function UserManagementPage() {
                         size="icon"
                         onClick={() => openDelete(user.id)}
                         className={`
-                          text-gray-400
+                          text-[var(--text-color-secondary)]
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >
@@ -206,16 +233,17 @@ export default function UserManagementPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </GlassCard>
 
-      <div className="flex justify-end">
-        <Pagination
+      <GlassCard className="p-2">
+        <DataTablePagination
           currentPage={page}
           pageSize={pageSize}
           total={data?.total || 0}
           onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
         />
-      </div>
+      </GlassCard>
 
       <UserDialog
         open={dialogOpen}

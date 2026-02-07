@@ -17,7 +17,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-cyber-black font-mono text-gray-300">
+    <div className="flex min-h-screen bg-[var(--bg-color)] font-sans text-[var(--text-color)]">
       <AdminSidebar
         user={{
           name: session.user.name,
@@ -27,39 +27,26 @@ export default async function AdminLayout({
       />
 
       {/* Main Content */}
-      <main className="ml-64 flex-1">
+      <main className="ml-64 flex-1 transition-all duration-300">
         <header
           className={`
-            sticky top-0 z-40 flex h-16 items-center justify-between border-b border-neon-cyan/20 bg-black/80 px-8
-            backdrop-blur-md
+            sticky top-0 z-40 flex h-16 items-center justify-between border-b border-[var(--glass-border)]
+            bg-[var(--glass-bg)] px-8 backdrop-blur-md
           `}
         >
-          <h1 className="text-lg font-bold tracking-wider text-white uppercase">
+          <h1 className="text-lg font-bold tracking-tight text-[var(--text-color)] uppercase">
             控制台
           </h1>
           <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2 text-xs text-neon-cyan">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-neon-cyan" />
+            <span className="flex items-center gap-2 text-xs font-medium text-[var(--accent-color)]">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-[var(--accent-color)]" />
               系统在线
             </span>
           </div>
         </header>
 
         <div className="p-8">
-          <div
-            className={`
-              relative min-h-[calc(100vh-8rem)] overflow-hidden rounded-md border border-white/5 bg-white/5 p-6
-              backdrop-blur-sm
-            `}
-          >
-            {/* Cyberpunk decoration lines */}
-            <div className="absolute top-0 left-0 h-16 w-1 bg-gradient-to-b from-neon-cyan to-transparent" />
-            <div className="absolute top-0 left-0 h-1 w-16 bg-gradient-to-r from-neon-cyan to-transparent" />
-            <div className="absolute right-0 bottom-0 h-16 w-1 bg-gradient-to-t from-neon-purple to-transparent" />
-            <div className="absolute right-0 bottom-0 h-1 w-16 bg-gradient-to-l from-neon-purple to-transparent" />
-
-            {children}
-          </div>
+          <div className="min-h-[calc(100vh-8rem)]">{children}</div>
         </div>
       </main>
     </div>

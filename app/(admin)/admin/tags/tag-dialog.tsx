@@ -95,12 +95,12 @@ export function TagDialog({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={`
-          border-neon-cyan/20 bg-black/90 text-white
+          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-md
           sm:max-w-[425px]
         `}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold tracking-wider text-neon-cyan uppercase">
+          <DialogTitle className="text-xl font-bold tracking-tight text-[var(--text-color)]">
             {tag ? "编辑标签" : "新建标签"}
           </DialogTitle>
         </DialogHeader>
@@ -111,13 +111,15 @@ export function TagDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">名称</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    名称
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="React"
                     />
@@ -131,13 +133,15 @@ export function TagDialog({
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">Slug</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    Slug
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="react"
                     />
@@ -151,13 +155,15 @@ export function TagDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">描述</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    描述
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        resize-none border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="标签描述..."
                     />
@@ -172,8 +178,8 @@ export function TagDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className={`
-                  border-white/20 text-gray-300
-                  hover:bg-white/10 hover:text-white
+                  border-[var(--glass-border)] bg-transparent text-[var(--text-color-secondary)]
+                  hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
                 `}
               >
                 取消
@@ -182,8 +188,8 @@ export function TagDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  bg-neon-cyan text-black
-                  hover:bg-cyan-400
+                  bg-[var(--accent-color)] text-white
+                  hover:bg-[var(--accent-color)]/90
                 `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

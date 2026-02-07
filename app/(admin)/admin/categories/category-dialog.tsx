@@ -103,12 +103,12 @@ export function CategoryDialog({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={`
-          border-neon-cyan/20 bg-black/90 text-white
+          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-md
           sm:max-w-[425px]
         `}
       >
         <DialogHeader>
-          <DialogTitle className="text-neon-cyan">
+          <DialogTitle className="text-[var(--text-color)]">
             {category ? "编辑分类" : "新增分类"}
           </DialogTitle>
         </DialogHeader>
@@ -119,18 +119,20 @@ export function CategoryDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400">名称</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    名称
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="分类名称"
                       className={`
-                        border-white/10 bg-white/5 text-white
-                        focus:border-neon-cyan/50
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -139,18 +141,20 @@ export function CategoryDialog({
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400">Slug</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    Slug
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="URL 标识"
                       className={`
-                        border-white/10 bg-white/5 text-white
-                        focus:border-neon-cyan/50
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -159,18 +163,20 @@ export function CategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400">描述</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    描述
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="分类描述"
                       className={`
-                        resize-none border-white/10 bg-white/5 text-white
-                        focus:border-neon-cyan/50
+                        resize-none border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage className="text-red-400" />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -179,8 +185,8 @@ export function CategoryDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  w-full bg-neon-cyan text-black
-                  hover:bg-cyan-400
+                  w-full bg-[var(--accent-color)] text-white
+                  hover:bg-[var(--accent-color)]/90
                 `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

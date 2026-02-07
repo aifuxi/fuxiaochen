@@ -108,13 +108,13 @@ export function ChangelogDialog({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={`
-          border-neon-cyan/20 bg-black/90 text-white
+          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-md
           sm:max-w-[600px]
         `}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold tracking-wider text-neon-cyan uppercase">
-            {changelog ? "编辑 Changelog" : "新建 Changelog"}
+          <DialogTitle className="text-xl font-bold tracking-tight text-[var(--text-color)] uppercase">
+            {changelog ? "编辑日志" : "新建日志"}
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
@@ -124,18 +124,20 @@ export function ChangelogDialog({
               name="version"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">版本号</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    版本号
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="v1.0.0"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -144,19 +146,21 @@ export function ChangelogDialog({
               name="date"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">发布日期</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    发布日期
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="date"
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                         [&::-webkit-calendar-picker-indicator]:invert
                       `}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -165,18 +169,20 @@ export function ChangelogDialog({
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">内容</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    内容
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
                       className={`
-                        min-h-[200px] border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        min-h-[200px] border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="更新内容..."
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-500" />
                 </FormItem>
               )}
             />
@@ -186,8 +192,8 @@ export function ChangelogDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className={`
-                  border-white/20 text-gray-300
-                  hover:bg-white/10 hover:text-white
+                  border-[var(--glass-border)] bg-transparent text-[var(--text-color-secondary)]
+                  hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
                 `}
               >
                 取消
@@ -196,8 +202,8 @@ export function ChangelogDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  bg-neon-cyan text-black
-                  hover:bg-cyan-400
+                  bg-[var(--accent-color)] text-white
+                  hover:bg-[var(--accent-color)]/90
                 `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

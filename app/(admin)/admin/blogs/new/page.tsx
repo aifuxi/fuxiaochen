@@ -28,9 +28,9 @@ export default async function NewBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-orbitron text-3xl font-bold tracking-wider text-white uppercase">
-          <span className="text-neon-cyan">New</span> Blog
-        </h1>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
+          新建文章
+        </h2>
       </div>
       <BlogForm categories={categories} tags={tags} />
     </div>
