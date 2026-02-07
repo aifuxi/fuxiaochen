@@ -62,7 +62,7 @@ export function BlogCard({
               <span
                 key={tag}
                 className={`
-                  inline-flex items-center rounded-md bg-[var(--accent-color)]/10 px-2 py-1 text-xs font-medium
+                  inline-flex items-center rounded-full bg-[var(--accent-color)]/10 px-2 py-1 text-xs font-medium
                   text-[var(--accent-color)]
                 `}
               >
