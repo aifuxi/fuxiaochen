@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Github, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
@@ -66,56 +67,40 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20 pb-20">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(123,97,255,0.05),transparent_60%)]" />
+    <main
+      className={`
+        relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-color)] px-4 pt-20 pb-20
+      `}
+    >
+      {/* Background Sphere Effect */}
       <div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
+        className={`
+          absolute top-1/2 left-1/2 -mt-64 -ml-64 h-128 w-128 -translate-x-1/2 -translate-y-1/2 rounded-full
+          bg-[var(--accent-color)]/10 blur-[100px]
+        `}
       />
 
-      <div className="z-10 w-full max-w-md px-4">
-        <div
-          className={`
-            group relative overflow-hidden rounded-xl border border-white/5 bg-cyber-gray/40 p-8 backdrop-blur-sm
-            transition-all duration-500
-            hover:border-neon-cyan/50 hover:shadow-[0_0_30px_rgba(0,255,255,0.1)]
-          `}
-        >
-          {/* Scanning line effect */}
-          <div
-            className={`
-              pointer-events-none absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0
-              transition-opacity duration-500
-              group-hover:opacity-100
-            `}
-          />
-
+      <div className="w-full max-w-md">
+        <GlassCard className="rounded-2xl p-8 backdrop-blur-xl">
           <div className="relative z-10 mb-8 text-center">
             <div
               className={`
-                mb-4 inline-block rounded-full border border-neon-cyan/30 bg-neon-cyan/5 px-4 py-1 backdrop-blur-sm
+                mb-4 inline-flex items-center justify-center rounded-full bg-[var(--accent-color)]/10 px-4 py-1
               `}
             >
-              <span className="text-xs tracking-[0.2em] text-neon-cyan uppercase">
+              <span className="text-xs font-medium tracking-wide text-[var(--accent-color)] uppercase">
                 身份验证
               </span>
             </div>
-            <h1
-              className={`
-                bg-gradient-to-br from-neon-cyan via-white to-neon-magenta bg-clip-text text-4xl font-black
-                tracking-tighter text-transparent uppercase
-              `}
-            >
+            <h1 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
               {isSignUp ? "注册账号" : "系统接入"}
             </h1>
+            <p className="mt-2 text-sm text-[var(--text-color-secondary)]">
+              {isSignUp ? "创建一个新账号以继续" : "输入您的凭证以访问管理系统"}
+            </p>
           </div>
 
-          <div className="relative z-10 space-y-4">
+          <div className="relative z-10 space-y-6">
             <form onSubmit={handleEmailSignIn} className="space-y-4">
               {isSignUp && (
                 <div className="space-y-2">
@@ -125,9 +110,9 @@ export default function LoginPage() {
                     onChange={(e) => setName(e.target.value)}
                     required
                     className={`
-                      border-white/10 bg-black/20 text-white
-                      placeholder:text-gray-500
-                      focus:border-neon-cyan focus:ring-neon-cyan/20
+                      rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                      placeholder:text-gray-400
+                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                     `}
                   />
                 </div>
@@ -140,9 +125,9 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className={`
-                    border-white/10 bg-black/20 text-white
-                    placeholder:text-gray-500
-                    focus:border-neon-cyan focus:ring-neon-cyan/20
+                    rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                    placeholder:text-gray-400
+                    focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                   `}
                 />
               </div>
@@ -154,9 +139,9 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className={`
-                    border-white/10 bg-black/20 text-white
-                    placeholder:text-gray-500
-                    focus:border-neon-cyan focus:ring-neon-cyan/20
+                    rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                    placeholder:text-gray-400
+                    focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                   `}
                 />
               </div>
@@ -164,8 +149,8 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className={`
-                  h-12 w-full bg-neon-cyan text-black transition-all duration-300
-                  hover:bg-cyan-400 hover:shadow-[0_0_15px_rgba(0,255,255,0.5)]
+                  h-11 w-full bg-[var(--accent-color)] text-white
+                  hover:bg-[var(--accent-color)]/90 hover:shadow-[var(--accent-color)]/20 hover:shadow-lg
                 `}
                 disabled={loading}
               >
@@ -178,23 +163,19 @@ export default function LoginPage() {
               </Button>
             </form>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/10"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#12121a] px-2 text-gray-500">
-                  Or continue with
-                </span>
-              </div>
+            <div className="relative flex items-center py-2">
+              <div className="grow border-t border-[var(--glass-border)]"></div>
+              <span className="shrink-0 px-4 text-xs font-medium text-[var(--text-color-secondary)] uppercase">
+                Or continue with
+              </span>
+              <div className="grow border-t border-[var(--glass-border)]"></div>
             </div>
 
             <Button
               variant="outline"
               className={`
-                h-12 w-full border-neon-cyan/50 bg-neon-cyan/5 text-neon-cyan transition-all duration-300
-                hover:border-neon-cyan hover:bg-neon-cyan/20 hover:text-neon-cyan
-                hover:shadow-[0_0_15px_rgba(0,255,255,0.3)]
+                h-11 w-full border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                hover:border-[var(--accent-color)] hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
               `}
               onClick={handleSocialSignIn}
               disabled={loading}
@@ -212,8 +193,8 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className={`
-                  text-gray-400 transition-colors
-                  hover:text-neon-cyan
+                  font-medium text-[var(--text-color-secondary)] transition-colors
+                  hover:text-[var(--accent-color)]
                 `}
               >
                 {isSignUp ? "已有账号？点击登录" : "没有账号？点击注册"}
@@ -221,10 +202,10 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="relative z-10 mt-6 text-center text-xs text-gray-500">
+          <div className="mt-8 text-center text-xs text-[var(--text-color-secondary)] opacity-70">
             <p>访问系统即代表您同意相关协议。</p>
           </div>
-        </div>
+        </GlassCard>
       </div>
     </main>
   );
