@@ -18,7 +18,7 @@ const navItems = [
   { href: "/admin/categories", label: "分类管理", icon: FolderTree },
   { href: "/admin/tags", label: "标签管理", icon: Tag },
   { href: "/admin/blogs", label: "博客管理", icon: FileText },
-  { href: "/admin/changelogs", label: "日志管理", icon: Clock9 },
+  { href: "/admin/changelogs", label: "更新日志", icon: Clock9 },
   { href: "/admin/users", label: "用户管理", icon: Users },
 ];
 
@@ -45,7 +45,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           className="text-xl font-bold tracking-tight text-[var(--text-color)] uppercase"
         >
           {WEBSITE}
-          <span className="text-[var(--accent-color)]">.ADMIN</span>
+          <span className="text-[var(--accent-color)]">后台管理</span>
         </Link>
       </div>
 
@@ -61,7 +61,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               key={item.href}
               href={item.href}
               className={`
-                group flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-300
+                group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300
                 ${
                   isActive
                     ? "bg-[var(--accent-color)]/10 text-[var(--accent-color)]"

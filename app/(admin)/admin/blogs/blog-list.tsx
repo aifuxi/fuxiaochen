@@ -128,7 +128,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
-          文章列表
+          博客管理
         </h2>
       </div>
 

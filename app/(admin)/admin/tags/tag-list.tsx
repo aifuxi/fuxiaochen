@@ -111,7 +111,7 @@ export default function TagManagementPage() {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
-          标签列表
+          标签管理
         </h2>
         <p className="text-[var(--text-color-secondary)]">
           管理博客文章的标签体系
