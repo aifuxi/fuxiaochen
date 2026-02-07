@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { cn } from "@/lib/utils";
 
 interface Heading {
@@ -64,9 +63,9 @@ export function TableOfContents() {
 
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
-      <div className={`
-        mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-[var(--accent-color)] uppercase
-      `}>
+      <div
+        className={`mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-[var(--accent-color)] uppercase`}
+      >
         <div className="h-2 w-2 rounded-full bg-[var(--accent-color)]" />
         Contents
       </div>
@@ -92,7 +91,7 @@ export function TableOfContents() {
                     : `
                       border-transparent text-[var(--text-color-secondary)]
                       hover:border-[var(--glass-border)] hover:text-[var(--text-color)]
-                    `
+                    `,
                 )}
               >
                 {heading.text}

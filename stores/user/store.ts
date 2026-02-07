@@ -4,9 +4,7 @@ import {
   type UserListResp,
   type UserUpdateReq,
 } from "@/types/user";
-
 import { prisma } from "@/lib/prisma";
-
 import { type IUserStore } from "./interface";
 
 export class UserStore implements IUserStore {

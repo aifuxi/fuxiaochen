@@ -1,4 +1,9 @@
-import { type Blog, type BlogCreateReq, type BlogListReq, type BlogListResp } from "@/types/blog";
+import {
+  type Blog,
+  type BlogCreateReq,
+  type BlogListReq,
+  type BlogListResp,
+} from "@/types/blog";
 
 export interface IBlogStore {
   create(data: BlogCreateReq): Promise<Blog>;

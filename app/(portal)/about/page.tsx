@@ -1,6 +1,14 @@
-import { GlassCard } from "@/components/ui/glass-card";
 import Link from "next/link";
-import { Github, Mail, MapPin, Briefcase, Zap, Laptop, Coffee } from "lucide-react";
+import {
+  Github,
+  Mail,
+  MapPin,
+  Briefcase,
+  Zap,
+  Laptop,
+  Coffee,
+} from "lucide-react";
+import { GlassCard } from "@/components/ui/glass-card";
 import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE } from "@/constants/info";
 
 export default function AboutPage() {
@@ -49,10 +57,12 @@ export default function AboutPage() {
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Page Header */}
         <div className="space-y-2">
-          <h1 className={`
-            text-4xl font-bold tracking-tight text-[var(--text-color)]
-            md:text-6xl
-          `}>
+          <h1
+            className={`
+              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              md:text-6xl
+            `}
+          >
             关于我
           </h1>
           <p className="max-w-xl text-lg text-[var(--text-color-secondary)]">
@@ -61,26 +71,34 @@ export default function AboutPage() {
         </div>
 
         {/* Bento Grid Layout */}
-        <div className={`
-          grid grid-cols-1 gap-4
-          md:grid-cols-3 md:grid-rows-2
-          lg:gap-6
-        `}>
+        <div
+          className={`
+            grid grid-cols-1 gap-4
+            md:grid-cols-3 md:grid-rows-2
+            lg:gap-6
+          `}
+        >
           {/* 1. Profile Card (Large, Span 2) */}
-          <GlassCard className={`
-            relative flex flex-col justify-between overflow-hidden p-8
-            md:col-span-2 md:row-span-2
-          `}>
-             <div className={`
-               absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-[var(--accent-color)]/20 blur-[100px]
-             `} />
+          <GlassCard
+            className={`
+              relative flex flex-col justify-between overflow-hidden p-8
+              md:col-span-2 md:row-span-2
+            `}
+          >
+            <div
+              className={`
+                absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-[var(--accent-color)]/20 blur-[100px]
+              `}
+            />
 
             <div className="relative z-10 space-y-6">
               <div className="flex items-start justify-between">
-                <div className={`
-                  flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent-color)]
-                  to-purple-600 text-4xl shadow-lg
-                `}>
+                <div
+                  className={`
+                    flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent-color)]
+                    to-purple-600 text-4xl shadow-lg
+                  `}
+                >
                   🧑‍💻
                 </div>
                 <div className="flex gap-3">
@@ -102,14 +120,16 @@ export default function AboutPage() {
               </div>
 
               <div className="space-y-4">
-                <h2 className={`
-                  text-2xl font-bold text-[var(--text-color)]
-                  md:text-4xl
-                `}>
+                <h2
+                  className={`
+                    text-2xl font-bold text-[var(--text-color)]
+                    md:text-4xl
+                  `}
+                >
                   付小晨 (Fu Xiaochen)
                 </h2>
                 <div className="flex flex-wrap gap-3 text-sm font-medium text-[var(--text-color-secondary)]">
-                   <span className="flex items-center gap-1.5 rounded-full bg-[var(--glass-border)]/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-[var(--glass-border)]/50 px-3 py-1">
                     <Briefcase className="h-4 w-4" />
                     Frontend Engineer
                   </span>
@@ -122,11 +142,14 @@ export default function AboutPage() {
                     Available for freelance
                   </span>
                 </div>
-                <p className={`
-                  text-base leading-relaxed text-[var(--text-color-secondary)]
-                  md:text-lg
-                `}>
-                  我是一名专注于用户体验的前端工程师。从 {startYear} 年开始，我一直致力于构建美观、高性能的 Web 应用。
+                <p
+                  className={`
+                    text-base leading-relaxed text-[var(--text-color-secondary)]
+                    md:text-lg
+                  `}
+                >
+                  我是一名专注于用户体验的前端工程师。从 {startYear}{" "}
+                  年开始，我一直致力于构建美观、高性能的 Web 应用。
                   热衷于开源社区，喜欢折腾各种新奇的技术栈。在代码之外，这里也是我记录生活和思考的地方。
                 </p>
               </div>
@@ -134,127 +157,179 @@ export default function AboutPage() {
           </GlassCard>
 
           {/* 2. Stats Card (Small) */}
-          <GlassCard className={`
-            flex flex-col justify-center rounded-2xl p-6
-            md:col-span-1
-          `}>
-             <div className="flex items-center gap-4">
-               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
-                 <Briefcase className="h-6 w-6" />
-               </div>
-               <div>
-                 <div className="text-3xl font-bold text-[var(--text-color)]">{expYears}+</div>
-                 <div className="text-sm text-[var(--text-color-secondary)]">从业年限</div>
-               </div>
-             </div>
+          <GlassCard
+            className={`
+              flex flex-col justify-center rounded-2xl p-6
+              md:col-span-1
+            `}
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/10 text-blue-500">
+                <Briefcase className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-[var(--text-color)]">
+                  {expYears}+
+                </div>
+                <div className="text-sm text-[var(--text-color-secondary)]">
+                  从业年限
+                </div>
+              </div>
+            </div>
           </GlassCard>
 
           {/* 3. Status/Coffee Card (Small) */}
-          <GlassCard className={`
-            flex flex-col justify-center rounded-2xl p-6
-            md:col-span-1
-          `}>
+          <GlassCard
+            className={`
+              flex flex-col justify-center rounded-2xl p-6
+              md:col-span-1
+            `}
+          >
             <div className="flex items-center gap-4">
-               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10 text-orange-500">
-                 <Coffee className="h-6 w-6" />
-               </div>
-               <div>
-                 <div className="text-3xl font-bold text-[var(--text-color)]">∞</div>
-                 <div className="text-sm text-[var(--text-color-secondary)]">咖啡消耗</div>
-               </div>
-             </div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/10 text-orange-500">
+                <Coffee className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-[var(--text-color)]">
+                  ∞
+                </div>
+                <div className="text-sm text-[var(--text-color-secondary)]">
+                  咖啡消耗
+                </div>
+              </div>
+            </div>
           </GlassCard>
 
-           {/* 4. Tech Stack (Wide) */}
-           <GlassCard className={`
-             rounded-2xl p-6
-             md:col-span-3
-           `}>
-             <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-[var(--text-color)]">
-               <Laptop className="h-5 w-5 text-[var(--accent-color)]" />
-               技术栈
-             </h3>
-             <div className={`
-               grid grid-cols-1 gap-8
-               md:grid-cols-2
-             `}>
-               <div>
-                  <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">前端技术</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {techStack.frontend.map((tech) => (
-                      <div key={tech.name} className={`
+          {/* 4. Tech Stack (Wide) */}
+          <GlassCard
+            className={`
+              rounded-2xl p-6
+              md:col-span-3
+            `}
+          >
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-[var(--text-color)]">
+              <Laptop className="h-5 w-5 text-[var(--accent-color)]" />
+              技术栈
+            </h3>
+            <div
+              className={`
+                grid grid-cols-1 gap-8
+                md:grid-cols-2
+              `}
+            >
+              <div>
+                <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">
+                  前端技术
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {techStack.frontend.map((tech) => (
+                    <div
+                      key={tech.name}
+                      className={`
                         flex items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50
                         px-3 py-2 transition-colors
                         hover:bg-[var(--glass-border)]
-                      `}>
-                        <span className={`
+                      `}
+                    >
+                      <span
+                        className={`
                           ${tech.icon}
                           h-5 w-5
-                        `} />
-                        <span className="text-sm font-medium text-[var(--text-color)]">{tech.name}</span>
-                      </div>
-                    ))}
-                  </div>
-               </div>
-                <div>
-                  <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">后端 & 运维</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {techStack.backend.map((tech) => (
-                      <div key={tech.name} className={`
-                        flex items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50
-                        px-3 py-2 transition-colors
-                        hover:bg-[var(--glass-border)]
-                      `}>
-                        <span className={`
-                          ${tech.icon}
-                          h-5 w-5
-                        `} />
-                        <span className="text-sm font-medium text-[var(--text-color)]">{tech.name}</span>
-                      </div>
-                    ))}
-                  </div>
-               </div>
-             </div>
-           </GlassCard>
-
-           {/* 5. Gear List (Wide) */}
-           <GlassCard className={`
-             rounded-2xl p-6
-             md:col-span-3
-           `}>
-             <div className={`
-               flex flex-col gap-6
-               md:flex-row md:items-center md:justify-between
-             `}>
-                <div>
-                  <h3 className="text-lg font-bold text-[var(--text-color)]">装备清单</h3>
-                  <p className="text-sm text-[var(--text-color-secondary)]">工欲善其事，必先利其器</p>
-                </div>
-                <div className={`
-                  grid grid-cols-1 gap-3
-                  sm:grid-cols-2
-                  md:flex md:flex-wrap
-                `}>
-                  {gear.map((item) => (
-                    <div key={item.name} className={`
-                      group relative flex items-center gap-3 overflow-hidden rounded-2xl border
-                      border-[var(--glass-border)] bg-[var(--glass-bg)]/30 px-4 py-2 transition-all
-                      hover:bg-[var(--glass-border)]
-                    `}>
-                      <div className={`
-                        absolute top-0 left-0 h-full w-0.5 bg-[var(--accent-color)] opacity-0 transition-opacity
-                        group-hover:opacity-100
-                      `} />
-                      <div className="flex flex-col">
-                        <span className="text-xs text-[var(--text-color-secondary)]">{item.category}</span>
-                        <span className="text-sm font-medium text-[var(--text-color)]">{item.name}</span>
-                      </div>
+                        `}
+                      />
+                      <span className="text-sm font-medium text-[var(--text-color)]">
+                        {tech.name}
+                      </span>
                     </div>
                   ))}
                 </div>
-             </div>
-           </GlassCard>
+              </div>
+              <div>
+                <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">
+                  后端 & 运维
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {techStack.backend.map((tech) => (
+                    <div
+                      key={tech.name}
+                      className={`
+                        flex items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50
+                        px-3 py-2 transition-colors
+                        hover:bg-[var(--glass-border)]
+                      `}
+                    >
+                      <span
+                        className={`
+                          ${tech.icon}
+                          h-5 w-5
+                        `}
+                      />
+                      <span className="text-sm font-medium text-[var(--text-color)]">
+                        {tech.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </GlassCard>
 
+          {/* 5. Gear List (Wide) */}
+          <GlassCard
+            className={`
+              rounded-2xl p-6
+              md:col-span-3
+            `}
+          >
+            <div
+              className={`
+                flex flex-col gap-6
+                md:flex-row md:items-center md:justify-between
+              `}
+            >
+              <div>
+                <h3 className="text-lg font-bold text-[var(--text-color)]">
+                  装备清单
+                </h3>
+                <p className="text-sm text-[var(--text-color-secondary)]">
+                  工欲善其事，必先利其器
+                </p>
+              </div>
+              <div
+                className={`
+                  grid grid-cols-1 gap-3
+                  sm:grid-cols-2
+                  md:flex md:flex-wrap
+                `}
+              >
+                {gear.map((item) => (
+                  <div
+                    key={item.name}
+                    className={`
+                      group relative flex items-center gap-3 overflow-hidden rounded-2xl border
+                      border-[var(--glass-border)] bg-[var(--glass-bg)]/30 px-4 py-2 transition-all
+                      hover:bg-[var(--glass-border)]
+                    `}
+                  >
+                    <div
+                      className={`
+                        absolute top-0 left-0 h-full w-0.5 bg-[var(--accent-color)] opacity-0 transition-opacity
+                        group-hover:opacity-100
+                      `}
+                    />
+                    <div className="flex flex-col">
+                      <span className="text-xs text-[var(--text-color-secondary)]">
+                        {item.category}
+                      </span>
+                      <span className="text-sm font-medium text-[var(--text-color)]">
+                        {item.name}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </GlassCard>
         </div>
       </div>
     </div>

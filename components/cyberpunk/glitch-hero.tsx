@@ -1,5 +1,4 @@
 import Link from "next/link";
-
 import { getChangelogsAction } from "@/app/actions/changelog";
 
 export async function GlitchHero() {

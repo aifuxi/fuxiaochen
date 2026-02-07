@@ -1,8 +1,7 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   `
@@ -15,17 +14,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          `
-            bg-[var(--accent-color)] text-white shadow-md
-            hover:opacity-90 hover:shadow-lg
-          `,
-        secondary:
-          `
-            bg-gray-100 text-[var(--text-color)]
-            hover:bg-gray-200
-            dark:bg-gray-800 dark:hover:bg-gray-700
-          `,
+        primary: `
+          bg-[var(--accent-color)] text-white shadow-md
+          hover:opacity-90 hover:shadow-lg
+        `,
+        secondary: `
+          bg-gray-100 text-[var(--text-color)]
+          hover:bg-gray-200
+          dark:bg-gray-800 dark:hover:bg-gray-700
+        `,
         ghost: `
           text-[var(--text-color)]
           hover:bg-gray-100
@@ -36,11 +33,10 @@ const buttonVariants = cva(
           hover:bg-white/10
           dark:hover:bg-white/5
         `,
-        outline:
-          `
-            border border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
-            hover:bg-[var(--glass-bg)]
-          `,
+        outline: `
+          border border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
+          hover:bg-[var(--glass-bg)]
+        `,
       },
       size: {
         default: "px-5 py-2.5",
@@ -53,27 +49,28 @@ const buttonVariants = cva(
       variant: "primary",
       size: "default",
     },
-  }
-)
+  },
+);
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+  asChild?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
+    const Comp = asChild ? Slot : "button";
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
       />
-    )
-  }
-)
-Button.displayName = "Button"
+    );
+  },
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

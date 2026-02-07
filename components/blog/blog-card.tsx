@@ -1,7 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
-import { GlassCard } from "@/components/ui/glass-card";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { GlassCard } from "@/components/ui/glass-card";
 
 interface BlogCardProps {
   title: string;
@@ -21,20 +21,28 @@ export function BlogCard({
   cover,
 }: BlogCardProps) {
   return (
-    <Link href={`/blog/${slug}`} className={`
-      group block h-full
-      focus:outline-none
-    `}>
-      <GlassCard variant="hover" className={`
-        flex h-full flex-col overflow-hidden border-transparent bg-white p-0 shadow-md
-        hover:shadow-xl
-        dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)]
-      `}>
+    <Link
+      href={`/blog/${slug}`}
+      className={`
+        group block h-full
+        focus:outline-none
+      `}
+    >
+      <GlassCard
+        variant="hover"
+        className={`
+          flex h-full flex-col overflow-hidden border-transparent bg-white p-0 shadow-md
+          hover:shadow-xl
+          dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)]
+        `}
+      >
         {/* Cover Image */}
-        <div className={`
-          relative h-48 w-full overflow-hidden bg-gray-100
-          dark:bg-gray-900
-        `}>
+        <div
+          className={`
+            relative h-48 w-full overflow-hidden bg-gray-100
+            dark:bg-gray-900
+          `}
+        >
           <Image
             src={cover || "/images/placeholder.avif"}
             alt={title}
@@ -63,10 +71,12 @@ export function BlogCard({
             ))}
           </div>
 
-          <h3 className={`
-            mb-2 line-clamp-2 text-xl font-bold tracking-tight text-[var(--text-color)] transition-colors
-            group-hover:text-[var(--accent-color)]
-          `}>
+          <h3
+            className={`
+              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-[var(--text-color)] transition-colors
+              group-hover:text-[var(--accent-color)]
+            `}
+          >
             {title}
           </h3>
 
@@ -74,15 +84,19 @@ export function BlogCard({
             {excerpt}
           </p>
 
-          <div className={`
-            mt-auto flex items-center justify-between border-t border-[var(--glass-border)] pt-4 text-xs font-medium
-            text-[var(--text-color-secondary)]
-          `}>
+          <div
+            className={`
+              mt-auto flex items-center justify-between border-t border-[var(--glass-border)] pt-4 text-xs font-medium
+              text-[var(--text-color-secondary)]
+            `}
+          >
             <time className="font-mono">{date}</time>
-            <span className={`
-              flex -translate-x-2 items-center gap-1 text-[var(--accent-color)] opacity-0 transition-all duration-300
-              group-hover:translate-x-0 group-hover:opacity-100
-            `}>
+            <span
+              className={`
+                flex -translate-x-2 items-center gap-1 text-[var(--accent-color)] opacity-0 transition-all duration-300
+                group-hover:translate-x-0 group-hover:opacity-100
+              `}
+            >
               Read Post <ArrowRight className="h-3 w-3" />
             </span>
           </div>

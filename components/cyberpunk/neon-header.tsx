@@ -1,9 +1,7 @@
 import { headers } from "next/headers";
 import Link from "next/link";
-
 import { SOURCE_CODE_GITHUB_PAGE, WEBSITE } from "@/constants/info";
 import { auth } from "@/lib/auth";
-
 import { ConnectDialog } from "./connect-dialog";
 import { MobileMenu } from "./mobile-menu";
 

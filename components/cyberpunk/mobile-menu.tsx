@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
 import { MenuIcon, XIcon } from "lucide-react";
-
 import { SOURCE_CODE_GITHUB_PAGE } from "@/constants/info";
 import { cn } from "@/lib/utils";
-
 import { ConnectDialog } from "./connect-dialog";
 
 interface MobileMenuProps {

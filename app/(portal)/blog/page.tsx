@@ -2,9 +2,9 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
+import { GlassCard } from "@/components/ui/glass-card";
 import { BlogList } from "@/components/blog/blog-list";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
-import { GlassCard } from "@/components/ui/glass-card";
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -29,16 +29,20 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   return (
     <div className="min-h-screen bg-[var(--bg-color)]">
-      <main className={`
-        mx-auto max-w-full px-4 pt-32 pb-20
-        lg:max-w-7xl
-      `}>
+      <main
+        className={`
+          mx-auto max-w-full px-4 pt-32 pb-20
+          lg:max-w-7xl
+        `}
+      >
         {/* Header Section */}
         <div className="relative mb-16 space-y-4">
-          <h1 className={`
-            text-4xl font-bold tracking-tight text-[var(--text-color)]
-            md:text-5xl
-          `}>
+          <h1
+            className={`
+              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              md:text-5xl
+            `}
+          >
             博客归档
           </h1>
           <p className="max-w-2xl text-lg text-[var(--text-color-secondary)]">
@@ -46,20 +50,22 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           </p>
         </div>
 
-        <div className={`
-          grid grid-cols-1 gap-12
-          lg:grid-cols-4
-        `}>
+        <div
+          className={`
+            grid grid-cols-1 gap-12
+            lg:grid-cols-4
+          `}
+        >
           {/* Sidebar / Filters */}
-          <aside className={`
-            custom-scrollbar space-y-8
-            lg:sticky lg:top-32 lg:col-span-1 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto
-          `}>
+          <aside
+            className={`
+              custom-scrollbar space-y-8
+              lg:sticky lg:top-32 lg:col-span-1 lg:h-fit lg:max-h-[calc(100vh-9rem)] lg:overflow-y-auto
+            `}
+          >
             {/* Categories */}
             <GlassCard className="p-6">
-              <h3 className="mb-4 font-bold text-[var(--text-color)]">
-                分类
-              </h3>
+              <h3 className="mb-4 font-bold text-[var(--text-color)]">分类</h3>
               <div className="space-y-1">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
@@ -94,10 +100,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     `}
                   >
                     <span>{cat.name}</span>
-                    <span className={`
-                      text-xs
-                      ${categorySlug === cat.slug ? "opacity-80" : "opacity-50"}
-                    `}>
+                    <span
+                      className={`
+                        text-xs
+                        ${categorySlug === cat.slug ? "opacity-80" : "opacity-50"}
+                      `}
+                    >
                       {cat.blogCount}
                     </span>
                   </Link>
@@ -107,12 +115,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
             {/* Tags */}
             <GlassCard className="p-6">
-              <h3 className="mb-4 font-bold text-[var(--text-color)]">
-                标签
-              </h3>
+              <h3 className="mb-4 font-bold text-[var(--text-color)]">标签</h3>
               <div className="flex flex-wrap gap-2">
                 <Link
-                  href={categorySlug ? `/blog?category=${categorySlug}` : "/blog"}
+                  href={
+                    categorySlug ? `/blog?category=${categorySlug}` : "/blog"
+                  }
                   className={`
                     rounded-full border border-transparent px-3 py-1 text-xs transition-all duration-200
                     ${

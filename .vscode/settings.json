@@ -12,11 +12,5 @@
   // 保存时格式化代码
   "editor.formatOnSave": true,
   // 配置 tailwindcss 的类函数
-  "tailwindCSS.classFunctions": [
-    "cva",
-    "cx",
-    "twMerge",
-    "cn",
-    "cs"
-  ]
+  "tailwindCSS.classFunctions": ["cva", "cx", "twMerge", "cn", "cs"]
 }

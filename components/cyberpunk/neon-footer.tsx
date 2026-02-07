@@ -1,7 +1,5 @@
 import Image from "next/image";
-
 import { getChangelogsAction } from "@/app/actions/changelog";
-
 import {
   BEI_AN_LINK,
   BEI_AN_NUMBER,

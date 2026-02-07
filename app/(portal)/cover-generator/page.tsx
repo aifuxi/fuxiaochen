@@ -54,10 +54,12 @@ export default function CoverGeneratorPage() {
       case "neon-grid":
         return (
           <>
-            <div className={`
-              ${base}
-              bg-[#000]
-            `} />
+            <div
+              className={`
+                ${base}
+                bg-[#000]
+              `}
+            />
             <div
               className={`
                 ${base}
@@ -68,10 +70,14 @@ export default function CoverGeneratorPage() {
           </>
         );
       case "circuit":
-        return <div className={`
-          ${base}
-          bg-[#1a1a2e] opacity-80
-        `} />;
+        return (
+          <div
+            className={`
+              ${base}
+              bg-[#1a1a2e] opacity-80
+            `}
+          />
+        );
       case "gradient-1":
         return (
           <div
@@ -91,10 +97,14 @@ export default function CoverGeneratorPage() {
           />
         );
       default:
-        return <div className={`
-          ${base}
-          bg-gray-900
-        `} />;
+        return (
+          <div
+            className={`
+              ${base}
+              bg-gray-900
+            `}
+          />
+        );
     }
   };
 
@@ -103,10 +113,12 @@ export default function CoverGeneratorPage() {
       <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 space-y-4 text-center">
-          <h1 className={`
-            text-4xl font-bold tracking-tight text-[var(--text-color)]
-            md:text-5xl
-          `}>
+          <h1
+            className={`
+              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              md:text-5xl
+            `}
+          >
             Cover Generator
           </h1>
           <p className="mx-auto max-w-xl text-lg text-[var(--text-color-secondary)]">
@@ -114,10 +126,12 @@ export default function CoverGeneratorPage() {
           </p>
         </div>
 
-        <div className={`
-          mx-auto grid max-w-7xl grid-cols-1 gap-8
-          lg:grid-cols-3
-        `}>
+        <div
+          className={`
+            mx-auto grid max-w-7xl grid-cols-1 gap-8
+            lg:grid-cols-3
+          `}
+        >
           {/* Controls Panel */}
           <div className="lg:col-span-1">
             <GlassCard className="space-y-6 p-6">
@@ -128,9 +142,12 @@ export default function CoverGeneratorPage() {
 
               {/* Text Settings */}
               <div className="space-y-4">
-                <div className={`
-                  flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)] uppercase
-                `}>
+                <div
+                  className={`
+                    flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)]
+                    uppercase
+                  `}
+                >
                   <Type className="h-3 w-3" /> Text
                 </div>
                 <div className="space-y-2">
@@ -161,9 +178,12 @@ export default function CoverGeneratorPage() {
 
               {/* Visual Settings */}
               <div className="space-y-4">
-                <div className={`
-                  flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)] uppercase
-                `}>
+                <div
+                  className={`
+                    flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)]
+                    uppercase
+                  `}
+                >
                   <ImageIcon className="h-3 w-3" /> Visuals
                 </div>
                 <div className="space-y-2">
@@ -176,18 +196,24 @@ export default function CoverGeneratorPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gradient-1">Blue/Purple Gradient</SelectItem>
-                      <SelectItem value="gradient-2">Teal/Cyan Gradient</SelectItem>
+                      <SelectItem value="gradient-1">
+                        Blue/Purple Gradient
+                      </SelectItem>
+                      <SelectItem value="gradient-2">
+                        Teal/Cyan Gradient
+                      </SelectItem>
                       <SelectItem value="neon-grid">Neon Grid</SelectItem>
                       <SelectItem value="circuit">Dark Circuit</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className={`
-                  flex items-center justify-between rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)]
-                  p-3
-                `}>
+                <div
+                  className={`
+                    flex items-center justify-between rounded-lg border border-[var(--glass-border)]
+                    bg-[var(--glass-bg)] p-3
+                  `}
+                >
                   <Label className="cursor-pointer">Glitch Effect</Label>
                   <Switch
                     checked={showGlitch}
@@ -195,10 +221,12 @@ export default function CoverGeneratorPage() {
                   />
                 </div>
 
-                <div className={`
-                  flex items-center justify-between rounded-lg border border-[var(--glass-border)] bg-[var(--glass-bg)]
-                  p-3
-                `}>
+                <div
+                  className={`
+                    flex items-center justify-between rounded-lg border border-[var(--glass-border)]
+                    bg-[var(--glass-bg)] p-3
+                  `}
+                >
                   <Label className="cursor-pointer">Border Frame</Label>
                   <Switch
                     checked={showBorder}
@@ -228,10 +256,13 @@ export default function CoverGeneratorPage() {
 
           {/* Preview Panel */}
           <div className="lg:col-span-2">
-            <div className={`
-              flex items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-4
-              lg:p-12
-            `}>
+            <div
+              className={`
+                flex items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]
+                p-4
+                lg:p-12
+              `}
+            >
               <div
                 ref={previewRef}
                 className={`
@@ -253,11 +284,12 @@ export default function CoverGeneratorPage() {
                 )}
 
                 {/* Content Layer */}
-                <div className={`
-                  relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center
-                  backdrop-blur-[0px]
-                `}>
-
+                <div
+                  className={`
+                    relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center
+                    backdrop-blur-[0px]
+                  `}
+                >
                   {/* Main Text */}
                   <h1
                     className={`
@@ -272,10 +304,12 @@ export default function CoverGeneratorPage() {
 
                   {/* Subtitle */}
                   <div className="relative">
-                    <p className={`
-                      text-2xl font-light tracking-[0.2em] text-white/90 uppercase
-                      md:text-3xl
-                    `}>
+                    <p
+                      className={`
+                        text-2xl font-light tracking-[0.2em] text-white/90 uppercase
+                        md:text-3xl
+                      `}
+                    >
                       {subtitle}
                     </p>
                   </div>
@@ -293,7 +327,8 @@ export default function CoverGeneratorPage() {
             </div>
 
             <p className="mt-4 text-center text-sm text-[var(--text-color-secondary)]">
-              Preview shown at lower resolution. Export will be high quality (2x).
+              Preview shown at lower resolution. Export will be high quality
+              (2x).
             </p>
           </div>
         </div>

@@ -1,11 +1,8 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter } from "next/navigation";
-
 import { LogOut } from "lucide-react";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +15,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-
 import { authClient } from "@/lib/auth-client";
 
 interface UserNavProps {

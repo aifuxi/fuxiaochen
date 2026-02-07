@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { format } from "date-fns";
 import { Edit, Loader2, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-
 import { getUsersAction } from "@/app/actions/user";
-
 import { type User, type UserListReq } from "@/types/user";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,9 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
 import { Pagination } from "@/components/cyberpunk/pagination";
-
 import { DeleteAlert } from "./delete-alert";
 import { UserDialog } from "./user-dialog";
 
@@ -47,10 +40,7 @@ export default function UserManagementPage() {
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const name = searchParams.get("name") || undefined;
 
-  const { data, isLoading, mutate } = useSWR(
-    { page, pageSize, name },
-    fetcher,
-  );
+  const { data, isLoading, mutate } = useSWR({ page, pageSize, name }, fetcher);
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,10 +104,12 @@ export default function UserManagementPage() {
       <div className="rounded-md border border-neon-cyan/20 bg-black/50 backdrop-blur-sm">
         <Table>
           <TableHeader>
-            <TableRow className={`
-              border-white/10
-              hover:bg-white/5
-            `}>
+            <TableRow
+              className={`
+                border-white/10
+                hover:bg-white/5
+              `}
+            >
               <TableHead className="text-neon-cyan">用户</TableHead>
               <TableHead className="text-neon-cyan">邮箱</TableHead>
               <TableHead className="text-neon-cyan">角色</TableHead>
@@ -128,13 +120,19 @@ export default function UserManagementPage() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-gray-400">
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-gray-400"
+                >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                 </TableCell>
               </TableRow>
             ) : data?.lists?.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-gray-400">
+                <TableCell
+                  colSpan={5}
+                  className="h-24 text-center text-gray-400"
+                >
                   暂无数据
                 </TableCell>
               </TableRow>

@@ -1,20 +1,22 @@
 import { Suspense } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { getBlogsAction } from "@/app/actions/blog";
+import { BlogCard } from "@/components/blog/blog-card";
 import { BlogListItemSkeleton } from "@/components/blog/blog-list-skeleton";
 import { Hero } from "@/components/portal/hero";
-import { BlogCard } from "@/components/blog/blog-card";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 export const revalidate = 3600; // Revalidate every hour
 
 function BlogListSkeleton() {
   return (
-    <div className={`
-      grid grid-cols-1 gap-8
-      md:grid-cols-2
-      lg:grid-cols-3
-    `}>
+    <div
+      className={`
+        grid grid-cols-1 gap-8
+        md:grid-cols-2
+        lg:grid-cols-3
+      `}
+    >
       {Array.from({ length: 6 }).map((_, i) => (
         <BlogListItemSkeleton key={i} />
       ))}
@@ -33,11 +35,13 @@ async function BlogList() {
   const blogs = data?.lists || [];
 
   return (
-    <div className={`
-      grid grid-cols-1 gap-8
-      md:grid-cols-2
-      lg:grid-cols-3
-    `}>
+    <div
+      className={`
+        grid grid-cols-1 gap-8
+        md:grid-cols-2
+        lg:grid-cols-3
+      `}
+    >
       {blogs.map((blog) => (
         <BlogCard
           key={blog.id}
@@ -65,10 +69,12 @@ export default function HomePage() {
       <main className="mx-auto max-w-7xl px-4 pb-20">
         {/* Blog Section */}
         <section id="blog" className="space-y-12">
-          <div className={`
-            flex flex-col justify-between gap-6
-            md:flex-row md:items-end
-          `}>
+          <div
+            className={`
+              flex flex-col justify-between gap-6
+              md:flex-row md:items-end
+            `}
+          >
             <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
                 最新 <span className="text-[var(--accent-color)]">文章</span>
@@ -85,10 +91,13 @@ export default function HomePage() {
                 hover:text-[var(--accent-color)]/80
               `}
             >
-              查看归档 <ArrowRight className={`
-                h-4 w-4 transition-transform
-                group-hover:translate-x-1
-              `} />
+              查看归档{" "}
+              <ArrowRight
+                className={`
+                  h-4 w-4 transition-transform
+                  group-hover:translate-x-1
+                `}
+              />
             </Link>
           </div>
 
