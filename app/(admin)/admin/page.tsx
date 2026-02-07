@@ -10,7 +10,8 @@ import {
 import { getDashboardStatsAction } from "@/app/actions/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { GlassCard } from "@/components/ui/glass-card";
 import {
   Table,
   TableBody,
@@ -47,35 +48,35 @@ export default async function DashboardPage() {
       icon: FileText,
       description: `已发布: ${publishedBlogCount}`,
       href: "/admin/blogs",
-      color: "text-neon-cyan",
+      color: "text-blue-500",
     },
     {
       title: "分类总数",
       value: categoryCount,
       icon: FolderTree,
       href: "/admin/categories",
-      color: "text-neon-purple",
+      color: "text-purple-500",
     },
     {
       title: "标签总数",
       value: tagCount,
       icon: TagIcon,
       href: "/admin/tags",
-      color: "text-neon-magenta",
+      color: "text-pink-500",
     },
     {
       title: "用户总数",
       value: userCount,
       icon: Users,
       href: "/admin/users",
-      color: "text-green-400",
+      color: "text-green-500",
     },
   ];
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
           仪表盘
         </h2>
       </div>
@@ -89,14 +90,14 @@ export default async function DashboardPage() {
       >
         {stats.map((stat) => (
           <Link key={stat.title} href={stat.href}>
-            <Card
+            <GlassCard
               className={`
-                border-white/10 bg-black/40 transition-all duration-300
-                hover:border-neon-cyan/50 hover:shadow-[0_0_20px_rgba(0,255,255,0.1)]
+                transition-all duration-300
+                hover:border-[var(--accent-color)]/50 hover:shadow-lg
               `}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-400">
+                <CardTitle className="text-sm font-medium text-[var(--text-color-secondary)]">
                   {stat.title}
                 </CardTitle>
                 <stat.icon
@@ -107,33 +108,32 @@ export default async function DashboardPage() {
                 />
               </CardHeader>
               <CardContent>
-                <div
-                  className={`
-                    text-2xl font-bold
-                    ${stat.color}
-                  `}
-                >
+                <div className="text-2xl font-bold text-[var(--text-color)]">
                   {stat.value}
                 </div>
                 {stat.description && (
-                  <p className="text-xs text-gray-500">{stat.description}</p>
+                  <p className="text-xs text-[var(--text-color-secondary)]">
+                    {stat.description}
+                  </p>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
           </Link>
         ))}
       </div>
 
-      <div className="rounded-xl border border-white/10 bg-black/40 p-6">
+      <GlassCard className="p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-white">最新文章</h3>
+          <h3 className="text-lg font-bold text-[var(--text-color)]">
+            最新文章
+          </h3>
           <Link href="/admin/blogs">
             <Button
               variant="ghost"
               size="sm"
               className={`
-                text-neon-cyan
-                hover:bg-neon-cyan/10 hover:text-neon-cyan
+                text-[var(--accent-color)]
+                hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
               `}
             >
               查看全部 <ArrowRight className="ml-2 h-4 w-4" />
@@ -145,15 +145,23 @@ export default async function DashboardPage() {
           <TableHeader>
             <TableRow
               className={`
-                border-white/10
-                hover:bg-white/5
+                border-[var(--glass-border)]
+                hover:bg-[var(--glass-bg)]/50
               `}
             >
-              <TableHead className="text-neon-purple">标题</TableHead>
-              <TableHead className="text-neon-purple">分类</TableHead>
-              <TableHead className="text-neon-purple">标签</TableHead>
-              <TableHead className="text-neon-purple">发布状态</TableHead>
-              <TableHead className="text-right text-neon-purple">
+              <TableHead className="text-[var(--text-color-secondary)]">
+                标题
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                分类
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                标签
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                发布状态
+              </TableHead>
+              <TableHead className="text-right text-[var(--text-color-secondary)]">
                 创建时间
               </TableHead>
             </TableRow>
@@ -163,7 +171,7 @@ export default async function DashboardPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   暂无文章
                 </TableCell>
@@ -173,18 +181,18 @@ export default async function DashboardPage() {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-white/10
-                    hover:bg-white/5
+                    border-[var(--glass-border)]
+                    hover:bg-[var(--glass-bg)]/50
                   `}
                 >
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-[var(--text-color)]">
                     {blog.title}
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
                       <Badge
                         variant="outline"
-                        className="border-neon-purple text-neon-purple"
+                        className="border-[var(--accent-color)] text-[var(--accent-color)]"
                       >
                         {blog.category.name}
                       </Badge>
@@ -199,7 +207,7 @@ export default async function DashboardPage() {
                             <Badge
                               key={tag.id}
                               variant="secondary"
-                              className="bg-white/10 text-xs"
+                              className="bg-[var(--accent-color)]/10 text-xs text-[var(--accent-color)]"
                             >
                               {tag.name}
                             </Badge>
@@ -213,16 +221,16 @@ export default async function DashboardPage() {
                       className={
                         blog.published
                           ? `
-                            bg-neon-cyan/20 text-neon-cyan
-                            hover:bg-neon-cyan/30
+                            bg-[var(--accent-color)]/20 text-[var(--accent-color)]
+                            hover:bg-[var(--accent-color)]/30
                           `
-                          : "bg-gray-800 text-gray-400"
+                          : "bg-[var(--glass-border)] text-[var(--text-color-secondary)]"
                       }
                     >
                       {blog.published ? "已发布" : "草稿"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right text-gray-400">
+                  <TableCell className="text-right text-[var(--text-color-secondary)]">
                     {format(new Date(blog.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                 </TableRow>
@@ -230,7 +238,7 @@ export default async function DashboardPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </GlassCard>
     </div>
   );
 }

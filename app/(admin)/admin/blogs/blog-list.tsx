@@ -15,7 +15,9 @@ import {
 import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -24,8 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { NeonSwitch } from "@/components/cyberpunk/neon-switch";
-import { Pagination } from "@/components/cyberpunk/pagination";
+import { DataTablePagination } from "@/components/admin/data-table-pagination";
 import { DeleteAlert } from "./delete-alert";
 
 const fetcher = async (params: BlogListReq) => {
@@ -91,6 +92,13 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
     router.push(`?${params.toString()}`);
   };
 
+  const handlePageSizeChange = (newSize: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", newSize.toString());
+    params.set("page", "1");
+    router.push(`?${params.toString()}`);
+  };
+
   const openDelete = (id: string) => {
     setDeletingId(id);
     setDeleteOpen(true);
@@ -119,35 +127,31 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
           文章列表
         </h2>
-        <Link href="/admin/blogs/new">
-          <Button
-            className={`
-              bg-neon-cyan text-black
-              hover:bg-cyan-400
-            `}
-          >
-            <Plus className="mr-2 h-4 w-4" /> 新建文章
-          </Button>
-        </Link>
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Filter Section */}
+      <GlassCard
+        className={`
+          flex flex-col gap-4 p-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <form
           onSubmit={handleSearch}
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
             <Input
               name="query"
               placeholder="搜索文章标题..."
               defaultValue={title || ""}
               className={`
-                border-white/10 bg-white/5 pl-9
-                focus:border-neon-cyan focus:ring-neon-cyan/20
+                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
+                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
               `}
             />
           </div>
@@ -155,38 +159,59 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
             type="submit"
             variant="secondary"
             className={`
-              border border-white/10 bg-white/5 text-gray-300
-              hover:bg-white/10
+              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
             `}
           >
             搜索
           </Button>
         </form>
-      </div>
+        <Link href="/admin/blogs/new">
+          <Button
+            className={`
+              bg-[var(--accent-color)] text-white
+              hover:bg-[var(--accent-color)]/90
+            `}
+          >
+            <Plus className="mr-2 h-4 w-4" /> 新建文章
+          </Button>
+        </Link>
+      </GlassCard>
 
-      <div className="rounded-md border border-white/10 bg-black/40">
+      {/* Table Section */}
+      <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow
               className={`
-                border-white/10
-                hover:bg-white/5
+                border-[var(--glass-border)]
+                hover:bg-[var(--glass-bg)]
               `}
             >
-              <TableHead className="text-neon-purple">标题</TableHead>
-              <TableHead className="text-neon-purple">分类</TableHead>
-              <TableHead className="text-neon-purple">标签</TableHead>
-              <TableHead className="text-neon-purple">发布状态</TableHead>
-              <TableHead className="text-neon-purple">精选状态</TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                标题
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                分类
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                标签
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                发布状态
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                精选状态
+              </TableHead>
               <TableHead
-                className="cursor-pointer text-neon-purple"
+                className="cursor-pointer text-[var(--text-color-secondary)]"
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center gap-1">
                   创建时间 <ArrowUpDown className="h-3 w-3" />
                 </div>
               </TableHead>
-              <TableHead className="text-right text-neon-purple">
+              <TableHead className="text-right text-[var(--text-color-secondary)]">
                 操作
               </TableHead>
             </TableRow>
@@ -196,7 +221,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   加载中...
                 </TableCell>
@@ -205,7 +230,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   暂无数据
                 </TableCell>
@@ -215,18 +240,18 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-white/10
-                    hover:bg-white/5
+                    border-[var(--glass-border)]
+                    hover:bg-[var(--accent-color)]/5
                   `}
                 >
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-[var(--text-color)]">
                     {blog.title}
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
                       <Badge
                         variant="outline"
-                        className="border-neon-purple text-neon-purple"
+                        className="border-[var(--accent-color)]/50 text-[var(--accent-color)]"
                       >
                         {blog.category.name}
                       </Badge>
@@ -241,7 +266,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                             <Badge
                               key={tag.id}
                               variant="secondary"
-                              className="bg-white/10 text-xs"
+                              className="bg-[var(--glass-bg)] text-[var(--text-color-secondary)]"
                             >
                               {tag.name}
                             </Badge>
@@ -250,20 +275,20 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <NeonSwitch
+                    <Switch
                       checked={blog.published}
                       disabled={!isAdmin}
                       onCheckedChange={() => void handleTogglePublish(blog.id)}
                     />
                   </TableCell>
                   <TableCell>
-                    <NeonSwitch
+                    <Switch
                       checked={blog.featured}
                       disabled={!isAdmin}
                       onCheckedChange={() => void handleToggleFeature(blog.id)}
                     />
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-[var(--text-color-secondary)]">
                     {format(new Date(blog.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
@@ -273,8 +298,8 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                           variant="ghost"
                           size="icon"
                           className={`
-                            text-neon-cyan
-                            hover:bg-neon-cyan/10 hover:text-neon-cyan
+                            text-[var(--text-color-secondary)]
+                            hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
                           `}
                         >
                           <Edit className="h-4 w-4" />
@@ -285,7 +310,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                         size="icon"
                         onClick={() => openDelete(blog.id)}
                         className={`
-                          text-red-500
+                          text-[var(--text-color-secondary)]
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >
@@ -298,16 +323,20 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
             )}
           </TableBody>
         </Table>
-      </div>
+      </GlassCard>
 
-      {data && (
-        <Pagination
-          currentPage={page}
-          total={data.total}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-        />
-      )}
+      {/* Pagination Section */}
+      <GlassCard className="p-2">
+        {data && (
+          <DataTablePagination
+            currentPage={page}
+            total={data.total}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )}
+      </GlassCard>
 
       <DeleteAlert
         id={deletingId}

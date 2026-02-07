@@ -40,9 +40,9 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-orbitron text-3xl font-bold tracking-wider text-white uppercase">
-          <span className="text-neon-cyan">Edit</span> Blog
-        </h1>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
+          编辑文章
+        </h2>
       </div>
       <BlogForm initialData={blog} categories={categories} tags={tags} />
     </div>

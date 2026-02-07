@@ -34,14 +34,18 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 w-64 border-r border-neon-cyan/20 bg-black/90 backdrop-blur-xl">
-      <div className="flex h-16 items-center border-b border-neon-cyan/20 px-6">
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-50 w-64 border-r border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl
+      `}
+    >
+      <div className="flex h-16 items-center border-b border-[var(--glass-border)] px-6">
         <Link
           href="/"
-          className="text-xl font-bold tracking-widest text-neon-cyan uppercase"
+          className="text-xl font-bold tracking-tight text-[var(--text-color)] uppercase"
         >
           {WEBSITE}
-          <span className="text-neon-purple">.ADMIN</span>
+          <span className="text-[var(--accent-color)]">.ADMIN</span>
         </Link>
       </div>
 
@@ -60,10 +64,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 group flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-300
                 ${
                   isActive
-                    ? "bg-neon-cyan/20 text-neon-cyan shadow-[0_0_15px_rgba(0,255,255,0.3)]"
+                    ? "bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
                     : `
-                      text-gray-400
-                      hover:bg-neon-cyan/10 hover:text-neon-cyan
+                      text-[var(--text-color-secondary)]
+                      hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
                     `
                 }
               `}
@@ -71,7 +75,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               <item.icon
                 className={`
                   h-5 w-5 transition-transform
-                  ${isActive ? "scale-110" : "group-hover:scale-110"}
+                  ${isActive ? "scale-105" : "group-hover:scale-105"}
                 `}
               />
               {item.label}
@@ -80,7 +84,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         })}
       </nav>
 
-      <div className="absolute bottom-0 w-full border-t border-neon-cyan/20 p-4">
+      <div className="absolute bottom-0 w-full border-t border-[var(--glass-border)] p-4">
         <UserNav user={user} />
       </div>
     </aside>

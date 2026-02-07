@@ -9,6 +9,7 @@ import { getCategoriesAction } from "@/app/actions/category";
 import { type Category, type CategoryListReq } from "@/types/category";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -18,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pagination } from "@/components/cyberpunk/pagination";
+import { DataTablePagination } from "@/components/admin/data-table-pagination";
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
 
@@ -65,6 +66,13 @@ export default function CategoryManagementPage() {
     router.push(`?${params.toString()}`);
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", newPageSize.toString());
+    params.set("page", "1"); // Reset to page 1
+    router.push(`?${params.toString()}`);
+  };
+
   const openEdit = (category: Category) => {
     setEditingCategory(category);
     setDialogOpen(true);
@@ -76,61 +84,91 @@ export default function CategoryManagementPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-white">
-            分类管理
-          </h2>
-          <p className="text-gray-400">管理博客文章的分类体系</p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
+          分类管理
+        </h2>
+        <p className="text-[var(--text-color-secondary)]">
+          管理博客文章的分类体系
+        </p>
+      </div>
+
+      <GlassCard
+        className={`
+          flex flex-col gap-4 p-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
+        <form
+          onSubmit={handleSearch}
+          className="flex flex-1 items-center gap-2"
+        >
+          <div className="relative max-w-sm flex-1">
+            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Input
+              name="query"
+              placeholder="搜索分类..."
+              defaultValue={name}
+              className={`
+                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
+                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+              `}
+            />
+          </div>
+          <Button
+            type="submit"
+            variant="secondary"
+            className={`
+              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
+            `}
+          >
+            搜索
+          </Button>
+        </form>
         <Button
           onClick={() => {
             setEditingCategory(undefined);
             setDialogOpen(true);
           }}
           className={`
-            bg-neon-cyan text-black
-            hover:bg-cyan-400
+            bg-[var(--accent-color)] text-white
+            hover:bg-[var(--accent-color)]/90
           `}
         >
           <Plus className="mr-2 h-4 w-4" />
           新增分类
         </Button>
-      </div>
+      </GlassCard>
 
-      <div className="flex items-center gap-4">
-        <form onSubmit={handleSearch} className="flex-1">
-          <div className="relative">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-500" />
-            <Input
-              name="query"
-              placeholder="搜索分类..."
-              defaultValue={name}
-              className={`
-                border-white/10 bg-white/5 pl-10 text-white
-                focus:border-neon-cyan/50
-              `}
-            />
-          </div>
-        </form>
-      </div>
-
-      <div className="rounded-md border border-neon-cyan/20 bg-black/50 backdrop-blur-sm">
+      <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow
               className={`
-                border-white/10
-                hover:bg-white/5
+                border-[var(--glass-border)]
+                hover:bg-[var(--glass-bg)]
               `}
             >
-              <TableHead className="text-neon-cyan">名称</TableHead>
-              <TableHead className="text-neon-cyan">Slug</TableHead>
-              <TableHead className="text-neon-cyan">描述</TableHead>
-              <TableHead className="text-neon-cyan">文章数</TableHead>
-              <TableHead className="text-neon-cyan">创建时间</TableHead>
-              <TableHead className="text-right text-neon-cyan">操作</TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                名称
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                Slug
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                描述
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                文章数
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                创建时间
+              </TableHead>
+              <TableHead className="text-right text-[var(--text-color-secondary)]">
+                操作
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -138,7 +176,7 @@ export default function CategoryManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-gray-400"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                 </TableCell>
@@ -147,7 +185,7 @@ export default function CategoryManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-gray-400"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   暂无数据
                 </TableCell>
@@ -157,28 +195,28 @@ export default function CategoryManagementPage() {
                 <TableRow
                   key={category.id}
                   className={`
-                    border-white/10
-                    hover:bg-white/5
+                    border-[var(--glass-border)]
+                    hover:bg-[var(--glass-bg)]
                   `}
                 >
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-[var(--text-color)]">
                     {category.name}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="border-neon-purple text-neon-purple"
+                      className="border-[var(--accent-color)] text-[var(--accent-color)]"
                     >
                       {category.slug}
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-w-[200px] truncate text-gray-400">
+                  <TableCell className="max-w-[200px] truncate text-[var(--text-color-secondary)]">
                     {category.description || "-"}
                   </TableCell>
-                  <TableCell className="text-gray-300">
+                  <TableCell className="text-[var(--text-color)]">
                     {category.blogCount}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-[var(--text-color-secondary)]">
                     {format(new Date(category.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
@@ -188,8 +226,8 @@ export default function CategoryManagementPage() {
                         size="icon"
                         onClick={() => openEdit(category)}
                         className={`
-                          text-gray-400
-                          hover:bg-neon-cyan/10 hover:text-neon-cyan
+                          text-[var(--text-color-secondary)]
+                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
                         `}
                       >
                         <Edit className="h-4 w-4" />
@@ -199,7 +237,7 @@ export default function CategoryManagementPage() {
                         size="icon"
                         onClick={() => openDelete(category.id)}
                         className={`
-                          text-gray-400
+                          text-[var(--text-color-secondary)]
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >
@@ -212,16 +250,19 @@ export default function CategoryManagementPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </GlassCard>
 
-      <div className="flex justify-end">
-        <Pagination
-          currentPage={page}
-          pageSize={pageSize}
-          total={data?.total || 0}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      <GlassCard className="p-2">
+        {data && (
+          <DataTablePagination
+            currentPage={page}
+            total={data.total}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )}
+      </GlassCard>
 
       <CategoryDialog
         open={dialogOpen}

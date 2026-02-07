@@ -91,19 +91,27 @@ export function UserDialog({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={`
-          border-neon-cyan/20 bg-black/90 text-white
+          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-xl
           sm:max-w-[425px]
         `}
       >
         <DialogHeader>
-          <DialogTitle className="text-neon-cyan">编辑用户角色</DialogTitle>
+          <DialogTitle className="text-[var(--text-color)]">
+            编辑用户角色
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <div className="text-sm text-gray-400">用户</div>
-              <div className="font-medium text-white">{user?.name}</div>
-              <div className="text-xs text-gray-500">{user?.email}</div>
+              <div className="text-sm text-[var(--text-color-secondary)]">
+                用户
+              </div>
+              <div className="font-medium text-[var(--text-color)]">
+                {user?.name}
+              </div>
+              <div className="text-xs text-[var(--text-color-secondary)]">
+                {user?.email}
+              </div>
             </div>
 
             <FormField
@@ -111,7 +119,9 @@ export function UserDialog({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-400">角色</FormLabel>
+                  <FormLabel className="text-[var(--text-color-secondary)]">
+                    角色
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -119,14 +129,16 @@ export function UserDialog({
                     <FormControl>
                       <SelectTrigger
                         className={`
-                          border-white/10 bg-white/5 text-white
-                          focus:border-neon-cyan/50
+                          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                          focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                         `}
                       >
                         <SelectValue placeholder="选择角色" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="border-neon-cyan/20 bg-black/90 text-white">
+                    <SelectContent className={`
+                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                    `}>
                       <SelectItem value="visitor">Visitor</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
@@ -140,8 +152,8 @@ export function UserDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  w-full bg-neon-cyan text-black
-                  hover:bg-cyan-400
+                  w-full bg-[var(--accent-color)] text-white
+                  hover:bg-[var(--accent-color)]/90
                 `}
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

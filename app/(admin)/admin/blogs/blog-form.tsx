@@ -29,6 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -43,10 +44,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import copyCodePlugin from "@/components/blog/plugin-copy-code";
 import headingsPlugin from "@/components/blog/plugin-headings";
-import { NeonSwitch } from "@/components/cyberpunk/neon-switch";
 import "bytemd/dist/index.css";
 
 const plugins = [
@@ -120,7 +121,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
   };
 
   return (
-    <div className="glass-panel rounded-xl border border-white/10 bg-black/50 p-6">
+    <GlassCard className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div
@@ -134,13 +135,15 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">标题</FormLabel>
+                  <FormLabel className="text-[var(--text-color)]">
+                    标题
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="文章标题"
                     />
@@ -154,13 +157,15 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">Slug</FormLabel>
+                  <FormLabel className="text-[var(--text-color)]">
+                    Slug
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-white/10 bg-white/5
-                        focus:border-neon-cyan focus:ring-neon-cyan/20
+                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                       `}
                       placeholder="article-slug"
                     />
@@ -176,13 +181,13 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neon-purple">描述</FormLabel>
+                <FormLabel className="text-[var(--text-color)]">描述</FormLabel>
                 <FormControl>
                   <Textarea
                     {...field}
                     className={`
-                      border-white/10 bg-white/5
-                      focus:border-neon-cyan focus:ring-neon-cyan/20
+                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                     `}
                     placeholder="文章简短描述..."
                   />
@@ -203,7 +208,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-neon-purple">分类</FormLabel>
+                  <FormLabel className="text-[var(--text-color)]">
+                    分类
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -212,19 +219,21 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                     <FormControl>
                       <SelectTrigger
                         className={`
-                          border-white/10 bg-white/5
-                          focus:ring-neon-cyan/20
+                          border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                          focus:ring-[var(--accent-color)]/20
                         `}
                       >
                         <SelectValue placeholder="选择分类" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="border-neon-cyan/20 bg-black/90 text-white">
+                    <SelectContent
+                      className={`border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]`}
+                    >
                       {categories.map((category) => (
                         <SelectItem
                           key={category.id}
                           value={category.id}
-                          className="focus:bg-neon-cyan/20 focus:text-neon-cyan"
+                          className="focus:bg-[var(--accent-color)]/20 focus:text-[var(--accent-color)]"
                         >
                           {category.name}
                         </SelectItem>
@@ -241,7 +250,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               name="tags"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-neon-purple">标签</FormLabel>
+                  <FormLabel className="text-[var(--text-color)]">
+                    标签
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -249,11 +260,14 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                           variant="outline"
                           role="combobox"
                           className={`
-                            justify-between border-white/10 bg-white/5
-                            hover:bg-white/10
-                            ${!field.value?.length && "text-muted-foreground"}
+                            justify-between border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                            hover:bg-[var(--glass-bg)]/80
+                            ${!field.value?.length && "text-[var(--text-color-secondary)]"}
                           `}
                         >
+                          {`
+
+                    `}
                           {field.value?.length
                             ? `${field.value.length} 个已选`
                             : "选择标签"}
@@ -261,7 +275,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-75 border-neon-cyan/20 bg-black/90 p-0 text-white">
+                    <PopoverContent
+                      className={`w-75 border-[var(--glass-border)] bg-[var(--glass-bg)] p-0 text-[var(--text-color)]`}
+                    >
                       <ScrollArea className="h-75 p-4">
                         <div className="space-y-2">
                           {tags.map((tag) => (
@@ -285,8 +301,8 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                                       );
                                 }}
                                 className={`
-                                  border-white/50
-                                  data-[state=checked]:bg-neon-cyan data-[state=checked]:text-black
+                                  border-[var(--text-color-secondary)]
+                                  data-[state=checked]:bg-[var(--accent-color)] data-[state=checked]:text-white
                                 `}
                               />
                               <label
@@ -311,7 +327,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                         <Badge
                           key={tag.id}
                           variant="secondary"
-                          className="bg-neon-cyan/10 text-neon-cyan"
+                          className="bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
                         >
                           {tag.name}
                         </Badge>
@@ -329,13 +345,15 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="cover"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neon-purple">封面图 URL</FormLabel>
+                <FormLabel className="text-[var(--text-color)]">
+                  封面图 URL
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     className={`
-                      border-white/10 bg-white/5
-                      focus:border-neon-cyan focus:ring-neon-cyan/20
+                      border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
                     `}
                     placeholder="https://example.com/image.png"
                   />
@@ -350,7 +368,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-neon-purple">内容</FormLabel>
+                <FormLabel className="text-[var(--text-color)]">内容</FormLabel>
                 <FormControl>
                   <div className="bytemd-dark">
                     <Editor
@@ -422,16 +440,17 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               render={({ field }) => (
                 <FormItem
                   className={`
-                    flex flex-row items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4
+                    flex flex-row items-center justify-between rounded-lg border border-[var(--glass-border)]
+                    bg-[var(--glass-bg)] p-4
                   `}
                 >
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base text-neon-purple">
+                    <FormLabel className="text-base text-[var(--text-color)]">
                       发布
                     </FormLabel>
                   </div>
                   <FormControl>
-                    <NeonSwitch
+                    <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -445,16 +464,17 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               render={({ field }) => (
                 <FormItem
                   className={`
-                    flex flex-row items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4
+                    flex flex-row items-center justify-between rounded-lg border border-[var(--glass-border)]
+                    bg-[var(--glass-bg)] p-4
                   `}
                 >
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base text-neon-purple">
+                    <FormLabel className="text-base text-[var(--text-color)]">
                       精选
                     </FormLabel>
                   </div>
                   <FormControl>
-                    <NeonSwitch
+                    <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
@@ -470,8 +490,8 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               variant="outline"
               onClick={() => router.push("/admin/blogs")}
               className={`
-                border-white/20 text-gray-300
-                hover:bg-white/10 hover:text-white
+                border-[var(--glass-border)] text-[var(--text-color-secondary)]
+                hover:bg-[var(--glass-bg)] hover:text-[var(--text-color)]
               `}
             >
               取消
@@ -480,8 +500,8 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               type="submit"
               disabled={loading}
               className={`
-                bg-neon-cyan text-black
-                hover:bg-cyan-400
+                bg-[var(--accent-color)] text-white
+                hover:bg-[var(--accent-color)]/90
               `}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -490,6 +510,6 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
           </div>
         </form>
       </Form>
-    </div>
+    </GlassCard>
   );
 }

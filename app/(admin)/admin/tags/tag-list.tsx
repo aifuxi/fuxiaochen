@@ -9,6 +9,7 @@ import { getTagsAction } from "@/app/actions/tag";
 import { type Tag, type TagListReq } from "@/types/tag";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -18,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Pagination } from "@/components/cyberpunk/pagination";
+import { DataTablePagination } from "@/components/admin/data-table-pagination";
 import { DeleteAlert } from "./delete-alert";
 import { TagDialog } from "./tag-dialog";
 
@@ -82,6 +83,13 @@ export default function TagManagementPage() {
     router.push(`?${params.toString()}`);
   };
 
+  const handlePageSizeChange = (newPageSize: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("pageSize", newPageSize.toString());
+    params.set("page", "1"); // Reset to page 1
+    router.push(`?${params.toString()}`);
+  };
+
   const openEdit = (tag: Tag) => {
     setEditingTag(tag);
     setDialogOpen(true);
@@ -101,35 +109,34 @@ export default function TagManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-wider text-neon-cyan uppercase">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
           标签列表
         </h2>
-        <Button
-          onClick={openCreate}
-          className={`
-            bg-neon-cyan text-black
-            hover:bg-cyan-400
-          `}
-        >
-          <Plus className="mr-2 h-4 w-4" /> 新建标签
-        </Button>
+        <p className="text-[var(--text-color-secondary)]">
+          管理博客文章的标签体系
+        </p>
       </div>
 
-      <div className="flex items-center gap-4">
+      <GlassCard
+        className={`
+          flex flex-col gap-4 p-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <form
           onSubmit={handleSearch}
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-gray-500" />
+            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
             <Input
               name="query"
               placeholder="搜索标签名称..."
               defaultValue={name || ""}
               className={`
-                border-white/10 bg-white/5 pl-9
-                focus:border-neon-cyan focus:ring-neon-cyan/20
+                border-[var(--glass-border)] bg-[var(--glass-bg)] pl-9
+                focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
               `}
             />
           </div>
@@ -137,29 +144,44 @@ export default function TagManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-white/10 bg-white/5 text-gray-300
-              hover:bg-white/10
+              border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+              hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
             `}
           >
             搜索
           </Button>
         </form>
-      </div>
+        <Button
+          onClick={openCreate}
+          className={`
+            bg-[var(--accent-color)] text-white
+            hover:bg-[var(--accent-color)]/90
+          `}
+        >
+          <Plus className="mr-2 h-4 w-4" /> 新建标签
+        </Button>
+      </GlassCard>
 
-      <div className="rounded-md border border-white/10 bg-black/40">
+      <GlassCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow
               className={`
-                border-white/10
-                hover:bg-white/5
+                border-[var(--glass-border)]
+                hover:bg-[var(--glass-bg)]
               `}
             >
-              <TableHead className="text-neon-purple">名称</TableHead>
-              <TableHead className="text-neon-purple">Slug</TableHead>
-              <TableHead className="text-neon-purple">文章数</TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                名称
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                Slug
+              </TableHead>
+              <TableHead className="text-[var(--text-color-secondary)]">
+                文章数
+              </TableHead>
               <TableHead
-                className="cursor-pointer text-neon-purple"
+                className="cursor-pointer text-[var(--text-color-secondary)]"
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center gap-1">
@@ -167,14 +189,14 @@ export default function TagManagementPage() {
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer text-neon-purple"
+                className="cursor-pointer text-[var(--text-color-secondary)]"
                 onClick={() => handleSort("updatedAt")}
               >
                 <div className="flex items-center gap-1">
                   更新时间 <ArrowUpDown className="h-3 w-3" />
                 </div>
               </TableHead>
-              <TableHead className="text-right text-neon-purple">
+              <TableHead className="text-right text-[var(--text-color-secondary)]">
                 操作
               </TableHead>
             </TableRow>
@@ -184,7 +206,7 @@ export default function TagManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   加载中...
                 </TableCell>
@@ -193,7 +215,7 @@ export default function TagManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-gray-500"
+                  className="h-24 text-center text-[var(--text-color-secondary)]"
                 >
                   暂无数据
                 </TableCell>
@@ -203,28 +225,28 @@ export default function TagManagementPage() {
                 <TableRow
                   key={tag.id}
                   className={`
-                    border-white/10
-                    hover:bg-white/5
+                    border-[var(--glass-border)]
+                    hover:bg-[var(--glass-bg)]
                   `}
                 >
-                  <TableCell className="font-medium text-white">
+                  <TableCell className="font-medium text-[var(--text-color)]">
                     {tag.name}
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-gray-400">
+                  <TableCell className="font-mono text-xs text-[var(--text-color-secondary)]">
                     {tag.slug}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className="bg-neon-cyan/10 text-neon-cyan"
+                      className="bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
                     >
                       {tag.blogCount}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-[var(--text-color-secondary)]">
                     {format(new Date(tag.createdAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
-                  <TableCell className="text-gray-400">
+                  <TableCell className="text-[var(--text-color-secondary)]">
                     {format(new Date(tag.updatedAt), "yyyy-MM-dd HH:mm")}
                   </TableCell>
                   <TableCell className="text-right">
@@ -234,8 +256,8 @@ export default function TagManagementPage() {
                         size="icon"
                         onClick={() => openEdit(tag)}
                         className={`
-                          text-gray-400
-                          hover:text-neon-cyan
+                          text-[var(--text-color-secondary)]
+                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
                         `}
                       >
                         <Edit className="h-4 w-4" />
@@ -245,8 +267,8 @@ export default function TagManagementPage() {
                         size="icon"
                         onClick={() => openDelete(tag.id)}
                         className={`
-                          text-gray-400
-                          hover:text-red-500
+                          text-[var(--text-color-secondary)]
+                          hover:bg-red-500/10 hover:text-red-500
                         `}
                       >
                         <Trash2 className="h-4 w-4" />
@@ -258,14 +280,19 @@ export default function TagManagementPage() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </GlassCard>
 
-      <Pagination
-        currentPage={page}
-        pageSize={pageSize}
-        total={data?.total || 0}
-        onPageChange={handlePageChange}
-      />
+      <GlassCard className="p-2">
+        {data && (
+          <DataTablePagination
+            currentPage={page}
+            total={data.total}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )}
+      </GlassCard>
 
       <TagDialog
         open={dialogOpen}
