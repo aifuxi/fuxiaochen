@@ -49,7 +49,7 @@ export default async function BlogDetailPage({
       <main className="relative z-10 pb-20">
         {/* Hero Section */}
         <div className="relative mb-12 h-[50vh] min-h-[400px] w-full pt-32">
-          <div className="absolute inset-0 bg-gray-900">
+          <div className="absolute inset-0">
             {blog.cover ? (
               <Image
                 src={blog.cover}
@@ -58,14 +58,7 @@ export default async function BlogDetailPage({
                 className="object-cover opacity-50"
                 priority
               />
-            ) : (
-              <div className="h-full w-full bg-gradient-to-br from-gray-800 to-black opacity-50" />
-            )}
-            <div
-              className={`
-                absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-[var(--bg-color)]/60 to-transparent
-              `}
-            />
+            ) : null}
           </div>
 
           <div className="relative z-20 container mx-auto flex h-full flex-col justify-end px-4 pb-12">
