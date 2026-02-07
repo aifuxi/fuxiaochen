@@ -98,7 +98,7 @@ export default function ChangelogManagementPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
-          CHANGELOG MANAGEMENT
+          更新日志管理
         </h1>
         <p className="text-[var(--text-color-secondary)]">管理系统更新日志</p>
       </div>

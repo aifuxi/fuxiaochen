@@ -47,7 +47,7 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3">
       <div className="h-10 w-10 rounded-full bg-[var(--accent-color)]/20 p-0.5">
         {user.image ? (
           <img
