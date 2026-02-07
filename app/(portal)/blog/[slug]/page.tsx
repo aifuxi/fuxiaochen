@@ -45,7 +45,7 @@ export default async function BlogDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] font-body text-[var(--text-color)]">
+    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--text-color)]">
       <main className="relative z-10 pb-20">
         {/* Hero Section */}
         <div className="relative mb-12 h-[50vh] min-h-[400px] w-full pt-32">

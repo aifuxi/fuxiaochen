@@ -2,28 +2,28 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ChangelogLoading() {
   return (
-    <div className="bg-cyber-black min-h-screen font-body text-white">
+    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--text-color)]">
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 flex flex-col items-center text-center">
-          <Skeleton className="mb-4 h-16 w-64 rounded-lg bg-white/5" />
+          <Skeleton className="mb-4 h-16 w-64 rounded-2xl" />
           <div className="flex w-full flex-col items-center space-y-2">
-            <Skeleton className="h-6 w-48 rounded bg-white/5" />
-            <Skeleton className="h-6 w-40 rounded bg-white/5" />
+            <Skeleton className="h-6 w-48 rounded-lg" />
+            <Skeleton className="h-6 w-40 rounded-lg" />
           </div>
         </div>
 
         {/* Changelog Timeline */}
         <div
           className={`
-            glass-panel relative rounded-md border border-white/10 p-8
+            glass-panel relative rounded-2xl p-8
             md:p-12
           `}
         >
           {/* Timeline Line Skeleton */}
           <div
             className={`
-              absolute top-12 bottom-12 left-8 w-px bg-white/5
+              absolute top-12 bottom-12 left-8 w-px bg-[var(--glass-border)]
               md:left-12
             `}
           />
@@ -40,7 +40,8 @@ export default function ChangelogLoading() {
                 {/* Timeline Dot Skeleton */}
                 <div
                   className={`
-                    absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-white/20 bg-white/10
+                    absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-[var(--glass-border)]
+                    bg-[var(--glass-bg)]
                     md:left-[-5px]
                   `}
                 />
@@ -51,14 +52,14 @@ export default function ChangelogLoading() {
                     md:flex-row md:items-baseline
                   `}
                 >
-                  <Skeleton className="h-8 w-24 rounded bg-white/5" />
-                  <Skeleton className="h-5 w-32 rounded bg-white/5" />
+                  <Skeleton className="h-8 w-24 rounded-lg" />
+                  <Skeleton className="h-5 w-32 rounded-lg" />
                 </div>
 
                 <div className="space-y-2">
-                  <Skeleton className="h-5 w-full rounded bg-white/5" />
-                  <Skeleton className="h-5 w-[90%] rounded bg-white/5" />
-                  <Skeleton className="h-5 w-[95%] rounded bg-white/5" />
+                  <Skeleton className="h-5 w-full rounded-lg" />
+                  <Skeleton className="h-5 w-[90%] rounded-lg" />
+                  <Skeleton className="h-5 w-[95%] rounded-lg" />
                 </div>
               </div>
             ))}
