@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { format } from "date-fns";
+import { RotateCcw } from "lucide-react";
 import { getBlogsAction } from "@/app/actions/blog";
+import { GlassCard } from "@/components/ui/glass-card";
 import {
   Pagination,
   PaginationContent,
@@ -10,8 +12,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { BlogCard } from "@/components/blog/blog-card";
-import { GlassCard } from "@/components/ui/glass-card";
-import { RotateCcw } from "lucide-react";
 
 interface BlogListProps {
   page: number;
@@ -44,10 +44,12 @@ export async function BlogList({
   return (
     <>
       {blogs.length > 0 ? (
-        <div className={`
-          mb-12 grid animate-in grid-cols-1 gap-8 duration-500 fade-in slide-in-from-bottom-4
-          md:grid-cols-2
-        `}>
+        <div
+          className={`
+            mb-12 grid animate-in grid-cols-1 gap-8 duration-500 fade-in slide-in-from-bottom-4
+            md:grid-cols-2
+          `}
+        >
           {blogs.map((blog) => (
             <BlogCard
               key={blog.id}
@@ -65,9 +67,11 @@ export async function BlogList({
           ))}
         </div>
       ) : (
-        <GlassCard className={`
-          flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
-        `}>
+        <GlassCard
+          className={`
+            flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
+          `}
+        >
           <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
             暂无文章
           </h3>
@@ -92,9 +96,11 @@ export async function BlogList({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-16 flex justify-center">
-          <Pagination className={`
-            w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
-          `}>
+          <Pagination
+            className={`
+              w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
+            `}
+          >
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
@@ -116,30 +122,28 @@ export async function BlogList({
                 />
               </PaginationItem>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (p) => (
-                  <PaginationItem key={p}>
-                    <PaginationLink
-                      href={`/blog?page=${p}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`}
-                      isActive={currentPage === p}
-                      className={
-                        currentPage === p
-                          ? `
-                            border-transparent bg-[var(--accent-color)] text-white shadow-sm
-                            hover:bg-[var(--accent-color)]/90 hover:text-white
-                          `
-                          : `
-                            transition-colors
-                            hover:bg-gray-100 hover:text-[var(--accent-color)]
-                            dark:hover:bg-[var(--accent-color)]/10
-                          `
-                      }
-                    >
-                      {p}
-                    </PaginationLink>
-                  </PaginationItem>
-                ),
-              )}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <PaginationItem key={p}>
+                  <PaginationLink
+                    href={`/blog?page=${p}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`}
+                    isActive={currentPage === p}
+                    className={
+                      currentPage === p
+                        ? `
+                          border-transparent bg-[var(--accent-color)] text-white shadow-sm
+                          hover:bg-[var(--accent-color)]/90 hover:text-white
+                        `
+                        : `
+                          transition-colors
+                          hover:bg-gray-100 hover:text-[var(--accent-color)]
+                          dark:hover:bg-[var(--accent-color)]/10
+                        `
+                    }
+                  >
+                    {p}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
 
               <PaginationItem>
                 <PaginationNext

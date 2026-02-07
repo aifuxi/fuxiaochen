@@ -61,9 +61,11 @@ export default async function BlogDetailPage({
             ) : (
               <div className="h-full w-full bg-gradient-to-br from-gray-800 to-black opacity-50" />
             )}
-            <div className={`
-              absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-[var(--bg-color)]/60 to-transparent
-            `} />
+            <div
+              className={`
+                absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] via-[var(--bg-color)]/60 to-transparent
+              `}
+            />
           </div>
 
           <div className="relative z-20 container mx-auto flex h-full flex-col justify-end px-4 pb-12">
@@ -92,11 +94,13 @@ export default async function BlogDetailPage({
                 )}
               </div>
 
-              <h1 className={`
-                mb-6 text-4xl leading-tight font-bold text-[var(--text-color)] drop-shadow-sm
-                md:text-5xl
-                lg:text-6xl
-              `}>
+              <h1
+                className={`
+                  mb-6 text-4xl leading-tight font-bold text-[var(--text-color)] drop-shadow-sm
+                  md:text-5xl
+                  lg:text-6xl
+                `}
+              >
                 {blog.title}
               </h1>
 
@@ -114,25 +118,30 @@ export default async function BlogDetailPage({
 
         {/* Content Section */}
         <div className="container mx-auto px-4">
-          <div className={`
-            grid grid-cols-1 gap-8
-            lg:grid-cols-[1fr_300px]
-          `}>
-            <div className={`
-              glass-panel relative h-fit overflow-hidden rounded-2xl border border-[var(--glass-border)]
-              bg-[var(--glass-bg)] p-8
-              md:p-12
-            `}>
-
-              <div className={`
-                blog-content prose prose-lg
-                dark:prose-invert
-                prose-headings:font-bold prose-headings:text-[var(--text-color)]
-                prose-p:text-[var(--text-color-secondary)]
-                prose-a:text-[var(--accent-color)]
-                max-w-none
-              `}>
-                 <BlogContent content={blog.content} />
+          <div
+            className={`
+              grid grid-cols-1 gap-8
+              lg:grid-cols-[1fr_300px]
+            `}
+          >
+            <div
+              className={`
+                glass-panel relative h-fit overflow-hidden rounded-2xl border border-[var(--glass-border)]
+                bg-[var(--glass-bg)] p-8
+                md:p-12
+              `}
+            >
+              <div
+                className={`
+                  blog-content prose prose-lg
+                  dark:prose-invert
+                  prose-headings:font-bold prose-headings:text-[var(--text-color)]
+                  prose-p:text-[var(--text-color-secondary)]
+                  prose-a:text-[var(--accent-color)]
+                  max-w-none
+                `}
+              >
+                <BlogContent content={blog.content} />
               </div>
 
               {/* Footer / Navigation */}
@@ -144,10 +153,12 @@ export default async function BlogDetailPage({
                     hover:text-[var(--accent-color)]
                   `}
                 >
-                  <span className={`
-                    transition-transform
-                    group-hover:-translate-x-1
-                  `}>
+                  <span
+                    className={`
+                      transition-transform
+                      group-hover:-translate-x-1
+                    `}
+                  >
                     ←
                   </span>{" "}
                   Back to Blog
@@ -159,10 +170,12 @@ export default async function BlogDetailPage({
               </div>
             </div>
 
-            <div className={`
-              hidden
-              lg:block
-            `}>
+            <div
+              className={`
+                hidden
+                lg:block
+              `}
+            >
               <TableOfContents />
             </div>
           </div>

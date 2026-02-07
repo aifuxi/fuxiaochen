@@ -1,9 +1,8 @@
 "use client";
 
-import { Monitor, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 import * as React from "react";
-
+import { useTheme } from "next-themes";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle({ className }: { className?: string }) {
@@ -16,10 +15,15 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   if (!mounted) {
     return (
-      <div className={cn(`
-        h-9 w-24 rounded-full bg-gray-100
-        dark:bg-gray-800
-      `, className)} />
+      <div
+        className={cn(
+          `
+            h-9 w-24 rounded-full bg-gray-100
+            dark:bg-gray-800
+          `,
+          className,
+        )}
+      />
     );
   }
 
@@ -33,7 +37,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     <div
       className={cn(
         "glass-panel flex items-center rounded-full p-1",
-        className
+        className,
       )}
     >
       {modes.map((mode) => {
@@ -49,10 +53,11 @@ export function ThemeToggle({ className }: { className?: string }) {
                 relative flex h-7 w-7 items-center justify-center rounded-full text-gray-500 transition-all duration-300
                 hover:text-[var(--text-color)]
               `,
-              isActive && `
-                bg-white text-black shadow-sm
-                dark:bg-[var(--accent-color)] dark:text-white
-              `
+              isActive &&
+                `
+                  bg-white text-black shadow-sm
+                  dark:bg-[var(--accent-color)] dark:text-white
+                `,
             )}
             aria-label={`Switch to ${mode.name} theme`}
           >

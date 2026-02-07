@@ -32,18 +32,15 @@ class APIServiceClient {
     body?: any,
     config?: Omit<RequestInit, "method" | "body">,
   ): Promise<T> {
-    const resp = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${path}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...config?.headers,
-        },
-        body: JSON.stringify(body),
-        ...config,
+    const resp = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...config?.headers,
       },
-    );
+      body: JSON.stringify(body),
+      ...config,
+    });
 
     return resp.json() as Promise<T>;
   }

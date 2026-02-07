@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
-import { ThemeProvider } from "@/components/theme-provider";
 import "@/styles/global.css";
 
 export const metadata: Metadata = {

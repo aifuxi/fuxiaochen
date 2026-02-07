@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-
 import { ErrorView } from "@/components/ui/error-view";
 
 export default function Error({

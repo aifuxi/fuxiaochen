@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { getChangelogsAction } from "@/app/actions/changelog";
+import { GlassCard } from "@/components/ui/glass-card";
 import {
   Pagination,
   PaginationContent,
@@ -9,7 +10,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import BlogContent from "@/components/blog/blog-content";
-import { GlassCard } from "@/components/ui/glass-card";
 
 interface ChangelogPageProps {
   searchParams: Promise<{
@@ -39,10 +39,12 @@ export default async function ChangelogPage({
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 space-y-4 text-center">
-          <h1 className={`
-            text-4xl font-bold tracking-tight text-[var(--text-color)]
-            md:text-5xl
-          `}>
+          <h1
+            className={`
+              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              md:text-5xl
+            `}
+          >
             更新日志
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-[var(--text-color-secondary)]">
@@ -51,63 +53,80 @@ export default async function ChangelogPage({
         </div>
 
         {/* Changelog Timeline */}
-        <div className={`
-          relative space-y-12
-          before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-[var(--glass-border)]
-          md:before:left-[12.5rem]
-        `}>
+        <div
+          className={`
+            relative space-y-12
+            before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-[var(--glass-border)]
+            md:before:left-[12.5rem]
+          `}
+        >
           {changelogs.length > 0 ? (
             changelogs.map((log) => (
-              <div key={log.id} className={`
-                relative flex flex-col gap-6 pl-6
-                md:flex-row md:gap-24 md:pl-0
-              `}>
+              <div
+                key={log.id}
+                className={`
+                  relative flex flex-col gap-6 pl-6
+                  md:flex-row md:gap-24 md:pl-0
+                `}
+              >
                 {/* Timestamp & Version Marker */}
-                <div className={`
-                  flex shrink-0 flex-col items-start gap-1
-                  md:w-40 md:items-end
-                `}>
-                  <span className={`
-                    text-xl font-bold text-[var(--text-color)]
-                    md:text-2xl
-                  `}>
+                <div
+                  className={`
+                    flex shrink-0 flex-col items-start gap-1
+                    md:w-40 md:items-end
+                  `}
+                >
+                  <span
+                    className={`
+                      text-xl font-bold text-[var(--text-color)]
+                      md:text-2xl
+                    `}
+                  >
                     {log.version}
                   </span>
                   <time className="text-sm text-[var(--text-color-secondary)]">
                     {format(new Date(log.date || log.createdAt), "yyyy-MM-dd")}
                   </time>
                   {/* Timeline Dot */}
-                  <div className={`
-                    absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-[var(--bg-color)]
-                    bg-[var(--accent-color)] ring-2 ring-[var(--glass-border)]
-                    md:top-2.5 md:left-[12.125rem]
-                  `} />
+                  <div
+                    className={`
+                      absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-[var(--bg-color)]
+                      bg-[var(--accent-color)] ring-2 ring-[var(--glass-border)]
+                      md:top-2.5 md:left-[12.125rem]
+                    `}
+                  />
                 </div>
 
                 {/* Content Card */}
-                <GlassCard className={`
-                  flex-1 p-6
-                  md:p-8
-                `}>
-                  <div className={`
-                    prose prose-gray
-                    dark:prose-invert
-                    prose-headings:font-bold prose-headings:text-[var(--text-color)]
-                    prose-p:text-[var(--text-color-secondary)]
-                    prose-a:text-[var(--accent-color)]
-                    prose-ul:list-disc prose-ul:pl-4
-                    max-w-none
-                  `}>
+                <GlassCard
+                  className={`
+                    flex-1 p-6
+                    md:p-8
+                  `}
+                >
+                  <div
+                    className={`
+                      prose prose-gray
+                      dark:prose-invert
+                      prose-headings:font-bold prose-headings:text-[var(--text-color)]
+                      prose-p:text-[var(--text-color-secondary)]
+                      prose-a:text-[var(--accent-color)]
+                      prose-ul:list-disc prose-ul:pl-4
+                      max-w-none
+                    `}
+                  >
                     <BlogContent content={log.content} />
                   </div>
                 </GlassCard>
               </div>
             ))
           ) : (
-            <div className={`
-              pl-8
-              md:pl-44
-            `}>
+            <div
+              className={`
+                pl-8
+                md:pl-44
+              `}
+            >
               <GlassCard className="py-20 text-center">
                 <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
                   暂无更新记录
@@ -123,15 +142,21 @@ export default async function ChangelogPage({
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="mt-20 flex justify-center">
-             <Pagination className={`
-               w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
-             `}>
+            <Pagination
+              className={`
+                w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
+              `}
+            >
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious
-                    href={currentPage > 1 ? `/changelog?page=${currentPage - 1}` : "#"}
+                    href={
+                      currentPage > 1
+                        ? `/changelog?page=${currentPage - 1}`
+                        : "#"
+                    }
                     aria-disabled={currentPage <= 1}
-                     className={
+                    className={
                       currentPage <= 1
                         ? "pointer-events-none opacity-50"
                         : `
@@ -149,7 +174,7 @@ export default async function ChangelogPage({
                       <PaginationLink
                         href={`/changelog?page=${page}`}
                         isActive={currentPage === page}
-                         className={
+                        className={
                           currentPage === page
                             ? `
                               border-transparent bg-[var(--accent-color)] text-white shadow-sm
@@ -170,9 +195,13 @@ export default async function ChangelogPage({
 
                 <PaginationItem>
                   <PaginationNext
-                    href={currentPage < totalPages ? `/changelog?page=${currentPage + 1}` : "#"}
+                    href={
+                      currentPage < totalPages
+                        ? `/changelog?page=${currentPage + 1}`
+                        : "#"
+                    }
                     aria-disabled={currentPage >= totalPages}
-                     className={
+                    className={
                       currentPage >= totalPages
                         ? "pointer-events-none opacity-50"
                         : `

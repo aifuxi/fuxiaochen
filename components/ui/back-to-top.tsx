@@ -37,7 +37,9 @@ export function BackToTop() {
           hover:-translate-y-1 hover:shadow-lg
           focus:outline-none
         `,
-        isVisible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-10 opacity-0"
+        isVisible
+          ? "translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-10 opacity-0",
       )}
       aria-label="Back to top"
     >

@@ -1,10 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
 import { auth } from "@/lib/auth";
-
 import { BlogForm } from "../blog-form";
 
 export default async function NewBlogPage() {
@@ -21,13 +19,11 @@ export default async function NewBlogPage() {
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
-
   const categories =
     categoriesRes.success && categoriesRes.data?.lists
       ? categoriesRes.data.lists
       : [];
-  const tags =
-    tagsRes.success && tagsRes.data?.lists ? tagsRes.data.lists : [];
+  const tags = tagsRes.success && tagsRes.data?.lists ? tagsRes.data.lists : [];
 
   return (
     <div className="space-y-6">

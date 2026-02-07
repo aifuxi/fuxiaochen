@@ -114,14 +114,14 @@
 
 ### 核心配色 (Color Palette)
 
-| 角色 | 变量名称 | Light Mode | Dark Mode |
-| :--- | :--- | :--- | :--- |
-| **Background** | `--bg-color` | `#f2f4f7` | `#121212` |
-| **Accent** | `--accent-color` | `#0056b3` | `#1a6dbf` |
-| **Primary Text** | `--text-color` | `#1d1d1f` | `#f5f5f7` |
-| **Secondary Text** | `--text-color-secondary` | `#6e6e73` | `#8e8e93` |
-| **Glass Background** | `--glass-bg` | `rgba(255, 255, 255, 0.95)` | `rgba(30, 30, 30, 0.9)` |
-| **Glass Border** | `--glass-border` | `rgba(0, 0, 0, 0.05)` | `rgba(255, 255, 255, 0.1)` |
+| 角色                 | 变量名称                 | Light Mode                  | Dark Mode                  |
+| :------------------- | :----------------------- | :-------------------------- | :------------------------- |
+| **Background**       | `--bg-color`             | `#f2f4f7`                   | `#121212`                  |
+| **Accent**           | `--accent-color`         | `#0056b3`                   | `#1a6dbf`                  |
+| **Primary Text**     | `--text-color`           | `#1d1d1f`                   | `#f5f5f7`                  |
+| **Secondary Text**   | `--text-color-secondary` | `#6e6e73`                   | `#8e8e93`                  |
+| **Glass Background** | `--glass-bg`             | `rgba(255, 255, 255, 0.95)` | `rgba(30, 30, 30, 0.9)`    |
+| **Glass Border**     | `--glass-border`         | `rgba(0, 0, 0, 0.05)`       | `rgba(255, 255, 255, 0.1)` |
 
 ### 字体排印 (Typography)
 
@@ -132,12 +132,12 @@
 ### 组件设计准则
 
 1.  **圆角 (Border Radius)**:
-    *   卡片与大型容器: `1.5rem` (24px)。
-    *   按钮与药丸标签: `9999px` (Full Circle)。
+    - 卡片与大型容器: `1.5rem` (24px)。
+    - 按钮与药丸标签: `9999px` (Full Circle)。
 2.  **玻璃效 (Effects)**:
-    *   悬浮面板必须包含 `backdrop-blur: 10px` 和 `saturate: 150%`。
-    *   边框应使用极低透明度的配色 (`var(--glass-border)`)。
+    - 悬浮面板必须包含 `backdrop-blur: 10px` 和 `saturate: 150%`。
+    - 边框应使用极低透明度的配色 (`var(--glass-border)`)。
 3.  **动画与过渡**:
-    *   全局切换过度时间为 `0.3s ease-out`。
-    *   卡片悬停效果：向上平移 `2px` 并增强阴影。
-    *   页面入场效果：支持 `fade-in` 和 `slide-up (20px)` 动画。
+    - 全局切换过度时间为 `0.3s ease-out`。
+    - 卡片悬停效果：向上平移 `2px` 并增强阴影。
+    - 页面入场效果：支持 `fade-in` 和 `slide-up (20px)` 动画。

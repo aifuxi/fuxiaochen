@@ -1,11 +1,9 @@
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-
 import { getBlogByIdAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
 import { auth } from "@/lib/auth";
-
 import { BlogForm } from "../blog-form";
 
 interface EditBlogPageProps {
@@ -37,8 +35,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
     categoriesRes.success && categoriesRes.data?.lists
       ? categoriesRes.data.lists
       : [];
-  const tags =
-    tagsRes.success && tagsRes.data?.lists ? tagsRes.data.lists : [];
+  const tags = tagsRes.success && tagsRes.data?.lists ? tagsRes.data.lists : [];
 
   return (
     <div className="space-y-6">
