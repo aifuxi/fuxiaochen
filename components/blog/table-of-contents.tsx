@@ -18,7 +18,7 @@ export function TableOfContents() {
     const timer = setTimeout(() => {
       const elements = Array.from(
         document.querySelectorAll(
-          ".blog-content h1, .blog-content h2, .blog-content h3",
+          ".glass-prose h1, .glass-prose h2, .glass-prose h3",
         ),
       );
 
@@ -70,10 +70,9 @@ export function TableOfContents() {
         目录
       </div>
       <nav className="relative">
-        <div className="absolute top-0 bottom-0 left-0 w-[1px] bg-[var(--glass-border)]" />
         <ul className="space-y-1">
           {headings.map((heading, index) => (
-            <li key={`${heading.id}-${index}`} className="relative">
+            <li key={`${heading.id}-${index}`}>
               <a
                 href={`#${heading.id}`}
                 onClick={(e) => {
@@ -84,13 +83,13 @@ export function TableOfContents() {
                   setActiveId(heading.id);
                 }}
                 className={cn(
-                  "block border-l-2 py-1 pl-4 text-sm transition-all duration-300",
-                  heading.level === 3 && "pl-8",
+                  "block rounded-2xl px-3 py-2 text-sm transition-all duration-300",
+                  heading.level === 3 && "pl-6",
                   activeId === heading.id
-                    ? "border-[var(--accent-color)] bg-[var(--accent-color)]/5 font-medium text-[var(--accent-color)]"
+                    ? "bg-[var(--accent-color)]/10 font-medium text-[var(--accent-color)] shadow-sm backdrop-blur-sm"
                     : `
-                      border-transparent text-[var(--text-color-secondary)]
-                      hover:border-[var(--glass-border)] hover:text-[var(--text-color)]
+                      text-[var(--text-color-secondary)]
+                      hover:bg-[var(--glass-bg)] hover:text-[var(--text-color)]
                     `,
                 )}
               >

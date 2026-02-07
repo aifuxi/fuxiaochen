@@ -4,17 +4,49 @@
 @plugin "@iconify/tailwind4" {
   prefixes: skill-icons;
 }
+@plugin "@tailwindcss/typography";
+
+/* inter-latin-wght-normal */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+/* jetbrains-mono-latin-wght-normal */
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
 
 @theme {
   /* System font stack for native feel - Apple Style */
   --font-display:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", sans-serif;
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-body:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", sans-serif;
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --font-mono:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 
   /* Color Palette - Liquid Glass */
   --color-bg-light: #f2f4f7;
@@ -53,6 +85,25 @@
     --glass-bg: var(--color-glass-bg-light);
     --glass-border: var(--color-glass-border-light);
     --glass-blur: 12px;
+
+    /* Syntax Highlighting - Light (GitHub inspired) */
+    --hljs-color: #24292f;
+    --hljs-bg: transparent; /* Handled by glass-panel */
+    --hljs-comment: #6e7781;
+    --hljs-keyword: #cf222e;
+    --hljs-section: #0550ae;
+    --hljs-literal: #953800;
+    --hljs-string: #0a3069;
+    --hljs-title: #8250df;
+    --hljs-variable: #24292f;
+    --hljs-built_in: #0550ae;
+    --hljs-attr: #24292f;
+    --hljs-subst: #24292f;
+    --hljs-symbol: #cf222e;
+    --hljs-class: #953800;
+    --hljs-function: #8250df;
+    --hljs-bold: 600;
+    --hljs-italic: italic;
   }
 
   .dark {
@@ -62,6 +113,23 @@
     --accent-color: var(--color-accent-dark);
     --glass-bg: var(--color-glass-bg-dark);
     --glass-border: var(--color-glass-border-dark);
+
+    /* Syntax Highlighting - Dark (GitHub Dark inspired) */
+    --hljs-color: #c9d1d9;
+    --hljs-bg: transparent;
+    --hljs-comment: #8b949e;
+    --hljs-keyword: #ff7b72;
+    --hljs-section: #79c0ff;
+    --hljs-literal: #ffa657;
+    --hljs-string: #a5d6ff;
+    --hljs-title: #d2a8ff;
+    --hljs-variable: #c9d1d9;
+    --hljs-built_in: #79c0ff;
+    --hljs-attr: #c9d1d9;
+    --hljs-subst: #c9d1d9;
+    --hljs-symbol: #ff7b72;
+    --hljs-class: #ffa657;
+    --hljs-function: #d2a8ff;
   }
 
   * {
@@ -146,4 +214,194 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-gray-400 dark:bg-gray-600;
   }
+}
+
+/* Liquid Glass Typography */
+.glass-prose {
+  @apply prose prose-lg max-w-none;
+
+  /* Color mapping */
+  --tw-prose-body: var(--text-color);
+  --tw-prose-headings: var(--text-color);
+  --tw-prose-lead: var(--text-color-secondary);
+  --tw-prose-links: var(--accent-color);
+  --tw-prose-bold: var(--text-color);
+  --tw-prose-counters: var(--accent-color);
+  --tw-prose-bullets: var(--accent-color);
+  --tw-prose-hr: var(--glass-border);
+  --tw-prose-quotes: var(--text-color);
+  --tw-prose-quote-borders: var(--accent-color);
+  --tw-prose-captions: var(--text-color-secondary);
+  --tw-prose-code: var(--accent-color);
+  --tw-prose-pre-code: var(--text-color);
+  --tw-prose-pre-bg: var(--glass-bg);
+  --tw-prose-th-borders: var(--glass-border);
+  --tw-prose-td-borders: var(--glass-border);
+}
+
+/* Additional glass styling for specific elements */
+.glass-prose pre {
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+  @apply !bg-[var(--glass-bg)]/50 rounded-2xl !border-[var(--glass-border)];
+}
+
+.glass-prose blockquote {
+  @apply border-l-4 border-[var(--accent-color)] bg-[var(--glass-bg)]/30 p-4 rounded-r-2xl not-italic;
+}
+
+.glass-prose img {
+  @apply rounded-2xl shadow-md border border-[var(--glass-border)];
+}
+
+.glass-prose a {
+  @apply no-underline hover:underline transition-all duration-300 font-medium;
+}
+
+.glass-prose code {
+  @apply px-1.5 py-0.5 rounded-2xl before:content-none after:content-none text-sm;
+}
+
+.glass-prose h1,
+.glass-prose h2,
+.glass-prose h3,
+.glass-prose h4 {
+  @apply scroll-m-20 tracking-tight;
+}
+
+.glass-prose h1 {
+  @apply text-3xl font-bold lg:text-4xl mb-8;
+}
+
+.glass-prose h2 {
+  @apply text-2xl font-semibold border-b border-[var(--glass-border)] pb-2 mt-10 mb-6;
+}
+
+.glass-prose h3 {
+  @apply text-xl font-semibold mt-8 mb-4;
+}
+
+/* Code Block Wrapper & Copy Button */
+.code-block-wrapper {
+  position: relative;
+}
+
+.copy-code-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  height: 2rem;
+  width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 1px solid var(--glass-border);
+  background-color: var(--glass-bg);
+  color: var(--text-color-secondary);
+  opacity: 0;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.code-block-wrapper:hover .copy-code-btn {
+  opacity: 1;
+}
+
+.copy-code-btn:hover {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.copy-code-btn.copied {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: var(--glass-bg);
+  opacity: 1;
+}
+
+.copy-code-btn .check-icon {
+  display: none;
+}
+
+.copy-code-btn.copied .copy-icon {
+  display: none;
+}
+
+.copy-code-btn.copied .check-icon {
+  display: block;
+}
+
+/* Highlight.js Custom Styles (Liquid Glass) */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  color: var(--hljs-color);
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-variable {
+  color: var(--hljs-comment);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: var(--hljs-keyword);
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-addition {
+  color: var(--hljs-string);
+}
+
+.hljs-deletion,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-meta {
+  color: var(--hljs-section);
+}
+
+.hljs-doctag {
+  color: var(--hljs-literal);
+}
+
+.hljs-attr {
+  color: var(--hljs-attr);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link {
+  color: var(--hljs-symbol);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
 }

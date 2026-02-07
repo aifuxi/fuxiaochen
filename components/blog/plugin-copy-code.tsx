@@ -6,7 +6,17 @@ export default function copyCodePlugin(): BytemdPlugin {
       const pres = markdownBody.querySelectorAll("pre");
 
       pres.forEach((pre) => {
-        if (pre.querySelector(".copy-code-btn")) return;
+        if (pre.parentElement?.classList.contains("code-block-wrapper")) return;
+
+        // Create wrapper
+        const wrapper = document.createElement("div");
+        wrapper.className = "code-block-wrapper relative group";
+
+        // Insert wrapper before pre
+        pre.parentNode?.insertBefore(wrapper, pre);
+
+        // Move pre into wrapper
+        wrapper.appendChild(pre);
 
         const button = document.createElement("button");
         button.className = "copy-code-btn";
@@ -32,7 +42,7 @@ export default function copyCodePlugin(): BytemdPlugin {
           }
         });
 
-        pre.appendChild(button);
+        wrapper.appendChild(button);
       });
     },
   };

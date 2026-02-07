@@ -131,18 +131,7 @@ export default async function BlogDetailPage({
                 md:p-12
               `}
             >
-              <div
-                className={`
-                  blog-content prose prose-lg
-                  dark:prose-invert
-                  prose-headings:font-bold prose-headings:text-[var(--text-color)]
-                  prose-p:text-[var(--text-color-secondary)]
-                  prose-a:text-[var(--accent-color)]
-                  max-w-none
-                `}
-              >
-                <BlogContent content={blog.content} />
-              </div>
+              <BlogContent content={blog.content} />
 
               {/* Footer / Navigation */}
               <div className="mt-16 flex items-center justify-between border-t border-[var(--glass-border)] pt-8">
@@ -161,7 +150,7 @@ export default async function BlogDetailPage({
                   >
                     ←
                   </span>{" "}
-                  Back to Blog
+                  返回博客列表
                 </Link>
 
                 <div className="flex gap-4">
