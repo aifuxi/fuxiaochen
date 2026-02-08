@@ -261,8 +261,17 @@
   @apply no-underline hover:underline transition-all duration-300 font-medium;
 }
 
-.glass-prose code {
-  @apply px-1.5 py-0.5 rounded-2xl before:content-none after:content-none text-sm;
+.glass-prose :not(pre) > code {
+  @apply px-1.5 py-0.5 rounded-lg text-sm font-mono border mx-0.5 shadow-sm before:content-none after:content-none align-middle;
+  background-color: var(--glass-bg);
+  border-color: var(--glass-border);
+  color: var(--accent-color);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.glass-prose pre code {
+  @apply bg-transparent border-none p-0 shadow-none  before:content-none after:content-none;
 }
 
 .glass-prose h1,

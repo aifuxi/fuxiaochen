@@ -314,7 +314,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               <FormItem>
                 <FormLabel className="text-[var(--text-color)]">内容</FormLabel>
                 <FormControl>
-                  <div className="bytemd-dark">
+                  <div className="glass-prose">
                     <Editor
                       value={field.value}
                       plugins={plugins}
