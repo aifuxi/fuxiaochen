@@ -184,6 +184,7 @@ export function TagDialog({
                   bg-[var(--accent-color)] text-white
                   hover:bg-[var(--accent-color)]/90
                 `}
+                hoverEffect="up"
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 保存

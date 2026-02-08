@@ -153,6 +153,7 @@ export default function LoginPage() {
                   hover:bg-[var(--accent-color)]/90 hover:shadow-[var(--accent-color)]/20 hover:shadow-lg
                 `}
                 disabled={loading}
+                hoverEffect="up"
               >
                 {loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

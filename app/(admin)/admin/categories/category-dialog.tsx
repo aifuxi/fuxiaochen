@@ -161,9 +161,10 @@ export function CategoryDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  w-full bg-[var(--accent-color)] text-white
-                  hover:bg-[var(--accent-color)]/90
+                  w-full bg-[var(--accent-color)] text-white transition-all duration-200
+                  hover:-translate-y-0.5 hover:bg-[var(--accent-color)]/90
                 `}
+                hoverEffect="up"
               >
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 保存
