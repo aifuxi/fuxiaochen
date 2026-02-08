@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, LayoutDashboard } from "lucide-react";
+import { Github, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { WEBSITE, SOURCE_CODE_GITHUB_PAGE } from "@/constants/info";
@@ -69,13 +69,19 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <Link
+            href={SOURCE_CODE_GITHUB_PAGE}
+            target="_blank"
+            aria-label="GitHub"
+          >
+            <Button variant="glass" size="icon" className="h-10 w-10">
+              <Github className="h-5 w-5" />
+            </Button>
+          </Link>
+
           <Link href="/admin" aria-label="Admin">
-            <Button
-              variant="glass"
-              size="sm"
-              className="h-9 w-9 rounded-full p-0"
-            >
-              <LayoutDashboard className="h-5 w-5" />
+            <Button variant="glass" size="icon" className="h-10 w-10">
+              <Settings className="h-5 w-5" />
             </Button>
           </Link>
 
@@ -85,20 +91,6 @@ export function Header() {
               sm:flex
             `}
           />
-
-          <Link
-            href={SOURCE_CODE_GITHUB_PAGE}
-            target="_blank"
-            aria-label="GitHub"
-          >
-            <Button
-              variant="glass"
-              size="sm"
-              className="h-9 w-9 rounded-full p-0"
-            >
-              <Github className="h-5 w-5" />
-            </Button>
-          </Link>
         </div>
       </nav>
     </header>
