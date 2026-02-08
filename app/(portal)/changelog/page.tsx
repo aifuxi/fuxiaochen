@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { getChangelogsAction } from "@/app/actions/changelog";
 import { GlassCard } from "@/components/ui/glass-card";
 import {
@@ -10,6 +9,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import BlogContent from "@/components/blog/blog-content";
+import { formatSimpleDate } from "@/lib/time";
 
 interface ChangelogPageProps {
   searchParams: Promise<{
@@ -85,7 +85,7 @@ export default async function ChangelogPage({
                     {log.version}
                   </span>
                   <time className="text-sm text-[var(--text-color-secondary)]">
-                    {format(new Date(log.date || log.createdAt), "yyyy-MM-dd")}
+                    {formatSimpleDate(new Date(log.date || log.createdAt))}
                   </time>
                   {/* Timeline Dot */}
                   <div

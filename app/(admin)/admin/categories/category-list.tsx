@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getCategoriesAction } from "@/app/actions/category";
@@ -20,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { formatSimpleDateWithTime } from "@/lib/time";
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
 
@@ -196,7 +196,7 @@ export default function CategoryManagementPage() {
                     {category.blogCount}
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
-                    {format(new Date(category.createdAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(category.createdAt))}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">

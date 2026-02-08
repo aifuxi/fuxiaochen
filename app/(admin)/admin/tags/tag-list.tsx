@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getTagsAction } from "@/app/actions/tag";
@@ -20,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 import { TagDialog } from "./tag-dialog";
 
@@ -219,10 +219,10 @@ export default function TagManagementPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
-                    {format(new Date(tag.createdAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(tag.createdAt))}
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
-                    {format(new Date(tag.updatedAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(tag.updatedAt))}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">

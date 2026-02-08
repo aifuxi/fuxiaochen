@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { Edit, Loader2, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getUsersAction } from "@/app/actions/user";
@@ -20,6 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 import { UserDialog } from "./user-dialog";
 
@@ -185,7 +185,7 @@ export default function UserManagementPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
-                    {format(new Date(user.createdAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(user.createdAt))}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">

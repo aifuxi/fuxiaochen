@@ -2,10 +2,10 @@ import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { format } from "date-fns";
 import { getBlogBySlugAction } from "@/app/actions/blog";
 import BlogContent from "@/components/blog/blog-content";
 import { TableOfContents } from "@/components/blog/table-of-contents";
+import { formatDateWithTime } from "@/lib/time";
 
 export async function generateMetadata({
   params,
@@ -101,7 +101,7 @@ export default async function BlogDetailPage({
                 <span className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-[var(--accent-color)]" />
                   {blog.publishedAt
-                    ? format(new Date(blog.publishedAt), "MMMM dd, yyyy")
+                    ? formatDateWithTime(new Date(blog.publishedAt))
                     : "Draft"}
                 </span>
               </div>
