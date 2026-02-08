@@ -144,7 +144,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-[var(--text-color-secondary)]" />
             <Input
               name="query"
               placeholder="搜索文章标题..."
