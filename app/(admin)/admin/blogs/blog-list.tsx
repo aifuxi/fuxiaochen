@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import useSWR from "swr";
@@ -27,6 +26,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 
 const fetcher = async (params: BlogListReq) => {
@@ -274,7 +274,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                     />
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
-                    {format(new Date(blog.createdAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(blog.createdAt))}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">

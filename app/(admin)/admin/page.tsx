@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { format } from "date-fns";
 import {
   ArrowRight,
   FileText,
@@ -20,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatSimpleDateWithTime } from "@/lib/time";
 
 export default async function DashboardPage() {
   const { data, success } = await getDashboardStatsAction();
@@ -231,7 +231,7 @@ export default async function DashboardPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right text-[var(--text-color-secondary)]">
-                    {format(new Date(blog.createdAt), "yyyy-MM-dd HH:mm")}
+                    {formatSimpleDateWithTime(new Date(blog.createdAt))}
                   </TableCell>
                 </TableRow>
               ))

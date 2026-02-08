@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { format } from "date-fns";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getChangelogsAction } from "@/app/actions/changelog";
@@ -19,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { formatSimpleDate } from "@/lib/time";
 import { ChangelogDialog } from "./changelog-dialog";
 import { DeleteAlert } from "./delete-alert";
 
@@ -205,7 +205,7 @@ export default function ChangelogManagementPage() {
                   </TableCell>
                   <TableCell className="text-[var(--text-color-secondary)]">
                     {changelog.date
-                      ? format(new Date(changelog.date), "yyyy-MM-dd")
+                      ? formatSimpleDate(new Date(changelog.date))
                       : "-"}
                   </TableCell>
                   <TableCell className="max-w-md truncate text-[var(--text-color-secondary)]">
