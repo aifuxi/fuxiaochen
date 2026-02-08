@@ -139,6 +139,7 @@ export default function ChangelogManagementPage() {
             bg-[var(--accent-color)] text-white
             hover:bg-[var(--accent-color)]/90
           `}
+          hoverEffect="up"
         >
           <Plus className="mr-2 h-4 w-4" />
           新建日志

@@ -152,7 +152,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
               className="pl-9"
             />
           </div>
-          <Button type="submit" variant="secondary">
+          <Button type="submit" variant="secondary" hoverEffect="up">
             搜索
           </Button>
         </form>
@@ -162,6 +162,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
               bg-[var(--accent-color)] text-white
               hover:bg-[var(--accent-color)]/90
             `}
+            hoverEffect="up"
           >
             <Plus className="mr-2 h-4 w-4" /> 新建文章
           </Button>
