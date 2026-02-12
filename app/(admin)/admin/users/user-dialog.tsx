@@ -120,12 +120,17 @@ export function UserDialog({
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger
+                        className={`
+                          border-glass-border bg-glass-bg text-text
+                          focus:border-accent focus:ring-accent/20
+                        `}
+                      >
                         <SelectValue placeholder="选择角色" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent
-                      className={`border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]`}
+                      className={`border-glass-border bg-glass-bg text-text`}
                     >
                       <SelectItem value="visitor">Visitor</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>

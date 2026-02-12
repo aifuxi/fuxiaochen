@@ -110,9 +110,9 @@ export default function LoginPage() {
                     onChange={(e) => setName(e.target.value)}
                     required
                     className={`
-                      rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                      rounded-2xl border-glass-border bg-glass-bg text-text
                       placeholder:text-gray-400
-                      focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                      focus:border-accent focus:ring-accent/20
                     `}
                   />
                 </div>
@@ -125,9 +125,9 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className={`
-                    rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                    rounded-2xl border-glass-border bg-glass-bg text-text
                     placeholder:text-gray-400
-                    focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                    focus:border-accent focus:ring-accent/20
                   `}
                 />
               </div>
@@ -139,21 +139,20 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className={`
-                    rounded-2xl border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
+                    rounded-2xl border-glass-border bg-glass-bg text-text
                     placeholder:text-gray-400
-                    focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                    focus:border-accent focus:ring-accent/20
                   `}
                 />
               </div>
 
               <Button
                 type="submit"
-                className={`
-                  h-11 w-full bg-[var(--accent-color)] text-white
-                  hover:bg-[var(--accent-color)]/90 hover:shadow-[var(--accent-color)]/20 hover:shadow-lg
-                `}
                 disabled={loading}
-                hoverEffect="up"
+                className={`
+                  w-full rounded-2xl bg-accent text-white transition-all duration-200
+                  hover:-translate-y-0.5 hover:bg-accent/90 hover:shadow-lg
+                `}
               >
                 {loading ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

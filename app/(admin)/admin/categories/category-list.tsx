@@ -86,10 +86,10 @@ export default function CategoryManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
+        <h2 className="text-2xl font-bold tracking-tight text-text">
           分类管理
         </h2>
-        <p className="text-[var(--text-color-secondary)]">
+        <p className="text-text-secondary">
           管理博客文章的分类体系
         </p>
       </div>
@@ -105,7 +105,7 @@ export default function CategoryManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
             <Input
               name="query"
               placeholder="搜索分类..."
@@ -123,8 +123,8 @@ export default function CategoryManagementPage() {
             setDialogOpen(true);
           }}
           className={`
-            bg-[var(--accent-color)] text-white
-            hover:bg-[var(--accent-color)]/90
+            bg-accent text-white
+            hover:bg-accent/90
           `}
           hoverEffect="up"
         >
@@ -137,22 +137,22 @@ export default function CategoryManagementPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 名称
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 Slug
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 描述
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 文章数
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 创建时间
               </TableHead>
-              <TableHead className="text-right text-[var(--text-color-secondary)]">
+              <TableHead className="text-right text-text-secondary">
                 操作
               </TableHead>
             </TableRow>
@@ -162,7 +162,7 @@ export default function CategoryManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                 </TableCell>
@@ -171,7 +171,7 @@ export default function CategoryManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   暂无数据
                 </TableCell>
