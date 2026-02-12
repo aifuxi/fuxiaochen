@@ -12,7 +12,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import * as z from "zod";
-import "highlight.js/styles/atom-one-dark.css";
 import { createBlogAction, updateBlogAction } from "@/app/actions/blog";
 import { getPresignUploadInfo } from "@/app/actions/upload";
 import { type Blog } from "@/types/blog";
@@ -48,7 +47,6 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import copyCodePlugin from "@/components/blog/plugin-copy-code";
 import headingsPlugin from "@/components/blog/plugin-headings";
-import "bytemd/dist/index.css";
 
 const plugins = [
   gfm(),
@@ -388,9 +386,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                   `}
                 >
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base text-text">
-                      发布
-                    </FormLabel>
+                    <FormLabel className="text-base text-text">发布</FormLabel>
                   </div>
                   <FormControl>
                     <Switch
