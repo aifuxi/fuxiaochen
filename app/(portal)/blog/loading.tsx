@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--text-color)]">
+    <div className="min-h-screen bg-bg text-text">
       <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16">
@@ -63,7 +63,7 @@ export default function BlogLoading() {
                     </div>
                     <Skeleton className="h-8 w-3/4 rounded-lg" />
                     <Skeleton className="h-20 w-full rounded-lg" />
-                    <div className="flex justify-between border-t border-[var(--glass-border)] pt-4">
+                    <div className="flex justify-between border-t border-glass-border pt-4">
                       <Skeleton className="h-4 w-24 rounded-lg" />
                       <Skeleton className="h-4 w-24 rounded-lg" />
                     </div>

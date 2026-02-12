@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ChangelogLoading() {
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--text-color)]">
+    <div className="min-h-screen bg-bg text-text">
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 flex flex-col items-center text-center">
@@ -23,7 +23,7 @@ export default function ChangelogLoading() {
           {/* Timeline Line Skeleton */}
           <div
             className={`
-              absolute top-12 bottom-12 left-8 w-px bg-[var(--glass-border)]
+              absolute top-12 bottom-12 left-8 w-px bg-glass-border
               md:left-12
             `}
           />
@@ -40,8 +40,7 @@ export default function ChangelogLoading() {
                 {/* Timeline Dot Skeleton */}
                 <div
                   className={`
-                    absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-[var(--glass-border)]
-                    bg-[var(--glass-bg)]
+                    absolute top-2 left-[-5px] z-10 h-3 w-3 rounded-full border-2 border-glass-border bg-glass-bg
                     md:left-[-5px]
                   `}
                 />

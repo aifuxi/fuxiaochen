@@ -68,15 +68,13 @@ export default function LoginPage() {
 
   return (
     <main
-      className={`
-        relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--bg-color)] px-4 pt-20 pb-20
-      `}
+      className={`relative flex min-h-screen items-center justify-center overflow-hidden bg-bg px-4 pt-20 pb-20`}
     >
       {/* Background Sphere Effect */}
       <div
         className={`
           absolute top-1/2 left-1/2 -mt-64 -ml-64 h-128 w-128 -translate-x-1/2 -translate-y-1/2 rounded-full
-          bg-[var(--accent-color)]/10 blur-[100px]
+          bg-accent/10 blur-[100px]
         `}
       />
 
@@ -84,18 +82,16 @@ export default function LoginPage() {
         <GlassCard className="rounded-2xl p-8 backdrop-blur-xl">
           <div className="relative z-10 mb-8 text-center">
             <div
-              className={`
-                mb-4 inline-flex items-center justify-center rounded-full bg-[var(--accent-color)]/10 px-4 py-1
-              `}
+              className={`mb-4 inline-flex items-center justify-center rounded-full bg-accent/10 px-4 py-1`}
             >
-              <span className="text-xs font-medium tracking-wide text-[var(--accent-color)] uppercase">
+              <span className="text-xs font-medium tracking-wide text-accent uppercase">
                 身份验证
               </span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
+            <h1 className="text-3xl font-bold tracking-tight text-text">
               {isSignUp ? "注册账号" : "系统接入"}
             </h1>
-            <p className="mt-2 text-sm text-[var(--text-color-secondary)]">
+            <p className="mt-2 text-sm text-text-secondary">
               {isSignUp ? "创建一个新账号以继续" : "输入您的凭证以访问管理系统"}
             </p>
           </div>
@@ -164,18 +160,18 @@ export default function LoginPage() {
             </form>
 
             <div className="relative flex items-center py-2">
-              <div className="grow border-t border-[var(--glass-border)]"></div>
-              <span className="shrink-0 px-4 text-xs font-medium text-[var(--text-color-secondary)] uppercase">
+              <div className="grow border-t border-glass-border"></div>
+              <span className="shrink-0 px-4 text-xs font-medium text-text-secondary uppercase">
                 Or continue with
               </span>
-              <div className="grow border-t border-[var(--glass-border)]"></div>
+              <div className="grow border-t border-glass-border"></div>
             </div>
 
             <Button
               variant="outline"
               className={`
-                h-11 w-full border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                hover:border-[var(--accent-color)] hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
+                h-11 w-full border-glass-border bg-glass-bg text-text
+                hover:border-accent hover:bg-accent/5 hover:text-accent
               `}
               onClick={handleSocialSignIn}
               disabled={loading}
@@ -193,8 +189,8 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className={`
-                  font-medium text-[var(--text-color-secondary)] transition-colors
-                  hover:text-[var(--accent-color)]
+                  font-medium text-text-secondary transition-colors
+                  hover:text-accent
                 `}
               >
                 {isSignUp ? "已有账号？点击登录" : "没有账号？点击注册"}
@@ -202,7 +198,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="mt-8 text-center text-xs text-[var(--text-color-secondary)] opacity-70">
+          <div className="mt-8 text-center text-xs text-text-secondary opacity-70">
             <p>访问系统即代表您同意相关协议。</p>
           </div>
         </GlassCard>
