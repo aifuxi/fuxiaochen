@@ -43,7 +43,7 @@ export function BackToTop() {
       )}
       aria-label="Back to top"
     >
-      <ArrowUp className="h-5 w-5 text-[var(--text-color)]" />
+      <ArrowUp className="h-5 w-5 text-text" />
     </button>
   );
 }

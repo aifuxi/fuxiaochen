@@ -39,11 +39,10 @@ function SelectTrigger({
         `
           data-[placeholder]:text-muted-foreground
           [&_svg:not([class*='text-'])]:text-muted-foreground
-          flex w-fit items-center justify-between gap-2 rounded-xl border border-[var(--glass-border)]
-          bg-[var(--glass-bg)]/50 px-3 py-2 text-sm whitespace-nowrap text-[var(--text-color)] shadow-sm
-          backdrop-blur-sm transition-all duration-300 outline-none
-          hover:border-[var(--accent-color)]/30 hover:bg-[var(--glass-bg)]
-          focus-visible:border-[var(--accent-color)] focus-visible:ring-4 focus-visible:ring-[var(--accent-color)]/20
+          flex w-fit items-center justify-between gap-2 rounded-xl border border-glass-border bg-glass-bg/50 px-3 py-2
+          text-sm whitespace-nowrap text-text shadow-sm backdrop-blur-sm transition-all duration-300 outline-none
+          hover:border-accent/30 hover:bg-glass-bg
+          focus-visible:border-accent focus-visible:ring-4 focus-visible:ring-accent/20
           disabled:cursor-not-allowed disabled:opacity-50
           aria-invalid:border-red-500 aria-invalid:ring-red-500/20
           data-[size=default]:h-10
@@ -80,7 +79,7 @@ function SelectContent({
           `
             relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem]
             origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl glass-panel
-            text-[var(--text-color)] shadow-lg
+            text-text shadow-lg
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -106,7 +105,7 @@ function SelectContent({
           className={cn(
             "p-1",
             position === "popper" &&
-              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1",
+              "h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1",
           )}
         >
           {children}

@@ -65,7 +65,7 @@ function DialogContent({
         className={cn(
           `
             fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%]
-            gap-4 rounded-2xl glass-panel p-6 text-[var(--text-color)] shadow-2xl duration-200 outline-none
+            gap-4 rounded-2xl glass-panel p-6 text-text shadow-2xl duration-200 outline-none
             data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
             data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95
             sm:max-w-lg
@@ -83,8 +83,8 @@ function DialogContent({
                 absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full opacity-70 transition-all
                 duration-300
               `,
-              "hover:rotate-90 hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)] hover:opacity-100",
-              "focus:ring-4 focus:ring-[var(--accent-color)]/20 focus:outline-hidden",
+              "hover:rotate-90 hover:bg-accent/10 hover:text-accent hover:opacity-100",
+              "focus:ring-4 focus:ring-accent/20 focus:outline-hidden",
               "disabled:pointer-events-none",
               `
                 [&_svg]:pointer-events-none [&_svg]:shrink-0

@@ -15,10 +15,10 @@ function Switch({
         `
           peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border border-transparent shadow-sm
           transition-all duration-300 outline-none
-          focus-visible:ring-4 focus-visible:ring-[var(--accent-color)]/20
+          focus-visible:ring-4 focus-visible:ring-accent/20
           disabled:cursor-not-allowed disabled:opacity-50
-          data-[state=checked]:bg-[var(--accent-color)]
-          data-[state=unchecked]:bg-[var(--glass-border)]
+          data-[state=checked]:bg-accent
+          data-[state=unchecked]:bg-glass-border
         `,
         className,
       )}
