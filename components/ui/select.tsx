@@ -143,7 +143,7 @@ function SelectItem({
           [&_svg:not([class*='text-'])]:text-muted-foreground
           relative flex w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-2 text-sm outline-hidden
           transition-colors duration-200 select-none
-          focus:bg-[var(--accent-color)]/10 focus:text-[var(--accent-color)]
+          focus:bg-accent/10 focus:text-accent
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
           [&_svg]:pointer-events-none [&_svg]:shrink-0
           [&_svg:not([class*='size-'])]:size-4

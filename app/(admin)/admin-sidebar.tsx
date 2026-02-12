@@ -85,7 +85,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         })}
       </nav>
 
-      <div className="absolute bottom-0 w-full border-t border-[var(--glass-border)] p-4">
+      <div className="absolute bottom-0 w-full border-t border-glass-border p-4">
         <UserNav user={user} />
       </div>
     </aside>
