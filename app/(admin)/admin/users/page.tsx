@@ -18,7 +18,7 @@ export default async function Page() {
           <h2 className="text-3xl font-bold tracking-widest text-red-500 uppercase">
             拒绝访问
           </h2>
-          <p className="text-[var(--text-color-secondary)]">
+          <p className="text-text-secondary">
             没有权限查看此页面
           </p>
         </GlassCard>
@@ -28,7 +28,7 @@ export default async function Page() {
 
   return (
     <Suspense
-      fallback={<div className="text-[var(--text-color)]">Loading...</div>}
+      fallback={<div className="text-text">Loading...</div>}
     >
       <UserManagementPage />
     </Suspense>

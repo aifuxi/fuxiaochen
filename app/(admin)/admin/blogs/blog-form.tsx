@@ -277,7 +277,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                         <Badge
                           key={tag.id}
                           variant="secondary"
-                          className="bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
+                          className="bg-accent/10 text-accent"
                         >
                           {tag.name}
                         </Badge>
@@ -312,7 +312,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[var(--text-color)]">内容</FormLabel>
+                <FormLabel className="text-text">内容</FormLabel>
                 <FormControl>
                   <div className="glass-prose">
                     <Editor
@@ -384,12 +384,11 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               render={({ field }) => (
                 <FormItem
                   className={`
-                    flex flex-row items-center justify-between rounded-lg border border-[var(--glass-border)]
-                    bg-[var(--glass-bg)] p-4
+                    flex flex-row items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-4
                   `}
                 >
                   <div className="space-y-0.5">
-                    <FormLabel className="text-base text-[var(--text-color)]">
+                    <FormLabel className="text-base text-text">
                       发布
                     </FormLabel>
                   </div>
@@ -433,8 +432,8 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               type="submit"
               disabled={loading}
               className={`
-                bg-[var(--accent-color)] text-white
-                hover:bg-[var(--accent-color)]/90
+                bg-accent text-white
+                hover:bg-accent/90
               `}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

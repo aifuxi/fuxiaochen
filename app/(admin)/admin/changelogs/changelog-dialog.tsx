@@ -171,8 +171,8 @@ export function ChangelogDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  bg-[var(--accent-color)] text-white
-                  hover:bg-[var(--accent-color)]/90
+                  bg-accent text-white
+                  hover:bg-accent/90
                 `}
                 hoverEffect="up"
               >
