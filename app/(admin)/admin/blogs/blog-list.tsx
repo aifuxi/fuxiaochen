@@ -157,21 +157,11 @@ export default function BlogManagementPage() {
                 hover:bg-glass-bg
               `}
             >
-              <TableHead className="text-text-secondary">
-                标题
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                分类
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                标签
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                发布状态
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                精选状态
-              </TableHead>
+              <TableHead className="text-text-secondary">标题</TableHead>
+              <TableHead className="text-text-secondary">分类</TableHead>
+              <TableHead className="text-text-secondary">标签</TableHead>
+              <TableHead className="text-text-secondary">发布状态</TableHead>
+              <TableHead className="text-text-secondary">精选状态</TableHead>
               <TableHead
                 className="cursor-pointer text-text-secondary"
                 onClick={() => handleSort("createdAt")}
@@ -261,10 +251,12 @@ export default function BlogManagementPage() {
                   <TableCell className="text-right text-text-secondary">
                     <div className="flex flex-col items-end gap-1 text-xs">
                       <span>
-                        创建: {formatSimpleDateWithTime(new Date(blog.createdAt))}
+                        创建:{" "}
+                        {formatSimpleDateWithTime(new Date(blog.createdAt))}
                       </span>
                       <span>
-                        更新: {formatSimpleDateWithTime(new Date(blog.updatedAt))}
+                        更新:{" "}
+                        {formatSimpleDateWithTime(new Date(blog.updatedAt))}
                       </span>
                     </div>
                   </TableCell>
@@ -273,9 +265,7 @@ export default function BlogManagementPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() =>
-                          router.push(`/admin/blogs/edit/${blog.id}`)
-                        }
+                        onClick={() => router.push(`/admin/blogs/${blog.id}`)}
                         className={`
                           text-text-secondary
                           hover:bg-accent/10 hover:text-accent

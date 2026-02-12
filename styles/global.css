@@ -6,6 +6,11 @@
 }
 @plugin "@tailwindcss/typography";
 
+@import "bytemd/dist/index.css";
+@import "highlight.js/styles/atom-one-dark.css";
+
+@import "./bytemd.css";
+
 /* Font Faces */
 @font-face {
   font-family: "Inter";
