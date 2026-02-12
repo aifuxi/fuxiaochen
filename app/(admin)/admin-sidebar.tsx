@@ -35,17 +35,15 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
   return (
     <aside
-      className={`
-        fixed inset-y-0 left-0 z-50 w-64 border-r border-[var(--glass-border)] bg-[var(--glass-bg)] backdrop-blur-xl
-      `}
+      className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-glass-border bg-glass-bg backdrop-blur-xl`}
     >
-      <div className="flex h-16 items-center border-b border-[var(--glass-border)] px-6">
+      <div className="flex h-16 items-center border-b border-glass-border px-6">
         <Link
           href="/"
           target="_blank"
-          className="text-xl font-bold tracking-tight text-[var(--text-color)] uppercase"
+          className="text-xl font-bold tracking-tight text-text uppercase"
         >
-          <span className="text-[var(--accent-color)]">{WEBSITE}</span>
+          <span className="text-accent">{WEBSITE}</span>
           后台管理
         </Link>
       </div>
@@ -65,10 +63,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300
                 ${
                   isActive
-                    ? "bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
+                    ? "bg-accent/10 text-accent"
                     : `
-                      text-[var(--text-color-secondary)]
-                      hover:bg-[var(--accent-color)]/5 hover:text-[var(--accent-color)]
+                      text-text-secondary
+                      hover:bg-accent/5 hover:text-accent
                     `
                 }
               `}

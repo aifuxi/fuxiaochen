@@ -104,15 +104,15 @@ export function TagDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     名称
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                        border-glass-border bg-glass-bg text-text
+                        focus:border-accent focus:ring-accent/20
                       `}
                       placeholder="React"
                     />
@@ -126,7 +126,7 @@ export function TagDialog({
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     Slug
                   </FormLabel>
                   <FormControl>
@@ -181,8 +181,8 @@ export function TagDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  bg-[var(--accent-color)] text-white
-                  hover:bg-[var(--accent-color)]/90
+                  bg-accent text-white
+                  hover:bg-accent/90
                 `}
                 hoverEffect="up"
               >

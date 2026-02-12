@@ -110,10 +110,10 @@ export default function TagManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
+        <h2 className="text-2xl font-bold tracking-tight text-text">
           标签管理
         </h2>
-        <p className="text-[var(--text-color-secondary)]">
+        <p className="text-text-secondary">
           管理博客文章的标签体系
         </p>
       </div>
@@ -129,7 +129,7 @@ export default function TagManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
             <Input
               name="query"
               placeholder="搜索标签名称..."
@@ -144,17 +144,13 @@ export default function TagManagementPage() {
         <Button
           onClick={openCreate}
           className={`
-            bg-[var(--accent-color)] text-white
-            hover:bg-[var(--accent-color)]/90
+            bg-accent text-white
+            hover:bg-accent/90
           `}
           hoverEffect="up"
         >
           <Plus className="mr-2 h-4 w-4" /> 新建标签
         </Button>
-        {`
-
-
-          `}
       </GlassCard>
 
       <GlassCard className="overflow-hidden p-0">
@@ -188,7 +184,7 @@ export default function TagManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   加载中...
                 </TableCell>
@@ -197,7 +193,7 @@ export default function TagManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   暂无数据
                 </TableCell>
@@ -205,10 +201,10 @@ export default function TagManagementPage() {
             ) : (
               tags.map((tag) => (
                 <TableRow key={tag.id}>
-                  <TableCell className="font-medium text-[var(--text-color)]">
+                  <TableCell className="font-medium text-text">
                     {tag.name}
                   </TableCell>
-                  <TableCell className="font-mono text-xs text-[var(--text-color-secondary)]">
+                  <TableCell className="font-mono text-xs text-text-secondary">
                     {tag.slug}
                   </TableCell>
                   <TableCell>

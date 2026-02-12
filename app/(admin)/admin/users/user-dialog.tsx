@@ -91,20 +91,20 @@ export function UserDialog({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-[var(--text-color)]">
+          <DialogTitle className="text-text">
             编辑用户角色
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <div className="text-sm text-[var(--text-color-secondary)]">
+              <div className="text-sm text-text-secondary">
                 用户
               </div>
-              <div className="font-medium text-[var(--text-color)]">
+              <div className="font-medium text-text">
                 {user?.name}
               </div>
-              <div className="text-xs text-[var(--text-color-secondary)]">
+              <div className="text-xs text-text-secondary">
                 {user?.email}
               </div>
             </div>
@@ -145,8 +145,8 @@ export function UserDialog({
                 type="submit"
                 disabled={loading}
                 className={`
-                  w-full bg-[var(--accent-color)] text-white
-                  hover:bg-[var(--accent-color)]/90
+                  w-full bg-accent text-white
+                  hover:bg-accent/90
                 `}
                 hoverEffect="up"
               >

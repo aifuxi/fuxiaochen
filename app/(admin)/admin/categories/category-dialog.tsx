@@ -112,7 +112,7 @@ export function CategoryDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     名称
                   </FormLabel>
                   <FormControl>

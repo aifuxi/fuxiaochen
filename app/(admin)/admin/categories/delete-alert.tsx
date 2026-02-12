@@ -52,7 +52,7 @@ export function DeleteAlert({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>确认删除？</AlertDialogTitle>
-          <AlertDialogDescription className="text-[var(--text-color-secondary)]">
+          <AlertDialogDescription className="text-text-secondary">
             此操作无法撤销。该分类将被永久删除。
           </AlertDialogDescription>
         </AlertDialogHeader>

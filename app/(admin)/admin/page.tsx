@@ -76,7 +76,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
           仪表盘
         </h2>
       </div>
@@ -93,11 +93,11 @@ export default async function DashboardPage() {
             <GlassCard
               className={`
                 transition-all duration-300
-                hover:border-[var(--accent-color)]/50 hover:shadow-lg
+                hover:border-accent/50 hover:shadow-lg
               `}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-[var(--text-color-secondary)]">
+                <CardTitle className="text-sm font-medium text-text-secondary">
                   {stat.title}
                 </CardTitle>
                 <stat.icon
@@ -108,11 +108,11 @@ export default async function DashboardPage() {
                 />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-[var(--text-color)]">
+                <div className="text-2xl font-bold text-text">
                   {stat.value}
                 </div>
                 {stat.description && (
-                  <p className="text-xs text-[var(--text-color-secondary)]">
+                  <p className="text-xs text-text-secondary">
                     {stat.description}
                   </p>
                 )}
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
 
       <GlassCard className="p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-[var(--text-color)]">
+          <h3 className="text-lg font-bold text-text">
             最新文章
           </h3>
           <Link href="/admin/blogs">
@@ -132,7 +132,7 @@ export default async function DashboardPage() {
               variant="ghost"
               size="sm"
               className={`
-                text-[var(--accent-color)]
+                text-accent
                 hover:bg-accent/10 hover:text-accent
               `}
             >
@@ -230,7 +230,7 @@ export default async function DashboardPage() {
                       {blog.published ? "已发布" : "草稿"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right text-[var(--text-color-secondary)]">
+                  <TableCell className="text-right text-text-secondary">
                     {formatSimpleDateWithTime(new Date(blog.createdAt))}
                   </TableCell>
                 </TableRow>

@@ -105,7 +105,7 @@ export default function BlogManagementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)] uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
           博客管理
         </h2>
       </div>
@@ -122,7 +122,7 @@ export default function BlogManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
             <Input
               name="query"
               placeholder="搜索文章标题..."
@@ -137,8 +137,8 @@ export default function BlogManagementPage() {
         <Link href="/admin/blogs/new">
           <Button
             className={`
-              bg-[var(--accent-color)] text-white
-              hover:bg-[var(--accent-color)]/90
+              bg-accent text-white
+              hover:bg-accent/90
             `}
             hoverEffect="up"
           >
@@ -153,34 +153,34 @@ export default function BlogManagementPage() {
           <TableHeader>
             <TableRow
               className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]
+                border-glass-border
+                hover:bg-glass-bg
               `}
             >
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 标题
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 分类
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 标签
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 发布状态
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 精选状态
               </TableHead>
               <TableHead
-                className="cursor-pointer text-[var(--text-color-secondary)]"
+                className="cursor-pointer text-text-secondary"
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center gap-1">
                   创建时间 <ArrowUpDown className="h-3 w-3" />
                 </div>
               </TableHead>
-              <TableHead className="text-right text-[var(--text-color-secondary)]">
+              <TableHead className="text-right text-text-secondary">
                 操作
               </TableHead>
             </TableRow>
@@ -190,7 +190,7 @@ export default function BlogManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   加载中...
                 </TableCell>
@@ -199,7 +199,7 @@ export default function BlogManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   暂无数据
                 </TableCell>
@@ -209,8 +209,8 @@ export default function BlogManagementPage() {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-[var(--glass-border)]
-                    hover:bg-[var(--accent-color)]/5
+                    border-glass-border
+                    hover:bg-accent/5
                   `}
                 >
                   <TableCell className="font-medium text-text">

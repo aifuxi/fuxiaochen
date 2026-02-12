@@ -85,10 +85,10 @@ export default function UserManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-[var(--text-color)]">
+          <h2 className="text-2xl font-bold tracking-tight text-text">
             用户管理
           </h2>
-          <p className="text-[var(--text-color-secondary)]">
+          <p className="text-text-secondary">
             管理系统用户及权限
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function UserManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-[var(--text-color-secondary)]" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
             <Input
               name="query"
               placeholder="搜索用户..."
@@ -123,19 +123,19 @@ export default function UserManagementPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 用户
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 邮箱
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 角色
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 注册时间
               </TableHead>
-              <TableHead className="text-right text-[var(--text-color-secondary)]">
+              <TableHead className="text-right text-text-secondary">
                 操作
               </TableHead>
             </TableRow>
@@ -145,7 +145,7 @@ export default function UserManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
                 </TableCell>
@@ -154,7 +154,7 @@ export default function UserManagementPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   暂无数据
                 </TableCell>
@@ -162,7 +162,7 @@ export default function UserManagementPage() {
             ) : (
               data?.lists?.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium text-[var(--text-color)]">
+                  <TableCell className="font-medium text-text">
                     <div className="flex items-center gap-2">
                       {user.image && (
                         <img
@@ -174,7 +174,7 @@ export default function UserManagementPage() {
                       {user.name}
                     </div>
                   </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
+                  <TableCell className="text-text-secondary">
                     {user.email}
                   </TableCell>
                   <TableCell>
@@ -184,7 +184,7 @@ export default function UserManagementPage() {
                       {user.role}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
+                  <TableCell className="text-text-secondary">
                     {formatSimpleDateWithTime(new Date(user.createdAt))}
                   </TableCell>
                   <TableCell className="text-right">
@@ -194,8 +194,8 @@ export default function UserManagementPage() {
                         size="icon"
                         onClick={() => openEdit(user)}
                         className={`
-                          text-[var(--text-color-secondary)]
-                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
+                          text-text-secondary
+                          hover:bg-accent/10 hover:text-accent
                         `}
                       >
                         <Edit className="h-4 w-4" />
@@ -205,7 +205,7 @@ export default function UserManagementPage() {
                         size="icon"
                         onClick={() => openDelete(user.id)}
                         className={`
-                          text-[var(--text-color-secondary)]
+                          text-text-secondary
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >
