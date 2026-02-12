@@ -45,7 +45,7 @@ export default async function BlogDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] text-[var(--text-color)]">
+    <div className="min-h-screen bg-bg text-text">
       <main className="relative z-10 pb-20">
         {/* Hero Section */}
         <div className="relative mb-12 h-[50vh] min-h-[400px] w-full pt-32">
@@ -68,8 +68,8 @@ export default async function BlogDetailPage({
                   <span
                     key={tag.id || tag.name}
                     className={`
-                      rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-1.5 text-sm
-                      font-medium backdrop-blur-md
+                      rounded-full border border-glass-border bg-glass-bg px-4 py-1.5 text-sm font-medium
+                      backdrop-blur-md
                     `}
                   >
                     {tag.name}
@@ -78,8 +78,7 @@ export default async function BlogDetailPage({
                 {blog.category && (
                   <span
                     className={`
-                      rounded-full bg-[var(--accent-color)] px-4 py-1.5 text-sm font-medium text-white shadow-md
-                      backdrop-blur-md
+                      rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white shadow-md backdrop-blur-md
                     `}
                   >
                     {blog.category.name}
@@ -89,7 +88,7 @@ export default async function BlogDetailPage({
 
               <h1
                 className={`
-                  mb-6 text-4xl leading-tight font-bold text-[var(--text-color)] drop-shadow-sm
+                  mb-6 text-4xl leading-tight font-bold text-text drop-shadow-sm
                   md:text-5xl
                   lg:text-6xl
                 `}
@@ -97,9 +96,9 @@ export default async function BlogDetailPage({
                 {blog.title}
               </h1>
 
-              <div className="flex items-center gap-6 text-sm text-[var(--text-color-secondary)]">
+              <div className="flex items-center gap-6 text-sm text-text-secondary">
                 <span className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-[var(--accent-color)]" />
+                  <div className="h-2 w-2 rounded-full bg-accent" />
                   {blog.publishedAt
                     ? formatDateWithTime(new Date(blog.publishedAt))
                     : "Draft"}
@@ -119,8 +118,7 @@ export default async function BlogDetailPage({
           >
             <div
               className={`
-                relative h-fit overflow-hidden rounded-2xl glass-panel border border-[var(--glass-border)] bg-glass-bg
-                p-8
+                relative h-fit overflow-hidden rounded-2xl glass-panel border border-glass-border bg-glass-bg p-8
                 md:p-12
               `}
             >
@@ -131,8 +129,8 @@ export default async function BlogDetailPage({
                 <Link
                   href="/blog"
                   className={`
-                    group flex items-center gap-2 text-[var(--text-color-secondary)] transition-colors
-                    hover:text-[var(--accent-color)]
+                    group flex items-center gap-2 text-text-secondary transition-colors
+                    hover:text-accent
                   `}
                 >
                   <span

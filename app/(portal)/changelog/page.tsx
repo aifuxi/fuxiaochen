@@ -35,19 +35,19 @@ export default async function ChangelogPage({
   const totalPages = Math.ceil(total / pageSize);
   const changelogs = lists;
   return (
-    <div className="min-h-screen bg-[var(--bg-color)]">
+    <div className="min-h-screen bg-bg">
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 space-y-4 text-center">
           <h1
             className={`
-              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              text-4xl font-bold tracking-tight text-text
               md:text-5xl
             `}
           >
             更新日志
           </h1>
-          <p className="mx-auto max-w-2xl text-lg text-[var(--text-color-secondary)]">
+          <p className="mx-auto max-w-2xl text-lg text-text-secondary">
             记录平台的演进与更新历程。
           </p>
         </div>
@@ -56,7 +56,7 @@ export default async function ChangelogPage({
         <div
           className={`
             relative space-y-12
-            before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-[var(--glass-border)]
+            before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-glass-border
             md:before:left-[12.5rem]
           `}
         >
@@ -78,20 +78,20 @@ export default async function ChangelogPage({
                 >
                   <span
                     className={`
-                      text-xl font-bold text-[var(--text-color)]
+                      text-xl font-bold text-text
                       md:text-2xl
                     `}
                   >
                     {log.version}
                   </span>
-                  <time className="text-sm text-[var(--text-color-secondary)]">
+                  <time className="text-sm text-text-secondary">
                     {formatSimpleDate(new Date(log.date || log.createdAt))}
                   </time>
                   {/* Timeline Dot */}
                   <div
                     className={`
-                      absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-[var(--bg-color)]
-                      bg-[var(--accent-color)] ring-2 ring-[var(--glass-border)]
+                      absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-bg bg-accent ring-2
+                      ring-glass-border
                       md:top-2.5 md:left-[12.125rem]
                     `}
                   />
@@ -116,10 +116,10 @@ export default async function ChangelogPage({
               `}
             >
               <GlassCard className="py-20 text-center">
-                <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
+                <h3 className="mb-2 text-2xl font-bold text-text">
                   暂无更新记录
                 </h3>
-                <p className="text-[var(--text-color-secondary)]">
+                <p className="text-text-secondary">
                   项目刚刚起步，敬请期待！
                 </p>
               </GlassCard>
@@ -131,9 +131,7 @@ export default async function ChangelogPage({
         {totalPages > 1 && (
           <div className="mt-20 flex justify-center">
             <Pagination
-              className={`
-                w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
-              `}
+              className={`w-fit rounded-full border border-glass-border bg-glass-bg px-4 py-2 backdrop-blur-md`}
             >
               <PaginationContent>
                 <PaginationItem>
@@ -149,8 +147,8 @@ export default async function ChangelogPage({
                         ? "pointer-events-none opacity-50"
                         : `
                           transition-colors
-                          hover:bg-gray-100 hover:text-[var(--accent-color)]
-                          dark:hover:bg-[var(--accent-color)]/10
+                          hover:bg-gray-100 hover:text-accent
+                          dark:hover:bg-accent/10
                         `
                     }
                   />
@@ -165,7 +163,7 @@ export default async function ChangelogPage({
                         className={
                           currentPage === page
                             ? `
-                              border-transparent bg-[var(--accent-color)] text-white shadow-sm
+                              border-transparent bg-accent text-white shadow-sm
                               hover:bg-accent/90 hover:text-white
                             `
                             : `
@@ -194,8 +192,8 @@ export default async function ChangelogPage({
                         ? "pointer-events-none opacity-50"
                         : `
                           transition-colors
-                          hover:bg-gray-100 hover:text-[var(--accent-color)]
-                          dark:hover:bg-[var(--accent-color)]/10
+                          hover:bg-gray-100 hover:text-accent
+                          dark:hover:bg-accent/10
                         `
                     }
                   />

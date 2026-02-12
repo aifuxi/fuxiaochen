@@ -76,10 +76,10 @@ export default function HomePage() {
             `}
           >
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight text-[var(--text-color)]">
-                最新 <span className="text-[var(--accent-color)]">文章</span>
+              <h2 className="text-3xl font-bold tracking-tight text-text">
+                最新 <span className="text-accent">文章</span>
               </h2>
-              <p className="text-[var(--text-color-secondary)]">
+              <p className="text-text-secondary">
                 探索技术、设计以及两者之间的一切。
               </p>
             </div>
@@ -87,8 +87,8 @@ export default function HomePage() {
             <Link
               href="/blog"
               className={`
-                group inline-flex items-center gap-1 font-medium text-[var(--accent-color)] transition-colors
-                hover:text-[var(--accent-color)]/80
+                group inline-flex items-center gap-1 font-medium text-accent transition-colors
+                hover:text-accent/80
               `}
             >
               查看归档{" "}

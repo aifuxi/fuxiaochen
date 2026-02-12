@@ -109,19 +109,19 @@ export default function CoverGeneratorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)]">
+    <div className="min-h-screen bg-bg">
       <main className="mx-auto max-w-7xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 space-y-4 text-center">
           <h1
             className={`
-              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              text-4xl font-bold tracking-tight text-text
               md:text-5xl
             `}
           >
             Cover Generator
           </h1>
-          <p className="mx-auto max-w-xl text-lg text-[var(--text-color-secondary)]">
+          <p className="mx-auto max-w-xl text-lg text-text-secondary">
             Create beautiful cover images for your blog posts or social media.
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function CoverGeneratorPage() {
           {/* Controls Panel */}
           <div className="lg:col-span-1">
             <GlassCard className="space-y-6 p-6">
-              <div className="flex items-center gap-2 font-semibold text-[var(--text-color)]">
+              <div className="flex items-center gap-2 font-semibold text-text">
                 <RefreshCw className="h-5 w-5" />
                 <span>Configuration</span>
               </div>
@@ -143,10 +143,7 @@ export default function CoverGeneratorPage() {
               {/* Text Settings */}
               <div className="space-y-4">
                 <div
-                  className={`
-                    flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)]
-                    uppercase
-                  `}
+                  className={`flex items-center gap-2 text-xs font-bold tracking-wider text-text-secondary uppercase`}
                 >
                   <Type className="h-3 w-3" /> Text
                 </div>
@@ -155,7 +152,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
+                    className="border-glass-border bg-glass-bg"
                   />
                 </div>
                 <div className="space-y-2">
@@ -163,7 +160,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
-                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
+                    className="border-glass-border bg-glass-bg"
                   />
                 </div>
                 <div className="space-y-2">
@@ -171,7 +168,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="border-[var(--glass-border)] bg-[var(--glass-bg)]"
+                    className="border-glass-border bg-glass-bg"
                   />
                 </div>
               </div>
@@ -179,10 +176,7 @@ export default function CoverGeneratorPage() {
               {/* Visual Settings */}
               <div className="space-y-4">
                 <div
-                  className={`
-                    flex items-center gap-2 text-xs font-bold tracking-wider text-[var(--text-color-secondary)]
-                    uppercase
-                  `}
+                  className={`flex items-center gap-2 text-xs font-bold tracking-wider text-text-secondary uppercase`}
                 >
                   <ImageIcon className="h-3 w-3" /> Visuals
                 </div>
@@ -192,7 +186,7 @@ export default function CoverGeneratorPage() {
                     value={bgStyle}
                     onValueChange={(val) => val && setBgStyle(val)}
                   >
-                    <SelectTrigger className="border-[var(--glass-border)] bg-[var(--glass-bg)]">
+                    <SelectTrigger className="border-glass-border bg-glass-bg">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -209,10 +203,7 @@ export default function CoverGeneratorPage() {
                 </div>
 
                 <div
-                  className={`
-                    flex items-center justify-between rounded-lg border border-[var(--glass-border)]
-                    bg-[var(--glass-bg)] p-3
-                  `}
+                  className={`flex items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-3`}
                 >
                   <Label className="cursor-pointer">Glitch Effect</Label>
                   <Switch
@@ -222,10 +213,7 @@ export default function CoverGeneratorPage() {
                 </div>
 
                 <div
-                  className={`
-                    flex items-center justify-between rounded-lg border border-[var(--glass-border)]
-                    bg-[var(--glass-bg)] p-3
-                  `}
+                  className={`flex items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-3`}
                 >
                   <Label className="cursor-pointer">Border Frame</Label>
                   <Switch
@@ -237,7 +225,7 @@ export default function CoverGeneratorPage() {
 
               <Button
                 className={`
-                  w-full bg-[var(--accent-color)] text-white
+                  w-full bg-accent text-white
                   hover:opacity-90
                 `}
                 onClick={handleDownload}
@@ -258,8 +246,7 @@ export default function CoverGeneratorPage() {
           <div className="lg:col-span-2">
             <div
               className={`
-                flex items-center justify-center rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]
-                p-4
+                flex items-center justify-center rounded-2xl border border-glass-border bg-glass-bg p-4
                 lg:p-12
               `}
             >
@@ -326,7 +313,7 @@ export default function CoverGeneratorPage() {
               </div>
             </div>
 
-            <p className="mt-4 text-center text-sm text-[var(--text-color-secondary)]">
+            <p className="mt-4 text-center text-sm text-text-secondary">
               Preview shown at lower resolution. Export will be high quality
               (2x).
             </p>

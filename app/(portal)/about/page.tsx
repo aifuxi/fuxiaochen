@@ -53,19 +53,19 @@ export default function AboutPage() {
   const expYears = currentYear - startYear;
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)] px-4 pt-32 pb-20">
+    <div className="min-h-screen bg-bg px-4 pt-32 pb-20">
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Page Header */}
         <div className="space-y-2">
           <h1
             className={`
-              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              text-4xl font-bold tracking-tight text-text
               md:text-6xl
             `}
           >
             关于我
           </h1>
-          <p className="max-w-xl text-lg text-[var(--text-color-secondary)]">
+          <p className="max-w-xl text-lg text-text-secondary">
             构建数字产品，探索技术边界，偶尔写写代码。
           </p>
         </div>
@@ -86,17 +86,15 @@ export default function AboutPage() {
             `}
           >
             <div
-              className={`
-                absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-[var(--accent-color)]/20 blur-[100px]
-              `}
+              className={`absolute top-0 right-0 -mt-20 -mr-20 h-96 w-96 rounded-full bg-accent/20 blur-[100px]`}
             />
 
             <div className="relative z-10 space-y-6">
               <div className="flex items-start justify-between">
                 <div
                   className={`
-                    flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--accent-color)]
-                    to-purple-600 text-4xl shadow-lg
+                    flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-purple-600
+                    text-4xl shadow-lg
                   `}
                 >
                   🧑‍💻
@@ -108,9 +106,9 @@ export default function AboutPage() {
                       href={link.href}
                       target="_blank"
                       className={`
-                        flex h-10 w-10 items-center justify-center rounded-full border border-[var(--glass-border)]
-                        bg-[var(--glass-bg)] text-[var(--text-color-secondary)] transition-all
-                        hover:scale-110 hover:border-[var(--accent-color)] hover:text-[var(--accent-color)]
+                        flex h-10 w-10 items-center justify-center rounded-full border border-glass-border bg-glass-bg
+                        text-text-secondary transition-all
+                        hover:scale-110 hover:border-accent hover:text-accent
                       `}
                     >
                       <link.icon className="h-5 w-5" />
@@ -122,29 +120,29 @@ export default function AboutPage() {
               <div className="space-y-4">
                 <h2
                   className={`
-                    text-2xl font-bold text-[var(--text-color)]
+                    text-2xl font-bold text-text
                     md:text-4xl
                   `}
                 >
                   付小晨 (Fu Xiaochen)
                 </h2>
-                <div className="flex flex-wrap gap-3 text-sm font-medium text-[var(--text-color-secondary)]">
-                  <span className="flex items-center gap-1.5 rounded-full bg-[var(--glass-border)]/50 px-3 py-1">
+                <div className="flex flex-wrap gap-3 text-sm font-medium text-text-secondary">
+                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
                     <Briefcase className="h-4 w-4" />
                     Frontend Engineer
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-[var(--glass-border)]/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
                     <MapPin className="h-4 w-4" />
                     Shanghai, China
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-[var(--glass-border)]/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
                     <Zap className="h-4 w-4 text-yellow-500" />
                     Available for freelance
                   </span>
                 </div>
                 <p
                   className={`
-                    text-base leading-relaxed text-[var(--text-color-secondary)]
+                    text-base leading-relaxed text-text-secondary
                     md:text-lg
                   `}
                 >
@@ -168,10 +166,10 @@ export default function AboutPage() {
                 <Briefcase className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-[var(--text-color)]">
+                <div className="text-3xl font-bold text-text">
                   {expYears}+
                 </div>
-                <div className="text-sm text-[var(--text-color-secondary)]">
+                <div className="text-sm text-text-secondary">
                   从业年限
                 </div>
               </div>
@@ -190,10 +188,10 @@ export default function AboutPage() {
                 <Coffee className="h-6 w-6" />
               </div>
               <div>
-                <div className="text-3xl font-bold text-[var(--text-color)]">
+                <div className="text-3xl font-bold text-text">
                   ∞
                 </div>
-                <div className="text-sm text-[var(--text-color-secondary)]">
+                <div className="text-sm text-text-secondary">
                   咖啡消耗
                 </div>
               </div>
@@ -207,8 +205,8 @@ export default function AboutPage() {
               md:col-span-3
             `}
           >
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-[var(--text-color)]">
-              <Laptop className="h-5 w-5 text-[var(--accent-color)]" />
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-text">
+              <Laptop className="h-5 w-5 text-accent" />
               技术栈
             </h3>
             <div
@@ -218,7 +216,7 @@ export default function AboutPage() {
               `}
             >
               <div>
-                <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">
+                <h4 className="mb-3 text-xs font-semibold tracking-wider text-text-secondary uppercase">
                   前端技术
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -226,9 +224,9 @@ export default function AboutPage() {
                     <div
                       key={tech.name}
                       className={`
-                        flex items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50
-                        px-3 py-2 transition-colors
-                        hover:bg-[var(--glass-border)]
+                        flex items-center gap-2 rounded-2xl border border-glass-border bg-glass-bg/50 px-3 py-2
+                        transition-colors
+                        hover:bg-glass-border
                       `}
                     >
                       <span
@@ -237,7 +235,7 @@ export default function AboutPage() {
                           h-5 w-5
                         `}
                       />
-                      <span className="text-sm font-medium text-[var(--text-color)]">
+                      <span className="text-sm font-medium text-text">
                         {tech.name}
                       </span>
                     </div>
@@ -245,7 +243,7 @@ export default function AboutPage() {
                 </div>
               </div>
               <div>
-                <h4 className="mb-3 text-xs font-semibold tracking-wider text-[var(--text-color-secondary)] uppercase">
+                <h4 className="mb-3 text-xs font-semibold tracking-wider text-text-secondary uppercase">
                   后端 & 运维
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -253,9 +251,9 @@ export default function AboutPage() {
                     <div
                       key={tech.name}
                       className={`
-                        flex items-center gap-2 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)]/50
-                        px-3 py-2 transition-colors
-                        hover:bg-[var(--glass-border)]
+                        flex items-center gap-2 rounded-2xl border border-glass-border bg-glass-bg/50 px-3 py-2
+                        transition-colors
+                        hover:bg-glass-border
                       `}
                     >
                       <span
@@ -264,7 +262,7 @@ export default function AboutPage() {
                           h-5 w-5
                         `}
                       />
-                      <span className="text-sm font-medium text-[var(--text-color)]">
+                      <span className="text-sm font-medium text-text">
                         {tech.name}
                       </span>
                     </div>
@@ -288,10 +286,10 @@ export default function AboutPage() {
               `}
             >
               <div>
-                <h3 className="text-lg font-bold text-[var(--text-color)]">
+                <h3 className="text-lg font-bold text-text">
                   装备清单
                 </h3>
-                <p className="text-sm text-[var(--text-color-secondary)]">
+                <p className="text-sm text-text-secondary">
                   工欲善其事，必先利其器
                 </p>
               </div>
@@ -306,22 +304,22 @@ export default function AboutPage() {
                   <div
                     key={item.name}
                     className={`
-                      group relative flex items-center gap-3 overflow-hidden rounded-2xl border
-                      border-[var(--glass-border)] bg-[var(--glass-bg)]/30 px-4 py-2 transition-all
-                      hover:bg-[var(--glass-border)]
+                      group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-glass-border
+                      bg-glass-bg/30 px-4 py-2 transition-all
+                      hover:bg-glass-border
                     `}
                   >
                     <div
                       className={`
-                        absolute top-0 left-0 h-full w-0.5 bg-[var(--accent-color)] opacity-0 transition-opacity
+                        absolute top-0 left-0 h-full w-0.5 bg-accent opacity-0 transition-opacity
                         group-hover:opacity-100
                       `}
                     />
                     <div className="flex flex-col">
-                      <span className="text-xs text-[var(--text-color-secondary)]">
+                      <span className="text-xs text-text-secondary">
                         {item.category}
                       </span>
-                      <span className="text-sm font-medium text-[var(--text-color)]">
+                      <span className="text-sm font-medium text-text">
                         {item.name}
                       </span>
                     </div>

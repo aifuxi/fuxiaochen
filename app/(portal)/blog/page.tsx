@@ -28,7 +28,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-color)]">
+    <div className="min-h-screen bg-bg">
       <main
         className={`
           mx-auto max-w-full px-4 pt-32 pb-20
@@ -39,13 +39,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <div className="relative mb-16 space-y-4">
           <h1
             className={`
-              text-4xl font-bold tracking-tight text-[var(--text-color)]
+              text-4xl font-bold tracking-tight text-text
               md:text-5xl
             `}
           >
             博客归档
           </h1>
-          <p className="max-w-2xl text-lg text-[var(--text-color-secondary)]">
+          <p className="max-w-2xl text-lg text-text-secondary">
             探索关于软件开发、设计和技术的思考与教程。
           </p>
         </div>
@@ -65,7 +65,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           >
             {/* Categories */}
             <GlassCard className="p-6">
-              <h3 className="mb-4 font-bold text-[var(--text-color)]">分类</h3>
+              <h3 className="mb-4 font-bold text-text">分类</h3>
               <div className="space-y-1">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
@@ -73,10 +73,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     block rounded-2xl px-3 py-2 text-sm transition-all duration-200
                     ${
                       !categorySlug
-                        ? "bg-[var(--accent-color)] font-medium text-white shadow-md"
+                        ? "bg-accent font-medium text-white shadow-md"
                         : `
-                          text-[var(--text-color-secondary)]
-                          hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
+                          text-text-secondary
+                          hover:bg-glass-border hover:text-text
                         `
                     }
                   `}
@@ -91,10 +91,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       flex items-center justify-between rounded-2xl px-3 py-2 text-sm transition-all duration-200
                       ${
                         categorySlug === cat.slug
-                          ? "bg-[var(--accent-color)] font-medium text-white shadow-md"
+                          ? "bg-accent font-medium text-white shadow-md"
                           : `
-                            text-[var(--text-color-secondary)]
-                            hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
+                            text-text-secondary
+                            hover:bg-glass-border hover:text-text
                           `
                       }
                     `}
