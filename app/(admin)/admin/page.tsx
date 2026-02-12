@@ -133,7 +133,7 @@ export default async function DashboardPage() {
               size="sm"
               className={`
                 text-[var(--accent-color)]
-                hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
+                hover:bg-accent/10 hover:text-accent
               `}
             >
               查看全部 <ArrowRight className="ml-2 h-4 w-4" />
@@ -145,23 +145,23 @@ export default async function DashboardPage() {
           <TableHeader>
             <TableRow
               className={`
-                border-[var(--glass-border)]
-                hover:bg-[var(--glass-bg)]/50
+                border-glass-border
+                hover:bg-glass-bg/50
               `}
             >
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 标题
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 分类
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 标签
               </TableHead>
-              <TableHead className="text-[var(--text-color-secondary)]">
+              <TableHead className="text-text-secondary">
                 发布状态
               </TableHead>
-              <TableHead className="text-right text-[var(--text-color-secondary)]">
+              <TableHead className="text-right text-text-secondary">
                 创建时间
               </TableHead>
             </TableRow>
@@ -171,7 +171,7 @@ export default async function DashboardPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-[var(--text-color-secondary)]"
+                  className="h-24 text-center text-text-secondary"
                 >
                   暂无文章
                 </TableCell>
@@ -181,18 +181,18 @@ export default async function DashboardPage() {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-[var(--glass-border)]
-                    hover:bg-[var(--glass-bg)]/50
+                    border-glass-border
+                    hover:bg-glass-bg/50
                   `}
                 >
-                  <TableCell className="font-medium text-[var(--text-color)]">
+                  <TableCell className="font-medium text-text">
                     {blog.title}
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
                       <Badge
                         variant="outline"
-                        className="border-[var(--accent-color)] text-[var(--accent-color)]"
+                        className="border-accent text-accent"
                       >
                         {blog.category.name}
                       </Badge>
@@ -207,7 +207,7 @@ export default async function DashboardPage() {
                             <Badge
                               key={tag.id}
                               variant="secondary"
-                              className="bg-[var(--accent-color)]/10 text-xs text-[var(--accent-color)]"
+                              className="bg-accent/10 text-xs text-accent"
                             >
                               {tag.name}
                             </Badge>
@@ -221,10 +221,10 @@ export default async function DashboardPage() {
                       className={
                         blog.published
                           ? `
-                            bg-[var(--accent-color)]/20 text-[var(--accent-color)]
-                            hover:bg-[var(--accent-color)]/30
+                            bg-accent/20 text-accent
+                            hover:bg-accent/30
                           `
-                          : "bg-[var(--glass-border)] text-[var(--text-color-secondary)]"
+                          : "bg-glass-border text-text-secondary"
                       }
                     >
                       {blog.published ? "已发布" : "草稿"}

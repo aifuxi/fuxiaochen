@@ -127,13 +127,20 @@ export function CategoryDialog({
               name="slug"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     Slug
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="URL 标识" {...field} />
+                    <Input
+                      {...field}
+                      className={`
+                        border-glass-border bg-glass-bg text-text
+                        focus:border-accent focus:ring-accent/20
+                      `}
+                      placeholder="frontend"
+                    />
                   </FormControl>
-                  <FormMessage className="text-red-500" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -142,33 +149,49 @@ export function CategoryDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     描述
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="分类描述"
-                      className="resize-none"
                       {...field}
+                      className={`
+                        resize-none border-glass-border bg-glass-bg text-text
+                        focus:border-accent focus:ring-accent/20
+                      `}
+                      placeholder="分类描述..."
                     />
                   </FormControl>
-                  <FormMessage className="text-red-500" />
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button
-                type="submit"
-                disabled={loading}
-                className={`
-                  w-full bg-[var(--accent-color)] text-white transition-all duration-200
-                  hover:-translate-y-0.5 hover:bg-[var(--accent-color)]/90
-                `}
-                hoverEffect="up"
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                保存
-              </Button>
+              <div className="flex w-full justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                  className={`
+                    border-glass-border bg-transparent text-text-secondary
+                    hover:bg-glass-border hover:text-text
+                  `}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className={`
+                    bg-accent text-white transition-all duration-200
+                    hover:-translate-y-0.5 hover:bg-accent/90
+                  `}
+                  hoverEffect="up"
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  保存
+                </Button>
+              </div>
             </DialogFooter>
           </form>
         </Form>

@@ -47,8 +47,8 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-[var(--glass-border)] bg-[var(--glass-bg)] p-3">
-      <div className="h-10 w-10 rounded-full bg-[var(--accent-color)]/20 p-0.5">
+    <div className="flex items-center gap-3 rounded-2xl border border-glass-border bg-glass-bg p-3">
+      <div className="h-10 w-10 rounded-full bg-accent/20 p-0.5">
         {user.image ? (
           <img
             src={user.image}
@@ -56,14 +56,14 @@ export function UserNav({ user }: UserNavProps) {
             className="h-full w-full rounded-full object-cover"
           />
         ) : (
-          <div className="h-full w-full rounded-full bg-[var(--accent-color)]/50" />
+          <div className="h-full w-full rounded-full bg-accent/50" />
         )}
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="truncate text-sm font-bold text-[var(--text-color)]">
+        <p className="truncate text-sm font-bold text-text">
           {user.name}
         </p>
-        <p className="truncate text-xs text-[var(--text-color-secondary)]">
+        <p className="truncate text-xs text-text-secondary">
           {user.role || "visitor"}
         </p>
       </div>
@@ -74,7 +74,7 @@ export function UserNav({ user }: UserNavProps) {
             size="icon"
             disabled={loading}
             className={`
-              text-[var(--text-color-secondary)]
+              text-text-secondary
               hover:bg-red-500/10 hover:text-red-500
             `}
           >
@@ -84,7 +84,7 @@ export function UserNav({ user }: UserNavProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>确认退出登录？</AlertDialogTitle>
-            <AlertDialogDescription className="text-[var(--text-color-secondary)]">
+            <AlertDialogDescription className="text-text-secondary">
               您将退出当前账号，需要重新登录才能访问后台管理系统。
             </AlertDialogDescription>
           </AlertDialogHeader>

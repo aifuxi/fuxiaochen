@@ -30,7 +30,7 @@ function PopoverContent({
         sideOffset={sideOffset}
         className={cn(
           `
-            glass-panel z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-xl p-4
+            z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-xl glass-panel p-4
             text-[var(--text-color)] shadow-lg outline-hidden
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2

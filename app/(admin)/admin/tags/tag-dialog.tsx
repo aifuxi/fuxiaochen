@@ -133,8 +133,8 @@ export function TagDialog({
                     <Input
                       {...field}
                       className={`
-                        border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                        border-glass-border bg-glass-bg text-text
+                        focus:border-accent focus:ring-accent/20
                       `}
                       placeholder="react"
                     />
@@ -148,15 +148,15 @@ export function TagDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-[var(--text-color-secondary)]">
+                  <FormLabel className="text-text-secondary">
                     描述
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       {...field}
                       className={`
-                        resize-none border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)]
-                        focus:border-[var(--accent-color)] focus:ring-[var(--accent-color)]/20
+                        resize-none border-glass-border bg-glass-bg text-text
+                        focus:border-accent focus:ring-accent/20
                       `}
                       placeholder="标签描述..."
                     />
@@ -171,8 +171,8 @@ export function TagDialog({
                 variant="outline"
                 onClick={() => onOpenChange(false)}
                 className={`
-                  border-[var(--glass-border)] bg-transparent text-[var(--text-color-secondary)]
-                  hover:bg-[var(--glass-border)] hover:text-[var(--text-color)]
+                  border-glass-border bg-transparent text-text-secondary
+                  hover:bg-glass-border hover:text-text
                 `}
               >
                 取消

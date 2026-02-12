@@ -115,7 +115,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
             {/* Tags */}
             <GlassCard className="p-6">
-              <h3 className="mb-4 font-bold text-[var(--text-color)]">标签</h3>
+              <h3 className="mb-4 font-bold text-text">标签</h3>
               <div className="flex flex-wrap gap-2">
                 <Link
                   href={
@@ -125,11 +125,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     rounded-full border border-transparent px-3 py-1 text-xs transition-all duration-200
                     ${
                       !tagSlug
-                        ? "bg-[var(--accent-color)] text-white shadow-sm"
+                        ? "bg-accent text-white shadow-sm"
                         : `
-                          bg-[var(--glass-border)] text-[var(--text-color-secondary)]
-                          hover:border-[var(--glass-border)] hover:bg-[var(--glass-border)]
-                          hover:text-[var(--text-color)] hover:brightness-95
+                          bg-glass-border text-text-secondary
+                          hover:border-glass-border hover:bg-glass-border hover:text-text hover:brightness-95
                         `
                     }
                   `}
@@ -144,11 +143,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       rounded-full border border-transparent px-3 py-1 text-xs transition-all duration-200
                       ${
                         tagSlug === tag.slug
-                          ? "bg-[var(--accent-color)] text-white shadow-sm"
+                          ? "bg-accent text-white shadow-sm"
                           : `
-                            bg-[var(--glass-border)] text-[var(--text-color-secondary)]
-                            hover:border-[var(--glass-border)] hover:bg-[var(--glass-border)]
-                            hover:text-[var(--text-color)] hover:brightness-95
+                            bg-glass-border text-text-secondary
+                            hover:border-glass-border hover:bg-glass-border hover:text-text hover:brightness-95
                           `
                       }
                     `}

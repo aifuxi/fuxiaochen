@@ -62,7 +62,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           `
-            glass-panel fixed z-50 flex flex-col gap-4 text-[var(--text-color)] shadow-2xl transition ease-in-out
+            fixed z-50 flex flex-col gap-4 glass-panel text-[var(--text-color)] shadow-2xl transition ease-in-out
             data-[state=closed]:animate-out data-[state=closed]:duration-300
             data-[state=open]:animate-in data-[state=open]:duration-500
           `,

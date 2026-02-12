@@ -11,7 +11,7 @@ export function BlogListSkeleton() {
       {[...Array(6)].map((_, i) => (
         <div
           key={i}
-          className="glass-panel h-[400px] overflow-hidden rounded-xl border border-white/10"
+          className="h-[400px] overflow-hidden rounded-xl glass-panel border border-white/10"
         >
           <Skeleton className="h-48 w-full bg-white/5" />
           <div className="space-y-4 p-6">
@@ -34,7 +34,7 @@ export function BlogListSkeleton() {
 
 export function BlogListItemSkeleton() {
   return (
-    <div className="glass-panel h-[400px] overflow-hidden rounded-xl border border-white/10">
+    <div className="h-[400px] overflow-hidden rounded-xl glass-panel border border-white/10">
       <Skeleton className="h-48 w-full bg-white/5" />
       <div className="space-y-4 p-6">
         <div className="flex gap-2">

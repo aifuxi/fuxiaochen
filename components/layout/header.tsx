@@ -12,7 +12,7 @@ export function Header() {
         md:px-8
       `}
     >
-      <nav className="glass-panel mx-auto flex max-w-7xl items-center justify-between rounded-full px-6 py-3 shadow-md">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full glass-panel px-6 py-3 shadow-md">
         {/* Logo */}
         <Link
           href="/"

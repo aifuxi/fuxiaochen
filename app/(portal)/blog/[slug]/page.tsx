@@ -119,15 +119,15 @@ export default async function BlogDetailPage({
           >
             <div
               className={`
-                glass-panel relative h-fit overflow-hidden rounded-2xl border border-[var(--glass-border)]
-                bg-[var(--glass-bg)] p-8
+                relative h-fit overflow-hidden rounded-2xl glass-panel border border-[var(--glass-border)] bg-glass-bg
+                p-8
                 md:p-12
               `}
             >
               <BlogContent content={blog.content} />
 
               {/* Footer / Navigation */}
-              <div className="mt-16 flex items-center justify-between border-t border-[var(--glass-border)] pt-8">
+              <div className="mt-16 flex items-center justify-between border-t border-glass-border pt-8">
                 <Link
                   href="/blog"
                   className={`
