@@ -72,19 +72,19 @@ export async function BlogList({
             flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
           `}
         >
-          <h3 className="mb-2 text-2xl font-bold text-[var(--text-color)]">
+          <h3 className="mb-2 text-2xl font-bold text-text">
             暂无文章
           </h3>
-          <p className="mb-6 text-[var(--text-color-secondary)]">
+          <p className="mb-6 text-text-secondary">
             尝试调整筛选条件或稍后再试。
           </p>
           {(category || tag) && (
             <Link
               href="/blog"
               className={`
-                inline-flex items-center gap-2 rounded-full border border-[var(--glass-border)] px-6 py-2 text-sm
-                font-medium transition-colors
-                hover:border-[var(--accent-color)] hover:bg-[var(--accent-color)] hover:text-white
+                inline-flex items-center gap-2 rounded-full border border-glass-border px-6 py-2 text-sm font-medium
+                transition-colors
+                hover:border-accent hover:bg-accent hover:text-white
               `}
             >
               <RotateCcw className="h-4 w-4" /> 重置筛选
@@ -97,9 +97,7 @@ export async function BlogList({
       {totalPages > 1 && (
         <div className="mt-16 flex justify-center">
           <Pagination
-            className={`
-              w-fit rounded-full border border-[var(--glass-border)] bg-[var(--glass-bg)] px-4 py-2 backdrop-blur-md
-            `}
+            className={`w-fit rounded-full border border-glass-border bg-glass-bg px-4 py-2 backdrop-blur-md`}
           >
             <PaginationContent>
               <PaginationItem>
@@ -115,8 +113,8 @@ export async function BlogList({
                       ? "pointer-events-none opacity-50"
                       : `
                         transition-colors
-                        hover:bg-gray-100 hover:text-[var(--accent-color)]
-                        dark:hover:bg-[var(--accent-color)]/10
+                        hover:bg-gray-100 hover:text-accent
+                        dark:hover:bg-accent/10
                       `
                   }
                 />
@@ -130,13 +128,13 @@ export async function BlogList({
                     className={
                       currentPage === p
                         ? `
-                          border-transparent bg-[var(--accent-color)] text-white shadow-sm
-                          hover:bg-[var(--accent-color)]/90 hover:text-white
+                          border-transparent bg-accent text-white shadow-sm
+                          hover:bg-accent/90 hover:text-white
                         `
                         : `
                           transition-colors
-                          hover:bg-gray-100 hover:text-[var(--accent-color)]
-                          dark:hover:bg-[var(--accent-color)]/10
+                          hover:bg-gray-100 hover:text-accent
+                          dark:hover:bg-accent/10
                         `
                     }
                   >
@@ -158,8 +156,8 @@ export async function BlogList({
                       ? "pointer-events-none opacity-50"
                       : `
                         transition-colors
-                        hover:bg-gray-100 hover:text-[var(--accent-color)]
-                        dark:hover:bg-[var(--accent-color)]/10
+                        hover:bg-gray-100 hover:text-accent
+                        dark:hover:bg-accent/10
                       `
                   }
                 />

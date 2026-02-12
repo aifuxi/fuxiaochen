@@ -64,9 +64,9 @@ export function TableOfContents() {
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
       <div
-        className={`mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-[var(--accent-color)]`}
+        className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-accent"
       >
-        <div className="h-2 w-2 rounded-full bg-[var(--accent-color)]" />
+        <div className="h-2 w-2 rounded-full bg-accent" />
         目录
       </div>
       <nav className="relative">
@@ -86,10 +86,10 @@ export function TableOfContents() {
                   "block rounded-2xl px-3 py-2 text-sm transition-all duration-300",
                   heading.level === 3 && "pl-6",
                   activeId === heading.id
-                    ? "bg-[var(--accent-color)]/10 font-medium text-[var(--accent-color)] shadow-sm backdrop-blur-sm"
+                    ? "bg-accent/10 font-medium text-accent shadow-sm backdrop-blur-sm"
                     : `
-                      text-[var(--text-color-secondary)]
-                      hover:bg-[var(--glass-bg)] hover:text-[var(--text-color)]
+                      text-text-secondary
+                      hover:bg-glass-bg hover:text-text
                     `,
                 )}
               >

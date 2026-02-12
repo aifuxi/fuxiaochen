@@ -33,7 +33,7 @@ export function BlogCard({
         className={`
           flex h-full flex-col overflow-hidden border-transparent bg-white p-0 shadow-md
           hover:shadow-xl
-          dark:border-[var(--glass-border)] dark:bg-[var(--glass-bg)]
+          dark:border-glass-border dark:bg-glass-bg
         `}
       >
         {/* Cover Image */}
@@ -62,8 +62,7 @@ export function BlogCard({
               <span
                 key={tag}
                 className={`
-                  inline-flex items-center rounded-full bg-[var(--accent-color)]/10 px-2 py-1 text-xs font-medium
-                  text-[var(--accent-color)]
+                  inline-flex items-center rounded-full bg-accent/10 px-2 py-1 text-xs font-medium text-accent
                 `}
               >
                 {tag}
