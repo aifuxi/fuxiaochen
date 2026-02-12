@@ -89,10 +89,10 @@ export default async function DashboardPage() {
         `}
       >
         {stats.map((stat) => (
-          <Link key={stat.title} href={stat.href}>
+          <Link key={stat.title} href={stat.href} className="block h-full">
             <GlassCard
               className={`
-                transition-all duration-300
+                h-full transition-all duration-300
                 hover:border-accent/50 hover:shadow-lg
               `}
             >
@@ -108,9 +108,7 @@ export default async function DashboardPage() {
                 />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-text">
-                  {stat.value}
-                </div>
+                <div className="text-2xl font-bold text-text">{stat.value}</div>
                 {stat.description && (
                   <p className="text-xs text-text-secondary">
                     {stat.description}
@@ -124,9 +122,7 @@ export default async function DashboardPage() {
 
       <GlassCard className="p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-text">
-            最新文章
-          </h3>
+          <h3 className="text-lg font-bold text-text">最新文章</h3>
           <Link href="/admin/blogs">
             <Button
               variant="ghost"
@@ -149,18 +145,10 @@ export default async function DashboardPage() {
                 hover:bg-glass-bg/50
               `}
             >
-              <TableHead className="text-text-secondary">
-                标题
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                分类
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                标签
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                发布状态
-              </TableHead>
+              <TableHead className="text-text-secondary">标题</TableHead>
+              <TableHead className="text-text-secondary">分类</TableHead>
+              <TableHead className="text-text-secondary">标签</TableHead>
+              <TableHead className="text-text-secondary">发布状态</TableHead>
               <TableHead className="text-right text-text-secondary">
                 创建时间
               </TableHead>
