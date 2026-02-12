@@ -62,7 +62,7 @@ function SheetContent({
         data-slot="sheet-content"
         className={cn(
           `
-            fixed z-50 flex flex-col gap-4 glass-panel text-[var(--text-color)] shadow-2xl transition ease-in-out
+            fixed z-50 flex flex-col gap-4 glass-panel text-text shadow-2xl transition ease-in-out
             data-[state=closed]:animate-out data-[state=closed]:duration-300
             data-[state=open]:animate-in data-[state=open]:duration-500
           `,
@@ -99,7 +99,7 @@ function SheetContent({
         {children}
         <SheetPrimitive.Close
           className={`
-            ring-offset-background absolute top-4 right-4 rounded-xs opacity-70 transition-opacity
+            ring-offset-background absolute top-4 right-4 rounded-full opacity-70 transition-opacity
             focus:ring-ring focus:ring-2 focus:ring-offset-2 focus:outline-hidden
             data-[state=open]:bg-secondary
             hover:opacity-100

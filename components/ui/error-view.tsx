@@ -24,10 +24,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
         >
           <div className="mb-6 flex justify-center">
             <div
-              className={`
-                flex h-20 w-20 items-center justify-center rounded-full bg-[var(--accent-color)]/10
-                text-[var(--accent-color)]
-              `}
+              className={`flex h-20 w-20 items-center justify-center rounded-full bg-accent/10 text-accent`}
             >
               {code === "404" ? (
                 <span className="text-3xl font-bold">404</span>
@@ -37,10 +34,10 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             </div>
           </div>
 
-          <h1 className="mb-2 text-3xl font-bold text-[var(--text-color)]">
+          <h1 className="mb-2 text-3xl font-bold text-text">
             {title}
           </h1>
-          <p className="mb-8 text-[var(--text-color-secondary)]">{message}</p>
+          <p className="mb-8 text-text-secondary">{message}</p>
 
           <div
             className={`

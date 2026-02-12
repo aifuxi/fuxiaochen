@@ -15,24 +15,24 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: `
-          bg-[var(--accent-color)] text-white shadow-md
+          bg-accent text-white shadow-md
           hover:opacity-90 hover:shadow-lg
         `,
         secondary: `
-          border border-[var(--glass-border)] bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-sm
-          hover:bg-[var(--glass-bg)]/80
+          border border-glass-border bg-glass-bg text-text backdrop-blur-sm
+          hover:bg-glass-bg/80
         `,
         ghost: `
-          text-[var(--text-color)]
-          hover:bg-[var(--glass-bg)]/50
+          text-text
+          hover:bg-glass-bg/50
         `,
         glass: `
-          glass-panel text-[var(--text-color)]
-          hover:bg-[var(--glass-bg)]/80
+          glass-panel text-text
+          hover:bg-glass-bg/80
         `,
         outline: `
-          border border-[var(--glass-border)] bg-transparent text-[var(--text-color)]
-          hover:bg-[var(--glass-bg)]/50
+          border border-glass-border bg-transparent text-text
+          hover:bg-glass-bg/50
         `,
       },
       size: {
@@ -45,7 +45,7 @@ const buttonVariants = cva(
         default: "",
         up: `
           transition-transform duration-150
-          hover:-translate-y-0.5 hover:bg-[var(--accent-color)]/90
+          hover:-translate-y-0.5 hover:bg-accent/90
         `,
       },
     },
