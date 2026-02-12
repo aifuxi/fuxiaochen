@@ -73,27 +73,27 @@ export function BlogCard({
 
           <h3
             className={`
-              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-[var(--text-color)] transition-colors
-              group-hover:text-[var(--accent-color)]
+              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-text transition-colors
+              group-hover:text-accent
             `}
           >
             {title}
           </h3>
 
-          <p className="mb-4 line-clamp-2 text-sm text-[var(--text-color-secondary)]">
+          <p className="mb-4 line-clamp-2 text-sm text-text-secondary">
             {excerpt}
           </p>
 
           <div
             className={`
-              mt-auto flex items-center justify-between border-t border-[var(--glass-border)] pt-4 text-xs font-medium
-              text-[var(--text-color-secondary)]
+              mt-auto flex items-center justify-between border-t border-glass-border pt-4 text-xs font-medium
+              text-text-secondary
             `}
           >
             <time className="font-mono">{date}</time>
             <span
               className={`
-                flex -translate-x-2 items-center gap-1 text-[var(--accent-color)] opacity-0 transition-all duration-300
+                flex -translate-x-2 items-center gap-1 text-accent opacity-0 transition-all duration-300
                 group-hover:translate-x-0 group-hover:opacity-100
               `}
             >

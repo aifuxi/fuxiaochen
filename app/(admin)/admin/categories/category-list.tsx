@@ -179,24 +179,24 @@ export default function CategoryManagementPage() {
             ) : (
               data?.lists?.map((category) => (
                 <TableRow key={category.id}>
-                  <TableCell className="font-medium text-[var(--text-color)]">
+                  <TableCell className="font-medium text-text">
                     {category.name}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="border-[var(--accent-color)] text-[var(--accent-color)]"
+                      className="border-accent text-accent"
                     >
                       {category.slug}
                     </Badge>
                   </TableCell>
-                  <TableCell className="max-w-[200px] truncate text-[var(--text-color-secondary)]">
+                  <TableCell className="max-w-[200px] truncate text-text-secondary">
                     {category.description || "-"}
                   </TableCell>
-                  <TableCell className="text-[var(--text-color)]">
+                  <TableCell className="text-text">
                     {category.blogCount}
                   </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
+                  <TableCell className="text-text-secondary">
                     {formatSimpleDateWithTime(new Date(category.createdAt))}
                   </TableCell>
                   <TableCell className="text-right">
@@ -213,7 +213,7 @@ export default function CategoryManagementPage() {
                         size="icon"
                         onClick={() => openDelete(category.id)}
                         className={`
-                          text-[var(--text-color-secondary)]
+                          text-text-secondary
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >

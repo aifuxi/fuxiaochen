@@ -4,19 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import useSWR from "swr";
-import {
-  getBlogsAction,
-  toggleBlogFeatureAction,
-  toggleBlogPublishAction,
-} from "@/app/actions/blog";
+import { getBlogsAction } from "@/app/actions/blog";
 import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -35,12 +29,7 @@ const fetcher = async (params: BlogListReq) => {
   return res.data;
 };
 
-interface BlogManagementPageProps {
-  role?: string;
-}
-
-export default function BlogManagementPage({ role }: BlogManagementPageProps) {
-  const isAdmin = role === "admin";
+export default function BlogManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -49,11 +38,12 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const title = searchParams.get("title") || undefined;
+  const categoryId = searchParams.get("categoryId") || undefined;
   const sortBy = (searchParams.get("sortBy") as any) || "createdAt";
   const order = (searchParams.get("order") as any) || "desc";
 
   const { data, isLoading, mutate } = useSWR(
-    { page, pageSize, title, sortBy, order },
+    { page, pageSize, title, categoryId, sortBy, order },
     fetcher,
   );
 
@@ -61,12 +51,18 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const query = formData.get("query") as string;
+    const catId = formData.get("categoryId") as string;
 
     const params = new URLSearchParams(searchParams);
     if (query) {
       params.set("title", query);
     } else {
       params.delete("title");
+    }
+    if (catId && catId !== "all") {
+      params.set("categoryId", catId);
+    } else {
+      params.delete("categoryId");
     }
     params.set("page", "1"); // Reset to page 1 on search
     router.push(`?${params.toString()}`);
@@ -102,24 +98,6 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
   const openDelete = (id: string) => {
     setDeletingId(id);
     setDeleteOpen(true);
-  };
-
-  const handleTogglePublish = async (id: string) => {
-    if (!isAdmin) {
-      toast.error("无权限");
-      return;
-    }
-    await toggleBlogPublishAction(id);
-    mutate();
-  };
-
-  const handleToggleFeature = async (id: string) => {
-    if (!isAdmin) {
-      toast.error("无权限");
-      return;
-    }
-    await toggleBlogFeatureAction(id);
-    mutate();
   };
 
   const blogs = data?.lists || [];
@@ -235,12 +213,17 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                     hover:bg-[var(--accent-color)]/5
                   `}
                 >
-                  <TableCell className="font-medium text-[var(--text-color)]">
+                  <TableCell className="font-medium text-text">
                     {blog.title}
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
-                      <Badge variant="outline">{blog.category.name}</Badge>
+                      <Badge
+                        variant="outline"
+                        className="border-accent text-accent"
+                      >
+                        {blog.category.name}
+                      </Badge>
                     ) : (
                       "-"
                     )}
@@ -252,7 +235,7 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                             <Badge
                               key={tag.id}
                               variant="secondary"
-                              className="bg-[var(--glass-bg)] text-[var(--text-color-secondary)]"
+                              className="bg-accent/10 text-xs text-accent"
                             >
                               {tag.name}
                             </Badge>
@@ -261,42 +244,51 @@ export default function BlogManagementPage({ role }: BlogManagementPageProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      checked={blog.published}
-                      disabled={!isAdmin}
-                      onCheckedChange={() => void handleTogglePublish(blog.id)}
-                    />
+                    <Badge
+                      variant={blog.published ? "default" : "secondary"}
+                      className={
+                        blog.published
+                          ? `
+                            bg-accent/20 text-accent
+                            hover:bg-accent/30
+                          `
+                          : "bg-glass-border text-text-secondary"
+                      }
+                    >
+                      {blog.published ? "已发布" : "草稿"}
+                    </Badge>
                   </TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={blog.featured}
-                      disabled={!isAdmin}
-                      onCheckedChange={() => void handleToggleFeature(blog.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
-                    {formatSimpleDateWithTime(new Date(blog.createdAt))}
+                  <TableCell className="text-right text-text-secondary">
+                    <div className="flex flex-col items-end gap-1 text-xs">
+                      <span>
+                        创建: {formatSimpleDateWithTime(new Date(blog.createdAt))}
+                      </span>
+                      <span>
+                        更新: {formatSimpleDateWithTime(new Date(blog.updatedAt))}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/admin/blogs/${blog.id}`}>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className={`
-                            text-[var(--text-color-secondary)]
-                            hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
-                          `}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          router.push(`/admin/blogs/edit/${blog.id}`)
+                        }
+                        className={`
+                          text-text-secondary
+                          hover:bg-accent/10 hover:text-accent
+                        `}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => openDelete(blog.id)}
                         className={`
-                          text-[var(--text-color-secondary)]
+                          text-text-secondary
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >

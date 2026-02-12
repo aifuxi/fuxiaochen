@@ -214,15 +214,15 @@ export default function TagManagementPage() {
                   <TableCell>
                     <Badge
                       variant="secondary"
-                      className="bg-[var(--accent-color)]/10 text-[var(--accent-color)]"
+                      className="bg-accent/10 text-accent"
                     >
                       {tag.blogCount}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
+                  <TableCell className="text-text-secondary">
                     {formatSimpleDateWithTime(new Date(tag.createdAt))}
                   </TableCell>
-                  <TableCell className="text-[var(--text-color-secondary)]">
+                  <TableCell className="text-text-secondary">
                     {formatSimpleDateWithTime(new Date(tag.updatedAt))}
                   </TableCell>
                   <TableCell className="text-right">
@@ -232,8 +232,8 @@ export default function TagManagementPage() {
                         size="icon"
                         onClick={() => openEdit(tag)}
                         className={`
-                          text-[var(--text-color-secondary)]
-                          hover:bg-[var(--accent-color)]/10 hover:text-[var(--accent-color)]
+                          text-text-secondary
+                          hover:bg-accent/10 hover:text-accent
                         `}
                       >
                         <Edit className="h-4 w-4" />
@@ -243,7 +243,7 @@ export default function TagManagementPage() {
                         size="icon"
                         onClick={() => openDelete(tag.id)}
                         className={`
-                          text-[var(--text-color-secondary)]
+                          text-text-secondary
                           hover:bg-red-500/10 hover:text-red-500
                         `}
                       >

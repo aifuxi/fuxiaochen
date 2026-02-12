@@ -25,7 +25,7 @@ export default function BlogLoading() {
             space-y-8
             lg:col-span-1
           `}>
-            <div className="glass-panel rounded-2xl p-6">
+            <div className="rounded-2xl glass-panel p-6">
               <Skeleton className="mb-6 h-6 w-1/2 rounded-lg" />
               <div className="space-y-3">
                 {[...Array(5)].map((_, i) => (
@@ -34,7 +34,7 @@ export default function BlogLoading() {
               </div>
             </div>
 
-            <div className="glass-panel rounded-2xl p-6">
+            <div className="rounded-2xl glass-panel p-6">
               <Skeleton className="mb-6 h-6 w-1/2 rounded-lg" />
               <div className="flex flex-wrap gap-2">
                 {[...Array(8)].map((_, i) => (
@@ -53,7 +53,7 @@ export default function BlogLoading() {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="glass-panel h-[400px] overflow-hidden rounded-2xl"
+                  className="h-[400px] overflow-hidden rounded-2xl glass-panel"
                 >
                   <Skeleton className="h-48 w-full rounded-none" />
                   <div className="space-y-4 p-6">

@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "glass-panel flex items-center rounded-full border-[var(--glass-border)] p-1",
+        "flex items-center rounded-full glass-panel border-[var(--glass-border)] p-1",
         className,
       )}
     >

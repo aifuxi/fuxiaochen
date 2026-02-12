@@ -16,12 +16,12 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: `
-          border-transparent bg-[var(--accent-color)] text-white shadow-sm
-          [a&]:hover:bg-[var(--accent-color)]/90
+          border-transparent bg-accent text-white shadow-sm
+          [a&]:hover:bg-accent/90
         `,
         secondary: `
-          border-transparent bg-[var(--glass-bg)] text-[var(--text-color)] backdrop-blur-sm
-          [a&]:hover:bg-[var(--glass-bg)]/80
+          border-transparent bg-glass-bg text-text backdrop-blur-sm
+          [a&]:hover:bg-glass-bg/80
         `,
         destructive: `
           bg-destructive border-transparent text-white shadow-sm
@@ -30,8 +30,8 @@ const badgeVariants = cva(
           dark:focus-visible:ring-destructive/40 dark:bg-destructive/60
         `,
         outline: `
-          border-[var(--glass-border)] text-[var(--text-color)] backdrop-blur-sm
-          [a&]:hover:bg-[var(--glass-bg)] [a&]:hover:text-[var(--text-color)]
+          border-glass-border text-text backdrop-blur-sm
+          [a&]:hover:bg-glass-bg [a&]:hover:text-text
         `,
       },
     },

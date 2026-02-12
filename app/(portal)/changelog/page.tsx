@@ -166,12 +166,12 @@ export default async function ChangelogPage({
                           currentPage === page
                             ? `
                               border-transparent bg-[var(--accent-color)] text-white shadow-sm
-                              hover:bg-[var(--accent-color)]/90 hover:text-white
+                              hover:bg-accent/90 hover:text-white
                             `
                             : `
                               transition-colors
-                              hover:bg-gray-100 hover:text-[var(--accent-color)]
-                              dark:hover:bg-[var(--accent-color)]/10
+                              hover:bg-gray-100 hover:text-accent
+                              dark:hover:bg-accent/10
                             `
                         }
                       >
