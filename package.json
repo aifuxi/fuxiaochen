@@ -139,7 +139,7 @@
   },
   "lint-staged": {
     "*.{js,cjs,mjs,jsx,ts,tsx}": [
-      "eslint --fix --quiet --concurrency auto ."
+      "eslint --fix --quiet --concurrency auto"
     ]
   },
   "config": {
