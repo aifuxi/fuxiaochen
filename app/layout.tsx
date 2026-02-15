@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
+import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
@@ -73,7 +74,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ModalProvider>{children}</ModalProvider>
           <Toaster richColors position="top-center" />
         </ThemeProvider>
       </body>
