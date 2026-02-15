@@ -88,9 +88,7 @@ export default function UserManagementPage() {
           <h2 className="text-2xl font-bold tracking-tight text-text">
             用户管理
           </h2>
-          <p className="text-text-secondary">
-            管理系统用户及权限
-          </p>
+          <p className="text-text-secondary">管理系统用户及权限</p>
         </div>
       </div>
 
@@ -113,7 +111,14 @@ export default function UserManagementPage() {
               className="pl-9"
             />
           </div>
-          <Button type="submit" variant="secondary">
+          <Button
+            type="submit"
+            variant="secondary"
+            className={`
+              border border-glass-border bg-glass-bg text-text
+              hover:bg-accent/5 hover:text-accent
+            `}
+          >
             搜索
           </Button>
         </form>
@@ -123,18 +128,10 @@ export default function UserManagementPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-text-secondary">
-                用户
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                邮箱
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                角色
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                注册时间
-              </TableHead>
+              <TableHead className="text-text-secondary">用户</TableHead>
+              <TableHead className="text-text-secondary">邮箱</TableHead>
+              <TableHead className="text-text-secondary">角色</TableHead>
+              <TableHead className="text-text-secondary">注册时间</TableHead>
               <TableHead className="text-right text-text-secondary">
                 操作
               </TableHead>
@@ -229,7 +226,6 @@ export default function UserManagementPage() {
           onPageSizeChange={handlePageSizeChange}
         />
       </GlassCard>
-
     </div>
   );
 }

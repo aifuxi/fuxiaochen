@@ -130,7 +130,14 @@ export default function BlogManagementPage() {
               className="pl-9"
             />
           </div>
-          <Button type="submit" variant="secondary" hoverEffect="up">
+          <Button
+            type="submit"
+            variant="secondary"
+            className={`
+              border border-glass-border bg-glass-bg text-text
+              hover:bg-accent/5 hover:text-accent
+            `}
+          >
             搜索
           </Button>
         </form>

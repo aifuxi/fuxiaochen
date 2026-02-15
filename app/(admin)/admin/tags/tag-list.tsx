@@ -114,9 +114,7 @@ export default function TagManagementPage() {
         <h2 className="text-2xl font-bold tracking-tight text-text">
           标签管理
         </h2>
-        <p className="text-text-secondary">
-          管理博客文章的标签体系
-        </p>
+        <p className="text-text-secondary">管理博客文章的标签体系</p>
       </div>
 
       <GlassCard
@@ -138,7 +136,14 @@ export default function TagManagementPage() {
               className="pl-9"
             />
           </div>
-          <Button type="submit" variant="secondary">
+          <Button
+            type="submit"
+            variant="secondary"
+            className={`
+              border border-glass-border bg-glass-bg text-text
+              hover:bg-accent/5 hover:text-accent
+            `}
+          >
             搜索
           </Button>
         </form>
@@ -266,7 +271,6 @@ export default function TagManagementPage() {
           />
         )}
       </GlassCard>
-
     </div>
   );
 }
