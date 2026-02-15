@@ -36,7 +36,7 @@ export function DataTablePagination({
 
   // Generate page numbers logic
   const getPageNumbers = () => {
-    const pages = [];
+    const pages: number[] = [];
     const maxVisible = 5;
     let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
     const end = Math.min(totalPages, start + maxVisible - 1);
@@ -52,6 +52,8 @@ export function DataTablePagination({
   };
 
   const pages = getPageNumbers();
+  const firstPage = pages[0] ?? 0;
+  const lastPage = pages[pages.length - 1] ?? 0;
 
   return (
     <div
@@ -102,7 +104,7 @@ export function DataTablePagination({
             />
           </PaginationItem>
 
-          {pages[0] > 1 && (
+          {firstPage > 1 && (
             <>
               <PaginationItem>
                 <PaginationLink
@@ -115,7 +117,7 @@ export function DataTablePagination({
                   1
                 </PaginationLink>
               </PaginationItem>
-              {pages[0] > 2 && (
+              {firstPage > 2 && (
                 <PaginationItem>
                   <PaginationEllipsis />
                 </PaginationItem>
@@ -138,9 +140,9 @@ export function DataTablePagination({
             </PaginationItem>
           ))}
 
-          {pages[pages.length - 1] < totalPages && (
+          {lastPage < totalPages && (
             <>
-              {pages[pages.length - 1] < totalPages - 1 && (
+              {lastPage < totalPages - 1 && (
                 <PaginationItem>
                   <PaginationEllipsis />
                 </PaginationItem>
