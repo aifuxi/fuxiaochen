@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import NiceModal from "@ebay/nice-modal-react";
 import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getTagsAction } from "@/app/actions/tag";
@@ -32,10 +32,6 @@ const fetcher = async (params: TagListReq) => {
 export default function TagManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTag, setEditingTag] = useState<Tag | undefined>(undefined);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<string>("");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
@@ -91,18 +87,23 @@ export default function TagManagementPage() {
   };
 
   const openEdit = (tag: Tag) => {
-    setEditingTag(tag);
-    setDialogOpen(true);
+    NiceModal.show(TagDialog, {
+      tag,
+      onSuccess: () => mutate(),
+    });
   };
 
   const openDelete = (id: string) => {
-    setDeletingId(id);
-    setDeleteOpen(true);
+    NiceModal.show(DeleteAlert, {
+      id,
+      onSuccess: () => mutate(),
+    });
   };
 
   const openCreate = () => {
-    setEditingTag(undefined);
-    setDialogOpen(true);
+    NiceModal.show(TagDialog, {
+      onSuccess: () => mutate(),
+    });
   };
 
   const tags = data?.lists || [];
@@ -266,19 +267,6 @@ export default function TagManagementPage() {
         )}
       </GlassCard>
 
-      <TagDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        tag={editingTag}
-        onSuccess={() => mutate()}
-      />
-
-      <DeleteAlert
-        id={deletingId}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        onSuccess={() => mutate()}
-      />
     </div>
   );
 }

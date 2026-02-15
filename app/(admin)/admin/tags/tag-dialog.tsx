@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -14,7 +15,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -35,164 +35,141 @@ const formSchema = z.object({
 
 interface TagDialogProps {
   tag?: Tag;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  trigger?: React.ReactNode;
   onSuccess?: () => void;
 }
 
-export function TagDialog({
-  tag,
-  open,
-  onOpenChange,
-  trigger,
-  onSuccess,
-}: TagDialogProps) {
-  const [loading, setLoading] = useState(false);
+export const TagDialog = NiceModal.create(
+  ({ tag, onSuccess }: TagDialogProps) => {
+    const [loading, setLoading] = useState(false);
+    const modal = NiceModal.useModal();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: tag?.name || "",
-      slug: tag?.slug || "",
-      description: tag?.description || "",
-    },
-  });
-
-  useEffect(() => {
-    if (open) {
-      form.reset({
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
         name: tag?.name || "",
         slug: tag?.slug || "",
         description: tag?.description || "",
-      });
-    }
-  }, [tag, open, form]);
+      },
+    });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-    try {
-      if (tag) {
-        const res = await updateTagAction(tag.id, values);
-        if (!res.success) throw new Error(res.error);
-      } else {
-        const res = await createTagAction(values);
-        if (!res.success) throw new Error(res.error);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      setLoading(true);
+      try {
+        if (tag) {
+          const res = await updateTagAction(tag.id, values);
+          if (!res.success) throw new Error(res.error);
+        } else {
+          const res = await createTagAction(values);
+          if (!res.success) throw new Error(res.error);
+        }
+        modal.remove();
+        form.reset();
+        onSuccess?.();
+      } catch (error) {
+        toast.error(`${error}`);
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      onOpenChange(false);
-      form.reset();
-      onSuccess?.();
-    } catch (error) {
-      toast.error(`${error}`);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>{tag ? "编辑标签" : "新建标签"}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-text-secondary">
-                    名称
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className={`
-                        border-glass-border bg-glass-bg text-text
-                        focus:border-accent focus:ring-accent/20
-                      `}
-                      placeholder="React"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-text-secondary">
-                    Slug
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className={`
-                        border-glass-border bg-glass-bg text-text
-                        focus:border-accent focus:ring-accent/20
-                      `}
-                      placeholder="react"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-text-secondary">
-                    描述
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      className={`
-                        resize-none border-glass-border bg-glass-bg text-text
-                        focus:border-accent focus:ring-accent/20
-                      `}
-                      placeholder="标签描述..."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className={`
-                  border-glass-border bg-transparent text-text-secondary
-                  hover:bg-glass-border hover:text-text
-                `}
-              >
-                取消
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className={`
-                  bg-accent text-white
-                  hover:bg-accent/90
-                `}
-                hoverEffect="up"
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                保存
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+    return (
+      <Dialog open={modal.visible} onOpenChange={modal.remove}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{tag ? "编辑标签" : "新建标签"}</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-text-secondary">名称</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className={`
+                          border-glass-border bg-glass-bg text-text
+                          focus:border-accent focus:ring-accent/20
+                        `}
+                        placeholder="React"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-text-secondary">Slug</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className={`
+                          border-glass-border bg-glass-bg text-text
+                          focus:border-accent focus:ring-accent/20
+                        `}
+                        placeholder="react"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-text-secondary">描述</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className={`
+                          resize-none border-glass-border bg-glass-bg text-text
+                          focus:border-accent focus:ring-accent/20
+                        `}
+                        placeholder="标签描述..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => modal.remove()}
+                  className={`
+                    border-glass-border bg-transparent text-text-secondary
+                    hover:bg-glass-border hover:text-text
+                  `}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className={`
+                    bg-accent text-white
+                    hover:bg-accent/90
+                  `}
+                  hoverEffect="up"
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  保存
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+);

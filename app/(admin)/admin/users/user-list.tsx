@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getUsersAction } from "@/app/actions/user";
@@ -32,10 +32,6 @@ const fetcher = async (params: UserListReq) => {
 export default function UserManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | undefined>(undefined);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<string>("");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
@@ -72,13 +68,17 @@ export default function UserManagementPage() {
   };
 
   const openEdit = (user: User) => {
-    setEditingUser(user);
-    setDialogOpen(true);
+    NiceModal.show(UserDialog, {
+      user,
+      onSuccess: () => mutate(),
+    });
   };
 
   const openDelete = (id: string) => {
-    setDeletingId(id);
-    setDeleteOpen(true);
+    NiceModal.show(DeleteAlert, {
+      id,
+      onSuccess: () => mutate(),
+    });
   };
 
   return (
@@ -230,19 +230,6 @@ export default function UserManagementPage() {
         />
       </GlassCard>
 
-      <UserDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        user={editingUser}
-        onSuccess={() => mutate()}
-      />
-
-      <DeleteAlert
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        id={deletingId}
-        onSuccess={() => mutate()}
-      />
     </div>
   );
 }

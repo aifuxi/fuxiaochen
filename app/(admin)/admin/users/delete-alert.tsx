@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import NiceModal from "@ebay/nice-modal-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteUserAction } from "@/app/actions/user";
@@ -17,25 +18,20 @@ import {
 
 interface DeleteAlertProps {
   id: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
 }
 
-export function DeleteAlert({
-  id,
-  open,
-  onOpenChange,
-  onSuccess,
-}: DeleteAlertProps) {
-  const [loading, setLoading] = useState(false);
+export const DeleteAlert = NiceModal.create(
+  ({ id, onSuccess }: DeleteAlertProps) => {
+    const [loading, setLoading] = useState(false);
+    const modal = NiceModal.useModal();
 
   const handleDelete = async () => {
     setLoading(true);
     try {
       const res = await deleteUserAction(id);
       if (!res.success) throw new Error(res.error);
-      onOpenChange(false);
+      modal.remove();
       onSuccess?.();
     } catch (error) {
       toast.error(`${error}`);
@@ -46,7 +42,7 @@ export function DeleteAlert({
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={modal.visible} onOpenChange={modal.remove}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>确认删除？</AlertDialogTitle>
@@ -71,4 +67,5 @@ export function DeleteAlert({
       </AlertDialogContent>
     </AlertDialog>
   );
-}
+  },
+);
