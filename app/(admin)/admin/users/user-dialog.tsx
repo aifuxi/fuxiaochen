@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -15,7 +16,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -39,124 +39,101 @@ const formSchema = z.object({
 
 interface UserDialogProps {
   user?: User;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  trigger?: React.ReactNode;
   onSuccess?: () => void;
 }
 
-export function UserDialog({
-  user,
-  open,
-  onOpenChange,
-  trigger,
-  onSuccess,
-}: UserDialogProps) {
-  const [loading, setLoading] = useState(false);
+export const UserDialog = NiceModal.create(
+  ({ user, onSuccess }: UserDialogProps) => {
+    const [loading, setLoading] = useState(false);
+    const modal = NiceModal.useModal();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      role: user?.role || "visitor",
-    },
-  });
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        role: user?.role || "visitor",
+      },
+    });
 
-  useEffect(() => {
-    if (open && user) {
-      form.reset({
-        role: user.role,
-      });
-    }
-  }, [user, open, form]);
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      if (!user) return; // Should not happen as we only support edit for now
+      setLoading(true);
+      try {
+        const res = await updateUserAction(user.id, values);
+        if (!res.success) throw new Error(res.error);
+        modal.remove();
+        form.reset();
+        onSuccess?.();
+      } catch (error) {
+        toast.error(`${error}`);
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!user) return; // Should not happen as we only support edit for now
-    setLoading(true);
-    try {
-      const res = await updateUserAction(user.id, values);
-      if (!res.success) throw new Error(res.error);
-      onOpenChange(false);
-      form.reset();
-      onSuccess?.();
-    } catch (error) {
-      toast.error(`${error}`);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle className="text-text">
-            编辑用户角色
-          </DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <div className="text-sm text-text-secondary">
-                用户
+    return (
+      <Dialog open={modal.visible} onOpenChange={modal.remove}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-text">编辑用户角色</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm text-text-secondary">用户</div>
+                <div className="font-medium text-text">{user?.name}</div>
+                <div className="text-xs text-text-secondary">{user?.email}</div>
               </div>
-              <div className="font-medium text-text">
-                {user?.name}
-              </div>
-              <div className="text-xs text-text-secondary">
-                {user?.email}
-              </div>
-            </div>
 
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>角色</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger
-                        className={`
-                          border-glass-border bg-glass-bg text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
-                      >
-                        <SelectValue placeholder="选择角色" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent
-                      className={`border-glass-border bg-glass-bg text-text`}
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>角色</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
                     >
-                      <SelectItem value="visitor">Visitor</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage className="text-red-400" />
-                </FormItem>
-              )}
-            />
-            <DialogFooter>
-              <Button
-                type="submit"
-                disabled={loading}
-                className={`
-                  w-full bg-accent text-white
-                  hover:bg-accent/90
-                `}
-                hoverEffect="up"
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                保存
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+                      <FormControl>
+                        <SelectTrigger
+                          className={`
+                            border-glass-border bg-glass-bg text-text
+                            focus:border-accent focus:ring-accent/20
+                          `}
+                        >
+                          <SelectValue placeholder="选择角色" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent
+                        className={`border-glass-border bg-glass-bg text-text`}
+                      >
+                        <SelectItem value="visitor">Visitor</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className={`
+                    w-full bg-accent text-white
+                    hover:bg-accent/90
+                  `}
+                  hoverEffect="up"
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  保存
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+);

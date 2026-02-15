@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getChangelogsAction } from "@/app/actions/changelog";
@@ -25,11 +25,6 @@ import { DeleteAlert } from "./delete-alert";
 export default function ChangelogManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [selectedChangelog, setSelectedChangelog] = useState<
-    Changelog | undefined
-  >(undefined);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
@@ -76,18 +71,23 @@ export default function ChangelogManagementPage() {
   };
 
   const handleEdit = (changelog: Changelog) => {
-    setSelectedChangelog(changelog);
-    setIsDialogOpen(true);
+    NiceModal.show(ChangelogDialog, {
+      changelog,
+      onSuccess,
+    });
   };
 
   const handleDelete = (changelog: Changelog) => {
-    setSelectedChangelog(changelog);
-    setIsDeleteDialogOpen(true);
+    NiceModal.show(DeleteAlert, {
+      id: changelog.id,
+      onSuccess,
+    });
   };
 
   const handleCreate = () => {
-    setSelectedChangelog(undefined);
-    setIsDialogOpen(true);
+    NiceModal.show(ChangelogDialog, {
+      onSuccess,
+    });
   };
 
   const onSuccess = () => {
@@ -253,19 +253,6 @@ export default function ChangelogManagementPage() {
         )}
       </GlassCard>
 
-      <ChangelogDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        changelog={selectedChangelog}
-        onSuccess={onSuccess}
-      />
-
-      <DeleteAlert
-        open={isDeleteDialogOpen}
-        onOpenChange={setIsDeleteDialogOpen}
-        id={selectedChangelog?.id || ""}
-        onSuccess={onSuccess}
-      />
     </div>
   );
 }

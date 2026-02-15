@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,7 +18,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -38,151 +38,132 @@ const formSchema = z.object({
 
 interface ChangelogDialogProps {
   changelog?: Changelog;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  trigger?: React.ReactNode;
   onSuccess?: () => void;
 }
 
-export function ChangelogDialog({
-  changelog,
-  open,
-  onOpenChange,
-  trigger,
-  onSuccess,
-}: ChangelogDialogProps) {
-  const [loading, setLoading] = useState(false);
+export const ChangelogDialog = NiceModal.create(
+  ({ changelog, onSuccess }: ChangelogDialogProps) => {
+    const [loading, setLoading] = useState(false);
+    const modal = NiceModal.useModal();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      version: changelog?.version || "",
-      content: changelog?.content || "",
-      date: changelog?.date
-        ? new Date(changelog.date).toISOString().split("T")[0]
-        : "",
-    },
-  });
-
-  useEffect(() => {
-    if (open) {
-      form.reset({
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
         version: changelog?.version || "",
         content: changelog?.content || "",
         date: changelog?.date
           ? new Date(changelog.date).toISOString().split("T")[0]
           : "",
-      });
-    }
-  }, [changelog, open, form]);
+      },
+    });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-    try {
-      const payload = {
-        version: values.version,
-        content: values.content,
-        date: values.date ? new Date(values.date).getTime() : undefined,
-      };
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      setLoading(true);
+      try {
+        const payload = {
+          version: values.version,
+          content: values.content,
+          date: values.date ? new Date(values.date).getTime() : undefined,
+        };
 
-      if (changelog) {
-        const res = await updateChangelogAction(changelog.id, payload);
-        if (!res.success) throw new Error(res.error);
-      } else {
-        const res = await createChangelogAction(payload);
-        if (!res.success) throw new Error(res.error);
+        if (changelog) {
+          const res = await updateChangelogAction(changelog.id, payload);
+          if (!res.success) throw new Error(res.error);
+        } else {
+          const res = await createChangelogAction(payload);
+          if (!res.success) throw new Error(res.error);
+        }
+        modal.remove();
+        form.reset();
+        onSuccess?.();
+      } catch (error) {
+        toast.error(`${error}`);
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
-      onOpenChange(false);
-      form.reset();
-      onSuccess?.();
-    } catch (error) {
-      toast.error(`${error}`);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>{changelog ? "编辑日志" : "新建日志"}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="version"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>版本号</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="v1.0.0" />
-                  </FormControl>
-                  <FormMessage className="text-red-500" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>发布日期</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="date"
-                      className="[&::-webkit-calendar-picker-indicator]:invert"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-500" />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>内容</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      {...field}
-                      className="min-h-[200px]"
-                      placeholder="更新内容..."
-                    />
-                  </FormControl>
-                  <FormMessage className="text-red-500" />
-                </FormItem>
-              )}
-            />
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                取消
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading}
-                className={`
-                  bg-accent text-white
-                  hover:bg-accent/90
-                `}
-                hoverEffect="up"
-              >
-                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                保存
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  );
-}
+    return (
+      <Dialog open={modal.visible} onOpenChange={modal.remove}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{changelog ? "编辑日志" : "新建日志"}</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="version"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>版本号</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="v1.0.0" />
+                    </FormControl>
+                    <FormMessage className="text-red-500" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>发布日期</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="date"
+                        className="[&::-webkit-calendar-picker-indicator]:invert"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>内容</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="min-h-[200px]"
+                        placeholder="更新内容..."
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-500" />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => modal.remove()}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className={`
+                    bg-accent text-white
+                    hover:bg-accent/90
+                  `}
+                  hoverEffect="up"
+                >
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  保存
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+);

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
@@ -33,9 +32,6 @@ const fetcher = async (params: CategoryListReq) => {
 export default function CategoryManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<string>("");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
@@ -72,8 +68,10 @@ export default function CategoryManagementPage() {
   };
 
   const openDelete = (id: string) => {
-    setDeletingId(id);
-    setDeleteOpen(true);
+    NiceModal.show(DeleteAlert, {
+      id,
+      onSuccess: () => mutate(),
+    });
   };
 
   const showCategoryModal = (category?: Category) => {
@@ -227,12 +225,6 @@ export default function CategoryManagementPage() {
         )}
       </GlassCard>
 
-      <DeleteAlert
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        id={deletingId}
-        onSuccess={() => mutate()}
-      />
     </div>
   );
 }
