@@ -45,6 +45,35 @@
   - **Components**: Pascal Case (e.g., `MyComponent`, `UserProfile`).
   - **Variables/Functions**: lowerCamelCase (e.g., `myVariable`, `fetchUserData`).
 
+## 交互组件规范 (NiceModal)
+
+Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理，避免本地 open 状态与多处触发造成的状态分裂。
+
+- **统一入口**: 页面或列表中使用 `NiceModal.show()` 打开组件。
+- **统一关闭**: 组件内部使用 `modal.remove()` 关闭。
+- **统一传参**: 通过 `NiceModal.show(Component, props)` 传入业务参数与回调。
+- **禁止**: 不再使用 `open`/`onOpenChange` 作为外部状态控制，不再使用 `DialogTrigger` 直接触发。
+
+```tsx
+export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
+  const modal = NiceModal.useModal();
+
+  return (
+    <Dialog open={modal.visible} onOpenChange={modal.remove}>
+      <DialogContent>
+        ...
+        <Button onClick={() => modal.remove()}>取消</Button>
+      </DialogContent>
+    </Dialog>
+  );
+});
+
+NiceModal.show(ExampleDialog, {
+  data,
+  onSuccess: () => mutate(),
+});
+```
+
 ## 架构与目录 (Architecture & Directory)
 
 ### 核心目录结构
