@@ -39,6 +39,7 @@
     "@bytemd/plugin-highlight-ssr": "^1.22.0",
     "@bytemd/plugin-medium-zoom": "^1.22.0",
     "@bytemd/react": "^1.22.0",
+    "@ebay/nice-modal-react": "^1.2.13",
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "16.1.1",
     "@next/third-parties": "16.1.1",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import { getCategoriesAction } from "@/app/actions/category";
@@ -32,10 +33,7 @@ const fetcher = async (params: CategoryListReq) => {
 export default function CategoryManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | undefined>(
-    undefined,
-  );
+
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string>("");
 
@@ -73,14 +71,16 @@ export default function CategoryManagementPage() {
     router.push(`?${params.toString()}`);
   };
 
-  const openEdit = (category: Category) => {
-    setEditingCategory(category);
-    setDialogOpen(true);
-  };
-
   const openDelete = (id: string) => {
     setDeletingId(id);
     setDeleteOpen(true);
+  };
+
+  const showCategoryModal = (category?: Category) => {
+    NiceModal.show(CategoryDialog, {
+      category,
+      onSuccess: () => mutate(),
+    });
   };
 
   return (
@@ -89,9 +89,7 @@ export default function CategoryManagementPage() {
         <h2 className="text-2xl font-bold tracking-tight text-text">
           分类管理
         </h2>
-        <p className="text-text-secondary">
-          管理博客文章的分类体系
-        </p>
+        <p className="text-text-secondary">管理博客文章的分类体系</p>
       </div>
 
       <GlassCard
@@ -119,8 +117,7 @@ export default function CategoryManagementPage() {
         </form>
         <Button
           onClick={() => {
-            setEditingCategory(undefined);
-            setDialogOpen(true);
+            showCategoryModal();
           }}
           className={`
             bg-accent text-white
@@ -137,21 +134,11 @@ export default function CategoryManagementPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-text-secondary">
-                名称
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                Slug
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                描述
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                文章数
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                创建时间
-              </TableHead>
+              <TableHead className="text-text-secondary">名称</TableHead>
+              <TableHead className="text-text-secondary">Slug</TableHead>
+              <TableHead className="text-text-secondary">描述</TableHead>
+              <TableHead className="text-text-secondary">文章数</TableHead>
+              <TableHead className="text-text-secondary">创建时间</TableHead>
               <TableHead className="text-right text-text-secondary">
                 操作
               </TableHead>
@@ -204,7 +191,7 @@ export default function CategoryManagementPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => openEdit(category)}
+                        onClick={() => showCategoryModal(category)}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -239,13 +226,6 @@ export default function CategoryManagementPage() {
           />
         )}
       </GlassCard>
-
-      <CategoryDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        category={editingCategory}
-        onSuccess={() => mutate()}
-      />
 
       <DeleteAlert
         open={deleteOpen}
