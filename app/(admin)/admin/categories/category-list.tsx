@@ -4,21 +4,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
+import type { ColumnDef } from "@tanstack/react-table";
 import { getCategoriesAction } from "@/app/actions/category";
 import { type Category, type CategoryListReq } from "@/types/category";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
@@ -37,7 +31,10 @@ export default function CategoryManagementPage() {
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const name = searchParams.get("name") || undefined;
 
-  const { data, isLoading, mutate } = useSWR({ page, pageSize, name }, fetcher);
+  const { data, isLoading, mutate } = useSWR(
+    { page, pageSize, name },
+    fetcher,
+  );
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,20 +47,7 @@ export default function CategoryManagementPage() {
     } else {
       params.delete("name");
     }
-    params.set("page", "1"); // Reset to page 1 on search
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("pageSize", newPageSize.toString());
-    params.set("page", "1"); // Reset to page 1
+    params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
 
@@ -80,6 +64,68 @@ export default function CategoryManagementPage() {
       onSuccess: () => mutate(),
     });
   };
+
+  const columns: ColumnDef<Category>[] = [
+    {
+      accessorKey: "name",
+      header: "名称",
+      cell: ({ row }) => (
+        <span className="font-medium text-text">{row.original.name}</span>
+      ),
+    },
+    {
+      accessorKey: "slug",
+      header: "Slug",
+      cell: ({ row }) => (
+        <Badge variant="outline" className="border-accent text-accent">
+          {row.original.slug}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "blogCount",
+      header: "文章数",
+      cell: ({ row }) => row.original.blogCount,
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="创建时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="更新时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+    },
+    {
+      id: "actions",
+      enablePinning: true,
+      header: "操作",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => showCategoryModal(row.original)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openDelete(row.original.id)}
+            className="hover:bg-error/10 hover:text-error"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -105,7 +151,7 @@ export default function CategoryManagementPage() {
             <Input
               name="query"
               placeholder="搜索分类..."
-              defaultValue={name}
+              defaultValue={name || ""}
               className="pl-9"
             />
           </div>
@@ -121,9 +167,7 @@ export default function CategoryManagementPage() {
           </Button>
         </form>
         <Button
-          onClick={() => {
-            showCategoryModal();
-          }}
+          onClick={() => showCategoryModal()}
           className={`
             bg-accent text-white
             hover:bg-accent/90
@@ -135,97 +179,25 @@ export default function CategoryManagementPage() {
       </AppleCard>
 
       <AppleCard className="overflow-hidden p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-text-secondary">名称</TableHead>
-              <TableHead className="text-text-secondary">Slug</TableHead>
-              <TableHead className="text-text-secondary">文章数</TableHead>
-              <TableHead className="text-text-secondary">创建时间</TableHead>
-              <TableHead className="text-right text-text-secondary">
-                操作
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                </TableCell>
-              </TableRow>
-            ) : data?.lists?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  暂无数据
-                </TableCell>
-              </TableRow>
-            ) : (
-              data?.lists?.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium text-text">
-                    {category.name}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className="border-accent text-accent"
-                    >
-                      {category.slug}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-text">
-                    {category.blogCount}
-                  </TableCell>
-                  <TableCell className="text-text-secondary">
-                    {formatSimpleDateWithTime(new Date(category.createdAt))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => showCategoryModal(category)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(category.id)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </AppleCard>
-
-      <AppleCard className="p-2">
-        {data && (
-          <DataTablePagination
-            currentPage={page}
-            total={data.total}
-            pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+        {isLoading ? (
+          <div className="flex h-24 items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data?.lists || []}
+            showPagination={false}
+            emptyText="暂无分类"
           />
         )}
       </AppleCard>
+
+      {data && (
+        <div className="flex justify-center text-sm text-text-secondary">
+          共 {data.total} 条数据
+        </div>
+      )}
     </div>
   );
 }
