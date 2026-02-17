@@ -3,6 +3,7 @@
 import type {
   ColumnDef,
   ColumnFiltersState,
+  ColumnPinningState,
   SortingState,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -60,9 +61,17 @@ export function DataTable<TData, TValue>({
   containerClassName,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [columnPinning, setColumnPinning] =
+    React.useState<ColumnPinningState>({
+      left: [],
+      right: ["actions"],
+    });
 
   const table = useReactTable({
     data,
@@ -75,6 +84,7 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    onColumnPinningChange: setColumnPinning,
     initialState: {
       pagination: {
         pageSize,
@@ -85,6 +95,7 @@ export function DataTable<TData, TValue>({
       columnFilters,
       columnVisibility,
       rowSelection,
+      columnPinning,
     },
   });
 
@@ -96,12 +107,19 @@ export function DataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  const isPinned = header.column.getIsPinned();
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      data-pinned={isPinned || undefined}
+                      className={isPinned ? "z-10" : ""}
+                    >
                       {header.isPlaceholder
                         ? null
                         : (typeof header.column.columnDef.header === "function"
-                            ? header.column.columnDef.header(header.getContext())
+                            ? header.column.columnDef.header(
+                                header.getContext(),
+                              )
                             : header.column.columnDef.header) as React.ReactNode}
                     </TableHead>
                   );
@@ -116,13 +134,20 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {typeof cell.column.columnDef.cell === "function"
-                        ? cell.column.columnDef.cell(cell.getContext())
-                        : cell.column.columnDef.cell as React.ReactNode}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const isPinned = cell.column.getIsPinned();
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        data-pinned={isPinned || undefined}
+                        className={isPinned ? "z-10" : ""}
+                      >
+                        {typeof cell.column.columnDef.cell === "function"
+                          ? cell.column.columnDef.cell(cell.getContext())
+                          : (cell.column.columnDef.cell as React.ReactNode)}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
@@ -149,4 +174,8 @@ export function DataTable<TData, TValue>({
 }
 
 // Re-export types for convenience
-export type { ColumnDef, Row, Table as TableType } from "@tanstack/react-table";
+export type {
+  ColumnDef,
+  Row,
+  Table as TableType,
+} from "@tanstack/react-table";
