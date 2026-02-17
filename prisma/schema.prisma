@@ -1,3 +1,4 @@
+
 datasource db {
   provider = "mysql"
 }
@@ -9,90 +10,77 @@ generator client {
 
 model Blog {
   id        String    @id @default(cuid())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  title       String    @unique @db.VarChar(255)
-  slug        String    @unique @db.VarChar(255)
-  description String    @db.Text
-  cover       String?   @db.VarChar(255)
-  content     String    @db.LongText
-  published   Boolean   @default(false)
-  publishedAt DateTime? @map("published_at")
-  featured    Boolean   @default(false)
+  title       String  @unique @db.VarChar(255)
+  slug        String  @unique @db.VarChar(255)
+  description String  @db.Text
+  cover       String? @db.VarChar(255)
+  content     String  @db.LongText
+  published   Boolean @default(false)
 
-  categoryId String   @map("category_id")
+  categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
   tags BlogTag[]
-
-  @@map("blogs")
 }
 
 model Category {
   id        String    @id @default(cuid())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  name        String  @unique @db.VarChar(255)
-  slug        String  @unique @db.VarChar(255)
-  description String? @db.VarChar(255)
+  name String @unique @db.VarChar(255)
+  slug String @unique @db.VarChar(255)
 
   blogs Blog[]
-
-  @@map("categories")
 }
 
 model Tag {
   id        String    @id @default(cuid())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  name        String  @unique @db.VarChar(255)
-  slug        String  @unique @db.VarChar(255)
-  description String? @db.VarChar(255)
+  name String @unique @db.VarChar(255)
+  slug String @unique @db.VarChar(255)
 
   blogs BlogTag[]
-
-  @@map("tags")
 }
 
 model BlogTag {
-  blogId String @map("blog_id")
-  tagId  String @map("tag_id")
+  blogId String
+  tagId  String
 
   blog Blog @relation(fields: [blogId], references: [id])
   tag  Tag  @relation(fields: [tagId], references: [id])
 
   @@id([blogId, tagId])
-  @@map("blog_tags")
 }
 
 model Changelog {
   id        String    @id @default(cuid())
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   version String    @db.VarChar(50)
   content String    @db.Text
   date    DateTime?
-
-  @@map("changelogs")
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
+  id            String    @id
+  name          String    @db.Text
   email         String
-  emailVerified Boolean
+  emailVerified Boolean   @default(false)
   image         String?   @db.Text
-  createdAt     DateTime
-  updatedAt     DateTime
-  role          Role      @default(visitor)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          Int?
   sessions      Session[]
   accounts      Account[]
 
@@ -100,30 +88,26 @@ model User {
   @@map("user")
 }
 
-enum Role {
-  admin
-  visitor
-}
-
 model Session {
-  id        String   @id @default(cuid())
+  id        String   @id
   expiresAt DateTime
   token     String
-  createdAt DateTime
-  updatedAt DateTime
-  ipAddress String?
-  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?  @db.Text
+  userAgent String?  @db.Text
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
+  @@index([userId(length: 191)])
   @@map("session")
 }
 
 model Account {
-  id                    String    @id @default(cuid())
-  accountId             String
-  providerId            String
+  id                    String    @id
+  accountId             String    @db.Text
+  providerId            String    @db.Text
   userId                String
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?   @db.Text
@@ -131,21 +115,23 @@ model Account {
   idToken               String?   @db.Text
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
+  @@index([userId(length: 191)])
   @@map("account")
 }
 
 model Verification {
-  id         String    @id @default(cuid())
-  identifier String    @db.Text
-  value      String    @db.Text
+  id         String   @id
+  identifier String   @db.Text
+  value      String   @db.Text
   expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
+  @@index([identifier(length: 191)])
   @@map("verification")
 }

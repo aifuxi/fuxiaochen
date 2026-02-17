@@ -5,13 +5,13 @@ export interface User extends CommonModel {
   email: string;
   emailVerified: boolean;
   image?: string;
-  role: "admin" | "visitor";
+  role: number; // 1: admin, 2: normal
 }
 
 export interface UserListReq extends ListReq {
   name?: string;
   email?: string;
-  role?: "admin" | "visitor";
+  role?: number; // 1: admin, 2: normal
 }
 
 export interface UserListResp {
@@ -20,5 +20,5 @@ export interface UserListResp {
 }
 
 export interface UserUpdateReq {
-  role: "admin" | "visitor";
+  role: number; // 1: admin, 2: normal
 }

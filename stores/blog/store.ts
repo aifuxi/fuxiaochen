@@ -17,7 +17,6 @@ export class BlogStore implements IBlogStore {
       content,
       cover,
       published,
-      featured,
       categoryId,
       tags,
     } = data;
@@ -30,8 +29,6 @@ export class BlogStore implements IBlogStore {
         content,
         cover,
         published: published || false,
-        featured: featured || false,
-        publishedAt: published ? new Date() : null,
         category: {
           connect: { id: categoryId },
         },
@@ -150,8 +147,6 @@ export class BlogStore implements IBlogStore {
       categoryId,
       tagId,
       published,
-      featured,
-      featuredStatus,
     } = params || {};
 
     const skip = (page - 1) * pageSize;
@@ -159,9 +154,6 @@ export class BlogStore implements IBlogStore {
 
     if (title) where.title = { contains: title };
     if (published !== undefined) where.published = published;
-    if (featured !== undefined) where.featured = featured;
-    if (featuredStatus === "featured") where.featured = true;
-    if (featuredStatus === "unfeatured") where.featured = false;
     if (categoryId) where.categoryId = categoryId;
 
     if (tagId) {
@@ -207,32 +199,6 @@ export class BlogStore implements IBlogStore {
       where: { id: id },
       data: {
         published: !blog.published,
-        publishedAt: !blog.published ? new Date() : null,
-      },
-      include: {
-        category: true,
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-    });
-
-    return this.mapToDomain(updatedBlog);
-  }
-
-  async toggleFeature(id: string): Promise<Blog | null> {
-    const blog = await prisma.blog.findUnique({
-      where: { id: id },
-    });
-
-    if (!blog) return null;
-
-    const updatedBlog = await prisma.blog.update({
-      where: { id: id },
-      data: {
-        featured: !blog.featured,
       },
       include: {
         category: true,
@@ -255,7 +221,6 @@ export class BlogStore implements IBlogStore {
       createdAt: prismaModel.createdAt.toISOString(),
       updatedAt: prismaModel.updatedAt.toISOString(),
       deletedAt: prismaModel.deletedAt?.toISOString(),
-      publishedAt: prismaModel.publishedAt?.toISOString(),
       category: prismaModel.category
         ? {
             ...prismaModel.category,

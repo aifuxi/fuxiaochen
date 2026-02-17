@@ -21,7 +21,7 @@ export default async function AdminLayout({
       <AdminSidebar
         user={{
           name: session.user.name,
-          role: session.user.role || "visitor",
+          role: session.user.role ?? 2, // 2: normal (default)
           image: session.user.image,
         }}
       />

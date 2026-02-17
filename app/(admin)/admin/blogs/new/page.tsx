@@ -10,7 +10,7 @@ export default async function NewBlogPage() {
     headers: await headers(),
   });
 
-  if (session?.user?.role !== "admin") {
+  if (session?.user?.role !== 1) {
     redirect("/admin/blogs");
   }
 

@@ -116,6 +116,8 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 ### 认证权限
 
+**用户角色**：`role` 为整数类型，`1` = 管理员 (admin)，`2` = 普通用户 (normal)，默认为 `2`。
+
 使用 `checkAdmin()` 函数保护需要管理员权限的 Server Action：
 
 ```ts
@@ -123,12 +125,12 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 import { checkAdmin } from "@/lib/auth-guard";
 
 export async function createBlogAction(data: BlogCreateReq) {
-  await checkAdmin(); // 未登录或非管理员会抛出错误
+  await checkAdmin(); // 未登录或 role !== 1 会抛出错误
   // ...
 }
 ```
 
-首个注册的用户会自动获得 admin 权限。
+首个注册的用户会自动获得 admin 权限 (`role = 1`)。
 
 ### 数据库软删除
 

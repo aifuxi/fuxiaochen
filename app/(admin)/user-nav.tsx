@@ -20,7 +20,7 @@ import { authClient } from "@/lib/auth-client";
 interface UserNavProps {
   user: {
     name: string;
-    role: string;
+    role: number; // 1: admin, 2: normal
     image?: string | null;
   };
 }
@@ -64,7 +64,7 @@ export function UserNav({ user }: UserNavProps) {
           {user.name}
         </p>
         <p className="truncate text-xs text-text-secondary">
-          {user.role || "visitor"}
+          {user.role === 1 ? "Admin" : "Normal"}
         </p>
       </div>
       <AlertDialog>

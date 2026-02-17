@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  role: z.enum(["admin", "visitor"]),
+  role: z.number(), // 1: admin, 2: normal
 });
 
 interface UserDialogProps {
@@ -50,7 +50,7 @@ export const UserDialog = NiceModal.create(
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-        role: user?.role || "visitor",
+        role: user?.role ?? 2, // 2: normal (default)
       },
     });
 
@@ -108,8 +108,8 @@ export const UserDialog = NiceModal.create(
                       <SelectContent
                         className={`border-glass-border bg-glass-bg text-text`}
                       >
-                        <SelectItem value="visitor">Visitor</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="1">Admin</SelectItem>
+                        <SelectItem value="2">Normal</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage className="text-red-400" />
