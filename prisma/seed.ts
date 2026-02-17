@@ -113,7 +113,7 @@ async function main() {
         content: blog.content,
         published: blog.published,
         updatedAt: new Date(blog.updatedAt),
-        categoryId: blog.categoryId,
+        categoryId: blog.categoryID,
         tags: {
           deleteMany: {}, // Remove all existing relationships
           create: tagIds.map((t: any) => ({
@@ -131,7 +131,7 @@ async function main() {
         published: blog.published,
         createdAt: new Date(blog.createdAt),
         updatedAt: new Date(blog.updatedAt),
-        categoryId: blog.categoryId,
+        categoryId: blog.categoryID,
         tags: {
           create: tagIds.map((t: any) => ({
             tag: { connect: { id: t.tagId } },
