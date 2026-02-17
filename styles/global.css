@@ -78,6 +78,24 @@
   --color-text: var(--text-color);
   --color-text-secondary: var(--text-color-secondary);
   --color-text-tertiary: var(--text-color-tertiary);
+
+  /* Semantic Status Colors - Apple Human Interface */
+  --color-success: var(--success-color);
+  --color-success-hover: var(--success-hover-color);
+  --color-success-bg: var(--success-bg-color);
+  --color-success-border: var(--success-border-color);
+  --color-warning: var(--warning-color);
+  --color-warning-hover: var(--warning-hover-color);
+  --color-warning-bg: var(--warning-bg-color);
+  --color-warning-border: var(--warning-border-color);
+  --color-error: var(--error-color);
+  --color-error-hover: var(--error-hover-color);
+  --color-error-bg: var(--error-bg-color);
+  --color-error-border: var(--error-border-color);
+  --color-info: var(--info-color);
+  --color-info-hover: var(--info-hover-color);
+  --color-info-bg: var(--info-bg-color);
+  --color-info-border: var(--info-border-color);
 }
 
 /* Base Variables & Theme Setup - Apple Human Interface */
@@ -92,9 +110,30 @@
   --text-color: #1d1d1f;
   --text-color-secondary: #6e6e73;
   --text-color-tertiary: #86868b;
+
+  /* Success - Green (Apple System Green) */
   --success-color: #34c759;
+  --success-hover-color: #2db14e;
+  --success-bg-color: #e3f9e8;
+  --success-border-color: #b8e8c2;
+
+  /* Warning - Orange (Apple System Orange) */
   --warning-color: #ff9500;
+  --warning-hover-color: #e68600;
+  --warning-bg-color: #fff4e6;
+  --warning-border-color: #ffd699;
+
+  /* Error - Red (Apple System Red) */
   --error-color: #ff3b30;
+  --error-hover-color: #e5352b;
+  --error-bg-color: #ffe5e4;
+  --error-border-color: #ffb4b1;
+
+  /* Info - Blue (Apple System Blue) */
+  --info-color: #007aff;
+  --info-hover-color: #006ed6;
+  --info-bg-color: #e5f1ff;
+  --info-border-color: #99c7ff;
 
   /* Syntax Highlighting - Light */
   --hljs-color: #24292f;
@@ -125,9 +164,30 @@
   --text-color: #f5f5f7;
   --text-color-secondary: #98989d;
   --text-color-tertiary: #86868b;
+
+  /* Success - Green (Apple System Green Dark) */
   --success-color: #30d158;
+  --success-hover-color: #28b747;
+  --success-bg-color: #0d2818;
+  --success-border-color: #1e5030;
+
+  /* Warning - Orange (Apple System Orange Dark) */
   --warning-color: #ff9f0a;
+  --warning-hover-color: #e68a00;
+  --warning-bg-color: #2d1f0a;
+  --warning-border-color: #5c3f15;
+
+  /* Error - Red (Apple System Red Dark) */
   --error-color: #ff453a;
+  --error-hover-color: #e53d33;
+  --error-bg-color: #2d0a0a;
+  --error-border-color: #5c1f1f;
+
+  /* Info - Blue (Apple System Blue Dark) */
+  --info-color: #0a84ff;
+  --info-hover-color: #409cff;
+  --info-bg-color: #0a1f3d;
+  --info-border-color: #1e4a80;
 
   /* Syntax Highlighting - Dark */
   --hljs-color: #c9d1d9;
