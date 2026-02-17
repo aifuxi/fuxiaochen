@@ -113,6 +113,7 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - Tailwind CSS 类检查（`@/styles/global.css` 作为入口点）
 - 文件命名强制 `KEBAB_CASE`
 - 类型导入使用 `type` 关键字 (`import type { ... }`)
+- 遇到 ESLint 问题时，可执行 `pnpm lint:fix` 尝试自动修复
 
 ## 认证权限
 
