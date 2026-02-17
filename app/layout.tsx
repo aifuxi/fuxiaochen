@@ -1,21 +1,7 @@
-import type { Metadata } from "next";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Toaster } from "sonner";
-import { ModalProvider } from "@/components/modal-provider";
-import { ThemeProvider } from "@/components/theme-provider";
-import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
 import "@/styles/global.css";
-
-export const metadata: Metadata = {
-  title: {
-    template: `%s | ${WEBSITE}`,
-    default: WEBSITE,
-  },
-  description: SLOGAN,
-  keywords: NICKNAME,
-};
 
 export const viewport = {
   width: "device-width",
@@ -61,23 +47,7 @@ export default function RootLayout({
             />
           )}
       </head>
-      <body
-        className={`
-          bg-[var(--bg-color)] text-[var(--text-color)] antialiased
-          selection:bg-[var(--accent-color)] selection:text-white
-          ${isProduction() ? "" : "debug-screens"}
-        `}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ModalProvider>{children}</ModalProvider>
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
-      </body>
+      <body>{children}</body>
 
       {/* Google Analytics  */}
       {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
