@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "首页" },
-  { href: "/changelogs", label: "更新日志" },
+  { href: "/changelog", label: "更新日志" },
 ];
 
 export function Header() {
