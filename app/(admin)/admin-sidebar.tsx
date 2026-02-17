@@ -7,7 +7,6 @@ import {
   FileText,
   FolderTree,
   LayoutDashboard,
-  Palette,
   Tag,
   Users,
 } from "lucide-react";
@@ -22,7 +21,6 @@ const navItems = [
   { href: "/admin/blogs", label: "博客管理", icon: FileText },
   { href: "/admin/changelogs", label: "更新日志", icon: Clock9 },
   { href: "/admin/users", label: "用户管理", icon: Users },
-  { href: "/admin/ui-preview", label: "组件预览", icon: Palette },
 ];
 
 interface AdminSidebarProps {
@@ -75,10 +73,12 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                   `,
               )}
             >
-              <item.icon className={`
-                h-5 w-5 transition-transform
-                ${isActive ? "scale-100" : "group-hover:scale-105"}
-              `} />
+              <item.icon
+                className={`
+                  h-5 w-5 transition-transform
+                  ${isActive ? "scale-100" : "group-hover:scale-105"}
+                `}
+              />
               {item.label}
             </Link>
           );
