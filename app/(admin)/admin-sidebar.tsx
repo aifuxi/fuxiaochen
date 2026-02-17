@@ -25,7 +25,7 @@ const navItems = [
 interface AdminSidebarProps {
   user: {
     name: string;
-    role: string;
+    role: number; // 1: admin, 2: normal
     image?: string | null;
   };
 }

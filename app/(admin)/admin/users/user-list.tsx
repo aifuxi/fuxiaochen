@@ -176,9 +176,9 @@ export default function UserManagementPage() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={user.role === "admin" ? "default" : "secondary"}
+                      variant={user.role === 1 ? "default" : "secondary"}
                     >
-                      {user.role}
+                      {user.role === 1 ? "Admin" : "Normal"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-text-secondary">

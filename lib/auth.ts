@@ -25,7 +25,7 @@ export const auth = betterAuth({
           if (userCount === 1) {
             await prisma.user.update({
               where: { id: user.id },
-              data: { role: "admin" },
+              data: { role: 1 }, // 1: admin
             });
           }
         },
@@ -35,7 +35,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        type: "string",
+        type: "number",
       },
     },
   },

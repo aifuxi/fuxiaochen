@@ -69,6 +69,8 @@ export class UserStore implements IUserStore {
   private mapToDomain(prismaModel: any): User {
     return {
       ...prismaModel,
+      id: prismaModel.id.toString(),
+      role: Number(prismaModel.role), // role is Int in schema
       createdAt: prismaModel.createdAt.toISOString(),
       updatedAt: prismaModel.updatedAt.toISOString(),
       // User doesn't have deletedAt

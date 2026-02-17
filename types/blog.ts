@@ -9,9 +9,7 @@ export interface Blog extends CommonModel {
   cover?: string;
   content: string;
   published: boolean;
-  featured: boolean;
-  publishedAt?: string;
-  categoryID: string;
+  categoryId: string;
   category?: Category;
   tags?: Tag[];
 }
@@ -22,9 +20,7 @@ export interface BlogListReq extends ListReq {
   categoryId?: string;
   tagId?: string;
   blogIDs?: string[];
-  featuredStatus?: "featured" | "unfeatured";
   published?: boolean;
-  featured?: boolean;
 }
 
 export interface BlogListResp {
@@ -39,15 +35,6 @@ export interface BlogCreateReq {
   cover?: string;
   content: string;
   published: boolean;
-  featured: boolean;
   categoryId: string;
   tags?: string[];
-}
-
-export interface BlogPublishedReq {
-  published: boolean;
-}
-
-export interface BlogFeaturedReq {
-  featured: boolean;
 }

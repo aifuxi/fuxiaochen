@@ -13,5 +13,4 @@ export interface IBlogStore {
   findBySlug(slug: string): Promise<Blog | null>;
   findAll(params?: BlogListReq): Promise<BlogListResp>;
   togglePublish(id: string): Promise<Blog | null>;
-  toggleFeature(id: string): Promise<Blog | null>;
 }

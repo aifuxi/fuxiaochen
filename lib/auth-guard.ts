@@ -5,7 +5,7 @@ export async function checkAdmin() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  if (session?.user?.role !== "admin") {
+  if (session?.user?.role !== 1) {
     throw new Error("无权限进行此操作");
   }
   return session;
