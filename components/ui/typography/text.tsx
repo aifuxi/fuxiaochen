@@ -31,13 +31,15 @@ const textVariants = cva("transition-colors duration-200", {
 });
 
 export interface TextProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof textVariants> {
+  extends React.HTMLAttributes<HTMLElement>, VariantProps<typeof textVariants> {
   as?: "span" | "p" | "div";
 }
 
 const Text = React.forwardRef<HTMLSpanElement, TextProps>(
-  ({ className, type, size, weight, as: Component = "span", ...props }, ref) => {
+  (
+    { className, type, size, weight, as: Component = "span", ...props },
+    ref,
+  ) => {
     return (
       <Component
         className={cn(textVariants({ type, size, weight, className }))}
