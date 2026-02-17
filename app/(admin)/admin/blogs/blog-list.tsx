@@ -7,7 +7,7 @@ import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getBlogsAction } from "@/app/actions/blog";
-import { type BlogListReq } from "@/types/blog";
+import { type Blog, type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,7 +65,7 @@ export default function BlogManagementPage() {
     });
   };
 
-  const columns: ColumnDef<NonNullable<typeof data>["lists"][number]>[] = [
+  const columns: ColumnDef<Blog>[] = [
     {
       accessorKey: "title",
       header: "标题",
