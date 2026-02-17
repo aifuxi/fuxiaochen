@@ -18,7 +18,7 @@ export function TableOfContents() {
     const timer = setTimeout(() => {
       const elements = Array.from(
         document.querySelectorAll(
-          ".glass-prose h1, .glass-prose h2, .glass-prose h3",
+          ".apple-prose h1, .apple-prose h2, .apple-prose h3",
         ),
       );
 
@@ -63,9 +63,7 @@ export function TableOfContents() {
 
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
-      <div
-        className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-accent"
-      >
+      <div className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-accent">
         <div className="h-2 w-2 rounded-full bg-accent" />
         目录
       </div>

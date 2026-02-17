@@ -20,7 +20,7 @@ const plugins = [
 
 export default function BlogContent({ content }: { content: string }) {
   return (
-    <div className="glass-prose mx-auto w-full">
+    <div className="apple-prose mx-auto w-full">
       <Viewer value={content} plugins={plugins} />
     </div>
   );
