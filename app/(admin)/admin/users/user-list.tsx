@@ -4,21 +4,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
+import type { ColumnDef } from "@tanstack/react-table";
 import { getUsersAction } from "@/app/actions/user";
 import { type User, type UserListReq } from "@/types/user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 import { UserDialog } from "./user-dialog";
@@ -50,20 +44,7 @@ export default function UserManagementPage() {
     } else {
       params.delete("name");
     }
-    params.set("page", "1"); // Reset to page 1 on search
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("pageSize", newPageSize.toString());
-    params.set("page", "1"); // Reset to page 1
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
+    params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
 
@@ -80,6 +61,82 @@ export default function UserManagementPage() {
       onSuccess: () => mutate(),
     });
   };
+
+  const columns: ColumnDef<User>[] = [
+    {
+      accessorKey: "name",
+      header: "用户",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          {row.original.image && (
+            <img
+              src={row.original.image}
+              alt={row.original.name}
+              className="h-6 w-6 rounded-full"
+            />
+          )}
+          <span className="font-medium text-text">{row.original.name}</span>
+        </div>
+      ),
+    },
+    {
+      accessorKey: "email",
+      header: "邮箱",
+      cell: ({ row }) => (
+        <span className="text-text-secondary">{row.original.email}</span>
+      ),
+    },
+    {
+      accessorKey: "role",
+      header: "角色",
+      cell: ({ row }) => (
+        <Badge
+          variant={row.original.role === 1 ? "default" : "secondary"}
+        >
+          {row.original.role === 1 ? "Admin" : "Normal"}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="注册时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="更新时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+    },
+    {
+      id: "actions",
+      enablePinning: true,
+      header: "操作",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openEdit(row.original)}
+            className="hover:bg-accent/10 hover:text-accent"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openDelete(row.original.id)}
+            className="hover:bg-error/10 hover:text-error"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -107,7 +164,7 @@ export default function UserManagementPage() {
             <Input
               name="query"
               placeholder="搜索用户..."
-              defaultValue={name}
+              defaultValue={name || ""}
               className="pl-9"
             />
           </div>
@@ -125,107 +182,25 @@ export default function UserManagementPage() {
       </AppleCard>
 
       <AppleCard className="overflow-hidden p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-text-secondary">用户</TableHead>
-              <TableHead className="text-text-secondary">邮箱</TableHead>
-              <TableHead className="text-text-secondary">角色</TableHead>
-              <TableHead className="text-text-secondary">注册时间</TableHead>
-              <TableHead className="text-right text-text-secondary">
-                操作
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                </TableCell>
-              </TableRow>
-            ) : data?.lists?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  暂无数据
-                </TableCell>
-              </TableRow>
-            ) : (
-              data?.lists?.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium text-text">
-                    <div className="flex items-center gap-2">
-                      {user.image && (
-                        <img
-                          src={user.image}
-                          alt={user.name}
-                          className="h-6 w-6 rounded-full"
-                        />
-                      )}
-                      {user.name}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-text-secondary">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={user.role === 1 ? "default" : "secondary"}
-                    >
-                      {user.role === 1 ? "Admin" : "Normal"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-text-secondary">
-                    {formatSimpleDateWithTime(new Date(user.createdAt))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEdit(user)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-accent/10 hover:text-accent
-                        `}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(user.id)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        {isLoading ? (
+          <div className="flex h-24 items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data?.lists || []}
+            showPagination={false}
+            emptyText="暂无用户"
+          />
+        )}
       </AppleCard>
 
-      <AppleCard className="p-2">
-        <DataTablePagination
-          currentPage={page}
-          pageSize={pageSize}
-          total={data?.total || 0}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      </AppleCard>
+      {data && (
+        <div className="flex justify-center text-sm text-text-secondary">
+          共 {data.total} 条数据
+        </div>
+      )}
     </div>
   );
 }
