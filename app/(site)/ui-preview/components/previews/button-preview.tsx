@@ -14,6 +14,7 @@ export function ButtonPreview() {
         <Button variant="secondary">Secondary</Button>
         <Button variant="ghost">Ghost</Button>
         <Button variant="outline">Outline</Button>
+        <Button variant="destructive">Destructive</Button>
       </PreviewCard>
 
       <PreviewCard title="Button Sizes">

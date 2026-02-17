@@ -8,6 +8,7 @@ import { DialogPreview } from "./components/previews/dialog-preview";
 import { TypographyPreview } from "./components/previews/typography-preview";
 import { FormPreview } from "./components/previews/form-preview";
 import { LayoutPreview } from "./components/previews/layout-preview";
+import { DataTablePreview } from "./components/previews/data-table-preview";
 
 export default function UIPreviewPage() {
   return (
@@ -50,6 +51,14 @@ export default function UIPreviewPage() {
         description="Layout and utility components"
       >
         <LayoutPreview />
+      </SectionWrapper>
+
+      <SectionWrapper
+        id="data-table"
+        title="Data Table"
+        description="Advanced data table with sorting, filtering, and pagination"
+      >
+        <DataTablePreview />
       </SectionWrapper>
     </div>
   );

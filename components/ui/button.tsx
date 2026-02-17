@@ -30,6 +30,10 @@ const buttonVariants = cva(
           border border-border bg-transparent text-text
           hover:bg-surface
         `,
+        destructive: `
+          hover:bg-error-hover-color
+          bg-error text-white shadow-sm
+        `,
       },
       size: {
         default: "px-5 py-2.5",
