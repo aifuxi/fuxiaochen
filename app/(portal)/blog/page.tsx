@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { BlogList } from "@/components/blog/blog-list";
 import { BlogListSkeleton } from "@/components/blog/blog-list-skeleton";
 
@@ -64,19 +64,19 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             `}
           >
             {/* Categories */}
-            <GlassCard className="p-6">
+            <AppleCard className="p-6">
               <h3 className="mb-4 font-bold text-text">分类</h3>
               <div className="space-y-1">
                 <Link
                   href={tagSlug ? `/blog?tag=${tagSlug}` : "/blog"}
                   className={`
-                    block rounded-2xl px-3 py-2 text-sm transition-all duration-200
+                    block rounded-xl px-3 py-2 text-sm transition-all duration-200
                     ${
                       !categorySlug
                         ? "bg-accent font-medium text-white shadow-md"
                         : `
                           text-text-secondary
-                          hover:bg-glass-border hover:text-text
+                          hover:bg-surface hover:text-text
                         `
                     }
                   `}
@@ -88,13 +88,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                     key={cat.id}
                     href={`/blog?category=${cat.slug}${tagSlug ? `&tag=${tagSlug}` : ""}`}
                     className={`
-                      flex items-center justify-between rounded-2xl px-3 py-2 text-sm transition-all duration-200
+                      flex items-center justify-between rounded-xl px-3 py-2 text-sm transition-all duration-200
                       ${
                         categorySlug === cat.slug
                           ? "bg-accent font-medium text-white shadow-md"
                           : `
                             text-text-secondary
-                            hover:bg-glass-border hover:text-text
+                            hover:bg-surface hover:text-text
                           `
                       }
                     `}
@@ -111,10 +111,10 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   </Link>
                 ))}
               </div>
-            </GlassCard>
+            </AppleCard>
 
             {/* Tags */}
-            <GlassCard className="p-6">
+            <AppleCard className="p-6">
               <h3 className="mb-4 font-bold text-text">标签</h3>
               <div className="flex flex-wrap gap-2">
                 <Link
@@ -127,8 +127,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                       !tagSlug
                         ? "bg-accent text-white shadow-sm"
                         : `
-                          bg-glass-border text-text-secondary
-                          hover:border-glass-border hover:bg-glass-border hover:text-text hover:brightness-95
+                          bg-surface text-text-secondary
+                          hover:border-border hover:bg-surface hover:text-text hover:brightness-95
                         `
                     }
                   `}
@@ -145,8 +145,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                         tagSlug === tag.slug
                           ? "bg-accent text-white shadow-sm"
                           : `
-                            bg-glass-border text-text-secondary
-                            hover:border-glass-border hover:bg-glass-border hover:text-text hover:brightness-95
+                            bg-surface text-text-secondary
+                            hover:border-border hover:bg-surface hover:text-text hover:brightness-95
                           `
                       }
                     `}
@@ -155,7 +155,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   </Link>
                 ))}
               </div>
-            </GlassCard>
+            </AppleCard>
           </aside>
 
           {/* Blog Grid */}

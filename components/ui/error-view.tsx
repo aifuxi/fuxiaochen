@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 
 interface ErrorViewProps {
   code?: string;
@@ -16,7 +16,7 @@ interface ErrorViewProps {
 export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
   return (
     <div className="flex min-h-[80vh] items-center justify-center p-4">
-      <GlassCard className="w-full max-w-md p-12 text-center">
+      <AppleCard className="w-full max-w-md p-12 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -71,7 +71,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             )}
           </div>
         </motion.div>
-      </GlassCard>
+      </AppleCard>
     </div>
   );
 }

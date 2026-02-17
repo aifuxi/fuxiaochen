@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Github, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
       />
 
       <div className="w-full max-w-md">
-        <GlassCard className="rounded-2xl p-8 backdrop-blur-xl">
+        <AppleCard className="rounded-xl p-8">
           <div className="relative z-10 mb-8 text-center">
             <div
               className={`mb-4 inline-flex items-center justify-center rounded-full bg-accent/10 px-4 py-1`}
@@ -106,7 +106,7 @@ export default function LoginPage() {
                     onChange={(e) => setName(e.target.value)}
                     required
                     className={`
-                      rounded-2xl border-glass-border bg-glass-bg text-text
+                      rounded-xl border-border bg-surface text-text
                       placeholder:text-gray-400
                       focus:border-accent focus:ring-accent/20
                     `}
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className={`
-                    rounded-2xl border-glass-border bg-glass-bg text-text
+                    rounded-xl border-border bg-surface text-text
                     placeholder:text-gray-400
                     focus:border-accent focus:ring-accent/20
                   `}
@@ -135,7 +135,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className={`
-                    rounded-2xl border-glass-border bg-glass-bg text-text
+                    rounded-xl border-border bg-surface text-text
                     placeholder:text-gray-400
                     focus:border-accent focus:ring-accent/20
                   `}
@@ -146,7 +146,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className={`
-                  w-full rounded-2xl bg-accent text-white transition-all duration-200
+                  w-full rounded-xl bg-accent text-white transition-all duration-200
                   hover:-translate-y-0.5 hover:bg-accent/90 hover:shadow-lg
                 `}
               >
@@ -160,17 +160,17 @@ export default function LoginPage() {
             </form>
 
             <div className="relative flex items-center py-2">
-              <div className="grow border-t border-glass-border"></div>
+              <div className="grow border-t border-border"></div>
               <span className="shrink-0 px-4 text-xs font-medium text-text-secondary uppercase">
                 Or continue with
               </span>
-              <div className="grow border-t border-glass-border"></div>
+              <div className="grow border-t border-border"></div>
             </div>
 
             <Button
               variant="outline"
               className={`
-                h-11 w-full border-glass-border bg-glass-bg text-text
+                h-11 w-full border-border bg-surface text-text
                 hover:border-accent hover:bg-accent/5 hover:text-accent
               `}
               onClick={handleSocialSignIn}
@@ -201,7 +201,7 @@ export default function LoginPage() {
           <div className="mt-8 text-center text-xs text-text-secondary opacity-70">
             <p>访问系统即代表您同意相关协议。</p>
           </div>
-        </GlassCard>
+        </AppleCard>
       </div>
     </main>
   );

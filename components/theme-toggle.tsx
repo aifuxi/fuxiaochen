@@ -17,7 +17,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "h-12 w-32 rounded-full border border-glass-border bg-glass-bg",
+          "h-12 w-32 rounded-lg border border-border bg-surface",
           className,
         )}
       />
@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-full glass-panel border-glass-border p-1",
+        "flex items-center rounded-lg border border-border bg-surface p-1",
         className,
       )}
     >
@@ -51,7 +51,7 @@ export function ThemeToggle({ className }: { className?: string }) {
                 ? "bg-accent text-white shadow-md"
                 : `
                   text-text-secondary
-                  hover:bg-glass-bg/50 hover:text-text
+                  hover:bg-surface/50 hover:text-text
                 `,
             )}
             aria-label={`Switch to ${mode.name} theme`}

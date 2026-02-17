@@ -25,12 +25,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
   slug: z.string().min(1, "Slug 不能为空"),
-  description: z.string().optional(),
 });
 
 interface TagDialogProps {
@@ -48,7 +46,6 @@ export const TagDialog = NiceModal.create(
       defaultValues: {
         name: tag?.name || "",
         slug: tag?.slug || "",
-        description: tag?.description || "",
       },
     });
 
@@ -91,7 +88,7 @@ export const TagDialog = NiceModal.create(
                       <Input
                         {...field}
                         className={`
-                          border-glass-border bg-glass-bg text-text
+                          border-border bg-surface text-text
                           focus:border-accent focus:ring-accent/20
                         `}
                         placeholder="React"
@@ -111,30 +108,10 @@ export const TagDialog = NiceModal.create(
                       <Input
                         {...field}
                         className={`
-                          border-glass-border bg-glass-bg text-text
+                          border-border bg-surface text-text
                           focus:border-accent focus:ring-accent/20
                         `}
                         placeholder="react"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-text-secondary">描述</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        className={`
-                          resize-none border-glass-border bg-glass-bg text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
-                        placeholder="标签描述..."
                       />
                     </FormControl>
                     <FormMessage />
@@ -147,8 +124,8 @@ export const TagDialog = NiceModal.create(
                   variant="outline"
                   onClick={() => modal.remove()}
                   className={`
-                    border-glass-border bg-transparent text-text-secondary
-                    hover:bg-glass-border hover:text-text
+                    border-border bg-transparent text-text-secondary
+                    hover:bg-surface hover:text-text
                   `}
                 >
                   取消
@@ -160,7 +137,6 @@ export const TagDialog = NiceModal.create(
                     bg-accent text-white
                     hover:bg-accent/90
                   `}
-                  hoverEffect="up"
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

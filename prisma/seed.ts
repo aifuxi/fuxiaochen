@@ -47,14 +47,12 @@ async function main() {
       update: {
         name: cat.name,
         slug: cat.slug,
-        description: cat.description,
         updatedAt: new Date(cat.updatedAt),
       },
       create: {
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
-        description: cat.description,
         createdAt: new Date(cat.createdAt),
         updatedAt: new Date(cat.updatedAt),
       },
@@ -70,14 +68,12 @@ async function main() {
       update: {
         name: tag.name,
         slug: tag.slug,
-        description: tag.description,
         updatedAt: new Date(tag.updatedAt),
       },
       create: {
         id: tag.id,
         name: tag.name,
         slug: tag.slug,
-        description: tag.description,
         createdAt: new Date(tag.createdAt),
         updatedAt: new Date(tag.updatedAt),
       },
@@ -88,7 +84,6 @@ async function main() {
   // 3. Seed Blogs
   console.log("Seeding Blogs...");
   for (const blog of blogsData.data.lists) {
-    const publishedAt = blog.publishedAt ? new Date(blog.publishedAt) : null;
 
     // Construct tag connections
     // blog.tags can be null or array
@@ -117,10 +112,8 @@ async function main() {
         cover: blog.cover || "",
         content: blog.content,
         published: blog.published,
-        publishedAt: publishedAt,
-        featured: blog.featured,
         updatedAt: new Date(blog.updatedAt),
-        categoryId: blog.categoryID,
+        categoryId: blog.categoryId,
         tags: {
           deleteMany: {}, // Remove all existing relationships
           create: tagIds.map((t: any) => ({
@@ -136,11 +129,9 @@ async function main() {
         cover: blog.cover || "",
         content: blog.content,
         published: blog.published,
-        publishedAt: publishedAt,
-        featured: blog.featured,
         createdAt: new Date(blog.createdAt),
         updatedAt: new Date(blog.updatedAt),
-        categoryId: blog.categoryID,
+        categoryId: blog.categoryId,
         tags: {
           create: tagIds.map((t: any) => ({
             tag: { connect: { id: t.tagId } },

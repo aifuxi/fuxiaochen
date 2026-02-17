@@ -18,7 +18,7 @@ function Switch({
           focus-visible:ring-4 focus-visible:ring-accent/20
           disabled:cursor-not-allowed disabled:opacity-50
           data-[state=checked]:bg-accent
-          data-[state=unchecked]:bg-glass-border
+          data-[state=unchecked]:bg-border
         `,
         className,
       )}

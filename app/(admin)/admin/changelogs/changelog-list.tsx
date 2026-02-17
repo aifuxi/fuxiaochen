@@ -7,7 +7,7 @@ import useSWR from "swr";
 import { getChangelogsAction } from "@/app/actions/changelog";
 import { type Changelog } from "@/types/changelog";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -103,7 +103,7 @@ export default function ChangelogManagementPage() {
         <p className="text-text-secondary">管理系统更新日志</p>
       </div>
 
-      <GlassCard
+      <AppleCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -126,7 +126,7 @@ export default function ChangelogManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-glass-border bg-glass-bg text-text
+              border border-border bg-surface text-text
               hover:bg-accent/5 hover:text-accent
             `}
           >
@@ -139,14 +139,13 @@ export default function ChangelogManagementPage() {
             bg-accent text-white
             hover:bg-accent/90
           `}
-          hoverEffect="up"
         >
           <Plus className="mr-2 h-4 w-4" />
           新建日志
         </Button>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="overflow-hidden p-0">
+      <AppleCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -197,8 +196,8 @@ export default function ChangelogManagementPage() {
                 <TableRow
                   key={changelog.id}
                   className={`
-                    border-glass-border
-                    hover:bg-glass-bg
+                    border-border
+                    hover:bg-surface
                   `}
                 >
                   <TableCell className="font-medium text-text">
@@ -239,9 +238,9 @@ export default function ChangelogManagementPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="p-2">
+      <AppleCard className="p-2">
         {data && (
           <DataTablePagination
             currentPage={page}
@@ -251,7 +250,7 @@ export default function ChangelogManagementPage() {
             onPageSizeChange={handlePageSizeChange}
           />
         )}
-      </GlassCard>
+      </AppleCard>
 
     </div>
   );

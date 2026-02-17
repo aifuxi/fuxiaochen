@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { toPng } from "html-to-image";
 import { Download, Image as ImageIcon, RefreshCw, Type } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -134,7 +134,7 @@ export default function CoverGeneratorPage() {
         >
           {/* Controls Panel */}
           <div className="lg:col-span-1">
-            <GlassCard className="space-y-6 p-6">
+            <AppleCard className="space-y-6 p-6">
               <div className="flex items-center gap-2 font-semibold text-text">
                 <RefreshCw className="h-5 w-5" />
                 <span>Configuration</span>
@@ -152,7 +152,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="border-glass-border bg-glass-bg"
+                    className="border-border bg-surface"
                   />
                 </div>
                 <div className="space-y-2">
@@ -160,7 +160,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
-                    className="border-glass-border bg-glass-bg"
+                    className="border-border bg-surface"
                   />
                 </div>
                 <div className="space-y-2">
@@ -168,7 +168,7 @@ export default function CoverGeneratorPage() {
                   <Input
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
-                    className="border-glass-border bg-glass-bg"
+                    className="border-border bg-surface"
                   />
                 </div>
               </div>
@@ -186,7 +186,7 @@ export default function CoverGeneratorPage() {
                     value={bgStyle}
                     onValueChange={(val) => val && setBgStyle(val)}
                   >
-                    <SelectTrigger className="border-glass-border bg-glass-bg">
+                    <SelectTrigger className="border-border bg-surface">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -203,7 +203,7 @@ export default function CoverGeneratorPage() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-3`}
+                  className={`flex items-center justify-between rounded-lg border border-border bg-surface p-3`}
                 >
                   <Label className="cursor-pointer">Glitch Effect</Label>
                   <Switch
@@ -213,7 +213,7 @@ export default function CoverGeneratorPage() {
                 </div>
 
                 <div
-                  className={`flex items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-3`}
+                  className={`flex items-center justify-between rounded-lg border border-border bg-surface p-3`}
                 >
                   <Label className="cursor-pointer">Border Frame</Label>
                   <Switch
@@ -239,14 +239,14 @@ export default function CoverGeneratorPage() {
                   </>
                 )}
               </Button>
-            </GlassCard>
+            </AppleCard>
           </div>
 
           {/* Preview Panel */}
           <div className="lg:col-span-2">
             <div
               className={`
-                flex items-center justify-center rounded-2xl border border-glass-border bg-glass-bg p-4
+                flex items-center justify-center rounded-xl border border-border bg-surface p-4
                 lg:p-12
               `}
             >
@@ -271,12 +271,7 @@ export default function CoverGeneratorPage() {
                 )}
 
                 {/* Content Layer */}
-                <div
-                  className={`
-                    relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center
-                    backdrop-blur-[0px]
-                  `}
-                >
+                <div className="relative z-10 flex h-full w-full flex-col items-center justify-center p-12 text-center">
                   {/* Main Text */}
                   <h1
                     className={`

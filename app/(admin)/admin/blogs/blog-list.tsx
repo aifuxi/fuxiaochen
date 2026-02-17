@@ -9,7 +9,6 @@ import { getBlogsAction } from "@/app/actions/blog";
 import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -22,6 +21,7 @@ import {
 import { DataTablePagination } from "@/components/admin/data-table-pagination";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
+import { AppleCard } from "@/components/ui/glass-card";
 
 const fetcher = async (params: BlogListReq) => {
   const res = await getBlogsAction(params);
@@ -111,7 +111,7 @@ export default function BlogManagementPage() {
       </div>
 
       {/* Filter Section */}
-      <GlassCard
+      <AppleCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -134,7 +134,7 @@ export default function BlogManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-glass-border bg-glass-bg text-text
+              border border-border bg-surface text-text
               hover:bg-accent/5 hover:text-accent
             `}
           >
@@ -147,21 +147,20 @@ export default function BlogManagementPage() {
               bg-accent text-white
               hover:bg-accent/90
             `}
-            hoverEffect="up"
           >
             <Plus className="mr-2 h-4 w-4" /> 新建文章
           </Button>
         </Link>
-      </GlassCard>
+      </AppleCard>
 
       {/* Table Section */}
-      <GlassCard className="overflow-hidden p-0">
+      <AppleCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow
               className={`
-                border-glass-border
-                hover:bg-glass-bg
+                border-border
+                hover:bg-surface
               `}
             >
               <TableHead className="text-text-secondary">标题</TableHead>
@@ -206,7 +205,7 @@ export default function BlogManagementPage() {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-glass-border
+                    border-border
                     hover:bg-accent/5
                   `}
                 >
@@ -249,7 +248,7 @@ export default function BlogManagementPage() {
                             bg-accent/20 text-accent
                             hover:bg-accent/30
                           `
-                          : "bg-glass-border text-text-secondary"
+                          : "bg-surface text-text-secondary"
                       }
                     >
                       {blog.published ? "已发布" : "草稿"}
@@ -298,10 +297,10 @@ export default function BlogManagementPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
 
       {/* Pagination Section */}
-      <GlassCard className="p-2">
+      <AppleCard className="p-2">
         {data && (
           <DataTablePagination
             currentPage={page}
@@ -311,7 +310,7 @@ export default function BlogManagementPage() {
             onPageSizeChange={handlePageSizeChange}
           />
         )}
-      </GlassCard>
+      </AppleCard>
 
       <DeleteAlert
         id={deletingId}

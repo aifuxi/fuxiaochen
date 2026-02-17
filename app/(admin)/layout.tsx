@@ -27,7 +27,7 @@ export default async function AdminLayout({
       />
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 transition-all duration-300">
+      <main className="ml-64 flex-1">
         <div className="p-8">
           <div className="min-h-[calc(100vh-8rem)]">{children}</div>
         </div>

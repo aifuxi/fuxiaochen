@@ -11,6 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import { WEBSITE } from "@/constants/info";
+import { cn } from "@/lib/utils";
 import { UserNav } from "./user-nav";
 
 const navItems = [
@@ -35,13 +36,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-glass-border bg-glass-bg backdrop-blur-xl`}
+      className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-surface`}
     >
-      <div className="flex h-16 items-center border-b border-glass-border px-6">
+      <div className="flex h-16 items-center border-b border-border px-6">
         <Link
           href="/"
           target="_blank"
-          className="text-xl font-bold tracking-tight text-text uppercase"
+          className="text-lg font-semibold tracking-tight text-text"
         >
           <span className="text-accent">{WEBSITE}</span>
           后台管理
@@ -59,31 +60,30 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`
-                group flex items-center gap-3 rounded-full px-4 py-3 text-sm font-medium transition-all duration-300
-                ${
-                  isActive
-                    ? "bg-accent/10 text-accent"
-                    : `
-                      text-text-secondary
-                      hover:bg-accent/5 hover:text-accent
-                    `
-                }
-              `}
+              className={cn(
+                `
+                  group flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200
+                  ease-apple
+                `,
+                isActive
+                  ? "bg-accent text-white"
+                  : `
+                    text-text-secondary
+                    hover:bg-surface-hover hover:text-text
+                  `,
+              )}
             >
-              <item.icon
-                className={`
-                  h-5 w-5 transition-transform
-                  ${isActive ? "scale-105" : "group-hover:scale-105"}
-                `}
-              />
+              <item.icon className={`
+                h-5 w-5 transition-transform
+                ${isActive ? "scale-100" : "group-hover:scale-105"}
+              `} />
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="absolute bottom-0 w-full border-t border-glass-border p-4">
+      <div className="absolute bottom-0 w-full border-t border-border p-4">
         <UserNav user={user} />
       </div>
     </aside>

@@ -8,7 +8,7 @@ import { getUsersAction } from "@/app/actions/user";
 import { type User, type UserListReq } from "@/types/user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -92,7 +92,7 @@ export default function UserManagementPage() {
         </div>
       </div>
 
-      <GlassCard
+      <AppleCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -115,16 +115,16 @@ export default function UserManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-glass-border bg-glass-bg text-text
+              border border-border bg-surface text-text
               hover:bg-accent/5 hover:text-accent
             `}
           >
             搜索
           </Button>
         </form>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="overflow-hidden p-0">
+      <AppleCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -215,9 +215,9 @@ export default function UserManagementPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="p-2">
+      <AppleCard className="p-2">
         <DataTablePagination
           currentPage={page}
           pageSize={pageSize}
@@ -225,7 +225,7 @@ export default function UserManagementPage() {
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
-      </GlassCard>
+      </AppleCard>
     </div>
   );
 }

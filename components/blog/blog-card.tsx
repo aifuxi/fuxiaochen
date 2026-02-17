@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 
 interface BlogCardProps {
   title: string;
@@ -28,27 +28,21 @@ export function BlogCard({
         focus:outline-none
       `}
     >
-      <GlassCard
+      <AppleCard
         variant="hover"
         className={`
-          flex h-full flex-col overflow-hidden border-transparent bg-white p-0 shadow-md
-          hover:shadow-xl
-          dark:border-glass-border dark:bg-glass-bg
+          flex h-full flex-col overflow-hidden border border-border bg-surface p-0 shadow-sm
+          hover:shadow-md
         `}
       >
         {/* Cover Image */}
-        <div
-          className={`
-            relative h-48 w-full overflow-hidden bg-gray-100
-            dark:bg-gray-900
-          `}
-        >
+        <div className="relative h-48 w-full overflow-hidden bg-surface">
           <Image
             src={cover || "/images/placeholder.avif"}
             alt={title}
             fill
             className={`
-              object-cover transition-transform duration-500
+              object-cover transition-transform duration-300 ease-apple
               group-hover:scale-105
             `}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -61,9 +55,7 @@ export function BlogCard({
             {tags.slice(0, 3).map((tag) => (
               <span
                 key={tag}
-                className={`
-                  inline-flex items-center rounded-full bg-accent/10 px-2 py-1 text-xs font-medium text-accent
-                `}
+                className="inline-flex items-center rounded-md bg-accent/10 px-2 py-1 text-xs font-medium text-accent"
               >
                 {tag}
               </span>
@@ -72,7 +64,7 @@ export function BlogCard({
 
           <h3
             className={`
-              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-text transition-colors
+              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-text transition-colors duration-200
               group-hover:text-accent
             `}
           >
@@ -85,14 +77,14 @@ export function BlogCard({
 
           <div
             className={`
-              mt-auto flex items-center justify-between border-t border-glass-border pt-4 text-xs font-medium
-              text-text-secondary
+              mt-auto flex items-center justify-between border-t border-border pt-4 text-xs font-medium
+              text-text-tertiary
             `}
           >
             <time className="font-mono">{date}</time>
             <span
               className={`
-                flex -translate-x-2 items-center gap-1 text-accent opacity-0 transition-all duration-300
+                flex -translate-x-2 items-center gap-1 text-accent opacity-0 transition-all duration-200
                 group-hover:translate-x-0 group-hover:opacity-100
               `}
             >
@@ -100,7 +92,7 @@ export function BlogCard({
             </span>
           </div>
         </div>
-      </GlassCard>
+      </AppleCard>
     </Link>
   );
 }

@@ -9,16 +9,13 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       className={cn(
         `
           file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium
-          placeholder:text-muted-foreground
-          h-10 w-full min-w-0 rounded-2xl border border-glass-border bg-glass-bg/50 px-3 py-1 text-base text-text
-          shadow-sm backdrop-blur-sm transition-all duration-300 outline-none
-          selection:bg-accent selection:text-white
-          hover:border-accent/30 hover:bg-glass-bg
-          focus-visible:border-accent focus-visible:ring-4 focus-visible:ring-accent/20
+          hover:not(:focus):border-accent/20
+          h-10 w-full min-w-0 border border-border bg-surface px-3 py-1.5 text-sm text-text transition-all duration-200
+          ease-apple outline-none
+          placeholder:text-text-tertiary
+          focus:border-accent focus:ring-2 focus:ring-accent/20
           disabled:cursor-not-allowed disabled:opacity-50
-          md:text-sm
         `,
-        `aria-invalid:border-red-500 aria-invalid:ring-red-500/20`,
         className,
       )}
       {...props}

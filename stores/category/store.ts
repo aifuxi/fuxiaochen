@@ -9,12 +9,11 @@ import { type ICategoryStore } from "./interface";
 
 export class CategoryStore implements ICategoryStore {
   async create(data: CategoryCreateReq): Promise<Category> {
-    const { name, slug, description } = data;
+    const { name, slug } = data;
     const category = await prisma.category.create({
       data: {
         name,
         slug,
-        description,
       },
     });
 

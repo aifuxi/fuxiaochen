@@ -12,7 +12,7 @@ function BlogListSkeleton() {
   return (
     <div
       className={`
-        grid grid-cols-1 gap-8
+        grid grid-cols-1 gap-6
         md:grid-cols-2
         lg:grid-cols-3
       `}
@@ -37,7 +37,7 @@ async function BlogList() {
   return (
     <div
       className={`
-        grid grid-cols-1 gap-8
+        grid grid-cols-1 gap-6
         md:grid-cols-2
         lg:grid-cols-3
       `}
@@ -48,11 +48,7 @@ async function BlogList() {
           title={blog.title}
           excerpt={blog.description}
           tags={blog.tags?.map((t) => t.name) || []}
-          date={
-            blog.publishedAt
-              ? new Date(blog.publishedAt).toLocaleDateString()
-              : ""
-          }
+          date={new Date(blog.updatedAt).toLocaleDateString()}
           slug={blog.slug}
           cover={blog.cover}
         />
@@ -68,15 +64,15 @@ export default function HomePage() {
 
       <main className="mx-auto max-w-7xl px-4 pb-20">
         {/* Blog Section */}
-        <section id="blog" className="space-y-12">
+        <section id="blog" className="space-y-8">
           <div
             className={`
-              flex flex-col justify-between gap-6
+              flex flex-col justify-between gap-4
               md:flex-row md:items-end
             `}
           >
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight text-text">
+              <h2 className="text-2xl font-semibold tracking-tight text-text">
                 最新 <span className="text-accent">文章</span>
               </h2>
               <p className="text-text-secondary">
@@ -87,14 +83,14 @@ export default function HomePage() {
             <Link
               href="/blog"
               className={`
-                group inline-flex items-center gap-1 font-medium text-accent transition-colors
-                hover:text-accent/80
+                group inline-flex items-center gap-1 font-medium text-accent transition-colors duration-200
+                hover:text-accent-hover-color
               `}
             >
               查看归档{" "}
               <ArrowRight
                 className={`
-                  h-4 w-4 transition-transform
+                  h-4 w-4 transition-transform duration-200
                   group-hover:translate-x-1
                 `}
               />

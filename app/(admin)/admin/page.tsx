@@ -10,7 +10,7 @@ import { getDashboardStatsAction } from "@/app/actions/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import {
   Table,
   TableBody,
@@ -90,7 +90,7 @@ export default async function DashboardPage() {
       >
         {stats.map((stat) => (
           <Link key={stat.title} href={stat.href} className="block h-full">
-            <GlassCard
+            <AppleCard
               className={`
                 h-full transition-all duration-300
                 hover:border-accent/50 hover:shadow-lg
@@ -115,12 +115,12 @@ export default async function DashboardPage() {
                   </p>
                 )}
               </CardContent>
-            </GlassCard>
+            </AppleCard>
           </Link>
         ))}
       </div>
 
-      <GlassCard className="p-6">
+      <AppleCard className="p-6">
         <div className="mb-6 flex items-center justify-between">
           <h3 className="text-lg font-bold text-text">最新文章</h3>
           <Link href="/admin/blogs">
@@ -141,8 +141,8 @@ export default async function DashboardPage() {
           <TableHeader>
             <TableRow
               className={`
-                border-glass-border
-                hover:bg-glass-bg/50
+                border-border
+                hover:bg-surface/50
               `}
             >
               <TableHead className="text-text-secondary">标题</TableHead>
@@ -169,8 +169,8 @@ export default async function DashboardPage() {
                 <TableRow
                   key={blog.id}
                   className={`
-                    border-glass-border
-                    hover:bg-glass-bg/50
+                    border-border
+                    hover:bg-surface/50
                   `}
                 >
                   <TableCell className="font-medium text-text">
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
                             bg-accent/20 text-accent
                             hover:bg-accent/30
                           `
-                          : "bg-glass-border text-text-secondary"
+                          : "bg-surface text-text-secondary"
                       }
                     >
                       {blog.published ? "已发布" : "草稿"}
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
     </div>
   );
 }

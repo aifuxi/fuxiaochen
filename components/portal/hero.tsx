@@ -7,8 +7,8 @@ export function Hero() {
       {/* Background Gradient Blob */}
       <div
         className={`
-          absolute top-1/2 left-1/2 -z-10 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent
-          opacity-5 blur-[120px]
+          absolute top-1/2 left-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent
+          opacity-10 blur-[100px]
         `}
       />
 
@@ -20,7 +20,7 @@ export function Hero() {
           `}
         >
           探索 <br />
-          <span className="bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-transparent">
+          <span className="text-accent">
             数字创造
           </span>
         </h1>
@@ -32,22 +32,22 @@ export function Hero() {
           `}
         >
           分享关于前端开发、设计系统和现代 Web 架构的思考。 基于 Next.js 16 和
-          Liquid Glass 美学构建。
+          Apple Human Interface 风格构建。
         </p>
 
         <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
           <Link
             href="/blog"
             className={`
-              group relative inline-flex items-center gap-2 rounded-full bg-accent px-8 py-3 text-white shadow-lg
-              transition-all duration-300
-              hover:-translate-y-1 hover:opacity-90 hover:shadow-xl
+              group relative inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-3 text-white shadow-sm
+              transition-all duration-200 ease-apple
+              hover:bg-accent-hover-color
             `}
           >
             开始阅读
             <ArrowRight
               className={`
-                h-4 w-4 transition-transform
+                h-4 w-4 transition-transform duration-200
                 group-hover:translate-x-1
               `}
             />
@@ -55,10 +55,9 @@ export function Hero() {
           <Link
             href="/about"
             className={`
-              inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/50 px-8 py-3 text-text
-              backdrop-blur-md transition-all duration-300
-              hover:bg-white/80 hover:shadow-md
-              dark:border-glass-border dark:bg-glass-bg dark:hover:bg-white/10
+              inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-8 py-3 text-text
+              transition-all duration-200 ease-apple
+              hover:bg-surface-hover
             `}
           >
             关于我

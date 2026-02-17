@@ -4,7 +4,6 @@ import type { CommonModel, ListReq } from "./common";
 export interface Category extends CommonModel {
   name: string;
   slug: string;
-  description: string;
   blogCount: number;
   blogs?: Blog[];
 }
@@ -22,5 +21,4 @@ export interface CategoryListResp {
 export interface CategoryCreateReq {
   name: string;
   slug: string;
-  description?: string;
 }
