@@ -23,7 +23,7 @@ const buttonVariants = cva(
           hover:bg-surface-hover
         `,
         ghost: `
-          text-text
+          bg-transparent text-text
           hover:bg-surface
         `,
         outline: `
