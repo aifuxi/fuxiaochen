@@ -1,24 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowUpDown, Edit, Plus, Search, Trash2 } from "lucide-react";
+import NiceModal from "@ebay/nice-modal-react";
+import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
+import type { ColumnDef } from "@tanstack/react-table";
 import { getBlogsAction } from "@/app/actions/blog";
 import { type BlogListReq } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DataTablePagination } from "@/components/admin/data-table-pagination";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 import { AppleCard } from "@/components/ui/glass-card";
@@ -32,18 +26,14 @@ const fetcher = async (params: BlogListReq) => {
 export default function BlogManagementPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deletingId, setDeletingId] = useState<string>("");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const title = searchParams.get("title") || undefined;
   const categoryId = searchParams.get("categoryId") || undefined;
-  const sortBy = (searchParams.get("sortBy") as any) || "createdAt";
-  const order = (searchParams.get("order") as any) || "desc";
 
   const { data, isLoading, mutate } = useSWR(
-    { page, pageSize, title, categoryId, sortBy, order },
+    { page, pageSize, title, categoryId },
     fetcher,
   );
 
@@ -64,43 +54,118 @@ export default function BlogManagementPage() {
     } else {
       params.delete("categoryId");
     }
-    params.set("page", "1"); // Reset to page 1 on search
-    router.push(`?${params.toString()}`);
-  };
-
-  const handleSort = (field: "createdAt" | "updatedAt") => {
-    const params = new URLSearchParams(searchParams);
-    const currentSort = params.get("sortBy");
-    const currentOrder = params.get("order");
-
-    if (currentSort === field) {
-      params.set("order", currentOrder === "asc" ? "desc" : "asc");
-    } else {
-      params.set("sortBy", field);
-      params.set("order", "desc");
-    }
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageSizeChange = (newSize: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("pageSize", newSize.toString());
     params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
 
   const openDelete = (id: string) => {
-    setDeletingId(id);
-    setDeleteOpen(true);
+    NiceModal.show(DeleteAlert, {
+      id,
+      onSuccess: () => mutate(),
+    });
   };
 
-  const blogs = data?.lists || [];
+  const columns: ColumnDef<NonNullable<typeof data>["lists"][number]>[] = [
+    {
+      accessorKey: "title",
+      header: "标题",
+      cell: ({ row }) => (
+        <span className="max-w-[200px] truncate font-medium text-text">
+          {row.original.title}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "category",
+      header: "分类",
+      cell: ({ row }) =>
+        row.original.category ? (
+          <Badge variant="outline" className="border-accent text-accent">
+            {row.original.category.name}
+          </Badge>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      accessorKey: "tags",
+      header: "标签",
+      cell: ({ row }) =>
+        row.original.tags && row.original.tags.length > 0 ? (
+          <div className="flex flex-wrap gap-1">
+            {row.original.tags.map((tag) => (
+              <Badge
+                key={tag.id}
+                variant="secondary"
+                className="bg-accent/10 text-xs text-accent"
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      accessorKey: "published",
+      header: "发布状态",
+      cell: ({ row }) => (
+        <Badge
+          variant={row.original.published ? "default" : "secondary"}
+          className={
+            row.original.published
+              ? `
+                bg-accent/20 text-accent
+                hover:bg-accent/30
+              `
+              : "bg-surface text-text-secondary"
+          }
+        >
+          {row.original.published ? "已发布" : "草稿"}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="创建时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="更新时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+    },
+    {
+      id: "actions",
+      enablePinning: true,
+      header: "操作",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push(`/admin/blogs/${row.original.id}`)}
+            className="hover:bg-accent/10 hover:text-accent"
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => openDelete(row.original.id)}
+            className="hover:bg-error/10 hover:text-error"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -110,7 +175,6 @@ export default function BlogManagementPage() {
         </h2>
       </div>
 
-      {/* Filter Section */}
       <AppleCard
         className={`
           flex flex-col gap-4 p-4
@@ -153,171 +217,26 @@ export default function BlogManagementPage() {
         </Link>
       </AppleCard>
 
-      {/* Table Section */}
       <AppleCard className="overflow-hidden p-0">
-        <Table>
-          <TableHeader>
-            <TableRow
-              className={`
-                border-border
-                hover:bg-surface
-              `}
-            >
-              <TableHead className="text-text-secondary">标题</TableHead>
-              <TableHead className="text-text-secondary">分类</TableHead>
-              <TableHead className="text-text-secondary">标签</TableHead>
-              <TableHead className="text-text-secondary">发布状态</TableHead>
-              <TableHead className="text-text-secondary">精选状态</TableHead>
-              <TableHead
-                className="cursor-pointer text-text-secondary"
-                onClick={() => handleSort("createdAt")}
-              >
-                <div className="flex items-center gap-1">
-                  创建时间 <ArrowUpDown className="h-3 w-3" />
-                </div>
-              </TableHead>
-              <TableHead className="text-right text-text-secondary">
-                操作
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  加载中...
-                </TableCell>
-              </TableRow>
-            ) : blogs.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  暂无数据
-                </TableCell>
-              </TableRow>
-            ) : (
-              blogs.map((blog) => (
-                <TableRow
-                  key={blog.id}
-                  className={`
-                    border-border
-                    hover:bg-accent/5
-                  `}
-                >
-                  <TableCell className="font-medium text-text">
-                    {blog.title}
-                  </TableCell>
-                  <TableCell>
-                    {blog.category ? (
-                      <Badge
-                        variant="outline"
-                        className="border-accent text-accent"
-                      >
-                        {blog.category.name}
-                      </Badge>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {blog.tags && blog.tags.length > 0
-                        ? blog.tags.map((tag) => (
-                            <Badge
-                              key={tag.id}
-                              variant="secondary"
-                              className="bg-accent/10 text-xs text-accent"
-                            >
-                              {tag.name}
-                            </Badge>
-                          ))
-                        : "-"}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={blog.published ? "default" : "secondary"}
-                      className={
-                        blog.published
-                          ? `
-                            bg-accent/20 text-accent
-                            hover:bg-accent/30
-                          `
-                          : "bg-surface text-text-secondary"
-                      }
-                    >
-                      {blog.published ? "已发布" : "草稿"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-text-secondary">
-                    <div className="flex flex-col items-end gap-1 text-xs">
-                      <span>
-                        创建:{" "}
-                        {formatSimpleDateWithTime(new Date(blog.createdAt))}
-                      </span>
-                      <span>
-                        更新:{" "}
-                        {formatSimpleDateWithTime(new Date(blog.updatedAt))}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => router.push(`/admin/blogs/${blog.id}`)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-accent/10 hover:text-accent
-                        `}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openDelete(blog.id)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </AppleCard>
-
-      {/* Pagination Section */}
-      <AppleCard className="p-2">
-        {data && (
-          <DataTablePagination
-            currentPage={page}
-            total={data.total}
-            pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+        {isLoading ? (
+          <div className="flex h-24 items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data?.lists || []}
+            showPagination={false}
+            emptyText="暂无文章"
           />
         )}
       </AppleCard>
 
-      <DeleteAlert
-        id={deletingId}
-        open={deleteOpen}
-        onOpenChange={setDeleteOpen}
-        onSuccess={() => mutate()}
-      />
+      {data && (
+        <div className="flex justify-center text-sm text-text-secondary">
+          共 {data.total} 条数据
+        </div>
+      )}
     </div>
   );
 }

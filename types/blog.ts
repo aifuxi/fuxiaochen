@@ -19,6 +19,7 @@ export interface BlogListReq extends ListReq {
   slug?: string;
   categoryId?: string;
   tagId?: string;
+  tagIds?: string[];
   blogIDs?: string[];
   published?: boolean;
 }
