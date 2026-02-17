@@ -17,10 +17,14 @@ export function ThemeToggle({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "h-12 w-32 rounded-lg border border-border bg-surface",
+          "flex h-9 items-center gap-1 rounded-lg border border-border bg-surface px-1",
           className,
         )}
-      />
+      >
+        <div className="h-7 w-7 rounded-md bg-surface-hover" />
+        <div className="h-7 w-7 rounded-md bg-surface-hover" />
+        <div className="h-7 w-7 rounded-md bg-surface-hover" />
+      </div>
     );
   }
 
@@ -33,7 +37,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center rounded-lg border border-border bg-surface p-1",
+        "flex items-center gap-1 rounded-lg border border-border bg-surface px-1",
         className,
       )}
     >
@@ -46,17 +50,17 @@ export function ThemeToggle({ className }: { className?: string }) {
             key={mode.name}
             onClick={() => setTheme(mode.name)}
             className={cn(
-              "relative flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300",
+              `flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200`,
               isActive
-                ? "bg-accent text-white shadow-md"
+                ? "bg-accent text-white"
                 : `
                   text-text-secondary
-                  hover:bg-surface/50 hover:text-text
+                  hover:bg-surface-hover hover:text-text
                 `,
             )}
             aria-label={`Switch to ${mode.name} theme`}
           >
-            <Icon className="h-5 w-5" />
+            <Icon className="h-4 w-4" />
           </button>
         );
       })}
