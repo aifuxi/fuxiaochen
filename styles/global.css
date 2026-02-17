@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  /* 颜色 - 浅色模式 */
+  --color-background: oklch(1 0 0);
+  --color-foreground: oklch(0.1 0 0);
+  --color-surface: oklch(1 0 0);
+  --color-surface-foreground: oklch(0.1 0 0);
+  --color-border: oklch(0.9 0 0);
+  --color-primary: oklch(0.6 0.25 250);
+  --color-primary-foreground: oklch(0.99 0 0);
+  --color-secondary: oklch(0.6 0 0);
+  --color-secondary-foreground: oklch(0.99 0 0);
+  --color-accent: oklch(0.96 0 0);
+  --color-accent-foreground: oklch(0.1 0 0);
+  --color-muted: oklch(0.96 0 0);
+  --color-muted-foreground: oklch(0.55 0 0);
+  --color-destructive: oklch(0.6 0.25 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  /* 毛玻璃 */
+  --backdrop-blur: 20px;
+  --backdrop-saturate: 180%;
+}
+
+/* 深色模式 */
+.dark {
+  --color-background: oklch(0.12 0 0);
+  --color-foreground: oklch(0.95 0 0);
+  --color-surface: oklch(0.15 0 0);
+  --color-surface-foreground: oklch(0.95 0 0);
+  --color-border: oklch(0.2 0 0);
+  --color-primary: oklch(0.65 0.25 250);
+  --color-primary-foreground: oklch(0.99 0 0);
+  --color-secondary: oklch(0.6 0 0);
+  --color-secondary-foreground: oklch(0.99 0 0);
+  --color-accent: oklch(0.2 0 0);
+  --color-accent-foreground: oklch(0.95 0 0);
+  --color-muted: oklch(0.2 0 0);
+  --color-muted-foreground: oklch(0.6 0 0);
+  --color-destructive: oklch(0.6 0.25 25);
+  --color-destructive-foreground: oklch(0.99 0 0);
+}
+
+/* 基础样式 */
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* 毛玻璃效果类 */
+.glass {
+  backdrop-filter: blur(var(--backdrop-blur)) saturate(var(--backdrop-saturate));
+  -webkit-backdrop-filter: blur(var(--backdrop-blur)) saturate(var(--backdrop-saturate));
+}
+
+/* 过渡动画 */
+* {
+  @apply transition-colors duration-200;
+}
+
+input, textarea, select {
+  @apply outline-none;
+}
