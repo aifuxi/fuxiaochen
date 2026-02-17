@@ -92,13 +92,13 @@ export const UserDialog = NiceModal.create(
                   <FormItem>
                     <FormLabel>角色</FormLabel>
                     <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      onValueChange={(v) => field.onChange(Number.parseInt(v, 10))}
+                      defaultValue={String(field.value)}
                     >
                       <FormControl>
                         <SelectTrigger
                           className={`
-                            border-glass-border bg-glass-bg text-text
+                            border-border bg-surface text-text
                             focus:border-accent focus:ring-accent/20
                           `}
                         >
@@ -106,7 +106,7 @@ export const UserDialog = NiceModal.create(
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent
-                        className={`border-glass-border bg-glass-bg text-text`}
+                        className={`border-border bg-surface text-text`}
                       >
                         <SelectItem value="1">Admin</SelectItem>
                         <SelectItem value="2">Normal</SelectItem>
@@ -124,7 +124,6 @@ export const UserDialog = NiceModal.create(
                     w-full bg-accent text-white
                     hover:bg-accent/90
                   `}
-                  hoverEffect="up"
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

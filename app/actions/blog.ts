@@ -84,14 +84,3 @@ export async function toggleBlogPublishAction(id: string) {
     return { success: false, error: error.message };
   }
 }
-
-export async function toggleBlogFeatureAction(id: string) {
-  try {
-    await checkAdmin();
-    const result = await blogStore.toggleFeature(id);
-    revalidatePath("/blog");
-    return { success: true, data: result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
-  }
-}

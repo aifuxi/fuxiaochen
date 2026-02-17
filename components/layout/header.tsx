@@ -12,7 +12,12 @@ export function Header() {
         md:px-8
       `}
     >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-full glass-panel px-6 py-3 shadow-md">
+      <nav
+        className={`
+          mx-auto flex max-w-7xl items-center justify-between rounded-lg border border-border bg-surface px-6 py-3
+          shadow-md
+        `}
+      >
         {/* Logo */}
         <Link
           href="/"
@@ -74,13 +79,13 @@ export function Header() {
             target="_blank"
             aria-label="GitHub"
           >
-            <Button variant="glass" size="icon" className="h-10 w-10">
+            <Button variant="ghost" size="icon" className="h-10 w-10">
               <Github className="h-5 w-5" />
             </Button>
           </Link>
 
           <Link href="/admin" aria-label="Admin">
-            <Button variant="glass" size="icon" className="h-10 w-10">
+            <Button variant="ghost" size="icon" className="h-10 w-10">
               <Settings className="h-5 w-5" />
             </Button>
           </Link>

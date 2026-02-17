@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 const toggleVariants = cva(
   `
-    hover:text-muted-foreground hover:bg-glass-bg
+    hover:text-muted-foreground hover:bg-surface
     focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
     aria-invalid:ring-destructive/20 aria-invalid:border-destructive
     dark:aria-invalid:ring-destructive/40
@@ -23,7 +23,7 @@ const toggleVariants = cva(
       variant: {
         default: "bg-transparent",
         outline: `
-          border border-glass-border bg-transparent shadow-xs
+          border border-border bg-transparent shadow-xs
           hover:bg-accent hover:text-white
         `,
       },

@@ -1,5 +1,5 @@
 import { getChangelogsAction } from "@/app/actions/changelog";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import {
   Pagination,
   PaginationContent,
@@ -39,12 +39,10 @@ export default async function ChangelogPage({
       <main className="mx-auto max-w-4xl px-4 pt-32 pb-20">
         {/* Header Section */}
         <div className="relative mb-16 space-y-4 text-center">
-          <h1
-            className={`
-              text-4xl font-bold tracking-tight text-text
-              md:text-5xl
-            `}
-          >
+          <h1 className={`
+            text-4xl font-bold tracking-tight text-text
+            md:text-5xl
+          `}>
             更新日志
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-text-secondary">
@@ -53,13 +51,11 @@ export default async function ChangelogPage({
         </div>
 
         {/* Changelog Timeline */}
-        <div
-          className={`
-            relative space-y-12
-            before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-glass-border
-            md:before:left-[12.5rem]
-          `}
-        >
+        <div className={`
+          relative space-y-12
+          before:absolute before:top-2 before:left-0 before:h-full before:w-px before:bg-border
+          md:before:left-[12.5rem]
+        `}>
           {changelogs.length > 0 ? (
             changelogs.map((log) => (
               <div
@@ -76,12 +72,10 @@ export default async function ChangelogPage({
                     md:w-40 md:items-end
                   `}
                 >
-                  <span
-                    className={`
-                      text-xl font-bold text-text
-                      md:text-2xl
-                    `}
-                  >
+                  <span className={`
+                    text-xl font-bold text-text
+                    md:text-2xl
+                  `}>
                     {log.version}
                   </span>
                   <time className="text-sm text-text-secondary">
@@ -90,39 +84,34 @@ export default async function ChangelogPage({
                   {/* Timeline Dot */}
                   <div
                     className={`
-                      absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-bg bg-accent ring-2
-                      ring-glass-border
+                      absolute top-2 left-[-5px] h-3 w-3 rounded-full border-2 border-bg bg-accent ring-2 ring-border
                       md:top-2.5 md:left-[12.125rem]
                     `}
                   />
                 </div>
 
                 {/* Content Card */}
-                <GlassCard
-                  className={`
-                    flex-1 p-6
-                    md:p-8
-                  `}
-                >
+                <AppleCard className={`
+                  flex-1 p-6
+                  md:p-8
+                `}>
                   <BlogContent content={log.content} />
-                </GlassCard>
+                </AppleCard>
               </div>
             ))
           ) : (
-            <div
-              className={`
-                pl-8
-                md:pl-44
-              `}
-            >
-              <GlassCard className="py-20 text-center">
+            <div className={`
+              pl-8
+              md:pl-44
+            `}>
+              <AppleCard className="py-20 text-center">
                 <h3 className="mb-2 text-2xl font-bold text-text">
                   暂无更新记录
                 </h3>
                 <p className="text-text-secondary">
                   项目刚刚起步，敬请期待！
                 </p>
-              </GlassCard>
+              </AppleCard>
             </div>
           )}
         </div>
@@ -131,7 +120,7 @@ export default async function ChangelogPage({
         {totalPages > 1 && (
           <div className="mt-20 flex justify-center">
             <Pagination
-              className={`w-fit rounded-full border border-glass-border bg-glass-bg px-4 py-2 backdrop-blur-md`}
+              className={`w-fit rounded-full border border-border bg-surface px-4 py-2`}
             >
               <PaginationContent>
                 <PaginationItem>

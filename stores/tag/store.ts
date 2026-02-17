@@ -9,12 +9,11 @@ import { type ITagStore } from "./interface";
 
 export class TagStore implements ITagStore {
   async create(data: TagCreateReq): Promise<Tag> {
-    const { name, slug, description } = data;
+    const { name, slug } = data;
     const tag = await prisma.tag.create({
       data: {
         name,
         slug,
-        description,
       },
     });
 

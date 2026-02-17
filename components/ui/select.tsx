@@ -37,20 +37,18 @@ function SelectTrigger({
       data-size={size}
       className={cn(
         `
-          data-[placeholder]:text-muted-foreground
-          [&_svg:not([class*='text-'])]:text-muted-foreground
-          flex w-fit items-center justify-between gap-2 rounded-xl border border-glass-border bg-glass-bg/50 px-3 py-2
-          text-sm whitespace-nowrap text-text shadow-sm backdrop-blur-sm transition-all duration-300 outline-none
-          hover:border-accent/30 hover:bg-glass-bg
-          focus-visible:border-accent focus-visible:ring-4 focus-visible:ring-accent/20
+          flex w-fit items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm
+          whitespace-nowrap text-text transition-all duration-200 ease-apple outline-none
+          hover:border-accent/20 hover:bg-surface-hover
+          focus:border-accent focus:ring-2 focus:ring-accent/20
           disabled:cursor-not-allowed disabled:opacity-50
-          aria-invalid:border-red-500 aria-invalid:ring-red-500/20
+          data-[placeholder]:text-text-tertiary
           data-[size=default]:h-10
           data-[size=sm]:h-8
           *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex
           *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2
           [&_svg]:pointer-events-none [&_svg]:shrink-0
-          [&_svg:not([class*='size-'])]:size-4
+          [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-text-tertiary
         `,
         className,
       )}
@@ -77,9 +75,8 @@ function SelectContent({
         data-slot="select-content"
         className={cn(
           `
-            relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem]
-            origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-xl glass-panel
-            text-text shadow-lg
+            relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-x-hidden
+            overflow-y-auto rounded-xl border border-border bg-surface text-text shadow-xl
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -105,7 +102,7 @@ function SelectContent({
           className={cn(
             "p-1",
             position === "popper" &&
-              "h-(--radix-select-trigger-height) w-full min-w-(--radix-select-trigger-width) scroll-my-1",
+              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]",
           )}
         >
           {children}
@@ -123,7 +120,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.Label
       data-slot="select-label"
-      className={cn("text-muted-foreground px-2 py-1.5 text-xs", className)}
+      className={cn("px-2 py-1.5 text-xs text-text-tertiary", className)}
       {...props}
     />
   );
@@ -139,13 +136,12 @@ function SelectItem({
       data-slot="select-item"
       className={cn(
         `
-          [&_svg:not([class*='text-'])]:text-muted-foreground
-          relative flex w-full cursor-default items-center gap-2 rounded-lg py-2 pr-8 pl-2 text-sm outline-hidden
+          relative flex w-full cursor-default items-center gap-2 rounded-md py-2 pr-8 pl-2 text-sm outline-hidden
           transition-colors duration-200 select-none
           focus:bg-accent/10 focus:text-accent
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
           [&_svg]:pointer-events-none [&_svg]:shrink-0
-          [&_svg:not([class*='size-'])]:size-4
+          [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-text-tertiary
           *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2
         `,
         className,
@@ -172,7 +168,7 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn("bg-border pointer-events-none -mx-1 my-1 h-px", className)}
+      className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   );

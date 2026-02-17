@@ -5,33 +5,29 @@ import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
   `
-    focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
-    aria-invalid:ring-destructive/20 aria-invalid:border-destructive
-    dark:aria-invalid:ring-destructive/40
     inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs
-    font-medium whitespace-nowrap transition-[color,box-shadow,background-color]
-    [&>svg]:pointer-events-none [&>svg]:size-3
+    font-medium whitespace-nowrap transition-all duration-200 ease-apple
+    focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none
+    [&>svg]:pointer-events-none [&>svg]:size-3 [&>svg]:shrink-0
   `,
   {
     variants: {
       variant: {
         default: `
-          border-transparent bg-accent text-white shadow-sm
-          [a&]:hover:bg-accent/90
+          border-transparent bg-accent text-white
+          hover:bg-accent-hover-color
         `,
         secondary: `
-          border-transparent bg-glass-bg text-text backdrop-blur-sm
-          [a&]:hover:bg-glass-bg/80
+          border-transparent bg-surface text-text
+          hover:bg-surface-hover
         `,
         destructive: `
-          bg-destructive border-transparent text-white shadow-sm
-          [a&]:hover:bg-destructive/90
-          focus-visible:ring-destructive/20
-          dark:focus-visible:ring-destructive/40 dark:bg-destructive/60
+          bg-error border-transparent text-white
+          hover:bg-error/90
         `,
         outline: `
-          border-glass-border text-text backdrop-blur-sm
-          [a&]:hover:bg-glass-bg [a&]:hover:text-text
+          border-border bg-transparent text-text
+          hover:bg-surface-hover
         `,
       },
     },
@@ -47,7 +43,9 @@ function Badge({
   asChild = false,
   ...props
 }: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
+  VariantProps<typeof badgeVariants> & {
+  asChild?: boolean;
+  }) {
   const Comp = asChild ? Slot : "span";
 
   return (

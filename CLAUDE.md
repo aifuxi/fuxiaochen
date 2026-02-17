@@ -110,11 +110,11 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 - 使用 flat config 格式
 - 启用 TypeScript 项目服务 (`projectService: true`)
-- Tailwind CSS 类检查 (`@/styles/global.css` 作为入口点)
+- Tailwind CSS 类检查（`@/styles/global.css` 作为入口点）
 - 文件命名强制 `KEBAB_CASE`
 - 类型导入使用 `type` 关键字 (`import type { ... }`)
 
-### 认证权限
+## 认证权限
 
 **用户角色**：`role` 为整数类型，`1` = 管理员 (admin)，`2` = 普通用户 (normal)，默认为 `2`。
 
@@ -144,16 +144,117 @@ const where: Prisma.BlogWhereInput = { deletedAt: null };
 
 Prisma Client 生成到 `generated/prisma/` 目录（已在 `.gitignore` 中）。
 
-## 设计系统：Liquid Glass
+## 设计系统：Apple Human Interface
 
-核心特性：
-- 配色：Light `#f2f4f7` / Dark `#121212` 背景
-- 视觉：`backdrop-blur`、大圆角 (`24px`)、药丸状按钮
-- 字体：Inter (Sans) 和 JetBrains Mono (Mono)
+### 配色方案
+
+**Light Mode**:
+- `--bg-color`: #ffffff
+- `--surface-color`: #f5f5f7
+- `--surface-hover-color`: #e8e8ed
+- `--border-color`: #d2d2d7
+- `--accent-color`: #0071e3
+- `--accent-hover-color`: #0077ed
+- `--text-color`: #1d1d1f
+- `--text-color-secondary`: #6e6e73
+- `--text-color-tertiary`: #86868b
+- `--success-color`: #34c759
+- `--warning-color`: #ff9500
+- `--error-color`: #ff3b30
+
+**Dark Mode**:
+- `--bg-color`: #000000
+- `--surface-color`: #1c1c1e
+- `--surface-hover-color`: #2c2c2e
+- `--border-color`: #38383a
+- `--accent-color`: #0a84ff
+- `--accent-hover-color`: #409cff
+- `--text-color`: #f5f5f7
+- `--text-color-secondary`: #98989d
+- `--text-color-tertiary`: #86868b
+- `--success-color`: #30d158
+- `--warning-color`: #ff9f0a
+- `--error-color`: #ff453a
+
+### 圆角系统
+- `--radius-sm`: 8px
+- `--radius-md`: 12px
+- `--radius-lg`: 16px
+- `--radius-xl`: 20px
+- `--radius-full`: 9999px
+
+### 阴影系统
+- `--shadow-xs`: 0 1px 2px rgba(0, 0, 0, 0.04)
+- `--shadow-sm`: 0 1px 3px rgba(0, 0, 0, 0.06)
+- `--shadow-md`: 0 4px 6px rgba(0, 0, 0, 0.07)
+- `--shadow-lg`: 0 10px 20px rgba(0, 0, 0, 0.08)
+- `--shadow-xl`: 0 20px 40px rgba(0, 0, 0, 0.1)
+
+### 过渡动画
+- `--ease-apple`: cubic-bezier(0.25, 0.1, 0.25, 1) - Apple 标准缓动函数
+- 标准过渡时长: `duration-200`
+
+### 字体
+- **Sans**: Inter / SF Pro Text / Helvetica Neue
+- **Mono**: JetBrains Mono / SF Mono
+
+### 组件样式指南
+
+#### Button (按钮)
+- 使用 `rounded-lg` (12px)
+- `variant="primary"`: `bg-accent text-white`
+- `variant="secondary"`: `border border-border bg-surface text-text`
+- `variant="ghost"`: `bg-transparent text-text hover:bg-surface`
+- `variant="outline"`: `border border-border bg-transparent text-text`
+- Hover: `bg-accent-hover-color`
+- Active: `scale-[0.98]`
+
+#### Input (输入框)
+- 使用 `rounded-lg` (12px)
+- 背景: `bg-surface`
+- 边框: `border border-border`
+- Focus: `border-accent ring-2 ring-accent/20`
+- Placeholder: `text-text-tertiary`
+- Hover: `border-[var(--border-color)]`
+
+#### Card (卡片)
+- 使用 `rounded-xl` (20px)
+- 背景: `bg-surface`
+- 边框: `border border-border`
+- 阴影: `shadow-sm`
+
+#### Dialog (对话框)
+- 使用 `rounded-xl` (20px)
+- 背景: `bg-surface`
+- 边框: `border border-border`
+- 阴影: `shadow-xl`
+- 遮罩: `bg-black/20 backdrop-blur-sm`
+
+#### Table (表格)
+- Header 边框: `border-b border-border`
+- Row 边框: `border-b border-border`
+- Row Hover: `bg-surface-hover`
+- 单元格内边距: `p-2`
+
+### 代码高亮 (Syntax Highlighting)
+
+使用 `apple-prose` 类应用 Markdown 样式：
+
+```tsx
+import { useMarkdown } from "@/hooks/use-markdown";
+
+<div className="apple-prose">
+  {children}
+</div>
+```
+
+代码块样式（在 `styles/global.css` 中）：
+- Light: `--hljs-color: #24292f`, `--hljs-bg: #f6f8fa`
+- Dark: `--hljs-color: #c9d1d9`, `--hljs-bg: #0d1117`
 
 ## 重要文件路径
 
-- `styles/global.css` - Tailwind CSS 4 配置入口
+- `styles/global.css` - Tailwind CSS 4 配置入口和全局样式
 - `lib/auth.ts` - Better Auth 配置
 - `lib/auth-guard.ts` - 权限守卫
 - `prisma/schema.prisma` - 数据库模型

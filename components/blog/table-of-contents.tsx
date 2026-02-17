@@ -83,13 +83,13 @@ export function TableOfContents() {
                   setActiveId(heading.id);
                 }}
                 className={cn(
-                  "block rounded-2xl px-3 py-2 text-sm transition-all duration-300",
+                  "block rounded-xl px-3 py-2 text-sm transition-all duration-300",
                   heading.level === 3 && "pl-6",
                   activeId === heading.id
-                    ? "bg-accent/10 font-medium text-accent shadow-sm backdrop-blur-sm"
+                    ? "bg-accent/10 font-medium text-accent shadow-sm"
                     : `
                       text-text-secondary
-                      hover:bg-glass-bg hover:text-text
+                      hover:bg-surface hover:text-text
                     `,
                 )}
               >

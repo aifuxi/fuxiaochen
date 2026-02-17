@@ -154,7 +154,6 @@ export const ChangelogDialog = NiceModal.create(
                     bg-accent text-white
                     hover:bg-accent/90
                   `}
-                  hoverEffect="up"
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

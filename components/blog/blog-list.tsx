@@ -2,7 +2,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { RotateCcw } from "lucide-react";
 import { getBlogsAction } from "@/app/actions/blog";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import {
   Pagination,
   PaginationContent,
@@ -56,18 +56,14 @@ export async function BlogList({
               title={blog.title}
               excerpt={blog.description}
               tags={blog.tags?.map((t) => t.name) || []}
-              date={
-                blog.publishedAt
-                  ? format(new Date(blog.publishedAt), "yyyy-MM-dd")
-                  : "草稿"
-              }
+              date={format(new Date(blog.updatedAt), "yyyy-MM-dd")}
               slug={blog.slug}
               cover={blog.cover}
             />
           ))}
         </div>
       ) : (
-        <GlassCard
+        <AppleCard
           className={`
             flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
           `}
@@ -82,7 +78,7 @@ export async function BlogList({
             <Link
               href="/blog"
               className={`
-                inline-flex items-center gap-2 rounded-full border border-glass-border px-6 py-2 text-sm font-medium
+                inline-flex items-center gap-2 rounded-full border border-border px-6 py-2 text-sm font-medium
                 transition-colors
                 hover:border-accent hover:bg-accent hover:text-white
               `}
@@ -90,14 +86,14 @@ export async function BlogList({
               <RotateCcw className="h-4 w-4" /> 重置筛选
             </Link>
           )}
-        </GlassCard>
+        </AppleCard>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="mt-16 flex justify-center">
           <Pagination
-            className={`w-fit rounded-full border border-glass-border bg-glass-bg px-4 py-2 backdrop-blur-md`}
+            className={`w-fit rounded-full border border-border bg-surface px-4 py-2`}
           >
             <PaginationContent>
               <PaginationItem>

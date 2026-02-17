@@ -28,7 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -66,7 +66,6 @@ const formSchema = z.object({
   categoryId: z.string().min(1, "请选择分类"),
   tags: z.array(z.string()).optional(),
   published: z.boolean(),
-  featured: z.boolean(),
 });
 
 interface BlogFormProps {
@@ -87,10 +86,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
       description: initialData?.description || "",
       content: initialData?.content || "",
       cover: initialData?.cover || "",
-      categoryId: initialData?.categoryID || "",
+      categoryId: initialData?.categoryId || "",
       tags: initialData?.tags?.map((t) => t.id) || [],
       published: initialData?.published || false,
-      featured: initialData?.featured || false,
     },
   });
 
@@ -119,15 +117,13 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
   };
 
   return (
-    <GlassCard className="p-6">
+    <AppleCard className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div
-            className={`
-              grid grid-cols-1 gap-6
-              md:grid-cols-2
-            `}
-          >
+          <div className={`
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+          `}>
             <FormField
               control={form.control}
               name="title"
@@ -170,12 +166,10 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             )}
           />
 
-          <div
-            className={`
-              grid grid-cols-1 gap-6
-              md:grid-cols-2
-            `}
-          >
+          <div className={`
+            grid grid-cols-1 gap-6
+            md:grid-cols-2
+          `}>
             <FormField
               control={form.control}
               name="categoryId"
@@ -312,7 +306,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
               <FormItem>
                 <FormLabel className="text-text">内容</FormLabel>
                 <FormControl>
-                  <div className="glass-prose">
+                  <div className="apple-prose">
                     <Editor
                       value={field.value}
                       plugins={plugins}
@@ -375,46 +369,25 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             )}
           />
 
-          <div className="flex gap-8">
-            <FormField
-              control={form.control}
-              name="published"
-              render={({ field }) => (
-                <FormItem
-                  className={`
-                    flex flex-row items-center justify-between rounded-lg border border-glass-border bg-glass-bg p-4
-                  `}
-                >
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base text-text">发布</FormLabel>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="featured"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">精选</FormLabel>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem className={`
+                flex flex-row items-center justify-between rounded-lg border border-border bg-surface p-4
+              `}>
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base text-text">发布</FormLabel>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
 
           <div className="flex justify-end gap-4">
             <Button
@@ -438,6 +411,6 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
           </div>
         </form>
       </Form>
-    </GlassCard>
+    </AppleCard>
   );
 }

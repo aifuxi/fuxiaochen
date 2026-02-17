@@ -8,7 +8,7 @@ import { getCategoriesAction } from "@/app/actions/category";
 import { type Category, type CategoryListReq } from "@/types/category";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -90,7 +90,7 @@ export default function CategoryManagementPage() {
         <p className="text-text-secondary">管理博客文章的分类体系</p>
       </div>
 
-      <GlassCard
+      <AppleCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -113,7 +113,7 @@ export default function CategoryManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-glass-border bg-glass-bg text-text
+              border border-border bg-surface text-text
               hover:bg-accent/5 hover:text-accent
             `}
           >
@@ -128,20 +128,18 @@ export default function CategoryManagementPage() {
             bg-accent text-white
             hover:bg-accent/90
           `}
-          hoverEffect="up"
         >
           <Plus className="mr-2 h-4 w-4" />
           新增分类
         </Button>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="overflow-hidden p-0">
+      <AppleCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead className="text-text-secondary">名称</TableHead>
               <TableHead className="text-text-secondary">Slug</TableHead>
-              <TableHead className="text-text-secondary">描述</TableHead>
               <TableHead className="text-text-secondary">文章数</TableHead>
               <TableHead className="text-text-secondary">创建时间</TableHead>
               <TableHead className="text-right text-text-secondary">
@@ -153,7 +151,7 @@ export default function CategoryManagementPage() {
             {isLoading ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={5}
                   className="h-24 text-center text-text-secondary"
                 >
                   <Loader2 className="mx-auto h-6 w-6 animate-spin" />
@@ -162,7 +160,7 @@ export default function CategoryManagementPage() {
             ) : data?.lists?.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={5}
                   className="h-24 text-center text-text-secondary"
                 >
                   暂无数据
@@ -181,9 +179,6 @@ export default function CategoryManagementPage() {
                     >
                       {category.slug}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="max-w-[200px] truncate text-text-secondary">
-                    {category.description || "-"}
                   </TableCell>
                   <TableCell className="text-text">
                     {category.blogCount}
@@ -218,9 +213,9 @@ export default function CategoryManagementPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="p-2">
+      <AppleCard className="p-2">
         {data && (
           <DataTablePagination
             currentPage={page}
@@ -230,7 +225,7 @@ export default function CategoryManagementPage() {
             onPageSizeChange={handlePageSizeChange}
           />
         )}
-      </GlassCard>
+      </AppleCard>
     </div>
   );
 }

@@ -30,12 +30,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   name: z.string().min(1, "名称不能为空"),
   slug: z.string().min(1, "Slug 不能为空"),
-  description: z.string().optional(),
 });
 
 interface CategoryDialogProps {
@@ -53,7 +51,6 @@ export const CategoryDialog = NiceModal.create(
       defaultValues: {
         name: category?.name || "",
         slug: category?.slug || "",
-        description: category?.description || "",
       },
     });
 
@@ -117,30 +114,10 @@ export const CategoryDialog = NiceModal.create(
                       <Input
                         {...field}
                         className={`
-                          border-glass-border bg-glass-bg text-text
+                          border-border bg-surface text-text
                           focus:border-accent focus:ring-accent/20
                         `}
                         placeholder="frontend"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-text-secondary">描述</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        className={`
-                          resize-none border-glass-border bg-glass-bg text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
-                        placeholder="分类描述..."
                       />
                     </FormControl>
                     <FormMessage />
@@ -154,8 +131,8 @@ export const CategoryDialog = NiceModal.create(
                     variant="outline"
                     onClick={() => modal.remove()}
                     className={`
-                      border-glass-border bg-transparent text-text-secondary
-                      hover:bg-glass-border hover:text-text
+                      border-border bg-transparent text-text-secondary
+                      hover:bg-surface hover:text-text
                     `}
                   >
                     取消
@@ -167,7 +144,6 @@ export const CategoryDialog = NiceModal.create(
                       bg-accent text-white transition-all duration-200
                       hover:-translate-y-0.5 hover:bg-accent/90
                     `}
-                    hoverEffect="up"
                   >
                     {loading && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

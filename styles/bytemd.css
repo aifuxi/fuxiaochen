@@ -1,10 +1,10 @@
 .bytemd {
-  @apply h-[calc(100vh-58px)] !border-glass-border !bg-glass-bg !text-text !rounded-2xl overflow-hidden;
+  @apply h-[calc(100vh-58px)] !border-border !bg-surface !text-text !rounded-xl overflow-hidden;
 }
 
 .bytemd .CodeMirror,
-.bytemd code,
-.bytemd kbd {
+bytemd code,
+bytemd kbd {
   @apply !font-mono;
 }
 
@@ -62,15 +62,15 @@
 
 /* 编辑器内显示行数背景 */
 .CodeMirror-gutters {
-  @apply !border-r !border-glass-border !bg-transparent;
+  @apply !border-r !border-border !bg-transparent;
 }
 
 .bytemd {
-  @apply !border !border-glass-border !bg-glass-bg !text-text !rounded-2xl;
+  @apply !border !border-border !bg-surface !text-text !rounded-xl;
 }
 
 .bytemd-toolbar {
-  @apply !border-b !border-glass-border !bg-glass-bg/70 backdrop-blur-(--glass-blur) !rounded-t-2xl py-4;
+  @apply !border-b !border-border !bg-surface/80 backdrop-blur-sm !rounded-t-xl py-4;
 }
 
 .CodeMirror {
@@ -78,11 +78,11 @@
 }
 
 .bytemd-split .bytemd-preview {
-  @apply !border-l !border-glass-border;
+  @apply !border-l !border-border;
 }
 
 .bytemd-status {
-  @apply !border-t !border-glass-border !bg-glass-bg/50;
+  @apply !border-t !border-border !bg-surface/50;
 }
 
 .bytemd-toolbar-icon {

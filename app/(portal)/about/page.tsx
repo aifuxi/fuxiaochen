@@ -8,7 +8,7 @@ import {
   Laptop,
   Coffee,
 } from "lucide-react";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { BILIBILI_PAGE, EMAIL, GITHUB_PAGE } from "@/constants/info";
 
 export default function AboutPage() {
@@ -79,7 +79,7 @@ export default function AboutPage() {
           `}
         >
           {/* 1. Profile Card (Large, Span 2) */}
-          <GlassCard
+          <AppleCard
             className={`
               relative flex flex-col justify-between overflow-hidden p-8
               md:col-span-2 md:row-span-2
@@ -93,7 +93,7 @@ export default function AboutPage() {
               <div className="flex items-start justify-between">
                 <div
                   className={`
-                    flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-purple-600
+                    flex h-20 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-purple-600
                     text-4xl shadow-lg
                   `}
                 >
@@ -106,7 +106,7 @@ export default function AboutPage() {
                       href={link.href}
                       target="_blank"
                       className={`
-                        flex h-10 w-10 items-center justify-center rounded-full border border-glass-border bg-glass-bg
+                        flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface
                         text-text-secondary transition-all
                         hover:scale-110 hover:border-accent hover:text-accent
                       `}
@@ -127,15 +127,15 @@ export default function AboutPage() {
                   付小晨 (Fu Xiaochen)
                 </h2>
                 <div className="flex flex-wrap gap-3 text-sm font-medium text-text-secondary">
-                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-surface/50 px-3 py-1">
                     <Briefcase className="h-4 w-4" />
                     Frontend Engineer
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-surface/50 px-3 py-1">
                     <MapPin className="h-4 w-4" />
                     Shanghai, China
                   </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-glass-border/50 px-3 py-1">
+                  <span className="flex items-center gap-1.5 rounded-full bg-surface/50 px-3 py-1">
                     <Zap className="h-4 w-4 text-yellow-500" />
                     Available for freelance
                   </span>
@@ -152,12 +152,12 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
-          </GlassCard>
+          </AppleCard>
 
           {/* 2. Stats Card (Small) */}
-          <GlassCard
+          <AppleCard
             className={`
-              flex flex-col justify-center rounded-2xl p-6
+              flex flex-col justify-center rounded-xl p-6
               md:col-span-1
             `}
           >
@@ -174,12 +174,12 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </AppleCard>
 
           {/* 3. Status/Coffee Card (Small) */}
-          <GlassCard
+          <AppleCard
             className={`
-              flex flex-col justify-center rounded-2xl p-6
+              flex flex-col justify-center rounded-xl p-6
               md:col-span-1
             `}
           >
@@ -196,12 +196,12 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </AppleCard>
 
           {/* 4. Tech Stack (Wide) */}
-          <GlassCard
+          <AppleCard
             className={`
-              rounded-2xl p-6
+              rounded-xl p-6
               md:col-span-3
             `}
           >
@@ -224,9 +224,9 @@ export default function AboutPage() {
                     <div
                       key={tech.name}
                       className={`
-                        flex items-center gap-2 rounded-2xl border border-glass-border bg-glass-bg/50 px-3 py-2
+                        flex items-center gap-2 rounded-xl border border-border bg-surface/50 px-3 py-2
                         transition-colors
-                        hover:bg-glass-border
+                        hover:bg-surface
                       `}
                     >
                       <span
@@ -251,9 +251,9 @@ export default function AboutPage() {
                     <div
                       key={tech.name}
                       className={`
-                        flex items-center gap-2 rounded-2xl border border-glass-border bg-glass-bg/50 px-3 py-2
+                        flex items-center gap-2 rounded-xl border border-border bg-surface/50 px-3 py-2
                         transition-colors
-                        hover:bg-glass-border
+                        hover:bg-surface
                       `}
                     >
                       <span
@@ -270,12 +270,12 @@ export default function AboutPage() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </AppleCard>
 
           {/* 5. Gear List (Wide) */}
-          <GlassCard
+          <AppleCard
             className={`
-              rounded-2xl p-6
+              rounded-xl p-6
               md:col-span-3
             `}
           >
@@ -304,9 +304,9 @@ export default function AboutPage() {
                   <div
                     key={item.name}
                     className={`
-                      group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-glass-border
-                      bg-glass-bg/30 px-4 py-2 transition-all
-                      hover:bg-glass-border
+                      group relative flex items-center gap-3 overflow-hidden rounded-xl border border-border
+                      bg-surface/30 px-4 py-2 transition-all
+                      hover:bg-surface
                     `}
                   >
                     <div
@@ -327,7 +327,7 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-          </GlassCard>
+          </AppleCard>
         </div>
       </div>
     </div>

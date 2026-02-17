@@ -8,7 +8,7 @@ import { getTagsAction } from "@/app/actions/tag";
 import { type Tag, type TagListReq } from "@/types/tag";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -117,7 +117,7 @@ export default function TagManagementPage() {
         <p className="text-text-secondary">管理博客文章的标签体系</p>
       </div>
 
-      <GlassCard
+      <AppleCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -140,7 +140,7 @@ export default function TagManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-glass-border bg-glass-bg text-text
+              border border-border bg-surface text-text
               hover:bg-accent/5 hover:text-accent
             `}
           >
@@ -153,13 +153,12 @@ export default function TagManagementPage() {
             bg-accent text-white
             hover:bg-accent/90
           `}
-          hoverEffect="up"
         >
           <Plus className="mr-2 h-4 w-4" /> 新建标签
         </Button>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="overflow-hidden p-0">
+      <AppleCard className="overflow-hidden p-0">
         <Table>
           <TableHeader>
             <TableRow>
@@ -258,9 +257,9 @@ export default function TagManagementPage() {
             )}
           </TableBody>
         </Table>
-      </GlassCard>
+      </AppleCard>
 
-      <GlassCard className="p-2">
+      <AppleCard className="p-2">
         {data && (
           <DataTablePagination
             currentPage={page}
@@ -270,7 +269,7 @@ export default function TagManagementPage() {
             onPageSizeChange={handlePageSizeChange}
           />
         )}
-      </GlassCard>
+      </AppleCard>
     </div>
   );
 }

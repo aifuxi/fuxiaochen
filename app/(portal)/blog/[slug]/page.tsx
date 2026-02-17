@@ -67,19 +67,14 @@ export default async function BlogDetailPage({
                 {blog.tags?.map((tag) => (
                   <span
                     key={tag.id || tag.name}
-                    className={`
-                      rounded-full border border-glass-border bg-glass-bg px-4 py-1.5 text-sm font-medium
-                      backdrop-blur-md
-                    `}
+                    className="rounded-full border border-border bg-surface px-4 py-1.5 text-sm font-medium"
                   >
                     {tag.name}
                   </span>
                 ))}
                 {blog.category && (
                   <span
-                    className={`
-                      rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white shadow-md backdrop-blur-md
-                    `}
+                    className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-white shadow-md"
                   >
                     {blog.category.name}
                   </span>
@@ -99,9 +94,7 @@ export default async function BlogDetailPage({
               <div className="flex items-center gap-6 text-sm text-text-secondary">
                 <span className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-accent" />
-                  {blog.publishedAt
-                    ? formatDateWithTime(new Date(blog.publishedAt))
-                    : "Draft"}
+                  {formatDateWithTime(new Date(blog.updatedAt))}
                 </span>
               </div>
             </div>
@@ -110,22 +103,18 @@ export default async function BlogDetailPage({
 
         {/* Content Section */}
         <div className="container mx-auto px-4">
-          <div
-            className={`
-              grid grid-cols-1 gap-8
-              lg:grid-cols-[1fr_300px]
-            `}
-          >
-            <div
-              className={`
-                relative h-fit overflow-hidden rounded-2xl glass-panel border border-glass-border bg-glass-bg p-8
-                md:p-12
-              `}
-            >
+          <div className={`
+            grid grid-cols-1 gap-8
+            lg:grid-cols-[1fr_300px]
+          `}>
+            <div className={`
+              relative h-fit overflow-hidden rounded-xl border border-border bg-surface p-8
+              md:p-12
+            `}>
               <BlogContent content={blog.content} />
 
               {/* Footer / Navigation */}
-              <div className="mt-16 flex items-center justify-between border-t border-glass-border pt-8">
+              <div className="mt-16 flex items-center justify-between border-t border-border pt-8">
                 <Link
                   href="/blog"
                   className={`
@@ -133,12 +122,10 @@ export default async function BlogDetailPage({
                     hover:text-accent
                   `}
                 >
-                  <span
-                    className={`
-                      transition-transform
-                      group-hover:-translate-x-1
-                    `}
-                  >
+                  <span className={`
+                    transition-transform
+                    group-hover:-translate-x-1
+                  `}>
                     ←
                   </span>{" "}
                   返回博客列表
@@ -150,12 +137,10 @@ export default async function BlogDetailPage({
               </div>
             </div>
 
-            <div
-              className={`
-                hidden
-                lg:block
-              `}
-            >
+            <div className={`
+              hidden
+              lg:block
+            `}>
               <TableOfContents />
             </div>
           </div>

@@ -11,7 +11,7 @@
 
 @import "./bytemd.css";
 
-/* Font Faces */
+/* Font Faces - Apple System Fonts */
 @font-face {
   font-family: "Inter";
   font-style: normal;
@@ -39,58 +39,66 @@
 }
 
 @theme {
-  /* Fonts */
+  /* Fonts - Apple SF Pro fallback */
   --font-sans:
-    "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC",
+    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", "Helvetica Neue", Arial, "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-mono:
     "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
 
-  /* Radius */
-  --radius-2xl: 1.5rem;
+  /* Radius - Apple Style */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  /* Shadows - Apple Style */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
 
-  /* Transitions */
-  --ease-fluid: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Transitions - Apple Ease */
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Accent Hover */
+  --accent-hover-color: var(--color-accent-hover-color);
 
   /* Semantic Colors (registered as theme tokens) */
   --color-bg: var(--bg-color);
-  --color-glass-bg: var(--glass-bg);
-  --color-glass-border: var(--glass-border);
+  --color-surface: var(--surface-color);
+  --color-surface-hover: var(--surface-hover-color);
+  --color-border: var(--border-color);
   --color-accent: var(--accent-color);
+  --color-accent-hover-color: var(--accent-hover-color);
   --color-text: var(--text-color);
   --color-text-secondary: var(--text-color-secondary);
+  --color-text-tertiary: var(--text-color-tertiary);
 }
 
-/* Base Variables & Theme Setup */
+/* Base Variables & Theme Setup - Apple Human Interface */
 :root {
-  /* Palette - Light */
-  --color-bg-light: #f2f4f7;
-  --color-text-light: #1d1d1f;
-  --color-text-secondary-light: #6e6e73;
-  --color-accent-light: #0056b3;
-  --color-glass-bg-light: rgba(255, 255, 255, 0.85);
-  --color-glass-border-light: rgba(0, 0, 0, 0.05);
+  /* Light Mode Palette */
+  --bg-color: #ffffff;
+  --surface-color: #f5f5f7;
+  --surface-hover-color: #e8e8ed;
+  --border-color: #d2d2d7;
+  --accent-color: #0071e3;
+  --accent-hover-color: #0077ed;
+  --text-color: #1d1d1f;
+  --text-color-secondary: #6e6e73;
+  --text-color-tertiary: #86868b;
+  --success-color: #34c759;
+  --warning-color: #ff9500;
+  --error-color: #ff3b30;
 
-  /* Semantic Mapping - Light (Default) */
-  --bg-color: var(--color-bg-light);
-  --text-color: var(--color-text-light);
-  --text-color-secondary: var(--color-text-secondary-light);
-  --accent-color: var(--color-accent-light);
-  --glass-bg: var(--color-glass-bg-light);
-  --glass-border: var(--color-glass-border-light);
-  --glass-blur: 12px;
-
-  /* Syntax Highlighting - Light (GitHub inspired) */
+  /* Syntax Highlighting - Light */
   --hljs-color: #24292f;
-  --hljs-bg: transparent;
+  --hljs-bg: #f6f8fa;
   --hljs-comment: #6e7781;
   --hljs-keyword: #cf222e;
   --hljs-section: #0550ae;
@@ -104,30 +112,26 @@
   --hljs-symbol: #cf222e;
   --hljs-class: #953800;
   --hljs-function: #8250df;
-  --hljs-bold: 600;
-  --hljs-italic: italic;
 }
 
 .dark {
-  /* Palette - Dark */
-  --color-bg-dark: #121212;
-  --color-text-dark: #f5f5f7;
-  --color-text-secondary-dark: #8e8e93;
-  --color-accent-dark: #1a6dbf;
-  --color-glass-bg-dark: rgba(30, 30, 30, 0.8);
-  --color-glass-border-dark: rgba(255, 255, 255, 0.1);
+  /* Dark Mode Palette */
+  --bg-color: #000000;
+  --surface-color: #1c1c1e;
+  --surface-hover-color: #2c2c2e;
+  --border-color: #38383a;
+  --accent-color: #0a84ff;
+  --accent-hover-color: #409cff;
+  --text-color: #f5f5f7;
+  --text-color-secondary: #98989d;
+  --text-color-tertiary: #86868b;
+  --success-color: #30d158;
+  --warning-color: #ff9f0a;
+  --error-color: #ff453a;
 
-  /* Semantic Mapping - Dark */
-  --bg-color: var(--color-bg-dark);
-  --text-color: var(--color-text-dark);
-  --text-color-secondary: var(--color-text-secondary-dark);
-  --accent-color: var(--color-accent-dark);
-  --glass-bg: var(--color-glass-bg-dark);
-  --glass-border: var(--color-glass-border-dark);
-
-  /* Syntax Highlighting - Dark (GitHub Dark inspired) */
+  /* Syntax Highlighting - Dark */
   --hljs-color: #c9d1d9;
-  --hljs-bg: transparent;
+  --hljs-bg: #0d1117;
   --hljs-comment: #8b949e;
   --hljs-keyword: #ff7b72;
   --hljs-section: #79c0ff;
@@ -146,7 +150,7 @@
 /* Base Styles */
 @layer base {
   * {
-    border-color: var(--glass-border);
+    border-color: var(--border-color);
   }
 
   body {
@@ -154,22 +158,28 @@
     color: var(--text-color);
     font-family: var(--font-sans);
     overflow-x: hidden;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Selection Color */
+  ::selection {
+    background-color: var(--accent-color);
+    color: white;
   }
 }
 
-/* Glass Components */
-@utility glass-panel {
-  @apply bg-glass-bg backdrop-blur-(--glass-blur) border border-glass-border transition-all duration-300 ease-(--ease-fluid);
-}
-
-@utility card-glass {
-  @apply glass-panel rounded-2xl overflow-hidden;
+/* Apple Style Components */
+@utility apple-card {
+  @apply bg-surface rounded-xl border border-border shadow-sm transition-all duration-200 ease-(--ease-apple);
   &:hover {
-    @apply -translate-y-1 shadow-lg;
+    @apply shadow-md;
   }
+}
+
+@utility apple-surface {
+  @apply bg-surface/50 rounded-lg border border-border;
 }
 
 /* Text Utilities */
@@ -177,22 +187,52 @@
   @apply text-text-secondary;
 }
 
+@utility text-tertiary {
+  @apply text-text-tertiary;
+}
+
 @utility text-accent-custom {
   @apply text-accent;
 }
 
-/* Button Utilities */
-@utility btn-primary {
-  @apply inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-300 bg-accent;
+/* Button Utilities - Apple Style */
+@utility apple-btn {
+  @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-(--ease-apple) active:scale-[0.98];
+}
+
+@utility apple-btn-primary {
+  @apply apple-btn bg-accent;
   &:hover {
-    @apply opacity-90 -translate-y-0.5 shadow-lg;
+    @apply bg-accent-hover-color;
   }
 }
 
-/* Custom Scrollbar */
+@utility apple-btn-secondary {
+  @apply apple-btn bg-surface text-text border border-border hover:bg-surface-hover;
+}
+
+@utility apple-btn-ghost {
+  @apply apple-btn bg-transparent text-text hover:bg-surface;
+}
+
+/* Input Utilities - Apple Style */
+@utility apple-input {
+  @apply h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-text outline-none transition-all duration-200;
+  &::placeholder {
+    @apply text-text-tertiary;
+  }
+  &:focus {
+    @apply border-accent ring-2 ring-accent/20;
+  }
+  &:hover:not(:focus) {
+    border-color: var(--border-color);
+  }
+}
+
+/* Custom Scrollbar - Apple Style */
 @media (min-width: 768px) {
   ::-webkit-scrollbar {
-    @apply w-2 h-2;
+    @apply w-1.5 h-1.5;
   }
 
   ::-webkit-scrollbar-track {
@@ -200,12 +240,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600;
+    @apply rounded-full bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600;
   }
 }
 
-/* Liquid Glass Typography */
-@utility glass-prose {
+/* Apple Typography */
+@utility apple-prose {
   @apply prose prose-lg max-w-none;
 
   /* Prose Color Mapping */
@@ -216,35 +256,35 @@
   --tw-prose-bold: var(--text-color);
   --tw-prose-counters: var(--accent-color);
   --tw-prose-bullets: var(--accent-color);
-  --tw-prose-hr: var(--glass-border);
+  --tw-prose-hr: var(--border-color);
   --tw-prose-quotes: var(--text-color);
   --tw-prose-quote-borders: var(--accent-color);
   --tw-prose-captions: var(--text-color-secondary);
   --tw-prose-code: var(--accent-color);
   --tw-prose-pre-code: var(--text-color);
-  --tw-prose-pre-bg: var(--glass-bg);
-  --tw-prose-th-borders: var(--glass-border);
-  --tw-prose-td-borders: var(--glass-border);
+  --tw-prose-pre-bg: var(--surface-color);
+  --tw-prose-th-borders: var(--border-color);
+  --tw-prose-td-borders: var(--border-color);
 
   /* Prose Element Styling */
   & pre {
-    @apply bg-glass-bg/50 rounded-2xl border border-glass-border backdrop-blur-(--glass-blur) transition-all duration-300;
+    @apply bg-surface rounded-xl border border-border p-4;
   }
 
   & blockquote {
-    @apply border-l-4 border-accent bg-glass-bg/30 p-4 rounded-r-2xl not-italic;
+    @apply border-l-4 border-accent bg-surface/50 p-4 rounded-r-xl not-italic;
   }
 
   & img {
-    @apply rounded-2xl shadow-md border border-glass-border;
+    @apply rounded-xl shadow-sm;
   }
 
   & a {
-    @apply no-underline hover:underline transition-all duration-300 font-medium;
+    @apply no-underline hover:underline transition-colors duration-200 font-medium;
   }
 
   & :not(pre) > code {
-    @apply px-1.5 py-0.5 rounded-lg text-sm font-mono border border-glass-border mx-0.5 shadow-sm align-middle bg-glass-bg text-accent-custom backdrop-blur-[4px];
+    @apply px-1.5 py-0.5 rounded-md text-sm font-mono bg-surface border border-border text-accent mx-0.5 align-middle;
   }
 
   /* Explicitly clear pseudo-elements for inline code to avoid artifacts */
@@ -254,7 +294,7 @@
   }
 
   & pre code {
-    @apply bg-transparent border-none p-0 shadow-none;
+    @apply bg-transparent border-none p-0;
   }
 
   & pre code::before,
@@ -274,7 +314,7 @@
   }
 
   & h2 {
-    @apply text-2xl font-semibold border-b border-glass-border pb-2 mt-10 mb-6;
+    @apply text-2xl font-semibold border-b border-border pb-2 mt-10 mb-6;
   }
 
   & h3 {
@@ -282,13 +322,13 @@
   }
 }
 
-/* Code Block Wrapper & Copy Button */
+/* Code Block Wrapper & Copy Button - Apple Style */
 @utility code-block-wrapper {
   @apply relative;
 }
 
 @utility copy-code-btn {
-  @apply absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-glass-border bg-glass-bg text-text-secondary opacity-0 transition-all duration-200 backdrop-blur-[4px] cursor-pointer;
+  @apply absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-text-tertiary opacity-0 transition-all duration-200 cursor-pointer;
 
   .code-block-wrapper:hover & {
     @apply opacity-100;
@@ -299,7 +339,7 @@
   }
 
   &.copied {
-    @apply border-accent text-accent bg-glass-bg opacity-100;
+    @apply border-accent text-accent bg-surface opacity-100;
   }
 
   & .check-icon {
@@ -315,7 +355,7 @@
   }
 }
 
-/* Highlight.js Custom Styles (Liquid Glass) */
+/* Highlight.js Custom Styles - Apple */
 .hljs {
   @apply block overflow-x-auto p-4 text-(--hljs-color) bg-transparent;
 }

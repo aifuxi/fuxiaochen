@@ -7,7 +7,7 @@ export default function BlogLoading() {
         {/* Header Section */}
         <div className="relative mb-16">
           <Skeleton className={`
-            mb-4 h-16 w-3/4 rounded-2xl
+            mb-4 h-16 w-3/4 rounded-xl
             md:w-1/2
           `} />
           <div className="space-y-2">
@@ -25,7 +25,7 @@ export default function BlogLoading() {
             space-y-8
             lg:col-span-1
           `}>
-            <div className="rounded-2xl glass-panel p-6">
+            <div className="rounded-xl border border-border bg-surface p-6">
               <Skeleton className="mb-6 h-6 w-1/2 rounded-lg" />
               <div className="space-y-3">
                 {[...Array(5)].map((_, i) => (
@@ -34,7 +34,7 @@ export default function BlogLoading() {
               </div>
             </div>
 
-            <div className="rounded-2xl glass-panel p-6">
+            <div className="rounded-xl border border-border bg-surface p-6">
               <Skeleton className="mb-6 h-6 w-1/2 rounded-lg" />
               <div className="flex flex-wrap gap-2">
                 {[...Array(8)].map((_, i) => (
@@ -53,7 +53,7 @@ export default function BlogLoading() {
               {[...Array(6)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-[400px] overflow-hidden rounded-2xl glass-panel"
+                  className="h-[400px] overflow-hidden rounded-xl border border-border bg-surface"
                 >
                   <Skeleton className="h-48 w-full rounded-none" />
                   <div className="space-y-4 p-6">
@@ -63,7 +63,7 @@ export default function BlogLoading() {
                     </div>
                     <Skeleton className="h-8 w-3/4 rounded-lg" />
                     <Skeleton className="h-20 w-full rounded-lg" />
-                    <div className="flex justify-between border-t border-glass-border pt-4">
+                    <div className="flex justify-between border-t border-border pt-4">
                       <Skeleton className="h-4 w-24 rounded-lg" />
                       <Skeleton className="h-4 w-24 rounded-lg" />
                     </div>
