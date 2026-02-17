@@ -22,7 +22,7 @@ const badgeVariants = cva(
           hover:bg-surface-hover
         `,
         destructive: `
-          bg-error border-transparent text-white
+          border-transparent bg-error text-white
           hover:bg-error/90
         `,
         outline: `
