@@ -4,23 +4,25 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
+import type { ColumnDef } from "@tanstack/react-table";
 import { getChangelogsAction } from "@/app/actions/changelog";
-import { type Changelog } from "@/types/changelog";
+import { type Changelog, type ChangelogListReq } from "@/types/changelog";
 import { Button } from "@/components/ui/button";
 import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { DataTablePagination } from "@/components/admin/data-table-pagination";
-import { formatSimpleDate } from "@/lib/time";
+import { DataTable } from "@/components/ui/data-table";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { formatSimpleDate, formatSimpleDateWithTime } from "@/lib/time";
 import { ChangelogDialog } from "./changelog-dialog";
 import { DeleteAlert } from "./delete-alert";
+
+const fetcher = async (params: ChangelogListReq) => {
+  const res = await getChangelogsAction(params);
+  if (res.success) {
+    return res.data;
+  }
+  throw new Error(res.error);
+};
 
 export default function ChangelogManagementPage() {
   const router = useRouter();
@@ -30,16 +32,9 @@ export default function ChangelogManagementPage() {
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const version = searchParams.get("version") || undefined;
 
-  // Fetch data using SWR
   const { data, error, isLoading, mutate } = useSWR(
     { page, pageSize, version },
-    async (params) => {
-      const res = await getChangelogsAction(params);
-      if (res.success) {
-        return res.data;
-      }
-      throw new Error(res.error);
-    },
+    fetcher,
   );
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,46 +48,99 @@ export default function ChangelogManagementPage() {
     } else {
       params.delete("version");
     }
-    params.set("page", "1"); // Reset to page 1 on search
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    const params = new URLSearchParams(searchParams);
-    params.set("pageSize", newPageSize.toString());
-    params.set("page", "1"); // Reset to page 1
+    params.set("page", "1");
     router.push(`?${params.toString()}`);
   };
 
   const handleEdit = (changelog: Changelog) => {
     NiceModal.show(ChangelogDialog, {
       changelog,
-      onSuccess,
+      onSuccess: () => mutate(),
     });
   };
 
   const handleDelete = (changelog: Changelog) => {
     NiceModal.show(DeleteAlert, {
       id: changelog.id,
-      onSuccess,
+      onSuccess: () => mutate(),
     });
   };
 
   const handleCreate = () => {
     NiceModal.show(ChangelogDialog, {
-      onSuccess,
+      onSuccess: () => mutate(),
     });
   };
 
-  const onSuccess = () => {
-    mutate();
-  };
+  const columns: ColumnDef<Changelog>[] = [
+    {
+      accessorKey: "version",
+      header: "版本",
+      cell: ({ row }) => (
+        <span className="font-medium text-text">{row.original.version}</span>
+      ),
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="发布日期" />
+      ),
+      cell: ({ row }) => (
+        <span className="text-text-secondary">
+          {row.original.date
+            ? formatSimpleDate(new Date(row.original.date))
+            : "-"}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "content",
+      header: "内容预览",
+      cell: ({ row }) => (
+        <span className="max-w-md truncate text-text-secondary">
+          {row.original.content}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="创建时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="更新时间" />
+      ),
+      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+    },
+    {
+      id: "actions",
+      enablePinning: true,
+      header: "操作",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleEdit(row.original)}
+          >
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => handleDelete(row.original)}
+            className="hover:bg-error/10 hover:text-error"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -118,7 +166,7 @@ export default function ChangelogManagementPage() {
             <Input
               name="query"
               placeholder="搜索版本号..."
-              defaultValue={version}
+              defaultValue={version || ""}
               className="pl-9"
             />
           </div>
@@ -146,112 +194,29 @@ export default function ChangelogManagementPage() {
       </AppleCard>
 
       <AppleCard className="overflow-hidden p-0">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-text-secondary">
-                版本
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                发布日期
-              </TableHead>
-              <TableHead className="text-text-secondary">
-                内容预览
-              </TableHead>
-              <TableHead className="text-right text-text-secondary">
-                操作
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-red-500"
-                >
-                  加载失败: {error.message}
-                </TableCell>
-              </TableRow>
-            ) : data?.lists?.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-text-secondary"
-                >
-                  暂无数据
-                </TableCell>
-              </TableRow>
-            ) : (
-              data?.lists?.map((changelog) => (
-                <TableRow
-                  key={changelog.id}
-                  className={`
-                    border-border
-                    hover:bg-surface
-                  `}
-                >
-                  <TableCell className="font-medium text-text">
-                    {changelog.version}
-                  </TableCell>
-                  <TableCell className="text-text-secondary">
-                    {changelog.date
-                      ? formatSimpleDate(new Date(changelog.date))
-                      : "-"}
-                  </TableCell>
-                  <TableCell className="max-w-md truncate text-text-secondary">
-                    {changelog.content}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(changelog)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(changelog)}
-                        className={`
-                          text-text-secondary
-                          hover:bg-red-500/10 hover:text-red-500
-                        `}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </AppleCard>
-
-      <AppleCard className="p-2">
-        {data && (
-          <DataTablePagination
-            currentPage={page}
-            total={data.total}
-            pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+        {isLoading ? (
+          <div className="flex h-24 items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+          </div>
+        ) : error ? (
+          <div className="flex h-24 items-center justify-center text-error">
+            加载失败: {error.message}
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={data?.lists || []}
+            showPagination={false}
+            emptyText="暂无数据"
           />
         )}
       </AppleCard>
 
+      {data && (
+        <div className="flex justify-center text-sm text-text-secondary">
+          共 {data.total} 条数据
+        </div>
+      )}
     </div>
   );
 }
