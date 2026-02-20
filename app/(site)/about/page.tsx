@@ -1,7 +1,4 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
-import { Title } from "@/components/ui/typography/title";
-import { Text } from "@/components/ui/typography/text";
 import {
   Laptop,
   Monitor,
@@ -12,6 +9,9 @@ import {
   Server,
   Sparkles,
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/typography/text";
+import { Title } from "@/components/ui/typography/title";
 
 // 技能数据 - 带图标
 const skillCategories = [
@@ -20,13 +20,13 @@ const skillCategories = [
     icon: Sparkles,
     description: "主要技术栈",
     skills: [
-      { name: "HTML", icon: "skill-icons:html" },
-      { name: "CSS", icon: "skill-icons:css" },
-      { name: "JavaScript", icon: "skill-icons:javascript" },
-      { name: "TypeScript", icon: "skill-icons:typescript" },
-      { name: "React", icon: "skill-icons:react" },
-      { name: "Next.js", icon: "skill-icons:nextjs" },
-      { name: "TailwindCSS", icon: "skill-icons:tailwindcss" },
+      { name: "HTML", icon: "icon-[skill-icons--html]" },
+      { name: "CSS", icon: "icon-[skill-icons--css]" },
+      { name: "JavaScript", icon: "icon-[skill-icons--javascript]" },
+      { name: "TypeScript", icon: "icon-[skill-icons--typescript]" },
+      { name: "React", icon: "icon-[skill-icons--react]" },
+      { name: "Next.js", icon: "icon-[skill-icons--nextjs]" },
+      { name: "TailwindCSS", icon: "icon-[skill-icons--tailwindcss]" },
     ],
   },
   {
@@ -34,8 +34,8 @@ const skillCategories = [
     icon: Server,
     description: "简单 CRUD 水平",
     skills: [
-      { name: "Go", icon: "skill-icons:go" },
-      { name: "MySQL", icon: "skill-icons:mysql" },
+      { name: "Go", icon: "icon-[skill-icons--go]" },
+      { name: "MySQL", icon: "icon-[skill-icons--mysql]" },
     ],
   },
   {
@@ -43,12 +43,12 @@ const skillCategories = [
     icon: Terminal,
     description: "日常使用",
     skills: [
-      { name: "Git", icon: "skill-icons:git" },
-      { name: "GitHub", icon: "skill-icons:github" },
-      { name: "Docker", icon: "skill-icons:docker" },
-      { name: "Linux", icon: "skill-icons:linux" },
-      { name: "Nginx", icon: "skill-icons:nginx" },
-      { name: "Figma", icon: "skill-icons:figma" },
+      { name: "Git", icon: "icon-[skill-icons--git]" },
+      { name: "GitHub", icon: "icon-[skill-icons--github]" },
+      { name: "Docker", icon: "icon-[skill-icons--docker]" },
+      { name: "Linux", icon: "icon-[skill-icons--linux]" },
+      { name: "Nginx", icon: "icon-[skill-icons--nginx]" },
+      { name: "Figma", icon: "icon-[skill-icons--figma]" },
     ],
   },
 ];
@@ -90,52 +90,68 @@ const devices = [
 // Hero 区域
 function Hero() {
   return (
-    <section className={`
-      relative overflow-hidden py-16
-      md:py-24
-    `}>
+    <section
+      className={`
+        relative overflow-hidden py-16
+        md:py-24
+      `}
+    >
       {/* 装饰性渐变 */}
-      <div className={`
-        pointer-events-none absolute -top-40 left-1/4 h-[400px] w-[600px] rounded-full bg-gradient-to-br from-accent/10
-        via-info/5 to-transparent blur-3xl
-      `} />
-      <div className={`
-        pointer-events-none absolute right-0 -bottom-20 h-[300px] w-[400px] rounded-full bg-gradient-to-tl
-        from-warning/10 to-transparent blur-3xl
-      `} />
+      <div
+        className={`
+          pointer-events-none absolute -top-40 left-1/4 h-[400px] w-[600px] rounded-full bg-gradient-to-br
+          from-accent/10 via-info/5 to-transparent blur-3xl
+        `}
+      />
+      <div
+        className={`
+          pointer-events-none absolute right-0 -bottom-20 h-[300px] w-[400px] rounded-full bg-gradient-to-tl
+          from-warning/10 to-transparent blur-3xl
+        `}
+      />
 
       <div className="relative mx-auto max-w-3xl">
-        <div className={`
-          flex flex-col items-center gap-8
-          md:flex-row md:gap-12
-        `}>
+        <div
+          className={`
+            flex flex-col items-center gap-8
+            md:flex-row md:gap-12
+          `}
+        >
           {/* 头像 */}
           <div className="relative shrink-0">
-            <div className={`
-              relative h-32 w-32 overflow-hidden rounded-full bg-gradient-to-br from-accent to-info p-[3px]
-              md:h-40 md:w-40
-            `}>
-              <div className={`
-                flex h-full w-full items-center justify-center rounded-full bg-surface text-5xl font-bold text-accent
-                md:text-6xl
-              `}>
+            <div
+              className={`
+                relative h-32 w-32 overflow-hidden rounded-full bg-gradient-to-br from-accent to-info p-[3px]
+                md:h-40 md:w-40
+              `}
+            >
+              <div
+                className={`
+                  flex h-full w-full items-center justify-center rounded-full bg-surface text-5xl font-bold text-accent
+                  md:text-6xl
+                `}
+              >
                 付
               </div>
             </div>
             {/* 状态指示器 */}
-            <div className={`
-              absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface
-              bg-success
-            `}>
+            <div
+              className={`
+                absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface
+                bg-success
+              `}
+            >
               <div className="h-2 w-2 rounded-full bg-white" />
             </div>
           </div>
 
           {/* 介绍文字 */}
-          <div className={`
-            flex-1 text-center
-            md:text-left
-          `}>
+          <div
+            className={`
+              flex-1 text-center
+              md:text-left
+            `}
+          >
             <Title level={1} className="mb-3">
               Hi~ 我是付小晨
             </Title>
@@ -191,9 +207,7 @@ function Skills() {
 
               {/* 技能图标网格 */}
               <Card className="p-4">
-                <div
-                  className={`flex flex-wrap gap-3`}
-                >
+                <div className={`flex flex-wrap gap-3`}>
                   {category.skills.map((skill, skillIndex) => (
                     <div
                       key={skillIndex}
@@ -241,11 +255,13 @@ function Devices() {
         <Text type="secondary">日常使用的硬件设备</Text>
       </div>
 
-      <div className={`
-        grid gap-4
-        sm:grid-cols-2
-        lg:grid-cols-3
-      `}>
+      <div
+        className={`
+          grid gap-4
+          sm:grid-cols-2
+          lg:grid-cols-3
+        `}
+      >
         {devices.map((device, index) => {
           const Icon = device.icon;
           return (
@@ -296,23 +312,31 @@ function Devices() {
 // 底部 CTA
 function BottomCTA() {
   return (
-    <section className={`
-      relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface via-surface to-surface-hover py-12
-      md:py-16
-    `}>
+    <section
+      className={`
+        relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface via-surface to-surface-hover py-12
+        md:py-16
+      `}
+    >
       {/* 装饰 */}
-      <div className={`
-        pointer-events-none absolute -top-20 -right-20 h-[200px] w-[200px] rounded-full bg-accent/10 blur-3xl
-      `} />
-      <div className={`
-        pointer-events-none absolute -bottom-20 -left-20 h-[200px] w-[200px] rounded-full bg-info/10 blur-3xl
-      `} />
+      <div
+        className={`
+          pointer-events-none absolute -top-20 -right-20 h-[200px] w-[200px] rounded-full bg-accent/10 blur-3xl
+        `}
+      />
+      <div
+        className={`
+          pointer-events-none absolute -bottom-20 -left-20 h-[200px] w-[200px] rounded-full bg-info/10 blur-3xl
+        `}
+      />
 
       <div className="relative mx-auto max-w-2xl px-6 text-center">
-        <h2 className={`
-          mb-4 text-2xl font-bold text-text
-          md:text-3xl
-        `}>
+        <h2
+          className={`
+            mb-4 text-2xl font-bold text-text
+            md:text-3xl
+          `}
+        >
           想了解更多？
         </h2>
         <p className="mb-8 text-text-secondary">
