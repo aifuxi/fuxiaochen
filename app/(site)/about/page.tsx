@@ -295,9 +295,9 @@ function BottomCTA() {
         `}>
           想了解更多？
         </h2>
-        <Text type="secondary" className="mb-8">
+        <p className="mb-8 text-text-secondary">
           查看我的博客文章，了解更多技术分享
-        </Text>
+        </p>
         <Link
           href="/blog"
           className={`
