@@ -1,89 +1,56 @@
 import Link from "next/link";
-import {
-  Laptop,
-  Monitor,
-  Keyboard,
-  Mouse,
-  Gamepad2,
-  Terminal,
-  Server,
-  Sparkles,
-} from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Text } from "@/components/ui/typography/text";
-import { Title } from "@/components/ui/typography/title";
 
 // 技能数据 - 带图标
-const skillCategories = [
-  {
-    title: "前端",
-    icon: Sparkles,
-    description: "主要技术栈",
-    skills: [
-      { name: "HTML", icon: "icon-[skill-icons--html]" },
-      { name: "CSS", icon: "icon-[skill-icons--css]" },
-      { name: "JavaScript", icon: "icon-[skill-icons--javascript]" },
-      { name: "TypeScript", icon: "icon-[skill-icons--typescript]" },
-      { name: "React", icon: "icon-[skill-icons--react-dark]" },
-      { name: "Next.js", icon: "icon-[skill-icons--nextjs-dark]" },
-      { name: "TailwindCSS", icon: "icon-[skill-icons--tailwindcss-dark]" },
-    ],
-  },
-  {
-    title: "后端",
-    icon: Server,
-    description: "简单 CRUD 水平",
-    skills: [
-      { name: "Go", icon: "icon-[skill-icons--golang]" },
-      { name: "MySQL", icon: "icon-[skill-icons--mysql-dark]" },
-    ],
-  },
-  {
-    title: "开发工具",
-    icon: Terminal,
-    description: "日常使用",
-    skills: [
-      { name: "Git", icon: "icon-[skill-icons--git]" },
-      { name: "GitHub", icon: "icon-[skill-icons--github-dark]" },
-      { name: "Docker", icon: "icon-[skill-icons--docker]" },
-      { name: "Linux", icon: "icon-[skill-icons--linux-dark]" },
-      { name: "Nginx", icon: "icon-[skill-icons--nginx]" },
-      { name: "Figma", icon: "icon-[skill-icons--figma-dark]" },
-    ],
-  },
+const allSkills = [
+  { name: "HTML", icon: "icon-[skill-icons--html]" },
+  { name: "CSS", icon: "icon-[skill-icons--css]" },
+  { name: "JavaScript", icon: "icon-[skill-icons--javascript]" },
+  { name: "TypeScript", icon: "icon-[skill-icons--typescript]" },
+  { name: "React", icon: "icon-[skill-icons--react-dark]" },
+  { name: "Next.js", icon: "icon-[skill-icons--nextjs-dark]" },
+  { name: "TailwindCSS", icon: "icon-[skill-icons--tailwindcss-dark]" },
+  { name: "Go", icon: "icon-[skill-icons--golang]" },
+  { name: "MySQL", icon: "icon-[skill-icons--mysql-dark]" },
+  { name: "Git", icon: "icon-[skill-icons--git]" },
+  { name: "GitHub", icon: "icon-[skill-icons--github-dark]" },
+  { name: "Docker", icon: "icon-[skill-icons--docker]" },
+  { name: "Linux", icon: "icon-[skill-icons--linux-dark]" },
+  { name: "Nginx", icon: "icon-[skill-icons--nginx]" },
+  { name: "Figma", icon: "icon-[skill-icons--figma-dark]" },
 ];
 
 // 设备数据
 const devices = [
   {
-    icon: Laptop,
     name: "MacBook Pro",
     spec: "14-inch M3 Max 64G",
-    description: "主力机，干活、编程、学习",
+    description: "主力机",
+    featured: true,
   },
   {
-    icon: Gamepad2,
     name: "微星 GP76",
     spec: "RTX 3070",
-    description: "打游戏用",
+    description: "游戏机",
+    featured: true,
   },
   {
-    icon: Monitor,
-    name: "LG 显示器",
-    spec: "27 英寸 4K HDR",
+    name: "LG 27 英寸 4K HDR",
+    spec: "",
     description: "",
+    featured: false,
   },
   {
-    icon: Keyboard,
     name: "珂芝 K75",
     spec: "",
-    description: "",
+    description: "键盘",
+    featured: false,
   },
   {
-    icon: Mouse,
     name: "罗技 PRO 2 代",
     spec: "",
-    description: "",
+    description: "鼠标",
+    featured: false,
   },
 ];
 
@@ -197,183 +164,226 @@ function Hero() {
   );
 }
 
-// 技能区域 - Apple 风格
+// 技能区域 - Apple 大胆风格
 function Skills() {
   return (
-    <section className="mb-16 space-y-8">
-      <div className="text-center">
-        <Title level={2} className="mb-2">
-          技能
-        </Title>
-        <Text type="secondary">我的技术栈与工具</Text>
-      </div>
+    <section
+      className={`
+        relative overflow-hidden py-20
+        md:py-32
+      `}
+    >
+      {/* 背景装饰 */}
+      <div
+        className={`
+          pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent
+        `}
+      />
 
-      {/* 技能分类 */}
-      <div className="space-y-8">
-        {skillCategories.map((category, index) => {
-          const Icon = category.icon;
-          return (
-            <div key={index} className="space-y-4">
-              {/* 分类标题 */}
-              <div className="flex items-center gap-3">
-                <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10`}
-                >
-                  <Icon className="h-4 w-4 text-accent" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-text">{category.title}</h3>
-                  {category.description && (
-                    <p className="text-xs text-text-tertiary">
-                      {category.description}
-                    </p>
-                  )}
-                </div>
+      <div className="relative mx-auto max-w-5xl px-4">
+        {/* 标题 */}
+        <div className={`
+          mb-12 text-center
+          md:mb-16
+        `}>
+          <h2
+            className={`
+              mb-4 text-4xl font-bold tracking-tight text-text
+              md:text-5xl
+            `}
+          >
+            Tech Stack
+          </h2>
+          <p className="text-lg text-text-secondary">
+            我熟练使用的技术与工具
+          </p>
+        </div>
+
+        {/* 技能网格 - 大图标 */}
+        <div
+          className={`
+            grid grid-cols-3 gap-4
+            sm:grid-cols-4
+            md:grid-cols-5
+            lg:grid-cols-6
+          `}
+        >
+          {allSkills.map((skill, index) => (
+            <div
+              key={index}
+              className={`
+                group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300
+                hover:bg-surface
+                md:p-6
+              `}
+            >
+              <div
+                className={`
+                  h-12 w-12 transition-transform duration-300
+                  group-hover:scale-110
+                  md:h-16 md:w-16
+                `}
+              >
+                <span className={skill.icon + " h-full w-full"} />
               </div>
-
-              {/* 技能图标网格 */}
-              <Card className="p-4">
-                <div className={`flex flex-wrap gap-3`}>
-                  {category.skills.map((skill, skillIndex) => (
-                    <div
-                      key={skillIndex}
-                      className={`
-                        group flex items-center gap-2 rounded-lg bg-surface px-3 py-2 transition-all duration-200
-                        hover:bg-accent/10
-                      `}
-                    >
-                      <span
-                        className={`
-                          inline-block h-5 w-5 transition-transform duration-200
-                          group-hover:scale-110
-                        `}
-                      >
-                        <span className={skill.icon} />
-                      </span>
-                      <span
-                        className={`
-                          text-sm text-text-secondary transition-colors duration-200
-                          group-hover:text-text
-                        `}
-                      >
-                        {skill.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              <span
+                className={`
+                  text-center text-xs text-text-secondary transition-colors duration-200
+                  group-hover:text-text
+                  md:text-sm
+                `}
+              >
+                {skill.name}
+              </span>
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-// 设备区域
+// 设备区域 - Apple 大胆风格
 function Devices() {
-  return (
-    <section className="mb-16 space-y-6">
-      <div className="text-center">
-        <Title level={2} className="mb-2">
-          我的设备
-        </Title>
-        <Text type="secondary">日常使用的硬件设备</Text>
-      </div>
+  const featuredDevices = devices.filter((d) => d.featured);
+  const otherDevices = devices.filter((d) => !d.featured);
 
-      <div
-        className={`
-          grid gap-4
-          sm:grid-cols-2
-          lg:grid-cols-3
-        `}
-      >
-        {devices.map((device, index) => {
-          const Icon = device.icon;
-          return (
+  return (
+    <section className={`
+      py-20
+      md:py-32
+    `}>
+      <div className="mx-auto max-w-5xl px-4">
+        {/* 标题 */}
+        <div className={`
+          mb-12 text-center
+          md:mb-16
+        `}>
+          <h2
+            className={`
+              mb-4 text-4xl font-bold tracking-tight text-text
+              md:text-5xl
+            `}
+          >
+            My Setup
+          </h2>
+          <p className="text-lg text-text-secondary">日常使用的硬件设备</p>
+        </div>
+
+        {/* 主力设备 - 大卡片 */}
+        <div
+          className={`
+            mb-8 grid gap-6
+            md:grid-cols-2
+          `}
+        >
+          {featuredDevices.map((device, index) => (
             <Card
               key={index}
               className={`
-                group relative overflow-hidden p-5 transition-all duration-200
-                hover:shadow-lg
+                group relative overflow-hidden p-8 transition-all duration-300
+                hover:shadow-xl
               `}
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`
-                    flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-surface transition-colors
-                    duration-200
-                    group-hover:bg-accent/10
-                  `}
+              {/* 装饰渐变 */}
+              <div
+                className={`
+                  pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br from-accent/10
+                  to-transparent opacity-0 blur-2xl transition-opacity duration-300
+                  group-hover:opacity-100
+                `}
+              />
+              <div className="relative">
+                <span
+                  className={`mb-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent`}
                 >
-                  <Icon
-                    className={`
-                      h-6 w-6 text-text-secondary transition-colors duration-200
-                      group-hover:text-accent
-                    `}
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-medium text-text">
-                    {device.name}
-                  </h3>
-                  {device.spec && (
-                    <p className="mt-0.5 text-sm text-accent">{device.spec}</p>
-                  )}
-                  {device.description && (
-                    <p className="mt-1 text-sm text-text-tertiary">
-                      {device.description}
-                    </p>
-                  )}
-                </div>
+                  {device.description}
+                </span>
+                <h3 className={`
+                  mb-2 text-2xl font-bold text-text
+                  md:text-3xl
+                `}>
+                  {device.name}
+                </h3>
+                {device.spec && (
+                  <p className="text-lg text-accent">{device.spec}</p>
+                )}
               </div>
             </Card>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* 其他设备 - 紧凑列表 */}
+        <div className="flex flex-wrap justify-center gap-4">
+          {otherDevices.map((device, index) => (
+            <div
+              key={index}
+              className={`
+                flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 transition-colors
+                duration-200
+                hover:border-accent/30
+              `}
+            >
+              <span className="text-sm font-medium text-text">
+                {device.name}
+              </span>
+              {device.description && (
+                <span className="text-xs text-text-tertiary">
+                  · {device.description}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-// 底部 CTA
+// 底部 CTA - Apple 大胆风格
 function BottomCTA() {
   return (
     <section
       className={`
-        relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface via-surface to-surface-hover py-12
-        md:py-16
+        relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
+        md:py-28
       `}
     >
       {/* 装饰 */}
       <div
         className={`
-          pointer-events-none absolute -top-20 -right-20 h-[200px] w-[200px] rounded-full bg-accent/10 blur-3xl
+          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-accent/20 blur-3xl
         `}
       />
       <div
         className={`
-          pointer-events-none absolute -bottom-20 -left-20 h-[200px] w-[200px] rounded-full bg-info/10 blur-3xl
+          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-info/20 blur-3xl
         `}
       />
 
-      <div className="relative mx-auto max-w-2xl px-6 text-center">
+      <div className="relative mx-auto max-w-3xl px-6 text-center">
         <h2
           className={`
-            mb-4 text-2xl font-bold text-text
-            md:text-3xl
+            mb-6 text-3xl font-bold text-text
+            md:text-4xl
           `}
         >
-          想了解更多？
+          看到这里了？
         </h2>
-        <p className="mb-8 text-text-secondary">
-          查看我的博客文章，了解更多技术分享
+        <p
+          className={`
+            mx-auto mb-10 max-w-md text-lg text-text-secondary
+            md:text-xl
+          `}
+        >
+          来我的博客看看吧，有更多技术分享和学习笔记
         </p>
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-sm font-medium text-white shadow-sm
-            transition-all duration-200
-            hover:bg-accent-hover-color
+            inline-flex items-center gap-2 rounded-full bg-text px-8 py-4 text-base font-medium text-white shadow-lg
+            transition-all duration-300
+            hover:bg-text/90
             active:scale-[0.98]
           `}
         >
