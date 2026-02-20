@@ -59,7 +59,7 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
   const baseUrl = `/blog?title=${params.title || ""}&categoryId=${params.categoryId || ""}&tagId=${params.tagId || ""}&sortBy=${params.sortBy || "createdAt"}&order=${params.order || "desc"}`;
 
   return (
-    <>
+    <div className="space-y-6">
       <BlogFilterBar
         categories={categories}
         tags={tags}
@@ -78,7 +78,7 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
         pageSize={pageSize}
         baseUrl={baseUrl}
       />
-    </>
+    </div>
   );
 }
 
