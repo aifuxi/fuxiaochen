@@ -13,6 +13,15 @@ import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
@@ -35,6 +44,49 @@ export default function CategoryManagementPage() {
     { page, pageSize, name },
     fetcher,
   );
+
+  const totalPages = Math.ceil((data?.total || 0) / pageSize);
+
+  const getPageUrl = (pageNum: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNum.toString());
+    return `?${params.toString()}`;
+  };
+
+  const getVisiblePages = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const showEllipsis = totalPages > 7;
+
+    if (!showEllipsis) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (page <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      } else if (page >= totalPages - 3) {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = page - 1; i <= page + 1; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,10 +182,10 @@ export default function CategoryManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-text">
+        <h1 className="text-3xl font-bold tracking-tight text-text">
           分类管理
-        </h2>
-        <p className="text-text-secondary">管理博客文章的分类体系</p>
+        </h1>
+        <p className="mt-1 text-text-secondary">管理博客文章的分类体系</p>
       </div>
 
       <AppleCard
@@ -169,8 +221,8 @@ export default function CategoryManagementPage() {
         <Button
           onClick={() => showCategoryModal()}
           className={`
+            hover:bg-accent-hover
             bg-accent text-white
-            hover:bg-accent/90
           `}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -193,9 +245,38 @@ export default function CategoryManagementPage() {
         )}
       </AppleCard>
 
-      {data && (
-        <div className="flex justify-center text-sm text-text-secondary">
-          共 {data.total} 条数据
+      {data && data.total > 0 && (
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                {page > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious href={getPageUrl(page - 1)} />
+                  </PaginationItem>
+                )}
+
+                {getVisiblePages().map((p, index) => (
+                  <PaginationItem key={index}>
+                    {p === "ellipsis" ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink href={getPageUrl(p)} isActive={p === page}>
+                        {p}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ))}
+
+                {page < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext href={getPageUrl(page + 1)} />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       )}
     </div>

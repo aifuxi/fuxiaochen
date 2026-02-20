@@ -62,11 +62,11 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               href={item.href}
               className={cn(
                 `
-                  group flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200
+                  group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
                   ease-apple
                 `,
                 isActive
-                  ? "bg-accent text-white"
+                  ? "bg-accent text-white shadow-sm"
                   : `
                     text-text-secondary
                     hover:bg-surface-hover hover:text-text
