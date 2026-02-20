@@ -42,8 +42,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <Link
           href="/"
           target="_blank"
-          className="text-lg font-semibold tracking-tight text-text"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-text"
         >
+          <img
+            src="/images/logo.svg"
+            alt="Logo"
+            className="h-6 w-6"
+          />
           <span className="text-accent">{WEBSITE}</span>
           后台管理
         </Link>

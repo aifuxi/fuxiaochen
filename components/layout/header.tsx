@@ -45,15 +45,14 @@ export function Header() {
             hover:opacity-80
           `}
         >
-          <div
+          <img
+            src="/images/logo.svg"
+            alt="Logo"
             className={`
-              flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-info text-sm
-              text-white transition-transform duration-300
+              h-8 w-8 transition-transform duration-300
               group-hover:scale-105
             `}
-          >
-            付
-          </div>
+          />
           <span className={`
             hidden
             sm:block
