@@ -12,24 +12,28 @@ interface BlogCardProps {
 
 export function BlogCard({ blog }: BlogCardProps) {
   return (
-    <Card className={`
-      group overflow-hidden p-0 transition-all duration-200 ease-apple
-      hover:shadow-md
-    `}>
+    <Card
+      className={`
+        group overflow-hidden rounded-2xl p-0 transition-all duration-300 ease-apple
+        hover:-translate-y-0.5 hover:shadow-lg
+      `}
+    >
       <Link href={`/blog/${blog.slug}`} className="flex gap-4">
         {/* 封面图 */}
         {blog.cover && (
-          <div className={`
-            h-40 w-40 shrink-0 overflow-hidden
-            sm:h-48 sm:w-48
-          `}>
+          <div
+            className={`
+              relative h-40 w-40 shrink-0 overflow-hidden
+              sm:h-48 sm:w-48
+            `}
+          >
             <Image
               src={blog.cover}
               alt={blog.title}
               width={192}
               height={192}
               className={`
-                h-full w-full object-cover transition-transform duration-200
+                h-full w-full object-cover transition-transform duration-500
                 group-hover:scale-105
               `}
             />
@@ -39,10 +43,12 @@ export function BlogCard({ blog }: BlogCardProps) {
         {/* 内容区 */}
         <div className="flex flex-1 flex-col gap-2 p-4">
           {/* 标题 */}
-          <h3 className={`
-            line-clamp-1 text-lg font-semibold text-text transition-colors
-            group-hover:text-accent
-          `}>
+          <h3
+            className={`
+              line-clamp-1 text-lg font-semibold text-text transition-colors
+              group-hover:text-accent
+            `}
+          >
             {blog.title}
           </h3>
 
