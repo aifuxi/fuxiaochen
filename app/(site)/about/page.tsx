@@ -1,51 +1,57 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Title } from "@/components/ui/typography/title";
 import { Text } from "@/components/ui/typography/text";
 import {
-  Code2,
-  Server,
-  Wrench,
   Laptop,
   Monitor,
   Keyboard,
   Mouse,
   Gamepad2,
+  Terminal,
+  Server,
+  Sparkles,
 } from "lucide-react";
 
-// 技能数据
-const skills = {
-  frontend: {
+// 技能数据 - 带图标
+const skillCategories = [
+  {
     title: "前端",
-    icon: Code2,
-    items: [
-      { name: "HTML + CSS + JavaScript", level: "熟练" },
-      { name: "TypeScript", level: "熟练" },
-      { name: "React + Next.js", level: "熟练" },
-      { name: "ahooks", level: "熟练" },
-      { name: "Tailwind CSS", level: "熟练" },
+    icon: Sparkles,
+    description: "主要技术栈",
+    skills: [
+      { name: "HTML", icon: "skill-icons:html" },
+      { name: "CSS", icon: "skill-icons:css" },
+      { name: "JavaScript", icon: "skill-icons:javascript" },
+      { name: "TypeScript", icon: "skill-icons:typescript" },
+      { name: "React", icon: "skill-icons:react" },
+      { name: "Next.js", icon: "skill-icons:nextjs" },
+      { name: "TailwindCSS", icon: "skill-icons:tailwindcss" },
     ],
   },
-  backend: {
+  {
     title: "后端",
     icon: Server,
-    items: [{ name: "Go + MySQL", level: "简单 CRUD" }],
-  },
-  other: {
-    title: "其他",
-    icon: Wrench,
-    items: [
-      { name: "Zsh + Oh My Zsh + iTerm2" },
-      { name: "Debian / CentOS / Rocky Linux 部署" },
-      { name: "Docker" },
-      { name: "NGINX（反向代理 + HTTPS + HTTP2）" },
-      { name: "Figma" },
-      { name: "Google + GitHub + Stack Overflow" },
-      { name: "AI 工具（Claude Code + 豆包）" },
+    description: "简单 CRUD 水平",
+    skills: [
+      { name: "Go", icon: "skill-icons:go" },
+      { name: "MySQL", icon: "skill-icons:mysql" },
     ],
   },
-};
+  {
+    title: "开发工具",
+    icon: Terminal,
+    description: "日常使用",
+    skills: [
+      { name: "Git", icon: "skill-icons:git" },
+      { name: "GitHub", icon: "skill-icons:github" },
+      { name: "Docker", icon: "skill-icons:docker" },
+      { name: "Linux", icon: "skill-icons:linux" },
+      { name: "Nginx", icon: "skill-icons:nginx" },
+      { name: "Figma", icon: "skill-icons:figma" },
+    ],
+  },
+];
 
 // 设备数据
 const devices = [
@@ -149,10 +155,10 @@ function Hero() {
   );
 }
 
-// 技能区域
+// 技能区域 - Apple 风格
 function Skills() {
   return (
-    <section className="mb-16 space-y-6">
+    <section className="mb-16 space-y-8">
       <div className="text-center">
         <Title level={2} className="mb-2">
           技能
@@ -160,49 +166,63 @@ function Skills() {
         <Text type="secondary">我的技术栈与工具</Text>
       </div>
 
-      <div className={`
-        grid gap-6
-        md:grid-cols-3
-      `}>
-        {Object.entries(skills).map(([key, skill]) => {
-          const Icon = skill.icon;
+      {/* 技能分类 */}
+      <div className="space-y-8">
+        {skillCategories.map((category, index) => {
+          const Icon = category.icon;
           return (
-            <Card key={key} className="relative overflow-hidden p-6">
-              {/* 卡片装饰 */}
-              <div className={`
-                pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br from-accent/10
-                to-transparent blur-2xl
-              `} />
-
-              <div className="relative">
-                {/* 标题 */}
-                <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10">
-                    <Icon className="h-5 w-5 text-accent" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-text">
-                    {skill.title}
-                  </h3>
+            <div key={index} className="space-y-4">
+              {/* 分类标题 */}
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10`}
+                >
+                  <Icon className="h-4 w-4 text-accent" />
                 </div>
-
-                {/* 技能列表 */}
-                <ul className="space-y-2">
-                  {skill.items.map((item, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between text-sm"
-                    >
-                      <span className="text-text">{item.name}</span>
-                      {"level" in item && item.level && (
-                        <Badge variant="secondary" className="text-xs">
-                          {item.level}
-                        </Badge>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+                <div>
+                  <h3 className="font-semibold text-text">{category.title}</h3>
+                  {category.description && (
+                    <p className="text-xs text-text-tertiary">
+                      {category.description}
+                    </p>
+                  )}
+                </div>
               </div>
-            </Card>
+
+              {/* 技能图标网格 */}
+              <Card className="p-4">
+                <div
+                  className={`flex flex-wrap gap-3`}
+                >
+                  {category.skills.map((skill, skillIndex) => (
+                    <div
+                      key={skillIndex}
+                      className={`
+                        group flex items-center gap-2 rounded-lg bg-surface px-3 py-2 transition-all duration-200
+                        hover:bg-accent/10
+                      `}
+                    >
+                      <span
+                        className={`
+                          inline-block h-5 w-5 transition-transform duration-200
+                          group-hover:scale-110
+                        `}
+                      >
+                        <span className={skill.icon} />
+                      </span>
+                      <span
+                        className={`
+                          text-sm text-text-secondary transition-colors duration-200
+                          group-hover:text-text
+                        `}
+                      >
+                        {skill.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
           );
         })}
       </div>
