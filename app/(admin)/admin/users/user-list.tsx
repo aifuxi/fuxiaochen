@@ -13,6 +13,15 @@ import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
 import { UserDialog } from "./user-dialog";
@@ -32,6 +41,49 @@ export default function UserManagementPage() {
   const name = searchParams.get("name") || undefined;
 
   const { data, isLoading, mutate } = useSWR({ page, pageSize, name }, fetcher);
+
+  const totalPages = Math.ceil((data?.total || 0) / pageSize);
+
+  const getPageUrl = (pageNum: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", pageNum.toString());
+    return `?${params.toString()}`;
+  };
+
+  const getVisiblePages = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const showEllipsis = totalPages > 7;
+
+    if (!showEllipsis) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (page <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      } else if (page >= totalPages - 3) {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = page - 1; i <= page + 1; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -140,13 +192,11 @@ export default function UserManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-text">
-            用户管理
-          </h2>
-          <p className="text-text-secondary">管理系统用户及权限</p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-text">
+          用户管理
+        </h1>
+        <p className="mt-1 text-text-secondary">管理系统用户及权限</p>
       </div>
 
       <AppleCard
@@ -196,9 +246,38 @@ export default function UserManagementPage() {
         )}
       </AppleCard>
 
-      {data && (
-        <div className="flex justify-center text-sm text-text-secondary">
-          共 {data.total} 条数据
+      {data && data.total > 0 && (
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          {totalPages > 1 && (
+            <Pagination>
+              <PaginationContent>
+                {page > 1 && (
+                  <PaginationItem>
+                    <PaginationPrevious href={getPageUrl(page - 1)} />
+                  </PaginationItem>
+                )}
+
+                {getVisiblePages().map((p, index) => (
+                  <PaginationItem key={index}>
+                    {p === "ellipsis" ? (
+                      <PaginationEllipsis />
+                    ) : (
+                      <PaginationLink href={getPageUrl(p)} isActive={p === page}>
+                        {p}
+                      </PaginationLink>
+                    )}
+                  </PaginationItem>
+                ))}
+
+                {page < totalPages && (
+                  <PaginationItem>
+                    <PaginationNext href={getPageUrl(page + 1)} />
+                  </PaginationItem>
+                )}
+              </PaginationContent>
+            </Pagination>
+          )}
         </div>
       )}
     </div>
