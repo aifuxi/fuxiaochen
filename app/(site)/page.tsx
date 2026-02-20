@@ -84,9 +84,9 @@ function Hero() {
           <Link
             href="/blog"
             className={`
-              inline-flex items-center gap-2 rounded-full bg-text px-8 py-4 text-base font-medium text-white shadow-lg
+              hover:bg-accent-hover
+              inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
               transition-all duration-300
-              hover:bg-text/90
               active:scale-[0.98]
             `}
           >
@@ -418,9 +418,9 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-full bg-text px-8 py-4 text-base font-medium text-white shadow-lg
+            hover:bg-accent-hover
+            inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
             transition-all duration-300
-            hover:bg-text/90
             active:scale-[0.98]
           `}
         >
