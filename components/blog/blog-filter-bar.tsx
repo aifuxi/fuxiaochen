@@ -172,7 +172,7 @@ export function BlogFilterBar({
             >
               全部
               </button>
-            {tags.slice(0, 8).map((tag) => (
+            {tags.map((tag) => (
               <button
                 key={tag.id}
                 type="button"
