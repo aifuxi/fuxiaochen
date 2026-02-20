@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { Category } from "@/types/category";
 import type { Tag } from "@/types/tag";
@@ -39,6 +39,8 @@ export function BlogFilterBar({
 }: BlogFilterBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [searchValue, setSearchValue] = useState(currentFilters.title || "");
 
   const updateFilter = useCallback(
     (key: string, value: string | null) => {
@@ -59,12 +61,18 @@ export function BlogFilterBar({
   const handleSearch = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const formData = new FormData(e.currentTarget);
-      const title = formData.get("title") as string;
-      updateFilter("title", title || null);
+      updateFilter("title", searchValue || null);
     },
-    [updateFilter],
+    [updateFilter, searchValue],
   );
+
+  const handleClearSearch = useCallback(() => {
+    setSearchValue("");
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    updateFilter("title", null);
+  }, [updateFilter]);
 
   const handleSortChange = useCallback(
     (value: string) => {
@@ -79,6 +87,7 @@ export function BlogFilterBar({
   );
 
   const handleReset = useCallback(() => {
+    setSearchValue("");
     router.push("/blog");
   }, [router]);
 
@@ -96,17 +105,32 @@ export function BlogFilterBar({
         <div className="relative">
           <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
           <input
+            ref={inputRef}
             name="title"
             type="text"
             placeholder="搜索博客..."
-            defaultValue={currentFilters.title || ""}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
             className={`
-              w-full rounded-2xl border border-border bg-surface/50 py-4 pr-4 pl-12 text-base text-text transition-all
+              w-full rounded-2xl border border-border bg-surface/50 py-4 pr-12 pl-12 text-base text-text transition-all
               duration-200
               placeholder:text-text-tertiary
               focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none
             `}
           />
+          {searchValue && (
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className={`
+                absolute top-1/2 right-4 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full
+                bg-surface-hover text-text-tertiary transition-colors
+                hover:bg-border hover:text-text
+              `}
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
       </form>
 
