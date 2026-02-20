@@ -43,19 +43,23 @@ function ChangelogItem({
 
   return (
     <div className="relative">
-      {/* 时间轴线 */}
+      {/* 时间轴线 - 从圆点中心向下延伸 */}
       {!isLast && (
-        <div className={`
-          absolute top-8 bottom-0 left-4 w-px bg-border
-          md:left-6
-        `} />
+        <div
+          className={`
+            absolute top-3 bottom-0 left-4 w-px bg-border
+            md:left-6
+          `}
+        />
       )}
 
-      {/* 圆点 */}
-      <div className={`
-        absolute top-1.5 left-4 flex items-center justify-center
-        md:left-6
-      `}>
+      {/* 圆点 - 垂直居中于时间轴线起点 */}
+      <div
+        className={`
+          absolute top-3 left-4 flex h-3 w-3 -translate-y-1/2 items-center justify-center
+          md:left-6
+        `}
+      >
         {isCurrent ? (
           <div className="h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20" />
         ) : (
