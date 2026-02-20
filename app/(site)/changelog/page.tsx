@@ -9,10 +9,7 @@ import type {
   ChangelogListResp,
   Changelog,
 } from "@/types/changelog";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/typography/text";
-import { Title } from "@/components/ui/typography/title";
 import BlogContent from "@/components/blog/blog-content";
 import { formatSimpleDate } from "@/lib/time";
 
@@ -28,40 +25,63 @@ const fetcher = async (
   throw new Error(String(res.error) || "获取数据失败");
 };
 
-function getDisplayDate(changelog: { date?: number; createdAt: string }) {
-  if (changelog.date) {
-    return formatSimpleDate(new Date(changelog.date));
-  }
-  return formatSimpleDate(new Date(changelog.createdAt));
+function isCurrentYear(date: Date): boolean {
+  return date.getFullYear() === new Date().getFullYear();
 }
 
-function ChangelogCard({
+function ChangelogItem({
   changelog,
-  isFirst,
+  isLast,
 }: {
   changelog: Changelog;
-  isFirst: boolean;
+  isLast: boolean;
 }) {
+  const displayDate = changelog.date
+    ? new Date(changelog.date)
+    : new Date(changelog.createdAt);
+  const isCurrent = isCurrentYear(displayDate);
+
   return (
-    <Card className="relative gap-0 overflow-hidden p-6">
-      {isFirst && (
-        <Badge className="absolute top-4 right-4" variant="default">
-          最新
-        </Badge>
+    <div className="relative">
+      {/* 时间轴线 */}
+      {!isLast && (
+        <div className={`
+          absolute top-8 bottom-0 left-4 w-px bg-border
+          md:left-6
+        `} />
       )}
-      <div className="flex items-center gap-3">
-        <Text className="text-lg font-semibold text-text">
-          {changelog.version}
-        </Text>
-        <span className="text-text-tertiary">·</span>
-        <time className="text-sm text-text-secondary">
-          {getDisplayDate(changelog)}
-        </time>
+
+      {/* 圆点 */}
+      <div className={`
+        absolute top-1.5 left-4 flex items-center justify-center
+        md:left-6
+      `}>
+        {isCurrent ? (
+          <div className="h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20" />
+        ) : (
+          <div className="h-2.5 w-2.5 rounded-full border border-border bg-surface-hover" />
+        )}
       </div>
-      <div className="text-text-secondary">
-        <BlogContent content={changelog.content} />
+
+      {/* 内容 */}
+      <div className={`
+        pb-12 pl-10
+        md:pl-14
+      `}>
+        <div className="mb-3 flex items-center gap-2">
+          <span className="text-lg font-semibold text-text">
+            {changelog.version}
+          </span>
+          <span className="text-text-tertiary">—</span>
+          <time className="text-sm text-text-tertiary">
+            {formatSimpleDate(displayDate)}
+          </time>
+        </div>
+        <div className="text-text-secondary">
+          <BlogContent content={changelog.content} />
+        </div>
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -110,35 +130,46 @@ export default function ChangelogPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
-      <div className="mb-8">
-        <Title level={1}>更新日志</Title>
-        <Text className="mt-2 text-text-secondary">
+      {/* 标题区 */}
+      <div className={`
+        py-16 text-center
+        md:py-24
+      `}>
+        <h1 className={`
+          text-4xl font-bold tracking-tight text-text
+          md:text-5xl
+        `}>
+          Changelog
+        </h1>
+        <p className="mt-2 text-lg text-text-secondary">
           记录产品的每一次迭代与改进
-        </Text>
+        </p>
       </div>
 
+      {/* 内容区 */}
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-text-secondary" />
         </div>
       ) : error ? (
-        <Card className="flex h-48 items-center justify-center">
+        <div className="flex h-48 items-center justify-center">
           <Text className="text-error">加载失败，请稍后重试</Text>
-        </Card>
+        </div>
       ) : isEmpty ? (
-        <Card className="flex h-48 items-center justify-center">
+        <div className="flex h-48 items-center justify-center">
           <Text className="text-text-secondary">暂无更新日志</Text>
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="relative">
           {changelogs.map((changelog, index) => (
-            <ChangelogCard
+            <ChangelogItem
               key={changelog.id}
               changelog={changelog}
-              isFirst={index === 0}
+              isLast={index === changelogs.length - 1}
             />
           ))}
 
+          {/* 加载更多指示器 */}
           <div ref={loaderRef} className="flex justify-center py-4">
             {isValidating && (
               <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
