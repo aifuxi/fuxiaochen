@@ -24,9 +24,9 @@ const skillCategories = [
       { name: "CSS", icon: "icon-[skill-icons--css]" },
       { name: "JavaScript", icon: "icon-[skill-icons--javascript]" },
       { name: "TypeScript", icon: "icon-[skill-icons--typescript]" },
-      { name: "React", icon: "icon-[skill-icons--react]" },
-      { name: "Next.js", icon: "icon-[skill-icons--nextjs]" },
-      { name: "TailwindCSS", icon: "icon-[skill-icons--tailwindcss]" },
+      { name: "React", icon: "icon-[skill-icons--react-dark]" },
+      { name: "Next.js", icon: "icon-[skill-icons--nextjs-dark]" },
+      { name: "TailwindCSS", icon: "icon-[skill-icons--tailwindcss-dark]" },
     ],
   },
   {
@@ -34,8 +34,8 @@ const skillCategories = [
     icon: Server,
     description: "简单 CRUD 水平",
     skills: [
-      { name: "Go", icon: "icon-[skill-icons--go]" },
-      { name: "MySQL", icon: "icon-[skill-icons--mysql]" },
+      { name: "Go", icon: "icon-[skill-icons--golang]" },
+      { name: "MySQL", icon: "icon-[skill-icons--mysql-dark]" },
     ],
   },
   {
@@ -44,11 +44,11 @@ const skillCategories = [
     description: "日常使用",
     skills: [
       { name: "Git", icon: "icon-[skill-icons--git]" },
-      { name: "GitHub", icon: "icon-[skill-icons--github]" },
+      { name: "GitHub", icon: "icon-[skill-icons--github-dark]" },
       { name: "Docker", icon: "icon-[skill-icons--docker]" },
-      { name: "Linux", icon: "icon-[skill-icons--linux]" },
+      { name: "Linux", icon: "icon-[skill-icons--linux-dark]" },
       { name: "Nginx", icon: "icon-[skill-icons--nginx]" },
-      { name: "Figma", icon: "icon-[skill-icons--figma]" },
+      { name: "Figma", icon: "icon-[skill-icons--figma-dark]" },
     ],
   },
 ];
@@ -87,84 +87,110 @@ const devices = [
   },
 ];
 
-// Hero 区域
+// Hero 区域 - Apple 大胆风格
 function Hero() {
   return (
     <section
       className={`
-        relative overflow-hidden py-16
-        md:py-24
+        relative flex min-h-[60vh] items-center justify-center overflow-hidden py-20
+        md:py-32
       `}
     >
-      {/* 装饰性渐变 */}
+      {/* 动态渐变背景 */}
       <div
         className={`
-          pointer-events-none absolute -top-40 left-1/4 h-[400px] w-[600px] rounded-full bg-gradient-to-br
-          from-accent/10 via-info/5 to-transparent blur-3xl
+          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
+          from-accent/10 via-transparent to-transparent
         `}
       />
       <div
         className={`
-          pointer-events-none absolute right-0 -bottom-20 h-[300px] w-[400px] rounded-full bg-gradient-to-tl
-          from-warning/10 to-transparent blur-3xl
+          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
+          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
+        `}
+      />
+      <div
+        className={`
+          pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full bg-gradient-to-tl
+          from-warning/5 to-transparent blur-3xl
         `}
       />
 
-      <div className="relative mx-auto max-w-3xl">
+      {/* 内容 */}
+      <div className="relative mx-auto max-w-4xl px-4 text-center">
+        {/* 小标签 */}
         <div
           className={`
-            flex flex-col items-center gap-8
-            md:flex-row md:gap-12
+            mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-1.5 text-sm
+            text-text-secondary backdrop-blur-sm
           `}
         >
-          {/* 头像 */}
-          <div className="relative shrink-0">
-            <div
-              className={`
-                relative h-32 w-32 overflow-hidden rounded-full bg-gradient-to-br from-accent to-info p-[3px]
-                md:h-40 md:w-40
-              `}
-            >
-              <div
-                className={`
-                  flex h-full w-full items-center justify-center rounded-full bg-surface text-5xl font-bold text-accent
-                  md:text-6xl
-                `}
-              >
-                付
-              </div>
-            </div>
-            {/* 状态指示器 */}
-            <div
-              className={`
-                absolute right-2 bottom-2 flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface
-                bg-success
-              `}
-            >
-              <div className="h-2 w-2 rounded-full bg-white" />
-            </div>
-          </div>
+          <span className="relative flex h-2 w-2">
+            <span
+              className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75`}
+            />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+          </span>
+          前端开发工程师
+        </div>
 
-          {/* 介绍文字 */}
-          <div
+        {/* 大标题 */}
+        <h1
+          className={`
+            mb-6 text-5xl font-bold tracking-tight
+            md:text-7xl
+            lg:text-8xl
+          `}
+        >
+          <span className="block text-text">Hi, I&apos;m</span>
+          <span
+            className={`block bg-gradient-to-r from-accent via-info to-accent bg-clip-text text-transparent`}
+          >
+            付小晨
+          </span>
+        </h1>
+
+        {/* 描述 */}
+        <p
+          className={`
+            mx-auto mb-8 max-w-xl text-lg text-text-secondary
+            md:text-xl
+          `}
+        >
+          2020 年毕业，喜欢 Coding 和打游戏。
+          <br className={`
+            hidden
+            sm:block
+          `} />
+          专注于前端开发，探索技术的无限可能。
+        </p>
+
+        {/* 技术栈标签 */}
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <span
             className={`
-              flex-1 text-center
-              md:text-left
+              inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent
             `}
           >
-            <Title level={1} className="mb-3">
-              Hi~ 我是付小晨
-            </Title>
-            <Text type="secondary" className="mb-4 text-lg">
-              前端开发工程师
-            </Text>
-            <Text type="secondary" className="leading-relaxed">
-              2020 年毕业，喜欢 Coding 和打游戏。
-              <br />
-              技术栈：<span className="text-accent">React</span> +{" "}
-              <span className="text-info">Go</span>
-            </Text>
-          </div>
+            <span className="icon-[skill-icons--react-dark] h-4 w-4" />
+            React
+          </span>
+          <span className="text-text-tertiary">+</span>
+          <span
+            className={`inline-flex items-center gap-2 rounded-full bg-info/10 px-4 py-2 text-sm font-medium text-info`}
+          >
+            <span className="icon-[skill-icons--golang] h-4 w-4" />
+            Go
+          </span>
+          <span className="text-text-tertiary">+</span>
+          <span
+            className={`
+              inline-flex items-center gap-2 rounded-full bg-warning/10 px-4 py-2 text-sm font-medium text-warning
+            `}
+          >
+            <span className="icon-[skill-icons--tailwindcss-dark] h-4 w-4" />
+            Tailwind
+          </span>
         </div>
       </div>
     </section>
@@ -360,12 +386,9 @@ function BottomCTA() {
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
-      {/* Hero */}
+    <div className="mx-auto max-w-5xl px-4">
+      {/* Hero - 全屏大胆设计 */}
       <Hero />
-
-      {/* 分隔线 */}
-      <div className="mb-16 h-px bg-gradient-to-r from-transparent via-border to-transparent" />
 
       {/* 技能 */}
       <Skills />
