@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { Category } from "@/types/category";
 import type { Tag } from "@/types/tag";
 import {
@@ -78,7 +78,16 @@ export function BlogFilterBar({
     [router, searchParams],
   );
 
+  const handleReset = useCallback(() => {
+    router.push("/blog");
+  }, [router]);
+
   const currentSort = `${currentFilters.sortBy || "createdAt"}_${currentFilters.order || "desc"}`;
+
+  const hasActiveFilters =
+    currentFilters.title ||
+    currentFilters.categoryId ||
+    currentFilters.tagId;
 
   return (
     <div className="space-y-6">
@@ -101,10 +110,11 @@ export function BlogFilterBar({
         </div>
       </form>
 
-      {/* 筛选标签组 */}
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {/* 分类标签 */}
+      {/* 筛选区域 */}
+      <div className="space-y-4">
+        {/* 分类筛选 */}
         <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="text-sm font-medium text-text-secondary">分类：</span>
           <button
             type="button"
             onClick={() => updateFilter("categoryId", null)}
@@ -119,7 +129,7 @@ export function BlogFilterBar({
               }
             `}
           >
-            全部分类
+            全部
           </button>
           {categories.map((category) => (
             <button
@@ -142,25 +152,17 @@ export function BlogFilterBar({
           ))}
         </div>
 
-        {/* 分隔线 */}
-        {tags.length > 0 && <div className="h-6 w-px bg-border" />}
-
-        {/* 标签 */}
-        <div className="flex flex-wrap items-center justify-center gap-2">
-          {tags.slice(0, 6).map((tag) => (
+        {/* 标签筛选 */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="text-sm font-medium text-text-secondary">标签：</span>
             <button
-              key={tag.id}
               type="button"
-              onClick={() =>
-                updateFilter(
-                  "tagId",
-                  currentFilters.tagId === tag.id ? null : tag.id,
-                )
-              }
+              onClick={() => updateFilter("tagId", null)}
               className={`
                 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
-                ${currentFilters.tagId === tag.id
-                  ? "bg-accent text-white"
+                ${!currentFilters.tagId
+                  ? "bg-info text-white"
                   : `
                     bg-surface/50 text-text-secondary
                     hover:bg-surface
@@ -168,13 +170,37 @@ export function BlogFilterBar({
                 }
               `}
             >
-              {tag.name}
-            </button>
-          ))}
-        </div>
+              全部
+              </button>
+            {tags.slice(0, 8).map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                onClick={() =>
+                  updateFilter(
+                    "tagId",
+                    currentFilters.tagId === tag.id ? null : tag.id,
+                  )
+                }
+                className={`
+                  rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
+                  ${currentFilters.tagId === tag.id
+                    ? "bg-info text-white"
+                    : `
+                      bg-surface/50 text-text-secondary
+                      hover:bg-surface
+                    `
+                  }
+                `}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        )}
 
-        {/* 排序 */}
-        <div className="ml-auto">
+        {/* 排序和重置 */}
+        <div className="flex items-center justify-center gap-3">
           <Select value={currentSort} onValueChange={handleSortChange}>
             <SelectTrigger
               className={`
@@ -193,6 +219,22 @@ export function BlogFilterBar({
               ))}
             </SelectContent>
           </Select>
+
+          {/* 重置按钮 */}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className={`
+                inline-flex items-center gap-1.5 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium
+                text-text-secondary transition-all duration-200
+                hover:bg-surface hover:text-text
+              `}
+            >
+              <X className="h-3.5 w-3.5" />
+              重置筛选
+            </button>
+          )}
         </div>
       </div>
     </div>
