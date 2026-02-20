@@ -4,9 +4,13 @@ import { useEffect, useRef, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import useSWRInfinite from "swr/infinite";
 import { getChangelogsAction } from "@/app/actions/changelog";
-import type { ChangelogListReq, ChangelogListResp, Changelog } from "@/types/changelog";
-import { Card } from "@/components/ui/card";
+import type {
+  ChangelogListReq,
+  ChangelogListResp,
+  Changelog,
+} from "@/types/changelog";
 import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/typography/text";
 import { Title } from "@/components/ui/typography/title";
 import BlogContent from "@/components/blog/blog-content";
@@ -14,7 +18,9 @@ import { formatSimpleDate } from "@/lib/time";
 
 const PAGE_SIZE = 10;
 
-const fetcher = async (params: ChangelogListReq): Promise<ChangelogListResp> => {
+const fetcher = async (
+  params: ChangelogListReq,
+): Promise<ChangelogListResp> => {
   const res = await getChangelogsAction(params);
   if (res.success) {
     return res.data;
@@ -37,13 +43,13 @@ function ChangelogCard({
   isFirst: boolean;
 }) {
   return (
-    <Card className="relative overflow-hidden p-6">
+    <Card className="relative gap-0 overflow-hidden p-6">
       {isFirst && (
         <Badge className="absolute top-4 right-4" variant="default">
           最新
         </Badge>
       )}
-      <div className="mb-4 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Text className="text-lg font-semibold text-text">
           {changelog.version}
         </Text>
@@ -67,7 +73,7 @@ export default function ChangelogPage() {
       if (previousPageData && !previousPageData.lists?.length) return null;
       return { page: pageIndex + 1, pageSize: PAGE_SIZE };
     },
-    []
+    [],
   );
 
   const { data, error, isLoading, isValidating, size, setSize } =
@@ -92,7 +98,7 @@ export default function ChangelogPage() {
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (loaderRef.current) {
