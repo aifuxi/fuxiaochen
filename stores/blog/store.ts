@@ -147,6 +147,8 @@ export class BlogStore implements IBlogStore {
       categoryId,
       tagId,
       published,
+      sortBy = "createdAt",
+      order = "desc",
     } = params || {};
 
     const skip = (page - 1) * pageSize;
@@ -164,13 +166,15 @@ export class BlogStore implements IBlogStore {
       };
     }
 
+    const orderBy = { [sortBy]: order };
+
     const [total, list] = await Promise.all([
       prisma.blog.count({ where }),
       prisma.blog.findMany({
         where,
         skip,
         take: pageSize,
-        orderBy: { createdAt: "desc" },
+        orderBy,
         include: {
           category: true,
           tags: {
