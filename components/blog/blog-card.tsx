@@ -1,98 +1,79 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { AppleCard } from "@/components/ui/glass-card";
+import type { Blog } from "@/types/blog";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/typography/text";
+import { formatSimpleDate } from "@/lib/time";
 
 interface BlogCardProps {
-  title: string;
-  excerpt: string;
-  tags: string[];
-  date: string;
-  slug: string;
-  cover?: string | null;
+  blog: Blog;
 }
 
-export function BlogCard({
-  title,
-  excerpt,
-  tags,
-  date,
-  slug,
-  cover,
-}: BlogCardProps) {
+export function BlogCard({ blog }: BlogCardProps) {
   return (
-    <Link
-      href={`/blog/${slug}`}
-      className={`
-        group block h-full
-        focus:outline-none
-      `}
-    >
-      <AppleCard
-        variant="hover"
-        className={`
-          flex h-full flex-col overflow-hidden border border-border bg-surface p-0 shadow-sm
-          hover:shadow-md
-        `}
-      >
-        {/* Cover Image */}
-        <div className="relative h-48 w-full overflow-hidden bg-surface">
-          <Image
-            src={cover || "/images/placeholder.avif"}
-            alt={title}
-            fill
-            className={`
-              object-cover transition-transform duration-300 ease-apple
-              group-hover:scale-105
-            `}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        </div>
-
-        {/* Content */}
-        <div className="flex flex-1 flex-col p-6">
-          <div className="mb-3 flex flex-wrap gap-2">
-            {tags.slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center rounded-md bg-accent/10 px-2 py-1 text-xs font-medium text-accent"
-              >
-                {tag}
-              </span>
-            ))}
+    <Card className={`
+      group overflow-hidden p-0 transition-all duration-200 ease-apple
+      hover:shadow-md
+    `}>
+      <Link href={`/blog/${blog.slug}`} className="flex gap-4">
+        {/* 封面图 */}
+        {blog.cover && (
+          <div className={`
+            h-40 w-40 shrink-0 overflow-hidden
+            sm:h-48 sm:w-48
+          `}>
+            <Image
+              src={blog.cover}
+              alt={blog.title}
+              width={192}
+              height={192}
+              className={`
+                h-full w-full object-cover transition-transform duration-200
+                group-hover:scale-105
+              `}
+            />
           </div>
+        )}
 
-          <h3
-            className={`
-              mb-2 line-clamp-2 text-xl font-bold tracking-tight text-text transition-colors duration-200
-              group-hover:text-accent
-            `}
-          >
-            {title}
+        {/* 内容区 */}
+        <div className="flex flex-1 flex-col gap-2 p-4">
+          {/* 标题 */}
+          <h3 className={`
+            line-clamp-1 text-lg font-semibold text-text transition-colors
+            group-hover:text-accent
+          `}>
+            {blog.title}
           </h3>
 
-          <p className="mb-4 line-clamp-2 text-sm text-text-secondary">
-            {excerpt}
-          </p>
+          {/* 描述 */}
+          <Text type="secondary" className="line-clamp-2 text-sm">
+            {blog.description}
+          </Text>
 
-          <div
-            className={`
-              mt-auto flex items-center justify-between border-t border-border pt-4 text-xs font-medium
-              text-text-tertiary
-            `}
-          >
-            <time className="font-mono">{date}</time>
-            <span
-              className={`
-                flex -translate-x-2 items-center gap-1 text-accent opacity-0 transition-all duration-200
-                group-hover:translate-x-0 group-hover:opacity-100
-              `}
-            >
-              Read Post <ArrowRight className="h-3 w-3" />
-            </span>
+          {/* 底部元信息 */}
+          <div className="mt-auto flex flex-wrap items-center gap-2">
+            {/* 分类 */}
+            {blog.category && (
+              <Badge variant="secondary" className="text-xs">
+                {blog.category.name}
+              </Badge>
+            )}
+
+            {/* 标签 */}
+            {blog.tags?.slice(0, 3).map((tag) => (
+              <Badge key={tag.id} variant="outline" className="text-xs">
+                {tag.name}
+              </Badge>
+            ))}
+
+            {/* 时间 */}
+            <Text type="secondary" size="sm" className="ml-auto">
+              {formatSimpleDate(new Date(blog.createdAt))}
+            </Text>
           </div>
         </div>
-      </AppleCard>
-    </Link>
+      </Link>
+    </Card>
   );
 }
