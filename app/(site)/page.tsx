@@ -297,53 +297,6 @@ function BottomCTA() {
   );
 }
 
-// 页脚
-function Footer() {
-  return (
-    <footer className="mt-16 border-t border-border py-8">
-      <div className={`
-        flex flex-col items-center justify-between gap-4
-        md:flex-row
-      `}>
-        <p className="text-sm text-text-tertiary">
-          © {new Date().getFullYear()} 傅小晨. All rights reserved.
-        </p>
-        <div className="flex items-center gap-6">
-          <Link
-            href="/blog"
-            className={`
-              text-sm text-text-secondary transition-colors
-              hover:text-accent
-            `}
-          >
-            博客
-          </Link>
-          <Link
-            href="/changelog"
-            className={`
-              text-sm text-text-secondary transition-colors
-              hover:text-accent
-            `}
-          >
-            更新日志
-          </Link>
-          <Link
-            href="https://github.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`
-              text-sm text-text-secondary transition-colors
-              hover:text-accent
-            `}
-          >
-            GitHub
-          </Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 export default async function HomePage() {
   return (
     <div className="mx-auto max-w-5xl px-4">
@@ -382,9 +335,6 @@ export default async function HomePage() {
 
       {/* 底部 CTA */}
       <BottomCTA />
-
-      {/* 页脚 */}
-      <Footer />
     </div>
   );
 }
