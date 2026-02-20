@@ -1,167 +1,140 @@
-import Link from "next/link";
-import { format } from "date-fns";
-import { RotateCcw } from "lucide-react";
-import { getBlogsAction } from "@/app/actions/blog";
-import { AppleCard } from "@/components/ui/glass-card";
+import type { Blog } from "@/types/blog";
+import { BlogCard } from "./blog-card";
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
   PaginationLink,
-  PaginationNext,
   PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { BlogCard } from "@/components/blog/blog-card";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
+import { FileText } from "lucide-react";
 
 interface BlogListProps {
-  page: number;
+  blogs: Blog[];
+  total: number;
+  currentPage: number;
   pageSize: number;
-  category?: string;
-  tag?: string;
+  baseUrl: string;
 }
 
-export async function BlogList({
-  page,
+export function BlogList({
+  blogs,
+  total,
+  currentPage,
   pageSize,
-  category,
-  tag,
+  baseUrl,
 }: BlogListProps) {
-  const currentPage = Number(page) || 1;
-
-  const { data } = await getBlogsAction({
-    page: currentPage,
-    pageSize,
-    categoryId: category,
-    tagId: tag,
-  });
-
-  const lists = data?.lists || [];
-  const total = data?.total || 0;
-
   const totalPages = Math.ceil(total / pageSize);
-  const blogs = lists;
+
+  if (blogs.length === 0) {
+    return (
+      <Empty className="border">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <FileText />
+          </EmptyMedia>
+          <EmptyTitle>暂无博客</EmptyTitle>
+          <EmptyDescription>没有找到符合条件的博客文章</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
+
+  const getPageUrl = (page: number) => {
+    const url = new URL(baseUrl, "http://localhost");
+    url.searchParams.set("page", page.toString());
+    return `/blog?${url.searchParams.toString()}`;
+  };
+
+  const getVisiblePages = () => {
+    const pages: (number | "ellipsis")[] = [];
+    const showEllipsis = totalPages > 7;
+
+    if (!showEllipsis) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = totalPages - 4; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        pages.push(1);
+        pages.push("ellipsis");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pages.push(i);
+        }
+        pages.push("ellipsis");
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
 
   return (
-    <>
-      {blogs.length > 0 ? (
-        <div
-          className={`
-            mb-12 grid animate-in grid-cols-1 gap-8 duration-500 fade-in slide-in-from-bottom-4
-            md:grid-cols-2
-          `}
-        >
-          {blogs.map((blog) => (
-            <BlogCard
-              key={blog.id}
-              title={blog.title}
-              excerpt={blog.description}
-              tags={blog.tags?.map((t) => t.name) || []}
-              date={format(new Date(blog.updatedAt), "yyyy-MM-dd")}
-              slug={blog.slug}
-              cover={blog.cover}
-            />
-          ))}
-        </div>
-      ) : (
-        <AppleCard
-          className={`
-            flex animate-in flex-col items-center justify-center py-20 text-center duration-300 zoom-in-95 fade-in
-          `}
-        >
-          <h3 className="mb-2 text-2xl font-bold text-text">
-            暂无文章
-          </h3>
-          <p className="mb-6 text-text-secondary">
-            尝试调整筛选条件或稍后再试。
-          </p>
-          {(category || tag) && (
-            <Link
-              href="/blog"
-              className={`
-                inline-flex items-center gap-2 rounded-full border border-border px-6 py-2 text-sm font-medium
-                transition-colors
-                hover:border-accent hover:bg-accent hover:text-white
-              `}
-            >
-              <RotateCcw className="h-4 w-4" /> 重置筛选
-            </Link>
-          )}
-        </AppleCard>
-      )}
+    <div className="space-y-6">
+      {/* 博客列表 */}
+      <div className="space-y-4">
+        {blogs.map((blog) => (
+          <BlogCard key={blog.id} blog={blog} />
+        ))}
+      </div>
 
-      {/* Pagination */}
+      {/* 分页 */}
       {totalPages > 1 && (
-        <div className="mt-16 flex justify-center">
-          <Pagination
-            className={`w-fit rounded-full border border-border bg-surface px-4 py-2`}
-          >
+        <div className="flex flex-col items-center gap-4">
+          <span className="text-sm text-text-secondary">共 {total} 篇博客</span>
+          <Pagination>
             <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href={
-                    page > 1
-                      ? `/blog?page=${page - 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
-                      : "#"
-                  }
-                  aria-disabled={page <= 1}
-                  className={
-                    page <= 1
-                      ? "pointer-events-none opacity-50"
-                      : `
-                        transition-colors
-                        hover:bg-gray-100 hover:text-accent
-                        dark:hover:bg-accent/10
-                      `
-                  }
-                />
-              </PaginationItem>
+              {currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious href={getPageUrl(currentPage - 1)} />
+                </PaginationItem>
+              )}
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <PaginationItem key={p}>
-                  <PaginationLink
-                    href={`/blog?page=${p}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`}
-                    isActive={currentPage === p}
-                    className={
-                      currentPage === p
-                        ? `
-                          border-transparent bg-accent text-white shadow-sm
-                          hover:bg-accent/90 hover:text-white
-                        `
-                        : `
-                          transition-colors
-                          hover:bg-gray-100 hover:text-accent
-                          dark:hover:bg-accent/10
-                        `
-                    }
-                  >
-                    {p}
-                  </PaginationLink>
+              {getVisiblePages().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === "ellipsis" ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href={getPageUrl(page)}
+                      isActive={page === currentPage}
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
                 </PaginationItem>
               ))}
 
-              <PaginationItem>
-                <PaginationNext
-                  href={
-                    page < totalPages
-                      ? `/blog?page=${page + 1}${category ? `&category=${category}` : ""}${tag ? `&tag=${tag}` : ""}`
-                      : "#"
-                  }
-                  aria-disabled={page >= totalPages}
-                  className={
-                    page >= totalPages
-                      ? "pointer-events-none opacity-50"
-                      : `
-                        transition-colors
-                        hover:bg-gray-100 hover:text-accent
-                        dark:hover:bg-accent/10
-                      `
-                  }
-                />
-              </PaginationItem>
+              {currentPage < totalPages && (
+                <PaginationItem>
+                  <PaginationNext href={getPageUrl(currentPage + 1)} />
+                </PaginationItem>
+              )}
             </PaginationContent>
           </Pagination>
         </div>
       )}
-    </>
+    </div>
   );
 }
