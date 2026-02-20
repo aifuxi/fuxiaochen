@@ -56,7 +56,7 @@ function ChangelogItem({
       {/* 圆点 - 垂直居中于时间轴线起点 */}
       <div
         className={`
-          absolute top-3 left-4 flex h-3 w-3 -translate-y-1/2 items-center justify-center
+          absolute top-3 left-4 flex h-3 w-3 -translate-x-1/2 -translate-y-3 items-center justify-center
           md:left-6
         `}
       >
@@ -68,10 +68,12 @@ function ChangelogItem({
       </div>
 
       {/* 内容 */}
-      <div className={`
-        pb-12 pl-10
-        md:pl-14
-      `}>
+      <div
+        className={`
+          pb-12 pl-10
+          md:pl-14
+        `}
+      >
         <div className="mb-3 flex items-center gap-2">
           <span className="text-lg font-semibold text-text">
             {changelog.version}
@@ -135,14 +137,18 @@ export default function ChangelogPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       {/* 标题区 */}
-      <div className={`
-        py-16 text-center
-        md:py-24
-      `}>
-        <h1 className={`
-          text-4xl font-bold tracking-tight text-text
-          md:text-5xl
-        `}>
+      <div
+        className={`
+          py-16 text-center
+          md:py-24
+        `}
+      >
+        <h1
+          className={`
+            text-4xl font-bold tracking-tight text-text
+            md:text-5xl
+          `}
+        >
           Changelog
         </h1>
         <p className="mt-2 text-lg text-text-secondary">
