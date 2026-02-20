@@ -51,14 +51,14 @@ export function Footer() {
                 hover:opacity-80
               `}
             >
-              <div
+              <img
+                src="/images/logo.svg"
+                alt="Logo"
                 className={`
-                  flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-info text-sm
-                  text-white
+                  h-8 w-8 transition-transform duration-300
+                  group-hover:scale-105
                 `}
-              >
-                付
-              </div>
+              />
               <span>傅小晨</span>
             </Link>
             <p className={`
