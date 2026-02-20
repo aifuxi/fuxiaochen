@@ -278,6 +278,7 @@ function BottomCTA() {
   return (
     <section className={`
       relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface via-surface to-surface-hover py-12
+      md:py-16
     `}>
       {/* 装饰 */}
       <div className={`
@@ -287,14 +288,14 @@ function BottomCTA() {
         pointer-events-none absolute -bottom-20 -left-20 h-[200px] w-[200px] rounded-full bg-info/10 blur-3xl
       `} />
 
-      <div className="relative mx-auto max-w-lg px-6 text-center">
+      <div className="relative mx-auto max-w-2xl px-6 text-center">
         <h2 className={`
-          mb-3 text-xl font-bold text-text
-          md:text-2xl
+          mb-4 text-2xl font-bold text-text
+          md:text-3xl
         `}>
           想了解更多？
         </h2>
-        <Text type="secondary" className="mb-6">
+        <Text type="secondary" className="mb-8">
           查看我的博客文章，了解更多技术分享
         </Text>
         <Link
