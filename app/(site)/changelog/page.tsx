@@ -22,7 +22,7 @@ const fetcher = async (
   params: ChangelogListReq,
 ): Promise<ChangelogListResp> => {
   const res = await getChangelogsAction(params);
-  if (res.success) {
+  if (res.success && res.data) {
     return res.data;
   }
   throw new Error(String(res.error) || "获取数据失败");
@@ -94,7 +94,7 @@ export default function ChangelogPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
+        if (entries[0]?.isIntersecting) {
           loadMore();
         }
       },
