@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { LayoutDashboard, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -17,6 +18,10 @@ const navItems = [
 export function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session } = authClient.useSession();
+
+  // 判断是否为管理员 (role === 1)
+  const isAdmin = session?.user?.role === 1;
 
   return (
     <header
@@ -100,8 +105,24 @@ export function Header() {
           })}
         </div>
 
-        {/* 右侧：主题切换 + 移动端菜单 */}
+        {/* 右侧：后台管理 + 主题切换 + 移动端菜单 */}
         <div className="flex items-center gap-2">
+          {/* 后台管理入口 - 仅管理员可见 */}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={`
+                flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-all duration-200
+                hover:bg-surface hover:text-text
+                active:scale-95
+              `}
+              target="_blank"
+              aria-label="后台管理"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+            </Link>
+          )}
+
           <ThemeToggle />
 
           {/* 移动端菜单按钮 */}
@@ -131,7 +152,7 @@ export function Header() {
             ease-apple
             md:hidden
           `,
-          mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0",
+          mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <div className="mx-auto max-w-6xl px-4 py-4">
@@ -158,6 +179,29 @@ export function Header() {
                 </Link>
               );
             })}
+
+            {/* 后台管理入口 - 仅管理员可见 */}
+            {isAdmin && (
+              <>
+                <div className="my-2 h-px bg-border" />
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    `flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
+                    pathname.startsWith("/admin")
+                      ? "bg-accent/10 text-accent"
+                      : `
+                        text-text-secondary
+                        hover:bg-surface-hover hover:text-text
+                      `,
+                  )}
+                >
+                  <LayoutDashboard className="h-5 w-5" />
+                  后台管理
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
