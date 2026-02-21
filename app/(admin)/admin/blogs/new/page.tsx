@@ -1,5 +1,4 @@
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
 import { auth } from "@/lib/auth";
@@ -9,10 +8,6 @@ export default async function NewBlogPage() {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
-  if (session?.user?.role !== 1) {
-    redirect("/admin/blogs");
-  }
 
   const [categoriesRes, tagsRes] = await Promise.all([
     getCategoriesAction({ page: 1, pageSize: 100 }),
@@ -32,7 +27,11 @@ export default async function NewBlogPage() {
           新建文章
         </h2>
       </div>
-      <BlogForm categories={categories} tags={tags} />
+      <BlogForm
+        categories={categories}
+        tags={tags}
+        isAdmin={session?.user?.role === 1}
+      />
     </div>
   );
 }

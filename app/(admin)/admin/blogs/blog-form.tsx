@@ -72,9 +72,15 @@ interface BlogFormProps {
   initialData?: Blog;
   categories: Category[];
   tags: Tag[];
+  isAdmin?: boolean;
 }
 
-export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
+export function BlogForm({
+  initialData,
+  categories,
+  tags,
+  isAdmin,
+}: BlogFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -120,10 +126,12 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
     <AppleCard className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className={`
-            grid grid-cols-1 gap-6
-            md:grid-cols-2
-          `}>
+          <div
+            className={`
+              grid grid-cols-1 gap-6
+              md:grid-cols-2
+            `}
+          >
             <FormField
               control={form.control}
               name="title"
@@ -166,10 +174,12 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             )}
           />
 
-          <div className={`
-            grid grid-cols-1 gap-6
-            md:grid-cols-2
-          `}>
+          <div
+            className={`
+              grid grid-cols-1 gap-6
+              md:grid-cols-2
+            `}
+          >
             <FormField
               control={form.control}
               name="categoryId"
@@ -310,54 +320,64 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
                     <Editor
                       value={field.value}
                       plugins={plugins}
-                      uploadImages={async (files) => {
-                        const result = await Promise.all(
-                          files.map(
-                            async (
-                              file,
-                            ): Promise<
-                              {
-                                url: string;
-                                name: string;
-                                title: string;
-                                alt: string;
-                              }[]
-                            > => {
-                              const presignRes = await getPresignUploadInfo(
-                                file.name,
+                      uploadImages={
+                        isAdmin
+                          ? async (files) => {
+                              const result = await Promise.all(
+                                files.map(
+                                  async (
+                                    file,
+                                  ): Promise<
+                                    {
+                                      url: string;
+                                      name: string;
+                                      title: string;
+                                      alt: string;
+                                    }[]
+                                  > => {
+                                    const presignRes =
+                                      await getPresignUploadInfo(file.name);
+
+                                    if (
+                                      !presignRes.success ||
+                                      !presignRes.data
+                                    ) {
+                                      toast.error(`${presignRes.error}`);
+                                      return [];
+                                    }
+
+                                    const {
+                                      uploadUrl,
+                                      signedHeaders,
+                                      name,
+                                      url,
+                                    } = presignRes.data || {};
+
+                                    const res = await fetch(uploadUrl, {
+                                      method: "PUT",
+                                      headers: signedHeaders,
+                                      body: files[0],
+                                    });
+
+                                    if (res.ok) {
+                                      return [
+                                        {
+                                          url: url || "",
+                                          name: name || "",
+                                          title: name || "",
+                                          alt: name || "",
+                                        },
+                                      ];
+                                    }
+                                    return [];
+                                  },
+                                ),
                               );
 
-                              if (!presignRes.success || !presignRes.data) {
-                                toast.error(`${presignRes.error}`);
-                                return [];
-                              }
-
-                              const { uploadUrl, signedHeaders, name, url } =
-                                presignRes.data || {};
-
-                              const res = await fetch(uploadUrl, {
-                                method: "PUT",
-                                headers: signedHeaders,
-                                body: files[0],
-                              });
-
-                              if (res.ok) {
-                                return [
-                                  {
-                                    url: url || "",
-                                    name: name || "",
-                                    title: name || "",
-                                    alt: name || "",
-                                  },
-                                ];
-                              }
-                              return [];
-                            },
-                          ),
-                        );
-
-                        return result.flat();
-                      }}
+                              return result.flat();
+                            }
+                          : undefined
+                      }
                       onChange={(v) => {
                         field.onChange(v);
                       }}
@@ -373,9 +393,9 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             control={form.control}
             name="published"
             render={({ field }) => (
-              <FormItem className={`
-                flex flex-row items-center justify-between rounded-lg border border-border bg-surface p-4
-              `}>
+              <FormItem
+                className={`flex flex-row items-center justify-between rounded-lg border border-border bg-surface p-4`}
+              >
                 <div className="space-y-0.5">
                   <FormLabel className="text-base text-text">发布</FormLabel>
                 </div>
@@ -399,7 +419,7 @@ export function BlogForm({ initialData, categories, tags }: BlogFormProps) {
             </Button>
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || !isAdmin}
               className={`
                 bg-accent text-white
                 hover:bg-accent/90
