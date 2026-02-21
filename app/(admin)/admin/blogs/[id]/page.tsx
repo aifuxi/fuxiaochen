@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { getBlogByIdAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
@@ -14,10 +14,6 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-
-  if (session?.user?.role !== 1) {
-    redirect("/admin/blogs");
-  }
 
   const { id } = await params;
   const [blogRes, categoriesRes, tagsRes] = await Promise.all([
@@ -44,7 +40,12 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
           编辑文章
         </h2>
       </div>
-      <BlogForm initialData={blog} categories={categories} tags={tags} />
+      <BlogForm
+        initialData={blog}
+        categories={categories}
+        tags={tags}
+        isAdmin={session?.user?.role === 1}
+      />
     </div>
   );
 }
