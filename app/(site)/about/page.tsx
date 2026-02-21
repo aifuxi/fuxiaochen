@@ -37,7 +37,7 @@ const devices = [
   {
     name: "LG 27 英寸 4K HDR",
     spec: "",
-    description: "",
+    description: "显示器",
     featured: false,
   },
   {
@@ -125,10 +125,12 @@ function Hero() {
           `}
         >
           2020 年毕业，喜欢 Coding 和打游戏。
-          <br className={`
-            hidden
-            sm:block
-          `} />
+          <br
+            className={`
+              hidden
+              sm:block
+            `}
+          />
           专注于前端开发，探索技术的无限可能。
         </p>
 
@@ -182,10 +184,12 @@ function Skills() {
 
       <div className="relative mx-auto max-w-5xl px-4">
         {/* 标题 */}
-        <div className={`
-          mb-12 text-center
-          md:mb-16
-        `}>
+        <div
+          className={`
+            mb-12 text-center
+            md:mb-16
+          `}
+        >
           <h2
             className={`
               mb-4 text-4xl font-bold tracking-tight text-text
@@ -194,9 +198,7 @@ function Skills() {
           >
             Tech Stack
           </h2>
-          <p className="text-lg text-text-secondary">
-            我熟练使用的技术与工具
-          </p>
+          <p className="text-lg text-text-secondary">我熟练使用的技术与工具</p>
         </div>
 
         {/* 技能网格 - 大图标 */}
@@ -249,23 +251,27 @@ function Devices() {
   const otherDevices = devices.filter((d) => !d.featured);
 
   return (
-    <section className={`
-      py-20
-      md:py-32
-    `}>
+    <section
+      className={`
+        py-20
+        md:py-32
+      `}
+    >
       <div className="mx-auto max-w-5xl px-4">
         {/* 标题 */}
-        <div className={`
-          mb-12 text-center
-          md:mb-16
-        `}>
+        <div
+          className={`
+            mb-12 text-center
+            md:mb-16
+          `}
+        >
           <h2
             className={`
               mb-4 text-4xl font-bold tracking-tight text-text
               md:text-5xl
             `}
           >
-            My Setup
+            我的设备
           </h2>
           <p className="text-lg text-text-secondary">日常使用的硬件设备</p>
         </div>
@@ -299,10 +305,12 @@ function Devices() {
                 >
                   {device.description}
                 </span>
-                <h3 className={`
-                  mb-2 text-2xl font-bold text-text
-                  md:text-3xl
-                `}>
+                <h3
+                  className={`
+                    mb-2 text-2xl font-bold text-text
+                    md:text-3xl
+                  `}
+                >
                   {device.name}
                 </h3>
                 {device.spec && (
