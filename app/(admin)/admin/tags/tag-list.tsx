@@ -128,7 +128,9 @@ export default function TagManagementPage() {
       accessorKey: "name",
       header: "名称",
       cell: ({ row }) => (
-        <span className="font-medium text-text">{row.original.name}</span>
+        <span className="line-clamp-2 max-w-[200px] font-medium whitespace-normal text-text">
+          {row.original.name}
+        </span>
       ),
     },
     {

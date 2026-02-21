@@ -124,10 +124,12 @@ export default function UserManagementPage() {
             <img
               src={row.original.image}
               alt={row.original.name}
-              className="h-6 w-6 rounded-full"
+              className="h-6 w-6 shrink-0 rounded-full"
             />
           )}
-          <span className="font-medium text-text">{row.original.name}</span>
+          <span className="line-clamp-2 max-w-[150px] font-medium whitespace-normal text-text">
+            {row.original.name}
+          </span>
         </div>
       ),
     },
@@ -135,7 +137,9 @@ export default function UserManagementPage() {
       accessorKey: "email",
       header: "邮箱",
       cell: ({ row }) => (
-        <span className="text-text-secondary">{row.original.email}</span>
+        <span className="line-clamp-2 max-w-[200px] whitespace-normal text-text-secondary">
+          {row.original.email}
+        </span>
       ),
     },
     {

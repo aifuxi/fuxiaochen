@@ -22,7 +22,7 @@ export class UploadStore implements IUploadStore {
 
     return {
       url: signatureUrl.split("?")[0] || signatureUrl,
-      name: filename,
+      name: filename?.split("/").pop() || "",
       uploadUrl: signatureUrl,
       signedHeaders: headers,
     };
