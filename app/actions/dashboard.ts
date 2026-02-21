@@ -1,11 +1,9 @@
 "use server";
 
-import { checkAdmin } from "@/lib/auth-guard";
 import { dashboardStore } from "@/stores/dashboard";
 
 export async function getDashboardStatsAction() {
   try {
-    await checkAdmin();
     const result = await dashboardStore.getDashboardStats();
     return {
       success: true,
