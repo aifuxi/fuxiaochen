@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
@@ -119,10 +120,29 @@ export default function BlogManagementPage() {
 
   const columns: ColumnDef<Blog>[] = [
     {
+      accessorKey: "cover",
+      header: "封面",
+      cell: ({ row }) =>
+        row.original.cover ? (
+          <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
+            <Image
+              src={row.original.cover}
+              alt={row.original.title}
+              fill
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-surface-hover text-text-tertiary">
+            暂无
+          </div>
+        ),
+    },
+    {
       accessorKey: "title",
       header: "标题",
       cell: ({ row }) => (
-        <span className="max-w-[200px] truncate font-medium text-text">
+        <span className="line-clamp-2 max-w-[200px] font-medium whitespace-normal text-text">
           {row.original.title}
         </span>
       ),

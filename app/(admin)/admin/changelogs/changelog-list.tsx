@@ -149,7 +149,7 @@ export default function ChangelogManagementPage() {
       accessorKey: "content",
       header: "内容预览",
       cell: ({ row }) => (
-        <span className="max-w-md truncate text-text-secondary">
+        <span className="line-clamp-2 max-w-sm whitespace-normal text-text-secondary">
           {row.original.content}
         </span>
       ),
