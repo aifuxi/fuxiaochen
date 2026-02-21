@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Github, Mail } from "lucide-react";
 import {
   WEBSITE,
   BEI_AN_NUMBER,
@@ -6,7 +7,6 @@ import {
   GONG_AN_NUMBER,
   GONG_AN_LINK,
 } from "@/constants/info";
-import { Github, Mail, Rss } from "lucide-react";
 
 const footerLinks = [
   { href: "/blog", label: "博客" },
@@ -15,9 +15,13 @@ const footerLinks = [
 ];
 
 const socialLinks = [
-  { href: "https://github.com", icon: Github, label: "GitHub" },
-  { href: "mailto:hello@example.com", icon: Mail, label: "邮箱" },
-  { href: "/rss.xml", icon: Rss, label: "RSS" },
+  {
+    href: "https://github.com/aifuxi/fuxiaochen",
+    icon: Github,
+    label: "GitHub",
+  },
+  { href: "mailto:aifuxi.js@gmail.com", icon: Mail, label: "邮箱" },
+  // { href: "/rss.xml", icon: Rss, label: "RSS" },
 ];
 
 export function Footer() {
@@ -30,19 +34,25 @@ export function Footer() {
         className={`pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-accent/5 to-transparent`}
       />
 
-      <div className={`
-        relative mx-auto max-w-6xl px-4 py-12
-        md:px-6 md:py-16
-      `}>
-        <div className={`
-          flex flex-col gap-8
-          md:flex-row md:items-start md:justify-between md:gap-12
-        `}>
+      <div
+        className={`
+          relative mx-auto max-w-6xl px-4 py-12
+          md:px-6 md:py-16
+        `}
+      >
+        <div
+          className={`
+            flex flex-col gap-8
+            md:flex-row md:items-start md:justify-between md:gap-12
+          `}
+        >
           {/* 左侧：品牌信息 */}
-          <div className={`
-            flex flex-col items-center gap-4
-            md:items-start
-          `}>
+          <div
+            className={`
+              flex flex-col items-center gap-4
+              md:items-start
+            `}
+          >
             {/* Logo */}
             <Link
               href="/"
@@ -59,12 +69,14 @@ export function Footer() {
                   group-hover:scale-105
                 `}
               />
-              <span>傅小晨</span>
+              <span>付小晨</span>
             </Link>
-            <p className={`
-              max-w-xs text-center text-sm text-text-secondary
-              md:text-left
-            `}>
+            <p
+              className={`
+                max-w-xs text-center text-sm text-text-secondary
+                md:text-left
+              `}
+            >
               记录前端开发与技术探索的点滴，分享学习心得与实践经验
             </p>
 
@@ -93,10 +105,12 @@ export function Footer() {
           </div>
 
           {/* 右侧：链接 */}
-          <div className={`
-            flex flex-col items-center gap-6
-            md:items-end
-          `}>
+          <div
+            className={`
+              flex flex-col items-center gap-6
+              md:items-end
+            `}
+          >
             {/* 导航链接 */}
             <div className="flex flex-wrap items-center justify-center gap-6">
               {footerLinks.map((item) => (
@@ -120,7 +134,9 @@ export function Footer() {
                 md:flex-row md:gap-4
               `}
             >
-              <span>© {currentYear} {WEBSITE}</span>
+              <span>
+                © {currentYear} {WEBSITE}
+              </span>
               <a
                 href={BEI_AN_LINK}
                 target="_blank"
