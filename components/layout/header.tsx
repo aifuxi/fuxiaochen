@@ -1,11 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
 
 const navItems = [
   { href: "/", label: "首页" },
@@ -33,10 +33,12 @@ export function Header() {
         `}
       />
 
-      <nav className={`
-        mx-auto flex h-16 max-w-6xl items-center justify-between px-4
-        md:px-6
-      `}>
+      <nav
+        className={`
+          mx-auto flex h-16 max-w-6xl items-center justify-between px-4
+          md:px-6
+        `}
+      >
         {/* Logo */}
         <Link
           href="/"
@@ -53,17 +55,23 @@ export function Header() {
               group-hover:scale-105
             `}
           />
-          <span className={`
-            hidden
-            sm:block
-          `}>傅小晨</span>
+          <span
+            className={`
+              hidden
+              sm:block
+            `}
+          >
+            付小晨
+          </span>
         </Link>
 
         {/* 桌面端导航 */}
-        <div className={`
-          hidden items-center gap-1
-          md:flex
-        `}>
+        <div
+          className={`
+            hidden items-center gap-1
+            md:flex
+          `}
+        >
           {navItems.map((item) => {
             const isActive = pathname === item.href;
 
@@ -78,7 +86,7 @@ export function Header() {
                     : `
                       text-text-secondary
                       hover:text-text
-                    `
+                    `,
                 )}
               >
                 {item.label}
@@ -123,7 +131,7 @@ export function Header() {
             ease-apple
             md:hidden
           `,
-          mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+          mobileMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0",
         )}
       >
         <div className="mx-auto max-w-6xl px-4 py-4">
@@ -143,7 +151,7 @@ export function Header() {
                       : `
                         text-text-secondary
                         hover:bg-surface-hover hover:text-text
-                      `
+                      `,
                   )}
                 >
                   {item.label}
