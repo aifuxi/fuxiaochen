@@ -1,6 +1,6 @@
 # fuxiaochen
 
-基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用现代化的 Liquid Glass 设计语言。
+基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用 Apple Human Interface Guidelines 设计规范。
 
 **本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
 
@@ -8,25 +8,30 @@
 
 ### 前台功能
 
+- **首页**：Apple 大胆风格设计，液态渐变背景
 - **博客展示**：文章列表、分类浏览、标签筛选
-- **关于页面**：个人介绍
-- **更新日志**：版本历史记录
-- **封面生成器**：自动化图片生成
+- **关于页面**：个人介绍、技能展示
+- **更新日志**：时间线风格版本历史
+- **登录页面**：液态风格设计
 - **SEO 优化**：Sitemap、OpenGraph 支持
 
 ### 后台管理
 
 - **仪表盘**：数据概览
-- **博客管理**：CRUD 操作、Markdown 编辑
+- **博客管理**：CRUD 操作、Markdown 编辑（ByteMD）
 - **分类管理**：分类创建与维护
 - **标签管理**：标签管理
-- **用户管理**：用户信息维护
+- **用户管理**：用户信息维护、角色分配
+- **更新日志**：版本记录管理
 - **图片上传**：OSS 云存储集成
+- **UI 预览**：组件预览页面
 
 ### 技术亮点
 
+- **Apple Human Interface**：遵循 Apple 设计规范
 - **Server Actions**：接口优先设计模式
 - **Store 架构**：Interface-First 数据流
+- **权限管理**：基于角色的访问控制
 - **类型安全**：TypeScript + Zod 验证
 - **现代 UI**：Radix UI + Tailwind CSS 4
 
@@ -34,13 +39,13 @@
 
 | 类别     | 技术                                   |
 | -------- | -------------------------------------- |
-| 框架     | Next.js 16.1.1 (React 19)              |
+| 框架     | Next.js 16.1.1 (React 19.2.3)          |
 | 数据库   | MySQL/MariaDB (Prisma ORM)             |
 | 样式     | Tailwind CSS 4, Radix UI, Lucide React |
 | 编辑器   | ByteMD (Markdown)                      |
-| 状态管理 | ahooks, SWR                            |
+| 状态管理 | SWR                                    |
 | 表单     | React Hook Form + Zod                  |
-| 认证     | Better Auth                            |
+| 认证     | Better Auth（GitHub OAuth + 邮箱密码） |
 | 包管理器 | pnpm                                   |
 | 部署     | PM2, Docker                            |
 
@@ -62,8 +67,8 @@ pnpm install
 
 参考 `.env.example` 文件配置环境变量。
 
-```
-$ cp .env.example .env
+```bash
+cp .env.example .env
 ```
 
 ```shell
@@ -88,7 +93,7 @@ BETTER_AUTH_URL="http://localhost:3000"
 # 1. 生成 Prisma Client
 pnpm db:gen
 
-# 2. 运行迁移
+# 2. 推送 schema 变更到数据库
 pnpm db:push
 
 # 3. 填充种子数据(可选)
@@ -105,51 +110,55 @@ pnpm dev
 
 ## 开发命令
 
-| 命令             | 说明                |
-| ---------------- | ------------------- |
-| `pnpm dev`       | 启动开发服务器      |
-| `pnpm build`     | 构建生产版本        |
-| `pnpm start`     | 启动生产服务器      |
-| `pnpm lint:fix`  | ESLint 检查并修复   |
-| `pnpm format`    | Prettier 格式化代码 |
-| `pnpm db:dev`    | Prisma 迁移 (开发)  |
-| `pnpm db:gen`    | 生成 Prisma Client  |
-| `pnpm db:seed`   | 填充种子数据        |
-| `pnpm db:studio` | Prisma Studio       |
-| `pnpm pm2:start` | PM2 启动应用        |
+| 命令             | 说明                  |
+| ---------------- | --------------------- |
+| `pnpm dev`       | 启动开发服务器        |
+| `pnpm build`     | 构建生产版本          |
+| `pnpm start`     | 启动生产服务器        |
+| `pnpm lint`      | ESLint 检查           |
+| `pnpm lint:fix`  | ESLint 检查并自动修复 |
+| `pnpm format`    | Prettier 格式化代码   |
+| `pnpm db:gen`    | 生成 Prisma Client    |
+| `pnpm db:push`   | 推送 schema 变更      |
+| `pnpm db:studio` | 打开 Prisma Studio    |
+| `pnpm db:seed`   | 填充种子数据          |
+| `pnpm pm2:start` | PM2 启动应用          |
 
 ## 项目结构
 
 ```
 fuxiaochen/
 ├── app/                    # Next.js App Router
-│   ├── (portal)/           # 前台页面组
+│   ├── (site)/             # 前台页面组
 │   │   ├── blog/           # 博客相关
 │   │   ├── about/          # 关于页面
 │   │   ├── changelog/      # 更新日志
-│   │   └── cover-generator/# 封面生成器
+│   │   ├── login/          # 登录页面
+│   │   └── ui-preview/     # UI 组件预览
 │   ├── (admin)/            # 后台管理组
 │   │   ├── admin/          # 管理功能
 │   │   │   ├── blogs/      # 博客管理
 │   │   │   ├── categories/ # 分类管理
 │   │   │   ├── tags/       # 标签管理
-│   │   │   └── users/      # 用户管理
+│   │   │   ├── users/      # 用户管理
+│   │   │   └── changelogs/ # 更新日志管理
 │   ├── actions/            # Server Actions
 │   └── api/                # API 路由
 ├── components/             # 组件库
-│   ├── ui/                 # 基础 UI 组件
+│   ├── ui/                 # 基础 UI 组件（Apple Human Interface）
+│   ├── admin/              # 后台业务组件
 │   ├── blog/               # 博客业务组件
-├── lib/                    # 核心工具库
+│   └── layout/             # 布局组件（header, footer）
 ├── stores/                 # Store 实现 (Interface-First)
 │   └── */                  # 各模块 Store
 │       ├── interface.ts    # 接口定义
 │       └── store.ts        # 实现代码
 ├── types/                  # TypeScript 类型定义
+├── hooks/                  # 自定义 Hooks
+├── lib/                    # 核心工具库
+├── styles/                 # 全局样式
 ├── prisma/                 # 数据库 Schema
-│   ├── schema.prisma       # 数据模型
-│   └── migrations/         # 迁移文件
-├── generated/prisma/       # Prisma Client 生成目录
-└── styles/                 # 全局样式
+└── docs/                   # 项目文档
 ```
 
 ## 架构设计
@@ -170,6 +179,12 @@ Prisma ORM
 MySQL/MariaDB
 ```
 
+### 权限管理
+
+- **角色定义**：`role = 1` 管理员，`role = 2` 普通用户
+- **权限守卫**：使用 `checkAdmin()` 保护敏感操作
+- **自动提权**：首个注册用户自动获得管理员权限
+
 ### Server Action 设计规范
 
 项目采用 **Interface-First** 模式：
@@ -185,48 +200,58 @@ MySQL/MariaDB
 | 类型      | 规则           | 示例            |
 | --------- | -------------- | --------------- |
 | 文件      | Kebab Case     | `blog-list.tsx` |
-| 组件      | Pascal Case    | `NeonHeader`    |
+| 组件      | Pascal Case    | `BlogList`      |
 | 变量/函数 | lowerCamelCase | `fetchBlogData` |
 | 类型      | Pascal Case    | `IBlogStore`    |
 
 ### 交互组件规范 (NiceModal)
 
-Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理，避免本地 open 状态与多处触发造成的状态分裂。
-
-- **统一入口**: 页面或列表中使用 `NiceModal.show()` 打开组件。
-- **统一关闭**: 组件内部使用 `modal.remove()` 关闭。
-- **统一传参**: 通过 `NiceModal.show(Component, props)` 传入业务参数与回调。
-- **禁止**: 不再使用 `open`/`onOpenChange` 作为外部状态控制，不再使用 `DialogTrigger` 直接触发。
+Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理：
 
 ```tsx
+// 定义组件
 export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
   const modal = NiceModal.useModal();
 
   return (
     <Dialog open={modal.visible} onOpenChange={modal.remove}>
       <DialogContent>
-        ...
         <Button onClick={() => modal.remove()}>取消</Button>
       </DialogContent>
     </Dialog>
   );
 });
 
-NiceModal.show(ExampleDialog, {
-  data,
-  onSuccess: () => mutate(),
-});
+// 使用组件
+NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 ```
 
-### 样式规范 (Liquid Glass)
+## 设计系统
 
-项目采用现代化的 **Liquid Glass (液态玻璃)** 设计风格：
+项目遵循 **Apple Human Interface Guidelines** 设计规范：
 
-- **核心配色**：
-  - Light: `#f2f4f7` (背景) / `#0056b3` (强调)
-  - Dark: `#121212` (背景) / `#1a6dbf` (强调)
-- **视觉特性**：背景模糊 (`backdrop-blur`)、大圆角 (`24px`)、药丸状按钮。
-- **字体**：系统原生字体栈 (Apple 系统风格)。
+### 配色方案
+
+**Light Mode**:
+- 背景色: `#ffffff`
+- 强调色: `#0071e3`
+- 文字色: `#1d1d1f`
+
+**Dark Mode**:
+- 背景色: `#000000`
+- 强调色: `#0a84ff`
+- 文字色: `#f5f5f7`
+
+### 圆角系统
+
+| 变量 | 值 |
+|------|-----|
+| `radius-sm` | 8px |
+| `radius-md` | 12px |
+| `radius-lg` | 16px |
+| `radius-xl` | 20px |
+
+详细设计规范请参考 [CLAUDE.md](./CLAUDE.md)。
 
 ## 部署
 
