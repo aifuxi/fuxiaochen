@@ -5,6 +5,7 @@ import {
   type ChangelogCreateReq,
   type ChangelogListReq,
 } from "@/types/changelog";
+import { checkAdmin } from "@/lib/auth-guard";
 import { changelogStore } from "@/stores/changelog";
 
 export async function getChangelogsAction(params?: ChangelogListReq) {
@@ -30,11 +31,13 @@ export async function getChangelogByIdAction(id: string) {
 
 export async function createChangelogAction(data: ChangelogCreateReq) {
   try {
+    await checkAdmin();
     const result = await changelogStore.create(data);
     revalidatePath("/changelog");
     return { success: true, data: result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "操作失败";
+    return { success: false, error: message };
   }
 }
 
@@ -43,20 +46,24 @@ export async function updateChangelogAction(
   data: Partial<ChangelogCreateReq>,
 ) {
   try {
+    await checkAdmin();
     const result = await changelogStore.update(id, data);
     revalidatePath("/changelog");
     return { success: true, data: result };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "操作失败";
+    return { success: false, error: message };
   }
 }
 
 export async function deleteChangelogAction(id: string) {
   try {
+    await checkAdmin();
     await changelogStore.delete(id);
     revalidatePath("/changelog");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "操作失败";
+    return { success: false, error: message };
   }
 }
