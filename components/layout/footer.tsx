@@ -6,9 +6,11 @@ import {
   BEI_AN_LINK,
   GONG_AN_NUMBER,
   GONG_AN_LINK,
+  SLOGAN,
 } from "@/constants/info";
 
 const footerLinks = [
+  { href: "/", label: "首页" },
   { href: "/blog", label: "博客" },
   { href: "/about", label: "关于" },
   { href: "/changelog", label: "更新日志" },
@@ -69,7 +71,7 @@ export function Footer() {
                   group-hover:scale-105
                 `}
               />
-              <span>付小晨</span>
+              <span>{WEBSITE}</span>
             </Link>
             <p
               className={`
@@ -77,7 +79,7 @@ export function Footer() {
                 md:text-left
               `}
             >
-              记录前端开发与技术探索的点滴，分享学习心得与实践经验
+              {SLOGAN}
             </p>
 
             {/* 社交链接 */}
