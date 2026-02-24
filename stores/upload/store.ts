@@ -10,7 +10,7 @@ export class UploadStore implements IUploadStore {
       "Content-Type": "application/octet-stream",
     };
 
-    const filename = `${process.env.OSS_UPLOAD_DIR || ""}/${Date.now()}_${uploadFileName}`;
+    const filename = `${Date.now()}_${uploadFileName}`;
     const uploadPath = `${process.env.OSS_UPLOAD_DIR || ""}/${filename}`;
 
     const signatureUrl = await aliOSS.signatureUrlV4(
@@ -22,7 +22,7 @@ export class UploadStore implements IUploadStore {
 
     return {
       url: signatureUrl.split("?")[0] || signatureUrl,
-      name: filename?.split("/").pop() || "",
+      name: filename,
       uploadUrl: signatureUrl,
       signedHeaders: headers,
     };
