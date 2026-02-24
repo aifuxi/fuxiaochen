@@ -20,7 +20,7 @@ export const BILIBILI_PAGE = "https://space.bilibili.com/315542317";
 export const WEBSITE = NICKNAME;
 
 /** Slogan */
-export const SLOGAN = "努力做一个更好的程序员";
+export const SLOGAN = "记录前端开发与技术探索的点滴，分享学习心得与实践经验";
 
 /** 网站 ICP 备案号 */
 export const BEI_AN_NUMBER = "赣 ICP 备 2024026230 号";
