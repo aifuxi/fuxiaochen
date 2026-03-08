@@ -123,8 +123,13 @@ export class BlogStore implements IBlogStore {
   }
 
   async findBySlug(slug: string): Promise<Blog | null> {
-    const blog = await prisma.blog.findUnique({
-      where: { slug },
+    // 公网读取使用：只返回未删除且已发布内容，避免草稿/软删内容泄露
+    const blog = await prisma.blog.findFirst({
+      where: {
+        slug,
+        deletedAt: null,
+        published: true,
+      },
       include: {
         category: true,
         tags: {
