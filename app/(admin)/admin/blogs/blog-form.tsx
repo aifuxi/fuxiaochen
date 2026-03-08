@@ -356,7 +356,7 @@ export function BlogForm({
                                     const res = await fetch(uploadUrl, {
                                       method: "PUT",
                                       headers: signedHeaders,
-                                      body: files[0],
+                                      body: file,
                                     });
 
                                     if (res.ok) {
@@ -369,6 +369,7 @@ export function BlogForm({
                                         },
                                       ];
                                     }
+                                    toast.error("上传失败，请重试");
                                     return [];
                                   },
                                 ),
