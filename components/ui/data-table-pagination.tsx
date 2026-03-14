@@ -37,7 +37,7 @@ export function DataTablePagination<TData>({
       flex flex-col items-center justify-between gap-4 px-2 py-4
       sm:flex-row
     `}>
-      <div className="flex-1 text-sm text-text-secondary">
+      <div className="flex-1 text-sm text-muted-foreground">
         {selectedRows > 0 && (
           <>
             已选择 {selectedRows} / {totalRows} 行
@@ -51,14 +51,14 @@ export function DataTablePagination<TData>({
         lg:gap-8
       `}>
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium text-text-secondary">每页行数</p>
+          <p className="text-sm font-medium text-muted-foreground">每页行数</p>
           <Select
             value={`${pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="h-8 w-[70px] border-border bg-surface">
+            <SelectTrigger className="h-8 w-[70px] border-border bg-muted">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -70,7 +70,7 @@ export function DataTablePagination<TData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex w-[100px] items-center justify-center text-sm font-medium text-text-secondary">
+        <div className="flex w-[100px] items-center justify-center text-sm font-medium text-muted-foreground">
           第 {pageIndex + 1} / {pageCount} 页
         </div>
         <div className="flex items-center gap-2">

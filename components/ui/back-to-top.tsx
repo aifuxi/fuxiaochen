@@ -9,22 +9,14 @@ export function BackToTop() {
 
   useEffect(() => {
     const toggleVisibility = () => {
-      if (window.scrollY > 300) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setIsVisible(window.scrollY > 300);
     };
-
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -33,7 +25,7 @@ export function BackToTop() {
       className={cn(
         `
           fixed right-8 bottom-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border
-          bg-surface transition-all duration-300
+          bg-muted transition-all duration-300
           hover:-translate-y-1 hover:shadow-lg
           focus:outline-none
         `,
@@ -43,7 +35,7 @@ export function BackToTop() {
       )}
       aria-label="Back to top"
     >
-      <ArrowUp className="h-5 w-5 text-text" />
+      <ArrowUp className="h-5 w-5 text-foreground" />
     </button>
   );
 }

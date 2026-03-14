@@ -48,7 +48,7 @@ export function DataTableToolbar<TData>({
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
             className={`
-              h-8 w-full border-border bg-surface
+              h-8 w-full border-border bg-muted
               sm:w-[250px]
             `}
           />
@@ -60,8 +60,8 @@ export function DataTableToolbar<TData>({
             size="sm"
             onClick={() => table.resetColumnFilters()}
             className={`
-              h-8 px-2 text-text-secondary
-              hover:text-text
+              h-8 px-2 text-muted-foreground
+              hover:text-foreground
             `}
           >
             重置

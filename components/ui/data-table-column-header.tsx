@@ -38,7 +38,7 @@ export function DataTableColumnHeader<TData, TValue>({
             size="sm"
             className={`
               -ml-3 h-8
-              data-[state=open]:bg-surface-hover
+              data-[state=open]:bg-accent
             `}
           >
             <span>{title}</span>
@@ -53,18 +53,18 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUp className="mr-2 h-3.5 w-3.5 text-text-tertiary" />
+            <ArrowUp className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
             升序
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDown className="mr-2 h-3.5 w-3.5 text-text-tertiary" />
+            <ArrowDown className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
             降序
           </DropdownMenuItem>
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                <EyeOff className="mr-2 h-3.5 w-3.5 text-text-tertiary" />
+                <EyeOff className="mr-2 h-3.5 w-3.5 text-muted-foreground" />
                 隐藏
               </DropdownMenuItem>
             </>
