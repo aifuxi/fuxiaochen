@@ -1,5 +1,5 @@
 .bytemd {
-  @apply h-[calc(100vh-58px)] !border-border !bg-surface !text-text !rounded-xl overflow-hidden;
+  @apply h-[calc(100vh-58px)] !border-border !bg-background !text-foreground !rounded-xl overflow-hidden;
 }
 
 .bytemd .CodeMirror,
@@ -22,42 +22,42 @@ bytemd kbd {
 
 /* 编辑器内标题样式 */
 .cm-header {
-  @apply !text-accent;
+  @apply !text-primary;
 }
 
 /* 编辑器内列表项样式 */
 .cm-variable-2 {
-  @apply !text-text;
+  @apply !text-foreground;
 }
 
 /* 编辑器内代码块样式 */
 .cm-comment {
-  @apply !text-text-secondary;
+  @apply !text-muted-foreground;
 }
 
 /* 编辑器内引用样式 */
 .cm-quote {
-  @apply !text-accent;
+  @apply !text-primary;
 }
 
 /* 编辑器内链接样式 */
 .cm-link {
-  @apply !text-accent;
+  @apply !text-primary;
 }
 
 /* 编辑器内图片链接样式 */
 .cm-string {
-  @apply !break-all !text-text;
+  @apply !break-all !text-foreground;
 }
 
 /* 编辑器内光标颜色 */
 .CodeMirror-cursor {
-  @apply !border-l-2 !border-l-accent;
+  @apply !border-l-2 !border-l-primary;
 }
 
 /* 编辑器内显示行数 */
 .CodeMirror-linenumber {
-  @apply !text-text-secondary;
+  @apply !text-muted-foreground;
 }
 
 /* 编辑器内显示行数背景 */
@@ -66,15 +66,15 @@ bytemd kbd {
 }
 
 .bytemd {
-  @apply !border !border-border !bg-surface !text-text !rounded-xl;
+  @apply !border !border-border !bg-background !text-foreground !rounded-xl;
 }
 
 .bytemd-toolbar {
-  @apply !border-b !border-border !bg-surface/80 backdrop-blur-sm !rounded-t-xl py-4;
+  @apply !border-b !border-border !bg-background/80 backdrop-blur-sm !rounded-t-xl py-4;
 }
 
 .CodeMirror {
-  @apply !bg-transparent !text-text;
+  @apply !bg-transparent !text-foreground;
 }
 
 .bytemd-split .bytemd-preview {
@@ -82,9 +82,9 @@ bytemd kbd {
 }
 
 .bytemd-status {
-  @apply !border-t !border-border !bg-surface/50;
+  @apply !border-t !border-border !bg-background/50;
 }
 
 .bytemd-toolbar-icon {
-  @apply hover:!bg-accent/10 hover:!text-accent transition-all duration-100 rounded-lg;
+  @apply hover:!bg-accent/50 hover:!text-accent-foreground transition-all duration-100 rounded-lg;
 }
