@@ -17,13 +17,13 @@ export function ThemeToggle({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "flex h-9 items-center gap-1 rounded-lg border border-border bg-surface px-1",
+          "flex h-9 items-center gap-1 rounded-lg border border-border bg-muted px-1",
           className,
         )}
       >
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
+        <div className="h-7 w-7 rounded-md bg-accent" />
+        <div className="h-7 w-7 rounded-md bg-accent" />
+        <div className="h-7 w-7 rounded-md bg-accent" />
       </div>
     );
   }
@@ -37,7 +37,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-lg border border-border bg-surface px-1",
+        "flex items-center gap-1 rounded-lg border border-border bg-muted px-1",
         className,
       )}
     >
@@ -52,10 +52,10 @@ export function ThemeToggle({ className }: { className?: string }) {
             className={cn(
               `flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200`,
               isActive
-                ? "bg-accent text-white"
+                ? "bg-primary text-white"
                 : `
-                  text-text-secondary
-                  hover:bg-surface-hover hover:text-text
+                  text-muted-foreground
+                  hover:bg-accent hover:text-foreground
                 `,
             )}
             aria-label={`Switch to ${mode.name} theme`}

@@ -18,7 +18,7 @@ export function TableOfContents() {
     const timer = setTimeout(() => {
       const elements = Array.from(
         document.querySelectorAll(
-          ".apple-prose h1, .apple-prose h2, .apple-prose h3",
+          ".blog-prose h1, .blog-prose h2, .blog-prose h3",
         ),
       );
 
@@ -63,8 +63,8 @@ export function TableOfContents() {
 
   return (
     <div className="custom-scrollbar sticky top-32 max-h-[calc(100vh-9rem)] space-y-4 overflow-y-auto pr-2">
-      <div className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-accent">
-        <div className="h-2 w-2 rounded-full bg-accent" />
+      <div className="mb-4 flex items-center gap-2 text-sm font-bold tracking-wider text-primary">
+        <div className="h-2 w-2 rounded-full bg-primary" />
         目录
       </div>
       <nav className="relative">
@@ -84,10 +84,10 @@ export function TableOfContents() {
                   "block rounded-xl px-3 py-2 text-sm transition-all duration-300",
                   heading.level === 3 && "pl-6",
                   activeId === heading.id
-                    ? "bg-accent/10 font-medium text-accent shadow-sm"
+                    ? "bg-primary/10 font-medium text-primary shadow-sm"
                     : `
-                      text-text-secondary
-                      hover:bg-surface hover:text-text
+                      text-muted-foreground
+                      hover:bg-accent hover:text-foreground
                     `,
                 )}
               >

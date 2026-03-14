@@ -49,9 +49,9 @@ export function BlogList({
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium text-text-secondary
+            inline-flex items-center gap-2 rounded-full bg-muted/50 px-4 py-2 text-sm font-medium text-muted-foreground
             transition-all duration-200
-            hover:bg-surface hover:text-text
+            hover:bg-accent hover:text-foreground
           `}
         >
           <RotateCcw className="h-4 w-4" />
@@ -114,7 +114,7 @@ export function BlogList({
       {/* 分页 */}
       {totalPages > 1 && (
         <div className="flex flex-col items-center gap-4">
-          <span className="text-sm text-text-secondary">共 {total} 篇博客</span>
+          <span className="text-sm text-muted-foreground">共 {total} 篇博客</span>
           <Pagination>
             <PaginationContent>
               {currentPage > 1 && (

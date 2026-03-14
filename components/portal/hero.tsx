@@ -7,7 +7,7 @@ export function Hero() {
       {/* Background Gradient Blob */}
       <div
         className={`
-          absolute top-1/2 left-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent
+          absolute top-1/2 left-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary
           opacity-10 blur-[100px]
         `}
       />
@@ -15,19 +15,19 @@ export function Hero() {
       <div className="max-w-4xl animate-in space-y-6 px-4 duration-1000 fade-in slide-in-from-bottom-8">
         <h1
           className={`
-            text-5xl font-bold tracking-tight text-text
+            text-5xl font-bold tracking-tight text-foreground
             md:text-7xl
           `}
         >
           探索 <br />
-          <span className="text-accent">
+          <span className="text-primary">
             数字创造
           </span>
         </h1>
 
         <p
           className={`
-            mx-auto max-w-2xl text-lg leading-relaxed text-text-secondary
+            mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground
             md:text-xl
           `}
         >
@@ -39,9 +39,9 @@ export function Hero() {
           <Link
             href="/blog"
             className={`
-              group relative inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-3 text-white shadow-sm
-              transition-all duration-200 ease-apple
-              hover:bg-accent-hover-color
+              group relative inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-3 text-white shadow-sm
+              transition-all duration-200 ease-in-out
+              hover:bg-primary/90
             `}
           >
             开始阅读
@@ -55,9 +55,9 @@ export function Hero() {
           <Link
             href="/about"
             className={`
-              inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-8 py-3 text-text
-              transition-all duration-200 ease-apple
-              hover:bg-surface-hover
+              inline-flex items-center gap-2 rounded-lg border border-border bg-muted px-8 py-3 text-foreground
+              transition-all duration-200 ease-in-out
+              hover:bg-accent
             `}
           >
             关于我

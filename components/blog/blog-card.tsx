@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Blog } from "@/types/blog";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Text } from "@/components/ui/typography/text";
 import { formatSimpleDate } from "@/lib/time";
 
 interface BlogCardProps {
@@ -14,7 +13,7 @@ export function BlogCard({ blog }: BlogCardProps) {
   return (
     <Card
       className={`
-        group overflow-hidden rounded-2xl p-0 transition-all duration-300 ease-apple
+        group overflow-hidden rounded-2xl p-0 transition-all duration-300 ease-in-out
         hover:-translate-y-0.5 hover:shadow-lg
       `}
     >
@@ -45,17 +44,17 @@ export function BlogCard({ blog }: BlogCardProps) {
           {/* 标题 */}
           <h3
             className={`
-              line-clamp-1 text-lg font-semibold text-text transition-colors
-              group-hover:text-accent
+              line-clamp-1 text-lg font-semibold text-foreground transition-colors
+              group-hover:text-primary
             `}
           >
             {blog.title}
           </h3>
 
           {/* 描述 */}
-          <Text type="secondary" className="line-clamp-2 text-sm">
+          <span className="line-clamp-2 text-sm text-muted-foreground">
             {blog.description}
-          </Text>
+          </span>
 
           {/* 底部元信息 */}
           <div className="mt-auto flex flex-wrap items-center gap-2">
@@ -74,9 +73,9 @@ export function BlogCard({ blog }: BlogCardProps) {
             ))}
 
             {/* 时间 */}
-            <Text type="secondary" size="sm" className="ml-auto">
+            <span className="ml-auto text-sm text-muted-foreground">
               {formatSimpleDate(new Date(blog.createdAt))}
-            </Text>
+            </span>
           </div>
         </div>
       </Link>

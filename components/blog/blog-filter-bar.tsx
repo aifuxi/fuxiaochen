@@ -103,7 +103,7 @@ export function BlogFilterBar({
       {/* 搜索框 */}
       <form onSubmit={handleSearch} className="mx-auto max-w-xl">
         <div className="relative">
-          <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
+          <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <input
             ref={inputRef}
             name="title"
@@ -112,10 +112,10 @@ export function BlogFilterBar({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             className={`
-              w-full rounded-2xl border border-border bg-surface/50 py-4 pr-12 pl-12 text-base text-text transition-all
-              duration-200
-              placeholder:text-text-tertiary
-              focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none
+              w-full rounded-2xl border border-border bg-muted/50 py-4 pr-12 pl-12 text-base text-foreground
+              transition-all duration-200
+              placeholder:text-muted-foreground
+              focus:border-primary focus:ring-4 focus:ring-primary/20 focus:outline-none
             `}
           />
           {searchValue && (
@@ -124,8 +124,8 @@ export function BlogFilterBar({
               onClick={handleClearSearch}
               className={`
                 absolute top-1/2 right-4 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full
-                bg-surface-hover text-text-tertiary transition-colors
-                hover:bg-border hover:text-text
+                bg-accent text-muted-foreground transition-colors
+                hover:bg-border hover:text-foreground
               `}
             >
               <X className="h-3.5 w-3.5" />
@@ -138,17 +138,17 @@ export function BlogFilterBar({
       <div className="space-y-4">
         {/* 分类筛选 */}
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="text-sm font-medium text-text-secondary">分类：</span>
+          <span className="text-sm font-medium text-muted-foreground">分类：</span>
           <button
             type="button"
             onClick={() => updateFilter("categoryId", null)}
             className={`
               rounded-full px-4 py-2 text-sm font-medium transition-all duration-200
               ${!currentFilters.categoryId
-                ? "bg-accent text-white"
+                ? "bg-primary text-primary-foreground"
                 : `
-                  bg-surface/50 text-text-secondary
-                  hover:bg-surface
+                  bg-muted/50 text-muted-foreground
+                  hover:bg-accent
                 `
               }
             `}
@@ -163,10 +163,10 @@ export function BlogFilterBar({
               className={`
                 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200
                 ${currentFilters.categoryId === category.id
-                  ? "bg-accent text-white"
+                  ? "bg-primary text-primary-foreground"
                   : `
-                    bg-surface/50 text-text-secondary
-                    hover:bg-surface
+                    bg-muted/50 text-muted-foreground
+                    hover:bg-accent
                   `
                 }
               `}
@@ -179,17 +179,17 @@ export function BlogFilterBar({
         {/* 标签筛选 */}
         {tags.length > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-sm font-medium text-text-secondary">标签：</span>
+            <span className="text-sm font-medium text-muted-foreground">标签：</span>
             <button
               type="button"
               onClick={() => updateFilter("tagId", null)}
               className={`
                 rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
                 ${!currentFilters.tagId
-                  ? "bg-info text-white"
+                  ? "bg-primary text-primary-foreground"
                   : `
-                    bg-surface/50 text-text-secondary
-                    hover:bg-surface
+                    bg-muted/50 text-muted-foreground
+                    hover:bg-accent
                   `
                 }
               `}
@@ -209,10 +209,10 @@ export function BlogFilterBar({
                 className={`
                   rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
                   ${currentFilters.tagId === tag.id
-                    ? "bg-info text-white"
+                    ? "bg-primary text-primary-foreground"
                     : `
-                      bg-surface/50 text-text-secondary
-                      hover:bg-surface
+                      bg-muted/50 text-muted-foreground
+                      hover:bg-accent
                     `
                   }
                 `}
@@ -228,8 +228,8 @@ export function BlogFilterBar({
           <Select value={currentSort} onValueChange={handleSortChange}>
             <SelectTrigger
               className={`
-                w-36 rounded-full border-border bg-surface/50
-                focus:ring-accent/20
+                w-36 rounded-full border-border bg-muted/50
+                focus:ring-primary/20
               `}
             >
               <SlidersHorizontal className="mr-2 h-4 w-4" />
@@ -250,9 +250,9 @@ export function BlogFilterBar({
               type="button"
               onClick={handleReset}
               className={`
-                inline-flex items-center gap-1.5 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium
-                text-text-secondary transition-all duration-200
-                hover:bg-surface hover:text-text
+                inline-flex items-center gap-1.5 rounded-full bg-muted/50 px-4 py-2 text-sm font-medium
+                text-muted-foreground transition-all duration-200
+                hover:bg-accent hover:text-foreground
               `}
             >
               <X className="h-3.5 w-3.5" />

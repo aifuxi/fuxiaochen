@@ -30,10 +30,10 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 border-t border-border/50 bg-surface/50">
+    <footer className="relative mt-20 border-t border-border/50 bg-muted/50">
       {/* 装饰性渐变 */}
       <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-accent/5 to-transparent`}
+        className={`pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-primary/5 to-transparent`}
       />
 
       <div
@@ -59,7 +59,8 @@ export function Footer() {
             <Link
               href="/"
               className={`
-                group flex items-center gap-2 text-xl font-bold tracking-tight text-text transition-opacity duration-200
+                group flex items-center gap-2 text-xl font-bold tracking-tight text-foreground transition-opacity
+                duration-200
                 hover:opacity-80
               `}
             >
@@ -75,7 +76,7 @@ export function Footer() {
             </Link>
             <p
               className={`
-                max-w-xs text-center text-sm text-text-secondary
+                max-w-xs text-center text-sm text-muted-foreground
                 md:text-left
               `}
             >
@@ -93,9 +94,9 @@ export function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`
-                      flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface
-                      text-text-secondary transition-all duration-200
-                      hover:border-accent/30 hover:text-accent
+                      flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted
+                      text-muted-foreground transition-all duration-200
+                      hover:border-primary/30 hover:text-primary
                     `}
                     aria-label={item.label}
                   >
@@ -120,8 +121,8 @@ export function Footer() {
                   key={item.href}
                   href={item.href}
                   className={`
-                    text-sm text-text-secondary transition-colors duration-200
-                    hover:text-accent
+                    text-sm text-muted-foreground transition-colors duration-200
+                    hover:text-primary
                   `}
                 >
                   {item.label}
@@ -132,7 +133,7 @@ export function Footer() {
             {/* 备案信息 */}
             <div
               className={`
-                flex flex-col items-center gap-2 text-xs text-text-tertiary
+                flex flex-col items-center gap-2 text-xs text-muted-foreground
                 md:flex-row md:gap-4
               `}
             >
@@ -145,7 +146,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className={`
                   transition-colors duration-200
-                  hover:text-accent
+                  hover:text-primary
                 `}
               >
                 {BEI_AN_NUMBER}
@@ -156,7 +157,7 @@ export function Footer() {
                 rel="noopener noreferrer"
                 className={`
                   transition-colors duration-200
-                  hover:text-accent
+                  hover:text-primary
                 `}
               >
                 {GONG_AN_NUMBER}

@@ -62,7 +62,7 @@ export function DataTablePagination({
         sm:flex-row
       `}
     >
-      <div className="flex items-center gap-2 text-sm text-text-secondary">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <span>共 {total} 条数据</span>
         {onPageSizeChange && (
           <div className="flex items-center gap-2">
@@ -73,7 +73,7 @@ export function DataTablePagination({
                 onPageSizeChange(Number(value));
               }}
             >
-              <SelectTrigger className="h-8 w-[70px] border-border bg-surface">
+              <SelectTrigger className="h-8 w-[70px] border-border bg-muted">
                 <SelectValue placeholder={pageSize} />
               </SelectTrigger>
               <SelectContent>

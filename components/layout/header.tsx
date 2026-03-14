@@ -21,14 +21,14 @@ export function Header() {
   return (
     <header
       className={`
-        bg-bg-color/80 sticky top-0 z-50 w-full border-b border-border/50 backdrop-blur-xl
-        supports-[backdrop-filter]:bg-bg-color/60
+        sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl
+        supports-[backdrop-filter]:bg-background/60
       `}
     >
       {/* 装饰性顶部渐变线 */}
       <div
         className={`
-          pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/30
+          pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30
           to-transparent
         `}
       />
@@ -43,7 +43,8 @@ export function Header() {
         <Link
           href="/"
           className={`
-            group flex items-center gap-2 text-xl font-bold tracking-tight text-text transition-opacity duration-200
+            group flex items-center gap-2 text-xl font-bold tracking-tight text-foreground transition-opacity
+            duration-200
             hover:opacity-80
           `}
         >
@@ -82,17 +83,17 @@ export function Header() {
                 className={cn(
                   `relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-200`,
                   isActive
-                    ? "text-accent"
+                    ? "text-primary"
                     : `
-                      text-text-secondary
-                      hover:text-text
+                      text-muted-foreground
+                      hover:text-foreground
                     `,
                 )}
               >
                 {item.label}
                 {isActive && (
                   <span
-                    className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-accent`}
+                    className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-primary`}
                   />
                 )}
               </Link>
@@ -105,8 +106,8 @@ export function Header() {
           <Link
             href="/admin"
             className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-all duration-200
-              hover:bg-surface hover:text-text
+              flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-all duration-200
+              hover:bg-accent hover:text-foreground
               active:scale-95
             `}
             target="_blank"
@@ -121,8 +122,8 @@ export function Header() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors duration-200
-              hover:bg-surface hover:text-text
+              flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-200
+              hover:bg-accent hover:text-foreground
               md:hidden
             `}
             aria-label="切换菜单"
@@ -140,8 +141,8 @@ export function Header() {
       <div
         className={cn(
           `
-            overflow-hidden border-t border-border/50 bg-surface/95 backdrop-blur-xl transition-all duration-300
-            ease-apple
+            overflow-hidden border-t border-border/50 bg-muted/95 backdrop-blur-xl transition-all duration-300
+            ease-in-out
             md:hidden
           `,
           mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
@@ -160,10 +161,10 @@ export function Header() {
                   className={cn(
                     `rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
                     isActive
-                      ? "bg-accent/10 text-accent"
+                      ? "bg-primary/10 text-primary"
                       : `
-                        text-text-secondary
-                        hover:bg-surface-hover hover:text-text
+                        text-muted-foreground
+                        hover:bg-accent hover:text-foreground
                       `,
                   )}
                 >
@@ -180,10 +181,10 @@ export function Header() {
                 className={cn(
                   `flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
                   pathname.startsWith("/admin")
-                    ? "bg-accent/10 text-accent"
+                    ? "bg-primary/10 text-primary"
                     : `
-                      text-text-secondary
-                      hover:bg-surface-hover hover:text-text
+                      text-muted-foreground
+                      hover:bg-accent hover:text-foreground
                     `,
                 )}
               >
