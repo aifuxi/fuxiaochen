@@ -14,12 +14,12 @@ const blogListReqSchema = z
     pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
     sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
     order: z.enum(["asc", "desc"]).optional(),
-    title: z.string().trim().min(1).max(200).optional(),
-    slug: z.string().trim().min(1).max(200).optional(),
-    categoryId: z.string().trim().min(1).max(128).optional(),
-    tagId: z.string().trim().min(1).max(128).optional(),
-    tagIds: z.array(z.string().trim().min(1).max(128)).max(50).optional(),
-    blogIDs: z.array(z.string().trim().min(1).max(128)).max(200).optional(),
+    title: z.string().trim().optional(),
+    slug: z.string().trim().optional(),
+    categoryId: z.string().trim().optional(),
+    tagId: z.string().trim().optional(),
+    tagIds: z.array(z.string().trim()).max(50).optional(),
+    blogIDs: z.array(z.string().trim()).max(200).optional(),
     published: z.boolean().optional(),
   });
 
@@ -41,12 +41,16 @@ export async function getBlogsAction(params?: BlogListReq) {
   try {
     const parsed = blogListReqSchema.safeParse(params ?? {});
     if (!parsed.success) {
+    console.log(parsed.error);
+
       return { success: false, error: "参数错误" };
     }
 
     const result = await blogStore.findAll(parsed.data as BlogListReq);
     return { success: true, data: result };
   } catch (error: any) {
+    console.log(error);
+    
     return { success: false, error: error.message };
   }
 }

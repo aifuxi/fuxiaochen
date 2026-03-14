@@ -27,7 +27,7 @@ const badgeVariants = cva(
           `,
         destructive:
           `
-            bg-destructive text-white
+            bg-destructive text-primary-foreground
             focus-visible:ring-destructive/20
             dark:bg-destructive/60 dark:focus-visible:ring-destructive/40
             [a&]:hover:bg-destructive/90

@@ -52,7 +52,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             className={cn(
               `flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200`,
               isActive
-                ? "bg-primary text-white"
+                ? "bg-primary text-primary-foreground"
                 : `
                   text-muted-foreground
                   hover:bg-accent hover:text-foreground

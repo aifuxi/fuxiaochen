@@ -389,8 +389,8 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white shadow-lg
-            transition-all duration-300
+            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
+            text-primary-foreground shadow-lg transition-all duration-300
             hover:bg-primary/90
             active:scale-[0.98]
           `}

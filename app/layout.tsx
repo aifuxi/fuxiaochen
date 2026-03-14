@@ -64,7 +64,7 @@ export default function RootLayout({
       <body
         className={`
           bg-[var(--bg-color)] text-[var(--text-color)] antialiased
-          selection:bg-[var(--accent-color)] selection:text-white
+          selection:bg-[var(--accent-color)] selection:text-primary-foreground
           ${isProduction() ? "" : "debug-screens"}
         `}
       >

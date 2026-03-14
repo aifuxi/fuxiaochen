@@ -110,6 +110,9 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
+  console.log(blogsResult.success,categoriesResult.success, tagsResult.success);
+  
+
   if (!blogsResult.success || !categoriesResult.success || !tagsResult.success) {
     throw new Error("获取数据失败");
   }

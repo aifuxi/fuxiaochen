@@ -229,8 +229,8 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className={`
-                  group relative h-12 w-full overflow-hidden rounded-xl bg-primary text-base font-medium text-white
-                  shadow-lg shadow-primary/25 transition-all duration-300
+                  group relative h-12 w-full overflow-hidden rounded-xl bg-primary text-base font-medium
+                  text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300
                   hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30
                   active:scale-[0.98]
                 `}

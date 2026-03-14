@@ -84,8 +84,8 @@ function Hero() {
           <Link
             href="/blog"
             className={`
-              inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white
-              shadow-lg transition-all duration-300
+              inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
+              text-primary-foreground shadow-lg transition-all duration-300
               hover:bg-primary/90
               active:scale-[0.98]
             `}
@@ -176,7 +176,7 @@ async function FeaturedPosts() {
               {firstPost.category && (
                 <span
                   className={`
-                    mb-4 inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-white
+                    mb-4 inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-primary-foreground
                     backdrop-blur-sm
                   `}
                 >
@@ -185,7 +185,7 @@ async function FeaturedPosts() {
               )}
               <h2
                 className={`
-                  mb-3 line-clamp-2 text-2xl font-bold text-white
+                  mb-3 line-clamp-2 text-2xl font-bold text-primary-foreground
                   md:text-3xl
                   lg:text-4xl
                 `}
@@ -194,7 +194,7 @@ async function FeaturedPosts() {
               </h2>
               <p
                 className={`
-                  mb-4 line-clamp-2 max-w-2xl text-sm text-white/80
+                  mb-4 line-clamp-2 max-w-2xl text-sm text-primary-foreground/80
                   md:text-base
                 `}
               >
@@ -202,7 +202,7 @@ async function FeaturedPosts() {
               </p>
               <div
                 className={`
-                  flex items-center gap-4 text-xs text-white/60
+                  flex items-center gap-4 text-xs text-primary-foreground/60
                   md:text-sm
                 `}
               >
@@ -219,8 +219,8 @@ async function FeaturedPosts() {
             {/* 悬浮箭头 */}
             <div
               className={`
-                absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white
-                opacity-0 backdrop-blur-sm transition-all duration-300
+                absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/10
+                text-primary-foreground opacity-0 backdrop-blur-sm transition-all duration-300
                 group-hover:opacity-100
               `}
             >
@@ -354,7 +354,7 @@ async function CategoryNav() {
                 className={`
                   flex items-center gap-3 rounded-full border border-border bg-muted px-6 py-3 text-base font-medium
                   text-foreground transition-all duration-300
-                  group-hover:border-primary/30 group-hover:bg-primary group-hover:text-white
+                  group-hover:border-primary/30 group-hover:bg-primary group-hover:text-primary-foreground
                 `}
               >
                 <span>{category.name}</span>
@@ -416,8 +416,8 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white shadow-lg
-            transition-all duration-300
+            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
+            text-primary-foreground shadow-lg transition-all duration-300
             hover:bg-primary/90
             active:scale-[0.98]
           `}

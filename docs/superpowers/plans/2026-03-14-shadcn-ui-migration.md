@@ -668,8 +668,8 @@ grep -n "typography\|bg-surface\|text-text\|bg-accent\|text-accent" \
 
 关键替换（注意语义）：
 - 搜索框 input：`bg-surface/50` → `bg-muted/50`，`text-text` → `text-foreground`，`placeholder:text-text-tertiary` → `placeholder:text-muted-foreground`，`focus:border-accent` → `focus:border-primary`，`focus:ring-accent/20` → `focus:ring-primary/20`
-- 分类按钮**选中态**：`bg-accent text-white` → `bg-primary text-primary-foreground`
-- 标签按钮**选中态**：`bg-info text-white` → `bg-primary text-primary-foreground`
+- 分类按钮**选中态**：`bg-accent text-primary-foreground` → `bg-primary text-primary-foreground`
+- 标签按钮**选中态**：`bg-info text-primary-foreground` → `bg-primary text-primary-foreground`
 - 未选中态：`bg-surface/50 text-text-secondary hover:bg-surface` → `bg-muted/50 text-muted-foreground hover:bg-accent`
 - 清除按钮：`bg-surface-hover` → `bg-accent`，`hover:text-text` → `hover:text-foreground`
 - Select 触发器：`bg-surface/50` → `bg-muted/50`

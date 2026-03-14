@@ -153,7 +153,7 @@ pnpm dlx shadcn@latest add --all --overwrite
 
 适用范围：`components/ui/`（自定义部分）、`components/blog/`、`components/admin/`、`components/layout/`、`app/` 中所有使用了旧 token 的文件。
 
-> ⚠️ **重要**：不要机械全局替换。涉及"选中状态"或"激活状态"语义色（如 `bg-info text-white` 用于选中态）的地方，需人工核查并改用 `bg-primary text-primary-foreground`，而非通用的 `bg-muted`。
+> ⚠️ **重要**：不要机械全局替换。涉及"选中状态"或"激活状态"语义色（如 `bg-info text-primary-foreground` 用于选中态）的地方，需人工核查并改用 `bg-primary text-primary-foreground`，而非通用的 `bg-muted`。
 
 ### 标准 Token 映射
 
@@ -199,7 +199,7 @@ pnpm dlx shadcn@latest add --all --overwrite
 | `app/(site)/login/page.tsx` | 大量使用 `animate-float-slow/medium/fast`、`animate-fade-in-up` | 动画移除后需重新设计登录页动效，可用 `tw-animate-css` 中的替代动画或去掉动效 |
 | `app/(site)/page.tsx` | 使用 `bg-info/20` 作为装饰性模糊光圈 | 改为 `bg-primary/10` 或 `bg-muted` |
 | `app/(site)/about/page.tsx` | `bg-success` 用于"在线"状态 ping 动画，`text-info`/`text-warning` 用于技术标签色区分，`bg-info/10`/`bg-info/20` 用于装饰背景 | `bg-success` ping 点改为 `bg-primary`；技术标签改为 `bg-secondary text-secondary-foreground`；装饰背景改为 `bg-primary/10` |
-| `components/blog/blog-filter-bar.tsx` | `bg-info text-white` 用于选中状态 | 改为 `bg-primary text-primary-foreground` |
+| `components/blog/blog-filter-bar.tsx` | `bg-info text-primary-foreground` 用于选中状态 | 改为 `bg-primary text-primary-foreground` |
 | `components/blog/table-of-contents.tsx` | DOM querySelector 字符串硬编码 `".apple-prose h1, .apple-prose h2, .apple-prose h3"` | 改为 `".blog-prose h1, .blog-prose h2, .blog-prose h3"` |
 | `app/(admin)/admin/blogs/blog-form.tsx` | 使用 `apple-prose` 作为 ByteMD 编辑器预览区的包裹类 | 改为 `blog-prose` |
 

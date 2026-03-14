@@ -56,7 +56,7 @@ export const DeleteAlert = NiceModal.create(
             onClick={handleDelete}
             disabled={loading}
             className={`
-              bg-red-500 text-white
+              bg-red-500 text-primary-foreground
               hover:bg-red-600
             `}
           >
