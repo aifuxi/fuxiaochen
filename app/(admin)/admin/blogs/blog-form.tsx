@@ -28,7 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -123,7 +123,7 @@ export function BlogForm({
   };
 
   return (
-    <AppleCard className="p-6">
+    <GlassCard className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div
@@ -279,7 +279,7 @@ export function BlogForm({
                         <Badge
                           key={tag.id}
                           variant="secondary"
-                          className="bg-accent/10 text-accent"
+                          className="bg-primary/10 text-primary"
                         >
                           {tag.name}
                         </Badge>
@@ -314,9 +314,9 @@ export function BlogForm({
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-text">内容</FormLabel>
+                <FormLabel className="text-foreground">内容</FormLabel>
                 <FormControl>
-                  <div className="apple-prose">
+                  <div className="blog-prose">
                     <Editor
                       value={field.value}
                       plugins={plugins}
@@ -395,10 +395,10 @@ export function BlogForm({
             name="published"
             render={({ field }) => (
               <FormItem
-                className={`flex flex-row items-center justify-between rounded-lg border border-border bg-surface p-4`}
+                className={`flex flex-row items-center justify-between rounded-lg border border-border bg-muted p-4`}
               >
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base text-text">发布</FormLabel>
+                  <FormLabel className="text-base text-foreground">发布</FormLabel>
                 </div>
                 <FormControl>
                   <Switch
@@ -422,8 +422,8 @@ export function BlogForm({
               type="submit"
               disabled={loading || !isAdmin}
               className={`
-                bg-accent text-white
-                hover:bg-accent/90
+                bg-primary text-primary-foreground
+                hover:bg-primary/90
               `}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -432,6 +432,6 @@ export function BlogForm({
           </div>
         </form>
       </Form>
-    </AppleCard>
+    </GlassCard>
   );
 }

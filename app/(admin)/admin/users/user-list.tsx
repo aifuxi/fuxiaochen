@@ -9,7 +9,7 @@ import { getUsersAction } from "@/app/actions/user";
 import { type User, type UserListReq } from "@/types/user";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
@@ -127,7 +127,7 @@ export default function UserManagementPage() {
               className="h-6 w-6 shrink-0 rounded-full"
             />
           )}
-          <span className="line-clamp-2 max-w-[150px] font-medium whitespace-normal text-text">
+          <span className="line-clamp-2 max-w-[150px] font-medium whitespace-normal text-foreground">
             {row.original.name}
           </span>
         </div>
@@ -137,7 +137,7 @@ export default function UserManagementPage() {
       accessorKey: "email",
       header: "邮箱",
       cell: ({ row }) => (
-        <span className="line-clamp-2 max-w-[200px] whitespace-normal text-text-secondary">
+        <span className="line-clamp-2 max-w-[200px] whitespace-normal text-muted-foreground">
           {row.original.email}
         </span>
       ),
@@ -177,7 +177,7 @@ export default function UserManagementPage() {
             variant="ghost"
             size="icon"
             onClick={() => openEdit(row.original)}
-            className="hover:bg-accent/10 hover:text-accent"
+            className="hover:bg-primary/10 hover:text-primary"
           >
             <Edit className="h-4 w-4" />
           </Button>
@@ -185,7 +185,7 @@ export default function UserManagementPage() {
             variant="ghost"
             size="icon"
             onClick={() => openDelete(row.original.id)}
-            className="hover:bg-error/10 hover:text-error"
+            className="hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -197,13 +197,13 @@ export default function UserManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-text">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           用户管理
         </h1>
-        <p className="mt-1 text-text-secondary">管理系统用户及权限</p>
+        <p className="mt-1 text-muted-foreground">管理系统用户及权限</p>
       </div>
 
-      <AppleCard
+      <GlassCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -214,7 +214,7 @@ export default function UserManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-muted-foreground" />
             <Input
               name="query"
               placeholder="搜索用户..."
@@ -226,19 +226,19 @@ export default function UserManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-border bg-surface text-text
-              hover:bg-accent/5 hover:text-accent
+              border border-border bg-muted text-foreground
+              hover:bg-primary/5 hover:text-primary
             `}
           >
             搜索
           </Button>
         </form>
-      </AppleCard>
+      </GlassCard>
 
-      <AppleCard className="overflow-hidden p-0">
+      <GlassCard className="overflow-hidden p-0">
         {isLoading ? (
           <div className="flex h-24 items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <DataTable
@@ -248,11 +248,11 @@ export default function UserManagementPage() {
             emptyText="暂无用户"
           />
         )}
-      </AppleCard>
+      </GlassCard>
 
       {data && data.total > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          <span className="text-sm text-muted-foreground">共 {data.total} 条</span>
           {totalPages > 1 && (
             <Pagination>
               <PaginationContent>

@@ -2,7 +2,7 @@
 
 import { FileX2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,13 +30,13 @@ export function DisplayPreview() {
         </Card>
       </PreviewCard>
 
-      <PreviewCard title="AppleCard">
-        <AppleCard className="w-64">
-          <p className="text-sm text-text-secondary">Default AppleCard</p>
-        </AppleCard>
-        <AppleCard variant="hover" className="w-64">
-          <p className="text-sm text-text-secondary">Hover AppleCard</p>
-        </AppleCard>
+      <PreviewCard title="GlassCard">
+        <GlassCard className="w-64">
+          <p className="text-sm text-muted-foreground">Default GlassCard</p>
+        </GlassCard>
+        <GlassCard variant="hover" className="w-64">
+          <p className="text-sm text-muted-foreground">Hover GlassCard</p>
+        </GlassCard>
       </PreviewCard>
 
       <PreviewCard title="Badge">

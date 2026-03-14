@@ -23,7 +23,7 @@ export default async function NewBlogPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground uppercase">
           新建文章
         </h2>
       </div>

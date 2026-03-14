@@ -68,12 +68,12 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-bg px-4 py-20">
+    <main className="bg-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-20">
       {/* Dynamic Gradient Orbs - Apple Liquid Style */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Primary Orb - Blue */}
         <div
-          className="absolute -top-40 -left-40 h-125 w-125 animate-float-slow rounded-full opacity-60 blur-[80px]"
+          className="absolute -top-40 -left-40 h-125 w-125 rounded-full opacity-60 blur-[80px]"
           style={{
             background:
               "radial-gradient(circle, rgba(0,113,227,0.4) 0%, rgba(0,113,227,0.1) 50%, transparent 70%)",
@@ -82,9 +82,7 @@ export default function LoginPage() {
 
         {/* Secondary Orb - Purple/Pink */}
         <div
-          className={`
-            absolute -right-20 -bottom-20 h-100 w-100 animate-float-medium rounded-full opacity-50 blur-[100px]
-          `}
+          className={`absolute -right-20 -bottom-20 h-100 w-100 rounded-full opacity-50 blur-[100px]`}
           style={{
             background:
               "radial-gradient(circle, rgba(191,90,242,0.35) 0%, rgba(191,90,242,0.1) 50%, transparent 70%)",
@@ -93,7 +91,7 @@ export default function LoginPage() {
 
         {/* Tertiary Orb - Teal */}
         <div
-          className="absolute top-1/3 right-1/4 h-75 w-75 animate-float-fast rounded-full opacity-40 blur-[60px]"
+          className="absolute top-1/3 right-1/4 h-75 w-75 rounded-full opacity-40 blur-[60px]"
           style={{
             background:
               "radial-gradient(circle, rgba(52,199,89,0.3) 0%, rgba(52,199,89,0.05) 50%, transparent 70%)",
@@ -102,7 +100,7 @@ export default function LoginPage() {
 
         {/* Accent Orb - Orange */}
         <div
-          className="absolute bottom-1/4 left-1/3 h-50 w-50 animate-float-slow rounded-full opacity-30 blur-[50px]"
+          className="absolute bottom-1/4 left-1/3 h-50 w-50 rounded-full opacity-30 blur-[50px]"
           style={{
             background:
               "radial-gradient(circle, rgba(255,149,0,0.3) 0%, rgba(255,149,0,0.05) 50%, transparent 70%)",
@@ -119,19 +117,16 @@ export default function LoginPage() {
       />
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-105 animate-fade-in-up">
+      <div className="relative z-10 w-full max-w-105">
         {/* Header Section */}
         <div className="mb-10 text-center">
           {/* Badge */}
           <div
-            className={`
-              mb-6 inline-flex animate-fade-in-up items-center gap-2 rounded-full bg-accent/10 px-4 py-1.5
-              backdrop-blur-sm
-            `}
+            className={`mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 backdrop-blur-sm`}
             style={{ animationDelay: "100ms" }}
           >
-            <Sparkles className="h-3.5 w-3.5 text-accent" />
-            <span className="text-xs font-medium tracking-wide text-accent">
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-medium tracking-wide text-primary">
               安全认证
             </span>
           </div>
@@ -139,7 +134,7 @@ export default function LoginPage() {
           {/* Main Title - Bold Typography */}
           <h1
             className={`
-              animate-fade-in-up text-4xl font-bold tracking-tight text-text
+              text-4xl font-bold tracking-tight text-foreground
               sm:text-5xl
             `}
             style={{ animationDelay: "200ms" }}
@@ -149,7 +144,7 @@ export default function LoginPage() {
 
           {/* Subtitle */}
           <p
-            className="mt-3 animate-fade-in-up text-base text-text-secondary"
+            className="mt-3 text-base text-muted-foreground"
             style={{ animationDelay: "300ms" }}
           >
             {isSignUp
@@ -173,7 +168,7 @@ export default function LoginPage() {
               {/* Name Field - Only for Sign Up */}
               <div
                 className={`
-                  grid transition-all duration-500 ease-apple
+                  grid transition-all duration-500 ease-in-out
                   ${isSignUp ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
                 `}
               >
@@ -185,10 +180,10 @@ export default function LoginPage() {
                       onChange={(e) => setName(e.target.value)}
                       required={isSignUp}
                       className={`
-                        h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
+                        h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
                         duration-200
-                        placeholder:text-text-tertiary
-                        focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
+                        placeholder:text-muted-foreground
+                        focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
                       `}
                     />
                   </div>
@@ -204,10 +199,10 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className={`
-                    h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
+                    h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
                     duration-200
-                    placeholder:text-text-tertiary
-                    focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
+                    placeholder:text-muted-foreground
+                    focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
                   `}
                 />
               </div>
@@ -221,10 +216,10 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className={`
-                    h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
+                    h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
                     duration-200
-                    placeholder:text-text-tertiary
-                    focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
+                    placeholder:text-muted-foreground
+                    focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
                   `}
                 />
               </div>
@@ -234,9 +229,9 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className={`
-                  group relative h-12 w-full overflow-hidden rounded-xl bg-accent text-base font-medium text-white
-                  shadow-lg shadow-accent/25 transition-all duration-300
-                  hover:-translate-y-0.5 hover:bg-accent-hover-color hover:shadow-xl hover:shadow-accent/30
+                  group relative h-12 w-full overflow-hidden rounded-xl bg-primary text-base font-medium text-white
+                  shadow-lg shadow-primary/25 transition-all duration-300
+                  hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30
                   active:scale-[0.98]
                 `}
               >
@@ -262,7 +257,7 @@ export default function LoginPage() {
             {/* Divider */}
             <div className="relative flex items-center gap-4 py-2">
               <div className="flex-1 border-t border-border/50" />
-              <span className="text-xs font-medium tracking-wider text-text-tertiary uppercase">
+              <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
                 或
               </span>
               <div className="flex-1 border-t border-border/50" />
@@ -273,9 +268,9 @@ export default function LoginPage() {
               type="button"
               variant="outline"
               className={`
-                group h-12 w-full rounded-xl border-border/50 bg-surface/30 text-text backdrop-blur-sm transition-all
-                duration-300
-                hover:border-accent/50 hover:bg-surface hover:shadow-lg
+                group h-12 w-full rounded-xl border-border/50 bg-muted/30 text-foreground backdrop-blur-sm
+                transition-all duration-300
+                hover:border-primary/50 hover:bg-accent hover:shadow-lg
                 active:scale-[0.98]
               `}
               onClick={handleSocialSignIn}
@@ -304,15 +299,15 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
                 className={`
-                  group inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition-colors
+                  group inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors
                   duration-200
-                  hover:text-accent
+                  hover:text-primary
                 `}
               >
                 <span>{isSignUp ? "已有账号？" : "还没有账号？"}</span>
                 <span
                   className={`
-                    text-accent transition-transform duration-200
+                    text-primary transition-transform duration-200
                     group-hover:translate-x-0.5
                   `}
                 >
@@ -325,7 +320,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p
-          className="mt-8 animate-fade-in-up text-center text-xs text-text-tertiary"
+          className="mt-8 text-center text-xs text-muted-foreground"
           style={{ animationDelay: "500ms" }}
         >
           继续即表示您同意我们的服务条款和隐私政策

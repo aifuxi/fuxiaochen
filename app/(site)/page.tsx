@@ -19,19 +19,19 @@ function Hero() {
       <div
         className={`
           pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
+          from-primary/10 via-transparent to-transparent
         `}
       />
       <div
         className={`
           pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
+          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
         `}
       />
       <div
         className={`
-          pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full bg-gradient-to-tl
-          from-warning/5 to-transparent blur-3xl
+          from-warning/5 pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full
+          bg-gradient-to-tl to-transparent blur-3xl
         `}
       />
 
@@ -40,11 +40,11 @@ function Hero() {
         {/* 小标签 */}
         <div
           className={`
-            mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-5 py-2 text-sm
-            text-text-secondary backdrop-blur-sm
+            mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-5 py-2 text-sm
+            text-muted-foreground backdrop-blur-sm
           `}
         >
-          <Sparkles className="h-4 w-4 text-accent" />
+          <Sparkles className="h-4 w-4 text-primary" />
           技术博客 · 学习笔记 · 项目分享
         </div>
 
@@ -56,9 +56,9 @@ function Hero() {
             lg:text-8xl
           `}
         >
-          <span className="block text-text">探索技术的</span>
+          <span className="block text-foreground">探索技术的</span>
           <span
-            className={`block bg-gradient-to-r from-accent via-info to-accent bg-clip-text text-transparent`}
+            className={`block bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent`}
           >
             无限可能
           </span>
@@ -67,7 +67,7 @@ function Hero() {
         {/* 描述 */}
         <p
           className={`
-            mx-auto mb-10 max-w-xl text-lg text-text-secondary
+            mx-auto mb-10 max-w-xl text-lg text-muted-foreground
             md:text-xl
           `}
         >
@@ -84,9 +84,9 @@ function Hero() {
           <Link
             href="/blog"
             className={`
-              hover:bg-accent-hover
-              inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
-              transition-all duration-300
+              inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white
+              shadow-lg transition-all duration-300
+              hover:bg-primary/90
               active:scale-[0.98]
             `}
           >
@@ -96,9 +96,9 @@ function Hero() {
           <Link
             href="/about"
             className={`
-              inline-flex items-center gap-2 rounded-full border border-border bg-surface/50 px-8 py-4 text-base
-              font-medium text-text backdrop-blur-sm transition-all duration-300
-              hover:border-accent/30 hover:bg-surface
+              inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-8 py-4 text-base
+              font-medium text-foreground backdrop-blur-sm transition-all duration-300
+              hover:border-primary/30 hover:bg-accent
               active:scale-[0.98]
             `}
           >
@@ -136,9 +136,7 @@ async function FeaturedPosts() {
     >
       {/* 背景装饰 */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent
-        `}
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-muted/50 to-transparent`}
       />
 
       <div className="relative space-y-10">
@@ -162,7 +160,7 @@ async function FeaturedPosts() {
                 `}
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/20 via-surface to-info/20" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-primary/20" />
             )}
             {/* 渐变遮罩 */}
             <div
@@ -243,8 +241,8 @@ async function FeaturedPosts() {
             <Link key={post.id} href={`/blog/${post.slug}`} className="group">
               <Card
                 className={`
-                  flex h-full flex-col overflow-hidden border-0 bg-surface/50 p-0 transition-all duration-300
-                  hover:bg-surface hover:shadow-xl
+                  flex h-full flex-col overflow-hidden border-0 bg-muted/50 p-0 transition-all duration-300
+                  hover:bg-accent hover:shadow-xl
                 `}
               >
                 {post.cover ? (
@@ -260,7 +258,7 @@ async function FeaturedPosts() {
                     />
                   </div>
                 ) : (
-                  <div className="aspect-[16/10] bg-gradient-to-br from-surface-hover to-surface" />
+                  <div className="aspect-[16/10] bg-gradient-to-br from-accent to-muted" />
                 )}
                 <div className={`
                   flex flex-1 flex-col gap-3 p-5
@@ -269,8 +267,8 @@ async function FeaturedPosts() {
                   {post.category && (
                     <span
                       className={`
-                        inline-flex w-fit items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium
-                        text-accent
+                        inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium
+                        text-primary
                       `}
                     >
                       {post.category.name}
@@ -278,17 +276,17 @@ async function FeaturedPosts() {
                   )}
                   <h3
                     className={`
-                      line-clamp-2 text-lg font-bold text-text
-                      group-hover:text-accent
+                      line-clamp-2 text-lg font-bold text-foreground
+                      group-hover:text-primary
                       md:text-xl
                     `}
                   >
                     {post.title}
                   </h3>
-                  <p className="line-clamp-2 flex-1 text-sm text-text-secondary">
+                  <p className="line-clamp-2 flex-1 text-sm text-muted-foreground">
                     {post.description}
                   </p>
-                  <div className="flex items-center justify-between text-xs text-text-tertiary">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3.5 w-3.5" />
                       {formatSimpleDate(new Date(post.createdAt))}
@@ -335,13 +333,13 @@ async function CategoryNav() {
         >
           <h2
             className={`
-              mb-4 text-4xl font-bold tracking-tight text-text
+              mb-4 text-4xl font-bold tracking-tight text-foreground
               md:text-5xl
             `}
           >
             探索分类
           </h2>
-          <p className="text-lg text-text-secondary">按主题浏览文章</p>
+          <p className="text-lg text-muted-foreground">按主题浏览文章</p>
         </div>
 
         {/* 分类网格 */}
@@ -354,15 +352,15 @@ async function CategoryNav() {
             >
               <div
                 className={`
-                  flex items-center gap-3 rounded-full border border-border bg-surface px-6 py-3 text-base font-medium
-                  text-text transition-all duration-300
-                  group-hover:border-accent/30 group-hover:bg-accent group-hover:text-white
+                  flex items-center gap-3 rounded-full border border-border bg-muted px-6 py-3 text-base font-medium
+                  text-foreground transition-all duration-300
+                  group-hover:border-primary/30 group-hover:bg-primary group-hover:text-white
                 `}
               >
                 <span>{category.name}</span>
                 <span
                   className={`
-                    rounded-full bg-text/10 px-2.5 py-0.5 text-sm
+                    rounded-full bg-foreground/10 px-2.5 py-0.5 text-sm
                     group-hover:bg-white/20
                   `}
                 >
@@ -382,26 +380,26 @@ function BottomCTA() {
   return (
     <section
       className={`
-        relative mb-20 overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
+        relative mb-20 overflow-hidden rounded-3xl bg-gradient-to-br from-primary/5 via-muted to-primary/5 py-20
         md:py-28
       `}
     >
       {/* 装饰 */}
       <div
         className={`
-          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-accent/20 blur-3xl
+          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
         `}
       />
       <div
         className={`
-          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-info/20 blur-3xl
+          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
         `}
       />
 
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <h2
           className={`
-            mb-6 text-3xl font-bold text-text
+            mb-6 text-3xl font-bold text-foreground
             md:text-4xl
           `}
         >
@@ -409,7 +407,7 @@ function BottomCTA() {
         </h2>
         <p
           className={`
-            mx-auto mb-10 max-w-md text-lg text-text-secondary
+            mx-auto mb-10 max-w-md text-lg text-muted-foreground
             md:text-xl
           `}
         >
@@ -418,9 +416,9 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            hover:bg-accent-hover
-            inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
+            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white shadow-lg
             transition-all duration-300
+            hover:bg-primary/90
             active:scale-[0.98]
           `}
         >

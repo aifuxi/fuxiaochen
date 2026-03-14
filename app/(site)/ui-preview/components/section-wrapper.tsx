@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-import { AppleCard } from "@/components/ui/glass-card";
-import { Title } from "@/components/ui/typography/title";
+import { GlassCard } from "@/components/ui/glass-card";
 
 interface SectionWrapperProps {
   id: string;
@@ -17,17 +16,17 @@ export function SectionWrapper({
 }: SectionWrapperProps) {
   return (
     <section id={id} className="scroll-mt-8">
-      <AppleCard className="mb-6">
+      <GlassCard className="mb-6">
         <div className="mb-6">
-          <Title level={3} className="mb-2">
+          <h3 className="mb-2 text-lg font-semibold text-foreground">
             {title}
-          </Title>
+          </h3>
           {description && (
-            <p className="text-sm text-text-secondary">{description}</p>
+            <p className="text-sm text-muted-foreground">{description}</p>
           )}
         </div>
         <div className="space-y-6">{children}</div>
-      </AppleCard>
+      </GlassCard>
     </section>
   );
 }

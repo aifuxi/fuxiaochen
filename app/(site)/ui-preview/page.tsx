@@ -1,5 +1,3 @@
-import { Title } from "@/components/ui/typography/title";
-import { Text } from "@/components/ui/typography/text";
 import { SectionWrapper } from "./components/section-wrapper";
 import { ButtonPreview } from "./components/previews/button-preview";
 import { InputPreview } from "./components/previews/input-preview";
@@ -14,11 +12,11 @@ export default function UIPreviewPage() {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <Title level={2}>UI Component Preview</Title>
-        <Text type="secondary" className="mt-2">
+        <h2 className="text-xl font-semibold text-foreground">UI Component Preview</h2>
+        <span className="mt-2 text-sm text-muted-foreground">
           A comprehensive preview of all UI components following Apple Human Interface
           guidelines.
-        </Text>
+        </span>
       </div>
 
       <SectionWrapper id="buttons" title="Buttons" description="Button components and variations">

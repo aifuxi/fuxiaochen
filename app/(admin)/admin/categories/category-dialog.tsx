@@ -96,7 +96,7 @@ export const CategoryDialog = NiceModal.create(
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-text-secondary">名称</FormLabel>
+                    <FormLabel className="text-muted-foreground">名称</FormLabel>
                     <FormControl>
                       <Input placeholder="分类名称" {...field} />
                     </FormControl>
@@ -109,13 +109,13 @@ export const CategoryDialog = NiceModal.create(
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-text-secondary">Slug</FormLabel>
+                    <FormLabel className="text-muted-foreground">Slug</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
+                          border-border bg-muted text-foreground
+                          focus:border-primary focus:ring-primary/20
                         `}
                         placeholder="frontend"
                       />
@@ -131,8 +131,8 @@ export const CategoryDialog = NiceModal.create(
                     variant="outline"
                     onClick={() => modal.remove()}
                     className={`
-                      border-border bg-transparent text-text-secondary
-                      hover:bg-surface hover:text-text
+                      border-border bg-transparent text-muted-foreground
+                      hover:bg-accent hover:text-foreground
                     `}
                   >
                     取消
@@ -141,8 +141,8 @@ export const CategoryDialog = NiceModal.create(
                     type="submit"
                     disabled={loading}
                     className={`
-                      bg-accent text-white transition-all duration-200
-                      hover:-translate-y-0.5 hover:bg-accent/90
+                      bg-primary text-primary-foreground transition-all duration-200
+                      hover:-translate-y-0.5 hover:bg-primary/90
                     `}
                   >
                     {loading && (

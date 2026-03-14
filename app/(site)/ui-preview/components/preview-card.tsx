@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Text } from "@/components/ui/typography/text";
 import { cn } from "@/lib/utils";
 
 interface PreviewCardProps {
@@ -11,10 +10,10 @@ interface PreviewCardProps {
 export function PreviewCard({ title, children, className }: PreviewCardProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      <Text type="secondary" size="sm" weight="medium">
+      <span className="text-sm font-medium text-muted-foreground">
         {title}
-      </Text>
-      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-surface p-4">
+      </span>
+      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-muted p-4">
         {children}
       </div>
     </div>

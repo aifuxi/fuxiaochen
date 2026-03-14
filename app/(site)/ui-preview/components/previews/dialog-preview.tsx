@@ -46,6 +46,7 @@ import {
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -181,7 +182,7 @@ export function DialogPreview() {
             <div className="grid gap-4">
               <div className="space-y-2">
                 <h4 className="leading-none font-medium">Dimensions</h4>
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm text-muted-foreground">
                   Set the dimensions for the layer.
                 </p>
               </div>
@@ -191,46 +192,48 @@ export function DialogPreview() {
       </PreviewCard>
 
       <PreviewCard title="Tooltip">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost">Hover me</Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>This is a tooltip</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost">Top</Button>
-          </TooltipTrigger>
-          <TooltipContent side="top">
-            <p>Tooltip on top</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost">Bottom</Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">
-            <p>Tooltip on bottom</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost">Left</Button>
-          </TooltipTrigger>
-          <TooltipContent side="left">
-            <p>Tooltip on left</p>
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button variant="ghost">Right</Button>
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>Tooltip on right</p>
-          </TooltipContent>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost">Hover me</Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>This is a tooltip</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost">Top</Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Tooltip on top</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost">Bottom</Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Tooltip on bottom</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost">Left</Button>
+            </TooltipTrigger>
+            <TooltipContent side="left">
+              <p>Tooltip on left</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost">Right</Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>Tooltip on right</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </PreviewCard>
     </>
   );

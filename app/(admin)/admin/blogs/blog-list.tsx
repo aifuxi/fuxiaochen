@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/pagination";
 import { formatSimpleDateWithTime } from "@/lib/time";
 import { DeleteAlert } from "./delete-alert";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 
 const fetcher = async (params: BlogListReq) => {
   const res = await getBlogsAction(params);
@@ -133,7 +133,7 @@ export default function BlogManagementPage() {
             />
           </div>
         ) : (
-          <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-surface-hover text-text-tertiary">
+          <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-accent text-muted-foreground">
             暂无
           </div>
         ),
@@ -142,7 +142,7 @@ export default function BlogManagementPage() {
       accessorKey: "title",
       header: "标题",
       cell: ({ row }) => (
-        <span className="line-clamp-2 max-w-[200px] font-medium whitespace-normal text-text">
+        <span className="line-clamp-2 max-w-[200px] font-medium whitespace-normal text-foreground">
           {row.original.title}
         </span>
       ),
@@ -152,7 +152,7 @@ export default function BlogManagementPage() {
       header: "分类",
       cell: ({ row }) =>
         row.original.category ? (
-          <Badge variant="outline" className="border-accent text-accent">
+          <Badge variant="outline" className="border-primary text-primary">
             {row.original.category.name}
           </Badge>
         ) : (
@@ -169,7 +169,7 @@ export default function BlogManagementPage() {
               <Badge
                 key={tag.id}
                 variant="secondary"
-                className="bg-accent/10 text-xs text-accent"
+                className="bg-primary/10 text-xs text-primary"
               >
                 {tag.name}
               </Badge>
@@ -188,10 +188,10 @@ export default function BlogManagementPage() {
           className={
             row.original.published
               ? `
-                bg-accent/20 text-accent
-                hover:bg-accent/30
+                bg-primary/20 text-primary
+                hover:bg-primary/30
               `
-              : "bg-surface text-text-secondary"
+              : "bg-muted text-muted-foreground"
           }
         >
           {row.original.published ? "已发布" : "草稿"}
@@ -222,7 +222,7 @@ export default function BlogManagementPage() {
             variant="ghost"
             size="icon"
             onClick={() => router.push(`/admin/blogs/${row.original.id}`)}
-            className="hover:bg-accent/10 hover:text-accent"
+            className="hover:bg-primary/10 hover:text-primary"
           >
             <Edit className="h-4 w-4" />
           </Button>
@@ -230,7 +230,7 @@ export default function BlogManagementPage() {
             variant="ghost"
             size="icon"
             onClick={() => openDelete(row.original.id)}
-            className="hover:bg-error/10 hover:text-error"
+            className="hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -242,12 +242,12 @@ export default function BlogManagementPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-text">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           博客管理
         </h1>
       </div>
 
-      <AppleCard
+      <GlassCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -258,7 +258,7 @@ export default function BlogManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-muted-foreground" />
             <Input
               name="query"
               placeholder="搜索文章标题..."
@@ -270,8 +270,8 @@ export default function BlogManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-border bg-surface text-text
-              hover:bg-accent/5 hover:text-accent
+              border border-border bg-muted text-foreground
+              hover:bg-primary/5 hover:text-primary
             `}
           >
             搜索
@@ -280,19 +280,19 @@ export default function BlogManagementPage() {
         <Link href="/admin/blogs/new">
           <Button
             className={`
-              hover:bg-accent-hover
-              bg-accent text-white
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
             `}
           >
             <Plus className="mr-2 h-4 w-4" /> 新建文章
           </Button>
         </Link>
-      </AppleCard>
+      </GlassCard>
 
-      <AppleCard className="overflow-hidden p-0">
+      <GlassCard className="overflow-hidden p-0">
         {isLoading ? (
           <div className="flex h-24 items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <DataTable
@@ -302,11 +302,11 @@ export default function BlogManagementPage() {
             emptyText="暂无文章"
           />
         )}
-      </AppleCard>
+      </GlassCard>
 
       {data && data.total > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          <span className="text-sm text-muted-foreground">共 {data.total} 条</span>
           {totalPages > 1 && (
             <Pagination>
               <PaginationContent>

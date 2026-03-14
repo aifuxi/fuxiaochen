@@ -151,8 +151,8 @@ export const ChangelogDialog = NiceModal.create(
                   type="submit"
                   disabled={loading}
                   className={`
-                    bg-accent text-white
-                    hover:bg-accent/90
+                    bg-primary text-primary-foreground
+                    hover:bg-primary/90
                   `}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

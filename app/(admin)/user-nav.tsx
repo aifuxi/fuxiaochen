@@ -47,8 +47,8 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3">
-      <div className="h-10 w-10 rounded-full bg-accent/10 p-0.5">
+    <div className="flex items-center gap-3 rounded-lg border border-border bg-muted p-3">
+      <div className="h-10 w-10 rounded-full bg-primary/10 p-0.5">
         {user.image ? (
           <img
             src={user.image}
@@ -56,14 +56,14 @@ export function UserNav({ user }: UserNavProps) {
             className="h-full w-full rounded-full object-cover"
           />
         ) : (
-          <div className="h-full w-full rounded-full bg-accent/20" />
+          <div className="h-full w-full rounded-full bg-primary/10" />
         )}
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="truncate text-sm font-semibold text-text">
+        <p className="truncate text-sm font-semibold text-foreground">
           {user.name}
         </p>
-        <p className="truncate text-xs text-text-secondary">
+        <p className="truncate text-xs text-muted-foreground">
           {user.role === 1 ? "Admin" : "Normal"}
         </p>
       </div>
@@ -74,8 +74,8 @@ export function UserNav({ user }: UserNavProps) {
             size="icon"
             disabled={loading}
             className={`
-              text-text-secondary
-              hover:bg-surface-hover hover:text-text
+              text-muted-foreground
+              hover:bg-accent hover:text-foreground
             `}
           >
             <LogOut className="h-4 w-4" />
@@ -84,15 +84,15 @@ export function UserNav({ user }: UserNavProps) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>确认退出登录？</AlertDialogTitle>
-            <AlertDialogDescription className="text-text-secondary">
+            <AlertDialogDescription className="text-muted-foreground">
               您将退出当前账号，需要重新登录才能访问后台管理系统。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction onClick={handleLogout} className={`
-              bg-accent text-white
-              hover:bg-accent-hover-color
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
             `}>
               退出登录
             </AlertDialogAction>

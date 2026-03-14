@@ -3,7 +3,6 @@ import { getBlogBySlugAction } from "@/app/actions/blog";
 import BlogContent from "@/components/blog/blog-content";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { Badge } from "@/components/ui/badge";
-import { Title } from "@/components/ui/typography/title";
 import { formatSimpleDate } from "@/lib/time";
 import Link from "next/link";
 import Image from "next/image";
@@ -61,8 +60,8 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       <Link
         href="/blog"
         className={`
-          mb-8 inline-flex items-center gap-1 text-sm text-text-secondary transition-colors
-          hover:text-accent
+          mb-8 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors
+          hover:text-primary
         `}
       >
         ← 返回博客列表
@@ -87,11 +86,11 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
           {/* 文章头部 */}
           <header className="mb-8">
-            <Title level={1} className="mb-4">
+            <h1 className="mb-4 text-3xl font-bold text-foreground">
               {blog.title}
-            </Title>
+            </h1>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
               <time>{formatSimpleDate(new Date(blog.createdAt))}</time>
               <span>·</span>
               {blog.category && (

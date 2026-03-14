@@ -8,7 +8,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { getChangelogsAction } from "@/app/actions/changelog";
 import { type Changelog, type ChangelogListReq } from "@/types/changelog";
 import { Button } from "@/components/ui/button";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
@@ -129,7 +129,7 @@ export default function ChangelogManagementPage() {
       accessorKey: "version",
       header: "版本",
       cell: ({ row }) => (
-        <span className="font-medium text-text">{row.original.version}</span>
+        <span className="font-medium text-foreground">{row.original.version}</span>
       ),
     },
     {
@@ -138,7 +138,7 @@ export default function ChangelogManagementPage() {
         <DataTableColumnHeader column={column} title="发布日期" />
       ),
       cell: ({ row }) => (
-        <span className="text-text-secondary">
+        <span className="text-muted-foreground">
           {row.original.date
             ? formatSimpleDate(new Date(row.original.date))
             : "-"}
@@ -149,7 +149,7 @@ export default function ChangelogManagementPage() {
       accessorKey: "content",
       header: "内容预览",
       cell: ({ row }) => (
-        <span className="line-clamp-2 max-w-sm whitespace-normal text-text-secondary">
+        <span className="line-clamp-2 max-w-sm whitespace-normal text-muted-foreground">
           {row.original.content}
         </span>
       ),
@@ -185,7 +185,7 @@ export default function ChangelogManagementPage() {
             variant="ghost"
             size="icon"
             onClick={() => handleDelete(row.original)}
-            className="hover:bg-error/10 hover:text-error"
+            className="hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -197,13 +197,13 @@ export default function ChangelogManagementPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-text">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           更新日志管理
         </h1>
-        <p className="mt-1 text-text-secondary">管理系统更新日志</p>
+        <p className="mt-1 text-muted-foreground">管理系统更新日志</p>
       </div>
 
-      <AppleCard
+      <GlassCard
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -214,7 +214,7 @@ export default function ChangelogManagementPage() {
           className="flex flex-1 items-center gap-2"
         >
           <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-text-secondary" />
+            <Search className="absolute top-3 left-3 z-10 h-4 w-4 text-muted-foreground" />
             <Input
               name="query"
               placeholder="搜索版本号..."
@@ -226,8 +226,8 @@ export default function ChangelogManagementPage() {
             type="submit"
             variant="secondary"
             className={`
-              border border-border bg-surface text-text
-              hover:bg-accent/5 hover:text-accent
+              border border-border bg-muted text-foreground
+              hover:bg-primary/5 hover:text-primary
             `}
           >
             搜索
@@ -236,22 +236,22 @@ export default function ChangelogManagementPage() {
         <Button
           onClick={handleCreate}
           className={`
-            hover:bg-accent-hover
-            bg-accent text-white
+            bg-primary text-primary-foreground
+            hover:bg-primary/90
           `}
         >
           <Plus className="mr-2 h-4 w-4" />
           新建日志
         </Button>
-      </AppleCard>
+      </GlassCard>
 
-      <AppleCard className="overflow-hidden p-0">
+      <GlassCard className="overflow-hidden p-0">
         {isLoading ? (
           <div className="flex h-24 items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : error ? (
-          <div className="flex h-24 items-center justify-center text-error">
+          <div className="flex h-24 items-center justify-center text-destructive">
             加载失败: {error.message}
           </div>
         ) : (
@@ -262,11 +262,11 @@ export default function ChangelogManagementPage() {
             emptyText="暂无数据"
           />
         )}
-      </AppleCard>
+      </GlassCard>
 
       {data && data.total > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          <span className="text-sm text-muted-foreground">共 {data.total} 条</span>
           {totalPages > 1 && (
             <Pagination>
               <PaginationContent>

@@ -17,7 +17,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-bg font-sans text-text">
+    <div className="bg-bg flex min-h-screen font-sans text-foreground">
       <AdminSidebar
         user={{
           name: session.user.name,

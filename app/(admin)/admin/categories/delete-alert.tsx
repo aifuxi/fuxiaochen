@@ -48,7 +48,7 @@ export const DeleteAlert = NiceModal.create(
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>确认删除？</AlertDialogTitle>
-            <AlertDialogDescription className="text-text-secondary">
+            <AlertDialogDescription className="text-muted-foreground">
               此操作无法撤销。该分类将被永久删除。
             </AlertDialogDescription>
           </AlertDialogHeader>

@@ -34,10 +34,10 @@ export function LayoutPreview() {
         </ScrollArea>
         <ScrollArea className="w-96 rounded-lg border whitespace-nowrap">
           <div className="flex w-max space-x-4 p-4">
-            <div className="h-[250px] w-[200px] rounded-md bg-surface" />
-            <div className="h-[250px] w-[200px] rounded-md bg-surface" />
-            <div className="h-[250px] w-[200px] rounded-md bg-surface" />
-            <div className="h-[250px] w-[200px] rounded-md bg-surface" />
+            <div className="h-[250px] w-[200px] rounded-md bg-muted" />
+            <div className="h-[250px] w-[200px] rounded-md bg-muted" />
+            <div className="h-[250px] w-[200px] rounded-md bg-muted" />
+            <div className="h-[250px] w-[200px] rounded-md bg-muted" />
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
@@ -71,7 +71,7 @@ export function LayoutPreview() {
       </PreviewCard>
 
       <PreviewCard title="BackToTop">
-        <p className="text-sm text-text-secondary">
+        <p className="text-sm text-muted-foreground">
           Scroll down on the page to see the BackToTop button appear in the bottom right corner.
         </p>
       </PreviewCard>

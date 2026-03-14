@@ -83,13 +83,13 @@ export const TagDialog = NiceModal.create(
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-text-secondary">名称</FormLabel>
+                    <FormLabel className="text-muted-foreground">名称</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
+                          border-border bg-muted text-foreground
+                          focus:border-primary focus:ring-primary/20
                         `}
                         placeholder="React"
                       />
@@ -103,13 +103,13 @@ export const TagDialog = NiceModal.create(
                 name="slug"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-text-secondary">Slug</FormLabel>
+                    <FormLabel className="text-muted-foreground">Slug</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
+                          border-border bg-muted text-foreground
+                          focus:border-primary focus:ring-primary/20
                         `}
                         placeholder="react"
                       />
@@ -124,8 +124,8 @@ export const TagDialog = NiceModal.create(
                   variant="outline"
                   onClick={() => modal.remove()}
                   className={`
-                    border-border bg-transparent text-text-secondary
-                    hover:bg-surface hover:text-text
+                    border-border bg-transparent text-muted-foreground
+                    hover:bg-accent hover:text-foreground
                   `}
                 >
                   取消
@@ -134,8 +134,8 @@ export const TagDialog = NiceModal.create(
                   type="submit"
                   disabled={loading}
                   className={`
-                    bg-accent text-white
-                    hover:bg-accent/90
+                    bg-primary text-primary-foreground
+                    hover:bg-primary/90
                   `}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

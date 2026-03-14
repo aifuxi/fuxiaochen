@@ -67,19 +67,19 @@ function Hero() {
       <div
         className={`
           pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
+          from-primary/10 via-transparent to-transparent
         `}
       />
       <div
         className={`
           pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
+          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
         `}
       />
       <div
         className={`
-          pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full bg-gradient-to-tl
-          from-warning/5 to-transparent blur-3xl
+          from-warning/5 pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full
+          bg-gradient-to-tl to-transparent blur-3xl
         `}
       />
 
@@ -88,15 +88,15 @@ function Hero() {
         {/* 小标签 */}
         <div
           className={`
-            mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-1.5 text-sm
-            text-text-secondary backdrop-blur-sm
+            mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-4 py-1.5 text-sm
+            text-muted-foreground backdrop-blur-sm
           `}
         >
           <span className="relative flex h-2 w-2">
             <span
-              className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75`}
+              className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75`}
             />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
           </span>
           前端开发工程师
         </div>
@@ -109,9 +109,9 @@ function Hero() {
             lg:text-8xl
           `}
         >
-          <span className="block text-text">Hi, I&apos;m</span>
+          <span className="block text-foreground">Hi, I&apos;m</span>
           <span
-            className={`block bg-gradient-to-r from-accent via-info to-accent bg-clip-text text-transparent`}
+            className={`block bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent`}
           >
             付小晨
           </span>
@@ -120,7 +120,7 @@ function Hero() {
         {/* 描述 */}
         <p
           className={`
-            mx-auto mb-8 max-w-xl text-lg text-text-secondary
+            mx-auto mb-8 max-w-xl text-lg text-muted-foreground
             md:text-xl
           `}
         >
@@ -138,23 +138,25 @@ function Hero() {
         <div className="flex flex-wrap items-center justify-center gap-3">
           <span
             className={`
-              inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent
+              inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary
             `}
           >
             <span className="icon-[skill-icons--react-dark] h-4 w-4" />
             React
           </span>
-          <span className="text-text-tertiary">+</span>
+          <span className="text-muted-foreground">+</span>
           <span
-            className={`inline-flex items-center gap-2 rounded-full bg-info/10 px-4 py-2 text-sm font-medium text-info`}
+            className={`
+              inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary
+            `}
           >
             <span className="icon-[skill-icons--golang] h-4 w-4" />
             Go
           </span>
-          <span className="text-text-tertiary">+</span>
+          <span className="text-muted-foreground">+</span>
           <span
             className={`
-              inline-flex items-center gap-2 rounded-full bg-warning/10 px-4 py-2 text-sm font-medium text-warning
+              inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-muted-foreground
             `}
           >
             <span className="icon-[skill-icons--tailwindcss-dark] h-4 w-4" />
@@ -177,9 +179,7 @@ function Skills() {
     >
       {/* 背景装饰 */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent
-        `}
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-muted/50 to-transparent`}
       />
 
       <div className="relative mx-auto max-w-5xl px-4">
@@ -192,13 +192,13 @@ function Skills() {
         >
           <h2
             className={`
-              mb-4 text-4xl font-bold tracking-tight text-text
+              mb-4 text-4xl font-bold tracking-tight text-foreground
               md:text-5xl
             `}
           >
             Tech Stack
           </h2>
-          <p className="text-lg text-text-secondary">我熟练使用的技术与工具</p>
+          <p className="text-lg text-muted-foreground">我熟练使用的技术与工具</p>
         </div>
 
         {/* 技能网格 - 大图标 */}
@@ -215,7 +215,7 @@ function Skills() {
               key={index}
               className={`
                 group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300
-                hover:bg-surface
+                hover:bg-accent
                 md:p-6
               `}
             >
@@ -230,8 +230,8 @@ function Skills() {
               </div>
               <span
                 className={`
-                  text-center text-xs text-text-secondary transition-colors duration-200
-                  group-hover:text-text
+                  text-center text-xs text-muted-foreground transition-colors duration-200
+                  group-hover:text-foreground
                   md:text-sm
                 `}
               >
@@ -267,13 +267,13 @@ function Devices() {
         >
           <h2
             className={`
-              mb-4 text-4xl font-bold tracking-tight text-text
+              mb-4 text-4xl font-bold tracking-tight text-foreground
               md:text-5xl
             `}
           >
             我的设备
           </h2>
-          <p className="text-lg text-text-secondary">日常使用的硬件设备</p>
+          <p className="text-lg text-muted-foreground">日常使用的硬件设备</p>
         </div>
 
         {/* 主力设备 - 大卡片 */}
@@ -294,27 +294,27 @@ function Devices() {
               {/* 装饰渐变 */}
               <div
                 className={`
-                  pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br from-accent/10
-                  to-transparent opacity-0 blur-2xl transition-opacity duration-300
+                  pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br
+                  from-primary/10 to-transparent opacity-0 blur-2xl transition-opacity duration-300
                   group-hover:opacity-100
                 `}
               />
               <div className="relative">
                 <span
-                  className={`mb-4 inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent`}
+                  className={`mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary`}
                 >
                   {device.description}
                 </span>
                 <h3
                   className={`
-                    mb-2 text-2xl font-bold text-text
+                    mb-2 text-2xl font-bold text-foreground
                     md:text-3xl
                   `}
                 >
                   {device.name}
                 </h3>
                 {device.spec && (
-                  <p className="text-lg text-accent">{device.spec}</p>
+                  <p className="text-lg text-primary">{device.spec}</p>
                 )}
               </div>
             </Card>
@@ -327,16 +327,16 @@ function Devices() {
             <div
               key={index}
               className={`
-                flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 transition-colors
+                flex items-center gap-2 rounded-full border border-border bg-muted px-5 py-2.5 transition-colors
                 duration-200
-                hover:border-accent/30
+                hover:border-primary/30
               `}
             >
-              <span className="text-sm font-medium text-text">
+              <span className="text-sm font-medium text-foreground">
                 {device.name}
               </span>
               {device.description && (
-                <span className="text-xs text-text-tertiary">
+                <span className="text-xs text-muted-foreground">
                   · {device.description}
                 </span>
               )}
@@ -353,26 +353,26 @@ function BottomCTA() {
   return (
     <section
       className={`
-        relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
+        relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/5 via-muted to-primary/5 py-20
         md:py-28
       `}
     >
       {/* 装饰 */}
       <div
         className={`
-          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-accent/20 blur-3xl
+          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
         `}
       />
       <div
         className={`
-          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-info/20 blur-3xl
+          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
         `}
       />
 
       <div className="relative mx-auto max-w-3xl px-6 text-center">
         <h2
           className={`
-            mb-6 text-3xl font-bold text-text
+            mb-6 text-3xl font-bold text-foreground
             md:text-4xl
           `}
         >
@@ -380,7 +380,7 @@ function BottomCTA() {
         </h2>
         <p
           className={`
-            mx-auto mb-10 max-w-md text-lg text-text-secondary
+            mx-auto mb-10 max-w-md text-lg text-muted-foreground
             md:text-xl
           `}
         >
@@ -389,9 +389,9 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            hover:bg-accent-hover
-            inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
+            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium text-white shadow-lg
             transition-all duration-300
+            hover:bg-primary/90
             active:scale-[0.98]
           `}
         >

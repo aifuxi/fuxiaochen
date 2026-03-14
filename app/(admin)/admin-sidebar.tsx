@@ -36,20 +36,20 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-surface`}
+      className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-border bg-muted`}
     >
       <div className="flex h-16 items-center border-b border-border px-6">
         <Link
           href="/"
           target="_blank"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-text"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight text-foreground"
         >
           <img
             src="/images/logo.svg"
             alt="Logo"
             className="h-6 w-6"
           />
-          <span className="text-accent">{WEBSITE}</span>
+          <span className="text-primary">{WEBSITE}</span>
           后台管理
         </Link>
       </div>
@@ -68,13 +68,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               className={cn(
                 `
                   group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
-                  ease-apple
+                  ease-in-out
                 `,
                 isActive
-                  ? "bg-accent text-white shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : `
-                    text-text-secondary
-                    hover:bg-surface-hover hover:text-text
+                    text-muted-foreground
+                    hover:bg-accent hover:text-foreground
                   `,
               )}
             >

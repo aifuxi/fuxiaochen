@@ -49,13 +49,13 @@ function Hero({
       <div
         className={`
           pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
+          from-primary/10 via-transparent to-transparent
         `}
       />
       <div
         className={`
           pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
+          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
         `}
       />
 
@@ -65,14 +65,14 @@ function Hero({
         <div className="mb-10 text-center">
           <h1
             className={`
-              mb-4 text-5xl font-bold tracking-tight text-text
+              mb-4 text-5xl font-bold tracking-tight text-foreground
               md:text-7xl
             `}
           >
             Blog
           </h1>
           <p className={`
-            text-lg text-text-secondary
+            text-lg text-muted-foreground
             md:text-xl
           `}>
             探索技术文章与学习笔记
@@ -157,7 +157,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     <Suspense
       fallback={
         <div className="flex h-[60vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-text-secondary" />
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       }
     >

@@ -36,7 +36,7 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground uppercase">
           编辑文章
         </h2>
       </div>

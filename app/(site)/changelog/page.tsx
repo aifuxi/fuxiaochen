@@ -9,7 +9,6 @@ import type {
   ChangelogListResp,
   Changelog,
 } from "@/types/changelog";
-import { Text } from "@/components/ui/typography/text";
 import BlogContent from "@/components/blog/blog-content";
 import { formatSimpleDate } from "@/lib/time";
 
@@ -61,9 +60,9 @@ function ChangelogItem({
         `}
       >
         {isCurrent ? (
-          <div className="h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20" />
+          <div className="h-3 w-3 rounded-full bg-primary ring-4 ring-primary/20" />
         ) : (
-          <div className="h-2.5 w-2.5 rounded-full border border-border bg-surface-hover" />
+          <div className="h-2.5 w-2.5 rounded-full border border-border bg-accent" />
         )}
       </div>
 
@@ -75,15 +74,15 @@ function ChangelogItem({
         `}
       >
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-lg font-semibold text-text">
+          <span className="text-lg font-semibold text-foreground">
             {changelog.version}
           </span>
-          <span className="text-text-tertiary">—</span>
-          <time className="text-sm text-text-tertiary">
+          <span className="text-muted-foreground">—</span>
+          <time className="text-sm text-muted-foreground">
             {formatSimpleDate(displayDate)}
           </time>
         </div>
-        <div className="text-text-secondary">
+        <div className="text-muted-foreground">
           <BlogContent content={changelog.content} />
         </div>
       </div>
@@ -145,13 +144,13 @@ export default function ChangelogPage() {
       >
         <h1
           className={`
-            text-4xl font-bold tracking-tight text-text
+            text-4xl font-bold tracking-tight text-foreground
             md:text-5xl
           `}
         >
           Changelog
         </h1>
-        <p className="mt-2 text-lg text-text-secondary">
+        <p className="mt-2 text-lg text-muted-foreground">
           记录产品的每一次迭代与改进
         </p>
       </div>
@@ -159,15 +158,15 @@ export default function ChangelogPage() {
       {/* 内容区 */}
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-text-secondary" />
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : error ? (
         <div className="flex h-48 items-center justify-center">
-          <Text className="text-error">加载失败，请稍后重试</Text>
+          <span className="text-sm text-destructive">加载失败，请稍后重试</span>
         </div>
       ) : isEmpty ? (
         <div className="flex h-48 items-center justify-center">
-          <Text className="text-text-secondary">暂无更新日志</Text>
+          <span className="text-sm text-muted-foreground">暂无更新日志</span>
         </div>
       ) : (
         <div className="relative">
@@ -182,10 +181,10 @@ export default function ChangelogPage() {
           {/* 加载更多指示器 */}
           <div ref={loaderRef} className="flex justify-center py-4">
             {isValidating && (
-              <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             )}
             {!hasMore && changelogs.length > 0 && (
-              <Text className="text-text-tertiary">已加载全部</Text>
+              <span className="text-sm text-muted-foreground">已加载全部</span>
             )}
           </div>
         </div>

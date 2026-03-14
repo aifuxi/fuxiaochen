@@ -10,7 +10,7 @@ import { getDashboardStatsAction } from "@/app/actions/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AppleCard } from "@/components/ui/glass-card";
+import { GlassCard } from "@/components/ui/glass-card";
 import {
   Table,
   TableBody,
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground uppercase">
           仪表盘
         </h2>
       </div>
@@ -90,14 +90,14 @@ export default async function DashboardPage() {
       >
         {stats.map((stat) => (
           <Link key={stat.title} href={stat.href} className="block h-full">
-            <AppleCard
+            <GlassCard
               className={`
                 h-full transition-all duration-300
-                hover:border-accent/50 hover:shadow-lg
+                hover:border-primary/50 hover:shadow-lg
               `}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-text-secondary">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
                 <stat.icon
@@ -108,28 +108,28 @@ export default async function DashboardPage() {
                 />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-text">{stat.value}</div>
+                <div className="text-2xl font-bold text-foreground">{stat.value}</div>
                 {stat.description && (
-                  <p className="text-xs text-text-secondary">
+                  <p className="text-xs text-muted-foreground">
                     {stat.description}
                   </p>
                 )}
               </CardContent>
-            </AppleCard>
+            </GlassCard>
           </Link>
         ))}
       </div>
 
-      <AppleCard className="p-6">
+      <GlassCard className="p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-text">最新文章</h3>
+          <h3 className="text-lg font-bold text-foreground">最新文章</h3>
           <Link href="/admin/blogs">
             <Button
               variant="ghost"
               size="sm"
               className={`
-                text-accent
-                hover:bg-accent/10 hover:text-accent
+                text-primary
+                hover:bg-primary/10 hover:text-primary
               `}
             >
               查看全部 <ArrowRight className="ml-2 h-4 w-4" />
@@ -142,14 +142,14 @@ export default async function DashboardPage() {
             <TableRow
               className={`
                 border-border
-                hover:bg-surface/50
+                hover:bg-muted/50
               `}
             >
-              <TableHead className="text-text-secondary">标题</TableHead>
-              <TableHead className="text-text-secondary">分类</TableHead>
-              <TableHead className="text-text-secondary">标签</TableHead>
-              <TableHead className="text-text-secondary">发布状态</TableHead>
-              <TableHead className="text-right text-text-secondary">
+              <TableHead className="text-muted-foreground">标题</TableHead>
+              <TableHead className="text-muted-foreground">分类</TableHead>
+              <TableHead className="text-muted-foreground">标签</TableHead>
+              <TableHead className="text-muted-foreground">发布状态</TableHead>
+              <TableHead className="text-right text-muted-foreground">
                 创建时间
               </TableHead>
             </TableRow>
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
               <TableRow>
                 <TableCell
                   colSpan={5}
-                  className="h-24 text-center text-text-secondary"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   暂无文章
                 </TableCell>
@@ -170,17 +170,17 @@ export default async function DashboardPage() {
                   key={blog.id}
                   className={`
                     border-border
-                    hover:bg-surface/50
+                    hover:bg-muted/50
                   `}
                 >
-                  <TableCell className="font-medium text-text">
+                  <TableCell className="font-medium text-foreground">
                     {blog.title}
                   </TableCell>
                   <TableCell>
                     {blog.category ? (
                       <Badge
                         variant="outline"
-                        className="border-accent text-accent"
+                        className="border-primary text-primary"
                       >
                         {blog.category.name}
                       </Badge>
@@ -195,7 +195,7 @@ export default async function DashboardPage() {
                             <Badge
                               key={tag.id}
                               variant="secondary"
-                              className="bg-accent/10 text-xs text-accent"
+                              className="bg-primary/10 text-xs text-primary"
                             >
                               {tag.name}
                             </Badge>
@@ -209,16 +209,16 @@ export default async function DashboardPage() {
                       className={
                         blog.published
                           ? `
-                            bg-accent/20 text-accent
-                            hover:bg-accent/30
+                            bg-primary/20 text-primary
+                            hover:bg-primary/30
                           `
-                          : "bg-surface text-text-secondary"
+                          : "bg-muted text-muted-foreground"
                       }
                     >
                       {blog.published ? "已发布" : "草稿"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right text-text-secondary">
+                  <TableCell className="text-right text-muted-foreground">
                     {formatSimpleDateWithTime(new Date(blog.createdAt))}
                   </TableCell>
                 </TableRow>
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
             )}
           </TableBody>
         </Table>
-      </AppleCard>
+      </GlassCard>
     </div>
   );
 }

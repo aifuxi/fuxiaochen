@@ -75,14 +75,14 @@ export const UserDialog = NiceModal.create(
       <Dialog open={modal.visible} onOpenChange={modal.remove}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-text">编辑用户角色</DialogTitle>
+            <DialogTitle className="text-foreground">编辑用户角色</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <div className="text-sm text-text-secondary">用户</div>
-                <div className="font-medium text-text">{user?.name}</div>
-                <div className="text-xs text-text-secondary">{user?.email}</div>
+                <div className="text-sm text-muted-foreground">用户</div>
+                <div className="font-medium text-foreground">{user?.name}</div>
+                <div className="text-xs text-muted-foreground">{user?.email}</div>
               </div>
 
               <FormField
@@ -98,15 +98,15 @@ export const UserDialog = NiceModal.create(
                       <FormControl>
                         <SelectTrigger
                           className={`
-                            border-border bg-surface text-text
-                            focus:border-accent focus:ring-accent/20
+                            border-border bg-muted text-foreground
+                            focus:border-primary focus:ring-primary/20
                           `}
                         >
                           <SelectValue placeholder="选择角色" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent
-                        className={`border-border bg-surface text-text`}
+                        className={`border-border bg-muted text-foreground`}
                       >
                         <SelectItem value="1">Admin</SelectItem>
                         <SelectItem value="2">Normal</SelectItem>
@@ -121,8 +121,8 @@ export const UserDialog = NiceModal.create(
                   type="submit"
                   disabled={loading}
                   className={`
-                    w-full bg-accent text-white
-                    hover:bg-accent/90
+                    w-full bg-primary text-primary-foreground
+                    hover:bg-primary/90
                   `}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
