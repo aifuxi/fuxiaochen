@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "首页" },
@@ -16,183 +14,98 @@ const navItems = [
 
 export function Header() {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
-      className={`
-        sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl
-        supports-[backdrop-filter]:bg-background/60
-      `}
+      className="fixed top-0 right-0 left-0 z-50 flex h-[60px] items-center transition-all duration-300"
+      style={
+        scrolled
+          ? {
+              background: "var(--nav-blur-bg)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderBottom: "1px solid var(--border-subtle)",
+            }
+          : {}
+      }
     >
-      {/* 装饰性顶部渐变线 */}
-      <div
-        className={`
-          pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30
-          to-transparent
-        `}
-      />
-
-      <nav
-        className={`
-          mx-auto flex h-16 max-w-6xl items-center justify-between px-4
-          md:px-6
-        `}
-      >
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link
           href="/"
-          className={`
-            group flex items-center gap-2 text-xl font-bold tracking-tight text-foreground transition-opacity
-            duration-200
-            hover:opacity-80
-          `}
+          className="flex items-center gap-2"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.9rem",
+            fontWeight: 500,
+            letterSpacing: "-0.02em",
+            color: "var(--foreground)",
+            textDecoration: "none",
+          }}
         >
-          <img
-            src="/images/logo.svg"
-            alt="Logo"
-            className={`
-              h-8 w-8 transition-transform duration-300
-              group-hover:scale-105
-            `}
-          />
-          <span
-            className={`
-              hidden
-              sm:block
-            `}
-          >
-            付小晨
-          </span>
+          <span>付小晨</span>
+          <span className="logo-dot" />
         </Link>
 
-        {/* 桌面端导航 */}
-        <div
-          className={`
-            hidden items-center gap-1
-            md:flex
-          `}
-        >
+        {/* Desktop Nav */}
+        <nav className={`
+          hidden items-center gap-6
+          md:flex
+        `}>
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
-
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  `relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-200`,
-                  isActive
-                    ? "text-primary"
-                    : `
-                      text-muted-foreground
-                      hover:text-foreground
-                    `,
-                )}
+                className="relative text-[0.85rem] font-normal transition-colors"
+                style={{
+                  color: isActive
+                    ? "var(--foreground)"
+                    : "var(--foreground-muted)",
+                }}
               >
                 {item.label}
                 {isActive && (
-                  <span
-                    className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-primary`}
+                  <div
+                    className="absolute -bottom-[20px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full"
+                    style={{
+                      background: "var(--primary)",
+                      boxShadow: "0 0 8px var(--primary)",
+                    }}
                   />
                 )}
               </Link>
             );
           })}
-        </div>
+        </nav>
 
-        {/* 右侧：后台管理 + 主题切换 + 移动端菜单 */}
-        <div className="flex items-center gap-2">
+        {/* Actions */}
+        <div className="flex items-center gap-3">
           <Link
-            href="/admin"
+            href="/login"
             className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-all duration-200
-              hover:bg-accent hover:text-foreground
-              active:scale-95
+              hidden rounded-[0.5rem] px-4 py-1.5 text-[0.85rem] font-medium transition-all
+              hover:border-[var(--border-hover)]
+              sm:flex
             `}
-            target="_blank"
-            aria-label="后台管理"
+            style={{
+              border: "1px solid var(--border)",
+              color: "var(--foreground-muted)",
+            }}
           >
-            <LayoutDashboard className="h-5 w-5" />
+            登录
           </Link>
-
           <ThemeToggle />
-
-          {/* 移动端菜单按钮 */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors duration-200
-              hover:bg-accent hover:text-foreground
-              md:hidden
-            `}
-            aria-label="切换菜单"
-          >
-            {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </button>
-        </div>
-      </nav>
-
-      {/* 移动端菜单 */}
-      <div
-        className={cn(
-          `
-            overflow-hidden border-t border-border/50 bg-muted/95 backdrop-blur-xl transition-all duration-300
-            ease-in-out
-            md:hidden
-          `,
-          mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
-        )}
-      >
-        <div className="mx-auto max-w-6xl px-4 py-4">
-          <div className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    `rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : `
-                        text-muted-foreground
-                        hover:bg-accent hover:text-foreground
-                      `,
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-
-            <>
-              <div className="my-2 h-px bg-border" />
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  `flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
-                  pathname.startsWith("/admin")
-                    ? "bg-primary/10 text-primary"
-                    : `
-                      text-muted-foreground
-                      hover:bg-accent hover:text-foreground
-                    `,
-                )}
-              >
-                <LayoutDashboard className="h-5 w-5" />
-                后台管理
-              </Link>
-            </>
-          </div>
         </div>
       </div>
     </header>

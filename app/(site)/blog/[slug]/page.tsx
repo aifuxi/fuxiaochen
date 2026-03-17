@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { getBlogBySlugAction } from "@/app/actions/blog";
 import BlogContent from "@/components/blog/blog-content";
 import { TableOfContents } from "@/components/blog/table-of-contents";
-import { Badge } from "@/components/ui/badge";
 import { formatSimpleDate } from "@/lib/time";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +11,7 @@ interface BlogDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// 生成 SEO 元数据
+// Generate SEO metadata
 export async function generateMetadata({
   params,
 }: BlogDetailPageProps): Promise<Metadata> {
@@ -50,84 +49,160 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   }
 
   const blog = result.data;
-
-  // 计算阅读时间（假设每分钟阅读 300 字）
   const readingTime = Math.max(1, Math.ceil(blog.content.length / 300));
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
-      {/* 返回链接 */}
+    <div className="mx-auto max-w-6xl px-6 py-12">
+      {/* Back link */}
       <Link
         href="/blog"
         className={`
-          mb-8 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors
-          hover:text-primary
+          mb-8 inline-block transition-colors duration-200
+          hover:opacity-80
         `}
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.72rem",
+          color: "var(--primary)",
+          textDecoration: "none",
+        }}
       >
         ← 返回博客列表
       </Link>
 
-      <div className="flex gap-8">
-        {/* 主内容区 */}
-        <article className="min-w-0 flex-1">
-          {/* 封面图 */}
-          {blog.cover && (
-            <div className="mb-8 aspect-video w-full overflow-hidden rounded-xl">
-              <Image
-                src={blog.cover}
-                alt={blog.title}
-                width={1200}
-                height={630}
-                className="h-full w-full object-cover"
-                priority
-              />
-            </div>
-          )}
+      {/* Hero Image */}
+      {blog.cover && (
+        <div
+          className="relative mb-10 w-full overflow-hidden"
+          style={{ aspectRatio: "21/9", borderRadius: "0.75rem" }}
+        >
+          <Image
+            src={blog.cover}
+            alt={blog.title}
+            fill
+            className="object-cover"
+            priority
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, transparent 50%, oklch(0.07 0 0 / 0.7) 100%)",
+            }}
+          />
+        </div>
+      )}
 
-          {/* 文章头部 */}
-          <header className="mb-8">
-            <h1 className="mb-4 text-3xl font-bold text-foreground">
-              {blog.title}
-            </h1>
+      {/* Article header */}
+      <header className="mb-10 max-w-[680px]">
+        {blog.category && (
+          <div
+            className="mb-3"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--primary)",
+              textTransform: "uppercase",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {blog.category.name}
+          </div>
+        )}
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-              <time>{formatSimpleDate(new Date(blog.createdAt))}</time>
-              <span>·</span>
-              {blog.category && (
-                <>
-                  <Badge variant="secondary">{blog.category.name}</Badge>
-                  <span>·</span>
-                </>
-              )}
-              <span>{readingTime} 分钟阅读</span>
-            </div>
-          </header>
+        <h1
+          className="mb-5 font-bold"
+          style={{
+            fontSize: "clamp(1.75rem, 4vw, 2.4rem)",
+            letterSpacing: "-0.03em",
+            lineHeight: 1.15,
+            color: "var(--foreground)",
+          }}
+        >
+          {blog.title}
+        </h1>
 
-          {/* 分隔线 */}
-          <div className="mb-8 h-px bg-border" />
+        {/* Meta */}
+        <div
+          className="mb-5 flex flex-wrap items-center gap-4"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.72rem",
+            color: "var(--foreground-subtle)",
+          }}
+        >
+          <time>{formatSimpleDate(new Date(blog.createdAt))}</time>
+          <span>·</span>
+          <span>{readingTime} 分钟阅读</span>
+        </div>
 
-          {/* 文章内容 */}
-          <BlogContent content={blog.content} />
+        {/* Tags */}
+        {blog.tags && blog.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {blog.tags.map((tag) => (
+              <span
+                key={tag.id}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  background: "var(--tag-bg)",
+                  color: "var(--tag-fg)",
+                  border: "1px solid var(--tag-border)",
+                  borderRadius: "0.375rem",
+                  padding: "0.2rem 0.6rem",
+                }}
+              >
+                {tag.name}
+              </span>
+            ))}
+          </div>
+        )}
+      </header>
 
-          {/* 标签 */}
-          {blog.tags && blog.tags.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-2">
-              {blog.tags.map((tag) => (
-                <Badge key={tag.id} variant="outline">
-                  {tag.name}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </article>
-
-        {/* 右侧目录（桌面端显示） */}
+      {/* 3-column grid */}
+      <div className={`
+        grid grid-cols-1 gap-12
+        lg:grid-cols-[200px_1fr_200px]
+      `}>
+        {/* Left TOC */}
         <aside className={`
-          hidden w-64 shrink-0
+          hidden
           lg:block
         `}>
-          <TableOfContents />
+          <div
+            className="sticky"
+            style={{ top: "100px" }}
+          >
+            <div
+              className="mb-3"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.65rem",
+                color: "var(--foreground-subtle)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              目录
+            </div>
+            <div style={{ borderLeft: "2px solid var(--border-subtle)", paddingLeft: "0.75rem" }}>
+              <TableOfContents />
+            </div>
+          </div>
         </aside>
+
+        {/* Center article */}
+        <article className="max-w-[680px] min-w-0">
+          <div className="article-content">
+            <BlogContent content={blog.content} />
+          </div>
+        </article>
+
+        {/* Right empty column for balance */}
+        <div className={`
+          hidden
+          lg:block
+        `} />
       </div>
     </div>
   );

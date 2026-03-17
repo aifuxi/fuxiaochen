@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 
-// 技能数据 - 带图标
+// Skill data with icons
 const allSkills = [
   { name: "HTML", icon: "icon-[skill-icons--html]" },
   { name: "CSS", icon: "icon-[skill-icons--css]" },
@@ -20,220 +20,201 @@ const allSkills = [
   { name: "Figma", icon: "icon-[skill-icons--figma-dark]" },
 ];
 
-// 设备数据
 const devices = [
-  {
-    name: "MacBook Pro",
-    spec: "14-inch M3 Max 64G",
-    description: "主力机",
-    featured: true,
-  },
-  {
-    name: "微星 GP76",
-    spec: "RTX 3070",
-    description: "游戏机",
-    featured: true,
-  },
-  {
-    name: "LG 27 英寸 4K HDR",
-    spec: "",
-    description: "显示器",
-    featured: false,
-  },
-  {
-    name: "珂芝 K75",
-    spec: "",
-    description: "键盘",
-    featured: false,
-  },
-  {
-    name: "罗技 PRO 2 代",
-    spec: "",
-    description: "鼠标",
-    featured: false,
-  },
+  { name: "MacBook Pro", spec: "14-inch M3 Max 64G", description: "主力机", featured: true },
+  { name: "微星 GP76", spec: "RTX 3070", description: "游戏机", featured: true },
+  { name: "LG 27 英寸 4K HDR", spec: "", description: "显示器", featured: false },
+  { name: "珂芝 K75", spec: "", description: "键盘", featured: false },
+  { name: "罗技 PRO 2 代", spec: "", description: "鼠标", featured: false },
 ];
 
-// Hero 区域 - Apple 大胆风格
+const skillTags = ["React", "Next.js", "TypeScript", "TailwindCSS", "Go", "MySQL"];
+
+// Hero
 function Hero() {
   return (
-    <section
-      className={`
-        relative flex min-h-[60vh] items-center justify-center overflow-hidden py-20
-        md:py-32
-      `}
-    >
-      {/* 动态渐变背景 */}
+    <section className={`
+      relative px-6 py-20
+      md:py-32
+    `}>
+      {/* Background glow */}
       <div
         className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-primary/10 via-transparent to-transparent
+          pointer-events-none absolute -top-40 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full blur-3xl
         `}
-      />
-      <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
-        `}
-      />
-      <div
-        className={`
-          from-warning/5 pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full
-          bg-gradient-to-tl to-transparent blur-3xl
-        `}
+        style={{ background: "var(--primary-glow)" }}
       />
 
-      {/* 内容 */}
-      <div className="relative mx-auto max-w-4xl px-4 text-center">
-        {/* 小标签 */}
+      <div className="relative mx-auto max-w-4xl text-center">
+        {/* Eyebrow */}
         <div
-          className={`
-            mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-4 py-1.5 text-sm
-            text-muted-foreground backdrop-blur-sm
-          `}
+          className="mb-4"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.72rem",
+            color: "var(--foreground-subtle)",
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            animation: "fade-up 0.5s ease forwards",
+          }}
         >
-          <span className="relative flex h-2 w-2">
-            <span
-              className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75`}
-            />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-          </span>
-          前端开发工程师
+          FRONT-END ENGINEER
         </div>
 
-        {/* 大标题 */}
-        <h1
-          className={`
-            mb-6 text-5xl font-bold tracking-tight
-            md:text-7xl
-            lg:text-8xl
-          `}
+        {/* Activity indicator */}
+        <div
+          className="mb-6 flex items-center justify-center gap-2"
+          style={{ animation: "fade-up 0.5s ease 0.05s both" }}
         >
-          <span className="block text-foreground">Hi, I&apos;m</span>
+          <div className="relative flex items-center justify-center">
+            <div
+              className="absolute rounded-full"
+              style={{
+                width: "16px",
+                height: "16px",
+                background: "var(--primary)",
+                opacity: 0.2,
+                animation: "ripple 2s ease-out infinite",
+              }}
+            />
+            <div
+              className="rounded-full"
+              style={{
+                width: "8px",
+                height: "8px",
+                background: "var(--primary)",
+                boxShadow: "0 0 8px var(--primary)",
+              }}
+            />
+          </div>
           <span
-            className={`block bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent`}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--foreground-muted)",
+            }}
           >
+            Available for opportunities
+          </span>
+        </div>
+
+        {/* Name heading */}
+        <h1
+          className="mb-6 font-bold"
+          style={{
+            fontSize: "clamp(2.5rem, 6vw, 3.75rem)",
+            letterSpacing: "-0.04em",
+            lineHeight: 1.05,
+            animation: "fade-up 0.5s ease 0.1s both",
+          }}
+        >
+          <span className="block" style={{ color: "var(--foreground)" }}>
+            Hi, I&apos;m
+          </span>
+          <span className="block" style={{ color: "var(--primary)" }}>
             付小晨
           </span>
         </h1>
 
-        {/* 描述 */}
+        {/* Bio */}
         <p
-          className={`
-            mx-auto mb-8 max-w-xl text-lg text-muted-foreground
-            md:text-xl
-          `}
+          className="mx-auto mb-8 max-w-xl"
+          style={{
+            fontSize: "1.1rem",
+            color: "var(--foreground-muted)",
+            lineHeight: 1.6,
+            animation: "fade-up 0.5s ease 0.2s both",
+          }}
         >
-          2020 年毕业，喜欢 Coding 和打游戏。
-          <br
-            className={`
-              hidden
-              sm:block
-            `}
-          />
-          专注于前端开发，探索技术的无限可能。
+          2020 年毕业，喜欢 Coding 和打游戏。专注于前端开发，探索技术的无限可能。
         </p>
 
-        {/* 技术栈标签 */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <span
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary
-            `}
-          >
-            <span className="icon-[skill-icons--react-dark] h-4 w-4" />
-            React
-          </span>
-          <span className="text-muted-foreground">+</span>
-          <span
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary
-            `}
-          >
-            <span className="icon-[skill-icons--golang] h-4 w-4" />
-            Go
-          </span>
-          <span className="text-muted-foreground">+</span>
-          <span
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-muted-foreground
-            `}
-          >
-            <span className="icon-[skill-icons--tailwindcss-dark] h-4 w-4" />
-            Tailwind
-          </span>
+        {/* Skill tags */}
+        <div
+          className="flex flex-wrap items-center justify-center gap-2"
+          style={{ animation: "fade-up 0.5s ease 0.3s both" }}
+        >
+          {skillTags.map((tag) => (
+            <span
+              key={tag}
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                background: "var(--tag-bg)",
+                color: "var(--tag-fg)",
+                border: "1px solid var(--tag-border)",
+                borderRadius: "0.375rem",
+                padding: "0.3rem 0.75rem",
+              }}
+            >
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// 技能区域 - Apple 大胆风格
+// Skills section
 function Skills() {
   return (
-    <section
-      className={`
-        relative overflow-hidden py-20
-        md:py-32
-      `}
-    >
-      {/* 背景装饰 */}
-      <div
-        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-muted/50 to-transparent`}
-      />
-
-      <div className="relative mx-auto max-w-5xl px-4">
-        {/* 标题 */}
-        <div
-          className={`
-            mb-12 text-center
-            md:mb-16
-          `}
-        >
-          <h2
-            className={`
-              mb-4 text-4xl font-bold tracking-tight text-foreground
-              md:text-5xl
-            `}
+    <section className={`
+      px-6 py-16
+      md:py-24
+    `}>
+      <div className="mx-auto max-w-5xl">
+        {/* Section label */}
+        <div className="mb-10 flex items-center gap-4">
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.65rem",
+              color: "var(--foreground-subtle)",
+              textTransform: "uppercase",
+              letterSpacing: "0.10em",
+              whiteSpace: "nowrap",
+            }}
           >
             Tech Stack
-          </h2>
-          <p className="text-lg text-muted-foreground">我熟练使用的技术与工具</p>
+          </span>
+          <div style={{ flex: 1, height: "1px", background: "var(--border-subtle)" }} />
         </div>
 
-        {/* 技能网格 - 大图标 */}
-        <div
-          className={`
-            grid grid-cols-3 gap-4
-            sm:grid-cols-4
-            md:grid-cols-5
-            lg:grid-cols-6
-          `}
-        >
+        {/* Skills grid */}
+        <div className={`
+          grid grid-cols-3 gap-4
+          sm:grid-cols-4
+          md:grid-cols-5
+          lg:grid-cols-6
+        `}>
           {allSkills.map((skill, index) => (
             <div
               key={index}
               className={`
-                group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300
-                hover:bg-accent
-                md:p-6
+                group flex cursor-default flex-col items-center gap-3 rounded-[0.5rem] p-4 transition-all duration-300
+                hover:-translate-y-[2px] hover:border-[var(--primary)] hover:bg-[var(--background-elevated)]
+                md:p-5
               `}
+              style={{ border: "1px solid transparent" }}
             >
-              <div
-                className={`
-                  h-12 w-12 transition-transform duration-300
-                  group-hover:scale-110
-                  md:h-16 md:w-16
-                `}
-              >
+              <div className={`
+                h-12 w-12 transition-transform duration-300
+                group-hover:scale-110
+                md:h-14 md:w-14
+              `}>
                 <span className={skill.icon + " h-full w-full"} />
               </div>
               <span
                 className={`
-                  text-center text-xs text-muted-foreground transition-colors duration-200
-                  group-hover:text-foreground
-                  md:text-sm
+                  text-center transition-colors duration-200
+                  group-hover:text-[var(--foreground)]
                 `}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.65rem",
+                  color: "var(--foreground-subtle)",
+                }}
               >
                 {skill.name}
               </span>
@@ -245,100 +226,99 @@ function Skills() {
   );
 }
 
-// 设备区域 - Apple 大胆风格
+// Setup / Devices section
 function Devices() {
   const featuredDevices = devices.filter((d) => d.featured);
   const otherDevices = devices.filter((d) => !d.featured);
 
   return (
-    <section
-      className={`
-        py-20
-        md:py-32
-      `}
-    >
-      <div className="mx-auto max-w-5xl px-4">
-        {/* 标题 */}
-        <div
-          className={`
-            mb-12 text-center
-            md:mb-16
-          `}
-        >
-          <h2
-            className={`
-              mb-4 text-4xl font-bold tracking-tight text-foreground
-              md:text-5xl
-            `}
+    <section className={`
+      px-6 py-16
+      md:py-24
+    `}>
+      <div className="mx-auto max-w-5xl">
+        {/* Section label */}
+        <div className="mb-10 flex items-center gap-4">
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.65rem",
+              color: "var(--foreground-subtle)",
+              textTransform: "uppercase",
+              letterSpacing: "0.10em",
+              whiteSpace: "nowrap",
+            }}
           >
-            我的设备
-          </h2>
-          <p className="text-lg text-muted-foreground">日常使用的硬件设备</p>
+            Setup & Devices
+          </span>
+          <div style={{ flex: 1, height: "1px", background: "var(--border-subtle)" }} />
         </div>
 
-        {/* 主力设备 - 大卡片 */}
-        <div
-          className={`
-            mb-8 grid gap-6
-            md:grid-cols-2
-          `}
-        >
+        {/* Featured devices */}
+        <div className={`
+          mb-6 grid gap-6
+          md:grid-cols-2
+        `}>
           {featuredDevices.map((device, index) => (
-            <Card
-              key={index}
-              className={`
-                group relative overflow-hidden p-8 transition-all duration-300
-                hover:shadow-xl
-              `}
-            >
-              {/* 装饰渐变 */}
-              <div
-                className={`
-                  pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br
-                  from-primary/10 to-transparent opacity-0 blur-2xl transition-opacity duration-300
-                  group-hover:opacity-100
-                `}
-              />
-              <div className="relative">
-                <span
-                  className={`mb-4 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary`}
-                >
-                  {device.description}
-                </span>
-                <h3
-                  className={`
-                    mb-2 text-2xl font-bold text-foreground
-                    md:text-3xl
-                  `}
-                >
-                  {device.name}
-                </h3>
-                {device.spec && (
-                  <p className="text-lg text-primary">{device.spec}</p>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* 其他设备 - 紧凑列表 */}
-        <div className="flex flex-wrap justify-center gap-4">
-          {otherDevices.map((device, index) => (
             <div
               key={index}
               className={`
-                flex items-center gap-2 rounded-full border border-border bg-muted px-5 py-2.5 transition-colors
-                duration-200
-                hover:border-primary/30
+                group relative overflow-hidden rounded-[0.5rem] p-8 transition-all duration-300
+                hover:-translate-y-[2px] hover:border-[var(--border-hover)]
               `}
+              style={{
+                border: "1px solid var(--border)",
+                background: "var(--background-subtle)",
+              }}
             >
-              <span className="text-sm font-medium text-foreground">
-                {device.name}
+              <span
+                className="mb-4 inline-block"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.65rem",
+                  background: "var(--tag-bg)",
+                  color: "var(--tag-fg)",
+                  border: "1px solid var(--tag-border)",
+                  borderRadius: "0.375rem",
+                  padding: "0.2rem 0.6rem",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.06em",
+                }}
+              >
+                {device.description}
               </span>
+              <h3
+                className="mb-1 font-bold"
+                style={{ fontSize: "1.4rem", color: "var(--foreground)" }}
+              >
+                {device.name}
+              </h3>
+              {device.spec && (
+                <p style={{ fontSize: "0.9rem", color: "var(--primary)" }}>{device.spec}</p>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Other devices as pills */}
+        <div className="flex flex-wrap gap-3">
+          {otherDevices.map((device, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 transition-all duration-200"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                background: "var(--tag-bg)",
+                color: "var(--tag-fg)",
+                border: "1px solid var(--tag-border)",
+                borderRadius: "0.375rem",
+                padding: "0.35rem 0.75rem",
+              }}
+            >
+              <span>{device.name}</span>
               {device.description && (
-                <span className="text-xs text-muted-foreground">
-                  · {device.description}
-                </span>
+                <span style={{ opacity: 0.6 }}>· {device.description}</span>
               )}
             </div>
           ))}
@@ -348,55 +328,60 @@ function Devices() {
   );
 }
 
-// 底部 CTA - Apple 大胆风格
+// Bottom CTA
 function BottomCTA() {
   return (
-    <section
-      className={`
-        relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/5 via-muted to-primary/5 py-20
-        md:py-28
-      `}
-    >
-      {/* 装饰 */}
-      <div
-        className={`
-          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
-        `}
-      />
-      <div
-        className={`
-          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
-        `}
-      />
-
-      <div className="relative mx-auto max-w-3xl px-6 text-center">
-        <h2
-          className={`
-            mb-6 text-3xl font-bold text-foreground
-            md:text-4xl
-          `}
+    <section className="px-6 py-24">
+      <div className="mx-auto max-w-5xl">
+        <div
+          className="relative overflow-hidden rounded-[0.75rem] px-8 py-16 text-center"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, var(--primary-glow) 0%, var(--background-elevated) 100%)",
+            border: "1px solid var(--border)",
+          }}
         >
-          看到这里了？
-        </h2>
-        <p
-          className={`
-            mx-auto mb-10 max-w-md text-lg text-muted-foreground
-            md:text-xl
-          `}
-        >
-          来我的博客看看吧，有更多技术分享和学习笔记
-        </p>
-        <Link
-          href="/blog"
-          className={`
-            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
-            text-primary-foreground shadow-lg transition-all duration-300
-            hover:bg-primary/90
-            active:scale-[0.98]
-          `}
-        >
-          浏览博客
-        </Link>
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 80% at 50% 50%, var(--primary-glow), transparent)",
+            }}
+          />
+          <div className="relative">
+            <h2
+              className="mb-4 font-bold"
+              style={{
+                fontSize: "clamp(1.5rem, 3vw, 2rem)",
+                letterSpacing: "-0.03em",
+                color: "var(--foreground)",
+              }}
+            >
+              看到这里了？
+            </h2>
+            <p
+              className="mx-auto mb-8 max-w-md"
+              style={{ color: "var(--foreground-muted)", fontSize: "1rem" }}
+            >
+              来我的博客看看吧，有更多技术分享和学习笔记
+            </p>
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-2 transition-all duration-300"
+              style={{
+                background: "var(--primary)",
+                color: "var(--primary-foreground)",
+                padding: "0.75rem 1.75rem",
+                borderRadius: "0.5rem",
+                fontSize: "0.95rem",
+                fontWeight: 600,
+              }}
+            >
+              浏览博客
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -404,17 +389,10 @@ function BottomCTA() {
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-5xl px-4">
-      {/* Hero - 全屏大胆设计 */}
+    <div>
       <Hero />
-
-      {/* 技能 */}
       <Skills />
-
-      {/* 设备 */}
       <Devices />
-
-      {/* 底部 CTA */}
       <BottomCTA />
     </div>
   );

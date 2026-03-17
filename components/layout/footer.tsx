@@ -1,168 +1,114 @@
 import Link from "next/link";
-import { Github, Mail } from "lucide-react";
 import {
-  WEBSITE,
   BEI_AN_NUMBER,
   BEI_AN_LINK,
   GONG_AN_NUMBER,
   GONG_AN_LINK,
-  SLOGAN,
 } from "@/constants/info";
 
-const footerLinks = [
-  { href: "/", label: "首页" },
-  { href: "/blog", label: "博客" },
-  { href: "/about", label: "关于" },
-  { href: "/changelog", label: "更新日志" },
-];
-
-const socialLinks = [
-  {
-    href: "https://github.com/aifuxi/fuxiaochen",
-    icon: Github,
-    label: "GitHub",
-  },
-  { href: "mailto:aifuxi.js@gmail.com", icon: Mail, label: "邮箱" },
-  // { href: "/rss.xml", icon: Rss, label: "RSS" },
-];
-
 export function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
-    <footer className="relative mt-20 border-t border-border/50 bg-muted/50">
-      {/* 装饰性渐变 */}
-      <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-primary/5 to-transparent`}
-      />
-
-      <div
-        className={`
-          relative mx-auto max-w-6xl px-4 py-12
-          md:px-6 md:py-16
-        `}
-      >
-        <div
-          className={`
-            flex flex-col gap-8
-            md:flex-row md:items-start md:justify-between md:gap-12
-          `}
-        >
-          {/* 左侧：品牌信息 */}
+    <footer
+      className="relative z-10 mt-12 py-10"
+      style={{
+        borderTop: "1px solid var(--border-subtle)",
+        background: "oklch(0.07 0 0 / 0.5)",
+      }}
+    >
+      <div className="mx-auto max-w-6xl px-6">
+        <div className={`
+          flex flex-col items-center justify-between gap-6
+          md:flex-row
+        `}>
           <div
-            className={`
-              flex flex-col items-center gap-4
-              md:items-start
-            `}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--foreground-subtle)",
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
           >
-            {/* Logo */}
+            © {new Date().getFullYear()} FU XIAOCHEN · ALL RIGHTS RESERVED
+            {BEI_AN_NUMBER && (
+              <>
+                {" · "}
+                <a
+                  href={BEI_AN_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    transition-colors
+                    hover:text-[var(--primary)]
+                  `}
+                  style={{ color: "var(--foreground-subtle)" }}
+                >
+                  {BEI_AN_NUMBER}
+                </a>
+              </>
+            )}
+            {GONG_AN_NUMBER && (
+              <>
+                {" · "}
+                <a
+                  href={GONG_AN_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    transition-colors
+                    hover:text-[var(--primary)]
+                  `}
+                  style={{ color: "var(--foreground-subtle)" }}
+                >
+                  {GONG_AN_NUMBER}
+                </a>
+              </>
+            )}
+          </div>
+          <div
+            className="flex items-center gap-8"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--foreground-subtle)",
+            }}
+          >
             <Link
               href="/"
               className={`
-                group flex items-center gap-2 text-xl font-bold tracking-tight text-foreground transition-opacity
-                duration-200
-                hover:opacity-80
+                uppercase transition-colors
+                hover:text-[var(--primary)]
               `}
             >
-              <img
-                src="/images/logo.svg"
-                alt="Logo"
-                className={`
-                  h-8 w-8 transition-transform duration-300
-                  group-hover:scale-105
-                `}
-              />
-              <span>{WEBSITE}</span>
+              HOME
             </Link>
-            <p
+            <Link
+              href="/blog"
               className={`
-                max-w-xs text-center text-sm text-muted-foreground
-                md:text-left
+                uppercase transition-colors
+                hover:text-[var(--primary)]
               `}
             >
-              {SLOGAN}
-            </p>
-
-            {/* 社交链接 */}
-            <div className="flex items-center gap-3">
-              {socialLinks.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`
-                      flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted
-                      text-muted-foreground transition-all duration-200
-                      hover:border-primary/30 hover:text-primary
-                    `}
-                    aria-label={item.label}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* 右侧：链接 */}
-          <div
-            className={`
-              flex flex-col items-center gap-6
-              md:items-end
-            `}
-          >
-            {/* 导航链接 */}
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              {footerLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`
-                    text-sm text-muted-foreground transition-colors duration-200
-                    hover:text-primary
-                  `}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* 备案信息 */}
-            <div
+              BLOG
+            </Link>
+            <Link
+              href="/about"
               className={`
-                flex flex-col items-center gap-2 text-xs text-muted-foreground
-                md:flex-row md:gap-4
+                uppercase transition-colors
+                hover:text-[var(--primary)]
               `}
             >
-              <span>
-                © {currentYear} {WEBSITE}
-              </span>
-              <a
-                href={BEI_AN_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  transition-colors duration-200
-                  hover:text-primary
-                `}
-              >
-                {BEI_AN_NUMBER}
-              </a>
-              <a
-                href={GONG_AN_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  transition-colors duration-200
-                  hover:text-primary
-                `}
-              >
-                {GONG_AN_NUMBER}
-              </a>
-            </div>
+              ABOUT
+            </Link>
+            <Link
+              href="/changelog"
+              className={`
+                uppercase transition-colors
+                hover:text-[var(--primary)]
+              `}
+            >
+              CHANGELOG
+            </Link>
           </div>
         </div>
       </div>

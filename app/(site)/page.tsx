@@ -2,116 +2,127 @@ import Link from "next/link";
 import Image from "next/image";
 import { getBlogsAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
-import { Card } from "@/components/ui/card";
-import { ArrowRight, Calendar, Clock, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { formatSimpleDate } from "@/lib/time";
 
-// Hero 区域 - Apple 大胆风格
+// Section label component
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-8 flex items-center gap-4">
+      <span
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.65rem",
+          color: "var(--foreground-subtle)",
+          textTransform: "uppercase",
+          letterSpacing: "0.10em",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {children}
+      </span>
+      <div style={{ flex: 1, height: "1px", background: "var(--border-subtle)" }} />
+    </div>
+  );
+}
+
+// Hero section
 function Hero() {
   return (
-    <section
-      className={`
-        relative flex min-h-[70vh] items-center justify-center overflow-hidden py-20
-        md:py-32
-      `}
-    >
-      {/* 动态渐变背景 */}
+    <section className={`
+      mx-auto max-w-4xl px-6 py-24 text-center
+      md:py-32
+    `}>
+      {/* Eyebrow */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-primary/10 via-transparent to-transparent
-        `}
-      />
+        className="mb-6"
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.75rem",
+          textTransform: "uppercase",
+          letterSpacing: "0.12em",
+          color: "var(--foreground-subtle)",
+          animation: "fade-up 0.6s ease forwards",
+        }}
+      >
+        技术博客 · 学习笔记 · 项目分享
+      </div>
+
+      {/* H1 */}
+      <h1
+        className="mb-6 font-bold"
+        style={{
+          fontSize: "clamp(2.5rem, 6vw, 3.75rem)",
+          letterSpacing: "-0.04em",
+          lineHeight: 1.05,
+          animation: "fade-up 0.6s ease 0.1s both",
+        }}
+      >
+        <span className="block" style={{ color: "var(--foreground)" }}>
+          探索技术的
+        </span>
+        <span className="block" style={{ color: "var(--primary)" }}>
+          无限可能
+        </span>
+      </h1>
+
+      {/* Description */}
+      <p
+        className="mx-auto mb-10 max-w-xl"
+        style={{
+          fontSize: "1.1rem",
+          color: "var(--foreground-muted)",
+          lineHeight: 1.6,
+          animation: "fade-up 0.6s ease 0.2s both",
+        }}
+      >
+        记录前端开发与技术探索的点滴，分享学习心得与实践经验
+      </p>
+
+      {/* CTAs */}
       <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
-        `}
-      />
-      <div
-        className={`
-          from-warning/5 pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full
-          bg-gradient-to-tl to-transparent blur-3xl
-        `}
-      />
-
-      {/* 内容 */}
-      <div className="relative mx-auto max-w-4xl px-4 text-center">
-        {/* 小标签 */}
-        <div
-          className={`
-            mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-muted/50 px-5 py-2 text-sm
-            text-muted-foreground backdrop-blur-sm
-          `}
+        className="flex flex-wrap items-center justify-center gap-4"
+        style={{ animation: "fade-up 0.6s ease 0.3s both" }}
+      >
+        <Link
+          href="/blog"
+          className="inline-flex items-center gap-2 transition-all duration-300"
+          style={{
+            background: "var(--primary)",
+            color: "var(--primary-foreground)",
+            padding: "0.75rem 1.75rem",
+            borderRadius: "0.5rem",
+            fontSize: "0.95rem",
+            fontWeight: 600,
+          }}
         >
-          <Sparkles className="h-4 w-4 text-primary" />
-          技术博客 · 学习笔记 · 项目分享
-        </div>
-
-        {/* 大标题 */}
-        <h1
+          开始阅读
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link
+          href="/about"
           className={`
-            mb-6 text-5xl font-bold tracking-tight
-            md:text-7xl
-            lg:text-8xl
+            inline-flex items-center gap-2 transition-all duration-300
+            hover:border-[var(--border-hover)]
           `}
+          style={{
+            border: "1px solid var(--border)",
+            color: "var(--foreground-muted)",
+            padding: "0.75rem 1.75rem",
+            borderRadius: "0.5rem",
+            fontSize: "0.95rem",
+            fontWeight: 500,
+          }}
         >
-          <span className="block text-foreground">探索技术的</span>
-          <span
-            className={`block bg-gradient-to-r from-primary via-primary to-primary bg-clip-text text-transparent`}
-          >
-            无限可能
-          </span>
-        </h1>
-
-        {/* 描述 */}
-        <p
-          className={`
-            mx-auto mb-10 max-w-xl text-lg text-muted-foreground
-            md:text-xl
-          `}
-        >
-          记录前端开发与技术探索的点滴
-          <br className={`
-            hidden
-            sm:block
-          `} />
-          分享学习心得与实践经验
-        </p>
-
-        {/* CTA 按钮组 */}
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <Link
-            href="/blog"
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
-              text-primary-foreground shadow-lg transition-all duration-300
-              hover:bg-primary/90
-              active:scale-[0.98]
-            `}
-          >
-            开始阅读
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/about"
-            className={`
-              inline-flex items-center gap-2 rounded-full border border-border bg-muted/50 px-8 py-4 text-base
-              font-medium text-foreground backdrop-blur-sm transition-all duration-300
-              hover:border-primary/30 hover:bg-accent
-              active:scale-[0.98]
-            `}
-          >
-            关于我
-          </Link>
-        </div>
+          关于作者
+        </Link>
       </div>
     </section>
   );
 }
 
-// 精选文章卡片 - Apple 大胆风格
-async function FeaturedPosts() {
+// Featured post section
+async function FeaturedPost() {
   const result = await getBlogsAction({
     page: 1,
     pageSize: 4,
@@ -128,186 +139,177 @@ async function FeaturedPosts() {
   const [firstPost, ...restPosts] = posts as [typeof posts[0], ...typeof posts];
 
   return (
-    <section
-      className={`
-        relative overflow-hidden py-20
-        md:py-32
-      `}
-    >
-      {/* 背景装饰 */}
-      <div
-        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-muted/50 to-transparent`}
-      />
+    <section className="mx-auto max-w-5xl px-6 py-12">
+      <SectionLabel>精选文章</SectionLabel>
 
-      <div className="relative space-y-10">
-        {/* 主推文章 - 全屏大卡片 */}
-        <Link href={`/blog/${firstPost.slug}`} className="group block">
-          <Card
-            className={`
-              relative aspect-[21/9] overflow-hidden border-0 p-0 shadow-xl transition-all duration-500
-              hover:shadow-2xl
-              md:aspect-[21/10]
-            `}
-          >
-            {firstPost.cover ? (
+      {/* Featured card */}
+      <Link
+        href={`/blog/${firstPost.slug}`}
+        className="group mb-8 block"
+        style={{ textDecoration: "none" }}
+      >
+        <div
+          className={`
+            flex flex-col overflow-hidden transition-all duration-300
+            hover:-translate-y-[3px] hover:border-[var(--border-hover)] hover:shadow-[0_8px_32px_oklch(0_0_0/0.3)]
+            md:flex-row
+          `}
+          style={{
+            border: "1px solid var(--border)",
+            background: "var(--background-subtle)",
+            borderRadius: "0.5rem",
+          }}
+        >
+          {/* Image */}
+          {firstPost.cover && (
+            <div className={`
+              relative overflow-hidden
+              md:w-2/5
+            `} style={{ aspectRatio: "16/10" }}>
               <Image
                 src={firstPost.cover}
                 alt={firstPost.title}
                 fill
                 className={`
-                  object-cover transition-transform duration-700
-                  group-hover:scale-105
+                  object-cover grayscale transition-all duration-500
+                  group-hover:scale-105 group-hover:grayscale-0
                 `}
               />
-            ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-muted to-primary/20" />
-            )}
-            {/* 渐变遮罩 */}
+            </div>
+          )}
+          {!firstPost.cover && (
             <div
-              className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent`}
+              className="md:w-2/5"
+              style={{
+                aspectRatio: "16/10",
+                background: "linear-gradient(135deg, var(--background-elevated), var(--border))",
+              }}
             />
-            {/* 内容 */}
+          )}
+
+          {/* Content */}
+          <div className="flex flex-1 flex-col justify-center p-8">
             <div
-              className={`
-                absolute right-0 bottom-0 left-0 p-6
-                md:p-10
-              `}
+              className="mb-3"
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.72rem",
+                color: "var(--primary)",
+              }}
             >
-              {firstPost.category && (
-                <span
-                  className={`
-                    mb-4 inline-block rounded-full bg-white/20 px-4 py-1.5 text-sm font-medium text-primary-foreground
-                    backdrop-blur-sm
-                  `}
-                >
-                  {firstPost.category.name}
-                </span>
-              )}
-              <h2
-                className={`
-                  mb-3 line-clamp-2 text-2xl font-bold text-primary-foreground
-                  md:text-3xl
-                  lg:text-4xl
-                `}
-              >
-                {firstPost.title}
-              </h2>
+              {formatSimpleDate(new Date(firstPost.createdAt))}
+              {firstPost.category && ` · ${firstPost.category.name}`}
+            </div>
+            <h2
+              className={`
+                mb-3 font-bold transition-colors
+                group-hover:text-[var(--primary)]
+              `}
+              style={{
+                fontSize: "1.35rem",
+                letterSpacing: "-0.02em",
+                color: "var(--foreground)",
+                lineHeight: 1.3,
+              }}
+            >
+              {firstPost.title}
+            </h2>
+            {firstPost.description && (
               <p
-                className={`
-                  mb-4 line-clamp-2 max-w-2xl text-sm text-primary-foreground/80
-                  md:text-base
-                `}
+                className="mb-4 line-clamp-2"
+                style={{ fontSize: "0.95rem", color: "var(--foreground-muted)" }}
               >
                 {firstPost.description}
               </p>
-              <div
-                className={`
-                  flex items-center gap-4 text-xs text-primary-foreground/60
-                  md:text-sm
-                `}
-              >
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
-                  {formatSimpleDate(new Date(firstPost.createdAt))}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4" />
-                  {Math.max(1, Math.ceil(firstPost.content.length / 300))} 分钟阅读
-                </span>
-              </div>
-            </div>
-            {/* 悬浮箭头 */}
+            )}
             <div
               className={`
-                absolute top-6 right-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/10
-                text-primary-foreground opacity-0 backdrop-blur-sm transition-all duration-300
-                group-hover:opacity-100
+                flex items-center gap-1 transition-all duration-200
+                group-hover:gap-2
               `}
+              style={{ fontSize: "0.85rem", color: "var(--primary)" }}
             >
-              <ArrowRight className="h-5 w-5" />
+              <span>阅读全文</span>
+              <ArrowRight className="h-3.5 w-3.5" />
             </div>
-          </Card>
-        </Link>
+          </div>
+        </div>
+      </Link>
 
-        {/* 其他文章 - 大卡片网格 */}
-        <div
-          className={`
-            grid gap-6
-            sm:grid-cols-2
-            lg:grid-cols-3
-          `}
-        >
+      {/* Recent posts rows */}
+      {restPosts.length > 0 && (
+        <div>
           {restPosts.map((post) => (
-            <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-              <Card
+            <Link
+              key={post.id}
+              href={`/blog/${post.slug}`}
+              className="group relative flex items-center gap-6 px-4 py-5 transition-all duration-200"
+              style={{
+                borderBottom: "1px solid var(--border-subtle)",
+                textDecoration: "none",
+              }}
+            >
+              {/* Left bar */}
+              <div
                 className={`
-                  flex h-full flex-col overflow-hidden border-0 bg-muted/50 p-0 transition-all duration-300
-                  hover:bg-accent hover:shadow-xl
+                  blog-row-bar
+                  group-hover:[transform:scaleY(1)]
                 `}
+                style={{ transform: "scaleY(0)" }}
+              />
+              {/* Date */}
+              <span
+                className={`
+                  hidden shrink-0
+                  md:block
+                `}
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  color: "var(--foreground-subtle)",
+                  minWidth: "70px",
+                }}
               >
-                {post.cover ? (
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image
-                      src={post.cover}
-                      alt={post.title}
-                      fill
-                      className={`
-                        object-cover transition-transform duration-500
-                        group-hover:scale-105
-                      `}
-                    />
-                  </div>
-                ) : (
-                  <div className="aspect-[16/10] bg-gradient-to-br from-accent to-muted" />
-                )}
-                <div className={`
-                  flex flex-1 flex-col gap-3 p-5
-                  md:p-6
-                `}>
-                  {post.category && (
-                    <span
-                      className={`
-                        inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium
-                        text-primary
-                      `}
-                    >
-                      {post.category.name}
-                    </span>
-                  )}
-                  <h3
-                    className={`
-                      line-clamp-2 text-lg font-bold text-foreground
-                      group-hover:text-primary
-                      md:text-xl
-                    `}
-                  >
-                    {post.title}
-                  </h3>
-                  <p className="line-clamp-2 flex-1 text-sm text-muted-foreground">
-                    {post.description}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      {formatSimpleDate(new Date(post.createdAt))}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3.5 w-3.5" />
-                      {Math.max(1, Math.ceil(post.content.length / 300))} 分钟
-                    </span>
-                  </div>
+                {formatSimpleDate(new Date(post.createdAt))}
+              </span>
+              {/* Title + excerpt */}
+              <div className="min-w-0 flex-1">
+                <div
+                  className={`
+                    mb-1 font-medium transition-colors
+                    group-hover:text-[var(--primary)]
+                  `}
+                  style={{ fontSize: "1rem", color: "var(--foreground)" }}
+                >
+                  {post.title}
                 </div>
-              </Card>
+                {post.description && (
+                  <div
+                    className="line-clamp-1"
+                    style={{ fontSize: "0.85rem", color: "var(--foreground-muted)" }}
+                  >
+                    {post.description}
+                  </div>
+                )}
+              </div>
+              {/* Arrow */}
+              <ArrowRight
+                className={`
+                  h-4 w-4 shrink-0 transition-transform duration-200
+                  group-hover:translate-x-[3px]
+                `}
+                style={{ color: "var(--foreground-subtle)" }}
+              />
             </Link>
           ))}
         </div>
-      </div>
+      )}
     </section>
   );
 }
 
-// 分类导航 - Apple 大胆风格
-async function CategoryNav() {
+// Categories section
+async function CategoriesSection() {
   const result = await getCategoriesAction({ page: 1, pageSize: 12 });
 
   if (!result.success || !result.data?.lists?.length) {
@@ -317,114 +319,90 @@ async function CategoryNav() {
   const categories = result.data.lists;
 
   return (
-    <section
-      className={`
-        py-20
-        md:py-32
-      `}
-    >
-      <div className="mx-auto max-w-5xl px-4">
-        {/* 标题 */}
-        <div
-          className={`
-            mb-12 text-center
-            md:mb-16
-          `}
-        >
-          <h2
+    <section className="mx-auto max-w-5xl px-6 py-12">
+      <SectionLabel>探索分类</SectionLabel>
+      <div className="flex flex-wrap gap-3">
+        {categories.map((category) => (
+          <Link
+            key={category.id}
+            href={`/blog?categoryId=${category.id}`}
             className={`
-              mb-4 text-4xl font-bold tracking-tight text-foreground
-              md:text-5xl
+              transition-all duration-200
+              hover:border-[var(--primary)] hover:text-[var(--primary)]
             `}
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              background: "var(--tag-bg)",
+              color: "var(--tag-fg)",
+              border: "1px solid var(--tag-border)",
+              borderRadius: "0.375rem",
+              padding: "0.35rem 0.75rem",
+              textDecoration: "none",
+            }}
           >
-            探索分类
-          </h2>
-          <p className="text-lg text-muted-foreground">按主题浏览文章</p>
-        </div>
-
-        {/* 分类网格 */}
-        <div className="flex flex-wrap justify-center gap-4">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/blog?categoryId=${category.id}`}
-              className="group"
-            >
-              <div
-                className={`
-                  flex items-center gap-3 rounded-full border border-border bg-muted px-6 py-3 text-base font-medium
-                  text-foreground transition-all duration-300
-                  group-hover:border-primary/30 group-hover:bg-primary group-hover:text-primary-foreground
-                `}
-              >
-                <span>{category.name}</span>
-                <span
-                  className={`
-                    rounded-full bg-foreground/10 px-2.5 py-0.5 text-sm
-                    group-hover:bg-white/20
-                  `}
-                >
-                  {category.blogCount}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+            {category.name}
+            <span className="ml-2 opacity-60">{category.blogCount}</span>
+          </Link>
+        ))}
       </div>
     </section>
   );
 }
 
-// 底部 CTA - Apple 大胆风格
+// Bottom CTA
 function BottomCTA() {
   return (
-    <section
-      className={`
-        relative mb-20 overflow-hidden rounded-3xl bg-gradient-to-br from-primary/5 via-muted to-primary/5 py-20
-        md:py-28
-      `}
-    >
-      {/* 装饰 */}
+    <section className="mx-auto max-w-5xl px-6 py-24">
       <div
-        className={`
-          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
-        `}
-      />
-      <div
-        className={`
-          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-primary/10 blur-3xl
-        `}
-      />
-
-      <div className="relative mx-auto max-w-3xl px-6 text-center">
-        <h2
-          className={`
-            mb-6 text-3xl font-bold text-foreground
-            md:text-4xl
-          `}
-        >
-          发现更多精彩内容
-        </h2>
-        <p
-          className={`
-            mx-auto mb-10 max-w-md text-lg text-muted-foreground
-            md:text-xl
-          `}
-        >
-          探索技术文章、学习笔记和项目分享
-        </p>
-        <Link
-          href="/blog"
-          className={`
-            inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-medium
-            text-primary-foreground shadow-lg transition-all duration-300
-            hover:bg-primary/90
-            active:scale-[0.98]
-          `}
-        >
-          浏览全部文章
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        className="relative overflow-hidden px-8 py-16 text-center"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, var(--primary-glow) 0%, var(--background-elevated) 100%)",
+          border: "1px solid var(--border)",
+          borderRadius: "0.75rem",
+        }}
+      >
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 80% at 50% 50%, var(--primary-glow), transparent)",
+          }}
+        />
+        <div className="relative">
+          <h2
+            className="mb-4 font-bold"
+            style={{
+              fontSize: "clamp(1.5rem, 3vw, 2rem)",
+              letterSpacing: "-0.03em",
+              color: "var(--foreground)",
+            }}
+          >
+            发现更多精彩内容
+          </h2>
+          <p
+            className="mx-auto mb-8 max-w-md"
+            style={{ color: "var(--foreground-muted)", fontSize: "1rem" }}
+          >
+            探索技术文章、学习笔记和项目分享
+          </p>
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 transition-all duration-300"
+            style={{
+              background: "var(--primary)",
+              color: "var(--primary-foreground)",
+              padding: "0.75rem 1.75rem",
+              borderRadius: "0.5rem",
+              fontSize: "0.95rem",
+              fontWeight: 600,
+            }}
+          >
+            浏览全部文章
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -432,20 +410,11 @@ function BottomCTA() {
 
 export default async function HomePage() {
   return (
-    <div className="mx-auto max-w-5xl px-4">
-      {/* Hero - 全屏大胆设计 */}
+    <div>
       <Hero />
-
-      {/* 分隔线 */}
-      <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
-
-      {/* 精选文章 */}
-      <FeaturedPosts />
-
-      {/* 分类导航 */}
-      <CategoryNav />
-
-      {/* 底部 CTA */}
+      <div style={{ height: "1px", background: "linear-gradient(to right, transparent, var(--border-subtle), transparent)" }} />
+      <FeaturedPost />
+      <CategoriesSection />
       <BottomCTA />
     </div>
   );

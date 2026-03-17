@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Github, Loader2, Mail, Sparkles } from "lucide-react";
+import { Github, Loader2, Mail, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,117 +60,89 @@ export default function LoginPage() {
         toast.success("登录成功");
       }
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "操作失败";
+      const message = error instanceof Error ? error.message : "操作失败";
       toast.error(message);
       setLoading(false);
     }
   };
 
   return (
-    <main className="bg-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-20">
-      {/* Dynamic Gradient Orbs - Apple Liquid Style */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {/* Primary Orb - Blue */}
+    <main className="relative flex min-h-[calc(100vh-120px)] items-center justify-center px-4 py-20">
+      {/* Purple radial glow behind card */}
+      <div
+        className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        style={{ zIndex: 0 }}
+      >
         <div
-          className="absolute -top-40 -left-40 h-125 w-125 rounded-full opacity-60 blur-[80px]"
+          className="rounded-full blur-[80px]"
           style={{
-            background:
-              "radial-gradient(circle, rgba(0,113,227,0.4) 0%, rgba(0,113,227,0.1) 50%, transparent 70%)",
-          }}
-        />
-
-        {/* Secondary Orb - Purple/Pink */}
-        <div
-          className={`absolute -right-20 -bottom-20 h-100 w-100 rounded-full opacity-50 blur-[100px]`}
-          style={{
-            background:
-              "radial-gradient(circle, rgba(191,90,242,0.35) 0%, rgba(191,90,242,0.1) 50%, transparent 70%)",
-          }}
-        />
-
-        {/* Tertiary Orb - Teal */}
-        <div
-          className="absolute top-1/3 right-1/4 h-75 w-75 rounded-full opacity-40 blur-[60px]"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(52,199,89,0.3) 0%, rgba(52,199,89,0.05) 50%, transparent 70%)",
-          }}
-        />
-
-        {/* Accent Orb - Orange */}
-        <div
-          className="absolute bottom-1/4 left-1/3 h-50 w-50 rounded-full opacity-30 blur-[50px]"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(255,149,0,0.3) 0%, rgba(255,149,0,0.05) 50%, transparent 70%)",
+            width: "400px",
+            height: "300px",
+            background: "var(--primary-glow)",
+            opacity: 0.8,
           }}
         />
       </div>
 
-      {/* Subtle Noise Texture Overlay */}
+      {/* Card */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.015]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
-
-      {/* Main Content */}
-      <div className="relative z-10 w-full max-w-105">
-        {/* Header Section */}
-        <div className="mb-10 text-center">
-          {/* Badge */}
+        className="relative z-10 w-full"
+        style={{ maxWidth: "420px" }}
+      >
+        {/* Logo header */}
+        <div className="mb-8 text-center">
           <div
-            className={`mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 backdrop-blur-sm`}
-            style={{ animationDelay: "100ms" }}
+            className="mb-6 inline-flex items-center gap-2"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "1rem",
+              fontWeight: 500,
+              letterSpacing: "-0.02em",
+              color: "var(--foreground)",
+            }}
           >
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs font-medium tracking-wide text-primary">
-              安全认证
-            </span>
+            <span>付小晨</span>
+            <span className="logo-dot" />
           </div>
-
-          {/* Main Title - Bold Typography */}
           <h1
-            className={`
-              text-4xl font-bold tracking-tight text-foreground
-              sm:text-5xl
-            `}
-            style={{ animationDelay: "200ms" }}
+            className="mb-2 font-bold"
+            style={{
+              fontSize: "1.75rem",
+              letterSpacing: "-0.03em",
+              color: "var(--foreground)",
+            }}
           >
             {isSignUp ? "创建账号" : "欢迎回来"}
           </h1>
-
-          {/* Subtitle */}
           <p
-            className="mt-3 text-base text-muted-foreground"
-            style={{ animationDelay: "300ms" }}
+            style={{
+              fontSize: "0.875rem",
+              color: "var(--foreground-muted)",
+            }}
           >
-            {isSignUp
-              ? "注册以开始使用管理系统"
-              : "登录以访问您的管理控制台"}
+            {isSignUp ? "注册以开始使用管理系统" : "登录以访问您的管理控制台"}
           </p>
         </div>
 
-        {/* Glass Card */}
+        {/* Card body */}
         <div
-          className={`
-            animate-fade-in-up rounded-3xl border border-white/10 bg-white/80 p-8 shadow-2xl shadow-black/5
-            backdrop-blur-xl
-            dark:border-white/5 dark:bg-white/5 dark:shadow-black/20
-          `}
-          style={{ animationDelay: "400ms" }}
+          className="p-8"
+          style={{
+            background: "var(--background-elevated)",
+            border: "1px solid var(--border)",
+            borderRadius: "0.75rem",
+          }}
         >
-          <div className="space-y-6">
+          <div className="space-y-5">
             {/* Form */}
             <form onSubmit={handleEmailSignIn} className="space-y-4">
-              {/* Name Field - Only for Sign Up */}
+              {/* Name field - only for sign up */}
               <div
-                className={`
-                  grid transition-all duration-500 ease-in-out
-                  ${isSignUp ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
-                `}
+                className="grid transition-all duration-500 ease-in-out"
+                style={{
+                  gridTemplateRows: isSignUp ? "1fr" : "0fr",
+                  opacity: isSignUp ? 1 : 0,
+                }}
               >
                 <div className="overflow-hidden">
                   <div className="pb-4">
@@ -179,75 +151,77 @@ export default function LoginPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required={isSignUp}
-                      className={`
-                        h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
-                        duration-200
-                        placeholder:text-muted-foreground
-                        focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
-                      `}
+                      className="h-11 transition-all duration-200"
+                      style={{
+                        background: "var(--background-subtle)",
+                        border: "1px solid var(--border)",
+                        borderRadius: "0.5rem",
+                        color: "var(--foreground)",
+                      }}
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Email Field */}
-              <div>
-                <Input
-                  type="email"
-                  placeholder="电子邮箱"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className={`
-                    h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
-                    duration-200
-                    placeholder:text-muted-foreground
-                    focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
-                  `}
-                />
-              </div>
+              {/* Email */}
+              <Input
+                type="email"
+                placeholder="电子邮箱"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className={`
+                  h-11 transition-all duration-200
+                  focus:ring-2 focus:ring-[var(--primary)]
+                `}
+                style={{
+                  background: "var(--background-subtle)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "0.5rem",
+                  color: "var(--foreground)",
+                }}
+              />
 
-              {/* Password Field */}
-              <div>
-                <Input
-                  type="password"
-                  placeholder="密码"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className={`
-                    h-12 rounded-xl border-border/50 bg-muted/50 text-foreground backdrop-blur-sm transition-all
-                    duration-200
-                    placeholder:text-muted-foreground
-                    focus:border-primary focus:bg-muted focus:ring-4 focus:ring-primary/10
-                  `}
-                />
-              </div>
+              {/* Password */}
+              <Input
+                type="password"
+                placeholder="密码"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={`
+                  h-11 transition-all duration-200
+                  focus:ring-2 focus:ring-[var(--primary)]
+                `}
+                style={{
+                  background: "var(--background-subtle)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "0.5rem",
+                  color: "var(--foreground)",
+                }}
+              />
 
-              {/* Submit Button */}
+              {/* Submit button */}
               <Button
                 type="submit"
                 disabled={loading}
-                className={`
-                  group relative h-12 w-full overflow-hidden rounded-xl bg-primary text-base font-medium
-                  text-primary-foreground shadow-lg shadow-primary/25 transition-all duration-300
-                  hover:-translate-y-0.5 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30
-                  active:scale-[0.98]
-                `}
+                className="h-11 w-full font-semibold transition-all duration-300"
+                style={{
+                  background: "var(--primary)",
+                  color: "var(--primary-foreground)",
+                  borderRadius: "0.5rem",
+                  fontSize: "0.9rem",
+                  border: "none",
+                }}
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2">
                   {loading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <>
-                      <Mail className="h-5 w-5" />
+                      <Mail className="h-4 w-4" />
                       <span>{isSignUp ? "创建账号" : "登录"}</span>
-                      <ArrowRight
-                        className={`
-                          h-4 w-4 transition-transform duration-200
-                          group-hover:translate-x-1
-                        `}
-                      />
+                      <ArrowRight className="h-4 w-4" />
                     </>
                   )}
                 </span>
@@ -255,62 +229,76 @@ export default function LoginPage() {
             </form>
 
             {/* Divider */}
-            <div className="relative flex items-center gap-4 py-2">
-              <div className="flex-1 border-t border-border/50" />
-              <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            <div className="relative flex items-center gap-4 py-1">
+              <div
+                className="flex-1"
+                style={{ borderTop: "1px solid var(--border-subtle)" }}
+              />
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.65rem",
+                  color: "var(--foreground-subtle)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
                 或
               </span>
-              <div className="flex-1 border-t border-border/50" />
+              <div
+                className="flex-1"
+                style={{ borderTop: "1px solid var(--border-subtle)" }}
+              />
             </div>
 
-            {/* Social Login */}
+            {/* GitHub button */}
             <Button
               type="button"
               variant="outline"
-              className={`
-                group h-12 w-full rounded-xl border-border/50 bg-muted/30 text-foreground backdrop-blur-sm
-                transition-all duration-300
-                hover:border-primary/50 hover:bg-accent hover:shadow-lg
-                active:scale-[0.98]
-              `}
+              className="group h-11 w-full transition-all duration-300"
+              style={{
+                background: "transparent",
+                border: "1px solid var(--border)",
+                color: "var(--foreground-muted)",
+                borderRadius: "0.5rem",
+              }}
               onClick={handleSocialSignIn}
               disabled={loading}
             >
               <span className="flex items-center justify-center gap-3">
                 {loading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <>
-                    <Github
-                      className={`
-                        h-5 w-5 transition-transform duration-200
-                        group-hover:scale-110
-                      `}
-                    />
-                    <span className="font-medium">使用 GitHub 继续</span>
+                    <Github className={`
+                      h-4 w-4 transition-transform duration-200
+                      group-hover:scale-110
+                    `} />
+                    <span
+                      className="font-medium"
+                      style={{ fontFamily: "var(--font-mono)", fontSize: "0.82rem" }}
+                    >
+                      使用 GitHub 继续
+                    </span>
                   </>
                 )}
               </span>
             </Button>
 
-            {/* Toggle Sign Up / Sign In */}
-            <div className="pt-2 text-center">
+            {/* Toggle sign up / sign in */}
+            <div className="pt-1 text-center">
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className={`
-                  group inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors
-                  duration-200
-                  hover:text-primary
-                `}
+                className="inline-flex items-center gap-1.5 transition-colors duration-200"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  color: "var(--foreground-subtle)",
+                }}
               >
                 <span>{isSignUp ? "已有账号？" : "还没有账号？"}</span>
-                <span
-                  className={`
-                    text-primary transition-transform duration-200
-                    group-hover:translate-x-0.5
-                  `}
-                >
+                <span style={{ color: "var(--primary)" }}>
                   {isSignUp ? "立即登录" : "立即注册"}
                 </span>
               </button>
@@ -318,10 +306,14 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer disclaimer */}
         <p
-          className="mt-8 text-center text-xs text-muted-foreground"
-          style={{ animationDelay: "500ms" }}
+          className="mt-6 text-center"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            color: "var(--foreground-subtle)",
+          }}
         >
           继续即表示您同意我们的服务条款和隐私政策
         </p>

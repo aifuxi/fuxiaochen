@@ -22,7 +22,7 @@ interface BlogPageProps {
 
 const DEFAULT_PAGE_SIZE = 10;
 
-// Hero 区域 - Apple 大胆风格
+// Hero
 function Hero({
   categories,
   tags,
@@ -39,52 +39,68 @@ function Hero({
   };
 }) {
   return (
-    <section
-      className={`
-        relative flex min-h-[50vh] flex-col items-center justify-center overflow-hidden py-20
-        md:min-h-[60vh] md:py-28
-      `}
-    >
-      {/* 动态渐变背景 */}
+    <section className={`
+      relative px-6 py-20
+      md:py-28
+    `}>
+      {/* Background glow */}
       <div
         className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-primary/10 via-transparent to-transparent
+          pointer-events-none absolute -top-40 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full blur-3xl
         `}
-      />
-      <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-primary/5 via-primary/5 to-transparent blur-3xl
-        `}
+        style={{ background: "var(--primary-glow)" }}
       />
 
-      {/* 内容 */}
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-4">
-        {/* 标题 */}
-        <div className="mb-10 text-center">
-          <h1
-            className={`
-              mb-4 text-5xl font-bold tracking-tight text-foreground
-              md:text-7xl
-            `}
-          >
-            Blog
-          </h1>
-          <p className={`
-            text-lg text-muted-foreground
-            md:text-xl
-          `}>
-            探索技术文章与学习笔记
-          </p>
+      <div className="relative z-10 mx-auto w-full max-w-4xl">
+        {/* Eyebrow */}
+        <div
+          className="mb-4"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.72rem",
+            color: "var(--foreground-subtle)",
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+            animation: "fade-up 0.5s ease forwards",
+          }}
+        >
+          EXPLORATION &amp; ARTICLES
         </div>
 
-        {/* 筛选栏 */}
-        <BlogFilterBar
-          categories={categories}
-          tags={tags}
-          currentFilters={currentFilters}
-        />
+        {/* Title */}
+        <h1
+          className="mb-4 font-bold"
+          style={{
+            fontSize: "clamp(2rem, 5vw, 3.25rem)",
+            letterSpacing: "-0.04em",
+            lineHeight: 1.1,
+            color: "var(--foreground)",
+            animation: "fade-up 0.5s ease 0.1s both",
+          }}
+        >
+          探索所有文章
+        </h1>
+
+        {/* Description */}
+        <p
+          className="mb-10"
+          style={{
+            fontSize: "1rem",
+            color: "var(--foreground-muted)",
+            animation: "fade-up 0.5s ease 0.2s both",
+          }}
+        >
+          探索技术文章、前端开发与学习笔记
+        </p>
+
+        {/* Filter Bar */}
+        <div style={{ animation: "fade-up 0.5s ease 0.3s both" }}>
+          <BlogFilterBar
+            categories={categories}
+            tags={tags}
+            currentFilters={currentFilters}
+          />
+        </div>
       </div>
     </section>
   );
@@ -110,8 +126,7 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
-  console.log(blogsResult.success,categoriesResult.success, tagsResult.success);
-  
+  console.log(blogsResult.success, categoriesResult.success, tagsResult.success);
 
   if (!blogsResult.success || !categoriesResult.success || !tagsResult.success) {
     throw new Error("获取数据失败");
@@ -141,8 +156,8 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
         }}
       />
 
-      {/* 博客列表 */}
-      <div className="mx-auto max-w-4xl px-4 pb-16">
+      {/* Blog list */}
+      <div className="mx-auto max-w-4xl px-6 pb-16">
         <BlogList
           blogs={blogs.lists || []}
           total={blogs.total}
@@ -160,7 +175,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     <Suspense
       fallback={
         <div className="flex h-[60vh] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="h-8 w-8 animate-spin" style={{ color: "var(--foreground-muted)" }} />
         </div>
       }
     >

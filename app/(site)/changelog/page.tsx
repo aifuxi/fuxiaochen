@@ -14,9 +14,7 @@ import { formatSimpleDate } from "@/lib/time";
 
 const PAGE_SIZE = 10;
 
-const fetcher = async (
-  params: ChangelogListReq,
-): Promise<ChangelogListResp> => {
+const fetcher = async (params: ChangelogListReq): Promise<ChangelogListResp> => {
   const res = await getChangelogsAction(params);
   if (res.success && res.data) {
     return res.data;
@@ -41,49 +39,86 @@ function ChangelogItem({
   const isCurrent = isCurrentYear(displayDate);
 
   return (
-    <div className="relative">
-      {/* 时间轴线 - 从圆点中心向下延伸 */}
-      {!isLast && (
+    <div className="relative flex gap-6">
+      {/* Timeline column */}
+      <div className="relative flex flex-col items-center" style={{ width: "20px", flexShrink: 0 }}>
+        {/* Circle dot */}
         <div
-          className={`
-            absolute top-3 bottom-0 left-4 w-px bg-border
-            md:left-6
-          `}
+          className="relative z-10 mt-1"
+          style={{
+            width: "16px",
+            height: "16px",
+            borderRadius: "50%",
+            background: isCurrent ? "var(--primary)" : "var(--background-elevated)",
+            border: isCurrent ? "none" : "2px solid var(--border)",
+            boxShadow: isCurrent ? "0 0 10px var(--primary)" : "none",
+            flexShrink: 0,
+          }}
         />
-      )}
-
-      {/* 圆点 - 垂直居中于时间轴线起点 */}
-      <div
-        className={`
-          absolute top-3 left-4 flex h-3 w-3 -translate-x-1/2 -translate-y-3 items-center justify-center
-          md:left-6
-        `}
-      >
-        {isCurrent ? (
-          <div className="h-3 w-3 rounded-full bg-primary ring-4 ring-primary/20" />
-        ) : (
-          <div className="h-2.5 w-2.5 rounded-full border border-border bg-accent" />
+        {/* Vertical line */}
+        {!isLast && (
+          <div
+            className="mt-2 flex-1"
+            style={{
+              width: "2px",
+              background: "var(--border-subtle)",
+              minHeight: "2rem",
+            }}
+          />
         )}
       </div>
 
-      {/* 内容 */}
+      {/* Content */}
       <div
-        className={`
-          pb-12 pl-10
-          md:pl-14
-        `}
+        className="group flex-1 pb-10"
+        style={{ minWidth: 0 }}
       >
-        <div className="mb-3 flex items-center gap-2">
-          <span className="text-lg font-semibold text-foreground">
+        {/* Version badge + date */}
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.75rem",
+              background: "var(--tag-bg)",
+              color: "var(--tag-fg)",
+              border: "1px solid var(--tag-border)",
+              borderRadius: "0.375rem",
+              padding: "0.2rem 0.6rem",
+              fontWeight: 500,
+            }}
+          >
             {changelog.version}
           </span>
-          <span className="text-muted-foreground">—</span>
-          <time className="text-sm text-muted-foreground">
+          <time
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--foreground-subtle)",
+            }}
+          >
             {formatSimpleDate(displayDate)}
           </time>
         </div>
-        <div className="text-muted-foreground">
-          <BlogContent content={changelog.content} />
+
+        {/* Changelog card */}
+        <div
+          className="rounded-[0.5rem] p-5 transition-all duration-300"
+          style={{
+            background: "var(--background-subtle)",
+            border: "1px solid var(--border)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLDivElement).style.transform = "translateX(4px)";
+            (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border-hover)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.transform = "translateX(0)";
+            (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)";
+          }}
+        >
+          <div style={{ color: "var(--foreground-muted)", fontSize: "0.9rem" }}>
+            <BlogContent content={changelog.content} />
+          </div>
         </div>
       </div>
     </div>
@@ -134,39 +169,79 @@ export default function ChangelogPage() {
   }, [loadMore]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      {/* 标题区 */}
-      <div
-        className={`
-          py-16 text-center
-          md:py-24
-        `}
-      >
-        <h1
+    <div className="mx-auto max-w-3xl px-6 py-12">
+      {/* Hero */}
+      <div className={`
+        relative py-20
+        md:py-28
+      `}>
+        {/* Background glow */}
+        <div
           className={`
-            text-4xl font-bold tracking-tight text-foreground
-            md:text-5xl
+            pointer-events-none absolute -top-20 left-1/2 h-[300px] w-[500px] -translate-x-1/2 rounded-full blur-3xl
           `}
-        >
-          Changelog
-        </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          记录产品的每一次迭代与改进
-        </p>
+          style={{ background: "var(--primary-glow)" }}
+        />
+
+        <div className="relative text-center">
+          {/* Eyebrow */}
+          <div
+            className="mb-4"
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.72rem",
+              color: "var(--foreground-subtle)",
+              textTransform: "uppercase",
+              letterSpacing: "0.12em",
+            }}
+          >
+            CHANGELOG
+          </div>
+
+          {/* Title */}
+          <h1
+            className="mb-4 font-bold"
+            style={{
+              fontSize: "clamp(2rem, 5vw, 3rem)",
+              letterSpacing: "-0.04em",
+              lineHeight: 1.1,
+              color: "var(--foreground)",
+            }}
+          >
+            更新记录
+          </h1>
+
+          {/* Subtitle */}
+          <p
+            style={{
+              fontSize: "1rem",
+              color: "var(--foreground-muted)",
+            }}
+          >
+            记录产品的每一次迭代与改进
+          </p>
+        </div>
       </div>
 
-      {/* 内容区 */}
+      {/* Timeline content */}
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2
+            className="h-8 w-8 animate-spin"
+            style={{ color: "var(--foreground-muted)" }}
+          />
         </div>
       ) : error ? (
         <div className="flex h-48 items-center justify-center">
-          <span className="text-sm text-destructive">加载失败，请稍后重试</span>
+          <span style={{ fontSize: "0.875rem", color: "var(--destructive)" }}>
+            加载失败，请稍后重试
+          </span>
         </div>
       ) : isEmpty ? (
         <div className="flex h-48 items-center justify-center">
-          <span className="text-sm text-muted-foreground">暂无更新日志</span>
+          <span style={{ fontSize: "0.875rem", color: "var(--foreground-muted)" }}>
+            暂无更新日志
+          </span>
         </div>
       ) : (
         <div className="relative">
@@ -178,13 +253,24 @@ export default function ChangelogPage() {
             />
           ))}
 
-          {/* 加载更多指示器 */}
+          {/* Load more indicator */}
           <div ref={loaderRef} className="flex justify-center py-4">
             {isValidating && (
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              <Loader2
+                className="h-6 w-6 animate-spin"
+                style={{ color: "var(--foreground-muted)" }}
+              />
             )}
             {!hasMore && changelogs.length > 0 && (
-              <span className="text-sm text-muted-foreground">已加载全部</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.72rem",
+                  color: "var(--foreground-subtle)",
+                }}
+              >
+                已加载全部
+              </span>
             )}
           </div>
         </div>
