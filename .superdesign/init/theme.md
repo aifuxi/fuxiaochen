@@ -1,0 +1,340 @@
+# Theme & Design System
+
+---
+
+## Framework
+
+- **Tailwind CSS 4** — CSS-first configuration via `@import "tailwindcss"`
+- **shadcn/ui** — new-york style, Zinc color preset
+- **Color format**: oklch for all design tokens
+- **Dark mode**: `class` strategy via next-themes
+- **Animations**: tw-animate-css
+
+---
+
+## `styles/global.css` — Full Contents
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "@iconify/tailwind4" {
+  prefixes: skill-icons;
+}
+@plugin "@tailwindcss/typography";
+
+@import "bytemd/dist/index.css";
+@import "highlight.js/styles/atom-one-dark.css";
+@import "./bytemd.css";
+
+/* Base Variables & Theme Setup - shadcn/ui Zinc */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.21 0.006 285.885);
+  --radius: 0.5rem;
+
+  /* Syntax Highlighting - Light */
+  --hljs-color: #24292f;
+  --hljs-bg: #f6f8fa;
+  --hljs-comment: #6e7781;
+  --hljs-keyword: #cf222e;
+  --hljs-section: #0550ae;
+  --hljs-literal: #953800;
+  --hljs-string: #0a3069;
+  --hljs-title: #8250df;
+  --hljs-variable: #24292f;
+  --hljs-built_in: #0550ae;
+  --hljs-attr: #24292f;
+  --hljs-subst: #24292f;
+  --hljs-symbol: #cf222e;
+  --hljs-class: #953800;
+  --hljs-function: #8250df;
+}
+
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+
+  /* Syntax Highlighting - Dark */
+  --hljs-color: #c9d1d9;
+  --hljs-bg: #0d1117;
+  --hljs-comment: #8b949e;
+  --hljs-keyword: #ff7b72;
+  --hljs-section: #79c0ff;
+  --hljs-literal: #ffa657;
+  --hljs-string: #a5d6ff;
+  --hljs-title: #d2a8ff;
+  --hljs-variable: #c9d1d9;
+  --hljs-built_in: #79c0ff;
+  --hljs-attr: #c9d1d9;
+  --hljs-subst: #c9d1d9;
+  --hljs-symbol: #ff7b72;
+  --hljs-class: #ffa657;
+  --hljs-function: #d2a8ff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+/* Base Styles */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+}
+
+/* Custom Scrollbar */
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600;
+  }
+}
+
+/* Blog Typography */
+@utility blog-prose {
+  @apply prose prose-lg max-w-none;
+
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--muted-foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: var(--primary);
+  --tw-prose-bullets: var(--primary);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--primary);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--primary);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+
+  & pre {
+    @apply bg-muted rounded-xl border border-border p-4;
+  }
+
+  & blockquote {
+    @apply border-l-4 border-primary bg-muted/50 p-4 rounded-r-xl not-italic;
+  }
+
+  & img {
+    @apply rounded-xl shadow-sm;
+  }
+
+  & a {
+    @apply no-underline hover:underline transition-colors duration-200 font-medium;
+  }
+
+  & :not(pre) > code {
+    @apply px-1.5 py-0.5 rounded-md text-sm font-mono bg-muted border border-border text-primary mx-0.5 align-middle;
+  }
+
+  & :not(pre) > code::before,
+  & :not(pre) > code::after {
+    content: none;
+  }
+
+  & pre code {
+    @apply bg-transparent border-none p-0;
+  }
+
+  & pre code::before,
+  & pre code::after {
+    content: none;
+  }
+
+  & h1, & h2, & h3, & h4 {
+    @apply scroll-m-20 tracking-tight;
+  }
+
+  & h1 {
+    @apply text-3xl font-bold lg:text-4xl mb-8;
+  }
+
+  & h2 {
+    @apply text-2xl font-semibold border-b border-border pb-2 mt-10 mb-6;
+  }
+
+  & h3 {
+    @apply text-xl font-semibold mt-8 mb-4;
+  }
+}
+
+/* Code Block Wrapper & Copy Button */
+@utility code-block-wrapper {
+  @apply relative;
+}
+
+@utility copy-code-btn {
+  @apply absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-muted text-muted-foreground opacity-0 transition-all duration-200 cursor-pointer;
+
+  .code-block-wrapper:hover & {
+    @apply opacity-100;
+  }
+
+  &:hover {
+    @apply bg-primary text-primary-foreground border-primary;
+  }
+
+  &.copied {
+    @apply border-primary text-primary bg-muted opacity-100;
+  }
+
+  & .check-icon { @apply hidden; }
+  &.copied .copy-icon { @apply hidden; }
+  &.copied .check-icon { @apply block; }
+}
+```
+
+---
+
+## Color Token Reference
+
+| Token | Light Value | Dark Value | Usage |
+|-------|-------------|------------|-------|
+| `background` | white | zinc-950 | Page background |
+| `foreground` | zinc-950 | white | Primary text |
+| `card` | white | zinc-900 | Card backgrounds |
+| `card-foreground` | zinc-950 | white | Card text |
+| `popover` | white | zinc-900 | Popover/dropdown bg |
+| `popover-foreground` | zinc-950 | white | Popover text |
+| `primary` | zinc-900 | white | Buttons, links, accents |
+| `primary-foreground` | white | zinc-900 | Text on primary bg |
+| `secondary` | zinc-100 | zinc-800 | Secondary buttons |
+| `secondary-foreground` | zinc-900 | white | Text on secondary |
+| `muted` | zinc-100 | zinc-800 | Subtle backgrounds |
+| `muted-foreground` | zinc-500 | zinc-400 | Subtle/secondary text |
+| `accent` | zinc-100 | zinc-800 | Hover states |
+| `accent-foreground` | zinc-900 | white | Text on accent |
+| `destructive` | red-500 | red-400 | Error/danger |
+| `destructive-foreground` | white | white | Text on destructive |
+| `border` | zinc-200 | white/10 | Borders |
+| `input` | zinc-200 | white/15 | Input borders |
+| `ring` | zinc-900 | zinc-500 | Focus rings |
+
+---
+
+## Border Radius
+
+```css
+--radius: 0.5rem;             /* Base = 8px */
+--radius-sm: 0.3rem;          /* 4.8px */
+--radius-md: 0.4rem;          /* 6.4px */
+--radius-lg: 0.5rem;          /* 8px */
+--radius-xl: 0.7rem;          /* 11.2px */
+```
+
+---
+
+## Typography
+
+- Font: system `var(--font-sans)` (no custom font loaded)
+- Body: antialiased, smooth
+- Blog content uses `blog-prose` utility class (prose-lg with shadcn token overrides)
+
+---
+
+## Design Language (observed patterns)
+
+- **Rounded elements**: Pills (`rounded-full`) for nav items, buttons, badges, category filters
+- **Glassmorphism**: `bg-background/80 backdrop-blur-xl` for header; `bg-white/80 backdrop-blur-xl` for login card
+- **Gradient orbs**: `radial-gradient` blobs as page section backgrounds (`blur-3xl`, `pointer-events-none absolute`)
+- **Decorative lines**: `h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent`
+- **Hover animations**: `-translate-y-0.5`, `scale-105`, `hover:shadow-xl`
+- **Active indicators**: bottom underline `h-0.5 rounded-full bg-primary` for nav
+- **Cards**: `rounded-xl border bg-card shadow-sm` (standard), `rounded-xl border border-border bg-muted` (glass variant)
+- **Section layout**: `mx-auto max-w-5xl px-4` or `max-w-6xl px-4`
+- **Spacing**: sections use `py-20 md:py-32`
+
+---
+
+## Tailwind Config
+
+No separate `tailwind.config.ts` — Tailwind CSS 4 uses CSS-first config exclusively via `styles/global.css`.
+
+The `@theme inline {}` block maps CSS variables to Tailwind utility classes.
+
+Plugins used:
+- `@tailwindcss/typography` — prose utilities
+- `@iconify/tailwind4` — skill-icons iconify set
+- `tw-animate-css` — additional animation utilities
