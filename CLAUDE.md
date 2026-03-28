@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 项目概述
+
+这是一个个人技术博客网站（付小晨的个人博客），展示前端开发技术探索与学习心得。
+
 ## 常用命令
 
 ### 开发
@@ -14,7 +18,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun lint:fix` - ESLint 检查并自动修复
 - `bun format` - Prettier 格式化代码
 
-
 ### 部署
 - `bun pm2:start` - 使用 PM2 启动应用
 - `bun pm2:stop` / `bun pm2:restart` - PM2 管理命令
@@ -25,11 +28,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 技术栈
 
-- **框架**: Next.js 16.1.1 (App Router) + React 19.2.3
+- **框架**: Next.js 16.2.1 (App Router) + React 19.2.4
 - **语言**: TypeScript 5.9.3（严格模式）
-- **数据库**: MySQL/MariaDB + Prisma ORM
-- **样式**: Tailwind CSS 4 + `@base-ui/react`(组件库文档：https://base-ui.com/llms.txt)
+- **样式**: Tailwind CSS 4 + `@base-ui/react` + shadcn 风格组件
+- **组件库文档**: https://base-ui.com/llms.txt
 - **包管理器**: bun
+
+## 目录结构
+
+```
+├── app/                    # Next.js App Router
+│   └── layout.tsx          # 根布局
+├── components/
+│   └── ui/                 # shadcn 风格 UI 组件（kebab-case 命名）
+├── constants/              # 站点元信息（邮箱、社交链接等）
+├── hooks/                  # React hooks
+├── lib/                    # 工具函数
+├── styles/
+│   └── global.css          # Tailwind 4 CSS 配置入口
+└── public/                 # 静态资源
+```
 
 ## 代码规范
 
@@ -38,42 +56,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 组件: `PascalCase` (如 `BlogList`)
 - 变量/函数: `lowerCamelCase` (如 `fetchBlogData`)
 
-### NiceModal 管理（重要）
-
-Dialog、Alert、Drawer 组件**必须**通过 NiceModal 统一管理，避免本地 `open` 状态造成状态分裂：
-
-```tsx
-// 定义组件
-export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
-  const modal = NiceModal.useModal();
-
-  return (
-    <Dialog open={modal.visible} onOpenChange={modal.remove}>
-      <DialogContent>
-        <Button onClick={() => modal.remove()}>取消</Button>
-      </DialogContent>
-    </Dialog>
-  );
-});
-
-// 使用组件
-NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
-```
-
-**禁止**：
-- 使用 `open`/`onOpenChange` 作为外部状态控制
-- 使用 `DialogTrigger` 直接触发
+### 类型导入
+- 类型定义必须使用 `type` 关键字: `import type { SomeType } from '...'`
+- 启用 `inline-type-imports` 风格修复
 
 ### ESLint 配置要点
-
-- 使用 flat config 格式
+- 使用 flat config 格式 (`eslint.config.mjs`)
 - 启用 TypeScript 项目服务 (`projectService: true`)
-- Tailwind CSS 类检查（`@/styles/global.css` 作为入口点）
+- Tailwind CSS 类检查通过 `@/styles/global.css` 入口
 - 文件命名强制 `KEBAB_CASE`
-- 类型导入使用 `type` 关键字 (`import type { ... }`)
-- 遇到 ESLint 问题时，可执行 `pnpm lint:fix` 尝试自动修复
+- 运行 `bun lint` 检查问题
 
-# Commit 规范
+## 样式系统
+
+### Tailwind CSS 4
+- 使用 CSS-based 配置（`@tailwindcss/postcss`）
+- 主题定义在 [styles/global.css](styles/global.css)
+- 支持 dark mode（通过 `.dark` 选择器）
+
+### shadcn 组件
+- 组件位于 [components/ui/](components/ui/)
+- 使用 `cn()` 工具函数合并类名
+- 组件接受 `className` prop 自定义样式
+
+## Commit 规范
 
 所有 commit 必须遵循 [Angular Conventional Commits](https://www.conventionalcommits.org/) 规范，**优先使用中文**描述。
 
@@ -101,3 +107,6 @@ docs(readme): 更新项目说明
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
+
+# currentDate
+Today's date is 2026-03-28.
