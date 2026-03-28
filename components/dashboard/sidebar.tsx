@@ -1,7 +1,5 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
   FileText,
@@ -12,8 +10,9 @@ import {
   BarChart3,
   Settings,
   Plus,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   {
@@ -34,18 +33,18 @@ const navItems = [
       { icon: Settings, label: "Settings", href: "#" },
     ],
   },
-]
+];
 
 interface SidebarProps {
-  className?: string
+  className?: string;
 }
 
 export function Sidebar({ className }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed top-[72px] bottom-0 left-0 z-90 w-[260px] overflow-y-auto border-r border-border bg-background",
-        className
+        "fixed top-0 bottom-0 left-0 z-90 w-[260px] overflow-y-auto border-r border-border bg-background",
+        className,
       )}
     >
       <div className="p-6">
@@ -94,11 +93,14 @@ export function Sidebar({ className }: SidebarProps) {
                         : `
                           text-muted
                           hover:bg-secondary hover:text-foreground
-                        `
+                        `,
                     )}
                   >
                     <item.icon
-                      className={cn("h-5 w-5", item.active ? "opacity-100" : "opacity-70")}
+                      className={cn(
+                        "h-5 w-5",
+                        item.active ? "opacity-100" : "opacity-70",
+                      )}
                     />
                     {item.label}
                   </a>
@@ -116,9 +118,12 @@ export function Sidebar({ className }: SidebarProps) {
           New Article
         </Button>
         <div className="flex items-center gap-3 rounded-lg bg-secondary p-3">
-          <div className={`
-            flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground
-          `}>
+          <div
+            className={`
+              flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-semibold
+              text-primary-foreground
+            `}
+          >
             SC
           </div>
           <div className="min-w-0 flex-1">
@@ -130,5 +135,5 @@ export function Sidebar({ className }: SidebarProps) {
         </div>
       </div>
     </aside>
-  )
+  );
 }

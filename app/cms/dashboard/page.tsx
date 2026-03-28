@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { motion } from "framer-motion";
 import {
   FileText,
@@ -19,8 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ActivityItem } from "@/components/dashboard/activity-item";
 import { ArticleItem } from "@/components/dashboard/article-item";
-import { Header } from "@/components/dashboard/header";
-import { Sidebar } from "@/components/dashboard/sidebar";
 import { StatsCard } from "@/components/dashboard/stats-card";
 
 const statsData = [
@@ -170,109 +167,38 @@ const activities = [
 ];
 
 export default function DashboardPage() {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Sidebar */}
-      <Sidebar />
+    <div>
+      {/* Page Header */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        className="mb-8"
+      >
+        <h1 className="mb-2 font-serif text-3xl font-semibold text-foreground">
+          Dashboard
+        </h1>
+        <p className="text-muted">
+          Welcome back, Sarah. Here&apos;s what&apos;s happening with your blog.
+        </p>
+      </motion.div>
 
-      {/* Header */}
-      <Header onMenuClick={() => setMobileMenuOpen(!mobileMenuOpen)} />
+      {/* Stats Grid */}
+      <div className="mb-8 grid grid-cols-4 gap-6">
+        {statsData.map((stat) => (
+          <StatsCard key={stat.label} {...stat} />
+        ))}
+      </div>
 
-      {/* Main Content */}
-      <main className="mt-18 ml-65 p-8">
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-8"
-        >
-          <h1 className="mb-2 font-serif text-3xl font-semibold text-foreground">
-            Dashboard
-          </h1>
-          <p className="text-muted">
-            Welcome back, Sarah. Here&apos;s what&apos;s happening with your
-            blog.
-          </p>
-        </motion.div>
-
-        {/* Stats Grid */}
-        <div className="mb-8 grid grid-cols-4 gap-6">
-          {statsData.map((stat) => (
-            <StatsCard key={stat.label} {...stat} />
-          ))}
-        </div>
-
-        {/* Dashboard Grid */}
-        <div className="mb-8 grid grid-cols-3 gap-6">
-          {/* Recent Articles */}
-          <Card className="col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Clock className="h-5 w-5 text-muted" />
-                Recent Articles
-              </CardTitle>
-              <Button variant="ghost" size="sm">
-                View All
-              </Button>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="divide-y divide-border">
-                {recentArticles.map((article) => (
-                  <ArticleItem key={article.title} {...article} />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Draft */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <PenSquare className="h-5 w-5 text-muted" />
-                Quick Draft
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form className="flex flex-col gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Title
-                  </label>
-                  <Input placeholder="Enter article title..." />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">
-                    Content
-                  </label>
-                  <Textarea
-                    placeholder="Write your thoughts..."
-                    className="min-h-25"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Button type="submit" className="w-full">
-                    <Send className="h-4 w-4" />
-                    Publish
-                  </Button>
-                  <Button type="button" variant="secondary" className="w-full">
-                    <Save className="h-4 w-4" />
-                    Save Draft
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Activity Feed */}
-        <Card>
+      {/* Dashboard Grid */}
+      <div className="mb-8 grid grid-cols-3 gap-6">
+        {/* Recent Articles */}
+        <Card className="col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Activity className="h-5 w-5 text-muted" />
-              Recent Activity
+              <Clock className="h-5 w-5 text-muted" />
+              Recent Articles
             </CardTitle>
             <Button variant="ghost" size="sm">
               View All
@@ -280,24 +206,72 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y divide-border">
-              {activities.map((activity) => (
-                <ActivityItem key={activity.time} {...activity} />
+              {recentArticles.map((article) => (
+                <ArticleItem key={article.title} {...article} />
               ))}
             </div>
           </CardContent>
         </Card>
-      </main>
 
-      {/* Mobile Sidebar Overlay */}
-      {mobileMenuOpen && (
-        <div
-          className={`
-            fixed inset-0 z-99 bg-black/50 backdrop-blur-sm
-            lg:hidden
-          `}
-          onClick={() => setMobileMenuOpen(false)}
-        />
-      )}
+        {/* Quick Draft */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <PenSquare className="h-5 w-5 text-muted" />
+              Quick Draft
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="flex flex-col gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Title
+                </label>
+                <Input placeholder="Enter article title..." />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Content
+                </label>
+                <Textarea
+                  placeholder="Write your thoughts..."
+                  className="min-h-25"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button type="submit" className="w-full">
+                  <Send className="h-4 w-4" />
+                  Publish
+                </Button>
+                <Button type="button" variant="secondary" className="w-full">
+                  <Save className="h-4 w-4" />
+                  Save Draft
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Activity Feed */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Activity className="h-5 w-5 text-muted" />
+            Recent Activity
+          </CardTitle>
+          <Button variant="ghost" size="sm">
+            View All
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="divide-y divide-border">
+            {activities.map((activity) => (
+              <ActivityItem key={activity.time} {...activity} />
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
