@@ -18,10 +18,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun lint:fix` - ESLint 检查并自动修复
 - `bun format` - Prettier 格式化代码
 
-### 部署
-- `bun pm2:start` - 使用 PM2 启动应用
-- `bun pm2:stop` / `bun pm2:restart` - PM2 管理命令
-
 ### Git 提交
 - `bun commit` - 使用 Commitizen 提交（遵循 Conventional Commits）
 - `bun commit:retry` - 重试失败的提交
@@ -33,19 +29,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **样式**: Tailwind CSS 4 + `@base-ui/react` + shadcn 风格组件
 - **组件库文档**: https://base-ui.com/llms.txt
 - **包管理器**: bun
+- **设计系统**: Chen Serif（深色模式 + 翡翠绿强调色）
+
+### 字体系统
+
+项目使用三种字体变量：
+- `--font-sans` (Inter) - 正文
+- `--font-mono` (Space Grotesk) - 技术标签/代码
+- `--font-serif` (Newsreader) - 标题
 
 ## 目录结构
 
 ```
-├── app/                    # Next.js App Router
-│   └── layout.tsx          # 根布局
-├── components/
-│   └── ui/                 # shadcn 风格 UI 组件（kebab-case 命名）
+├── app/
+│   ├── layout.tsx          # 根布局（字体配置、TooltipProvider）
+│   └── design-system/     # 设计系统文档页面
+├── components/ui/          # shadcn 风格 UI 组件（kebab-case 命名）
 ├── constants/              # 站点元信息（邮箱、社交链接等）
 ├── hooks/                  # React hooks
-├── lib/                    # 工具函数
+├── lib/utils.ts            # cn() 工具函数
 ├── styles/
-│   └── global.css          # Tailwind 4 CSS 配置入口
+│   └── global.css          # Tailwind 4 CSS 配置入口（设计系统变量定义）
 └── public/                 # 静态资源
 ```
 
@@ -72,7 +76,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Tailwind CSS 4
 - 使用 CSS-based 配置（`@tailwindcss/postcss`）
 - 主题定义在 [styles/global.css](styles/global.css)
-- 支持 dark mode（通过 `.dark` 选择器）
+- **深色模式默认启用**（`.dark` 类始终存在于 html 元素）
+
+### 设计系统组件变体
+- **Card**: `default` | `glass` | `shimmer` | `spotlight`
+- **Avatar**: `sm` | `md` | `lg` | `xl`（支持 `ring` 属性）
+- **Input**: `default` | `search` | `error`
 
 ### shadcn 组件
 - 组件位于 [components/ui/](components/ui/)
@@ -107,6 +116,3 @@ docs(readme): 更新项目说明
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
 <!-- END:nextjs-agent-rules -->
-
-# currentDate
-Today's date is 2026-03-28.
