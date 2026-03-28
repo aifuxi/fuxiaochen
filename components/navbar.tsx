@@ -16,12 +16,9 @@ const navLinks: NavLink[] = [
   { label: "Home", href: "/" },
   { label: "Articles", href: "/articles" },
   { label: "About", href: "/about" },
-];
-
-const dropdownLinks = [
   { label: "Changelog", href: "/changelog" },
   { label: "Friends", href: "/friends" },
-  { label: "Design Spec", href: "/design-system" },
+  { label: "Design System", href: "/design-system" },
 ];
 
 function Navbar() {
@@ -99,67 +96,6 @@ function Navbar() {
             </Link>
           ))}
 
-          {/* Dropdown Menu */}
-          <div className="group relative">
-            <Link
-              href="#"
-              className={cn(
-                `
-                  nav-link flex items-center gap-1 font-mono text-xs tracking-widest uppercase transition-colors
-                  duration-300
-                `,
-                pathname.startsWith("/changelog") ||
-                  pathname.startsWith("/friends") ||
-                  pathname.startsWith("/design-system")
-                  ? "text-foreground"
-                  : `
-                    text-muted
-                    hover:text-foreground
-                  `
-              )}
-            >
-              More
-              <svg
-                className="h-3 w-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </Link>
-            <div
-              className={cn(
-                "invisible absolute top-full left-0 mt-2 w-48 translate-y-2 transform rounded-xl border border-white/10",
-                "bg-black/90 py-2 opacity-0 backdrop-blur-xl transition-all duration-300",
-                "group-hover:visible group-hover:translate-y-0 group-hover:opacity-100"
-              )}
-            >
-              {dropdownLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={cn(
-                    "block px-4 py-2 font-mono text-xs transition-colors",
-                    "hover:bg-white/5",
-                    isActive(link.href)
-                      ? "text-primary"
-                      : `
-                        text-muted
-                        hover:text-foreground
-                      `
-                  )}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* CTA Button */}
