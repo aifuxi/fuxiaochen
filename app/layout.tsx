@@ -35,7 +35,7 @@ export default function RootLayout({
         inter.variable,
         spaceGrotesk.variable,
         newsreader.variable,
-        "dark"
+        "dark",
       )}
     >
       <head>
