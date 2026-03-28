@@ -1,5 +1,8 @@
 "use client";
 
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -18,19 +21,31 @@ const navItems = [
   {
     section: "Main",
     items: [
-      { icon: LayoutDashboard, label: "Dashboard", href: "#", active: true },
-      { icon: FileText, label: "Articles", href: "#" },
-      { icon: Folder, label: "Categories", href: "#" },
-      { icon: Tags, label: "Tags", href: "#" },
-      { icon: MessageSquare, label: "Comments", href: "#" },
+      {
+        icon: LayoutDashboard,
+        label: "Dashboard",
+        href: "/cms/dashboard",
+      },
+      {
+        icon: FileText,
+        label: "Articles",
+        href: "/cms/articles",
+      },
+      { icon: Folder, label: "Categories", href: "/cms/categories" },
+      { icon: Tags, label: "Tags", href: "/cms/tags" },
+      {
+        icon: MessageSquare,
+        label: "Comments",
+        href: "/cms/comments",
+      },
     ],
   },
   {
     section: "Management",
     items: [
-      { icon: Users, label: "Users", href: "#" },
-      { icon: BarChart3, label: "Analytics", href: "#" },
-      { icon: Settings, label: "Settings", href: "#" },
+      { icon: Users, label: "Users", href: "/cms/users" },
+      { icon: BarChart3, label: "Analytics", href: "/cms/analytics" },
+      { icon: Settings, label: "Settings", href: "/cms/settings" },
     ],
   },
 ];
@@ -40,6 +55,12 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className }: SidebarProps) {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
   return (
     <aside
       className={cn(
@@ -82,13 +103,13 @@ export function Sidebar({ className }: SidebarProps) {
               </div>
               <div className="flex flex-col gap-1">
                 {section.items.map((item) => (
-                  <a
+                  <Link
                     key={item.label}
                     href={item.href}
                     className={cn(
                       "flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200",
                       "border border-transparent",
-                      item.active
+                      isActive(item.href)
                         ? "border-primary/20 bg-primary/10 text-primary"
                         : `
                           text-muted
@@ -99,11 +120,11 @@ export function Sidebar({ className }: SidebarProps) {
                     <item.icon
                       className={cn(
                         "h-5 w-5",
-                        item.active ? "opacity-100" : "opacity-70",
+                        isActive(item.href) ? "opacity-100" : "opacity-70",
                       )}
                     />
                     {item.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
