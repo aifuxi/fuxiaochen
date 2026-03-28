@@ -36,6 +36,7 @@ import {
   Layout as LayoutIcon,
   DownloadIcon,
   BookOpenIcon,
+  Loader2 as LoaderIcon,
   Plus as PlusIcon,
   Edit2 as Edit2Icon,
   Trash2 as Trash2Icon,
@@ -449,8 +450,9 @@ function ComponentsSection() {
           <div className="flex flex-wrap gap-3">
             <Button variant="default">Default</Button>
             <Button variant="default" disabled>Disabled</Button>
-            <Button variant="default" className="animate-spin">
-              <span>Loading</span>
+            <Button variant="default" disabled>
+              <LoaderIcon className="animate-spin" />
+              Loading
             </Button>
           </div>
         </Card>
