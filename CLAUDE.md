@@ -145,230 +145,31 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - 类型导入使用 `type` 关键字 (`import type { ... }`)
 - 遇到 ESLint 问题时，可执行 `pnpm lint:fix` 尝试自动修复
 
-## 认证权限
+# Commit 规范
 
-**用户角色**：`role` 为整数类型，`1` = 管理员 (admin)，`2` = 普通用户 (normal)，默认为 `2`。
+所有 commit 必须遵循 [Angular Conventional Commits](https://www.conventionalcommits.org/) 规范，**优先使用中文**描述。
 
-使用 `checkAdmin()` 函数保护需要管理员权限的 Server Action：
+格式: `<type>(<scope>): <description>`
 
-```ts
-"use server";
-import { checkAdmin } from "@/lib/auth-guard";
+**常用 type:**
+- `feat` - 新功能
+- `fix` - 修复 bug
+- `docs` - 文档更改
+- `style` - 代码格式（不影响功能）
+- `refactor` - 重构
+- `perf` - 性能优化
+- `test` - 测试
+- `chore` - 构建/工具变动
 
-export async function createBlogAction(data: BlogCreateReq) {
-  await checkAdmin(); // 未登录或 role !== 1 会抛出错误
-  // ...
-}
+**示例:**
+```
+feat(images): 允许加载任意来源的图片
+fix(auth): 修复令牌过期问题
+docs(readme): 更新项目说明
 ```
 
-首个注册的用户会自动获得 admin 权限 (`role = 1`)。
+<!-- BEGIN:nextjs-agent-rules -->
+# This is NOT the Next.js you know
 
-### 数据库软删除
-
-大多数模型使用软删除（`deletedAt` 字段）。查询时需要过滤已删除记录：
-
-```ts
-const where: Prisma.BlogWhereInput = { deletedAt: null };
-```
-
-### Prisma Client
-
-Prisma Client 生成到 `generated/prisma/` 目录（已在 `.gitignore` 中）。
-
-## 数据库模型
-
-### 业务模型
-- **Blog** - 博客文章（title, slug, description, cover, content, published）
-- **Category** - 分类（name, slug），与 Blog 一对多
-- **Tag** - 标签（name, slug），与 Blog 多对多
-- **Changelog** - 更新日志（version, content, date）
-
-### 认证模型（Better Auth）
-- **User** - 用户（name, email, image, role）
-- **Session** - 会话
-- **Account** - 第三方账户
-- **Verification** - 验证码
-
-## UI 组件库
-
-> **重要**: 所有 UI 组件**必须**遵循 Apple Human Interface Guidelines 设计规范。
-
-### 基础组件 (`components/ui/`)
-| 组件 | 说明 |
-|------|------|
-| button | 按钮（primary, secondary, ghost, outline） |
-| input / textarea | 输入框 |
-| select | 选择器 |
-| checkbox / switch | 复选框/开关 |
-| radio-group | 单选组 |
-| label | 表单标签 |
-| card / glass-card | 卡片 |
-| badge | 徽章 |
-| avatar | 头像 |
-| skeleton | 骨架屏 |
-| empty | 空状态 |
-| separator | 分隔线 |
-| table | 表格 |
-| data-table | 数据表格（带排序、分页） |
-| dropdown-menu | 下拉菜单 |
-
-### 弹层组件
-| 组件 | 说明 |
-|------|------|
-| dialog | 对话框 |
-| alert-dialog | 警告对话框 |
-| sheet | 侧边面板（支持 top/right/bottom/left） |
-| drawer | 抽屉（底部弹出） |
-| popover | 弹出框 |
-| tooltip | 提示框 |
-
-### 排版组件 (`components/ui/typography/`)
-| 组件 | 说明 |
-|------|------|
-| title | 标题（level 1-6） |
-| text | 文本（primary, secondary, success, warning, danger） |
-| paragraph | 段落 |
-| link | 链接 |
-
-### 布局组件
-| 组件 | 说明 |
-|------|------|
-| scroll-area | 滚动区域 |
-| pagination | 分页 |
-| back-to-top | 返回顶部 |
-| button-group | 按钮组 |
-
-## 设计系统：Apple Human Interface
-
-### 配色方案
-
-**Light Mode**:
-- `--bg-color`: #ffffff
-- `--surface-color`: #f5f5f7
-- `--surface-hover-color`: #e8e8ed
-- `--border-color`: #d2d2d7
-- `--accent-color`: #0071e3
-- `--accent-hover-color`: #0077ed
-- `--text-color`: #1d1d1f
-- `--text-color-secondary`: #6e6e73
-- `--text-color-tertiary`: #86868b
-
-**Dark Mode**:
-- `--bg-color`: #000000
-- `--surface-color`: #1c1c1e
-- `--surface-hover-color`: #2c2c2e
-- `--border-color`: #38383a
-- `--accent-color`: #0a84ff
-- `--accent-hover-color`: #409cff
-- `--text-color`: #f5f5f7
-- `--text-color-secondary`: #98989d
-- `--text-color-tertiary`: #86868b
-
-### 语意化颜色
-
-每种语意化颜色包含：主色 (`-color`)、hover色 (`-hover-color`)、背景色 (`-bg-color`)、边框色 (`-border-color`)
-
-| 语义 | Light 主色 | Dark 主色 | 用途 |
-|------|-----------|----------|------|
-| success | #34c759 | #30d158 | 成功状态 |
-| warning | #ff9500 | #ff9f0a | 警告状态 |
-| error | #ff3b30 | #ff453a | 错误状态 |
-| info | #007aff | #0a84ff | 信息状态 |
-
-**使用示例**：
-```tsx
-// 文本颜色
-<span className="text-success">成功</span>
-<span className="text-warning">警告</span>
-<span className="text-error">错误</span>
-<span className="text-info">信息</span>
-
-// 背景颜色
-<div className="bg-success-bg border-success-border">成功提示</div>
-
-// 按钮样式
-<button className="bg-success hover:bg-success-hover">确认</button>
-```
-
-### 圆角系统
-- `--radius-sm`: 8px
-- `--radius-md`: 12px
-- `--radius-lg`: 16px
-- `--radius-xl`: 20px
-- `--radius-full`: 9999px
-
-### 阴影系统
-- `--shadow-xs`: 0 1px 2px rgba(0, 0, 0, 0.04)
-- `--shadow-sm`: 0 1px 3px rgba(0, 0, 0, 0.06)
-- `--shadow-md`: 0 4px 6px rgba(0, 0, 0, 0.07)
-- `--shadow-lg`: 0 10px 20px rgba(0, 0, 0, 0.08)
-- `--shadow-xl`: 0 20px 40px rgba(0, 0, 0, 0.1)
-
-### 过渡动画
-- `--ease-apple`: cubic-bezier(0.25, 0.1, 0.25, 1) - Apple 标准缓动函数
-- 标准过渡时长: `duration-200`
-
-### 字体
-- **Sans**: Inter / SF Pro Text / Helvetica Neue
-- **Mono**: JetBrains Mono / SF Mono
-
-### 组件样式指南
-
-#### Button (按钮)
-- 使用 `rounded-lg` (12px)
-- `variant="primary"`: `bg-accent text-white`
-- `variant="secondary"`: `border border-border bg-surface text-text`
-- `variant="ghost"`: `bg-transparent text-text hover:bg-surface`
-- `variant="outline"`: `border border-border bg-transparent text-text`
-- Hover: `bg-accent-hover-color`
-- Active: `scale-[0.98]`
-
-#### Input (输入框)
-- 使用 `rounded-lg` (12px)
-- 背景: `bg-surface`
-- 边框: `border border-border`
-- Focus: `border-accent ring-2 ring-accent/20`
-- Placeholder: `text-text-tertiary`
-- Hover: `border-[var(--border-color)]`
-
-#### Card (卡片)
-- 使用 `rounded-xl` (20px)
-- 背景: `bg-surface`
-- 边框: `border border-border`
-- 阴影: `shadow-sm`
-
-#### Dialog (对话框)
-- 使用 `rounded-xl` (20px)
-- 背景: `bg-surface`
-- 边框: `border border-border`
-- 阴影: `shadow-xl`
-- 遮罩: `bg-black/20 backdrop-blur-sm`
-
-#### Table (表格)
-- Header 边框: `border-b border-border`
-- Row 边框: `border-b border-border`
-- Row Hover: `bg-surface-hover`
-- 单元格内边距: `p-2`
-
-### 代码高亮 (Syntax Highlighting)
-
-使用 `apple-prose` 类应用 Markdown 样式：
-
-```tsx
-<div className="apple-prose">
-  {children}
-</div>
-```
-
-代码块样式（在 `styles/global.css` 中）：
-- Light: `--hljs-color: #24292f`, `--hljs-bg: #f6f8fa`
-- Dark: `--hljs-color: #c9d1d9`, `--hljs-bg: #0d1117`
-
-## 重要文件路径
-
-- `styles/global.css` - Tailwind CSS 4 配置入口和全局样式
-- `lib/auth.ts` - Better Auth 配置
-- `lib/auth-guard.ts` - 权限守卫
-- `lib/oss.ts` - OSS 存储工具
-- `prisma/schema.prisma` - 数据库模型
-- `generated/prisma/` - Prisma Client 生成目录（忽略）
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+<!-- END:nextjs-agent-rules -->
