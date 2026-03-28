@@ -8,9 +8,7 @@ import {
   FileText,
   Folder,
   Tags,
-  MessageSquare,
   Users,
-  BarChart3,
   Settings,
   Plus,
 } from "lucide-react";
@@ -33,18 +31,12 @@ const navItems = [
       },
       { icon: Folder, label: "Categories", href: "/cms/categories" },
       { icon: Tags, label: "Tags", href: "/cms/tags" },
-      {
-        icon: MessageSquare,
-        label: "Comments",
-        href: "/cms/comments",
-      },
     ],
   },
   {
     section: "Management",
     items: [
       { icon: Users, label: "Users", href: "/cms/users" },
-      { icon: BarChart3, label: "Analytics", href: "/cms/analytics" },
       { icon: Settings, label: "Settings", href: "/cms/settings" },
     ],
   },
