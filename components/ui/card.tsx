@@ -18,11 +18,11 @@ function Card({
       data-variant={variant}
       className={cn(
         `
-          group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card text-card-foreground ring-1
+          group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card p-6 text-card-foreground ring-1
           ring-foreground/5 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]
           has-data-[slot=card-footer]:pb-0
           has-[>img:first-child]:pt-0
-          data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0
+          data-[size=sm]:gap-3 data-[size=sm]:p-4 data-[size=sm]:has-data-[slot=card-footer]:pb-0
           *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl
         `,
         // Variant styles

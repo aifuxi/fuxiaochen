@@ -1013,7 +1013,7 @@ function EffectsSection() {
       {/* Gradient Text */}
       <div className="mb-12">
         <h3 className="mb-4 font-mono text-xs tracking-widest text-muted-foreground uppercase">渐变文字 / Gradient Text</h3>
-        <Card className="text-center" style={{ padding: "var(--spacing-3xl)" }}>
+        <Card className="p-12 text-center">
           <h2 className="gradient-text font-serif" style={{ fontSize: "48px", fontWeight: 600 }}>
             Chen Serif Design
           </h2>
