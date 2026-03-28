@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Reveal } from "@/components/ui/reveal";
 import { NICKNAME, EMAIL } from "@/constants/info";
 import Navbar from "@/components/navbar";
 
 // Info Card Component
 function InfoCard() {
   return (
-    <div
-      className="reveal mt-10 rounded-2xl border border-primary/20 p-6"
-      style={{ background: "rgba(16, 185, 129, 0.05)" }}
-    >
+    <Reveal className="mt-10 rounded-2xl border border-primary/20 p-6" style={{ background: "rgba(16, 185, 129, 0.05)" }}>
       <div className="flex items-start gap-4">
         <div
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
@@ -56,7 +54,7 @@ function InfoCard() {
           </ul>
         </div>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
@@ -77,79 +75,54 @@ function FriendCard({
   delay?: number;
 }) {
   return (
-    <Link
-      href="#"
-      className="reveal block rounded-xl border border-white/8 p-6 transition-all duration-300"
-      style={{
-        background: "var(--card)",
-        animationDelay: `${delay}s`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "var(--primary)";
-        e.currentTarget.style.transform = "translateY(-4px)";
-        e.currentTarget.style.boxShadow = "0 0 30px rgba(16, 185, 129, 0.1)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.08)";
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "none";
-      }}
-    >
-      <div className="mb-4 flex items-center gap-4">
-        <Avatar size="lg" className="ring-0">
-          <AvatarImage src={avatar} alt={name} />
-          <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div>
-          <h4 className="font-mono text-sm font-semibold">{name}</h4>
-          <p className="text-xs text-muted">{role}</p>
-        </div>
-      </div>
-      <p className="mb-4 text-sm leading-relaxed font-light text-muted">
-        {description}
-      </p>
-      <div className="flex items-center gap-2 text-xs text-primary">
-        <svg
-          className="h-3 w-3"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-          />
-        </svg>
-        <span className="font-mono">{website}</span>
-      </div>
-    </Link>
+    <Reveal delay={delay}>
+      <motion.div
+        className="block rounded-xl border border-white/8 bg-card p-6"
+        whileHover={{
+          y: -4,
+          borderColor: "var(--primary)",
+          boxShadow: "0 0 30px rgba(16, 185, 129, 0.1)",
+        }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <Link href="#">
+          <div className="mb-4 flex items-center gap-4">
+            <Avatar size="lg" className="ring-0">
+              <AvatarImage src={avatar} alt={name} />
+              <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h4 className="font-mono text-sm font-semibold">{name}</h4>
+              <p className="text-xs text-muted">{role}</p>
+            </div>
+          </div>
+          <p className="mb-4 text-sm leading-relaxed font-light text-muted">
+            {description}
+          </p>
+          <div className="flex items-center gap-2 text-xs text-primary">
+            <svg
+              className="h-3 w-3"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0 3-4.03 3-9s-1.343-9-3-9m-9 9a9 9 0 019-9"
+              />
+            </svg>
+            <span className="font-mono">{website}</span>
+          </div>
+        </Link>
+      </motion.div>
+    </Reveal>
   );
 }
 
 // Friends Section
 function FriendsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   const friends = [
     {
       name: "John Doe",
@@ -202,7 +175,7 @@ function FriendsSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative px-8 pb-32">
+    <section className="relative px-8 pb-32">
       <div className="mx-auto max-w-4xl">
         <div className={`
           grid gap-6
@@ -220,33 +193,10 @@ function FriendsSection() {
 
 // Apply Form Section
 function ApplySection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative px-8 pb-32">
+    <section className="relative px-8 pb-32">
       <div className="mx-auto max-w-4xl">
-        <div
-          className="reveal rounded-2xl border border-white/10 p-8 backdrop-blur-xl"
-          style={{ background: "var(--card)" }}
-        >
+        <Reveal className="rounded-2xl border border-white/10 p-8 backdrop-blur-xl" style={{ background: "var(--card)" }}>
           <div className="mb-6 flex items-center gap-3">
             <div
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-primary/20"
@@ -310,7 +260,7 @@ function ApplySection() {
               </Button>
             </div>
           </form>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -407,68 +357,41 @@ function Footer() {
 
 // Main Page Component
 export default function FriendsPage() {
-  useEffect(() => {
-    // Initialize reveal animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-
-    const reveals = document.querySelectorAll(".reveal");
-    reveals.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <main className="min-h-screen">
       {/* Background Blobs */}
       <div
-        className="morph-blob morph-blob-1"
+        className="morph-blob morph-blob-1 pointer-events-none fixed"
         style={{
-          position: "fixed",
-          width: "384px",
-          height: "384px",
+          width: 384,
+          height: 384,
           background: "rgba(16, 185, 129, 0.03)",
           filter: "blur(80px)",
-          pointerEvents: "none",
           zIndex: 0,
         }}
       />
       <div
-        className="morph-blob morph-blob-2"
+        className="morph-blob morph-blob-2 pointer-events-none fixed"
         style={{
-          position: "fixed",
-          width: "384px",
-          height: "384px",
+          width: 384,
+          height: 384,
           background: "rgba(16, 185, 129, 0.03)",
           filter: "blur(80px)",
-          pointerEvents: "none",
           zIndex: 0,
           top: "60%",
           right: "5%",
-          animationDelay: "-4s",
         }}
       />
       <div
-        className="morph-blob morph-blob-3"
+        className="morph-blob morph-blob-3 pointer-events-none fixed"
         style={{
-          position: "fixed",
-          width: "384px",
-          height: "384px",
+          width: 384,
+          height: 384,
           background: "rgba(16, 185, 129, 0.03)",
           filter: "blur(80px)",
-          pointerEvents: "none",
           zIndex: 0,
           bottom: "10%",
           left: "40%",
-          animationDelay: "-2s",
         }}
       />
 
@@ -477,7 +400,7 @@ export default function FriendsPage() {
       {/* Hero */}
       <section className="relative px-8 pt-32 pb-16">
         <div className="mx-auto max-w-4xl">
-          <div className="reveal">
+          <Reveal>
             <span className="mb-4 block font-mono text-xs tracking-widest text-primary uppercase">
               Connection
             </span>
@@ -493,7 +416,7 @@ export default function FriendsPage() {
             <p className="max-w-xl text-lg leading-relaxed font-light text-muted">
               与志同道合的创作者建立连接。这里收录了优秀的个人博客和项目，每一行链接都是一次思想的碰撞。
             </p>
-          </div>
+          </Reveal>
 
           <InfoCard />
         </div>

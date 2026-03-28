@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Reveal } from "@/components/ui/reveal";
 import { NICKNAME, GITHUB_PAGE, EMAIL } from "@/constants/info";
 import Navbar from "@/components/navbar";
 
@@ -16,13 +16,13 @@ function AboutHeroSection() {
           lg:grid-cols-2
         `}>
           {/* Left - Avatar */}
-          <div className={`
-            reveal flex justify-center
+          <Reveal direction="left" className={`
+            flex justify-center
             lg:justify-start
           `}>
             <div className="relative">
               {/* Avatar Ring */}
-              <div
+              <motion.div
                 className={`
                   h-72 w-72
                   lg:h-80 lg:w-80
@@ -32,8 +32,9 @@ function AboutHeroSection() {
                     "linear-gradient(135deg, var(--primary), transparent, var(--primary))",
                   borderRadius: "50%",
                   padding: "4px",
-                  animation: "rotate-ring 8s linear infinite",
                 }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
               >
                 <div className="relative h-full w-full overflow-hidden rounded-full bg-secondary">
                   <Image
@@ -44,27 +45,31 @@ function AboutHeroSection() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-              </div>
+              </motion.div>
               {/* Floating Badge */}
-              <div
+              <motion.div
                 className="glass-card shimmer-border absolute -right-4 -bottom-4 px-4 py-2"
                 style={{ borderRadius: "1rem" }}
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="flex items-center gap-2">
-                  <div
-                    className="h-2 w-2 animate-pulse rounded-full"
+                  <motion.div
+                    className="h-2 w-2 rounded-full"
                     style={{ background: "var(--primary)" }}
+                    animate={{ opacity: [1, 0.5, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   />
                   <span className="font-mono text-xs text-muted">
                     Available for work
                   </span>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </Reveal>
 
           {/* Right - Info */}
-          <div className="reveal space-y-6" style={{ animationDelay: "0.1s" }}>
+          <Reveal direction="right" delay={0.1} className="space-y-6">
             <div>
               <span className="font-mono text-xs tracking-widest text-primary uppercase">
                 About Me
@@ -96,13 +101,15 @@ function AboutHeroSection() {
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">
-              <a
+              <motion.a
                 href="#"
-                className={cn(
-                  "flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-mono text-sm tracking-wider uppercase",
-                  "text-primary-foreground transition-all duration-300",
-                  "hover:gap-3"
-                )}
+                className={`
+                  flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-mono text-sm tracking-wider
+                  text-primary-foreground uppercase transition-all duration-300
+                  hover:gap-3
+                `}
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               >
                 <svg
                   className="h-4 w-4"
@@ -118,17 +125,16 @@ function AboutHeroSection() {
                   />
                 </svg>
                 Download CV
-              </a>
-              <a
+              </motion.a>
+              <motion.a
                 href={`mailto:${EMAIL}`}
-                className={cn(
-                  `
-                    flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 font-mono text-sm
-                    tracking-wider uppercase
-                  `,
-                  "transition-all duration-300",
-                  "hover:border-primary hover:text-primary"
-                )}
+                className={`
+                  flex items-center gap-2 rounded-full border border-white/20 px-6 py-3 font-mono text-sm tracking-wider
+                  uppercase transition-all duration-300
+                  hover:border-primary hover:text-primary
+                `}
+                whileHover={{ x: 4 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               >
                 <svg
                   className="h-4 w-4"
@@ -144,9 +150,9 @@ function AboutHeroSection() {
                   />
                 </svg>
                 Contact Me
-              </a>
+              </motion.a>
             </div>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -166,52 +172,31 @@ function SkillBadge({
   delay?: number;
 }) {
   return (
-    <div
-      className={cn(
-        "skill-badge reveal text-center transition-all duration-300",
-        "hover:-translate-y-1 hover:border-primary hover:shadow-lg"
-      )}
-      style={{
-        animationDelay: `${delay}s`,
-        background: "var(--card)",
-        border: "1px solid var(--border)",
-        borderRadius: "1rem",
-        padding: "1.5rem",
-      }}
-    >
-      <div
-        className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl transition-all duration-300"
-        style={{ background: "rgba(16, 185, 129, 0.1)" }}
+    <Reveal delay={delay} className="text-center">
+      <motion.div
+        className={`
+          rounded-xl border border-border bg-card p-6 transition-all duration-300
+          hover:border-primary hover:shadow-lg
+        `}
+        style={{ padding: "1.5rem" }}
+        whileHover={{ y: -4 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       >
-        {icon}
-      </div>
-      <div className="font-mono text-sm font-medium">{name}</div>
-      <div className="mt-1 font-mono text-xs text-muted">{years}</div>
-    </div>
+        <div
+          className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl transition-all duration-300"
+          style={{ background: "rgba(16, 185, 129, 0.1)" }}
+        >
+          {icon}
+        </div>
+        <div className="font-mono text-sm font-medium">{name}</div>
+        <div className="mt-1 font-mono text-xs text-muted">{years}</div>
+      </motion.div>
+    </Reveal>
   );
 }
 
 // Skills Section
 function SkillsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   const skills = [
     {
@@ -434,14 +419,14 @@ function SkillsSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative px-8 py-20">
+    <section className="relative px-8 py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="reveal mb-12">
+        <Reveal className="mb-12">
           <span className="font-mono text-xs tracking-widest text-primary uppercase">
             Expertise
           </span>
           <h2 className="mt-2 font-serif text-4xl">Development Skills</h2>
-        </div>
+        </Reveal>
 
         <div className={`
           grid grid-cols-2 gap-4
@@ -479,65 +464,46 @@ function HobbyCard({
   delay?: number;
 }) {
   return (
-    <div
-      className={cn(
-        "reveal relative overflow-hidden rounded-2xl transition-transform duration-500",
-        "hover:scale-105"
-      )}
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <div className="aspect-[4/3]">
-        <Image
-          src={image}
-          alt={title}
-          width={400}
-          height={300}
-          className="h-full w-full object-cover"
-        />
-      </div>
-      {/* Overlay */}
-      <div
-        className="absolute inset-0 flex items-end"
-        style={{
-          background:
-            "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)",
-        }}
+    <Reveal delay={delay}>
+      <motion.div
+        className="relative overflow-hidden rounded-2xl"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="p-6">
-          <div className="mb-1 flex items-center gap-2">
-            <span className="h-4 w-4 text-primary">{icon}</span>
-            <span className="font-mono text-xs tracking-wider text-primary uppercase">
-              {title}
-            </span>
-          </div>
-          <p className="text-sm text-white/70">{description}</p>
+        <div className="aspect-4/3">
+          <Image
+            src={image}
+            alt={title}
+            width={400}
+            height={300}
+            className="h-full w-full object-cover"
+          />
         </div>
-      </div>
-    </div>
+        {/* Overlay */}
+        <div
+          className="absolute inset-0 flex items-end"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 60%)",
+          }}
+        >
+          <div className="p-6">
+            <div className="mb-1 flex items-center gap-2">
+              <span className="h-4 w-4 text-primary">{icon}</span>
+              <span className="font-mono text-xs tracking-wider text-primary uppercase">
+                {title}
+              </span>
+            </div>
+            <p className="text-sm text-white/70">{description}</p>
+          </div>
+        </div>
+      </motion.div>
+    </Reveal>
   );
 }
 
 // Hobbies Section
 function HobbiesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   const hobbies = [
     {
@@ -639,14 +605,14 @@ function HobbiesSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative px-8 py-20">
+    <section className="relative px-8 py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="reveal mb-12">
+        <Reveal className="mb-12">
           <span className="font-mono text-xs tracking-widest text-primary uppercase">
             Beyond Work
           </span>
           <h2 className="mt-2 font-serif text-4xl">My Hobbies</h2>
-        </div>
+        </Reveal>
 
         <div className={`
           grid gap-6
@@ -675,51 +641,32 @@ function DeviceCard({
   delay?: number;
 }) {
   return (
-    <div
-      className={cn(
-        "reveal flex items-center gap-4 rounded-xl border border-white/8 p-6 transition-all duration-300",
-        "hover:border-primary hover:bg-primary/5"
-      )}
-      style={{
-        animationDelay: `${delay}s`,
-        background: "var(--card)",
-      }}
-    >
-      <div
-        className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-        style={{ background: "rgba(16, 185, 129, 0.1)" }}
+    <Reveal delay={delay}>
+      <motion.div
+        className={`
+          flex items-center gap-4 rounded-xl border border-white/8 bg-card p-6 transition-all duration-300
+          hover:border-primary hover:bg-primary/5
+        `}
+        whileHover={{ x: 4 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       >
-        {icon}
-      </div>
-      <div>
-        <div className="font-mono text-sm font-medium">{name}</div>
-        <div className="mt-1 font-mono text-xs text-muted">{specs}</div>
-      </div>
-    </div>
+        <div
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
+          style={{ background: "rgba(16, 185, 129, 0.1)" }}
+        >
+          {icon}
+        </div>
+        <div>
+          <div className="font-mono text-sm font-medium">{name}</div>
+          <div className="mt-1 font-mono text-xs text-muted">{specs}</div>
+        </div>
+      </motion.div>
+    </Reveal>
   );
 }
 
 // Current Gear Section
 function GearSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   const devices = [
     {
@@ -896,14 +843,14 @@ function GearSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative px-8 py-20">
+    <section className="relative px-8 py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="reveal mb-12">
+        <Reveal className="mb-12">
           <span className="font-mono text-xs tracking-widest text-primary uppercase">
             Setup
           </span>
           <h2 className="mt-2 font-serif text-4xl">Current Gear</h2>
-        </div>
+        </Reveal>
 
         <div className={`
           grid gap-6
@@ -938,14 +885,8 @@ function TimelineItem({
   delay?: number;
 }) {
   return (
-    <div
-      className="reveal timeline-item"
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <div
-        className="glass-card rounded-2xl border border-white/10 p-6"
-        style={{ position: "relative" }}
-      >
+    <Reveal delay={delay}>
+      <div className="glass-card rounded-2xl border border-white/10 p-6">
         <div className="mb-2 flex items-start justify-between">
           <div>
             <h3 className="font-serif text-xl">{title}</h3>
@@ -957,31 +898,12 @@ function TimelineItem({
           {description}
         </p>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
 // Timeline Section
 function TimelineSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   const experiences = [
     {
@@ -1015,14 +937,14 @@ function TimelineSection() {
   ];
 
   return (
-    <section ref={sectionRef} className="relative px-8 py-20">
+    <section className="relative px-8 py-20">
       <div className="mx-auto max-w-3xl">
-        <div className="reveal mb-12">
+        <Reveal className="mb-12">
           <span className="font-mono text-xs tracking-widest text-primary uppercase">
             Journey
           </span>
           <h2 className="mt-2 font-serif text-4xl">Experience</h2>
-        </div>
+        </Reveal>
 
         <div className="space-y-8">
           {experiences.map((exp, index) => (
@@ -1036,29 +958,9 @@ function TimelineSection() {
 
 // CTA Section
 function CTASection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative px-8 py-20">
-      <div className="reveal mx-auto max-w-3xl text-center">
+    <section className="relative px-8 py-20">
+      <Reveal className="mx-auto max-w-3xl text-center">
         <h2 className={`
           mb-4 font-serif text-4xl
           lg:text-5xl
@@ -1070,13 +972,15 @@ function CTASection() {
           projects, or just having a chat.
         </p>
         <div className="flex flex-wrap justify-center gap-4">
-          <a
+          <motion.a
             href={`mailto:${EMAIL}`}
-            className={cn(
-              "flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-mono text-sm tracking-wider uppercase",
-              "text-primary-foreground transition-all duration-300",
-              "hover:gap-3"
-            )}
+            className={`
+              flex items-center gap-2 rounded-full bg-primary px-8 py-4 font-mono text-sm tracking-wider
+              text-primary-foreground uppercase transition-all duration-300
+              hover:gap-3
+            `}
+            whileHover={{ x: 4 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <svg
               className="h-4 w-4"
@@ -1092,27 +996,26 @@ function CTASection() {
               />
             </svg>
             Get in Touch
-          </a>
-          <a
+          </motion.a>
+          <motion.a
             href={GITHUB_PAGE}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(
-              `
-                flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 font-mono text-sm tracking-wider
-                uppercase
-              `,
-              "transition-all duration-300",
-              "hover:border-primary hover:text-primary"
-            )}
+            className={`
+              flex items-center gap-2 rounded-full border border-white/20 px-8 py-4 font-mono text-sm tracking-wider
+              uppercase transition-all duration-300
+              hover:border-primary hover:text-primary
+            `}
+            whileHover={{ x: 4 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
             </svg>
             GitHub
-          </a>
+          </motion.a>
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -1208,25 +1111,6 @@ function Footer() {
 
 // Main Page Component
 export default function AboutPage() {
-  useEffect(() => {
-    // Initialize reveal animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-
-    const reveals = document.querySelectorAll(".reveal");
-    reveals.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <main className="min-h-screen">
       <Navbar />

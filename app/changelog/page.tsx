@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/ui/reveal";
 import { NICKNAME, GITHUB_PAGE, EMAIL } from "@/constants/info";
 import Navbar from "@/components/navbar";
 
@@ -78,14 +79,8 @@ function ChangelogItem({
   delay?: number;
 }) {
   return (
-    <div
-      className="changelog-item reveal"
-      style={{ animationDelay: `${delay}s` }}
-    >
-      <div
-        className="glass-card rounded-2xl border border-white/10 p-8"
-        style={{ position: "relative" }}
-      >
+    <Reveal delay={delay}>
+      <div className="glass-card rounded-2xl border border-white/10 p-8">
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-center gap-4">
           <VersionBadge version={version} major={major} />
@@ -111,7 +106,7 @@ function ChangelogItem({
           ))}
         </div>
       </div>
-    </div>
+    </Reveal>
   );
 }
 
@@ -120,7 +115,7 @@ function HeroSection() {
   return (
     <section className="relative px-8 pt-32 pb-16">
       <div className="mx-auto max-w-4xl">
-        <div className="reveal">
+        <Reveal>
           <span className="mb-4 block font-mono text-xs tracking-widest text-primary uppercase">
             Updates
           </span>
@@ -137,10 +132,10 @@ function HeroSection() {
             A record of all major updates, improvements, and fixes. Stay up to
             date with the latest changes.
           </p>
-        </div>
+        </Reveal>
 
         {/* Legend */}
-        <div className="reveal mt-8 flex flex-wrap gap-4">
+        <Reveal delay={0.1} className="mt-8 flex flex-wrap gap-4">
           <div className="flex items-center gap-2">
             <ChangeTag type="added" />
             <span className="text-sm text-muted">New features</span>
@@ -157,7 +152,7 @@ function HeroSection() {
             <ChangeTag type="changed" />
             <span className="text-sm text-muted">Breaking changes</span>
           </div>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -397,28 +392,8 @@ const changelogData = [
 
 // Changelog Section
 function ChangelogSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const reveals = sectionRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative px-8 pb-32">
+    <section className="relative px-8 pb-32">
       <div className="mx-auto max-w-4xl">
         <div className="space-y-12">
           {changelogData.map((item, index) => (
@@ -431,18 +406,22 @@ function ChangelogSection() {
         </div>
 
         {/* Load More Button */}
-        <div className="reveal mt-16 text-center">
-          <button
-            className={cn(
-              "mx-auto flex items-center gap-2 rounded-full border border-white/10 px-8 py-4",
-              "font-mono text-sm tracking-wider uppercase transition-all duration-300",
-              "hover:border-primary hover:text-primary"
-            )}
+        <Reveal delay={0.5} className="mt-16 text-center">
+          <motion.button
+            className={`
+              mx-auto flex items-center gap-2 rounded-full border border-white/10 px-8 py-4 font-mono text-sm
+              tracking-wider uppercase transition-all duration-300
+              hover:border-primary hover:text-primary
+            `}
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <svg
-              className="h-4 w-4 animate-spin"
+            <motion.svg
+              className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
             >
               <circle
                 className="opacity-25"
@@ -457,10 +436,10 @@ function ChangelogSection() {
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
-            </svg>
+            </motion.svg>
             Load More
-          </button>
-        </div>
+          </motion.button>
+        </Reveal>
       </div>
     </section>
   );
@@ -558,25 +537,6 @@ function Footer() {
 
 // Main Page Component
 export default function ChangelogPage() {
-  useEffect(() => {
-    // Initialize reveal animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-
-    const reveals = document.querySelectorAll(".reveal");
-    reveals.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <main className="min-h-screen">
       {/* Background Blobs */}

@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/ui/reveal";
 import { NICKNAME, GITHUB_PAGE, EMAIL } from "@/constants/info";
 import Navbar from "@/components/navbar";
 import {
@@ -430,26 +432,6 @@ function Footer() {
 // Main Page Component
 export default function ArticlePage() {
   const [activeSection, setActiveSection] = useState("introduction");
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  // Scroll reveal effect
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-    );
-
-    const reveals = contentRef.current?.querySelectorAll(".reveal");
-    reveals?.forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
-  }, []);
 
   // Active section tracking
   useEffect(() => {
@@ -492,38 +474,44 @@ export default function ArticlePage() {
       <Navbar />
 
       {/* Hero Image */}
-      <section className="hero-image-container reveal">
+      <section className="hero-image-container relative overflow-hidden" style={{ height: 500, marginTop: 96 }}>
         <Image
           src={article.image}
           alt="Article cover"
           width={1400}
           height={500}
-          className="hero-image"
+          className="h-full w-full object-cover"
           priority
         />
-        <div className="hero-image-overlay" />
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-black/50 to-black" />
       </section>
 
       {/* Article Header */}
       <section className="px-8 py-12">
         <div className="mx-auto max-w-7xl">
-          <div className="reveal mb-6 flex items-center gap-3">
-            <div className="hero-label-dot h-2 w-2 animate-pulse rounded-full bg-primary" />
+          <Reveal className="mb-6 flex items-center gap-3">
+            <motion.div
+              className="h-2 w-2 rounded-full bg-primary"
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
             <span className="font-mono text-xs tracking-widest text-primary uppercase">
               {article.topicLabel}
             </span>
-          </div>
+          </Reveal>
 
-          <h1 className={`
-            article-title reveal mb-8 font-serif text-4xl text-foreground
-            md:text-5xl
-            lg:text-6xl
-          `}>
-            {article.title}
-          </h1>
+          <Reveal delay={0.1}>
+            <h1 className={`
+              article-title mb-8 font-serif text-4xl text-foreground
+              md:text-5xl
+              lg:text-6xl
+            `}>
+              {article.title}
+            </h1>
+          </Reveal>
 
           {/* Author Meta */}
-          <div className="author-meta reveal flex flex-wrap items-center gap-6">
+          <Reveal delay={0.2} className="author-meta flex flex-wrap items-center gap-6">
             <Avatar size="lg" className="ring-2 ring-white/10">
               <AvatarImage
                 src={article.author.avatar}
@@ -551,7 +539,7 @@ export default function ArticlePage() {
                 <span className="font-mono text-sm">{article.likes.toLocaleString()}</span>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -560,7 +548,7 @@ export default function ArticlePage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex gap-12">
             {/* Article Content */}
-            <div ref={contentRef} className="article-content flex-1">
+            <div className="article-content flex-1">
               <ArticleContent content={article.content} />
             </div>
 
@@ -582,9 +570,8 @@ export default function ArticlePage() {
       {/* Like & Stats Section */}
       <section className="px-8 pb-16">
         <div className="mx-auto max-w-7xl">
-          <div className={`
-            reveal flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl
-            transition-all duration-300
+          <Reveal className={`
+            flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl
           `}>
             <LikeButton initialLikes={article.likes} initialLiked={false} />
 
@@ -600,160 +587,28 @@ export default function ArticlePage() {
                 <span className="font-mono text-sm">{article.readTime}</span>
               </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* Related Articles */}
       <section className="px-8 pb-24">
         <div className="mx-auto max-w-7xl">
-          <h2 className="reveal mb-8 font-serif text-3xl">Related Articles</h2>
+          <Reveal className="mb-8 font-serif text-3xl">Related Articles</Reveal>
           <div className={`
             grid gap-8
             md:grid-cols-3
           `}>
             {relatedArticles.map((related, index) => (
-              <div
-                key={related.id}
-                className="reveal"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
+              <Reveal key={related.id} delay={index * 0.1}>
                 <RelatedArticleCard {...related} />
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
       <Footer />
-
-      <style jsx>{`
-        /* Hero Image */
-        .hero-image-container {
-          position: relative;
-          height: 500px;
-          margin-top: 96px;
-          overflow: hidden;
-        }
-
-        .hero-image {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .hero-image-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(5, 5, 5, 0.5) 70%,
-            rgba(5, 5, 5, 1) 100%
-          );
-        }
-
-        /* Article Content Styles */
-        .article-content {
-          max-width: 720px;
-        }
-
-        .article-content :global(h2) {
-          font-family: var(--font-serif), Georgia, serif;
-          font-size: 1.875rem;
-          font-weight: 600;
-          margin-top: 3rem;
-          margin-bottom: 1rem;
-          scroll-margin-top: 120px;
-        }
-
-        .article-content :global(h3) {
-          font-family: var(--font-serif), Georgia, serif;
-          font-size: 1.5rem;
-          font-weight: 600;
-          margin-top: 2rem;
-          margin-bottom: 0.75rem;
-          scroll-margin-top: 120px;
-        }
-
-        .article-content :global(p) {
-          color: var(--muted);
-          line-height: 1.8;
-          margin-bottom: 1.5rem;
-        }
-
-        .article-content :global(blockquote) {
-          border-left: 3px solid var(--primary);
-          padding-left: 1.5rem;
-          margin: 2rem 0;
-          font-style: italic;
-          color: var(--muted);
-        }
-
-        .article-content :global(pre) {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid var(--border);
-          border-radius: 0.75rem;
-          padding: 1.5rem;
-          margin: 1.5rem 0;
-          overflow-x: auto;
-        }
-
-        .article-content :global(pre code) {
-          font-family: var(--font-mono), monospace;
-          font-size: 0.875rem;
-          line-height: 1.6;
-          color: var(--foreground);
-        }
-
-        .article-content :global(code) {
-          font-family: var(--font-mono), monospace;
-          font-size: 0.875rem;
-          background: rgba(255, 255, 255, 0.05);
-          padding: 0.125rem 0.375rem;
-          border-radius: 0.25rem;
-          color: var(--primary);
-        }
-
-        .article-content :global(img) {
-          width: 100%;
-          border-radius: 0.75rem;
-          margin: 2rem 0;
-        }
-
-        /* Reveal Animation */
-        .reveal {
-          opacity: 0;
-          transform: translateY(20px);
-          transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
-            transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .reveal.visible {
-          opacity: 1;
-          transform: translateY(0);
-        }
-
-        /* Arrow Button */
-        .arrow-btn {
-          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .arrow-btn:hover {
-          transform: translateX(4px);
-        }
-
-        /* Related Card */
-        .related-card {
-          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-            box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .related-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-      `}</style>
     </main>
   );
 }

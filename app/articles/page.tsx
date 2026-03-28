@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Input, InputWrapper, InputIcon } from "@/components/ui/input";
 import {
@@ -22,6 +23,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/ui/reveal";
+import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { NICKNAME, GITHUB_PAGE, EMAIL } from "@/constants/info";
 import Navbar from "@/components/navbar";
 import {
@@ -454,41 +457,6 @@ const tags = [
   { value: "performance", label: "Performance" },
 ];
 
-// Spotlight Card Component
-function SpotlightCard({
-  className,
-  style,
-  children,
-}: {
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty("--x", `${x}px`);
-      card.style.setProperty("--y", `${y}px`);
-    };
-
-    card.addEventListener("mousemove", handleMouseMove);
-    return () => card.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  return (
-    <div ref={cardRef} className={cn("spotlight-card", className)} style={style}>
-      {children}
-    </div>
-  );
-}
-
 // Article Card Component
 function ArticleCard({
   image,
@@ -509,34 +477,33 @@ function ArticleCard({
 }) {
   return (
     <Link href={href}>
-      <article
-        className={`
-          article-card group glass-card shimmer-border overflow-hidden transition-all duration-300
-          ease-[cubic-bezier(0.16,1,0.3,1)]
-        `}
+      <motion.article
+        className="group glass-card shimmer-border overflow-hidden"
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="overflow-hidden">
-          <Image
-            src={image}
-            alt={title}
-            width={600}
-            height={400}
-            className={`
-              card-image h-48 w-full object-cover transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
-              group-hover:scale-105
-            `}
-          />
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <Image
+              src={image}
+              alt={title}
+              width={600}
+              height={400}
+              className="card-image h-48 w-full object-cover"
+            />
+          </motion.div>
         </div>
         <div className="relative z-10 p-6">
           <Badge variant="primary" className="mb-3">
             {topicLabel}
           </Badge>
-          <h3
-            className={`
-              mt-2 mb-3 font-serif text-xl transition-colors duration-300
-              group-hover:text-primary
-            `}
-          >
+          <h3 className={`
+            mt-2 mb-3 font-serif text-xl transition-colors duration-300
+            group-hover:text-primary
+          `}>
             {title}
           </h3>
           <p className="mb-4 line-clamp-2 text-sm leading-relaxed font-light text-muted">
@@ -548,12 +515,15 @@ function ArticleCard({
               <span>•</span>
               <span>{readTime} read</span>
             </div>
-            <div className="arrow-btn">
+            <motion.div
+              whileHover={{ x: 4 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
               <ArrowRightIcon className="h-4 w-4 text-primary" />
-            </div>
+            </motion.div>
           </div>
         </div>
-      </article>
+      </motion.article>
     </Link>
   );
 }
@@ -762,28 +732,35 @@ export default function ArticlesPage() {
       {/* Page Header */}
       <section className="relative px-8 pt-40 pb-12">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-4 flex items-center gap-3">
-            <div
-              className="hero-label-dot h-2 w-2"
-              style={{
-                background: "var(--primary)",
-                borderRadius: "50%",
-                animation: "pulse-dot 2s ease-in-out infinite",
-              }}
-            />
-            <span className="font-mono text-xs tracking-widest text-muted uppercase">
-              Archive
-            </span>
-          </div>
-          <div className="flex items-end justify-between">
-            <h1 className={`
-              font-serif text-5xl
-              lg:text-6xl
-            `}>All Writings</h1>
-            <span className="font-mono text-sm text-muted" id="articleCount">
-              {filteredArticles.length} articles
-            </span>
-          </div>
+          <Reveal>
+            <div className="mb-4 flex items-center gap-3">
+              <motion.div
+                className="h-2 w-2 rounded-full"
+                style={{ background: "var(--primary)" }}
+                animate={{
+                  scale: [1, 0.8, 1],
+                  opacity: [1, 0.5, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+              <span className="font-mono text-xs tracking-widest text-muted uppercase">
+                Archive
+              </span>
+            </div>
+            <div className="flex items-end justify-between">
+              <h1 className={`
+                font-serif text-5xl
+                lg:text-6xl
+              `}>All Writings</h1>
+              <span className="font-mono text-sm text-muted" id="articleCount">
+                {filteredArticles.length} articles
+              </span>
+            </div>
+          </Reveal>
         </div>
       </section>
 
