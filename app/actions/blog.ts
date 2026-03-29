@@ -8,39 +8,46 @@ import { blogStore } from "@/stores/blog";
 
 const PAGE_SIZE_MAX = 1000;
 
-const blogListReqSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional().default(1),
-    pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
-    sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    title: z.string().trim().min(1).max(200).optional(),
-    slug: z.string().trim().min(1).max(200).optional(),
-    categoryId: z.string().trim().min(1).max(128).optional(),
-    tagId: z.string().trim().min(1).max(128).optional(),
-    tagIds: z.array(z.string().trim().min(1).max(128)).max(50).optional(),
-    blogIDs: z.array(z.string().trim().min(1).max(128)).max(200).optional(),
-    published: z.boolean().optional(),
-  });
+const blogListReqSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  pageSize: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(PAGE_SIZE_MAX)
+    .optional()
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc", ""]).optional(),
+  title: z.string().trim().optional(),
+  slug: z.string().trim().optional(),
+  categoryId: z.string().trim().optional(),
+  tagId: z.string().trim().optional(),
+  tagIds: z.array(z.string().trim()).optional(),
+  blogIDs: z.array(z.string().trim()).optional(),
+  published: z.boolean().optional(),
+});
 
-const blogIdSchema = z.string().trim().min(1).max(128);
-const blogSlugSchema = z.string().trim().min(1).max(200);
+const blogIdSchema = z.string().trim();
+const blogSlugSchema = z.string().trim();
 
 const blogCreateReqSchema = z.object({
-  title: z.string().trim().min(1).max(200),
-  slug: z.string().trim().min(1).max(200),
-  description: z.string().trim().min(1).max(500),
-  cover: z.string().trim().min(1).max(2048).optional(),
-  content: z.string().min(1),
+  title: z.string().trim(),
+  slug: z.string().trim(),
+  description: z.string().trim(),
+  cover: z.string().trim().optional(),
+  content: z.string(),
   published: z.boolean(),
-  categoryId: z.string().trim().min(1).max(128),
-  tags: z.array(z.string().trim().min(1).max(128)).max(50).optional(),
+  categoryId: z.string().trim(),
+  tags: z.array(z.string().trim()).optional(),
 });
 
 export async function getBlogsAction(params?: BlogListReq) {
   try {
     const parsed = blogListReqSchema.safeParse(params ?? {});
     if (!parsed.success) {
+      console.log("blog parsed --------->", parsed);
+
       return { success: false, error: "参数错误" };
     }
 

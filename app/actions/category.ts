@@ -8,20 +8,25 @@ import { categoryStore } from "@/stores/category";
 
 const PAGE_SIZE_MAX = 1000;
 
-const categoryListReqSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional().default(1),
-    pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
-    sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    name: z.string().trim().min(1).max(200).optional(),
-    slug: z.string().trim().min(1).max(200).optional(),
-  });
+const categoryListReqSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  pageSize: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(PAGE_SIZE_MAX)
+    .optional()
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+  name: z.string().trim().optional(),
+  slug: z.string().trim().optional(),
+});
 
-const categoryIdSchema = z.string().trim().min(1).max(128);
+const categoryIdSchema = z.string().trim();
 const categoryCreateReqSchema = z.object({
-  name: z.string().trim().min(1).max(100),
-  slug: z.string().trim().min(1).max(200),
+  name: z.string().trim(),
+  slug: z.string().trim(),
 });
 
 export async function getCategoriesAction(params?: CategoryListReq) {

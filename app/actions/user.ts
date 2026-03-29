@@ -6,20 +6,22 @@ import { type UserListReq, type UserUpdateReq } from "@/types/user";
 import { checkAdmin } from "@/lib/auth-guard";
 import { userStore } from "@/stores/user";
 
-const PAGE_SIZE_MAX = 1000;
+const userListReqSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  pageSize: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+  name: z.string().trim().optional(),
+  email: z.string().trim().optional(),
+  role: z.coerce.number().int().optional(),
+});
 
-const userListReqSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional().default(1),
-    pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
-    sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    name: z.string().trim().min(1).max(200).optional(),
-    email: z.string().trim().min(1).max(200).optional(),
-    role: z.coerce.number().int().optional(),
-  });
-
-const userIdSchema = z.string().trim().min(1).max(128);
+const userIdSchema = z.string().trim();
 const userUpdateReqSchema = z.object({
   role: z.coerce.number().int(),
 });

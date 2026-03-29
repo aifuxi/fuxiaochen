@@ -4,7 +4,7 @@ import { z } from "zod";
 import { checkAdmin } from "@/lib/auth-guard";
 import { uploadStore } from "@/stores/upload";
 
-const uploadFileNameSchema = z.string().trim().min(1).max(255);
+const uploadFileNameSchema = z.string().trim();
 
 export async function getPresignUploadInfo(uploadFileName: string) {
   try {

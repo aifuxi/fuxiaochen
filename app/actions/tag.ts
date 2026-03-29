@@ -6,22 +6,24 @@ import { type TagCreateReq, type TagListReq } from "@/types/tag";
 import { checkAdmin } from "@/lib/auth-guard";
 import { tagStore } from "@/stores/tag";
 
-const PAGE_SIZE_MAX = 1000;
+const tagListReqSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  pageSize: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+  name: z.string().trim().optional(),
+  slug: z.string().trim().optional(),
+});
 
-const tagListReqSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional().default(1),
-    pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
-    sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    name: z.string().trim().min(1).max(200).optional(),
-    slug: z.string().trim().min(1).max(200).optional(),
-  });
-
-const tagIdSchema = z.string().trim().min(1).max(128);
+const tagIdSchema = z.string().trim();
 const tagCreateReqSchema = z.object({
-  name: z.string().trim().min(1).max(100),
-  slug: z.string().trim().min(1).max(200),
+  name: z.string().trim(),
+  slug: z.string().trim(),
 });
 
 export async function getTagsAction(params?: TagListReq) {
