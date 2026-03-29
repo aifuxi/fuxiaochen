@@ -46,8 +46,6 @@ export async function getBlogsAction(params?: BlogListReq) {
   try {
     const parsed = blogListReqSchema.safeParse(params ?? {});
     if (!parsed.success) {
-      console.log("blog parsed --------->", parsed);
-
       return { success: false, error: "参数错误" };
     }
 
