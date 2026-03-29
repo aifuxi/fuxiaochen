@@ -112,10 +112,6 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
-  console.log("blogsResult =>", blogsResult);
-  console.log("categoriesResult =>", categoriesResult);
-  console.log("tagsResult =>", tagsResult);
-
   if (
     !blogsResult.success ||
     !categoriesResult.success ||
