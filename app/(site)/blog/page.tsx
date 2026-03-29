@@ -1,12 +1,12 @@
 import { Suspense } from "react";
+import { Loader2 } from "lucide-react";
 import { getBlogsAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
-import { BlogFilterBar } from "@/components/blog/blog-filter-bar";
-import { BlogList } from "@/components/blog/blog-list";
-import { Loader2 } from "lucide-react";
 import type { Category } from "@/types/category";
 import type { Tag } from "@/types/tag";
+import { BlogFilterBar } from "@/components/blog/blog-filter-bar";
+import { BlogList } from "@/components/blog/blog-list";
 
 interface BlogPageProps {
   searchParams: Promise<{
@@ -71,10 +71,12 @@ function Hero({
           >
             Blog
           </h1>
-          <p className={`
-            text-lg text-text-secondary
-            md:text-xl
-          `}>
+          <p
+            className={`
+              text-lg text-text-secondary
+              md:text-xl
+            `}
+          >
             探索技术文章与学习笔记
           </p>
         </div>
@@ -110,7 +112,15 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
     getTagsAction({ page: 1, pageSize: 100 }),
   ]);
 
-  if (!blogsResult.success || !categoriesResult.success || !tagsResult.success) {
+  console.log("blogsResult =>", blogsResult);
+  console.log("categoriesResult =>", categoriesResult);
+  console.log("tagsResult =>", tagsResult);
+
+  if (
+    !blogsResult.success ||
+    !categoriesResult.success ||
+    !tagsResult.success
+  ) {
     throw new Error("获取数据失败");
   }
 
