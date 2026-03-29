@@ -228,30 +228,44 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 ## 设计系统
 
-项目遵循 **Apple Human Interface Guidelines** 设计规范：
+项目遵循 **Chen Serif 设计系统**（Variant-driven Design 方案），基于 Tailwind CSS v4 + shadcn/ui 理念构建。
+
+### 核心理念
+
+**Variant-driven Design**（变体驱动设计）：组件通过 props 管理变体（`variant`、`size`），而非全局 CSS 类名。
 
 ### 配色方案
 
-**Light Mode**:
-- 背景色: `#ffffff`
-- 强调色: `#0071e3`
-- 文字色: `#1d1d1f`
+| 类别 | Token | 值 | 用途 |
+|------|-------|-----|------|
+| 背景 | `--color-bg` | `#050505` | 页面背景 |
+| 文字 | `--color-fg` | `#ebebeb` | 主文字 |
+| 品牌 | `--color-primary` | `#10b981` | 主强调色（翡翠绿） |
+| 卡片 | `--color-card` | `rgba(255,255,255,0.02)` | 卡片背景 |
+| 表面 | `--color-surface` | `rgba(255,255,255,0.08)` | 次级背景 |
+| 次级文字 | `--color-muted` | `rgba(255,255,255,0.4)` | 次级文字 |
+| 边框 | `--color-border` | `rgba(255,255,255,0.08)` | 边框 |
 
-**Dark Mode**:
-- 背景色: `#000000`
-- 强调色: `#0a84ff`
-- 文字色: `#f5f5f7`
+### 字体体系
 
-### 圆角系统
+| 用途 | 字体 | Token |
+|------|------|-------|
+| 标题/强调 | Newsreader | `--font-serif` |
+| 正文/UI | Inter | `--font-sans` |
+| 代码/技术 | Space Grotesk | `--font-mono` |
 
-| 变量 | 值 |
-|------|-----|
-| `radius-sm` | 8px |
-| `radius-md` | 12px |
-| `radius-lg` | 16px |
-| `radius-xl` | 20px |
+### 组件示例
 
-详细设计规范请参考 [CLAUDE.md](./CLAUDE.md)。
+```tsx
+<Button variant="primary">新建文章</Button>
+<Button variant="secondary">取消</Button>
+<Button variant="ghost">了解更多</Button>
+
+<Badge variant="success">成功</Badge>
+<Badge variant="warning">警告</Badge>
+```
+
+详细设计规范请参考 [docs/chen-serif-design-system.md](./docs/chen-serif-design-system.md)。
 
 ## 部署
 
