@@ -113,11 +113,112 @@
 
 ### 1.3 字体体系
 
-| 用途 | 字体 | Token |
-|------|------|-------|
-| 标题/强调 | Newsreader | `--font-serif` |
-| 正文/UI | Inter | `--font-sans` |
-| 代码/技术 | Space Grotesk | `--font-mono` |
+字体使用 jsDelivr CDN 的 @fontsource 包，通过 `@font-face` 定义可变字体。
+
+#### 字体 CSS 定义
+
+```css
+/* ======================================
+   Font Faces (CDN Variable Fonts)
+   ====================================== */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/inter-latin-wght-normal.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-normal.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Newsreader";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-italic.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 700;
+  src: url(https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk:vf@latest/space-grotesk-latin-wght-normal.woff2)
+    format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+```
+
+#### 字体 Token 定义
+
+在 `styles/global.css` 的 `@theme` 块中注册：
+
+```css
+@theme {
+  /* === 字体 === */
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
+}
+```
+
+#### 字体用途
+
+| 用途 | 字体 | Token | 字重范围 |
+|------|------|-------|---------|
+| 标题/强调 | Newsreader | `--font-serif` | 200-800 (可变) |
+| 正文/UI | Inter | `--font-sans` | 100-900 (可变) |
+| 代码/技术 | Space Grotesk | `--font-mono` | 300-700 (可变) |
+
+#### 字体使用方式
+
+```tsx
+// 使用 Tailwind 类
+<h1 className="font-serif text-h1">Newsreader 标题</h1>
+<p className="font-sans text-base">Inter 正文字体</p>
+<code className="font-mono text-sm">Space Grotesk 等宽</code>
+
+// 单独使用字重（通过 CSS 字重范围）
+<p className="font-serif font-light">细体 Newsreader (200)</p>
+<p className="font-serif font-extrabold">特粗体 Newsreader (800)</p>
+<p className="font-sans font-medium">中等 Inter (500)</p>
+<p className="font-mono font-normal">常规 Space Grotesk (400)</p>
+
+// 使用斜体（仅 Newsreader 支持）
+<p className="font-serif italic">Newsreader 斜体</p>
+```
+
+#### 字体安装方式对比
+
+| 方式 | 命令 | 适用场景 |
+|------|------|---------|
+| **CDN @fontsource**（推荐） | 无需安装，使用 CDN URL | 快速启动、生产环境 |
+| npm 包 | `pnpm add @fontsource-variable/newsreader` | 需要本地化字体、离线使用 |
 
 ### 1.4 间距与圆角体系
 
@@ -851,11 +952,20 @@ Phase 3: 布局与业务组件
 
 ### 8.2 字体速查
 
-| 用途 | Tailwind 类 | CSS Token |
-|------|-------------|-----------|
-| 衬线标题 | `font-serif` | `--font-serif` |
-| 无衬线正文 | `font-sans` | `--font-sans` |
-| 等宽代码 | `font-mono` | `--font-mono` |
+| 用途 | Tailwind 类 | CSS Token | 可变字重 |
+|------|-------------|-----------|---------|
+| 衬线标题 | `font-serif` | `--font-serif` | 200-800 |
+| 无衬线正文 | `font-sans` | `--font-sans` | 100-900 |
+| 等宽代码 | `font-mono` | `--font-mono` | 300-700 |
+
+### 8.3 CDN 字体 URL
+
+| 字体 | Woff2 URL |
+|------|----------|
+| Inter | `https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/inter-latin-wght-normal.woff2` |
+| Newsreader | `https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-normal.woff2` |
+| Newsreader Italic | `https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-italic.woff2` |
+| Space Grotesk | `https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk:vf@latest/space-grotesk-latin-wght-normal.woff2` |
 
 ---
 
