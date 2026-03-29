@@ -9,21 +9,23 @@ import {
 import { checkAdmin } from "@/lib/auth-guard";
 import { changelogStore } from "@/stores/changelog";
 
-const PAGE_SIZE_MAX = 1000;
+const changelogListReqSchema = z.object({
+  page: z.coerce.number().int().positive().optional().default(1),
+  pageSize: z.coerce
+    .number()
+    .int()
+    .positive()
+    .optional()
+    .default(10),
+  sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
+  order: z.enum(["asc", "desc"]).optional(),
+  version: z.string().trim().optional(),
+});
 
-const changelogListReqSchema = z
-  .object({
-    page: z.coerce.number().int().positive().optional().default(1),
-    pageSize: z.coerce.number().int().positive().max(PAGE_SIZE_MAX).optional().default(10),
-    sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
-    order: z.enum(["asc", "desc"]).optional(),
-    version: z.string().trim().min(1).max(100).optional(),
-  });
-
-const changelogIdSchema = z.string().trim().min(1).max(128);
+const changelogIdSchema = z.string().trim();
 const changelogCreateReqSchema = z.object({
-  version: z.string().trim().min(1).max(100),
-  content: z.string().trim().min(1),
+  version: z.string().trim(),
+  content: z.string().trim(),
   date: z.coerce.number().int().optional(),
 });
 
