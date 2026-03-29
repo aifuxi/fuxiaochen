@@ -1,6 +1,6 @@
 # fuxiaochen
 
-基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用 Apple Human Interface Guidelines 设计规范。
+基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用 Chen Serif 设计系统（Variant-driven Design 方案）。
 
 **本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
 
@@ -8,7 +8,7 @@
 
 ### 前台功能
 
-- **首页**：Apple 大胆风格设计，液态渐变背景
+- **首页**：大胆风格设计，液态渐变背景
 - **博客展示**：文章列表、分类浏览、标签筛选
 - **关于页面**：个人介绍、技能展示
 - **更新日志**：时间线风格版本历史
@@ -28,7 +28,7 @@
 
 ### 技术亮点
 
-- **Apple Human Interface**：遵循 Apple 设计规范
+- **Chen Serif 设计系统**：Variant-driven Design 变体驱动方案
 - **Server Actions**：接口优先设计模式
 - **Store 架构**：Interface-First 数据流
 - **权限管理**：基于角色的访问控制
@@ -145,7 +145,7 @@ fuxiaochen/
 │   ├── actions/            # Server Actions
 │   └── api/                # API 路由
 ├── components/             # 组件库
-│   ├── ui/                 # 基础 UI 组件（Apple Human Interface）
+│   ├── ui/                 # 基础 UI 组件（Chen Serif 设计系统）
 │   ├── admin/              # 后台业务组件
 │   ├── blog/               # 博客业务组件
 │   └── layout/             # 布局组件（header, footer）
@@ -248,11 +248,21 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 ### 字体体系
 
-| 用途 | 字体 | Token |
-|------|------|-------|
-| 标题/强调 | Newsreader | `--font-serif` |
-| 正文/UI | Inter | `--font-sans` |
-| 代码/技术 | Space Grotesk | `--font-mono` |
+字体使用 jsDelivr CDN @fontsource，通过 `@font-face` 定义可变字体。
+
+| 用途 | 字体 | Token | 字重范围 |
+|------|------|-------|---------|
+| 标题/强调 | Newsreader | `--font-serif` | 200-800 (可变) |
+| 正文/UI | Inter | `--font-sans` | 100-900 (可变) |
+| 代码/技术 | Space Grotesk | `--font-mono` | 300-700 (可变) |
+
+**使用示例：**
+```tsx
+<h1 className="font-serif">Newsreader 标题</h1>
+<p className="font-sans">Inter 正文字体</p>
+<code className="font-mono">Space Grotesk 等宽</code>
+<p className="font-serif italic">Newsreader 斜体</p>
+```
 
 ### 组件示例
 
