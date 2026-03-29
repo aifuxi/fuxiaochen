@@ -11,6 +11,7 @@ import {
   Users,
   Settings,
   Plus,
+  ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ const navItems = [
       },
       { icon: Folder, label: "Categories", href: "/cms/categories" },
       { icon: Tags, label: "Tags", href: "/cms/tags" },
+      { icon: ScrollText, label: "Changelog", href: "/cms/changelog" },
     ],
   },
   {
