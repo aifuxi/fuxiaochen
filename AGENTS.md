@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# AGENTS.md
 
 ## 常用命令
 
@@ -41,65 +39,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Markdown**: ByteMD（博客编辑器）
 - **存储**: OSS（文件上传）
 - **包管理器**: pnpm
-
-## 项目目录结构
-
-```
-├── app/                    # Next.js App Router
-│   ├── (admin)/           # 管理后台路由组
-│   │   ├── admin/         # 后台页面（blogs, categories, tags, users, changelogs）
-│   │   ├── layout.tsx     # 后台布局
-│   │   └── admin-sidebar.tsx
-│   ├── (site)/            # 前台路由组（blog, about, changelog, login, ui-preview）
-│   ├── actions/           # Server Actions
-│   ├── api/               # API 路由
-│   └── layout.tsx         # 根布局
-├── components/
-│   ├── ui/                # 基础 UI 组件（Chen Serif 设计系统）
-│   ├── admin/             # 后台业务组件
-│   ├── blog/              # 博客相关组件
-│   ├── layout/            # 布局组件（header, footer）
-│   └── portal/            # 传送门组件
-├── stores/                # 状态管理（Interface-First 架构）
-├── types/                 # TypeScript 类型定义
-├── hooks/                 # 自定义 Hooks
-├── lib/                   # 工具函数
-├── styles/                # 全局样式
-└── prisma/                # 数据库相关
-```
-
-## 架构模式
-
-### Interface-First 数据流架构
-
-```
-Client Component
-    ↓
-Server Action ('use server')
-    ↓
-Store Interface (stores/*/interface.ts)
-    ↓
-Store Implementation (stores/*/store.ts)
-    ↓
-Prisma ORM
-    ↓
-MySQL/MariaDB
-```
-
-1. **Interface 定义** (`stores/*/interface.ts`)：定义 Store 接口契约
-2. **Implementation 实现** (`stores/*/store.ts`)：实现具体业务逻辑
-3. **Server Action** (`app/actions/*.ts`)：统一入口，处理错误和缓存（`revalidatePath`）
-
-### 业务模块
-
-每个业务模块包含：
-- `types/[module].ts` - TypeScript 类型定义
-- `stores/[module]/interface.ts` - Store 接口
-- `stores/[module]/store.ts` - Store 实现
-- `app/actions/[module].ts` - Server Actions
-- `components/[module]/*` - 业务组件
-
-**现有模块**：blog, category, tag, changelog, user, upload, dashboard
 
 ## 代码规范
 
@@ -144,99 +83,6 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - 文件命名强制 `KEBAB_CASE`
 - 类型导入使用 `type` 关键字 (`import type { ... }`)
 - 遇到 ESLint 问题时，可执行 `pnpm lint:fix` 尝试自动修复
-
-## 认证权限
-
-**用户角色**：`role` 为整数类型，`1` = 管理员 (admin)，`2` = 普通用户 (normal)，默认为 `2`。
-
-使用 `checkAdmin()` 函数保护需要管理员权限的 Server Action：
-
-```ts
-"use server";
-import { checkAdmin } from "@/lib/auth-guard";
-
-export async function createBlogAction(data: BlogCreateReq) {
-  await checkAdmin(); // 未登录或 role !== 1 会抛出错误
-  // ...
-}
-```
-
-首个注册的用户会自动获得 admin 权限 (`role = 1`)。
-
-### 数据库软删除
-
-大多数模型使用软删除（`deletedAt` 字段）。查询时需要过滤已删除记录：
-
-```ts
-const where: Prisma.BlogWhereInput = { deletedAt: null };
-```
-
-### Prisma Client
-
-Prisma Client 生成到 `generated/prisma/` 目录（已在 `.gitignore` 中）。
-
-## 数据库模型
-
-### 业务模型
-- **Blog** - 博客文章（title, slug, description, cover, content, published）
-- **Category** - 分类（name, slug），与 Blog 一对多
-- **Tag** - 标签（name, slug），与 Blog 多对多
-- **Changelog** - 更新日志（version, content, date）
-
-### 认证模型（Better Auth）
-- **User** - 用户（name, email, image, role）
-- **Session** - 会话
-- **Account** - 第三方账户
-- **Verification** - 验证码
-
-## UI 组件库
-
-> **重要**: 所有 UI 组件**必须**遵循 Chen Serif 设计系统（Variant-driven Design）。
-
-### 基础组件 (`components/ui/`)
-| 组件 | 说明 |
-|------|------|
-| button | 按钮（primary, secondary, ghost, outline） |
-| input / textarea | 输入框 |
-| select | 选择器 |
-| checkbox / switch | 复选框/开关 |
-| radio-group | 单选组 |
-| label | 表单标签 |
-| card / glass-card | 卡片 |
-| badge | 徽章 |
-| avatar | 头像 |
-| skeleton | 骨架屏 |
-| empty | 空状态 |
-| separator | 分隔线 |
-| table | 表格 |
-| data-table | 数据表格（带排序、分页） |
-| dropdown-menu | 下拉菜单 |
-
-### 弹层组件
-| 组件 | 说明 |
-|------|------|
-| dialog | 对话框 |
-| alert-dialog | 警告对话框 |
-| sheet | 侧边面板（支持 top/right/bottom/left） |
-| drawer | 抽屉（底部弹出） |
-| popover | 弹出框 |
-| tooltip | 提示框 |
-
-### 排版组件 (`components/ui/typography/`)
-| 组件 | 说明 |
-|------|------|
-| title | 标题（level 1-6） |
-| text | 文本（primary, secondary, success, warning, danger） |
-| paragraph | 段落 |
-| link | 链接 |
-
-### 布局组件
-| 组件 | 说明 |
-|------|------|
-| scroll-area | 滚动区域 |
-| pagination | 分页 |
-| back-to-top | 返回顶部 |
-| button-group | 按钮组 |
 
 ## 设计系统：Chen Serif
 
@@ -298,39 +144,34 @@ export function cn(...inputs: ClassValue[]) {
 #### 字体 CSS 定义
 
 ```css
+/* inter-latin-wght-normal */
 @font-face {
-  font-family: "Inter";
+  font-family: 'Inter';
   font-style: normal;
   font-display: swap;
   font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/inter-latin-wght-normal.woff2)
-    format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.2.8/files/inter-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
+/* newsreader-latin-wght-normal */
 @font-face {
-  font-family: "Newsreader";
+  font-family: 'Newsreader';
   font-style: normal;
   font-display: swap;
   font-weight: 200 800;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-normal.woff2)
-    format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/npm/@fontsource-variable/newsreader@5.2.10/files/newsreader-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 
+/* space-grotesk-latin-wght-normal */
 @font-face {
-  font-family: "Newsreader";
-  font-style: italic;
-  font-weight: 200 800;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/newsreader:vf@latest/newsreader-latin-wght-italic.woff2)
-    format("woff2-variations");
-}
-
-@font-face {
-  font-family: "Space Grotesk";
+  font-family: 'Space Grotesk';
   font-style: normal;
   font-display: swap;
   font-weight: 300 700;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk:vf@latest/space-grotesk-latin-wght-normal.woff2)
-    format("woff2-variations");
+  src: url(https://cdn.jsdelivr.net/npm/@fontsource-variable/space-grotesk@5.2.10/files/space-grotesk-latin-wght-normal.woff2) format('woff2-variations');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
 ```
 

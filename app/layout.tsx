@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
-import { ModalProvider } from "@/components/modal-provider";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ModalProvider } from "@/components/provider/modal-provider";
+import { ThemeProvider } from "@/components/provider/theme-provider";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
-import { isProduction } from "@/lib/env";
 import "@/styles/global.css";
 
 export const metadata: Metadata = {
@@ -53,21 +52,14 @@ export default function RootLayout({
         />
         <link rel="manifest" href="/site.webmanifest" />
         {/* Google Search Console 验证 */}
-        {isProduction() &&
-          process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (
-            <meta
-              name="google-site-verification"
-              content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
-            />
-          )}
+        {process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (
+          <meta
+            name="google-site-verification"
+            content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
+          />
+        )}
       </head>
-      <body
-        className={`
-          bg-[var(--bg-color)] text-[var(--text-color)] antialiased
-          selection:bg-[var(--accent-color)] selection:text-white
-          ${isProduction() ? "" : "debug-screens"}
-        `}
-      >
+      <body className={`antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -80,13 +72,12 @@ export default function RootLayout({
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
+      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
       )}
 
       {/* umami 统计 */}
-      {isProduction() &&
-        process.env.NEXT_PUBLIC_UMAMI_URL &&
+      {process.env.NEXT_PUBLIC_UMAMI_URL &&
         process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
           <Script
             id="umami"

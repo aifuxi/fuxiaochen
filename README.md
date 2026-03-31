@@ -2,38 +2,6 @@
 
 基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用 Chen Serif 设计系统（Variant-driven Design 方案）。
 
-**本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
-
-## 功能特性
-
-### 前台功能
-
-- **首页**：大胆风格设计，液态渐变背景
-- **博客展示**：文章列表、分类浏览、标签筛选
-- **关于页面**：个人介绍、技能展示
-- **更新日志**：时间线风格版本历史
-- **登录页面**：液态风格设计
-- **SEO 优化**：Sitemap、OpenGraph 支持
-
-### 后台管理
-
-- **仪表盘**：数据概览
-- **博客管理**：CRUD 操作、Markdown 编辑（ByteMD）
-- **分类管理**：分类创建与维护
-- **标签管理**：标签管理
-- **用户管理**：用户信息维护、角色分配
-- **更新日志**：版本记录管理
-- **图片上传**：OSS 云存储集成
-- **UI 预览**：组件预览页面
-
-### 技术亮点
-
-- **Chen Serif 设计系统**：Variant-driven Design 变体驱动方案
-- **Server Actions**：接口优先设计模式
-- **Store 架构**：Interface-First 数据流
-- **权限管理**：基于角色的访问控制
-- **类型安全**：TypeScript + Zod 验证
-- **现代 UI**：Radix UI + Tailwind CSS 4
 
 ## 技术栈
 
@@ -123,75 +91,6 @@ pnpm dev
 | `pnpm db:studio` | 打开 Prisma Studio    |
 | `pnpm db:seed`   | 填充种子数据          |
 | `pnpm pm2:start` | PM2 启动应用          |
-
-## 项目结构
-
-```
-fuxiaochen/
-├── app/                    # Next.js App Router
-│   ├── (site)/             # 前台页面组
-│   │   ├── blog/           # 博客相关
-│   │   ├── about/          # 关于页面
-│   │   ├── changelog/      # 更新日志
-│   │   ├── login/          # 登录页面
-│   │   └── ui-preview/     # UI 组件预览
-│   ├── (admin)/            # 后台管理组
-│   │   ├── admin/          # 管理功能
-│   │   │   ├── blogs/      # 博客管理
-│   │   │   ├── categories/ # 分类管理
-│   │   │   ├── tags/       # 标签管理
-│   │   │   ├── users/      # 用户管理
-│   │   │   └── changelogs/ # 更新日志管理
-│   ├── actions/            # Server Actions
-│   └── api/                # API 路由
-├── components/             # 组件库
-│   ├── ui/                 # 基础 UI 组件（Chen Serif 设计系统）
-│   ├── admin/              # 后台业务组件
-│   ├── blog/               # 博客业务组件
-│   └── layout/             # 布局组件（header, footer）
-├── stores/                 # Store 实现 (Interface-First)
-│   └── */                  # 各模块 Store
-│       ├── interface.ts    # 接口定义
-│       └── store.ts        # 实现代码
-├── types/                  # TypeScript 类型定义
-├── hooks/                  # 自定义 Hooks
-├── lib/                    # 核心工具库
-├── styles/                 # 全局样式
-├── prisma/                 # 数据库 Schema
-└── docs/                   # 项目文档
-```
-
-## 架构设计
-
-### 数据流架构
-
-```
-Client Component
-    ↓
-Server Action ('use server')
-    ↓
-Store Interface (stores/*/interface.ts)
-    ↓
-Store Implementation (stores/*/store.ts)
-    ↓
-Prisma ORM
-    ↓
-MySQL/MariaDB
-```
-
-### 权限管理
-
-- **角色定义**：`role = 1` 管理员，`role = 2` 普通用户
-- **权限守卫**：使用 `checkAdmin()` 保护敏感操作
-- **自动提权**：首个注册用户自动获得管理员权限
-
-### Server Action 设计规范
-
-项目采用 **Interface-First** 模式：
-
-1. **Interface** (`stores/*/interface.ts`)：定义 Store 接口
-2. **Implementation** (`stores/*/store.ts`)：实现业务逻辑
-3. **Action** (`app/actions/*.ts`)：统一错误处理、缓存更新
 
 ## 代码规范
 
