@@ -79,6 +79,14 @@ export function Button({
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
+  const content = loading ? (
+    <>
+      <LoaderCircle className="size-4 animate-spin" />
+      {children}
+    </>
+  ) : (
+    children
+  );
 
   return (
     <Comp
@@ -86,8 +94,7 @@ export function Button({
       disabled={disabled ?? loading}
       {...props}
     >
-      {loading ? <LoaderCircle className="size-4 animate-spin" /> : null}
-      {children}
+      {content}
     </Comp>
   );
 }
