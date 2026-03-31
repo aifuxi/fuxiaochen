@@ -248,3 +248,112 @@
     font-family: var(--font-mono);
   }
 }
+
+@keyframes shimmer-demo {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes morph-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    border-radius: 44% 56% 52% 48% / 48% 35% 65% 52%;
+  }
+
+  50% {
+    transform: translate3d(12px, -18px, 0) scale(1.08);
+    border-radius: 61% 39% 35% 65% / 39% 58% 42% 61%;
+  }
+}
+
+@keyframes morph-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    border-radius: 58% 42% 37% 63% / 41% 60% 40% 59%;
+  }
+
+  50% {
+    transform: translate3d(-16px, 14px, 0) scale(0.94);
+    border-radius: 36% 64% 58% 42% / 62% 43% 57% 38%;
+  }
+}
+
+@keyframes morph-c {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    border-radius: 41% 59% 62% 38% / 53% 35% 65% 47%;
+  }
+
+  50% {
+    transform: translate3d(8px, 16px, 0) scale(1.04);
+    border-radius: 52% 48% 39% 61% / 38% 60% 40% 62%;
+  }
+}
+
+@keyframes reveal-up {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@layer utilities {
+  .animate-shimmer-demo {
+    background:
+      linear-gradient(
+        90deg,
+        rgb(16 185 129 / 0.2),
+        rgb(16 185 129 / 0.65),
+        rgb(16 185 129 / 0.2)
+      );
+    background-size: 200% 100%;
+    animation: shimmer-demo 2s linear infinite;
+  }
+
+  .animate-gradient-flow {
+    animation: gradient-flow 7s ease infinite;
+  }
+
+  .animate-morph-a {
+    animation: morph-a 11s var(--ease-smooth) infinite;
+  }
+
+  .animate-morph-b {
+    animation: morph-b 13s var(--ease-smooth) infinite;
+  }
+
+  .animate-morph-c {
+    animation: morph-c 9s var(--ease-smooth) infinite;
+  }
+
+  .animate-reveal-up {
+    animation: reveal-up 700ms var(--ease-smooth) both;
+  }
+}
