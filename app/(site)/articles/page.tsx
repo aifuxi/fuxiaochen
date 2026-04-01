@@ -1,51 +1,75 @@
 import { ArticleSearch } from "@/components/features/articles/article-search";
-import { PageHero } from "@/components/shared/page-hero";
 import { ArticleCard } from "@/components/site/article-card";
-
-const articles = [
-  {
-    href: "/articles/design-tokens-at-scale",
-    category: "Design System",
-    title: "Design Tokens At Scale",
-    excerpt: "Shared semantic tokens for content-heavy public pages and higher-density admin views.",
-    meta: "8 min read",
-  },
-  {
-    href: "/articles/routing-the-editorial-system",
-    category: "Architecture",
-    title: "Routing The Editorial System",
-    excerpt: "Scaffolded with route groups so future implementation can stay isolated and predictable.",
-    meta: "6 min read",
-  },
-  {
-    href: "/articles/variant-driven-cms-ui",
-    category: "Variants",
-    title: "Variant Driven CMS UI",
-    excerpt: "Buttons, cards and badges are now aligned with CVA-based visual intent instead of page-local styling.",
-    meta: "7 min read",
-  },
-] as const;
+import { archiveArticles } from "@/lib/mock/design-content";
 
 export default function ArticlesPage() {
   return (
     <div className={`
-      container-shell space-y-10 py-10
-      md:py-14
+      container-shell space-y-10 py-8
+      md:py-12
     `}>
-      <PageHero
-        badge="Archive"
-        eyebrow="Articles"
-        title="Editorial archive scaffold"
-        description="Search, filtering and pagination are split into feature and shared layers rather than embedded in a single page."
-      />
+      <section className="space-y-5 py-8">
+        <div className="flex items-center gap-3">
+          <div className="hero-label-dot" />
+          <span className="font-mono text-xs tracking-[0.24em] text-primary uppercase">
+            Articles
+          </span>
+        </div>
+        <h1 className="font-serif leading-[0.94] font-medium tracking-[-0.05em] text-[var(--text-h1)]">
+          Essays, notes and implementation details.
+        </h1>
+        <p className="max-w-2xl text-lg leading-9 text-muted">
+          一个偏内容型的归档页，保留了搜索、筛选和分页的视觉结构，但不接入真实 API 数据。
+        </p>
+        <div className="font-mono text-[11px] tracking-[0.16em] text-muted uppercase">
+          28 articles available
+        </div>
+      </section>
+
       <ArticleSearch />
-      <div className={`
+
+      <section className={`
         grid gap-6
-        lg:grid-cols-3
+        md:grid-cols-2
+        xl:grid-cols-3
       `}>
-        {articles.map((article) => (
+        {archiveArticles.map((article) => (
           <ArticleCard key={article.href} {...article} />
         ))}
+      </section>
+
+      <div className="flex items-center justify-center gap-2 py-2">
+        <button type="button" className={`
+          rounded-lg border border-white/10 px-4 py-2 text-sm text-muted transition-colors
+          hover:text-fg
+        `}>
+          Prev
+        </button>
+        {[1, 2, 3, 4].map((page) => (
+          <button
+            key={page}
+            type="button"
+            className={`
+              size-10 rounded-lg text-sm transition-colors
+              ${
+              page === 1
+                ? "bg-primary text-primary-fg"
+                : `
+                  border border-white/10 text-muted
+                  hover:text-fg
+                `
+            }
+            `}
+          >
+            {page}
+          </button>
+        ))}
+        <button type="button" className={`
+          rounded-lg border border-white/10 px-4 py-2 text-sm text-muted transition-colors
+          hover:text-fg
+        `}>
+          Next
+        </button>
       </div>
     </div>
   );

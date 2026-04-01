@@ -1,39 +1,32 @@
-import { PageHero } from "@/components/shared/page-hero";
 import { ProjectCard } from "@/components/site/project-card";
-
-const projects = [
-  {
-    title: "Design System Showcase",
-    description: "Token-driven design doc route backed by shared UI primitives and demo patterns.",
-    stack: ["Design", "Radix", "CVA"],
-  },
-  {
-    title: "Blog Platform",
-    description: "Public site scaffold ready for hero sections, archive cards and article detail composition.",
-    stack: ["Next.js", "Tailwind", "Prisma"],
-  },
-  {
-    title: "CMS Console",
-    description: "Dashboard shell for analytics, settings and content operations with reusable layout surfaces.",
-    stack: ["Auth", "Tables", "Forms"],
-  },
-] as const;
+import { projects } from "@/lib/mock/design-content";
 
 export default function ProjectsPage() {
   return (
     <div className={`
-      container-shell space-y-10 py-10
-      md:py-14
+      container-shell space-y-10 py-8
+      md:py-12
     `}>
-      <PageHero
-        badge="Projects"
-        eyebrow="Portfolio"
-        title="Projects are mapped to dedicated site business components."
-        description="The page-level scaffold is now independent from card structure, so project views can evolve without reshaping the whole route."
-      />
+      <section className="space-y-5 py-8">
+        <div className="flex items-center gap-3">
+          <div className="hero-label-dot" />
+          <span className="font-mono text-xs tracking-[0.24em] text-primary uppercase">
+            Projects
+          </span>
+        </div>
+        <h1 className="font-serif leading-[0.94] font-medium tracking-[-0.05em] text-[var(--text-h1)]">
+          Work shaped around clarity,
+          <br />
+          atmosphere and maintainability.
+        </h1>
+        <p className="max-w-2xl text-lg leading-9 text-muted">
+          这些项目覆盖 editorial 站点、设计系统文档和内容运营后台，页面只展示静态前端表现，不接任何业务接口。
+        </p>
+      </section>
       <div className={`
         grid gap-6
-        lg:grid-cols-3
+        md:grid-cols-2
+        xl:grid-cols-4
       `}>
         {projects.map((project) => (
           <ProjectCard key={project.title} {...project} />

@@ -24,20 +24,29 @@ export function AuthShell({
           bg-[size:64px_64px]
         `}
       />
-      <div className={`
-        relative z-10 w-full max-w-[440px] rounded-[1.5rem] border border-border bg-card/95 p-8
-        shadow-[var(--shadow-lg)] backdrop-blur-2xl
-      `}>
-        <div className="mb-8 space-y-3 text-center">
-          <div className="font-mono text-[11px] tracking-[0.24em] text-primary uppercase">
-            Chen CMS
+      <div className="relative z-10 w-full max-w-[420px]">
+        <div className="mb-8 flex justify-center">
+          <div className="inline-flex items-center gap-3 text-center">
+            <div className={`
+              flex size-12 items-center justify-center rounded-2xl bg-primary font-mono text-base font-bold
+              text-primary-fg
+            `}>
+              SB
+            </div>
+            <div className="font-mono text-[1.75rem] font-bold tracking-[-0.04em]">
+              Super<span className="text-primary">Blog</span>
+            </div>
           </div>
-          <h1 className="font-serif text-4xl font-semibold tracking-[-0.04em]">
-            {title}
-          </h1>
-          <p className="text-sm leading-7 text-muted">{description}</p>
         </div>
-        {children}
+        <div className="rounded-[1rem] border border-border bg-card/95 p-8 shadow-[var(--shadow-lg)] backdrop-blur-xl">
+          <div className="mb-8 space-y-3 text-center">
+            <h1 className="font-serif text-[1.75rem] font-semibold tracking-[-0.04em]">
+              {title}
+            </h1>
+            <p className="text-[15px] leading-7 text-muted">{description}</p>
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );
