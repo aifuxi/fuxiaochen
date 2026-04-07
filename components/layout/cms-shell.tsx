@@ -9,13 +9,11 @@ type CmsShellProps = {
 
 export function CmsShell({ children, description, title }: CmsShellProps) {
   return (
-    <div className="shell-container-lg py-6">
-      <div className="flex gap-6">
-        <CmsSidebar />
-        <div className="min-w-0 flex-1 rounded-[2rem] border border-white/8 bg-black/20 p-6 backdrop-blur-xl">
-          <CmsHeader description={description} title={title} />
-          {children}
-        </div>
+    <div className="admin-layout">
+      <CmsSidebar />
+      <div className="cms-main">
+        <CmsHeader description={description} title={title} />
+        <div className="cms-content">{children}</div>
       </div>
     </div>
   );

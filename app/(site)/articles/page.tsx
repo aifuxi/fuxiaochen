@@ -1,18 +1,30 @@
 import { ArticleArchive } from "@/components/blocks/article-archive";
-import { PageIntro } from "@/components/blocks/page-intro";
 import { articles } from "@/lib/mocks/site-content";
 
 export default function ArticlesPage() {
   return (
-    <>
-      <PageIntro
-        description="A mock content archive showing search, filtering, and pagination behavior on top of the Chen Serif card system."
-        eyebrow="Archive"
-        title="Articles, notes, and longer system essays."
-      />
-      <section className="shell-container">
-        <ArticleArchive articles={articles} />
+    <div>
+      <section className="px-8 pt-40 pb-12">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="hero-label-dot" />
+            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">Archive</span>
+          </div>
+          <div className="flex items-end justify-between">
+            <h1 className={`
+              font-serif text-5xl
+              lg:text-6xl
+            `}>All Writings</h1>
+            <span className="font-mono-tech text-sm text-muted">{articles.length} articles</span>
+          </div>
+        </div>
       </section>
-    </>
+
+      <section className="px-8 pb-24">
+        <div className="mx-auto max-w-7xl">
+          <ArticleArchive articles={articles} />
+        </div>
+      </section>
+    </div>
   );
 }

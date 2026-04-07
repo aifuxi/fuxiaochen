@@ -1,54 +1,57 @@
 "use client";
 
 import NiceModal from "@ebay/nice-modal-react";
-import { Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { SubscribeDialog } from "@/components/modals/subscribe-dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 export function NewsletterCard() {
   const [email, setEmail] = useState("");
 
   return (
-    <section className="shell-container mt-16">
-      <div className={`
-        relative overflow-hidden rounded-[2.2rem] border border-primary/16 px-6 py-8 card-surface
-        md:px-10
-      `}>
-        <div className="absolute inset-y-0 right-0 w-1/2 bg-gradient-to-l from-primary/12 to-transparent" />
+    <section className="relative px-8 py-32">
+      <div className="relative mx-auto max-w-3xl text-center">
         <div className={`
-          relative grid gap-8
-          lg:grid-cols-[1.2fr_0.9fr] lg:items-center
-        `}>
-          <div className="space-y-4">
-            <div className="type-label text-primary">Newsletter</div>
-            <h2 className="font-serif text-5xl tracking-[-0.05em] text-balance">Writing notes, product fragments, and changelog drops.</h2>
-            <p className="max-w-xl text-sm leading-6 text-muted">
-              This is a mock flow for the first implementation pass. It demonstrates form styling, modal orchestration,
-              and CTA behavior before real subscriber persistence exists.
-            </p>
-          </div>
+          absolute top-1/2 left-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 bg-primary opacity-15
+          blur-[120px]
+        `} />
+
+        <div className="relative z-10">
+          <h2 className={`
+            gradient-text mb-4 font-serif text-5xl
+            lg:text-6xl
+          `}>Stay Updated</h2>
+          <p className="mx-auto mb-10 max-w-md text-lg font-light text-muted">
+            Subscribe to my newsletter for the latest articles, tutorials, and insights on design and development.
+          </p>
+
           <form
-            className="space-y-3"
+            className={`
+              mx-auto flex max-w-lg flex-col gap-4
+              sm:flex-row
+            `}
             onSubmit={(event) => {
               event.preventDefault();
               toast.success("Captured locally for the mock flow.");
               void NiceModal.show(SubscribeDialog, { email });
             }}
           >
-            <Input
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
+            <input
+              className={`
+                newsletter-input flex-1 rounded-full px-6 py-4 text-white
+                placeholder:text-muted
+              `}
+              placeholder="your@email.com"
               value={email}
+              onChange={(event) => setEmail(event.target.value)}
             />
-            <Button className="w-full justify-center" type="submit">
-              <Sparkles className="size-4" />
-              Open confirmation flow
-            </Button>
+            <button className="btn-primary-glow font-mono-tech rounded-full px-8 py-4 text-sm tracking-wider uppercase" type="submit">
+              Subscribe
+            </button>
           </form>
+
+          <p className="mt-6 text-xs text-muted">No spam, unsubscribe anytime.</p>
         </div>
       </div>
     </section>

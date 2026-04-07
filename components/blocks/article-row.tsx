@@ -1,38 +1,32 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import type { Article } from "@/lib/mocks/site-content";
 
 export function ArticleRow({ article }: { article: Article }) {
   return (
-    <Link
-      className={`
-        group flex flex-col gap-4 rounded-[1.75rem] border border-white/8 bg-white/3 p-5 transition-all
-        hover:border-white/12 hover:bg-white/5
-        md:flex-row md:items-center md:justify-between
-      `}
-      href={`/article/${article.slug}`}
-    >
-      <div className="space-y-3">
-        <Badge className="w-fit" variant="muted">
-          {article.category}
-        </Badge>
-        <div>
-          <h3 className="font-serif text-3xl tracking-[-0.05em]">{article.title}</h3>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">{article.excerpt}</p>
-        </div>
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="font-mono text-[11px] tracking-[0.28em] text-muted uppercase">
-          {article.date} · {article.readTime}
+    <Link className={`
+      group -mx-6 block rounded-xl border-b border-white/5 px-6 py-8 transition-all duration-300
+      hover:bg-white/5
+    `} href={`/article/${article.slug}`}>
+      <div className="flex items-start gap-6">
+        <Image alt={article.title} className="h-[72px] w-24 rounded-xl object-cover" height={150} src={article.image} width={200} />
+        <div className="min-w-0 flex-1">
+          <h3 className={`
+            group-hover:text-primary-accent
+            mb-2 font-serif text-xl transition-colors duration-300
+          `}>{article.title}</h3>
+          <p className="mb-3 text-sm leading-relaxed font-light text-muted">{article.excerpt}</p>
+          <div className="flex items-center gap-4 text-xs text-muted">
+            <span>{article.date}</span>
+            <span>•</span>
+            <span>{article.readTime}</span>
+          </div>
         </div>
         <div className={`
-          flex size-12 items-center justify-center rounded-full bg-white/6 transition-colors
-          group-hover:bg-primary group-hover:text-primary-foreground
-        `}>
-          <ArrowRight className="size-4" />
-        </div>
+          arrow-btn text-muted transition-colors duration-300
+          group-hover:text-primary-accent
+        `}>→</div>
       </div>
     </Link>
   );
