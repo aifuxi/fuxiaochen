@@ -56,7 +56,6 @@ export const primaryNavItems: NavItem[] = [
 export const secondaryNavItems: NavItem[] = [
   { href: "/changelog", label: "Changelog" },
   { href: "/friends", label: "Friends" },
-  { href: "/design-spec", label: "Design Spec" },
 ];
 
 const baseMarkdown = `## Introduction
