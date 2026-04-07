@@ -5,6 +5,7 @@ import prettier from "eslint-config-prettier/flat";
 import checkFile from "eslint-plugin-check-file";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
+import { parser as eslintParserTypeScript } from "typescript-eslint";
 import eslintPluginBetterTailwindcss from "eslint-plugin-better-tailwindcss";
 
 export default defineConfig([
@@ -12,6 +13,7 @@ export default defineConfig([
     files: ["**/*.{ts,tsx}"],
     extends: [nextTs, nextVitals, eslint.configs.recommended],
     languageOptions: {
+      parser: eslintParserTypeScript,
       parserOptions: {
         projectService: true, // 自动处理 tsconfig 查找
         tsconfigRootDir: import.meta.dirname,
@@ -81,7 +83,7 @@ export default defineConfig([
     settings: {
       "better-tailwindcss": {
         // tailwindcss 4: the path to the entry file of the css based tailwind config (eg: `src/global.css`)
-        entryPoint: "styles/global.css",
+        entryPoint: "app/globals.css",
       },
     },
   },
