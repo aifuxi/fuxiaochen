@@ -3,42 +3,42 @@
 ## 常用命令
 
 ### 开发
-- `pnpm dev` - 启动开发服务器
-- `pnpm build` - 构建生产版本
-- `pnpm start` - 启动生产服务器
-- `pnpm build:analyzer` - 分析构建包大小
+- `bun run dev` - 启动开发服务器
+- `bun run build` - 构建生产版本
+- `bun run start` - 启动生产服务器
+- `bun run build:analyzer` - 分析构建包大小
 
 ### 代码质量
-- `pnpm lint` - ESLint 检查
-- `pnpm lint:fix` - ESLint 检查并自动修复
-- `pnpm format` - Prettier 格式化代码
+- `bun run lint` - ESLint 检查
+- `bun run lint:fix` - ESLint 检查并自动修复
+- `bun run format` - Prettier 格式化代码
 
 ### 数据库
-- `pnpm db:gen` - 生成 Prisma Client
-- `pnpm db:push` - 推送 schema 变更到数据库
-- `pnpm db:dev` - 运行 Prisma 迁移（开发环境）
-- `pnpm db:reset` - 重置数据库
-- `pnpm db:studio` - 打开 Prisma Studio
-- `pnpm db:seed` - 填充种子数据
+- `bun run db:gen` - 生成 Prisma Client
+- `bun run db:push` - 推送 schema 变更到数据库
+- `bun run db:dev` - 运行 Prisma 迁移（开发环境）
+- `bun run db:reset` - 重置数据库
+- `bun run db:studio` - 打开 Prisma Studio
+- `bun run db:seed` - 填充种子数据
 
 ### 部署
-- `pnpm pm2:start` - 使用 PM2 启动应用
-- `pnpm pm2:stop` / `pnpm pm2:restart` - PM2 管理命令
+- `bun run pm2:start` - 使用 PM2 启动应用
+- `bun run pm2:stop` / `bun run pm2:restart` - PM2 管理命令
 
 ### Git 提交
-- `pnpm commit` - 使用 Commitizen 提交（遵循 Conventional Commits）
-- `pnpm commit:retry` - 重试失败的提交
+- `bun run commit` - 使用 Commitizen 提交（遵循 Conventional Commits）
+- `bun run commit:retry` - 重试失败的提交
 
 ## 技术栈
 
 - **框架**: Next.js 16.1.1 (App Router) + React 19.2.3
 - **语言**: TypeScript 5.9.3（严格模式）
 - **数据库**: MySQL/MariaDB + Prisma ORM
-- **样式**: Tailwind CSS 4 + Radix UI
+- **样式**: Tailwind CSS 4 + `@base-ui/react`
 - **认证**: Better Auth（支持 GitHub OAuth 和邮箱密码登录）
 - **Markdown**: ByteMD（博客编辑器）
 - **存储**: OSS（文件上传）
-- **包管理器**: pnpm
+- **包管理器**: bun
 
 ## 代码规范
 
@@ -47,7 +47,6 @@
 - 组件: `PascalCase` (如 `BlogList`)
 - 变量/函数: `lowerCamelCase` (如 `fetchBlogData`)
 - 类型/接口: `PascalCase` (如 `IBlogStore`)
-- Store 接口前缀: `I` (如 `IBlogStore`)
 
 ### NiceModal 管理（重要）
 
@@ -82,7 +81,7 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - Tailwind CSS 类检查（`@/styles/global.css` 作为入口点）
 - 文件命名强制 `KEBAB_CASE`
 - 类型导入使用 `type` 关键字 (`import type { ... }`)
-- 遇到 ESLint 问题时，可执行 `pnpm lint:fix` 尝试自动修复
+- 遇到 ESLint 问题时，可执行 `bun run lint:fix` 尝试自动修复
 
 ### 字体体系
 
@@ -167,9 +166,6 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 ## 重要文件路径
 
-- `styles/global.css` - Tailwind CSS 4 配置入口和全局样式
-- `lib/auth.ts` - Better Auth 配置
-- `lib/auth-guard.ts` - 权限守卫
-- `lib/oss.ts` - OSS 存储工具
+- `app/global.css` - Tailwind CSS 4 配置入口和全局样式
 - `prisma/schema.prisma` - 数据库模型
 - `generated/prisma/` - Prisma Client 生成目录（忽略）
