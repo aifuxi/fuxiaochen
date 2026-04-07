@@ -126,10 +126,17 @@ export default function HomePage() {
               lg:gap-12
             `}>
               <div className={`
-                h-32 w-32 flex-shrink-0 rounded-2xl
-                bg-[radial-gradient(circle_at_30%_30%,rgba(16,185,129,0.35),rgba(255,255,255,0.04),rgba(0,0,0,0.7))]
+                h-32 w-32 flex-shrink-0 overflow-hidden rounded-2xl
                 lg:h-40 lg:w-40
-              `} />
+              `}>
+                <Image
+                  alt="Alex Chen"
+                  className="h-full w-full object-cover"
+                  height={400}
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
+                  width={400}
+                />
+              </div>
               <div>
                 <h2 className={`
                   mb-4 font-serif text-3xl

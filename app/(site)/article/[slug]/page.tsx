@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ArticleCard } from "@/components/blocks/article-card";
-import { ArticleLikePanel } from "@/components/blocks/article-like-panel";
+import { ArticleStatsPanel } from "@/components/blocks/article-stats-panel";
 import { MarkdownViewer } from "@/components/editor/markdown-viewer";
 import { extractToc } from "@/lib/markdown";
 import { articles } from "@/lib/mocks/site-content";
@@ -34,41 +34,14 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
         <div className="hero-image-overlay" />
       </section>
 
-      <section className="px-8 py-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="hero-label-dot" />
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">{article.category}</span>
-          </div>
-
-          <h1 className="article-title mb-8 font-serif">{article.title}</h1>
-
-          <div className="author-meta flex flex-wrap items-center gap-6">
-            <img
-              alt="Author avatar"
-              className="h-12 w-12 rounded-full border-2 border-white/8 object-cover"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face"
-            />
-            <div className="flex items-center gap-3">
-              <span className="author-name">Alex Chen</span>
-              <span className="meta-divider">•</span>
-              <span className="text-sm text-muted">{article.date}</span>
-              <span className="meta-divider">•</span>
-              <span className="text-sm text-muted">{article.readTime}</span>
-            </div>
-            <div className="ml-auto flex items-center gap-4">
-              <div className="flex items-center gap-2 text-muted">
-                <span>◔</span>
-                <span className="font-mono-tech text-sm">2,847</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted">
-                <span>♥</span>
-                <span className="font-mono-tech text-sm">328</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ArticleStatsPanel
+        authorAvatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face"
+        authorName="Alex Chen"
+        category={article.category}
+        date={article.date}
+        readTime={article.readTime}
+        title={article.title}
+      />
 
       <section className="px-8 pb-24">
         <div className="mx-auto max-w-7xl">
@@ -103,12 +76,6 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               </div>
             </aside>
           </div>
-        </div>
-      </section>
-
-      <section className="px-8 pb-16">
-        <div className="mx-auto max-w-7xl">
-          <ArticleLikePanel readTime={article.readTime} />
         </div>
       </section>
 

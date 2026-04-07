@@ -17,7 +17,7 @@ export function AuthCard({ mode }: AuthCardProps) {
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6">
       <div className={`
         pointer-events-none fixed inset-0
-        bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.15),transparent),radial-gradient(ellipse_60%_40%_at_100%_100%,rgba(99,102,241,0.1),transparent)]
+        bg-[linear-gradient(180deg,rgba(16,185,129,0.12),transparent_30%),linear-gradient(135deg,rgba(99,102,241,0.08),transparent_55%)]
       `} />
       <div className={`
         pointer-events-none fixed inset-0

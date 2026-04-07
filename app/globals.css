@@ -2,7 +2,8 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-serif: "Newsreader", Georgia, serif;
   --font-mono: "JetBrains Mono", "Space Grotesk", monospace;
 
@@ -31,14 +32,13 @@
   --color-info: #38bdf8;
   --color-success: #10b981;
 
-  --radius-xs: 0.5rem;
+  /* --radius-xs: 0.5rem;
   --radius-sm: 0.75rem;
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
+  --radius-xl: 2rem; */
 
-  --shadow-soft:
-    0 10px 30px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.18);
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.18);
   --shadow-card:
     0 18px 40px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.03);
   --shadow-glow:
@@ -144,10 +144,11 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background-image:
-      radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 26%),
-      radial-gradient(circle at 90% 20%, rgba(16, 185, 129, 0.1), transparent 20%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 30%);
+    background-image: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.02),
+      transparent 30%
+    );
     min-height: 100vh;
     text-rendering: optimizeLegibility;
   }
@@ -173,7 +174,11 @@
 }
 
 @utility card-surface {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.02)
+  );
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(16px);
 }
@@ -309,7 +314,12 @@
     content: "";
     position: absolute;
     inset: -1px;
-    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-primary),
+      transparent
+    );
     background-size: 200% 100%;
     animation: shimmer 4s linear infinite;
     opacity: 0;
@@ -333,8 +343,11 @@
     inset: 0;
     border-radius: inherit;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background:
-      radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(16, 185, 129, 0.18), transparent 32%);
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.14),
+      transparent 55%
+    );
     opacity: 0;
     transition: opacity 240ms var(--ease-smooth);
     pointer-events: none;
@@ -353,7 +366,11 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(16, 185, 129, 0.12), transparent 40%);
+    background: linear-gradient(
+      135deg,
+      rgba(16, 185, 129, 0.12),
+      transparent 55%
+    );
     opacity: 0;
     transition: opacity 0.5s var(--ease-smooth);
     pointer-events: none;
@@ -366,7 +383,9 @@
 
   .article-card,
   .project-card {
-    transition: transform 0.4s var(--ease-smooth), box-shadow 0.4s var(--ease-smooth);
+    transition:
+      transform 0.4s var(--ease-smooth),
+      box-shadow 0.4s var(--ease-smooth);
   }
 
   .article-card:hover,
