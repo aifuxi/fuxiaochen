@@ -43,16 +43,16 @@ enum FriendLinkStatus {
 }
 
 model MediaAsset {
-  id          BigInt    @id @default(autoincrement())
-  kind        String    @db.VarChar(32)
-  storageKey  String    @unique @map("storage_key") @db.VarChar(255)
-  originalUrl String?   @map("original_url") @db.Text
-  mimeType    String?   @map("mime_type") @db.VarChar(100)
-  sizeBytes   BigInt?   @map("size_bytes")
+  id          String   @id @default(cuid()) @db.VarChar(191)
+  kind        String   @db.VarChar(32)
+  storageKey  String   @unique @map("storage_key") @db.VarChar(255)
+  originalUrl String?  @map("original_url") @db.Text
+  mimeType    String?  @map("mime_type") @db.VarChar(100)
+  sizeBytes   Int?     @map("size_bytes")
   width       Int?
   height      Int?
-  altText     String?   @map("alt_text") @db.VarChar(255)
-  createdAt   DateTime  @default(now()) @map("created_at")
+  altText     String?  @map("alt_text") @db.VarChar(255)
+  createdAt   DateTime @default(now()) @map("created_at")
 
   articleCovers Article[]
   projectCovers Project[]
@@ -63,28 +63,28 @@ model MediaAsset {
 }
 
 model Category {
-  id          BigInt    @id @default(autoincrement())
-  name        String    @db.VarChar(80)
-  slug        String    @unique @db.VarChar(80)
-  color       String?   @db.VarChar(7)
-  description String?   @db.Text
-  sortOrder   Int       @default(0) @map("sort_order")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id          String   @id @default(cuid()) @db.VarChar(191)
+  name        String   @db.VarChar(80)
+  slug        String   @unique @db.VarChar(80)
+  color       String?  @db.VarChar(7)
+  description String?  @db.Text
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  articles    Article[]
+  articles Article[]
 
   @@map("categories")
 }
 
 model Tag {
-  id          BigInt       @id @default(autoincrement())
-  name        String       @db.VarChar(80)
-  slug        String       @unique @db.VarChar(80)
-  description String?      @db.Text
-  sortOrder   Int          @default(0) @map("sort_order")
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @updatedAt @map("updated_at")
+  id          String   @id @default(cuid()) @db.VarChar(191)
+  name        String   @db.VarChar(80)
+  slug        String   @unique @db.VarChar(80)
+  description String?  @db.Text
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   articleTags ArticleTag[]
 
@@ -92,33 +92,33 @@ model Tag {
 }
 
 model Article {
-  id                 BigInt           @id @default(autoincrement())
-  title              String           @db.VarChar(255)
-  slug               String           @unique @db.VarChar(255)
-  excerpt            String?          @db.Text
-  contentHtml        String?          @map("content_html") @db.LongText
-  contentMarkdown    String?          @map("content_markdown") @db.LongText
-  coverAssetId       BigInt?          @map("cover_asset_id")
-  categoryId         BigInt?          @map("category_id")
-  status             ArticleStatus    @default(Draft)
-  isFeatured         Boolean          @default(false) @map("is_featured")
-  seoTitle           String?          @map("seo_title") @db.VarChar(255)
-  seoDescription     String?          @map("seo_description") @db.VarChar(500)
-  readingTimeMinutes Int?             @map("reading_time_minutes")
-  publishedAt        DateTime?        @map("published_at")
-  archivedAt         DateTime?        @map("archived_at")
-  viewCount          Int              @default(0) @map("view_count")
-  likeCount          Int              @default(0) @map("like_count")
-  commentCount       Int              @default(0) @map("comment_count")
-  createdAt          DateTime         @default(now()) @map("created_at")
-  updatedAt          DateTime         @updatedAt @map("updated_at")
+  id                 String        @id @default(cuid()) @db.VarChar(191)
+  title              String        @db.VarChar(255)
+  slug               String        @unique @db.VarChar(255)
+  excerpt            String?       @db.Text
+  contentHtml        String?       @map("content_html") @db.LongText
+  contentMarkdown    String?       @map("content_markdown") @db.LongText
+  coverAssetId       String?       @map("cover_asset_id") @db.VarChar(191)
+  categoryId         String?       @map("category_id") @db.VarChar(191)
+  status             ArticleStatus @default(Draft)
+  isFeatured         Boolean       @default(false) @map("is_featured")
+  seoTitle           String?       @map("seo_title") @db.VarChar(255)
+  seoDescription     String?       @map("seo_description") @db.VarChar(500)
+  readingTimeMinutes Int?          @map("reading_time_minutes")
+  publishedAt        DateTime?     @map("published_at")
+  archivedAt         DateTime?     @map("archived_at")
+  viewCount          Int           @default(0) @map("view_count")
+  likeCount          Int           @default(0) @map("like_count")
+  commentCount       Int           @default(0) @map("comment_count")
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
 
-  coverAsset         MediaAsset?      @relation(fields: [coverAssetId], references: [id])
-  category           Category?        @relation(fields: [categoryId], references: [id])
-  revisions          ArticleRevision[]
-  articleTags        ArticleTag[]
-  comments           Comment[]
-  metricsDaily       ArticleMetricDaily[]
+  coverAsset   MediaAsset?          @relation(fields: [coverAssetId], references: [id])
+  category     Category?            @relation(fields: [categoryId], references: [id])
+  revisions    ArticleRevision[]
+  articleTags  ArticleTag[]
+  comments     Comment[]
+  metricsDaily ArticleMetricDaily[]
 
   @@index([status, publishedAt], map: "idx_articles_status_published_at")
   @@index([categoryId], map: "idx_articles_category_id")
@@ -127,52 +127,52 @@ model Article {
 }
 
 model ArticleRevision {
-  id              BigInt    @id @default(autoincrement())
-  articleId       BigInt    @map("article_id")
-  revisionNo      Int       @map("revision_no")
-  title           String    @db.VarChar(255)
-  excerpt         String?   @db.Text
-  contentHtml     String?   @map("content_html") @db.LongText
-  contentMarkdown String?   @map("content_markdown") @db.LongText
-  autosaved       Boolean   @default(true)
-  createdAt       DateTime  @default(now()) @map("created_at")
+  id              String   @id @default(cuid()) @db.VarChar(191)
+  articleId       String   @map("article_id") @db.VarChar(191)
+  revisionNo      Int      @map("revision_no")
+  title           String   @db.VarChar(255)
+  excerpt         String?  @db.Text
+  contentHtml     String?  @map("content_html") @db.LongText
+  contentMarkdown String?  @map("content_markdown") @db.LongText
+  autosaved       Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
 
-  article         Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@unique([articleId, revisionNo])
   @@map("article_revisions")
 }
 
 model ArticleTag {
-  articleId  BigInt    @map("article_id")
-  tagId      BigInt    @map("tag_id")
-  createdAt  DateTime  @default(now()) @map("created_at")
+  articleId String   @map("article_id") @db.VarChar(191)
+  tagId     String   @map("tag_id") @db.VarChar(191)
+  createdAt DateTime @default(now()) @map("created_at")
 
-  article    Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  tag        Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([articleId, tagId])
   @@map("article_tags")
 }
 
 model Comment {
-  id                   BigInt         @id @default(autoincrement())
-  articleId            BigInt         @map("article_id")
-  parentCommentId      BigInt?        @map("parent_comment_id")
-  authorName           String         @map("author_name") @db.VarChar(100)
-  authorEmail          String?        @map("author_email") @db.VarChar(255)
-  authorAvatarColor    String?        @map("author_avatar_color") @db.VarChar(7)
-  authorAvatarInitials String?        @map("author_avatar_initials") @db.VarChar(8)
-  body                 String         @db.Text
-  status               CommentStatus  @default(Pending)
-  replyDepth           Int            @default(0) @map("reply_depth")
-  approvedAt           DateTime?      @map("approved_at")
-  createdAt            DateTime       @default(now()) @map("created_at")
-  updatedAt            DateTime       @updatedAt @map("updated_at")
+  id                   String        @id @default(cuid()) @db.VarChar(191)
+  articleId            String        @map("article_id") @db.VarChar(191)
+  parentCommentId      String?       @map("parent_comment_id") @db.VarChar(191)
+  authorName           String        @map("author_name") @db.VarChar(100)
+  authorEmail          String?       @map("author_email") @db.VarChar(255)
+  authorAvatarColor    String?       @map("author_avatar_color") @db.VarChar(7)
+  authorAvatarInitials String?       @map("author_avatar_initials") @db.VarChar(8)
+  body                 String        @db.Text
+  status               CommentStatus @default(Pending)
+  replyDepth           Int           @default(0) @map("reply_depth")
+  approvedAt           DateTime?     @map("approved_at")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
 
-  article              Article        @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  parentComment        Comment?       @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
-  replies              Comment[]      @relation("CommentReplies")
+  article       Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  parentComment Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id], onDelete: Cascade)
+  replies       Comment[] @relation("CommentReplies")
 
   @@index([articleId, status, createdAt], map: "idx_comments_article_status")
   @@index([parentCommentId], map: "idx_comments_parent_id")
@@ -180,117 +180,117 @@ model Comment {
 }
 
 model SiteSetting {
-  id                     Int              @id @default(1)
-  blogName               String           @map("blog_name") @db.VarChar(120)
-  blogUrl                String           @map("blog_url") @db.VarChar(255)
-  blogDescription        String?          @map("blog_description") @db.Text
-  contactEmail           String?          @map("contact_email") @db.VarChar(255)
-  timezone               String           @db.VarChar(64)
-  languageCode           String           @map("language_code") @db.VarChar(16)
-  theme                  String           @default("dark") @db.VarChar(16)
-  fontFamily             String?          @map("font_family") @db.VarChar(64)
-  accentColor            String?          @map("accent_color") @db.VarChar(7)
-  logoAssetId            BigInt?          @map("logo_asset_id")
-  defaultMetaTitle       String?          @map("default_meta_title") @db.VarChar(255)
-  defaultMetaDescription String?          @map("default_meta_description") @db.VarChar(500)
-  googleAnalyticsId      String?          @map("google_analytics_id") @db.VarChar(32)
-  sitemapUrl             String?          @map("sitemap_url") @db.VarChar(255)
-  createdAt              DateTime         @default(now()) @map("created_at")
-  updatedAt              DateTime         @updatedAt @map("updated_at")
+  id                     Int      @id @default(1)
+  blogName               String   @map("blog_name") @db.VarChar(120)
+  blogUrl                String   @map("blog_url") @db.VarChar(255)
+  blogDescription        String?  @map("blog_description") @db.Text
+  contactEmail           String?  @map("contact_email") @db.VarChar(255)
+  timezone               String   @db.VarChar(64)
+  languageCode           String   @map("language_code") @db.VarChar(16)
+  theme                  String   @default("dark") @db.VarChar(16)
+  fontFamily             String?  @map("font_family") @db.VarChar(64)
+  accentColor            String?  @map("accent_color") @db.VarChar(7)
+  logoAssetId            String?  @map("logo_asset_id") @db.VarChar(191)
+  defaultMetaTitle       String?  @map("default_meta_title") @db.VarChar(255)
+  defaultMetaDescription String?  @map("default_meta_description") @db.VarChar(500)
+  googleAnalyticsId      String?  @map("google_analytics_id") @db.VarChar(32)
+  sitemapUrl             String?  @map("sitemap_url") @db.VarChar(255)
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
 
-  logoAsset              MediaAsset?      @relation(fields: [logoAssetId], references: [id])
-  commentSettings        CommentSetting?
+  logoAsset       MediaAsset?     @relation(fields: [logoAssetId], references: [id])
+  commentSettings CommentSetting?
 
   @@map("site_settings")
 }
 
 model CommentSetting {
-  siteSettingsId       Int        @id @map("site_settings_id")
-  enabled              Boolean    @default(true)
-  moderationRequired   Boolean    @default(true) @map("moderation_required")
-  allowAnonymous       Boolean    @default(false) @map("allow_anonymous")
-  nestedRepliesEnabled Boolean    @default(true) @map("nested_replies_enabled")
-  maxReplyDepth        Int        @default(3) @map("max_reply_depth")
-  updatedAt            DateTime   @updatedAt @map("updated_at")
+  siteSettingsId       Int      @id @map("site_settings_id")
+  enabled              Boolean  @default(true)
+  moderationRequired   Boolean  @default(true) @map("moderation_required")
+  allowAnonymous       Boolean  @default(false) @map("allow_anonymous")
+  nestedRepliesEnabled Boolean  @default(true) @map("nested_replies_enabled")
+  maxReplyDepth        Int      @default(3) @map("max_reply_depth")
+  updatedAt            DateTime @updatedAt @map("updated_at")
 
-  siteSettings         SiteSetting @relation(fields: [siteSettingsId], references: [id], onDelete: Cascade)
+  siteSettings SiteSetting @relation(fields: [siteSettingsId], references: [id], onDelete: Cascade)
 
   @@map("comment_settings")
 }
 
 model Project {
-  id            BigInt            @id @default(autoincrement())
-  name          String            @db.VarChar(150)
-  slug          String            @unique @db.VarChar(150)
-  category      ProjectCategory
-  badgeLabel    String?           @map("badge_label") @db.VarChar(60)
-  summary       String            @db.Text
-  detail        String?           @db.Text
-  coverAssetId  BigInt?           @map("cover_asset_id")
-  externalUrl   String?           @map("external_url") @db.Text
-  sourceUrl     String?           @map("source_url") @db.Text
-  isFeatured    Boolean           @default(true) @map("is_featured")
-  metricLabel   String?           @map("metric_label") @db.VarChar(40)
-  metricValue   String?           @map("metric_value") @db.VarChar(40)
-  sortOrder     Int               @default(0) @map("sort_order")
-  publishedAt   DateTime?         @map("published_at")
-  createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @map("updated_at")
+  id           String          @id @default(cuid()) @db.VarChar(191)
+  name         String          @db.VarChar(150)
+  slug         String          @unique @db.VarChar(150)
+  category     ProjectCategory
+  badgeLabel   String?         @map("badge_label") @db.VarChar(60)
+  summary      String          @db.Text
+  detail       String?         @db.Text
+  coverAssetId String?         @map("cover_asset_id") @db.VarChar(191)
+  externalUrl  String?         @map("external_url") @db.Text
+  sourceUrl    String?         @map("source_url") @db.Text
+  isFeatured   Boolean         @default(true) @map("is_featured")
+  metricLabel  String?         @map("metric_label") @db.VarChar(40)
+  metricValue  String?         @map("metric_value") @db.VarChar(40)
+  sortOrder    Int             @default(0) @map("sort_order")
+  publishedAt  DateTime?       @map("published_at")
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
 
-  coverAsset    MediaAsset?       @relation(fields: [coverAssetId], references: [id])
-  technologies  ProjectTechnology[]
+  coverAsset   MediaAsset?         @relation(fields: [coverAssetId], references: [id])
+  technologies ProjectTechnology[]
 
   @@map("projects")
 }
 
 model ProjectTechnology {
-  id         BigInt    @id @default(autoincrement())
-  projectId  BigInt    @map("project_id")
-  techName   String    @map("tech_name") @db.VarChar(60)
-  sortOrder  Int       @default(0) @map("sort_order")
+  id        String @id @default(cuid()) @db.VarChar(191)
+  projectId String @map("project_id") @db.VarChar(191)
+  techName  String @map("tech_name") @db.VarChar(60)
+  sortOrder Int    @default(0) @map("sort_order")
 
-  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_technologies")
 }
 
 model ChangelogRelease {
-  id         BigInt           @id @default(autoincrement())
-  version    String           @unique @db.VarChar(32)
-  title      String           @db.VarChar(255)
-  summary    String?          @db.Text
-  releasedOn DateTime         @map("released_on") @db.Date
-  isMajor    Boolean          @default(false) @map("is_major")
-  sortOrder  Int              @default(0) @map("sort_order")
-  createdAt  DateTime         @default(now()) @map("created_at")
+  id         String   @id @default(cuid()) @db.VarChar(191)
+  version    String   @unique @db.VarChar(32)
+  title      String   @db.VarChar(255)
+  summary    String?  @db.Text
+  releasedOn DateTime @map("released_on") @db.Date
+  isMajor    Boolean  @default(false) @map("is_major")
+  sortOrder  Int      @default(0) @map("sort_order")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  items      ChangelogItem[]
+  items ChangelogItem[]
 
   @@map("changelog_releases")
 }
 
 model ChangelogItem {
-  id          BigInt             @id @default(autoincrement())
-  releaseId   BigInt             @map("release_id")
-  itemType    ChangelogItemType  @map("item_type")
-  title       String             @db.VarChar(255)
-  description String?            @db.Text
-  sortOrder   Int                @default(0) @map("sort_order")
+  id          String            @id @default(cuid()) @db.VarChar(191)
+  releaseId   String            @map("release_id") @db.VarChar(191)
+  itemType    ChangelogItemType @map("item_type")
+  title       String            @db.VarChar(255)
+  description String?           @db.Text
+  sortOrder   Int               @default(0) @map("sort_order")
 
-  release     ChangelogRelease   @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+  release ChangelogRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
 
   @@map("changelog_items")
 }
 
 model FriendLinkApplication {
-  id                 BigInt            @id @default(autoincrement())
-  siteName           String            @map("site_name") @db.VarChar(120)
-  siteUrl            String            @map("site_url") @db.VarChar(255)
-  siteDescription    String            @map("site_description") @db.Text
-  avatarUrl          String?           @map("avatar_url") @db.Text
-  status             FriendLinkStatus  @default(Pending)
-  reviewedAt         DateTime?         @map("reviewed_at")
-  createdAt          DateTime          @default(now()) @map("created_at")
+  id              String           @id @default(cuid()) @db.VarChar(191)
+  siteName        String           @map("site_name") @db.VarChar(120)
+  siteUrl         String           @map("site_url") @db.VarChar(255)
+  siteDescription String           @map("site_description") @db.Text
+  avatarUrl       String?          @map("avatar_url") @db.Text
+  status          FriendLinkStatus @default(Pending)
+  reviewedAt      DateTime?        @map("reviewed_at")
+  createdAt       DateTime         @default(now()) @map("created_at")
 
   approvedFriendLink FriendLink?
 
@@ -298,21 +298,21 @@ model FriendLinkApplication {
 }
 
 model FriendLink {
-  id                        BigInt                 @id @default(autoincrement())
-  siteName                  String                 @map("site_name") @db.VarChar(120)
-  siteUrl                   String                 @unique @map("site_url") @db.VarChar(255)
-  subtitle                  String?                @db.VarChar(120)
-  description               String                 @db.Text
-  avatarAssetId             BigInt?                @map("avatar_asset_id")
-  domain                    String?                @db.VarChar(120)
-  status                    FriendLinkStatus       @default(Approved)
-  sortOrder                 Int                    @default(0) @map("sort_order")
-  approvedFromApplicationId BigInt?                @unique @map("approved_from_application_id")
-  createdAt                 DateTime               @default(now()) @map("created_at")
-  updatedAt                 DateTime               @updatedAt @map("updated_at")
+  id                        String           @id @default(cuid()) @db.VarChar(191)
+  siteName                  String           @map("site_name") @db.VarChar(120)
+  siteUrl                   String           @unique @map("site_url") @db.VarChar(255)
+  subtitle                  String?          @db.VarChar(120)
+  description               String           @db.Text
+  avatarAssetId             String?          @map("avatar_asset_id") @db.VarChar(191)
+  domain                    String?          @db.VarChar(120)
+  status                    FriendLinkStatus @default(Approved)
+  sortOrder                 Int              @default(0) @map("sort_order")
+  approvedFromApplicationId String?          @unique @map("approved_from_application_id") @db.VarChar(191)
+  createdAt                 DateTime         @default(now()) @map("created_at")
+  updatedAt                 DateTime         @updatedAt @map("updated_at")
 
-  avatarAsset               MediaAsset?            @relation(fields: [avatarAssetId], references: [id])
-  approvedFromApplication   FriendLinkApplication? @relation(fields: [approvedFromApplicationId], references: [id])
+  avatarAsset             MediaAsset?            @relation(fields: [avatarAssetId], references: [id])
+  approvedFromApplication FriendLinkApplication? @relation(fields: [approvedFromApplicationId], references: [id])
 
   @@map("friend_links")
 }
@@ -330,65 +330,65 @@ model SiteMetricDaily {
 }
 
 model ArticleMetricDaily {
-  articleId   BigInt    @map("article_id")
-  metricDate  DateTime  @map("metric_date") @db.Date
-  views       Int       @default(0)
-  likes       Int       @default(0)
-  comments    Int       @default(0)
+  articleId  String   @map("article_id") @db.VarChar(191)
+  metricDate DateTime @map("metric_date") @db.Date
+  views      Int      @default(0)
+  likes      Int      @default(0)
+  comments   Int      @default(0)
 
-  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
 
   @@id([articleId, metricDate])
   @@map("article_metric_daily")
 }
 
 model User {
-  id            String    @id @db.VarChar(191)
-  name          String    @db.VarChar(100)
-  email         String    @unique @db.VarChar(255)
-  emailVerified Boolean   @default(false) @map("email_verified")
-  image         String?   @db.Text
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  id            String   @id @db.VarChar(191)
+  name          String   @db.VarChar(100)
+  email         String   @unique @db.VarChar(255)
+  emailVerified Boolean  @default(false) @map("email_verified")
+  image         String?  @db.Text
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  accounts      Account[]
-  sessions      Session[]
+  accounts Account[]
+  sessions Session[]
 
   @@map("users")
 }
 
 model Session {
-  id         String    @id @db.VarChar(191)
-  userId     String    @map("user_id") @db.VarChar(191)
-  token      String    @unique @db.VarChar(255)
-  expiresAt  DateTime  @map("expires_at")
-  ipAddress  String?   @map("ip_address") @db.VarChar(255)
-  userAgent  String?   @map("user_agent") @db.Text
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @updatedAt @map("updated_at")
+  id        String   @id @db.VarChar(191)
+  userId    String   @map("user_id") @db.VarChar(191)
+  token     String   @unique @db.VarChar(255)
+  expiresAt DateTime @map("expires_at")
+  ipAddress String?  @map("ip_address") @db.VarChar(255)
+  userAgent String?  @map("user_agent") @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "idx_sessions_user_id")
   @@map("sessions")
 }
 
 model Account {
-  id                     String    @id @db.VarChar(191)
-  userId                 String    @map("user_id") @db.VarChar(191)
-  accountId              String    @map("account_id") @db.VarChar(255)
-  providerId             String    @map("provider_id") @db.VarChar(100)
-  accessToken            String?   @map("access_token") @db.Text
-  refreshToken           String?   @map("refresh_token") @db.Text
-  idToken                String?   @map("id_token") @db.Text
-  accessTokenExpiresAt   DateTime? @map("access_token_expires_at")
-  refreshTokenExpiresAt  DateTime? @map("refresh_token_expires_at")
-  scope                  String?   @db.Text
-  password               String?   @db.Text
-  createdAt              DateTime  @default(now()) @map("created_at")
-  updatedAt              DateTime  @updatedAt @map("updated_at")
+  id                    String    @id @db.VarChar(191)
+  userId                String    @map("user_id") @db.VarChar(191)
+  accountId             String    @map("account_id") @db.VarChar(255)
+  providerId            String    @map("provider_id") @db.VarChar(100)
+  accessToken           String?   @map("access_token") @db.Text
+  refreshToken          String?   @map("refresh_token") @db.Text
+  idToken               String?   @map("id_token") @db.Text
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
-  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId], map: "uk_accounts_provider_account")
   @@index([userId], map: "idx_accounts_user_id")
@@ -396,12 +396,12 @@ model Account {
 }
 
 model Verification {
-  id          String    @id @db.VarChar(191)
-  identifier  String    @db.VarChar(255)
-  value       String    @db.VarChar(255)
-  expiresAt   DateTime  @map("expires_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  id         String   @id @db.VarChar(191)
+  identifier String   @db.VarChar(255)
+  value      String   @db.VarChar(255)
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@unique([identifier, value], map: "uk_verifications_identifier_value")
   @@map("verifications")
