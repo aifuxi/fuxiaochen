@@ -7,7 +7,23 @@ import { LucideIcon } from "@/components/ui/lucide-icon";
 import { cn } from "@/lib/utils";
 import { cmsNavGroups } from "@/lib/mocks/cms-content";
 
-export function CmsSidebar() {
+function getUserInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+type CmsSidebarProps = {
+  user: {
+    name: string;
+    email: string;
+  };
+};
+
+export function CmsSidebar({ user }: CmsSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -61,10 +77,10 @@ export function CmsSidebar() {
           <div className={`
             flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#10b981,#059669)] text-sm
             font-semibold text-black
-          `}>SC</div>
+          `}>{getUserInitials(user.name)}</div>
           <div>
-            <div className="text-sm font-semibold">Sarah Chen</div>
-            <div className="text-xs text-muted">Administrator</div>
+            <div className="text-sm font-semibold">{user.name}</div>
+            <div className="max-w-[180px] truncate text-xs text-muted">{user.email}</div>
           </div>
         </div>
       </div>

@@ -16,16 +16,22 @@ type TextFieldProps = {
   placeholder?: string;
   defaultValue?: string;
   leadingSearch?: boolean;
+  type?: React.ComponentPropsWithoutRef<typeof Input>["type"];
+  autoComplete?: React.ComponentPropsWithoutRef<typeof Input>["autoComplete"];
+  disabled?: boolean;
 };
 
 export function TextField({
+  autoComplete,
   defaultValue,
+  disabled,
   description,
   error,
   label,
   leadingSearch,
   name,
   placeholder,
+  type,
 }: TextFieldProps) {
   return (
     <Field.Root name={name} className="space-y-2">
@@ -33,9 +39,12 @@ export function TextField({
       <Field.Control
         render={
           <Input
+            autoComplete={autoComplete}
             defaultValue={defaultValue}
+            disabled={disabled}
             placeholder={placeholder}
             startAdornment={leadingSearch ? <Search className="size-4" /> : undefined}
+            type={type}
           />
         }
       />

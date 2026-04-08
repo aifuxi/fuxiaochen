@@ -1,5 +1,6 @@
 import { CmsHeader } from "@/components/layout/cms-header";
 import { CmsSidebar } from "@/components/layout/cms-sidebar";
+import { requireCmsSession } from "@/lib/auth";
 
 type CmsShellProps = {
   title: string;
@@ -7,12 +8,14 @@ type CmsShellProps = {
   children: React.ReactNode;
 };
 
-export function CmsShell({ children, description, title }: CmsShellProps) {
+export async function CmsShell({ children, description, title }: CmsShellProps) {
+  const session = await requireCmsSession();
+
   return (
     <div className="admin-layout">
-      <CmsSidebar />
+      <CmsSidebar user={session.user} />
       <div className="cms-main">
-        <CmsHeader description={description} title={title} />
+        <CmsHeader description={description} title={title} user={session.user} />
         <div className="cms-content">{children}</div>
       </div>
     </div>

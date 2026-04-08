@@ -1,8 +1,52 @@
 "use client";
 
-import { Bell, Mail, Search } from "lucide-react";
+import { Bell, LogOut, Mail, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
 
-export function CmsHeader({ title, description }: { title: string; description: string }) {
+import { authClient } from "@/lib/auth-client";
+
+function getUserInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+type CmsHeaderProps = {
+  title: string;
+  description: string;
+  user: {
+    name: string;
+    email: string;
+  };
+};
+
+export function CmsHeader({ title, description, user }: CmsHeaderProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSignOut() {
+    startTransition(() => {
+      void (async () => {
+        const { error } = await authClient.signOut();
+
+        if (error) {
+          toast.error(error.message || "Failed to sign out.");
+
+          return;
+        }
+
+        toast.success("Signed out successfully.");
+        router.replace("/cms/login");
+        router.refresh();
+      })();
+    });
+  }
+
   return (
     <>
       <header className="cms-header">
@@ -27,12 +71,27 @@ export function CmsHeader({ title, description }: { title: string; description: 
           `}>
             <Mail className="h-5 w-5" />
           </button>
+          <button
+            className={`
+              rounded-xl p-3 text-muted transition
+              hover:bg-white/8 hover:text-foreground
+              disabled:cursor-not-allowed disabled:opacity-60
+            `}
+            disabled={isPending}
+            onClick={handleSignOut}
+            type="button"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
           <div className="flex items-center gap-3 rounded-xl border border-white/8 px-3 py-2">
             <div className={`
               flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#10b981,#059669)] text-sm
               font-semibold text-black
-            `}>SC</div>
-            <div className="text-sm text-muted">Sarah Chen</div>
+            `}>{getUserInitials(user.name)}</div>
+            <div>
+              <div className="text-sm text-foreground">{user.name}</div>
+              <div className="text-xs text-muted">{user.email}</div>
+            </div>
           </div>
         </div>
       </header>

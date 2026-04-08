@@ -341,3 +341,68 @@ model ArticleMetricDaily {
   @@id([articleId, metricDate])
   @@map("article_metric_daily")
 }
+
+model User {
+  id            String    @id @db.VarChar(191)
+  name          String    @db.VarChar(100)
+  email         String    @unique @db.VarChar(255)
+  emailVerified Boolean   @default(false) @map("email_verified")
+  image         String?   @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  accounts      Account[]
+  sessions      Session[]
+
+  @@map("users")
+}
+
+model Session {
+  id         String    @id @db.VarChar(191)
+  userId     String    @map("user_id") @db.VarChar(191)
+  token      String    @unique @db.VarChar(255)
+  expiresAt  DateTime  @map("expires_at")
+  ipAddress  String?   @map("ip_address") @db.VarChar(255)
+  userAgent  String?   @map("user_agent") @db.Text
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_sessions_user_id")
+  @@map("sessions")
+}
+
+model Account {
+  id                     String    @id @db.VarChar(191)
+  userId                 String    @map("user_id") @db.VarChar(191)
+  accountId              String    @map("account_id") @db.VarChar(255)
+  providerId             String    @map("provider_id") @db.VarChar(100)
+  accessToken            String?   @map("access_token") @db.Text
+  refreshToken           String?   @map("refresh_token") @db.Text
+  idToken                String?   @map("id_token") @db.Text
+  accessTokenExpiresAt   DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt  DateTime? @map("refresh_token_expires_at")
+  scope                  String?   @db.Text
+  password               String?   @db.Text
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  user                   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId], map: "uk_accounts_provider_account")
+  @@index([userId], map: "idx_accounts_user_id")
+  @@map("accounts")
+}
+
+model Verification {
+  id          String    @id @db.VarChar(191)
+  identifier  String    @db.VarChar(255)
+  value       String    @db.VarChar(255)
+  expiresAt   DateTime  @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([identifier, value], map: "uk_verifications_identifier_value")
+  @@map("verifications")
+}
