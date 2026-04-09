@@ -1,6 +1,7 @@
 import {
   BarChart3,
   Bell,
+  BriefcaseBusiness,
   FileText,
   Folder,
   LayoutDashboard,
@@ -16,6 +17,7 @@ import type { LucideProps } from "lucide-react";
 const icons = {
   "bar-chart-3": BarChart3,
   bell: Bell,
+  "briefcase-business": BriefcaseBusiness,
   "file-text": FileText,
   folder: Folder,
   "layout-dashboard": LayoutDashboard,

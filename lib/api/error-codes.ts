@@ -23,10 +23,17 @@ export const articleErrorCodes = {
   ARTICLE_TAG_NOT_FOUND: "ARTICLE_TAG_NOT_FOUND",
 } as const;
 
+export const projectErrorCodes = {
+  PROJECT_COVER_ASSET_NOT_FOUND: "PROJECT_COVER_ASSET_NOT_FOUND",
+  PROJECT_NOT_FOUND: "PROJECT_NOT_FOUND",
+  PROJECT_SLUG_CONFLICT: "PROJECT_SLUG_CONFLICT",
+} as const;
+
 export const errorCodes = {
   ...apiErrorCodes,
   ...articleErrorCodes,
   ...categoryErrorCodes,
+  ...projectErrorCodes,
   ...tagErrorCodes,
 } as const;
 
@@ -41,6 +48,9 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   CATEGORY_NOT_FOUND: 404,
   CATEGORY_SLUG_CONFLICT: 409,
   INTERNAL_ERROR: 500,
+  PROJECT_COVER_ASSET_NOT_FOUND: 404,
+  PROJECT_NOT_FOUND: 404,
+  PROJECT_SLUG_CONFLICT: 409,
   TAG_NAME_CONFLICT: 409,
   TAG_NOT_FOUND: 404,
   TAG_SLUG_CONFLICT: 409,

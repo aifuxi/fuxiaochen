@@ -48,6 +48,7 @@ export const cmsNavGroups: CmsNavGroup[] = [
     items: [
       { href: "/cms/dashboard", label: "Dashboard", icon: "layout-dashboard" },
       { href: "/cms/articles", label: "Articles", icon: "file-text" },
+      { href: "/cms/projects", label: "Projects", icon: "briefcase-business" },
       { href: "/cms/categories", label: "Categories", icon: "folder" },
       { href: "/cms/tags", label: "Tags", icon: "tags" },
       { href: "/cms/comments", label: "Comments", icon: "message-square" },
