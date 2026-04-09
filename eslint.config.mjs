@@ -42,7 +42,7 @@ export default defineConfig([
       ],
       "no-unused-vars": "off",
       "better-tailwindcss/no-unregistered-classes": "warn",
-      "@typescript-eslint/no-unsafe-member-access": "warn",
+      "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-return": "off",
