@@ -29,10 +29,16 @@ export const projectErrorCodes = {
   PROJECT_SLUG_CONFLICT: "PROJECT_SLUG_CONFLICT",
 } as const;
 
+export const changelogErrorCodes = {
+  CHANGELOG_RELEASE_NOT_FOUND: "CHANGELOG_RELEASE_NOT_FOUND",
+  CHANGELOG_VERSION_CONFLICT: "CHANGELOG_VERSION_CONFLICT",
+} as const;
+
 export const errorCodes = {
   ...apiErrorCodes,
   ...articleErrorCodes,
   ...categoryErrorCodes,
+  ...changelogErrorCodes,
   ...projectErrorCodes,
   ...tagErrorCodes,
 } as const;
@@ -47,6 +53,8 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   CATEGORY_NAME_CONFLICT: 409,
   CATEGORY_NOT_FOUND: 404,
   CATEGORY_SLUG_CONFLICT: 409,
+  CHANGELOG_RELEASE_NOT_FOUND: 404,
+  CHANGELOG_VERSION_CONFLICT: 409,
   INTERNAL_ERROR: 500,
   PROJECT_COVER_ASSET_NOT_FOUND: 404,
   PROJECT_NOT_FOUND: 404,
