@@ -1,3 +1,4 @@
+import { Prisma } from "@/generated/prisma/client";
 import { ApiError } from "@/lib/api/api-error";
 import { tagErrorCodes } from "@/lib/api/error-codes";
 import type { CreateTagInput, ListTagsQuery, UpdateTagInput } from "@/lib/tag/tag-dto";
@@ -26,7 +27,7 @@ export function createTagService(repository: TagRepository): TagService {
       await ensureNameAvailable(repository, input.name);
       await ensureSlugAvailable(repository, input.slug);
 
-      const tag = await repository.create(input);
+      const tag = await createTagWithConflictHandling(repository, input);
 
       return toTagDto(tag);
     },
@@ -71,7 +72,7 @@ export function createTagService(repository: TagRepository): TagService {
         await ensureSlugAvailable(repository, input.slug, existingTag.id);
       }
 
-      const updatedTag = await repository.update(id, input);
+      const updatedTag = await updateTagWithConflictHandling(repository, id, input);
 
       return toTagDto(updatedTag);
     },
@@ -111,4 +112,52 @@ async function getExistingTag(repository: TagRepository, id: string) {
   }
 
   return tag;
+}
+
+async function createTagWithConflictHandling(repository: TagRepository, input: CreateTagInput) {
+  try {
+    return await repository.create(input);
+  } catch (error) {
+    throw normalizeTagPersistenceError(error);
+  }
+}
+
+async function updateTagWithConflictHandling(repository: TagRepository, id: string, input: UpdateTagInput) {
+  try {
+    return await repository.update(id, input);
+  } catch (error) {
+    throw normalizeTagPersistenceError(error);
+  }
+}
+
+function normalizeTagPersistenceError(error: unknown) {
+  if (isPrismaUniqueConflictError(error)) {
+    const targets = getErrorTargets(error);
+
+    if (targets.includes("slug")) {
+      return new ApiError({
+        code: tagErrorCodes.TAG_SLUG_CONFLICT,
+        message: "Tag slug already exists.",
+      });
+    }
+
+    if (targets.includes("name")) {
+      return new ApiError({
+        code: tagErrorCodes.TAG_NAME_CONFLICT,
+        message: "Tag name already exists.",
+      });
+    }
+  }
+
+  return error;
+}
+
+function getErrorTargets(error: Prisma.PrismaClientKnownRequestError) {
+  const target = error.meta?.target;
+
+  return Array.isArray(target) ? target.filter((item): item is string => typeof item === "string") : [];
+}
+
+function isPrismaUniqueConflictError(error: unknown): error is Prisma.PrismaClientKnownRequestError {
+  return error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002";
 }
