@@ -52,9 +52,9 @@ describe("tag service", () => {
         slug: "architecture-2",
         sortOrder: 0,
       }),
-    ).rejects.toMatchObject<ApiError>({
+    ).rejects.toMatchObject({
       code: tagErrorCodes.TAG_NAME_CONFLICT,
-    });
+    } satisfies Partial<ApiError>);
   });
 
   test("returns TAG_SLUG_CONFLICT when tag slug already exists on create", async () => {
@@ -70,9 +70,9 @@ describe("tag service", () => {
         slug: "architecture",
         sortOrder: 0,
       }),
-    ).rejects.toMatchObject<ApiError>({
+    ).rejects.toMatchObject({
       code: tagErrorCodes.TAG_SLUG_CONFLICT,
-    });
+    } satisfies Partial<ApiError>);
   });
 
   test("returns TAG_NAME_CONFLICT when update collides with another tag name", async () => {
@@ -91,9 +91,9 @@ describe("tag service", () => {
       service.updateTag("tag_1", {
         name: "Engineering",
       }),
-    ).rejects.toMatchObject<ApiError>({
+    ).rejects.toMatchObject({
       code: tagErrorCodes.TAG_NAME_CONFLICT,
-    });
+    } satisfies Partial<ApiError>);
   });
 
   test("returns TAG_NOT_FOUND when tag does not exist", async () => {
@@ -103,8 +103,8 @@ describe("tag service", () => {
       }),
     );
 
-    await expect(service.getTagById("missing")).rejects.toMatchObject<ApiError>({
+    await expect(service.getTagById("missing")).rejects.toMatchObject({
       code: tagErrorCodes.TAG_NOT_FOUND,
-    });
+    } satisfies Partial<ApiError>);
   });
 });
