@@ -16,8 +16,16 @@ export const categoryErrorCodes = {
   CATEGORY_SLUG_CONFLICT: "CATEGORY_SLUG_CONFLICT",
 } as const;
 
+export const articleErrorCodes = {
+  ARTICLE_CATEGORY_NOT_FOUND: "ARTICLE_CATEGORY_NOT_FOUND",
+  ARTICLE_NOT_FOUND: "ARTICLE_NOT_FOUND",
+  ARTICLE_SLUG_CONFLICT: "ARTICLE_SLUG_CONFLICT",
+  ARTICLE_TAG_NOT_FOUND: "ARTICLE_TAG_NOT_FOUND",
+} as const;
+
 export const errorCodes = {
   ...apiErrorCodes,
+  ...articleErrorCodes,
   ...categoryErrorCodes,
   ...tagErrorCodes,
 } as const;
@@ -25,6 +33,10 @@ export const errorCodes = {
 export type ErrorCode = typeof errorCodes[keyof typeof errorCodes];
 
 export const errorStatusMap: Record<ErrorCode, number> = {
+  ARTICLE_CATEGORY_NOT_FOUND: 404,
+  ARTICLE_NOT_FOUND: 404,
+  ARTICLE_SLUG_CONFLICT: 409,
+  ARTICLE_TAG_NOT_FOUND: 404,
   CATEGORY_NAME_CONFLICT: 409,
   CATEGORY_NOT_FOUND: 404,
   CATEGORY_SLUG_CONFLICT: 409,
