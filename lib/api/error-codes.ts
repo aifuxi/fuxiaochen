@@ -34,11 +34,20 @@ export const changelogErrorCodes = {
   CHANGELOG_VERSION_CONFLICT: "CHANGELOG_VERSION_CONFLICT",
 } as const;
 
+export const commentErrorCodes = {
+  COMMENT_ARTICLE_NOT_FOUND: "COMMENT_ARTICLE_NOT_FOUND",
+  COMMENT_NOT_FOUND: "COMMENT_NOT_FOUND",
+  COMMENT_PARENT_ARTICLE_MISMATCH: "COMMENT_PARENT_ARTICLE_MISMATCH",
+  COMMENT_PARENT_NOT_FOUND: "COMMENT_PARENT_NOT_FOUND",
+  COMMENT_SELF_PARENT: "COMMENT_SELF_PARENT",
+} as const;
+
 export const errorCodes = {
   ...apiErrorCodes,
   ...articleErrorCodes,
   ...categoryErrorCodes,
   ...changelogErrorCodes,
+  ...commentErrorCodes,
   ...projectErrorCodes,
   ...tagErrorCodes,
 } as const;
@@ -55,6 +64,11 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   CATEGORY_SLUG_CONFLICT: 409,
   CHANGELOG_RELEASE_NOT_FOUND: 404,
   CHANGELOG_VERSION_CONFLICT: 409,
+  COMMENT_ARTICLE_NOT_FOUND: 404,
+  COMMENT_NOT_FOUND: 404,
+  COMMENT_PARENT_ARTICLE_MISMATCH: 400,
+  COMMENT_PARENT_NOT_FOUND: 404,
+  COMMENT_SELF_PARENT: 400,
   INTERNAL_ERROR: 500,
   PROJECT_COVER_ASSET_NOT_FOUND: 404,
   PROJECT_NOT_FOUND: 404,
