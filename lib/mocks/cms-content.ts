@@ -37,7 +37,7 @@ export type CommentRow = {
 
 export type UserRow = {
   name: string;
-  role: "Admin" | "Editor" | "Author";
+  role: "Admin" | "Normal";
   status: "Active" | "Invited";
   email: string;
 };
@@ -120,15 +120,9 @@ export const userRows: UserRow[] = [
   },
   {
     name: "Lin",
-    role: "Editor",
+    role: "Normal",
     status: "Active",
     email: "lin@example.com",
-  },
-  {
-    name: "Wen",
-    role: "Author",
-    status: "Invited",
-    email: "wen@example.com",
   },
 ];
 

@@ -282,6 +282,7 @@ CREATE TABLE `users` (
     `email` VARCHAR(255) NOT NULL,
     `email_verified` BOOLEAN NOT NULL DEFAULT false,
     `image` TEXT NULL,
+    `role` ENUM('admin', 'normal') NOT NULL DEFAULT 'normal',
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 

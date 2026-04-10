@@ -1,4 +1,5 @@
 export const apiErrorCodes = {
+  FORBIDDEN: "FORBIDDEN",
   INTERNAL_ERROR: "INTERNAL_ERROR",
   UNAUTHORIZED: "UNAUTHORIZED",
   VALIDATION_ERROR: "VALIDATION_ERROR",
@@ -42,6 +43,11 @@ export const commentErrorCodes = {
   COMMENT_SELF_PARENT: "COMMENT_SELF_PARENT",
 } as const;
 
+export const userErrorCodes = {
+  USER_EMAIL_CONFLICT: "USER_EMAIL_CONFLICT",
+  USER_NOT_FOUND: "USER_NOT_FOUND",
+} as const;
+
 export const errorCodes = {
   ...apiErrorCodes,
   ...articleErrorCodes,
@@ -50,6 +56,7 @@ export const errorCodes = {
   ...commentErrorCodes,
   ...projectErrorCodes,
   ...tagErrorCodes,
+  ...userErrorCodes,
 } as const;
 
 export type ErrorCode = typeof errorCodes[keyof typeof errorCodes];
@@ -69,6 +76,7 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   COMMENT_PARENT_ARTICLE_MISMATCH: 400,
   COMMENT_PARENT_NOT_FOUND: 404,
   COMMENT_SELF_PARENT: 400,
+  FORBIDDEN: 403,
   INTERNAL_ERROR: 500,
   PROJECT_COVER_ASSET_NOT_FOUND: 404,
   PROJECT_NOT_FOUND: 404,
@@ -77,5 +85,7 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   TAG_NOT_FOUND: 404,
   TAG_SLUG_CONFLICT: 409,
   UNAUTHORIZED: 401,
+  USER_EMAIL_CONFLICT: 409,
+  USER_NOT_FOUND: 404,
   VALIDATION_ERROR: 400,
 };

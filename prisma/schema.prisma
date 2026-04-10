@@ -42,6 +42,11 @@ enum FriendLinkStatus {
   Offline  @map("offline")
 }
 
+enum UserRole {
+  Admin  @map("admin")
+  Normal @map("normal")
+}
+
 model MediaAsset {
   id          String   @id @default(cuid()) @db.VarChar(191)
   kind        String   @db.VarChar(32)
@@ -348,6 +353,7 @@ model User {
   email         String   @unique @db.VarChar(255)
   emailVerified Boolean  @default(false) @map("email_verified")
   image         String?  @db.Text
+  role          UserRole @default(Normal)
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
