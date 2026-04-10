@@ -43,6 +43,12 @@ export const commentErrorCodes = {
   COMMENT_SELF_PARENT: "COMMENT_SELF_PARENT",
 } as const;
 
+export const friendLinkErrorCodes = {
+  FRIEND_LINK_AVATAR_ASSET_NOT_FOUND: "FRIEND_LINK_AVATAR_ASSET_NOT_FOUND",
+  FRIEND_LINK_NOT_FOUND: "FRIEND_LINK_NOT_FOUND",
+  FRIEND_LINK_SITE_URL_CONFLICT: "FRIEND_LINK_SITE_URL_CONFLICT",
+} as const;
+
 export const userErrorCodes = {
   USER_EMAIL_CONFLICT: "USER_EMAIL_CONFLICT",
   USER_NOT_FOUND: "USER_NOT_FOUND",
@@ -54,6 +60,7 @@ export const errorCodes = {
   ...categoryErrorCodes,
   ...changelogErrorCodes,
   ...commentErrorCodes,
+  ...friendLinkErrorCodes,
   ...projectErrorCodes,
   ...tagErrorCodes,
   ...userErrorCodes,
@@ -76,6 +83,9 @@ export const errorStatusMap: Record<ErrorCode, number> = {
   COMMENT_PARENT_ARTICLE_MISMATCH: 400,
   COMMENT_PARENT_NOT_FOUND: 404,
   COMMENT_SELF_PARENT: 400,
+  FRIEND_LINK_AVATAR_ASSET_NOT_FOUND: 404,
+  FRIEND_LINK_NOT_FOUND: 404,
+  FRIEND_LINK_SITE_URL_CONFLICT: 409,
   FORBIDDEN: 403,
   INTERNAL_ERROR: 500,
   PROJECT_COVER_ASSET_NOT_FOUND: 404,
