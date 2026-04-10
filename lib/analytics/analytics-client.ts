@@ -1,0 +1,102 @@
+import type { AnalyticsDashboardDto, AnalyticsPeriod } from "@/lib/analytics/analytics-dto";
+
+type ApiSuccessResponse<TData, TMeta = undefined> = {
+  code: "OK";
+  data: TData;
+  message: string;
+  meta?: TMeta;
+  success: true;
+};
+
+type ApiErrorResponse = {
+  code: string;
+  error?: {
+    details?: Record<string, unknown>;
+  };
+  message: string;
+  success: false;
+};
+
+export class AnalyticsApiError extends Error {
+  code: string;
+  details: Record<string, unknown>;
+  status: number;
+
+  constructor({
+    code,
+    details,
+    message,
+    status,
+  }: {
+    code: string;
+    details?: Record<string, unknown>;
+    message: string;
+    status: number;
+  }) {
+    super(message);
+    this.name = "AnalyticsApiError";
+    this.code = code;
+    this.details = details ?? {};
+    this.status = status;
+  }
+}
+
+export async function getAnalyticsDashboard(query: { period: AnalyticsPeriod }): Promise<AnalyticsDashboardDto> {
+  const searchParams = new URLSearchParams({
+    period: String(query.period),
+  });
+  const response = await request<AnalyticsDashboardDto>(`/api/analytics?${searchParams.toString()}`, {
+    cache: "no-store",
+  });
+
+  return response.data;
+}
+
+async function request<TData, TMeta = undefined>(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+): Promise<ApiSuccessResponse<TData, TMeta>> {
+  const response = await fetch(input, {
+    ...init,
+    headers: {
+      Accept: "application/json",
+      ...init?.headers,
+    },
+  });
+  const payload = await parsePayload(response);
+
+  if (!payload.success) {
+    throw new AnalyticsApiError({
+      code: payload.code,
+      details: payload.error?.details,
+      message: payload.message,
+      status: response.status,
+    });
+  }
+
+  if (!response.ok) {
+    throw new AnalyticsApiError({
+      code: "HTTP_ERROR",
+      message: payload.message,
+      status: response.status,
+    });
+  }
+
+  return payload as ApiSuccessResponse<TData, TMeta>;
+}
+
+async function parsePayload<TData, TMeta>(
+  response: Response,
+): Promise<ApiErrorResponse | ApiSuccessResponse<TData, TMeta>> {
+  const contentType = response.headers.get("content-type");
+
+  if (!contentType?.includes("application/json")) {
+    throw new AnalyticsApiError({
+      code: "INVALID_RESPONSE",
+      message: "The server returned an unexpected response.",
+      status: response.status,
+    });
+  }
+
+  return (await response.json()) as ApiErrorResponse | ApiSuccessResponse<TData, TMeta>;
+}
