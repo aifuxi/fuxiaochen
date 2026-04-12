@@ -11,7 +11,7 @@ export default async function CmsEditProjectPage({ params }: CmsEditProjectPageP
   const { id } = await params;
 
   return (
-    <CmsShell description="Update project metadata, links, featured state, and technologies." title="Edit Project">
+    <CmsShell description="更新项目元数据、链接、精选状态和技术栈。" title="编辑项目">
       <CmsProjectForm projectId={id} />
     </CmsShell>
   );

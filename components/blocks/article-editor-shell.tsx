@@ -24,21 +24,21 @@ export function ArticleEditorShell({ initialValue }: ArticleEditorShellProps) {
       xl:grid-cols-[22rem_1fr]
     `}>
       <aside className="space-y-5 rounded-[1.8rem] border border-white/8 bg-white/3 p-5">
-        <div className="type-label">Article Settings</div>
-        <TextField label="Title" name="title" placeholder="Building a calm CMS" />
+        <div className="type-label">文章设置</div>
+        <TextField label="标题" name="title" placeholder="构建一个简洁的 CMS" />
         <TextField label="Slug" name="slug" placeholder="building-a-calm-cms" />
         <TextareaField
-          defaultValue="A concise editorial note on interface pacing and CMS ergonomics."
-          description="Used in archive cards and social previews."
-          label="Excerpt"
+          defaultValue="关于界面节奏和 CMS 人体工程学的简洁编辑笔记。"
+          description="用于归档卡片和社交预览。"
+          label="摘要"
           name="excerpt"
-          placeholder="Short summary"
+          placeholder="简短摘要"
         />
         <Select
           options={[
-            { label: "Draft", value: "draft" },
-            { label: "Review", value: "review" },
-            { label: "Published", value: "published" },
+            { label: "草稿", value: "draft" },
+            { label: "待审核", value: "review" },
+            { label: "已发布", value: "published" },
           ]}
           value={status}
           onValueChange={(value) => setStatus(value as string)}
@@ -48,20 +48,20 @@ export function ArticleEditorShell({ initialValue }: ArticleEditorShellProps) {
             className="w-full justify-center"
             onClick={() =>
               startTransition(() => {
-                toast.success("Mock draft saved", { description: `Status: ${status}` });
+                toast.success("草稿已保存", { description: `状态: ${status}` });
               })
             }
             type="button"
           >
-            Save Draft
+            保存草稿
           </Button>
           <Button
             className="w-full justify-center"
             type="button"
             variant="outline"
-            onClick={() => toast.message("Preview uses the same markdown source below.")}
+            onClick={() => toast.message("预览使用下方相同的 Markdown 源。")}
           >
-            Share Preview
+            分享预览
           </Button>
         </div>
       </aside>
@@ -69,8 +69,8 @@ export function ArticleEditorShell({ initialValue }: ArticleEditorShellProps) {
       <div className="space-y-5">
         <Tabs defaultValue="editor">
           <TabsList>
-            <TabsTrigger value="editor">Editor</TabsTrigger>
-            <TabsTrigger value="preview">Preview</TabsTrigger>
+            <TabsTrigger value="editor">编辑器</TabsTrigger>
+            <TabsTrigger value="preview">预览</TabsTrigger>
           </TabsList>
           <TabsContent value="editor">
             <MarkdownEditor value={markdown} onChange={setMarkdown} />

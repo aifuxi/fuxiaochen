@@ -48,7 +48,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           />
         ) : (
           <div className="hero-image flex h-[500px] w-full items-center justify-center bg-white/5">
-            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">No Cover</span>
+            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">暂无封面</span>
           </div>
         )}
         <div className="hero-image-overlay" />
@@ -57,7 +57,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
       <ArticleStatsPanel
         authorAvatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face"
         authorName="Alex Chen"
-        category={article.category?.name ?? "Uncategorized"}
+        category={article.category?.name ?? "未分类"}
         date={formatArticleDate(article.publishedAt)}
         initialLikes={article.likeCount}
         initialViews={article.viewCount}
@@ -79,7 +79,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
               lg:block
             `}>
               <div className="toc-container rounded-2xl border border-white/8 bg-white/3 p-5">
-                <h4 className="font-mono-tech mb-4 text-xs tracking-widest text-muted uppercase">On This Page</h4>
+                <h4 className="font-mono-tech mb-4 text-xs tracking-widest text-muted uppercase">页面内容</h4>
                 <ul className="toc-list space-y-1.5">
                   {toc.map((item) => (
                     <li key={item.id} className="toc-item">
@@ -103,7 +103,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
 
       <section className="px-8 pb-24">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-8 font-serif text-3xl">Related Articles</h2>
+          <h2 className="mb-8 font-serif text-3xl">相关文章</h2>
           <div className={`
             grid gap-8
             md:grid-cols-3

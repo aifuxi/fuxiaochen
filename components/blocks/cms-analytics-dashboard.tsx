@@ -55,15 +55,15 @@ export function CmsAnalyticsDashboard() {
           <div>
             <h2 className="flex items-center gap-2 text-lg font-semibold">
               <span className="text-primary">◌</span>
-              Traffic Overview
+              流量概览
             </h2>
-            <p className="mt-1 text-sm text-muted">Daily views from the selected reporting window.</p>
+            <p className="mt-1 text-sm text-muted">所选报告期间的每日浏览量。</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {isValidating && !isLoading ? (
               <span className="inline-flex items-center gap-2 text-xs text-muted">
                 <RefreshCw className="size-3 animate-spin" />
-                Refreshing
+                刷新中
               </span>
             ) : null}
             {PERIOD_OPTIONS.map((option) => (
@@ -93,11 +93,11 @@ export function CmsAnalyticsDashboard() {
         xl:grid-cols-2
       `}>
         <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <h2 className="mb-4 text-lg font-semibold">Growth Trend</h2>
+          <h2 className="mb-4 text-lg font-semibold">增长趋势</h2>
           <GrowthTrend dailyMetrics={dailyMetrics} isLoading={isLoading} />
         </div>
         <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <h2 className="mb-4 text-lg font-semibold">Popular Articles</h2>
+          <h2 className="mb-4 text-lg font-semibold">热门文章</h2>
           {isLoading && popularArticles.length === 0 ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }, (_, index) => (
@@ -105,7 +105,7 @@ export function CmsAnalyticsDashboard() {
               ))}
             </div>
           ) : popularArticles.length === 0 ? (
-            <EmptyState message="No article traffic has been recorded yet." />
+            <EmptyState message="暂无文章流量记录。" />
           ) : (
             <ul className="space-y-2">
               {popularArticles.map((item, index) => (
@@ -120,7 +120,7 @@ export function CmsAnalyticsDashboard() {
                   <div className="min-w-0 flex-1">
                     <div className="truncate font-medium text-foreground">{item.title}</div>
                     <div className="mt-1 text-xs text-muted">
-                      {item.formattedViews} views · {item.likes} likes · {item.comments} comments
+                      {item.formattedViews} 阅读 · {item.likes} 喜欢 · {item.comments} 评论
                     </div>
                   </div>
                 </li>
@@ -165,7 +165,7 @@ function TrafficChart({
   }
 
   if (dailyMetrics.length === 0) {
-    return <EmptyState message="No daily traffic data is available for this period." />;
+    return <EmptyState message="该时段暂无每日流量数据。" />;
   }
 
   const maxViews = Math.max(...dailyMetrics.map((metric) => metric.totalViews), 1);
@@ -212,7 +212,7 @@ function GrowthTrend({
   }
 
   if (dailyMetrics.length === 0) {
-    return <EmptyState message="No growth metrics are available for this period." />;
+    return <EmptyState message="该时段暂无增长指标。" />;
   }
 
   const recentMetrics = dailyMetrics.slice(-7);
@@ -223,12 +223,12 @@ function GrowthTrend({
         <div key={metric.date} className="rounded-xl border border-white/8 bg-white/3 px-4 py-3">
           <div className="mb-2 flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-foreground">{metric.label}</span>
-            <span className="font-mono-tech text-xs text-muted">{metric.newVisitors} visitors</span>
+            <span className="font-mono-tech text-xs text-muted">{metric.newVisitors} 访客</span>
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs text-muted">
-            <span>{metric.totalViews} views</span>
-            <span>{metric.totalComments} comments</span>
-            <span>{metric.totalSubscribers} subscribers</span>
+            <span>{metric.totalViews} 阅读</span>
+            <span>{metric.totalComments} 评论</span>
+            <span>{metric.totalSubscribers} 订阅</span>
           </div>
         </div>
       ))}
@@ -246,9 +246,9 @@ function AnalyticsError({
   return (
     <div className="flex min-h-[240px] flex-col items-center justify-center gap-4 text-center">
       <BarChart3 className="size-10 text-muted" />
-      <p className="max-w-md text-sm text-muted">{error.message || "Failed to load analytics."}</p>
+      <p className="max-w-md text-sm text-muted">{error.message || "加载分析数据失败。"}</p>
       <Button type="button" variant="outline" onClick={onRetry}>
-        Retry
+        重试
       </Button>
     </div>
   );

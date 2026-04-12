@@ -87,16 +87,16 @@ export function CmsDashboardOverview() {
               sm:flex-row sm:items-center sm:justify-between
             `}
           >
-            <h2 className="font-serif text-2xl">Recent Articles</h2>
+            <h2 className="font-serif text-2xl">最近文章</h2>
             <div className="flex items-center gap-3">
               {isValidating && !isLoading ? (
                 <span className="inline-flex items-center gap-2 text-xs text-muted">
                   <RefreshCw className="size-3 animate-spin" />
-                  Refreshing
+                  刷新中
                 </span>
               ) : null}
               <span className="font-mono-tech text-xs tracking-wider text-muted uppercase">
-                Latest Updates
+                最新更新
               </span>
             </div>
           </div>
@@ -105,11 +105,11 @@ export function CmsDashboardOverview() {
 
         <Card className="space-y-4 rounded-2xl">
           <div className="flex items-center justify-between gap-3">
-            <div className="type-label">Activity Feed</div>
+            <div className="type-label">活动动态</div>
             <Activity className="size-4 text-muted" />
           </div>
           {activityFeed.length === 0 ? (
-            <EmptyState message="No activity has been recorded yet." />
+            <EmptyState message="暂无活动记录。" />
           ) : (
             <ul className="space-y-3 text-sm leading-6 text-muted">
               {activityFeed.map((item, index) => (
@@ -156,7 +156,7 @@ function RecentArticlesTable({
   articles: DashboardArticleDto[];
 }) {
   if (articles.length === 0) {
-    return <EmptyState message="No articles have been created yet." />;
+    return <EmptyState message="暂无文章。" />;
   }
 
   return (
@@ -164,10 +164,10 @@ function RecentArticlesTable({
       <TableRoot>
         <TableHead>
           <tr>
-            <TableHeaderCell>Title</TableHeaderCell>
-            <TableHeaderCell>Category</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Updated</TableHeaderCell>
+            <TableHeaderCell>标题</TableHeaderCell>
+            <TableHeaderCell>分类</TableHeaderCell>
+            <TableHeaderCell>状态</TableHeaderCell>
+            <TableHeaderCell>更新时间</TableHeaderCell>
           </tr>
         </TableHead>
         <TableBody>
@@ -234,10 +234,10 @@ function DashboardError({
     >
       <FileText className="size-10 text-muted" />
       <p className="max-w-md text-center text-sm text-muted">
-        {error.message || "Failed to load dashboard."}
+        {error.message || "加载仪表盘失败。"}
       </p>
       <Button type="button" variant="outline" onClick={onRetry}>
-        Retry
+        重试
       </Button>
     </div>
   );

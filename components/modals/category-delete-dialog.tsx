@@ -33,7 +33,7 @@ export const CategoryDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete category.");
+          toast.error("删除分类失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,17 +49,15 @@ export const CategoryDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Category</DialogTitle>
+            <DialogTitle className="text-3xl">删除分类</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{category.name}</span>{" "}
-              from the taxonomy. Articles assigned to this category will lose
-              the relation after deletion.
+              从分类体系中移除 <span className="text-foreground">{category.name}</span>。
+              删除后，分配到此分类的文章将失去关联。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Current usage count:{" "}
-            {category.usageCount}.
+            此操作无法撤销。当前使用次数：{category.usageCount}。
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -69,7 +67,7 @@ export const CategoryDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -77,7 +75,7 @@ export const CategoryDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Category"}
+              {isSubmitting ? "删除中..." : "删除分类"}
             </Button>
           </div>
         </DialogContent>

@@ -51,7 +51,7 @@ export function ArticleArchive({ categories, initialResult }: ArticleArchiveProp
     keepPreviousData: true,
   });
 
-  const categoryOptions = useMemo(() => [{ name: "All", slug: "all" }, ...categories], [categories]);
+  const categoryOptions = useMemo(() => [{ name: "全部", slug: "all" }, ...categories], [categories]);
   const totalPages = Math.max(1, result.totalPages);
   const pagedArticles = result.items;
   const articleCountLabel = `${result.total} article${result.total === 1 ? "" : "s"}`;
@@ -69,7 +69,7 @@ export function ArticleArchive({ categories, initialResult }: ArticleArchiveProp
                 search-input w-full rounded-xl py-3 pr-4 pl-12 text-white
                 placeholder:text-muted
               `}
-              placeholder="Search articles..."
+              placeholder="搜索文章..."
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
@@ -88,7 +88,7 @@ export function ArticleArchive({ categories, initialResult }: ArticleArchiveProp
           >
             {categoryOptions.map((item) => (
               <option key={item.slug} value={item.slug}>
-                {item.slug === "all" ? "All Topics" : item.name}
+                {item.slug === "all" ? "全部分类" : item.name}
               </option>
             ))}
           </select>
@@ -121,15 +121,15 @@ export function ArticleArchive({ categories, initialResult }: ArticleArchiveProp
 
       {pagedArticles.length === 0 && !isLoading ? (
         <div className="py-20 text-center">
-          <h3 className="mb-2 font-serif text-2xl">No articles found</h3>
-          <p className="text-muted">Try adjusting your search or filter criteria</p>
+          <h3 className="mb-2 font-serif text-2xl">未找到文章</h3>
+          <p className="text-muted">尝试调整搜索或筛选条件</p>
         </div>
       ) : null}
 
       <div className="flex flex-col items-center gap-6">
         <div className="flex items-center gap-2">
           <button className="page-btn px-4" disabled={page === 1} type="button" onClick={() => setPage((current) => Math.max(1, current - 1))}>
-            Prev
+            上一页
           </button>
           {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
             <button key={item} className={cn("page-btn", item === page && "active")} type="button" onClick={() => setPage(item)}>
@@ -137,13 +137,13 @@ export function ArticleArchive({ categories, initialResult }: ArticleArchiveProp
             </button>
           ))}
           <button className="page-btn px-4" disabled={page === totalPages} type="button" onClick={() => setPage((current) => Math.min(totalPages, current + 1))}>
-            Next
+            下一页
           </button>
         </div>
         <span className="font-mono-tech text-sm text-muted">
           {pagedArticles.length > 0
-            ? `Showing ${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, result.total)} of ${articleCountLabel}`
-            : `Showing 0 of ${articleCountLabel}`}
+            ? `显示 ${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, result.total)}，共 ${articleCountLabel}`
+            : `显示 0，共 ${articleCountLabel}`}
         </span>
       </div>
     </div>

@@ -19,7 +19,7 @@ type SelectProps = React.ComponentPropsWithoutRef<typeof BaseSelect.Root> & {
 export function Select({
   className,
   options,
-  placeholder = "Select an option",
+  placeholder = "请选择一个选项",
   ...props
 }: SelectProps) {
   return (

@@ -33,7 +33,7 @@ export const ProjectDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete project.");
+          toast.error("删除项目失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,15 +49,14 @@ export const ProjectDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Project</DialogTitle>
+            <DialogTitle className="text-3xl">删除项目</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{project.name}</span>{" "}
-              from the project library.
+              从项目库中移除 <span className="text-foreground">{project.name}</span>。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Slug: {project.slug}
+            此操作无法撤销。Slug: {project.slug}
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -67,7 +66,7 @@ export const ProjectDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -75,7 +74,7 @@ export const ProjectDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Project"}
+              {isSubmitting ? "删除中..." : "删除项目"}
             </Button>
           </div>
         </DialogContent>

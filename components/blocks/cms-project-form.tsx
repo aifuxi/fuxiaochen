@@ -28,9 +28,9 @@ type CmsProjectFormProps = {
 
 const PROJECT_CATEGORY_OPTIONS = [
   { label: "Web", value: ProjectCategory.Web },
-  { label: "Design", value: ProjectCategory.Design },
-  { label: "Mobile", value: ProjectCategory.Mobile },
-  { label: "Open Source", value: ProjectCategory.OpenSource },
+  { label: "设计", value: ProjectCategory.Design },
+  { label: "移动端", value: ProjectCategory.Mobile },
+  { label: "开源", value: ProjectCategory.OpenSource },
 ];
 
 export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
@@ -80,7 +80,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
       : createProjectBodySchema.safeParse(payload);
 
     if (!parsedValues.success) {
-      toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+      toast.error(parsedValues.error.issues[0]?.message ?? "请检查您的输入。");
 
       return;
     }
@@ -90,11 +90,11 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
     try {
       if (isEditMode && projectId) {
         await updateProject(projectId, parsedValues.data as UpdateProjectInput);
-        toast.success("Project updated successfully.");
+        toast.success("项目更新成功。");
         router.refresh();
       } else {
         const project = await createProject(parsedValues.data as CreateProjectInput);
-        toast.success("Project created successfully.");
+        toast.success("项目创建成功。");
         router.replace(`/cms/project/${project.id}`);
       }
     } catch (error) {
@@ -103,7 +103,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
       } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to save project.");
+        toast.error("保存项目失败。");
       }
     } finally {
       setIsSubmitting(false);
@@ -132,9 +132,9 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
     `}>
       <div className="space-y-6">
         <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">Identity</div>
+          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">基本信息</div>
           <div className="space-y-5 p-6">
-            <Field label="Project Name">
+            <Field label="项目名称">
               <Input
                 onChange={(event) => {
                   const nextName = event.target.value;
@@ -176,7 +176,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                   value={values.slug}
                 />
               </Field>
-              <Field label="Category">
+              <Field label="分类">
                 <Select
                   onValueChange={(value) =>
                     setValues((currentValues) => ({
@@ -190,7 +190,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
               </Field>
             </div>
 
-            <Field description="Short portfolio summary for cards and listings." label="Summary">
+            <Field description="用于卡片和列表的简短项目摘要。" label="摘要">
               <Textarea
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -203,7 +203,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
               />
             </Field>
 
-            <Field description="Optional longer project description." label="Detail">
+            <Field description="可选的详细项目描述。" label="详情">
               <Textarea
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -219,12 +219,12 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
         </section>
 
         <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">Links & Assets</div>
+          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">链接与资源</div>
           <div className={`
             grid gap-5 p-6
             sm:grid-cols-2
           `}>
-            <Field label="External URL">
+            <Field label="外部链接">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -236,7 +236,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 value={values.externalUrl}
               />
             </Field>
-            <Field label="Source URL">
+            <Field label="源代码链接">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -248,7 +248,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 value={values.sourceUrl}
               />
             </Field>
-            <Field description="Optional media asset id from uploads." label="Cover Asset ID">
+            <Field description="可选的上传资源 ID。" label="封面资源 ID">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -260,7 +260,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 value={values.coverAssetId}
               />
             </Field>
-            <Field label="Published At">
+            <Field label="发布时间">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -280,7 +280,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
         <section className="rounded-2xl border border-white/8 bg-white/3 p-6">
           <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
             <Check className="size-4" />
-            {isEditMode ? "Editing existing project" : "Ready to publish"}
+            {isEditMode ? "正在编辑项目" : "准备发布"}
           </div>
           <div className="space-y-3">
             <Button
@@ -289,13 +289,13 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
               onClick={() => void handleSubmit()}
               type="button"
             >
-              {isSubmitting ? "Saving..." : isEditMode ? "Update Project" : "Create Project"}
+              {isSubmitting ? "保存中..." : isEditMode ? "更新项目" : "创建项目"}
             </Button>
           </div>
         </section>
 
         <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">Display Settings</div>
+          <div className="text-sm font-semibold">展示设置</div>
 
           <label className={`
             flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
@@ -309,7 +309,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 }))
               }
             />
-            <span>Feature this project</span>
+            <span>将此项目设为精选</span>
           </label>
 
           <div className={`
@@ -317,7 +317,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
             sm:grid-cols-2
             xl:grid-cols-1
           `}>
-            <Field label="Badge Label">
+            <Field label="徽章标签">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -329,7 +329,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 value={values.badgeLabel}
               />
             </Field>
-            <Field label="Sort Order">
+            <Field label="排序顺序">
               <Input
                 inputMode="numeric"
                 onChange={(event) =>
@@ -350,7 +350,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
             sm:grid-cols-2
             xl:grid-cols-1
           `}>
-            <Field label="Metric Label">
+            <Field label="指标标签">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -362,7 +362,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
                 value={values.metricLabel}
               />
             </Field>
-            <Field label="Metric Value">
+            <Field label="指标值">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -376,7 +376,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
             </Field>
           </div>
 
-          <Field description="Comma-separated technology names." label="Technologies">
+          <Field description="用逗号分隔的技术名称。" label="技术栈">
             <Textarea
               onChange={(event) =>
                 setValues((currentValues) => ({
@@ -393,7 +393,7 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
             <div className="flex items-center gap-2">
               <Badge variant="muted">{formatCategoryLabel(values.category)}</Badge>
               <Badge variant={values.isFeatured ? "success" : "muted"}>
-                {values.isFeatured ? "Featured" : "Standard"}
+                {values.isFeatured ? "精选" : "普通"}
               </Badge>
             </div>
           </div>
@@ -481,7 +481,7 @@ function createFormStateFromProject(project: ProjectDto): FormState {
 
 function formatCategoryLabel(category: ProjectCategory) {
   if (category === ProjectCategory.OpenSource) {
-    return "Open Source";
+    return "开源";
   }
 
   return category;

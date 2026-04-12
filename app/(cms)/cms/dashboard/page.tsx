@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsDashboardPage() {
   return (
-    <CmsShell description="A snapshot of publishing throughput, moderation state, and editorial system health." title="Dashboard">
+    <CmsShell description="发布吞吐量、审核状态和编辑系统健康状况的快照。" title="仪表盘">
       <CmsDashboardOverview />
     </CmsShell>
   );

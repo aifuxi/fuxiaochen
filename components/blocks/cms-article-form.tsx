@@ -32,9 +32,9 @@ type CmsArticleFormProps = {
 };
 
 const STATUS_OPTIONS = [
-  { label: "Draft", value: ArticleStatus.Draft },
-  { label: "Published", value: ArticleStatus.Published },
-  { label: "Archived", value: ArticleStatus.Archived },
+  { label: "草稿", value: ArticleStatus.Draft },
+  { label: "已发布", value: ArticleStatus.Published },
+  { label: "已归档", value: ArticleStatus.Archived },
 ];
 
 export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
@@ -97,7 +97,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
       : createArticleBodySchema.safeParse(payload);
 
     if (!parsedValues.success) {
-      toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+      toast.error(parsedValues.error.issues[0]?.message ?? "请检查您的输入。");
 
       return;
     }
@@ -107,11 +107,11 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
     try {
       if (isEditMode && articleId) {
         await updateArticle(articleId, parsedValues.data as UpdateArticleInput);
-        toast.success("Article updated successfully.");
+        toast.success("文章更新成功。");
         router.refresh();
       } else {
         const article = await createArticle(parsedValues.data as CreateArticleInput);
-        toast.success("Article created successfully.");
+        toast.success("文章创建成功。");
         router.replace(`/cms/article/${article.id}`);
       }
     } catch (error) {
@@ -120,7 +120,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
       } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to save article.");
+        toast.error("保存文章失败。");
       }
     } finally {
       setIsSubmitting(false);
@@ -149,9 +149,9 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
     `}>
       <div className="space-y-6">
         <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">Title & Metadata</div>
+          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">标题与元数据</div>
           <div className="space-y-5 p-6">
-            <Field label="Title">
+            <Field label="标题">
               <Input
                 onChange={(event) => {
                   const nextTitle = event.target.value;
@@ -171,7 +171,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                     };
                   });
                 }}
-                placeholder="Building a calm CMS"
+                placeholder="构建一个简洁的 CMS"
                 value={values.title}
               />
             </Field>
@@ -193,7 +193,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                   value={values.slug}
                 />
               </Field>
-              <Field description="Optional read time in minutes." label="Reading Time">
+              <Field description="可选的阅读时长（分钟）。" label="阅读时长">
                 <Input
                   inputMode="numeric"
                   onChange={(event) =>
@@ -209,7 +209,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
               </Field>
             </div>
 
-            <Field description="Used in archive cards and previews." label="Excerpt">
+            <Field description="用于归档卡片和预览。" label="摘要">
               <Textarea
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -217,7 +217,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                     excerpt: event.target.value,
                   }))
                 }
-                placeholder="A concise editorial note on interface pacing and CMS ergonomics."
+                placeholder="关于界面节奏和 CMS 人体工程学的简洁编辑笔记。"
                 value={values.excerpt}
               />
             </Field>
@@ -227,8 +227,8 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
         <section className="rounded-2xl border border-white/8 bg-white/3 p-5">
           <Tabs defaultValue="editor">
             <TabsList>
-              <TabsTrigger value="editor">Editor</TabsTrigger>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
+              <TabsTrigger value="editor">编辑器</TabsTrigger>
+              <TabsTrigger value="preview">预览</TabsTrigger>
             </TabsList>
             <TabsContent value="editor">
               <MarkdownEditor
@@ -256,7 +256,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
         <section className="rounded-2xl border border-white/8 bg-white/3 p-6">
           <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
             <Check className="size-4" />
-            {isEditMode ? "Editing existing article" : "Ready to publish"}
+            {isEditMode ? "正在编辑文章" : "准备发布"}
           </div>
           <div className="space-y-3">
             <Button
@@ -265,7 +265,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
               onClick={() => void handleSubmit(ArticleStatus.Published)}
               type="button"
             >
-              {isSubmitting ? "Saving..." : "Publish Article"}
+              {isSubmitting ? "保存中..." : "发布文章"}
             </Button>
             <Button
               className="w-full justify-center"
@@ -274,15 +274,15 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
               type="button"
               variant="outline"
             >
-              Save Draft
+              保存草稿
             </Button>
           </div>
         </section>
 
         <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">Post Settings</div>
+          <div className="text-sm font-semibold">文章设置</div>
 
-          <Field label="Status">
+          <Field label="状态">
             <Select
               onValueChange={(value) =>
                 setValues((currentValues) => ({
@@ -295,7 +295,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
             />
           </Field>
 
-          <Field label="Category">
+          <Field label="分类">
             <Select
               onValueChange={(value) =>
                 setValues((currentValues) => ({
@@ -304,7 +304,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 }))
               }
               options={[
-                { label: "Uncategorized", value: "" },
+                { label: "未分类", value: "" },
                 ...categories.map((category) => ({
                   label: category.name,
                   value: category.id,
@@ -314,7 +314,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
             />
           </Field>
 
-          <Field label="Tags">
+          <Field label="标签">
             <div className="space-y-2 rounded-2xl border border-white/8 bg-white/3 p-4">
               {tags.length > 0 ? (
                 tags.map((tag) => (
@@ -334,7 +334,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                   </label>
                 ))
               ) : (
-                <p className="text-sm text-muted">No tags available.</p>
+                <p className="text-sm text-muted">暂无标签。</p>
               )}
             </div>
           </Field>
@@ -351,7 +351,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 }))
               }
             />
-            <span>Feature this article</span>
+            <span>将此文章设为精选</span>
           </label>
 
           <div className={`
@@ -359,7 +359,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
             sm:grid-cols-2
             xl:grid-cols-1
           `}>
-            <Field label="Published At">
+            <Field label="发布时间">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -371,7 +371,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 value={values.publishedAt}
               />
             </Field>
-            <Field label="Archived At">
+            <Field label="归档时间">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -388,7 +388,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
 
         <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
           <div className="text-sm font-semibold">SEO</div>
-          <Field label="SEO Title">
+          <Field label="SEO 标题">
             <Input
               onChange={(event) =>
                 setValues((currentValues) => ({
@@ -396,11 +396,11 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                   seoTitle: event.target.value,
                 }))
               }
-              placeholder="Optimized headline for search"
+              placeholder="优化的搜索标题"
               value={values.seoTitle}
             />
           </Field>
-          <Field label="SEO Description">
+          <Field label="SEO 描述">
             <Textarea
               onChange={(event) =>
                 setValues((currentValues) => ({
@@ -408,13 +408,13 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                   seoDescription: event.target.value,
                 }))
               }
-              placeholder="Concise search summary"
+              placeholder="简洁的搜索摘要"
               value={values.seoDescription}
             />
           </Field>
           <div className="space-y-2 text-xs text-muted">
             <div className="flex items-center gap-2">
-              <Badge variant="muted">{values.tagIds.length} tags</Badge>
+              <Badge variant="muted">{values.tagIds.length} 个标签</Badge>
               <Badge variant="muted">{values.status}</Badge>
             </div>
           </div>

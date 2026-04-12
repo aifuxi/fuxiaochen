@@ -40,16 +40,16 @@ import type { ProjectDto } from "@/lib/project/project-dto";
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const CATEGORY_OPTIONS = [
-  { label: "All Categories", value: "" },
+  { label: "全部分类", value: "" },
   { label: "Web", value: ProjectCategory.Web },
-  { label: "Design", value: ProjectCategory.Design },
-  { label: "Mobile", value: ProjectCategory.Mobile },
-  { label: "Open Source", value: ProjectCategory.OpenSource },
+  { label: "设计", value: ProjectCategory.Design },
+  { label: "移动端", value: ProjectCategory.Mobile },
+  { label: "开源", value: ProjectCategory.OpenSource },
 ];
 const FEATURED_OPTIONS = [
-  { label: "All Projects", value: "" },
-  { label: "Featured", value: "true" },
-  { label: "Not Featured", value: "false" },
+  { label: "全部项目", value: "" },
+  { label: "精选", value: "true" },
+  { label: "非精选", value: "false" },
 ];
 
 export function CmsProjectManager() {
@@ -123,7 +123,7 @@ export function CmsProjectManager() {
     await deleteMutation.trigger({
       id: project.id,
     });
-    toast.success(`Deleted ${project.name}.`);
+    toast.success(`已删除 ${project.name}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -161,7 +161,7 @@ export function CmsProjectManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by name, slug, or summary"
+              placeholder="按名称、slug 或摘要搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -187,10 +187,10 @@ export function CmsProjectManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} projects</Badge>
+            <Badge variant="muted">{total} 个项目</Badge>
             {isValidating && !isLoading ? (
               <span className="inline-flex items-center gap-2">
-                <RefreshCw className={`size-3 animate-spin`} /> Refreshing
+                <RefreshCw className={`size-3 animate-spin`} /> 刷新中
               </span>
             ) : null}
           </div>
@@ -199,7 +199,7 @@ export function CmsProjectManager() {
         <Link href="/cms/project/new">
           <Button variant="primary" className="font-medium!">
             <Plus className="size-4" />
-            New Project
+            新建项目
           </Button>
         </Link>
       </div>
@@ -210,11 +210,11 @@ export function CmsProjectManager() {
           sm:grid-cols-3
         `}
       >
-        <MetricCard label="Total Projects" value={String(total)} />
-        <MetricCard label="Visible Projects" value={String(projects.length)} />
+        <MetricCard label="项目总数" value={String(total)} />
+        <MetricCard label="可见项目" value={String(projects.length)} />
         <MetricCard
-          label="Active Filter"
-          value={category || (featured ? "Featured" : "All projects")}
+          label="当前筛选"
+          value={category || (featured ? "精选" : "全部项目")}
         />
       </div>
 
@@ -222,12 +222,12 @@ export function CmsProjectManager() {
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Project</TableHeaderCell>
-              <TableHeaderCell>Category</TableHeaderCell>
-              <TableHeaderCell>Technologies</TableHeaderCell>
-              <TableHeaderCell>Published</TableHeaderCell>
-              <TableHeaderCell>State</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>项目</TableHeaderCell>
+              <TableHeaderCell>分类</TableHeaderCell>
+              <TableHeaderCell>技术栈</TableHeaderCell>
+              <TableHeaderCell>发布时间</TableHeaderCell>
+              <TableHeaderCell>状态</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -244,10 +244,10 @@ export function CmsProjectManager() {
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
                     <p className="max-w-md text-sm text-muted">
-                      {error.message || "Failed to load projects."}
+                      {error.message || "加载项目失败。"}
                     </p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -266,20 +266,20 @@ export function CmsProjectManager() {
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
                         {keyword || category || featured
-                          ? "No projects match this filter."
-                          : "No projects yet."}
+                          ? "没有符合筛选条件的项目。"
+                          : "暂无项目。"}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || category || featured
-                          ? "Try a different filter combination."
-                          : "Create the first project to build the portfolio library."}
+                          ? "尝试不同的筛选组合。"
+                          : "创建第一个项目来构建作品集。"}
                       </p>
                     </div>
                     {!keyword && !category && !featured ? (
                       <Link href="/cms/project/new">
                         <Button variant="outline">
                           <Plus className="size-4" />
-                          Create Project
+                          创建项目
                         </Button>
                       </Link>
                     ) : null}
@@ -313,7 +313,7 @@ export function CmsProjectManager() {
                         ))
                       ) : (
                         <span className="text-xs text-muted">
-                          No technologies
+                          暂无技术栈
                         </span>
                       )}
                     </div>
@@ -321,12 +321,12 @@ export function CmsProjectManager() {
                   <TableCell className="text-muted">
                     {project.publishedAt
                       ? format(new Date(project.publishedAt), "yyyy-MM-dd")
-                      : "Unpublished"}
+                      : "未发布"}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Badge variant={project.isFeatured ? "success" : "muted"}>
-                        {project.isFeatured ? "Featured" : "Standard"}
+                        {project.isFeatured ? "精选" : "普通"}
                       </Badge>
                     </div>
                   </TableCell>
@@ -334,7 +334,7 @@ export function CmsProjectManager() {
                     <div className="flex justify-end gap-2">
                       <Link href={`/cms/project/${project.id}`}>
                         <Button size="sm" variant="ghost">
-                          Edit
+                          编辑
                         </Button>
                       </Link>
                       <Button
@@ -344,7 +344,7 @@ export function CmsProjectManager() {
                         variant="outline"
                       >
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -363,8 +363,8 @@ export function CmsProjectManager() {
       >
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -375,7 +375,7 @@ export function CmsProjectManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -396,7 +396,7 @@ export function CmsProjectManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>
@@ -415,7 +415,7 @@ function MetricCard({ label, value }: { label: string; value: string }) {
 
 function formatCategoryLabel(category: ProjectCategory) {
   if (category === ProjectCategory.OpenSource) {
-    return "Open Source";
+    return "开源";
   }
 
   return category;

@@ -91,7 +91,7 @@ export function CmsUserManager() {
 
   async function handleCreate(input: CreateUserInput) {
     await createMutation.trigger(input);
-    toast.success("User created successfully.");
+    toast.success("用户创建成功。");
     await mutate();
   }
 
@@ -100,7 +100,7 @@ export function CmsUserManager() {
       id,
       input,
     });
-    toast.success("User updated successfully.");
+    toast.success("用户更新成功。");
     await mutate();
   }
 
@@ -108,7 +108,7 @@ export function CmsUserManager() {
     await deleteMutation.trigger({
       id: user.id,
     });
-    toast.success(`Deleted ${user.name}.`);
+    toast.success(`已删除 ${user.name}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -157,7 +157,7 @@ export function CmsUserManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by user name or email"
+              placeholder="按用户名或邮箱搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -170,7 +170,7 @@ export function CmsUserManager() {
               }}
               options={[
                 {
-                  label: "All Roles",
+                  label: "全部角色",
                   value: "",
                 },
                 ...userRoleOptions,
@@ -179,16 +179,16 @@ export function CmsUserManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} users</Badge>
+            <Badge variant="muted">{total} 个用户</Badge>
             {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
               size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            `} /> 刷新中</span> : null}
           </div>
         </div>
 
         <Button disabled={isMutating} onClick={openCreateDialog} variant="primary">
           <Plus className="size-4" />
-          Add User
+          添加用户
         </Button>
       </div>
 
@@ -196,22 +196,22 @@ export function CmsUserManager() {
         grid gap-4
         sm:grid-cols-3
       `}>
-        <MetricCard label="Total Users" value={String(total)} />
-        <MetricCard label="Verified On Page" value={String(verifiedVisibleCount)} />
-        <MetricCard label="Active Sessions" value={String(visibleSessionCount)} />
+        <MetricCard label="用户总数" value={String(total)} />
+        <MetricCard label="本页已验证" value={String(verifiedVisibleCount)} />
+        <MetricCard label="活跃会话" value={String(visibleSessionCount)} />
       </div>
 
       <Table>
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>User</TableHeaderCell>
-              <TableHeaderCell>Role</TableHeaderCell>
-              <TableHeaderCell>Verification</TableHeaderCell>
-              <TableHeaderCell>Linked Auth</TableHeaderCell>
-              <TableHeaderCell>Sessions</TableHeaderCell>
-              <TableHeaderCell>Updated</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>用户</TableHeaderCell>
+              <TableHeaderCell>角色</TableHeaderCell>
+              <TableHeaderCell>验证状态</TableHeaderCell>
+              <TableHeaderCell>关联账户</TableHeaderCell>
+              <TableHeaderCell>会话数</TableHeaderCell>
+              <TableHeaderCell>更新时间</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -227,9 +227,9 @@ export function CmsUserManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={7}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load users."}</p>
+                    <p className="max-w-md text-sm text-muted">{error.message || "加载用户失败。"}</p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -244,17 +244,17 @@ export function CmsUserManager() {
                       <Users className="size-5" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-base text-foreground">{keyword ? "No users match this search." : "No users yet."}</p>
+                      <p className="text-base text-foreground">{keyword ? "没有符合搜索条件的用户。" : "暂无用户。"}</p>
                       <p className="text-sm text-muted">
                         {keyword
-                          ? "Try a different keyword or clear the search."
-                          : "Create the first CMS user to manage editorial access."}
+                          ? "尝试不同的关键词或清除搜索。"
+                          : "创建第一个 CMS 用户来管理编辑访问权限。"}
                       </p>
                     </div>
                     {!keyword ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
-                        Create User
+                        创建用户
                       </Button>
                     ) : null}
                   </div>
@@ -284,19 +284,19 @@ export function CmsUserManager() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={user.emailVerified ? "success" : "warning"}>
-                      {user.emailVerified ? "Verified" : "Pending"}
+                      {user.emailVerified ? "已验证" : "待验证"}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-muted">
                       <ShieldCheck className="size-4 text-primary" />
-                      <span>{user.accountCount} linked</span>
+                      <span>{user.accountCount} 个关联</span>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2 text-sm text-muted">
                       <MailCheck className="size-4 text-emerald-300" />
-                      <span>{user.sessionCount} active</span>
+                      <span>{user.sessionCount} 个活跃</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-muted">{format(new Date(user.updatedAt), "yyyy-MM-dd HH:mm")}</TableCell>
@@ -304,11 +304,11 @@ export function CmsUserManager() {
                     <div className="flex justify-end gap-2">
                       <Button disabled={isMutating} onClick={() => openEditDialog(user)} size="sm" variant="ghost">
                         <Pencil className="size-4" />
-                        Edit
+                        编辑
                       </Button>
                       <Button disabled={isMutating} onClick={() => openDeleteDialog(user)} size="sm" variant="outline">
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -325,8 +325,8 @@ export function CmsUserManager() {
       `}>
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -335,7 +335,7 @@ export function CmsUserManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -354,7 +354,7 @@ export function CmsUserManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

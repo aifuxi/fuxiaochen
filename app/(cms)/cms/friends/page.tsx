@@ -4,8 +4,8 @@ import { CmsShell } from "@/components/layout/cms-shell";
 export default function CmsFriendsPage() {
   return (
     <CmsShell
-      description="Manage directory entries, friend site metadata, and visibility states against the live API."
-      title="Friends"
+      description="管理友链目录条目、友站元数据和可见性状态。"
+      title="友链"
     >
       <CmsFriendLinkManager />
     </CmsShell>

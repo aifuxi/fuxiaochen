@@ -33,7 +33,7 @@ export const ChangelogDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete changelog release.");
+          toast.error("删除更新日志版本失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,15 +49,14 @@ export const ChangelogDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Release</DialogTitle>
+            <DialogTitle className="text-3xl">删除版本</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{release.version}</span>{" "}
-              from the changelog timeline.
+              从更新日志时间线中移除 <span className="text-foreground">{release.version}</span>。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Item count: {release.items.length}.
+            此操作无法撤销。条目数量：{release.items.length}。
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -67,7 +66,7 @@ export const ChangelogDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -75,7 +74,7 @@ export const ChangelogDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Release"}
+              {isSubmitting ? "删除中..." : "删除版本"}
             </Button>
           </div>
         </DialogContent>

@@ -90,7 +90,7 @@ export function CmsCategoryManager() {
 
   async function handleCreate(input: CreateCategoryInput) {
     await createMutation.trigger(input);
-    toast.success("Category created successfully.");
+    toast.success("分类创建成功。");
     await mutate();
   }
 
@@ -99,7 +99,7 @@ export function CmsCategoryManager() {
       id,
       input,
     });
-    toast.success("Category updated successfully.");
+    toast.success("分类更新成功。");
     await mutate();
   }
 
@@ -107,7 +107,7 @@ export function CmsCategoryManager() {
     await deleteMutation.trigger({
       id: category.id,
     });
-    toast.success(`Deleted ${category.name}.`);
+    toast.success(`已删除 ${category.name}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -156,22 +156,22 @@ export function CmsCategoryManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by category name, slug, or description"
+              placeholder="按分类名称、slug 或描述搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} categories</Badge>
+            <Badge variant="muted">{total} 个分类</Badge>
             {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
               size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            `} /> 刷新中</span> : null}
           </div>
         </div>
 
         <Button disabled={isMutating} onClick={openCreateDialog} variant="primary">
           <Plus className="size-4" />
-          Add Category
+          添加分类
         </Button>
       </div>
 
@@ -179,21 +179,21 @@ export function CmsCategoryManager() {
         grid gap-4
         sm:grid-cols-3
       `}>
-        <MetricCard label="Total Categories" value={String(total)} />
-        <MetricCard label="Visible Categories" value={String(categories.length)} />
-        <MetricCard label="Active Search" value={keyword ? keyword : "All categories"} />
+        <MetricCard label="分类总数" value={String(total)} />
+        <MetricCard label="可见分类" value={String(categories.length)} />
+        <MetricCard label="当前搜索" value={keyword ? keyword : "全部分类"} />
       </div>
 
       <Table>
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Category</TableHeaderCell>
+              <TableHeaderCell>分类</TableHeaderCell>
               <TableHeaderCell>Slug</TableHeaderCell>
-              <TableHeaderCell>Usage</TableHeaderCell>
-              <TableHeaderCell>Sort</TableHeaderCell>
-              <TableHeaderCell>Updated</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>使用量</TableHeaderCell>
+              <TableHeaderCell>排序</TableHeaderCell>
+              <TableHeaderCell>更新时间</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -209,9 +209,9 @@ export function CmsCategoryManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load categories."}</p>
+                    <p className="max-w-md text-sm text-muted">{error.message || "加载分类失败。"}</p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -227,18 +227,18 @@ export function CmsCategoryManager() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
-                        {keyword ? "No categories match this search." : "No categories yet."}
+                        {keyword ? "没有符合搜索条件的分类。" : "暂无分类。"}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword
-                          ? "Try a different keyword or clear the search."
-                          : "Create the first category to organize top-level article sections."}
+                          ? "尝试不同的关键词或清除搜索。"
+                          : "创建第一个分类来组织顶级文章板块。"}
                       </p>
                     </div>
                     {!keyword ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
-                        Create Category
+                        创建分类
                       </Button>
                     ) : null}
                   </div>
@@ -257,7 +257,7 @@ export function CmsCategoryManager() {
                         <span className="font-medium text-foreground">{category.name}</span>
                       </div>
                       <div className="line-clamp-2 text-xs leading-5 text-muted">
-                        {category.description || "No description"}
+                        {category.description || "暂无描述"}
                       </div>
                     </div>
                   </TableCell>
@@ -266,7 +266,7 @@ export function CmsCategoryManager() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={category.usageCount > 0 ? "primary" : "muted"}>
-                      {category.usageCount} {category.usageCount === 1 ? "article" : "articles"}
+                      {category.usageCount} {category.usageCount === 1 ? "篇文章" : "篇文章"}
                     </Badge>
                   </TableCell>
                   <TableCell>{category.sortOrder}</TableCell>
@@ -277,7 +277,7 @@ export function CmsCategoryManager() {
                     <div className="flex justify-end gap-2">
                       <Button disabled={isMutating} onClick={() => openEditDialog(category)} size="sm" variant="ghost">
                         <Pencil className="size-4" />
-                        Edit
+                        编辑
                       </Button>
                       <Button
                         disabled={isMutating}
@@ -286,7 +286,7 @@ export function CmsCategoryManager() {
                         variant="outline"
                       >
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -303,8 +303,8 @@ export function CmsCategoryManager() {
       `}>
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -313,7 +313,7 @@ export function CmsCategoryManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -332,7 +332,7 @@ export function CmsCategoryManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

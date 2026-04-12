@@ -6,7 +6,7 @@ export default async function CmsSettingsPage() {
   await requireCmsAdminSession();
 
   return (
-    <CmsShell description="Core workspace preferences, appearance, SEO, and moderation defaults." title="Settings">
+    <CmsShell description="核心工作区偏好、外观、SEO 和审核默认设置。" title="设置">
       <CmsSettingsManager />
     </CmsShell>
   );

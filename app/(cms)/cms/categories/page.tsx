@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsCategoriesPage() {
   return (
-    <CmsShell description="Organize article collections with colors, counts, and quick taxonomy maintenance." title="Categories">
+    <CmsShell description="使用颜色、数量快速组织和维护文章分类。" title="分类">
       <CmsCategoryManager />
     </CmsShell>
   );

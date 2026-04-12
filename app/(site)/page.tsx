@@ -24,29 +24,29 @@ export default async function HomePage() {
           <div className="space-y-8">
             <div className="flex items-center gap-3">
               <div className="hero-label-dot" />
-              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">Design & Development</span>
+              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">设计与开发</span>
             </div>
 
             <h1 className={`
               font-serif text-6xl leading-none tracking-tighter
               lg:text-7xl
             `} style={{ lineHeight: 0.95 }}>
-              Thoughts
+              思考
               <br />
               <span className="text-primary-accent italic">&amp;</span>
               <br />
-              Code
+              代码
             </h1>
 
             <p className="max-w-md text-lg leading-relaxed font-light text-muted">
-              A personal space where I share ideas about design systems, web development, and the intersection of technology and creativity.
+              在这里分享关于设计系统、Web 开发以及技术与创意交汇点的思考。
             </p>
 
             <Link className={`
               arrow-btn flex items-center gap-2 text-foreground transition-colors duration-300
               hover:text-primary-accent
             `} href="#articles">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">Latest Article</span>
+              <span className="font-mono-tech text-sm tracking-wider uppercase">最新文章</span>
               <span>→</span>
             </Link>
           </div>
@@ -71,7 +71,7 @@ export default async function HomePage() {
               <div className="glass-card shimmer-border absolute right-[-16px] bottom-[-16px] px-4 py-2">
                 <div className="flex items-center gap-2">
                   <div className="hero-label-dot h-1.5 w-1.5" />
-                  <span className="font-mono-tech text-xs text-muted">Available for work</span>
+                  <span className="font-mono-tech text-xs text-muted">可提供服务</span>
                 </div>
               </div>
             </div>
@@ -83,14 +83,14 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex items-center justify-between">
             <div>
-              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Featured</span>
-              <h2 className="mt-2 font-serif text-4xl">Featured Articles</h2>
+              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">精选</span>
+              <h2 className="mt-2 font-serif text-4xl">精选文章</h2>
             </div>
             <Link className={`
               arrow-btn flex items-center gap-2 text-muted transition-colors duration-300
               hover:text-foreground
             `} href="/articles">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">View All</span>
+              <span className="font-mono-tech text-sm tracking-wider uppercase">查看全部</span>
               <span>→</span>
             </Link>
           </div>
@@ -109,8 +109,8 @@ export default async function HomePage() {
       <section className="relative px-8 py-32">
         <div className="mx-auto max-w-5xl">
           <div className="mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Writing</span>
-            <h2 className="mt-2 font-serif text-4xl">Latest Writings</h2>
+            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">写作</span>
+            <h2 className="mt-2 font-serif text-4xl">最新文章</h2>
           </div>
           <div className="space-y-0">
             {latestArticles.items.map((article) => (
@@ -159,7 +159,7 @@ export default async function HomePage() {
                   arrow-btn text-primary-accent inline-flex items-center gap-2 transition-all duration-300
                   hover:gap-3
                 `} href="/about">
-                  <span className="font-mono-tech text-sm tracking-wider uppercase">Read More</span>
+                  <span className="font-mono-tech text-sm tracking-wider uppercase">阅读更多</span>
                   <span>→</span>
                 </Link>
               </div>
@@ -172,14 +172,14 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex items-center justify-between">
             <div>
-              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Portfolio</span>
-              <h2 className="mt-2 font-serif text-4xl">Featured Projects</h2>
+              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">作品集</span>
+              <h2 className="mt-2 font-serif text-4xl">精选项目</h2>
             </div>
             <Link className={`
               arrow-btn flex items-center gap-2 text-muted transition-colors duration-300
               hover:text-foreground
             `} href="/projects">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">View All</span>
+              <span className="font-mono-tech text-sm tracking-wider uppercase">查看全部</span>
               <span>→</span>
             </Link>
           </div>

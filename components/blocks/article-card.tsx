@@ -17,13 +17,13 @@ export function ArticleCard({ article }: { article: PublicArticleListItemDto }) 
           />
         ) : (
           <div className="card-image flex h-48 w-full items-center justify-center bg-white/5">
-            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">No Cover</span>
+            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">无封面</span>
           </div>
         )}
       </div>
       <div className="relative z-10 p-6">
         <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">
-          {article.category?.name ?? "Uncategorized"}
+          {article.category?.name ?? "未分类"}
         </span>
         <h3 className="mt-2 mb-3 font-serif text-xl">{article.title}</h3>
         <p className="mb-4 text-sm leading-relaxed font-light text-muted">{article.excerpt}</p>

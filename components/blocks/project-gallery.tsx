@@ -11,11 +11,11 @@ type ProjectGalleryProps = {
 };
 
 const filters = [
-  { label: "All", value: "all" },
-  { label: "Web Apps", value: "web" },
-  { label: "Design Systems", value: "design" },
+  { label: "全部", value: "all" },
+  { label: "Web 应用", value: "web" },
+  { label: "设计系统", value: "design" },
   { label: "Mobile", value: "mobile" },
-  { label: "Open Source", value: "open-source" },
+  { label: "开源", value: "open-source" },
 ] as const;
 
 export function ProjectGallery({ projects }: ProjectGalleryProps) {
@@ -100,7 +100,7 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
                     arrow-btn text-primary-accent flex items-center gap-2 transition-all duration-300
                     hover:gap-3
                   `}>
-                    <span className="font-mono-tech text-xs tracking-wider uppercase">View</span>
+                    <span className="font-mono-tech text-xs tracking-wider uppercase">查看</span>
                     <span>→</span>
                   </div>
                 </div>

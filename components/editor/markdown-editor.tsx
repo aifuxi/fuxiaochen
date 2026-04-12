@@ -19,7 +19,7 @@ export function MarkdownEditor({ onChange, value }: MarkdownEditorProps) {
     <Editor
       mode="split"
       plugins={plugins}
-      placeholder="Write the article in Markdown..."
+      placeholder="使用 Markdown 编写文章..."
       value={value}
       onChange={onChange}
     />

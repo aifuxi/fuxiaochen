@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsTagsPage() {
   return (
-    <CmsShell description="Manage reusable labels, article associations, and editorial taxonomy in one place." title="Tags">
+    <CmsShell description="统一管理可复用标签、文章关联和编辑分类法。" title="标签">
       <CmsTagManager />
     </CmsShell>
   );

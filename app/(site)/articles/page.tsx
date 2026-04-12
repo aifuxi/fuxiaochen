@@ -13,14 +13,14 @@ export default async function ArticlesPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-4 flex items-center gap-3">
             <div className="hero-label-dot" />
-            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">Archive</span>
+            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">文章归档</span>
           </div>
           <div className="flex items-end justify-between">
             <h1 className={`
               font-serif text-5xl
               lg:text-6xl
-            `}>All Writings</h1>
-            <span className="font-mono-tech text-sm text-muted">{articles.total} articles</span>
+            `}>全部文章</h1>
+            <span className="font-mono-tech text-sm text-muted">{articles.total} 篇文章</span>
           </div>
         </div>
       </section>

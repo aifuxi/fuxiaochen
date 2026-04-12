@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsNewProjectPage() {
   return (
-    <CmsShell description="Create portfolio projects with links, technologies, and publishing metadata." title="Create Project">
+    <CmsShell description="创建带有链接、技术和发布元数据的作品集项目。" title="创建项目">
       <CmsProjectForm />
     </CmsShell>
   );

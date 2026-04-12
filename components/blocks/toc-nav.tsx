@@ -36,7 +36,7 @@ export function TocNav({ items }: { items: TocItem[] }) {
 
   return (
     <aside className="rounded-[1.8rem] border border-white/8 bg-white/3 p-5">
-      <div className="mb-4 type-label">On This Page</div>
+      <div className="mb-4 type-label">页面导航</div>
       <ul className="space-y-1.5">
         {nestedItems.map((item) => (
           <li key={item.id}>

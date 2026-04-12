@@ -33,7 +33,7 @@ export const CommentDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete comment.");
+          toast.error("删除评论失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,16 +49,14 @@ export const CommentDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Comment</DialogTitle>
+            <DialogTitle className="text-3xl">删除评论</DialogTitle>
             <DialogDescription>
-              Remove{" "}
-              <span className="text-foreground">{comment.authorName}</span>
-              &apos;s comment from the moderation queue.
+              从审核队列中移除 <span className="text-foreground">{comment.authorName}</span> 的评论。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Article: {comment.article.title}
+            此操作无法撤销。文章：{comment.article.title}
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -68,7 +66,7 @@ export const CommentDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -76,7 +74,7 @@ export const CommentDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Comment"}
+              {isSubmitting ? "删除中..." : "删除评论"}
             </Button>
           </div>
         </DialogContent>

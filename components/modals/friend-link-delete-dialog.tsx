@@ -33,7 +33,7 @@ export const FriendLinkDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete friend link.");
+          toast.error("删除友链失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,16 +49,14 @@ export const FriendLinkDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Friend Link</DialogTitle>
+            <DialogTitle className="text-3xl">删除友链</DialogTitle>
             <DialogDescription>
-              Remove{" "}
-              <span className="text-foreground">{friendLink.siteName}</span>{" "}
-              from the friends directory.
+              从好友目录中移除 <span className="text-foreground">{friendLink.siteName}</span>。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. URL: {friendLink.siteUrl}
+            此操作无法撤销。URL: {friendLink.siteUrl}
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -68,7 +66,7 @@ export const FriendLinkDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -76,7 +74,7 @@ export const FriendLinkDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Friend Link"}
+              {isSubmitting ? "删除中..." : "删除友链"}
             </Button>
           </div>
         </DialogContent>

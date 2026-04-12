@@ -34,12 +34,12 @@ export function CmsHeader({ title, description, user }: CmsHeaderProps) {
         const { error } = await authClient.signOut();
 
         if (error) {
-          toast.error(error.message || "Failed to sign out.");
+          toast.error(error.message || "退出登录失败");
 
           return;
         }
 
-        toast.success("Signed out successfully.");
+        toast.success("已成功退出登录");
         router.replace("/cms/login");
         router.refresh();
       })();

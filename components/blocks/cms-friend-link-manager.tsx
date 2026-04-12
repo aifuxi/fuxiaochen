@@ -29,11 +29,11 @@ import type { CreateFriendLinkInput, FriendLinkDto, UpdateFriendLinkInput } from
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const STATUS_FILTER_OPTIONS = [
-  { label: "All Statuses", value: "" },
-  { label: "Approved", value: FriendLinkStatus.Approved },
-  { label: "Pending", value: FriendLinkStatus.Pending },
-  { label: "Offline", value: FriendLinkStatus.Offline },
-  { label: "Rejected", value: FriendLinkStatus.Rejected },
+  { label: "全部状态", value: "" },
+  { label: "已批准", value: FriendLinkStatus.Approved },
+  { label: "待审核", value: FriendLinkStatus.Pending },
+  { label: "已下线", value: FriendLinkStatus.Offline },
+  { label: "已拒绝", value: FriendLinkStatus.Rejected },
 ];
 
 export function CmsFriendLinkManager() {
@@ -102,7 +102,7 @@ export function CmsFriendLinkManager() {
 
   async function handleCreate(input: CreateFriendLinkInput) {
     await createMutation.trigger(input);
-    toast.success("Friend link created successfully.");
+    toast.success("友链创建成功。");
     await mutate();
   }
 
@@ -111,7 +111,7 @@ export function CmsFriendLinkManager() {
       id,
       input,
     });
-    toast.success("Friend link updated successfully.");
+    toast.success("友链更新成功。");
     await mutate();
   }
 
@@ -119,7 +119,7 @@ export function CmsFriendLinkManager() {
     await deleteMutation.trigger({
       id: friendLink.id,
     });
-    toast.success(`Deleted ${friendLink.siteName}.`);
+    toast.success(`已删除 ${friendLink.siteName}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -168,7 +168,7 @@ export function CmsFriendLinkManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by site name, URL, domain, or description"
+              placeholder="按网站名称、URL、域名或描述搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -184,16 +184,16 @@ export function CmsFriendLinkManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} links</Badge>
+            <Badge variant="muted">{total} 个链接</Badge>
             {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
               size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            `} /> 刷新中</span> : null}
           </div>
         </div>
 
         <Button disabled={isMutating} onClick={openCreateDialog} variant="primary">
           <Plus className="size-4" />
-          Add Friend Link
+          添加友链
         </Button>
       </div>
 
@@ -201,21 +201,21 @@ export function CmsFriendLinkManager() {
         grid gap-4
         sm:grid-cols-3
       `}>
-        <MetricCard label="Total Links" value={String(total)} />
-        <MetricCard label="Visible Links" value={String(friendLinks.length)} />
-        <MetricCard label="Active Filter" value={status || (keyword ? `#${keyword}` : "All links")} />
+        <MetricCard label="链接总数" value={String(total)} />
+        <MetricCard label="可见链接" value={String(friendLinks.length)} />
+        <MetricCard label="当前筛选" value={status || (keyword ? `#${keyword}` : "全部链接")} />
       </div>
 
       <Table>
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Site</TableHeaderCell>
-              <TableHeaderCell>Domain</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Sort</TableHeaderCell>
-              <TableHeaderCell>Updated</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>网站</TableHeaderCell>
+              <TableHeaderCell>域名</TableHeaderCell>
+              <TableHeaderCell>状态</TableHeaderCell>
+              <TableHeaderCell>排序</TableHeaderCell>
+              <TableHeaderCell>更新时间</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -231,9 +231,9 @@ export function CmsFriendLinkManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load friend links."}</p>
+                    <p className="max-w-md text-sm text-muted">{error.message || "加载友链失败。"}</p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -249,18 +249,18 @@ export function CmsFriendLinkManager() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
-                        {keyword || status ? "No friend links match this filter." : "No friend links yet."}
+                        {keyword || status ? "没有符合筛选条件的友链。" : "暂无友链。"}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || status
-                          ? "Try a different keyword or status."
-                          : "Create the first friend link to populate the directory."}
+                          ? "尝试不同的关键词或状态。"
+                          : "创建第一个友链来填充目录。"}
                       </p>
                     </div>
                     {!keyword && !status ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
-                        Create Friend Link
+                        创建友链
                       </Button>
                     ) : null}
                   </div>
@@ -296,7 +296,7 @@ export function CmsFriendLinkManager() {
                     <div className="flex justify-end gap-2">
                       <Button disabled={isMutating} onClick={() => openEditDialog(friendLink)} size="sm" variant="ghost">
                         <Pencil className="size-4" />
-                        Edit
+                        编辑
                       </Button>
                       <Button
                         disabled={isMutating}
@@ -305,7 +305,7 @@ export function CmsFriendLinkManager() {
                         variant="outline"
                       >
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -322,8 +322,8 @@ export function CmsFriendLinkManager() {
       `}>
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -332,7 +332,7 @@ export function CmsFriendLinkManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -351,7 +351,7 @@ export function CmsFriendLinkManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>
@@ -385,14 +385,14 @@ function getStatusBadgeVariant(status: FriendLinkStatus) {
 function formatStatusLabel(status: FriendLinkStatus) {
   switch (status) {
     case FriendLinkStatus.Approved:
-      return "Approved";
+      return "已批准";
     case FriendLinkStatus.Offline:
-      return "Offline";
+      return "已下线";
     case FriendLinkStatus.Rejected:
-      return "Rejected";
+      return "已拒绝";
     case FriendLinkStatus.Pending:
     default:
-      return "Pending";
+      return "待审核";
   }
 }
 

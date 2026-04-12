@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Chen Serif",
-  description: "A Chen Serif blog and CMS system built with Tailwind CSS v4 and Base UI.",
+  description: "基于 Tailwind CSS v4 和 Base UI 构建的 Chen Serif 博客与 CMS 系统。",
 };
 
 export default function RootLayout({

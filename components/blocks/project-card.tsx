@@ -40,7 +40,7 @@ export function ProjectCard({ project }: { project: PublicProjectDto }) {
             text-primary-accent arrow-btn mt-4 flex items-center gap-2 text-xs transition-all duration-300
             hover:gap-3
           `}>
-            <span className="font-mono-tech tracking-wider uppercase">View Project</span>
+            <span className="font-mono-tech tracking-wider uppercase">查看项目</span>
             <span>→</span>
           </div>
         </div>

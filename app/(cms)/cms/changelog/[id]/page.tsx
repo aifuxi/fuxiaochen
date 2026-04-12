@@ -11,7 +11,7 @@ export default async function CmsEditChangelogPage({ params }: CmsEditChangelogP
   const { id } = await params;
 
   return (
-    <CmsShell description="Update release metadata, ordering, and nested changelog items." title="Edit Release">
+    <CmsShell description="更新版本元数据、排序和嵌套的更新日志条目。" title="编辑版本">
       <CmsChangelogForm releaseId={id} />
     </CmsShell>
   );

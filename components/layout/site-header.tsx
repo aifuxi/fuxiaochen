@@ -7,15 +7,15 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 const primaryNavItems = [
-  { href: "/", label: "Home" },
-  { href: "/articles", label: "Articles" },
-  { href: "/projects", label: "Projects" },
-  { href: "/about", label: "About" },
+  { href: "/", label: "首页" },
+  { href: "/articles", label: "文章" },
+  { href: "/projects", label: "项目" },
+  { href: "/about", label: "关于" },
 ];
 
 const secondaryNavItems = [
-  { href: "/changelog", label: "Changelog" },
-  { href: "/friends", label: "Friends" },
+  { href: "/changelog", label: "更新日志" },
+  { href: "/friends", label: "友链" },
 ];
 
 export function SiteHeader() {
@@ -65,7 +65,7 @@ export function SiteHeader() {
               transition-colors duration-300
               hover:text-foreground
             `}>
-              More
+              更多
               <span className="text-[10px]">⌄</span>
             </div>
             <div className={`
@@ -96,7 +96,7 @@ export function SiteHeader() {
         </div>
 
         <Link className="btn-primary-glow font-mono-tech rounded-full px-6 py-2 text-xs tracking-wider uppercase" href="/cms/dashboard">
-          Get Started
+          开始使用
         </Link>
       </div>
     </nav>

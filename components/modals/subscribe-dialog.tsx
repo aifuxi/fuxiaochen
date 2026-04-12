@@ -22,20 +22,19 @@ export const SubscribeDialog = NiceModal.create(
       <Dialog open={modal.visible} onOpenChange={modal.remove}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mock subscription captured</DialogTitle>
+            <DialogTitle>模拟订阅已捕获</DialogTitle>
             <DialogDescription>
-              The first pass stores no subscribers yet. This modal exists to
-              prove the NiceModal + Base UI dialog flow for future auth and CMS
-              actions.
+              首个版本不存储任何订阅者。此弹窗用于验证 NiceModal + Base UI
+              弹窗流程，为后续的认证和 CMS 操作做准备。
             </DialogDescription>
           </DialogHeader>
           <div className="mt-8 rounded-2xl border border-white/8 bg-white/4 p-5 text-sm text-muted">
-            Submitted email:{" "}
-            <span className="text-foreground">{email || "not provided"}</span>
+            提交的邮箱：{" "}
+            <span className="text-foreground">{email || "未提供"}</span>
           </div>
           <div className="mt-6 flex justify-end">
             <Button onClick={() => modal.remove()} variant="primary">
-              Close
+              关闭
             </Button>
           </div>
         </DialogContent>

@@ -11,7 +11,7 @@ export default async function CmsEditArticlePage({ params }: CmsEditArticlePageP
   const { id } = await params;
 
   return (
-    <CmsShell description="Update article content, taxonomy, publishing state, and SEO metadata." title="Edit Article">
+    <CmsShell description="更新文章内容、分类、发布状态和 SEO 元数据。" title="编辑文章">
       <CmsArticleForm articleId={id} />
     </CmsShell>
   );

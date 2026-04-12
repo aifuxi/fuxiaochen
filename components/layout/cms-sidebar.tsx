@@ -79,7 +79,7 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
           `}
         >
           <LucideIcon className="size-4" name="plus" />
-          New Article
+          新建文章
         </button>
         <div
           className={`

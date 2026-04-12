@@ -35,10 +35,10 @@ import { listCategories } from "@/lib/category/category-client";
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const STATUS_OPTIONS = [
-  { label: "All Statuses", value: "" },
-  { label: "Draft", value: ArticleStatus.Draft },
-  { label: "Published", value: ArticleStatus.Published },
-  { label: "Archived", value: ArticleStatus.Archived },
+  { label: "全部状态", value: "" },
+  { label: "草稿", value: ArticleStatus.Draft },
+  { label: "已发布", value: ArticleStatus.Published },
+  { label: "已归档", value: ArticleStatus.Archived },
 ];
 
 export function CmsArticleManager() {
@@ -120,7 +120,7 @@ export function CmsArticleManager() {
     await deleteMutation.trigger({
       id: article.id,
     });
-    toast.success(`Deleted ${article.title}.`);
+    toast.success(`已删除《${article.title}》。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -158,7 +158,7 @@ export function CmsArticleManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by title, slug, or excerpt"
+              placeholder="按标题、slug 或摘要搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -180,7 +180,7 @@ export function CmsArticleManager() {
                 setPage(1);
               }}
               options={[
-                { label: "All Categories", value: "" },
+                { label: "全部分类", value: "" },
                 ...categories.map((category) => ({
                   label: category.name,
                   value: category.id,
@@ -190,10 +190,10 @@ export function CmsArticleManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} articles</Badge>
+            <Badge variant="muted">{total} 篇文章</Badge>
             {isValidating && !isLoading ? (
               <span className="inline-flex items-center gap-2">
-                <RefreshCw className={`size-3 animate-spin`} /> Refreshing
+                <RefreshCw className={`size-3 animate-spin`} /> 刷新中
               </span>
             ) : null}
           </div>
@@ -202,7 +202,7 @@ export function CmsArticleManager() {
         <Link href="/cms/article/new">
           <Button variant="primary" className="font-medium!">
             <Plus className="size-4" />
-            New Article
+            新建文章
           </Button>
         </Link>
       </div>
@@ -213,11 +213,11 @@ export function CmsArticleManager() {
           sm:grid-cols-3
         `}
       >
-        <MetricCard label="Total Articles" value={String(total)} />
-        <MetricCard label="Visible Articles" value={String(articles.length)} />
+        <MetricCard label="文章总数" value={String(total)} />
+        <MetricCard label="可见文章" value={String(articles.length)} />
         <MetricCard
-          label="Active Filter"
-          value={status || (categoryId ? "Category" : "All content")}
+          label="当前筛选"
+          value={status || (categoryId ? "分类" : "全部内容")}
         />
       </div>
 
@@ -225,12 +225,12 @@ export function CmsArticleManager() {
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Article</TableHeaderCell>
-              <TableHeaderCell>Category</TableHeaderCell>
-              <TableHeaderCell>Status</TableHeaderCell>
-              <TableHeaderCell>Tags</TableHeaderCell>
-              <TableHeaderCell>Updated</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>文章</TableHeaderCell>
+              <TableHeaderCell>分类</TableHeaderCell>
+              <TableHeaderCell>状态</TableHeaderCell>
+              <TableHeaderCell>标签</TableHeaderCell>
+              <TableHeaderCell>更新时间</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -247,10 +247,10 @@ export function CmsArticleManager() {
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
                     <p className="max-w-md text-sm text-muted">
-                      {error.message || "Failed to load articles."}
+                      {error.message || "加载文章失败。"}
                     </p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -269,20 +269,20 @@ export function CmsArticleManager() {
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
                         {keyword || status || categoryId
-                          ? "No articles match this filter."
-                          : "No articles yet."}
+                          ? "没有符合筛选条件的文章。"
+                          : "暂无文章。"}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || status || categoryId
-                          ? "Try a different filter combination."
-                          : "Create the first article to start publishing content."}
+                          ? "尝试不同的筛选组合。"
+                          : "创建第一篇文章以开始发布内容。"}
                       </p>
                     </div>
                     {!keyword && !status && !categoryId ? (
                       <Link href="/cms/article/new">
                         <Button variant="outline">
                           <Plus className="size-4" />
-                          Create Article
+                          创建文章
                         </Button>
                       </Link>
                     ) : null}
@@ -315,7 +315,7 @@ export function CmsArticleManager() {
                         <span>{article.category.name}</span>
                       </div>
                     ) : (
-                      <span className="text-muted">Uncategorized</span>
+                      <span className="text-muted">未分类</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -335,7 +335,7 @@ export function CmsArticleManager() {
                           </span>
                         ))
                       ) : (
-                        <span className="text-xs text-muted">No tags</span>
+                        <span className="text-xs text-muted">暂无标签</span>
                       )}
                     </div>
                   </TableCell>
@@ -346,7 +346,7 @@ export function CmsArticleManager() {
                     <div className="flex justify-end gap-2">
                       <Link href={`/cms/article/${article.id}`}>
                         <Button size="sm" variant="ghost">
-                          Edit
+                          编辑
                         </Button>
                       </Link>
                       <Button
@@ -356,7 +356,7 @@ export function CmsArticleManager() {
                         variant="outline"
                       >
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -375,8 +375,8 @@ export function CmsArticleManager() {
       >
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -387,7 +387,7 @@ export function CmsArticleManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -408,7 +408,7 @@ export function CmsArticleManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

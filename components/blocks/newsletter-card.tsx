@@ -21,9 +21,9 @@ export function NewsletterCard() {
           <h2 className={`
             gradient-text mb-4 font-serif text-5xl
             lg:text-6xl
-          `}>Stay Updated</h2>
+          `}>保持更新</h2>
           <p className="mx-auto mb-10 max-w-md text-lg font-light text-muted">
-            Subscribe to my newsletter for the latest articles, tutorials, and insights on design and development.
+            订阅我的 newsletter，获取关于设计与开发的最新文章、教程和见解。
           </p>
 
           <form
@@ -33,7 +33,7 @@ export function NewsletterCard() {
             `}
             onSubmit={(event) => {
               event.preventDefault();
-              toast.success("Subscription request captured.");
+              toast.success("订阅请求已收到。");
               void NiceModal.show(SubscribeDialog, { email });
             }}
           >
@@ -47,11 +47,11 @@ export function NewsletterCard() {
               onChange={(event) => setEmail(event.target.value)}
             />
             <button className="btn-primary-glow font-mono-tech rounded-full px-8 py-4 text-sm tracking-wider uppercase" type="submit">
-              Subscribe
+              订阅
             </button>
           </form>
 
-          <p className="mt-6 text-xs text-muted">No spam, unsubscribe anytime.</p>
+          <p className="mt-6 text-xs text-muted">无垃圾邮件，可随时取消订阅。</p>
         </div>
       </div>
     </section>

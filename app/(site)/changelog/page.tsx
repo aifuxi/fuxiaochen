@@ -1,10 +1,10 @@
 import { listPublicChangelog } from "@/lib/public/public-content-client";
 
 const legend = [
-  { label: "Added", tone: "text-primary-accent" },
-  { label: "Improved", tone: "text-sky-400" },
-  { label: "Fixed", tone: "text-amber-400" },
-  { label: "Changed", tone: "text-red-400" },
+  { label: "新增", tone: "text-primary-accent" },
+  { label: "优化", tone: "text-sky-400" },
+  { label: "修复", tone: "text-amber-400" },
+  { label: "变更", tone: "text-red-400" },
 ];
 
 export default async function ChangelogPage() {
@@ -14,15 +14,15 @@ export default async function ChangelogPage() {
     <div>
       <section className="relative px-8 pt-32 pb-16">
         <div className="mx-auto max-w-4xl">
-          <span className="font-mono-tech text-primary-accent mb-4 block text-xs tracking-widest uppercase">Updates</span>
+          <span className="font-mono-tech text-primary-accent mb-4 block text-xs tracking-widest uppercase">更新日志</span>
           <h1 className={`
             font-serif text-5xl tracking-tighter
             lg:text-6xl
           `} style={{ lineHeight: 0.95 }}>
-            Changelog
+            更新日志
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
-            A record of all major updates, improvements, and fixes. Stay up to date with the latest changes.
+            记录所有主要更新、优化和问题修复。了解最新变化。
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
@@ -32,7 +32,7 @@ export default async function ChangelogPage() {
                   rounded-full bg-white/6 px-3 py-1 text-xs font-medium
                   ${item.tone}
                 `}>{item.label}</span>
-                <span className="text-sm text-muted">{item.label === "Added" ? "New features" : item.label === "Improved" ? "Enhancements" : item.label === "Fixed" ? "Bug fixes" : "Breaking changes"}</span>
+                <span className="text-sm text-muted">{item.label === "新增" ? "新功能" : item.label === "优化" ? "改进优化" : item.label === "修复" ? "问题修复" : "破坏性变更"}</span>
               </div>
             ))}
           </div>

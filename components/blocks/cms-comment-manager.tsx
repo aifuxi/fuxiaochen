@@ -27,11 +27,11 @@ import { listArticles } from "@/lib/article/article-client";
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const STATUS_OPTIONS = [
-  { label: "All", value: "" },
-  { label: "Pending", value: CommentStatus.Pending },
-  { label: "Approved", value: CommentStatus.Approved },
-  { label: "Spam", value: CommentStatus.Spam },
-  { label: "Deleted", value: CommentStatus.Deleted },
+  { label: "全部", value: "" },
+  { label: "待审核", value: CommentStatus.Pending },
+  { label: "已批准", value: CommentStatus.Approved },
+  { label: "垃圾评论", value: CommentStatus.Spam },
+  { label: "已删除", value: CommentStatus.Deleted },
 ];
 
 export function CmsCommentManager() {
@@ -110,7 +110,7 @@ export function CmsCommentManager() {
       id: comment.id,
       status: nextStatus,
     });
-    toast.success(`Marked comment as ${nextStatus.toLowerCase()}.`);
+    toast.success(`已将评论标记为${nextStatus.toLowerCase() === "approved" ? "已批准" : nextStatus.toLowerCase() === "pending" ? "待审核" : nextStatus.toLowerCase() === "spam" ? "垃圾评论" : "已删除"}。`);
     await mutate();
   }
 
@@ -118,7 +118,7 @@ export function CmsCommentManager() {
     await deleteMutation.trigger({
       id: comment.id,
     });
-    toast.success("Comment deleted.");
+    toast.success("评论已删除。");
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -152,7 +152,7 @@ export function CmsCommentManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by author, email, or comment body"
+              placeholder="按作者、邮箱或评论内容搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -174,7 +174,7 @@ export function CmsCommentManager() {
                 setPage(1);
               }}
               options={[
-                { label: "All Articles", value: "" },
+                { label: "全部文章", value: "" },
                 ...articles.map((article) => ({
                   label: article.title,
                   value: article.id,
@@ -184,10 +184,10 @@ export function CmsCommentManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} comments</Badge>
+            <Badge variant="muted">{total} 条评论</Badge>
             {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
               size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            `} /> 刷新中</span> : null}
           </div>
         </div>
       </div>
@@ -199,9 +199,9 @@ export function CmsCommentManager() {
           ))
         ) : error ? (
           <div className="rounded-2xl border border-white/8 bg-white/3 p-8 text-center">
-            <p className="text-sm text-muted">{error.message || "Failed to load comments."}</p>
+            <p className="text-sm text-muted">{error.message || "加载评论失败。"}</p>
             <Button className="mt-4" onClick={() => void mutate()} variant="outline">
-              Retry
+              重试
             </Button>
           </div>
         ) : comments.length === 0 ? (
@@ -213,12 +213,12 @@ export function CmsCommentManager() {
               <MessageSquare className="size-5" />
             </div>
             <p className="mt-4 text-base text-foreground">
-              {keyword || status || articleId ? "No comments match this filter." : "No comments yet."}
+              {keyword || status || articleId ? "没有符合筛选条件的评论。" : "暂无评论。"}
             </p>
             <p className="mt-2 text-sm text-muted">
               {keyword || status || articleId
-                ? "Try a different filter combination."
-                : "Comments will appear here once readers start the discussion."}
+                ? "尝试不同的筛选组合。"
+                : "当读者开始讨论时，评论将显示在这里。"}
             </p>
           </div>
         ) : (
@@ -244,7 +244,7 @@ export function CmsCommentManager() {
                   </div>
                   <div>
                     <div className="font-semibold text-foreground">{comment.authorName}</div>
-                    <div className="text-xs text-muted">{comment.authorEmail || "No email provided"}</div>
+                    <div className="text-xs text-muted">{comment.authorEmail || "未提供邮箱"}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -264,8 +264,8 @@ export function CmsCommentManager() {
                 </div>
                 <p className="mb-2 text-sm leading-7 text-foreground">{comment.body}</p>
                 <div className="flex flex-wrap gap-2 text-xs text-muted">
-                  <span>Replies: {comment.repliesCount}</span>
-                  <span>Depth: {comment.replyDepth}</span>
+                  <span>回复: {comment.repliesCount}</span>
+                  <span>深度: {comment.replyDepth}</span>
                 </div>
               </div>
 
@@ -277,7 +277,7 @@ export function CmsCommentManager() {
                     size="sm"
                     variant="ghost"
                   >
-                    Approve
+                    批准
                   </Button>
                 ) : null}
                 {comment.status !== CommentStatus.Spam ? (
@@ -287,7 +287,7 @@ export function CmsCommentManager() {
                     size="sm"
                     variant="outline"
                   >
-                    Spam
+                    标记垃圾
                   </Button>
                 ) : null}
                 {comment.status !== CommentStatus.Pending ? (
@@ -297,7 +297,7 @@ export function CmsCommentManager() {
                     size="sm"
                     variant="outline"
                   >
-                    Pending
+                    待审核
                   </Button>
                 ) : null}
                 <Button
@@ -307,7 +307,7 @@ export function CmsCommentManager() {
                   variant="outline"
                 >
                   <Trash2 className="size-4" />
-                  Delete
+                  删除
                 </Button>
               </div>
             </div>
@@ -321,8 +321,8 @@ export function CmsCommentManager() {
       `}>
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -331,7 +331,7 @@ export function CmsCommentManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -350,7 +350,7 @@ export function CmsCommentManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

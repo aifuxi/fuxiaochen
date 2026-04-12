@@ -34,9 +34,9 @@ import type { ChangelogReleaseDto } from "@/lib/changelog/changelog-dto";
 const PAGE_SIZE = 10;
 const SEARCH_DEBOUNCE_DELAY = 300;
 const MAJOR_OPTIONS = [
-  { label: "All Releases", value: "" },
-  { label: "Major Releases", value: "true" },
-  { label: "Minor Releases", value: "false" },
+  { label: "全部版本", value: "" },
+  { label: "大版本", value: "true" },
+  { label: "小版本", value: "false" },
 ];
 
 export function CmsChangelogManager() {
@@ -109,7 +109,7 @@ export function CmsChangelogManager() {
     await deleteMutation.trigger({
       id: release.id,
     });
-    toast.success(`Deleted ${release.version}.`);
+    toast.success(`已删除 ${release.version}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -147,7 +147,7 @@ export function CmsChangelogManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by version, title, or summary"
+              placeholder="按版本、标题或摘要搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
@@ -163,10 +163,10 @@ export function CmsChangelogManager() {
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} releases</Badge>
+            <Badge variant="muted">{total} 个版本</Badge>
             {isValidating && !isLoading ? (
               <span className="inline-flex items-center gap-2">
-                <RefreshCw className={`size-3 animate-spin`} /> Refreshing
+                <RefreshCw className={`size-3 animate-spin`} /> 刷新中
               </span>
             ) : null}
           </div>
@@ -175,7 +175,7 @@ export function CmsChangelogManager() {
         <Link href="/cms/changelog/new">
           <Button variant="primary" className="font-medium!">
             <Plus className="size-4" />
-            New Release
+            新建版本
           </Button>
         </Link>
       </div>
@@ -186,16 +186,16 @@ export function CmsChangelogManager() {
           sm:grid-cols-3
         `}
       >
-        <MetricCard label="Total Releases" value={String(total)} />
-        <MetricCard label="Visible Releases" value={String(releases.length)} />
+        <MetricCard label="版本总数" value={String(total)} />
+        <MetricCard label="可见版本" value={String(releases.length)} />
         <MetricCard
-          label="Active Filter"
+          label="当前筛选"
           value={
             isMajorFilter === ""
-              ? "All releases"
+              ? "全部版本"
               : isMajorFilter === "true"
-                ? "Major"
-                : "Minor"
+                ? "大版本"
+                : "小版本"
           }
         />
       </div>
@@ -204,12 +204,12 @@ export function CmsChangelogManager() {
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Release</TableHeaderCell>
-              <TableHeaderCell>Date</TableHeaderCell>
-              <TableHeaderCell>Items</TableHeaderCell>
-              <TableHeaderCell>Highlights</TableHeaderCell>
-              <TableHeaderCell>State</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>版本</TableHeaderCell>
+              <TableHeaderCell>日期</TableHeaderCell>
+              <TableHeaderCell>项数</TableHeaderCell>
+              <TableHeaderCell>亮点</TableHeaderCell>
+              <TableHeaderCell>状态</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -226,10 +226,10 @@ export function CmsChangelogManager() {
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
                     <p className="max-w-md text-sm text-muted">
-                      {error.message || "Failed to load changelog releases."}
+                      {error.message || "加载更新日志失败。"}
                     </p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -248,20 +248,20 @@ export function CmsChangelogManager() {
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
                         {keyword || isMajorFilter
-                          ? "No changelog releases match this filter."
-                          : "No changelog releases yet."}
+                          ? "没有符合筛选条件的更新日志。"
+                          : "暂无更新日志。"}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || isMajorFilter
-                          ? "Try a different filter combination."
-                          : "Create the first release to start tracking product updates."}
+                          ? "尝试不同的筛选组合。"
+                          : "创建第一个版本以开始追踪产品更新。"}
                       </p>
                     </div>
                     {!keyword && !isMajorFilter ? (
                       <Link href="/cms/changelog/new">
                         <Button variant="outline">
                           <Plus className="size-4" />
-                          Create Release
+                          创建版本
                         </Button>
                       </Link>
                     ) : null}
@@ -294,14 +294,14 @@ export function CmsChangelogManager() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={release.isMajor ? "success" : "muted"}>
-                      {release.isMajor ? "Major" : "Minor"}
+                      {release.isMajor ? "大版本" : "小版本"}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Link href={`/cms/changelog/${release.id}`}>
                         <Button size="sm" variant="ghost">
-                          Edit
+                          编辑
                         </Button>
                       </Link>
                       <Button
@@ -311,7 +311,7 @@ export function CmsChangelogManager() {
                         variant="outline"
                       >
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -330,8 +330,8 @@ export function CmsChangelogManager() {
       >
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -342,7 +342,7 @@ export function CmsChangelogManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -363,7 +363,7 @@ export function CmsChangelogManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

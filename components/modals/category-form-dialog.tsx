@@ -50,7 +50,7 @@ export const CategoryFormDialog = NiceModal.create(
 
       if (!parsedValues.success) {
         toast.error(
-          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+          parsedValues.error.issues[0]?.message ?? "请检查输入内容。",
         );
 
         return;
@@ -69,7 +69,7 @@ export const CategoryFormDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to save category.");
+          toast.error("保存分类失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -105,12 +105,12 @@ export const CategoryFormDialog = NiceModal.create(
         >
           <DialogHeader>
             <DialogTitle className="text-3xl">
-              {mode === "create" ? "Add Category" : "Edit Category"}
+              {mode === "create" ? "添加分类" : "编辑分类"}
             </DialogTitle>
             <DialogDescription>
               {mode === "create"
-                ? "Create a primary article grouping with a consistent editorial color."
-                : "Update category metadata without leaving the current listing."}
+                ? "创建一个主要文章分组，配置统一的编辑颜色。"
+                : "更新分类元数据，无需离开当前列表。"}
             </DialogDescription>
           </DialogHeader>
 
@@ -121,12 +121,12 @@ export const CategoryFormDialog = NiceModal.create(
                 sm:grid-cols-2
               `}
             >
-              <Field label="Name">
+              <Field label="名称">
                 <Input
                   autoFocus
                   disabled={isSubmitting}
                   onChange={handleNameChange}
-                  placeholder="Design Systems"
+                  placeholder="设计系统"
                   value={values.name}
                 />
               </Field>
@@ -153,8 +153,8 @@ export const CategoryFormDialog = NiceModal.create(
               `}
             >
               <Field
-                description="Hex color used for category accents."
-                label="Color"
+                description="用于分类强调色的十六进制颜色值。"
+                label="颜色"
               >
                 <div className="flex items-center gap-3">
                   <div
@@ -177,8 +177,8 @@ export const CategoryFormDialog = NiceModal.create(
                 </div>
               </Field>
               <Field
-                description="Lower values appear first in sorted lists."
-                label="Sort Order"
+                description="值越小，在排序列表中越靠前。"
+                label="排序顺序"
               >
                 <Input
                   disabled={isSubmitting}
@@ -197,8 +197,8 @@ export const CategoryFormDialog = NiceModal.create(
             </div>
 
             <Field
-              description="Optional context for editors and content planning."
-              label="Description"
+              description="编辑者和内容策划的可选说明。"
+              label="描述"
             >
               <Textarea
                 disabled={isSubmitting}
@@ -208,7 +208,7 @@ export const CategoryFormDialog = NiceModal.create(
                     description: event.target.value,
                   }))
                 }
-                placeholder="Long-form writing about tokens, systems, and component governance."
+                placeholder="关于 Token、系统设计和组件治理的长文写作。"
                 value={values.description}
               />
             </Field>
@@ -220,16 +220,16 @@ export const CategoryFormDialog = NiceModal.create(
                 type="button"
                 variant="outline"
               >
-                Cancel
+                取消
               </Button>
               <Button disabled={isSubmitting} type="submit" variant="primary">
                 {isSubmitting
                   ? mode === "create"
-                    ? "Saving..."
-                    : "Updating..."
+                    ? "保存中..."
+                    : "更新中..."
                   : mode === "create"
-                    ? "Create Category"
-                    : "Save Changes"}
+                    ? "创建分类"
+                    : "保存更改"}
               </Button>
             </div>
           </form>

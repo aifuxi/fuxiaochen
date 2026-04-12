@@ -28,10 +28,10 @@ type FriendLinkFormDialogProps = NiceModalHocProps & {
 };
 
 const STATUS_OPTIONS = [
-  { label: "Approved", value: FriendLinkStatus.Approved },
-  { label: "Pending", value: FriendLinkStatus.Pending },
-  { label: "Offline", value: FriendLinkStatus.Offline },
-  { label: "Rejected", value: FriendLinkStatus.Rejected },
+  { label: "已通过", value: FriendLinkStatus.Approved },
+  { label: "待审核", value: FriendLinkStatus.Pending },
+  { label: "已下线", value: FriendLinkStatus.Offline },
+  { label: "已拒绝", value: FriendLinkStatus.Rejected },
 ];
 
 export const FriendLinkFormDialog = NiceModal.create(
@@ -64,7 +64,7 @@ export const FriendLinkFormDialog = NiceModal.create(
 
       if (!parsedValues.success) {
         toast.error(
-          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+          parsedValues.error.issues[0]?.message ?? "请检查输入内容。",
         );
 
         return;
@@ -84,7 +84,7 @@ export const FriendLinkFormDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to save friend link.");
+          toast.error("保存友链失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -120,12 +120,12 @@ export const FriendLinkFormDialog = NiceModal.create(
         >
           <DialogHeader>
             <DialogTitle className="text-3xl">
-              {mode === "create" ? "Add Friend Link" : "Edit Friend Link"}
+              {mode === "create" ? "添加友链" : "编辑友链"}
             </DialogTitle>
             <DialogDescription>
               {mode === "create"
-                ? "Add a new external site to the friends directory."
-                : "Update friend link details without leaving the current listing."}
+                ? "将新的外部站点添加到好友目录。"
+                : "更新友链详情，无需离开当前列表。"}
             </DialogDescription>
           </DialogHeader>
 
@@ -136,7 +136,7 @@ export const FriendLinkFormDialog = NiceModal.create(
                 sm:grid-cols-2
               `}
             >
-              <Field label="Site Name">
+              <Field label="站点名称">
                 <Input
                   autoFocus
                   disabled={isSubmitting}
@@ -150,7 +150,7 @@ export const FriendLinkFormDialog = NiceModal.create(
                   value={values.siteName}
                 />
               </Field>
-              <Field label="Site URL">
+              <Field label="站点 URL">
                 <Input
                   disabled={isSubmitting}
                   onChange={handleSiteUrlChange}
@@ -166,7 +166,7 @@ export const FriendLinkFormDialog = NiceModal.create(
                 sm:grid-cols-2
               `}
             >
-              <Field label="Status">
+              <Field label="状态">
                 <Select
                   disabled={isSubmitting}
                   onValueChange={(value) =>
@@ -180,8 +180,8 @@ export const FriendLinkFormDialog = NiceModal.create(
                 />
               </Field>
               <Field
-                description="Lower values appear first in sorted lists."
-                label="Sort Order"
+                description="值越小，在排序列表中越靠前。"
+                label="排序顺序"
               >
                 <Input
                   disabled={isSubmitting}
@@ -206,8 +206,8 @@ export const FriendLinkFormDialog = NiceModal.create(
               `}
             >
               <Field
-                description="Optional short label shown under the site name."
-                label="Subtitle"
+                description="显示在站点名称下方的可选简短标签。"
+                label="副标题"
               >
                 <Input
                   disabled={isSubmitting}
@@ -217,13 +217,13 @@ export const FriendLinkFormDialog = NiceModal.create(
                       subtitle: event.target.value,
                     }))
                   }
-                  placeholder="Builder notes"
+                  placeholder="开发者笔记"
                   value={values.subtitle}
                 />
               </Field>
               <Field
-                description="Optional host label for cards and filtering."
-                label="Domain"
+                description="用于卡片和筛选的可选主机标签。"
+                label="域名"
               >
                 <Input
                   disabled={isSubmitting}
@@ -241,8 +241,8 @@ export const FriendLinkFormDialog = NiceModal.create(
             </div>
 
             <Field
-              description="Optional media asset id for the avatar image."
-              label="Avatar Asset ID"
+              description="头像图片的可选媒体资源 ID。"
+              label="头像资源 ID"
             >
               <Input
                 disabled={isSubmitting}
@@ -257,7 +257,7 @@ export const FriendLinkFormDialog = NiceModal.create(
               />
             </Field>
 
-            <Field label="Description">
+            <Field label="描述">
               <Textarea
                 disabled={isSubmitting}
                 onChange={(event) =>
@@ -278,16 +278,16 @@ export const FriendLinkFormDialog = NiceModal.create(
                 type="button"
                 variant="outline"
               >
-                Cancel
+                取消
               </Button>
               <Button disabled={isSubmitting} type="submit" variant="primary">
                 {isSubmitting
                   ? mode === "create"
-                    ? "Saving..."
-                    : "Updating..."
+                    ? "保存中..."
+                    : "更新中..."
                   : mode === "create"
-                    ? "Create Friend Link"
-                    : "Save Changes"}
+                    ? "创建友链"
+                    : "保存更改"}
               </Button>
             </div>
           </form>

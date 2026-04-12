@@ -4,11 +4,11 @@ export type UserRole = (typeof userRoleValues)[number];
 
 export const userRoleOptions = [
   {
-    label: "Admin",
+    label: "管理员",
     value: "Admin",
   },
   {
-    label: "Normal",
+    label: "普通用户",
     value: "Normal",
   },
 ] as const satisfies Array<{

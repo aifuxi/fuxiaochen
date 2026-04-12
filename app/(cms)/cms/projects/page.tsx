@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsProjectsPage() {
   return (
-    <CmsShell description="Manage the portfolio library, featured work, and project metadata against the live API." title="Projects">
+    <CmsShell description="管理作品集、精选项目和项目元数据。" title="项目">
       <CmsProjectManager />
     </CmsShell>
   );

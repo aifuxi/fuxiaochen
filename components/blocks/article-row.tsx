@@ -20,7 +20,7 @@ export function ArticleRow({ article }: { article: PublicArticleListItemDto }) {
           />
         ) : (
           <div className="flex h-[72px] w-24 shrink-0 items-center justify-center rounded-xl bg-white/5">
-            <span className="font-mono-tech text-[10px] text-muted uppercase">No Cover</span>
+            <span className="font-mono-tech text-[10px] text-muted uppercase">无封面</span>
           </div>
         )}
         <div className="min-w-0 flex-1">

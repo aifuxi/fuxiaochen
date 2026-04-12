@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsCommentsPage() {
   return (
-    <CmsShell description="Review, approve, or remove community discussion with clear moderation states." title="Comments">
+    <CmsShell description="审核、批准或删除社区讨论，拥有清晰的审核状态。" title="评论">
       <CmsCommentManager />
     </CmsShell>
   );

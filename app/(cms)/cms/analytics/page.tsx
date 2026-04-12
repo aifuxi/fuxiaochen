@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsAnalyticsPage() {
   return (
-    <CmsShell description="Traffic, engagement, and content performance across the publishing system." title="Analytics">
+    <CmsShell description="追踪发布系统的流量、参与度和内容表现。" title="数据分析">
       <CmsAnalyticsDashboard />
     </CmsShell>
   );

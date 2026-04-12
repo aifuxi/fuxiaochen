@@ -44,24 +44,24 @@ export type UserRow = {
 
 export const cmsNavGroups: CmsNavGroup[] = [
   {
-    label: "Main",
+    label: "主页",
     items: [
-      { href: "/cms/dashboard", label: "Dashboard", icon: "layout-dashboard" },
-      { href: "/cms/articles", label: "Articles", icon: "file-text" },
-      { href: "/cms/projects", label: "Projects", icon: "briefcase-business" },
-      { href: "/cms/friends", label: "Friends", icon: "link-2" },
-      { href: "/cms/changelog", label: "Changelog", icon: "history" },
-      { href: "/cms/categories", label: "Categories", icon: "folder" },
-      { href: "/cms/tags", label: "Tags", icon: "tags" },
-      { href: "/cms/comments", label: "Comments", icon: "message-square" },
+      { href: "/cms/dashboard", label: "仪表盘", icon: "layout-dashboard" },
+      { href: "/cms/articles", label: "文章", icon: "file-text" },
+      { href: "/cms/projects", label: "项目", icon: "briefcase-business" },
+      { href: "/cms/friends", label: "友链", icon: "link-2" },
+      { href: "/cms/changelog", label: "更新日志", icon: "history" },
+      { href: "/cms/categories", label: "分类", icon: "folder" },
+      { href: "/cms/tags", label: "标签", icon: "tags" },
+      { href: "/cms/comments", label: "评论", icon: "message-square" },
     ],
   },
   {
-    label: "Management",
+    label: "管理",
     items: [
-      { href: "/cms/users", label: "Users", icon: "users" },
-      { href: "/cms/analytics", label: "Analytics", icon: "bar-chart-3" },
-      { href: "/cms/settings", label: "Settings", icon: "settings-2" },
+      { href: "/cms/users", label: "用户", icon: "users" },
+      { href: "/cms/analytics", label: "数据分析", icon: "bar-chart-3" },
+      { href: "/cms/settings", label: "设置", icon: "settings-2" },
     ],
   },
 ];

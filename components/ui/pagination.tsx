@@ -18,7 +18,7 @@ export function Pagination({ buildHref, page, totalPages }: PaginationProps) {
         className={cn(buttonVariants({ size: "sm", variant: "outline" }), page === 1 && "pointer-events-none opacity-40")}
         href={buildHref(Math.max(page - 1, 1))}
       >
-        Prev
+        上一页
       </Link>
       {pages.map((item) => (
         <Link
@@ -39,7 +39,7 @@ export function Pagination({ buildHref, page, totalPages }: PaginationProps) {
         )}
         href={buildHref(Math.min(page + 1, totalPages))}
       >
-        Next
+        下一页
       </Link>
     </div>
   );

@@ -3,7 +3,7 @@ import { CmsShell } from "@/components/layout/cms-shell";
 
 export default function CmsArticlesPage() {
   return (
-    <CmsShell description="Manage article state, status, taxonomy, and revisions against the live content API." title="Articles">
+    <CmsShell description="管理文章状态、状态、分类和版本，对抗实时内容 API。" title="文章">
       <CmsArticleManager />
     </CmsShell>
   );

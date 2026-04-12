@@ -33,7 +33,7 @@ export const UserDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete user.");
+          toast.error("删除用户失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,18 +49,15 @@ export const UserDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete User</DialogTitle>
+            <DialogTitle className="text-3xl">删除用户</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{user.name}</span> from
-              the CMS. Linked accounts and active sessions for{" "}
-              <span className="text-foreground">{user.email}</span> will also be
-              removed.
+              从 CMS 中移除 <span className="text-foreground">{user.name}</span>。
+              <span className="text-foreground">{user.email}</span> 的关联账号和活跃会话也将被移除。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Current linked accounts:{" "}
-            {user.accountCount}. Active sessions: {user.sessionCount}.
+            此操作无法撤销。当前关联账号：{user.accountCount}。活跃会话：{user.sessionCount}。
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -70,7 +67,7 @@ export const UserDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -78,7 +75,7 @@ export const UserDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete User"}
+              {isSubmitting ? "删除中..." : "删除用户"}
             </Button>
           </div>
         </DialogContent>

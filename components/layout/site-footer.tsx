@@ -17,7 +17,7 @@ export function SiteFooter() {
         </div>
 
         <span className="font-mono-tech text-xs text-white/40">
-          © 2024 Alex Chen. All rights reserved.
+          © 2024 Alex Chen. 保留所有权利。
         </span>
       </div>
     </footer>

@@ -34,11 +34,11 @@ type CmsChangelogFormProps = {
 };
 
 const ITEM_TYPE_OPTIONS = [
-  { label: "Added", value: ChangelogItemType.Added },
-  { label: "Improved", value: ChangelogItemType.Improved },
-  { label: "Fixed", value: ChangelogItemType.Fixed },
-  { label: "Changed", value: ChangelogItemType.Changed },
-  { label: "Removed", value: ChangelogItemType.Removed },
+  { label: "新增", value: ChangelogItemType.Added },
+  { label: "优化", value: ChangelogItemType.Improved },
+  { label: "修复", value: ChangelogItemType.Fixed },
+  { label: "变更", value: ChangelogItemType.Changed },
+  { label: "移除", value: ChangelogItemType.Removed },
 ];
 
 export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
@@ -81,7 +81,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
       : createChangelogReleaseBodySchema.safeParse(payload);
 
     if (!parsedValues.success) {
-      toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+      toast.error(parsedValues.error.issues[0]?.message ?? "请检查您的输入。");
 
       return;
     }
@@ -91,11 +91,11 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
     try {
       if (isEditMode && releaseId) {
         await updateChangelogRelease(releaseId, parsedValues.data as UpdateChangelogReleaseInput);
-        toast.success("Changelog release updated successfully.");
+        toast.success("更新日志版本更新成功。");
         router.refresh();
       } else {
         const release = await createChangelogRelease(parsedValues.data as CreateChangelogReleaseInput);
-        toast.success("Changelog release created successfully.");
+        toast.success("更新日志版本创建成功。");
         router.replace(`/cms/changelog/${release.id}`);
       }
     } catch (error) {
@@ -104,7 +104,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
       } else if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to save changelog release.");
+        toast.error("保存更新日志版本失败。");
       }
     } finally {
       setIsSubmitting(false);
@@ -133,13 +133,13 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
     `}>
       <div className="space-y-6">
         <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">Release Metadata</div>
+          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">版本元数据</div>
           <div className="space-y-5 p-6">
             <div className={`
               grid gap-5
               sm:grid-cols-2
             `}>
-              <Field label="Version">
+              <Field label="版本号">
                 <Input
                   onChange={(event) =>
                     setValues((currentValues) => ({
@@ -151,7 +151,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                   value={values.version}
                 />
               </Field>
-              <Field label="Released On">
+              <Field label="发布日期">
                 <Input
                   onChange={(event) =>
                     setValues((currentValues) => ({
@@ -165,7 +165,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
               </Field>
             </div>
 
-            <Field label="Title">
+            <Field label="标题">
               <Input
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -173,12 +173,12 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                     title: event.target.value,
                   }))
                 }
-                placeholder="Spring release"
+                placeholder="春季发布"
                 value={values.title}
               />
             </Field>
 
-            <Field label="Summary">
+            <Field label="摘要">
               <Textarea
                 onChange={(event) =>
                   setValues((currentValues) => ({
@@ -186,7 +186,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                     summary: event.target.value,
                   }))
                 }
-                placeholder="Concise release summary for the changelog archive."
+                placeholder="简洁的发布摘要，用于更新日志归档。"
                 value={values.summary}
               />
             </Field>
@@ -195,7 +195,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
 
         <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
           <div className="flex items-center justify-between border-b border-white/8 px-6 py-4">
-            <div className="text-sm font-semibold">Release Items</div>
+            <div className="text-sm font-semibold">更新条目</div>
             <Button
               onClick={() =>
                 setValues((currentValues) => ({
@@ -208,7 +208,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
               variant="outline"
             >
               <Plus className="size-4" />
-              Add Item
+              添加条目
             </Button>
           </div>
 
@@ -217,7 +217,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
               values.items.map((item, index) => (
                 <div key={index} className="rounded-2xl border border-white/8 bg-white/3 p-5">
                   <div className="mb-4 flex items-center justify-between">
-                    <Badge variant="muted">Item {index + 1}</Badge>
+                    <Badge variant="muted">条目 {index + 1}</Badge>
                     <Button
                       onClick={() =>
                         setValues((currentValues) => ({
@@ -230,7 +230,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                       variant="ghost"
                     >
                       <Trash2 className="size-4" />
-                      Remove
+                      移除
                     </Button>
                   </div>
 
@@ -238,7 +238,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                     grid gap-5
                     sm:grid-cols-[180px_minmax(0,1fr)]
                   `}>
-                    <Field label="Type">
+                    <Field label="类型">
                       <Select
                         onValueChange={(value) =>
                           setValues((currentValues) => ({
@@ -257,7 +257,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                         value={item.itemType}
                       />
                     </Field>
-                    <Field label="Title">
+                    <Field label="标题">
                       <Input
                         onChange={(event) =>
                           setValues((currentValues) => ({
@@ -272,14 +272,14 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                             ),
                           }))
                         }
-                        placeholder="Added project CRUD API"
+                        placeholder="新增项目 CRUD API"
                         value={item.title}
                       />
                     </Field>
                   </div>
 
                   <div className="mt-5">
-                    <Field label="Description">
+                    <Field label="描述">
                       <Textarea
                         onChange={(event) =>
                           setValues((currentValues) => ({
@@ -294,7 +294,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                             ),
                           }))
                         }
-                        placeholder="Optional extra detail for this changelog item."
+                        placeholder="可选的额外详情。"
                         value={item.description}
                       />
                     </Field>
@@ -303,7 +303,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
               ))
             ) : (
               <div className="rounded-2xl border border-dashed border-white/10 p-10 text-center text-sm text-muted">
-                No items yet. Add the first changelog item for this release.
+                暂无条目。为这个版本添加第一个更新条目。
               </div>
             )}
           </div>
@@ -314,7 +314,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
         <section className="rounded-2xl border border-white/8 bg-white/3 p-6">
           <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
             <Check className="size-4" />
-            {isEditMode ? "Editing existing release" : "Ready to publish"}
+            {isEditMode ? "正在编辑版本" : "准备发布"}
           </div>
           <div className="space-y-3">
             <Button
@@ -323,13 +323,13 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
               onClick={() => void handleSubmit()}
               type="button"
             >
-              {isSubmitting ? "Saving..." : isEditMode ? "Update Release" : "Create Release"}
+              {isSubmitting ? "保存中..." : isEditMode ? "更新版本" : "创建版本"}
             </Button>
           </div>
         </section>
 
         <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">Release Settings</div>
+          <div className="text-sm font-semibold">版本设置</div>
 
           <label className={`
             flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
@@ -343,10 +343,10 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                 }))
               }
             />
-            <span>Mark as major release</span>
+            <span>标记为主版本</span>
           </label>
 
-          <Field label="Sort Order">
+          <Field label="排序顺序">
             <Input
               inputMode="numeric"
               onChange={(event) =>
@@ -364,9 +364,9 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
           <div className="space-y-2 text-xs text-muted">
             <div className="flex items-center gap-2">
               <Badge variant={values.isMajor ? "success" : "muted"}>
-                {values.isMajor ? "Major" : "Minor"}
+                {values.isMajor ? "主版本" : "次版本"}
               </Badge>
-              <Badge variant="muted">{values.items.length} items</Badge>
+              <Badge variant="muted">{values.items.length} 个条目</Badge>
             </div>
           </div>
         </section>

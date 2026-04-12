@@ -44,7 +44,7 @@ export const TagFormDialog = NiceModal.create(
 
       if (!parsedValues.success) {
         toast.error(
-          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+          parsedValues.error.issues[0]?.message ?? "请检查输入内容。",
         );
 
         return;
@@ -62,7 +62,7 @@ export const TagFormDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to save tag.");
+          toast.error("保存标签失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -98,12 +98,12 @@ export const TagFormDialog = NiceModal.create(
         >
           <DialogHeader>
             <DialogTitle className="text-3xl">
-              {mode === "create" ? "Add Tag" : "Edit Tag"}
+              {mode === "create" ? "添加标签" : "编辑标签"}
             </DialogTitle>
             <DialogDescription>
               {mode === "create"
-                ? "Create a reusable label for filtering and organizing articles."
-                : "Update tag details without leaving the current listing."}
+                ? "创建可用于筛选和组织文章的标签。"
+                : "更新标签详情，无需离开当前列表。"}
             </DialogDescription>
           </DialogHeader>
 
@@ -114,7 +114,7 @@ export const TagFormDialog = NiceModal.create(
                 sm:grid-cols-2
               `}
             >
-              <Field label="Name">
+              <Field label="名称">
                 <Input
                   autoFocus
                   disabled={isSubmitting}
@@ -140,8 +140,8 @@ export const TagFormDialog = NiceModal.create(
             </div>
 
             <Field
-              description="Lower values appear first in sorted lists."
-              label="Sort Order"
+              description="值越小，在排序列表中越靠前。"
+              label="排序顺序"
             >
               <Input
                 disabled={isSubmitting}
@@ -159,8 +159,8 @@ export const TagFormDialog = NiceModal.create(
             </Field>
 
             <Field
-              description="Optional short context for editors."
-              label="Description"
+              description="编辑者的可选简短说明。"
+              label="描述"
             >
               <Textarea
                 disabled={isSubmitting}
@@ -170,7 +170,7 @@ export const TagFormDialog = NiceModal.create(
                     description: event.target.value,
                   }))
                 }
-                placeholder="Used for articles about the Next.js ecosystem."
+                placeholder="用于 Next.js 生态系统相关的文章。"
                 value={values.description}
               />
             </Field>
@@ -182,16 +182,16 @@ export const TagFormDialog = NiceModal.create(
                 type="button"
                 variant="outline"
               >
-                Cancel
+                取消
               </Button>
               <Button disabled={isSubmitting} type="submit" variant="primary">
                 {isSubmitting
                   ? mode === "create"
-                    ? "Saving..."
-                    : "Updating..."
+                    ? "保存中..."
+                    : "更新中..."
                   : mode === "create"
-                    ? "Create Tag"
-                    : "Save Changes"}
+                    ? "创建标签"
+                    : "保存更改"}
               </Button>
             </div>
           </form>

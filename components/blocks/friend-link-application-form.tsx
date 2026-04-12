@@ -30,7 +30,7 @@ export function FriendLinkApplicationForm() {
       const payload = (await response.json()) as { message?: string; success?: boolean };
 
       if (!response.ok || !payload.success) {
-        throw new Error(payload.message ?? "Unable to submit application.");
+        throw new Error(payload.message ?? "无法提交申请。");
       }
 
       event.currentTarget.reset();

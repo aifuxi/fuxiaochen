@@ -85,7 +85,7 @@ export function CmsTagManager() {
 
   async function handleCreate(input: CreateTagInput) {
     await createMutation.trigger(input);
-    toast.success("Tag created successfully.");
+    toast.success("标签创建成功。");
     await mutate();
   }
 
@@ -94,7 +94,7 @@ export function CmsTagManager() {
       id,
       input,
     });
-    toast.success("Tag updated successfully.");
+    toast.success("标签更新成功。");
     await mutate();
   }
 
@@ -102,7 +102,7 @@ export function CmsTagManager() {
     await deleteMutation.trigger({
       id: tag.id,
     });
-    toast.success(`Deleted #${tag.name}.`);
+    toast.success(`已删除 #${tag.name}。`);
 
     const nextTotal = Math.max(total - 1, 0);
     const nextTotalPages = Math.max(Math.ceil(nextTotal / PAGE_SIZE), 1);
@@ -151,22 +151,22 @@ export function CmsTagManager() {
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Search by tag name, slug, or description"
+              placeholder="按标签名称、slug 或描述搜索"
               startAdornment={<Search className="size-4" />}
               value={searchValue}
             />
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} tags</Badge>
+            <Badge variant="muted">{total} 个标签</Badge>
             {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
               size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            `} /> 刷新中</span> : null}
           </div>
         </div>
 
         <Button disabled={isMutating} onClick={openCreateDialog} variant="primary">
           <Plus className="size-4" />
-          Add Tag
+          添加标签
         </Button>
       </div>
 
@@ -174,14 +174,14 @@ export function CmsTagManager() {
         grid gap-4
         sm:grid-cols-3
       `}>
-        <MetricCard label="Total Tags" value={String(total)} />
+        <MetricCard label="标签总数" value={String(total)} />
         <MetricCard
-          label="Visible Tags"
+          label="可见标签"
           value={String(tags.length)}
         />
         <MetricCard
-          label="Active Search"
-          value={keyword ? `#${keyword}` : "All tags"}
+          label="当前搜索"
+          value={keyword ? `#${keyword}` : "全部标签"}
         />
       </div>
 
@@ -189,12 +189,12 @@ export function CmsTagManager() {
         <TableRoot>
           <TableHead>
             <tr>
-              <TableHeaderCell>Name</TableHeaderCell>
+              <TableHeaderCell>名称</TableHeaderCell>
               <TableHeaderCell>Slug</TableHeaderCell>
-              <TableHeaderCell>Usage</TableHeaderCell>
-              <TableHeaderCell>Sort</TableHeaderCell>
-              <TableHeaderCell>Updated</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell>使用量</TableHeaderCell>
+              <TableHeaderCell>排序</TableHeaderCell>
+              <TableHeaderCell>更新时间</TableHeaderCell>
+              <TableHeaderCell className="text-right">操作</TableHeaderCell>
             </tr>
           </TableHead>
           <TableBody>
@@ -210,9 +210,9 @@ export function CmsTagManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load tags."}</p>
+                    <p className="max-w-md text-sm text-muted">{error.message || "加载标签失败。"}</p>
                     <Button onClick={() => void mutate()} variant="outline">
-                      Retry
+                      重试
                     </Button>
                   </div>
                 </TableCell>
@@ -227,15 +227,15 @@ export function CmsTagManager() {
                       <Tag className="size-5" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-base text-foreground">{keyword ? "No tags match this search." : "No tags yet."}</p>
+                      <p className="text-base text-foreground">{keyword ? "没有符合搜索条件的标签。" : "暂无标签。"}</p>
                       <p className="text-sm text-muted">
-                        {keyword ? "Try a different keyword or clear the search." : "Create the first tag to organize article topics."}
+                        {keyword ? "尝试不同的关键词或清除搜索。" : "创建第一个标签来组织文章主题。"}
                       </p>
                     </div>
                     {!keyword ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
-                        Create Tag
+                        创建标签
                       </Button>
                     ) : null}
                   </div>
@@ -248,7 +248,7 @@ export function CmsTagManager() {
                     <div className="space-y-1">
                       <div className="font-medium text-foreground">#{tag.name}</div>
                       <div className="line-clamp-2 text-xs leading-5 text-muted">
-                        {tag.description || "No description"}
+                        {tag.description || "暂无描述"}
                       </div>
                     </div>
                   </TableCell>
@@ -257,7 +257,7 @@ export function CmsTagManager() {
                   </TableCell>
                   <TableCell>
                     <Badge variant={tag.usageCount > 0 ? "primary" : "muted"}>
-                      {tag.usageCount} {tag.usageCount === 1 ? "article" : "articles"}
+                      {tag.usageCount} {tag.usageCount === 1 ? "篇文章" : "篇文章"}
                     </Badge>
                   </TableCell>
                   <TableCell>{tag.sortOrder}</TableCell>
@@ -266,11 +266,11 @@ export function CmsTagManager() {
                     <div className="flex justify-end gap-2">
                       <Button disabled={isMutating} onClick={() => openEditDialog(tag)} size="sm" variant="ghost">
                         <Pencil className="size-4" />
-                        Edit
+                        编辑
                       </Button>
                       <Button disabled={isMutating} onClick={() => openDeleteDialog(tag)} size="sm" variant="outline">
                         <Trash2 className="size-4" />
-                        Delete
+                        删除
                       </Button>
                     </div>
                   </TableCell>
@@ -287,8 +287,8 @@ export function CmsTagManager() {
       `}>
         <p className="text-sm text-muted">
           {total === 0
-            ? "No records"
-            : `Showing ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)} of ${total}`}
+            ? "无记录"
+            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -297,7 +297,7 @@ export function CmsTagManager() {
             size="sm"
             variant="outline"
           >
-            Prev
+            上一页
           </Button>
           {visiblePages.map((item) => (
             <Button
@@ -316,7 +316,7 @@ export function CmsTagManager() {
             size="sm"
             variant="outline"
           >
-            Next
+            下一页
           </Button>
         </div>
       </div>

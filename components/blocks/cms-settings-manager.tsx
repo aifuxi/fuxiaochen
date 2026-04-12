@@ -17,12 +17,12 @@ import {
 } from "@/lib/settings/settings-client";
 import type { SettingsDto, UpdateSettingsInput } from "@/lib/settings/settings-dto";
 
-const sections = ["General", "Appearance", "SEO", "Comments", "Integrations"] as const;
+const sections = ["常规", "外观", "SEO", "评论", "集成"] as const;
 
 const themeOptions = [
-  { label: "Dark", value: "dark" },
-  { label: "Light", value: "light" },
-  { label: "System", value: "system" },
+  { label: "深色", value: "dark" },
+  { label: "浅色", value: "light" },
+  { label: "跟随系统", value: "system" },
 ];
 
 const languageOptions = [
@@ -40,7 +40,7 @@ const timezoneOptions = [
 ];
 
 const fontOptions = [
-  { label: "Default", value: "default" },
+  { label: "默认", value: "default" },
   { label: "Inter", value: "Inter" },
   { label: "Newsreader", value: "Newsreader" },
   { label: "Space Grotesk", value: "Space Grotesk" },
@@ -70,7 +70,7 @@ type SettingsFormState = {
 };
 
 export function CmsSettingsManager() {
-  const [activeSection, setActiveSection] = React.useState<(typeof sections)[number]>("General");
+  const [activeSection, setActiveSection] = React.useState<(typeof sections)[number]>("常规");
   const [values, setValues] = React.useState<SettingsFormState>(createEmptySettingsForm());
   const { data, error, isLoading, isValidating, mutate } = useSWR<SettingsDto, SettingsApiError>(
     ["settings"],
@@ -97,7 +97,7 @@ export function CmsSettingsManager() {
     await mutate(updatedSettings, {
       revalidate: false,
     });
-    toast.success("Settings saved.");
+    toast.success("设置已保存。");
   }
 
   if (isLoading && !data) {
@@ -142,22 +142,22 @@ export function CmsSettingsManager() {
 
       <form className="space-y-8" onSubmit={handleSubmit}>
         <SettingsSection
-          description="Site identity, metadata, and default publishing information."
+          description="站点标识、元数据和默认发布信息。"
           id={getSectionId("General")}
-          title="General Settings"
+          title="常规设置"
         >
           <div className={`
             grid gap-6
             md:grid-cols-2
           `}>
-            <Field label="Site Name">
+            <Field label="站点名称">
               <Input
                 required
                 value={values.blogName}
                 onChange={(event) => updateValue("blogName", event.target.value, setValues)}
               />
             </Field>
-            <Field label="Site URL">
+            <Field label="站点 URL">
               <Input
                 required
                 type="url"
@@ -165,21 +165,21 @@ export function CmsSettingsManager() {
                 onChange={(event) => updateValue("blogUrl", event.target.value, setValues)}
               />
             </Field>
-            <Field label="Contact Email">
+            <Field label="联系邮箱">
               <Input
                 type="email"
                 value={values.contactEmail}
                 onChange={(event) => updateValue("contactEmail", event.target.value, setValues)}
               />
             </Field>
-            <Field label="Language">
+            <Field label="语言">
               <Select
                 options={languageOptions}
                 value={values.languageCode}
                 onValueChange={(value) => updateValue("languageCode", value as string, setValues)}
               />
             </Field>
-            <Field className="md:col-span-2" label="Description">
+            <Field className="md:col-span-2" label="描述">
               <textarea
                 className="form-input min-h-28 w-full rounded-xl px-4 py-3"
                 value={values.blogDescription}
@@ -190,29 +190,29 @@ export function CmsSettingsManager() {
         </SettingsSection>
 
         <SettingsSection
-          description="Theme, typography, color, and localization defaults."
+          description="主题、排版、颜色和本地化默认值。"
           id={getSectionId("Appearance")}
-          title="Appearance"
+          title="外观"
         >
           <div className={`
             grid gap-6
             md:grid-cols-2
           `}>
-            <Field label="Theme">
+            <Field label="主题">
               <Select
                 options={themeOptions}
                 value={values.theme}
                 onValueChange={(value) => updateValue("theme", value as string, setValues)}
               />
             </Field>
-            <Field label="Font Family">
+            <Field label="字体">
               <Select
                 options={fontOptions}
                 value={values.fontFamily || "default"}
                 onValueChange={(value) => updateValue("fontFamily", value === "default" ? "" : value as string, setValues)}
               />
             </Field>
-            <Field label="Accent Color">
+            <Field label="强调色">
               <Input
                 maxLength={7}
                 placeholder="#10B981"
@@ -220,7 +220,7 @@ export function CmsSettingsManager() {
                 onChange={(event) => updateValue("accentColor", event.target.value, setValues)}
               />
             </Field>
-            <Field label="Timezone">
+            <Field label="时区">
               <Select
                 options={timezoneOptions}
                 value={values.timezone}
@@ -231,7 +231,7 @@ export function CmsSettingsManager() {
         </SettingsSection>
 
         <SettingsSection
-          description="Default metadata for previews, search engines, and sitemap discovery."
+          description="用于预览、搜索引擎和站点地图发现的默认元数据。"
           id={getSectionId("SEO")}
           title="SEO"
         >
@@ -239,20 +239,20 @@ export function CmsSettingsManager() {
             grid gap-6
             md:grid-cols-2
           `}>
-            <Field label="Default Meta Title">
+            <Field label="默认 Meta 标题">
               <Input
                 value={values.defaultMetaTitle}
                 onChange={(event) => updateValue("defaultMetaTitle", event.target.value, setValues)}
               />
             </Field>
-            <Field label="Sitemap URL">
+            <Field label="站点地图 URL">
               <Input
                 type="url"
                 value={values.sitemapUrl}
                 onChange={(event) => updateValue("sitemapUrl", event.target.value, setValues)}
               />
             </Field>
-            <Field className="md:col-span-2" label="Default Meta Description">
+            <Field className="md:col-span-2" label="默认 Meta 描述">
               <textarea
                 className="form-input min-h-28 w-full rounded-xl px-4 py-3"
                 maxLength={500}
@@ -264,38 +264,38 @@ export function CmsSettingsManager() {
         </SettingsSection>
 
         <SettingsSection
-          description="Reader discussion, moderation queue, and reply depth controls."
+          description="读者讨论、审核队列和回复深度控制。"
           id={getSectionId("Comments")}
-          title="Comments"
+          title="评论"
         >
           <div className="divide-y divide-white/8">
             <ToggleRow
               checked={values.commentSettings.enabled}
-              description="Readers can comment on published articles."
-              label="Allow comments"
+              description="读者可以对已发布的文章发表评论。"
+              label="允许评论"
               onCheckedChange={(checked) => updateCommentValue("enabled", checked, setValues)}
             />
             <ToggleRow
               checked={values.commentSettings.moderationRequired}
-              description="All new comments enter the moderation queue first."
-              label="Require moderation"
+              description="所有新评论首先进入审核队列。"
+              label="需要审核"
               onCheckedChange={(checked) => updateCommentValue("moderationRequired", checked, setValues)}
             />
             <ToggleRow
               checked={values.commentSettings.allowAnonymous}
-              description="Readers can comment without signing in."
-              label="Allow anonymous comments"
+              description="读者可以在不登录的情况下发表评论。"
+              label="允许匿名评论"
               onCheckedChange={(checked) => updateCommentValue("allowAnonymous", checked, setValues)}
             />
             <ToggleRow
               checked={values.commentSettings.nestedRepliesEnabled}
-              description="Comment threads can include nested replies."
-              label="Nested replies"
+              description="评论线程可以包含嵌套回复。"
+              label="嵌套回复"
               onCheckedChange={(checked) => updateCommentValue("nestedRepliesEnabled", checked, setValues)}
             />
           </div>
           <div className="mt-6 max-w-xs">
-            <Field label="Max Reply Depth">
+            <Field label="最大回复深度">
               <Input
                 max={10}
                 min={1}
@@ -311,9 +311,9 @@ export function CmsSettingsManager() {
         </SettingsSection>
 
         <SettingsSection
-          description="Analytics and external service identifiers."
+          description="分析和外部服务标识符。"
           id={getSectionId("Integrations")}
-          title="Integrations"
+          title="集成"
         >
           <Field label="Google Analytics ID">
             <Input
@@ -333,15 +333,15 @@ export function CmsSettingsManager() {
             {isValidating ? (
               <span className="inline-flex items-center gap-2">
                 <RefreshCw className="size-3 animate-spin" />
-                Refreshing settings
+                刷新设置中
               </span>
             ) : (
-              "Changes are saved to the live CMS settings record."
+              "更改将保存到实时 CMS 设置记录中。"
             )}
           </div>
           <Button disabled={updateMutation.isMutating} type="submit" variant="primary">
             {updateMutation.isMutating ? <RefreshCw className="size-4 animate-spin" /> : <Save className="size-4" />}
-            Save Settings
+            保存设置
           </Button>
         </div>
       </form>
@@ -441,9 +441,9 @@ function SettingsError({
       glass-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/8
     `}>
       <Settings2 className="size-10 text-muted" />
-      <p className="max-w-md text-center text-sm text-muted">{error.message || "Failed to load settings."}</p>
+      <p className="max-w-md text-center text-sm text-muted">{error.message || "加载设置失败。"}</p>
       <Button type="button" variant="outline" onClick={onRetry}>
-        Retry
+        重试
       </Button>
     </div>
   );

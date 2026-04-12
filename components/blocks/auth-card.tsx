@@ -14,17 +14,17 @@ type AuthCardProps = {
 };
 
 const loginSchema = z.object({
-  email: z.email("Please enter a valid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
+  email: z.email("请输入有效的邮箱地址。"),
+  password: z.string().min(8, "密码至少需要 8 个字符。"),
 });
 
 const registerSchema = loginSchema
   .extend({
-    name: z.string().trim().min(2, "Name must be at least 2 characters."),
-    confirmPassword: z.string().min(8, "Please confirm your password."),
+    name: z.string().trim().min(2, "姓名至少需要 2 个字符。"),
+    confirmPassword: z.string().min(8, "请确认您的密码。"),
   })
   .refine((value) => value.password === value.confirmPassword, {
-    message: "Passwords do not match.",
+    message: "两次密码输入不一致。",
     path: ["confirmPassword"],
   });
 
@@ -48,7 +48,7 @@ export function AuthCard({ mode }: AuthCardProps) {
       const parsedValues = loginSchema.safeParse(rawValues);
 
       if (!parsedValues.success) {
-        toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+        toast.error(parsedValues.error.issues[0]?.message ?? "请检查您的输入。");
 
         return;
       }
@@ -62,12 +62,12 @@ export function AuthCard({ mode }: AuthCardProps) {
           });
 
           if (error) {
-            toast.error(error.message || "Failed to sign in.");
+            toast.error(error.message || "登录失败。");
 
             return;
           }
 
-          toast.success("Signed in successfully.");
+          toast.success("登录成功。");
           router.replace("/cms/dashboard");
           router.refresh();
         })();
@@ -79,7 +79,7 @@ export function AuthCard({ mode }: AuthCardProps) {
     const parsedValues = registerSchema.safeParse(rawValues);
 
     if (!parsedValues.success) {
-      toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+      toast.error(parsedValues.error.issues[0]?.message ?? "请检查您的输入。");
 
       return;
     }
@@ -94,12 +94,12 @@ export function AuthCard({ mode }: AuthCardProps) {
         });
 
         if (error) {
-          toast.error(error.message || "Failed to create your account.");
+          toast.error(error.message || "创建账户失败。");
 
           return;
         }
 
-        toast.success("Account created successfully.");
+        toast.success("账户创建成功。");
         router.replace("/cms/dashboard");
         router.refresh();
       })();
@@ -131,8 +131,8 @@ export function AuthCard({ mode }: AuthCardProps) {
 
         <div className="rounded-2xl border border-white/8 bg-white/3 p-8 backdrop-blur-xl">
           <div className="mb-8 text-center">
-            <h1 className="mb-2 font-serif text-[1.75rem] font-semibold">{isLogin ? "Sign In" : "Sign Up"}</h1>
-            <p className="text-[0.9375rem] text-muted">{isLogin ? "Enter your credentials to access the dashboard" : "Create your account to start publishing"}</p>
+            <h1 className="mb-2 font-serif text-[1.75rem] font-semibold">{isLogin ? "登录" : "注册"}</h1>
+            <p className="text-[0.9375rem] text-muted">{isLogin ? "输入凭据以访问仪表盘" : "创建账户以开始发布内容"}</p>
           </div>
 
           <form className="space-y-4" onSubmit={handleSubmit}>
@@ -140,15 +140,15 @@ export function AuthCard({ mode }: AuthCardProps) {
               <TextField
                 autoComplete="name"
                 disabled={isPending}
-                label="Full Name"
+                label="姓名"
                 name="name"
-                placeholder="Sarah Chen"
+                placeholder="张三"
               />
             ) : null}
             <TextField
               autoComplete="email"
               disabled={isPending}
-              label="Email"
+              label="邮箱"
               name="email"
               placeholder="you@example.com"
               type="email"
@@ -156,7 +156,7 @@ export function AuthCard({ mode }: AuthCardProps) {
             <TextField
               autoComplete={isLogin ? "current-password" : "new-password"}
               disabled={isPending}
-              label="Password"
+              label="密码"
               name="password"
               placeholder="••••••••"
               type="password"
@@ -165,7 +165,7 @@ export function AuthCard({ mode }: AuthCardProps) {
               <TextField
                 autoComplete="new-password"
                 disabled={isPending}
-                label="Confirm Password"
+                label="确认密码"
                 name="confirmPassword"
                 placeholder="••••••••"
                 type="password"
@@ -180,14 +180,14 @@ export function AuthCard({ mode }: AuthCardProps) {
               disabled={isPending}
               type="submit"
             >
-              {isPending ? (isLogin ? "Signing In..." : "Creating Account...") : isLogin ? "Sign In" : "Create Account"}
+              {isPending ? (isLogin ? "登录中..." : "创建账户...") : isLogin ? "登录" : "创建账户"}
             </button>
           </form>
 
           <div className="mt-6 text-center text-sm text-muted">
-            {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+            {isLogin ? "还没有账户？" : "已有账户？"}{" "}
             <Link className="font-medium text-primary" href={isLogin ? "/cms/register" : "/cms/login"}>
-              {isLogin ? "Sign up" : "Sign in"}
+              {isLogin ? "注册" : "登录"}
             </Link>
           </div>
         </div>

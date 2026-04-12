@@ -16,25 +16,23 @@ export function HeroSection({ stats = [] }: { stats?: PublicSiteStatDto[] }) {
       `}>
         <div className="space-y-8">
           <Badge className="w-fit" variant="primary">
-            Design System v1
+            设计系统 v1
           </Badge>
           <div className="space-y-5">
             <h1 className="max-w-4xl hero-title text-balance">
-              Chen <span className="text-primary italic">Serif</span> for content, product surfaces, and the CMS behind
-              them.
+              Chen <span className="text-primary italic">Serif</span>：面向内容、产品界面及其背后 CMS 的排版系统。
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-muted">
-              An editorial-first interface system shaped by Tailwind CSS v4 tokens, Base UI primitives, and ByteMD
-              writing workflows.
+              一个由 Tailwind CSS v4 设计令牌、Base UI 组件和 ByteMD 写作工作流塑造的编辑优先界面系统。
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link className={cn(buttonVariants({ size: "lg" }))} href="/articles">
-              Explore Articles
+              浏览文章
               <ArrowRight className="size-4" />
             </Link>
             <Link className={cn(buttonVariants({ size: "lg", variant: "outline" }))} href="/design-spec">
-              View Design Spec
+              查看设计规范
             </Link>
           </div>
         </div>
@@ -42,10 +40,9 @@ export function HeroSection({ stats = [] }: { stats?: PublicSiteStatDto[] }) {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
           <div className="space-y-8">
             <div className="space-y-3">
-              <div className="type-label">System Snapshot</div>
+              <div className="type-label">系统概览</div>
               <p className="text-sm leading-6 text-muted">
-                One visual language across the public site and the editorial desk, without hiding component logic behind
-                a vendor theme.
+                公共站点和编辑后台使用统一的视觉语言，组件逻辑不隐藏在第三方主题之后。
               </p>
             </div>
             <div className={`

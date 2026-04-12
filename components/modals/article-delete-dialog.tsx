@@ -33,7 +33,7 @@ export const ArticleDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete article.");
+          toast.error("删除文章失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,15 +49,15 @@ export const ArticleDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Article</DialogTitle>
+            <DialogTitle className="text-3xl">删除文章</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{article.title}</span>{" "}
-              from the CMS. This also removes its tag relations and revisions.
+              从 CMS 中移除 <span className="text-foreground">{article.title}</span>。
+              此操作同时会移除相关的标签关联和版本记录。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Slug: {article.slug}
+            此操作无法撤销。Slug: {article.slug}
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -67,7 +67,7 @@ export const ArticleDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -75,7 +75,7 @@ export const ArticleDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Article"}
+              {isSubmitting ? "删除中..." : "删除文章"}
             </Button>
           </div>
         </DialogContent>

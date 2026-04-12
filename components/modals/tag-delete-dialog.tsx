@@ -33,7 +33,7 @@ export const TagDeleteDialog = NiceModal.create(
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to delete tag.");
+          toast.error("删除标签失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -49,16 +49,15 @@ export const TagDeleteDialog = NiceModal.create(
           `}
         >
           <DialogHeader>
-            <DialogTitle className="text-3xl">Delete Tag</DialogTitle>
+            <DialogTitle className="text-3xl">删除标签</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">#{tag.name}</span> from
-              the taxonomy. Articles will lose this tag association after
-              deletion.
+              从分类体系中移除 <span className="text-foreground">#{tag.name}</span>。
+              删除后，文章将失去此标签关联。
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6 rounded-2xl border border-red-400/15 bg-red-400/8 p-4 text-sm leading-6 text-red-100">
-            This action cannot be undone. Current usage count: {tag.usageCount}.
+            此操作无法撤销。当前使用次数：{tag.usageCount}。
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
@@ -68,7 +67,7 @@ export const TagDeleteDialog = NiceModal.create(
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button
               disabled={isSubmitting}
@@ -76,7 +75,7 @@ export const TagDeleteDialog = NiceModal.create(
               type="button"
               variant="destructive"
             >
-              {isSubmitting ? "Deleting..." : "Delete Tag"}
+              {isSubmitting ? "删除中..." : "删除标签"}
             </Button>
           </div>
         </DialogContent>

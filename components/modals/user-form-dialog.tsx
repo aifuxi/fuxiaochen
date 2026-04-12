@@ -57,7 +57,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
 
       if (!parsedValues.success) {
         toast.error(
-          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+          parsedValues.error.issues[0]?.message ?? "请检查输入内容。",
         );
 
         return;
@@ -75,7 +75,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
         if (error instanceof Error) {
           toast.error(error.message);
         } else {
-          toast.error("Failed to save user.");
+          toast.error("保存用户失败。");
         }
       } finally {
         setIsSubmitting(false);
@@ -95,7 +95,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
 
     if (!parsedValues.success) {
       toast.error(
-        parsedValues.error.issues[0]?.message ?? "Please check your input.",
+        parsedValues.error.issues[0]?.message ?? "请检查输入内容。",
       );
 
       return;
@@ -113,7 +113,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("Failed to save user.");
+        toast.error("保存用户失败。");
       }
     } finally {
       setIsSubmitting(false);
@@ -130,12 +130,12 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
       >
         <DialogHeader>
           <DialogTitle className="text-3xl">
-            {props.mode === "create" ? "Add User" : "Edit User"}
+            {props.mode === "create" ? "添加用户" : "编辑用户"}
           </DialogTitle>
           <DialogDescription>
             {props.mode === "create"
-              ? "Create a CMS user account with email/password access."
-              : "Update profile fields, verification state, or rotate the password from one place."}
+              ? "创建使用邮箱/密码访问的 CMS 用户账号。"
+              : "更新资料字段、验证状态，或在此处重置密码。"}
           </DialogDescription>
         </DialogHeader>
 
@@ -146,7 +146,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
               sm:grid-cols-2
             `}
           >
-            <Field label="Name">
+            <Field label="名称">
               <Input
                 autoFocus
                 disabled={isSubmitting}
@@ -160,7 +160,7 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
                 value={values.name}
               />
             </Field>
-            <Field label="Email">
+            <Field label="邮箱">
               <Input
                 disabled={isSubmitting}
                 onChange={(event) =>
@@ -177,8 +177,8 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
           </div>
 
           <Field
-            description="Admins can access user management APIs and screens."
-            label="Role"
+            description="管理员可以访问用户管理 API 和页面。"
+            label="角色"
           >
             <Select
               onValueChange={(value) =>
@@ -201,10 +201,10 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
             <Field
               description={
                 props.mode === "create"
-                  ? "Minimum 8 characters."
-                  : "Leave blank to keep the current password."
+                  ? "最少 8 个字符。"
+                  : "留空以保持当前密码不变。"
               }
-              label={props.mode === "create" ? "Password" : "New Password"}
+              label={props.mode === "create" ? "密码" : "新密码"}
             >
               <Input
                 disabled={isSubmitting}
@@ -217,15 +217,15 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
                 placeholder={
                   props.mode === "create"
                     ? "test123456"
-                    : "Enter a new password"
+                    : "输入新密码"
                 }
                 type="password"
                 value={values.password}
               />
             </Field>
             <Field
-              description="Optional avatar or profile image URL."
-              label="Image URL"
+              description="可选的头像或资料图片 URL。"
+              label="图片 URL"
             >
               <Input
                 disabled={isSubmitting}
@@ -257,10 +257,10 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
             />
             <div className="space-y-1">
               <span className="block font-medium text-foreground">
-                Email verified
+                邮箱已验证
               </span>
               <span className="block text-xs text-muted">
-                Mark the account as already verified.
+                将此账号标记为已验证状态。
               </span>
             </div>
           </label>
@@ -272,16 +272,16 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
               type="button"
               variant="outline"
             >
-              Cancel
+              取消
             </Button>
             <Button disabled={isSubmitting} type="submit" variant="primary">
               {isSubmitting
                 ? props.mode === "create"
-                  ? "Creating..."
-                  : "Saving..."
+                  ? "创建中..."
+                  : "保存中..."
                 : props.mode === "create"
-                  ? "Create User"
-                  : "Save Changes"}
+                  ? "创建用户"
+                  : "保存更改"}
             </Button>
           </div>
         </form>

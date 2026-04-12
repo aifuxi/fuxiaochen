@@ -29,8 +29,8 @@ export function DesignSystemShowcase() {
           <div className="type-label">Core Tokens</div>
           <CardTitle>Color, typography, and hierarchy</CardTitle>
           <CardDescription>
-            Semantic tokens drive every public and CMS surface before
-            page-specific styling appears.
+            语义化 Token 驱动所有公开页面和 CMS 界面的样式，
+            在页面特定样式之前生效。
           </CardDescription>
         </CardHeader>
         <CardContent
@@ -82,9 +82,9 @@ export function DesignSystemShowcase() {
 
       <Tabs defaultValue="controls">
         <TabsList>
-          <TabsTrigger value="controls">Controls</TabsTrigger>
-          <TabsTrigger value="data">Data</TabsTrigger>
-          <TabsTrigger value="motion">Motion</TabsTrigger>
+          <TabsTrigger value="controls">控件</TabsTrigger>
+          <TabsTrigger value="data">数据</TabsTrigger>
+          <TabsTrigger value="motion">动效</TabsTrigger>
         </TabsList>
         <TabsContent value="controls">
           <Card>
@@ -95,7 +95,7 @@ export function DesignSystemShowcase() {
               `}
             >
               <div className="space-y-4">
-                <div className="type-label">Buttons & badges</div>
+                <div className="type-label">按钮和徽章</div>
                 <div className="flex flex-wrap gap-3">
                   <Button variant="primary">Primary</Button>
                   <Button variant="secondary">Secondary</Button>
@@ -110,7 +110,7 @@ export function DesignSystemShowcase() {
                 </div>
               </div>
               <div className="space-y-4">
-                <div className="type-label">Stateful primitives</div>
+                <div className="type-label">状态组件</div>
                 <Select
                   defaultValue="editorial"
                   options={[
@@ -126,10 +126,10 @@ export function DesignSystemShowcase() {
                 >
                   <div className="space-y-1">
                     <div className="text-sm font-medium">
-                      Realtime notifications
+                      实时通知
                     </div>
                     <div className="text-xs text-muted">
-                      Mock switch state using Base UI.
+                      使用 Base UI 的模拟开关状态。
                     </div>
                   </div>
                   <Switch
@@ -143,7 +143,7 @@ export function DesignSystemShowcase() {
                   `}
                 >
                   <Checkbox defaultChecked />
-                  Enable compact publishing mode
+                  启用紧凑发布模式
                 </label>
               </div>
             </CardContent>
@@ -168,7 +168,7 @@ export function DesignSystemShowcase() {
               `}
             >
               <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-                <div className="mb-3 type-label">Glow CTA</div>
+                <div className="mb-3 type-label">发光 CTA</div>
                 <Button
                   onClick={() =>
                     void NiceModal.show(SubscribeDialog, {
@@ -176,14 +176,13 @@ export function DesignSystemShowcase() {
                     })
                   }
                 >
-                  Open NiceModal Dialog
+                  打开 NiceModal 对话框
                 </Button>
               </div>
               <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-                <div className="mb-3 type-label">Atmosphere</div>
+                <div className="mb-3 type-label">氛围</div>
                 <p className="text-sm leading-6 text-muted">
-                  Motion stays concentrated in hero surfaces, focus rings, and
-                  feedback cues rather than everywhere.
+                  动效集中于首屏区域、焦点环和反馈提示，而非无处不在。
                 </p>
               </div>
             </CardContent>

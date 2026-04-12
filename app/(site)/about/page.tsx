@@ -15,7 +15,7 @@ const skills = [
   "Rust",
 ];
 
-const hobbies = ["Photography", "Travel", "Coffee", "Books"];
+const hobbies = ["摄影", "旅行", "咖啡", "阅读"];
 const hobbyImages = [
   "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
   "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=400&h=300&fit=crop",
@@ -67,7 +67,7 @@ export default function AboutPage() {
               `}>
                 <div className="flex items-center gap-2">
                   <div className="hero-label-dot" />
-                  <span className="font-mono-tech text-xs text-muted">Available for work</span>
+                  <span className="font-mono-tech text-xs text-muted">可提供服务</span>
                 </div>
               </div>
             </div>
@@ -75,28 +75,28 @@ export default function AboutPage() {
 
           <div className="space-y-6">
             <div>
-              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">About Me</span>
+              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">关于我</span>
               <h1 className={`
                 mt-2 font-serif text-5xl
                 lg:text-6xl
               `} style={{ lineHeight: 1 }}>
-                Hey, I&apos;m Alex Chen
+                你好，我是 Alex Chen
               </h1>
             </div>
             <p className="text-lg leading-relaxed font-light text-muted">
-              A designer and developer based in San Francisco with 8+ years of experience crafting digital experiences. I bridge the gap between design and engineering, creating products that are both beautiful and functional.
+              一位身处旧金山的设计师和开发者，拥有 8 年以上打造数字产品的经验。我致力于连接设计与工程的鸿沟，创造既美观又实用的产品。
             </p>
             <p className="text-base leading-relaxed font-light text-muted">
-              My journey started with a fascination for how things work under the hood. Today, I specialize in design systems, frontend architecture, and building tools that help teams ship faster.
+              我的旅程始于对事物内在运行原理的好奇。如今，我专注于设计系统、前端架构以及帮助团队更快交付的工具。
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <button className={`
                 btn-primary-glow font-mono-tech rounded-full px-6 py-3 text-sm tracking-wider uppercase
-              `}>Download CV</button>
+              `}>下载简历</button>
               <button className={`
                 font-mono-tech rounded-full border border-white/20 px-6 py-3 text-sm tracking-wider uppercase transition
                 hover:text-primary-accent hover:border-primary
-              `}>Contact Me</button>
+              `}>联系我</button>
             </div>
           </div>
         </div>
@@ -105,8 +105,8 @@ export default function AboutPage() {
       <section className="relative px-8 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Expertise</span>
-            <h2 className="mt-2 font-serif text-4xl">Development Skills</h2>
+            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">专业领域</span>
+            <h2 className="mt-2 font-serif text-4xl">开发技能</h2>
           </div>
           <div className={`
             grid grid-cols-2 gap-4
@@ -118,7 +118,7 @@ export default function AboutPage() {
               <div key={skill} className="glass-card rounded-2xl border border-white/8 p-5 text-center">
                 <div className="text-primary-accent mb-3">✦</div>
                 <div className="font-mono-tech text-sm font-medium">{skill}</div>
-                <div className="font-mono-tech mt-1 text-xs text-muted">5 years</div>
+                <div className="font-mono-tech mt-1 text-xs text-muted">5 年</div>
               </div>
             ))}
           </div>
@@ -128,8 +128,8 @@ export default function AboutPage() {
       <section className="relative px-8 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Beyond Work</span>
-            <h2 className="mt-2 font-serif text-4xl">My Hobbies</h2>
+            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">工作之外</span>
+            <h2 className="mt-2 font-serif text-4xl">我的爱好</h2>
           </div>
           <div className={`
             grid gap-6
@@ -145,7 +145,7 @@ export default function AboutPage() {
                     <span className="text-primary-accent">✦</span>
                     <span className="font-mono-tech text-primary-accent text-xs tracking-wider uppercase">{hobby}</span>
                   </div>
-                  <p className="text-sm text-white/70">A quiet ritual that keeps my design and engineering work grounded.</p>
+                  <p className="text-sm text-white/70">让我的设计和开发工作保持专注的安静仪式。</p>
                 </div>
               </div>
             ))}
@@ -156,8 +156,8 @@ export default function AboutPage() {
       <section className="relative px-8 py-20">
         <div className="mx-auto max-w-7xl">
           <div className="reveal mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Setup</span>
-            <h2 className="mt-2 font-serif text-4xl">Current Gear</h2>
+            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">装备</span>
+            <h2 className="mt-2 font-serif text-4xl">我的装备</h2>
           </div>
           <div className={`
             grid gap-6
@@ -182,8 +182,8 @@ export default function AboutPage() {
       <section className="relative px-8 py-20">
         <div className="mx-auto max-w-3xl">
           <div className="reveal mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">Journey</span>
-            <h2 className="mt-2 font-serif text-4xl">Experience</h2>
+            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">历程</span>
+            <h2 className="mt-2 font-serif text-4xl">工作经历</h2>
           </div>
           <div className="space-y-8">
             {timeline.map(([role, company, years], index) => (
@@ -196,7 +196,7 @@ export default function AboutPage() {
                   <span className="font-mono-tech text-xs text-muted">{years}</span>
                 </div>
                 <p className="text-sm leading-relaxed font-light text-muted">
-                  Built products, component systems, and workflows that connect product thinking with frontend execution.
+                  构建了连接产品思维与前端执行的产品、组件系统和工作流。
                 </p>
               </div>
             ))}
@@ -209,12 +209,12 @@ export default function AboutPage() {
           <h2 className={`
             mb-4 font-serif text-4xl
             lg:text-5xl
-          `}>Let&apos;s Work Together</h2>
+          `}>让我们一起合作</h2>
           <p className="mx-auto mb-8 max-w-md text-lg font-light text-muted">
-            I&apos;m always open to discussing new opportunities, interesting projects, or just having a chat.
+            我始终乐于探讨新机会、有趣的项目，或者只是聊聊天。
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <button className="btn-primary-glow font-mono-tech rounded-full px-8 py-4 text-sm tracking-wider uppercase">Get in Touch</button>
+            <button className="btn-primary-glow font-mono-tech rounded-full px-8 py-4 text-sm tracking-wider uppercase">联系我</button>
             <button className={`
               font-mono-tech rounded-full border border-white/20 px-8 py-4 text-sm tracking-wider uppercase transition
               hover:text-primary-accent hover:border-primary

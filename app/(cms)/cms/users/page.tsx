@@ -6,7 +6,7 @@ export default async function CmsUsersPage() {
   await requireCmsAdminSession();
 
   return (
-    <CmsShell description="Manage CMS user accounts, verification state, linked credentials, and active sessions." title="Users">
+    <CmsShell description="管理 CMS 用户账户、验证状态、关联凭证和活跃会话。" title="用户">
       <CmsUserManager />
     </CmsShell>
   );

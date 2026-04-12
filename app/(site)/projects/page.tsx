@@ -14,18 +14,18 @@ export default async function ProjectsPage() {
           <div className="max-w-3xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="hero-label-dot" />
-              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">My Work</span>
+              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">我的作品</span>
             </div>
             <h1 className={`
               font-serif text-6xl tracking-tighter
               lg:text-7xl
             `} style={{ lineHeight: 0.95 }}>
-              Featured
+              精选
               <br />
-              <span className="text-primary-accent italic">Projects</span>
+              <span className="text-primary-accent italic">项目</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
-              A collection of projects showcasing my work in design systems, web development, and creative technology. Each project represents a unique challenge and solution.
+              展示我在设计系统、Web 开发和创意技术方面工作的项目集合。每个项目都代表着一个独特的挑战与解决方案。
             </p>
           </div>
 

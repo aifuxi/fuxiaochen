@@ -10,12 +10,12 @@ export default async function FriendsPage() {
     <div>
       <section className="relative px-8 pt-32 pb-16">
         <div className="mx-auto max-w-4xl">
-          <span className="font-mono-tech text-primary-accent mb-4 block text-xs tracking-widest uppercase">Connection</span>
+          <span className="font-mono-tech text-primary-accent mb-4 block text-xs tracking-widest uppercase">连接</span>
           <h1 className={`
             font-serif text-5xl tracking-tighter
             lg:text-6xl
           `} style={{ lineHeight: 0.95 }}>
-            Friends
+            朋友们
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
             与志同道合的创作者建立连接。这里收录了优秀的个人博客和项目，每一行链接都是一次思想的碰撞。

@@ -88,14 +88,14 @@ export function ArticleStatsPanel({
               onClick={toggleLike}
             >
               <span className={cn("transition-colors", liked ? "text-primary" : "text-primary-accent")}>♥</span>
-              <span className="font-mono-tech text-sm">Like this article</span>
+              <span className="font-mono-tech text-sm">喜欢这篇文章</span>
               <span className="font-mono-tech text-sm text-muted">{likes}</span>
             </button>
 
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2 text-muted">
                 <span>◔</span>
-                <span className="font-mono-tech text-sm">{initialViews.toLocaleString()} views</span>
+                <span className="font-mono-tech text-sm">{initialViews.toLocaleString()} 次阅读</span>
               </div>
               <div className="flex items-center gap-2 text-muted">
                 <span>◷</span>
