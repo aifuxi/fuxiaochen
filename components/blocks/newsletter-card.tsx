@@ -33,7 +33,7 @@ export function NewsletterCard() {
             `}
             onSubmit={(event) => {
               event.preventDefault();
-              toast.success("Captured locally for the mock flow.");
+              toast.success("Subscription request captured.");
               void NiceModal.show(SubscribeDialog, { email });
             }}
           >

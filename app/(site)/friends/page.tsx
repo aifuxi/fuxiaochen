@@ -1,8 +1,11 @@
 import Image from "next/image";
 
-import { friendLinks } from "@/lib/mocks/site-content";
+import { FriendLinkApplicationForm } from "@/components/blocks/friend-link-application-form";
+import { listPublicFriendLinks } from "@/lib/public/public-content-client";
 
-export default function FriendsPage() {
+export default async function FriendsPage() {
+  const friendLinks = await listPublicFriendLinks({ page: 1, pageSize: 50 });
+
   return (
     <div>
       <section className="relative px-8 pt-32 pb-16">
@@ -43,22 +46,34 @@ export default function FriendsPage() {
           md:grid-cols-2
           lg:grid-cols-3
         `}>
-          {friendLinks.map((friend) => (
-            <a key={friend.name} className={`
+          {friendLinks.items.map((friend) => (
+            <a key={friend.id} className={`
               glass-card block rounded-2xl border border-white/10 p-6 transition-transform duration-300
               hover:-translate-y-1
-            `} href={friend.href}>
+            `} href={friend.siteUrl}>
               <div className="mb-4 flex items-center gap-4">
-                <Image alt={friend.name} className="h-16 w-16 rounded-full object-cover" height={100} src={friend.avatar} width={100} />
+                {friend.avatarUrl ? (
+                  <Image
+                    alt={friend.avatarAlt ?? friend.siteName}
+                    className="h-16 w-16 rounded-full object-cover"
+                    height={100}
+                    src={friend.avatarUrl}
+                    width={100}
+                  />
+                ) : (
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+                    <span className="font-mono-tech text-sm text-muted">{friend.siteName.slice(0, 2).toUpperCase()}</span>
+                  </div>
+                )}
                 <div>
-                  <h4 className="font-mono-tech text-sm font-semibold">{friend.name}</h4>
+                  <h4 className="font-mono-tech text-sm font-semibold">{friend.siteName}</h4>
                   <p className="text-xs text-muted">{friend.role}</p>
                 </div>
               </div>
               <p className="text-sm leading-relaxed text-muted">{friend.description}</p>
               <div className="text-primary-accent mt-4 flex items-center gap-2 text-xs">
                 <span>⌁</span>
-                <span className="font-mono-tech">{new URL(friend.href).host}</span>
+                <span className="font-mono-tech">{friend.domain}</span>
               </div>
             </a>
           ))}
@@ -73,32 +88,7 @@ export default function FriendsPage() {
               <h2 className="font-serif text-2xl tracking-tight">申请友链</h2>
             </div>
             <p className="mb-8 text-sm text-muted">填写以下信息提交友链申请，我会尽快处理。请确保您的网站符合上述要求。</p>
-            <form className="space-y-4">
-              <div className={`
-                grid gap-4
-                md:grid-cols-2
-              `}>
-                <div>
-                  <label className="mb-2 block text-sm font-medium">网站名称</label>
-                  <input className="form-input w-full rounded-xl px-4 py-3" placeholder="例如：John 的博客" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-medium">网站地址</label>
-                  <input className="form-input w-full rounded-xl px-4 py-3" placeholder="https://example.com" />
-                </div>
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium">网站描述</label>
-                <input className="form-input w-full rounded-xl px-4 py-3" placeholder="简要描述您的网站内容" />
-              </div>
-              <div>
-                <label className="mb-2 block text-sm font-medium">头像链接（可选）</label>
-                <input className="form-input w-full rounded-xl px-4 py-3" placeholder="https://example.com/avatar.jpg" />
-              </div>
-              <button className={`
-                btn-primary-glow font-mono-tech rounded-full px-6 py-3 text-sm tracking-wider uppercase
-              `} type="submit">提交申请</button>
-            </form>
+            <FriendLinkApplicationForm />
           </div>
         </div>
       </section>

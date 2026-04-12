@@ -1,4 +1,4 @@
-import { changelogEntries } from "@/lib/mocks/site-content";
+import { listPublicChangelog } from "@/lib/public/public-content-client";
 
 const legend = [
   { label: "Added", tone: "text-primary-accent" },
@@ -7,7 +7,9 @@ const legend = [
   { label: "Changed", tone: "text-red-400" },
 ];
 
-export default function ChangelogPage() {
+export default async function ChangelogPage() {
+  const changelog = await listPublicChangelog({ page: 1, pageSize: 50 });
+
   return (
     <div>
       <section className="relative px-8 pt-32 pb-16">
@@ -39,7 +41,7 @@ export default function ChangelogPage() {
 
       <section className="relative px-8 pb-32">
         <div className="mx-auto max-w-4xl space-y-12">
-          {changelogEntries.map((entry, index) => (
+          {changelog.items.map((entry, index) => (
             <div key={entry.version} className="glass-card rounded-2xl border border-white/10 p-8">
               <div className="mb-6 flex flex-wrap items-center gap-4">
                 <span className={`
@@ -49,20 +51,21 @@ export default function ChangelogPage() {
                 <span className="text-sm text-muted">{entry.date}</span>
                 <span className="text-sm font-medium">{entry.title}</span>
               </div>
-              <p className="mb-6 leading-relaxed font-light text-muted">{entry.title}</p>
+              <p className="mb-6 leading-relaxed font-light text-muted">{entry.summary ?? entry.title}</p>
               <div className="space-y-3">
-                {entry.changes.map((change, changeIndex) => (
-                  <div key={change} className="flex items-start gap-3">
+                {entry.items.map((item, changeIndex) => (
+                  <div key={item.id} className="flex items-start gap-3">
                     <span className={`
                       mt-0.5 rounded-full px-3 py-1 text-xs
                       ${changeIndex % 4 === 0 ? "text-primary-accent bg-primary/20" : changeIndex % 4 === 1 ? `
                         bg-sky-500/20 text-sky-400
                       ` : changeIndex % 4 === 2 ? `bg-amber-500/20 text-amber-400` : `bg-red-500/20 text-red-400`}
                     `}>
-                      {changeIndex % 4 === 0 ? "Added" : changeIndex % 4 === 1 ? "Improved" : changeIndex % 4 === 2 ? "Fixed" : "Changed"}
+                      {item.itemType}
                     </span>
                     <div>
-                      <span className="font-medium">{change}</span>
+                      <span className="font-medium">{item.title}</span>
+                      {item.description ? <p className="mt-1 text-sm text-muted">{item.description}</p> : null}
                     </div>
                   </div>
                 ))}

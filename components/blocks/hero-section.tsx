@@ -5,9 +5,9 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { siteStats } from "@/lib/mocks/site-content";
+import type { PublicSiteStatDto } from "@/lib/public/public-content-dto";
 
-export function HeroSection() {
+export function HeroSection({ stats = [] }: { stats?: PublicSiteStatDto[] }) {
   return (
     <section className="shell-container pt-6">
       <div className={`
@@ -53,7 +53,7 @@ export function HeroSection() {
               sm:grid-cols-3
               lg:grid-cols-1
             `}>
-              {siteStats.map((item) => (
+              {stats.map((item) => (
                 <div key={item.label} className="rounded-[1.4rem] border border-white/8 bg-white/4 p-4">
                   <div className="font-serif text-4xl tracking-[-0.05em]">{item.value}</div>
                   <div className="mt-2 type-label">{item.label}</div>

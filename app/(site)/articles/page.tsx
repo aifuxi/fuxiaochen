@@ -1,7 +1,12 @@
 import { ArticleArchive } from "@/components/blocks/article-archive";
-import { articles } from "@/lib/mocks/site-content";
+import { getPublicSite, listPublicArticles } from "@/lib/public/public-content-client";
 
-export default function ArticlesPage() {
+export default async function ArticlesPage() {
+  const [articles, site] = await Promise.all([
+    listPublicArticles({ page: 1, pageSize: 8 }),
+    getPublicSite(),
+  ]);
+
   return (
     <div>
       <section className="px-8 pt-40 pb-12">
@@ -15,14 +20,14 @@ export default function ArticlesPage() {
               font-serif text-5xl
               lg:text-6xl
             `}>All Writings</h1>
-            <span className="font-mono-tech text-sm text-muted">{articles.length} articles</span>
+            <span className="font-mono-tech text-sm text-muted">{articles.total} articles</span>
           </div>
         </div>
       </section>
 
       <section className="px-8 pb-24">
         <div className="mx-auto max-w-7xl">
-          <ArticleArchive articles={articles} />
+          <ArticleArchive categories={site.articleCategories} initialResult={articles} />
         </div>
       </section>
     </div>

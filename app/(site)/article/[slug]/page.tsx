@@ -1,10 +1,13 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { ArticleCard } from "@/components/blocks/article-card";
 import { ArticleStatsPanel } from "@/components/blocks/article-stats-panel";
 import { MarkdownViewer } from "@/components/editor/markdown-viewer";
 import { extractToc } from "@/lib/markdown";
-import { articles } from "@/lib/mocks/site-content";
+import { getPublicArticle, PublicContentApiError } from "@/lib/public/public-content-client";
+import { createPublicContentRepository } from "@/lib/public/public-content-repository";
+import { createPublicContentService } from "@/lib/public/public-content-service";
 
 type ArticleDetailPageProps = {
   params: Promise<{
@@ -12,34 +15,53 @@ type ArticleDetailPageProps = {
   }>;
 };
 
-export function generateStaticParams() {
-  return articles.map((article) => ({ slug: article.slug }));
+export async function generateStaticParams() {
+  const service = createPublicContentService(createPublicContentRepository());
+  const slugs = await service.listArticleSlugs();
+
+  return slugs.map((article) => ({ slug: article.slug }));
 }
 
 export default async function ArticleDetailPage({ params }: ArticleDetailPageProps) {
   const { slug } = await params;
-  const article = articles.find((item) => item.slug === slug);
+  const detail = await getArticleDetail(slug);
 
-  if (!article) {
+  if (!detail) {
     notFound();
   }
 
-  const toc = extractToc(article.markdown);
-  const relatedArticles = articles.filter((item) => item.slug !== article.slug).slice(0, 3);
+  const { article, relatedArticles } = detail;
+  const markdown = article.contentMarkdown ?? article.contentHtml ?? "";
+  const toc = extractToc(markdown);
 
   return (
     <div>
       <section className="hero-image-container mt-24 overflow-hidden">
-        <img alt={article.title} className="hero-image h-[500px] w-full object-cover" src={article.heroImage ?? article.image} />
+        {article.coverImageUrl ? (
+          <Image
+            priority
+            alt={article.coverImageAlt ?? article.title}
+            className="hero-image h-[500px] w-full object-cover"
+            height={500}
+            src={article.coverImageUrl}
+            width={1400}
+          />
+        ) : (
+          <div className="hero-image flex h-[500px] w-full items-center justify-center bg-white/5">
+            <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">No Cover</span>
+          </div>
+        )}
         <div className="hero-image-overlay" />
       </section>
 
       <ArticleStatsPanel
         authorAvatar="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face"
         authorName="Alex Chen"
-        category={article.category}
-        date={article.date}
-        readTime={article.readTime}
+        category={article.category?.name ?? "Uncategorized"}
+        date={formatArticleDate(article.publishedAt)}
+        initialLikes={article.likeCount}
+        initialViews={article.viewCount}
+        readTime={article.readTimeLabel}
         title={article.title}
       />
 
@@ -48,7 +70,7 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
           <div className="flex gap-12">
             <div className="article-content flex-1">
               <div className="prose-chen">
-                <MarkdownViewer value={article.markdown} />
+                <MarkdownViewer value={markdown} />
               </div>
             </div>
 
@@ -94,4 +116,24 @@ export default async function ArticleDetailPage({ params }: ArticleDetailPagePro
       </section>
     </div>
   );
+}
+
+async function getArticleDetail(slug: string) {
+  try {
+    return await getPublicArticle(slug);
+  } catch (error) {
+    if (error instanceof PublicContentApiError && error.status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+function formatArticleDate(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
 }

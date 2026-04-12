@@ -5,7 +5,18 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
-import { primaryNavItems, secondaryNavItems } from "@/lib/mocks/site-content";
+
+const primaryNavItems = [
+  { href: "/", label: "Home" },
+  { href: "/articles", label: "Articles" },
+  { href: "/projects", label: "Projects" },
+  { href: "/about", label: "About" },
+];
+
+const secondaryNavItems = [
+  { href: "/changelog", label: "Changelog" },
+  { href: "/friends", label: "Friends" },
+];
 
 export function SiteHeader() {
   const pathname = usePathname();

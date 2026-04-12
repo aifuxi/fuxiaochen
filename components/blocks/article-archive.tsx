@@ -1,40 +1,60 @@
 "use client";
 
 import { useDeferredValue, useMemo, useState } from "react";
+import useSWR from "swr";
 
 import { ArticleCard } from "@/components/blocks/article-card";
+import type {
+  PublicArticleCategorySummaryDto,
+  PublicArticleListItemDto,
+  PublicListResult,
+} from "@/lib/public/public-content-dto";
 import { cn } from "@/lib/utils";
-import type { Article } from "@/lib/mocks/site-content";
 
 const pageSize = 8;
 
-export function ArticleArchive({ articles }: { articles: Article[] }) {
+type ArticleArchiveProps = {
+  categories: PublicArticleCategorySummaryDto[];
+  initialResult: PublicListResult<PublicArticleListItemDto>;
+};
+
+type ArticlesApiResponse = {
+  data: {
+    items: PublicArticleListItemDto[];
+  };
+  meta?: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+  success: boolean;
+};
+
+export function ArticleArchive({ categories, initialResult }: ArticleArchiveProps) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("all");
+  const [categorySlug, setCategorySlug] = useState("all");
   const [page, setPage] = useState(1);
   const deferredQuery = useDeferredValue(query);
+  const requestPath = useMemo(
+    () =>
+      buildArticlesPath({
+        categorySlug: categorySlug === "all" ? undefined : categorySlug,
+        keyword: deferredQuery,
+        page,
+        pageSize,
+      }),
+    [categorySlug, deferredQuery, page],
+  );
+  const { data: result = initialResult, isLoading } = useSWR(requestPath, fetchArticles, {
+    fallbackData: isInitialRequest(requestPath) ? initialResult : undefined,
+    keepPreviousData: true,
+  });
 
-  const categories = useMemo(() => ["all", ...new Set(articles.map((article) => article.category))], [articles]);
-
-  const filteredArticles = useMemo(() => {
-    const normalizedQuery = deferredQuery.trim().toLowerCase();
-
-    return articles.filter((article) => {
-      const matchesQuery =
-        normalizedQuery.length === 0 ||
-        [article.title, article.excerpt, article.description, article.category, ...article.tags]
-          .join(" ")
-          .toLowerCase()
-          .includes(normalizedQuery);
-      const matchesCategory = category === "all" || article.category === category;
-
-      return matchesQuery && matchesCategory;
-    });
-  }, [articles, category, deferredQuery]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / pageSize));
-  const pagedArticles = filteredArticles.slice((page - 1) * pageSize, page * pageSize);
-  const articleCountLabel = `${filteredArticles.length} article${filteredArticles.length === 1 ? "" : "s"}`;
+  const categoryOptions = useMemo(() => [{ name: "All", slug: "all" }, ...categories], [categories]);
+  const totalPages = Math.max(1, result.totalPages);
+  const pagedArticles = result.items;
+  const articleCountLabel = `${result.total} article${result.total === 1 ? "" : "s"}`;
 
   return (
     <div className="space-y-12">
@@ -60,35 +80,35 @@ export function ArticleArchive({ articles }: { articles: Article[] }) {
           </div>
           <select
             className="select-dropdown font-mono-tech rounded-xl px-4 py-3 text-sm text-white"
-            value={category}
+            value={categorySlug}
             onChange={(event) => {
-              setCategory(event.target.value);
+              setCategorySlug(event.target.value);
               setPage(1);
             }}
           >
-            {categories.map((item) => (
-              <option key={item} value={item}>
-                {item === "all" ? "All Topics" : item}
+            {categoryOptions.map((item) => (
+              <option key={item.slug} value={item.slug}>
+                {item.slug === "all" ? "All Topics" : item.name}
               </option>
             ))}
           </select>
         </div>
 
         <div className="flex flex-wrap gap-3">
-          {categories.map((item) => (
+          {categoryOptions.map((item) => (
             <button
-              key={item}
+              key={item.slug}
               className={cn(
                 "tag-pill font-mono-tech rounded-full px-4 py-2 text-xs tracking-wider uppercase",
-                category === item && "active",
+                categorySlug === item.slug && "active",
               )}
               type="button"
               onClick={() => {
-                setCategory(item);
+                setCategorySlug(item.slug);
                 setPage(1);
               }}
             >
-              {item === "all" ? "All" : item}
+              {item.name}
             </button>
           ))}
         </div>
@@ -99,7 +119,7 @@ export function ArticleArchive({ articles }: { articles: Article[] }) {
         md:grid-cols-2
       `}>{pagedArticles.map((article) => <ArticleCard key={article.slug} article={article} />)}</div>
 
-      {pagedArticles.length === 0 ? (
+      {pagedArticles.length === 0 && !isLoading ? (
         <div className="py-20 text-center">
           <h3 className="mb-2 font-serif text-2xl">No articles found</h3>
           <p className="text-muted">Try adjusting your search or filter criteria</p>
@@ -122,10 +142,63 @@ export function ArticleArchive({ articles }: { articles: Article[] }) {
         </div>
         <span className="font-mono-tech text-sm text-muted">
           {pagedArticles.length > 0
-            ? `Showing ${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, filteredArticles.length)} of ${articleCountLabel}`
+            ? `Showing ${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, result.total)} of ${articleCountLabel}`
             : `Showing 0 of ${articleCountLabel}`}
         </span>
       </div>
     </div>
   );
+}
+
+async function fetchArticles(path: string): Promise<PublicListResult<PublicArticleListItemDto>> {
+  const response = await fetch(path, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  const payload = (await response.json()) as ArticlesApiResponse;
+
+  if (!response.ok || !payload.success) {
+    throw new Error("Unable to fetch articles.");
+  }
+
+  return {
+    items: payload.data.items,
+    page: payload.meta?.page ?? 1,
+    pageSize: payload.meta?.pageSize ?? pageSize,
+    total: payload.meta?.total ?? payload.data.items.length,
+    totalPages: payload.meta?.totalPages ?? 1,
+  };
+}
+
+function buildArticlesPath({
+  categorySlug,
+  keyword,
+  page,
+  pageSize,
+}: {
+  categorySlug?: string;
+  keyword: string;
+  page: number;
+  pageSize: number;
+}) {
+  const searchParams = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+  const normalizedKeyword = keyword.trim();
+
+  if (normalizedKeyword.length > 0) {
+    searchParams.set("keyword", normalizedKeyword);
+  }
+
+  if (categorySlug) {
+    searchParams.set("categorySlug", categorySlug);
+  }
+
+  return `/api/public/articles?${searchParams.toString()}`;
+}
+
+function isInitialRequest(path: string) {
+  return path === `/api/public/articles?page=1&pageSize=${pageSize}`;
 }

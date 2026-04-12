@@ -1,21 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
+import type { PublicProjectDto } from "@/lib/public/public-content-dto";
 import { cn } from "@/lib/utils";
 
-export type ProjectGalleryItem = {
-  category: "web" | "design" | "mobile" | "open-source";
-  label: string;
-  metric: string;
-  slug: string;
-  tags: string[];
-  title: string;
-  description: string;
-};
-
 type ProjectGalleryProps = {
-  projects: ProjectGalleryItem[];
+  projects: PublicProjectDto[];
 };
 
 const filters = [
@@ -34,7 +26,7 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
       return projects;
     }
 
-    return projects.filter((project) => project.category === filter);
+    return projects.filter((project) => project.categorySlug === filter);
   }, [filter, projects]);
 
   return (
@@ -72,10 +64,17 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="overflow-hidden">
-                <div className={`
-                  card-image h-48 w-full
-                  bg-[linear-gradient(135deg,rgba(16,185,129,0.22),rgba(255,255,255,0.04),rgba(0,0,0,0.6))]
-                `} />
+                {project.coverImageUrl ? (
+                  <Image
+                    alt={project.coverImageAlt ?? project.title}
+                    className="card-image h-48 w-full object-cover"
+                    height={400}
+                    src={project.coverImageUrl}
+                    width={600}
+                  />
+                ) : (
+                  <div className="card-image h-48 w-full bg-white/5" />
+                )}
               </div>
               <div className="relative z-10 p-6">
                 <div className="mb-3 flex items-center gap-2">
@@ -89,7 +88,7 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
                 <h3 className="mb-2 font-serif text-xl">{project.title}</h3>
                 <p className="mb-4 text-sm leading-relaxed font-light text-muted">{project.description}</p>
                 <div className="mb-4 flex items-center gap-3">
-                  {project.tags.map((tag) => (
+                  {project.techNames.map((tag) => (
                     <span key={tag} className="font-mono-tech rounded bg-white/5 px-2 py-1 text-xs text-muted">
                       {tag}
                     </span>

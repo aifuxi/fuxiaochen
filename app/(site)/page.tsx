@@ -5,9 +5,15 @@ import { ArticleCard } from "@/components/blocks/article-card";
 import { ArticleRow } from "@/components/blocks/article-row";
 import { NewsletterCard } from "@/components/blocks/newsletter-card";
 import { ProjectCard } from "@/components/blocks/project-card";
-import { articles, projects } from "@/lib/mocks/site-content";
+import { listPublicArticles, listPublicProjects } from "@/lib/public/public-content-client";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [featuredArticles, latestArticles, featuredProjects] = await Promise.all([
+    listPublicArticles({ featured: true, page: 1, pageSize: 3 }),
+    listPublicArticles({ page: 1, pageSize: 3 }),
+    listPublicProjects({ featured: true, page: 1, pageSize: 4 }),
+  ]);
+
   return (
     <div>
       <section className="relative flex min-h-screen items-center px-8 pt-24">
@@ -93,7 +99,7 @@ export default function HomePage() {
             md:grid-cols-2
             lg:grid-cols-3
           `}>
-            {articles.slice(0, 3).map((article) => (
+            {featuredArticles.items.map((article) => (
               <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
@@ -107,7 +113,7 @@ export default function HomePage() {
             <h2 className="mt-2 font-serif text-4xl">Latest Writings</h2>
           </div>
           <div className="space-y-0">
-            {articles.slice(0, 3).map((article) => (
+            {latestArticles.items.map((article) => (
               <ArticleRow key={article.slug} article={article} />
             ))}
           </div>
@@ -181,7 +187,7 @@ export default function HomePage() {
             grid gap-8
             md:grid-cols-2
           `}>
-            {projects.slice(0, 4).map((project) => (
+            {featuredProjects.items.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
           </div>
