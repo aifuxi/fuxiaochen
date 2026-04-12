@@ -92,8 +92,6 @@ export async function requireCmsSession() {
 
 export async function requireCmsAdminSession() {
   const session = await requireCmsSession();
-  console.log("session", session);
-
   if (!isAdminRole(session.user.role)) {
     redirect("/cms/dashboard");
   }
