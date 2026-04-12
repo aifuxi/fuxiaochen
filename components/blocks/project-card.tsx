@@ -30,7 +30,7 @@ export function ProjectCard({ project }: { project: PublicProjectDto }) {
             <span className="font-mono-tech text-xs text-white/60">{project.techNames.join(", ")}</span>
           </div>
           <h3 className="mb-2 font-serif text-2xl text-white">{project.title}</h3>
-          <p className="mb-4 text-sm leading-relaxed font-light text-white/70">{project.description}</p>
+          <p className="mb-4 text-sm leading-relaxed text-white/70">{project.description}</p>
           {project.metric ? (
             <div className="font-mono-tech flex items-center gap-2 text-xs text-white/70">
               <span>{project.metric}</span>

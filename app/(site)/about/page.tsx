@@ -83,10 +83,10 @@ export default function AboutPage() {
                 你好，我是 Alex Chen
               </h1>
             </div>
-            <p className="text-lg leading-relaxed font-light text-muted">
+            <p className="text-lg leading-relaxed text-muted">
               一位身处旧金山的设计师和开发者，拥有 8 年以上打造数字产品的经验。我致力于连接设计与工程的鸿沟，创造既美观又实用的产品。
             </p>
-            <p className="text-base leading-relaxed font-light text-muted">
+            <p className="text-base leading-relaxed text-muted">
               我的旅程始于对事物内在运行原理的好奇。如今，我专注于设计系统、前端架构以及帮助团队更快交付的工具。
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
@@ -195,7 +195,7 @@ export default function AboutPage() {
                   </div>
                   <span className="font-mono-tech text-xs text-muted">{years}</span>
                 </div>
-                <p className="text-sm leading-relaxed font-light text-muted">
+                <p className="text-sm leading-relaxed text-muted">
                   构建了连接产品思维与前端执行的产品、组件系统和工作流。
                 </p>
               </div>
@@ -210,7 +210,7 @@ export default function AboutPage() {
             mb-4 font-serif text-4xl
             lg:text-5xl
           `}>让我们一起合作</h2>
-          <p className="mx-auto mb-8 max-w-md text-lg font-light text-muted">
+          <p className="mx-auto mb-8 max-w-md text-lg text-muted">
             我始终乐于探讨新机会、有趣的项目，或者只是聊聊天。
           </p>
           <div className="flex flex-wrap justify-center gap-4">

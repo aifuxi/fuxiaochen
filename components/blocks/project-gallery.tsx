@@ -86,7 +86,7 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
                   </span>
                 </div>
                 <h3 className="mb-2 font-serif text-xl">{project.title}</h3>
-                <p className="mb-4 text-sm leading-relaxed font-light text-muted">{project.description}</p>
+                <p className="mb-4 text-sm leading-relaxed text-muted">{project.description}</p>
                 <div className="mb-4 flex items-center gap-3">
                   {project.techNames.map((tag) => (
                     <span key={tag} className="font-mono-tech rounded bg-white/5 px-2 py-1 text-xs text-muted">

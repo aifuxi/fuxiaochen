@@ -21,7 +21,7 @@ export default async function ChangelogPage() {
           `} style={{ lineHeight: 0.95 }}>
             更新日志
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
             记录所有主要更新、优化和问题修复。了解最新变化。
           </p>
 
@@ -51,7 +51,7 @@ export default async function ChangelogPage() {
                 <span className="text-sm text-muted">{entry.date}</span>
                 <span className="text-sm font-medium">{entry.title}</span>
               </div>
-              <p className="mb-6 leading-relaxed font-light text-muted">{entry.summary ?? entry.title}</p>
+              <p className="mb-6 leading-relaxed text-muted">{entry.summary ?? entry.title}</p>
               <div className="space-y-3">
                 {entry.items.map((item, changeIndex) => (
                   <div key={item.id} className="flex items-start gap-3">

@@ -17,7 +17,7 @@ export default async function FriendsPage() {
           `} style={{ lineHeight: 0.95 }}>
             朋友们
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
             与志同道合的创作者建立连接。这里收录了优秀的个人博客和项目，每一行链接都是一次思想的碰撞。
           </p>
 

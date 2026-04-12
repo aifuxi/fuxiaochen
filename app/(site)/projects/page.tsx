@@ -24,7 +24,7 @@ export default async function ProjectsPage() {
               <br />
               <span className="text-primary-accent italic">项目</span>
             </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed font-light text-muted">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
               展示我在设计系统、Web 开发和创意技术方面工作的项目集合。每个项目都代表着一个独特的挑战与解决方案。
             </p>
           </div>

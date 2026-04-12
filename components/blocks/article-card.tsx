@@ -26,7 +26,7 @@ export function ArticleCard({ article }: { article: PublicArticleListItemDto }) 
           {article.category?.name ?? "未分类"}
         </span>
         <h3 className="mt-2 mb-3 font-serif text-xl">{article.title}</h3>
-        <p className="mb-4 text-sm leading-relaxed font-light text-muted">{article.excerpt}</p>
+        <p className="mb-4 text-sm leading-relaxed text-muted">{article.excerpt}</p>
         <div className="flex items-center justify-between text-xs text-muted">
           <span>{formatArticleDate(article.publishedAt)}</span>
           <span>{article.readTimeLabel}</span>

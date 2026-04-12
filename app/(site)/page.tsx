@@ -38,7 +38,7 @@ export default async function HomePage() {
               代码
             </h1>
 
-            <p className="max-w-md text-lg leading-relaxed font-light text-muted">
+            <p className="max-w-md text-lg leading-relaxed text-muted">
               在这里分享关于设计系统、Web 开发以及技术与创意交汇点的思考。
             </p>
 
@@ -152,7 +152,7 @@ export default async function HomePage() {
                   Design is not just what it looks like, it&apos;s how it works.
                   <span className="text-primary-accent italic">&rdquo;</span>
                 </h2>
-                <p className="mb-6 max-w-xl leading-relaxed font-light text-muted">
+                <p className="mb-6 max-w-xl leading-relaxed text-muted">
                   I&apos;m Alex Chen, a designer and developer based in San Francisco. I create digital experiences that blend aesthetics with functionality, focusing on design systems, web performance, and user-centered design.
                 </p>
                 <Link className={`

@@ -28,7 +28,7 @@ export function ArticleRow({ article }: { article: PublicArticleListItemDto }) {
             group-hover:text-primary-accent
             mb-2 font-serif text-xl transition-colors duration-300
           `}>{article.title}</h3>
-          <p className="mb-3 text-sm leading-relaxed font-light text-muted">{article.excerpt}</p>
+          <p className="mb-3 text-sm leading-relaxed text-muted">{article.excerpt}</p>
           <div className="flex items-center gap-4 text-xs text-muted">
             <span>{formatArticleDate(article.publishedAt)}</span>
             <span>•</span>

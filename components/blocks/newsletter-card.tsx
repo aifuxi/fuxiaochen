@@ -22,7 +22,7 @@ export function NewsletterCard() {
             gradient-text mb-4 font-serif text-5xl
             lg:text-6xl
           `}>保持更新</h2>
-          <p className="mx-auto mb-10 max-w-md text-lg font-light text-muted">
+          <p className="mx-auto mb-10 max-w-md text-lg text-muted">
             订阅我的 newsletter，获取关于设计与开发的最新文章、教程和见解。
           </p>
 

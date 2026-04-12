@@ -23,7 +23,7 @@ export function PageIntro({ action, description, eyebrow, title }: PageIntroProp
           `} style={{ lineHeight: 0.95 }}>
             {title}
           </h1>
-          <p className="max-w-xl text-lg leading-relaxed font-light text-muted">{description}</p>
+          <p className="max-w-xl text-lg leading-relaxed text-muted">{description}</p>
           {action ? <div className="mt-8">{action}</div> : null}
         </div>
       </div>
