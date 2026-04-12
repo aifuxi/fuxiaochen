@@ -96,7 +96,7 @@
     font-family: "Inter";
     font-style: normal;
     font-display: swap;
-    font-weight: 100 900;
+    font-weight: 400 900;
     src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.2.8/files/inter-latin-wght-normal.woff2")
       format("woff2-variations");
   }
@@ -105,7 +105,7 @@
     font-family: "Newsreader";
     font-style: normal;
     font-display: swap;
-    font-weight: 200 800;
+    font-weight: 400 800;
     src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/newsreader@5.2.10/files/newsreader-latin-wght-normal.woff2")
       format("woff2-variations");
   }
@@ -114,7 +114,7 @@
     font-family: "Space Grotesk";
     font-style: normal;
     font-display: swap;
-    font-weight: 300 700;
+    font-weight: 400 700;
     src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/space-grotesk@5.2.10/files/space-grotesk-latin-wght-normal.woff2")
       format("woff2-variations");
   }
@@ -123,7 +123,7 @@
     font-family: "JetBrains Mono";
     font-style: normal;
     font-display: swap;
-    font-weight: 100 800;
+    font-weight: 400 800;
     src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/jetbrains-mono@5.2.8/files/jetbrains-mono-latin-wght-normal.woff2")
       format("woff2-variations");
   }
@@ -220,15 +220,6 @@
   line-height: 0.95;
   letter-spacing: -0.05em;
   font-weight: 320;
-}
-
-@utility morph-blob {
-  position: absolute;
-  inset: auto;
-  border-radius: 999px;
-  filter: blur(60px);
-  pointer-events: none;
-  animation: var(--animate-float-slow);
 }
 
 @layer components {
