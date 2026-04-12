@@ -1,9 +1,8 @@
 "use client";
 
+import * as React from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { Check, ChevronDown } from "lucide-react";
-import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 type SelectOption = {
@@ -17,23 +16,30 @@ type SelectProps = React.ComponentPropsWithoutRef<typeof BaseSelect.Root> & {
   className?: string;
 };
 
-export function Select({ className, options, placeholder = "Select an option", ...props }: SelectProps) {
+export function Select({
+  className,
+  options,
+  placeholder = "Select an option",
+  ...props
+}: SelectProps) {
   return (
     <BaseSelect.Root {...props}>
       <BaseSelect.Trigger
         className={cn(
           `
-            flex h-12 w-full items-center justify-between rounded-[1.2rem] border border-white/10 bg-white/5 px-4
-            text-sm text-foreground transition-all outline-none
+            flex h-12 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-sm
+            text-foreground transition-all outline-none
             focus-visible:border-primary/60 focus-visible:ring-4 focus-visible:ring-primary/10
           `,
           className,
         )}
       >
-        <BaseSelect.Value className={`
-          text-left text-foreground
-          data-[placeholder]:text-muted
-        `}>
+        <BaseSelect.Value
+          className={`
+            text-left text-foreground
+            data-[placeholder]:text-muted
+          `}
+        >
           {placeholder}
         </BaseSelect.Value>
         <BaseSelect.Icon>
@@ -42,10 +48,12 @@ export function Select({ className, options, placeholder = "Select an option", .
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
         <BaseSelect.Positioner sideOffset={8}>
-          <BaseSelect.Popup className={`
-            min-w-[var(--anchor-width)] rounded-[1.4rem] border border-white/10 bg-popover p-2
-            shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl
-          `}>
+          <BaseSelect.Popup
+            className={`
+              min-w-[var(--anchor-width)] rounded-[1.4rem] border border-white/10 bg-popover p-2
+              shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl
+            `}
+          >
             <BaseSelect.List className="space-y-1">
               {options.map((option) => (
                 <BaseSelect.Item

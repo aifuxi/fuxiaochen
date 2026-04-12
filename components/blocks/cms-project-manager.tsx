@@ -1,21 +1,34 @@
 "use client";
 
-import NiceModal from "@ebay/nice-modal-react";
-import { ProjectCategory } from "@/generated/prisma/enums";
-import { format } from "date-fns";
-import { BriefcaseBusiness, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import NiceModal from "@ebay/nice-modal-react";
+import { format } from "date-fns";
+import {
+  BriefcaseBusiness,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import { toast } from "sonner";
-
-import { ProjectDeleteDialog } from "@/components/modals/project-delete-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRoot, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRoot,
+  TableRow,
+} from "@/components/ui/table";
+import { ProjectDeleteDialog } from "@/components/modals/project-delete-dialog";
+import { ProjectCategory } from "@/generated/prisma/enums";
 import {
   deleteProject,
   listProjects,
@@ -68,8 +81,18 @@ export function CmsProjectManager() {
     [category, featured, keyword, page],
   );
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR<ListProjectsResult, ProjectApiError>(
-    ["projects", query.keyword ?? "", query.category ?? "", String(query.isFeatured ?? ""), query.page, query.pageSize],
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    ListProjectsResult,
+    ProjectApiError
+  >(
+    [
+      "projects",
+      query.keyword ?? "",
+      query.category ?? "",
+      String(query.isFeatured ?? ""),
+      query.page,
+      query.pageSize,
+    ],
     () => listProjects(query),
     {
       keepPreviousData: true,
@@ -123,14 +146,18 @@ export function CmsProjectManager() {
 
   return (
     <div className="space-y-6">
-      <div className={`
-        flex flex-col gap-4
-        lg:flex-row lg:items-center lg:justify-between
-      `}>
-        <div className={`
-          flex flex-1 flex-col gap-3
-          lg:flex-row lg:items-center
-        `}>
+      <div
+        className={`
+          flex flex-col gap-4
+          lg:flex-row lg:items-center lg:justify-between
+        `}
+      >
+        <div
+          className={`
+            flex flex-1 flex-col gap-3
+            lg:flex-row lg:items-center
+          `}
+        >
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
@@ -161,27 +188,34 @@ export function CmsProjectManager() {
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
             <Badge variant="muted">{total} projects</Badge>
-            {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
-              size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            {isValidating && !isLoading ? (
+              <span className="inline-flex items-center gap-2">
+                <RefreshCw className={`size-3 animate-spin`} /> Refreshing
+              </span>
+            ) : null}
           </div>
         </div>
 
         <Link href="/cms/project/new">
-          <Button variant="primary">
+          <Button variant="primary" className="font-medium!">
             <Plus className="size-4" />
             New Project
           </Button>
         </Link>
       </div>
 
-      <div className={`
-        grid gap-4
-        sm:grid-cols-3
-      `}>
+      <div
+        className={`
+          grid gap-4
+          sm:grid-cols-3
+        `}
+      >
         <MetricCard label="Total Projects" value={String(total)} />
         <MetricCard label="Visible Projects" value={String(projects.length)} />
-        <MetricCard label="Active Filter" value={category || (featured ? "Featured" : "All projects")} />
+        <MetricCard
+          label="Active Filter"
+          value={category || (featured ? "Featured" : "All projects")}
+        />
       </div>
 
       <Table>
@@ -209,7 +243,9 @@ export function CmsProjectManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load projects."}</p>
+                    <p className="max-w-md text-sm text-muted">
+                      {error.message || "Failed to load projects."}
+                    </p>
                     <Button onClick={() => void mutate()} variant="outline">
                       Retry
                     </Button>
@@ -220,14 +256,18 @@ export function CmsProjectManager() {
               <TableRow>
                 <TableCell className="py-12" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <div className={`
-                      flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                    `}>
+                    <div
+                      className={`
+                        flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
+                      `}
+                    >
                       <BriefcaseBusiness className="size-5" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
-                        {keyword || category || featured ? "No projects match this filter." : "No projects yet."}
+                        {keyword || category || featured
+                          ? "No projects match this filter."
+                          : "No projects yet."}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || category || featured
@@ -251,7 +291,9 @@ export function CmsProjectManager() {
                 <TableRow key={project.id}>
                   <TableCell>
                     <div className="space-y-1">
-                      <div className="font-medium text-foreground">{project.name}</div>
+                      <div className="font-medium text-foreground">
+                        {project.name}
+                      </div>
                       <div className="line-clamp-2 text-xs leading-5 text-muted">
                         {project.summary}
                       </div>
@@ -262,17 +304,24 @@ export function CmsProjectManager() {
                     <div className="flex flex-wrap gap-1.5">
                       {project.techNames.length > 0 ? (
                         project.techNames.slice(0, 3).map((techName) => (
-                          <span key={techName} className="rounded-md bg-white/6 px-2 py-1 text-xs text-muted">
+                          <span
+                            key={techName}
+                            className="rounded-md bg-white/6 px-2 py-1 text-xs text-muted"
+                          >
                             {techName}
                           </span>
                         ))
                       ) : (
-                        <span className="text-xs text-muted">No technologies</span>
+                        <span className="text-xs text-muted">
+                          No technologies
+                        </span>
                       )}
                     </div>
                   </TableCell>
                   <TableCell className="text-muted">
-                    {project.publishedAt ? format(new Date(project.publishedAt), "yyyy-MM-dd") : "Unpublished"}
+                    {project.publishedAt
+                      ? format(new Date(project.publishedAt), "yyyy-MM-dd")
+                      : "Unpublished"}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -284,7 +333,9 @@ export function CmsProjectManager() {
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Link href={`/cms/project/${project.id}`}>
-                        <Button size="sm" variant="ghost">Edit</Button>
+                        <Button size="sm" variant="ghost">
+                          Edit
+                        </Button>
                       </Link>
                       <Button
                         disabled={deleteMutation.isMutating}
@@ -304,10 +355,12 @@ export function CmsProjectManager() {
         </TableRoot>
       </Table>
 
-      <div className={`
-        flex flex-col gap-4
-        sm:flex-row sm:items-center sm:justify-between
-      `}>
+      <div
+        className={`
+          flex flex-col gap-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <p className="text-sm text-muted">
           {total === 0
             ? "No records"
@@ -316,7 +369,9 @@ export function CmsProjectManager() {
         <div className="flex items-center gap-2">
           <Button
             disabled={page === 1 || isLoading}
-            onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+            onClick={() =>
+              setPage((currentPage) => Math.max(currentPage - 1, 1))
+            }
             size="sm"
             variant="outline"
           >
@@ -335,7 +390,9 @@ export function CmsProjectManager() {
           ))}
           <Button
             disabled={page === totalPages || isLoading}
-            onClick={() => setPage((currentPage) => Math.min(currentPage + 1, totalPages))}
+            onClick={() =>
+              setPage((currentPage) => Math.min(currentPage + 1, totalPages))
+            }
             size="sm"
             variant="outline"
           >
@@ -371,7 +428,13 @@ function getVisiblePages(page: number, totalPages: number) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
-  const startPage = Math.max(1, Math.min(page - 2, totalPages - maxVisiblePages + 1));
+  const startPage = Math.max(
+    1,
+    Math.min(page - 2, totalPages - maxVisiblePages + 1),
+  );
 
-  return Array.from({ length: maxVisiblePages }, (_, index) => startPage + index);
+  return Array.from(
+    { length: maxVisiblePages },
+    (_, index) => startPage + index,
+  );
 }

@@ -3,31 +3,50 @@
 import { formatDistanceToNow } from "date-fns";
 import { Activity, FileText, RefreshCw } from "lucide-react";
 import useSWR from "swr";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRoot, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRoot,
+  TableRow,
+} from "@/components/ui/table";
 import {
   getDashboard,
   type DashboardApiError,
 } from "@/lib/dashboard/dashboard-client";
-import type { DashboardArticleDto, DashboardMetricDto } from "@/lib/dashboard/dashboard-dto";
+import type {
+  DashboardArticleDto,
+  DashboardMetricDto,
+} from "@/lib/dashboard/dashboard-dto";
 
-const statusVariantMap: Record<string, "destructive" | "info" | "success" | "warning"> = {
+const statusVariantMap: Record<
+  string,
+  "destructive" | "info" | "success" | "warning"
+> = {
   Archived: "info",
   Draft: "warning",
   Published: "success",
 };
 
-const toneVariantMap: Record<DashboardMetricDto["tone"], "info" | "success" | "warning"> = {
+const toneVariantMap: Record<
+  DashboardMetricDto["tone"],
+  "info" | "success" | "warning"
+> = {
   info: "info",
   success: "success",
   warning: "warning",
 };
 
 export function CmsDashboardOverview() {
-  const { data, error, isLoading, isValidating, mutate } = useSWR(["dashboard"], getDashboard);
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
+    ["dashboard"],
+    getDashboard,
+  );
 
   if (isLoading && !data) {
     return <DashboardSkeleton />;
@@ -43,25 +62,31 @@ export function CmsDashboardOverview() {
 
   return (
     <div className="space-y-6">
-      <div className={`
-        grid gap-4
-        md:grid-cols-2
-        xl:grid-cols-4
-      `}>
+      <div
+        className={`
+          grid gap-4
+          md:grid-cols-2
+          xl:grid-cols-4
+        `}
+      >
         {stats.map((stat) => (
           <StatCard key={stat.key} stat={stat} />
         ))}
       </div>
 
-      <div className={`
-        grid gap-6
-        xl:grid-cols-[1.2fr_0.8fr]
-      `}>
+      <div
+        className={`
+          grid gap-6
+          xl:grid-cols-[1.2fr_0.8fr]
+        `}
+      >
         <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <div className={`
-            mb-4 flex flex-col gap-3
-            sm:flex-row sm:items-center sm:justify-between
-          `}>
+          <div
+            className={`
+              mb-4 flex flex-col gap-3
+              sm:flex-row sm:items-center sm:justify-between
+            `}
+          >
             <h2 className="font-serif text-2xl">Recent Articles</h2>
             <div className="flex items-center gap-3">
               {isValidating && !isLoading ? (
@@ -70,7 +95,9 @@ export function CmsDashboardOverview() {
                   Refreshing
                 </span>
               ) : null}
-              <span className="font-mono-tech text-xs tracking-wider text-muted uppercase">Latest Updates</span>
+              <span className="font-mono-tech text-xs tracking-wider text-muted uppercase">
+                Latest Updates
+              </span>
             </div>
           </div>
           <RecentArticlesTable articles={recentArticles} />
@@ -86,10 +113,17 @@ export function CmsDashboardOverview() {
           ) : (
             <ul className="space-y-3 text-sm leading-6 text-muted">
               {activityFeed.map((item, index) => (
-                <li key={item.id} className="rounded-xl border border-white/6 bg-white/3 px-4 py-3">
-                  <span className="text-primary-accent mr-2">{String(index + 1).padStart(2, "0")}</span>
+                <li
+                  key={item.id}
+                  className="rounded-xl border border-white/6 bg-white/3 px-4 py-3"
+                >
+                  <span className="text-primary-accent mr-2">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                   {item.message}
-                  <div className="mt-1 text-xs text-muted">{formatRelativeTime(item.occurredAt)}</div>
+                  <div className="mt-1 text-xs text-muted">
+                    {formatRelativeTime(item.occurredAt)}
+                  </div>
                 </li>
               ))}
             </ul>
@@ -102,19 +136,25 @@ export function CmsDashboardOverview() {
 
 function StatCard({ stat }: { stat: DashboardMetricDto }) {
   return (
-    <Card className="rounded-[1.7rem]">
+    <Card className="">
       <div className="space-y-5">
         <div className="flex items-center justify-between gap-4">
           <div className="type-label">{stat.title}</div>
           <Badge variant={toneVariantMap[stat.tone]}>{stat.deltaLabel}</Badge>
         </div>
-        <div className="font-serif text-5xl tracking-[-0.06em]">{stat.value}</div>
+        <div className="font-serif text-5xl tracking-[-0.06em]">
+          {stat.value}
+        </div>
       </div>
     </Card>
   );
 }
 
-function RecentArticlesTable({ articles }: { articles: DashboardArticleDto[] }) {
+function RecentArticlesTable({
+  articles,
+}: {
+  articles: DashboardArticleDto[];
+}) {
   if (articles.length === 0) {
     return <EmptyState message="No articles have been created yet." />;
   }
@@ -136,7 +176,9 @@ function RecentArticlesTable({ articles }: { articles: DashboardArticleDto[] }) 
               <TableCell>{article.title}</TableCell>
               <TableCell>{article.category}</TableCell>
               <TableCell>
-                <Badge variant={statusVariantMap[article.status] ?? "info"}>{article.status}</Badge>
+                <Badge variant={statusVariantMap[article.status] ?? "info"}>
+                  {article.status}
+                </Badge>
               </TableCell>
               <TableCell>{formatRelativeTime(article.updatedAt)}</TableCell>
             </TableRow>
@@ -150,19 +192,26 @@ function RecentArticlesTable({ articles }: { articles: DashboardArticleDto[] }) 
 function DashboardSkeleton() {
   return (
     <div className="space-y-6">
-      <div className={`
-        grid gap-4
-        md:grid-cols-2
-        xl:grid-cols-4
-      `}>
+      <div
+        className={`
+          grid gap-4
+          md:grid-cols-2
+          xl:grid-cols-4
+        `}
+      >
         {Array.from({ length: 4 }, (_, index) => (
-          <div key={index} className="h-40 animate-pulse rounded-2xl bg-white/5" />
+          <div
+            key={index}
+            className="h-40 animate-pulse rounded-2xl bg-white/5"
+          />
         ))}
       </div>
-      <div className={`
-        grid gap-6
-        xl:grid-cols-[1.2fr_0.8fr]
-      `}>
+      <div
+        className={`
+          grid gap-6
+          xl:grid-cols-[1.2fr_0.8fr]
+        `}
+      >
         <div className="h-96 animate-pulse rounded-2xl bg-white/5" />
         <div className="h-96 animate-pulse rounded-2xl bg-white/5" />
       </div>
@@ -178,11 +227,15 @@ function DashboardError({
   onRetry: () => void;
 }) {
   return (
-    <div className={`
-      glass-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/8
-    `}>
+    <div
+      className={`
+        glass-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/8
+      `}
+    >
       <FileText className="size-10 text-muted" />
-      <p className="max-w-md text-center text-sm text-muted">{error.message || "Failed to load dashboard."}</p>
+      <p className="max-w-md text-center text-sm text-muted">
+        {error.message || "Failed to load dashboard."}
+      </p>
       <Button type="button" variant="outline" onClick={onRetry}>
         Retry
       </Button>

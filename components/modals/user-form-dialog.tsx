@@ -1,12 +1,17 @@
 "use client";
 
-import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import React from "react";
+import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {
@@ -51,7 +56,9 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
       const parsedValues = createUserBodySchema.safeParse(values);
 
       if (!parsedValues.success) {
-        toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+        toast.error(
+          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+        );
 
         return;
       }
@@ -87,7 +94,9 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
     });
 
     if (!parsedValues.success) {
-      toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+      toast.error(
+        parsedValues.error.issues[0]?.message ?? "Please check your input.",
+      );
 
       return;
     }
@@ -113,12 +122,16 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
 
   return (
     <Dialog open={modal.visible} onOpenChange={modal.remove}>
-      <DialogContent className={`
-        max-w-3xl rounded-[1.6rem] p-6
-        sm:p-8
-      `}>
+      <DialogContent
+        className={`
+          max-w-3xl rounded-4xl p-6
+          sm:p-8
+        `}
+      >
         <DialogHeader>
-          <DialogTitle className="text-3xl">{props.mode === "create" ? "Add User" : "Edit User"}</DialogTitle>
+          <DialogTitle className="text-3xl">
+            {props.mode === "create" ? "Add User" : "Edit User"}
+          </DialogTitle>
           <DialogDescription>
             {props.mode === "create"
               ? "Create a CMS user account with email/password access."
@@ -127,10 +140,12 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
         </DialogHeader>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-          <div className={`
-            grid gap-5
-            sm:grid-cols-2
-          `}>
+          <div
+            className={`
+              grid gap-5
+              sm:grid-cols-2
+            `}
+          >
             <Field label="Name">
               <Input
                 autoFocus
@@ -161,7 +176,10 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
             </Field>
           </div>
 
-          <Field description="Admins can access user management APIs and screens." label="Role">
+          <Field
+            description="Admins can access user management APIs and screens."
+            label="Role"
+          >
             <Select
               onValueChange={(value) =>
                 setValues((currentValues) => ({
@@ -174,12 +192,18 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
             />
           </Field>
 
-          <div className={`
-            grid gap-5
-            sm:grid-cols-2
-          `}>
+          <div
+            className={`
+              grid gap-5
+              sm:grid-cols-2
+            `}
+          >
             <Field
-              description={props.mode === "create" ? "Minimum 8 characters." : "Leave blank to keep the current password."}
+              description={
+                props.mode === "create"
+                  ? "Minimum 8 characters."
+                  : "Leave blank to keep the current password."
+              }
               label={props.mode === "create" ? "Password" : "New Password"}
             >
               <Input
@@ -190,12 +214,19 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
                     password: event.target.value,
                   }))
                 }
-                placeholder={props.mode === "create" ? "test123456" : "Enter a new password"}
+                placeholder={
+                  props.mode === "create"
+                    ? "test123456"
+                    : "Enter a new password"
+                }
                 type="password"
                 value={values.password}
               />
             </Field>
-            <Field description="Optional avatar or profile image URL." label="Image URL">
+            <Field
+              description="Optional avatar or profile image URL."
+              label="Image URL"
+            >
               <Input
                 disabled={isSubmitting}
                 onChange={(event) =>
@@ -210,9 +241,11 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
             </Field>
           </div>
 
-          <label className={`
-            flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
-          `}>
+          <label
+            className={`
+              flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+            `}
+          >
             <Checkbox
               checked={values.emailVerified}
               onCheckedChange={(checked) =>
@@ -223,13 +256,22 @@ export const UserFormDialog = NiceModal.create((props: UserFormDialogProps) => {
               }
             />
             <div className="space-y-1">
-              <span className="block font-medium text-foreground">Email verified</span>
-              <span className="block text-xs text-muted">Mark the account as already verified.</span>
+              <span className="block font-medium text-foreground">
+                Email verified
+              </span>
+              <span className="block text-xs text-muted">
+                Mark the account as already verified.
+              </span>
             </div>
           </label>
 
           <div className="flex justify-end gap-3">
-            <Button disabled={isSubmitting} onClick={() => modal.remove()} type="button" variant="outline">
+            <Button
+              disabled={isSubmitting}
+              onClick={() => modal.remove()}
+              type="button"
+              variant="outline"
+            >
               Cancel
             </Button>
             <Button disabled={isSubmitting} type="submit" variant="primary">
@@ -261,7 +303,9 @@ function Field({
     <label className="block space-y-2">
       <span className="type-label text-foreground">{label}</span>
       {children}
-      {description ? <span className="block text-xs text-muted">{description}</span> : null}
+      {description ? (
+        <span className="block text-xs text-muted">{description}</span>
+      ) : null}
     </label>
   );
 }

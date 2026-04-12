@@ -1,11 +1,16 @@
 "use client";
 
-import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import React from "react";
+import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { FriendLinkDto } from "@/lib/friend-link/friend-link-dto";
 
 type FriendLinkDeleteDialogProps = NiceModalHocProps & {
@@ -37,14 +42,18 @@ export const FriendLinkDeleteDialog = NiceModal.create(
 
     return (
       <Dialog open={modal.visible} onOpenChange={modal.remove}>
-        <DialogContent className={`
-          max-w-xl rounded-[1.6rem] p-6
-          sm:p-8
-        `}>
+        <DialogContent
+          className={`
+            max-w-xl rounded-4xl p-6
+            sm:p-8
+          `}
+        >
           <DialogHeader>
             <DialogTitle className="text-3xl">Delete Friend Link</DialogTitle>
             <DialogDescription>
-              Remove <span className="text-foreground">{friendLink.siteName}</span> from the friends directory.
+              Remove{" "}
+              <span className="text-foreground">{friendLink.siteName}</span>{" "}
+              from the friends directory.
             </DialogDescription>
           </DialogHeader>
 
@@ -53,10 +62,20 @@ export const FriendLinkDeleteDialog = NiceModal.create(
           </div>
 
           <div className="mt-8 flex justify-end gap-3">
-            <Button disabled={isSubmitting} onClick={() => modal.remove()} type="button" variant="outline">
+            <Button
+              disabled={isSubmitting}
+              onClick={() => modal.remove()}
+              type="button"
+              variant="outline"
+            >
               Cancel
             </Button>
-            <Button disabled={isSubmitting} onClick={() => void handleConfirm()} type="button" variant="destructive">
+            <Button
+              disabled={isSubmitting}
+              onClick={() => void handleConfirm()}
+              type="button"
+              variant="destructive"
+            >
               {isSubmitting ? "Deleting..." : "Delete Friend Link"}
             </Button>
           </div>

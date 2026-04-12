@@ -1,21 +1,28 @@
 "use client";
 
+import React from "react";
+import Link from "next/link";
 import NiceModal from "@ebay/nice-modal-react";
-import { ChangelogItemType } from "@/generated/prisma/enums";
 import { format } from "date-fns";
 import { History, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+import { toast } from "sonner";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
-import { toast } from "sonner";
-
-import { ChangelogDeleteDialog } from "@/components/modals/changelog-delete-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRoot, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRoot,
+  TableRow,
+} from "@/components/ui/table";
+import { ChangelogDeleteDialog } from "@/components/modals/changelog-delete-dialog";
+import { ChangelogItemType } from "@/generated/prisma/enums";
 import {
   deleteChangelogRelease,
   listChangelogReleases,
@@ -36,7 +43,9 @@ export function CmsChangelogManager() {
   const [page, setPage] = React.useState(1);
   const [searchValue, setSearchValue] = React.useState("");
   const [keyword, setKeyword] = React.useState("");
-  const [isMajorFilter, setIsMajorFilter] = React.useState<"" | "false" | "true">("");
+  const [isMajorFilter, setIsMajorFilter] = React.useState<
+    "" | "false" | "true"
+  >("");
 
   React.useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -59,8 +68,17 @@ export function CmsChangelogManager() {
     [isMajorFilter, keyword, page],
   );
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR<ListChangelogReleasesResult, ChangelogApiError>(
-    ["changelog-releases", query.keyword ?? "", String(query.isMajor ?? ""), query.page, query.pageSize],
+  const { data, error, isLoading, isValidating, mutate } = useSWR<
+    ListChangelogReleasesResult,
+    ChangelogApiError
+  >(
+    [
+      "changelog-releases",
+      query.keyword ?? "",
+      String(query.isMajor ?? ""),
+      query.page,
+      query.pageSize,
+    ],
     () => listChangelogReleases(query),
     {
       keepPreviousData: true,
@@ -114,14 +132,18 @@ export function CmsChangelogManager() {
 
   return (
     <div className="space-y-6">
-      <div className={`
-        flex flex-col gap-4
-        lg:flex-row lg:items-center lg:justify-between
-      `}>
-        <div className={`
-          flex flex-1 flex-col gap-3
-          lg:flex-row lg:items-center
-        `}>
+      <div
+        className={`
+          flex flex-col gap-4
+          lg:flex-row lg:items-center lg:justify-between
+        `}
+      >
+        <div
+          className={`
+            flex flex-1 flex-col gap-3
+            lg:flex-row lg:items-center
+          `}
+        >
           <div className="w-full max-w-md">
             <Input
               onChange={(event) => setSearchValue(event.target.value)}
@@ -142,27 +164,40 @@ export function CmsChangelogManager() {
           </div>
           <div className="flex items-center gap-3 text-sm text-muted">
             <Badge variant="muted">{total} releases</Badge>
-            {isValidating && !isLoading ? <span className="inline-flex items-center gap-2"><RefreshCw className={`
-              size-3 animate-spin
-            `} /> Refreshing</span> : null}
+            {isValidating && !isLoading ? (
+              <span className="inline-flex items-center gap-2">
+                <RefreshCw className={`size-3 animate-spin`} /> Refreshing
+              </span>
+            ) : null}
           </div>
         </div>
 
         <Link href="/cms/changelog/new">
-          <Button variant="primary">
+          <Button variant="primary" className="font-medium!">
             <Plus className="size-4" />
             New Release
           </Button>
         </Link>
       </div>
 
-      <div className={`
-        grid gap-4
-        sm:grid-cols-3
-      `}>
+      <div
+        className={`
+          grid gap-4
+          sm:grid-cols-3
+        `}
+      >
         <MetricCard label="Total Releases" value={String(total)} />
         <MetricCard label="Visible Releases" value={String(releases.length)} />
-        <MetricCard label="Active Filter" value={isMajorFilter === "" ? "All releases" : isMajorFilter === "true" ? "Major" : "Minor"} />
+        <MetricCard
+          label="Active Filter"
+          value={
+            isMajorFilter === ""
+              ? "All releases"
+              : isMajorFilter === "true"
+                ? "Major"
+                : "Minor"
+          }
+        />
       </div>
 
       <Table>
@@ -190,7 +225,9 @@ export function CmsChangelogManager() {
               <TableRow>
                 <TableCell className="py-10" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "Failed to load changelog releases."}</p>
+                    <p className="max-w-md text-sm text-muted">
+                      {error.message || "Failed to load changelog releases."}
+                    </p>
                     <Button onClick={() => void mutate()} variant="outline">
                       Retry
                     </Button>
@@ -201,14 +238,18 @@ export function CmsChangelogManager() {
               <TableRow>
                 <TableCell className="py-12" colSpan={6}>
                   <div className="flex flex-col items-center gap-4 text-center">
-                    <div className={`
-                      flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                    `}>
+                    <div
+                      className={`
+                        flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
+                      `}
+                    >
                       <History className="size-5" />
                     </div>
                     <div className="space-y-1">
                       <p className="text-base text-foreground">
-                        {keyword || isMajorFilter ? "No changelog releases match this filter." : "No changelog releases yet."}
+                        {keyword || isMajorFilter
+                          ? "No changelog releases match this filter."
+                          : "No changelog releases yet."}
                       </p>
                       <p className="text-sm text-muted">
                         {keyword || isMajorFilter
@@ -232,11 +273,15 @@ export function CmsChangelogManager() {
                 <TableRow key={release.id}>
                   <TableCell>
                     <div className="space-y-1">
-                      <div className="font-medium text-foreground">{release.version}</div>
+                      <div className="font-medium text-foreground">
+                        {release.version}
+                      </div>
                       <div className="text-xs text-muted">{release.title}</div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted">{format(new Date(release.releasedOn), "yyyy-MM-dd")}</TableCell>
+                  <TableCell className="text-muted">
+                    {format(new Date(release.releasedOn), "yyyy-MM-dd")}
+                  </TableCell>
                   <TableCell>{release.items.length}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1.5">
@@ -255,7 +300,9 @@ export function CmsChangelogManager() {
                   <TableCell>
                     <div className="flex justify-end gap-2">
                       <Link href={`/cms/changelog/${release.id}`}>
-                        <Button size="sm" variant="ghost">Edit</Button>
+                        <Button size="sm" variant="ghost">
+                          Edit
+                        </Button>
                       </Link>
                       <Button
                         disabled={deleteMutation.isMutating}
@@ -275,10 +322,12 @@ export function CmsChangelogManager() {
         </TableRoot>
       </Table>
 
-      <div className={`
-        flex flex-col gap-4
-        sm:flex-row sm:items-center sm:justify-between
-      `}>
+      <div
+        className={`
+          flex flex-col gap-4
+          sm:flex-row sm:items-center sm:justify-between
+        `}
+      >
         <p className="text-sm text-muted">
           {total === 0
             ? "No records"
@@ -287,7 +336,9 @@ export function CmsChangelogManager() {
         <div className="flex items-center gap-2">
           <Button
             disabled={page === 1 || isLoading}
-            onClick={() => setPage((currentPage) => Math.max(currentPage - 1, 1))}
+            onClick={() =>
+              setPage((currentPage) => Math.max(currentPage - 1, 1))
+            }
             size="sm"
             variant="outline"
           >
@@ -306,7 +357,9 @@ export function CmsChangelogManager() {
           ))}
           <Button
             disabled={page === totalPages || isLoading}
-            onClick={() => setPage((currentPage) => Math.min(currentPage + 1, totalPages))}
+            onClick={() =>
+              setPage((currentPage) => Math.min(currentPage + 1, totalPages))
+            }
             size="sm"
             variant="outline"
           >
@@ -354,9 +407,15 @@ function getVisiblePages(page: number, totalPages: number) {
     return Array.from({ length: totalPages }, (_, index) => index + 1);
   }
 
-  const startPage = Math.max(1, Math.min(page - 2, totalPages - maxVisiblePages + 1));
+  const startPage = Math.max(
+    1,
+    Math.min(page - 2, totalPages - maxVisiblePages + 1),
+  );
 
-  return Array.from({ length: maxVisiblePages }, (_, index) => startPage + index);
+  return Array.from(
+    { length: maxVisiblePages },
+    (_, index) => startPage + index,
+  );
 }
 
 function summarizeItemTypes(items: ChangelogReleaseDto["items"]) {
@@ -369,6 +428,11 @@ function summarizeItemTypes(items: ChangelogReleaseDto["items"]) {
   return Array.from(counts.entries()).map(([itemType, count]) => ({
     count,
     label: itemType,
-    variant: getItemTypeVariant(itemType) as "destructive" | "info" | "muted" | "success" | "warning",
+    variant: getItemTypeVariant(itemType) as
+      | "destructive"
+      | "info"
+      | "muted"
+      | "success"
+      | "warning",
   }));
 }

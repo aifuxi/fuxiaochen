@@ -32,12 +32,6 @@
   --color-info: #38bdf8;
   --color-success: #10b981;
 
-  /* --radius-xs: 0.5rem;
-  --radius-sm: 0.75rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem; */
-
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.18);
   --shadow-card:
     0 18px 40px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.03);
@@ -156,6 +150,27 @@
   ::selection {
     background: rgba(16, 185, 129, 0.35);
     color: #f9fffc;
+  }
+
+  /* ========================================
+   Scrollbar
+   ======================================== */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-muted);
   }
 
   a {
@@ -474,7 +489,6 @@
 
   .cms-sidebar {
     width: 260px;
-    background: #0a0a0a;
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     flex-direction: column;
@@ -494,8 +508,7 @@
   }
 
   .cms-header {
-    height: 72px;
-    background: rgba(5, 5, 5, 0.8);
+    height: 80px;
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;

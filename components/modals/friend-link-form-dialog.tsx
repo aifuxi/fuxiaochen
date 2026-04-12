@@ -1,15 +1,20 @@
 "use client";
 
-import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
-import { FriendLinkStatus } from "@/generated/prisma/enums";
 import React from "react";
+import NiceModal, { type NiceModalHocProps } from "@ebay/nice-modal-react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { FriendLinkStatus } from "@/generated/prisma/enums";
 import {
   createFriendLinkBodySchema,
   type CreateFriendLinkInput,
@@ -43,7 +48,9 @@ export const FriendLinkFormDialog = NiceModal.create(
       status: friendLink?.status ?? FriendLinkStatus.Approved,
       subtitle: friendLink?.subtitle ?? "",
     }));
-    const [hasEditedDomain, setHasEditedDomain] = React.useState(mode === "edit");
+    const [hasEditedDomain, setHasEditedDomain] = React.useState(
+      mode === "edit",
+    );
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
       event.preventDefault();
@@ -56,7 +63,9 @@ export const FriendLinkFormDialog = NiceModal.create(
       });
 
       if (!parsedValues.success) {
-        toast.error(parsedValues.error.issues[0]?.message ?? "Please check your input.");
+        toast.error(
+          parsedValues.error.issues[0]?.message ?? "Please check your input.",
+        );
 
         return;
       }
@@ -103,12 +112,16 @@ export const FriendLinkFormDialog = NiceModal.create(
 
     return (
       <Dialog open={modal.visible} onOpenChange={modal.remove}>
-        <DialogContent className={`
-          max-w-3xl rounded-[1.6rem] p-6
-          sm:p-8
-        `}>
+        <DialogContent
+          className={`
+            max-w-3xl rounded-4xl p-6
+            sm:p-8
+          `}
+        >
           <DialogHeader>
-            <DialogTitle className="text-3xl">{mode === "create" ? "Add Friend Link" : "Edit Friend Link"}</DialogTitle>
+            <DialogTitle className="text-3xl">
+              {mode === "create" ? "Add Friend Link" : "Edit Friend Link"}
+            </DialogTitle>
             <DialogDescription>
               {mode === "create"
                 ? "Add a new external site to the friends directory."
@@ -117,10 +130,12 @@ export const FriendLinkFormDialog = NiceModal.create(
           </DialogHeader>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-            <div className={`
-              grid gap-5
-              sm:grid-cols-2
-            `}>
+            <div
+              className={`
+                grid gap-5
+                sm:grid-cols-2
+              `}
+            >
               <Field label="Site Name">
                 <Input
                   autoFocus
@@ -145,10 +160,12 @@ export const FriendLinkFormDialog = NiceModal.create(
               </Field>
             </div>
 
-            <div className={`
-              grid gap-5
-              sm:grid-cols-2
-            `}>
+            <div
+              className={`
+                grid gap-5
+                sm:grid-cols-2
+              `}
+            >
               <Field label="Status">
                 <Select
                   disabled={isSubmitting}
@@ -162,7 +179,10 @@ export const FriendLinkFormDialog = NiceModal.create(
                   value={values.status}
                 />
               </Field>
-              <Field description="Lower values appear first in sorted lists." label="Sort Order">
+              <Field
+                description="Lower values appear first in sorted lists."
+                label="Sort Order"
+              >
                 <Input
                   disabled={isSubmitting}
                   inputMode="numeric"
@@ -179,11 +199,16 @@ export const FriendLinkFormDialog = NiceModal.create(
               </Field>
             </div>
 
-            <div className={`
-              grid gap-5
-              sm:grid-cols-2
-            `}>
-              <Field description="Optional short label shown under the site name." label="Subtitle">
+            <div
+              className={`
+                grid gap-5
+                sm:grid-cols-2
+              `}
+            >
+              <Field
+                description="Optional short label shown under the site name."
+                label="Subtitle"
+              >
                 <Input
                   disabled={isSubmitting}
                   onChange={(event) =>
@@ -196,7 +221,10 @@ export const FriendLinkFormDialog = NiceModal.create(
                   value={values.subtitle}
                 />
               </Field>
-              <Field description="Optional host label for cards and filtering." label="Domain">
+              <Field
+                description="Optional host label for cards and filtering."
+                label="Domain"
+              >
                 <Input
                   disabled={isSubmitting}
                   onChange={(event) => {
@@ -212,7 +240,10 @@ export const FriendLinkFormDialog = NiceModal.create(
               </Field>
             </div>
 
-            <Field description="Optional media asset id for the avatar image." label="Avatar Asset ID">
+            <Field
+              description="Optional media asset id for the avatar image."
+              label="Avatar Asset ID"
+            >
               <Input
                 disabled={isSubmitting}
                 onChange={(event) =>
@@ -241,7 +272,12 @@ export const FriendLinkFormDialog = NiceModal.create(
             </Field>
 
             <div className="flex justify-end gap-3">
-              <Button disabled={isSubmitting} onClick={() => modal.remove()} type="button" variant="outline">
+              <Button
+                disabled={isSubmitting}
+                onClick={() => modal.remove()}
+                type="button"
+                variant="outline"
+              >
                 Cancel
               </Button>
               <Button disabled={isSubmitting} type="submit" variant="primary">
@@ -274,7 +310,9 @@ function Field({
     <label className="block space-y-2">
       <span className="type-label text-foreground">{label}</span>
       {children}
-      {description ? <span className="block text-xs text-muted">{description}</span> : null}
+      {description ? (
+        <span className="block text-xs text-muted">{description}</span>
+      ) : null}
     </label>
   );
 }
