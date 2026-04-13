@@ -2,10 +2,10 @@
  * Seed script for migrating data from JSON files to database.
  * Run with: bun run db:seed
  */
-
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import "dotenv/config";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 // Resolve paths relative to this file's location
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +27,9 @@ if (!databaseUrl) {
 }
 
 const adapter = new PrismaMariaDb(databaseUrl);
-const { PrismaClient } = await import(join(ROOT_DIR, "generated/prisma/client.js"));
+const { PrismaClient } = await import(
+  join(ROOT_DIR, "generated/prisma/client.js")
+);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -48,7 +50,9 @@ async function main() {
       },
     });
   }
-  console.log(`   ✅ ${categories.default.data.lists.length} categories seeded`);
+  console.log(
+    `   ✅ ${categories.default.data.lists.length} categories seeded`,
+  );
 
   // 2. Seed Tags
   console.log("🏷️  Seeding tags...");
@@ -141,7 +145,9 @@ async function main() {
       });
     }
   }
-  console.log(`   ✅ ${changelogs.default.data.lists.length} changelog releases seeded`);
+  console.log(
+    `   ✅ ${changelogs.default.data.lists.length} changelog releases seeded`,
+  );
 
   console.log("✅ Seed completed!");
 }
@@ -166,7 +172,7 @@ function parseChangelogContent(content) {
     if (trimmed.startsWith("- ")) {
       const itemText = trimmed.slice(2);
       const match = itemText.match(
-        /^(feat|fix|chore|docs|perf|refactor|test|style)(\([^)]+\))?:\s*(.+)/
+        /^(feat|fix|chore|docs|perf|refactor|test|style)(\([^)]+\))?:\s*(.+)/,
       );
 
       if (match) {
