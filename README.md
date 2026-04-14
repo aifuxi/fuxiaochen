@@ -4,6 +4,13 @@
 
 **本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
 
+## 文档说明
+
+- [`README.md`](./README.md)：项目介绍、快速开始、部署说明
+- [`AGENTS.md`](./AGENTS.md)：仓库协作规范、架构约定、Agent 工作方式
+- [`CLAUDE.md`](./CLAUDE.md)：Claude Code 工作约定
+- [`docs/chen-serif-design-system.md`](./docs/chen-serif-design-system.md)：Chen Serif 设计系统完整规范
+
 ## 功能特性
 
 ### 前台功能
@@ -163,7 +170,7 @@ fuxiaochen/
 
 ## 架构设计
 
-### 数据流架构
+### 数据流
 
 ```
 Client Component
@@ -179,103 +186,39 @@ Prisma ORM
 MySQL/MariaDB
 ```
 
-### 权限管理
-
-- **角色定义**：`role = 1` 管理员，`role = 2` 普通用户
-- **权限守卫**：使用 `checkAdmin()` 保护敏感操作
-- **自动提权**：首个注册用户自动获得管理员权限
-
-### Server Action 设计规范
-
 项目采用 **Interface-First** 模式：
 
-1. **Interface** (`stores/*/interface.ts`)：定义 Store 接口
-2. **Implementation** (`stores/*/store.ts`)：实现业务逻辑
-3. **Action** (`app/actions/*.ts`)：统一错误处理、缓存更新
+1. `stores/*/interface.ts` 定义接口契约
+2. `stores/*/store.ts` 实现业务逻辑
+3. `app/actions/*.ts` 作为统一入口，处理参数校验、权限和缓存刷新
 
-## 代码规范
+### 权限管理
 
-### 命名约定
+- `role = 1`：管理员
+- `role = 2`：普通用户
+- 敏感操作通过 `checkAdmin()` 保护
+- 首个注册用户会自动获得管理员权限
 
-| 类型      | 规则           | 示例            |
-| --------- | -------------- | --------------- |
-| 文件      | Kebab Case     | `blog-list.tsx` |
-| 组件      | Pascal Case    | `BlogList`      |
-| 变量/函数 | lowerCamelCase | `fetchBlogData` |
-| 类型      | Pascal Case    | `IBlogStore`    |
+更多协作约定、模块组织和改动原则请参考 [`AGENTS.md`](./AGENTS.md)。
 
-### 交互组件规范 (NiceModal)
+## 开发约定
 
-Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理：
+- 文件命名使用 `kebab-case`
+- Store 采用 Interface-First 模式
+- 写操作优先通过 Server Actions 进入
+- Dialog / Alert / Drawer 统一通过 NiceModal 管理
+- 需要管理员权限的写操作先执行 `checkAdmin()`
 
-```tsx
-// 定义组件
-export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
-  const modal = NiceModal.useModal();
-
-  return (
-    <Dialog open={modal.visible} onOpenChange={modal.remove}>
-      <DialogContent>
-        <Button onClick={() => modal.remove()}>取消</Button>
-      </DialogContent>
-    </Dialog>
-  );
-});
-
-// 使用组件
-NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
-```
+详细执行规则见 [`AGENTS.md`](./AGENTS.md) 与 [`CLAUDE.md`](./CLAUDE.md)。
 
 ## 设计系统
 
 项目遵循 **Chen Serif 设计系统**（Variant-driven Design 方案），基于 Tailwind CSS v4 + shadcn/ui 理念构建。
 
-### 核心理念
-
-**Variant-driven Design**（变体驱动设计）：组件通过 props 管理变体（`variant`、`size`），而非全局 CSS 类名。
-
-### 配色方案
-
-| 类别 | Token | 值 | 用途 |
-|------|-------|-----|------|
-| 背景 | `--color-bg` | `#050505` | 页面背景 |
-| 文字 | `--color-fg` | `#ebebeb` | 主文字 |
-| 品牌 | `--color-primary` | `#10b981` | 主强调色（翡翠绿） |
-| 卡片 | `--color-card` | `rgba(255,255,255,0.02)` | 卡片背景 |
-| 表面 | `--color-surface` | `rgba(255,255,255,0.08)` | 次级背景 |
-| 次级文字 | `--color-muted` | `rgba(255,255,255,0.4)` | 次级文字 |
-| 边框 | `--color-border` | `rgba(255,255,255,0.08)` | 边框 |
-
-### 字体体系
-
-字体使用 jsDelivr CDN @fontsource，通过 `@font-face` 定义可变字体。
-
-| 用途 | 字体 | Token | 字重范围 |
-|------|------|-------|---------|
-| 标题/强调 | Newsreader | `--font-serif` | 200-800 (可变) |
-| 正文/UI | Inter | `--font-sans` | 100-900 (可变) |
-| 代码/技术 | Space Grotesk | `--font-mono` | 300-700 (可变) |
-
-**使用示例：**
-```tsx
-<h1 className="font-serif">Newsreader 标题</h1>
-<p className="font-sans">Inter 正文字体</p>
-<code className="font-mono">Space Grotesk 等宽</code>
-<p className="font-serif italic">Newsreader 斜体</p>
-```
-
-### 组件示例
-
-```tsx
-<Button variant="primary">新建文章</Button>
-<Button variant="secondary">取消</Button>
-<Button variant="ghost">了解更多</Button>
-
-<Badge variant="success">成功</Badge>
-<Badge variant="warning">警告</Badge>
-```
-
-详细设计规范请参考 [docs/chen-serif-design-system.md](./docs/chen-serif-design-system.md)。
+- 核心思想：通过组件 `variant` 管理变体，而不是堆叠全局类名
+- 优先复用 `components/ui/*` 中的基础组件
+- 设计 token 定义位于 `styles/global.css`
+- 完整视觉规范、token、字体与组件约定请参考 [`docs/chen-serif-design-system.md`](./docs/chen-serif-design-system.md)
 
 ## 部署
 
@@ -300,6 +243,8 @@ pnpm pm2:start
 3. 提交变更 (`git commit -m 'feat: add amazing feature'`)
 4. 推送分支 (`git push origin feature/amazing-feature`)
 5. 创建 Pull Request
+
+如果是 AI Agent 或需要遵循仓库内约定进行开发，请优先阅读 [`AGENTS.md`](./AGENTS.md)。
 
 ### Commit 规范
 
