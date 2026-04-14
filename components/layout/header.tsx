@@ -14,7 +14,6 @@ const primaryNavItems = [
 
 const moreNavItems = [
   { href: "/changelog", label: "更新日志" },
-  { href: "/ui-preview", label: "设计系统" },
 ];
 
 export function Header() {

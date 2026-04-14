@@ -140,8 +140,7 @@ fuxiaochen/
 │   │   ├── blog/           # 博客相关
 │   │   ├── about/          # 关于页面
 │   │   ├── changelog/      # 更新日志
-│   │   ├── login/          # 登录页面
-│   │   └── ui-preview/     # UI 组件预览
+│   │   └── login/          # 登录页面
 │   ├── (admin)/            # 后台管理组
 │   │   ├── admin/          # 管理功能
 │   │   │   ├── blogs/      # 博客管理

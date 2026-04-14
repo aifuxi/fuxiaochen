@@ -14,7 +14,6 @@ const footerLinks = [
   { href: "/blog", label: "文章" },
   { href: "/about", label: "关于" },
   { href: "/changelog", label: "更新日志" },
-  { href: "/ui-preview", label: "设计系统" },
 ];
 
 const socialLinks = [
