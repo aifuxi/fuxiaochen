@@ -47,7 +47,7 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-white/10 bg-white/4 p-3">
+    <div className="flex items-center gap-3 rounded-md border border-white/10 bg-white/4 p-3">
       <div className={`
         flex size-11 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-primary/12
       `}>

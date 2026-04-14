@@ -66,10 +66,11 @@
   --text-xs:              12px;
 
   /* === 圆角 === */
-  --radius-sm:            8px;
-  --radius:               12px;
-  --radius-lg:            16px;
-  --radius-xl:            20px;
+  --radius-sm:            0.75rem;
+  --radius-md:            1rem;
+  --radius-lg:            var(--radius-md);
+  --radius-xl:            var(--radius-md);
+  --radius-2xl:           var(--radius-md);
   --radius-full:          9999px;
 
   /* === 阴影 === */
@@ -218,11 +219,9 @@
 
 | Tailwind 类 | 值 | 用途 |
 |-------------|-----|------|
-| `rounded-sm` | 8px | 小圆角 |
-| `rounded-md` | 12px | 标准圆角 |
-| `rounded-lg` | 16px | 大圆角 |
-| `rounded-xl` | 20px | 特大圆角 |
-| `rounded-full` | 9999px | 圆形 |
+| `rounded-sm` | `0.75rem` | Standard |
+| `rounded-md` | `1rem` | Large |
+| `rounded-full` | `9999px` | Pill / Circle |
 
 **组件示例映射**（曾用自定义类名 → 现用 Tailwind 类名）：
 
@@ -239,10 +238,12 @@
 | `p-xl` | `p-6` | 24px |
 | `pb-xl` / `pt-xl` | `pb-6` / `pt-6` | 24px |
 | `left-md` | `left-3` | 12px |
-| `rounded-[var(--radius)]` | `rounded-md` | 12px |
-| `rounded-[var(--radius-sm)]` | `rounded-sm` | 8px |
-| `rounded-[var(--radius-lg)]` | `rounded-lg` | 16px |
-| `rounded-[var(--radius-xl)]` | `rounded-xl` | 20px |
+| `rounded-[var(--radius-sm)]` | `rounded-sm` | `0.75rem` |
+| `rounded-[var(--radius-md)]` | `rounded-md` | `1rem` |
+| `rounded-[var(--radius-lg)]` | `rounded-md` | `1rem` |
+| `rounded-[var(--radius-xl)]` | `rounded-md` | `1rem` |
+| `rounded-lg` / `rounded-xl` / `rounded-2xl` / `rounded-3xl` | `rounded-md` | `1rem` |
+| `rounded-t-xl` / `rounded-b-xl` / `rounded-r-xl` | `rounded-t-md` / `rounded-b-md` / `rounded-r-md` | `1rem` |
 
 ### 1.5 动效体系
 
@@ -430,7 +431,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const cardVariants = cva(
-  'rounded-lg border border-border bg-card p-6 transition-all duration-[var(--duration-base)] ease-[var(--ease-smooth)]',
+  'rounded-md border border-border bg-card p-6 transition-all duration-[var(--duration-base)] ease-[var(--ease-smooth)]',
   {
     variants: {
       variant: {
@@ -749,7 +750,7 @@ const dialogVariants = cva(
 );
 
 const dialogContentVariants = cva(
-  'relative bg-card border border-border rounded-lg w-full max-w-lg transform transition-all duration-[var(--duration-base)]',
+  'relative bg-card border border-border rounded-md w-full max-w-lg transform transition-all duration-[var(--duration-base)]',
   {
     variants: {
       visible: {

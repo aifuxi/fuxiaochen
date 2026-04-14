@@ -17,7 +17,7 @@ export function ThemeToggle({ className }: { className?: string }) {
     return (
       <div
         className={cn(
-          "flex h-9 items-center gap-1 rounded-lg border border-border bg-surface px-1",
+          "flex h-9 items-center gap-1 rounded-md border border-border bg-surface px-1",
           className,
         )}
       >
@@ -37,7 +37,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 rounded-lg border border-border bg-surface px-1",
+        "flex items-center gap-1 rounded-md border border-border bg-surface px-1",
         className,
       )}
     >

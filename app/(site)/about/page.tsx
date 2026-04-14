@@ -214,7 +214,7 @@ function Skills() {
             <div
               key={index}
               className={`
-                group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300
+                group flex flex-col items-center gap-3 rounded-md p-4 transition-all duration-300
                 hover:bg-surface
                 md:p-6
               `}
@@ -353,7 +353,7 @@ function BottomCTA() {
   return (
     <section
       className={`
-        relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
+        relative overflow-hidden rounded-md bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
         md:py-28
       `}
     >

@@ -90,7 +90,7 @@ export function DisplayPreview() {
             <Skeleton className="h-4 w-24" />
           </div>
         </div>
-        <Skeleton className="h-32 w-64 rounded-lg" />
+        <Skeleton className="h-32 w-64 rounded-md" />
       </PreviewCard>
 
       <PreviewCard title="Empty">

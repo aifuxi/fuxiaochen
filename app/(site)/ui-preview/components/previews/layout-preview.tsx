@@ -16,7 +16,7 @@ export function LayoutPreview() {
   return (
     <>
       <PreviewCard title="ScrollArea">
-        <ScrollArea className="h-48 w-64 rounded-lg border">
+        <ScrollArea className="h-48 w-64 rounded-md border">
           <div className="p-4">
             <h4 className="mb-4 text-sm leading-none font-medium">Tags</h4>
             {Array.from({ length: 20 }).map((_, i) => (
@@ -32,7 +32,7 @@ export function LayoutPreview() {
             ))}
           </div>
         </ScrollArea>
-        <ScrollArea className="w-96 rounded-lg border whitespace-nowrap">
+        <ScrollArea className="w-96 rounded-md border whitespace-nowrap">
           <div className="flex w-max space-x-4 p-4">
             <div className="h-[250px] w-[200px] rounded-md bg-surface" />
             <div className="h-[250px] w-[200px] rounded-md bg-surface" />

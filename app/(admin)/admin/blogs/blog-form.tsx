@@ -395,7 +395,7 @@ export function BlogForm({
             name="published"
             render={({ field }) => (
               <FormItem
-                className={`flex flex-row items-center justify-between rounded-lg border border-border bg-surface p-4`}
+                className={`flex flex-row items-center justify-between rounded-md border border-border bg-surface p-4`}
               >
                 <div className="space-y-0.5">
                   <FormLabel className="text-base text-text">发布</FormLabel>

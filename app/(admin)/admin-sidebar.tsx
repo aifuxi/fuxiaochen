@@ -99,7 +99,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                     href={item.href}
                     className={cn(
                       `
-                        group flex items-center gap-3 rounded-[var(--radius-md)] px-3 py-3 text-sm transition-all
+                        group flex items-center gap-3 rounded-md px-3 py-3 text-sm transition-all
                         duration-[var(--duration-normal)]
                       `,
                       isActive

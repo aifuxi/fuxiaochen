@@ -171,7 +171,7 @@ export default function LoginPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required={isSignUp}
-                      className="h-12 rounded-[var(--radius-lg)]"
+                      className="h-12 rounded-md"
                     />
                   </div>
                 </div>
@@ -185,7 +185,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-12 rounded-[var(--radius-lg)]"
+                  className="h-12 rounded-md"
                 />
               </div>
 
@@ -197,7 +197,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 rounded-[var(--radius-lg)]"
+                  className="h-12 rounded-md"
                 />
               </div>
 
@@ -205,7 +205,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 variant="glow"
-                className="group h-12 w-full rounded-[var(--radius-lg)] text-base"
+                className="group h-12 w-full rounded-md text-base"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (
@@ -239,7 +239,7 @@ export default function LoginPage() {
             <Button
               type="button"
               variant="outline"
-              className="group h-12 w-full rounded-[var(--radius-lg)]"
+              className="group h-12 w-full rounded-md"
               onClick={handleSocialSignIn}
               disabled={loading}
             >

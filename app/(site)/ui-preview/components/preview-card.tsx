@@ -15,8 +15,7 @@ export function PreviewCard({ title, children, className }: PreviewCardProps) {
         {title}
       </Text>
       <div className={`
-        flex flex-wrap items-center gap-4 rounded-[var(--radius-lg)] border border-white/10 bg-white/4 p-5
-        backdrop-blur-sm
+        flex flex-wrap items-center gap-4 rounded-md border border-white/10 bg-white/4 p-5 backdrop-blur-sm
       `}>
         {children}
       </div>

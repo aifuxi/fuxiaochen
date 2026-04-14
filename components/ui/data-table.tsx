@@ -101,7 +101,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className={containerClassName}>
-      <div className="overflow-hidden overflow-x-auto rounded-xl border border-border bg-surface">
+      <div className="overflow-hidden overflow-x-auto rounded-md border border-border bg-surface">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

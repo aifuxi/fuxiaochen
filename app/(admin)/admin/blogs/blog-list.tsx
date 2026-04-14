@@ -124,7 +124,7 @@ export default function BlogManagementPage() {
       header: "封面",
       cell: ({ row }) =>
         row.original.cover ? (
-          <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-lg">
+          <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-md">
             <Image
               src={row.original.cover}
               alt={row.original.title}
@@ -133,7 +133,7 @@ export default function BlogManagementPage() {
             />
           </div>
         ) : (
-          <div className="flex h-16 w-24 items-center justify-center rounded-lg bg-surface-hover text-text-tertiary">
+          <div className="flex h-16 w-24 items-center justify-center rounded-md bg-surface-hover text-text-tertiary">
             暂无
           </div>
         ),

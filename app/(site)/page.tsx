@@ -390,7 +390,7 @@ function BottomCTA() {
   return (
     <section
       className={`
-        relative mb-20 overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
+        relative mb-20 overflow-hidden rounded-md bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
         md:py-28
       `}
     >

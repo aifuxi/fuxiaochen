@@ -77,8 +77,7 @@ function SelectContent({
         className={cn(
           `
             relative z-50 max-h-[var(--radix-select-content-available-height)] min-w-[8rem] overflow-x-hidden
-            overflow-y-auto rounded-[var(--radius-lg)] border border-white/10 bg-popover text-popover-foreground
-            shadow-lg
+            overflow-y-auto rounded-md border border-white/10 bg-popover text-popover-foreground shadow-lg
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -138,8 +137,8 @@ function SelectItem({
       data-slot="select-item"
       className={cn(
         `
-          relative flex w-full cursor-default items-center gap-2 rounded-[var(--radius-sm)] py-2 pr-8 pl-3 text-sm
-          outline-hidden transition-colors duration-[var(--duration-fast)] select-none
+          relative flex w-full cursor-default items-center gap-2 rounded-sm py-2 pr-8 pl-3 text-sm outline-hidden
+          transition-colors duration-[var(--duration-fast)] select-none
           focus:bg-primary/10 focus:text-primary
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
           [&_svg]:pointer-events-none [&_svg]:shrink-0

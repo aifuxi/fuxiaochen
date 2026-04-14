@@ -73,9 +73,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         <article className="min-w-0 flex-1">
           {/* 封面图 */}
           {blog.cover && (
-            <div className={`
-              mb-10 aspect-[16/9] w-full overflow-hidden rounded-[var(--radius-xl)] border border-white/10
-            `}>
+            <div className="mb-10 aspect-[16/9] w-full overflow-hidden rounded-md border border-white/10">
               <Image
                 src={blog.cover}
                 alt={blog.title}

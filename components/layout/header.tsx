@@ -131,8 +131,8 @@ export function Header() {
             </button>
 
             <div className={`
-              pointer-events-none absolute top-full left-1/2 mt-3 w-44 -translate-x-1/2 rounded-[var(--radius-lg)]
-              border border-white/10 bg-popover p-2 opacity-0 shadow-lg transition-all duration-[var(--duration-normal)]
+              pointer-events-none absolute top-full left-1/2 mt-3 w-44 -translate-x-1/2 rounded-md border
+              border-white/10 bg-popover p-2 opacity-0 shadow-lg transition-all duration-[var(--duration-normal)]
               group-hover:pointer-events-auto group-hover:translate-y-1 group-hover:opacity-100
             `}>
               {moreNavItems.map((item) => (
@@ -141,7 +141,7 @@ export function Header() {
                   href={item.href}
                   className={cn(
                     `
-                      block rounded-[var(--radius-sm)] px-3 py-2 text-sm text-muted-foreground transition-colors
+                      block rounded-sm px-3 py-2 text-sm text-muted-foreground transition-colors
                       duration-[var(--duration-fast)]
                       hover:bg-white/5 hover:text-foreground
                     `,
@@ -207,8 +207,7 @@ export function Header() {
               onClick={() => setMobileMenuOpen(false)}
               className={cn(
                 `
-                  rounded-[var(--radius-md)] px-4 py-3 text-sm text-muted-foreground transition-colors
-                  duration-[var(--duration-fast)]
+                  rounded-md px-4 py-3 text-sm text-muted-foreground transition-colors duration-[var(--duration-fast)]
                   hover:bg-white/5 hover:text-foreground
                 `,
                 pathname === item.href && "bg-primary/10 text-primary",

@@ -13,7 +13,7 @@ import { SectionWrapper } from "./components/section-wrapper";
 export default function UIPreviewPage() {
   return (
     <div className="container-shell space-y-8 py-12">
-      <div className="rounded-[var(--radius-xl)] border border-white/10 bg-white/4 px-6 py-10 backdrop-blur-xl">
+      <div className="rounded-md border border-white/10 bg-white/4 px-6 py-10 backdrop-blur-xl">
         <div className={`
           text-label mb-4 inline-flex rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-primary
         `}>

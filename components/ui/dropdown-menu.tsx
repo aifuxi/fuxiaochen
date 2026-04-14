@@ -30,7 +30,7 @@ function DropdownMenuSubTrigger({
     <DropdownMenuPrimitive.SubTrigger
       className={cn(
         `
-          flex cursor-default items-center rounded-lg px-2 py-1.5 text-sm outline-none select-none
+          flex cursor-default items-center rounded-md px-2 py-1.5 text-sm outline-none select-none
           focus:bg-surface-hover
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
         `,
@@ -54,7 +54,7 @@ function DropdownMenuSubContent({
       <DropdownMenuPrimitive.SubContent
         className={cn(
           `
-            z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-surface p-1 text-text shadow-lg
+            z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-surface p-1 text-text shadow-lg
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -81,7 +81,7 @@ function DropdownMenuContent({
         sideOffset={sideOffset}
         className={cn(
           `
-            z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-surface p-1 text-text shadow-lg
+            z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-surface p-1 text-text shadow-lg
             data-[side=bottom]:slide-in-from-top-2
             data-[side=left]:slide-in-from-right-2
             data-[side=right]:slide-in-from-left-2
@@ -108,7 +108,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       className={cn(
         `
-          relative flex cursor-default items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors outline-none
+          relative flex cursor-default items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors outline-none
           select-none
           focus:bg-surface-hover
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
@@ -132,7 +132,7 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       className={cn(
         `
-          relative flex cursor-default items-center rounded-lg py-1.5 pr-2 pl-8 text-sm transition-colors outline-none
+          relative flex cursor-default items-center rounded-md py-1.5 pr-2 pl-8 text-sm transition-colors outline-none
           select-none
           focus:bg-surface-hover
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50
@@ -161,7 +161,7 @@ function DropdownMenuRadioItem({
     <DropdownMenuPrimitive.RadioItem
       className={cn(
         `
-          relative flex cursor-default items-center rounded-lg py-1.5 pr-2 pl-8 text-sm transition-colors outline-none
+          relative flex cursor-default items-center rounded-md py-1.5 pr-2 pl-8 text-sm transition-colors outline-none
           select-none
           focus:bg-surface-hover
           data-[disabled]:pointer-events-none data-[disabled]:opacity-50

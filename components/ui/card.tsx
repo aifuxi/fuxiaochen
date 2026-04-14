@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const cardVariants = cva(
   `
-    flex flex-col gap-6 rounded-[var(--radius-xl)] border border-border text-foreground shadow-sm transition-all
+    flex flex-col gap-6 rounded-md border border-border text-foreground shadow-sm transition-all
     duration-[var(--duration-normal)] ease-[var(--ease-smooth)]
   `,
   {

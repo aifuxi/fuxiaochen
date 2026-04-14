@@ -59,9 +59,9 @@
 
   --radius-sm: 0.75rem;
   --radius-md: 1rem;
-  --radius-lg: 1.25rem;
-  --radius-xl: 1.75rem;
-  --radius-2xl: 2rem;
+  --radius-lg: var(--radius-md);
+  --radius-xl: var(--radius-md);
+  --radius-2xl: var(--radius-md);
   --radius-full: 9999px;
 
   --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.22);
@@ -221,11 +221,11 @@
 }
 
 .surface-card {
-  @apply rounded-[var(--radius-lg)] border border-border bg-card shadow-sm backdrop-blur-sm;
+  @apply rounded-md border border-border bg-card shadow-sm backdrop-blur-sm;
 }
 
 .glass-panel {
-  @apply rounded-[var(--radius-xl)] border border-white/10 bg-white/4 shadow-md backdrop-blur-xl;
+  @apply rounded-md border border-white/10 bg-white/4 shadow-md backdrop-blur-xl;
 }
 
 .text-label {
@@ -373,12 +373,12 @@
 
 .prose-brand blockquote,
 .apple-prose blockquote {
-  @apply rounded-r-[var(--radius-lg)] border-l-2 border-primary bg-white/3 px-5 py-3 not-italic;
+  @apply rounded-r-md border-l-2 border-primary bg-white/3 px-5 py-3 not-italic;
 }
 
 .prose-brand pre,
 .apple-prose pre {
-  @apply rounded-[var(--radius-lg)] border border-white/10 bg-black/30 p-4 shadow-sm;
+  @apply rounded-md border border-white/10 bg-black/30 p-4 shadow-sm;
 }
 
 .prose-brand :not(pre) > code,
@@ -402,7 +402,7 @@
 }
 
 .copy-code-btn {
-  @apply absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-black/60
+  @apply absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-black/60
     text-muted-foreground opacity-0 transition-all duration-[var(--duration-normal)] ease-[var(--ease-smooth)];
 }
 

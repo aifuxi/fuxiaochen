@@ -81,7 +81,7 @@ export function TableOfContents() {
                   setActiveId(heading.id);
                 }}
                 className={cn(
-                  "block rounded-[var(--radius-md)] px-3 py-2 text-sm transition-all duration-[var(--duration-normal)]",
+                  "block rounded-md px-3 py-2 text-sm transition-all duration-[var(--duration-normal)]",
                   heading.level === 3 && "pl-6",
                   activeId === heading.id
                     ? "bg-primary/10 font-medium text-primary shadow-sm"

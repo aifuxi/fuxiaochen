@@ -264,7 +264,7 @@ function DataTableWithToolbar() {
   return (
     <div>
       <DataTableToolbar table={table} searchKey="email" searchPlaceholder="搜索邮箱..." />
-      <div className="overflow-hidden rounded-xl border border-border bg-surface">
+      <div className="overflow-hidden rounded-md border border-border bg-surface">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

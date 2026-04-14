@@ -65,7 +65,7 @@ function DialogContent({
         className={cn(
           `
             ease-apple fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%]
-            translate-y-[-50%] gap-4 rounded-xl border border-border bg-surface p-6 text-text shadow-xl duration-200
+            translate-y-[-50%] gap-4 rounded-md border border-border bg-surface p-6 text-text shadow-xl duration-200
             outline-none
             data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95
             data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95
@@ -81,7 +81,7 @@ function DialogContent({
             data-slot="dialog-close"
             className={cn(
               `
-                ease-apple absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-lg text-text-tertiary
+                ease-apple absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-md text-text-tertiary
                 transition-all duration-200
               `,
               "hover:bg-surface hover:text-text",
