@@ -3,7 +3,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const linkVariants = cva(
-  "inline-flex items-center gap-1 transition-all duration-200 ease-apple",
+  "ease-apple inline-flex items-center gap-1 transition-all duration-200",
   {
     variants: {
       underline: {

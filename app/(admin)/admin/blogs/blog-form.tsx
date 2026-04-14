@@ -19,6 +19,7 @@ import { type Category } from "@/types/category";
 import { type Tag } from "@/types/tag";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
@@ -28,7 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AppleCard } from "@/components/ui/glass-card";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -123,7 +123,7 @@ export function BlogForm({
   };
 
   return (
-    <AppleCard className="p-6">
+    <Card variant="glass" className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div
@@ -316,7 +316,7 @@ export function BlogForm({
               <FormItem>
                 <FormLabel className="text-text">内容</FormLabel>
                 <FormControl>
-                  <div className="apple-prose">
+                  <div className="prose-brand">
                     <Editor
                       value={field.value}
                       plugins={plugins}
@@ -432,6 +432,6 @@ export function BlogForm({
           </div>
         </form>
       </Form>
-    </AppleCard>
+    </Card>
   );
 }

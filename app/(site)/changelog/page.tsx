@@ -135,39 +135,41 @@ export default function ChangelogPage() {
   }, [loadMore]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      {/* 标题区 */}
-      <div
-        className={`
-          py-16 text-center
-          md:py-24
-        `}
-      >
-        <h1
-          className={`
-            text-4xl font-bold tracking-tight text-text
-            md:text-5xl
-          `}
-        >
+    <div className="container-shell max-w-4xl py-12">
+      <div className={`
+        py-16 text-center
+        md:py-24
+      `}>
+        <div className={`
+          text-label mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2
+          text-primary
+        `}>
+          <span className="inline-flex h-2 w-2 rounded-full bg-primary" />
+          Product Timeline
+        </div>
+        <h1 className={`
+          font-serif text-5xl tracking-tight text-foreground
+          md:text-6xl
+        `}>
           Changelog
         </h1>
-        <p className="mt-2 text-lg text-text-secondary">
-          记录产品的每一次迭代与改进
+        <p className="mt-4 text-lg text-muted-foreground">
+          记录产品的每一次迭代、修复与重新打磨
         </p>
       </div>
 
       {/* 内容区 */}
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-text-secondary" />
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </div>
       ) : error ? (
         <div className="flex h-48 items-center justify-center">
-          <Text className="text-error">加载失败，请稍后重试</Text>
+          <Text className="text-destructive">加载失败，请稍后重试</Text>
         </div>
       ) : isEmpty ? (
         <div className="flex h-48 items-center justify-center">
-          <Text className="text-text-secondary">暂无更新日志</Text>
+          <Text className="text-muted-foreground">暂无更新日志</Text>
         </div>
       ) : (
         <div className="relative">
@@ -182,10 +184,10 @@ export default function ChangelogPage() {
           {/* 加载更多指示器 */}
           <div ref={loaderRef} className="flex justify-center py-4">
             {isValidating && (
-              <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             )}
             {!hasMore && changelogs.length > 0 && (
-              <Text className="text-text-tertiary">已加载全部</Text>
+              <Text className="text-muted">已加载全部</Text>
             )}
           </div>
         </div>

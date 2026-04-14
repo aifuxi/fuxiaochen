@@ -60,8 +60,8 @@ function DrawerContent({
         data-slot="drawer-content"
         className={cn(
           `
-            group/drawer-content fixed z-50 flex h-auto flex-col border border-border bg-surface text-text shadow-xl
-            duration-200 ease-apple
+            group/drawer-content ease-apple fixed z-50 flex h-auto flex-col border border-border bg-surface text-text
+            shadow-xl duration-200
             data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0
             data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh]
             data-[vaul-drawer-direction=bottom]:rounded-t-xl data-[vaul-drawer-direction=bottom]:border-t

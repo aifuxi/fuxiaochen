@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   `
-    inline-flex items-center justify-center rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200
-    ease-apple
-    focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none
+    inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium tracking-[0.01em] whitespace-nowrap
+    transition-all duration-[var(--duration-normal)] ease-[var(--ease-smooth)]
+    focus-visible:ring-2 focus-visible:ring-primary/45 focus-visible:ring-offset-2 focus-visible:ring-offset-background
+    focus-visible:outline-none
     active:scale-[0.98]
     disabled:pointer-events-none disabled:opacity-50
   `,
@@ -15,31 +16,39 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: `
-          bg-accent text-white shadow-sm
-          hover:bg-accent-hover-color
+          bg-primary text-primary-foreground shadow-sm
+          hover:-translate-y-0.5 hover:shadow-md hover:brightness-110
         `,
         secondary: `
-          border border-border bg-surface text-text
-          hover:bg-surface-hover
+          border border-border bg-secondary text-foreground shadow-xs
+          hover:border-white/20 hover:bg-white/12 hover:text-foreground
         `,
         ghost: `
-          bg-transparent text-text
-          hover:bg-surface
+          bg-transparent text-muted-foreground
+          hover:bg-white/5 hover:text-foreground
         `,
         outline: `
-          border border-border bg-transparent text-text
-          hover:bg-surface
+          border border-border bg-transparent text-foreground
+          hover:border-primary/40 hover:bg-primary/8 hover:text-primary
         `,
         destructive: `
-          hover:bg-error-hover-color
-          bg-error text-white shadow-sm
+          bg-destructive text-destructive-foreground shadow-sm
+          hover:-translate-y-0.5 hover:brightness-110
+        `,
+        glow: `
+          glow-button bg-primary text-primary-foreground shadow-md
+          hover:-translate-y-0.5 hover:brightness-110
+        `,
+        link: `
+          h-auto rounded-none px-0 py-0 text-primary underline-offset-4
+          hover:text-primary/80 hover:underline
         `,
       },
       size: {
-        default: "px-5 py-2.5",
-        sm: "px-3 py-1.5 text-xs",
-        lg: "px-6 py-3 text-base",
-        icon: "h-9 w-9",
+        default: "h-11 px-5",
+        sm: "h-9 px-3.5 text-xs",
+        lg: "h-12 px-6 text-base",
+        icon: "size-11 rounded-full",
       },
     },
     defaultVariants: {

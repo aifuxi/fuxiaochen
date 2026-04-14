@@ -1,13 +1,13 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogBySlugAction } from "@/app/actions/blog";
-import BlogContent from "@/components/blog/blog-content";
-import { TableOfContents } from "@/components/blog/table-of-contents";
 import { Badge } from "@/components/ui/badge";
 import { Title } from "@/components/ui/typography/title";
+import BlogContent from "@/components/blog/blog-content";
+import { TableOfContents } from "@/components/blog/table-of-contents";
 import { formatSimpleDate } from "@/lib/time";
-import Link from "next/link";
-import Image from "next/image";
-import type { Metadata } from "next";
 
 interface BlogDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -56,24 +56,26 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const readingTime = Math.max(1, Math.ceil(blog.content.length / 300));
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
+    <div className="container-shell max-w-6xl py-12">
       {/* 返回链接 */}
       <Link
         href="/blog"
         className={`
-          mb-8 inline-flex items-center gap-1 text-sm text-text-secondary transition-colors
-          hover:text-accent
+          mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors
+          hover:text-primary
         `}
       >
         ← 返回博客列表
       </Link>
 
-      <div className="flex gap-8">
+      <div className="flex gap-10">
         {/* 主内容区 */}
         <article className="min-w-0 flex-1">
           {/* 封面图 */}
           {blog.cover && (
-            <div className="mb-8 aspect-video w-full overflow-hidden rounded-xl">
+            <div className={`
+              mb-10 aspect-[16/9] w-full overflow-hidden rounded-[var(--radius-xl)] border border-white/10
+            `}>
               <Image
                 src={blog.cover}
                 alt={blog.title}
@@ -86,20 +88,26 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
           )}
 
           {/* 文章头部 */}
-          <header className="mb-8">
-            <Title level={1} className="mb-4">
+          <header className="mb-10">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              {blog.category && (
+                <Badge variant="success">{blog.category.name}</Badge>
+              )}
+              <span className="text-label text-muted-foreground">Article</span>
+            </div>
+
+            <Title level={1} className={`
+              mb-5 text-5xl
+              md:text-6xl
+            `}>
               {blog.title}
             </Title>
 
-            <div className="flex flex-wrap items-center gap-3 text-sm text-text-secondary">
-              <time>{formatSimpleDate(new Date(blog.createdAt))}</time>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+              <time className="font-mono">
+                {formatSimpleDate(new Date(blog.createdAt))}
+              </time>
               <span>·</span>
-              {blog.category && (
-                <>
-                  <Badge variant="secondary">{blog.category.name}</Badge>
-                  <span>·</span>
-                </>
-              )}
               <span>{readingTime} 分钟阅读</span>
             </div>
           </header>
@@ -112,7 +120,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
           {/* 标签 */}
           {blog.tags && blog.tags.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-2">
+            <div className="mt-10 flex flex-wrap gap-2">
               {blog.tags.map((tag) => (
                 <Badge key={tag.id} variant="outline">
                   {tag.name}
@@ -123,10 +131,12 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         </article>
 
         {/* 右侧目录（桌面端显示） */}
-        <aside className={`
-          hidden w-64 shrink-0
-          lg:block
-        `}>
+        <aside
+          className={`
+            hidden w-72 shrink-0
+            lg:block
+          `}
+        >
           <TableOfContents />
         </aside>
       </div>

@@ -1,6 +1,13 @@
 import Link from "next/link";
+import { FileText, RotateCcw } from "lucide-react";
 import type { Blog } from "@/types/blog";
-import { BlogCard } from "./blog-card";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
 import {
   Pagination,
   PaginationContent,
@@ -10,14 +17,7 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
-import { FileText, RotateCcw } from "lucide-react";
+import { BlogCard } from "./blog-card";
 
 interface BlogListProps {
   blogs: Blog[];
@@ -49,9 +49,9 @@ export function BlogList({
         <Link
           href="/blog"
           className={`
-            inline-flex items-center gap-2 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium text-text-secondary
-            transition-all duration-200
-            hover:bg-surface hover:text-text
+            inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-2 text-sm font-medium
+            text-muted-foreground transition-all duration-[var(--duration-normal)]
+            hover:border-primary/30 hover:text-foreground
           `}
         >
           <RotateCcw className="h-4 w-4" />
@@ -103,7 +103,7 @@ export function BlogList({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* 博客列表 */}
       <div className="space-y-4">
         {blogs.map((blog) => (
@@ -114,7 +114,9 @@ export function BlogList({
       {/* 分页 */}
       {totalPages > 1 && (
         <div className="flex flex-col items-center gap-4">
-          <span className="text-sm text-text-secondary">共 {total} 篇博客</span>
+          <span className="text-sm text-muted-foreground">
+            共 {total} 篇博客
+          </span>
           <Pagination>
             <PaginationContent>
               {currentPage > 1 && (

@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 const textVariants = cva("transition-colors duration-200", {
   variants: {
     type: {
-      primary: "text-text",
-      secondary: "text-text-secondary",
-      success: "text-success",
+      primary: "text-foreground",
+      secondary: "text-muted-foreground",
+      success: "text-primary",
       warning: "text-warning",
-      danger: "text-error",
+      danger: "text-destructive",
     },
     size: {
       sm: "text-sm",

@@ -6,8 +6,11 @@ function Empty({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty"
       className={cn(
-        "flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-xl border-dashed border-border",
-        "p-6 text-center text-balance",
+        `
+          flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-[var(--radius-xl)] border border-dashed
+          border-border bg-card/60
+        `,
+        "p-6 text-center text-balance shadow-sm backdrop-blur-sm",
         "md:p-12",
         className,
       )}
@@ -39,7 +42,8 @@ const emptyMediaVariants = cva(
       variant: {
         default: "bg-transparent",
         icon: `
-          flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-text
+          flex size-12 shrink-0 items-center justify-center rounded-full border border-primary/15 bg-primary/10
+          text-primary
           [&_svg:not([class*='size-'])]:size-6
         `,
       },
@@ -70,7 +74,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="empty-title"
       className={cn(
-        "text-lg font-medium tracking-tight text-text",
+        "font-serif text-2xl tracking-tight text-foreground",
         className,
       )}
       {...props}
@@ -84,9 +88,9 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="empty-description"
       className={cn(
         `
-          text-sm/relaxed text-text-secondary
+          text-sm/relaxed text-muted-foreground
           [&>a]:underline [&>a]:underline-offset-4
-          [&>a:hover]:text-accent
+          [&>a:hover]:text-primary
         `,
         className,
       )}

@@ -1,10 +1,13 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { Category } from "@/types/category";
 import type { Tag } from "@/types/tag";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -68,9 +71,7 @@ export function BlogFilterBar({
 
   const handleClearSearch = useCallback(() => {
     setSearchValue("");
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
     updateFilter("title", null);
   }, [updateFilter]);
 
@@ -78,8 +79,10 @@ export function BlogFilterBar({
     (value: string) => {
       const [sortBy, order] = value.split("_");
       const params = new URLSearchParams(searchParams.toString());
+
       if (sortBy) params.set("sortBy", sortBy);
       if (order) params.set("order", order);
+
       params.delete("page");
       router.push(`/blog?${params.toString()}`);
     },
@@ -92,40 +95,32 @@ export function BlogFilterBar({
   }, [router]);
 
   const currentSort = `${currentFilters.sortBy || "createdAt"}_${currentFilters.order || "desc"}`;
-
   const hasActiveFilters =
-    currentFilters.title ||
-    currentFilters.categoryId ||
-    currentFilters.tagId;
+    currentFilters.title || currentFilters.categoryId || currentFilters.tagId;
 
   return (
-    <div className="space-y-6">
-      {/* 搜索框 */}
-      <form onSubmit={handleSearch} className="mx-auto max-w-xl">
+    <Card variant="glass" className="spotlight-card space-y-6 p-6">
+      <form onSubmit={handleSearch} className="mx-auto max-w-2xl">
         <div className="relative">
-          <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-text-tertiary" />
-          <input
+          <Search className="absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
             ref={inputRef}
             name="title"
             type="text"
-            placeholder="搜索博客..."
+            placeholder="搜索博客、主题或关键词"
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className={`
-              w-full rounded-2xl border border-border bg-surface/50 py-4 pr-12 pl-12 text-base text-text transition-all
-              duration-200
-              placeholder:text-text-tertiary
-              focus:border-accent focus:ring-4 focus:ring-accent/20 focus:outline-none
-            `}
+            className="h-12 rounded-full pr-12 pl-11 text-base"
           />
           {searchValue && (
             <button
               type="button"
               onClick={handleClearSearch}
               className={`
-                absolute top-1/2 right-4 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full
-                bg-surface-hover text-text-tertiary transition-colors
-                hover:bg-border hover:text-text
+                absolute top-1/2 right-3 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-full
+                border border-white/10 bg-white/6 text-muted-foreground transition-colors
+                duration-[var(--duration-fast)]
+                hover:text-foreground
               `}
             >
               <X className="h-3.5 w-3.5" />
@@ -134,104 +129,67 @@ export function BlogFilterBar({
         </div>
       </form>
 
-      {/* 筛选区域 */}
-      <div className="space-y-4">
-        {/* 分类筛选 */}
+      <div className="space-y-5">
         <div className="flex flex-wrap items-center justify-center gap-2">
-          <span className="text-sm font-medium text-text-secondary">分类：</span>
-          <button
+          <span className="text-label text-muted-foreground">分类</span>
+          <Button
             type="button"
+            size="sm"
+            variant={!currentFilters.categoryId ? "primary" : "secondary"}
             onClick={() => updateFilter("categoryId", null)}
-            className={`
-              rounded-full px-4 py-2 text-sm font-medium transition-all duration-200
-              ${!currentFilters.categoryId
-                ? "bg-accent text-white"
-                : `
-                  bg-surface/50 text-text-secondary
-                  hover:bg-surface
-                `
-              }
-            `}
           >
             全部
-          </button>
+          </Button>
           {categories.map((category) => (
-            <button
+            <Button
               key={category.id}
               type="button"
+              size="sm"
+              variant={
+                currentFilters.categoryId === category.id
+                  ? "primary"
+                  : "secondary"
+              }
               onClick={() => updateFilter("categoryId", category.id)}
-              className={`
-                rounded-full px-4 py-2 text-sm font-medium transition-all duration-200
-                ${currentFilters.categoryId === category.id
-                  ? "bg-accent text-white"
-                  : `
-                    bg-surface/50 text-text-secondary
-                    hover:bg-surface
-                  `
-                }
-              `}
             >
               {category.name}
-            </button>
+            </Button>
           ))}
         </div>
 
-        {/* 标签筛选 */}
         {tags.length > 0 && (
           <div className="flex flex-wrap items-center justify-center gap-2">
-            <span className="text-sm font-medium text-text-secondary">标签：</span>
-            <button
+            <span className="text-label text-muted-foreground">标签</span>
+            <Button
               type="button"
+              size="sm"
+              variant={!currentFilters.tagId ? "outline" : "ghost"}
               onClick={() => updateFilter("tagId", null)}
-              className={`
-                rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
-                ${!currentFilters.tagId
-                  ? "bg-info text-white"
-                  : `
-                    bg-surface/50 text-text-secondary
-                    hover:bg-surface
-                  `
-                }
-              `}
             >
               全部
-              </button>
+            </Button>
             {tags.map((tag) => (
-              <button
+              <Button
                 key={tag.id}
                 type="button"
+                size="sm"
+                variant={currentFilters.tagId === tag.id ? "outline" : "ghost"}
                 onClick={() =>
                   updateFilter(
                     "tagId",
                     currentFilters.tagId === tag.id ? null : tag.id,
                   )
                 }
-                className={`
-                  rounded-full px-3 py-1.5 text-xs font-medium transition-all duration-200
-                  ${currentFilters.tagId === tag.id
-                    ? "bg-info text-white"
-                    : `
-                      bg-surface/50 text-text-secondary
-                      hover:bg-surface
-                    `
-                  }
-                `}
               >
                 {tag.name}
-              </button>
+              </Button>
             ))}
           </div>
         )}
 
-        {/* 排序和重置 */}
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <Select value={currentSort} onValueChange={handleSortChange}>
-            <SelectTrigger
-              className={`
-                w-36 rounded-full border-border bg-surface/50
-                focus:ring-accent/20
-              `}
-            >
+            <SelectTrigger className="w-40">
               <SlidersHorizontal className="mr-2 h-4 w-4" />
               <SelectValue />
             </SelectTrigger>
@@ -244,23 +202,19 @@ export function BlogFilterBar({
             </SelectContent>
           </Select>
 
-          {/* 重置按钮 */}
           {hasActiveFilters && (
-            <button
+            <Button
               type="button"
+              size="sm"
+              variant="ghost"
               onClick={handleReset}
-              className={`
-                inline-flex items-center gap-1.5 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium
-                text-text-secondary transition-all duration-200
-                hover:bg-surface hover:text-text
-              `}
             >
               <X className="h-3.5 w-3.5" />
               重置筛选
-            </button>
+            </Button>
           )}
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

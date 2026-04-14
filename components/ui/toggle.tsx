@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils";
 
 const toggleVariants = cva(
   `
-    hover:text-muted-foreground hover:bg-surface
-    focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]
-    aria-invalid:ring-destructive/20 aria-invalid:border-destructive
-    dark:aria-invalid:ring-destructive/40
     inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap
     transition-[color,box-shadow,background-color] outline-none
+    hover:bg-surface hover:text-muted-foreground
+    focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50
     disabled:pointer-events-none disabled:opacity-50
+    aria-invalid:border-destructive aria-invalid:ring-destructive/20
     data-[state=on]:bg-accent data-[state=on]:text-white
+    dark:aria-invalid:ring-destructive/40
     [&_svg]:pointer-events-none [&_svg]:shrink-0
     [&_svg:not([class*='size-'])]:size-4
   `,

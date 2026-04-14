@@ -2,16 +2,16 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import NiceModal from "@ebay/nice-modal-react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-import type { ColumnDef } from "@tanstack/react-table";
 import { getChangelogsAction } from "@/app/actions/changelog";
 import { type Changelog, type ChangelogListReq } from "@/types/changelog";
 import { Button } from "@/components/ui/button";
-import { AppleCard } from "@/components/ui/glass-card";
-import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -159,14 +159,16 @@ export default function ChangelogManagementPage() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="创建时间" />
       ),
-      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+      cell: ({ row }) =>
+        formatSimpleDateWithTime(new Date(row.original.createdAt)),
     },
     {
       accessorKey: "updatedAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="更新时间" />
       ),
-      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+      cell: ({ row }) =>
+        formatSimpleDateWithTime(new Date(row.original.updatedAt)),
     },
     {
       id: "actions",
@@ -203,7 +205,8 @@ export default function ChangelogManagementPage() {
         <p className="mt-1 text-text-secondary">管理系统更新日志</p>
       </div>
 
-      <AppleCard
+      <Card
+        variant="glass"
         className={`
           flex flex-col gap-4 p-4
           sm:flex-row sm:items-center sm:justify-between
@@ -236,16 +239,16 @@ export default function ChangelogManagementPage() {
         <Button
           onClick={handleCreate}
           className={`
-            hover:bg-accent-hover
             bg-accent text-white
+            hover:bg-accent-hover
           `}
         >
           <Plus className="mr-2 h-4 w-4" />
           新建日志
         </Button>
-      </AppleCard>
+      </Card>
 
-      <AppleCard className="overflow-hidden p-0">
+      <Card variant="glass" className="overflow-hidden p-0">
         {isLoading ? (
           <div className="flex h-24 items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-text-secondary" />
@@ -262,11 +265,13 @@ export default function ChangelogManagementPage() {
             emptyText="暂无数据"
           />
         )}
-      </AppleCard>
+      </Card>
 
       {data && data.total > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          <span className="text-sm text-text-secondary">
+            共 {data.total} 条
+          </span>
           {totalPages > 1 && (
             <Pagination>
               <PaginationContent>
@@ -281,7 +286,10 @@ export default function ChangelogManagementPage() {
                     {p === "ellipsis" ? (
                       <PaginationEllipsis />
                     ) : (
-                      <PaginationLink href={getPageUrl(p)} isActive={p === page}>
+                      <PaginationLink
+                        href={getPageUrl(p)}
+                        isActive={p === page}
+                      >
                         {p}
                       </PaginationLink>
                     )}

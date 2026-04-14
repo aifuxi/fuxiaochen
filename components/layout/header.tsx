@@ -1,78 +1,89 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ChevronDown, LayoutDashboard, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const navItems = [
+const primaryNavItems = [
   { href: "/", label: "首页" },
-  { href: "/blog", label: "博客" },
+  { href: "/blog", label: "文章" },
   { href: "/about", label: "关于" },
+];
+
+const moreNavItems = [
   { href: "/changelog", label: "更新日志" },
+  { href: "/ui-preview", label: "设计系统" },
 ];
 
 export function Header() {
   const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 24);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <header
-      className={`
-        bg-bg-color/80 sticky top-0 z-50 w-full border-b border-border/50 backdrop-blur-xl
-        supports-[backdrop-filter]:bg-bg-color/60
-      `}
+      className={cn(
+        `
+          fixed inset-x-0 top-0 z-50 border-b border-transparent transition-all duration-[var(--duration-slow)]
+          ease-[var(--ease-smooth)]
+        `,
+        isScrolled
+          ? "border-white/10 bg-black/70 backdrop-blur-xl"
+          : "bg-transparent",
+      )}
     >
-      {/* 装饰性顶部渐变线 */}
-      <div
-        className={`
-          pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/30
-          to-transparent
-        `}
-      />
-
       <nav
-        className={`
-          mx-auto flex h-16 max-w-6xl items-center justify-between px-4
-          md:px-6
-        `}
+        className={cn(
+          `
+            container-shell flex items-center justify-between transition-[height,padding]
+            duration-[var(--duration-slow)] ease-[var(--ease-smooth)]
+          `,
+          isScrolled ? "h-16" : "h-[var(--header-height)]",
+        )}
       >
-        {/* Logo */}
         <Link
           href="/"
-          className={`
-            group flex items-center gap-2 text-xl font-bold tracking-tight text-text transition-opacity duration-200
-            hover:opacity-80
-          `}
+          className="group flex items-center gap-3"
+          aria-label="返回首页"
         >
-          <img
-            src="/images/logo.svg"
-            alt="Logo"
-            className={`
-              h-8 w-8 transition-transform duration-300
-              group-hover:scale-105
-            `}
-          />
-          <span
-            className={`
-              hidden
-              sm:block
-            `}
-          >
-            付小晨
-          </span>
+          <div className={`
+            flex size-10 items-center justify-center rounded-[1rem] bg-foreground text-sm font-semibold text-background
+            transition-transform duration-[var(--duration-slower)]
+            group-hover:rotate-[360deg]
+          `}>
+            FC
+          </div>
+          <div className={`
+            hidden
+            sm:block
+          `}>
+            <div className="font-serif text-lg font-semibold text-foreground">
+              付小晨
+            </div>
+            <div className="text-label text-[10px] text-muted-foreground">
+              Chen Serif System
+            </div>
+          </div>
         </Link>
 
-        {/* 桌面端导航 */}
-        <div
-          className={`
-            hidden items-center gap-1
-            md:flex
-          `}
-        >
-          {navItems.map((item) => {
+        <div className={`
+          hidden items-center gap-8
+          md:flex
+        `}>
+          {primaryNavItems.map((item) => {
             const isActive = pathname === item.href;
 
             return (
@@ -80,118 +91,143 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  `relative rounded-full px-4 py-2 text-sm font-medium transition-all duration-200`,
-                  isActive
-                    ? "text-accent"
-                    : `
-                      text-text-secondary
-                      hover:text-text
-                    `,
+                  `
+                    text-label relative py-2 text-muted-foreground transition-colors duration-[var(--duration-fast)]
+                    hover:text-foreground
+                  `,
+                  isActive && "text-foreground",
                 )}
               >
                 {item.label}
-                {isActive && (
-                  <span
-                    className={`absolute inset-x-2 -bottom-1 h-0.5 rounded-full bg-accent`}
-                  />
-                )}
+                <span
+                  className={cn(
+                    `
+                      absolute inset-x-0 -bottom-1 h-px origin-center scale-x-0 bg-primary transition-transform
+                      duration-[var(--duration-normal)]
+                    `,
+                    (isActive || pathname.startsWith(item.href)) &&
+                      "scale-x-100",
+                  )}
+                />
               </Link>
             );
           })}
+
+          <div className="group relative">
+            <button
+              type="button"
+              className={cn(
+                `
+                  text-label flex items-center gap-1 py-2 text-muted-foreground transition-colors
+                  duration-[var(--duration-fast)]
+                  hover:text-foreground
+                `,
+                moreNavItems.some((item) => pathname === item.href) &&
+                  "text-foreground",
+              )}
+            >
+              更多
+              <ChevronDown className="size-3" />
+            </button>
+
+            <div className={`
+              pointer-events-none absolute top-full left-1/2 mt-3 w-44 -translate-x-1/2 rounded-[var(--radius-lg)]
+              border border-white/10 bg-popover p-2 opacity-0 shadow-lg transition-all duration-[var(--duration-normal)]
+              group-hover:pointer-events-auto group-hover:translate-y-1 group-hover:opacity-100
+            `}>
+              {moreNavItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    `
+                      block rounded-[var(--radius-sm)] px-3 py-2 text-sm text-muted-foreground transition-colors
+                      duration-[var(--duration-fast)]
+                      hover:bg-white/5 hover:text-foreground
+                    `,
+                    pathname === item.href && "bg-primary/10 text-primary",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* 右侧：后台管理 + 主题切换 + 移动端菜单 */}
         <div className="flex items-center gap-2">
-          <Link
-            href="/admin"
-            className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-all duration-200
-              hover:bg-surface hover:text-text
-              active:scale-95
-            `}
-            target="_blank"
-            aria-label="后台管理"
-          >
-            <LayoutDashboard className="h-5 w-5" />
+          <Link href="/admin" className={`
+            hidden
+            md:block
+          `}>
+            <span className={`
+              inline-flex h-11 items-center gap-2 rounded-full border border-white/10 bg-white/4 px-5 text-sm
+              text-foreground transition-all duration-[var(--duration-normal)]
+              hover:border-primary/40 hover:bg-primary/10 hover:text-primary
+            `}>
+              <LayoutDashboard className="size-4" />
+              进入后台
+            </span>
           </Link>
 
-          <ThemeToggle />
-
-          {/* 移动端菜单按钮 */}
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            type="button"
+            aria-label="切换菜单"
             className={`
-              flex h-9 w-9 items-center justify-center rounded-full text-text-secondary transition-colors duration-200
-              hover:bg-surface hover:text-text
+              inline-flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/4
+              text-foreground
               md:hidden
             `}
-            aria-label="切换菜单"
+            onClick={() => setMobileMenuOpen((value) => !value)}
           >
             {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="size-5" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="size-5" />
             )}
           </button>
         </div>
       </nav>
 
-      {/* 移动端菜单 */}
       <div
         className={cn(
           `
-            overflow-hidden border-t border-border/50 bg-surface/95 backdrop-blur-xl transition-all duration-300
-            ease-apple
+            overflow-hidden border-t border-white/10 bg-black/80 backdrop-blur-xl transition-all
+            duration-[var(--duration-slow)]
             md:hidden
           `,
-          mobileMenuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0",
+          mobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
         )}
       >
-        <div className="mx-auto max-w-6xl px-4 py-4">
-          <div className="flex flex-col gap-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    `rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
-                    isActive
-                      ? "bg-accent/10 text-accent"
-                      : `
-                        text-text-secondary
-                        hover:bg-surface-hover hover:text-text
-                      `,
-                  )}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-
-            <>
-              <div className="my-2 h-px bg-border" />
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(
-                  `flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-colors duration-200`,
-                  pathname.startsWith("/admin")
-                    ? "bg-accent/10 text-accent"
-                    : `
-                      text-text-secondary
-                      hover:bg-surface-hover hover:text-text
-                    `,
-                )}
-              >
-                <LayoutDashboard className="h-5 w-5" />
-                后台管理
-              </Link>
-            </>
-          </div>
+        <div className="container-shell flex flex-col gap-2 py-4">
+          {[...primaryNavItems, ...moreNavItems].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setMobileMenuOpen(false)}
+              className={cn(
+                `
+                  rounded-[var(--radius-md)] px-4 py-3 text-sm text-muted-foreground transition-colors
+                  duration-[var(--duration-fast)]
+                  hover:bg-white/5 hover:text-foreground
+                `,
+                pathname === item.href && "bg-primary/10 text-primary",
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href="/admin"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`
+              mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-medium
+              text-primary-foreground
+            `}
+          >
+            <LayoutDashboard className="size-4" />
+            进入后台
+          </Link>
         </div>
       </div>
     </header>

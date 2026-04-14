@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 const paragraphVariants = cva("mb-4 leading-relaxed", {
   variants: {
     type: {
-      primary: "text-text",
-      secondary: "text-text-secondary",
-      success: "text-success",
+      primary: "text-foreground",
+      secondary: "text-muted-foreground",
+      success: "text-primary",
       warning: "text-warning",
-      danger: "text-error",
+      danger: "text-destructive",
     },
     size: {
       sm: "text-sm",
@@ -24,7 +24,8 @@ const paragraphVariants = cva("mb-4 leading-relaxed", {
 });
 
 export interface ParagraphProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends
+    React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof paragraphVariants> {
   as?: "p" | "div";
 }

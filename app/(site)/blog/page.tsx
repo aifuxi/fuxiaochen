@@ -45,43 +45,30 @@ function Hero({
         md:min-h-[60vh] md:py-28
       `}
     >
-      {/* 动态渐变背景 */}
-      <div
-        className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
-        `}
-      />
-      <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
-        `}
-      />
+      <div className="morph-blob top-16 left-[6%] h-72 w-72" />
+      <div className="morph-blob right-[10%] bottom-0 h-96 w-96 bg-info/10" />
 
-      {/* 内容 */}
-      <div className="relative z-10 mx-auto w-full max-w-4xl px-4">
-        {/* 标题 */}
+      <div className="container-shell relative z-10 max-w-5xl">
         <div className="mb-10 text-center">
-          <h1
-            className={`
-              mb-4 text-5xl font-bold tracking-tight text-text
-              md:text-7xl
-            `}
-          >
-            Blog
+          <div className={`
+            text-label mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2
+            text-primary
+          `}>
+            <span className="inline-flex h-2 w-2 rounded-full bg-primary" />
+            Article Archive
+          </div>
+          <h1 className="hero-title text-foreground">
+            所有文章与
+            <span className="brand-gradient block">学习记录</span>
           </h1>
-          <p
-            className={`
-              text-lg text-text-secondary
-              md:text-xl
-            `}
-          >
-            探索技术文章与学习笔记
+          <p className={`
+            mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground
+            md:text-xl
+          `}>
+            围绕前端工程、交互实现、内容系统与个人实践，按主题把文章整理成一套可检索的知识栈。
           </p>
         </div>
 
-        {/* 筛选栏 */}
         <BlogFilterBar
           categories={categories}
           tags={tags}
@@ -145,7 +132,7 @@ async function BlogListContent({ searchParams }: BlogPageProps) {
       />
 
       {/* 博客列表 */}
-      <div className="mx-auto max-w-4xl px-4 pb-16">
+      <div className="container-shell max-w-5xl pb-20">
         <BlogList
           blogs={blogs.lists || []}
           total={blogs.total}

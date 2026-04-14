@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Mail } from "lucide-react";
+import { Github, Mail, Sparkles } from "lucide-react";
 import {
   WEBSITE,
   BEI_AN_NUMBER,
@@ -11,9 +11,10 @@ import {
 
 const footerLinks = [
   { href: "/", label: "首页" },
-  { href: "/blog", label: "博客" },
+  { href: "/blog", label: "文章" },
   { href: "/about", label: "关于" },
   { href: "/changelog", label: "更新日志" },
+  { href: "/ui-preview", label: "设计系统" },
 ];
 
 const socialLinks = [
@@ -23,66 +24,43 @@ const socialLinks = [
     label: "GitHub",
   },
   { href: "mailto:aifuxi.js@gmail.com", icon: Mail, label: "邮箱" },
-  // { href: "/rss.xml", icon: Rss, label: "RSS" },
 ];
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 border-t border-border/50 bg-surface/50">
-      {/* 装饰性渐变 */}
-      <div
-        className={`pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-accent/5 to-transparent`}
-      />
+    <footer className="relative mt-24 border-t border-white/10 bg-black/30">
+      <div className={`
+        pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50
+        to-transparent
+      `} />
+      <div className={`
+        pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-primary/6 to-transparent
+      `} />
 
-      <div
-        className={`
-          relative mx-auto max-w-6xl px-4 py-12
-          md:px-6 md:py-16
-        `}
-      >
-        <div
-          className={`
-            flex flex-col gap-8
-            md:flex-row md:items-start md:justify-between md:gap-12
-          `}
-        >
-          {/* 左侧：品牌信息 */}
-          <div
-            className={`
-              flex flex-col items-center gap-4
-              md:items-start
-            `}
-          >
-            {/* Logo */}
-            <Link
-              href="/"
-              className={`
-                group flex items-center gap-2 text-xl font-bold tracking-tight text-text transition-opacity duration-200
-                hover:opacity-80
-              `}
-            >
-              <img
-                src="/images/logo.svg"
-                alt="Logo"
-                className={`
-                  h-8 w-8 transition-transform duration-300
-                  group-hover:scale-105
-                `}
-              />
-              <span>{WEBSITE}</span>
-            </Link>
-            <p
-              className={`
-                max-w-xs text-center text-sm text-text-secondary
-                md:text-left
-              `}
-            >
-              {SLOGAN}
-            </p>
+      <div className="container-shell relative py-16">
+        <div className={`
+          grid gap-12
+          lg:grid-cols-[1.4fr_1fr]
+        `}>
+          <div className="space-y-6">
+            <div className={`
+              inline-flex items-center gap-3 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-xs
+              tracking-[0.18em] text-primary uppercase
+            `}>
+              <Sparkles className="size-3.5" />
+              Chen Serif
+            </div>
+            <div>
+              <h2 className="font-serif text-4xl leading-tight text-foreground">
+                为博客与后台统一一套克制、锋利又带一点光泽的视觉语言。
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
+                {SLOGAN}
+              </p>
+            </div>
 
-            {/* 社交链接 */}
             <div className="flex items-center gap-3">
               {socialLinks.map((item) => {
                 const Icon = item.icon;
@@ -92,75 +70,71 @@ export function Footer() {
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`
-                      flex h-9 w-9 items-center justify-center rounded-full border border-border bg-surface
-                      text-text-secondary transition-all duration-200
-                      hover:border-accent/30 hover:text-accent
-                    `}
                     aria-label={item.label}
+                    className={`
+                      inline-flex size-11 items-center justify-center rounded-full border border-white/10 bg-white/4
+                      text-muted-foreground transition-all duration-[var(--duration-normal)]
+                      hover:border-primary/40 hover:bg-primary/10 hover:text-primary
+                    `}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="size-4.5" />
                   </a>
                 );
               })}
             </div>
           </div>
 
-          {/* 右侧：链接 */}
-          <div
-            className={`
-              flex flex-col items-center gap-6
-              md:items-end
-            `}
-          >
-            {/* 导航链接 */}
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              {footerLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`
-                    text-sm text-text-secondary transition-colors duration-200
-                    hover:text-accent
-                  `}
-                >
-                  {item.label}
-                </Link>
-              ))}
+          <div className={`
+            grid gap-10
+            sm:grid-cols-2
+          `}>
+            <div className="space-y-4">
+              <div className="text-label text-muted-foreground">导航</div>
+              <div className="space-y-3">
+                {footerLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`
+                      block text-sm text-muted-foreground transition-colors duration-[var(--duration-fast)]
+                      hover:text-foreground
+                    `}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* 备案信息 */}
-            <div
-              className={`
-                flex flex-col items-center gap-2 text-xs text-text-tertiary
-                md:flex-row md:gap-4
-              `}
-            >
-              <span>
-                © {currentYear} {WEBSITE}
-              </span>
-              <a
-                href={BEI_AN_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  transition-colors duration-200
-                  hover:text-accent
-                `}
-              >
-                {BEI_AN_NUMBER}
-              </a>
-              <a
-                href={GONG_AN_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`
-                  transition-colors duration-200
-                  hover:text-accent
-                `}
-              >
-                {GONG_AN_NUMBER}
-              </a>
+            <div className="space-y-4">
+              <div className="text-label text-muted-foreground">备案信息</div>
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <p>
+                  © {currentYear} {WEBSITE}
+                </p>
+                <a
+                  href={BEI_AN_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    block transition-colors duration-[var(--duration-fast)]
+                    hover:text-foreground
+                  `}
+                >
+                  {BEI_AN_NUMBER}
+                </a>
+                <a
+                  href={GONG_AN_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`
+                    block transition-colors duration-[var(--duration-fast)]
+                    hover:text-foreground
+                  `}
+                >
+                  {GONG_AN_NUMBER}
+                </a>
+              </div>
             </div>
           </div>
         </div>

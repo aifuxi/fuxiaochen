@@ -1,9 +1,9 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Calendar, Clock, Sparkles } from "lucide-react";
 import { getBlogsAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, Calendar, Clock, Sparkles } from "lucide-react";
 import { formatSimpleDate } from "@/lib/time";
 
 // Hero 区域 - Apple 大胆风格
@@ -51,7 +51,7 @@ function Hero() {
         {/* 大标题 */}
         <h1
           className={`
-            mb-6 text-5xl font-bold tracking-tight
+            mb-6 font-serif text-5xl tracking-tight
             md:text-7xl
             lg:text-8xl
           `}
@@ -72,10 +72,12 @@ function Hero() {
           `}
         >
           记录前端开发与技术探索的点滴
-          <br className={`
-            hidden
-            sm:block
-          `} />
+          <br
+            className={`
+              hidden
+              sm:block
+            `}
+          />
           分享学习心得与实践经验
         </p>
 
@@ -84,9 +86,9 @@ function Hero() {
           <Link
             href="/blog"
             className={`
+              inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium
+              text-primary-foreground shadow-lg transition-all duration-300
               hover:bg-accent-hover
-              inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
-              transition-all duration-300
               active:scale-[0.98]
             `}
           >
@@ -125,7 +127,10 @@ async function FeaturedPosts() {
   }
 
   const posts = result.data.lists;
-  const [firstPost, ...restPosts] = posts as [typeof posts[0], ...typeof posts];
+  const [firstPost, ...restPosts] = posts as [
+    (typeof posts)[0],
+    ...typeof posts,
+  ];
 
   return (
     <section
@@ -214,7 +219,8 @@ async function FeaturedPosts() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-4 w-4" />
-                  {Math.max(1, Math.ceil(firstPost.content.length / 300))} 分钟阅读
+                  {Math.max(1, Math.ceil(firstPost.content.length / 300))}{" "}
+                  分钟阅读
                 </span>
               </div>
             </div>
@@ -262,10 +268,12 @@ async function FeaturedPosts() {
                 ) : (
                   <div className="aspect-[16/10] bg-gradient-to-br from-surface-hover to-surface" />
                 )}
-                <div className={`
-                  flex flex-1 flex-col gap-3 p-5
-                  md:p-6
-                `}>
+                <div
+                  className={`
+                    flex flex-1 flex-col gap-3 p-5
+                    md:p-6
+                  `}
+                >
                   {post.category && (
                     <span
                       className={`
@@ -418,9 +426,9 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            hover:bg-accent-hover
             inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
             transition-all duration-300
+            hover:bg-accent-hover
             active:scale-[0.98]
           `}
         >

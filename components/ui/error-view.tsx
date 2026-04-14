@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AppleCard } from "@/components/ui/glass-card";
+import { Card } from "@/components/ui/card";
 
 interface ErrorViewProps {
   code?: string;
@@ -16,16 +16,17 @@ interface ErrorViewProps {
 export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
   return (
     <div className="flex min-h-[80vh] items-center justify-center p-4">
-      <AppleCard className="w-full max-w-md p-12 text-center">
+      <Card variant="glass" className="w-full max-w-md p-12 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
           <div className="mb-6 flex justify-center">
-            <div
-              className={`flex h-20 w-20 items-center justify-center rounded-full bg-accent/10 text-accent`}
-            >
+            <div className={`
+              flex h-20 w-20 items-center justify-center rounded-full border border-destructive/20 bg-destructive/10
+              text-destructive
+            `}>
               {code === "404" ? (
                 <span className="text-3xl font-bold">404</span>
               ) : (
@@ -34,10 +35,10 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             </div>
           </div>
 
-          <h1 className="mb-2 text-3xl font-bold text-text">
+          <h1 className="mb-2 font-serif text-4xl font-semibold text-foreground">
             {title}
           </h1>
-          <p className="mb-8 text-text-secondary">{message}</p>
+          <p className="mb-8 text-muted-foreground">{message}</p>
 
           <div
             className={`
@@ -60,6 +61,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             {onRetry && (
               <Button
                 onClick={onRetry}
+                variant="glow"
                 className={`
                   w-full
                   sm:w-auto
@@ -71,7 +73,7 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             )}
           </div>
         </motion.div>
-      </AppleCard>
+      </Card>
     </div>
   );
 }

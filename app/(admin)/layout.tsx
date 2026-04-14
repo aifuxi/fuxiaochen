@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { AdminHeader } from "./admin-header";
 import { AdminSidebar } from "./admin-sidebar";
 
 export default async function AdminLayout({
@@ -17,7 +18,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-bg font-sans text-text">
+    <div className="min-h-screen bg-background font-sans text-foreground">
       <AdminSidebar
         user={{
           name: session.user.name,
@@ -26,10 +27,13 @@ export default async function AdminLayout({
         }}
       />
 
-      {/* Main Content */}
-      <main className="ml-64 flex-1">
-        <div className="p-8">
-          <div className="min-h-[calc(100vh-8rem)]">{children}</div>
+      <main className={`
+        min-h-screen
+        lg:pl-[calc(var(--sidebar-width)+1.5rem)]
+      `}>
+        <div className="container-shell py-6">
+          <AdminHeader />
+          <div className="min-h-[calc(100vh-10rem)]">{children}</div>
         </div>
       </main>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, Newsreader, Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
@@ -7,6 +8,24 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 import { isProduction } from "@/lib/env";
 import "@/styles/global.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-newsreader",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-space-grotesk",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -32,7 +51,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html
+      lang="zh-CN"
+      suppressHydrationWarning
+      className={`
+        ${inter.variable}
+        ${newsreader.variable}
+        ${spaceGrotesk.variable}
+      `}
+    >
       <head>
         <link
           rel="apple-touch-icon"
@@ -63,15 +90,15 @@ export default function RootLayout({
       </head>
       <body
         className={`
-          bg-[var(--bg-color)] text-[var(--text-color)] antialiased
-          selection:bg-[var(--accent-color)] selection:text-white
+          bg-background text-foreground antialiased
+          selection:bg-primary/30 selection:text-foreground
           ${isProduction() ? "" : "debug-screens"}
         `}
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <ModalProvider>{children}</ModalProvider>

@@ -104,7 +104,7 @@ function Hero() {
         {/* 大标题 */}
         <h1
           className={`
-            mb-6 text-5xl font-bold tracking-tight
+            mb-6 font-serif text-5xl tracking-tight
             md:text-7xl
             lg:text-8xl
           `}
@@ -389,9 +389,9 @@ function BottomCTA() {
         <Link
           href="/blog"
           className={`
-            hover:bg-accent-hover
             inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
             transition-all duration-300
+            hover:bg-accent-hover
             active:scale-[0.98]
           `}
         >

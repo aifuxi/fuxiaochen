@@ -11,10 +11,13 @@ interface PreviewCardProps {
 export function PreviewCard({ title, children, className }: PreviewCardProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      <Text type="secondary" size="sm" weight="medium">
+      <Text type="secondary" size="sm" weight="medium" className="text-label">
         {title}
       </Text>
-      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-surface p-4">
+      <div className={`
+        flex flex-wrap items-center gap-4 rounded-[var(--radius-lg)] border border-white/10 bg-white/4 p-5
+        backdrop-blur-sm
+      `}>
         {children}
       </div>
     </div>

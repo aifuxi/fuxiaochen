@@ -32,10 +32,11 @@ export function BackToTop() {
       onClick={scrollToTop}
       className={cn(
         `
-          fixed right-8 bottom-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border
-          bg-surface transition-all duration-300
-          hover:-translate-y-1 hover:shadow-lg
+          fixed right-6 bottom-6 z-40 flex size-12 items-center justify-center rounded-full border border-white/10
+          bg-black/70 text-foreground shadow-md backdrop-blur-xl transition-all duration-[var(--duration-normal)]
+          hover:-translate-y-1 hover:border-primary/40 hover:text-primary hover:shadow-lg
           focus:outline-none
+          focus-visible:ring-2 focus-visible:ring-primary/40
         `,
         isVisible
           ? "translate-y-0 opacity-100"
@@ -43,7 +44,7 @@ export function BackToTop() {
       )}
       aria-label="Back to top"
     >
-      <ArrowUp className="h-5 w-5 text-text" />
+      <ArrowUp className="size-5" />
     </button>
   );
 }

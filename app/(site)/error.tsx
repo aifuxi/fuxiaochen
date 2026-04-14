@@ -18,8 +18,8 @@ export default function Error({
   return (
     <ErrorView
       code="500"
-      title="Something went wrong"
-      message="We encountered an unexpected error."
+      title="页面发生异常"
+      message="出现了一个未预期的问题，我们已经帮你保留当前位置。"
       onRetry={() => reset()}
     />
   );

@@ -39,8 +39,8 @@ export function Hero() {
           <Link
             href="/blog"
             className={`
-              group relative inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-3 text-white shadow-sm
-              transition-all duration-200 ease-apple
+              group ease-apple relative inline-flex items-center gap-2 rounded-lg bg-accent px-8 py-3 text-white
+              shadow-sm transition-all duration-200
               hover:bg-accent-hover-color
             `}
           >
@@ -55,8 +55,8 @@ export function Hero() {
           <Link
             href="/about"
             className={`
-              inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-8 py-3 text-text
-              transition-all duration-200 ease-apple
+              ease-apple inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-8 py-3 text-text
+              transition-all duration-200
               hover:bg-surface-hover
             `}
           >

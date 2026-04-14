@@ -10,7 +10,7 @@ export default function PortalLayout({
   return (
     <>
       <Header />
-      {children}
+      <div className="pt-[var(--header-height)]">{children}</div>
       <Footer />
       <BackToTop />
     </>

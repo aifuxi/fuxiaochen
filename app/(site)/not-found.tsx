@@ -4,8 +4,8 @@ export default function NotFound() {
   return (
     <ErrorView
       code="404"
-      title="Page Not Found"
-      message="The page you are looking for does not exist."
+      title="页面未找到"
+      message="这个地址可能已经被移动，或者它从一开始就不在这里。"
     />
   );
 }

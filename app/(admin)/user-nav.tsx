@@ -47,23 +47,27 @@ export function UserNav({ user }: UserNavProps) {
   };
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3">
-      <div className="h-10 w-10 rounded-full bg-accent/10 p-0.5">
+    <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-white/10 bg-white/4 p-3">
+      <div className={`
+        flex size-11 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-primary/12
+      `}>
         {user.image ? (
           <img
             src={user.image}
             alt={user.name}
-            className="h-full w-full rounded-full object-cover"
+            className="size-full object-cover"
           />
         ) : (
-          <div className="h-full w-full rounded-full bg-accent/20" />
+          <span className="text-sm font-medium text-primary">
+            {user.name.slice(0, 1).toUpperCase()}
+          </span>
         )}
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="truncate text-sm font-semibold text-text">
+        <p className="truncate text-sm font-semibold text-foreground">
           {user.name}
         </p>
-        <p className="truncate text-xs text-text-secondary">
+        <p className="truncate text-xs text-muted-foreground">
           {user.role === 1 ? "Admin" : "Normal"}
         </p>
       </div>
@@ -74,8 +78,8 @@ export function UserNav({ user }: UserNavProps) {
             size="icon"
             disabled={loading}
             className={`
-              text-text-secondary
-              hover:bg-surface-hover hover:text-text
+              text-muted-foreground
+              hover:bg-white/6 hover:text-foreground
             `}
           >
             <LogOut className="h-4 w-4" />
@@ -90,10 +94,13 @@ export function UserNav({ user }: UserNavProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout} className={`
-              bg-accent text-white
-              hover:bg-accent-hover-color
-            `}>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className={`
+                bg-primary text-primary-foreground
+                hover:brightness-110
+              `}
+            >
               退出登录
             </AlertDialogAction>
           </AlertDialogFooter>

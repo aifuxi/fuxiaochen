@@ -8,527 +8,448 @@
 
 @import "bytemd/dist/index.css";
 @import "highlight.js/styles/atom-one-dark.css";
-
 @import "./bytemd.css";
 
-/* Custom Animations - Apple Style */
-@keyframes float-slow {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(30px, -30px) scale(1.05);
-  }
-  50% {
-    transform: translate(-20px, 20px) scale(0.95);
-  }
-  75% {
-    transform: translate(20px, 10px) scale(1.02);
-  }
-}
-
-@keyframes float-medium {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(-40px, 20px) scale(1.1);
-  }
-  66% {
-    transform: translate(30px, -30px) scale(0.9);
-  }
-}
-
-@keyframes float-fast {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(25px, -25px) scale(1.15);
-  }
-}
-
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Font Faces - Apple System Fonts */
-@font-face {
-  font-family: "Inter";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 900;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/inter:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "JetBrains Mono";
-  font-style: normal;
-  font-display: swap;
-  font-weight: 100 800;
-  src: url(https://cdn.jsdelivr.net/fontsource/fonts/jetbrains-mono:vf@latest/latin-wght-normal.woff2)
-    format("woff2-variations");
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
 @theme {
-  /* Fonts - Apple SF Pro fallback */
   --font-sans:
-    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", "Helvetica Neue", Arial, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    var(--font-inter), "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans CJK SC", sans-serif;
+  --font-serif:
+    var(--font-newsreader), "Noto Serif SC", "Songti SC", "STSong",
+    "Source Han Serif SC", serif;
   --font-mono:
-    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+    var(--font-space-grotesk), "JetBrains Mono", "SFMono-Regular", Menlo,
+    Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Radius - Apple Style */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--primary);
+  --color-accent-foreground: var(--primary-foreground);
+  --color-accent-hover: var(--primary-hover);
+  --color-accent-hover-color: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  /* Compatibility aliases while pages migrate onto semantic classes. */
+  --color-bg: var(--background);
+  --color-surface: var(--card);
+  --color-surface-hover: var(--card-hover);
+  --color-text: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-tertiary: var(--muted);
+  --color-success: var(--primary);
+  --color-error: var(--destructive);
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2rem;
   --radius-full: 9999px;
 
-  /* Shadows - Apple Style */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.08);
-  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.1);
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.22);
+  --shadow-sm: 0 2px 6px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 10px 30px rgb(0 0 0 / 0.32);
+  --shadow-lg: 0 18px 48px rgb(0 0 0 / 0.36);
+  --shadow-xl: 0 28px 80px rgb(0 0 0 / 0.42);
 
-  /* Transitions - Apple Ease */
-  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 220ms;
+  --duration-slow: 320ms;
+  --duration-slower: 450ms;
 
-  /* Accent Hover */
-  --accent-hover-color: var(--color-accent-hover-color);
+  --spacing-section: clamp(4rem, 6vw, 7rem);
+  --spacing-page: clamp(1.25rem, 3vw, 2rem);
+  --sidebar-width: 17rem;
+  --header-height: 4.5rem;
 
-  /* Semantic Colors (registered as theme tokens) */
-  --color-bg: var(--bg-color);
-  --color-surface: var(--surface-color);
-  --color-surface-hover: var(--surface-hover-color);
-  --color-border: var(--border-color);
-  --color-accent: var(--accent-color);
-  --color-accent-hover-color: var(--accent-hover-color);
-  --color-text: var(--text-color);
-  --color-text-secondary: var(--text-color-secondary);
-  --color-text-tertiary: var(--text-color-tertiary);
+  --animate-float-blob: float-blob 16s ease-in-out infinite;
+  --animate-shimmer: shimmer 3.6s linear infinite;
+  --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
+  --animate-fade-up: fade-up 500ms var(--ease-smooth) both;
 
-  /* Semantic Status Colors - Apple Human Interface */
-  --color-success: var(--success-color);
-  --color-success-hover: var(--success-hover-color);
-  --color-success-bg: var(--success-bg-color);
-  --color-success-border: var(--success-border-color);
-  --color-warning: var(--warning-color);
-  --color-warning-hover: var(--warning-hover-color);
-  --color-warning-bg: var(--warning-bg-color);
-  --color-warning-border: var(--warning-border-color);
-  --color-error: var(--error-color);
-  --color-error-hover: var(--error-hover-color);
-  --color-error-bg: var(--error-bg-color);
-  --color-error-border: var(--error-border-color);
-  --color-info: var(--info-color);
-  --color-info-hover: var(--info-hover-color);
-  --color-info-bg: var(--info-bg-color);
-  --color-info-border: var(--info-border-color);
+  @keyframes float-blob {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    33% {
+      transform: translate3d(3rem, -2rem, 0) scale(1.05);
+    }
+    66% {
+      transform: translate3d(-2rem, 2rem, 0) scale(0.96);
+    }
+  }
 
-  /* Custom Animations */
-  --animate-float-slow: float-slow 20s ease-in-out infinite;
-  --animate-float-medium: float-medium 15s ease-in-out infinite;
-  --animate-float-fast: float-fast 10s ease-in-out infinite;
-  --animate-fade-in-up: fade-in-up 0.6s ease-out forwards;
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(16 185 129 / 0.18);
+    }
+    50% {
+      box-shadow: 0 0 0 10px rgb(16 185 129 / 0);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
-/* Base Variables & Theme Setup - Apple Human Interface */
 :root {
-  /* Light Mode Palette */
-  --bg-color: #ffffff;
-  --surface-color: #f5f5f7;
-  --surface-hover-color: #e8e8ed;
-  --border-color: #d2d2d7;
-  --accent-color: #0071e3;
-  --accent-hover-color: #0077ed;
-  --text-color: #1d1d1f;
-  --text-color-secondary: #6e6e73;
-  --text-color-tertiary: #86868b;
-
-  /* Success - Green (Apple System Green) */
-  --success-color: #34c759;
-  --success-hover-color: #2db14e;
-  --success-bg-color: #e3f9e8;
-  --success-border-color: #b8e8c2;
-
-  /* Warning - Orange (Apple System Orange) */
-  --warning-color: #ff9500;
-  --warning-hover-color: #e68600;
-  --warning-bg-color: #fff4e6;
-  --warning-border-color: #ffd699;
-
-  /* Error - Red (Apple System Red) */
-  --error-color: #ff3b30;
-  --error-hover-color: #e5352b;
-  --error-bg-color: #ffe5e4;
-  --error-border-color: #ffb4b1;
-
-  /* Info - Blue (Apple System Blue) */
-  --info-color: #007aff;
-  --info-hover-color: #006ed6;
-  --info-bg-color: #e5f1ff;
-  --info-border-color: #99c7ff;
-
-  /* Syntax Highlighting - Light */
-  --hljs-color: #24292f;
-  --hljs-bg: #f6f8fa;
-  --hljs-comment: #6e7781;
-  --hljs-keyword: #cf222e;
-  --hljs-section: #0550ae;
-  --hljs-literal: #953800;
-  --hljs-string: #0a3069;
-  --hljs-title: #8250df;
-  --hljs-variable: #24292f;
-  --hljs-built_in: #0550ae;
-  --hljs-attr: #24292f;
-  --hljs-subst: #24292f;
-  --hljs-symbol: #cf222e;
-  --hljs-class: #953800;
-  --hljs-function: #8250df;
+  color-scheme: dark;
+  --background: #050505;
+  --foreground: #ebebeb;
+  --card: rgb(255 255 255 / 0.03);
+  --card-hover: rgb(255 255 255 / 0.06);
+  --card-foreground: #ebebeb;
+  --popover: rgb(8 8 8 / 0.96);
+  --popover-foreground: #ebebeb;
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-foreground: #04120d;
+  --secondary: rgb(255 255 255 / 0.08);
+  --secondary-foreground: #f6f6f3;
+  --muted: rgb(255 255 255 / 0.4);
+  --muted-foreground: rgb(255 255 255 / 0.72);
+  --border: rgb(255 255 255 / 0.1);
+  --input: rgb(255 255 255 / 0.12);
+  --ring: rgb(16 185 129 / 0.46);
+  --destructive: #ef4444;
+  --destructive-foreground: #fff5f5;
+  --warning: #f59e0b;
+  --warning-foreground: #140e03;
+  --info: #3b82f6;
+  --info-foreground: #eff6ff;
 }
 
-.dark {
-  /* Dark Mode Palette */
-  --bg-color: #000000;
-  --surface-color: #1c1c1e;
-  --surface-hover-color: #2c2c2e;
-  --border-color: #38383a;
-  --accent-color: #0a84ff;
-  --accent-hover-color: #409cff;
-  --text-color: #f5f5f7;
-  --text-color-secondary: #98989d;
-  --text-color-tertiary: #86868b;
-
-  /* Success - Green (Apple System Green Dark) */
-  --success-color: #30d158;
-  --success-hover-color: #28b747;
-  --success-bg-color: #0d2818;
-  --success-border-color: #1e5030;
-
-  /* Warning - Orange (Apple System Orange Dark) */
-  --warning-color: #ff9f0a;
-  --warning-hover-color: #e68a00;
-  --warning-bg-color: #2d1f0a;
-  --warning-border-color: #5c3f15;
-
-  /* Error - Red (Apple System Red Dark) */
-  --error-color: #ff453a;
-  --error-hover-color: #e53d33;
-  --error-bg-color: #2d0a0a;
-  --error-border-color: #5c1f1f;
-
-  /* Info - Blue (Apple System Blue Dark) */
-  --info-color: #0a84ff;
-  --info-hover-color: #409cff;
-  --info-bg-color: #0a1f3d;
-  --info-border-color: #1e4a80;
-
-  /* Syntax Highlighting - Dark */
-  --hljs-color: #c9d1d9;
-  --hljs-bg: #0d1117;
-  --hljs-comment: #8b949e;
-  --hljs-keyword: #ff7b72;
-  --hljs-section: #79c0ff;
-  --hljs-literal: #ffa657;
-  --hljs-string: #a5d6ff;
-  --hljs-title: #d2a8ff;
-  --hljs-variable: #c9d1d9;
-  --hljs-built_in: #79c0ff;
-  --hljs-attr: #c9d1d9;
-  --hljs-subst: #c9d1d9;
-  --hljs-symbol: #ff7b72;
-  --hljs-class: #ffa657;
-  --hljs-function: #d2a8ff;
-}
-
-/* Base Styles */
 @layer base {
   * {
-    border-color: var(--border-color);
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top, rgb(16 185 129 / 0.08), transparent 35%),
+      radial-gradient(
+        circle at 80% 20%,
+        rgb(59 130 246 / 0.05),
+        transparent 25%
+      ),
+      var(--background);
+    color: var(--foreground);
     font-family: var(--font-sans);
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
 
-  /* Selection Color */
   ::selection {
-    background-color: var(--accent-color);
-    color: white;
+    background: rgb(16 185 129 / 0.28);
+    color: var(--foreground);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif);
+    letter-spacing: -0.02em;
+    color: var(--foreground);
   }
 }
 
-/* Apple Style Components */
-@utility apple-card {
-  @apply bg-surface rounded-xl border border-border shadow-sm transition-all duration-200 ease-(--ease-apple);
-  &:hover {
-    @apply shadow-md;
-  }
+.container-shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: var(--spacing-page);
 }
 
-@utility apple-surface {
-  @apply bg-surface/50 rounded-lg border border-border;
+.section-shell {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 80rem;
+  padding-inline: var(--spacing-page);
+  padding-block: var(--spacing-section);
 }
 
-/* Text Utilities */
-@utility text-secondary {
-  @apply text-text-secondary;
+.surface-card {
+  @apply rounded-[var(--radius-lg)] border border-border bg-card shadow-sm backdrop-blur-sm;
 }
 
-@utility text-tertiary {
-  @apply text-text-tertiary;
+.glass-panel {
+  @apply rounded-[var(--radius-xl)] border border-white/10 bg-white/4 shadow-md backdrop-blur-xl;
 }
 
-@utility text-accent-custom {
-  @apply text-accent;
+.text-label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
-/* Button Utilities - Apple Style */
-@utility apple-btn {
-  @apply inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 ease-(--ease-apple) active:scale-[0.98];
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
 }
 
-@utility apple-btn-primary {
-  @apply apple-btn bg-accent;
-  &:hover {
-    @apply bg-accent-hover-color;
-  }
+.brand-gradient {
+  background-image: linear-gradient(
+    120deg,
+    #ebebeb 0%,
+    #10b981 45%,
+    #7dd3fc 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-@utility apple-btn-secondary {
-  @apply apple-btn bg-surface text-text border border-border hover:bg-surface-hover;
+.glow-button {
+  position: relative;
+  isolation: isolate;
 }
 
-@utility apple-btn-ghost {
-  @apply apple-btn bg-transparent text-text hover:bg-surface;
+.glow-button::before {
+  content: "";
+  position: absolute;
+  inset: -0.15rem;
+  border-radius: inherit;
+  background: rgb(16 185 129 / 0.28);
+  filter: blur(1rem);
+  opacity: 0.65;
+  z-index: -1;
 }
 
-/* Input Utilities - Apple Style */
-@utility apple-input {
-  @apply h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-text outline-none transition-all duration-200;
-  &::placeholder {
-    @apply text-text-tertiary;
-  }
-  &:focus {
-    @apply border-accent ring-2 ring-accent/20;
-  }
-  &:hover:not(:focus) {
-    border-color: var(--border-color);
-  }
+.shimmer-border {
+  position: relative;
+  overflow: hidden;
 }
 
-/* Custom Scrollbar - Apple Style */
-@media (min-width: 768px) {
-  ::-webkit-scrollbar {
-    @apply w-1.5 h-1.5;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600;
-  }
+.shimmer-border::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(16 185 129 / 0.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-normal) var(--ease-smooth);
 }
 
-/* Apple Typography */
-@utility apple-prose {
-  @apply prose prose-lg max-w-none;
-
-  /* Prose Color Mapping */
-  --tw-prose-body: var(--text-color);
-  --tw-prose-headings: var(--text-color);
-  --tw-prose-lead: var(--text-color-secondary);
-  --tw-prose-links: var(--accent-color);
-  --tw-prose-bold: var(--text-color);
-  --tw-prose-counters: var(--accent-color);
-  --tw-prose-bullets: var(--accent-color);
-  --tw-prose-hr: var(--border-color);
-  --tw-prose-quotes: var(--text-color);
-  --tw-prose-quote-borders: var(--accent-color);
-  --tw-prose-captions: var(--text-color-secondary);
-  --tw-prose-code: var(--accent-color);
-  --tw-prose-pre-code: var(--text-color);
-  --tw-prose-pre-bg: var(--surface-color);
-  --tw-prose-th-borders: var(--border-color);
-  --tw-prose-td-borders: var(--border-color);
-
-  /* Prose Element Styling */
-  & pre {
-    @apply bg-surface rounded-xl border border-border p-4;
-  }
-
-  & blockquote {
-    @apply border-l-4 border-accent bg-surface/50 p-4 rounded-r-xl not-italic;
-  }
-
-  & img {
-    @apply rounded-xl shadow-sm;
-  }
-
-  & a {
-    @apply no-underline hover:underline transition-colors duration-200 font-medium;
-  }
-
-  & :not(pre) > code {
-    @apply px-1.5 py-0.5 rounded-md text-sm font-mono bg-surface border border-border text-accent mx-0.5 align-middle;
-  }
-
-  /* Explicitly clear pseudo-elements for inline code to avoid artifacts */
-  & :not(pre) > code::before,
-  & :not(pre) > code::after {
-    content: none;
-  }
-
-  & pre code {
-    @apply bg-transparent border-none p-0;
-  }
-
-  & pre code::before,
-  & pre code::after {
-    content: none;
-  }
-
-  & h1,
-  & h2,
-  & h3,
-  & h4 {
-    @apply scroll-m-20 tracking-tight;
-  }
-
-  & h1 {
-    @apply text-3xl font-bold lg:text-4xl mb-8;
-  }
-
-  & h2 {
-    @apply text-2xl font-semibold border-b border-border pb-2 mt-10 mb-6;
-  }
-
-  & h3 {
-    @apply text-xl font-semibold mt-8 mb-4;
-  }
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
 }
 
-/* Code Block Wrapper & Copy Button - Apple Style */
-@utility code-block-wrapper {
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    480px circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    rgb(16 185 129 / 0.14),
+    transparent 42%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-slow) var(--ease-smooth);
+}
+
+.morph-blob {
+  @apply pointer-events-none absolute rounded-full blur-3xl;
+  animation: var(--animate-float-blob);
+  background: rgb(16 185 129 / 0.09);
+}
+
+.spotlight-card:hover::before,
+.spotlight-card:focus-within::before,
+.shimmer-border:hover::after,
+.shimmer-border:focus-within::after {
+  opacity: 1;
+}
+
+.prose-brand,
+.apple-prose {
+  @apply prose prose-invert max-w-none;
+  --tw-prose-body: rgb(235 235 235 / 0.86);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: rgb(235 235 235 / 0.72);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-counters: rgb(235 235 235 / 0.6);
+  --tw-prose-bullets: rgb(16 185 129 / 0.7);
+  --tw-prose-hr: var(--border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: rgb(16 185 129 / 0.4);
+  --tw-prose-captions: rgb(235 235 235 / 0.55);
+  --tw-prose-code: #b8ffd9;
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: rgb(255 255 255 / 0.03);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: rgb(255 255 255 / 0.06);
+}
+
+.prose-brand h1,
+.prose-brand h2,
+.prose-brand h3,
+.prose-brand h4,
+.apple-prose h1,
+.apple-prose h2,
+.apple-prose h3,
+.apple-prose h4 {
+  font-family: var(--font-serif);
+}
+
+.prose-brand h1,
+.apple-prose h1 {
+  @apply text-4xl font-semibold;
+}
+
+.prose-brand h2,
+.apple-prose h2 {
+  @apply mt-12 border-b border-border pb-3 text-3xl font-semibold;
+}
+
+.prose-brand h3,
+.apple-prose h3 {
+  @apply mt-10 text-2xl font-medium;
+}
+
+.prose-brand blockquote,
+.apple-prose blockquote {
+  @apply rounded-r-[var(--radius-lg)] border-l-2 border-primary bg-white/3 px-5 py-3 not-italic;
+}
+
+.prose-brand pre,
+.apple-prose pre {
+  @apply rounded-[var(--radius-lg)] border border-white/10 bg-black/30 p-4 shadow-sm;
+}
+
+.prose-brand :not(pre) > code,
+.apple-prose :not(pre) > code {
+  @apply rounded-md border border-white/10 bg-white/5 px-1.5 py-0.5 text-sm text-primary;
+}
+
+.prose-brand :not(pre) > code::before,
+.prose-brand :not(pre) > code::after,
+.apple-prose :not(pre) > code::before,
+.apple-prose :not(pre) > code::after,
+.prose-brand pre code::before,
+.prose-brand pre code::after,
+.apple-prose pre code::before,
+.apple-prose pre code::after {
+  content: none;
+}
+
+.code-block-wrapper {
   @apply relative;
 }
 
-@utility copy-code-btn {
-  @apply absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-text-tertiary opacity-0 transition-all duration-200 cursor-pointer;
-
-  .code-block-wrapper:hover & {
-    @apply opacity-100;
-  }
-
-  &:hover {
-    @apply bg-accent text-white border-accent;
-  }
-
-  &.copied {
-    @apply border-accent text-accent bg-surface opacity-100;
-  }
-
-  & .check-icon {
-    @apply hidden;
-  }
-
-  &.copied .copy-icon {
-    @apply hidden;
-  }
-
-  &.copied .check-icon {
-    @apply block;
-  }
+.copy-code-btn {
+  @apply absolute top-3 right-3 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-black/60
+    text-muted-foreground opacity-0 transition-all duration-[var(--duration-normal)] ease-[var(--ease-smooth)];
 }
 
-/* Highlight.js Custom Styles - Apple */
+.code-block-wrapper:hover .copy-code-btn {
+  @apply opacity-100;
+}
+
+.copy-code-btn:hover {
+  @apply border-primary/50 bg-primary/10 text-primary;
+}
+
+.copy-code-btn.copied {
+  @apply border-primary/50 bg-primary/10 text-primary opacity-100;
+}
+
+.copy-code-btn .check-icon {
+  @apply hidden;
+}
+
+.copy-code-btn.copied .copy-icon {
+  @apply hidden;
+}
+
+.copy-code-btn.copied .check-icon {
+  @apply block;
+}
+
 .hljs {
-  @apply block overflow-x-auto p-4 text-(--hljs-color) bg-transparent;
+  @apply block overflow-x-auto bg-transparent p-4 text-foreground;
 }
 
-.hljs-comment,
-.hljs-quote,
-.hljs-variable {
-  color: var(--hljs-comment);
-  font-style: italic;
-}
+@media (min-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+  }
 
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-built_in,
-.hljs-name,
-.hljs-tag {
-  color: var(--hljs-keyword);
-}
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
 
-.hljs-string,
-.hljs-title,
-.hljs-section,
-.hljs-attribute,
-.hljs-literal,
-.hljs-template-tag,
-.hljs-template-variable,
-.hljs-type,
-.hljs-addition {
-  color: var(--hljs-string);
-}
+  ::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.12);
+  }
 
-.hljs-deletion,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-meta {
-  color: var(--hljs-section);
-}
-
-.hljs-doctag {
-  color: var(--hljs-literal);
-}
-
-.hljs-attr {
-  color: var(--hljs-attr);
-}
-
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link {
-  color: var(--hljs-symbol);
-}
-
-.hljs-emphasis {
-  font-style: italic;
-}
-
-.hljs-strong {
-  font-weight: bold;
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(255 255 255 / 0.2);
+  }
 }

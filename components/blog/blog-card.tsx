@@ -13,25 +13,32 @@ interface BlogCardProps {
 export function BlogCard({ blog }: BlogCardProps) {
   return (
     <Card
+      variant="article"
       className={`
-        group overflow-hidden rounded-2xl p-0 transition-all duration-300 ease-apple
-        hover:-translate-y-0.5 hover:shadow-lg
+        group overflow-hidden p-0
+        hover:-translate-y-1 hover:border-primary/20 hover:shadow-lg
       `}
     >
-      <Link href={`/blog/${blog.slug}`} className="flex gap-4">
+      <Link
+        href={`/blog/${blog.slug}`}
+        className={`
+          flex flex-col gap-0
+          md:flex-row
+        `}
+      >
         {/* 封面图 */}
         {blog.cover && (
           <div
             className={`
-              relative h-40 w-40 shrink-0 overflow-hidden
-              sm:h-48 sm:w-48
+              relative aspect-[16/10] shrink-0 overflow-hidden
+              md:h-auto md:w-60
             `}
           >
             <Image
               src={blog.cover}
               alt={blog.title}
-              width={192}
-              height={192}
+              fill
+              sizes="(min-width: 768px) 240px, 100vw"
               className={`
                 h-full w-full object-cover transition-transform duration-500
                 group-hover:scale-105
@@ -41,19 +48,22 @@ export function BlogCard({ blog }: BlogCardProps) {
         )}
 
         {/* 内容区 */}
-        <div className="flex flex-1 flex-col gap-2 p-4">
+        <div className={`
+          flex flex-1 flex-col gap-3 p-5
+          md:p-6
+        `}>
           {/* 标题 */}
           <h3
             className={`
-              line-clamp-1 text-lg font-semibold text-text transition-colors
-              group-hover:text-accent
+              line-clamp-2 font-serif text-2xl text-foreground transition-colors
+              group-hover:text-primary
             `}
           >
             {blog.title}
           </h3>
 
           {/* 描述 */}
-          <Text type="secondary" className="line-clamp-2 text-sm">
+          <Text type="secondary" className="line-clamp-3 text-sm leading-6">
             {blog.description}
           </Text>
 
@@ -61,7 +71,7 @@ export function BlogCard({ blog }: BlogCardProps) {
           <div className="mt-auto flex flex-wrap items-center gap-2">
             {/* 分类 */}
             {blog.category && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge variant="success" className="text-xs">
                 {blog.category.name}
               </Badge>
             )}
@@ -74,7 +84,7 @@ export function BlogCard({ blog }: BlogCardProps) {
             ))}
 
             {/* 时间 */}
-            <Text type="secondary" size="sm" className="ml-auto">
+            <Text type="secondary" size="sm" className="ml-auto font-mono">
               {formatSimpleDate(new Date(blog.createdAt))}
             </Text>
           </div>
