@@ -3,8 +3,8 @@
 }
 
 .bytemd .CodeMirror,
-bytemd code,
-bytemd kbd {
+.bytemd code,
+.bytemd kbd {
   @apply !font-mono;
 }
 
