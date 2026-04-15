@@ -6,6 +6,8 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
+import { CmsSettingsNav } from "@/components/cms/cms-settings-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -111,33 +113,20 @@ export function CmsSettingsManager() {
   return (
     <div className={`
       grid gap-8
-      xl:grid-cols-[240px_1fr]
+      xl:grid-cols-[280px_1fr]
     `}>
       <aside className="xl:sticky xl:top-28 xl:h-fit">
-        <div className="glass-card rounded-2xl border border-white/8 p-3">
-          {sections.map((section) => (
-            <button
-              key={section}
-              className={activeSection === section ? `
-                mb-1 flex w-full items-center gap-3 rounded-xl bg-primary/10 px-4 py-3 text-sm text-primary
-              ` : `
-                mb-1 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-muted transition
-                hover:bg-white/6 hover:text-foreground
-              `}
-              type="button"
-              onClick={() => {
-                setActiveSection(section);
-                document.getElementById(getSectionId(section))?.scrollIntoView({
-                  behavior: "smooth",
-                  block: "start",
-                });
-              }}
-            >
-              <span>•</span>
-              {section}
-            </button>
-          ))}
-        </div>
+        <CmsSettingsNav
+          activeSection={activeSection}
+          sections={sections}
+          onSectionChange={(section) => {
+            setActiveSection(section);
+            document.getElementById(getSectionId(section))?.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }}
+        />
       </aside>
 
       <form className="space-y-8" onSubmit={handleSubmit}>
@@ -326,7 +315,10 @@ export function CmsSettingsManager() {
         </SettingsSection>
 
         <div className={`
-          sticky bottom-6 z-10 flex flex-col gap-3 rounded-2xl border border-white/8 bg-popover/90 p-4 backdrop-blur-xl
+          flex flex-col gap-3 rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+          p-4
           sm:flex-row sm:items-center sm:justify-between
         `}>
           <div className="text-sm text-muted">
@@ -361,13 +353,9 @@ function SettingsSection({
   title: string;
 }) {
   return (
-    <section id={id} className="glass-card scroll-mt-28 overflow-hidden rounded-2xl border border-white/8">
-      <div className="border-b border-white/8 px-6 py-5">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <p className="mt-1 text-sm text-muted">{description}</p>
-      </div>
-      <div className="p-6">{children}</div>
-    </section>
+    <CmsSectionPanel description={description} id={id} title={title}>
+      {children}
+    </CmsSectionPanel>
   );
 }
 
@@ -417,12 +405,25 @@ function SettingsSkeleton() {
   return (
     <div className={`
       grid gap-8
-      xl:grid-cols-[240px_1fr]
+      xl:grid-cols-[280px_1fr]
     `}>
-      <div className="h-64 animate-pulse rounded-2xl bg-white/5" />
+      <div
+        className={`
+          h-64 animate-pulse rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+        `}
+      />
       <div className="space-y-8">
         {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="h-72 animate-pulse rounded-2xl bg-white/5" />
+          <div
+            key={index}
+            className={`
+              h-72 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+            `}
+          />
         ))}
       </div>
     </div>
@@ -438,7 +439,9 @@ function SettingsError({
 }) {
   return (
     <div className={`
-      glass-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/8
+      flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border
+      border-[color:var(--color-line-default)]
+      bg-[color:var(--color-surface-1)]
     `}>
       <Settings2 className="size-10 text-muted" />
       <p className="max-w-md text-center text-sm text-muted">{error.message || "加载设置失败。"}</p>
