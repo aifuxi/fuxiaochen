@@ -118,11 +118,23 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
       <CmsEditorLayout
         primary={
           <>
-            <div className="h-56 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-            <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+            <div className={`
+              h-56 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
+            <div className={`
+              h-[720px] animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
           </>
         }
-        sidebar={<div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />}
+        sidebar={<div className={`
+          h-[720px] animate-pulse rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+        `} />}
       />
     );
   }
@@ -211,7 +223,12 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
             <div className="space-y-5">
               {values.items.length > 0 ? (
                 values.items.map((item, index) => (
-                  <div key={index} className="rounded-2xl border border-white/8 bg-white/3 p-5">
+                  <div key={index} className={`
+                    rounded-2xl border
+                    border-[color:var(--color-line-default)]
+                    bg-[color:var(--color-surface-1)]
+                    p-5
+                  `}>
                     <div className="mb-4 flex items-center justify-between">
                       <Badge variant="muted">条目 {index + 1}</Badge>
                       <Button
@@ -328,7 +345,10 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
           <CmsSectionPanel title="版本设置">
             <div className="space-y-5">
               <label className={`
-                flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+                flex items-center gap-3 rounded-2xl border
+                border-[color:var(--color-line-default)]
+                bg-[color:var(--color-surface-1)]
+                p-4 text-sm text-foreground
               `}>
                 <Checkbox
                   checked={values.isMajor}

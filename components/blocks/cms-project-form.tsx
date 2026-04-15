@@ -117,11 +117,23 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
       <CmsEditorLayout
         primary={
           <>
-            <div className="h-64 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-            <div className="h-96 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+            <div className={`
+              h-64 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
+            <div className={`
+              h-96 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
           </>
         }
-        sidebar={<div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />}
+        sidebar={<div className={`
+          h-[720px] animate-pulse rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+        `} />}
       />
     );
   }
@@ -295,7 +307,10 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
           <CmsSectionPanel title="展示设置">
             <div className="space-y-5">
               <label className={`
-                flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+                flex items-center gap-3 rounded-2xl border
+                border-[color:var(--color-line-default)]
+                bg-[color:var(--color-surface-1)]
+                p-4 text-sm text-foreground
               `}>
                 <Checkbox
                   checked={values.isFeatured}

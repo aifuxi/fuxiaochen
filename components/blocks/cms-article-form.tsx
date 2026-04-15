@@ -134,11 +134,23 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
       <CmsEditorLayout
         primary={
           <>
-            <div className="h-56 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-            <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+            <div className={`
+              h-56 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
+            <div className={`
+              h-[720px] animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `} />
           </>
         }
-        sidebar={<div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />}
+        sidebar={<div className={`
+          h-[720px] animate-pulse rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+        `} />}
       />
     );
   }
@@ -240,7 +252,12 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 />
               </TabsContent>
               <TabsContent value="preview">
-                <div className="rounded-[1.8rem] border border-white/8 bg-white/3 p-6">
+                <div className={`
+                  rounded-[1.8rem] border
+                  border-[color:var(--color-line-default)]
+                  bg-[color:var(--color-surface-1)]
+                  p-6
+                `}>
                   <div className="prose max-w-none prose-invert">
                     <MarkdownViewer value={values.contentMarkdown} />
                   </div>
@@ -313,7 +330,12 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
               </Field>
 
               <Field label="标签">
-                <div className="space-y-2 rounded-2xl border border-white/8 bg-white/3 p-4">
+                <div className={`
+                  space-y-2 rounded-2xl border
+                  border-[color:var(--color-line-default)]
+                  bg-[color:var(--color-surface-1)]
+                  p-4
+                `}>
                   {tags.length > 0 ? (
                     tags.map((tag) => (
                       <label key={tag.id} className="flex items-center gap-3 text-sm text-foreground">
@@ -338,7 +360,10 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
               </Field>
 
               <label className={`
-                flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+                flex items-center gap-3 rounded-2xl border
+                border-[color:var(--color-line-default)]
+                bg-[color:var(--color-surface-1)]
+                p-4 text-sm text-foreground
               `}>
                 <Checkbox
                   checked={values.isFeatured}

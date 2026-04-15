@@ -120,8 +120,10 @@ export function CmsSettingsManager() {
           activeSection={activeSection}
           sections={sections}
           onSectionChange={(section) => {
-            setActiveSection(section);
-            document.getElementById(getSectionId(section))?.scrollIntoView({
+            const nextSection = section as (typeof sections)[number];
+
+            setActiveSection(nextSection);
+            document.getElementById(getSectionId(nextSection))?.scrollIntoView({
               behavior: "smooth",
               block: "start",
             });
