@@ -3,13 +3,20 @@ import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+export const badgeBaseClassName =
+  "inline-flex items-center rounded-lg border px-2.5 py-1 font-mono text-[11px] tracking-[0.24em] uppercase";
+export const badgePrimaryClassName =
+  "border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] text-primary";
+export const badgeMutedClassName =
+  "border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] text-muted";
+
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-3 py-1 font-mono text-[11px] tracking-[0.24em] uppercase",
+  badgeBaseClassName,
   {
     variants: {
       variant: {
-        primary: "border-primary/25 bg-primary/12 text-primary",
-        muted: "border-white/8 bg-white/4 text-muted",
+        primary: badgePrimaryClassName,
+        muted: badgeMutedClassName,
         success: "border-emerald-400/20 bg-emerald-400/12 text-emerald-300",
         warning: "border-amber-400/20 bg-amber-400/12 text-amber-200",
         destructive: "border-red-400/20 bg-red-400/12 text-red-200",

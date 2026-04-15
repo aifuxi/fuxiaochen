@@ -8,7 +8,11 @@ export function Table({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-white/8 bg-white/3",
+        `
+          overflow-hidden rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+        `,
         className,
       )}
       {...props}
@@ -32,7 +36,7 @@ export function TableHead({
   className,
   ...props
 }: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className={cn("bg-white/4", className)} {...props} />;
+  return <thead className={cn("bg-transparent", className)} {...props} />;
 }
 
 export function TableBody({
@@ -53,7 +57,7 @@ export function TableRow({
       className={cn(
         `
           transition-colors
-          hover:bg-white/4
+          hover:bg-[color:var(--color-surface-2)]
         `,
         className,
       )}

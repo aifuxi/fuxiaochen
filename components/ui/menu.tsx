@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 
 export const DropdownMenu = BaseMenu.Root;
 export const DropdownMenuTrigger = BaseMenu.Trigger;
+export const dropdownMenuContentClassName =
+  "min-w-56 rounded-[1.4rem] border border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] p-2 shadow-[0_30px_80px_rgba(0,0,0,0.42)]";
 
 export function DropdownMenuContent({
   className,
@@ -16,16 +18,7 @@ export function DropdownMenuContent({
   return (
     <BaseMenu.Portal>
       <BaseMenu.Positioner sideOffset={10}>
-        <BaseMenu.Popup
-          className={cn(
-            `
-              min-w-56 rounded-[1.4rem] border border-white/10 bg-popover p-2 shadow-[0_30px_80px_rgba(0,0,0,0.42)]
-              backdrop-blur-xl
-            `,
-            className,
-          )}
-          {...props}
-        />
+        <BaseMenu.Popup className={cn(dropdownMenuContentClassName, className)} {...props} />
       </BaseMenu.Positioner>
     </BaseMenu.Portal>
   );
@@ -41,7 +34,7 @@ export function DropdownMenuItem({
       className={cn(
         `
           flex cursor-default items-center rounded-2xl px-3 py-2 text-sm text-muted transition-colors outline-none
-          data-[highlighted]:bg-white/6 data-[highlighted]:text-foreground
+          data-[highlighted]:bg-[color:var(--color-line-default)] data-[highlighted]:text-foreground
         `,
         inset && "pl-8",
         className,
@@ -56,7 +49,7 @@ export function DropdownMenuLinkItem(props: React.ComponentPropsWithoutRef<typeo
     <BaseMenu.LinkItem
       className={`
         flex cursor-default items-center rounded-2xl px-3 py-2 text-sm text-muted transition-colors outline-none
-        data-[highlighted]:bg-white/6 data-[highlighted]:text-foreground
+        data-[highlighted]:bg-[color:var(--color-line-default)] data-[highlighted]:text-foreground
       `}
       {...props}
     />
@@ -69,7 +62,7 @@ export function DropdownMenuSubTrigger(props: React.ComponentPropsWithoutRef<typ
       className={`
         flex cursor-default items-center justify-between rounded-2xl px-3 py-2 text-sm text-muted transition-colors
         outline-none
-        data-[highlighted]:bg-white/6 data-[highlighted]:text-foreground
+        data-[highlighted]:bg-[color:var(--color-line-default)] data-[highlighted]:text-foreground
       `}
       {...props}
     >

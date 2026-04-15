@@ -4,6 +4,9 @@ import * as React from "react";
 import { Input as BaseInput } from "@base-ui/react/input";
 import { cn } from "@/lib/utils";
 
+export const inputFrameClassName =
+  "flex h-12 items-center gap-3 rounded-xl border border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] px-4 text-sm transition-all focus-within:border-primary/60 focus-within:ring-4 focus-within:ring-primary/10";
+
 type InputProps = React.ComponentPropsWithoutRef<typeof BaseInput> & {
   startAdornment?: React.ReactNode;
 };
@@ -11,16 +14,10 @@ type InputProps = React.ComponentPropsWithoutRef<typeof BaseInput> & {
 export const Input = React.forwardRef<
   React.ElementRef<typeof BaseInput>,
   InputProps
->(({ className, startAdornment, ...props }, ref) => {
+  >(({ className, startAdornment, ...props }, ref) => {
   return (
     <div
-      className={cn(
-        `
-          flex h-12 items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 text-sm transition-all
-          focus-within:border-primary/60 focus-within:bg-white/7 focus-within:ring-4 focus-within:ring-primary/10
-        `,
-        className,
-      )}
+      className={cn(inputFrameClassName, className)}
     >
       {startAdornment ? (
         <div className="text-muted">{startAdornment}</div>

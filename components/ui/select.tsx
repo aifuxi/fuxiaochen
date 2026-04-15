@@ -10,6 +10,12 @@ type SelectOption = {
   value: string;
 };
 
+export const selectTriggerClassName =
+  "flex h-12 w-full items-center justify-between rounded-xl border border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] px-4 text-sm text-foreground transition-all outline-none focus-visible:border-primary/60 focus-visible:ring-4 focus-visible:ring-primary/10";
+
+export const selectPopupClassName =
+  "min-w-[var(--anchor-width)] rounded-[1.4rem] border border-[color:var(--color-line-default)] bg-[color:var(--color-surface-1)] p-2 shadow-[0_30px_80px_rgba(0,0,0,0.4)]";
+
 type SelectProps = React.ComponentPropsWithoutRef<typeof BaseSelect.Root> & {
   options: SelectOption[];
   placeholder?: string;
@@ -25,14 +31,7 @@ export function Select({
   return (
     <BaseSelect.Root {...props}>
       <BaseSelect.Trigger
-        className={cn(
-          `
-            flex h-12 w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 text-sm
-            text-foreground transition-all outline-none
-            focus-visible:border-primary/60 focus-visible:ring-4 focus-visible:ring-primary/10
-          `,
-          className,
-        )}
+        className={cn(selectTriggerClassName, className)}
       >
         <BaseSelect.Value
           className={`
@@ -48,12 +47,7 @@ export function Select({
       </BaseSelect.Trigger>
       <BaseSelect.Portal>
         <BaseSelect.Positioner sideOffset={8}>
-          <BaseSelect.Popup
-            className={`
-              min-w-[var(--anchor-width)] rounded-[1.4rem] border border-white/10 bg-popover p-2
-              shadow-[0_30px_80px_rgba(0,0,0,0.4)] backdrop-blur-xl
-            `}
-          >
+          <BaseSelect.Popup className={selectPopupClassName}>
             <BaseSelect.List className="space-y-1">
               {options.map((option) => (
                 <BaseSelect.Item
@@ -61,7 +55,7 @@ export function Select({
                   className={`
                     flex cursor-default items-center justify-between rounded-2xl px-3 py-2 text-sm text-muted
                     transition-colors outline-none
-                    data-[highlighted]:bg-white/6 data-[highlighted]:text-foreground
+                    data-[highlighted]:bg-[color:var(--color-line-default)] data-[highlighted]:text-foreground
                     data-[selected]:text-foreground
                   `}
                   value={option.value}
