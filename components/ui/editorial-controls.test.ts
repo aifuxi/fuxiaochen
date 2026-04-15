@@ -1,19 +1,24 @@
+import { createElement, type ReactElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { inputFrameClassName } from "./input";
-import { textareaClassName } from "./textarea";
-import { selectPopupClassName, selectTriggerClassName } from "./select";
-import { dialogBackdropClassName, dialogSurfaceClassName } from "./dialog";
-import { dropdownMenuContentClassName } from "./menu";
+import { avatarClassName, Avatar } from "./avatar";
 import {
+  Badge,
   badgeBaseClassName,
   badgeMutedClassName,
   badgePrimaryClassName,
 } from "./badge";
-import { switchRootClassName } from "./switch";
-import { tabsListClassName, tabsTriggerClassName } from "./tabs";
-import { avatarClassName } from "./avatar";
-import { checkboxClassName } from "./checkbox";
+import { checkboxClassName, Checkbox } from "./checkbox";
+import { dialogBackdropClassName, dialogSurfaceClassName } from "./dialog";
+import { inputFrameClassName, Input } from "./input";
+import { dropdownMenuContentClassName } from "./menu";
+import { selectPopupClassName, selectTriggerClassName, Select } from "./select";
+import { switchRootClassName, switchThumbClassName, Switch } from "./switch";
+import { tabsListClassName, Tabs, TabsContent, TabsList, tabsTriggerClassName, TabsTrigger } from "./tabs";
+import { textareaClassName, Textarea } from "./textarea";
+
+const renderMarkup = (element: ReactElement) => renderToStaticMarkup(element);
 
 describe("editorial controls surface contracts", () => {
   it("uses the surface token for input", () => {
@@ -64,5 +69,52 @@ describe("editorial controls surface contracts", () => {
     expect(checkboxClassName).toContain("border-[color:var(--color-line-default)]");
     expect(avatarClassName).toContain("bg-[color:var(--color-surface-1)]");
     expect(avatarClassName).toContain("border-[color:var(--color-line-default)]");
+  });
+
+  it("renders contract classes into stable component markup", () => {
+    const inputMarkup = renderMarkup(createElement(Input, { placeholder: "标题" }));
+    const textareaMarkup = renderMarkup(createElement(Textarea, { defaultValue: "摘要" }));
+    const selectMarkup = renderMarkup(
+      createElement(Select, {
+        defaultValue: "draft",
+        options: [
+          { label: "Draft", value: "draft" },
+          { label: "Published", value: "published" },
+        ],
+      }),
+    );
+    const badgeMarkup = renderMarkup(createElement(Badge, { variant: "primary" }, "Featured"));
+    const avatarMarkup = renderMarkup(createElement(Avatar, { alt: "Codex", fallback: "CX" }));
+
+    expect(inputMarkup).toContain(inputFrameClassName);
+    expect(textareaMarkup).toContain(textareaClassName);
+    expect(selectMarkup).toContain(selectTriggerClassName);
+    expect(badgeMarkup).toContain(badgeBaseClassName);
+    expect(badgeMarkup).toContain(badgePrimaryClassName);
+    expect(avatarMarkup).toContain(avatarClassName);
+  });
+
+  it("renders tabs, checkbox, and switch with their contract classes", () => {
+    const tabsMarkup = renderMarkup(
+      createElement(
+        Tabs,
+        { defaultValue: "overview" },
+        createElement(
+          TabsList,
+          null,
+          createElement(TabsTrigger, { value: "overview" }, "Overview"),
+          createElement(TabsTrigger, { value: "settings" }, "Settings"),
+        ),
+        createElement(TabsContent, { value: "overview" }, "Overview panel"),
+      ),
+    );
+    const checkboxMarkup = renderMarkup(createElement(Checkbox, { defaultChecked: true }));
+    const switchMarkup = renderMarkup(createElement(Switch, { defaultChecked: true }));
+
+    expect(tabsMarkup).toContain(tabsListClassName);
+    expect(tabsMarkup).toContain(tabsTriggerClassName);
+    expect(checkboxMarkup).toContain(checkboxClassName);
+    expect(switchMarkup).toContain(switchRootClassName);
+    expect(switchMarkup).toContain(switchThumbClassName);
   });
 });
