@@ -143,7 +143,7 @@ export function CmsSettingsManager() {
       <form className="space-y-8" onSubmit={handleSubmit}>
         <SettingsSection
           description="站点标识、元数据和默认发布信息。"
-          id={getSectionId("General")}
+          id={getSectionId("常规")}
           title="常规设置"
         >
           <div className={`
@@ -191,7 +191,7 @@ export function CmsSettingsManager() {
 
         <SettingsSection
           description="主题、排版、颜色和本地化默认值。"
-          id={getSectionId("Appearance")}
+          id={getSectionId("外观")}
           title="外观"
         >
           <div className={`
@@ -265,7 +265,7 @@ export function CmsSettingsManager() {
 
         <SettingsSection
           description="读者讨论、审核队列和回复深度控制。"
-          id={getSectionId("Comments")}
+          id={getSectionId("评论")}
           title="评论"
         >
           <div className="divide-y divide-white/8">
@@ -312,7 +312,7 @@ export function CmsSettingsManager() {
 
         <SettingsSection
           description="分析和外部服务标识符。"
-          id={getSectionId("Integrations")}
+          id={getSectionId("集成")}
           title="集成"
         >
           <Field label="Google Analytics ID">

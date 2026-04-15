@@ -1,38 +1,31 @@
 import Image from "next/image";
 
 import { FriendLinkApplicationForm } from "@/components/blocks/friend-link-application-form";
+import { SiteSectionHeading } from "@/components/blocks/site-section-heading";
 import { listPublicFriendLinks } from "@/lib/public/public-content-client";
 
 export default async function FriendsPage() {
   const friendLinks = await listPublicFriendLinks({ page: 1, pageSize: 50 });
 
   return (
-    <div>
-      <section className="relative px-8 pt-32 pb-16">
+    <div className="space-y-14 pb-24">
+      <section className="px-8 pt-32">
         <div className="mx-auto max-w-4xl">
-          <span className="font-mono-tech text-primary-accent mb-4 block text-xs tracking-widest uppercase">连接</span>
-          <h1 className={`
-            font-serif text-5xl tracking-tighter
-            lg:text-6xl
-          `} style={{ lineHeight: 0.95 }}>
-            朋友们
-          </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-            与志同道合的创作者建立连接。这里收录了优秀的个人博客和项目，每一行链接都是一次思想的碰撞。
-          </p>
-
-          <div className="glass-card mt-10 rounded-2xl border border-white/10 p-6">
-            <div className="flex items-start gap-4">
-              <div className={`
-                text-primary-accent flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-primary/10
-              `}>⌘</div>
-              <div>
-                <h3 className="font-mono-tech mb-2 text-sm font-semibold">如何添加友链</h3>
-                <ul className="space-y-2 text-sm text-muted">
-                  <li className="flex items-start gap-2"><span className="text-primary-accent">01</span><span>网站内容为原创，遵守法律法规和道德规范</span></li>
-                  <li className="flex items-start gap-2"><span className="text-primary-accent">02</span><span>网站有自己的持续更新内容，非纯导航页</span></li>
-                  <li className="flex items-start gap-2"><span className="text-primary-accent">03</span><span>网站设计美观，无恶意弹窗或广告</span></li>
-                  <li className="flex items-start gap-2"><span className="text-primary-accent">04</span><span>在下方表单提交申请，我会尽快处理</span></li>
+          <div className="space-y-8">
+            <SiteSectionHeading
+              description="这里收录的是我认可的个人博客、作品集和独立项目链接。"
+              eyebrow="Connections / 友链"
+              meta={`${friendLinks.total} 个链接`}
+              title="朋友们"
+            />
+            <div className="glass-card rounded-[2rem] border border-white/10 p-6">
+              <div className="space-y-4">
+                <div className="font-mono-tech text-[11px] tracking-[0.22em] text-muted uppercase">申请说明</div>
+                <ul className="space-y-3 text-sm leading-7 text-muted">
+                  <li>网站内容以原创为主，遵守法律法规与基本公序良俗。</li>
+                  <li>网站保持持续更新，不是纯导航页或一次性项目页。</li>
+                  <li>页面设计与内容表达清晰，没有明显骚扰性广告或弹窗。</li>
+                  <li>如符合上述条件，可以直接在下方表单提交申请。</li>
                 </ul>
               </div>
             </div>
@@ -40,7 +33,7 @@ export default async function FriendsPage() {
         </div>
       </section>
 
-      <section className="relative px-8 pb-32">
+      <section className="px-8">
         <div className={`
           mx-auto grid max-w-4xl gap-6
           md:grid-cols-2
@@ -48,8 +41,8 @@ export default async function FriendsPage() {
         `}>
           {friendLinks.items.map((friend) => (
             <a key={friend.id} className={`
-              glass-card block rounded-2xl border border-white/10 p-6 transition-transform duration-300
-              hover:-translate-y-1
+              glass-card block rounded-[1.75rem] border border-white/10 p-6 transition-colors
+              hover:border-primary/30
             `} href={friend.siteUrl}>
               <div className="mb-4 flex items-center gap-4">
                 {friend.avatarUrl ? (
@@ -66,29 +59,34 @@ export default async function FriendsPage() {
                   </div>
                 )}
                 <div>
-                  <h4 className="font-mono-tech text-sm font-semibold">{friend.siteName}</h4>
-                  <p className="text-xs text-muted">{friend.role}</p>
+                  <h4 className="font-serif text-xl tracking-[-0.03em] text-foreground">{friend.siteName}</h4>
+                  <p className="font-mono-tech text-[11px] tracking-[0.18em] text-muted uppercase">{friend.role}</p>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed text-muted">{friend.description}</p>
+              <p className="text-sm leading-7 text-muted">{friend.description}</p>
               <div className="text-primary-accent mt-4 flex items-center gap-2 text-xs">
                 <span>⌁</span>
-                <span className="font-mono-tech">{friend.domain}</span>
+                <span className="font-mono-tech tracking-[0.18em]">{friend.domain}</span>
               </div>
             </a>
           ))}
         </div>
       </section>
 
-      <section className="relative px-8 pb-32">
+      <section className="px-8">
         <div className="mx-auto max-w-4xl">
-          <div className="glass-card rounded-2xl border border-white/10 p-8">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="text-primary-accent flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">✉</div>
-              <h2 className="font-serif text-2xl tracking-tight">申请友链</h2>
+          <div className="space-y-8">
+            <SiteSectionHeading
+              description="如果你的站点也在认真更新，欢迎提交申请。"
+              eyebrow="Apply / 申请"
+              title="提交友链申请"
+            />
+            <div className="glass-card rounded-[2rem] border border-white/10 p-8">
+              <p className="mb-8 max-w-2xl text-sm leading-7 text-muted">
+                填写下面的信息后，我会按顺序查看申请。只要信息完整且符合上面的条件，通常都能很快处理。
+              </p>
+              <FriendLinkApplicationForm />
             </div>
-            <p className="mb-8 text-sm text-muted">填写以下信息提交友链申请，我会尽快处理。请确保您的网站符合上述要求。</p>
-            <FriendLinkApplicationForm />
           </div>
         </div>
       </section>

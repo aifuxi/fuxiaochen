@@ -1,8 +1,3 @@
-"use client";
-
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-
 type ArticleStatsPanelProps = {
   authorName: string;
   authorAvatar: string;
@@ -24,87 +19,39 @@ export function ArticleStatsPanel({
   readTime,
   title,
 }: ArticleStatsPanelProps) {
-  const [liked, setLiked] = useState(false);
-  const [likes, setLikes] = useState(initialLikes);
-
-  const toggleLike = () => {
-    setLiked((current) => {
-      const next = !current;
-      setLikes((value) => value + (next ? 1 : -1));
-      return next;
-    });
-  };
-
   return (
-    <>
-      <section className="px-8 py-12">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="hero-label-dot" />
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">{category}</span>
-          </div>
-
-          <h1 className="article-title mb-8 font-serif">{title}</h1>
-
-          <div className="author-meta flex flex-wrap items-center gap-6">
-            <img
-              alt="Author avatar"
-              className="h-12 w-12 rounded-full border-2 border-white/8 object-cover"
-              src={authorAvatar}
-            />
-            <div className="flex items-center gap-3">
-              <span className="author-name">{authorName}</span>
-              <span className="meta-divider">•</span>
-              <span className="text-sm text-muted">{date}</span>
-              <span className="meta-divider">•</span>
-              <span className="text-sm text-muted">{readTime}</span>
-            </div>
-            <div className="ml-auto flex items-center gap-4">
-              <div className="flex items-center gap-2 text-muted">
-                <span>◔</span>
-                <span className="font-mono-tech text-sm">{initialViews.toLocaleString()}</span>
-              </div>
-              <button className="flex items-center gap-2 text-muted" type="button" onClick={toggleLike}>
-                <span className={cn(liked ? "text-primary" : "")}>♥</span>
-                <span className="font-mono-tech text-sm">{likes}</span>
-              </button>
-            </div>
-          </div>
+    <section className={`
+      px-6 pt-8
+      sm:px-8
+    `}>
+      <div className="mx-auto max-w-6xl border-b border-white/8 pb-6">
+        <div className="flex flex-wrap items-center gap-3 text-[11px] tracking-[0.22em] text-muted uppercase">
+          <span>{category}</span>
+          <span className="text-white/20">/</span>
+          <span>文章信息</span>
         </div>
-      </section>
 
-      <section className="px-8 pb-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="glass-card shimmer-border flex items-center justify-between p-8">
-            <button
-              className={cn(
-                `
-                  flex items-center gap-3 rounded-full border border-white/10 px-8 py-4 transition-all duration-300
-                  hover:border-primary/50
-                `,
-                liked && "border-primary/50 bg-primary/8",
-              )}
-              type="button"
-              onClick={toggleLike}
-            >
-              <span className={cn("transition-colors", liked ? "text-primary" : "text-primary-accent")}>♥</span>
-              <span className="font-mono-tech text-sm">喜欢这篇文章</span>
-              <span className="font-mono-tech text-sm text-muted">{likes}</span>
-            </button>
+        <h1 className={`
+          mt-4 max-w-4xl font-serif text-4xl leading-tight text-balance
+          sm:text-5xl
+        `}>{title}</h1>
 
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-muted">
-                <span>◔</span>
-                <span className="font-mono-tech text-sm">{initialViews.toLocaleString()} 次阅读</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted">
-                <span>◷</span>
-                <span className="font-mono-tech text-sm">{readTime}</span>
-              </div>
-            </div>
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted">
+          <div className="flex items-center gap-3">
+            <img alt={authorName} className="h-10 w-10 rounded-full border border-white/10 object-cover" src={authorAvatar} />
+            <span className="font-medium text-foreground">{authorName}</span>
           </div>
+          <p className="leading-6 text-muted">
+            <span>{date}</span>
+            <span className="mx-2 text-white/20">·</span>
+            <span>{readTime}</span>
+            <span className="mx-2 text-white/20">·</span>
+            <span>{initialViews.toLocaleString()} 次阅读</span>
+            <span className="mx-2 text-white/20">·</span>
+            <span>{initialLikes.toLocaleString()} 次喜欢</span>
+          </p>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

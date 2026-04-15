@@ -32,6 +32,14 @@ const { PrismaClient } = await import(
 );
 const prisma = new PrismaClient({ adapter });
 
+type SeedChangelogItemType = "Added" | "Fixed" | "Changed" | "Improved";
+
+type SeedChangelogItem = {
+  description: string;
+  title: string;
+  type: SeedChangelogItemType;
+};
+
 async function main() {
   console.log("🌱 Starting seed...");
 
@@ -152,11 +160,15 @@ async function main() {
   console.log("✅ Seed completed!");
 }
 
-function parseChangelogContent(content) {
-  if (!content) return { title: "", items: [] };
+function parseChangelogContent(
+  content: string | null | undefined,
+): { items: SeedChangelogItem[]; title: string } {
+  if (!content) {
+    return { title: "", items: [] };
+  }
 
   const lines = content.split("\n");
-  const items = [];
+  const items: SeedChangelogItem[] = [];
   let title = "";
 
   for (const line of lines) {
@@ -177,7 +189,7 @@ function parseChangelogContent(content) {
 
       if (match) {
         const [, type, , description] = match;
-        const typeMap = {
+        const typeMap: Record<string, SeedChangelogItemType> = {
           feat: "Added",
           fix: "Fixed",
           chore: "Changed",
@@ -188,12 +200,14 @@ function parseChangelogContent(content) {
           style: "Changed",
         };
         items.push({
+          description,
           type: typeMap[type] ?? "Changed",
           title: description,
         });
       } else if (itemText) {
         // Plain text item without type prefix
         items.push({
+          description: itemText,
           type: "Changed",
           title: itemText,
         });
