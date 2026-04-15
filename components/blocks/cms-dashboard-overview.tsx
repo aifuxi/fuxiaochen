@@ -1,11 +1,11 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { Activity, FileText, RefreshCw } from "lucide-react";
 import useSWR from "swr";
-import { Badge } from "@/components/ui/badge";
+
+import { CmsActivityList, CmsEmptyState, CmsFeedbackPanel, CmsSectionPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -21,7 +21,6 @@ import {
 } from "@/lib/dashboard/dashboard-client";
 import type {
   DashboardArticleDto,
-  DashboardMetricDto,
 } from "@/lib/dashboard/dashboard-dto";
 
 const statusVariantMap: Record<
@@ -31,15 +30,6 @@ const statusVariantMap: Record<
   Archived: "info",
   Draft: "warning",
   Published: "success",
-};
-
-const toneVariantMap: Record<
-  DashboardMetricDto["tone"],
-  "info" | "success" | "warning"
-> = {
-  info: "info",
-  success: "success",
-  warning: "warning",
 };
 
 export function CmsDashboardOverview() {
@@ -62,17 +52,18 @@ export function CmsDashboardOverview() {
 
   return (
     <div className="space-y-6">
-      <div
+      <CmsSummaryGrid
         className={`
           grid gap-4
           md:grid-cols-2
           xl:grid-cols-4
         `}
-      >
-        {stats.map((stat) => (
-          <StatCard key={stat.key} stat={stat} />
-        ))}
-      </div>
+        items={stats.map((stat) => ({
+          description: stat.deltaLabel,
+          label: stat.title,
+          value: stat.value,
+        }))}
+      />
 
       <div
         className={`
@@ -80,73 +71,27 @@ export function CmsDashboardOverview() {
           xl:grid-cols-[1.2fr_0.8fr]
         `}
       >
-        <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <div
-            className={`
-              mb-4 flex flex-col gap-3
-              sm:flex-row sm:items-center sm:justify-between
-            `}
-          >
-            <h2 className="font-serif text-2xl">最近文章</h2>
-            <div className="flex items-center gap-3">
-              {isValidating && !isLoading ? (
-                <span className="inline-flex items-center gap-2 text-xs text-muted">
-                  <RefreshCw className="size-3 animate-spin" />
-                  刷新中
-                </span>
-              ) : null}
-              <span className="font-mono-tech text-xs tracking-wider text-muted uppercase">
-                最新更新
-              </span>
-            </div>
+        <CmsSectionPanel
+          description="最新更新的文章一览。"
+          title="最近文章"
+        >
+          <div className="space-y-4">
+            {isValidating && !isLoading ? (
+              <p className="font-mono-tech text-xs tracking-wider text-muted uppercase">
+                刷新中
+              </p>
+            ) : null}
+            <RecentArticlesTable articles={recentArticles} />
           </div>
-          <RecentArticlesTable articles={recentArticles} />
-        </div>
+        </CmsSectionPanel>
 
-        <Card className="space-y-4 rounded-2xl">
-          <div className="flex items-center justify-between gap-3">
-            <div className="type-label">活动动态</div>
-            <Activity className="size-4 text-muted" />
-          </div>
-          {activityFeed.length === 0 ? (
-            <EmptyState message="暂无活动记录。" />
-          ) : (
-            <ul className="space-y-3 text-sm leading-6 text-muted">
-              {activityFeed.map((item, index) => (
-                <li
-                  key={item.id}
-                  className="rounded-xl border border-white/6 bg-white/3 px-4 py-3"
-                >
-                  <span className="text-primary-accent mr-2">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  {item.message}
-                  <div className="mt-1 text-xs text-muted">
-                    {formatRelativeTime(item.occurredAt)}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
+        <CmsActivityList
+          className="h-full"
+          description="最近的内容、评论和站点变更。"
+          items={activityFeed}
+        />
       </div>
     </div>
-  );
-}
-
-function StatCard({ stat }: { stat: DashboardMetricDto }) {
-  return (
-    <Card className="">
-      <div className="space-y-5">
-        <div className="flex items-center justify-between gap-4">
-          <div className="type-label">{stat.title}</div>
-          <Badge variant={toneVariantMap[stat.tone]}>{stat.deltaLabel}</Badge>
-        </div>
-        <div className="font-serif text-5xl tracking-[-0.06em]">
-          {stat.value}
-        </div>
-      </div>
-    </Card>
   );
 }
 
@@ -156,7 +101,12 @@ function RecentArticlesTable({
   articles: DashboardArticleDto[];
 }) {
   if (articles.length === 0) {
-    return <EmptyState message="暂无文章。" />;
+    return (
+      <CmsEmptyState
+        description="新的文章会显示在这里。"
+        title="暂无文章"
+      />
+    );
   }
 
   return (
@@ -202,7 +152,11 @@ function DashboardSkeleton() {
         {Array.from({ length: 4 }, (_, index) => (
           <div
             key={index}
-            className="h-40 animate-pulse rounded-2xl bg-white/5"
+            className={`
+              h-40 animate-pulse rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-2)]
+            `}
           />
         ))}
       </div>
@@ -212,8 +166,20 @@ function DashboardSkeleton() {
           xl:grid-cols-[1.2fr_0.8fr]
         `}
       >
-        <div className="h-96 animate-pulse rounded-2xl bg-white/5" />
-        <div className="h-96 animate-pulse rounded-2xl bg-white/5" />
+        <div
+          className={`
+            h-96 animate-pulse rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+          `}
+        />
+        <div
+          className={`
+            h-96 animate-pulse rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+          `}
+        />
       </div>
     </div>
   );
@@ -227,28 +193,16 @@ function DashboardError({
   onRetry: () => void;
 }) {
   return (
-    <div
-      className={`
-        glass-card flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-2xl border border-white/8
-      `}
-    >
-      <FileText className="size-10 text-muted" />
-      <p className="max-w-md text-center text-sm text-muted">
-        {error.message || "加载仪表盘失败。"}
-      </p>
-      <Button type="button" variant="outline" onClick={onRetry}>
-        重试
-      </Button>
-    </div>
-  );
-}
-
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center text-sm text-muted">
-      <FileText className="size-8" />
-      <p>{message}</p>
-    </div>
+    <CmsFeedbackPanel
+      action={
+        <Button type="button" variant="outline" onClick={onRetry}>
+          重试
+        </Button>
+      }
+      className="flex min-h-[320px] flex-col items-center justify-center gap-4 text-center"
+      description={error.message || "加载仪表盘失败。"}
+      title="仪表盘加载失败"
+    />
   );
 }
 

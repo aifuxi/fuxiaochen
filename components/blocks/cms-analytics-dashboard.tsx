@@ -1,19 +1,16 @@
 "use client";
 
-import { BarChart3, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 
+import { CmsEmptyState, CmsFeedbackPanel, CmsSectionPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
 import { Button } from "@/components/ui/button";
 import type {
   AnalyticsDailyMetricDto,
   AnalyticsPeriod,
-  AnalyticsSummaryMetricDto,
 } from "@/lib/analytics/analytics-dto";
-import {
-  getAnalyticsDashboard,
-  type AnalyticsApiError,
-} from "@/lib/analytics/analytics-client";
+import { getAnalyticsDashboard } from "@/lib/analytics/analytics-client";
 
 const PERIOD_OPTIONS: Array<{ label: string; value: AnalyticsPeriod }> = [
   { label: "7D", value: 7 },
@@ -37,28 +34,33 @@ export function CmsAnalyticsDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className={`
-        grid gap-4
-        md:grid-cols-2
-        xl:grid-cols-5
-      `}>
-        {isLoading && summary.length === 0
-          ? Array.from({ length: 5 }, (_, index) => <SummarySkeleton key={index} />)
-          : summary.map((stat) => <SummaryCard key={stat.key} stat={stat} />)}
-      </div>
+      {isLoading && summary.length === 0 ? (
+        <SummarySkeleton />
+      ) : (
+        <CmsSummaryGrid
+          className={`
+            grid gap-4
+            md:grid-cols-2
+            xl:grid-cols-5
+          `}
+          items={summary.map((stat) => ({
+            description: stat.deltaLabel,
+            label: stat.title,
+            value: stat.formattedValue,
+          }))}
+        />
+      )}
 
-      <div className="glass-card rounded-2xl border border-white/8 p-6">
-        <div className={`
-          mb-6 flex flex-col gap-4
-          sm:flex-row sm:items-center sm:justify-between
-        `}>
-          <div>
-            <h2 className="flex items-center gap-2 text-lg font-semibold">
-              <span className="text-primary">◌</span>
-              流量概览
-            </h2>
-            <p className="mt-1 text-sm text-muted">所选报告期间的每日浏览量。</p>
-          </div>
+      <CmsSectionPanel
+        description="所选报告期间的每日浏览量。"
+        title="流量概览"
+      >
+        <div
+          className={`
+            mb-6 flex flex-col gap-4
+            sm:flex-row sm:items-center sm:justify-between
+          `}
+        >
           <div className="flex flex-wrap items-center gap-2">
             {isValidating && !isLoading ? (
               <span className="inline-flex items-center gap-2 text-xs text-muted">
@@ -82,30 +84,49 @@ export function CmsAnalyticsDashboard() {
         </div>
 
         {error ? (
-          <AnalyticsError error={error} onRetry={() => void mutate()} />
+          <CmsFeedbackPanel
+            action={
+              <Button type="button" variant="outline" onClick={() => void mutate()}>
+                重试
+              </Button>
+            }
+            className="flex min-h-[240px] flex-col items-center justify-center gap-4 text-center"
+            description={error.message || "加载分析数据失败。"}
+            title="分析数据加载失败"
+          />
         ) : (
           <TrafficChart dailyMetrics={dailyMetrics} isLoading={isLoading} />
         )}
-      </div>
+      </CmsSectionPanel>
 
-      <div className={`
-        grid gap-6
-        xl:grid-cols-2
-      `}>
-        <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <h2 className="mb-4 text-lg font-semibold">增长趋势</h2>
+      <div
+        className={`
+          grid gap-6
+          xl:grid-cols-2
+        `}
+      >
+        <CmsSectionPanel description="最近 7 天的增长变化。" title="增长趋势">
           <GrowthTrend dailyMetrics={dailyMetrics} isLoading={isLoading} />
-        </div>
-        <div className="glass-card rounded-2xl border border-white/8 p-6">
-          <h2 className="mb-4 text-lg font-semibold">热门文章</h2>
+        </CmsSectionPanel>
+        <CmsSectionPanel description="按阅读量排序的热门内容。" title="热门文章">
           {isLoading && popularArticles.length === 0 ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }, (_, index) => (
-                <div key={index} className="h-16 animate-pulse rounded-xl bg-white/5" />
+          <div className="space-y-3">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div
+                key={index}
+                className={`
+                  h-16 animate-pulse rounded-xl border
+                  border-[color:var(--color-line-default)]
+                  bg-[color:var(--color-surface-2)]
+                `}
+              />
               ))}
             </div>
           ) : popularArticles.length === 0 ? (
-            <EmptyState message="暂无文章流量记录。" />
+            <CmsEmptyState
+              description="这一时段还没有文章流量记录。"
+              title="暂无文章"
+            />
           ) : (
             <ul className="space-y-2">
               {popularArticles.map((item, index) => (
@@ -127,28 +148,54 @@ export function CmsAnalyticsDashboard() {
               ))}
             </ul>
           )}
-        </div>
+        </CmsSectionPanel>
       </div>
-    </div>
-  );
-}
-
-function SummaryCard({ stat }: { stat: AnalyticsSummaryMetricDto }) {
-  return (
-    <div className="glass-card rounded-2xl border border-white/8 p-5 text-center">
-      <div className="mb-1 font-mono text-3xl font-bold text-foreground">{stat.formattedValue}</div>
-      <div className="mb-2 text-xs text-muted">{stat.title}</div>
-      <span className={getToneClassName(stat.tone)}>{stat.deltaLabel}</span>
     </div>
   );
 }
 
 function SummarySkeleton() {
   return (
-    <div className="glass-card rounded-2xl border border-white/8 p-5">
-      <div className="mx-auto mb-3 h-9 w-24 animate-pulse rounded-lg bg-white/5" />
-      <div className="mx-auto mb-3 h-4 w-28 animate-pulse rounded bg-white/5" />
-      <div className="mx-auto h-7 w-20 animate-pulse rounded-full bg-white/5" />
+    <div
+      className={`
+        grid gap-4
+        md:grid-cols-2
+        xl:grid-cols-5
+      `}
+    >
+      {Array.from({ length: 5 }, (_, index) => (
+        <div
+          key={index}
+          className={`
+            rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            p-5
+          `}
+        >
+          <div
+            className={`
+              mx-auto mb-3 h-9 w-24 animate-pulse rounded-lg border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+            `}
+          />
+          <div
+            className={`
+              mx-auto mb-3 h-4 w-28 animate-pulse rounded border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+            `}
+          />
+          <div
+            className={`
+              mx-auto h-7 w-20 animate-pulse rounded-full border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+            `}
+          />
+        </div>
+      ))}
     </div>
   );
 }
@@ -161,11 +208,24 @@ function TrafficChart({
   isLoading: boolean;
 }) {
   if (isLoading && dailyMetrics.length === 0) {
-    return <div className="h-[240px] animate-pulse rounded-xl bg-white/5" />;
+    return (
+      <div
+        className={`
+          h-[240px] animate-pulse rounded-xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+        `}
+      />
+    );
   }
 
   if (dailyMetrics.length === 0) {
-    return <EmptyState message="该时段暂无每日流量数据。" />;
+    return (
+      <CmsEmptyState
+        description="所选时段还没有每日流量数据。"
+        title="暂无每日流量"
+      />
+    );
   }
 
   const maxViews = Math.max(...dailyMetrics.map((metric) => metric.totalViews), 1);
@@ -208,11 +268,24 @@ function GrowthTrend({
   isLoading: boolean;
 }) {
   if (isLoading && dailyMetrics.length === 0) {
-    return <div className="h-64 animate-pulse rounded-xl bg-white/5" />;
+    return (
+      <div
+        className={`
+          h-64 animate-pulse rounded-xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+        `}
+      />
+    );
   }
 
   if (dailyMetrics.length === 0) {
-    return <EmptyState message="该时段暂无增长指标。" />;
+    return (
+      <CmsEmptyState
+        description="所选时段还没有增长指标。"
+        title="暂无增长指标"
+      />
+    );
   }
 
   const recentMetrics = dailyMetrics.slice(-7);
@@ -220,7 +293,15 @@ function GrowthTrend({
   return (
     <div className="space-y-3">
       {recentMetrics.map((metric) => (
-        <div key={metric.date} className="rounded-xl border border-white/8 bg-white/3 px-4 py-3">
+        <div
+          key={metric.date}
+          className={`
+            rounded-xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            px-4 py-3
+          `}
+        >
           <div className="mb-2 flex items-center justify-between gap-3">
             <span className="text-sm font-medium text-foreground">{metric.label}</span>
             <span className="font-mono-tech text-xs text-muted">{metric.newVisitors} 访客</span>
@@ -236,61 +317,24 @@ function GrowthTrend({
   );
 }
 
-function AnalyticsError({
-  error,
-  onRetry,
-}: {
-  error: AnalyticsApiError;
-  onRetry: () => void;
-}) {
-  return (
-    <div className="flex min-h-[240px] flex-col items-center justify-center gap-4 text-center">
-      <BarChart3 className="size-10 text-muted" />
-      <p className="max-w-md text-sm text-muted">{error.message || "加载分析数据失败。"}</p>
-      <Button type="button" variant="outline" onClick={onRetry}>
-        重试
-      </Button>
-    </div>
-  );
-}
-
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="flex min-h-40 flex-col items-center justify-center gap-3 text-center text-sm text-muted">
-      <BarChart3 className="size-8" />
-      <p>{message}</p>
-    </div>
-  );
-}
-
-function getToneClassName(tone: AnalyticsSummaryMetricDto["tone"]) {
-  const baseClassName = "inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs";
-
-  if (tone === "success") {
-    return `${baseClassName} bg-primary/10 text-primary`;
-  }
-
-  if (tone === "warning") {
-    return `${baseClassName} bg-red-500/10 text-red-400`;
-  }
-
-  return `${baseClassName} bg-sky-500/10 text-sky-400`;
-}
-
 function getRankClassName(index: number) {
-  const baseClassName = "flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold";
+  const baseClassName = `
+    flex h-8 w-8 items-center justify-center rounded-full border
+    border-[color:var(--color-line-default)]
+    bg-[color:var(--color-surface-1)] text-sm font-semibold text-muted
+  `;
 
   if (index === 0) {
-    return `${baseClassName} bg-primary/10 text-primary`;
+    return `${baseClassName} text-foreground`;
   }
 
   if (index === 1) {
-    return `${baseClassName} bg-indigo-500/10 text-indigo-400`;
+    return baseClassName;
   }
 
   if (index === 2) {
-    return `${baseClassName} bg-amber-500/10 text-amber-400`;
+    return baseClassName;
   }
 
-  return `${baseClassName} bg-white/6 text-muted`;
+  return baseClassName;
 }
