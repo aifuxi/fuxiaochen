@@ -5,6 +5,7 @@ import { ArticleCard } from "@/components/blocks/article-card";
 import { ArticleRow } from "@/components/blocks/article-row";
 import { NewsletterCard } from "@/components/blocks/newsletter-card";
 import { ProjectCard } from "@/components/blocks/project-card";
+import { SiteSectionHeading } from "@/components/blocks/site-section-heading";
 import { listPublicArticles, listPublicProjects } from "@/lib/public/public-content-client";
 
 export default async function HomePage() {
@@ -13,40 +14,48 @@ export default async function HomePage() {
     listPublicArticles({ page: 1, pageSize: 3 }),
     listPublicProjects({ featured: true, page: 1, pageSize: 4 }),
   ]);
+  const featuredArticleSlugs = new Set(featuredArticles.items.map((article) => article.slug));
+  const latestDistinctArticles = latestArticles.items.filter((article) => !featuredArticleSlugs.has(article.slug));
 
   return (
-    <div>
-      <section className="relative flex min-h-screen items-center px-8 pt-24">
+    <div className="space-y-24 pb-24">
+      <section className="px-8 pt-24">
         <div className={`
-          mx-auto grid w-full max-w-7xl items-center gap-16
-          lg:grid-cols-2
+          mx-auto grid max-w-7xl items-center gap-14
+          lg:grid-cols-[1.05fr_0.95fr]
         `}>
           <div className="space-y-8">
-            <div className="flex items-center gap-3">
-              <div className="hero-label-dot" />
-              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">设计与开发</span>
+            <div className="space-y-4">
+              <div className="font-mono-tech text-[11px] tracking-[0.28em] text-primary uppercase">设计与开发</div>
+              <h1 className={`
+                font-serif text-5xl tracking-[-0.06em] text-foreground
+                lg:text-7xl
+              `} style={{ lineHeight: 0.95 }}>
+                思考
+                <br />
+                <span className="text-primary-accent italic">&amp;</span>
+                <br />
+                代码
+              </h1>
+              <p className="max-w-lg text-lg leading-8 text-muted">
+                在这里记录设计系统、Web 开发和创意实践交汇处的观察。
+              </p>
             </div>
-
-            <h1 className={`
-              font-serif text-6xl leading-none tracking-tighter
-              lg:text-7xl
-            `} style={{ lineHeight: 0.95 }}>
-              思考
-              <br />
-              <span className="text-primary-accent italic">&amp;</span>
-              <br />
-              代码
-            </h1>
-
-            <p className="max-w-md text-lg leading-relaxed text-muted">
-              在这里分享关于设计系统、Web 开发以及技术与创意交汇点的思考。
-            </p>
-
-            <Link className={`
-              arrow-btn flex items-center gap-2 text-foreground transition-colors duration-300
-              hover:text-primary-accent
-            `} href="#articles">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">最新文章</span>
+            <div className="flex flex-wrap items-center gap-3 text-sm text-muted">
+              <span>Alex Chen</span>
+              <span>·</span>
+              <span>San Francisco</span>
+              <span>·</span>
+              <span>Design engineer</span>
+            </div>
+            <Link
+              className={`
+                hover:text-primary-accent
+                inline-flex items-center gap-2 border-b border-primary/40 pb-1 text-sm text-foreground transition-colors
+              `}
+              href="#articles"
+            >
+              <span className="font-mono-tech tracking-[0.22em] uppercase">浏览最新文章</span>
               <span>→</span>
             </Link>
           </div>
@@ -57,7 +66,7 @@ export default async function HomePage() {
           `}>
             <div className="relative">
               <div className={`
-                h-72 w-72 overflow-hidden rounded-full border border-white/8
+                h-72 w-72 overflow-hidden rounded-[2rem] border border-white/10
                 lg:h-80 lg:w-80
               `}>
                 <Image
@@ -68,10 +77,12 @@ export default async function HomePage() {
                   width={400}
                 />
               </div>
-              <div className="glass-card shimmer-border absolute right-[-16px] bottom-[-16px] px-4 py-2">
-                <div className="flex items-center gap-2">
-                  <div className="hero-label-dot h-1.5 w-1.5" />
-                  <span className="font-mono-tech text-xs text-muted">可提供服务</span>
+              <div className={`
+                glass-card absolute right-[-12px] bottom-[-12px] rounded-2xl border border-white/10 px-4 py-3
+              `}>
+                <div className="space-y-1">
+                  <div className="font-mono-tech text-[11px] tracking-[0.22em] text-muted uppercase">当前关注</div>
+                  <div className="text-sm text-foreground">编辑系统 / 前端架构 / 产品写作</div>
                 </div>
               </div>
             </div>
@@ -79,21 +90,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="articles" className="relative px-8 py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 flex items-center justify-between">
-            <div>
-              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">精选</span>
-              <h2 className="mt-2 font-serif text-4xl">精选文章</h2>
-            </div>
-            <Link className={`
-              arrow-btn flex items-center gap-2 text-muted transition-colors duration-300
-              hover:text-foreground
-            `} href="/articles">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">查看全部</span>
-              <span>→</span>
-            </Link>
-          </div>
+      <section id="articles" className="px-8">
+        <div className="mx-auto max-w-7xl space-y-10">
+          <SiteSectionHeading
+            description="先看近期写作，再进入完整归档。这里保留的是更值得回看的内容。"
+            eyebrow="Archive / 文章"
+            meta={`${featuredArticles.total} 篇精选`}
+            title="精选文章"
+          />
           <div className={`
             grid gap-8
             md:grid-cols-2
@@ -103,36 +107,46 @@ export default async function HomePage() {
               <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
+          <div className="flex justify-end">
+            <Link className={`
+              inline-flex items-center gap-2 text-sm text-muted transition-colors
+              hover:text-foreground
+            `} href="/articles">
+              <span className="font-mono-tech tracking-[0.22em] uppercase">查看完整归档</span>
+              <span>→</span>
+            </Link>
+          </div>
         </div>
       </section>
 
-      <section className="relative px-8 py-32">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-12">
-            <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">写作</span>
-            <h2 className="mt-2 font-serif text-4xl">最新文章</h2>
-          </div>
+      <section className="px-8">
+        <div className="mx-auto max-w-5xl space-y-10">
+          <SiteSectionHeading
+            description="按时间排列的近期更新，适合快速浏览我最近在想什么。"
+            eyebrow="Writing / 近期"
+            meta={`${latestDistinctArticles.length} 条`}
+            title="最新文章"
+          />
           <div className="space-y-0">
-            {latestArticles.items.map((article) => (
+            {latestDistinctArticles.map((article) => (
               <ArticleRow key={article.slug} article={article} />
             ))}
           </div>
         </div>
       </section>
 
-      <section className="relative px-8 py-32">
+      <section className="px-8">
         <div className="mx-auto max-w-5xl">
           <div className={`
-            spotlight-card glass-card shimmer-border p-10
-            lg:p-12
+            glass-card rounded-[2rem] border border-white/10 p-8
+            lg:p-10
           `}>
             <div className={`
-              flex flex-col items-center gap-8 text-center
-              md:flex-row md:text-left
-              lg:gap-12
+              flex flex-col items-center gap-8
+              md:flex-row md:items-start
             `}>
               <div className={`
-                h-32 w-32 flex-shrink-0 overflow-hidden rounded-2xl
+                h-32 w-32 flex-shrink-0 overflow-hidden rounded-[1.5rem]
                 lg:h-40 lg:w-40
               `}>
                 <Image
@@ -143,23 +157,22 @@ export default async function HomePage() {
                   width={400}
                 />
               </div>
-              <div>
+              <div className="space-y-5">
+                <div className="font-mono-tech text-[11px] tracking-[0.28em] text-primary uppercase">作者简介</div>
                 <h2 className={`
-                  mb-4 font-serif text-3xl
+                  font-serif text-3xl tracking-[-0.04em] text-foreground
                   lg:text-4xl
                 `}>
-                  <span className="text-primary-accent italic">&ldquo;</span>
-                  Design is not just what it looks like, it&apos;s how it works.
-                  <span className="text-primary-accent italic">&rdquo;</span>
+                  设计不止于外观，更关乎秩序、结构与使用时的节奏。
                 </h2>
-                <p className="mb-6 max-w-xl leading-relaxed text-muted">
-                  I&apos;m Alex Chen, a designer and developer based in San Francisco. I create digital experiences that blend aesthetics with functionality, focusing on design systems, web performance, and user-centered design.
+                <p className="max-w-xl text-base leading-8 text-muted">
+                  我是 Alex Chen，一名专注于设计系统、前端架构和产品表达的设计师与开发者。这里记录的是我持续打磨数字体验的过程，而不是一套固定风格。
                 </p>
                 <Link className={`
-                  arrow-btn text-primary-accent inline-flex items-center gap-2 transition-all duration-300
-                  hover:gap-3
+                  text-primary-accent inline-flex items-center gap-2 text-sm transition-colors
+                  hover:text-foreground
                 `} href="/about">
-                  <span className="font-mono-tech text-sm tracking-wider uppercase">阅读更多</span>
+                  <span className="font-mono-tech tracking-[0.22em] uppercase">阅读更多</span>
                   <span>→</span>
                 </Link>
               </div>
@@ -168,21 +181,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="projects" className="relative px-8 py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 flex items-center justify-between">
-            <div>
-              <span className="font-mono-tech text-primary-accent text-xs tracking-widest uppercase">作品集</span>
-              <h2 className="mt-2 font-serif text-4xl">精选项目</h2>
-            </div>
-            <Link className={`
-              arrow-btn flex items-center gap-2 text-muted transition-colors duration-300
-              hover:text-foreground
-            `} href="/projects">
-              <span className="font-mono-tech text-sm tracking-wider uppercase">查看全部</span>
-              <span>→</span>
-            </Link>
-          </div>
+      <section id="projects" className="px-8">
+        <div className="mx-auto max-w-7xl space-y-10">
+          <SiteSectionHeading
+            description="精选的是更具代表性的项目片段，完整项目集在项目归档中。"
+            eyebrow="Archive / 项目"
+            meta={`${featuredProjects.items.length} 个精选`}
+            title="精选项目"
+          />
           <div className={`
             grid gap-8
             md:grid-cols-2
@@ -190,6 +196,15 @@ export default async function HomePage() {
             {featuredProjects.items.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
+          </div>
+          <div className="flex justify-end">
+            <Link className={`
+              inline-flex items-center gap-2 text-sm text-muted transition-colors
+              hover:text-foreground
+            `} href="/projects">
+              <span className="font-mono-tech tracking-[0.22em] uppercase">查看完整项目</span>
+              <span>→</span>
+            </Link>
           </div>
         </div>
       </section>

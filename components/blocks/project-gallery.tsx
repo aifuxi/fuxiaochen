@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useMemo, useState } from "react";
 
+import { ProjectCard } from "@/components/blocks/project-card";
 import type { PublicProjectDto } from "@/lib/public/public-content-dto";
 import { cn } from "@/lib/utils";
 
@@ -31,15 +31,22 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
 
   return (
     <>
-      <section className="relative px-8 py-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-wrap items-center gap-3">
+      <section className="px-8 py-8">
+        <div className="site-frame">
+          <div className="flex flex-wrap items-center gap-3 rounded-[1.5rem] px-4 py-4 editorial-panel">
             {filters.map((item) => (
               <button
                 key={item.value}
                 className={cn(
-                  "tag-pill font-mono-tech rounded-full px-5 py-2 text-xs tracking-wider uppercase",
-                  filter === item.value && "active",
+                  `
+                    rounded-full border
+                    border-[color:var(--color-line-default)]
+                    bg-transparent px-4 py-2 text-[11px] tracking-[0.18em] text-muted uppercase transition-colors
+                  `,
+                  filter === item.value && `
+                    border-[color:var(--color-line-strong)]
+                    bg-white/[0.02] text-foreground
+                  `,
                 )}
                 type="button"
                 onClick={() => setFilter(item.value)}
@@ -51,62 +58,21 @@ export function ProjectGallery({ projects }: ProjectGalleryProps) {
         </div>
       </section>
 
-      <section className="relative px-8 pb-32">
-        <div className={`
-          mx-auto grid max-w-7xl gap-8
-          md:grid-cols-2
-          lg:grid-cols-3
-        `}>
-          {filteredProjects.map((project, index) => (
-            <article
-              key={project.slug}
-              className="project-card glass-card shimmer-border spotlight-card reveal overflow-hidden"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <div className="overflow-hidden">
-                {project.coverImageUrl ? (
-                  <Image
-                    alt={project.coverImageAlt ?? project.title}
-                    className="card-image h-48 w-full object-cover"
-                    height={400}
-                    src={project.coverImageUrl}
-                    width={600}
-                  />
-                ) : (
-                  <div className="card-image h-48 w-full bg-white/5" />
-                )}
+      <section className="px-8 pb-32">
+        <div className="site-frame">
+          <div
+            className={`
+              grid gap-8
+              md:grid-cols-2
+              lg:grid-cols-3
+            `}
+          >
+            {filteredProjects.map((project) => (
+              <div key={project.slug}>
+                <ProjectCard project={project} />
               </div>
-              <div className="relative z-10 p-6">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className={`
-                    font-mono-tech text-primary-accent rounded-full bg-primary/20 px-3 py-1 text-xs tracking-wider
-                    uppercase
-                  `}>
-                    {project.label}
-                  </span>
-                </div>
-                <h3 className="mb-2 font-serif text-xl">{project.title}</h3>
-                <p className="mb-4 text-sm leading-relaxed text-muted">{project.description}</p>
-                <div className="mb-4 flex items-center gap-3">
-                  {project.techNames.map((tag) => (
-                    <span key={tag} className="font-mono-tech rounded bg-white/5 px-2 py-1 text-xs text-muted">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                  <div className="text-xs text-muted">{project.metric}</div>
-                  <div className={`
-                    arrow-btn text-primary-accent flex items-center gap-2 transition-all duration-300
-                    hover:gap-3
-                  `}>
-                    <span className="font-mono-tech text-xs tracking-wider uppercase">查看</span>
-                    <span>→</span>
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </>

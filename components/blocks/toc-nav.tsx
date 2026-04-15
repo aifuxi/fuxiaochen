@@ -10,18 +10,27 @@ export function TocNav({ items }: { items: TocItem[] }) {
   const [activeId, setActiveId] = useState<string | null>(nestedItems[0]?.id ?? null);
 
   useEffect(() => {
-    const sections = nestedItems
-      .map((item) => document.getElementById(item.id))
-      .filter((section): section is HTMLElement => Boolean(section));
+    const contentRoot = document.querySelector<HTMLElement>("[data-article-content]");
+
+    if (!contentRoot) {
+      return;
+    }
+
+    const sections = Array.from(contentRoot.querySelectorAll<HTMLElement>("h2, h3")).filter((section) =>
+      nestedItems.some((item) => item.title.trim() === section.textContent?.trim()),
+    );
+
+    nestedItems.forEach((item, index) => {
+      const section = sections[index];
+      if (section && !section.id) {
+        section.id = item.id;
+      }
+    });
 
     const onScroll = () => {
       const scrollY = window.scrollY + 200;
-
-      sections.forEach((section) => {
-        if (scrollY >= section.offsetTop) {
-          setActiveId(section.id);
-        }
-      });
+      const currentSection = [...sections].reverse().find((section) => scrollY >= section.offsetTop) ?? null;
+      setActiveId(currentSection?.id ?? nestedItems[0]?.id ?? null);
     };
 
     onScroll();
@@ -35,20 +44,24 @@ export function TocNav({ items }: { items: TocItem[] }) {
   }
 
   return (
-    <aside className="rounded-[1.8rem] border border-white/8 bg-white/3 p-5">
-      <div className="mb-4 type-label">页面导航</div>
-      <ul className="space-y-1.5">
+    <aside className="sticky top-28 rounded-2xl border border-white/6 bg-transparent p-4">
+      <div className="mb-4">
+        <div className="type-label">页面目录</div>
+        <p className="mt-2 text-xs leading-5 text-muted">快速跳转到本文的章节。</p>
+      </div>
+      <ul className="space-y-1">
         {nestedItems.map((item) => (
           <li key={item.id}>
             <a
               className={cn(
                 `
-                  block rounded-xl px-3 py-2 text-sm text-muted transition-colors
-                  hover:bg-white/6 hover:text-foreground
+                  block rounded-lg px-3 py-1.5 text-sm leading-6 text-muted transition-colors
+                  hover:text-foreground
                 `,
-                activeId === item.id && "bg-white/6 text-foreground",
-                item.depth === 3 && "ml-4 text-xs",
+                activeId === item.id && "text-foreground",
+                item.depth === 3 && "ml-3 text-xs",
               )}
+              aria-current={activeId === item.id ? "location" : undefined}
               href={`#${item.id}`}
             >
               {item.title}

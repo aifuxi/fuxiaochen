@@ -4,10 +4,10 @@ import { SiteHeader } from "@/components/layout/site-header";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden">
+    <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <SiteEffects />
       <SiteHeader />
-      <main className="pt-12 pb-16">{children}</main>
+      <main className="pt-24 pb-20">{children}</main>
       <SiteFooter />
     </div>
   );

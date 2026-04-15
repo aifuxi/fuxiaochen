@@ -1,44 +1,45 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { PublicArticleListItemDto } from "@/lib/public/public-content-dto";
 
 export function ArticleRow({ article }: { article: PublicArticleListItemDto }) {
   return (
-    <Link className={`
-      group -mx-6 block rounded-xl border-b border-white/5 px-6 py-8 transition-all duration-300
-      hover:bg-white/5
-    `} href={`/article/${article.slug}`}>
-      <div className="flex items-start gap-6">
-        {article.coverImageUrl ? (
-          <Image
-            alt={article.coverImageAlt ?? article.title}
-            className="h-[72px] w-24 rounded-xl object-cover"
-            height={150}
-            src={article.coverImageUrl}
-            width={200}
-          />
-        ) : (
-          <div className="flex h-[72px] w-24 shrink-0 items-center justify-center rounded-xl bg-white/5">
-            <span className="font-mono-tech text-[10px] text-muted uppercase">无封面</span>
-          </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <h3 className={`
-            group-hover:text-primary-accent
-            mb-2 font-serif text-xl transition-colors duration-300
-          `}>{article.title}</h3>
-          <p className="mb-3 text-sm leading-relaxed text-muted">{article.excerpt}</p>
-          <div className="flex items-center gap-4 text-xs text-muted">
+    <Link
+      className={`
+        group block border-b
+        border-[color:var(--color-line-subtle)]
+        py-6 transition-colors duration-300
+        hover:bg-white/[0.02]
+      `}
+      href={`/article/${article.slug}`}
+    >
+      <div className={`
+        grid gap-4
+        lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start
+      `}>
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-3 text-[11px] tracking-[0.18em] text-muted uppercase">
+            <span className="text-primary">{article.category?.name ?? "未分类"}</span>
+            <span aria-hidden="true" className="text-muted-soft">
+              /
+            </span>
             <span>{formatArticleDate(article.publishedAt)}</span>
-            <span>•</span>
+            <span aria-hidden="true" className="text-muted-soft">
+              /
+            </span>
             <span>{article.readTimeLabel}</span>
           </div>
+          <h3 className="font-serif text-2xl leading-tight tracking-[-0.04em] text-foreground">
+            {article.title}
+          </h3>
+          <p className="max-w-3xl text-sm leading-7 text-muted">{article.excerpt}</p>
         </div>
         <div className={`
-          arrow-btn text-muted transition-colors duration-300
-          group-hover:text-primary-accent
-        `}>→</div>
+          font-mono-tech text-[11px] tracking-[0.18em] text-muted uppercase
+          lg:justify-self-end
+        `}>
+          继续阅读 →
+        </div>
       </div>
     </Link>
   );

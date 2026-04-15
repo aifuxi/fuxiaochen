@@ -1,4 +1,5 @@
 import { ProjectGallery } from "@/components/blocks/project-gallery";
+import { SiteSectionHeading } from "@/components/blocks/site-section-heading";
 import { getPublicSite, listPublicProjects } from "@/lib/public/public-content-client";
 
 export default async function ProjectsPage() {
@@ -8,37 +9,33 @@ export default async function ProjectsPage() {
   ]);
 
   return (
-    <div>
-      <section className="relative px-8 pt-32 pb-16">
+    <div className="space-y-12 pb-24">
+      <section className="px-8 pt-32">
         <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="hero-label-dot" />
-              <span className="font-mono-tech text-xs tracking-widest text-muted uppercase">我的作品</span>
+          <div className="space-y-8">
+            <SiteSectionHeading
+              description="这里按时间与主题整理了全部项目，先看总览，再进入完整目录。"
+              eyebrow="Archive / 项目"
+              meta={`${projects.total} 个项目`}
+              title="项目归档"
+            />
+            <div className={`
+              grid gap-4
+              sm:grid-cols-2
+              lg:grid-cols-4
+            `}>
+              {site.projectStats.map((item) => (
+                <div key={item.label} className="glass-card rounded-[1.75rem] border border-white/10 p-6">
+                  <div className="text-primary-accent font-serif text-4xl tracking-[-0.04em]">{item.value}</div>
+                  <div className="font-mono-tech mt-2 text-[11px] tracking-[0.22em] text-muted uppercase">
+                    {item.label}
+                  </div>
+                </div>
+              ))}
             </div>
-            <h1 className={`
-              font-serif text-6xl tracking-tighter
-              lg:text-7xl
-            `} style={{ lineHeight: 0.95 }}>
-              精选
-              <br />
-              <span className="text-primary-accent italic">项目</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted">
-              展示我在设计系统、Web 开发和创意技术方面工作的项目集合。每个项目都代表着一个独特的挑战与解决方案。
-            </p>
-          </div>
-
-          <div className={`
-            mt-12 grid grid-cols-2 gap-4
-            md:grid-cols-4
-          `}>
-            {site.projectStats.map((item) => (
-              <div key={item.label} className="glass-card rounded-2xl border border-white/8 p-6 text-center">
-                <div className="text-primary-accent mb-1 font-serif text-4xl">{item.value}</div>
-                <div className="font-mono-tech text-xs tracking-widest text-muted uppercase">{item.label}</div>
-              </div>
-            ))}
+            <div className="rounded-[2rem] border border-white/10 bg-white/4 p-6 text-sm leading-7 text-muted">
+              项目列表保持完整归档视角，不做精选筛选，便于按发布时间和内容连续阅读。
+            </div>
           </div>
         </div>
       </section>
