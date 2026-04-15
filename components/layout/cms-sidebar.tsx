@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Layers2Icon } from "lucide-react";
+import { CmsSidebarNav } from "@/components/cms/cms-sidebar-nav";
 import { LucideIcon } from "@/components/ui/lucide-icon";
 import { cmsNavGroups } from "@/lib/mocks/cms-content";
 import { cn } from "@/lib/utils";
@@ -27,10 +27,27 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="cms-sidebar">
-      <div className="border-b border-white/8 p-6">
-        <div className="flex items-center gap-3 font-mono text-lg font-semibold">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-bold text-black">
+    <aside
+      className={cn(
+        `
+          flex h-screen w-[280px] shrink-0 flex-col border-r
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+        `,
+      )}
+    >
+      <div className={`
+        border-b
+        border-[color:var(--color-line-default)]
+        px-6 py-5
+      `}>
+        <div className="flex items-center gap-3 font-mono text-lg font-semibold text-foreground">
+          <div className={`
+            flex h-8 w-8 items-center justify-center rounded-xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            text-primary
+          `}>
             <Layers2Icon className="size-4" />
           </div>
           <span>
@@ -39,43 +56,20 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
         </div>
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-4">
-        {cmsNavGroups.map((group) => (
-          <div key={group.label} className="mb-6">
-            <div className="px-4 pb-2 font-mono text-xs tracking-[0.08em] text-muted uppercase">
-              {group.label}
-            </div>
-            {group.items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "relative mb-1 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all",
-                  pathname === item.href
-                    ? "bg-primary/10 text-primary"
-                    : `
-                      text-muted
-                      hover:bg-white/8 hover:text-foreground
-                    `,
-                )}
-              >
-                <LucideIcon
-                  className="size-6"
-                  name={item.icon as Parameters<typeof LucideIcon>[0]["name"]}
-                />
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        ))}
-      </nav>
+      <CmsSidebarNav currentPath={pathname} groups={cmsNavGroups} />
 
-      <div className="border-t border-white/8 p-4">
+      <div className={`
+        border-t
+        border-[color:var(--color-line-default)]
+        p-4
+      `}>
         <button
           className={`
-            mb-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold
-            text-black transition
-            hover:bg-emerald-600
+            mb-4 flex w-full items-center justify-center gap-2 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            px-4 py-3 text-sm font-semibold text-foreground transition
+            hover:border-primary/30 hover:text-primary
           `}
         >
           <LucideIcon className="size-4" name="plus" />
@@ -83,20 +77,26 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
         </button>
         <div
           className={`
-            flex items-center gap-3 rounded-xl p-3
-            hover:bg-white/6
+            flex items-center gap-3 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            p-3
           `}
         >
           <div
             className={`
-              flex h-10 w-10 items-center justify-center rounded-full bg-[linear-gradient(135deg,#10b981,#059669)]
-              text-sm font-semibold text-black
+              flex h-10 w-10 items-center justify-center rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+              text-sm font-semibold text-primary
             `}
           >
             {getUserInitials(user.name)}
           </div>
           <div>
-            <div className="text-sm font-semibold">{user.name}</div>
+            <div className="text-sm font-semibold text-foreground">
+              {user.name}
+            </div>
             <div className="max-w-[180px] truncate text-xs text-muted">
               {user.email}
             </div>

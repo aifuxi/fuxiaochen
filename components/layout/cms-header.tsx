@@ -16,15 +16,13 @@ function getUserInitials(name: string) {
 }
 
 type CmsHeaderProps = {
-  title: string;
-  description: string;
   user: {
     name: string;
     email: string;
   };
 };
 
-export function CmsHeader({ title, description, user }: CmsHeaderProps) {
+export function CmsHeader({ user }: CmsHeaderProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -47,70 +45,87 @@ export function CmsHeader({ title, description, user }: CmsHeaderProps) {
   }
 
   return (
-    <>
-      <header className="cms-header flex">
-        <div className="flex-1"></div>
-        <div className="flex items-center gap-3">
-          <button
+    <header
+      className={`
+        sticky top-0 z-50 flex h-20 items-center justify-end gap-3 border-b
+        border-[color:var(--color-line-default)]
+        bg-[color:var(--color-surface-1)]/95
+        px-8
+      `}
+    >
+      <div className="flex items-center gap-3">
+        <button
+          className={`
+            relative rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            p-3 text-muted transition
+            hover:text-foreground
+          `}
+          aria-label="查看通知"
+          type="button"
+        >
+          <Bell className="h-5 w-5" />
+          <span
             className={`
-              relative rounded-xl p-3 text-muted transition
-              hover:bg-white/8 hover:text-foreground
+              absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1
+              text-[10px] font-semibold text-black
             `}
           >
-            <Bell className="h-5 w-5" />
-            <span
-              className={`
-                absolute top-1 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1
-                text-[10px] font-semibold text-black
-              `}
-            >
-              3
-            </span>
-          </button>
-          <button
+            3
+          </span>
+        </button>
+        <button
+          className={`
+            rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            p-3 text-muted transition
+            hover:text-foreground
+          `}
+          aria-label="查看站内信"
+          type="button"
+        >
+          <Mail className="h-5 w-5" />
+        </button>
+        <button
+          className={`
+            rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            p-3 text-muted transition
+            hover:text-foreground
+            disabled:cursor-not-allowed disabled:opacity-60
+          `}
+          aria-label="退出登录"
+          disabled={isPending}
+          onClick={handleSignOut}
+          type="button"
+          >
+          <LogOut className="h-5 w-5" />
+        </button>
+        <div className={`
+          flex items-center gap-3 rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-2)]
+          px-3 py-2
+        `}>
+          <div
             className={`
-              rounded-xl p-3 text-muted transition
-              hover:bg-white/8 hover:text-foreground
+              flex h-9 w-9 items-center justify-center rounded-2xl border
+              border-[color:var(--color-line-default)]
+              bg-[color:var(--color-surface-1)]
+              text-sm font-semibold text-primary
             `}
           >
-            <Mail className="h-5 w-5" />
-          </button>
-          <button
-            className={`
-              rounded-xl p-3 text-muted transition
-              hover:bg-white/8 hover:text-foreground
-              disabled:cursor-not-allowed disabled:opacity-60
-            `}
-            disabled={isPending}
-            onClick={handleSignOut}
-            type="button"
-          >
-            <LogOut className="h-5 w-5" />
-          </button>
-          <div className="flex items-center gap-3 rounded-xl border border-white/8 px-3 py-2">
-            <div
-              className={`
-                flex h-9 w-9 items-center justify-center rounded-full bg-[linear-gradient(135deg,#10b981,#059669)]
-                text-sm font-semibold text-black
-              `}
-            >
-              {getUserInitials(user.name)}
-            </div>
-            <div>
-              <div className="text-sm text-foreground">{user.name}</div>
-              <div className="text-xs text-muted">{user.email}</div>
-            </div>
+            {getUserInitials(user.name)}
+          </div>
+          <div>
+            <div className="text-sm text-foreground">{user.name}</div>
+            <div className="text-xs text-muted">{user.email}</div>
           </div>
         </div>
-      </header>
-      <div className="mb-8 px-8 pt-8">
-        <h1 className="font-serif text-3xl font-semibold tracking-[-0.05em]">
-          {title}
-        </h1>
-        <p className="mt-2 max-w-2xl text-base leading-6 text-muted">
-          {description}
-        </p>
       </div>
-    </>
+    </header>
   );
 }
