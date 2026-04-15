@@ -2,12 +2,17 @@
 
 import NiceModal from "@ebay/nice-modal-react";
 import { format } from "date-fns";
-import { MailCheck, Pencil, Plus, RefreshCw, Search, ShieldCheck, Trash2, Users } from "lucide-react";
+import { MailCheck, Pencil, Plus, RefreshCw, Search, ShieldCheck, Trash2 } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 
+import { CmsEmptyState } from "@/components/cms/cms-empty-state";
+import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
+import { CmsListShell } from "@/components/cms/cms-list-shell";
+import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { UserDeleteDialog } from "@/components/modals/user-delete-dialog";
 import { UserFormDialog } from "@/components/modals/user-form-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -145,7 +150,8 @@ export function CmsUserManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <CmsListShell
+      filters={(
       <div className={`
         flex flex-col gap-4
         lg:flex-row lg:items-center lg:justify-between
@@ -191,16 +197,22 @@ export function CmsUserManager() {
           添加用户
         </Button>
       </div>
-
-      <div className={`
-        grid gap-4
-        sm:grid-cols-3
-      `}>
-        <MetricCard label="用户总数" value={String(total)} />
-        <MetricCard label="本页已验证" value={String(verifiedVisibleCount)} />
-        <MetricCard label="活跃会话" value={String(visibleSessionCount)} />
-      </div>
-
+      )}
+      metrics={(
+        <CmsMetricStrip
+          items={[
+            { label: "用户总数", value: String(total) },
+            { label: "本页已验证", value: String(verifiedVisibleCount) },
+            { label: "活跃会话", value: String(visibleSessionCount) },
+          ]}
+        />
+      )}
+      body={(
+        <CmsSectionPanel
+          description="查看用户角色、验证状态与活跃会话。"
+          title="用户列表"
+        >
+          <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -225,39 +237,35 @@ export function CmsUserManager() {
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="py-10" colSpan={7}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "加载用户失败。"}</p>
-                    <Button onClick={() => void mutate()} variant="outline">
-                      重试
-                    </Button>
-                  </div>
+                <TableCell className="py-6" colSpan={7}>
+                  <CmsFeedbackPanel
+                    action={(
+                      <Button onClick={() => void mutate()} variant="outline">
+                        重试
+                      </Button>
+                    )}
+                    description={error.message || "加载用户失败。"}
+                    title="用户加载失败"
+                  />
                 </TableCell>
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell className="py-12" colSpan={7}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div className={`
-                      flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                    `}>
-                      <Users className="size-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-base text-foreground">{keyword ? "没有符合搜索条件的用户。" : "暂无用户。"}</p>
-                      <p className="text-sm text-muted">
-                        {keyword
-                          ? "尝试不同的关键词或清除搜索。"
-                          : "创建第一个 CMS 用户来管理编辑访问权限。"}
-                      </p>
-                    </div>
-                    {!keyword ? (
+                <TableCell className="py-6" colSpan={7}>
+                  <CmsEmptyState
+                    action={!keyword ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
                         创建用户
                       </Button>
-                    ) : null}
-                  </div>
+                    ) : undefined}
+                    description={
+                      keyword
+                        ? "尝试不同的关键词或清除搜索。"
+                        : "创建第一个 CMS 用户来管理编辑访问权限。"
+                    }
+                    title={keyword ? "没有符合搜索条件的用户。" : "暂无用户。"}
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -358,16 +366,10 @@ export function CmsUserManager() {
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-      <p className="text-xs tracking-[0.18em] text-muted uppercase">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
-    </div>
+          </div>
+        </CmsSectionPanel>
+      )}
+    />
   );
 }
 

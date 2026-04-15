@@ -4,10 +4,15 @@ import React from "react";
 import Link from "next/link";
 import NiceModal from "@ebay/nice-modal-react";
 import { format } from "date-fns";
-import { History, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
+import { Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+import { CmsEmptyState } from "@/components/cms/cms-empty-state";
+import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
+import { CmsListShell } from "@/components/cms/cms-list-shell";
+import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -131,7 +136,8 @@ export function CmsChangelogManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <CmsListShell
+      filters={(
       <div
         className={`
           flex flex-col gap-4
@@ -179,27 +185,30 @@ export function CmsChangelogManager() {
           </Button>
         </Link>
       </div>
-
-      <div
-        className={`
-          grid gap-4
-          sm:grid-cols-3
-        `}
-      >
-        <MetricCard label="版本总数" value={String(total)} />
-        <MetricCard label="可见版本" value={String(releases.length)} />
-        <MetricCard
-          label="当前筛选"
-          value={
-            isMajorFilter === ""
-              ? "全部版本"
-              : isMajorFilter === "true"
-                ? "大版本"
-                : "小版本"
-          }
+      )}
+      metrics={(
+        <CmsMetricStrip
+          items={[
+            { label: "版本总数", value: String(total) },
+            { label: "可见版本", value: String(releases.length) },
+            {
+              label: "当前筛选",
+              value:
+                isMajorFilter === ""
+                  ? "全部版本"
+                  : isMajorFilter === "true"
+                    ? "大版本"
+                    : "小版本",
+            },
+          ]}
         />
-      </div>
-
+      )}
+      body={(
+        <CmsSectionPanel
+          description="查看版本节奏、条目规模和发布类型。"
+          title="版本列表"
+        >
+          <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -223,49 +232,41 @@ export function CmsChangelogManager() {
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="py-10" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">
-                      {error.message || "加载更新日志失败。"}
-                    </p>
-                    <Button onClick={() => void mutate()} variant="outline">
-                      重试
-                    </Button>
-                  </div>
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsFeedbackPanel
+                    action={(
+                      <Button onClick={() => void mutate()} variant="outline">
+                        重试
+                      </Button>
+                    )}
+                    description={error.message || "加载更新日志失败。"}
+                    title="版本加载失败"
+                  />
                 </TableCell>
               </TableRow>
             ) : releases.length === 0 ? (
               <TableRow>
-                <TableCell className="py-12" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div
-                      className={`
-                        flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                      `}
-                    >
-                      <History className="size-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-base text-foreground">
-                        {keyword || isMajorFilter
-                          ? "没有符合筛选条件的更新日志。"
-                          : "暂无更新日志。"}
-                      </p>
-                      <p className="text-sm text-muted">
-                        {keyword || isMajorFilter
-                          ? "尝试不同的筛选组合。"
-                          : "创建第一个版本以开始追踪产品更新。"}
-                      </p>
-                    </div>
-                    {!keyword && !isMajorFilter ? (
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsEmptyState
+                    action={!keyword && !isMajorFilter ? (
                       <Link href="/cms/changelog/new">
                         <Button variant="outline">
                           <Plus className="size-4" />
                           创建版本
                         </Button>
                       </Link>
-                    ) : null}
-                  </div>
+                    ) : undefined}
+                    description={
+                      keyword || isMajorFilter
+                        ? "尝试不同的筛选组合。"
+                        : "创建第一个版本以开始追踪产品更新。"
+                    }
+                    title={
+                      keyword || isMajorFilter
+                        ? "没有符合筛选条件的更新日志。"
+                        : "暂无更新日志。"
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -367,16 +368,10 @@ export function CmsChangelogManager() {
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-      <p className="text-xs tracking-[0.18em] text-muted uppercase">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
-    </div>
+          </div>
+        </CmsSectionPanel>
+      )}
+    />
   );
 }
 

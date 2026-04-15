@@ -3,12 +3,17 @@
 import NiceModal from "@ebay/nice-modal-react";
 import { FriendLinkStatus } from "@/generated/prisma/enums";
 import { format } from "date-fns";
-import { Link2, Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
+import { Pencil, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 
+import { CmsEmptyState } from "@/components/cms/cms-empty-state";
+import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
+import { CmsListShell } from "@/components/cms/cms-list-shell";
+import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { FriendLinkDeleteDialog } from "@/components/modals/friend-link-delete-dialog";
 import { FriendLinkFormDialog } from "@/components/modals/friend-link-form-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -156,7 +161,8 @@ export function CmsFriendLinkManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <CmsListShell
+      filters={(
       <div className={`
         flex flex-col gap-4
         lg:flex-row lg:items-center lg:justify-between
@@ -196,16 +202,22 @@ export function CmsFriendLinkManager() {
           添加友链
         </Button>
       </div>
-
-      <div className={`
-        grid gap-4
-        sm:grid-cols-3
-      `}>
-        <MetricCard label="链接总数" value={String(total)} />
-        <MetricCard label="可见链接" value={String(friendLinks.length)} />
-        <MetricCard label="当前筛选" value={status || (keyword ? `#${keyword}` : "全部链接")} />
-      </div>
-
+      )}
+      metrics={(
+        <CmsMetricStrip
+          items={[
+            { label: "链接总数", value: String(total) },
+            { label: "可见链接", value: String(friendLinks.length) },
+            { label: "当前筛选", value: status || (keyword ? `#${keyword}` : "全部链接") },
+          ]}
+        />
+      )}
+      body={(
+        <CmsSectionPanel
+          description="集中维护友链状态、排序和站点资料。"
+          title="友链列表"
+        >
+          <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -229,41 +241,35 @@ export function CmsFriendLinkManager() {
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="py-10" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">{error.message || "加载友链失败。"}</p>
-                    <Button onClick={() => void mutate()} variant="outline">
-                      重试
-                    </Button>
-                  </div>
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsFeedbackPanel
+                    action={(
+                      <Button onClick={() => void mutate()} variant="outline">
+                        重试
+                      </Button>
+                    )}
+                    description={error.message || "加载友链失败。"}
+                    title="友链加载失败"
+                  />
                 </TableCell>
               </TableRow>
             ) : friendLinks.length === 0 ? (
               <TableRow>
-                <TableCell className="py-12" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div className={`
-                      flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                    `}>
-                      <Link2 className="size-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-base text-foreground">
-                        {keyword || status ? "没有符合筛选条件的友链。" : "暂无友链。"}
-                      </p>
-                      <p className="text-sm text-muted">
-                        {keyword || status
-                          ? "尝试不同的关键词或状态。"
-                          : "创建第一个友链来填充目录。"}
-                      </p>
-                    </div>
-                    {!keyword && !status ? (
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsEmptyState
+                    action={!keyword && !status ? (
                       <Button onClick={openCreateDialog} variant="outline">
                         <Plus className="size-4" />
                         创建友链
                       </Button>
-                    ) : null}
-                  </div>
+                    ) : undefined}
+                    description={
+                      keyword || status
+                        ? "尝试不同的关键词或状态。"
+                        : "创建第一个友链来填充目录。"
+                    }
+                    title={keyword || status ? "没有符合筛选条件的友链。" : "暂无友链。"}
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -355,16 +361,10 @@ export function CmsFriendLinkManager() {
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-      <p className="text-xs tracking-[0.18em] text-muted uppercase">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
-    </div>
+          </div>
+        </CmsSectionPanel>
+      )}
+    />
   );
 }
 

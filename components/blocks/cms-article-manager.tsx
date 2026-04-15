@@ -4,10 +4,15 @@ import React from "react";
 import Link from "next/link";
 import NiceModal from "@ebay/nice-modal-react";
 import { format } from "date-fns";
-import { FileText, Plus, RefreshCw, Search, Trash2 } from "lucide-react";
+import { Plus, RefreshCw, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+import { CmsEmptyState } from "@/components/cms/cms-empty-state";
+import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
+import { CmsListShell } from "@/components/cms/cms-list-shell";
+import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -142,286 +147,277 @@ export function CmsArticleManager() {
   }
 
   return (
-    <div className="space-y-6">
-      <div
-        className={`
-          flex flex-col gap-4
-          lg:flex-row lg:items-center lg:justify-between
-        `}
-      >
+    <CmsListShell
+      filters={(
         <div
           className={`
-            flex flex-1 flex-col gap-3
-            lg:flex-row lg:items-center
+            flex flex-col gap-4
+            lg:flex-row lg:items-center lg:justify-between
           `}
         >
-          <div className="w-full max-w-md">
-            <Input
-              onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="按标题、slug 或摘要搜索"
-              startAdornment={<Search className="size-4" />}
-              value={searchValue}
-            />
-          </div>
-          <div className="w-full max-w-56">
-            <Select
-              onValueChange={(value) => {
-                setStatus(value as ArticleStatus | "");
-                setPage(1);
-              }}
-              options={STATUS_OPTIONS}
-              value={status}
-            />
-          </div>
-          <div className="w-full max-w-64">
-            <Select
-              onValueChange={(value) => {
-                setCategoryId(value as string);
-                setPage(1);
-              }}
-              options={[
-                { label: "全部分类", value: "" },
-                ...categories.map((category) => ({
-                  label: category.name,
-                  value: category.id,
-                })),
-              ]}
-              value={categoryId}
-            />
-          </div>
-          <div className="flex items-center gap-3 text-sm text-muted">
-            <Badge variant="muted">{total} 篇文章</Badge>
-            {isValidating && !isLoading ? (
-              <span className="inline-flex items-center gap-2">
-                <RefreshCw className={`size-3 animate-spin`} /> 刷新中
-              </span>
-            ) : null}
-          </div>
-        </div>
-
-        <Link href="/cms/article/new">
-          <Button variant="primary" className="font-medium!">
-            <Plus className="size-4" />
-            新建文章
-          </Button>
-        </Link>
-      </div>
-
-      <div
-        className={`
-          grid gap-4
-          sm:grid-cols-3
-        `}
-      >
-        <MetricCard label="文章总数" value={String(total)} />
-        <MetricCard label="可见文章" value={String(articles.length)} />
-        <MetricCard
-          label="当前筛选"
-          value={status || (categoryId ? "分类" : "全部内容")}
-        />
-      </div>
-
-      <Table>
-        <TableRoot>
-          <TableHead>
-            <tr>
-              <TableHeaderCell>文章</TableHeaderCell>
-              <TableHeaderCell>分类</TableHeaderCell>
-              <TableHeaderCell>状态</TableHeaderCell>
-              <TableHeaderCell>标签</TableHeaderCell>
-              <TableHeaderCell>更新时间</TableHeaderCell>
-              <TableHeaderCell className="text-right">操作</TableHeaderCell>
-            </tr>
-          </TableHead>
-          <TableBody>
-            {isLoading ? (
-              Array.from({ length: 5 }, (_, index) => (
-                <TableRow key={index}>
-                  <TableCell colSpan={6}>
-                    <div className="h-14 animate-pulse rounded-xl bg-white/5" />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : error ? (
-              <TableRow>
-                <TableCell className="py-10" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">
-                      {error.message || "加载文章失败。"}
-                    </p>
-                    <Button onClick={() => void mutate()} variant="outline">
-                      重试
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : articles.length === 0 ? (
-              <TableRow>
-                <TableCell className="py-12" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div
-                      className={`
-                        flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                      `}
-                    >
-                      <FileText className="size-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-base text-foreground">
-                        {keyword || status || categoryId
-                          ? "没有符合筛选条件的文章。"
-                          : "暂无文章。"}
-                      </p>
-                      <p className="text-sm text-muted">
-                        {keyword || status || categoryId
-                          ? "尝试不同的筛选组合。"
-                          : "创建第一篇文章以开始发布内容。"}
-                      </p>
-                    </div>
-                    {!keyword && !status && !categoryId ? (
-                      <Link href="/cms/article/new">
-                        <Button variant="outline">
-                          <Plus className="size-4" />
-                          创建文章
-                        </Button>
-                      </Link>
-                    ) : null}
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              articles.map((article) => (
-                <TableRow key={article.id}>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="font-medium text-foreground">
-                        {article.title}
-                      </div>
-                      <div className="line-clamp-2 text-xs leading-5 text-muted">
-                        {article.excerpt || article.slug}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {article.category ? (
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="inline-block size-2.5 rounded-full border border-white/10"
-                          style={{
-                            backgroundColor:
-                              article.category.color ?? "#27272A",
-                          }}
-                        />
-                        <span>{article.category.name}</span>
-                      </div>
-                    ) : (
-                      <span className="text-muted">未分类</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(article.status)}>
-                      {article.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1.5">
-                      {article.tags.length > 0 ? (
-                        article.tags.slice(0, 3).map((tag) => (
-                          <span
-                            key={tag.id}
-                            className="rounded-md bg-white/6 px-2 py-1 text-xs text-muted"
-                          >
-                            {tag.name}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-muted">暂无标签</span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-muted">
-                    {format(new Date(article.updatedAt), "yyyy-MM-dd HH:mm")}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex justify-end gap-2">
-                      <Link href={`/cms/article/${article.id}`}>
-                        <Button size="sm" variant="ghost">
-                          编辑
-                        </Button>
-                      </Link>
-                      <Button
-                        disabled={deleteMutation.isMutating}
-                        onClick={() => openDeleteDialog(article)}
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Trash2 className="size-4" />
-                        删除
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </TableRoot>
-      </Table>
-
-      <div
-        className={`
-          flex flex-col gap-4
-          sm:flex-row sm:items-center sm:justify-between
-        `}
-      >
-        <p className="text-sm text-muted">
-          {total === 0
-            ? "无记录"
-            : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
-        </p>
-        <div className="flex items-center gap-2">
-          <Button
-            disabled={page === 1 || isLoading}
-            onClick={() =>
-              setPage((currentPage) => Math.max(currentPage - 1, 1))
-            }
-            size="sm"
-            variant="outline"
+          <div
+            className={`
+              flex flex-1 flex-col gap-3
+              lg:flex-row lg:items-center
+            `}
           >
-            上一页
-          </Button>
-          {visiblePages.map((item) => (
-            <Button
-              key={item}
-              disabled={isLoading}
-              onClick={() => setPage(item)}
-              size="sm"
-              variant={item === page ? "primary" : "ghost"}
-            >
-              {item}
+            <div className="w-full max-w-md">
+              <Input
+                onChange={(event) => setSearchValue(event.target.value)}
+                placeholder="按标题、slug 或摘要搜索"
+                startAdornment={<Search className="size-4" />}
+                value={searchValue}
+              />
+            </div>
+            <div className="w-full max-w-56">
+              <Select
+                onValueChange={(value) => {
+                  setStatus(value as ArticleStatus | "");
+                  setPage(1);
+                }}
+                options={STATUS_OPTIONS}
+                value={status}
+              />
+            </div>
+            <div className="w-full max-w-64">
+              <Select
+                onValueChange={(value) => {
+                  setCategoryId(value as string);
+                  setPage(1);
+                }}
+                options={[
+                  { label: "全部分类", value: "" },
+                  ...categories.map((category) => ({
+                    label: category.name,
+                    value: category.id,
+                  })),
+                ]}
+                value={categoryId}
+              />
+            </div>
+            <div className="flex items-center gap-3 text-sm text-muted">
+              <Badge variant="muted">{total} 篇文章</Badge>
+              {isValidating && !isLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <RefreshCw className="size-3 animate-spin" /> 刷新中
+                </span>
+              ) : null}
+            </div>
+          </div>
+
+          <Link href="/cms/article/new">
+            <Button className="font-medium!" variant="primary">
+              <Plus className="size-4" />
+              新建文章
             </Button>
-          ))}
-          <Button
-            disabled={page === totalPages || isLoading}
-            onClick={() =>
-              setPage((currentPage) => Math.min(currentPage + 1, totalPages))
-            }
-            size="sm"
-            variant="outline"
-          >
-            下一页
-          </Button>
+          </Link>
         </div>
-      </div>
-    </div>
-  );
-}
+      )}
+      metrics={(
+        <CmsMetricStrip
+          items={[
+            { label: "文章总数", value: String(total) },
+            { label: "可见文章", value: String(articles.length) },
+            {
+              label: "当前筛选",
+              value: status || (categoryId ? "分类" : "全部内容"),
+            },
+          ]}
+        />
+      )}
+      body={(
+        <CmsSectionPanel
+          description="集中查看文章状态、标签和发布时间。"
+          title="文章列表"
+        >
+          <div className="space-y-6">
+            <Table>
+              <TableRoot>
+                <TableHead>
+                  <tr>
+                    <TableHeaderCell>文章</TableHeaderCell>
+                    <TableHeaderCell>分类</TableHeaderCell>
+                    <TableHeaderCell>状态</TableHeaderCell>
+                    <TableHeaderCell>标签</TableHeaderCell>
+                    <TableHeaderCell>更新时间</TableHeaderCell>
+                    <TableHeaderCell className="text-right">操作</TableHeaderCell>
+                  </tr>
+                </TableHead>
+                <TableBody>
+                  {isLoading ? (
+                    Array.from({ length: 5 }, (_, index) => (
+                      <TableRow key={index}>
+                        <TableCell colSpan={6}>
+                          <div className="h-14 animate-pulse rounded-xl bg-white/5" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : error ? (
+                    <TableRow>
+                      <TableCell className="py-6" colSpan={6}>
+                        <CmsFeedbackPanel
+                          action={(
+                            <Button onClick={() => void mutate()} variant="outline">
+                              重试
+                            </Button>
+                          )}
+                          description={error.message || "加载文章失败。"}
+                          title="文章加载失败"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : articles.length === 0 ? (
+                    <TableRow>
+                      <TableCell className="py-6" colSpan={6}>
+                        <CmsEmptyState
+                          action={!keyword && !status && !categoryId ? (
+                            <Link href="/cms/article/new">
+                              <Button variant="outline">
+                                <Plus className="size-4" />
+                                创建文章
+                              </Button>
+                            </Link>
+                          ) : undefined}
+                          description={
+                            keyword || status || categoryId
+                              ? "尝试不同的筛选组合。"
+                              : "创建第一篇文章以开始发布内容。"
+                          }
+                          title={
+                            keyword || status || categoryId
+                              ? "没有符合筛选条件的文章。"
+                              : "暂无文章。"
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    articles.map((article) => (
+                      <TableRow key={article.id}>
+                        <TableCell>
+                          <div className="space-y-1">
+                            <div className="font-medium text-foreground">
+                              {article.title}
+                            </div>
+                            <div className="line-clamp-2 text-xs leading-5 text-muted">
+                              {article.excerpt || article.slug}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {article.category ? (
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="inline-block size-2.5 rounded-full border border-white/10"
+                                style={{
+                                  backgroundColor:
+                                    article.category.color ?? "#27272A",
+                                }}
+                              />
+                              <span>{article.category.name}</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted">未分类</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={getStatusVariant(article.status)}>
+                            {article.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-wrap gap-1.5">
+                            {article.tags.length > 0 ? (
+                              article.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag.id}
+                                  className="rounded-md bg-white/6 px-2 py-1 text-xs text-muted"
+                                >
+                                  {tag.name}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-xs text-muted">暂无标签</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-muted">
+                          {format(new Date(article.updatedAt), "yyyy-MM-dd HH:mm")}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-end gap-2">
+                            <Link href={`/cms/article/${article.id}`}>
+                              <Button size="sm" variant="ghost">
+                                编辑
+                              </Button>
+                            </Link>
+                            <Button
+                              disabled={deleteMutation.isMutating}
+                              onClick={() => openDeleteDialog(article)}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <Trash2 className="size-4" />
+                              删除
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </TableRoot>
+            </Table>
 
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-      <p className="text-xs tracking-[0.18em] text-muted uppercase">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
-    </div>
+            <div
+              className={`
+                flex flex-col gap-4
+                sm:flex-row sm:items-center sm:justify-between
+              `}
+            >
+              <p className="text-sm text-muted">
+                {total === 0
+                  ? "无记录"
+                  : `显示 ${(page - 1) * PAGE_SIZE + 1}-${Math.min(page * PAGE_SIZE, total)}，共 ${total} 条`}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  disabled={page === 1 || isLoading}
+                  onClick={() =>
+                    setPage((currentPage) => Math.max(currentPage - 1, 1))
+                  }
+                  size="sm"
+                  variant="outline"
+                >
+                  上一页
+                </Button>
+                {visiblePages.map((item) => (
+                  <Button
+                    key={item}
+                    disabled={isLoading}
+                    onClick={() => setPage(item)}
+                    size="sm"
+                    variant={item === page ? "primary" : "ghost"}
+                  >
+                    {item}
+                  </Button>
+                ))}
+                <Button
+                  disabled={page === totalPages || isLoading}
+                  onClick={() =>
+                    setPage((currentPage) => Math.min(currentPage + 1, totalPages))
+                  }
+                  size="sm"
+                  variant="outline"
+                >
+                  下一页
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CmsSectionPanel>
+      )}
+    />
   );
 }
 

@@ -5,7 +5,6 @@ import Link from "next/link";
 import NiceModal from "@ebay/nice-modal-react";
 import { format } from "date-fns";
 import {
-  BriefcaseBusiness,
   Plus,
   RefreshCw,
   Search,
@@ -14,6 +13,11 @@ import {
 import { toast } from "sonner";
 import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
+import { CmsEmptyState } from "@/components/cms/cms-empty-state";
+import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
+import { CmsListShell } from "@/components/cms/cms-list-shell";
+import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,7 +149,8 @@ export function CmsProjectManager() {
   }
 
   return (
-    <div className="space-y-6">
+    <CmsListShell
+      filters={(
       <div
         className={`
           flex flex-col gap-4
@@ -203,21 +208,25 @@ export function CmsProjectManager() {
           </Button>
         </Link>
       </div>
-
-      <div
-        className={`
-          grid gap-4
-          sm:grid-cols-3
-        `}
-      >
-        <MetricCard label="项目总数" value={String(total)} />
-        <MetricCard label="可见项目" value={String(projects.length)} />
-        <MetricCard
-          label="当前筛选"
-          value={category || (featured ? "精选" : "全部项目")}
+      )}
+      metrics={(
+        <CmsMetricStrip
+          items={[
+            { label: "项目总数", value: String(total) },
+            { label: "可见项目", value: String(projects.length) },
+            {
+              label: "当前筛选",
+              value: category || (featured ? "精选" : "全部项目"),
+            },
+          ]}
         />
-      </div>
-
+      )}
+      body={(
+        <CmsSectionPanel
+          description="统一管理项目分类、精选状态与技术栈摘要。"
+          title="项目列表"
+        >
+          <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -241,49 +250,41 @@ export function CmsProjectManager() {
               ))
             ) : error ? (
               <TableRow>
-                <TableCell className="py-10" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <p className="max-w-md text-sm text-muted">
-                      {error.message || "加载项目失败。"}
-                    </p>
-                    <Button onClick={() => void mutate()} variant="outline">
-                      重试
-                    </Button>
-                  </div>
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsFeedbackPanel
+                    action={(
+                      <Button onClick={() => void mutate()} variant="outline">
+                        重试
+                      </Button>
+                    )}
+                    description={error.message || "加载项目失败。"}
+                    title="项目加载失败"
+                  />
                 </TableCell>
               </TableRow>
             ) : projects.length === 0 ? (
               <TableRow>
-                <TableCell className="py-12" colSpan={6}>
-                  <div className="flex flex-col items-center gap-4 text-center">
-                    <div
-                      className={`
-                        flex size-12 items-center justify-center rounded-xl border border-white/8 bg-white/4 text-muted
-                      `}
-                    >
-                      <BriefcaseBusiness className="size-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-base text-foreground">
-                        {keyword || category || featured
-                          ? "没有符合筛选条件的项目。"
-                          : "暂无项目。"}
-                      </p>
-                      <p className="text-sm text-muted">
-                        {keyword || category || featured
-                          ? "尝试不同的筛选组合。"
-                          : "创建第一个项目来构建作品集。"}
-                      </p>
-                    </div>
-                    {!keyword && !category && !featured ? (
+                <TableCell className="py-6" colSpan={6}>
+                  <CmsEmptyState
+                    action={!keyword && !category && !featured ? (
                       <Link href="/cms/project/new">
                         <Button variant="outline">
                           <Plus className="size-4" />
                           创建项目
                         </Button>
                       </Link>
-                    ) : null}
-                  </div>
+                    ) : undefined}
+                    description={
+                      keyword || category || featured
+                        ? "尝试不同的筛选组合。"
+                        : "创建第一个项目来构建作品集。"
+                    }
+                    title={
+                      keyword || category || featured
+                        ? "没有符合筛选条件的项目。"
+                        : "暂无项目。"
+                    }
+                  />
                 </TableCell>
               </TableRow>
             ) : (
@@ -400,16 +401,10 @@ export function CmsProjectManager() {
           </Button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function MetricCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-white/3 p-5">
-      <p className="text-xs tracking-[0.18em] text-muted uppercase">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
-    </div>
+          </div>
+        </CmsSectionPanel>
+      )}
+    />
   );
 }
 
