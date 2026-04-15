@@ -7,6 +7,8 @@ import React from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
 
+import { CmsEditorLayout } from "@/components/cms/cms-editor-layout";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -112,294 +114,291 @@ export function CmsProjectForm({ projectId }: CmsProjectFormProps) {
 
   if (isLoading) {
     return (
-      <div className={`
-        grid gap-6
-        xl:grid-cols-[1fr_360px]
-      `}>
-        <div className="space-y-6">
-          <div className="h-64 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-          <div className="h-96 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-        </div>
-        <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-      </div>
+      <CmsEditorLayout
+        primary={
+          <>
+            <div className="h-64 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+            <div className="h-96 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+          </>
+        }
+        sidebar={<div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />}
+      />
     );
   }
 
   return (
-    <div className={`
-      grid gap-6
-      xl:grid-cols-[1fr_360px]
-    `}>
-      <div className="space-y-6">
-        <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">基本信息</div>
-          <div className="space-y-5 p-6">
-            <Field label="项目名称">
-              <Input
-                onChange={(event) => {
-                  const nextName = event.target.value;
+    <CmsEditorLayout
+      primary={
+        <>
+          <CmsSectionPanel title="基本信息">
+            <div className="space-y-5">
+              <Field label="项目名称">
+                <Input
+                  onChange={(event) => {
+                    const nextName = event.target.value;
 
-                  setValues((currentValues) => {
-                    if (!hasEditedSlug) {
+                    setValues((currentValues) => {
+                      if (!hasEditedSlug) {
+                        return {
+                          ...currentValues,
+                          name: nextName,
+                          slug: slugify(nextName),
+                        };
+                      }
+
                       return {
                         ...currentValues,
                         name: nextName,
-                        slug: slugify(nextName),
                       };
+                    });
+                  }}
+                  placeholder="StreamLine"
+                  value={values.name}
+                />
+              </Field>
+
+              <div className={`
+                grid gap-5
+                sm:grid-cols-2
+              `}>
+                <Field label="Slug">
+                  <Input
+                    onChange={(event) => {
+                      setHasEditedSlug(true);
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        slug: event.target.value,
+                      }));
+                    }}
+                    placeholder="streamline"
+                    value={values.slug}
+                  />
+                </Field>
+                <Field label="分类">
+                  <Select
+                    onValueChange={(value) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        category: value as ProjectCategory,
+                      }))
                     }
+                    options={PROJECT_CATEGORY_OPTIONS}
+                    value={values.category}
+                  />
+                </Field>
+              </div>
 
-                    return {
+              <Field description="用于卡片和列表的简短项目摘要。" label="摘要">
+                <Textarea
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
                       ...currentValues,
-                      name: nextName,
-                    };
-                  });
-                }}
-                placeholder="StreamLine"
-                value={values.name}
-              />
-            </Field>
+                      summary: event.target.value,
+                    }))
+                  }
+                  placeholder="Project management for modern teams."
+                  value={values.summary}
+                />
+              </Field>
 
+              <Field description="可选的详细项目描述。" label="详情">
+                <Textarea
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      detail: event.target.value,
+                    }))
+                  }
+                  placeholder="Longer product story, scope, and outcome."
+                  value={values.detail}
+                />
+              </Field>
+            </div>
+          </CmsSectionPanel>
+
+          <CmsSectionPanel title="链接与资源">
             <div className={`
               grid gap-5
               sm:grid-cols-2
             `}>
-              <Field label="Slug">
+              <Field label="外部链接">
                 <Input
-                  onChange={(event) => {
-                    setHasEditedSlug(true);
+                  onChange={(event) =>
                     setValues((currentValues) => ({
                       ...currentValues,
-                      slug: event.target.value,
-                    }));
-                  }}
-                  placeholder="streamline"
-                  value={values.slug}
-                />
-              </Field>
-              <Field label="分类">
-                <Select
-                  onValueChange={(value) =>
-                    setValues((currentValues) => ({
-                      ...currentValues,
-                      category: value as ProjectCategory,
+                      externalUrl: event.target.value,
                     }))
                   }
-                  options={PROJECT_CATEGORY_OPTIONS}
-                  value={values.category}
+                  placeholder="https://example.com"
+                  value={values.externalUrl}
+                />
+              </Field>
+              <Field label="源代码链接">
+                <Input
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      sourceUrl: event.target.value,
+                    }))
+                  }
+                  placeholder="https://github.com/example/repo"
+                  value={values.sourceUrl}
+                />
+              </Field>
+              <Field description="可选的上传资源 ID。" label="封面资源 ID">
+                <Input
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      coverAssetId: event.target.value,
+                    }))
+                  }
+                  placeholder="cm..."
+                  value={values.coverAssetId}
+                />
+              </Field>
+              <Field label="发布时间">
+                <Input
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      publishedAt: event.target.value,
+                    }))
+                  }
+                  type="datetime-local"
+                  value={values.publishedAt}
                 />
               </Field>
             </div>
-
-            <Field description="用于卡片和列表的简短项目摘要。" label="摘要">
-              <Textarea
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    summary: event.target.value,
-                  }))
-                }
-                placeholder="Project management for modern teams."
-                value={values.summary}
-              />
-            </Field>
-
-            <Field description="可选的详细项目描述。" label="详情">
-              <Textarea
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    detail: event.target.value,
-                  }))
-                }
-                placeholder="Longer product story, scope, and outcome."
-                value={values.detail}
-              />
-            </Field>
-          </div>
-        </section>
-
-        <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">链接与资源</div>
-          <div className={`
-            grid gap-5 p-6
-            sm:grid-cols-2
-          `}>
-            <Field label="外部链接">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    externalUrl: event.target.value,
-                  }))
-                }
-                placeholder="https://example.com"
-                value={values.externalUrl}
-              />
-            </Field>
-            <Field label="源代码链接">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    sourceUrl: event.target.value,
-                  }))
-                }
-                placeholder="https://github.com/example/repo"
-                value={values.sourceUrl}
-              />
-            </Field>
-            <Field description="可选的上传资源 ID。" label="封面资源 ID">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    coverAssetId: event.target.value,
-                  }))
-                }
-                placeholder="cm..."
-                value={values.coverAssetId}
-              />
-            </Field>
-            <Field label="发布时间">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    publishedAt: event.target.value,
-                  }))
-                }
-                type="datetime-local"
-                value={values.publishedAt}
-              />
-            </Field>
-          </div>
-        </section>
-      </div>
-
-      <aside className="space-y-6">
-        <section className="rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
-            <Check className="size-4" />
-            {isEditMode ? "正在编辑项目" : "准备发布"}
-          </div>
-          <div className="space-y-3">
-            <Button
-              className="w-full justify-center"
-              disabled={isSubmitting}
-              onClick={() => void handleSubmit()}
-              type="button"
-            >
-              {isSubmitting ? "保存中..." : isEditMode ? "更新项目" : "创建项目"}
-            </Button>
-          </div>
-        </section>
-
-        <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">展示设置</div>
-
-          <label className={`
-            flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
-          `}>
-            <Checkbox
-              checked={values.isFeatured}
-              onCheckedChange={(checked) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  isFeatured: Boolean(checked),
-                }))
-              }
-            />
-            <span>将此项目设为精选</span>
-          </label>
-
-          <div className={`
-            grid gap-5
-            sm:grid-cols-2
-            xl:grid-cols-1
-          `}>
-            <Field label="徽章标签">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    badgeLabel: event.target.value,
-                  }))
-                }
-                placeholder="Productivity"
-                value={values.badgeLabel}
-              />
-            </Field>
-            <Field label="排序顺序">
-              <Input
-                inputMode="numeric"
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    sortOrder: event.target.value,
-                  }))
-                }
-                placeholder="0"
-                type="number"
-                value={values.sortOrder}
-              />
-            </Field>
-          </div>
-
-          <div className={`
-            grid gap-5
-            sm:grid-cols-2
-            xl:grid-cols-1
-          `}>
-            <Field label="指标标签">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    metricLabel: event.target.value,
-                  }))
-                }
-                placeholder="Teams"
-                value={values.metricLabel}
-              />
-            </Field>
-            <Field label="指标值">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    metricValue: event.target.value,
-                  }))
-                }
-                placeholder="1.2k"
-                value={values.metricValue}
-              />
-            </Field>
-          </div>
-
-          <Field description="用逗号分隔的技术名称。" label="技术栈">
-            <Textarea
-              onChange={(event) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  techNames: event.target.value,
-                }))
-              }
-              placeholder="Svelte, Supabase, Tailwind CSS"
-              value={values.techNames}
-            />
-          </Field>
-
-          <div className="space-y-2 text-xs text-muted">
-            <div className="flex items-center gap-2">
-              <Badge variant="muted">{formatCategoryLabel(values.category)}</Badge>
-              <Badge variant={values.isFeatured ? "success" : "muted"}>
-                {values.isFeatured ? "精选" : "普通"}
-              </Badge>
+          </CmsSectionPanel>
+        </>
+      }
+      sidebar={
+        <>
+          <CmsSectionPanel>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <Check className="size-4" />
+                {isEditMode ? "正在编辑项目" : "准备发布"}
+              </div>
+              <Button
+                className="w-full justify-center"
+                disabled={isSubmitting}
+                onClick={() => void handleSubmit()}
+                type="button"
+              >
+                {isSubmitting ? "保存中..." : isEditMode ? "更新项目" : "创建项目"}
+              </Button>
             </div>
-          </div>
-        </section>
-      </aside>
-    </div>
+          </CmsSectionPanel>
+
+          <CmsSectionPanel title="展示设置">
+            <div className="space-y-5">
+              <label className={`
+                flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+              `}>
+                <Checkbox
+                  checked={values.isFeatured}
+                  onCheckedChange={(checked) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      isFeatured: Boolean(checked),
+                    }))
+                  }
+                />
+                <span>将此项目设为精选</span>
+              </label>
+
+              <div className={`
+                grid gap-5
+                sm:grid-cols-2
+                xl:grid-cols-1
+              `}>
+                <Field label="徽章标签">
+                  <Input
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        badgeLabel: event.target.value,
+                      }))
+                    }
+                    placeholder="Productivity"
+                    value={values.badgeLabel}
+                  />
+                </Field>
+                <Field label="排序顺序">
+                  <Input
+                    inputMode="numeric"
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        sortOrder: event.target.value,
+                      }))
+                    }
+                    placeholder="0"
+                    type="number"
+                    value={values.sortOrder}
+                  />
+                </Field>
+              </div>
+
+              <div className={`
+                grid gap-5
+                sm:grid-cols-2
+                xl:grid-cols-1
+              `}>
+                <Field label="指标标签">
+                  <Input
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        metricLabel: event.target.value,
+                      }))
+                    }
+                    placeholder="Teams"
+                    value={values.metricLabel}
+                  />
+                </Field>
+                <Field label="指标值">
+                  <Input
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        metricValue: event.target.value,
+                      }))
+                    }
+                    placeholder="1.2k"
+                    value={values.metricValue}
+                  />
+                </Field>
+              </div>
+
+              <Field description="用逗号分隔的技术名称。" label="技术栈">
+                <Textarea
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      techNames: event.target.value,
+                    }))
+                  }
+                  placeholder="Svelte, Supabase, Tailwind CSS"
+                  value={values.techNames}
+                />
+              </Field>
+
+              <div className="space-y-2 text-xs text-muted">
+                <div className="flex items-center gap-2">
+                  <Badge variant="muted">{formatCategoryLabel(values.category)}</Badge>
+                  <Badge variant={values.isFeatured ? "success" : "muted"}>
+                    {values.isFeatured ? "精选" : "普通"}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </CmsSectionPanel>
+        </>
+      }
+    />
   );
 }
 

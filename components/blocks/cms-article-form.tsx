@@ -7,6 +7,8 @@ import React from "react";
 import useSWR from "swr";
 import { toast } from "sonner";
 
+import { CmsEditorLayout } from "@/components/cms/cms-editor-layout";
+import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { MarkdownEditor } from "@/components/editor/markdown-editor";
 import { MarkdownViewer } from "@/components/editor/markdown-viewer";
 import { Badge } from "@/components/ui/badge";
@@ -129,298 +131,297 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
 
   if (isLoading) {
     return (
-      <div className={`
-        grid gap-6
-        xl:grid-cols-[1fr_360px]
-      `}>
-        <div className="space-y-6">
-          <div className="h-56 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-          <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-        </div>
-        <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
-      </div>
+      <CmsEditorLayout
+        primary={
+          <>
+            <div className="h-56 animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+            <div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />
+          </>
+        }
+        sidebar={<div className="h-[720px] animate-pulse rounded-2xl border border-white/8 bg-white/4" />}
+      />
     );
   }
 
   return (
-    <div className={`
-      grid gap-6
-      xl:grid-cols-[1fr_360px]
-    `}>
-      <div className="space-y-6">
-        <section className="overflow-hidden rounded-2xl border border-white/8 bg-white/3">
-          <div className="border-b border-white/8 px-6 py-4 text-sm font-semibold">标题与元数据</div>
-          <div className="space-y-5 p-6">
-            <Field label="标题">
-              <Input
-                onChange={(event) => {
-                  const nextTitle = event.target.value;
-
-                  setValues((currentValues) => {
-                    if (!hasEditedSlug) {
-                      return {
-                        ...currentValues,
-                        slug: slugify(nextTitle),
-                        title: nextTitle,
-                      };
-                    }
-
-                    return {
-                      ...currentValues,
-                      title: nextTitle,
-                    };
-                  });
-                }}
-                placeholder="构建一个简洁的 CMS"
-                value={values.title}
-              />
-            </Field>
-
-            <div className={`
-              grid gap-5
-              sm:grid-cols-2
-            `}>
-              <Field label="Slug">
+    <CmsEditorLayout
+      primary={
+        <>
+          <CmsSectionPanel title="标题与元数据">
+            <div className="space-y-5">
+              <Field label="标题">
                 <Input
                   onChange={(event) => {
-                    setHasEditedSlug(true);
-                    setValues((currentValues) => ({
-                      ...currentValues,
-                      slug: event.target.value,
-                    }));
+                    const nextTitle = event.target.value;
+
+                    setValues((currentValues) => {
+                      if (!hasEditedSlug) {
+                        return {
+                          ...currentValues,
+                          slug: slugify(nextTitle),
+                          title: nextTitle,
+                        };
+                      }
+
+                      return {
+                        ...currentValues,
+                        title: nextTitle,
+                      };
+                    });
                   }}
-                  placeholder="building-a-calm-cms"
-                  value={values.slug}
+                  placeholder="构建一个简洁的 CMS"
+                  value={values.title}
                 />
               </Field>
-              <Field description="可选的阅读时长（分钟）。" label="阅读时长">
-                <Input
-                  inputMode="numeric"
+
+              <div className={`
+                grid gap-5
+                sm:grid-cols-2
+              `}>
+                <Field label="Slug">
+                  <Input
+                    onChange={(event) => {
+                      setHasEditedSlug(true);
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        slug: event.target.value,
+                      }));
+                    }}
+                    placeholder="building-a-calm-cms"
+                    value={values.slug}
+                  />
+                </Field>
+                <Field description="可选的阅读时长（分钟）。" label="阅读时长">
+                  <Input
+                    inputMode="numeric"
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        readingTimeMinutes: event.target.value,
+                      }))
+                    }
+                    placeholder="6"
+                    type="number"
+                    value={values.readingTimeMinutes}
+                  />
+                </Field>
+              </div>
+
+              <Field description="用于归档卡片和预览。" label="摘要">
+                <Textarea
                   onChange={(event) =>
                     setValues((currentValues) => ({
                       ...currentValues,
-                      readingTimeMinutes: event.target.value,
+                      excerpt: event.target.value,
                     }))
                   }
-                  placeholder="6"
-                  type="number"
-                  value={values.readingTimeMinutes}
+                  placeholder="关于界面节奏和 CMS 人体工程学的简洁编辑笔记。"
+                  value={values.excerpt}
                 />
               </Field>
             </div>
+          </CmsSectionPanel>
 
-            <Field description="用于归档卡片和预览。" label="摘要">
-              <Textarea
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    excerpt: event.target.value,
-                  }))
-                }
-                placeholder="关于界面节奏和 CMS 人体工程学的简洁编辑笔记。"
-                value={values.excerpt}
-              />
-            </Field>
-          </div>
-        </section>
+          <CmsSectionPanel title="内容编辑">
+            <Tabs defaultValue="editor">
+              <TabsList>
+                <TabsTrigger value="editor">编辑器</TabsTrigger>
+                <TabsTrigger value="preview">预览</TabsTrigger>
+              </TabsList>
+              <TabsContent value="editor">
+                <MarkdownEditor
+                  onChange={(value) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      contentMarkdown: value,
+                    }))
+                  }
+                  value={values.contentMarkdown}
+                />
+              </TabsContent>
+              <TabsContent value="preview">
+                <div className="rounded-[1.8rem] border border-white/8 bg-white/3 p-6">
+                  <div className="prose max-w-none prose-invert">
+                    <MarkdownViewer value={values.contentMarkdown} />
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CmsSectionPanel>
+        </>
+      }
+      sidebar={
+        <>
+          <CmsSectionPanel>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <Check className="size-4" />
+                {isEditMode ? "正在编辑文章" : "准备发布"}
+              </div>
+              <Button
+                className="w-full justify-center"
+                disabled={isSubmitting}
+                onClick={() => void handleSubmit(ArticleStatus.Published)}
+                type="button"
+              >
+                {isSubmitting ? "保存中..." : "发布文章"}
+              </Button>
+              <Button
+                className="w-full justify-center"
+                disabled={isSubmitting}
+                onClick={() => void handleSubmit(ArticleStatus.Draft)}
+                type="button"
+                variant="outline"
+              >
+                保存草稿
+              </Button>
+            </div>
+          </CmsSectionPanel>
 
-        <section className="rounded-2xl border border-white/8 bg-white/3 p-5">
-          <Tabs defaultValue="editor">
-            <TabsList>
-              <TabsTrigger value="editor">编辑器</TabsTrigger>
-              <TabsTrigger value="preview">预览</TabsTrigger>
-            </TabsList>
-            <TabsContent value="editor">
-              <MarkdownEditor
-                onChange={(value) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    contentMarkdown: value,
-                  }))
-                }
-                value={values.contentMarkdown}
-              />
-            </TabsContent>
-            <TabsContent value="preview">
-              <div className="rounded-[1.8rem] border border-white/8 bg-white/3 p-6">
-                <div className="prose max-w-none prose-invert">
-                  <MarkdownViewer value={values.contentMarkdown} />
+          <CmsSectionPanel title="文章设置">
+            <div className="space-y-5">
+              <Field label="状态">
+                <Select
+                  onValueChange={(value) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      status: value as ArticleStatus,
+                    }))
+                  }
+                  options={STATUS_OPTIONS}
+                  value={values.status}
+                />
+              </Field>
+
+              <Field label="分类">
+                <Select
+                  onValueChange={(value) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      categoryId: value as string,
+                    }))
+                  }
+                  options={[
+                    { label: "未分类", value: "" },
+                    ...categories.map((category) => ({
+                      label: category.name,
+                      value: category.id,
+                    })),
+                  ]}
+                  value={values.categoryId}
+                />
+              </Field>
+
+              <Field label="标签">
+                <div className="space-y-2 rounded-2xl border border-white/8 bg-white/3 p-4">
+                  {tags.length > 0 ? (
+                    tags.map((tag) => (
+                      <label key={tag.id} className="flex items-center gap-3 text-sm text-foreground">
+                        <Checkbox
+                          checked={values.tagIds.includes(tag.id)}
+                          onCheckedChange={(checked) =>
+                            setValues((currentValues) => ({
+                              ...currentValues,
+                              tagIds: checked
+                                ? Array.from(new Set([...currentValues.tagIds, tag.id]))
+                                : currentValues.tagIds.filter((item) => item !== tag.id),
+                            }))
+                          }
+                        />
+                        <span>{tag.name}</span>
+                      </label>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted">暂无标签。</p>
+                  )}
+                </div>
+              </Field>
+
+              <label className={`
+                flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
+              `}>
+                <Checkbox
+                  checked={values.isFeatured}
+                  onCheckedChange={(checked) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      isFeatured: Boolean(checked),
+                    }))
+                  }
+                />
+                <span>将此文章设为精选</span>
+              </label>
+
+              <div className={`
+                grid gap-5
+                sm:grid-cols-2
+                xl:grid-cols-1
+              `}>
+                <Field label="发布时间">
+                  <Input
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        publishedAt: event.target.value,
+                      }))
+                    }
+                    type="datetime-local"
+                    value={values.publishedAt}
+                  />
+                </Field>
+                <Field label="归档时间">
+                  <Input
+                    onChange={(event) =>
+                      setValues((currentValues) => ({
+                        ...currentValues,
+                        archivedAt: event.target.value,
+                      }))
+                    }
+                    type="datetime-local"
+                    value={values.archivedAt}
+                  />
+                </Field>
+              </div>
+            </div>
+          </CmsSectionPanel>
+
+          <CmsSectionPanel title="SEO">
+            <div className="space-y-5">
+              <Field label="SEO 标题">
+                <Input
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      seoTitle: event.target.value,
+                    }))
+                  }
+                  placeholder="优化的搜索标题"
+                  value={values.seoTitle}
+                />
+              </Field>
+              <Field label="SEO 描述">
+                <Textarea
+                  onChange={(event) =>
+                    setValues((currentValues) => ({
+                      ...currentValues,
+                      seoDescription: event.target.value,
+                    }))
+                  }
+                  placeholder="简洁的搜索摘要"
+                  value={values.seoDescription}
+                />
+              </Field>
+              <div className="space-y-2 text-xs text-muted">
+                <div className="flex items-center gap-2">
+                  <Badge variant="muted">{values.tagIds.length} 个标签</Badge>
+                  <Badge variant="muted">{values.status}</Badge>
                 </div>
               </div>
-            </TabsContent>
-          </Tabs>
-        </section>
-      </div>
-
-      <aside className="space-y-6">
-        <section className="rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="mb-4 flex items-center gap-2 text-sm font-medium text-primary">
-            <Check className="size-4" />
-            {isEditMode ? "正在编辑文章" : "准备发布"}
-          </div>
-          <div className="space-y-3">
-            <Button
-              className="w-full justify-center"
-              disabled={isSubmitting}
-              onClick={() => void handleSubmit(ArticleStatus.Published)}
-              type="button"
-            >
-              {isSubmitting ? "保存中..." : "发布文章"}
-            </Button>
-            <Button
-              className="w-full justify-center"
-              disabled={isSubmitting}
-              onClick={() => void handleSubmit(ArticleStatus.Draft)}
-              type="button"
-              variant="outline"
-            >
-              保存草稿
-            </Button>
-          </div>
-        </section>
-
-        <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">文章设置</div>
-
-          <Field label="状态">
-            <Select
-              onValueChange={(value) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  status: value as ArticleStatus,
-                }))
-              }
-              options={STATUS_OPTIONS}
-              value={values.status}
-            />
-          </Field>
-
-          <Field label="分类">
-            <Select
-              onValueChange={(value) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  categoryId: value as string,
-                }))
-              }
-              options={[
-                { label: "未分类", value: "" },
-                ...categories.map((category) => ({
-                  label: category.name,
-                  value: category.id,
-                })),
-              ]}
-              value={values.categoryId}
-            />
-          </Field>
-
-          <Field label="标签">
-            <div className="space-y-2 rounded-2xl border border-white/8 bg-white/3 p-4">
-              {tags.length > 0 ? (
-                tags.map((tag) => (
-                  <label key={tag.id} className="flex items-center gap-3 text-sm text-foreground">
-                    <Checkbox
-                      checked={values.tagIds.includes(tag.id)}
-                      onCheckedChange={(checked) =>
-                        setValues((currentValues) => ({
-                          ...currentValues,
-                          tagIds: checked
-                            ? Array.from(new Set([...currentValues.tagIds, tag.id]))
-                            : currentValues.tagIds.filter((item) => item !== tag.id),
-                        }))
-                      }
-                    />
-                    <span>{tag.name}</span>
-                  </label>
-                ))
-              ) : (
-                <p className="text-sm text-muted">暂无标签。</p>
-              )}
             </div>
-          </Field>
-
-          <label className={`
-            flex items-center gap-3 rounded-2xl border border-white/8 bg-white/3 p-4 text-sm text-foreground
-          `}>
-            <Checkbox
-              checked={values.isFeatured}
-              onCheckedChange={(checked) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  isFeatured: Boolean(checked),
-                }))
-              }
-            />
-            <span>将此文章设为精选</span>
-          </label>
-
-          <div className={`
-            grid gap-5
-            sm:grid-cols-2
-            xl:grid-cols-1
-          `}>
-            <Field label="发布时间">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    publishedAt: event.target.value,
-                  }))
-                }
-                type="datetime-local"
-                value={values.publishedAt}
-              />
-            </Field>
-            <Field label="归档时间">
-              <Input
-                onChange={(event) =>
-                  setValues((currentValues) => ({
-                    ...currentValues,
-                    archivedAt: event.target.value,
-                  }))
-                }
-                type="datetime-local"
-                value={values.archivedAt}
-              />
-            </Field>
-          </div>
-        </section>
-
-        <section className="space-y-5 rounded-2xl border border-white/8 bg-white/3 p-6">
-          <div className="text-sm font-semibold">SEO</div>
-          <Field label="SEO 标题">
-            <Input
-              onChange={(event) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  seoTitle: event.target.value,
-                }))
-              }
-              placeholder="优化的搜索标题"
-              value={values.seoTitle}
-            />
-          </Field>
-          <Field label="SEO 描述">
-            <Textarea
-              onChange={(event) =>
-                setValues((currentValues) => ({
-                  ...currentValues,
-                  seoDescription: event.target.value,
-                }))
-              }
-              placeholder="简洁的搜索摘要"
-              value={values.seoDescription}
-            />
-          </Field>
-          <div className="space-y-2 text-xs text-muted">
-            <div className="flex items-center gap-2">
-              <Badge variant="muted">{values.tagIds.length} 个标签</Badge>
-              <Badge variant="muted">{values.status}</Badge>
-            </div>
-          </div>
-        </section>
-      </aside>
-    </div>
+          </CmsSectionPanel>
+        </>
+      }
+    />
   );
 }
 
