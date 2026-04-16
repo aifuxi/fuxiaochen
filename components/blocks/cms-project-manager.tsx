@@ -16,7 +16,6 @@ import useSWRMutation from "swr/mutation";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -208,18 +207,6 @@ export function CmsProjectManager() {
           </Button>
         </Link>
       </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "项目总数", value: String(total) },
-            { label: "可见项目", value: String(projects.length) },
-            {
-              label: "当前筛选",
-              value: category || (featured ? "精选" : "全部项目"),
-            },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

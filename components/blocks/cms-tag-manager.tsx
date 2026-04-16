@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { TagDeleteDialog } from "@/components/modals/tag-delete-dialog";
 import { TagFormDialog } from "@/components/modals/tag-form-dialog";
@@ -177,15 +176,6 @@ export function CmsTagManager() {
             添加标签
           </Button>
         </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "标签总数", value: String(total) },
-            { label: "可见标签", value: String(tags.length) },
-            { label: "当前搜索", value: keyword ? `#${keyword}` : "全部标签" },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

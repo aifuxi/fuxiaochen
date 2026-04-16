@@ -11,7 +11,6 @@ import useSWRMutation from "swr/mutation";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -212,18 +211,6 @@ export function CmsArticleManager() {
             </Button>
           </Link>
         </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "文章总数", value: String(total) },
-            { label: "可见文章", value: String(articles.length) },
-            {
-              label: "当前筛选",
-              value: status || (categoryId ? "分类" : "全部内容"),
-            },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

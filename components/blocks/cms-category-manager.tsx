@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { CategoryDeleteDialog } from "@/components/modals/category-delete-dialog";
 import { CategoryFormDialog } from "@/components/modals/category-form-dialog";
@@ -182,15 +181,6 @@ export function CmsCategoryManager() {
             添加分类
           </Button>
         </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "分类总数", value: String(total) },
-            { label: "可见分类", value: String(categories.length) },
-            { label: "当前搜索", value: keyword ? keyword : "全部分类" },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

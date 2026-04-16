@@ -11,7 +11,6 @@ import useSWRMutation from "swr/mutation";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -185,23 +184,6 @@ export function CmsChangelogManager() {
           </Button>
         </Link>
       </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "版本总数", value: String(total) },
-            { label: "可见版本", value: String(releases.length) },
-            {
-              label: "当前筛选",
-              value:
-                isMajorFilter === ""
-                  ? "全部版本"
-                  : isMajorFilter === "true"
-                    ? "大版本"
-                    : "小版本",
-            },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

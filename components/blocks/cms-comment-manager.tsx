@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { CommentDeleteDialog } from "@/components/modals/comment-delete-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -100,8 +99,6 @@ export function CmsCommentManager() {
   const totalPages = Math.max(data?.totalPages ?? 1, 1);
   const visiblePages = getVisiblePages(page, totalPages);
   const isMutating = updateMutation.isMutating || deleteMutation.isMutating;
-  const approvedVisibleCount = comments.filter((comment) => comment.status === CommentStatus.Approved).length;
-  const pendingVisibleCount = comments.filter((comment) => comment.status === CommentStatus.Pending).length;
 
   React.useEffect(() => {
     if (!data) {
@@ -202,15 +199,6 @@ export function CmsCommentManager() {
             </div>
           </div>
         </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "评论总数", value: String(total) },
-            { label: "本页已批准", value: String(approvedVisibleCount) },
-            { label: "本页待审核", value: String(pendingVisibleCount) },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

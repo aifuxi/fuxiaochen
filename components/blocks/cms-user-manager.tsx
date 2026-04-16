@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { UserDeleteDialog } from "@/components/modals/user-delete-dialog";
 import { UserFormDialog } from "@/components/modals/user-form-dialog";
@@ -81,8 +80,6 @@ export function CmsUserManager() {
   const totalPages = Math.max(data?.totalPages ?? 1, 1);
   const visiblePages = getVisiblePages(page, totalPages);
   const isMutating = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
-  const verifiedVisibleCount = users.filter((user) => user.emailVerified).length;
-  const visibleSessionCount = users.reduce((totalSessions, user) => totalSessions + user.sessionCount, 0);
 
   React.useEffect(() => {
     if (!data) {
@@ -197,15 +194,6 @@ export function CmsUserManager() {
           添加用户
         </Button>
       </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "用户总数", value: String(total) },
-            { label: "本页已验证", value: String(verifiedVisibleCount) },
-            { label: "活跃会话", value: String(visibleSessionCount) },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel

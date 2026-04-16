@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
 import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { FriendLinkDeleteDialog } from "@/components/modals/friend-link-delete-dialog";
 import { FriendLinkFormDialog } from "@/components/modals/friend-link-form-dialog";
@@ -202,15 +201,6 @@ export function CmsFriendLinkManager() {
           添加友链
         </Button>
       </div>
-      )}
-      metrics={(
-        <CmsMetricStrip
-          items={[
-            { label: "链接总数", value: String(total) },
-            { label: "可见链接", value: String(friendLinks.length) },
-            { label: "当前筛选", value: status || (keyword ? `#${keyword}` : "全部链接") },
-          ]}
-        />
       )}
       body={(
         <CmsSectionPanel
