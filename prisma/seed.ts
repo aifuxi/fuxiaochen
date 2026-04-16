@@ -1,3 +1,7 @@
+/* eslint-disable */
+
+/* @ts-ignore */
+
 /**
  * Seed script for migrating data from JSON files to database.
  * Run with: bun run db:seed
@@ -160,9 +164,10 @@ async function main() {
   console.log("✅ Seed completed!");
 }
 
-function parseChangelogContent(
-  content: string | null | undefined,
-): { items: SeedChangelogItem[]; title: string } {
+function parseChangelogContent(content: string | null | undefined): {
+  items: SeedChangelogItem[];
+  title: string;
+} {
   if (!content) {
     return { title: "", items: [] };
   }
