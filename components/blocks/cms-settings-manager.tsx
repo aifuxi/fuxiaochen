@@ -6,7 +6,6 @@ import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 import { toast } from "sonner";
 
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { CmsSettingsNav } from "@/components/cms/cms-settings-nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -355,9 +354,27 @@ function SettingsSection({
   title: string;
 }) {
   return (
-    <CmsSectionPanel description={description} id={id} title={title}>
-      {children}
-    </CmsSectionPanel>
+    <section
+      id={id}
+      className={`
+        scroll-mt-28 rounded-2xl border
+        border-[color:var(--color-line-default)]
+        bg-[color:var(--color-surface-1)]
+        p-6
+      `}
+    >
+      <div className="space-y-2">
+        <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+          {title}
+        </h2>
+      </div>
+      <p className="mt-2 text-sm leading-6 text-muted">
+        {description}
+      </p>
+      <div className="mt-6">
+        {children}
+      </div>
+    </section>
   );
 }
 

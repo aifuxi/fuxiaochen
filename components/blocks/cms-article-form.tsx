@@ -8,7 +8,6 @@ import useSWR from "swr";
 import { toast } from "sonner";
 
 import { CmsEditorLayout } from "@/components/cms/cms-editor-layout";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { MarkdownEditor } from "@/components/editor/markdown-editor";
 import { MarkdownViewer } from "@/components/editor/markdown-viewer";
 import { Badge } from "@/components/ui/badge";
@@ -159,7 +158,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
     <CmsEditorLayout
       primary={
         <>
-          <CmsSectionPanel title="标题与元数据">
+          <EditorSection title="标题与元数据">
             <div className="space-y-5">
               <Field label="标题">
                 <Input
@@ -232,9 +231,9 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 />
               </Field>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
 
-          <CmsSectionPanel title="内容编辑">
+          <EditorSection title="内容编辑">
             <Tabs defaultValue="editor">
               <TabsList>
                 <TabsTrigger value="editor">编辑器</TabsTrigger>
@@ -264,12 +263,12 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 </div>
               </TabsContent>
             </Tabs>
-          </CmsSectionPanel>
+          </EditorSection>
         </>
       }
       sidebar={
         <>
-          <CmsSectionPanel>
+          <EditorSection>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                 <Check className="size-4" />
@@ -293,9 +292,9 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 保存草稿
               </Button>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
 
-          <CmsSectionPanel title="文章设置">
+          <EditorSection title="文章设置">
             <div className="space-y-5">
               <Field label="状态">
                 <Select
@@ -408,9 +407,9 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 </Field>
               </div>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
 
-          <CmsSectionPanel title="SEO">
+          <EditorSection title="SEO">
             <div className="space-y-5">
               <Field label="SEO 标题">
                 <Input
@@ -443,7 +442,7 @@ export function CmsArticleForm({ articleId }: CmsArticleFormProps) {
                 </div>
               </div>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
         </>
       }
     />
@@ -530,6 +529,36 @@ function slugify(value: string) {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function EditorSection({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
+  title?: string;
+}) {
+  return (
+    <section
+      className={`
+        scroll-mt-28 rounded-2xl border
+        border-[color:var(--color-line-default)]
+        bg-[color:var(--color-surface-1)]
+        p-6
+      `}
+    >
+      {title ? (
+        <div className="space-y-2">
+          <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+            {title}
+          </h2>
+        </div>
+      ) : null}
+      <div className="mt-6">
+        {children}
+      </div>
+    </section>
+  );
 }
 
 function toDateTimeLocalValue(value: string | null) {

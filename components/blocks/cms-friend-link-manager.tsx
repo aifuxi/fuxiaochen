@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { FriendLinkDeleteDialog } from "@/components/modals/friend-link-delete-dialog";
 import { FriendLinkFormDialog } from "@/components/modals/friend-link-form-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -203,11 +202,7 @@ export function CmsFriendLinkManager() {
       </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="集中维护友链状态、排序和站点资料。"
-          title="友链列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -351,8 +346,7 @@ export function CmsFriendLinkManager() {
           </Button>
         </div>
       </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

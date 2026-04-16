@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { CategoryDeleteDialog } from "@/components/modals/category-delete-dialog";
 import { CategoryFormDialog } from "@/components/modals/category-form-dialog";
 import { Badge } from "@/components/ui/badge";
@@ -183,11 +182,7 @@ export function CmsCategoryManager() {
         </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="管理文章分类层级、展示色和使用情况。"
-          title="分类列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
             <Table>
               <TableRoot>
                 <TableHead>
@@ -334,8 +329,7 @@ export function CmsCategoryManager() {
                 </Button>
               </div>
             </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

@@ -11,7 +11,6 @@ import useSWRMutation from "swr/mutation";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -186,11 +185,7 @@ export function CmsChangelogManager() {
       </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="查看版本节奏、条目规模和发布类型。"
-          title="版本列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -350,8 +345,7 @@ export function CmsChangelogManager() {
           </Button>
         </div>
       </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

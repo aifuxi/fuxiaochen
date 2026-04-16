@@ -12,7 +12,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { CommentDeleteDialog } from "@/components/modals/comment-delete-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -201,11 +200,7 @@ export function CmsCommentManager() {
         </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="统一审核评论状态、来源文章和互动深度。"
-          title="评论列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
             <Table>
               <TableRoot>
                 <TableHead>
@@ -395,8 +390,7 @@ export function CmsCommentManager() {
                 </Button>
               </div>
             </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

@@ -11,7 +11,6 @@ import { toast } from "sonner";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { TagDeleteDialog } from "@/components/modals/tag-delete-dialog";
 import { TagFormDialog } from "@/components/modals/tag-form-dialog";
 import { Button } from "@/components/ui/button";
@@ -178,11 +177,7 @@ export function CmsTagManager() {
         </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="管理标签命名、排序和内容覆盖范围。"
-          title="标签列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
             <Table>
               <TableRoot>
                 <TableHead>
@@ -314,8 +309,7 @@ export function CmsTagManager() {
                 </Button>
               </div>
             </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

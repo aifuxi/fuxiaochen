@@ -16,7 +16,6 @@ import useSWRMutation from "swr/mutation";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsListShell } from "@/components/cms/cms-list-shell";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -209,11 +208,7 @@ export function CmsProjectManager() {
       </div>
       )}
       body={(
-        <CmsSectionPanel
-          description="统一管理项目分类、精选状态与技术栈摘要。"
-          title="项目列表"
-        >
-          <div className="space-y-6">
+        <div className="space-y-6">
       <Table>
         <TableRoot>
           <TableHead>
@@ -388,8 +383,7 @@ export function CmsProjectManager() {
           </Button>
         </div>
       </div>
-          </div>
-        </CmsSectionPanel>
+        </div>
       )}
     />
   );

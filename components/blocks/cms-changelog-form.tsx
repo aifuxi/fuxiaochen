@@ -8,7 +8,6 @@ import useSWR from "swr";
 import { toast } from "sonner";
 
 import { CmsEditorLayout } from "@/components/cms/cms-editor-layout";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -143,7 +142,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
     <CmsEditorLayout
       primary={
         <>
-          <CmsSectionPanel title="版本元数据">
+          <EditorSection title="版本元数据">
             <div className="space-y-5">
               <div className={`
                 grid gap-5
@@ -201,9 +200,9 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                 />
               </Field>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
 
-          <CmsSectionPanel title="更新条目">
+          <EditorSection title="更新条目">
             <Button
               className="mb-5"
               onClick={() =>
@@ -320,12 +319,12 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                 </div>
               )}
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
         </>
       }
       sidebar={
         <>
-          <CmsSectionPanel>
+          <EditorSection>
             <div className="space-y-3">
               <div className="flex items-center gap-2 text-sm font-medium text-primary">
                 <Check className="size-4" />
@@ -340,9 +339,9 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                 {isSubmitting ? "保存中..." : isEditMode ? "更新版本" : "创建版本"}
               </Button>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
 
-          <CmsSectionPanel title="版本设置">
+          <EditorSection title="版本设置">
             <div className="space-y-5">
               <label className={`
                 flex items-center gap-3 rounded-2xl border
@@ -386,7 +385,7 @@ export function CmsChangelogForm({ releaseId }: CmsChangelogFormProps) {
                 </div>
               </div>
             </div>
-          </CmsSectionPanel>
+          </EditorSection>
         </>
       }
     />
@@ -424,6 +423,36 @@ function Field({
       {children}
       {description ? <span className="block text-xs text-muted">{description}</span> : null}
     </label>
+  );
+}
+
+function EditorSection({
+  children,
+  title,
+}: {
+  children: React.ReactNode;
+  title?: string;
+}) {
+  return (
+    <section
+      className={`
+        scroll-mt-28 rounded-2xl border
+        border-[color:var(--color-line-default)]
+        bg-[color:var(--color-surface-1)]
+        p-6
+      `}
+    >
+      {title ? (
+        <div className="space-y-2">
+          <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+            {title}
+          </h2>
+        </div>
+      ) : null}
+      <div className="mt-6">
+        {children}
+      </div>
+    </section>
   );
 }
 
