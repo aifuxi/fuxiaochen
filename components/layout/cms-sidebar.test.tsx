@@ -29,5 +29,8 @@ describe("CmsSidebar", () => {
     );
 
     expect(html).toContain("退出登录");
+    expect(html).toContain("sticky");
+    expect(html).toContain("top-0");
+    expect(html).toContain("h-dvh");
   });
 });
