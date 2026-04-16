@@ -3,7 +3,7 @@
 import { formatDistanceToNow } from "date-fns";
 import useSWR from "swr";
 
-import { CmsActivityList, CmsEmptyState, CmsFeedbackPanel, CmsSectionPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
+import { CmsActivityList, CmsEmptyState, CmsFeedbackPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -71,11 +71,23 @@ export function CmsDashboardOverview() {
           xl:grid-cols-[1.2fr_0.8fr]
         `}
       >
-        <CmsSectionPanel
-          description="最新更新的文章一览。"
-          title="最近文章"
+        <section
+          className={`
+            scroll-mt-28 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-1)]
+            p-6
+          `}
         >
-          <div className="space-y-4">
+          <div className="space-y-2">
+            <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+              最近文章
+            </h2>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            最新更新的文章一览。
+          </p>
+          <div className="mt-6 space-y-4">
             {isValidating && !isLoading ? (
               <p className="font-mono-tech text-xs tracking-wider text-muted uppercase">
                 刷新中
@@ -83,7 +95,7 @@ export function CmsDashboardOverview() {
             ) : null}
             <RecentArticlesTable articles={recentArticles} />
           </div>
-        </CmsSectionPanel>
+        </section>
 
         <CmsActivityList
           className="h-full"

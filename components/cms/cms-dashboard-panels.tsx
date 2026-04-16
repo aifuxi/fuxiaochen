@@ -5,10 +5,9 @@ import type { ComponentType } from "react";
 import { CmsEmptyState } from "@/components/cms/cms-empty-state";
 import { CmsFeedbackPanel } from "@/components/cms/cms-feedback-panel";
 import { CmsMetricStrip } from "@/components/cms/cms-metric-strip";
-import { CmsSectionPanel } from "@/components/cms/cms-section-panel";
 import { cn } from "@/lib/utils";
 
-export { CmsEmptyState, CmsFeedbackPanel, CmsMetricStrip, CmsSectionPanel };
+export { CmsEmptyState, CmsFeedbackPanel, CmsMetricStrip };
 
 export type CmsSummaryGridItem = {
   description?: string;
@@ -77,7 +76,28 @@ export function CmsActivityList({
   title = "活动动态",
 }: CmsActivityListProps) {
   return (
-    <CmsSectionPanel className={className} description={description} title={title}>
+    <section
+      className={cn(
+        `
+          scroll-mt-28 rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+          p-6
+        `,
+        className,
+      )}
+    >
+      <div className="space-y-2">
+        <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+          {title}
+        </h2>
+      </div>
+      {description ? (
+        <p className="mt-2 text-sm leading-6 text-muted">
+          {description}
+        </p>
+      ) : null}
+      <div className="mt-6">
       {items.length === 0 ? (
         <CmsEmptyState description={emptyDescription} title={emptyTitle} />
       ) : (
@@ -135,6 +155,7 @@ export function CmsActivityList({
           })}
         </ul>
       )}
-    </CmsSectionPanel>
+      </div>
+    </section>
   );
 }

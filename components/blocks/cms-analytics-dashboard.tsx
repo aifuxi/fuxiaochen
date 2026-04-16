@@ -4,7 +4,7 @@ import { RefreshCw } from "lucide-react";
 import React from "react";
 import useSWR from "swr";
 
-import { CmsEmptyState, CmsFeedbackPanel, CmsSectionPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
+import { CmsEmptyState, CmsFeedbackPanel, CmsSummaryGrid } from "@/components/cms/cms-dashboard-panels";
 import { Button } from "@/components/ui/button";
 import type {
   AnalyticsDailyMetricDto,
@@ -51,10 +51,23 @@ export function CmsAnalyticsDashboard() {
         />
       )}
 
-      <CmsSectionPanel
-        description="所选报告期间的每日浏览量。"
-        title="流量概览"
+      <section
+        className={`
+          scroll-mt-28 rounded-2xl border
+          border-[color:var(--color-line-default)]
+          bg-[color:var(--color-surface-1)]
+          p-6
+        `}
       >
+        <div className="space-y-2">
+          <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+            流量概览
+          </h2>
+        </div>
+        <p className="mt-2 text-sm leading-6 text-muted">
+          所选报告期间的每日浏览量。
+        </p>
+        <div className="mt-6">
         <div
           className={`
             mb-6 flex flex-col gap-4
@@ -97,7 +110,8 @@ export function CmsAnalyticsDashboard() {
         ) : (
           <TrafficChart dailyMetrics={dailyMetrics} isLoading={isLoading} />
         )}
-      </CmsSectionPanel>
+        </div>
+      </section>
 
       <div
         className={`
@@ -105,10 +119,43 @@ export function CmsAnalyticsDashboard() {
           xl:grid-cols-2
         `}
       >
-        <CmsSectionPanel description="最近 7 天的增长变化。" title="增长趋势">
-          <GrowthTrend dailyMetrics={dailyMetrics} isLoading={isLoading} />
-        </CmsSectionPanel>
-        <CmsSectionPanel description="按阅读量排序的热门内容。" title="热门文章">
+        <section
+          className={`
+            scroll-mt-28 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-1)]
+            p-6
+          `}
+        >
+          <div className="space-y-2">
+            <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+              增长趋势
+            </h2>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            最近 7 天的增长变化。
+          </p>
+          <div className="mt-6">
+            <GrowthTrend dailyMetrics={dailyMetrics} isLoading={isLoading} />
+          </div>
+        </section>
+        <section
+          className={`
+            scroll-mt-28 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-1)]
+            p-6
+          `}
+        >
+          <div className="space-y-2">
+            <h2 className="font-serif text-2xl tracking-[-0.04em] text-foreground">
+              热门文章
+            </h2>
+          </div>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            按阅读量排序的热门内容。
+          </p>
+          <div className="mt-6">
           {isLoading && popularArticles.length === 0 ? (
           <div className="space-y-3">
             {Array.from({ length: 4 }, (_, index) => (
@@ -148,7 +195,8 @@ export function CmsAnalyticsDashboard() {
               ))}
             </ul>
           )}
-        </CmsSectionPanel>
+          </div>
+        </section>
       </div>
     </div>
   );
