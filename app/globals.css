@@ -413,19 +413,6 @@
     flex-direction: column;
   }
 
-  .cms-header {
-    height: 80px;
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-
   .cms-content {
     padding: 0 2rem 2rem;
   }

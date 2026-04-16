@@ -1,9 +1,12 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { Layers2Icon } from "lucide-react";
+import { useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { Layers2Icon, LogOut } from "lucide-react";
+import { toast } from "sonner";
 import { CmsSidebarNav } from "@/components/cms/cms-sidebar-nav";
 import { LucideIcon } from "@/components/ui/lucide-icon";
+import { authClient } from "@/lib/auth-client";
 import { cmsNavGroups } from "@/lib/mocks/cms-content";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +28,26 @@ type CmsSidebarProps = {
 
 export function CmsSidebar({ user }: CmsSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSignOut() {
+    startTransition(() => {
+      void (async () => {
+        const { error } = await authClient.signOut();
+
+        if (error) {
+          toast.error(error.message || "退出登录失败");
+
+          return;
+        }
+
+        toast.success("已成功退出登录");
+        router.replace("/cms/login");
+        router.refresh();
+      })();
+    });
+  }
 
   return (
     <aside
@@ -75,6 +98,7 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
           <LucideIcon className="size-4" name="plus" />
           新建文章
         </button>
+
         <div
           className={`
             flex items-center gap-3 rounded-2xl border
@@ -102,6 +126,23 @@ export function CmsSidebar({ user }: CmsSidebarProps) {
             </div>
           </div>
         </div>
+        <button
+          aria-label="退出登录"
+          className={`
+            mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border
+            border-[color:var(--color-line-default)]
+            bg-[color:var(--color-surface-2)]
+            px-4 py-3 text-sm font-semibold text-foreground transition
+            hover:border-primary/30 hover:text-primary
+            disabled:cursor-not-allowed disabled:opacity-60
+          `}
+          disabled={isPending}
+          onClick={handleSignOut}
+          type="button"
+        >
+          <LogOut className="size-4" />
+          退出登录
+        </button>
       </div>
     </aside>
   );
