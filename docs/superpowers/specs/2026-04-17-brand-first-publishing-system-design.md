@@ -1,64 +1,74 @@
-# Brand-First Publishing System Design
+# 品牌优先的个人发布系统设计方案
 
-**Date:** 2026-04-17
-**Status:** Approved in conversation, pending written-spec review
-**Project:** `fuxiaochen`
+**日期：** 2026-04-17  
+**状态：** 对话中已确认，等待书面方案复核  
+**项目：** `fuxiaochen`
 
-## 1. Context
+## 1. 背景
 
-The current product uses an Apple-inspired visual language across both the public
-site and the admin console. That system is built around gradients, glassmorphism,
-accent colors, thick soft shadows, and light/dark theme switching. It conflicts
-directly with the design direction defined in `DESIGN.md`, which calls for a
-strict Uber-inspired black-and-white system with pill controls, compact layouts,
-bold typography, and minimal visual decoration.
+当前项目的前台与后台共用一套偏 Apple 风格的视觉体系，主要特征是：
 
-This redesign is not a skin swap. The project will abandon the current UI and
-design rules, then rebuild the shared component system, the public site, and the
-admin console under one new visual and structural system.
+- 渐变背景
+- 毛玻璃与半透明卡片
+- 彩色强调色
+- 较厚的柔和阴影
+- 深浅色主题切换
 
-## 2. Product Direction
+这套语言与 `DESIGN.md` 中定义的设计方向直接冲突。`DESIGN.md` 要求的是一套接近 Uber 风格的黑白高对比体系，核心特征包括：
 
-### Core Positioning
+- 纯黑白主色
+- 强秩序感的排版
+- 紧凑而高效的布局
+- `999px` 的胶囊式按钮与筛选项
+- 极轻的阴影
+- 几乎不使用装饰性视觉元素
 
-The redesigned product should behave as a **brand-first personal publishing
-system**:
+因此，这次不是“在旧界面上换皮”，而是彻底放弃现有设计语言，重新建立共享组件系统、前台页面体系与后台管理界面。
 
-- The public site introduces the person first, then routes visitors into writing.
-- The blog is the main content destination, but it does not replace the role of
-  the homepage.
-- The admin console is a single-user content publishing tool, not a general
-  multi-user SaaS admin.
+## 2. 产品方向
 
-### Chosen Direction
+### 2.1 核心定位
 
-The approved top-level direction is:
+重构后的产品应被定义为一套**品牌优先的个人发布系统**：
 
-- **A. Brand-First Publishing System**
+- 前台先介绍“你是谁”，再把访问者导向内容阅读。
+- 博客仍然是主要内容产品，但不承担首页的身份介绍职责。
+- 后台是单人使用的内容发布后台，而不是多用户 SaaS 管理系统。
 
-This direction was chosen over a more editorial publication model and a more
-experimental "personal operating system" model because it best matches the
-desired outcome:
+### 2.2 已确认方向
 
-- establish who the owner is before asking visitors to read,
-- keep writing as the main content product,
-- keep admin scope focused and controllable,
-- enable phased implementation without turning the project into a CMS rebuild.
+本次采用的总方向为：
 
-## 3. Approved Scope
+- **A. 品牌优先的个人发布系统**
 
-### Public Navigation
+选择该方向而不是“编辑部型内容站”或“个人操作系统型站点”的原因是：
 
-The top-level public modules that must exist are:
+- 更符合“先建立个人认知，再导向文章阅读”的目标。
+- 能保持博客为核心内容载体。
+- 能把后台控制在单人内容发布范围内，避免需求失控。
+- 更适合分阶段落地，不会过早演变成 CMS 平台重建。
+
+## 3. 已确认范围
+
+### 3.1 前台导航范围
+
+前台必须保留的顶级模块为：
 
 - `首页`
 - `博客`
 - `关于我`
 - `更新日志`
 
-### Admin Scope
+本次重构不新增以下顶级模块：
 
-The admin console is for content publishing only. The core modules are:
+- `项目/实验`
+- `服务`
+- `邮件订阅`
+- `团队`
+
+### 3.2 后台范围
+
+后台的定位是内容发布后台，核心模块为：
 
 - `仪表盘`
 - `博客管理`
@@ -66,212 +76,198 @@ The admin console is for content publishing only. The core modules are:
 - `标签管理`
 - `更新日志管理`
 
-`用户管理` is not part of the redesign target. Authentication remains only as
-the login gate for a single-user admin experience.
+`用户管理` 不属于本次重构范围。认证能力仅保留“登录后进入单人后台”的基本用途。
 
-### Theme Model
+### 3.3 主题策略
 
-The new system is **single-theme only**:
+新站点采用**单一主题体系**：
 
-- no theme toggle,
-- no full dark mode variant,
-- white pages as the default surface,
-- black sections used intentionally for contrast and emphasis.
+- 不保留主题切换
+- 不实现完整深色模式
+- 白色页面为默认基底
+- 黑色区块作为强调和收束使用
 
-## 4. Goals And Non-Goals
+## 4. 目标与非目标
 
-### Goals
+### 4.1 目标
 
-- Replace the current Apple-like design system with the black/white Uber-inspired
-  language from `DESIGN.md`.
-- Rebuild public and admin surfaces so they feel like one brand.
-- Make the homepage primarily about identity and positioning.
-- Make the blog the main content destination and archive.
-- Keep the admin console efficient, compact, and centered on publishing.
-- Allow a limited amount of new UX and content modules where they strengthen the
-  product direction.
+- 用 `DESIGN.md` 的黑白体系替换当前 Apple 风格设计系统。
+- 让前台与后台在视觉气质上属于同一品牌，而不是两套站点。
+- 让首页以个人身份与价值表达为第一优先级。
+- 让博客成为内容发现、归档与阅读入口。
+- 让后台围绕单人内容发布场景保持高效、紧凑和易维护。
+- 允许在合理范围内补充少量新模块，以增强品牌表达和内容分发能力。
 
-### Non-Goals
+### 4.2 非目标
 
-- Building a fully configurable CMS for all public copy and layout.
-- Preserving the current visual language in any major way.
-- Maintaining a full multi-user admin workflow.
-- Adding new top-level public sections such as projects, labs, services, or
-  newsletters in this redesign.
-- Introducing gradients, glass effects, large color accents, or a second design
-  language for admin.
+- 不把整站改造成所有文案都可后台配置的完整 CMS。
+- 不保留当前视觉语言中的主要特征。
+- 不维持多用户后台管理流程。
+- 不新增与当前定位无关的顶级站点模块。
+- 不引入渐变、毛玻璃、大面积彩色强调或另一套独立后台设计语言。
 
-## 5. Information Architecture
+## 5. 信息架构
 
-### Public Site Structure
+### 5.1 前台结构
 
-#### Homepage
+#### 首页
 
-The homepage is a branded entry point, not a general content index. It should
-answer "who is this person and why should I keep reading?" before asking the
-visitor to browse articles.
+首页是品牌入口页，不是博客列表页的翻版。它首先要回答：
 
-Required homepage sections:
+> 你是谁、你在做什么、为什么值得继续看。
 
-1. **Brand Hero**
-   - identity label,
-   - strong headline,
-   - concise value proposition,
-   - primary CTA to `博客`,
-   - secondary CTA to `关于我`.
-2. **Featured Writing**
-   - one lead article,
-   - two to four secondary article entries.
-3. **Latest Writing**
-   - recent posts to reinforce ongoing activity.
-4. **About Snapshot**
-   - short, high-signal summary of background, focus, and strengths.
-5. **Recent Changelog**
-   - latest product/site updates to signal that the site is actively maintained.
+首页必须包含以下主区块：
 
-#### Blog
+1. **品牌 Hero**
+   - 身份标签
+   - 主标题
+   - 简洁价值主张
+   - 主 CTA 指向 `博客`
+   - 次 CTA 指向 `关于我`
+2. **精选文章**
+   - 1 篇主推文章
+   - 2 到 4 个次级文章入口
+3. **最新写作**
+   - 近期更新文章流
+4. **关于我摘要**
+   - 对你的背景、关注方向和能力做高密度概括
+5. **最近更新日志**
+   - 展示最近几条更新，强化“持续建设中”的状态感
 
-The blog is the content discovery and archive center.
+#### 博客
 
-Required structure:
+博客页是内容发现与归档中心，必须包含：
 
-- intro/header section,
-- category and tag pill navigation,
-- featured article slot,
-- article list / archive stream,
-- search,
-- sorting,
-- pagination,
-- redesigned empty and no-result states.
+- 顶部导语区
+- 分类与标签的胶囊式导航
+- 精选文章位
+- 文章列表或归档流
+- 搜索
+- 排序
+- 分页
+- 空状态与无结果状态
 
-The blog remains based on the current `Blog`, `Category`, and `Tag` data model.
+博客仍然以现有数据模型为基础：
 
-#### About
+- `Blog`
+- `Category`
+- `Tag`
 
-The about page is a full personal profile page, not a loose collection of cards.
+#### 关于我
 
-Required sections:
+关于页应是完整的个人介绍页，而不是若干旧卡片的重新排版。必须包含：
 
-- intro hero,
-- what I do,
-- background / journey,
-- tech stack,
-- work style / interests,
-- external links.
+- 介绍型 Hero
+- 我在做什么
+- 背景 / 成长路径
+- 技术栈
+- 工作方式 / 兴趣偏好
+- 外部链接
 
-#### Changelog
+#### 更新日志
 
-The changelog remains intentionally lightweight, but it should read as a proper
-timeline page inside the same brand system.
+更新日志页保持轻量，但应作为品牌体系下的标准时间线页面存在。必须包含：
 
-Required structure:
+- 页面导语
+- 倒序时间线
+- 统一的版本 / 日期 / 内容组织方式
+- 可直接用于首页摘要展示的内容结构
 
-- page intro,
-- reverse-chronological update timeline,
-- consistent version/date/content presentation,
-- strong rhythm and readability.
+### 5.2 后台结构
 
-### Admin Structure
+后台是单人内容发布工作台，必须同时具备品牌统一性和工具效率。
 
-The admin console is a single-user publishing desk. It should feel related to
-the public site, but with denser layouts and stronger utility.
+必须包含的模块：
 
-Required modules:
+- 仪表盘
+- 博客管理
+- 分类管理
+- 标签管理
+- 更新日志管理
 
-- dashboard,
-- blog management,
-- category management,
-- tag management,
-- changelog management.
+允许新增但必须受控的能力：
 
-Optional additions allowed within scope:
+- 仪表盘快捷操作
+- 首页精选内容或推荐内容的有限配置能力
+- 继续编辑草稿、快速发布更新等单人工作流优化
 
-- quick actions on the dashboard,
-- a limited "featured content" or homepage recommendation workflow,
-- small workflow improvements for continuing drafts and publishing updates.
+## 6. 设计系统方向
 
-## 6. Design System Direction
+### 6.1 视觉语言
 
-### Visual Language
+整体视觉遵循 `DESIGN.md` 的规则：
 
-The redesign adopts the `DESIGN.md` visual rules:
+- 主色为纯黑 `#000000`
+- 主底色为纯白 `#ffffff`
+- 仅使用必要的灰阶作为辅助层级
+- 所有交互控件尽量使用胶囊式造型
+- 布局紧凑、信息密度高
+- 阴影极轻，仅用于结构分层
+- 不使用渐变
 
-- true black `#000000`,
-- pure white `#ffffff`,
-- minimal grayscale supporting roles,
-- flat surfaces,
-- extremely restrained shadows,
-- pill controls with `999px` radius,
-- compact and information-dense layouts,
-- bold heading hierarchy,
-- no gradients.
+目标气质是：
 
-The intended feel is:
+- 克制
+- 果断
+- 高对比
+- 高秩序
+- 人性化但不过度活泼
 
-- confident,
-- controlled,
-- efficient,
-- high-contrast,
-- human but not playful.
+### 6.2 排版
 
-### Typography
+排版应尽量接近 `DESIGN.md` 里 `UberMove / UberMoveText` 的角色分工：
 
-The system should approximate the `UberMove` / `UberMoveText` split defined in
-`DESIGN.md`:
+- 标题使用更强势、更具几何感的无衬线风格
+- 正文、表单、按钮、表格使用稳定、清晰的 UI 字体层
 
-- stronger geometric sans-serif styling for headings,
-- pragmatic UI/body font for content, controls, and data.
+排版规则：
 
-Typography principles:
+- 标题承担主要视觉张力
+- 正文保持稳定可读
+- 层级更多依赖字号和字重，而不是颜色装饰
+- 不使用装饰性字距、夸张字效和无意义文本处理
 
-- headlines carry most of the visual weight,
-- body text stays stable and readable,
-- hierarchy comes from size and weight more than color,
-- no decorative letter-spacing or ornamental display treatments.
+### 6.3 Token 体系
 
-### Tokens
+新的设计 token 应围绕以下角色重建：
 
-The new token system should be rebuilt around:
+- 黑
+- 白
+- 多层级灰色文本
+- 筛选项与弱背景灰
+- 边框黑
+- 低透明度黑色阴影
+- 仅在后台必要状态中使用的最小语义色
 
-- black,
-- white,
-- gray text tiers,
-- chip/background grays,
-- border black,
-- low-opacity black shadows,
-- minimal semantic status colors only where operationally useful.
+当前以强调色驱动的设计方式应被移除。
 
-The current accent-driven system should be removed as a primary visual driver.
+### 6.4 圆角
 
-### Radius
+圆角尺度以两类为主：
 
-The radius scale should center on:
+- `8px`、`12px`：用于卡片、输入框、常规容器
+- `999px`：用于按钮、筛选 pill、导航 chip 等交互件
 
-- `8px` and `12px` for cards, inputs, and containers,
-- `999px` for buttons, pills, chips, and similar interactive controls.
+### 6.5 阴影
 
-### Elevation
+仅使用低透明度黑色阴影。不再使用厚重阴影、柔光、发光或 Apple 风格的悬浮深度。
 
-Use only low-opacity black shadows. No heavy shadow stacks, glows, or soft
-Apple-style depth treatment.
+### 6.6 前后台关系
 
-### Public And Admin Relationship
+前台和后台必须共享同一套品牌 DNA：
 
-Public and admin surfaces must share the same visual DNA:
+- 相同的 token 基础
+- 相同的按钮与 pill 语言
+- 相同的排版逻辑
+- 相同的黑白对比哲学
 
-- same core tokens,
-- same button/chip language,
-- same typographic logic,
-- same contrast philosophy.
+两者可以在信息密度和页面组织上不同，但不能在品牌气质上分裂。
 
-They may differ in density and structure, but not in brand identity.
+## 7. 共享组件策略
 
-## 7. Shared Component Strategy
+本次重构需要重建共享 UI 层，而不是在现有组件上做轻度修补。
 
-The redesign requires rebuilding the shared UI layer rather than lightly editing
-the current one.
-
-Core component families that must be redesigned:
+必须重构的组件族包括：
 
 - `Button`
 - `Input`
@@ -291,209 +287,195 @@ Core component families that must be redesigned:
 - `Error`
 - `Skeleton`
 
-Components or patterns expected to be removed or replaced:
+应删除或替换的旧组件 / 旧模式包括：
 
-- `theme-toggle`,
-- `glass-card`,
-- old gradient-heavy or accent-heavy surface treatments,
-- page-level visual hacks that bypass shared component rules.
+- `theme-toggle`
+- `glass-card`
+- 所有依赖旧渐变或旧强调色的表面样式
+- 绕过共享组件规则、直接把旧视觉语言写死在页面中的实现
 
-The `ui-preview` route should become the acceptance surface for the rebuilt
-design system rather than a showcase for the old one.
+关于预览页，本次明确调整为：
 
-## 8. Page-Level Redesign Rules
+- 删除 `app/(site)/ui-preview` 页面
+- 删除 `app/(site)/ui-preview/components` 相关预览组件
+- 不在公开站点中保留组件预览入口
 
-### Homepage Rules
+## 8. 页面级重构规则
 
-- Must lead with identity before content.
-- Must direct primary attention toward reading, not toward generic exploration.
-- Must avoid becoming a noisy "everything page."
-- Must keep modules disciplined and limited in number.
+### 8.1 首页规则
 
-Allowed new additions:
+- 首页必须先讲清身份，再导向内容。
+- 首页的主目标是让访问者理解你是谁，而不是尽快把所有内容堆出来。
+- 首页模块数量必须克制，避免变成“什么都放一点”的总览页。
 
-- featured writing logic,
-- stronger content-distribution modules,
-- tighter personal brand snapshot modules.
+允许新增：
 
-Not allowed in this phase:
+- 精选文章逻辑
+- 更强的内容分发模块
+- 更高密度的个人品牌摘要模块
 
-- a large experiments/projects section as a top-level homepage pillar,
-- social-feed style modules,
-- newsletter-heavy growth mechanics.
+本阶段不做：
 
-### Blog Rules
+- 把项目/实验做成首页一级主模块
+- 做成社交 feed 式动态页
+- 大规模订阅增长组件
 
-- Must feel like a browsing environment, not just a filtered CRUD list.
-- Must use pill-shaped category/tag controls in the new visual language.
-- Must keep discovery features bounded to what current content models can
-  support.
+### 8.2 博客规则
 
-Allowed additions:
+- 博客页必须像一个浏览环境，而不是简单的 CRUD 列表页。
+- 分类、标签必须用新的 pill 体系组织。
+- 内容发现能力必须受限于当前内容模型，不额外扩展复杂编辑结构。
 
-- featured post treatment,
-- stronger metadata presentation,
-- more visible category/tag navigation.
+允许新增：
 
-Not allowed in this phase:
+- 精选文章位
+- 更强的日期、阅读时长等元信息展示
+- 更清晰的分类 / 标签导航
 
-- topic hubs requiring new editorial structures,
-- series systems,
-- algorithmic recommendation systems.
+本阶段不做：
 
-### About Rules
+- 专题系统
+- 系列文章系统
+- 算法式推荐系统
 
-- Must present a coherent personal narrative.
-- May reuse current information categories such as skills, devices, links, and
-  background material.
-- Must not preserve the current Apple-style presentation structure.
+### 8.3 关于页规则
 
-### Changelog Rules
+- 关于页必须形成完整的人物叙事。
+- 可以复用当前已有的信息类别，例如技能、设备、外部链接、经历等。
+- 但不能保留当前 Apple 风格的表达结构。
 
-- Must remain simple.
-- Must become visually integrated with the new system.
-- Must support both dedicated page reading and homepage summary usage.
+### 8.4 更新日志规则
 
-### Admin Rules
+- 更新日志必须保持简单。
+- 更新日志必须与新设计系统完全统一。
+- 更新日志内容结构必须同时支持独立阅读与首页摘要引用。
 
-- Must serve single-user publishing tasks.
-- Must feel more like an editorial control desk than a generic SaaS panel.
-- Must remove `用户管理` from the main admin navigation.
-- Must support efficient list, form, dialog, and quick-action workflows.
+### 8.5 后台规则
 
-## 9. Content And Data Strategy
+- 后台必须服务于单人内容发布工作流。
+- 后台气质应接近“编辑控制台”，而不是通用 SaaS 面板。
+- `用户管理` 必须从主导航中移除。
+- 列表、表单、弹窗、快捷操作都必须围绕效率组织。
 
-### Existing Data To Reuse
+## 9. 内容与数据策略
 
-The current schema already provides the minimum content backbone for the first
-phase of the redesign:
+### 9.1 继续复用的数据模型
+
+当前 schema 已经能支撑第一阶段重构的核心内容能力：
 
 - `Blog`
 - `Category`
 - `Tag`
 - `Changelog`
 
-### Minimal Extension Policy
+### 9.2 最小扩展原则
 
-The redesign should avoid turning into a full CMS project.
+本次重构要避免演变为 CMS 项目，因此内容策略按以下原则执行：
 
-Recommended content strategy:
+- `关于我` 页内容优先采用本地配置
+- 首页精选内容优先根据现有文章数据规则生成
+- 不在第一阶段把整站文案改成后台可编辑
 
-- keep `关于我` content locally configured first,
-- generate homepage featured-content behavior from existing blog data where
-  possible,
-- defer broad site-copy editability to a later phase.
+### 9.3 可预留的后续扩展
 
-### Future-Friendly Extension
+可以为后续最小站点配置模型预留空间，但不要求在本次一次性实现。可预留的配置点包括：
 
-It is acceptable to reserve room for a minimal site-content configuration model
-later, especially for:
+- 首页 Hero 文案
+- 首页精选内容位
+- 简短的个人介绍内容
 
-- homepage hero copy,
-- homepage featured content slots,
-- short personal-intro content.
+除非实现过程中证明必须立即做，否则这些能力默认属于后续阶段。
 
-That extension should be considered a later phase unless implementation reality
-proves it is required immediately.
+## 10. 分阶段实施方式
 
-## 10. Implementation Phasing
+本次重构必须按阶段推进，不能按页面想到哪改到哪。
 
-This redesign should be delivered in phases rather than page-by-page ad hoc
-editing.
+### 阶段 1：基础层
 
-### Phase 1: Foundation
+- 重建全局 token 和页面基础样式
+- 去掉深浅色主题切换路径
+- 替换旧的视觉基础变量
+- 标记需要淘汰的组件与工具类
 
-- rebuild global tokens and shared page foundations,
-- remove the dark/light theme path,
-- replace old visual primitives,
-- identify components and utilities that must be retired.
+### 阶段 2：共享 UI 系统
 
-### Phase 2: Shared UI System
+- 重建核心共享组件库
+- 统一前后台的基础控件语言
+- 在进入页面级重构前先把复用模式定下来
+- 明确删除 `ui-preview` 页面及其相关预览组件，不保留公开预览页
 
-- rebuild the core shared component library,
-- update the design preview route to reflect the new system,
-- establish reusable patterns before page-level rewrites.
+### 阶段 3：前台站点
 
-### Phase 3: Public Site
+建议顺序：
 
-Recommended order:
+1. 前台布局壳层
+2. Header
+3. Footer
+4. 首页
+5. 博客列表页
+6. 博客详情页
+7. 关于我
+8. 更新日志
+9. 登录页、404、错误页
 
-1. public layout shell,
-2. header,
-3. footer,
-4. homepage,
-5. blog list page,
-6. blog detail page,
-7. about page,
-8. changelog page,
-9. login, not-found, and error states.
+### 阶段 4：后台控制台
 
-### Phase 4: Admin Console
+建议顺序：
 
-Recommended order:
+1. 后台布局壳层
+2. 后台导航
+3. 仪表盘
+4. 博客管理
+5. 分类管理
+6. 标签管理
+7. 更新日志管理
 
-1. admin layout shell,
-2. admin navigation,
-3. dashboard,
-4. blog management,
-5. category management,
-6. tag management,
-7. changelog management.
+### 阶段 5：清理与统一
 
-### Phase 5: Cleanup And Consistency
+- 删除废弃组件和废弃样式
+- 移除残留的 Apple 风格 token 和页面类名
+- 统一 spacing、标题层级、控件状态、空状态与错误状态
+- 完成 `lint`、`build` 和关键页面手动冒烟检查
 
-- remove obsolete components and styles,
-- eliminate old Apple-style tokens and page-level leftovers,
-- normalize spacing, heading levels, control states, and empty/error patterns,
-- verify lint, build, and manual smoke checks.
+## 11. 风险点
 
-## 11. Risks
+### 风险 1：页面级样式强耦合
 
-### Risk 1: Page-Level Style Coupling
+当前很多页面把旧视觉语言直接写在 class 和布局结构里。仅替换共享组件并不能完成重构，页面层也必须系统性清理。
 
-Many existing pages encode the current design language directly in class names
-and layout composition. Replacing the shared components alone will not be enough.
+### 风险 2：共享组件反复返工
 
-### Risk 2: Shared Component Drift
+前台与后台复用大量基础控件。如果基础层没有先稳定下来，后续页面改造会反复返工。
 
-Because public and admin surfaces share many primitives, weak foundations will
-create repeated rework and visual inconsistency.
+### 风险 3：CMS 范围膨胀
 
-### Risk 3: CMS Scope Creep
+如果把首页、关于页、全站文案都同时做成后台可配，本次任务会从 UI 重构迅速膨胀成 CMS 平台开发。
 
-If public copy, homepage structure, and about-page content all become admin
-editable during the redesign, the project will expand from UI rebuild into CMS
-platform work.
+### 风险 4：新旧风格混用
 
-### Risk 4: Mixed-Language UI
+博客详情、筛选条、表格、表单、弹窗等复合页面最容易出现新旧设计语言混搭，必须重点清理。
 
-Complex surfaces such as blog detail pages, filter bars, data tables, forms, and
-dialogs are likely places for old and new design patterns to mix unless they are
-reviewed deliberately.
+## 12. 验收标准
 
-## 12. Acceptance Criteria
+只有以下条件全部满足，才能视为本次重构完成：
 
-The redesign is successful only when all of the following are true:
+- 前台和后台都不再呈现 Apple 风格视觉特征。
+- 旧的渐变、毛玻璃、强调色驱动和主题切换路径从主体验中移除。
+- `首页`、`博客`、`关于我`、`更新日志` 以及后台核心页面都按新的信息架构完成重做。
+- 共享组件形成一套一致的系统，前后台不再视觉分裂。
+- 后台明确收敛为单人内容发布工作流。
+- `app/(site)/ui-preview` 页面及其相关预览组件被删除。
+- `pnpm lint` 与 `pnpm build` 通过。
+- 手动冒烟验证确认主要前台路由与核心后台流程仍可用。
 
-- The public site and admin console no longer read visually as Apple-inspired
-  interfaces.
-- The old gradient, glass, accent-heavy, theme-toggle-driven language is gone
-  from the primary experience.
-- `首页`, `博客`, `关于我`, `更新日志`, and the core admin pages all follow the
-  new information architecture and design direction.
-- Shared components form one coherent system across public and admin.
-- The admin console is clearly centered on single-user publishing workflows.
-- The implementation passes `pnpm lint` and `pnpm build`.
-- Manual smoke checks confirm that the main public routes and core admin flows
-  still function after the redesign.
+## 13. 进入实现计划前已锁定的约束
 
-## 13. Open Constraints Carried Into Planning
+除非你后续明确修改，否则实现计划必须遵守以下约束：
 
-These decisions are locked for the implementation plan unless explicitly changed:
-
-- Choose the brand-first publishing direction.
-- Keep public navigation limited to `首页 / 博客 / 关于我 / 更新日志`.
-- Keep admin focused on content publishing.
-- Remove multi-user management from redesign scope.
-- Use a single-theme black/white system based on `DESIGN.md`.
-- Allow selective new modules, but avoid CMS-scale scope expansion.
+- 采用“品牌优先的个人发布系统”方向。
+- 前台顶级导航只保留 `首页 / 博客 / 关于我 / 更新日志`。
+- 后台聚焦内容发布。
+- 多用户管理不在本次范围内。
+- 设计体系采用基于 `DESIGN.md` 的黑白单主题方案。
+- 允许补充少量增强模块，但不允许演变成 CMS 级范围扩张。
+- 删除 `ui-preview` 页面及相关预览组件。
