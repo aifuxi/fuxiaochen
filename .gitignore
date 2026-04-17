@@ -70,3 +70,6 @@ __pycache__/
 
 # mysql 数据库
 mysql_data/
+
+#
+.superpowers/
