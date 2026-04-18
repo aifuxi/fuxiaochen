@@ -65,7 +65,7 @@ storybook-static
 
 # data
 /data/*
-!/data/*.json
+/data/*.json
 !/data/postgres_ddl.sql
 
 __pycache__/
