@@ -5,7 +5,6 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
 
 import { ModalProvider } from "@/components/modal-provider";
-import { ThemeProvider } from "@/components/theme-provider";
 
 import { isProduction } from "@/lib/env";
 
@@ -67,15 +66,8 @@ export default function RootLayout({
           )}
       </head>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ModalProvider>{children}</ModalProvider>
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
+        <ModalProvider>{children}</ModalProvider>
+        <Toaster richColors position="top-center" />
       </body>
 
       {/* Google Analytics  */}
