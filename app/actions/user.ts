@@ -1,19 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { z } from "zod";
+
 import { type UserListReq, type UserUpdateReq } from "@/types/user";
+
 import { checkAdmin } from "@/lib/auth-guard";
+
 import { userStore } from "@/stores/user";
 
 const userListReqSchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
-  pageSize: z.coerce
-    .number()
-    .int()
-    .positive()
-    .optional()
-    .default(10),
+  pageSize: z.coerce.number().int().positive().optional().default(10),
   sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
   name: z.string().trim().optional(),

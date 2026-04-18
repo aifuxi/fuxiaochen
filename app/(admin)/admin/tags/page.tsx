@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+
 import TagManagementPage from "./tag-list";
 
 export const dynamic = "force-dynamic";

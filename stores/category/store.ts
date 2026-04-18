@@ -4,7 +4,9 @@ import {
   type CategoryListReq,
   type CategoryListResp,
 } from "@/types/category";
+
 import { prisma } from "@/lib/prisma";
+
 import { type ICategoryStore } from "./interface";
 
 export class CategoryStore implements ICategoryStore {

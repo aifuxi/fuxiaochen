@@ -1,22 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { z } from "zod";
+
 import {
   type ChangelogCreateReq,
   type ChangelogListReq,
 } from "@/types/changelog";
+
 import { checkAdmin } from "@/lib/auth-guard";
+
 import { changelogStore } from "@/stores/changelog";
 
 const changelogListReqSchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
-  pageSize: z.coerce
-    .number()
-    .int()
-    .positive()
-    .optional()
-    .default(10),
+  pageSize: z.coerce.number().int().positive().optional().default(10),
   sortBy: z.enum(["createdAt", "updatedAt"]).optional(),
   order: z.enum(["asc", "desc"]).optional(),
   version: z.string().trim().optional(),
@@ -35,7 +34,9 @@ export async function getChangelogsAction(params?: ChangelogListReq) {
     if (!parsed.success) {
       return { success: false, error: "参数错误" };
     }
-    const result = await changelogStore.findAll(parsed.data as ChangelogListReq);
+    const result = await changelogStore.findAll(
+      parsed.data as ChangelogListReq,
+    );
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };

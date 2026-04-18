@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { updateUserAction } from "@/app/actions/user";
+
 import { type User } from "@/types/user";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -92,15 +96,14 @@ export const UserDialog = NiceModal.create(
                   <FormItem>
                     <FormLabel>角色</FormLabel>
                     <Select
-                      onValueChange={(v) => field.onChange(Number.parseInt(v, 10))}
+                      onValueChange={(v) =>
+                        field.onChange(Number.parseInt(v, 10))
+                      }
                       defaultValue={String(field.value)}
                     >
                       <FormControl>
                         <SelectTrigger
-                          className={`
-                            border-border bg-surface text-text
-                            focus:border-accent focus:ring-accent/20
-                          `}
+                          className={`border-border bg-surface text-text focus:border-accent focus:ring-accent/20`}
                         >
                           <SelectValue placeholder="选择角色" />
                         </SelectTrigger>
@@ -120,10 +123,7 @@ export const UserDialog = NiceModal.create(
                 <Button
                   type="submit"
                   disabled={loading}
-                  className={`
-                    w-full bg-accent text-white
-                    hover:bg-accent/90
-                  `}
+                  className={`w-full bg-accent text-white hover:bg-accent/90`}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

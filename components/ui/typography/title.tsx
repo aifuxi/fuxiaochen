@@ -1,14 +1,13 @@
 import * as React from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 const titleVariants = cva("tracking-tight text-text", {
   variants: {
     level: {
-      1: `
-        text-3xl font-bold
-        lg:text-4xl
-      `,
+      1: `text-3xl font-bold lg:text-4xl`,
       2: "text-2xl font-semibold",
       3: "text-xl font-semibold",
       4: "text-lg font-medium",
@@ -22,7 +21,8 @@ const titleVariants = cva("tracking-tight text-text", {
 });
 
 export interface TitleProps
-  extends React.HTMLAttributes<HTMLHeadingElement>,
+  extends
+    React.HTMLAttributes<HTMLHeadingElement>,
     VariantProps<typeof titleVariants> {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }

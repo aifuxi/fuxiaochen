@@ -9,15 +9,16 @@
 - `pnpm dev`：启动本地 Next.js 开发服务器。
 - `pnpm build`：生成生产构建；`postbuild` 会额外生成 sitemap 文件。
 - `pnpm start`：本地启动生产构建产物。
-- `pnpm lint` / `pnpm lint:fix`：运行 ESLint 检查，或自动修复可安全处理的问题。
-- `pnpm format`：使用 Prettier 和导入排序规则格式化整个仓库。
+- `pnpm lint` / `pnpm lint:fix`：运行 Oxlint 检查，或自动修复可安全处理的问题。
+- `pnpm lint:inspect`：输出当前生效的 Oxlint 配置，便于排查规则来源。
+- `pnpm format` / `pnpm format:check`：使用 Oxfmt 格式化整个仓库，或检查格式是否符合约定。
 - `pnpm db:prepare` 或 `pnpm db:dev`：执行 Prisma 迁移并重新生成客户端。
 - `pnpm db:studio`：打开 Prisma Studio 查看本地数据库内容。
 - `make build_image`：读取 `.env` 中的变量构建 Docker 镜像。
 
 ## 代码风格与命名约定
 
-项目使用 TypeScript，启用 `strict` 模式，并通过 `@/*` 引用根目录路径。Prettier 统一 2 空格缩进、分号、尾随逗号和双引号。ESLint 要求应用代码文件名使用 kebab-case，并优先使用内联 `type` imports。路由相关代码放在 `app/...`，共享工具函数放在 `lib/`，通用基础组件放在 `components/ui/`。除非确有必要，不要保留面向生产环境的 `console` 输出。
+项目使用 TypeScript，启用 `strict` 模式，并通过 `@/*` 引用根目录路径。Oxfmt 统一 2 空格缩进、分号、尾随逗号和双引号，并负责导入排序与 Tailwind 类名排序。Oxlint 要求应用代码文件名使用 kebab-case，并优先使用内联 `type` imports。路由相关代码放在 `app/...`，共享工具函数放在 `lib/`，通用基础组件放在 `components/ui/`。除非确有必要，不要保留面向生产环境的 `console` 输出。
 
 ## 测试指南
 

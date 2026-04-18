@@ -1,6 +1,5 @@
 "use client";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Pagination,
   PaginationContent,
@@ -10,6 +9,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 import { PreviewCard } from "../preview-card";
 
 export function LayoutPreview() {
@@ -22,10 +23,7 @@ export function LayoutPreview() {
             {Array.from({ length: 20 }).map((_, i) => (
               <div
                 key={i}
-                className={`
-                  border-b border-border py-2 text-sm
-                  last:border-0
-                `}
+                className={`border-b border-border py-2 text-sm last:border-0`}
               >
                 Item {i + 1}
               </div>
@@ -72,7 +70,8 @@ export function LayoutPreview() {
 
       <PreviewCard title="BackToTop">
         <p className="text-sm text-text-secondary">
-          Scroll down on the page to see the BackToTop button appear in the bottom right corner.
+          Scroll down on the page to see the BackToTop button appear in the
+          bottom right corner.
         </p>
       </PreviewCard>
     </>

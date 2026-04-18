@@ -57,10 +57,7 @@ export function DataTablePagination({
 
   return (
     <div
-      className={`
-        flex flex-col items-center justify-between gap-4 py-4
-        sm:flex-row
-      `}
+      className={`flex flex-col items-center justify-between gap-4 py-4 sm:flex-row`}
     >
       <div className="flex items-center gap-2 text-sm text-text-secondary">
         <span>共 {total} 条数据</span>

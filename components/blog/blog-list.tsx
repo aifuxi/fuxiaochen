@@ -1,6 +1,16 @@
 import Link from "next/link";
+
+import { FileText, RotateCcw } from "lucide-react";
+
 import type { Blog } from "@/types/blog";
-import { BlogCard } from "./blog-card";
+
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty";
 import {
   Pagination,
   PaginationContent,
@@ -10,14 +20,8 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
-import { FileText, RotateCcw } from "lucide-react";
+
+import { BlogCard } from "./blog-card";
 
 interface BlogListProps {
   blogs: Blog[];
@@ -48,11 +52,7 @@ export function BlogList({
         </EmptyHeader>
         <Link
           href="/blog"
-          className={`
-            inline-flex items-center gap-2 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium text-text-secondary
-            transition-all duration-200
-            hover:bg-surface hover:text-text
-          `}
+          className={`inline-flex items-center gap-2 rounded-full bg-surface/50 px-4 py-2 text-sm font-medium text-text-secondary transition-all duration-200 hover:bg-surface hover:text-text`}
         >
           <RotateCcw className="h-4 w-4" />
           重置筛选

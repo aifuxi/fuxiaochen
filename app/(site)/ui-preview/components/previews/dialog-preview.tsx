@@ -1,15 +1,6 @@
 "use client";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -20,14 +11,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -38,19 +31,27 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
 import { PreviewCard } from "../preview-card";
 
 export function DialogPreview() {
@@ -65,7 +66,8 @@ export function DialogPreview() {
             <DialogHeader>
               <DialogTitle>Edit Profile</DialogTitle>
               <DialogDescription>
-                Make changes to your profile here. Click save when you&apos;re done.
+                Make changes to your profile here. Click save when you&apos;re
+                done.
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -73,7 +75,11 @@ export function DialogPreview() {
                 <Label htmlFor="name" className="text-right">
                   Name
                 </Label>
-                <Input id="name" defaultValue="John Doe" className="col-span-3" />
+                <Input
+                  id="name"
+                  defaultValue="John Doe"
+                  className="col-span-3"
+                />
               </div>
             </div>
             <DialogFooter>
@@ -92,8 +98,8 @@ export function DialogPreview() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete your account
-                and remove your data from our servers.
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

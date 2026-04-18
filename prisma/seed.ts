@@ -3,6 +3,7 @@ import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+
 import { PrismaClient } from "../generated/prisma/client";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -84,7 +85,6 @@ async function main() {
   // 3. Seed Blogs
   console.log("Seeding Blogs...");
   for (const blog of blogsData.data.lists) {
-
     // Construct tag connections
     // blog.tags can be null or array
     // Explicit many-to-many: we need to create BlogTag records

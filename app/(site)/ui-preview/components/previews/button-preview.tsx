@@ -1,9 +1,14 @@
 "use client";
 
 import { Mail } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { ButtonGroup, ButtonGroupSeparator } from "@/components/ui/button-group";
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from "@/components/ui/button-group";
 import { Toggle } from "@/components/ui/toggle";
+
 import { PreviewCard } from "../preview-card";
 
 export function ButtonPreview() {

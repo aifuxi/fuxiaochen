@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { PreviewCard } from "../preview-card";
 
 type Payment = {
@@ -238,7 +239,10 @@ export function DataTablePreview() {
         </div>
       </PreviewCard>
 
-      <PreviewCard title="Data Table without Pagination" className="overflow-hidden">
+      <PreviewCard
+        title="Data Table without Pagination"
+        className="overflow-hidden"
+      >
         <div className="w-full">
           <DataTable
             columns={simpleColumns}
@@ -263,7 +267,11 @@ function DataTableWithToolbar() {
 
   return (
     <div>
-      <DataTableToolbar table={table} searchKey="email" searchPlaceholder="搜索邮箱..." />
+      <DataTableToolbar
+        table={table}
+        searchKey="email"
+        searchPlaceholder="搜索邮箱..."
+      />
       <div className="overflow-hidden rounded-xl border border-border bg-surface">
         <Table>
           <TableHeader>
@@ -301,7 +309,10 @@ function DataTableWithToolbar() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   暂无数据
                 </TableCell>
               </TableRow>

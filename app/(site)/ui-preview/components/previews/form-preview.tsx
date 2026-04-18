@@ -1,10 +1,10 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -14,6 +14,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+
 import { PreviewCard } from "../preview-card";
 
 const formSchema = z.object({
@@ -65,7 +67,11 @@ export function FormPreview() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="Enter your email" {...field} />
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

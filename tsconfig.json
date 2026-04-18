@@ -36,8 +36,6 @@
     "next.config.mjs",
     "**/*.ts",
     "**/*.tsx",
-    "eslint.config.mjs",
-    ".prettierrc.cjs",
     ".commitlintrc.cjs",
     "postcss.config.mjs",
     "next-sitemap.config.cjs",

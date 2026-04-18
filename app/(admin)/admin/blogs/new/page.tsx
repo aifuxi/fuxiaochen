@@ -1,7 +1,10 @@
 import { headers } from "next/headers";
+
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
+
 import { auth } from "@/lib/auth";
+
 import { BlogForm } from "../blog-form";
 
 export default async function NewBlogPage() {

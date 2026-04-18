@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { Card } from "@/components/ui/card";
 
 // 技能数据 - 带图标
@@ -58,39 +59,24 @@ const devices = [
 function Hero() {
   return (
     <section
-      className={`
-        relative flex min-h-[60vh] items-center justify-center overflow-hidden py-20
-        md:py-32
-      `}
+      className={`relative flex min-h-[60vh] items-center justify-center overflow-hidden py-20 md:py-32`}
     >
       {/* 动态渐变背景 */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
-        `}
+        className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent`}
       />
       <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
-        `}
+        className={`pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl`}
       />
       <div
-        className={`
-          pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full bg-gradient-to-tl
-          from-warning/5 to-transparent blur-3xl
-        `}
+        className={`pointer-events-none absolute right-0 -bottom-40 h-[400px] w-[500px] rounded-full bg-gradient-to-tl from-warning/5 to-transparent blur-3xl`}
       />
 
       {/* 内容 */}
       <div className="relative mx-auto max-w-4xl px-4 text-center">
         {/* 小标签 */}
         <div
-          className={`
-            mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-1.5 text-sm
-            text-text-secondary backdrop-blur-sm
-          `}
+          className={`mb-6 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/50 px-4 py-1.5 text-sm text-text-secondary backdrop-blur-sm`}
         >
           <span className="relative flex h-2 w-2">
             <span
@@ -103,11 +89,7 @@ function Hero() {
 
         {/* 大标题 */}
         <h1
-          className={`
-            mb-6 text-5xl font-bold tracking-tight
-            md:text-7xl
-            lg:text-8xl
-          `}
+          className={`mb-6 text-5xl font-bold tracking-tight md:text-7xl lg:text-8xl`}
         >
           <span className="block text-text">Hi, I&apos;m</span>
           <span
@@ -119,27 +101,17 @@ function Hero() {
 
         {/* 描述 */}
         <p
-          className={`
-            mx-auto mb-8 max-w-xl text-lg text-text-secondary
-            md:text-xl
-          `}
+          className={`mx-auto mb-8 max-w-xl text-lg text-text-secondary md:text-xl`}
         >
           2020 年毕业，喜欢 Coding 和打游戏。
-          <br
-            className={`
-              hidden
-              sm:block
-            `}
-          />
+          <br className={`hidden sm:block`} />
           专注于前端开发，探索技术的无限可能。
         </p>
 
         {/* 技术栈标签 */}
         <div className="flex flex-wrap items-center justify-center gap-3">
           <span
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent
-            `}
+            className={`inline-flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent`}
           >
             <span className="icon-[skill-icons--react-dark] h-4 w-4" />
             React
@@ -153,9 +125,7 @@ function Hero() {
           </span>
           <span className="text-text-tertiary">+</span>
           <span
-            className={`
-              inline-flex items-center gap-2 rounded-full bg-warning/10 px-4 py-2 text-sm font-medium text-warning
-            `}
+            className={`inline-flex items-center gap-2 rounded-full bg-warning/10 px-4 py-2 text-sm font-medium text-warning`}
           >
             <span className="icon-[skill-icons--tailwindcss-dark] h-4 w-4" />
             Tailwind
@@ -169,32 +139,17 @@ function Hero() {
 // 技能区域 - Apple 大胆风格
 function Skills() {
   return (
-    <section
-      className={`
-        relative overflow-hidden py-20
-        md:py-32
-      `}
-    >
+    <section className={`relative overflow-hidden py-20 md:py-32`}>
       {/* 背景装饰 */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent
-        `}
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-surface/50 to-transparent`}
       />
 
       <div className="relative mx-auto max-w-5xl px-4">
         {/* 标题 */}
-        <div
-          className={`
-            mb-12 text-center
-            md:mb-16
-          `}
-        >
+        <div className={`mb-12 text-center md:mb-16`}>
           <h2
-            className={`
-              mb-4 text-4xl font-bold tracking-tight text-text
-              md:text-5xl
-            `}
+            className={`mb-4 text-4xl font-bold tracking-tight text-text md:text-5xl`}
           >
             Tech Stack
           </h2>
@@ -203,37 +158,20 @@ function Skills() {
 
         {/* 技能网格 - 大图标 */}
         <div
-          className={`
-            grid grid-cols-3 gap-4
-            sm:grid-cols-4
-            md:grid-cols-5
-            lg:grid-cols-6
-          `}
+          className={`grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6`}
         >
           {allSkills.map((skill, index) => (
             <div
               key={index}
-              className={`
-                group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300
-                hover:bg-surface
-                md:p-6
-              `}
+              className={`group flex flex-col items-center gap-3 rounded-2xl p-4 transition-all duration-300 hover:bg-surface md:p-6`}
             >
               <div
-                className={`
-                  h-12 w-12 transition-transform duration-300
-                  group-hover:scale-110
-                  md:h-16 md:w-16
-                `}
+                className={`h-12 w-12 transition-transform duration-300 group-hover:scale-110 md:h-16 md:w-16`}
               >
                 <span className={skill.icon + " h-full w-full"} />
               </div>
               <span
-                className={`
-                  text-center text-xs text-text-secondary transition-colors duration-200
-                  group-hover:text-text
-                  md:text-sm
-                `}
+                className={`text-center text-xs text-text-secondary transition-colors duration-200 group-hover:text-text md:text-sm`}
               >
                 {skill.name}
               </span>
@@ -251,25 +189,12 @@ function Devices() {
   const otherDevices = devices.filter((d) => !d.featured);
 
   return (
-    <section
-      className={`
-        py-20
-        md:py-32
-      `}
-    >
+    <section className={`py-20 md:py-32`}>
       <div className="mx-auto max-w-5xl px-4">
         {/* 标题 */}
-        <div
-          className={`
-            mb-12 text-center
-            md:mb-16
-          `}
-        >
+        <div className={`mb-12 text-center md:mb-16`}>
           <h2
-            className={`
-              mb-4 text-4xl font-bold tracking-tight text-text
-              md:text-5xl
-            `}
+            className={`mb-4 text-4xl font-bold tracking-tight text-text md:text-5xl`}
           >
             我的设备
           </h2>
@@ -277,27 +202,15 @@ function Devices() {
         </div>
 
         {/* 主力设备 - 大卡片 */}
-        <div
-          className={`
-            mb-8 grid gap-6
-            md:grid-cols-2
-          `}
-        >
+        <div className={`mb-8 grid gap-6 md:grid-cols-2`}>
           {featuredDevices.map((device, index) => (
             <Card
               key={index}
-              className={`
-                group relative overflow-hidden p-8 transition-all duration-300
-                hover:shadow-xl
-              `}
+              className={`group relative overflow-hidden p-8 transition-all duration-300 hover:shadow-xl`}
             >
               {/* 装饰渐变 */}
               <div
-                className={`
-                  pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br from-accent/10
-                  to-transparent opacity-0 blur-2xl transition-opacity duration-300
-                  group-hover:opacity-100
-                `}
+                className={`pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-gradient-to-br from-accent/10 to-transparent opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100`}
               />
               <div className="relative">
                 <span
@@ -305,12 +218,7 @@ function Devices() {
                 >
                   {device.description}
                 </span>
-                <h3
-                  className={`
-                    mb-2 text-2xl font-bold text-text
-                    md:text-3xl
-                  `}
-                >
+                <h3 className={`mb-2 text-2xl font-bold text-text md:text-3xl`}>
                   {device.name}
                 </h3>
                 {device.spec && (
@@ -326,11 +234,7 @@ function Devices() {
           {otherDevices.map((device, index) => (
             <div
               key={index}
-              className={`
-                flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 transition-colors
-                duration-200
-                hover:border-accent/30
-              `}
+              className={`flex items-center gap-2 rounded-full border border-border bg-surface px-5 py-2.5 transition-colors duration-200 hover:border-accent/30`}
             >
               <span className="text-sm font-medium text-text">
                 {device.name}
@@ -352,48 +256,28 @@ function Devices() {
 function BottomCTA() {
   return (
     <section
-      className={`
-        relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20
-        md:py-28
-      `}
+      className={`relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/5 via-surface to-info/5 py-20 md:py-28`}
     >
       {/* 装饰 */}
       <div
-        className={`
-          pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-accent/20 blur-3xl
-        `}
+        className={`pointer-events-none absolute -top-20 -left-20 h-[300px] w-[300px] rounded-full bg-accent/20 blur-3xl`}
       />
       <div
-        className={`
-          pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-info/20 blur-3xl
-        `}
+        className={`pointer-events-none absolute -right-20 -bottom-20 h-[300px] w-[300px] rounded-full bg-info/20 blur-3xl`}
       />
 
       <div className="relative mx-auto max-w-3xl px-6 text-center">
-        <h2
-          className={`
-            mb-6 text-3xl font-bold text-text
-            md:text-4xl
-          `}
-        >
+        <h2 className={`mb-6 text-3xl font-bold text-text md:text-4xl`}>
           看到这里了？
         </h2>
         <p
-          className={`
-            mx-auto mb-10 max-w-md text-lg text-text-secondary
-            md:text-xl
-          `}
+          className={`mx-auto mb-10 max-w-md text-lg text-text-secondary md:text-xl`}
         >
           来我的博客看看吧，有更多技术分享和学习笔记
         </p>
         <Link
           href="/blog"
-          className={`
-            hover:bg-accent-hover
-            inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg
-            transition-all duration-300
-            active:scale-[0.98]
-          `}
+          className={`hover:bg-accent-hover inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-base font-medium text-white shadow-lg transition-all duration-300 active:scale-[0.98]`}
         >
           浏览博客
         </Link>

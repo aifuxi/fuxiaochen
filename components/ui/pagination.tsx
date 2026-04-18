@@ -1,10 +1,13 @@
 import * as React from "react";
+
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react";
+
 import { type Button, buttonVariants } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
@@ -72,24 +75,11 @@ function PaginationPrevious({
     <PaginationLink
       aria-label="转到上一页"
       size="default"
-      className={cn(
-        `
-          gap-1 px-2.5
-          sm:pl-2.5
-        `,
-        className,
-      )}
+      className={cn(`gap-1 px-2.5 sm:pl-2.5`, className)}
       {...props}
     >
       <ChevronLeftIcon />
-      <span
-        className={`
-          hidden
-          sm:block
-        `}
-      >
-        上一页
-      </span>
+      <span className={`hidden sm:block`}>上一页</span>
     </PaginationLink>
   );
 }
@@ -102,23 +92,10 @@ function PaginationNext({
     <PaginationLink
       aria-label="转到下一页"
       size="default"
-      className={cn(
-        `
-          gap-1 px-2.5
-          sm:pr-2.5
-        `,
-        className,
-      )}
+      className={cn(`gap-1 px-2.5 sm:pr-2.5`, className)}
       {...props}
     >
-      <span
-        className={`
-          hidden
-          sm:block
-        `}
-      >
-        下一页
-      </span>
+      <span className={`hidden sm:block`}>下一页</span>
       <ChevronRightIcon />
     </PaginationLink>
   );

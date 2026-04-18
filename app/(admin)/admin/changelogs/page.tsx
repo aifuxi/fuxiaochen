@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+
 import ChangelogManagementPage from "./changelog-list";
 
 export const dynamic = "force-dynamic";

@@ -4,8 +4,8 @@ import type { Table } from "@tanstack/react-table";
 import { X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
+import { Input } from "@/components/ui/input";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -30,15 +30,12 @@ export function DataTableToolbar<TData>({
   children,
 }: DataTableToolbarProps<TData>) {
   const searchValue = searchKey
-    ? (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
+    ? ((table.getColumn(searchKey)?.getFilterValue() as string) ?? "")
     : "";
   const isFiltered = table.getState().columnFilters.length > 0;
 
   return (
-    <div className={`
-      flex flex-col gap-4 py-4
-      sm:flex-row sm:items-center
-    `}>
+    <div className={`flex flex-col gap-4 py-4 sm:flex-row sm:items-center`}>
       <div className="flex flex-1 items-center gap-2">
         {searchKey && (
           <Input
@@ -47,10 +44,7 @@ export function DataTableToolbar<TData>({
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
-            className={`
-              h-8 w-full border-border bg-surface
-              sm:w-[250px]
-            `}
+            className={`h-8 w-full border-border bg-surface sm:w-[250px]`}
           />
         )}
         {children}
@@ -59,10 +53,7 @@ export function DataTableToolbar<TData>({
             variant="ghost"
             size="sm"
             onClick={() => table.resetColumnFilters()}
-            className={`
-              h-8 px-2 text-text-secondary
-              hover:text-text
-            `}
+            className={`h-8 px-2 text-text-secondary hover:text-text`}
           >
             重置
             <X className="ml-1 h-4 w-4" />

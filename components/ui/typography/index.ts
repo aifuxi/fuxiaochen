@@ -10,10 +10,10 @@ export type { ParagraphProps } from "./paragraph";
 export { Link, linkVariants } from "./link";
 export type { LinkProps } from "./link";
 
-import { Title } from "./title";
-import { Text } from "./text";
-import { Paragraph } from "./paragraph";
 import { Link } from "./link";
+import { Paragraph } from "./paragraph";
+import { Text } from "./text";
+import { Title } from "./title";
 
 export const Typography = {
   Title,

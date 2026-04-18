@@ -1,9 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
 import { z } from "zod";
+
 import { type CategoryCreateReq, type CategoryListReq } from "@/types/category";
+
 import { checkAdmin } from "@/lib/auth-guard";
+
 import { categoryStore } from "@/stores/category";
 
 const PAGE_SIZE_MAX = 1000;

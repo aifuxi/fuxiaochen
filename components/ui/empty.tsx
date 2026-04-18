@@ -1,4 +1,5 @@
 import { type VariantProps, cva } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
@@ -30,18 +31,12 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 const emptyMediaVariants = cva(
-  `
-    mb-2 flex shrink-0 items-center justify-center
-    [&_svg]:pointer-events-none [&_svg]:shrink-0
-  `,
+  `mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0`,
   {
     variants: {
       variant: {
         default: "bg-transparent",
-        icon: `
-          flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-text
-          [&_svg:not([class*='size-'])]:size-6
-        `,
+        icon: `flex size-10 shrink-0 items-center justify-center rounded-xl bg-surface text-text [&_svg:not([class*='size-'])]:size-6`,
       },
     },
     defaultVariants: {
@@ -69,10 +64,7 @@ function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="empty-title"
-      className={cn(
-        "text-lg font-medium tracking-tight text-text",
-        className,
-      )}
+      className={cn("text-lg font-medium tracking-tight text-text", className)}
       {...props}
     />
   );
@@ -83,11 +75,7 @@ function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
     <div
       data-slot="empty-description"
       className={cn(
-        `
-          text-sm/relaxed text-text-secondary
-          [&>a]:underline [&>a]:underline-offset-4
-          [&>a:hover]:text-accent
-        `,
+        `text-sm/relaxed text-text-secondary [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-accent`,
         className,
       )}
       {...props}

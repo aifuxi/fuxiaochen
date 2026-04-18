@@ -1,5 +1,7 @@
 import * as React from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 const linkVariants = cva(
@@ -9,17 +11,11 @@ const linkVariants = cva(
       underline: {
         true: "underline",
         false: "no-underline",
-        hover: `
-          no-underline
-          hover:underline
-        `,
+        hover: `no-underline hover:underline`,
       },
       disabled: {
         true: "pointer-events-none cursor-not-allowed text-text-tertiary",
-        false: `
-          text-accent
-          hover:text-accent-hover-color
-        `,
+        false: `text-accent hover:text-accent-hover-color`,
       },
     },
     defaultVariants: {
@@ -30,7 +26,8 @@ const linkVariants = cva(
 );
 
 export interface LinkProps
-  extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">,
+  extends
+    Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">,
     VariantProps<typeof linkVariants> {
   href?: string;
 }

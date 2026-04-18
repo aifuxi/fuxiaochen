@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+
 import { Text } from "@/components/ui/typography/text";
+
 import { cn } from "@/lib/utils";
 
 interface PreviewCardProps {
