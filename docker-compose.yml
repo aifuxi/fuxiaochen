@@ -7,24 +7,34 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=123456
+      - DATABASE_DBNAME=fuxiaochen
+      - DATABASE_NAME=fuxiaochen
+      - DATABASE_URL=postgresql://postgres:123456@postgresql:5432/fuxiaochen
     networks:
       - fuxiaochen-network
     depends_on:
-      - mariadb
+      - postgresql
 
-  mariadb:
-    image: mariadb:lts
-    container_name: mariadb
+  postgresql:
+    image: postgres:17
+    container_name: postgresql
     restart: unless-stopped
     ports:
-      - "3306:3306"
+      - "5400:5432"
     environment:
-      - MARIADB_ROOT_PASSWORD=123456
-      - MARIADB_DATABASE=fuxiaochen
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=fuxiaochen
       - TZ=Asia/Shanghai
+      - PGTZ=Asia/Shanghai
     volumes:
-      - mysql_data:/var/lib/mysql
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c timezone=Asia/Shanghai
     networks:
       - fuxiaochen-network
 
@@ -33,4 +43,4 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  postgres_data:
