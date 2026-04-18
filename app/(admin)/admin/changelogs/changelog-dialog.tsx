@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import {
   createChangelogAction,
   updateChangelogAction,
 } from "@/app/actions/changelog";
+
 import { type Changelog } from "@/types/changelog";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -150,10 +154,7 @@ export const ChangelogDialog = NiceModal.create(
                 <Button
                   type="submit"
                   disabled={loading}
-                  className={`
-                    bg-accent text-white
-                    hover:bg-accent/90
-                  `}
+                  className={`bg-accent text-white hover:bg-accent/90`}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

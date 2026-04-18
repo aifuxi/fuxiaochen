@@ -1,16 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+
 import { Loader2 } from "lucide-react";
 import useSWRInfinite from "swr/infinite";
+
 import { getChangelogsAction } from "@/app/actions/changelog";
+
 import type {
   ChangelogListReq,
   ChangelogListResp,
   Changelog,
 } from "@/types/changelog";
+
 import { Text } from "@/components/ui/typography/text";
+
 import BlogContent from "@/components/blog/blog-content";
+
 import { formatSimpleDate } from "@/lib/time";
 
 const PAGE_SIZE = 10;
@@ -46,19 +52,13 @@ function ChangelogItem({
       {/* 时间轴线 - 从圆点中心向下延伸 */}
       {!isLast && (
         <div
-          className={`
-            absolute top-3 bottom-0 left-4 w-px bg-border
-            md:left-6
-          `}
+          className={`absolute top-3 bottom-0 left-4 w-px bg-border md:left-6`}
         />
       )}
 
       {/* 圆点 - 垂直居中于时间轴线起点 */}
       <div
-        className={`
-          absolute top-3 left-4 flex h-3 w-3 -translate-x-1/2 -translate-y-3 items-center justify-center
-          md:left-6
-        `}
+        className={`absolute top-3 left-4 flex h-3 w-3 -translate-x-1/2 -translate-y-3 items-center justify-center md:left-6`}
       >
         {isCurrent ? (
           <div className="h-3 w-3 rounded-full bg-accent ring-4 ring-accent/20" />
@@ -68,12 +68,7 @@ function ChangelogItem({
       </div>
 
       {/* 内容 */}
-      <div
-        className={`
-          pb-12 pl-10
-          md:pl-14
-        `}
-      >
+      <div className={`pb-12 pl-10 md:pl-14`}>
         <div className="mb-3 flex items-center gap-2">
           <span className="text-lg font-semibold text-text">
             {changelog.version}
@@ -137,17 +132,9 @@ export default function ChangelogPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12">
       {/* 标题区 */}
-      <div
-        className={`
-          py-16 text-center
-          md:py-24
-        `}
-      >
+      <div className={`py-16 text-center md:py-24`}>
         <h1
-          className={`
-            text-4xl font-bold tracking-tight text-text
-            md:text-5xl
-          `}
+          className={`text-4xl font-bold tracking-tight text-text md:text-5xl`}
         >
           Changelog
         </h1>

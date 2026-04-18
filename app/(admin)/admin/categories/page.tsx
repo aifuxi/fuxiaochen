@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+
 import CategoryManagementPage from "./category-list";
 
 export const dynamic = "force-dynamic";

@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { useTheme } from "next-themes";
+
 import { Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+
 import { cn } from "@/lib/utils";
 
 export function ThemeToggle({ className }: { className?: string }) {
@@ -53,10 +55,7 @@ export function ThemeToggle({ className }: { className?: string }) {
               `flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200`,
               isActive
                 ? "bg-accent text-white"
-                : `
-                  text-text-secondary
-                  hover:bg-surface-hover hover:text-text
-                `,
+                : `text-text-secondary hover:bg-surface-hover hover:text-text`,
             )}
             aria-label={`Switch to ${mode.name} theme`}
           >

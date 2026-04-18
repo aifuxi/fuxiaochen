@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
 import { ArrowRight, Github, Loader2, Mail, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
@@ -60,8 +63,7 @@ export default function LoginPage() {
         toast.success("登录成功");
       }
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "操作失败";
+      const message = error instanceof Error ? error.message : "操作失败";
       toast.error(message);
       setLoading(false);
     }
@@ -82,9 +84,7 @@ export default function LoginPage() {
 
         {/* Secondary Orb - Purple/Pink */}
         <div
-          className={`
-            absolute -right-20 -bottom-20 h-100 w-100 animate-float-medium rounded-full opacity-50 blur-[100px]
-          `}
+          className={`absolute -right-20 -bottom-20 h-100 w-100 animate-float-medium rounded-full opacity-50 blur-[100px]`}
           style={{
             background:
               "radial-gradient(circle, rgba(191,90,242,0.35) 0%, rgba(191,90,242,0.1) 50%, transparent 70%)",
@@ -124,10 +124,7 @@ export default function LoginPage() {
         <div className="mb-10 text-center">
           {/* Badge */}
           <div
-            className={`
-              mb-6 inline-flex animate-fade-in-up items-center gap-2 rounded-full bg-accent/10 px-4 py-1.5
-              backdrop-blur-sm
-            `}
+            className={`mb-6 inline-flex animate-fade-in-up items-center gap-2 rounded-full bg-accent/10 px-4 py-1.5 backdrop-blur-sm`}
             style={{ animationDelay: "100ms" }}
           >
             <Sparkles className="h-3.5 w-3.5 text-accent" />
@@ -138,10 +135,7 @@ export default function LoginPage() {
 
           {/* Main Title - Bold Typography */}
           <h1
-            className={`
-              animate-fade-in-up text-4xl font-bold tracking-tight text-text
-              sm:text-5xl
-            `}
+            className={`animate-fade-in-up text-4xl font-bold tracking-tight text-text sm:text-5xl`}
             style={{ animationDelay: "200ms" }}
           >
             {isSignUp ? "创建账号" : "欢迎回来"}
@@ -152,19 +146,13 @@ export default function LoginPage() {
             className="mt-3 animate-fade-in-up text-base text-text-secondary"
             style={{ animationDelay: "300ms" }}
           >
-            {isSignUp
-              ? "注册以开始使用管理系统"
-              : "登录以访问您的管理控制台"}
+            {isSignUp ? "注册以开始使用管理系统" : "登录以访问您的管理控制台"}
           </p>
         </div>
 
         {/* Glass Card */}
         <div
-          className={`
-            animate-fade-in-up rounded-3xl border border-white/10 bg-white/80 p-8 shadow-2xl shadow-black/5
-            backdrop-blur-xl
-            dark:border-white/5 dark:bg-white/5 dark:shadow-black/20
-          `}
+          className={`animate-fade-in-up rounded-3xl border border-white/10 bg-white/80 p-8 shadow-2xl shadow-black/5 backdrop-blur-xl dark:border-white/5 dark:bg-white/5 dark:shadow-black/20`}
           style={{ animationDelay: "400ms" }}
         >
           <div className="space-y-6">
@@ -172,10 +160,7 @@ export default function LoginPage() {
             <form onSubmit={handleEmailSignIn} className="space-y-4">
               {/* Name Field - Only for Sign Up */}
               <div
-                className={`
-                  grid transition-all duration-500 ease-apple
-                  ${isSignUp ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}
-                `}
+                className={`grid transition-all duration-500 ease-apple ${isSignUp ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"} `}
               >
                 <div className="overflow-hidden">
                   <div className="pb-4">
@@ -184,12 +169,7 @@ export default function LoginPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required={isSignUp}
-                      className={`
-                        h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
-                        duration-200
-                        placeholder:text-text-tertiary
-                        focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
-                      `}
+                      className={`h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all duration-200 placeholder:text-text-tertiary focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10`}
                     />
                   </div>
                 </div>
@@ -203,12 +183,7 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className={`
-                    h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
-                    duration-200
-                    placeholder:text-text-tertiary
-                    focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
-                  `}
+                  className={`h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all duration-200 placeholder:text-text-tertiary focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10`}
                 />
               </div>
 
@@ -220,12 +195,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className={`
-                    h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all
-                    duration-200
-                    placeholder:text-text-tertiary
-                    focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10
-                  `}
+                  className={`h-12 rounded-xl border-border/50 bg-surface/50 text-text backdrop-blur-sm transition-all duration-200 placeholder:text-text-tertiary focus:border-accent focus:bg-surface focus:ring-4 focus:ring-accent/10`}
                 />
               </div>
 
@@ -233,12 +203,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className={`
-                  group relative h-12 w-full overflow-hidden rounded-xl bg-accent text-base font-medium text-white
-                  shadow-lg shadow-accent/25 transition-all duration-300
-                  hover:-translate-y-0.5 hover:bg-accent-hover-color hover:shadow-xl hover:shadow-accent/30
-                  active:scale-[0.98]
-                `}
+                className={`group relative h-12 w-full overflow-hidden rounded-xl bg-accent text-base font-medium text-white shadow-lg shadow-accent/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-accent-hover-color hover:shadow-xl hover:shadow-accent/30 active:scale-[0.98]`}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {loading ? (
@@ -248,10 +213,7 @@ export default function LoginPage() {
                       <Mail className="h-5 w-5" />
                       <span>{isSignUp ? "创建账号" : "登录"}</span>
                       <ArrowRight
-                        className={`
-                          h-4 w-4 transition-transform duration-200
-                          group-hover:translate-x-1
-                        `}
+                        className={`h-4 w-4 transition-transform duration-200 group-hover:translate-x-1`}
                       />
                     </>
                   )}
@@ -272,12 +234,7 @@ export default function LoginPage() {
             <Button
               type="button"
               variant="outline"
-              className={`
-                group h-12 w-full rounded-xl border-border/50 bg-surface/30 text-text backdrop-blur-sm transition-all
-                duration-300
-                hover:border-accent/50 hover:bg-surface hover:shadow-lg
-                active:scale-[0.98]
-              `}
+              className={`group h-12 w-full rounded-xl border-border/50 bg-surface/30 text-text backdrop-blur-sm transition-all duration-300 hover:border-accent/50 hover:bg-surface hover:shadow-lg active:scale-[0.98]`}
               onClick={handleSocialSignIn}
               disabled={loading}
             >
@@ -287,10 +244,7 @@ export default function LoginPage() {
                 ) : (
                   <>
                     <Github
-                      className={`
-                        h-5 w-5 transition-transform duration-200
-                        group-hover:scale-110
-                      `}
+                      className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110`}
                     />
                     <span className="font-medium">使用 GitHub 继续</span>
                   </>
@@ -303,18 +257,11 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className={`
-                  group inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition-colors
-                  duration-200
-                  hover:text-accent
-                `}
+                className={`group inline-flex items-center gap-1.5 text-sm font-medium text-text-secondary transition-colors duration-200 hover:text-accent`}
               >
                 <span>{isSignUp ? "已有账号？" : "还没有账号？"}</span>
                 <span
-                  className={`
-                    text-accent transition-transform duration-200
-                    group-hover:translate-x-0.5
-                  `}
+                  className={`text-accent transition-transform duration-200 group-hover:translate-x-0.5`}
                 >
                   {isSignUp ? "立即登录" : "立即注册"}
                 </span>

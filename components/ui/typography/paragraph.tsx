@@ -1,5 +1,7 @@
 import * as React from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 const paragraphVariants = cva("mb-4 leading-relaxed", {
@@ -24,7 +26,8 @@ const paragraphVariants = cva("mb-4 leading-relaxed", {
 });
 
 export interface ParagraphProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends
+    React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof paragraphVariants> {
   as?: "p" | "div";
 }
@@ -34,7 +37,7 @@ const Paragraph = React.forwardRef<HTMLParagraphElement, ParagraphProps>(
     return (
       <Component
         className={cn(paragraphVariants({ type, size, className }))}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         ref={ref as any}
         {...props}
       />

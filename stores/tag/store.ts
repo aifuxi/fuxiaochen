@@ -4,7 +4,9 @@ import {
   type TagListReq,
   type TagListResp,
 } from "@/types/tag";
+
 import { prisma } from "@/lib/prisma";
+
 import { type ITagStore } from "./interface";
 
 export class TagStore implements ITagStore {

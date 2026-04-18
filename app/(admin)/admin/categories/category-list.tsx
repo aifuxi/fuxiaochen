@@ -1,18 +1,22 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+
 import NiceModal from "@ebay/nice-modal-react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Edit, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import useSWR from "swr";
-import type { ColumnDef } from "@tanstack/react-table";
+
 import { getCategoriesAction } from "@/app/actions/category";
+
 import { type Category, type CategoryListReq } from "@/types/category";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AppleCard } from "@/components/ui/glass-card";
-import { Input } from "@/components/ui/input";
 import { DataTable } from "@/components/ui/data-table";
 import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { AppleCard } from "@/components/ui/glass-card";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -22,7 +26,9 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+
 import { formatSimpleDateWithTime } from "@/lib/time";
+
 import { CategoryDialog } from "./category-dialog";
 import { DeleteAlert } from "./delete-alert";
 
@@ -40,10 +46,7 @@ export default function CategoryManagementPage() {
   const pageSize = Number(searchParams.get("pageSize")) || 10;
   const name = searchParams.get("name") || undefined;
 
-  const { data, isLoading, mutate } = useSWR(
-    { page, pageSize, name },
-    fetcher,
-  );
+  const { data, isLoading, mutate } = useSWR({ page, pageSize, name }, fetcher);
 
   const totalPages = Math.ceil((data?.total || 0) / pageSize);
 
@@ -146,14 +149,16 @@ export default function CategoryManagementPage() {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="创建时间" />
       ),
-      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.createdAt)),
+      cell: ({ row }) =>
+        formatSimpleDateWithTime(new Date(row.original.createdAt)),
     },
     {
       accessorKey: "updatedAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="更新时间" />
       ),
-      cell: ({ row }) => formatSimpleDateWithTime(new Date(row.original.updatedAt)),
+      cell: ({ row }) =>
+        formatSimpleDateWithTime(new Date(row.original.updatedAt)),
     },
     {
       id: "actions",
@@ -191,10 +196,7 @@ export default function CategoryManagementPage() {
       </div>
 
       <AppleCard
-        className={`
-          flex flex-col gap-4 p-4
-          sm:flex-row sm:items-center sm:justify-between
-        `}
+        className={`flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between`}
       >
         <form
           onSubmit={handleSearch}
@@ -212,20 +214,14 @@ export default function CategoryManagementPage() {
           <Button
             type="submit"
             variant="secondary"
-            className={`
-              border border-border bg-surface text-text
-              hover:bg-accent/5 hover:text-accent
-            `}
+            className={`border border-border bg-surface text-text hover:bg-accent/5 hover:text-accent`}
           >
             搜索
           </Button>
         </form>
         <Button
           onClick={() => showCategoryModal()}
-          className={`
-            hover:bg-accent-hover
-            bg-accent text-white
-          `}
+          className={`hover:bg-accent-hover bg-accent text-white`}
         >
           <Plus className="mr-2 h-4 w-4" />
           新增分类
@@ -249,7 +245,9 @@ export default function CategoryManagementPage() {
 
       {data && data.total > 0 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-text-secondary">共 {data.total} 条</span>
+          <span className="text-sm text-text-secondary">
+            共 {data.total} 条
+          </span>
           {totalPages > 1 && (
             <Pagination>
               <PaginationContent>
@@ -264,7 +262,10 @@ export default function CategoryManagementPage() {
                     {p === "ellipsis" ? (
                       <PaginationEllipsis />
                     ) : (
-                      <PaginationLink href={getPageUrl(p)} isActive={p === page}>
+                      <PaginationLink
+                        href={getPageUrl(p)}
+                        isActive={p === page}
+                      >
                         {p}
                       </PaginationLink>
                     )}

@@ -1,7 +1,11 @@
 import { Suspense } from "react";
+
 import { headers } from "next/headers";
+
 import { AppleCard } from "@/components/ui/glass-card";
+
 import { auth } from "@/lib/auth";
+
 import UserManagementPage from "./user-list";
 
 export const dynamic = "force-dynamic";
@@ -18,18 +22,14 @@ export default async function Page() {
           <h2 className="text-3xl font-bold tracking-widest text-red-500 uppercase">
             拒绝访问
           </h2>
-          <p className="text-text-secondary">
-            没有权限查看此页面
-          </p>
+          <p className="text-text-secondary">没有权限查看此页面</p>
         </AppleCard>
       </div>
     );
   }
 
   return (
-    <Suspense
-      fallback={<div className="text-text">Loading...</div>}
-    >
+    <Suspense fallback={<div className="text-text">Loading...</div>}>
       <UserManagementPage />
     </Suspense>
   );

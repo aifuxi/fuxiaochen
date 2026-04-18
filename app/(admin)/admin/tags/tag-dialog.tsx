@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { createTagAction, updateTagAction } from "@/app/actions/tag";
+
 import { type Tag } from "@/types/tag";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -87,10 +91,7 @@ export const TagDialog = NiceModal.create(
                     <FormControl>
                       <Input
                         {...field}
-                        className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
+                        className={`border-border bg-surface text-text focus:border-accent focus:ring-accent/20`}
                         placeholder="React"
                       />
                     </FormControl>
@@ -107,10 +108,7 @@ export const TagDialog = NiceModal.create(
                     <FormControl>
                       <Input
                         {...field}
-                        className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
+                        className={`border-border bg-surface text-text focus:border-accent focus:ring-accent/20`}
                         placeholder="react"
                       />
                     </FormControl>
@@ -123,20 +121,14 @@ export const TagDialog = NiceModal.create(
                   type="button"
                   variant="outline"
                   onClick={() => modal.remove()}
-                  className={`
-                    border-border bg-transparent text-text-secondary
-                    hover:bg-surface hover:text-text
-                  `}
+                  className={`border-border bg-transparent text-text-secondary hover:bg-surface hover:text-text`}
                 >
                   取消
                 </Button>
                 <Button
                   type="submit"
                   disabled={loading}
-                  className={`
-                    bg-accent text-white
-                    hover:bg-accent/90
-                  `}
+                  className={`bg-accent text-white hover:bg-accent/90`}
                 >
                   {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   保存

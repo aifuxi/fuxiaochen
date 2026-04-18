@@ -33,10 +33,9 @@ export function DataTablePagination<TData>({
   const pageCount = table.getPageCount();
 
   return (
-    <div className={`
-      flex flex-col items-center justify-between gap-4 px-2 py-4
-      sm:flex-row
-    `}>
+    <div
+      className={`flex flex-col items-center justify-between gap-4 px-2 py-4 sm:flex-row`}
+    >
       <div className="flex-1 text-sm text-text-secondary">
         {selectedRows > 0 && (
           <>
@@ -45,11 +44,9 @@ export function DataTablePagination<TData>({
         )}
         {selectedRows === 0 && <>共 {totalRows} 行</>}
       </div>
-      <div className={`
-        flex flex-col items-center gap-4
-        sm:flex-row sm:gap-6
-        lg:gap-8
-      `}>
+      <div
+        className={`flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8`}
+      >
         <div className="flex items-center gap-2">
           <p className="text-sm font-medium text-text-secondary">每页行数</p>
           <Select
@@ -77,10 +74,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             size="icon"
-            className={`
-              hidden size-8
-              lg:flex
-            `}
+            className={`hidden size-8 lg:flex`}
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
@@ -110,10 +104,7 @@ export function DataTablePagination<TData>({
           <Button
             variant="outline"
             size="icon"
-            className={`
-              hidden size-8
-              lg:flex
-            `}
+            className={`hidden size-8 lg:flex`}
             onClick={() => table.setPageIndex(pageCount - 1)}
             disabled={!table.getCanNextPage()}
           >

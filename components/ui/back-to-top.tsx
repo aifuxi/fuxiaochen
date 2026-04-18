@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { ArrowUp } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 export function BackToTop() {
@@ -31,12 +33,7 @@ export function BackToTop() {
     <button
       onClick={scrollToTop}
       className={cn(
-        `
-          fixed right-8 bottom-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border
-          bg-surface transition-all duration-300
-          hover:-translate-y-1 hover:shadow-lg
-          focus:outline-none
-        `,
+        `fixed right-8 bottom-8 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-border bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus:outline-none`,
         isVisible
           ? "translate-y-0 opacity-100"
           : "pointer-events-none translate-y-10 opacity-0",

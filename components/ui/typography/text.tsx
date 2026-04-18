@@ -1,5 +1,7 @@
 import * as React from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
 const textVariants = cva("transition-colors duration-200", {
@@ -43,7 +45,7 @@ const Text = React.forwardRef<HTMLSpanElement, TextProps>(
     return (
       <Component
         className={cn(textVariants({ type, size, weight, className }))}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         ref={ref as any}
         {...props}
       />

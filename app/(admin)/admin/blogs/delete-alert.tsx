@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
 import { deleteBlogAction } from "@/app/actions/blog";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,10 +64,7 @@ export function DeleteAlert({
           <AlertDialogAction
             onClick={handleDelete}
             disabled={loading}
-            className={`
-              bg-red-500 text-white
-              hover:bg-red-600
-            `}
+            className={`bg-red-500 text-white hover:bg-red-600`}
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             删除

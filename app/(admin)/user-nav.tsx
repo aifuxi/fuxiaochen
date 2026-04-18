@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import { useRouter } from "next/navigation";
+
 import { LogOut } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+
 import { authClient } from "@/lib/auth-client";
 
 interface UserNavProps {
@@ -60,9 +64,7 @@ export function UserNav({ user }: UserNavProps) {
         )}
       </div>
       <div className="flex-1 overflow-hidden">
-        <p className="truncate text-sm font-semibold text-text">
-          {user.name}
-        </p>
+        <p className="truncate text-sm font-semibold text-text">{user.name}</p>
         <p className="truncate text-xs text-text-secondary">
           {user.role === 1 ? "Admin" : "Normal"}
         </p>
@@ -73,10 +75,7 @@ export function UserNav({ user }: UserNavProps) {
             variant="ghost"
             size="icon"
             disabled={loading}
-            className={`
-              text-text-secondary
-              hover:bg-surface-hover hover:text-text
-            `}
+            className={`text-text-secondary hover:bg-surface-hover hover:text-text`}
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -90,10 +89,10 @@ export function UserNav({ user }: UserNavProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction onClick={handleLogout} className={`
-              bg-accent text-white
-              hover:bg-accent-hover-color
-            `}>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className={`bg-accent text-white hover:bg-accent-hover-color`}
+            >
               退出登录
             </AlertDialogAction>
           </AlertDialogFooter>

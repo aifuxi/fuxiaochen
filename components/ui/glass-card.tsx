@@ -17,10 +17,7 @@ export function AppleCard({
       className={cn(
         "rounded-xl border border-border bg-surface p-6 shadow-sm",
         variant === "hover" &&
-          `
-            transition-all duration-200 ease-apple
-            hover:shadow-md
-          `,
+          `transition-all duration-200 ease-apple hover:shadow-md`,
         className,
       )}
       {...props}

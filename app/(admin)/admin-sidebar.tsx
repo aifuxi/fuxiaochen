@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import {
   Clock9,
   FileText,
@@ -10,8 +11,11 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-import { WEBSITE } from "@/constants/info";
+
 import { cn } from "@/lib/utils";
+
+import { WEBSITE } from "@/constants/info";
+
 import { UserNav } from "./user-nav";
 
 const navItems = [
@@ -44,11 +48,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           target="_blank"
           className="flex items-center gap-2 text-lg font-semibold tracking-tight text-text"
         >
-          <img
-            src="/images/logo.svg"
-            alt="Logo"
-            className="h-6 w-6"
-          />
+          <img src="/images/logo.svg" alt="Logo" className="h-6 w-6" />
           <span className="text-accent">{WEBSITE}</span>
           后台管理
         </Link>
@@ -66,23 +66,14 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                `
-                  group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200
-                  ease-apple
-                `,
+                `group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ease-apple`,
                 isActive
                   ? "bg-accent text-white shadow-sm"
-                  : `
-                    text-text-secondary
-                    hover:bg-surface-hover hover:text-text
-                  `,
+                  : `text-text-secondary hover:bg-surface-hover hover:text-text`,
               )}
             >
               <item.icon
-                className={`
-                  h-5 w-5 transition-transform
-                  ${isActive ? "scale-100" : "group-hover:scale-105"}
-                `}
+                className={`h-5 w-5 transition-transform ${isActive ? "scale-100" : "group-hover:scale-105"} `}
               />
               {item.label}
             </Link>

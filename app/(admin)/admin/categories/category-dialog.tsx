@@ -1,17 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import NiceModal from "@ebay/nice-modal-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import {
   createCategoryAction,
   updateCategoryAction,
 } from "@/app/actions/category";
+
 import { type Category } from "@/types/category";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -113,10 +117,7 @@ export const CategoryDialog = NiceModal.create(
                     <FormControl>
                       <Input
                         {...field}
-                        className={`
-                          border-border bg-surface text-text
-                          focus:border-accent focus:ring-accent/20
-                        `}
+                        className={`border-border bg-surface text-text focus:border-accent focus:ring-accent/20`}
                         placeholder="frontend"
                       />
                     </FormControl>
@@ -130,20 +131,14 @@ export const CategoryDialog = NiceModal.create(
                     type="button"
                     variant="outline"
                     onClick={() => modal.remove()}
-                    className={`
-                      border-border bg-transparent text-text-secondary
-                      hover:bg-surface hover:text-text
-                    `}
+                    className={`border-border bg-transparent text-text-secondary hover:bg-surface hover:text-text`}
                   >
                     取消
                   </Button>
                   <Button
                     type="submit"
                     disabled={loading}
-                    className={`
-                      bg-accent text-white transition-all duration-200
-                      hover:-translate-y-0.5 hover:bg-accent/90
-                    `}
+                    className={`bg-accent text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-accent/90`}
                   >
                     {loading && (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

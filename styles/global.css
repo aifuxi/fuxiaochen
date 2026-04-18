@@ -92,9 +92,9 @@
 @theme {
   /* Fonts - Apple SF Pro fallback */
   --font-sans:
-    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", "Helvetica Neue", Arial, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", sans-serif;
   --font-mono:
     "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
@@ -277,7 +277,9 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   /* Selection Color */
@@ -289,14 +291,14 @@
 
 /* Apple Style Components */
 @utility apple-card {
-  @apply bg-surface rounded-xl border border-border shadow-sm transition-all duration-200 ease-(--ease-apple);
+  @apply rounded-xl border border-border bg-surface shadow-sm transition-all duration-200 ease-(--ease-apple);
   &:hover {
     @apply shadow-md;
   }
 }
 
 @utility apple-surface {
-  @apply bg-surface/50 rounded-lg border border-border;
+  @apply rounded-lg border border-border bg-surface/50;
 }
 
 /* Text Utilities */
@@ -325,7 +327,7 @@
 }
 
 @utility apple-btn-secondary {
-  @apply apple-btn bg-surface text-text border border-border hover:bg-surface-hover;
+  @apply apple-btn border border-border bg-surface text-text hover:bg-surface-hover;
 }
 
 @utility apple-btn-ghost {
@@ -334,7 +336,7 @@
 
 /* Input Utilities - Apple Style */
 @utility apple-input {
-  @apply h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-text outline-none transition-all duration-200;
+  @apply h-10 w-full rounded-lg border border-border bg-surface px-3 text-sm text-text transition-all duration-200 outline-none;
   &::placeholder {
     @apply text-text-tertiary;
   }
@@ -349,7 +351,7 @@
 /* Custom Scrollbar - Apple Style */
 @media (min-width: 768px) {
   ::-webkit-scrollbar {
-    @apply w-1.5 h-1.5;
+    @apply h-1.5 w-1.5;
   }
 
   ::-webkit-scrollbar-track {
@@ -357,7 +359,7 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply rounded-full bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600;
+    @apply rounded-full bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600;
   }
 }
 
@@ -385,11 +387,11 @@
 
   /* Prose Element Styling */
   & pre {
-    @apply bg-surface rounded-xl border border-border p-4;
+    @apply rounded-xl border border-border bg-surface p-4;
   }
 
   & blockquote {
-    @apply border-l-4 border-accent bg-surface/50 p-4 rounded-r-xl not-italic;
+    @apply rounded-r-xl border-l-4 border-accent bg-surface/50 p-4 not-italic;
   }
 
   & img {
@@ -397,11 +399,11 @@
   }
 
   & a {
-    @apply no-underline hover:underline transition-colors duration-200 font-medium;
+    @apply font-medium no-underline transition-colors duration-200 hover:underline;
   }
 
   & :not(pre) > code {
-    @apply px-1.5 py-0.5 rounded-md text-sm font-mono bg-surface border border-border text-accent mx-0.5 align-middle;
+    @apply mx-0.5 rounded-md border border-border bg-surface px-1.5 py-0.5 align-middle font-mono text-sm text-accent;
   }
 
   /* Explicitly clear pseudo-elements for inline code to avoid artifacts */
@@ -411,7 +413,7 @@
   }
 
   & pre code {
-    @apply bg-transparent border-none p-0;
+    @apply border-none bg-transparent p-0;
   }
 
   & pre code::before,
@@ -427,15 +429,15 @@
   }
 
   & h1 {
-    @apply text-3xl font-bold lg:text-4xl mb-8;
+    @apply mb-8 text-3xl font-bold lg:text-4xl;
   }
 
   & h2 {
-    @apply text-2xl font-semibold border-b border-border pb-2 mt-10 mb-6;
+    @apply mt-10 mb-6 border-b border-border pb-2 text-2xl font-semibold;
   }
 
   & h3 {
-    @apply text-xl font-semibold mt-8 mb-4;
+    @apply mt-8 mb-4 text-xl font-semibold;
   }
 }
 
@@ -445,18 +447,18 @@
 }
 
 @utility copy-code-btn {
-  @apply absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-surface text-text-tertiary opacity-0 transition-all duration-200 cursor-pointer;
+  @apply absolute top-3 right-3 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md border border-border bg-surface text-text-tertiary opacity-0 transition-all duration-200;
 
   .code-block-wrapper:hover & {
     @apply opacity-100;
   }
 
   &:hover {
-    @apply bg-accent text-white border-accent;
+    @apply border-accent bg-accent text-white;
   }
 
   &.copied {
-    @apply border-accent text-accent bg-surface opacity-100;
+    @apply border-accent bg-surface text-accent opacity-100;
   }
 
   & .check-icon {
@@ -474,7 +476,7 @@
 
 /* Highlight.js Custom Styles - Apple */
 .hljs {
-  @apply block overflow-x-auto p-4 text-(--hljs-color) bg-transparent;
+  @apply block overflow-x-auto bg-transparent p-4 text-(--hljs-color);
 }
 
 .hljs-comment,

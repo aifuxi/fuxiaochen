@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -14,7 +16,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import * as React from "react";
 
 import { DataTablePagination } from "@/components/ui/data-table-pagination";
 import {
@@ -67,11 +68,10 @@ export function DataTable<TData, TValue>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnPinning, setColumnPinning] =
-    React.useState<ColumnPinningState>({
-      left: [],
-      right: ["actions"],
-    });
+  const [columnPinning, setColumnPinning] = React.useState<ColumnPinningState>({
+    left: [],
+    right: ["actions"],
+  });
 
   const table = useReactTable({
     data,
@@ -116,11 +116,12 @@ export function DataTable<TData, TValue>({
                     >
                       {header.isPlaceholder
                         ? null
-                        : (typeof header.column.columnDef.header === "function"
+                        : ((typeof header.column.columnDef.header === "function"
                             ? header.column.columnDef.header(
                                 header.getContext(),
                               )
-                            : header.column.columnDef.header) as React.ReactNode}
+                            : header.column.columnDef
+                                .header) as React.ReactNode)}
                     </TableHead>
                   );
                 })}
@@ -164,18 +165,11 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       {showPagination && (
-        <DataTablePagination
-          table={table}
-          pageSizeOptions={pageSizeOptions}
-        />
+        <DataTablePagination table={table} pageSizeOptions={pageSizeOptions} />
       )}
     </div>
   );
 }
 
 // Re-export types for convenience
-export type {
-  ColumnDef,
-  Row,
-  Table as TableType,
-} from "@tanstack/react-table";
+export type { ColumnDef, Row, Table as TableType } from "@tanstack/react-table";

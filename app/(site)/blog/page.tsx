@@ -1,10 +1,14 @@
 import { Suspense } from "react";
+
 import { Loader2 } from "lucide-react";
+
 import { getBlogsAction } from "@/app/actions/blog";
 import { getCategoriesAction } from "@/app/actions/category";
 import { getTagsAction } from "@/app/actions/tag";
+
 import type { Category } from "@/types/category";
 import type { Tag } from "@/types/tag";
+
 import { BlogFilterBar } from "@/components/blog/blog-filter-bar";
 import { BlogList } from "@/components/blog/blog-list";
 
@@ -40,23 +44,14 @@ function Hero({
 }) {
   return (
     <section
-      className={`
-        relative flex min-h-[50vh] flex-col items-center justify-center overflow-hidden py-20
-        md:min-h-[60vh] md:py-28
-      `}
+      className={`relative flex min-h-[50vh] flex-col items-center justify-center overflow-hidden py-20 md:min-h-[60vh] md:py-28`}
     >
       {/* 动态渐变背景 */}
       <div
-        className={`
-          pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))]
-          from-accent/10 via-transparent to-transparent
-        `}
+        className={`pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent`}
       />
       <div
-        className={`
-          pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full
-          bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl
-        `}
+        className={`pointer-events-none absolute -top-40 left-1/2 h-[600px] w-[800px] -translate-x-1/2 rounded-full bg-gradient-to-b from-accent/5 via-info/5 to-transparent blur-3xl`}
       />
 
       {/* 内容 */}
@@ -64,19 +59,11 @@ function Hero({
         {/* 标题 */}
         <div className="mb-10 text-center">
           <h1
-            className={`
-              mb-4 text-5xl font-bold tracking-tight text-text
-              md:text-7xl
-            `}
+            className={`mb-4 text-5xl font-bold tracking-tight text-text md:text-7xl`}
           >
             Blog
           </h1>
-          <p
-            className={`
-              text-lg text-text-secondary
-              md:text-xl
-            `}
-          >
+          <p className={`text-lg text-text-secondary md:text-xl`}>
             探索技术文章与学习笔记
           </p>
         </div>

@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+
 import NiceModal from "@ebay/nice-modal-react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
 import { deleteCategoryAction } from "@/app/actions/category";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,10 +60,7 @@ export const DeleteAlert = NiceModal.create(
             <AlertDialogAction
               onClick={handleDelete}
               disabled={loading}
-              className={`
-                bg-red-500 text-white
-                hover:bg-red-600
-              `}
+              className={`bg-red-500 text-white hover:bg-red-600`}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               删除

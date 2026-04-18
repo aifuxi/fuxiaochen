@@ -1,9 +1,10 @@
 "use client";
 
-import { Title } from "@/components/ui/typography/title";
-import { Text } from "@/components/ui/typography/text";
-import { Paragraph } from "@/components/ui/typography/paragraph";
 import { Link } from "@/components/ui/typography/link";
+import { Paragraph } from "@/components/ui/typography/paragraph";
+import { Text } from "@/components/ui/typography/text";
+import { Title } from "@/components/ui/typography/title";
+
 import { PreviewCard } from "../preview-card";
 
 export function TypographyPreview() {
@@ -43,12 +44,12 @@ export function TypographyPreview() {
 
       <PreviewCard title="Paragraph">
         <Paragraph type="primary">
-          This is a primary paragraph. It provides a way to display longer blocks of text
-          with proper line height and spacing.
+          This is a primary paragraph. It provides a way to display longer
+          blocks of text with proper line height and spacing.
         </Paragraph>
         <Paragraph type="secondary" size="sm">
-          This is a secondary small paragraph. It&apos;s useful for supporting text or
-          less prominent content.
+          This is a secondary small paragraph. It&apos;s useful for supporting
+          text or less prominent content.
         </Paragraph>
       </PreviewCard>
 

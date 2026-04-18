@@ -1,13 +1,17 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import { getBlogBySlugAction } from "@/app/actions/blog";
-import BlogContent from "@/components/blog/blog-content";
-import { TableOfContents } from "@/components/blog/table-of-contents";
+
 import { Badge } from "@/components/ui/badge";
 import { Title } from "@/components/ui/typography/title";
+
+import BlogContent from "@/components/blog/blog-content";
+import { TableOfContents } from "@/components/blog/table-of-contents";
+
 import { formatSimpleDate } from "@/lib/time";
-import Link from "next/link";
-import Image from "next/image";
-import type { Metadata } from "next";
 
 interface BlogDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -60,10 +64,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
       {/* 返回链接 */}
       <Link
         href="/blog"
-        className={`
-          mb-8 inline-flex items-center gap-1 text-sm text-text-secondary transition-colors
-          hover:text-accent
-        `}
+        className={`mb-8 inline-flex items-center gap-1 text-sm text-text-secondary transition-colors hover:text-accent`}
       >
         ← 返回博客列表
       </Link>
@@ -123,10 +124,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         </article>
 
         {/* 右侧目录（桌面端显示） */}
-        <aside className={`
-          hidden w-64 shrink-0
-          lg:block
-        `}>
+        <aside className={`hidden w-64 shrink-0 lg:block`}>
           <TableOfContents />
         </aside>
       </div>

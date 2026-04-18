@@ -1,5 +1,7 @@
 import { type PresignUploadInfoResp } from "@/types/upload";
+
 import { aliOSS } from "@/lib/oss";
+
 import { type IUploadStore } from "./interface";
 
 export class UploadStore implements IUploadStore {

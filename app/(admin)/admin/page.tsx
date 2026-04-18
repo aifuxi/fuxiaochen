@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import {
   ArrowRight,
   FileText,
@@ -6,7 +7,9 @@ import {
   Tag as TagIcon,
   Users,
 } from "lucide-react";
+
 import { getDashboardStatsAction } from "@/app/actions/dashboard";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,6 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { formatSimpleDateWithTime } from "@/lib/time";
 
 export default async function DashboardPage() {
@@ -81,31 +85,17 @@ export default async function DashboardPage() {
         </h2>
       </div>
 
-      <div
-        className={`
-          grid gap-6
-          md:grid-cols-2
-          lg:grid-cols-4
-        `}
-      >
+      <div className={`grid gap-6 md:grid-cols-2 lg:grid-cols-4`}>
         {stats.map((stat) => (
           <Link key={stat.title} href={stat.href} className="block h-full">
             <AppleCard
-              className={`
-                h-full transition-all duration-300
-                hover:border-accent/50 hover:shadow-lg
-              `}
+              className={`h-full transition-all duration-300 hover:border-accent/50 hover:shadow-lg`}
             >
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-text-secondary">
                   {stat.title}
                 </CardTitle>
-                <stat.icon
-                  className={`
-                    h-4 w-4
-                    ${stat.color}
-                  `}
-                />
+                <stat.icon className={`h-4 w-4 ${stat.color} `} />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-text">{stat.value}</div>
@@ -127,10 +117,7 @@ export default async function DashboardPage() {
             <Button
               variant="ghost"
               size="sm"
-              className={`
-                text-accent
-                hover:bg-accent/10 hover:text-accent
-              `}
+              className={`text-accent hover:bg-accent/10 hover:text-accent`}
             >
               查看全部 <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -139,12 +126,7 @@ export default async function DashboardPage() {
 
         <Table>
           <TableHeader>
-            <TableRow
-              className={`
-                border-border
-                hover:bg-surface/50
-              `}
-            >
+            <TableRow className={`border-border hover:bg-surface/50`}>
               <TableHead className="text-text-secondary">标题</TableHead>
               <TableHead className="text-text-secondary">分类</TableHead>
               <TableHead className="text-text-secondary">标签</TableHead>
@@ -168,10 +150,7 @@ export default async function DashboardPage() {
               recentBlogs.map((blog) => (
                 <TableRow
                   key={blog.id}
-                  className={`
-                    border-border
-                    hover:bg-surface/50
-                  `}
+                  className={`border-border hover:bg-surface/50`}
                 >
                   <TableCell className="font-medium text-text">
                     {blog.title}
@@ -208,10 +187,7 @@ export default async function DashboardPage() {
                       variant={blog.published ? "default" : "secondary"}
                       className={
                         blog.published
-                          ? `
-                            bg-accent/20 text-accent
-                            hover:bg-accent/30
-                          `
+                          ? `bg-accent/20 text-accent hover:bg-accent/30`
                           : "bg-surface text-text-secondary"
                       }
                     >

@@ -1,7 +1,9 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -9,10 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
 import { PreviewCard } from "../preview-card";
 
 export function InputPreview() {
@@ -20,7 +21,11 @@ export function InputPreview() {
     <>
       <PreviewCard title="Input">
         <Input className="w-64" placeholder="Default input" />
-        <Input className="w-64" placeholder="With value" defaultValue="Some text" />
+        <Input
+          className="w-64"
+          placeholder="With value"
+          defaultValue="Some text"
+        />
         <Input className="w-64" placeholder="Disabled" disabled />
       </PreviewCard>
 

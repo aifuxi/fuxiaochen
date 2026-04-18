@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 interface Heading {
@@ -85,10 +86,7 @@ export function TableOfContents() {
                   heading.level === 3 && "pl-6",
                   activeId === heading.id
                     ? "bg-accent/10 font-medium text-accent shadow-sm"
-                    : `
-                      text-text-secondary
-                      hover:bg-surface hover:text-text
-                    `,
+                    : `text-text-secondary hover:bg-surface hover:text-text`,
                 )}
               >
                 {heading.text}

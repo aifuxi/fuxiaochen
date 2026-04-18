@@ -4,7 +4,9 @@ import {
   type ChangelogListReq,
   type ChangelogListResp,
 } from "@/types/changelog";
+
 import { prisma } from "@/lib/prisma";
+
 import { type IChangelogStore } from "./interface";
 
 export class ChangelogStore implements IChangelogStore {

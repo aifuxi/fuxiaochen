@@ -1,4 +1,5 @@
 import { type ISitemapField, getServerSideSitemap } from "next-sitemap";
+
 import { getBlogsAction } from "@/app/actions/blog";
 
 export async function GET() {

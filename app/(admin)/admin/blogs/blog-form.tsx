@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+
 import { useRouter } from "next/navigation";
+
 import breaks from "@bytemd/plugin-breaks";
 import gfm from "@bytemd/plugin-gfm";
 import highlight from "@bytemd/plugin-highlight-ssr";
@@ -10,13 +11,17 @@ import mediumZoom from "@bytemd/plugin-medium-zoom";
 import { Editor } from "@bytemd/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronsUpDown, Loader2 } from "lucide-react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { createBlogAction, updateBlogAction } from "@/app/actions/blog";
 import { getPresignUploadInfo } from "@/app/actions/upload";
+
 import { type Blog } from "@/types/blog";
 import { type Category } from "@/types/category";
 import { type Tag } from "@/types/tag";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,6 +50,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+
 import copyCodePlugin from "@/components/blog/plugin-copy-code";
 import headingsPlugin from "@/components/blog/plugin-headings";
 
@@ -126,12 +132,7 @@ export function BlogForm({
     <AppleCard className="p-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div
-            className={`
-              grid grid-cols-1 gap-6
-              md:grid-cols-2
-            `}
-          >
+          <div className={`grid grid-cols-1 gap-6 md:grid-cols-2`}>
             <FormField
               control={form.control}
               name="title"
@@ -174,12 +175,7 @@ export function BlogForm({
             )}
           />
 
-          <div
-            className={`
-              grid grid-cols-1 gap-6
-              md:grid-cols-2
-            `}
-          >
+          <div className={`grid grid-cols-1 gap-6 md:grid-cols-2`}>
             <FormField
               control={form.control}
               name="categoryId"
@@ -221,10 +217,7 @@ export function BlogForm({
                         <Button
                           variant="outline"
                           role="combobox"
-                          className={`
-                            justify-between
-                            ${!field.value?.length && "text-muted-foreground"}
-                          `}
+                          className={`justify-between ${!field.value?.length && "text-muted-foreground"} `}
                         >
                           {field.value?.length
                             ? `${field.value.length} 个已选`
@@ -259,10 +252,7 @@ export function BlogForm({
                               />
                               <label
                                 htmlFor={tag.id}
-                                className={`
-                                  text-sm leading-none font-medium
-                                  peer-disabled:cursor-not-allowed peer-disabled:opacity-70
-                                `}
+                                className={`text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70`}
                               >
                                 {tag.name}
                               </label>
@@ -421,10 +411,7 @@ export function BlogForm({
             <Button
               type="submit"
               disabled={loading || !isAdmin}
-              className={`
-                bg-accent text-white
-                hover:bg-accent/90
-              `}
+              className={`bg-accent text-white hover:bg-accent/90`}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               保存

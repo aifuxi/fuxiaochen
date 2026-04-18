@@ -7,10 +7,13 @@
     "**/.trae": true
   },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.oxc": "always"
   },
   // 保存时格式化代码
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "oxc.typeAware": true,
   // 配置 tailwindcss 的类函数
   "tailwindCSS.classFunctions": ["cva", "cx", "twMerge", "cn", "cs"]
 }

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+
 import { motion } from "framer-motion";
 import { AlertTriangle, ArrowLeft, RefreshCw } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { AppleCard } from "@/components/ui/glass-card";
 
@@ -34,37 +36,18 @@ export function ErrorView({ code, title, message, onRetry }: ErrorViewProps) {
             </div>
           </div>
 
-          <h1 className="mb-2 text-3xl font-bold text-text">
-            {title}
-          </h1>
+          <h1 className="mb-2 text-3xl font-bold text-text">{title}</h1>
           <p className="mb-8 text-text-secondary">{message}</p>
 
-          <div
-            className={`
-              flex flex-col gap-3
-              sm:flex-row sm:justify-center
-            `}
-          >
+          <div className={`flex flex-col gap-3 sm:flex-row sm:justify-center`}>
             <Link href="/">
-              <Button
-                variant="outline"
-                className={`
-                  w-full
-                  sm:w-auto
-                `}
-              >
+              <Button variant="outline" className={`w-full sm:w-auto`}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back Home
               </Button>
             </Link>
             {onRetry && (
-              <Button
-                onClick={onRetry}
-                className={`
-                  w-full
-                  sm:w-auto
-                `}
-              >
+              <Button onClick={onRetry} className={`w-full sm:w-auto`}>
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Try Again
               </Button>

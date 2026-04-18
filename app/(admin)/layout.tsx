@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+
 import { auth } from "@/lib/auth";
+
 import { AdminSidebar } from "./admin-sidebar";
 
 export default async function AdminLayout({
