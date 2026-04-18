@@ -66,9 +66,7 @@ export default function RootLayout({
             />
           )}
       </head>
-      <body
-        className={`bg-[var(--bg-color)] text-[var(--text-color)] antialiased selection:bg-[var(--accent-color)] selection:text-white ${isProduction() ? "" : "debug-screens"} `}
-      >
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
