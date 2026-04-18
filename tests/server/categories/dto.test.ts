@@ -69,3 +69,11 @@ test("categoryListQuerySchema parses explicit pagination values", () => {
     pageSize: 50,
   });
 });
+
+test("categoryListQuerySchema rejects oversized pageSize", () => {
+  const result = categoryListQuerySchema.safeParse({
+    pageSize: "101",
+  });
+
+  assert.equal(result.success, false);
+});

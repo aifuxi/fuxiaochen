@@ -10,6 +10,10 @@ import { AppError } from "../../../lib/server/http/errors";
 test("createChangelog generates an id and timestamps before persisting", async () => {
   const now = new Date("2026-04-19T10:00:00.000Z");
   type CreateInput = Parameters<ChangelogRepository["create"]>[0];
+  const toPersistedChangelog = (changelog: CreateInput) => ({
+    ...changelog,
+    releaseDate: changelog.releaseDate ?? null,
+  });
 
   const calls: CreateInput[] = [];
   const repository: ChangelogRepository = {
@@ -24,7 +28,7 @@ test("createChangelog generates an id and timestamps before persisting", async (
     },
     async create(changelog: CreateInput) {
       calls.push(changelog);
-      return changelog;
+      return toPersistedChangelog(changelog);
     },
     async update() {
       throw new Error("not used");
@@ -374,6 +378,8 @@ test("changelogListOrderBy places null release dates last", () => {
   const nullsLastOrder = changelogListOrderBy[0] as {
     queryChunks: Array<{ value: string[] }>;
   };
+  const suffix = nullsLastOrder.queryChunks[2];
 
-  assert.equal(nullsLastOrder.queryChunks[2].value[0], " is null");
+  assert.ok(suffix);
+  assert.equal(suffix.value[0], " is null");
 });

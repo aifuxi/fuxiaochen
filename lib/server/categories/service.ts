@@ -30,6 +30,8 @@ export interface CategoryService {
   deleteCategory(id: string): Promise<void>;
 }
 
+const CATEGORY_IN_USE_CONSTRAINT = "blogs_category_id_fkey";
+
 const createNotFoundError = (id: string) =>
   new AppError(ERROR_CODES.CATEGORY_NOT_FOUND, "Category not found", 404, {
     id,
@@ -43,11 +45,24 @@ const createSlugConflictError = (slug: string) =>
     { slug },
   );
 
+const createInUseConflictError = (id: string) =>
+  new AppError(ERROR_CODES.COMMON_INVALID_REQUEST, "Category is in use", 409, {
+    id,
+  });
+
 const isDuplicateSlugError = (error: unknown) =>
   typeof error === "object" &&
   error !== null &&
   "code" in error &&
   (error as { code?: unknown }).code === "23505";
+
+const isCategoryInUseError = (error: unknown) =>
+  typeof error === "object" &&
+  error !== null &&
+  "code" in error &&
+  "constraint" in error &&
+  (error as { code?: unknown }).code === "23503" &&
+  (error as { constraint?: unknown }).constraint === CATEGORY_IN_USE_CONSTRAINT;
 
 export function createCategoryService({
   repository = categoryRepository,
@@ -133,7 +148,17 @@ export function createCategoryService({
         throw createNotFoundError(id);
       }
 
-      const deleted = await repository.delete(id);
+      let deleted: boolean;
+
+      try {
+        deleted = await repository.delete(id);
+      } catch (error) {
+        if (isCategoryInUseError(error)) {
+          throw createInUseConflictError(id);
+        }
+
+        throw error;
+      }
 
       if (!deleted) {
         throw createNotFoundError(id);

@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import type { CategoryRepository } from "../../../lib/server/categories/repository";
+import {
+  categoryListOrderBy,
+  type CategoryRepository,
+} from "../../../lib/server/categories/repository";
 import { createCategoryService } from "../../../lib/server/categories/service";
 import { ERROR_CODES } from "../../../lib/server/http/error-codes";
 import { AppError } from "../../../lib/server/http/errors";
@@ -279,4 +282,71 @@ test("deleteCategory converts delete races into CATEGORY_NOT_FOUND", async () =>
       return true;
     },
   );
+});
+
+test("deleteCategory converts in-use foreign key violations into a conflict AppError", async () => {
+  const inUseError = Object.assign(new Error("foreign key violation"), {
+    code: "23503",
+    constraint: "blogs_category_id_fkey",
+  });
+
+  const repository: CategoryRepository = {
+    async list() {
+      throw new Error("not used");
+    },
+    async findById() {
+      return {
+        id: "cat_existing",
+        createdAt: new Date("2026-04-19T10:00:00.000Z"),
+        updatedAt: new Date("2026-04-19T10:00:00.000Z"),
+        name: "Existing",
+        slug: "design",
+        description: "Existing category",
+      };
+    },
+    async findBySlug() {
+      return null;
+    },
+    async create() {
+      throw new Error("not used");
+    },
+    async update() {
+      throw new Error("not used");
+    },
+    async delete() {
+      throw inUseError;
+    },
+  };
+
+  const service = createCategoryService({ repository });
+
+  await assert.rejects(
+    service.deleteCategory("cat_existing"),
+    (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      assert.equal(error.code, ERROR_CODES.COMMON_INVALID_REQUEST);
+      assert.equal(error.status, 409);
+      assert.deepEqual(error.details, { id: "cat_existing" });
+      return true;
+    },
+  );
+});
+
+test("categoryRepository list order is stable for pagination", () => {
+  const orderedColumns = categoryListOrderBy.map((clause) => {
+    const column = clause.queryChunks[1];
+
+    if (
+      typeof column === "object" &&
+      column !== null &&
+      "name" in column &&
+      typeof column.name === "string"
+    ) {
+      return column.name;
+    }
+
+    return null;
+  });
+
+  assert.deepEqual(orderedColumns, ["created_at", "id"]);
 });
