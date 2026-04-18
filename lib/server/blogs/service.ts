@@ -33,21 +33,28 @@ type BlogUpdateOptions = {
   replaceTagIds?: string[];
 };
 
+export type BlogCategorySummary = Pick<Category, "id" | "name" | "slug">;
+export type BlogTagSummary = Pick<Tag, "id" | "name" | "slug">;
+export type BlogReadModel = Blog & {
+  category: BlogCategorySummary | null;
+  tags: BlogTagSummary[];
+};
+
 export interface BlogRepository {
   list(query: BlogListQuery): Promise<{
-    items: Blog[];
+    items: BlogReadModel[];
     total: number;
   }>;
-  findById(id: string): Promise<Blog | null>;
-  findBySlug(slug: string): Promise<Blog | null>;
+  findById(id: string): Promise<BlogReadModel | null>;
+  findBySlug(slug: string): Promise<BlogReadModel | null>;
   findCategoryById(id: string): Promise<Pick<Category, "id"> | null>;
   findTagsByIds(ids: string[]): Promise<Array<Pick<Tag, "id">>>;
-  create(blog: NewBlog, options: BlogTagIds): Promise<Blog>;
+  create(blog: NewBlog, options: BlogTagIds): Promise<BlogReadModel>;
   update(
     id: string,
     blog: BlogUpdateMutation,
     options: BlogUpdateOptions,
-  ): Promise<Blog | null>;
+  ): Promise<BlogReadModel | null>;
   delete(id: string): Promise<boolean>;
 }
 
@@ -59,12 +66,12 @@ export interface BlogServiceDeps {
 
 export interface BlogService {
   listBlogs(query: BlogListQuery): Promise<{
-    items: Blog[];
+    items: BlogReadModel[];
     total: number;
   }>;
-  getBlog(id: string): Promise<Blog>;
-  createBlog(input: BlogCreateInput): Promise<Blog>;
-  updateBlog(id: string, input: BlogUpdateInput): Promise<Blog>;
+  getBlog(id: string): Promise<BlogReadModel>;
+  createBlog(input: BlogCreateInput): Promise<BlogReadModel>;
+  updateBlog(id: string, input: BlogUpdateInput): Promise<BlogReadModel>;
   deleteBlog(id: string): Promise<void>;
 }
 
