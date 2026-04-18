@@ -31,6 +31,11 @@ const countCategories = async () => {
   return rows[0]?.total ?? 0;
 };
 
+export const categoryListOrderBy = [
+  desc(categories.createdAt),
+  desc(categories.id),
+] as const;
+
 export const categoryRepository: CategoryRepository = {
   async list({ page, pageSize }) {
     const offset = (page - 1) * pageSize;
@@ -38,7 +43,7 @@ export const categoryRepository: CategoryRepository = {
       db
         .select()
         .from(categories)
-        .orderBy(desc(categories.createdAt))
+        .orderBy(...categoryListOrderBy)
         .limit(pageSize)
         .offset(offset),
       countCategories(),

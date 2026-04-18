@@ -2,6 +2,9 @@ import type { AppError } from "./errors";
 
 type ResponseMeta = Record<string, unknown>;
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
 const sanitizeJsonValue = (
   value: unknown,
   seen: WeakSet<object> = new WeakSet(),
@@ -53,7 +56,7 @@ const sanitizeJsonValue = (
     return sanitizedArray;
   }
 
-  if (valueType === "object") {
+  if (isRecord(value)) {
     if (seen.has(value)) {
       return "[Circular]";
     }

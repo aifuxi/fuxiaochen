@@ -9,6 +9,7 @@ import {
 } from "../../../lib/server/blogs/dto";
 import {
   createBlogService,
+  type BlogReadModel,
   type BlogRepository,
 } from "../../../lib/server/blogs/service";
 import { ERROR_CODES } from "../../../lib/server/http/error-codes";
@@ -29,6 +30,12 @@ const existingBlog: Blog = {
   publishedAt: null,
   featured: false,
   categoryId: "cat_1",
+};
+
+const existingBlogReadModel: BlogReadModel = {
+  ...existingBlog,
+  category: null,
+  tags: [],
 };
 
 function createBlogInput(
@@ -53,16 +60,23 @@ expectCreateInput({ ...createBlogInput(), published: "not-a-bool" });
 // @ts-expect-error service inputs must be parsed DTO output, not raw date strings
 expectUpdateInput({ publishedAt: "not-a-date" });
 
-function toPersistedBlog(
-  blog: Parameters<BlogRepository["create"]>[0],
-  overrides: Partial<Blog> = {},
-): Blog {
+function toBlogReadModel(
+  blog: Partial<Blog> & Pick<Blog, "id" | "createdAt" | "updatedAt">,
+  overrides: Partial<BlogReadModel> = {},
+): BlogReadModel {
   return {
     ...blog,
+    title: blog.title ?? "",
+    slug: blog.slug ?? "",
+    description: blog.description ?? "",
+    content: blog.content ?? "",
+    categoryId: blog.categoryId ?? "",
     cover: blog.cover ?? "",
     published: blog.published ?? false,
     publishedAt: blog.publishedAt ?? null,
     featured: blog.featured ?? false,
+    category: null,
+    tags: [],
     ...overrides,
   };
 }
@@ -105,7 +119,7 @@ test("listBlogs passes query through to repository", async () => {
     async list(query) {
       queries.push(query);
       return {
-        items: [existingBlog],
+        items: [existingBlogReadModel],
         total: 1,
       };
     },
@@ -130,7 +144,7 @@ test("listBlogs passes query through to repository", async () => {
     },
   ]);
   assert.deepEqual(result, {
-    items: [existingBlog],
+    items: [existingBlogReadModel],
     total: 1,
   });
 });
@@ -181,7 +195,7 @@ test("createBlog generates an id and timestamps before persisting", async () => 
     },
     async create(blog, options) {
       calls.push([blog, options]);
-      return toPersistedBlog(blog);
+      return toBlogReadModel(blog);
     },
   });
 
@@ -208,6 +222,8 @@ test("createBlog generates an id and timestamps before persisting", async () => 
     published: false,
     publishedAt: null,
     featured: false,
+    category: null,
+    tags: [],
   });
   assert.deepEqual(calls, [
     [
@@ -291,7 +307,7 @@ test("createBlog deduplicates tag ids before persisting", async () => {
     },
     async create(_blog, options) {
       calls.push(options);
-      return existingBlog;
+      return existingBlogReadModel;
     },
   });
 
@@ -314,7 +330,7 @@ test("createBlog rejects duplicate slugs before persisting", async () => {
   const service = createBlogService({
     repository: createRepository({
       async findBySlug() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async findCategoryById() {
         return { id: "cat_1" };
@@ -365,6 +381,71 @@ test("createBlog normalizes repository duplicate slug errors", async () => {
   );
 });
 
+test("createBlog normalizes category foreign key write races", async () => {
+  const service = createBlogService({
+    repository: createRepository({
+      async findCategoryById() {
+        return { id: "cat_1" };
+      },
+      async create() {
+        throw Object.assign(new Error("foreign key violation"), {
+          code: "23503",
+          constraint: "blogs_category_id_fkey",
+        });
+      },
+    }),
+  });
+
+  await assert.rejects(
+    service.createBlog({
+      ...createBlogInput(),
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      assert.equal(error.code, ERROR_CODES.BLOG_CATEGORY_NOT_FOUND);
+      assert.equal(error.status, 404);
+      assert.deepEqual(error.details, { categoryId: "cat_1" });
+      return true;
+    },
+  );
+});
+
+test("createBlog normalizes tag foreign key write races", async () => {
+  const service = createBlogService({
+    repository: createRepository({
+      async findCategoryById() {
+        return { id: "cat_1" };
+      },
+      async findTagsByIds(ids) {
+        return ids.map((id) => ({ id }));
+      },
+      async create() {
+        throw Object.assign(new Error("foreign key violation"), {
+          code: "23503",
+          constraint: "blog_tags_tag_id_fkey",
+        });
+      },
+    }),
+  });
+
+  await assert.rejects(
+    service.createBlog({
+      ...createBlogInput({
+        tagIds: ["tag_1", "tag_2"],
+      }),
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      assert.equal(error.code, ERROR_CODES.BLOG_TAGS_NOT_FOUND);
+      assert.equal(error.status, 404);
+      assert.deepEqual(error.details, {
+        missingTagIds: ["tag_1", "tag_2"],
+      });
+      return true;
+    },
+  );
+});
+
 test("updateBlog rejects missing blogs with BLOG_NOT_FOUND", async () => {
   const service = createBlogService({
     repository: createRepository(),
@@ -387,11 +468,11 @@ test("updateBlog rejects pre-write duplicate slugs with BLOG_SLUG_CONFLICT", asy
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async findBySlug() {
         return {
-          ...existingBlog,
+          ...existingBlogReadModel,
           id: "blog_other",
           slug: "next-post",
         };
@@ -416,7 +497,7 @@ test("updateBlog rejects missing categories with BLOG_CATEGORY_NOT_FOUND", async
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
     }),
   });
@@ -438,7 +519,7 @@ test("updateBlog rejects missing tag ids with BLOG_TAGS_NOT_FOUND", async () => 
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async findTagsByIds(ids) {
         return ids.filter((id) => id === "tag_1").map((id) => ({ id }));
@@ -466,14 +547,11 @@ test("updateBlog preserves tag relations when tagIds are omitted", async () => {
   const calls: Array<Parameters<BlogRepository["update"]>> = [];
   const repository = createRepository({
     async findById() {
-      return existingBlog;
+      return existingBlogReadModel;
     },
     async update(id, input, options) {
       calls.push([id, input, options]);
-      return {
-        ...existingBlog,
-        ...input,
-      };
+      return toBlogReadModel({ ...existingBlogReadModel, ...input });
     },
   });
 
@@ -502,17 +580,14 @@ test("updateBlog validates and replaces deduplicated tag ids when provided", asy
   const calls: Array<Parameters<BlogRepository["update"]>> = [];
   const repository = createRepository({
     async findById() {
-      return existingBlog;
+      return existingBlogReadModel;
     },
     async findTagsByIds(ids) {
       return ids.map((id) => ({ id }));
     },
     async update(id, input, options) {
       calls.push([id, input, options]);
-      return {
-        ...existingBlog,
-        ...input,
-      };
+      return toBlogReadModel({ ...existingBlogReadModel, ...input });
     },
   });
 
@@ -542,7 +617,7 @@ test("updateBlog normalizes repository duplicate slug errors", async () => {
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async update() {
         throw Object.assign(new Error("duplicate key"), {
@@ -566,11 +641,77 @@ test("updateBlog normalizes repository duplicate slug errors", async () => {
   );
 });
 
+test("updateBlog normalizes category foreign key write races", async () => {
+  const service = createBlogService({
+    repository: createRepository({
+      async findById() {
+        return existingBlogReadModel;
+      },
+      async findCategoryById() {
+        return { id: "cat_2" };
+      },
+      async update() {
+        throw Object.assign(new Error("foreign key violation"), {
+          code: "23503",
+          constraint: "blogs_category_id_fkey",
+        });
+      },
+    }),
+  });
+
+  await assert.rejects(
+    service.updateBlog(existingBlog.id, {
+      categoryId: "cat_2",
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      assert.equal(error.code, ERROR_CODES.BLOG_CATEGORY_NOT_FOUND);
+      assert.equal(error.status, 404);
+      assert.deepEqual(error.details, { categoryId: "cat_2" });
+      return true;
+    },
+  );
+});
+
+test("updateBlog normalizes tag foreign key write races", async () => {
+  const service = createBlogService({
+    repository: createRepository({
+      async findById() {
+        return existingBlogReadModel;
+      },
+      async findTagsByIds(ids) {
+        return ids.map((id) => ({ id }));
+      },
+      async update() {
+        throw Object.assign(new Error("foreign key violation"), {
+          code: "23503",
+          constraint: "blog_tags_tag_id_fkey",
+        });
+      },
+    }),
+  });
+
+  await assert.rejects(
+    service.updateBlog(existingBlog.id, {
+      tagIds: ["tag_1", "tag_2"],
+    }),
+    (error: unknown) => {
+      assert.ok(error instanceof AppError);
+      assert.equal(error.code, ERROR_CODES.BLOG_TAGS_NOT_FOUND);
+      assert.equal(error.status, 404);
+      assert.deepEqual(error.details, {
+        missingTagIds: ["tag_1", "tag_2"],
+      });
+      return true;
+    },
+  );
+});
+
 test("updateBlog converts null repository responses into BLOG_NOT_FOUND", async () => {
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async update() {
         return null;
@@ -608,7 +749,7 @@ test("deleteBlog converts delete races into BLOG_NOT_FOUND", async () => {
   const service = createBlogService({
     repository: createRepository({
       async findById() {
-        return existingBlog;
+        return existingBlogReadModel;
       },
       async delete() {
         return false;

@@ -76,6 +76,8 @@ export interface BlogService {
 }
 
 const BLOG_SLUG_CONSTRAINT = "blogs_slug_key";
+const BLOG_CATEGORY_FK_CONSTRAINT = "blogs_category_id_fkey";
+const BLOG_TAG_FK_CONSTRAINT = "blog_tags_tag_id_fkey";
 
 const createNotFoundError = (id: string) =>
   new AppError(ERROR_CODES.BLOG_NOT_FOUND, "Blog not found", 404, {
@@ -121,6 +123,41 @@ const isDuplicateSlugError = (error: unknown) => {
     code === "23505" &&
     (constraint === undefined || constraint === BLOG_SLUG_CONSTRAINT)
   );
+};
+
+const getForeignKeyConstraint = (error: unknown) => {
+  if (typeof error !== "object" || error === null) {
+    return null;
+  }
+
+  const { code, constraint } = error as {
+    code?: unknown;
+    constraint?: unknown;
+  };
+
+  return code === "23503" && typeof constraint === "string" ? constraint : null;
+};
+
+const normalizeWriteForeignKeyError = ({
+  error,
+  categoryId,
+  tagIds,
+}: {
+  error: unknown;
+  categoryId?: string;
+  tagIds?: string[];
+}) => {
+  const constraint = getForeignKeyConstraint(error);
+
+  if (constraint === BLOG_CATEGORY_FK_CONSTRAINT && categoryId !== undefined) {
+    return createCategoryNotFoundError(categoryId);
+  }
+
+  if (constraint === BLOG_TAG_FK_CONSTRAINT && tagIds !== undefined) {
+    return createTagsNotFoundError(tagIds);
+  }
+
+  return null;
 };
 
 const dedupeTagIds = (tagIds?: string[]) => [...new Set(tagIds ?? [])];
@@ -204,6 +241,16 @@ export function createBlogService({
           throw createSlugConflictError(input.slug);
         }
 
+        const normalizedError = normalizeWriteForeignKeyError({
+          error,
+          categoryId: input.categoryId,
+          tagIds,
+        });
+
+        if (normalizedError) {
+          throw normalizedError;
+        }
+
         throw error;
       }
     },
@@ -275,6 +322,16 @@ export function createBlogService({
       } catch (error) {
         if (isDuplicateSlugError(error)) {
           throw createSlugConflictError(input.slug ?? existingBlog.slug);
+        }
+
+        const normalizedError = normalizeWriteForeignKeyError({
+          error,
+          categoryId: input.categoryId,
+          tagIds: options.replaceTagIds,
+        });
+
+        if (normalizedError) {
+          throw normalizedError;
         }
 
         throw error;

@@ -280,8 +280,20 @@ test("deleteTag converts delete races into TAG_NOT_FOUND", async () => {
 });
 
 test("tagRepository list order is stable for pagination", () => {
-  assert.deepEqual(
-    tagListOrderBy.map((clause) => clause.queryChunks[1]?.name),
-    ["created_at", "id"],
-  );
+  const orderedColumns = tagListOrderBy.map((clause) => {
+    const column = clause.queryChunks[1];
+
+    if (
+      typeof column === "object" &&
+      column !== null &&
+      "name" in column &&
+      typeof column.name === "string"
+    ) {
+      return column.name;
+    }
+
+    return null;
+  });
+
+  assert.deepEqual(orderedColumns, ["created_at", "id"]);
 });
