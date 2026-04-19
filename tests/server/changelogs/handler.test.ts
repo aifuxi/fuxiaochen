@@ -67,6 +67,34 @@ test("handleListChangelogs forwards query and sort params to the service", async
   ]);
 });
 
+test("handleListChangelogs normalizes an empty query string to no filter", async () => {
+  const queries: Array<Parameters<ChangelogService["listChangelogs"]>[0]> = [];
+  const response = await createChangelogHandlers({
+    service: createService({
+      async listChangelogs(query) {
+        queries.push(query);
+        return {
+          items: [],
+          total: 0,
+        };
+      },
+    }),
+  }).handleListChangelogs(
+    new Request("http://localhost/api/changelogs?page=1&pageSize=20&query="),
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(queries, [
+    {
+      page: 1,
+      pageSize: 20,
+      query: undefined,
+      sortBy: "releaseDate",
+      sortDirection: "desc",
+    },
+  ]);
+});
+
 test("handleCreateChangelog returns a 400-level response for malformed JSON bodies", async () => {
   const request = new Request("http://localhost/api/changelogs", {
     method: "POST",

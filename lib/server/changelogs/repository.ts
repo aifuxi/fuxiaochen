@@ -53,16 +53,6 @@ const buildChangelogOrderBy = ({
     ] as const;
   }
 
-  if (sortBy === "version") {
-    return [
-      sortDirection === "asc"
-        ? asc(changelogs.version)
-        : desc(changelogs.version),
-      desc(changelogs.updatedAt),
-      desc(changelogs.id),
-    ] as const;
-  }
-
   return [
     sortDirection === "asc"
       ? asc(changelogs.updatedAt)

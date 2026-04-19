@@ -65,6 +65,34 @@ test("handleListCategories forwards query and sort params to the service", async
   ]);
 });
 
+test("handleListCategories normalizes an empty query string to no filter", async () => {
+  const queries: Array<Parameters<CategoryService["listCategories"]>[0]> = [];
+  const response = await createCategoryHandlers({
+    service: createService({
+      async listCategories(query) {
+        queries.push(query);
+        return {
+          items: [],
+          total: 0,
+        };
+      },
+    }),
+  }).handleListCategories(
+    new Request("http://localhost/api/categories?page=1&pageSize=20&query="),
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(queries, [
+    {
+      page: 1,
+      pageSize: 20,
+      query: undefined,
+      sortBy: "createdAt",
+      sortDirection: "desc",
+    },
+  ]);
+});
+
 test("handleCreateCategory returns a 400-level response for malformed JSON bodies", async () => {
   const request = new Request("http://localhost/api/categories", {
     method: "POST",
