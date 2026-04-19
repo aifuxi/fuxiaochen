@@ -1,22 +1,40 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
+
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
+  buildBlogDraft,
   buildResourcePayload,
+  emptyBlogDraft,
   emptyData,
+  fetchAdminResourceList,
   fetchDashboardData,
+  fetchList,
   getDraftForResource,
   getEmptyDraft,
   parseResponse,
   pickSelectedId,
 } from "./admin-data";
+import {
+  parseAdminResourceListParams,
+  toAdminResourceSearchParams,
+} from "./admin-query-state";
+import { getAdminResourceConfig } from "./admin-resource-config";
+import { AdminResourceTablePage } from "./admin-resource-table-page";
 import { AdminResourceView } from "./admin-resource-view";
 import type {
   AdminDashboardData,
+  AdminListMeta,
+  AdminListParams,
+  BlogRecord,
+  CategoryRecord,
   DraftByResource,
   ResourceSection,
+  TagRecord,
 } from "./admin-types";
+import { BlogForm } from "./resource-forms/blog-form";
 
 const apiPathByResource = {
   categories: "categories",
@@ -25,13 +43,394 @@ const apiPathByResource = {
   changelogs: "changelogs",
 } as const;
 
+const blogConfig = getAdminResourceConfig("blogs");
+
 type AdminResourcePageProps<TResource extends ResourceSection> = {
   resource: TResource;
   title: string;
   description: string;
 };
 
+type BlogTableRow = {
+  id: string;
+  title: string;
+  slug: string;
+  category: string;
+  status: string;
+  featured: boolean;
+  publishedAt: string;
+  updatedAt: string;
+};
+
+const emptyBlogListMeta: AdminListMeta = {
+  page: blogConfig.defaultListParams.page,
+  pageSize: blogConfig.defaultListParams.pageSize,
+  total: 0,
+};
+
 export function AdminResourcePage<TResource extends ResourceSection>({
+  resource,
+  title,
+  description,
+}: AdminResourcePageProps<TResource>) {
+  if (resource === "blogs") {
+    return <AdminBlogResourcePage />;
+  }
+
+  return (
+    <LegacyAdminResourcePage
+      description={description}
+      resource={resource}
+      title={title}
+    />
+  );
+}
+
+function AdminBlogResourcePage() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [data, setData] = useState<AdminDashboardData>(emptyData);
+  const [draft, setDraft] = useState(emptyBlogDraft);
+  const [listMeta, setListMeta] = useState<AdminListMeta>(emptyBlogListMeta);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [pending, setPending] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<"create" | "edit">("create");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+
+  const listParams = parseAdminResourceListParams(
+    "blogs",
+    new URLSearchParams(searchParams.toString()),
+  );
+  const listQuery = toAdminResourceSearchParams("blogs", listParams).toString();
+
+  async function loadBlogData(preferredId?: string | null) {
+    setLoading(true);
+
+    try {
+      const [blogsResult, categories, tags] = await Promise.all([
+        fetchAdminResourceList<BlogRecord>(
+          "/api/blogs",
+          new URLSearchParams(listQuery),
+        ),
+        fetchList<CategoryRecord>("/api/categories?page=1&pageSize=100"),
+        fetchList<TagRecord>("/api/tags?page=1&pageSize=100"),
+      ]);
+      const nextSelectedId =
+        preferredId === undefined ? selectedId : preferredId;
+      const nextSelectedBlog =
+        blogsResult.items.find((blog) => blog.id === nextSelectedId) ?? null;
+
+      setData((current) => ({
+        ...current,
+        blogs: blogsResult.items,
+        categories,
+        tags,
+      }));
+      setListMeta(blogsResult.meta);
+      setSelectedId(nextSelectedBlog?.id ?? null);
+      setErrorMessage("");
+
+      if (nextSelectedBlog) {
+        setDraft(buildBlogDraft(nextSelectedBlog));
+      } else if (drawerMode === "create") {
+        setDraft(emptyBlogDraft());
+      } else {
+        setDrawerMode("create");
+        setDrawerOpen(false);
+        setDraft(emptyBlogDraft());
+      }
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "后台数据加载失败",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCurrentPage() {
+      setLoading(true);
+
+      try {
+        const [blogsResult, categories, tags] = await Promise.all([
+          fetchAdminResourceList<BlogRecord>(
+            "/api/blogs",
+            new URLSearchParams(listQuery),
+          ),
+          fetchList<CategoryRecord>("/api/categories?page=1&pageSize=100"),
+          fetchList<TagRecord>("/api/tags?page=1&pageSize=100"),
+        ]);
+
+        if (cancelled) {
+          return;
+        }
+
+        const nextSelectedBlog =
+          blogsResult.items.find((blog) => blog.id === selectedId) ?? null;
+
+        setData((current) => ({
+          ...current,
+          blogs: blogsResult.items,
+          categories,
+          tags,
+        }));
+        setListMeta(blogsResult.meta);
+        setSelectedId(nextSelectedBlog?.id ?? null);
+        setErrorMessage("");
+
+        if (nextSelectedBlog) {
+          setDraft(buildBlogDraft(nextSelectedBlog));
+        } else if (drawerMode === "create") {
+          setDraft(emptyBlogDraft());
+        } else {
+          setDrawerMode("create");
+          setDrawerOpen(false);
+          setDraft(emptyBlogDraft());
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setErrorMessage(
+            error instanceof Error ? error.message : "后台数据加载失败",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void loadCurrentPage();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    drawerMode,
+    listParams.categoryId,
+    listParams.featured,
+    listParams.page,
+    listParams.pageSize,
+    listParams.published,
+    listParams.query,
+    listQuery,
+    selectedId,
+  ]);
+
+  const rows = data.blogs.map((blog) => buildBlogTableRow(blog));
+
+  const categoryOptions = data.categories.map((category) => ({
+    label: category.name,
+    value: category.id,
+  }));
+
+  const updateLocation = (nextParams: Partial<AdminListParams>) => {
+    const nextSearchParams = toAdminResourceSearchParams("blogs", {
+      ...listParams,
+      ...nextParams,
+    });
+    const query = nextSearchParams.toString();
+
+    startTransition(() => {
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    });
+  };
+
+  const handleCreate = () => {
+    setSelectedId(null);
+    setDrawerMode("create");
+    setDrawerOpen(true);
+    setDraft(emptyBlogDraft());
+    setErrorMessage("");
+    setFeedbackMessage("");
+  };
+
+  const handleRowClick = (row: BlogTableRow) => {
+    const selectedBlog = data.blogs.find((blog) => blog.id === row.id);
+
+    if (!selectedBlog) {
+      return;
+    }
+
+    setSelectedId(selectedBlog.id);
+    setDrawerMode("edit");
+    setDrawerOpen(true);
+    setDraft(buildBlogDraft(selectedBlog));
+    setFeedbackMessage("");
+  };
+
+  const handleSubmit = async () => {
+    setPending(true);
+    setErrorMessage("");
+    setFeedbackMessage("");
+
+    try {
+      const editing = drawerMode === "edit" && Boolean(selectedId);
+      const method = editing ? "PATCH" : "POST";
+      const basePath = `/api/${apiPathByResource.blogs}`;
+      const url = editing ? `${basePath}/${selectedId}` : basePath;
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(buildResourcePayload("blogs", draft)),
+      });
+      const saved = await parseResponse<{ id: string }>(response);
+
+      await loadBlogData(saved.id);
+      setDrawerOpen(false);
+      setDrawerMode("edit");
+      setFeedbackMessage(editing ? "保存成功。" : "创建成功。");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "保存失败");
+    } finally {
+      setPending(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!selectedId) {
+      return;
+    }
+
+    setPending(true);
+    setErrorMessage("");
+    setFeedbackMessage("");
+
+    try {
+      const response = await fetch(
+        `/api/${apiPathByResource.blogs}/${selectedId}`,
+        {
+          method: "DELETE",
+        },
+      );
+      await parseResponse<null>(response);
+      setDrawerMode("create");
+      setDrawerOpen(false);
+      setSelectedId(null);
+      setDraft(emptyBlogDraft());
+      await loadBlogData(null);
+      setFeedbackMessage("删除成功。");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "删除失败");
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <AdminResourceTablePage
+      config={blogConfig}
+      drawerBody={
+        <BlogForm
+          canDelete={drawerMode === "edit" && Boolean(selectedId)}
+          categories={data.categories}
+          deleteLabel={blogConfig.form.deleteLabel}
+          draft={draft}
+          pending={pending}
+          submitLabel={blogConfig.form.submitLabel}
+          tags={data.tags}
+          onDelete={() => {
+            void handleDelete();
+          }}
+          onDraftChange={(field, value) => {
+            setDraft((current) => ({
+              ...current,
+              [field]: value,
+            }));
+          }}
+          onSubmit={() => {
+            void handleSubmit();
+          }}
+          onToggleTag={(tagId) => {
+            setDraft((current) => {
+              const exists = current.tagIds.includes(tagId);
+
+              return {
+                ...current,
+                tagIds: exists
+                  ? current.tagIds.filter((id) => id !== tagId)
+                  : [...current.tagIds, tagId],
+              };
+            });
+          }}
+        />
+      }
+      drawerMode={drawerMode}
+      drawerOpen={drawerOpen}
+      errorMessage={errorMessage}
+      feedbackMessage={feedbackMessage}
+      filterActions={
+        <button
+          className="ui-admin-button"
+          disabled={loading}
+          type="button"
+          onClick={() => {
+            void loadBlogData();
+          }}
+        >
+          Refresh
+        </button>
+      }
+      filterOptions={{
+        categoryId: categoryOptions,
+      }}
+      filterValues={{
+        categoryId: listParams.categoryId,
+        featured: listParams.featured,
+        published: listParams.published,
+        query: listParams.query,
+      }}
+      items={rows}
+      loading={loading}
+      page={listMeta.page}
+      pageSize={listMeta.pageSize}
+      pending={pending}
+      resource="blogs"
+      selectedRowId={selectedId}
+      total={listMeta.total}
+      onCloseDrawer={() => {
+        setDrawerOpen(false);
+      }}
+      onCreate={handleCreate}
+      onFilterChange={(key, value) => {
+        updateLocation({
+          [key]: value,
+          page: 1,
+        });
+      }}
+      onPageChange={(page) => {
+        updateLocation({ page });
+      }}
+      onPageSizeChange={(pageSize) => {
+        updateLocation({ page: 1, pageSize });
+      }}
+      onResetFilters={() => {
+        updateLocation({
+          ...blogConfig.defaultListParams,
+          categoryId: undefined,
+          featured: undefined,
+          published: undefined,
+          query: undefined,
+        });
+      }}
+      onRowClick={handleRowClick}
+    />
+  );
+}
+
+function LegacyAdminResourcePage<TResource extends ResourceSection>({
   resource,
   title,
   description,
@@ -250,4 +649,35 @@ export function AdminResourcePage<TResource extends ResourceSection>({
       onToggleBlogTag={handleToggleBlogTag}
     />
   );
+}
+
+function buildBlogTableRow(blog: BlogRecord): BlogTableRow {
+  return {
+    id: blog.id,
+    title: blog.title,
+    slug: blog.slug,
+    category: blog.category?.name ?? "Uncategorized",
+    status: blog.published ? "Published" : "Draft",
+    featured: blog.featured,
+    publishedAt: formatDateLabel(blog.publishedAt),
+    updatedAt: formatDateLabel(blog.updatedAt),
+  };
+}
+
+function formatDateLabel(value: string | null) {
+  if (!value) {
+    return "—";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 }
