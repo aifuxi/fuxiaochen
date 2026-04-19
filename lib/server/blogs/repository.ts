@@ -37,12 +37,17 @@ const toBlogCategory = (
   };
 };
 
+type BlogListFilters = Pick<
+  BlogListQuery,
+  "query" | "published" | "featured" | "categoryId"
+>;
+
 const buildFilters = ({
   query,
   published,
   featured,
   categoryId,
-}: BlogListQuery) => {
+}: BlogListFilters) => {
   const filters: SQLWrapper[] = [];
 
   if (query) {
