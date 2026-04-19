@@ -79,6 +79,20 @@ test("parseAdminResourceListParams rejects malformed numerics in resource-aware 
   });
 });
 
+test("parseAdminResourceListParams strips blog-only filters for non-blog resources", () => {
+  const params = new URLSearchParams(
+    "query=design&published=true&featured=false&categoryId=cat_1&sortBy=name",
+  );
+
+  assert.deepEqual(parseAdminResourceListParams("categories", params), {
+    page: 1,
+    pageSize: 20,
+    query: "design",
+    sortBy: "name",
+    sortDirection: "desc",
+  });
+});
+
 test("parseAdminListParams normalizes uppercase boolean values like the server DTOs", () => {
   const params = new URLSearchParams("published=TRUE&featured=FALSE");
 
@@ -115,10 +129,30 @@ test("toAdminResourceSearchParams drops invalid sort keys and preserves canonica
     sortBy: "title",
     sortDirection: "asc",
     query: "v1",
+    published: true,
+    featured: false,
+    categoryId: "cat_1",
   });
 
   assert.equal(
     params.toString(),
     "page=2&pageSize=50&query=v1&sortBy=releaseDate&sortDirection=asc",
+  );
+});
+
+test("toAdminResourceSearchParams preserves blog filters only for blogs", () => {
+  const params = toAdminResourceSearchParams("blogs", {
+    page: 1,
+    pageSize: 20,
+    sortBy: "updatedAt",
+    sortDirection: "asc",
+    published: true,
+    featured: false,
+    categoryId: "cat_1",
+  });
+
+  assert.equal(
+    params.toString(),
+    "page=1&pageSize=20&sortBy=updatedAt&sortDirection=asc&published=true&featured=false&categoryId=cat_1",
   );
 });

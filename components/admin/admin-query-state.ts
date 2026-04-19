@@ -115,6 +115,19 @@ function normalizeSortBy(
   return sortKeys[0];
 }
 
+function supportsFilterKey(
+  constraints: AdminListParamConstraints,
+  key: "published" | "featured" | "categoryId",
+) {
+  const filterKeys = constraints.filterKeys;
+
+  if (!filterKeys || filterKeys.length === 0) {
+    return true;
+  }
+
+  return filterKeys.includes(key);
+}
+
 export function normalizeAdminListParams(
   params: AdminListParamsInput,
   defaults: Partial<AdminListParamsDefaults> = {},
@@ -139,9 +152,17 @@ export function normalizeAdminListParams(
     ),
     ...(sortBy ? { sortBy } : {}),
     ...(query ? { query } : {}),
-    ...(typeof published === "boolean" ? { published } : {}),
-    ...(typeof featured === "boolean" ? { featured } : {}),
-    ...(categoryId ? { categoryId } : {}),
+    ...(typeof published === "boolean" &&
+    supportsFilterKey(constraints, "published")
+      ? { published }
+      : {}),
+    ...(typeof featured === "boolean" &&
+    supportsFilterKey(constraints, "featured")
+      ? { featured }
+      : {}),
+    ...(categoryId && supportsFilterKey(constraints, "categoryId")
+      ? { categoryId }
+      : {}),
   };
 }
 
@@ -175,6 +196,7 @@ export function parseAdminResourceListParams(
   const config = getAdminResourceConfig(resource);
 
   return parseAdminListParams(params, config.defaultListParams, {
+    filterKeys: config.filters.map((filter) => filter.key),
     sortKeys: config.sortKeys,
   });
 }
@@ -226,6 +248,7 @@ export function toAdminResourceSearchParams(
   const config = getAdminResourceConfig(resource);
 
   return toAdminListSearchParams(params, config.defaultListParams, {
+    filterKeys: config.filters.map((filter) => filter.key),
     sortKeys: config.sortKeys,
   });
 }
