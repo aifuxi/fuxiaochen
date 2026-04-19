@@ -7,11 +7,16 @@ import test from "node:test";
 
 import { AdminHomeView } from "../../components/admin/admin-home-view";
 import { getAdminResourceConfig } from "../../components/admin/admin-resource-config";
+import {
+  applyAdminBlogListResult,
+  getCreateBlogDraft,
+} from "../../components/admin/admin-resource-page";
 import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
 import { AdminResourceView } from "../../components/admin/admin-resource-view";
 import { AdminShellFrame } from "../../components/admin/admin-shell";
 import {
   type AdminDashboardData,
+  type AdminListMeta,
   type BlogDraft,
   type CategoryDraft,
   type ChangelogDraft,
@@ -236,6 +241,11 @@ test("Posts resource page renders table chrome with the blog drawer form", () =>
   assert.match(html, /Delete Post/);
   assert.match(html, /Published/);
   assert.match(html, /Search posts by title or slug/);
+  assert.match(html, /label[^>]*for="title"[^>]*>Title</);
+  assert.match(html, /input[^>]*id="title"[^>]*name="title"/);
+  assert.match(html, /label[^>]*for="categoryId"[^>]*>Category</);
+  assert.match(html, /select[^>]*id="categoryId"[^>]*name="categoryId"/);
+  assert.doesNotMatch(html, />Uncategorized</);
 });
 
 test("AdminResourceView renders only the changelog editor on changelog pages", () => {
@@ -269,6 +279,39 @@ test("AdminResourceView renders only the changelog editor on changelog pages", (
   assert.match(html, /<textarea[^>]*name="changelogContent"/);
   assert.doesNotMatch(html, /<textarea[^>]*name="content"/);
   assert.match(html, /Version/);
+});
+
+test("getCreateBlogDraft seeds a valid category when categories exist", () => {
+  assert.equal(getCreateBlogDraft(sampleData.categories).categoryId, "cat_1");
+  assert.equal(getCreateBlogDraft([]).categoryId, "");
+});
+
+test("applyAdminBlogListResult preserves in-progress blog draft and edit target across list refreshes", () => {
+  const meta: AdminListMeta = {
+    page: 2,
+    pageSize: 20,
+    total: 21,
+  };
+
+  const result = applyAdminBlogListResult({
+    blogs: sampleData.blogs,
+    categories: sampleData.categories,
+    currentDraft: {
+      ...getCreateBlogDraft(sampleData.categories),
+      title: "Unsaved local title",
+      content: "Unsaved local body",
+    },
+    currentSelectedId: "blog_1",
+    meta,
+    tags: sampleData.tags,
+  });
+
+  assert.equal(result.selectedId, "blog_1");
+  assert.equal(result.listMeta, meta);
+  assert.equal(result.data.blogs[0]?.id, "blog_1");
+  assert.equal(result.draft.title, "Unsaved local title");
+  assert.equal(result.draft.content, "Unsaved local body");
+  assert.equal(result.draft.categoryId, "cat_1");
 });
 
 void ({} as CategoryDraft);
