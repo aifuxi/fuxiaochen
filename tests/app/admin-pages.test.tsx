@@ -1,11 +1,13 @@
 import { renderToStaticMarkup } from "react-dom/server";
 
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import test from "node:test";
 
 import { AdminHomeView } from "../../components/admin/admin-home-view";
 import { AdminResourceView } from "../../components/admin/admin-resource-view";
-import { AdminShell } from "../../components/admin/admin-shell";
+import { AdminShellFrame } from "../../components/admin/admin-shell";
 import {
   type AdminDashboardData,
   type BlogDraft,
@@ -77,9 +79,12 @@ const sampleData: AdminDashboardData = {
 
 test("AdminShell renders grouped navigation and toolbar chrome", () => {
   const html = renderToStaticMarkup(
-    <AdminShell pathname="/admin/posts">
-      <section>Shell content</section>
-    </AdminShell>,
+    <AdminShellFrame pathname="/admin/posts">
+      <section>
+        <h1>Posts page heading</h1>
+        <p>Shell content</p>
+      </section>
+    </AdminShellFrame>,
   );
 
   assert.match(html, /Workspace/);
@@ -91,7 +96,9 @@ test("AdminShell renders grouped navigation and toolbar chrome", () => {
   assert.match(html, /href="\/admin\/changelog"/);
   assert.match(html, /aria-current="page"[^>]*href="\/admin\/posts"/);
   assert.match(html, />Posts</);
-  assert.match(html, /<h1[^>]*>Posts</);
+  assert.equal(html.match(/<h1/g)?.length ?? 0, 1);
+  assert.match(html, /<h1[^>]*>Posts page heading</);
+  assert.match(html, /<h2[^>]*>Posts</);
   assert.match(
     html,
     /Manage posts, publication state, and taxonomy coverage\./,
@@ -99,6 +106,33 @@ test("AdminShell renders grouped navigation and toolbar chrome", () => {
   assert.match(html, />Search admin</);
   assert.match(html, />Open site</);
   assert.match(html, /Shell content/);
+});
+
+test("AdminShell uses neutral toolbar context on unknown admin paths", () => {
+  const html = renderToStaticMarkup(
+    <AdminShellFrame pathname="/admin/experiments">
+      <section>Unknown admin content</section>
+    </AdminShellFrame>,
+  );
+
+  assert.match(html, /<h2[^>]*>Admin workspace</);
+  assert.match(
+    html,
+    /Select a known admin section to review content, taxonomy, or release history\./,
+  );
+  assert.doesNotMatch(html, /aria-current="page"/);
+  assert.doesNotMatch(html, /<h2[^>]*>Dashboard</);
+});
+
+test("app admin layout remains a server component boundary", () => {
+  const layoutSource = readFileSync(
+    path.join(process.cwd(), "app/admin/layout.tsx"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(layoutSource, /^"use client";/m);
+  assert.doesNotMatch(layoutSource, /usePathname/);
+  assert.match(layoutSource, /<AdminShell>/);
 });
 
 test("AdminHomeView renders links to dedicated admin resource pages", () => {

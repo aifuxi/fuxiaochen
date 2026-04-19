@@ -20,9 +20,9 @@ export function AdminToolbar({
         <div className="min-w-0">
           <p className="ui-eyebrow">{section}</p>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <h1 className="text-title-lg font-light tracking-[-0.05em] text-text-strong">
+            <h2 className="text-title-lg font-light tracking-[-0.05em] text-text-strong">
               {title}
-            </h1>
+            </h2>
             <span className="ui-admin-chip">{pathname}</span>
           </div>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-text-soft">

@@ -63,9 +63,10 @@ export const adminNavigation = [
 ] as const satisfies readonly AdminNavigationGroup[];
 
 const defaultContext = {
-  section: adminNavigation[0].label,
-  title: adminNavigation[0].items[0].title,
-  description: adminNavigation[0].items[0].description,
+  section: "Admin",
+  title: "Admin workspace",
+  description:
+    "Select a known admin section to review content, taxonomy, or release history.",
 } satisfies AdminPageContext;
 
 function normalizeAdminPathname(pathname: string) {
