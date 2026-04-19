@@ -9,6 +9,7 @@ import { AdminHomeView } from "../../components/admin/admin-home-view";
 import { getAdminResourceConfig } from "../../components/admin/admin-resource-config";
 import {
   applyAdminBlogListResult,
+  applyAdminLightweightListResult,
   getCreateBlogDraft,
 } from "../../components/admin/admin-resource-page";
 import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
@@ -142,6 +143,8 @@ test("Posts admin route source remains wired to the shared resource page", () =>
     "utf8",
   );
 
+  assert.match(pageSource, /Suspense/);
+  assert.match(pageSource, /fallback=/);
   assert.match(pageSource, /AdminResourcePage/);
   assert.match(pageSource, /resource="blogs"/);
   assert.match(pageSource, /title="Posts"/);
@@ -174,6 +177,8 @@ test("Remaining admin resource routes stay wired to the shared resource page", (
   ];
 
   for (const route of routeSources) {
+    assert.match(route.source, /Suspense/);
+    assert.match(route.source, /fallback=/);
     assert.match(route.source, /AdminResourcePage/);
     assert.match(route.source, new RegExp(`resource="${route.resource}"`));
   }
@@ -187,6 +192,38 @@ test("shared admin resource page stays on the table and drawer implementation", 
 
   assert.match(pageSource, /AdminResourceTablePage/);
   assert.doesNotMatch(pageSource, /AdminResourceView/);
+});
+
+test("lightweight resource reload clears edit selection when the active row leaves the current list", () => {
+  const meta: AdminListMeta = {
+    page: 2,
+    pageSize: 20,
+    total: 21,
+  };
+
+  const result = applyAdminLightweightListResult({
+    currentDraft: {
+      name: "Unsaved local title",
+      slug: "design",
+      description: "Unsaved local body",
+    } satisfies CategoryDraft,
+    currentDrawerMode: "edit",
+    currentDrawerOpen: true,
+    currentSelectedId: "cat_missing",
+    data: sampleData,
+    meta,
+    resource: "categories",
+  });
+
+  assert.equal(result.selectedId, null);
+  assert.equal(result.drawerOpen, false);
+  assert.equal(result.drawerMode, "create");
+  assert.deepEqual(result.draft, {
+    name: "",
+    slug: "",
+    description: "",
+  });
+  assert.equal(result.listMeta, meta);
 });
 
 test("Posts resource page renders table chrome with the blog drawer form", () => {

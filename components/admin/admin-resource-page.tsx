@@ -133,6 +133,57 @@ export function applyAdminBlogListResult({
   };
 }
 
+type ApplyAdminLightweightListResultInput<
+  TResource extends LightweightResource,
+> = {
+  resource: TResource;
+  data: AdminDashboardData;
+  currentDraft: DraftByResource[TResource];
+  currentSelectedId: string | null;
+  currentDrawerMode: DrawerMode;
+  currentDrawerOpen: boolean;
+  meta: AdminListMeta;
+};
+
+export function applyAdminLightweightListResult<
+  TResource extends LightweightResource,
+>({
+  resource,
+  data,
+  currentDraft,
+  currentSelectedId,
+  currentDrawerMode,
+  currentDrawerOpen,
+  meta,
+}: ApplyAdminLightweightListResultInput<TResource>) {
+  const items = data[resource] as Array<{ id: string }>;
+  const selectedId = pickSelectedId(items, currentSelectedId);
+  const editingMissingRecord =
+    currentDrawerMode === "edit" &&
+    currentSelectedId !== null &&
+    selectedId !== currentSelectedId;
+
+  if (editingMissingRecord) {
+    return {
+      data,
+      draft: getEmptyDraft(resource) as DraftByResource[TResource],
+      drawerMode: "create" as const,
+      drawerOpen: false,
+      listMeta: meta,
+      selectedId: null,
+    };
+  }
+
+  return {
+    data,
+    draft: currentDraft,
+    drawerMode: currentDrawerMode,
+    drawerOpen: currentDrawerOpen,
+    listMeta: meta,
+    selectedId,
+  };
+}
+
 export function AdminResourcePage<TResource extends ResourceSection>({
   resource,
   title,
@@ -471,6 +522,8 @@ function AdminLightweightResourcePage<TResource extends LightweightResource>({
   const [reloadToken, setReloadToken] = useState(0);
   const draftRef = useRef(draft);
   const selectedIdRef = useRef(selectedId);
+  const drawerOpenRef = useRef(drawerOpen);
+  const drawerModeRef = useRef(drawerMode);
 
   const listParams = parseAdminResourceListParams(
     resource,
@@ -482,6 +535,8 @@ function AdminLightweightResourcePage<TResource extends LightweightResource>({
   ).toString();
   draftRef.current = draft;
   selectedIdRef.current = selectedId;
+  drawerOpenRef.current = drawerOpen;
+  drawerModeRef.current = drawerMode;
 
   useEffect(() => {
     let cancelled = false;
@@ -501,6 +556,8 @@ function AdminLightweightResourcePage<TResource extends LightweightResource>({
 
         const nextState = applyAdminLightweightListResult({
           currentDraft: draftRef.current,
+          currentDrawerMode: drawerModeRef.current,
+          currentDrawerOpen: drawerOpenRef.current,
           currentSelectedId: selectedIdRef.current,
           data: result.data,
           meta: result.meta,
@@ -509,6 +566,8 @@ function AdminLightweightResourcePage<TResource extends LightweightResource>({
 
         setData(nextState.data);
         setDraft(nextState.draft);
+        setDrawerMode(nextState.drawerMode);
+        setDrawerOpen(nextState.drawerOpen);
         setListMeta(nextState.listMeta);
         setSelectedId(nextState.selectedId);
         setErrorMessage("");
@@ -721,36 +780,6 @@ function buildBlogTableRow(blog: BlogRecord): BlogTableRow {
     featured: blog.featured,
     publishedAt: formatDateLabel(blog.publishedAt),
     updatedAt: formatDateLabel(blog.updatedAt),
-  };
-}
-
-type ApplyAdminLightweightListResultInput<
-  TResource extends LightweightResource,
-> = {
-  resource: TResource;
-  data: AdminDashboardData;
-  currentDraft: DraftByResource[TResource];
-  currentSelectedId: string | null;
-  meta: AdminListMeta;
-};
-
-function applyAdminLightweightListResult<
-  TResource extends LightweightResource,
->({
-  resource,
-  data,
-  currentDraft,
-  currentSelectedId,
-  meta,
-}: ApplyAdminLightweightListResultInput<TResource>) {
-  return {
-    data,
-    draft: currentDraft,
-    listMeta: meta,
-    selectedId: pickSelectedId(
-      data[resource] as Array<{ id: string }>,
-      currentSelectedId,
-    ),
   };
 }
 
