@@ -55,18 +55,26 @@ test("tagListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "updatedAt",
+    sortDirection: "desc",
   });
 });
 
-test("tagListQuerySchema parses explicit pagination values", () => {
+test("tagListQuerySchema parses search and sort values", () => {
   const result = tagListQuerySchema.parse({
     page: "3",
     pageSize: "50",
+    query: "design",
+    sortBy: "name",
+    sortDirection: "asc",
   });
 
   assert.deepEqual(result, {
     page: 3,
     pageSize: 50,
+    query: "design",
+    sortBy: "name",
+    sortDirection: "asc",
   });
 });
 

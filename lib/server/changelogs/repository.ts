@@ -1,11 +1,12 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, ilike, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import type { Changelog, NewChangelog } from "@/lib/db/schema";
 import { changelogs } from "@/lib/db/schema";
+import type { ChangelogListQuery } from "@/lib/server/changelogs/dto";
 
 export interface ChangelogRepository {
-  list(query: { page: number; pageSize: number }): Promise<{
+  list(query: ChangelogListQuery): Promise<{
     items: Changelog[];
     total: number;
   }>;
@@ -21,34 +22,68 @@ export interface ChangelogRepository {
   delete(id: string): Promise<boolean>;
 }
 
-const countChangelogs = async () => {
+const buildChangelogWhere = (query?: string) =>
+  query ? ilike(changelogs.version, `%${query}%`) : undefined;
+
+const countChangelogs = async (where?: SQL<unknown>) => {
   const rows = await db
     .select({
       total: sql<number>`count(*)`.mapWith(Number),
     })
-    .from(changelogs);
+    .from(changelogs)
+    .where(where);
 
   return rows[0]?.total ?? 0;
 };
 
-export const changelogListOrderBy = [
-  sql`${changelogs.releaseDate} is null`,
-  desc(changelogs.releaseDate),
-  desc(changelogs.createdAt),
-  desc(changelogs.id),
-] as const;
+const buildChangelogOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<ChangelogListQuery, "sortBy" | "sortDirection">) => {
+  const releaseDateNullOrder = sql`${changelogs.releaseDate} is null`;
+
+  if (sortBy === "releaseDate") {
+    return [
+      releaseDateNullOrder,
+      sortDirection === "asc"
+        ? asc(changelogs.releaseDate)
+        : desc(changelogs.releaseDate),
+      desc(changelogs.createdAt),
+      desc(changelogs.id),
+    ] as const;
+  }
+
+  if (sortBy === "version") {
+    return [
+      sortDirection === "asc"
+        ? asc(changelogs.version)
+        : desc(changelogs.version),
+      desc(changelogs.updatedAt),
+      desc(changelogs.id),
+    ] as const;
+  }
+
+  return [
+    sortDirection === "asc"
+      ? asc(changelogs.updatedAt)
+      : desc(changelogs.updatedAt),
+    desc(changelogs.id),
+  ] as const;
+};
 
 export const changelogRepository: ChangelogRepository = {
-  async list({ page, pageSize }) {
+  async list({ page, pageSize, query, sortBy, sortDirection }) {
     const offset = (page - 1) * pageSize;
+    const where = buildChangelogWhere(query);
     const [items, total] = await Promise.all([
       db
         .select()
         .from(changelogs)
-        .orderBy(...changelogListOrderBy)
+        .where(where)
+        .orderBy(...buildChangelogOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
-      countChangelogs(),
+      countChangelogs(where),
     ]);
 
     return { items, total };

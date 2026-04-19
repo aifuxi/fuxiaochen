@@ -55,18 +55,26 @@ test("categoryListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "updatedAt",
+    sortDirection: "desc",
   });
 });
 
-test("categoryListQuerySchema parses explicit pagination values", () => {
+test("categoryListQuerySchema parses search and sort values", () => {
   const result = categoryListQuerySchema.parse({
     page: "3",
     pageSize: "50",
+    query: "design",
+    sortBy: "name",
+    sortDirection: "asc",
   });
 
   assert.deepEqual(result, {
     page: 3,
     pageSize: 50,
+    query: "design",
+    sortBy: "name",
+    sortDirection: "asc",
   });
 });
 

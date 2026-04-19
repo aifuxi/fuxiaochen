@@ -87,7 +87,7 @@ test("handleListBlogs returns the shared envelope with pagination meta", async (
 
   const response = await handlers.handleListBlogs(
     new Request(
-      "http://localhost/api/blogs?page=2&pageSize=5&published=true&featured=false&categoryId=cat_1",
+      "http://localhost/api/blogs?page=2&pageSize=5&query=admin&published=true&featured=false&categoryId=cat_1&sortBy=updatedAt&sortDirection=asc",
     ),
   );
 
@@ -96,9 +96,12 @@ test("handleListBlogs returns the shared envelope with pagination meta", async (
     {
       page: 2,
       pageSize: 5,
+      query: "admin",
       published: true,
       featured: false,
       categoryId: "cat_1",
+      sortBy: "updatedAt",
+      sortDirection: "asc",
     },
   ]);
   assert.deepEqual(await response.json(), {

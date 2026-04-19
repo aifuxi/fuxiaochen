@@ -1,11 +1,12 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import type { NewTag, Tag } from "@/lib/db/schema";
 import { tags } from "@/lib/db/schema";
+import type { TagListQuery } from "@/lib/server/tags/dto";
 
 export interface TagRepository {
-  list(query: { page: number; pageSize: number }): Promise<{
+  list(query: TagListQuery): Promise<{
     items: Tag[];
     total: number;
   }>;
@@ -19,29 +20,56 @@ export interface TagRepository {
   delete(id: string): Promise<boolean>;
 }
 
-const countTags = async () => {
+const buildTagWhere = (query?: string) =>
+  query
+    ? or(ilike(tags.name, `%${query}%`), ilike(tags.slug, `%${query}%`)) ??
+      undefined
+    : undefined;
+
+const countTags = async (where?: SQL<unknown>) => {
   const rows = await db
     .select({
       total: sql<number>`count(*)`.mapWith(Number),
     })
-    .from(tags);
+    .from(tags)
+    .where(where);
 
   return rows[0]?.total ?? 0;
 };
 
-export const tagListOrderBy = [desc(tags.createdAt), desc(tags.id)] as const;
+const tagOrderByMap = {
+  createdAt: tags.createdAt,
+  updatedAt: tags.updatedAt,
+  name: tags.name,
+} as const;
+
+const buildTagOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<TagListQuery, "sortBy" | "sortDirection">) => {
+  const primaryOrder =
+    sortDirection === "asc" ? asc(tagOrderByMap[sortBy]) : desc(tagOrderByMap[sortBy]);
+
+  if (sortBy === "name") {
+    return [primaryOrder, desc(tags.updatedAt), desc(tags.id)] as const;
+  }
+
+  return [primaryOrder, desc(tags.id)] as const;
+};
 
 export const tagRepository: TagRepository = {
-  async list({ page, pageSize }) {
+  async list({ page, pageSize, query, sortBy, sortDirection }) {
     const offset = (page - 1) * pageSize;
+    const where = buildTagWhere(query);
     const [items, total] = await Promise.all([
       db
         .select()
         .from(tags)
-        .orderBy(...tagListOrderBy)
+        .where(where)
+        .orderBy(...buildTagOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
-      countTags(),
+      countTags(where),
     ]);
 
     return { items, total };

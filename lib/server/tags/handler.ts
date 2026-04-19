@@ -7,7 +7,7 @@ import {
   tagListQuerySchema,
   tagUpdateSchema,
 } from "./dto";
-import { tagService } from "./service";
+import { createTagService, type TagService, type TagServiceDeps } from "./service";
 
 import { ERROR_CODES } from "../http/error-codes";
 import { AppError } from "../http/errors";
@@ -24,80 +24,90 @@ const toJsonBody = async (request: Request) => {
   }
 };
 
-export async function handleListTags(request: Request) {
-  try {
-    const url = new URL(request.url);
-    const query = tagListQuerySchema.parse({
-      page: url.searchParams.get("page") ?? undefined,
-      pageSize: url.searchParams.get("pageSize") ?? undefined,
-    });
-    const result = await tagService.listTags(query);
+type TagHandlerDeps = {
+  service?: TagService;
+  serviceDeps?: TagServiceDeps;
+};
 
-    return createSuccessResponse(
-      {
-        items: result.items,
-      },
-      {
-        page: query.page,
-        pageSize: query.pageSize,
-        total: result.total,
-      },
-    );
-  } catch (error) {
-    return toErrorResponse(error);
-  }
+export function createTagHandlers({
+  serviceDeps,
+  service = createTagService(serviceDeps),
+}: TagHandlerDeps = {}) {
+  return {
+    async handleListTags(request: Request) {
+      try {
+        const url = new URL(request.url);
+        const query = tagListQuerySchema.parse({
+          page: url.searchParams.get("page") ?? undefined,
+          pageSize: url.searchParams.get("pageSize") ?? undefined,
+          query: url.searchParams.get("query") ?? undefined,
+          sortBy: url.searchParams.get("sortBy") ?? undefined,
+          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+        });
+        const result = await service.listTags(query);
+
+        return createSuccessResponse(
+          {
+            items: result.items,
+          },
+          {
+            page: query.page,
+            pageSize: query.pageSize,
+            total: result.total,
+          },
+        );
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleCreateTag(request: Request) {
+      try {
+        const body = tagCreateSchema.parse(await toJsonBody(request));
+        const tag = await service.createTag(body);
+
+        return createSuccessResponse(tag, undefined, 201);
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleGetTag(_request: Request, params: Promise<{ id: string }>) {
+      try {
+        const { id } = tagIdParamsSchema.parse(await params);
+        const tag = await service.getTag(id);
+
+        return createSuccessResponse(tag);
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleUpdateTag(request: Request, params: Promise<{ id: string }>) {
+      try {
+        const { id } = tagIdParamsSchema.parse(await params);
+        const body = tagUpdateSchema.parse(await toJsonBody(request));
+        const tag = await service.updateTag(id, body);
+
+        return createSuccessResponse(tag);
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleDeleteTag(_request: Request, params: Promise<{ id: string }>) {
+      try {
+        const { id } = tagIdParamsSchema.parse(await params);
+        await service.deleteTag(id);
+
+        return createSuccessResponse(null);
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+  };
 }
 
-export async function handleCreateTag(request: Request) {
-  try {
-    const body = tagCreateSchema.parse(await toJsonBody(request));
-    const tag = await tagService.createTag(body);
+const defaultHandlers = createTagHandlers();
 
-    return createSuccessResponse(tag, undefined, 201);
-  } catch (error) {
-    return toErrorResponse(error);
-  }
-}
-
-export async function handleGetTag(
-  _request: Request,
-  params: Promise<{ id: string }>,
-) {
-  try {
-    const { id } = tagIdParamsSchema.parse(await params);
-    const tag = await tagService.getTag(id);
-
-    return createSuccessResponse(tag);
-  } catch (error) {
-    return toErrorResponse(error);
-  }
-}
-
-export async function handleUpdateTag(
-  request: Request,
-  params: Promise<{ id: string }>,
-) {
-  try {
-    const { id } = tagIdParamsSchema.parse(await params);
-    const body = tagUpdateSchema.parse(await toJsonBody(request));
-    const tag = await tagService.updateTag(id, body);
-
-    return createSuccessResponse(tag);
-  } catch (error) {
-    return toErrorResponse(error);
-  }
-}
-
-export async function handleDeleteTag(
-  _request: Request,
-  params: Promise<{ id: string }>,
-) {
-  try {
-    const { id } = tagIdParamsSchema.parse(await params);
-    await tagService.deleteTag(id);
-
-    return createSuccessResponse(null);
-  } catch (error) {
-    return toErrorResponse(error);
-  }
-}
+export const handleListTags = defaultHandlers.handleListTags;
+export const handleCreateTag = defaultHandlers.handleCreateTag;
+export const handleGetTag = defaultHandlers.handleGetTag;
+export const handleUpdateTag = defaultHandlers.handleUpdateTag;
+export const handleDeleteTag = defaultHandlers.handleDeleteTag;

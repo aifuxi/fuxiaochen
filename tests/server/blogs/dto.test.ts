@@ -89,24 +89,32 @@ test("blogListQuerySchema applies defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "publishedAt",
+    sortDirection: "desc",
   });
 });
 
-test("blogListQuerySchema parses optional filters", () => {
+test("blogListQuerySchema parses keyword, filters, and sort options", () => {
   const result = blogListQuerySchema.parse({
     page: "2",
-    pageSize: "50",
+    pageSize: "10",
+    query: "admin",
     published: "false",
     featured: "true",
     categoryId: "cat_1",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
   });
 
   assert.deepEqual(result, {
     page: 2,
-    pageSize: 50,
+    pageSize: 10,
+    query: "admin",
     published: false,
     featured: true,
     categoryId: "cat_1",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
   });
 });
 
