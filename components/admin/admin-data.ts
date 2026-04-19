@@ -2,6 +2,8 @@
 
 import type {
   AdminDashboardData,
+  AdminListMeta,
+  AdminResourceListResult,
   BlogDraft,
   BlogRecord,
   CategoryDraft,
@@ -17,11 +19,7 @@ import type {
 type ApiSuccessEnvelope<T> = {
   success: true;
   data: T;
-  meta?: {
-    page: number;
-    pageSize: number;
-    total: number;
-  };
+  meta?: AdminListMeta;
 };
 
 type ApiErrorEnvelope = {
@@ -122,6 +120,14 @@ export const buildChangelogDraft = (
 });
 
 export async function parseResponse<T>(response: Response): Promise<T> {
+  const payload = await parseResponseEnvelope<T>(response);
+
+  return payload.data;
+}
+
+async function parseResponseEnvelope<T>(
+  response: Response,
+): Promise<ApiSuccessEnvelope<T>> {
   const payload = (await response.json()) as
     | ApiSuccessEnvelope<T>
     | ApiErrorEnvelope;
@@ -134,13 +140,40 @@ export async function parseResponse<T>(response: Response): Promise<T> {
     );
   }
 
-  return payload.data;
+  return payload;
+}
+
+export async function parseListResponse<T>(
+  response: Response,
+): Promise<AdminResourceListResult<T>> {
+  const payload = await parseResponseEnvelope<{ items: T[] }>(response);
+
+  return {
+    items: payload.data.items,
+    meta: {
+      page: payload.meta?.page ?? 1,
+      pageSize: payload.meta?.pageSize ?? payload.data.items.length,
+      total: payload.meta?.total ?? payload.data.items.length,
+    },
+  };
 }
 
 export async function fetchList<T>(url: string) {
   const response = await fetch(url, { cache: "no-store" });
 
-  return parseResponse<{ items: T[] }>(response).then((data) => data.items);
+  return parseListResponse<T>(response).then((result) => result.items);
+}
+
+export async function fetchAdminResourceList<T>(
+  path: string,
+  params: URLSearchParams,
+) {
+  const query = params.toString();
+  const response = await fetch(query ? `${path}?${query}` : path, {
+    cache: "no-store",
+  });
+
+  return parseListResponse<T>(response);
 }
 
 export async function fetchDashboardData() {
