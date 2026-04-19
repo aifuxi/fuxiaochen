@@ -81,7 +81,47 @@ test("changelogListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "releaseDate",
+    sortDirection: "desc",
   });
+});
+
+test("changelogListQuerySchema parses search and sort values", () => {
+  const result = changelogListQuerySchema.parse({
+    page: "2",
+    pageSize: "30",
+    query: "1.0",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
+  });
+
+  assert.deepEqual(result, {
+    page: 2,
+    pageSize: 30,
+    query: "1.0",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
+  });
+});
+
+test("changelogListQuerySchema normalizes empty query to undefined", () => {
+  const result = changelogListQuerySchema.parse({
+    query: "",
+  });
+
+  assert.equal(result.query, undefined);
+  assert.equal(result.page, 1);
+  assert.equal(result.pageSize, 20);
+  assert.equal(result.sortBy, "releaseDate");
+  assert.equal(result.sortDirection, "desc");
+});
+
+test("changelogListQuerySchema rejects unsupported semantic version sorting", () => {
+  const result = changelogListQuerySchema.safeParse({
+    sortBy: "version",
+  });
+
+  assert.equal(result.success, false);
 });
 
 test("changelogListQuerySchema clamps pageSize to the configured maximum", () => {

@@ -89,25 +89,45 @@ test("blogListQuerySchema applies defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "publishedAt",
+    sortDirection: "desc",
   });
 });
 
-test("blogListQuerySchema parses optional filters", () => {
+test("blogListQuerySchema parses keyword, filters, and sort options", () => {
   const result = blogListQuerySchema.parse({
     page: "2",
-    pageSize: "50",
+    pageSize: "10",
+    query: "admin",
     published: "false",
     featured: "true",
     categoryId: "cat_1",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
   });
 
   assert.deepEqual(result, {
     page: 2,
-    pageSize: 50,
+    pageSize: 10,
+    query: "admin",
     published: false,
     featured: true,
     categoryId: "cat_1",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
   });
+});
+
+test("blogListQuerySchema normalizes empty query to undefined", () => {
+  const result = blogListQuerySchema.parse({
+    query: "",
+  });
+
+  assert.equal(result.query, undefined);
+  assert.equal(result.page, 1);
+  assert.equal(result.pageSize, 20);
+  assert.equal(result.sortBy, "publishedAt");
+  assert.equal(result.sortDirection, "desc");
 });
 
 test("blogListQuerySchema rejects oversized pageSize", () => {

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 const nonEmptyString = z.string().trim().min(1);
+const optionalSearchQuery = z.preprocess(
+  (value) =>
+    typeof value === "string" && value.trim().length === 0 ? undefined : value,
+  nonEmptyString.optional(),
+);
+const sortDirectionSchema = z.enum(["asc", "desc"]);
+const tagSortBySchema = z.enum(["createdAt", "updatedAt", "name"]);
 
 export const tagCreateSchema = z.object({
   name: nonEmptyString,
@@ -21,6 +28,9 @@ export const tagIdParamsSchema = z.object({
 export const tagListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
+  query: optionalSearchQuery,
+  sortBy: tagSortBySchema.default("createdAt"),
+  sortDirection: sortDirectionSchema.default("desc"),
 });
 
 export type TagCreateInput = z.infer<typeof tagCreateSchema>;

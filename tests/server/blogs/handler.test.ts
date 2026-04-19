@@ -87,7 +87,7 @@ test("handleListBlogs returns the shared envelope with pagination meta", async (
 
   const response = await handlers.handleListBlogs(
     new Request(
-      "http://localhost/api/blogs?page=2&pageSize=5&published=true&featured=false&categoryId=cat_1",
+      "http://localhost/api/blogs?page=2&pageSize=5&query=admin&published=true&featured=false&categoryId=cat_1&sortBy=updatedAt&sortDirection=asc",
     ),
   );
 
@@ -96,9 +96,12 @@ test("handleListBlogs returns the shared envelope with pagination meta", async (
     {
       page: 2,
       pageSize: 5,
+      query: "admin",
       published: true,
       featured: false,
       categoryId: "cat_1",
+      sortBy: "updatedAt",
+      sortDirection: "asc",
     },
   ]);
   assert.deepEqual(await response.json(), {
@@ -140,6 +143,37 @@ test("handleListBlogs normalizes invalid query validation errors", async () => {
   assert.deepEqual(payload.error.details.formErrors, []);
   assert.deepEqual(payload.error.details.fieldErrors.published, [
     "Invalid input",
+  ]);
+});
+
+test("handleListBlogs normalizes an empty query string to no filter", async () => {
+  const queries: Array<Parameters<BlogService["listBlogs"]>[0]> = [];
+  const response = await createBlogHandlers({
+    service: createService({
+      async listBlogs(query) {
+        queries.push(query);
+        return {
+          items: [],
+          total: 0,
+        };
+      },
+    }),
+  }).handleListBlogs(
+    new Request("http://localhost/api/blogs?page=1&pageSize=10&query="),
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(queries, [
+    {
+      page: 1,
+      pageSize: 10,
+      query: undefined,
+      published: undefined,
+      featured: undefined,
+      categoryId: undefined,
+      sortBy: "publishedAt",
+      sortDirection: "desc",
+    },
   ]);
 });
 
