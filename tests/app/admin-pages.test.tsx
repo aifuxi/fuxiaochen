@@ -5,6 +5,7 @@ import test from "node:test";
 
 import { AdminHomeView } from "../../components/admin/admin-home-view";
 import { AdminResourceView } from "../../components/admin/admin-resource-view";
+import { AdminShell } from "../../components/admin/admin-shell";
 import {
   type AdminDashboardData,
   type BlogDraft,
@@ -73,6 +74,32 @@ const sampleData: AdminDashboardData = {
     },
   ],
 };
+
+test("AdminShell renders grouped navigation and toolbar chrome", () => {
+  const html = renderToStaticMarkup(
+    <AdminShell pathname="/admin/posts">
+      <section>Shell content</section>
+    </AdminShell>,
+  );
+
+  assert.match(html, /Workspace/);
+  assert.match(html, /Content/);
+  assert.match(html, /href="\/admin"/);
+  assert.match(html, /href="\/admin\/posts"/);
+  assert.match(html, /href="\/admin\/categories"/);
+  assert.match(html, /href="\/admin\/tags"/);
+  assert.match(html, /href="\/admin\/changelog"/);
+  assert.match(html, /aria-current="page"[^>]*href="\/admin\/posts"/);
+  assert.match(html, />Posts</);
+  assert.match(html, /<h1[^>]*>Posts</);
+  assert.match(
+    html,
+    /Manage posts, publication state, and taxonomy coverage\./,
+  );
+  assert.match(html, />Search admin</);
+  assert.match(html, />Open site</);
+  assert.match(html, /Shell content/);
+});
 
 test("AdminHomeView renders links to dedicated admin resource pages", () => {
   const html = renderToStaticMarkup(<AdminHomeView data={sampleData} />);
