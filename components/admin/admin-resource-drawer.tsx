@@ -1,6 +1,12 @@
 "use client";
 
-import type { ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
+} from "react";
 
 import { X } from "lucide-react";
 
@@ -13,6 +19,120 @@ type AdminResourceDrawerProps = {
   onClose?: () => void;
 };
 
+type FocusableLike = {
+  focus: () => void;
+};
+
+type DrawerDocumentLike = {
+  activeElement: FocusableLike | null;
+  body: {
+    style: {
+      overflow: string;
+    };
+  };
+};
+
+type DrawerContainerLike = {
+  focus: () => void;
+  ownerDocument?: DrawerDocumentLike;
+  contains: (target: unknown) => boolean;
+  querySelectorAll: (selector: string) => ArrayLike<unknown>;
+};
+
+function isFocusableLike(value: unknown): value is FocusableLike {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "focus" in value &&
+    typeof value.focus === "function"
+  );
+}
+
+export function getAdminDrawerFocusableElements(
+  container: DrawerContainerLike,
+) {
+  return Array.from(
+    container.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+  ).filter(isFocusableLike);
+}
+
+export function handleAdminDrawerKeyDown(
+  event: Pick<KeyboardEvent, "key" | "shiftKey" | "target" | "preventDefault">,
+  {
+    container,
+    onClose,
+  }: {
+    container: DrawerContainerLike;
+    onClose?: () => void;
+  },
+) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    onClose?.();
+    return;
+  }
+
+  if (event.key !== "Tab") {
+    return;
+  }
+
+  const focusableElements = getAdminDrawerFocusableElements(container);
+
+  if (focusableElements.length === 0) {
+    event.preventDefault();
+    container.focus();
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+  const currentTarget = event.target;
+
+  if (event.shiftKey && currentTarget === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+    return;
+  }
+
+  if (!event.shiftKey && currentTarget === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
+
+export function createAdminDrawerLifecycle({
+  container,
+}: {
+  container: DrawerContainerLike;
+}) {
+  const ownerDocument = container.ownerDocument;
+  const previousActiveElement = ownerDocument?.activeElement ?? null;
+  const previousOverflow = ownerDocument?.body.style.overflow ?? "";
+  const focusableElements = getAdminDrawerFocusableElements(container);
+  const initialFocusTarget = focusableElements[0] ?? container;
+
+  if (ownerDocument?.body) {
+    ownerDocument.body.style.overflow = "hidden";
+  }
+  initialFocusTarget.focus();
+
+  return () => {
+    if (ownerDocument?.body) {
+      ownerDocument.body.style.overflow = previousOverflow;
+    }
+
+    if (
+      previousActiveElement &&
+      isFocusableLike(previousActiveElement) &&
+      !container.contains(previousActiveElement)
+    ) {
+      previousActiveElement.focus();
+    }
+  };
+}
+
 export function AdminResourceDrawer({
   open,
   title,
@@ -21,14 +141,23 @@ export function AdminResourceDrawer({
   footer,
   onClose,
 }: AdminResourceDrawerProps) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  useEffect(() => {
+    if (!open || !containerRef.current) {
+      return undefined;
+    }
+
+    return createAdminDrawerLifecycle({
+      container: containerRef.current,
+    });
+  }, [open]);
+
   if (!open) {
     return null;
   }
-
-  const titleId = `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-title`;
-  const descriptionId = `${title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")}-description`;
 
   return (
     <div className="fixed inset-0 z-40 bg-canvas/72 backdrop-blur-sm">
@@ -37,13 +166,18 @@ export function AdminResourceDrawer({
         aria-labelledby={titleId}
         aria-modal={true}
         className="ml-auto flex h-full w-full max-w-2xl flex-col border-l border-white/8 bg-surface-1/96 shadow-2xl"
+        ref={containerRef}
         role="dialog"
         tabIndex={-1}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            event.preventDefault();
-            onClose?.();
+        onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
+          if (!containerRef.current) {
+            return;
           }
+
+          handleAdminDrawerKeyDown(event.nativeEvent, {
+            container: containerRef.current,
+            onClose,
+          });
         }}
       >
         <header className="flex items-start justify-between gap-4 border-b border-white/8 px-6 py-5">
@@ -66,12 +200,7 @@ export function AdminResourceDrawer({
           </div>
 
           {onClose ? (
-            <button
-              autoFocus
-              className="ui-admin-button"
-              type="button"
-              onClick={onClose}
-            >
+            <button className="ui-admin-button" type="button" onClick={onClose}>
               <X className="size-3.5" />
               Close
             </button>
