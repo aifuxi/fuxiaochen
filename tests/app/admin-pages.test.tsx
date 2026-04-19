@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
 
@@ -12,8 +12,6 @@ import {
   getCreateBlogDraft,
 } from "../../components/admin/admin-resource-page";
 import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
-import { AdminResourceView } from "../../components/admin/admin-resource-view";
-import { AdminShellFrame } from "../../components/admin/admin-shell";
 import {
   type AdminDashboardData,
   type AdminListMeta,
@@ -88,53 +86,6 @@ const sampleData: AdminDashboardData = {
   ],
 };
 
-test("AdminShell renders grouped navigation and toolbar chrome", () => {
-  const html = renderToStaticMarkup(
-    <AdminShellFrame pathname="/admin/posts">
-      <section>
-        <h1>Posts page heading</h1>
-        <p>Shell content</p>
-      </section>
-    </AdminShellFrame>,
-  );
-
-  assert.match(html, /Workspace/);
-  assert.match(html, /Content/);
-  assert.match(html, /href="\/admin"/);
-  assert.match(html, /href="\/admin\/posts"/);
-  assert.match(html, /href="\/admin\/categories"/);
-  assert.match(html, /href="\/admin\/tags"/);
-  assert.match(html, /href="\/admin\/changelog"/);
-  assert.match(html, /aria-current="page"[^>]*href="\/admin\/posts"/);
-  assert.match(html, />Posts</);
-  assert.equal(html.match(/<h1/g)?.length ?? 0, 1);
-  assert.match(html, /<h1[^>]*>Posts page heading</);
-  assert.match(html, /<h2[^>]*>Posts</);
-  assert.match(
-    html,
-    /Manage posts, publication state, and taxonomy coverage\./,
-  );
-  assert.match(html, />Search admin</);
-  assert.match(html, />Open site</);
-  assert.match(html, /Shell content/);
-});
-
-test("AdminShell uses neutral toolbar context on unknown admin paths", () => {
-  const html = renderToStaticMarkup(
-    <AdminShellFrame pathname="/admin/experiments">
-      <section>Unknown admin content</section>
-    </AdminShellFrame>,
-  );
-
-  assert.match(html, /<h2[^>]*>Admin workspace</);
-  assert.match(
-    html,
-    /Select a known admin section to review content, taxonomy, or release history\./,
-  );
-  assert.doesNotMatch(html, /aria-current="page"/);
-  assert.doesNotMatch(html, /<h2[^>]*>Dashboard</);
-});
-
 test("app admin layout remains a server component boundary", () => {
   const layoutSource = readFileSync(
     path.join(process.cwd(), "app/admin/layout.tsx"),
@@ -144,6 +95,31 @@ test("app admin layout remains a server component boundary", () => {
   assert.doesNotMatch(layoutSource, /^"use client";/m);
   assert.doesNotMatch(layoutSource, /usePathname/);
   assert.match(layoutSource, /<AdminShell>/);
+});
+
+test("app admin home route remains wired to AdminHome", () => {
+  const pageSource = readFileSync(
+    path.join(process.cwd(), "app/admin/page.tsx"),
+    "utf8",
+  );
+
+  assert.match(pageSource, /AdminHome/);
+  assert.match(pageSource, /return <AdminHome \/>/);
+});
+
+test("obsolete split-layout admin files are removed", () => {
+  assert.equal(
+    existsSync(
+      path.join(process.cwd(), "components/admin/admin-layout-shell.tsx"),
+    ),
+    false,
+  );
+  assert.equal(
+    existsSync(
+      path.join(process.cwd(), "components/admin/admin-resource-view.tsx"),
+    ),
+    false,
+  );
 });
 
 test("AdminHomeView renders links to dedicated admin resource pages", () => {
@@ -168,6 +144,8 @@ test("Posts admin route source remains wired to the shared resource page", () =>
 
   assert.match(pageSource, /AdminResourcePage/);
   assert.match(pageSource, /resource="blogs"/);
+  assert.match(pageSource, /title="Posts"/);
+  assert.match(pageSource, /description=/);
 });
 
 test("Remaining admin resource routes stay wired to the shared resource page", () => {
@@ -199,6 +177,16 @@ test("Remaining admin resource routes stay wired to the shared resource page", (
     assert.match(route.source, /AdminResourcePage/);
     assert.match(route.source, new RegExp(`resource="${route.resource}"`));
   }
+});
+
+test("shared admin resource page stays on the table and drawer implementation", () => {
+  const pageSource = readFileSync(
+    path.join(process.cwd(), "components/admin/admin-resource-page.tsx"),
+    "utf8",
+  );
+
+  assert.match(pageSource, /AdminResourceTablePage/);
+  assert.doesNotMatch(pageSource, /AdminResourceView/);
 });
 
 test("Posts resource page renders table chrome with the blog drawer form", () => {
@@ -455,39 +443,6 @@ test("Changelog resource page renders table chrome with the changelog drawer for
   assert.match(html, /label[^>]*for="version"[^>]*>Version</);
   assert.match(html, /input[^>]*id="releaseDate"[^>]*name="releaseDate"/);
   assert.match(html, /textarea[^>]*id="content"[^>]*name="content"/);
-});
-
-test("AdminResourceView renders only the changelog editor on changelog pages", () => {
-  const html = renderToStaticMarkup(
-    <AdminResourceView
-      data={sampleData}
-      resource="changelogs"
-      title="Changelog"
-      description="Manage changelog"
-      selectedId="change_1"
-      pending={false}
-      errorMessage=""
-      feedbackMessage=""
-      draft={
-        {
-          version: "v1.0.0",
-          content: "Initial release",
-          releaseDate: "2026-04-19",
-        } satisfies ChangelogDraft
-      }
-      onCreate={() => {}}
-      onDelete={() => {}}
-      onRefresh={() => {}}
-      onSelect={() => {}}
-      onSubmit={() => {}}
-      onDraftChange={() => {}}
-      onToggleBlogTag={() => {}}
-    />,
-  );
-
-  assert.match(html, /<textarea[^>]*name="changelogContent"/);
-  assert.doesNotMatch(html, /<textarea[^>]*name="content"/);
-  assert.match(html, /Version/);
 });
 
 test("getCreateBlogDraft seeds a valid category when categories exist", () => {
