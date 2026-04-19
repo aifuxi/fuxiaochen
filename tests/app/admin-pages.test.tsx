@@ -23,6 +23,9 @@ import {
   type TagDraft,
 } from "../../components/admin/admin-types";
 import { BlogForm } from "../../components/admin/resource-forms/blog-form";
+import { CategoryForm } from "../../components/admin/resource-forms/category-form";
+import { ChangelogForm } from "../../components/admin/resource-forms/changelog-form";
+import { TagForm } from "../../components/admin/resource-forms/tag-form";
 
 const sampleData: AdminDashboardData = {
   categories: [
@@ -167,6 +170,37 @@ test("Posts admin route source remains wired to the shared resource page", () =>
   assert.match(pageSource, /resource="blogs"/);
 });
 
+test("Remaining admin resource routes stay wired to the shared resource page", () => {
+  const routeSources = [
+    {
+      resource: "categories",
+      source: readFileSync(
+        path.join(process.cwd(), "app/admin/categories/page.tsx"),
+        "utf8",
+      ),
+    },
+    {
+      resource: "tags",
+      source: readFileSync(
+        path.join(process.cwd(), "app/admin/tags/page.tsx"),
+        "utf8",
+      ),
+    },
+    {
+      resource: "changelogs",
+      source: readFileSync(
+        path.join(process.cwd(), "app/admin/changelog/page.tsx"),
+        "utf8",
+      ),
+    },
+  ];
+
+  for (const route of routeSources) {
+    assert.match(route.source, /AdminResourcePage/);
+    assert.match(route.source, new RegExp(`resource="${route.resource}"`));
+  }
+});
+
 test("Posts resource page renders table chrome with the blog drawer form", () => {
   const html = renderToStaticMarkup(
     <AdminResourceTablePage
@@ -246,6 +280,181 @@ test("Posts resource page renders table chrome with the blog drawer form", () =>
   assert.match(html, /label[^>]*for="categoryId"[^>]*>Category</);
   assert.match(html, /select[^>]*id="categoryId"[^>]*name="categoryId"/);
   assert.doesNotMatch(html, />Uncategorized</);
+});
+
+test("Categories resource page renders table chrome with the category drawer form", () => {
+  const html = renderToStaticMarkup(
+    <AdminResourceTablePage
+      config={getAdminResourceConfig("categories")}
+      drawerBody={
+        <CategoryForm
+          canDelete={true}
+          draft={
+            {
+              name: "Design",
+              slug: "design",
+              description: "Design notes",
+            } satisfies CategoryDraft
+          }
+          onDraftChange={() => {}}
+          onSubmit={() => {}}
+        />
+      }
+      drawerMode="edit"
+      drawerOpen={true}
+      filterValues={{
+        query: "design",
+      }}
+      items={[
+        {
+          id: "cat_1",
+          name: "Design",
+          slug: "design",
+          description: "Design notes",
+          updatedAt: "2026-04-19",
+        },
+      ]}
+      page={1}
+      pageSize={20}
+      pending={false}
+      resource="categories"
+      selectedRowId="cat_1"
+      total={1}
+      onCloseDrawer={() => {}}
+      onCreate={() => {}}
+      onFilterChange={() => {}}
+      onPageChange={() => {}}
+      onPageSizeChange={() => {}}
+      onResetFilters={() => {}}
+      onRowClick={() => {}}
+    />,
+  );
+
+  assert.match(html, /Categories table/);
+  assert.match(html, /Edit category/);
+  assert.match(html, /Save Category/);
+  assert.match(html, /Delete Category/);
+  assert.match(html, /Search categories by name or slug/);
+  assert.match(html, /label[^>]*for="name"[^>]*>Name</);
+  assert.match(html, /input[^>]*id="name"[^>]*name="name"/);
+  assert.match(html, /label[^>]*for="slug"[^>]*>Slug</);
+  assert.match(html, /textarea[^>]*id="description"[^>]*name="description"/);
+});
+
+test("Tags resource page renders table chrome with the tag drawer form", () => {
+  const html = renderToStaticMarkup(
+    <AdminResourceTablePage
+      config={getAdminResourceConfig("tags")}
+      drawerBody={
+        <TagForm
+          canDelete={true}
+          draft={
+            {
+              name: "UI",
+              slug: "ui",
+              description: "UI tag",
+            } satisfies TagDraft
+          }
+          onDraftChange={() => {}}
+          onSubmit={() => {}}
+        />
+      }
+      drawerMode="edit"
+      drawerOpen={true}
+      filterValues={{
+        query: "ui",
+      }}
+      items={[
+        {
+          id: "tag_1",
+          name: "UI",
+          slug: "ui",
+          description: "UI tag",
+          updatedAt: "2026-04-19",
+        },
+      ]}
+      page={1}
+      pageSize={20}
+      pending={false}
+      resource="tags"
+      selectedRowId="tag_1"
+      total={1}
+      onCloseDrawer={() => {}}
+      onCreate={() => {}}
+      onFilterChange={() => {}}
+      onPageChange={() => {}}
+      onPageSizeChange={() => {}}
+      onResetFilters={() => {}}
+      onRowClick={() => {}}
+    />,
+  );
+
+  assert.match(html, /Tags table/);
+  assert.match(html, /Edit tag/);
+  assert.match(html, /Save Tag/);
+  assert.match(html, /Delete Tag/);
+  assert.match(html, /Search tags by name or slug/);
+  assert.match(html, /label[^>]*for="name"[^>]*>Name</);
+  assert.match(html, /input[^>]*id="slug"[^>]*name="slug"/);
+  assert.match(html, /textarea[^>]*id="description"[^>]*name="description"/);
+});
+
+test("Changelog resource page renders table chrome with the changelog drawer form", () => {
+  const html = renderToStaticMarkup(
+    <AdminResourceTablePage
+      config={getAdminResourceConfig("changelogs")}
+      drawerBody={
+        <ChangelogForm
+          canDelete={true}
+          draft={
+            {
+              version: "v1.0.0",
+              content: "Initial release",
+              releaseDate: "2026-04-19",
+            } satisfies ChangelogDraft
+          }
+          onDraftChange={() => {}}
+          onSubmit={() => {}}
+        />
+      }
+      drawerMode="edit"
+      drawerOpen={true}
+      filterValues={{
+        query: "v1.0.0",
+      }}
+      items={[
+        {
+          id: "change_1",
+          version: "v1.0.0",
+          releaseDate: "2026-04-19",
+          contentPreview: "Initial release",
+          updatedAt: "2026-04-19",
+        },
+      ]}
+      page={1}
+      pageSize={20}
+      pending={false}
+      resource="changelogs"
+      selectedRowId="change_1"
+      total={1}
+      onCloseDrawer={() => {}}
+      onCreate={() => {}}
+      onFilterChange={() => {}}
+      onPageChange={() => {}}
+      onPageSizeChange={() => {}}
+      onResetFilters={() => {}}
+      onRowClick={() => {}}
+    />,
+  );
+
+  assert.match(html, /Changelog table/);
+  assert.match(html, /Edit entry/);
+  assert.match(html, /Save Entry/);
+  assert.match(html, /Delete Entry/);
+  assert.match(html, /Search changelog versions/);
+  assert.match(html, /label[^>]*for="version"[^>]*>Version</);
+  assert.match(html, /input[^>]*id="releaseDate"[^>]*name="releaseDate"/);
+  assert.match(html, /textarea[^>]*id="content"[^>]*name="content"/);
 });
 
 test("AdminResourceView renders only the changelog editor on changelog pages", () => {
