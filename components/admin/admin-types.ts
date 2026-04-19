@@ -24,6 +24,7 @@ export type AdminListParamsDefaults = Pick<
 
 export type AdminListParamConstraints = {
   sortKeys?: readonly string[];
+  filterKeys?: readonly AdminFilterKey[];
 };
 
 export type AdminListMeta = {
