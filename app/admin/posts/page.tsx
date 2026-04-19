@@ -4,7 +4,7 @@ import { AdminResourcePage } from "@/components/admin/admin-resource-page";
 
 export const metadata: Metadata = {
   title: "Admin Posts",
-  description: "Manage post records in the admin interface.",
+  description: "Manage posts in the admin table and drawer workflow.",
 };
 
 export default function AdminPostsPage() {

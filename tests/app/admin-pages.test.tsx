@@ -6,6 +6,8 @@ import path from "node:path";
 import test from "node:test";
 
 import { AdminHomeView } from "../../components/admin/admin-home-view";
+import { getAdminResourceConfig } from "../../components/admin/admin-resource-config";
+import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
 import { AdminResourceView } from "../../components/admin/admin-resource-view";
 import { AdminShellFrame } from "../../components/admin/admin-shell";
 import {
@@ -15,6 +17,7 @@ import {
   type ChangelogDraft,
   type TagDraft,
 } from "../../components/admin/admin-types";
+import { BlogForm } from "../../components/admin/resource-forms/blog-form";
 
 const sampleData: AdminDashboardData = {
   categories: [
@@ -138,51 +141,101 @@ test("app admin layout remains a server component boundary", () => {
 test("AdminHomeView renders links to dedicated admin resource pages", () => {
   const html = renderToStaticMarkup(<AdminHomeView data={sampleData} />);
 
+  assert.match(html, /Operations overview/);
+  assert.match(html, /Quick access/);
   assert.match(html, /href="\/admin\/posts"/);
   assert.match(html, /href="\/admin\/categories"/);
   assert.match(html, /href="\/admin\/tags"/);
   assert.match(html, /href="\/admin\/changelog"/);
+  assert.match(html, /Admin post/);
+  assert.match(html, /1 published post/);
   assert.doesNotMatch(html, /<textarea/);
 });
 
-test("AdminResourceView renders only the selected posts editor", () => {
+test("Posts admin route source remains wired to the shared resource page", () => {
+  const pageSource = readFileSync(
+    path.join(process.cwd(), "app/admin/posts/page.tsx"),
+    "utf8",
+  );
+
+  assert.match(pageSource, /AdminResourcePage/);
+  assert.match(pageSource, /resource="blogs"/);
+});
+
+test("Posts resource page renders table chrome with the blog drawer form", () => {
   const html = renderToStaticMarkup(
-    <AdminResourceView
-      data={sampleData}
-      resource="blogs"
-      title="Posts"
-      description="Manage posts"
-      selectedId="blog_1"
-      pending={false}
-      errorMessage=""
-      feedbackMessage=""
-      draft={
+    <AdminResourceTablePage
+      config={getAdminResourceConfig("blogs")}
+      drawerBody={
+        <BlogForm
+          canDelete={true}
+          categories={sampleData.categories}
+          draft={
+            {
+              title: "Admin post",
+              slug: "admin-post",
+              description: "A post used in the admin test",
+              cover: "",
+              content: "## Markdown body",
+              categoryId: "cat_1",
+              tagIds: ["tag_1"],
+              published: true,
+              publishedAt: "2026-04-19T08:00",
+              featured: false,
+            } satisfies BlogDraft
+          }
+          tags={sampleData.tags}
+          onDraftChange={() => {}}
+          onSubmit={() => {}}
+          onToggleTag={() => {}}
+        />
+      }
+      drawerMode="edit"
+      drawerOpen={true}
+      filterOptions={{
+        categoryId: [{ label: "Design", value: "cat_1" }],
+      }}
+      filterValues={{
+        categoryId: "cat_1",
+        featured: false,
+        published: true,
+        query: "admin",
+      }}
+      items={[
         {
+          id: "blog_1",
           title: "Admin post",
           slug: "admin-post",
-          description: "A post used in the admin test",
-          cover: "",
-          content: "## Markdown body",
-          categoryId: "cat_1",
-          tagIds: ["tag_1"],
-          published: true,
-          publishedAt: "2026-04-19T08:00",
+          category: "Design",
+          status: "Published",
           featured: false,
-        } satisfies BlogDraft
-      }
+          publishedAt: "2026-04-19",
+          updatedAt: "2026-04-19",
+        },
+      ]}
+      page={1}
+      pageSize={20}
+      pending={false}
+      resource="blogs"
+      selectedRowId="blog_1"
+      total={1}
+      onCloseDrawer={() => {}}
       onCreate={() => {}}
-      onDelete={() => {}}
-      onRefresh={() => {}}
-      onSelect={() => {}}
-      onSubmit={() => {}}
-      onDraftChange={() => {}}
-      onToggleBlogTag={() => {}}
+      onFilterChange={() => {}}
+      onPageChange={() => {}}
+      onPageSizeChange={() => {}}
+      onResetFilters={() => {}}
+      onRowClick={() => {}}
     />,
   );
 
+  assert.match(html, /Posts table/);
+  assert.match(html, /Edit post/);
   assert.match(html, /<textarea[^>]*name="content"/);
-  assert.doesNotMatch(html, /<textarea[^>]*name="changelogContent"/);
+  assert.match(html, /Save Post/);
+  assert.match(html, /Delete Post/);
   assert.match(html, /Published/);
+  assert.match(html, /Search posts by title or slug/);
 });
 
 test("AdminResourceView renders only the changelog editor on changelog pages", () => {
