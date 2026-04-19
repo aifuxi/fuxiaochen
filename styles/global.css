@@ -141,6 +141,42 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
 }
 
+@utility ui-admin-button {
+  @apply inline-flex items-center justify-center rounded-control border border-white/10 bg-surface-2 px-4 py-2 font-mono text-xs tracking-[0.18em] text-text-base uppercase transition-[border-color,background-color,color] duration-300 hover:border-brand/30 hover:bg-surface-3 hover:text-text-strong;
+}
+
+@utility ui-admin-button-primary {
+  @apply inline-flex items-center justify-center rounded-control border border-brand/20 bg-brand/12 px-4 py-2 font-mono text-xs tracking-[0.18em] text-brand-soft uppercase transition-[border-color,background-color,color] duration-300 hover:border-brand/40 hover:bg-brand/18 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+@utility ui-admin-button-danger {
+  @apply inline-flex items-center justify-center rounded-control border border-rose-300/15 bg-rose-500/8 px-4 py-2 font-mono text-xs tracking-[0.18em] text-rose-200 uppercase transition-[border-color,background-color,color] duration-300 hover:border-rose-300/30 hover:bg-rose-500/12 disabled:cursor-not-allowed disabled:opacity-60;
+}
+
+@utility ui-admin-chip {
+  @apply inline-flex items-center rounded-full border border-white/8 bg-surface-2 px-3 py-1.5 font-mono text-[0.68rem] tracking-[0.18em] text-text-soft uppercase transition-[border-color,background-color,color] duration-300;
+}
+
+@utility ui-admin-chip-active {
+  @apply border-brand/25 bg-brand/10 text-brand-soft;
+}
+
+@utility ui-admin-list-item {
+  @apply rounded-control border border-white/6 bg-transparent px-4 py-4 transition-[border-color,background-color,color] duration-300 hover:border-white/12 hover:bg-surface-2/70;
+}
+
+@utility ui-admin-list-item-active {
+  @apply border-brand/20 bg-surface-2;
+}
+
+@utility ui-admin-input {
+  @apply w-full rounded-control border border-white/8 bg-surface-2 px-4 py-3 text-sm text-text-strong transition-[border-color,box-shadow] duration-300 outline-none placeholder:text-text-muted focus:border-brand/35;
+}
+
+@utility ui-admin-textarea {
+  @apply min-h-[12rem] ui-admin-input resize-y leading-7;
+}
+
 .prose-editorial {
   color: var(--color-text-base);
 }
