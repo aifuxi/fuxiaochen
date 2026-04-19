@@ -184,6 +184,17 @@ test("Remaining admin resource routes stay wired to the shared resource page", (
   }
 });
 
+test("admin toolbar no longer advertises the removed search shortcut", () => {
+  const toolbarSource = readFileSync(
+    path.join(process.cwd(), "components/admin/admin-toolbar.tsx"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(toolbarSource, /Search admin/);
+  assert.doesNotMatch(toolbarSource, /Ctrl K/);
+  assert.doesNotMatch(toolbarSource, /ui-admin-toolbar-search/);
+});
+
 test("shared admin resource page stays on the table and drawer implementation", () => {
   const pageSource = readFileSync(
     path.join(process.cwd(), "components/admin/admin-resource-page.tsx"),

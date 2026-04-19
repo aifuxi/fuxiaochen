@@ -24,10 +24,10 @@ export interface CategoryRepository {
 
 const buildCategoryWhere = (query?: string) =>
   query
-    ? or(
+    ? (or(
         ilike(categories.name, `%${query}%`),
         ilike(categories.slug, `%${query}%`),
-      ) ?? undefined
+      ) ?? undefined)
     : undefined;
 
 const countCategories = async (where?: SQL<unknown>) => {
@@ -47,17 +47,30 @@ const categoryOrderByMap = {
   name: categories.name,
 } as const;
 
+export const categoryListOrderBy = [
+  desc(categories.createdAt),
+  desc(categories.id),
+] as const;
+
 const buildCategoryOrderBy = ({
   sortBy,
   sortDirection,
 }: Pick<CategoryListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "createdAt" && sortDirection === "desc") {
+    return categoryListOrderBy;
+  }
+
   const primaryOrder =
     sortDirection === "asc"
       ? asc(categoryOrderByMap[sortBy])
       : desc(categoryOrderByMap[sortBy]);
 
   if (sortBy === "name") {
-    return [primaryOrder, desc(categories.updatedAt), desc(categories.id)] as const;
+    return [
+      primaryOrder,
+      desc(categories.updatedAt),
+      desc(categories.id),
+    ] as const;
   }
 
   return [primaryOrder, desc(categories.id)] as const;
