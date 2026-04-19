@@ -22,6 +22,10 @@ export type AdminListParamsDefaults = Pick<
   sortBy?: string;
 };
 
+export type AdminListParamConstraints = {
+  sortKeys?: readonly string[];
+};
+
 export type AdminListMeta = {
   page: number;
   pageSize: number;
@@ -117,6 +121,7 @@ export type AdminResourceConfig = {
   columns: readonly AdminTableColumn[];
   searchableFields: readonly string[];
   filters: readonly AdminFilterConfig[];
+  sortKeys: readonly string[];
   defaultListParams: AdminListParamsDefaults;
   drawer: AdminResourceDrawerCopy;
   view: AdminResourceViewCopy;

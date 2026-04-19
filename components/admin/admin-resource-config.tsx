@@ -27,6 +27,7 @@ const resourceConfigs = {
       { key: "categoryId", label: "Category", kind: "select" },
       { key: "featured", label: "Featured", kind: "boolean" },
     ],
+    sortKeys: ["publishedAt", "updatedAt", "title"],
     defaultListParams: {
       page: 1,
       pageSize: 20,
@@ -67,6 +68,7 @@ const resourceConfigs = {
         placeholder: "Search categories by name or slug",
       },
     ],
+    sortKeys: ["createdAt", "updatedAt", "name"],
     defaultListParams: {
       page: 1,
       pageSize: 20,
@@ -107,6 +109,7 @@ const resourceConfigs = {
         placeholder: "Search tags by name or slug",
       },
     ],
+    sortKeys: ["createdAt", "updatedAt", "name"],
     defaultListParams: {
       page: 1,
       pageSize: 20,
@@ -148,6 +151,7 @@ const resourceConfigs = {
         placeholder: "Search changelog versions",
       },
     ],
+    sortKeys: ["releaseDate", "updatedAt"],
     defaultListParams: {
       page: 1,
       pageSize: 20,

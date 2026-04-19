@@ -6,7 +6,11 @@ import test from "node:test";
 
 import { AdminDataTable } from "../../components/admin/admin-data-table";
 import { getAdminResourceConfig } from "../../components/admin/admin-resource-config";
-import { AdminResourceDrawer } from "../../components/admin/admin-resource-drawer";
+import {
+  AdminResourceDrawer,
+  createAdminDrawerLifecycle,
+  handleAdminDrawerKeyDown,
+} from "../../components/admin/admin-resource-drawer";
 import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
 
 function findElement(
@@ -143,44 +147,152 @@ test("AdminResourceTablePage renders declared filter controls generically", () =
 });
 
 test("AdminResourceDrawer exposes dialog semantics and Escape dismissal", () => {
-  let closeCount = 0;
-  const tree = AdminResourceDrawer({
-    open: true,
-    title: "Edit post",
-    description: "Update metadata.",
-    children: <div>Drawer body</div>,
-    footer: <div>Drawer footer</div>,
-    onClose: () => {
-      closeCount += 1;
+  const html = renderToStaticMarkup(
+    <AdminResourceDrawer
+      description="Update metadata."
+      footer={<div>Drawer footer</div>}
+      open={true}
+      title="Edit post"
+      onClose={() => {}}
+    >
+      <div>Drawer body</div>
+    </AdminResourceDrawer>,
+  );
+
+  assert.match(html, /role="dialog"/);
+  assert.match(html, /aria-modal="true"/);
+  assert.match(html, /aria-labelledby=/);
+  assert.match(html, /aria-describedby=/);
+  assert.match(html, />Close</);
+});
+
+test("AdminResourceDrawer lifecycle manages focus, scroll lock, and focus restoration", () => {
+  let bodyOverflow = "auto";
+  const previouslyFocused = {
+    focusCalls: 0,
+    focus() {
+      this.focusCalls += 1;
     },
+  };
+  const initialTarget = {
+    focusCalls: 0,
+    focus() {
+      this.focusCalls += 1;
+    },
+  };
+  const ownerDocument = {
+    activeElement: previouslyFocused,
+    body: {
+      style: {
+        get overflow() {
+          return bodyOverflow;
+        },
+        set overflow(value: string) {
+          bodyOverflow = value;
+        },
+      },
+    },
+  };
+  const container = {
+    ownerDocument,
+    contains(target: unknown) {
+      return target === initialTarget;
+    },
+    querySelectorAll() {
+      return [initialTarget];
+    },
+  };
+
+  const cleanup = createAdminDrawerLifecycle({
+    container: container as never,
   });
 
-  const dialog = findElement(
-    tree,
-    (element) => element.props.role === "dialog",
+  cleanup();
+
+  assert.equal(bodyOverflow, "auto");
+  assert.equal(initialTarget.focusCalls, 1);
+  assert.equal(previouslyFocused.focusCalls, 1);
+});
+
+test("AdminResourceDrawer keyboard handler traps focus and closes on Escape", () => {
+  let closeCount = 0;
+  const first = {
+    focusCalls: 0,
+    focus() {
+      this.focusCalls += 1;
+    },
+  };
+  const last = {
+    focusCalls: 0,
+    focus() {
+      this.focusCalls += 1;
+    },
+  };
+  const container = {
+    contains(target: unknown) {
+      return target === first || target === last;
+    },
+    querySelectorAll() {
+      return [first, last];
+    },
+  };
+
+  let prevented = 0;
+  handleAdminDrawerKeyDown(
+    {
+      key: "Tab",
+      shiftKey: true,
+      target: first,
+      preventDefault() {
+        prevented += 1;
+      },
+    } as never,
+    {
+      container: container as never,
+      onClose: () => {
+        closeCount += 1;
+      },
+    },
   );
 
-  assert.ok(dialog);
-  assert.equal(dialog.props["aria-modal"], true);
-  assert.ok(dialog.props["aria-labelledby"]);
-  assert.ok(dialog.props["aria-describedby"]);
+  handleAdminDrawerKeyDown(
+    {
+      key: "Tab",
+      shiftKey: false,
+      target: last,
+      preventDefault() {
+        prevented += 1;
+      },
+    } as never,
+    {
+      container: container as never,
+      onClose: () => {
+        closeCount += 1;
+      },
+    },
+  );
 
-  dialog.props.onKeyDown({
-    key: "Escape",
-    preventDefault() {},
-  });
+  handleAdminDrawerKeyDown(
+    {
+      key: "Escape",
+      shiftKey: false,
+      target: first,
+      preventDefault() {
+        prevented += 1;
+      },
+    } as never,
+    {
+      container: container as never,
+      onClose: () => {
+        closeCount += 1;
+      },
+    },
+  );
 
+  assert.equal(prevented, 3);
+  assert.equal(first.focusCalls, 1);
+  assert.equal(last.focusCalls, 1);
   assert.equal(closeCount, 1);
-
-  const closeButton = findElement(
-    tree,
-    (element) =>
-      element.type === "button" &&
-      typeof element.props.onClick === "function" &&
-      element.props.autoFocus === true,
-  );
-
-  assert.ok(closeButton);
 });
 
 test("resource configs expose typed filters for reusable table pages", () => {

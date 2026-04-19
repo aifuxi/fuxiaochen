@@ -1,7 +1,10 @@
+import { getAdminResourceConfig } from "./admin-resource-config";
 import type {
+  AdminListParamConstraints,
   AdminListParams,
   AdminListParamsDefaults,
   AdminSortDirection,
+  ResourceSection,
 } from "./admin-types";
 
 const DEFAULT_PAGE = 1;
@@ -89,11 +92,35 @@ function parseOptionalBoolean(value: string | boolean | null | undefined) {
   return undefined;
 }
 
+function normalizeSortBy(
+  value: string | undefined,
+  fallback: string | undefined,
+  constraints: AdminListParamConstraints,
+) {
+  const normalizedValue = normalizeOptionalString(value);
+  const sortKeys = constraints.sortKeys;
+
+  if (!sortKeys || sortKeys.length === 0) {
+    return normalizedValue ?? fallback;
+  }
+
+  if (normalizedValue && sortKeys.includes(normalizedValue)) {
+    return normalizedValue;
+  }
+
+  if (fallback && sortKeys.includes(fallback)) {
+    return fallback;
+  }
+
+  return sortKeys[0];
+}
+
 export function normalizeAdminListParams(
   params: AdminListParamsInput,
   defaults: Partial<AdminListParamsDefaults> = {},
+  constraints: AdminListParamConstraints = {},
 ): AdminListParams {
-  const sortBy = normalizeOptionalString(params.sortBy) ?? defaults.sortBy;
+  const sortBy = normalizeSortBy(params.sortBy, defaults.sortBy, constraints);
   const query = normalizeOptionalString(params.query);
   const categoryId = normalizeOptionalString(params.categoryId);
   const published = parseOptionalBoolean(params.published);
@@ -121,6 +148,7 @@ export function normalizeAdminListParams(
 export function parseAdminListParams(
   params: URLSearchParams,
   defaults: Partial<AdminListParamsDefaults> = {},
+  constraints: AdminListParamConstraints = {},
 ): AdminListParams {
   return normalizeAdminListParams(
     {
@@ -136,14 +164,31 @@ export function parseAdminListParams(
       categoryId: params.get("categoryId") ?? undefined,
     },
     defaults,
+    constraints,
   );
+}
+
+export function parseAdminResourceListParams(
+  resource: ResourceSection,
+  params: URLSearchParams,
+) {
+  const config = getAdminResourceConfig(resource);
+
+  return parseAdminListParams(params, config.defaultListParams, {
+    sortKeys: config.sortKeys,
+  });
 }
 
 export function toAdminListSearchParams(
   params: Partial<AdminListParams>,
   defaults: Partial<AdminListParamsDefaults> = {},
+  constraints: AdminListParamConstraints = {},
 ) {
-  const normalizedParams = normalizeAdminListParams(params, defaults);
+  const normalizedParams = normalizeAdminListParams(
+    params,
+    defaults,
+    constraints,
+  );
   const searchParams = new URLSearchParams();
 
   searchParams.set("page", String(normalizedParams.page));
@@ -172,4 +217,15 @@ export function toAdminListSearchParams(
   }
 
   return searchParams;
+}
+
+export function toAdminResourceSearchParams(
+  resource: ResourceSection,
+  params: Partial<AdminListParams>,
+) {
+  const config = getAdminResourceConfig(resource);
+
+  return toAdminListSearchParams(params, config.defaultListParams, {
+    sortKeys: config.sortKeys,
+  });
 }
