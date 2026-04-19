@@ -36,18 +36,25 @@ const countChangelogs = async (where?: SQL<unknown>) => {
   return rows[0]?.total ?? 0;
 };
 
+export const changelogListOrderBy = [
+  sql`${changelogs.releaseDate} is null`,
+  desc(changelogs.releaseDate),
+  desc(changelogs.createdAt),
+  desc(changelogs.id),
+] as const;
+
 const buildChangelogOrderBy = ({
   sortBy,
   sortDirection,
 }: Pick<ChangelogListQuery, "sortBy" | "sortDirection">) => {
-  const releaseDateNullOrder = sql`${changelogs.releaseDate} is null`;
-
   if (sortBy === "releaseDate") {
+    if (sortDirection === "desc") {
+      return changelogListOrderBy;
+    }
+
     return [
-      releaseDateNullOrder,
-      sortDirection === "asc"
-        ? asc(changelogs.releaseDate)
-        : desc(changelogs.releaseDate),
+      sql`${changelogs.releaseDate} is null`,
+      asc(changelogs.releaseDate),
       desc(changelogs.createdAt),
       desc(changelogs.id),
     ] as const;

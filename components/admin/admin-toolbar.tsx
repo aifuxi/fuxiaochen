@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ArrowUpRight, Search } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import type { AdminPageContext } from "./admin-navigation";
 
@@ -31,14 +31,6 @@ export function AdminToolbar({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button type="button" className="ui-admin-toolbar-search">
-            <Search className="h-4 w-4" aria-hidden="true" />
-            <span>Search admin</span>
-            <span className="ui-admin-toolbar-kbd" aria-hidden="true">
-              Ctrl K
-            </span>
-          </button>
-
           <Link href="/" className="ui-admin-button">
             Open site
             <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

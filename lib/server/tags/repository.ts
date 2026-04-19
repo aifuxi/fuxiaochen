@@ -22,8 +22,8 @@ export interface TagRepository {
 
 const buildTagWhere = (query?: string) =>
   query
-    ? or(ilike(tags.name, `%${query}%`), ilike(tags.slug, `%${query}%`)) ??
-      undefined
+    ? (or(ilike(tags.name, `%${query}%`), ilike(tags.slug, `%${query}%`)) ??
+      undefined)
     : undefined;
 
 const countTags = async (where?: SQL<unknown>) => {
@@ -43,12 +43,20 @@ const tagOrderByMap = {
   name: tags.name,
 } as const;
 
+export const tagListOrderBy = [desc(tags.createdAt), desc(tags.id)] as const;
+
 const buildTagOrderBy = ({
   sortBy,
   sortDirection,
 }: Pick<TagListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "createdAt" && sortDirection === "desc") {
+    return tagListOrderBy;
+  }
+
   const primaryOrder =
-    sortDirection === "asc" ? asc(tagOrderByMap[sortBy]) : desc(tagOrderByMap[sortBy]);
+    sortDirection === "asc"
+      ? asc(tagOrderByMap[sortBy])
+      : desc(tagOrderByMap[sortBy]);
 
   if (sortBy === "name") {
     return [primaryOrder, desc(tags.updatedAt), desc(tags.id)] as const;
