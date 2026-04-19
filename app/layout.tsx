@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DM_Mono, Inter } from "next/font/google";
 import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -11,6 +12,17 @@ import { isProduction } from "@/lib/env";
 import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
 
 import "@/styles/global.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-dm-mono",
+  weight: ["400", "500"],
+});
 
 export const metadata: Metadata = {
   title: {
@@ -65,7 +77,9 @@ export default function RootLayout({
             />
           )}
       </head>
-      <body>
+      <body
+        className={`${inter.variable} ${dmMono.variable} bg-canvas font-sans text-text-strong antialiased`}
+      >
         <ModalProvider>{children}</ModalProvider>
         <Toaster richColors position="top-center" />
       </body>
