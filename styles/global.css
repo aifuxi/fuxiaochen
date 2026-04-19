@@ -177,6 +177,40 @@
   @apply min-h-[12rem] ui-admin-input resize-y leading-7;
 }
 
+@utility ui-admin-shell {
+  @apply min-h-[100dvh] bg-canvas text-text-strong lg:grid lg:grid-cols-[18rem_minmax(0,1fr)];
+}
+
+@utility ui-admin-sidebar {
+  @apply border-b border-white/6 bg-surface-1/92 backdrop-blur-xl lg:sticky lg:top-0 lg:h-[100dvh] lg:border-r lg:border-b-0;
+  box-shadow:
+    inset -1px 0 0 rgba(255, 255, 255, 0.04),
+    0 20px 40px rgba(0, 0, 0, 0.16);
+}
+
+@utility ui-admin-sidebar-link {
+  @apply flex items-center gap-3 rounded-panel border border-transparent px-3 py-3 text-text-base transition-[border-color,background-color,color,transform] duration-300 ease-out hover:border-white/8 hover:bg-surface-2/75 hover:text-text-strong active:scale-[0.99];
+}
+
+@utility ui-admin-sidebar-link-active {
+  @apply border-brand/20 bg-brand/8 text-brand-soft;
+}
+
+@utility ui-admin-toolbar {
+  @apply sticky top-0 z-30 border-b border-white/6 bg-canvas/86 backdrop-blur-xl;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 16px 30px rgba(0, 0, 0, 0.18);
+}
+
+@utility ui-admin-toolbar-search {
+  @apply inline-flex items-center gap-3 rounded-control border border-white/8 bg-surface-2/90 px-4 py-2.5 text-sm text-text-base transition-[border-color,background-color,color] duration-300 hover:border-brand/25 hover:bg-surface-3 hover:text-text-strong;
+}
+
+@utility ui-admin-toolbar-kbd {
+  @apply rounded-full border border-white/8 px-2 py-1 font-mono text-[0.68rem] tracking-[0.18em] text-text-muted uppercase;
+}
+
 .prose-editorial {
   color: var(--color-text-base);
 }

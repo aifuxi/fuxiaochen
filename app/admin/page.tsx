@@ -4,7 +4,8 @@ import { AdminHome } from "@/components/admin/admin-home";
 
 export const metadata: Metadata = {
   title: "Admin",
-  description: "Internal admin landing page for navigating content resources.",
+  description:
+    "Operations dashboard for content, taxonomy, and release admin workflows.",
 };
 
 export default function AdminPage() {

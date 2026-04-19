@@ -1,8 +1,11 @@
 import {
   and,
+  asc,
   desc,
   eq,
   inArray,
+  ilike,
+  or,
   sql,
   type SQL,
   type SQLWrapper,
@@ -11,6 +14,7 @@ import {
 import { db } from "@/lib/db";
 import type { Blog, Category, NewBlogTag } from "@/lib/db/schema";
 import { blogTags, blogs, categories, tags } from "@/lib/db/schema";
+import type { BlogListQuery } from "@/lib/server/blogs/dto";
 
 import type {
   BlogCategorySummary,
@@ -18,13 +22,6 @@ import type {
   BlogRepository,
   BlogTagSummary,
 } from "./service";
-
-const blogListOrderBy = [
-  sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
-  desc(blogs.publishedAt),
-  desc(blogs.createdAt),
-  desc(blogs.id),
-] as const;
 
 const toBlogCategory = (
   row: Pick<Category, "id" | "name" | "slug"> | null,
@@ -40,17 +37,24 @@ const toBlogCategory = (
   };
 };
 
+type BlogListFilters = Pick<
+  BlogListQuery,
+  "query" | "published" | "featured" | "categoryId"
+>;
+
 const buildFilters = ({
+  query,
   published,
   featured,
   categoryId,
-}: {
-  published?: boolean;
-  featured?: boolean;
-  categoryId?: string;
-}) => {
+}: BlogListFilters) => {
   const filters: SQLWrapper[] = [];
 
+  if (query) {
+    filters.push(
+      or(ilike(blogs.title, `%${query}%`), ilike(blogs.slug, `%${query}%`))!,
+    );
+  }
   if (published !== undefined) {
     filters.push(eq(blogs.published, published));
   }
@@ -62,6 +66,33 @@ const buildFilters = ({
   }
 
   return filters.length > 0 ? and(...filters) : undefined;
+};
+
+const buildBlogOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<BlogListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "publishedAt") {
+    return [
+      sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
+      sortDirection === "asc" ? asc(blogs.publishedAt) : desc(blogs.publishedAt),
+      desc(blogs.createdAt),
+      desc(blogs.id),
+    ] as const;
+  }
+
+  if (sortBy === "title") {
+    return [
+      sortDirection === "asc" ? asc(blogs.title) : desc(blogs.title),
+      desc(blogs.updatedAt),
+      desc(blogs.id),
+    ] as const;
+  }
+
+  return [
+    sortDirection === "asc" ? asc(blogs.updatedAt) : desc(blogs.updatedAt),
+    desc(blogs.id),
+  ] as const;
 };
 
 const countBlogs = async (where?: SQL<unknown>) => {
@@ -125,9 +156,19 @@ const attachRelations = async (
 };
 
 export const blogRepository: BlogRepository = {
-  async list({ page, pageSize, published, featured, categoryId }) {
+  async list({
+    page,
+    pageSize,
+    query,
+    published,
+    featured,
+    categoryId,
+    sortBy,
+    sortDirection,
+  }) {
     const offset = (page - 1) * pageSize;
     const where = buildFilters({
+      query,
       published,
       featured,
       categoryId,
@@ -146,7 +187,7 @@ export const blogRepository: BlogRepository = {
         .from(blogs)
         .leftJoin(categories, eq(blogs.categoryId, categories.id))
         .where(where)
-        .orderBy(...blogListOrderBy)
+        .orderBy(...buildBlogOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
       countBlogs(where),

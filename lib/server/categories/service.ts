@@ -2,6 +2,7 @@ import { generateCuid } from "@/lib/cuid";
 import type { Category } from "@/lib/db/schema";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import type { CategoryListQuery } from "@/lib/server/categories/dto";
 
 import { categoryRepository, type CategoryRepository } from "./repository";
 
@@ -20,7 +21,7 @@ export interface CreateCategoryInput {
 export type UpdateCategoryInput = Partial<CreateCategoryInput>;
 
 export interface CategoryService {
-  listCategories(query: { page: number; pageSize: number }): Promise<{
+  listCategories(query: CategoryListQuery): Promise<{
     items: Category[];
     total: number;
   }>;
