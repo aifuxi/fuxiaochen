@@ -25,24 +25,53 @@ export function AdminResourceDrawer({
     return null;
   }
 
+  const titleId = `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-title`;
+  const descriptionId = `${title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")}-description`;
+
   return (
     <div className="fixed inset-0 z-40 bg-canvas/72 backdrop-blur-sm">
-      <div className="ml-auto flex h-full w-full max-w-2xl flex-col border-l border-white/8 bg-surface-1/96 shadow-2xl">
+      <div
+        aria-describedby={description ? descriptionId : undefined}
+        aria-labelledby={titleId}
+        aria-modal={true}
+        className="ml-auto flex h-full w-full max-w-2xl flex-col border-l border-white/8 bg-surface-1/96 shadow-2xl"
+        role="dialog"
+        tabIndex={-1}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            onClose?.();
+          }
+        }}
+      >
         <header className="flex items-start justify-between gap-4 border-b border-white/8 px-6 py-5">
           <div className="space-y-2">
             <p className="ui-eyebrow">Resource Drawer</p>
-            <h2 className="text-2xl font-medium tracking-[-0.04em] text-text-strong">
+            <h2
+              className="text-2xl font-medium tracking-[-0.04em] text-text-strong"
+              id={titleId}
+            >
               {title}
             </h2>
             {description ? (
-              <p className="max-w-xl text-sm leading-6 text-text-soft">
+              <p
+                className="max-w-xl text-sm leading-6 text-text-soft"
+                id={descriptionId}
+              >
                 {description}
               </p>
             ) : null}
           </div>
 
           {onClose ? (
-            <button className="ui-admin-button" type="button" onClick={onClose}>
+            <button
+              autoFocus
+              className="ui-admin-button"
+              type="button"
+              onClick={onClose}
+            >
               <X className="size-3.5" />
               Close
             </button>

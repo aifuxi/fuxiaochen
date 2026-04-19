@@ -33,17 +33,32 @@ export type AdminResourceListResult<TItem> = {
   meta: AdminListMeta;
 };
 
-export type AdminTableRow = {
+type AdminRenderableTableCell = Exclude<ReactNode, boolean | null | undefined>;
+
+export type AdminTableCellValue =
+  | AdminRenderableTableCell
+  | boolean
+  | null
+  | undefined;
+
+export type AdminTableRow = Record<string, unknown> & {
   id: string;
-  [key: string]: ReactNode;
 };
 
-export type AdminTableColumn<TKey extends string = string> = {
+export type AdminTableColumn<
+  TItem extends AdminTableRow = AdminTableRow,
+  TKey extends string = string,
+> = {
   key: TKey;
   label: string;
   className?: string;
   headerClassName?: string;
+  render?: (item: TItem) => AdminTableCellValue;
 };
+
+export type AdminFilterKey = "query" | "published" | "featured" | "categoryId";
+
+export type AdminFilterValues = Pick<Partial<AdminListParams>, AdminFilterKey>;
 
 export type AdminFilterKind = "search" | "select" | "boolean";
 
@@ -52,13 +67,31 @@ export type AdminFilterOption = {
   value: string;
 };
 
-export type AdminFilterConfig = {
-  key: string;
+type AdminSearchFilterConfig = {
+  key: "query";
   label: string;
-  kind: AdminFilterKind;
+  kind: "search";
+  placeholder?: string;
+};
+
+type AdminBooleanFilterConfig = {
+  key: "published" | "featured";
+  label: string;
+  kind: "boolean";
+};
+
+type AdminSelectFilterConfig = {
+  key: "categoryId";
+  label: string;
+  kind: "select";
   placeholder?: string;
   options?: readonly AdminFilterOption[];
 };
+
+export type AdminFilterConfig =
+  | AdminSearchFilterConfig
+  | AdminBooleanFilterConfig
+  | AdminSelectFilterConfig;
 
 export type AdminResourceDrawerCopy = {
   createTitle: string;
