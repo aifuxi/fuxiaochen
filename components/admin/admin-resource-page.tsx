@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -68,6 +68,43 @@ const emptyBlogListMeta: AdminListMeta = {
   total: 0,
 };
 
+type ApplyAdminBlogListResultInput = {
+  blogs: BlogRecord[];
+  categories: CategoryRecord[];
+  currentDraft: DraftByResource["blogs"];
+  currentSelectedId: string | null;
+  meta: AdminListMeta;
+  tags: TagRecord[];
+};
+
+export function getCreateBlogDraft(categories: CategoryRecord[]) {
+  return {
+    ...emptyBlogDraft(),
+    categoryId: getDefaultBlogCategoryId(categories),
+  };
+}
+
+export function applyAdminBlogListResult({
+  blogs,
+  categories,
+  currentDraft,
+  currentSelectedId,
+  meta,
+  tags,
+}: ApplyAdminBlogListResultInput) {
+  return {
+    data: {
+      ...emptyData,
+      blogs,
+      categories,
+      tags,
+    } satisfies AdminDashboardData,
+    draft: normalizeBlogDraftCategory(currentDraft, categories),
+    listMeta: meta,
+    selectedId: currentSelectedId,
+  };
+}
+
 export function AdminResourcePage<TResource extends ResourceSection>({
   resource,
   title,
@@ -101,57 +138,17 @@ function AdminBlogResourcePage() {
   const [drawerMode, setDrawerMode] = useState<"create" | "edit">("create");
   const [errorMessage, setErrorMessage] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
+  const draftRef = useRef(draft);
+  const selectedIdRef = useRef(selectedId);
 
   const listParams = parseAdminResourceListParams(
     "blogs",
     new URLSearchParams(searchParams.toString()),
   );
   const listQuery = toAdminResourceSearchParams("blogs", listParams).toString();
-
-  async function loadBlogData(preferredId?: string | null) {
-    setLoading(true);
-
-    try {
-      const [blogsResult, categories, tags] = await Promise.all([
-        fetchAdminResourceList<BlogRecord>(
-          "/api/blogs",
-          new URLSearchParams(listQuery),
-        ),
-        fetchList<CategoryRecord>("/api/categories?page=1&pageSize=100"),
-        fetchList<TagRecord>("/api/tags?page=1&pageSize=100"),
-      ]);
-      const nextSelectedId =
-        preferredId === undefined ? selectedId : preferredId;
-      const nextSelectedBlog =
-        blogsResult.items.find((blog) => blog.id === nextSelectedId) ?? null;
-
-      setData((current) => ({
-        ...current,
-        blogs: blogsResult.items,
-        categories,
-        tags,
-      }));
-      setListMeta(blogsResult.meta);
-      setSelectedId(nextSelectedBlog?.id ?? null);
-      setErrorMessage("");
-
-      if (nextSelectedBlog) {
-        setDraft(buildBlogDraft(nextSelectedBlog));
-      } else if (drawerMode === "create") {
-        setDraft(emptyBlogDraft());
-      } else {
-        setDrawerMode("create");
-        setDrawerOpen(false);
-        setDraft(emptyBlogDraft());
-      }
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "后台数据加载失败",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
+  draftRef.current = draft;
+  selectedIdRef.current = selectedId;
 
   useEffect(() => {
     let cancelled = false;
@@ -173,28 +170,20 @@ function AdminBlogResourcePage() {
           return;
         }
 
-        const nextSelectedBlog =
-          blogsResult.items.find((blog) => blog.id === selectedId) ?? null;
-
-        setData((current) => ({
-          ...current,
+        const nextState = applyAdminBlogListResult({
           blogs: blogsResult.items,
           categories,
+          currentDraft: draftRef.current,
+          currentSelectedId: selectedIdRef.current,
+          meta: blogsResult.meta,
           tags,
-        }));
-        setListMeta(blogsResult.meta);
-        setSelectedId(nextSelectedBlog?.id ?? null);
-        setErrorMessage("");
+        });
 
-        if (nextSelectedBlog) {
-          setDraft(buildBlogDraft(nextSelectedBlog));
-        } else if (drawerMode === "create") {
-          setDraft(emptyBlogDraft());
-        } else {
-          setDrawerMode("create");
-          setDrawerOpen(false);
-          setDraft(emptyBlogDraft());
-        }
+        setData(nextState.data);
+        setDraft(nextState.draft);
+        setListMeta(nextState.listMeta);
+        setSelectedId(nextState.selectedId);
+        setErrorMessage("");
       } catch (error) {
         if (!cancelled) {
           setErrorMessage(
@@ -213,17 +202,7 @@ function AdminBlogResourcePage() {
     return () => {
       cancelled = true;
     };
-  }, [
-    drawerMode,
-    listParams.categoryId,
-    listParams.featured,
-    listParams.page,
-    listParams.pageSize,
-    listParams.published,
-    listParams.query,
-    listQuery,
-    selectedId,
-  ]);
+  }, [listQuery, reloadToken]);
 
   const rows = data.blogs.map((blog) => buildBlogTableRow(blog));
 
@@ -231,6 +210,10 @@ function AdminBlogResourcePage() {
     label: category.name,
     value: category.id,
   }));
+
+  const refreshBlogList = () => {
+    setReloadToken((current) => current + 1);
+  };
 
   const updateLocation = (nextParams: Partial<AdminListParams>) => {
     const nextSearchParams = toAdminResourceSearchParams("blogs", {
@@ -250,7 +233,7 @@ function AdminBlogResourcePage() {
     setSelectedId(null);
     setDrawerMode("create");
     setDrawerOpen(true);
-    setDraft(emptyBlogDraft());
+    setDraft(getCreateBlogDraft(data.categories));
     setErrorMessage("");
     setFeedbackMessage("");
   };
@@ -265,7 +248,9 @@ function AdminBlogResourcePage() {
     setSelectedId(selectedBlog.id);
     setDrawerMode("edit");
     setDrawerOpen(true);
-    setDraft(buildBlogDraft(selectedBlog));
+    setDraft(
+      normalizeBlogDraftCategory(buildBlogDraft(selectedBlog), data.categories),
+    );
     setFeedbackMessage("");
   };
 
@@ -288,10 +273,11 @@ function AdminBlogResourcePage() {
       });
       const saved = await parseResponse<{ id: string }>(response);
 
-      await loadBlogData(saved.id);
       setDrawerOpen(false);
       setDrawerMode("edit");
+      setSelectedId(saved.id);
       setFeedbackMessage(editing ? "保存成功。" : "创建成功。");
+      refreshBlogList();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存失败");
     } finally {
@@ -319,9 +305,9 @@ function AdminBlogResourcePage() {
       setDrawerMode("create");
       setDrawerOpen(false);
       setSelectedId(null);
-      setDraft(emptyBlogDraft());
-      await loadBlogData(null);
+      setDraft(getCreateBlogDraft(data.categories));
       setFeedbackMessage("删除成功。");
+      refreshBlogList();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "删除失败");
     } finally {
@@ -346,7 +332,7 @@ function AdminBlogResourcePage() {
           }}
           onDraftChange={(field, value) => {
             setDraft((current) => ({
-              ...current,
+              ...normalizeBlogDraftCategory(current, data.categories),
               [field]: value,
             }));
           }}
@@ -377,7 +363,7 @@ function AdminBlogResourcePage() {
           disabled={loading}
           type="button"
           onClick={() => {
-            void loadBlogData();
+            refreshBlogList();
           }}
         >
           Refresh
@@ -661,6 +647,28 @@ function buildBlogTableRow(blog: BlogRecord): BlogTableRow {
     featured: blog.featured,
     publishedAt: formatDateLabel(blog.publishedAt),
     updatedAt: formatDateLabel(blog.updatedAt),
+  };
+}
+
+function getDefaultBlogCategoryId(categories: CategoryRecord[]) {
+  return categories[0]?.id ?? "";
+}
+
+function normalizeBlogDraftCategory(
+  draft: DraftByResource["blogs"],
+  categories: CategoryRecord[],
+) {
+  if (categories.length === 0) {
+    return draft;
+  }
+
+  if (categories.some((category) => category.id === draft.categoryId)) {
+    return draft;
+  }
+
+  return {
+    ...draft,
+    categoryId: getDefaultBlogCategoryId(categories),
   };
 }
 

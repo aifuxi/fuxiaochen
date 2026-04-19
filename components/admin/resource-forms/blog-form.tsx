@@ -33,6 +33,9 @@ export function BlogForm({
   onSubmit,
   onDelete,
 }: BlogFormProps) {
+  const hasCategories = categories.length > 0;
+  const submitDisabled = pending || !hasCategories;
+
   return (
     <form
       className="space-y-5"
@@ -45,6 +48,7 @@ export function BlogForm({
         <FormField label="Title" name="title">
           <input
             className="ui-admin-input w-full px-4 py-3"
+            id="title"
             name="title"
             type="text"
             value={draft.title}
@@ -57,6 +61,7 @@ export function BlogForm({
         <FormField label="Slug" name="slug">
           <input
             className="ui-admin-input w-full px-4 py-3"
+            id="slug"
             name="slug"
             type="text"
             value={draft.slug}
@@ -70,6 +75,7 @@ export function BlogForm({
       <FormField label="Description" name="description">
         <input
           className="ui-admin-input w-full px-4 py-3"
+          id="description"
           name="description"
           type="text"
           value={draft.description}
@@ -82,6 +88,7 @@ export function BlogForm({
       <FormField label="Cover" name="cover">
         <input
           className="ui-admin-input w-full px-4 py-3"
+          id="cover"
           name="cover"
           type="text"
           value={draft.cover}
@@ -94,6 +101,7 @@ export function BlogForm({
       <FormField label="Content" name="content">
         <textarea
           className="min-h-72 ui-admin-input w-full resize-y px-4 py-3"
+          id="content"
           name="content"
           rows={14}
           value={draft.content}
@@ -107,24 +115,31 @@ export function BlogForm({
         <FormField label="Category" name="categoryId">
           <select
             className="ui-admin-input w-full px-4 py-3"
+            disabled={!hasCategories}
+            id="categoryId"
             name="categoryId"
             value={draft.categoryId}
             onChange={(event) => {
               onDraftChange("categoryId", event.target.value);
             }}
           >
-            <option value="">Uncategorized</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}
           </select>
+          {!hasCategories ? (
+            <p className="text-sm text-text-muted">
+              Create a category before saving posts.
+            </p>
+          ) : null}
         </FormField>
 
         <FormField label="Published At" name="publishedAt">
           <input
             className="ui-admin-input w-full px-4 py-3"
+            id="publishedAt"
             name="publishedAt"
             type="datetime-local"
             value={draft.publishedAt}
@@ -153,10 +168,12 @@ export function BlogForm({
                       "ui-admin-chip cursor-pointer",
                       checked && "ui-admin-chip-active",
                     )}
+                    htmlFor={`blog-tag-${tag.id}`}
                   >
                     <input
                       checked={checked}
                       className="sr-only"
+                      id={`blog-tag-${tag.id}`}
                       type="checkbox"
                       onChange={() => {
                         onToggleTag(tag.id);
@@ -174,37 +191,39 @@ export function BlogForm({
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        <label className="flex items-center justify-between rounded-control border border-white/8 bg-surface-2/80 px-4 py-3 text-sm text-text-soft">
-          <span>Published</span>
+        <div className="flex items-center justify-between rounded-control border border-white/8 bg-surface-2/80 px-4 py-3 text-sm text-text-soft">
+          <label htmlFor="published">Published</label>
           <input
             checked={draft.published}
             className="size-4 accent-brand"
+            id="published"
             name="published"
             type="checkbox"
             onChange={(event) => {
               onDraftChange("published", event.target.checked);
             }}
           />
-        </label>
+        </div>
 
-        <label className="flex items-center justify-between rounded-control border border-white/8 bg-surface-2/80 px-4 py-3 text-sm text-text-soft">
-          <span>Featured</span>
+        <div className="flex items-center justify-between rounded-control border border-white/8 bg-surface-2/80 px-4 py-3 text-sm text-text-soft">
+          <label htmlFor="featured">Featured</label>
           <input
             checked={draft.featured}
             className="size-4 accent-brand"
+            id="featured"
             name="featured"
             type="checkbox"
             onChange={(event) => {
               onDraftChange("featured", event.target.checked);
             }}
           />
-        </label>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/8 pt-4">
         <button
           className="ui-admin-button-primary"
-          disabled={pending}
+          disabled={submitDisabled}
           type="submit"
         >
           {pending ? "Saving..." : submitLabel}
