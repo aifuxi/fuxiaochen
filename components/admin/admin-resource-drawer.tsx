@@ -24,18 +24,18 @@ type FocusableLike = {
 };
 
 type DrawerDocumentLike = {
-  activeElement: FocusableLike | null;
+  activeElement: unknown;
   body: {
     style: {
       overflow: string;
     };
-  };
+  } | null;
 };
 
 type DrawerContainerLike = {
   focus: () => void;
   ownerDocument?: DrawerDocumentLike;
-  contains: (target: unknown) => boolean;
+  contains: (target: FocusableLike | null) => boolean;
   querySelectorAll: (selector: string) => ArrayLike<unknown>;
 };
 
@@ -79,24 +79,32 @@ export function handleAdminDrawerKeyDown(
   }
 
   const focusableElements = getAdminDrawerFocusableElements(container);
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
 
-  if (focusableElements.length === 0) {
+  if (!firstElement || !lastElement) {
     event.preventDefault();
     container.focus();
     return;
   }
 
-  const firstElement = focusableElements[0];
-  const lastElement = focusableElements[focusableElements.length - 1];
   const currentTarget = event.target;
 
-  if (event.shiftKey && currentTarget === firstElement) {
+  if (
+    event.shiftKey &&
+    isFocusableLike(currentTarget) &&
+    currentTarget === firstElement
+  ) {
     event.preventDefault();
     lastElement.focus();
     return;
   }
 
-  if (!event.shiftKey && currentTarget === lastElement) {
+  if (
+    !event.shiftKey &&
+    isFocusableLike(currentTarget) &&
+    currentTarget === lastElement
+  ) {
     event.preventDefault();
     firstElement.focus();
   }
@@ -109,7 +117,7 @@ export function createAdminDrawerLifecycle({
 }) {
   const ownerDocument = container.ownerDocument;
   const previousActiveElement = ownerDocument?.activeElement ?? null;
-  const previousOverflow = ownerDocument?.body.style.overflow ?? "";
+  const previousOverflow = ownerDocument?.body?.style.overflow ?? "";
   const focusableElements = getAdminDrawerFocusableElements(container);
   const initialFocusTarget = focusableElements[0] ?? container;
 
@@ -133,6 +141,28 @@ export function createAdminDrawerLifecycle({
   };
 }
 
+function toDrawerContainerLike(container: HTMLDivElement): DrawerContainerLike {
+  const ownerDocument = container.ownerDocument;
+
+  return {
+    focus: () => {
+      container.focus();
+    },
+    ownerDocument: ownerDocument
+      ? {
+          activeElement: ownerDocument.activeElement,
+          body: ownerDocument.body,
+        }
+      : undefined,
+    contains: (target) => {
+      return target instanceof Node ? container.contains(target) : false;
+    },
+    querySelectorAll: (selector) => {
+      return container.querySelectorAll(selector);
+    },
+  };
+}
+
 export function AdminResourceDrawer({
   open,
   title,
@@ -151,7 +181,7 @@ export function AdminResourceDrawer({
     }
 
     return createAdminDrawerLifecycle({
-      container: containerRef.current,
+      container: toDrawerContainerLike(containerRef.current),
     });
   }, [open]);
 
@@ -175,7 +205,7 @@ export function AdminResourceDrawer({
           }
 
           handleAdminDrawerKeyDown(event.nativeEvent, {
-            container: containerRef.current,
+            container: toDrawerContainerLike(containerRef.current),
             onClose,
           });
         }}

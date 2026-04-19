@@ -13,13 +13,22 @@ import {
 } from "../../components/admin/admin-resource-drawer";
 import { AdminResourceTablePage } from "../../components/admin/admin-resource-table-page";
 
-function findElement(
+type ElementWithChildrenProps = {
+  children?: ReactNode;
+};
+
+type InteractiveRowProps = ElementWithChildrenProps & {
+  onKeyDown?: (event: { key: string; preventDefault: () => void }) => void;
+  tabIndex?: number;
+};
+
+function findElement<TProps extends ElementWithChildrenProps>(
   node: ReactNode,
-  predicate: (element: ReactElement) => boolean,
-): ReactElement | null {
+  predicate: (element: ReactElement<TProps>) => boolean,
+): ReactElement<TProps> | null {
   if (Array.isArray(node)) {
     for (const child of node as ReactNode[]) {
-      const match = findElement(child, predicate);
+      const match = findElement<TProps>(child, predicate);
 
       if (match) {
         return match;
@@ -29,11 +38,11 @@ function findElement(
     return null;
   }
 
-  if (!isValidElement(node)) {
+  if (!isValidElement<TProps>(node)) {
     return null;
   }
 
-  const element = node as ReactElement<{ children?: ReactNode }>;
+  const element = node as ReactElement<TProps>;
 
   if (predicate(element)) {
     return element;
@@ -81,7 +90,7 @@ test("AdminDataTable renders boolean cells explicitly and exposes keyboard row a
     },
   });
 
-  const interactiveRow = findElement(
+  const interactiveRow = findElement<InteractiveRowProps>(
     tree,
     (element) =>
       element.type === "tr" &&
@@ -91,11 +100,11 @@ test("AdminDataTable renders boolean cells explicitly and exposes keyboard row a
 
   assert.ok(interactiveRow);
 
-  interactiveRow.props.onKeyDown({
+  interactiveRow.props.onKeyDown?.({
     key: "Enter",
     preventDefault() {},
   });
-  interactiveRow.props.onKeyDown({
+  interactiveRow.props.onKeyDown?.({
     key: " ",
     preventDefault() {},
   });
