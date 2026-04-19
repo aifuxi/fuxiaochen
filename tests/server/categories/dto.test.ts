@@ -55,7 +55,7 @@ test("categoryListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
-    sortBy: "updatedAt",
+    sortBy: "createdAt",
     sortDirection: "desc",
   });
 });
@@ -76,6 +76,18 @@ test("categoryListQuerySchema parses search and sort values", () => {
     sortBy: "name",
     sortDirection: "asc",
   });
+});
+
+test("categoryListQuerySchema normalizes empty query to undefined", () => {
+  const result = categoryListQuerySchema.parse({
+    query: "",
+  });
+
+  assert.equal(result.query, undefined);
+  assert.equal(result.page, 1);
+  assert.equal(result.pageSize, 20);
+  assert.equal(result.sortBy, "createdAt");
+  assert.equal(result.sortDirection, "desc");
 });
 
 test("categoryListQuerySchema rejects oversized pageSize", () => {

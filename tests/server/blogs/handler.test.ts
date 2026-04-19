@@ -146,6 +146,37 @@ test("handleListBlogs normalizes invalid query validation errors", async () => {
   ]);
 });
 
+test("handleListBlogs normalizes an empty query string to no filter", async () => {
+  const queries: Array<Parameters<BlogService["listBlogs"]>[0]> = [];
+  const response = await createBlogHandlers({
+    service: createService({
+      async listBlogs(query) {
+        queries.push(query);
+        return {
+          items: [],
+          total: 0,
+        };
+      },
+    }),
+  }).handleListBlogs(
+    new Request("http://localhost/api/blogs?page=1&pageSize=10&query="),
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(queries, [
+    {
+      page: 1,
+      pageSize: 10,
+      query: undefined,
+      published: undefined,
+      featured: undefined,
+      categoryId: undefined,
+      sortBy: "publishedAt",
+      sortDirection: "desc",
+    },
+  ]);
+});
+
 test("handleCreateBlog returns a 400-level response for malformed JSON bodies", async () => {
   const request = new Request("http://localhost/api/blogs", {
     method: "POST",

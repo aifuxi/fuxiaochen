@@ -55,7 +55,7 @@ test("tagListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
-    sortBy: "updatedAt",
+    sortBy: "createdAt",
     sortDirection: "desc",
   });
 });
@@ -76,6 +76,18 @@ test("tagListQuerySchema parses search and sort values", () => {
     sortBy: "name",
     sortDirection: "asc",
   });
+});
+
+test("tagListQuerySchema normalizes empty query to undefined", () => {
+  const result = tagListQuerySchema.parse({
+    query: "",
+  });
+
+  assert.equal(result.query, undefined);
+  assert.equal(result.page, 1);
+  assert.equal(result.pageSize, 20);
+  assert.equal(result.sortBy, "createdAt");
+  assert.equal(result.sortDirection, "desc");
 });
 
 test("tagListQuerySchema rejects oversized page sizes", () => {

@@ -118,6 +118,18 @@ test("blogListQuerySchema parses keyword, filters, and sort options", () => {
   });
 });
 
+test("blogListQuerySchema normalizes empty query to undefined", () => {
+  const result = blogListQuerySchema.parse({
+    query: "",
+  });
+
+  assert.equal(result.query, undefined);
+  assert.equal(result.page, 1);
+  assert.equal(result.pageSize, 20);
+  assert.equal(result.sortBy, "publishedAt");
+  assert.equal(result.sortDirection, "desc");
+});
+
 test("blogListQuerySchema rejects oversized pageSize", () => {
   const result = blogListQuerySchema.safeParse({
     pageSize: "101",

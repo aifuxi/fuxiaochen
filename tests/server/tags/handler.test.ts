@@ -65,6 +65,34 @@ test("handleListTags forwards query and sort params to the service", async () =>
   ]);
 });
 
+test("handleListTags normalizes an empty query string to no filter", async () => {
+  const queries: Array<Parameters<TagService["listTags"]>[0]> = [];
+  const response = await createTagHandlers({
+    service: createService({
+      async listTags(query) {
+        queries.push(query);
+        return {
+          items: [],
+          total: 0,
+        };
+      },
+    }),
+  }).handleListTags(
+    new Request("http://localhost/api/tags?page=1&pageSize=20&query="),
+  );
+
+  assert.equal(response.status, 200);
+  assert.deepEqual(queries, [
+    {
+      page: 1,
+      pageSize: 20,
+      query: undefined,
+      sortBy: "createdAt",
+      sortDirection: "desc",
+    },
+  ]);
+});
+
 test("handleCreateTag returns a 400-level response for malformed JSON bodies", async () => {
   const request = new Request("http://localhost/api/tags", {
     method: "POST",

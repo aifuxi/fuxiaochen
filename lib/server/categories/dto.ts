@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 const nonEmptyString = z.string().trim().min(1);
+const optionalSearchQuery = z.preprocess(
+  (value) =>
+    typeof value === "string" && value.trim().length === 0 ? undefined : value,
+  nonEmptyString.optional(),
+);
 const sortDirectionSchema = z.enum(["asc", "desc"]);
 const categorySortBySchema = z.enum(["createdAt", "updatedAt", "name"]);
 
@@ -23,8 +28,8 @@ export const categoryIdParamsSchema = z.object({
 export const categoryListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
-  query: nonEmptyString.optional(),
-  sortBy: categorySortBySchema.default("updatedAt"),
+  query: optionalSearchQuery,
+  sortBy: categorySortBySchema.default("createdAt"),
   sortDirection: sortDirectionSchema.default("desc"),
 });
 
