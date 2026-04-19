@@ -35,10 +35,21 @@ function parsePositiveInteger(
   fallback: number,
   max?: number,
 ) {
-  const numericValue =
-    typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+  let numericValue: number;
 
-  if (!Number.isFinite(numericValue) || numericValue < 1) {
+  if (typeof value === "number") {
+    numericValue = value;
+  } else {
+    const normalizedValue = normalizeOptionalString(value);
+
+    if (!normalizedValue || !/^\d+$/.test(normalizedValue)) {
+      return fallback;
+    }
+
+    numericValue = Number(normalizedValue);
+  }
+
+  if (!Number.isInteger(numericValue) || numericValue < 1) {
     return fallback;
   }
 
@@ -61,7 +72,7 @@ function parseOptionalBoolean(value: string | boolean | null | undefined) {
     return value;
   }
 
-  const normalizedValue = normalizeOptionalString(value);
+  const normalizedValue = normalizeOptionalString(value)?.toLowerCase();
 
   if (!normalizedValue) {
     return undefined;

@@ -43,6 +43,28 @@ test("parseAdminListParams falls back to defaults and drops blank optional value
   );
 });
 
+test("parseAdminListParams rejects malformed numeric values instead of truncating them", () => {
+  const params = new URLSearchParams("page=1foo&pageSize=1.5");
+
+  assert.deepEqual(parseAdminListParams(params), {
+    page: 1,
+    pageSize: 20,
+    sortDirection: "desc",
+  });
+});
+
+test("parseAdminListParams normalizes uppercase boolean values like the server DTOs", () => {
+  const params = new URLSearchParams("published=TRUE&featured=FALSE");
+
+  assert.deepEqual(parseAdminListParams(params), {
+    page: 1,
+    pageSize: 20,
+    sortDirection: "desc",
+    published: true,
+    featured: false,
+  });
+});
+
 test("toAdminListSearchParams serializes only normalized values", () => {
   const params = toAdminListSearchParams({
     page: 2,

@@ -8,6 +8,9 @@ import { AdminPagination } from "./admin-pagination";
 import { getAdminResourceConfig } from "./admin-resource-config";
 import { AdminResourceDrawer } from "./admin-resource-drawer";
 import type {
+  AdminFilterKey,
+  AdminFilterOption,
+  AdminFilterValues,
   AdminResourceConfig,
   AdminTableRow,
   ResourceSection,
@@ -19,7 +22,8 @@ type AdminResourceTablePageProps<TItem extends AdminTableRow> = {
   page: number;
   pageSize: number;
   total: number;
-  query?: string;
+  filterValues?: AdminFilterValues;
+  filterOptions?: Partial<Record<AdminFilterKey, readonly AdminFilterOption[]>>;
   selectedRowId?: string | null;
   loading?: boolean;
   pending?: boolean;
@@ -37,7 +41,10 @@ type AdminResourceTablePageProps<TItem extends AdminTableRow> = {
   onCloseDrawer?: () => void;
   onPageChange?: (page: number) => void;
   onPageSizeChange?: (pageSize: number) => void;
-  onQueryChange?: (query: string) => void;
+  onFilterChange?: (
+    key: AdminFilterKey,
+    value: string | boolean | undefined,
+  ) => void;
   onResetFilters?: () => void;
   onRowClick?: (item: TItem) => void;
 };
@@ -48,7 +55,8 @@ export function AdminResourceTablePage<TItem extends AdminTableRow>({
   page,
   pageSize,
   total,
-  query = "",
+  filterValues,
+  filterOptions,
   selectedRowId,
   loading = false,
   pending = false,
@@ -66,14 +74,11 @@ export function AdminResourceTablePage<TItem extends AdminTableRow>({
   onCloseDrawer,
   onPageChange,
   onPageSizeChange,
-  onQueryChange,
+  onFilterChange,
   onResetFilters,
   onRowClick,
 }: AdminResourceTablePageProps<TItem>) {
   const config = providedConfig ?? getAdminResourceConfig(resource);
-  const searchFilter = config.filters.find(
-    (filter) => filter.kind === "search",
-  );
   const drawerTitle =
     drawerMode === "edit" ? config.drawer.editTitle : config.drawer.createTitle;
 
@@ -114,10 +119,11 @@ export function AdminResourceTablePage<TItem extends AdminTableRow>({
 
       <AdminFilterBar
         actions={filterActions}
-        query={query}
-        queryPlaceholder={searchFilter?.placeholder ?? `Search ${config.title}`}
+        filterOptions={filterOptions}
+        filters={config.filters}
         summary={`${total} total records`}
-        onQueryChange={onQueryChange}
+        values={filterValues}
+        onFilterChange={onFilterChange}
         onReset={onResetFilters}
       >
         {filterContent}

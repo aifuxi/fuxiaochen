@@ -1,19 +1,47 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { isValidElement, type ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-import type { AdminTableColumn, AdminTableRow } from "./admin-types";
+import type {
+  AdminTableCellValue,
+  AdminTableColumn,
+  AdminTableRow,
+} from "./admin-types";
 
 type AdminDataTableProps<TItem extends AdminTableRow> = {
-  columns: readonly AdminTableColumn[];
+  columns: readonly AdminTableColumn<TItem>[];
   items: readonly TItem[];
   emptyState?: ReactNode;
   selectedRowId?: string | null;
   caption?: string;
   onRowClick?: (item: TItem) => void;
 };
+
+function renderCellValue(value: AdminTableCellValue | undefined) {
+  if (typeof value === "boolean") {
+    return <span className="ui-admin-chip">{value ? "True" : "False"}</span>;
+  }
+
+  if (value === null || value === undefined || value === "") {
+    return "—";
+  }
+
+  if (isValidElement(value)) {
+    return value;
+  }
+
+  if (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "bigint"
+  ) {
+    return value;
+  }
+
+  return "—";
+}
 
 export function AdminDataTable<TItem extends AdminTableRow>({
   columns,
@@ -58,8 +86,20 @@ export function AdminDataTable<TItem extends AdminTableRow>({
                       interactive && "cursor-pointer hover:bg-surface-2/65",
                       selectedRowId === item.id && "bg-brand/8",
                     )}
+                    role={interactive ? "button" : undefined}
+                    tabIndex={interactive ? 0 : undefined}
                     onClick={() => {
                       onRowClick?.(item);
+                    }}
+                    onKeyDown={(event) => {
+                      if (!interactive) {
+                        return;
+                      }
+
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        onRowClick?.(item);
+                      }
                     }}
                   >
                     {columns.map((column) => (
@@ -70,7 +110,13 @@ export function AdminDataTable<TItem extends AdminTableRow>({
                           column.className,
                         )}
                       >
-                        {item[column.key] ?? "—"}
+                        {renderCellValue(
+                          column.render
+                            ? column.render(item)
+                            : (item[column.key] as
+                                | AdminTableCellValue
+                                | undefined),
+                        )}
                       </td>
                     ))}
                   </tr>
