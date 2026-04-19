@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 const nonEmptyString = z.string().trim().min(1);
+const sortDirectionSchema = z.enum(["asc", "desc"]);
+const changelogSortBySchema = z.enum(["releaseDate", "updatedAt", "version"]);
 const isoDateString = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -31,6 +33,9 @@ export const changelogIdParamsSchema = z.object({
 export const changelogListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
+  query: nonEmptyString.optional(),
+  sortBy: changelogSortBySchema.default("releaseDate"),
+  sortDirection: sortDirectionSchema.default("desc"),
 });
 
 export type ChangelogCreateInput = z.infer<typeof changelogCreateSchema>;

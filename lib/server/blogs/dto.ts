@@ -21,6 +21,8 @@ const dateLikeSchema = z
 const optionalBoolean = booleanLikeSchema.optional();
 const optionalDate = dateLikeSchema.nullable().optional();
 const optionalTagIds = z.array(nonEmptyString).optional();
+const sortDirectionSchema = z.enum(["asc", "desc"]);
+const blogSortBySchema = z.enum(["publishedAt", "updatedAt", "title"]);
 
 const blogMutationFields = {
   title: nonEmptyString,
@@ -59,9 +61,12 @@ export const blogIdParamsSchema = z.object({
 export const blogListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
+  query: nonEmptyString.optional(),
   published: optionalBoolean,
   featured: optionalBoolean,
   categoryId: nonEmptyString.optional(),
+  sortBy: blogSortBySchema.default("publishedAt"),
+  sortDirection: sortDirectionSchema.default("desc"),
 });
 
 export type BlogCreateInput = z.infer<typeof blogCreateSchema>;

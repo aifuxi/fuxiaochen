@@ -1,11 +1,12 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import type { Category, NewCategory } from "@/lib/db/schema";
 import { categories } from "@/lib/db/schema";
+import type { CategoryListQuery } from "@/lib/server/categories/dto";
 
 export interface CategoryRepository {
-  list(query: { page: number; pageSize: number }): Promise<{
+  list(query: CategoryListQuery): Promise<{
     items: Category[];
     total: number;
   }>;
@@ -21,32 +22,60 @@ export interface CategoryRepository {
   delete(id: string): Promise<boolean>;
 }
 
-const countCategories = async () => {
+const buildCategoryWhere = (query?: string) =>
+  query
+    ? or(
+        ilike(categories.name, `%${query}%`),
+        ilike(categories.slug, `%${query}%`),
+      ) ?? undefined
+    : undefined;
+
+const countCategories = async (where?: SQL<unknown>) => {
   const rows = await db
     .select({
       total: sql<number>`count(*)`.mapWith(Number),
     })
-    .from(categories);
+    .from(categories)
+    .where(where);
 
   return rows[0]?.total ?? 0;
 };
 
-export const categoryListOrderBy = [
-  desc(categories.createdAt),
-  desc(categories.id),
-] as const;
+const categoryOrderByMap = {
+  createdAt: categories.createdAt,
+  updatedAt: categories.updatedAt,
+  name: categories.name,
+} as const;
+
+const buildCategoryOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<CategoryListQuery, "sortBy" | "sortDirection">) => {
+  const primaryOrder =
+    sortDirection === "asc"
+      ? asc(categoryOrderByMap[sortBy])
+      : desc(categoryOrderByMap[sortBy]);
+
+  if (sortBy === "name") {
+    return [primaryOrder, desc(categories.updatedAt), desc(categories.id)] as const;
+  }
+
+  return [primaryOrder, desc(categories.id)] as const;
+};
 
 export const categoryRepository: CategoryRepository = {
-  async list({ page, pageSize }) {
+  async list({ page, pageSize, query, sortBy, sortDirection }) {
     const offset = (page - 1) * pageSize;
+    const where = buildCategoryWhere(query);
     const [items, total] = await Promise.all([
       db
         .select()
         .from(categories)
-        .orderBy(...categoryListOrderBy)
+        .where(where)
+        .orderBy(...buildCategoryOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
-      countCategories(),
+      countCategories(where),
     ]);
 
     return { items, total };

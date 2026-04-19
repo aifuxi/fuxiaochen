@@ -48,9 +48,12 @@ export function createBlogHandlers({
         const query = blogListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
           pageSize: url.searchParams.get("pageSize") ?? undefined,
+          query: url.searchParams.get("query") ?? undefined,
           published: url.searchParams.get("published") ?? undefined,
           featured: url.searchParams.get("featured") ?? undefined,
           categoryId: url.searchParams.get("categoryId") ?? undefined,
+          sortBy: url.searchParams.get("sortBy") ?? undefined,
+          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
         const result = await service.listBlogs(query);
 

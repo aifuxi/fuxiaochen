@@ -81,6 +81,26 @@ test("changelogListQuerySchema applies pagination defaults", () => {
   assert.deepEqual(result, {
     page: 1,
     pageSize: 20,
+    sortBy: "releaseDate",
+    sortDirection: "desc",
+  });
+});
+
+test("changelogListQuerySchema parses search and sort values", () => {
+  const result = changelogListQuerySchema.parse({
+    page: "2",
+    pageSize: "30",
+    query: "1.0",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
+  });
+
+  assert.deepEqual(result, {
+    page: 2,
+    pageSize: 30,
+    query: "1.0",
+    sortBy: "updatedAt",
+    sortDirection: "asc",
   });
 });
 

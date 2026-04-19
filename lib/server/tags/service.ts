@@ -2,6 +2,7 @@ import { generateCuid } from "@/lib/cuid";
 import type { Tag } from "@/lib/db/schema";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import type { TagListQuery } from "@/lib/server/tags/dto";
 
 import { tagRepository, type TagRepository } from "./repository";
 
@@ -20,7 +21,7 @@ export interface CreateTagInput {
 export type UpdateTagInput = Partial<CreateTagInput>;
 
 export interface TagService {
-  listTags(query: { page: number; pageSize: number }): Promise<{
+  listTags(query: TagListQuery): Promise<{
     items: Tag[];
     total: number;
   }>;

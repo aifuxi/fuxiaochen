@@ -2,6 +2,7 @@ import { generateCuid } from "@/lib/cuid";
 import type { Changelog } from "@/lib/db/schema";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import type { ChangelogListQuery } from "@/lib/server/changelogs/dto";
 
 import { changelogRepository, type ChangelogRepository } from "./repository";
 
@@ -20,7 +21,7 @@ export interface CreateChangelogInput {
 export type UpdateChangelogInput = Partial<CreateChangelogInput>;
 
 export interface ChangelogService {
-  listChangelogs(query: { page: number; pageSize: number }): Promise<{
+  listChangelogs(query: ChangelogListQuery): Promise<{
     items: Changelog[];
     total: number;
   }>;
