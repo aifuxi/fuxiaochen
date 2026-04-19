@@ -10,7 +10,6 @@ import {
   emptyBlogDraft,
   emptyData,
   fetchAdminResourceList,
-  fetchDashboardData,
   fetchList,
   getDraftForResource,
   getEmptyDraft,
@@ -23,18 +22,21 @@ import {
 } from "./admin-query-state";
 import { getAdminResourceConfig } from "./admin-resource-config";
 import { AdminResourceTablePage } from "./admin-resource-table-page";
-import { AdminResourceView } from "./admin-resource-view";
 import type {
   AdminDashboardData,
   AdminListMeta,
   AdminListParams,
   BlogRecord,
   CategoryRecord,
+  ChangelogRecord,
   DraftByResource,
   ResourceSection,
   TagRecord,
 } from "./admin-types";
 import { BlogForm } from "./resource-forms/blog-form";
+import { CategoryForm } from "./resource-forms/category-form";
+import { ChangelogForm } from "./resource-forms/changelog-form";
+import { TagForm } from "./resource-forms/tag-form";
 
 const apiPathByResource = {
   categories: "categories",
@@ -44,6 +46,8 @@ const apiPathByResource = {
 } as const;
 
 const blogConfig = getAdminResourceConfig("blogs");
+type DrawerMode = "create" | "edit";
+type LightweightResource = Exclude<ResourceSection, "blogs">;
 
 type AdminResourcePageProps<TResource extends ResourceSection> = {
   resource: TResource;
@@ -59,6 +63,30 @@ type BlogTableRow = {
   status: string;
   featured: boolean;
   publishedAt: string;
+  updatedAt: string;
+};
+
+type CategoryTableRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  updatedAt: string;
+};
+
+type TagTableRow = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  updatedAt: string;
+};
+
+type ChangelogTableRow = {
+  id: string;
+  version: string;
+  releaseDate: string;
+  contentPreview: string;
   updatedAt: string;
 };
 
@@ -115,7 +143,7 @@ export function AdminResourcePage<TResource extends ResourceSection>({
   }
 
   return (
-    <LegacyAdminResourcePage
+    <AdminLightweightResourcePage
       description={description}
       resource={resource}
       title={title}
@@ -416,72 +444,73 @@ function AdminBlogResourcePage() {
   );
 }
 
-function LegacyAdminResourcePage<TResource extends ResourceSection>({
+function AdminLightweightResourcePage<TResource extends LightweightResource>({
   resource,
-  title,
-  description,
 }: AdminResourcePageProps<TResource>) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const config = getAdminResourceConfig(resource);
+
   const [data, setData] = useState<AdminDashboardData>(emptyData);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<DraftByResource[TResource]>(
     getEmptyDraft(resource) as DraftByResource[TResource],
   );
+  const [listMeta, setListMeta] = useState<AdminListMeta>({
+    page: config.defaultListParams.page,
+    pageSize: config.defaultListParams.pageSize,
+    total: 0,
+  });
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<DrawerMode>("create");
   const [errorMessage, setErrorMessage] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [reloadToken, setReloadToken] = useState(0);
+  const draftRef = useRef(draft);
+  const selectedIdRef = useRef(selectedId);
 
-  async function loadData(preferredId?: string | null) {
-    setLoading(true);
-
-    try {
-      const nextData = await fetchDashboardData();
-      const items = nextData[resource] as Array<{ id: string }>;
-      const nextSelectedId = pickSelectedId(items, preferredId ?? selectedId);
-
-      setData(nextData);
-      setSelectedId(nextSelectedId);
-      setDraft(
-        getDraftForResource(
-          nextData,
-          resource,
-          nextSelectedId,
-        ) as DraftByResource[TResource],
-      );
-      setErrorMessage("");
-    } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "后台数据加载失败",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }
+  const listParams = parseAdminResourceListParams(
+    resource,
+    new URLSearchParams(searchParams.toString()),
+  );
+  const listQuery = toAdminResourceSearchParams(
+    resource,
+    listParams,
+  ).toString();
+  draftRef.current = draft;
+  selectedIdRef.current = selectedId;
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadInitialData() {
+    async function loadCurrentPage() {
+      setLoading(true);
+
       try {
-        const nextData = await fetchDashboardData();
+        const result = await fetchLightweightResourcePageData(
+          resource,
+          new URLSearchParams(listQuery),
+        );
 
         if (cancelled) {
           return;
         }
 
-        const nextSelectedId = pickSelectedId(
-          nextData[resource] as Array<{ id: string }>,
-          null,
-        );
-        setData(nextData);
-        setSelectedId(nextSelectedId);
-        setDraft(
-          getDraftForResource(
-            nextData,
-            resource,
-            nextSelectedId,
-          ) as DraftByResource[TResource],
-        );
+        const nextState = applyAdminLightweightListResult({
+          currentDraft: draftRef.current,
+          currentSelectedId: selectedIdRef.current,
+          data: result.data,
+          meta: result.meta,
+          resource,
+        });
+
+        setData(nextState.data);
+        setDraft(nextState.draft);
+        setListMeta(nextState.listMeta);
+        setSelectedId(nextState.selectedId);
         setErrorMessage("");
       } catch (error) {
         if (!cancelled) {
@@ -496,51 +525,52 @@ function LegacyAdminResourcePage<TResource extends ResourceSection>({
       }
     }
 
-    void loadInitialData();
+    void loadCurrentPage();
 
     return () => {
       cancelled = true;
     };
-  }, [resource]);
+  }, [listQuery, reloadToken, resource]);
+
+  const rows = buildLightweightTableRows(resource, data);
+
+  const refreshList = () => {
+    setReloadToken((current) => current + 1);
+  };
+
+  const updateLocation = (nextParams: Partial<AdminListParams>) => {
+    const nextSearchParams = toAdminResourceSearchParams(resource, {
+      ...listParams,
+      ...nextParams,
+    });
+    const query = nextSearchParams.toString();
+
+    startTransition(() => {
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
+    });
+  };
 
   const handleCreate = () => {
     setSelectedId(null);
+    setDrawerMode("create");
+    setDrawerOpen(true);
     setDraft(getEmptyDraft(resource) as DraftByResource[TResource]);
     setErrorMessage("");
     setFeedbackMessage("");
   };
 
-  const handleSelect = (id: string) => {
-    setSelectedId(id);
+  const handleRowClick = (
+    row: CategoryTableRow | TagTableRow | ChangelogTableRow,
+  ) => {
+    setSelectedId(row.id);
+    setDrawerMode("edit");
+    setDrawerOpen(true);
     setDraft(
-      getDraftForResource(data, resource, id) as DraftByResource[TResource],
+      getDraftForResource(data, resource, row.id) as DraftByResource[TResource],
     );
     setFeedbackMessage("");
-  };
-
-  const handleDraftChange = (field: string, value: string | boolean) => {
-    setDraft((current) => ({
-      ...current,
-      [field]: value,
-    }));
-  };
-
-  const handleToggleBlogTag = (tagId: string) => {
-    if (resource !== "blogs") {
-      return;
-    }
-
-    setDraft((current) => {
-      const blogDraft = current as DraftByResource["blogs"];
-      const exists = blogDraft.tagIds.includes(tagId);
-
-      return {
-        ...blogDraft,
-        tagIds: exists
-          ? blogDraft.tagIds.filter((id) => id !== tagId)
-          : [...blogDraft.tagIds, tagId],
-      } as DraftByResource[TResource];
-    });
   };
 
   const handleSubmit = async () => {
@@ -549,9 +579,10 @@ function LegacyAdminResourcePage<TResource extends ResourceSection>({
     setFeedbackMessage("");
 
     try {
-      const method = selectedId ? "PATCH" : "POST";
+      const editing = drawerMode === "edit" && Boolean(selectedId);
+      const method = editing ? "PATCH" : "POST";
       const basePath = `/api/${apiPathByResource[resource]}`;
-      const url = selectedId ? `${basePath}/${selectedId}` : basePath;
+      const url = editing ? `${basePath}/${selectedId}` : basePath;
       const response = await fetch(url, {
         method,
         headers: {
@@ -561,8 +592,11 @@ function LegacyAdminResourcePage<TResource extends ResourceSection>({
       });
       const saved = await parseResponse<{ id: string }>(response);
 
-      await loadData(saved.id);
-      setFeedbackMessage(selectedId ? "保存成功。" : "创建成功。");
+      setDrawerOpen(false);
+      setDrawerMode("edit");
+      setSelectedId(saved.id);
+      setFeedbackMessage(editing ? "保存成功。" : "创建成功。");
+      refreshList();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "保存失败");
     } finally {
@@ -587,8 +621,12 @@ function LegacyAdminResourcePage<TResource extends ResourceSection>({
         },
       );
       await parseResponse<null>(response);
-      await loadData(null);
+      setDrawerMode("create");
+      setDrawerOpen(false);
+      setSelectedId(null);
+      setDraft(getEmptyDraft(resource) as DraftByResource[TResource]);
       setFeedbackMessage("删除成功。");
+      refreshList();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "删除失败");
     } finally {
@@ -596,43 +634,79 @@ function LegacyAdminResourcePage<TResource extends ResourceSection>({
     }
   };
 
-  if (loading) {
-    return (
-      <main className="shell-page pt-32 pb-24">
-        <section className="ui-panel p-8">
-          <p className="ui-meta">Loading</p>
-          <p className="mt-4 text-base leading-7 text-text-base">
-            正在加载 {title.toLowerCase()} 数据...
-          </p>
-        </section>
-      </main>
-    );
-  }
-
   return (
-    <AdminResourceView
-      data={data}
-      description={description}
-      draft={draft}
+    <AdminResourceTablePage
+      config={config}
+      drawerBody={renderLightweightForm({
+        canDelete: drawerMode === "edit" && Boolean(selectedId),
+        deleteLabel: config.form.deleteLabel,
+        draft,
+        pending,
+        resource,
+        submitLabel: config.form.submitLabel,
+        onDelete: () => {
+          void handleDelete();
+        },
+        onDraftChange: (field, value) => {
+          setDraft((current) => ({
+            ...current,
+            [field]: value,
+          }));
+        },
+        onSubmit: () => {
+          void handleSubmit();
+        },
+      })}
+      drawerMode={drawerMode}
+      drawerOpen={drawerOpen}
       errorMessage={errorMessage}
       feedbackMessage={feedbackMessage}
+      filterActions={
+        <button
+          className="ui-admin-button"
+          disabled={loading}
+          type="button"
+          onClick={() => {
+            refreshList();
+          }}
+        >
+          Refresh
+        </button>
+      }
+      filterValues={{
+        query: listParams.query,
+      }}
+      items={rows}
+      loading={loading}
+      page={listMeta.page}
+      pageSize={listMeta.pageSize}
       pending={pending}
       resource={resource}
-      selectedId={selectedId}
-      title={title}
+      selectedRowId={selectedId}
+      total={listMeta.total}
+      onCloseDrawer={() => {
+        setDrawerOpen(false);
+      }}
       onCreate={handleCreate}
-      onDelete={() => {
-        void handleDelete();
+      onFilterChange={(key, value) => {
+        updateLocation({
+          [key]: value,
+          page: 1,
+        });
       }}
-      onDraftChange={handleDraftChange}
-      onRefresh={() => {
-        void loadData();
+      onPageChange={(page) => {
+        updateLocation({ page });
       }}
-      onSelect={handleSelect}
-      onSubmit={() => {
-        void handleSubmit();
+      onPageSizeChange={(pageSize) => {
+        updateLocation({ page: 1, pageSize });
       }}
-      onToggleBlogTag={handleToggleBlogTag}
+      onResetFilters={() => {
+        updateLocation({
+          ...config.defaultListParams,
+          query: undefined,
+        });
+      }}
+      onRowClick={handleRowClick}
     />
   );
 }
@@ -648,6 +722,181 @@ function buildBlogTableRow(blog: BlogRecord): BlogTableRow {
     publishedAt: formatDateLabel(blog.publishedAt),
     updatedAt: formatDateLabel(blog.updatedAt),
   };
+}
+
+type ApplyAdminLightweightListResultInput<
+  TResource extends LightweightResource,
+> = {
+  resource: TResource;
+  data: AdminDashboardData;
+  currentDraft: DraftByResource[TResource];
+  currentSelectedId: string | null;
+  meta: AdminListMeta;
+};
+
+function applyAdminLightweightListResult<
+  TResource extends LightweightResource,
+>({
+  resource,
+  data,
+  currentDraft,
+  currentSelectedId,
+  meta,
+}: ApplyAdminLightweightListResultInput<TResource>) {
+  return {
+    data,
+    draft: currentDraft,
+    listMeta: meta,
+    selectedId: pickSelectedId(
+      data[resource] as Array<{ id: string }>,
+      currentSelectedId,
+    ),
+  };
+}
+
+async function fetchLightweightResourcePageData<
+  TResource extends LightweightResource,
+>(resource: TResource, params: URLSearchParams) {
+  switch (resource) {
+    case "categories": {
+      const result = await fetchAdminResourceList<CategoryRecord>(
+        "/api/categories",
+        params,
+      );
+
+      return {
+        data: {
+          ...emptyData,
+          categories: result.items,
+        } satisfies AdminDashboardData,
+        meta: result.meta,
+      };
+    }
+    case "tags": {
+      const result = await fetchAdminResourceList<TagRecord>(
+        "/api/tags",
+        params,
+      );
+
+      return {
+        data: {
+          ...emptyData,
+          tags: result.items,
+        } satisfies AdminDashboardData,
+        meta: result.meta,
+      };
+    }
+    case "changelogs": {
+      const result = await fetchAdminResourceList<ChangelogRecord>(
+        "/api/changelogs",
+        params,
+      );
+
+      return {
+        data: {
+          ...emptyData,
+          changelogs: result.items,
+        } satisfies AdminDashboardData,
+        meta: result.meta,
+      };
+    }
+  }
+}
+
+function buildLightweightTableRows(
+  resource: LightweightResource,
+  data: AdminDashboardData,
+) {
+  switch (resource) {
+    case "categories":
+      return data.categories.map((category) => ({
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        description: category.description,
+        updatedAt: formatDateLabel(category.updatedAt),
+      })) satisfies CategoryTableRow[];
+    case "tags":
+      return data.tags.map((tag) => ({
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        description: tag.description,
+        updatedAt: formatDateLabel(tag.updatedAt),
+      })) satisfies TagTableRow[];
+    case "changelogs":
+      return data.changelogs.map((changelog) => ({
+        id: changelog.id,
+        version: changelog.version,
+        releaseDate: formatDateLabel(changelog.releaseDate),
+        contentPreview: changelog.content,
+        updatedAt: formatDateLabel(changelog.updatedAt),
+      })) satisfies ChangelogTableRow[];
+  }
+}
+
+function renderLightweightForm<TResource extends LightweightResource>({
+  resource,
+  draft,
+  pending,
+  canDelete,
+  submitLabel,
+  deleteLabel,
+  onDraftChange,
+  onSubmit,
+  onDelete,
+}: {
+  resource: TResource;
+  draft: DraftByResource[TResource];
+  pending: boolean;
+  canDelete: boolean;
+  submitLabel: string;
+  deleteLabel: string;
+  onDraftChange: (field: string, value: string) => void;
+  onSubmit: () => void;
+  onDelete: () => void;
+}) {
+  switch (resource) {
+    case "categories":
+      return (
+        <CategoryForm
+          canDelete={canDelete}
+          deleteLabel={deleteLabel}
+          draft={draft as DraftByResource["categories"]}
+          pending={pending}
+          submitLabel={submitLabel}
+          onDelete={onDelete}
+          onDraftChange={onDraftChange}
+          onSubmit={onSubmit}
+        />
+      );
+    case "tags":
+      return (
+        <TagForm
+          canDelete={canDelete}
+          deleteLabel={deleteLabel}
+          draft={draft as DraftByResource["tags"]}
+          pending={pending}
+          submitLabel={submitLabel}
+          onDelete={onDelete}
+          onDraftChange={onDraftChange}
+          onSubmit={onSubmit}
+        />
+      );
+    case "changelogs":
+      return (
+        <ChangelogForm
+          canDelete={canDelete}
+          deleteLabel={deleteLabel}
+          draft={draft as DraftByResource["changelogs"]}
+          pending={pending}
+          submitLabel={submitLabel}
+          onDelete={onDelete}
+          onDraftChange={onDraftChange}
+          onSubmit={onSubmit}
+        />
+      );
+  }
 }
 
 function getDefaultBlogCategoryId(categories: CategoryRecord[]) {

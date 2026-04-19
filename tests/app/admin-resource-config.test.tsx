@@ -27,21 +27,22 @@ test("blogs resource config exposes table columns and drawer copy", () => {
 });
 
 test("lightweight resources keep focused copy and default sorting", () => {
+  const categoryConfig = getAdminResourceConfig("categories");
+  const tagConfig = getAdminResourceConfig("tags");
+  const changelogConfig = getAdminResourceConfig("changelogs");
+
   assert.deepEqual(
-    getAdminResourceConfig("categories").columns.map((column) => column.key),
+    categoryConfig.columns.map((column) => column.key),
     ["name", "slug", "description", "updatedAt"],
   );
-  assert.equal(
-    getAdminResourceConfig("categories").createLabel,
-    "Add Category",
-  );
-  assert.equal(getAdminResourceConfig("tags").createLabel, "Add Tag");
-  assert.equal(
-    getAdminResourceConfig("tags").defaultListParams.sortBy,
-    "createdAt",
-  );
+  assert.equal(categoryConfig.createLabel, "Add Category");
+  assert.equal(categoryConfig.drawer.editTitle, "Edit category");
+  assert.equal(categoryConfig.form.submitLabel, "Save Category");
 
-  const changelogConfig = getAdminResourceConfig("changelogs");
+  assert.equal(tagConfig.createLabel, "Add Tag");
+  assert.equal(tagConfig.defaultListParams.sortBy, "createdAt");
+  assert.equal(tagConfig.drawer.editTitle, "Edit tag");
+  assert.equal(tagConfig.form.deleteLabel, "Delete Tag");
 
   assert.equal(changelogConfig.title, "Changelog");
   assert.equal(changelogConfig.createLabel, "Add Entry");
@@ -50,8 +51,10 @@ test("lightweight resources keep focused copy and default sorting", () => {
     ["version", "releaseDate", "contentPreview", "updatedAt"],
   );
   assert.equal(changelogConfig.defaultListParams.sortBy, "releaseDate");
+  assert.equal(changelogConfig.drawer.editTitle, "Edit entry");
   assert.equal(
     changelogConfig.drawer.description,
     "Edit metadata and long-form release notes.",
   );
+  assert.equal(changelogConfig.form.submitLabel, "Save Entry");
 });
