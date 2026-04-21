@@ -1,17 +1,18 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
-  date,
   foreignKey,
   index,
+  integer,
   pgTable,
   primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export const categories = pgTable("categories", {
-  id: text("id").primaryKey(),
+export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
+
+const createTimestampColumns = () => ({
   createdAt: timestamp("created_at", {
     mode: "date",
     withTimezone: true,
@@ -20,49 +21,41 @@ export const categories = pgTable("categories", {
     mode: "date",
     withTimezone: true,
   }).notNull(),
+});
+
+export const categories = pgTable("categories", {
+  id: text("id").primaryKey(),
+  ...createTimestampColumns(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique("categories_slug_key"),
-  description: text("description").notNull(),
+  description: text("description").notNull().default(""),
 });
 
 export const tags = pgTable("tags", {
   id: text("id").primaryKey(),
-  createdAt: timestamp("created_at", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-  updatedAt: timestamp("updated_at", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
+  ...createTimestampColumns(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique("tags_slug_key"),
-  description: text("description").notNull(),
+  description: text("description").notNull().default(""),
 });
 
 export const blogs = pgTable(
   "blogs",
   {
     id: text("id").primaryKey(),
-    createdAt: timestamp("created_at", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
-    updatedAt: timestamp("updated_at", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
+    ...createTimestampColumns(),
     title: text("title").notNull(),
     slug: text("slug").notNull().unique("blogs_slug_key"),
     description: text("description").notNull(),
-    cover: text("cover").notNull().default(""),
     content: text("content").notNull(),
+    coverImage: text("cover_image").notNull().default(""),
+    featured: boolean("featured").notNull().default(false),
     published: boolean("published").notNull().default(false),
     publishedAt: timestamp("published_at", {
       mode: "date",
       withTimezone: true,
     }),
-    featured: boolean("featured").notNull().default(false),
+    readTimeMinutes: integer("read_time_minutes").notNull().default(1),
     categoryId: text("category_id").notNull(),
   },
   (table) => [
@@ -95,7 +88,7 @@ export const blogTags = pgTable(
       name: "blog_tags_tag_id_fkey",
       columns: [table.tagId],
       foreignColumns: [tags.id],
-    }).onDelete("cascade"),
+    }),
     primaryKey({
       columns: [table.blogId, table.tagId],
       name: "blog_tags_pkey",
@@ -104,21 +97,48 @@ export const blogTags = pgTable(
   ],
 );
 
+export const projects = pgTable(
+  "projects",
+  {
+    id: text("id").primaryKey(),
+    ...createTimestampColumns(),
+    title: text("title").notNull(),
+    slug: text("slug").notNull().unique("projects_slug_key"),
+    description: text("description").notNull(),
+    longDescription: text("long_description").notNull(),
+    image: text("image").notNull().default(""),
+    tags: text("tags")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
+    githubUrl: text("github_url"),
+    liveUrl: text("live_url"),
+    featured: boolean("featured").notNull().default(false),
+    published: boolean("published").notNull().default(false),
+    year: integer("year").notNull(),
+  },
+  (table) => [
+    index("projects_published_year_idx").on(table.published, table.year.desc()),
+  ],
+);
+
 export const changelogs = pgTable(
   "changelogs",
   {
     id: text("id").primaryKey(),
-    createdAt: timestamp("created_at", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
-    updatedAt: timestamp("updated_at", {
-      mode: "date",
-      withTimezone: true,
-    }).notNull(),
+    ...createTimestampColumns(),
     version: text("version").notNull().unique("changelogs_version_key"),
-    content: text("content").notNull(),
-    releaseDate: date("release_date", { mode: "string" }),
+    title: text("title").notNull(),
+    releaseDate: timestamp("release_date", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    type: text("type").$type<ChangelogType>().notNull(),
+    description: text("description").notNull(),
+    changes: text("changes")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
   },
   (table) => [
     index("changelogs_release_date_idx").on(table.releaseDate.desc()),
@@ -133,7 +153,7 @@ export const tagsRelations = relations(tags, ({ many }) => ({
   blogTags: many(blogTags),
 }));
 
-export const blogsRelations = relations(blogs, ({ one, many }) => ({
+export const blogsRelations = relations(blogs, ({ many, one }) => ({
   category: one(categories, {
     fields: [blogs.categoryId],
     references: [categories.id],
@@ -153,11 +173,12 @@ export const blogTagsRelations = relations(blogTags, ({ one }) => ({
 }));
 
 export const schema = {
-  categories,
-  tags,
   blogs,
   blogTags,
+  categories,
   changelogs,
+  projects,
+  tags,
 };
 
 export type Category = typeof categories.$inferSelect;
@@ -168,5 +189,7 @@ export type Blog = typeof blogs.$inferSelect;
 export type NewBlog = typeof blogs.$inferInsert;
 export type BlogTag = typeof blogTags.$inferSelect;
 export type NewBlogTag = typeof blogTags.$inferInsert;
+export type Project = typeof projects.$inferSelect;
+export type NewProject = typeof projects.$inferInsert;
 export type Changelog = typeof changelogs.$inferSelect;
 export type NewChangelog = typeof changelogs.$inferInsert;

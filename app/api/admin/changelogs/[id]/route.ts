@@ -1,26 +1,26 @@
 import {
-  handleDeleteCategory,
-  handleGetCategory,
-  handleUpdateCategory,
-} from "@/lib/server/categories/handler";
+  handleAdminDeleteChangelog,
+  handleAdminGetChangelog,
+  handleAdminUpdateChangelog,
+} from "@/lib/server/changelogs/handler";
 
 export function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleGetCategory(request, params);
+  return handleAdminGetChangelog(request, params);
 }
 
 export function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleUpdateCategory(request, params);
+  return handleAdminUpdateChangelog(request, params);
 }
 
 export function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleDeleteCategory(request, params);
+  return handleAdminDeleteChangelog(request, params);
 }

@@ -1,34 +1,56 @@
 import { generateCuid } from "@/lib/cuid";
-import type { Category } from "@/lib/db/schema";
+import type { Category, NewCategory } from "@/lib/db/schema";
+import type {
+  AdminCategoryCreateInput,
+  AdminCategoryListQuery,
+  AdminCategoryUpdateInput,
+} from "@/lib/server/categories/dto";
+import { normalizeNullableString, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
-import type { CategoryListQuery } from "@/lib/server/categories/dto";
 
 import { categoryRepository, type CategoryRepository } from "./repository";
+
+export type CategoryReadModel = Category & {
+  blogCount: number;
+  publishedBlogCount: number;
+};
+
+export interface CategoryRepository {
+  listAdmin(query: AdminCategoryListQuery): Promise<{
+    items: CategoryReadModel[];
+    total: number;
+  }>;
+  listPublic(): Promise<CategoryReadModel[]>;
+  findById(id: string): Promise<CategoryReadModel | null>;
+  findBySlug(slug: string): Promise<CategoryReadModel | null>;
+  create(category: NewCategory): Promise<CategoryReadModel>;
+  update(
+    id: string,
+    category: Partial<NewCategory>,
+  ): Promise<CategoryReadModel | null>;
+  delete(id: string): Promise<boolean>;
+}
+
+export interface CategoryService {
+  listAdminCategories(query: AdminCategoryListQuery): Promise<{
+    items: CategoryReadModel[];
+    total: number;
+  }>;
+  listPublicCategories(): Promise<CategoryReadModel[]>;
+  getCategory(id: string): Promise<CategoryReadModel>;
+  createCategory(input: AdminCategoryCreateInput): Promise<CategoryReadModel>;
+  updateCategory(
+    id: string,
+    input: AdminCategoryUpdateInput,
+  ): Promise<CategoryReadModel>;
+  deleteCategory(id: string): Promise<void>;
+}
 
 export interface CategoryServiceDeps {
   repository?: CategoryRepository;
   now?: () => Date;
   generateId?: () => string;
-}
-
-export interface CreateCategoryInput {
-  name: string;
-  slug: string;
-  description: string;
-}
-
-export type UpdateCategoryInput = Partial<CreateCategoryInput>;
-
-export interface CategoryService {
-  listCategories(query: CategoryListQuery): Promise<{
-    items: Category[];
-    total: number;
-  }>;
-  getCategory(id: string): Promise<Category>;
-  createCategory(input: CreateCategoryInput): Promise<Category>;
-  updateCategory(id: string, input: UpdateCategoryInput): Promise<Category>;
-  deleteCategory(id: string): Promise<void>;
 }
 
 const CATEGORY_IN_USE_CONSTRAINT = "blogs_category_id_fkey";
@@ -47,7 +69,7 @@ const createSlugConflictError = (slug: string) =>
   );
 
 const createInUseConflictError = (id: string) =>
-  new AppError(ERROR_CODES.COMMON_INVALID_REQUEST, "Category is in use", 409, {
+  new AppError(ERROR_CODES.CATEGORY_IN_USE, "Category is in use", 409, {
     id,
   });
 
@@ -65,14 +87,31 @@ const isCategoryInUseError = (error: unknown) =>
   (error as { code?: unknown }).code === "23503" &&
   (error as { constraint?: unknown }).constraint === CATEGORY_IN_USE_CONSTRAINT;
 
+const resolveSlug = (name: string, slug?: string) => {
+  const resolvedSlug = slugify(slug ?? name);
+
+  if (!resolvedSlug) {
+    throw new AppError(
+      ERROR_CODES.COMMON_VALIDATION_ERROR,
+      "Category slug cannot be empty",
+      400,
+    );
+  }
+
+  return resolvedSlug;
+};
+
 export function createCategoryService({
   repository = categoryRepository,
   now = () => new Date(),
   generateId = generateCuid,
 }: CategoryServiceDeps = {}): CategoryService {
   return {
-    listCategories(query) {
-      return repository.list(query);
+    listAdminCategories(query) {
+      return repository.listAdmin(query);
+    },
+    listPublicCategories() {
+      return repository.listPublic();
     },
     async getCategory(id) {
       const category = await repository.findById(id);
@@ -84,25 +123,28 @@ export function createCategoryService({
       return category;
     },
     async createCategory(input) {
-      const existingCategory = await repository.findBySlug(input.slug);
+      const slug = resolveSlug(input.name, input.slug);
+      const existingCategory = await repository.findBySlug(slug);
 
       if (existingCategory) {
-        throw createSlugConflictError(input.slug);
+        throw createSlugConflictError(slug);
       }
 
       const timestamp = now();
-      const category = {
+      const category: NewCategory = {
         id: generateId(),
         createdAt: timestamp,
         updatedAt: timestamp,
-        ...input,
+        name: input.name,
+        slug,
+        description: normalizeNullableString(input.description) ?? "",
       };
 
       try {
         return await repository.create(category);
       } catch (error) {
         if (isDuplicateSlugError(error)) {
-          throw createSlugConflictError(input.slug);
+          throw createSlugConflictError(slug);
         }
 
         throw error;
@@ -115,17 +157,27 @@ export function createCategoryService({
         throw createNotFoundError(id);
       }
 
-      if (input.slug && input.slug !== existingCategory.slug) {
-        const duplicateCategory = await repository.findBySlug(input.slug);
+      const resolvedSlug =
+        input.name !== undefined || input.slug !== undefined
+          ? resolveSlug(input.name ?? existingCategory.name, input.slug)
+          : undefined;
+
+      if (resolvedSlug && resolvedSlug !== existingCategory.slug) {
+        const duplicateCategory = await repository.findBySlug(resolvedSlug);
 
         if (duplicateCategory && duplicateCategory.id !== id) {
-          throw createSlugConflictError(input.slug);
+          throw createSlugConflictError(resolvedSlug);
         }
       }
 
       try {
         const updatedCategory = await repository.update(id, {
-          ...input,
+          name: input.name,
+          slug: resolvedSlug,
+          description:
+            input.description === undefined
+              ? undefined
+              : (normalizeNullableString(input.description) ?? ""),
           updatedAt: now(),
         });
 
@@ -136,7 +188,7 @@ export function createCategoryService({
         return updatedCategory;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
-          throw createSlugConflictError(input.slug ?? existingCategory.slug);
+          throw createSlugConflictError(resolvedSlug ?? existingCategory.slug);
         }
 
         throw error;

@@ -3,8 +3,10 @@ import {
   asc,
   desc,
   eq,
-  inArray,
+  exists,
   ilike,
+  inArray,
+  ne,
   or,
   sql,
   type SQL,
@@ -12,9 +14,19 @@ import {
 } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import type { Blog, Category, NewBlogTag } from "@/lib/db/schema";
-import { blogTags, blogs, categories, tags } from "@/lib/db/schema";
-import type { BlogListQuery } from "@/lib/server/blogs/dto";
+import {
+  blogTags,
+  blogs,
+  categories,
+  tags,
+  type Blog,
+  type Category,
+  type NewBlogTag,
+} from "@/lib/db/schema";
+import type {
+  AdminBlogListQuery,
+  PublicBlogListQuery,
+} from "@/lib/server/blogs/dto";
 
 import type {
   BlogCategorySummary,
@@ -37,46 +49,118 @@ const toBlogCategory = (
   };
 };
 
-type BlogListFilters = Pick<
-  BlogListQuery,
-  "query" | "published" | "featured" | "categoryId"
->;
-
-const buildFilters = ({
+const buildAdminWhere = ({
   query,
-  published,
-  featured,
   categoryId,
-}: BlogListFilters) => {
+  tagId,
+  featured,
+  published,
+}: Pick<
+  AdminBlogListQuery,
+  "query" | "categoryId" | "tagId" | "featured" | "published"
+>) => {
   const filters: SQLWrapper[] = [];
 
   if (query) {
     filters.push(
-      or(ilike(blogs.title, `%${query}%`), ilike(blogs.slug, `%${query}%`))!,
+      or(
+        ilike(blogs.title, `%${query}%`),
+        ilike(blogs.slug, `%${query}%`),
+        ilike(blogs.description, `%${query}%`),
+      )!,
     );
   }
-  if (published !== undefined) {
-    filters.push(eq(blogs.published, published));
+
+  if (categoryId) {
+    filters.push(eq(blogs.categoryId, categoryId));
   }
+
+  if (tagId) {
+    filters.push(
+      exists(
+        db
+          .select({ one: sql`1` })
+          .from(blogTags)
+          .where(and(eq(blogTags.blogId, blogs.id), eq(blogTags.tagId, tagId))),
+      ),
+    );
+  }
+
   if (featured !== undefined) {
     filters.push(eq(blogs.featured, featured));
   }
-  if (categoryId !== undefined) {
-    filters.push(eq(blogs.categoryId, categoryId));
+
+  if (published !== undefined) {
+    filters.push(eq(blogs.published, published));
   }
 
   return filters.length > 0 ? and(...filters) : undefined;
 };
 
-const buildBlogOrderBy = ({
+const buildPublicWhere = ({
+  query,
+  category,
+  tag,
+  featured,
+}: Pick<PublicBlogListQuery, "query" | "category" | "tag" | "featured">) => {
+  const filters: SQLWrapper[] = [eq(blogs.published, true)];
+
+  if (query) {
+    filters.push(
+      or(
+        ilike(blogs.title, `%${query}%`),
+        ilike(blogs.description, `%${query}%`),
+        ilike(blogs.content, `%${query}%`),
+      )!,
+    );
+  }
+
+  if (category) {
+    filters.push(
+      exists(
+        db
+          .select({ one: sql`1` })
+          .from(categories)
+          .where(
+            and(
+              eq(categories.id, blogs.categoryId),
+              eq(categories.slug, category),
+            ),
+          ),
+      ),
+    );
+  }
+
+  if (tag) {
+    filters.push(
+      exists(
+        db
+          .select({ one: sql`1` })
+          .from(blogTags)
+          .innerJoin(tags, eq(blogTags.tagId, tags.id))
+          .where(and(eq(blogTags.blogId, blogs.id), eq(tags.slug, tag))),
+      ),
+    );
+  }
+
+  if (featured !== undefined) {
+    filters.push(eq(blogs.featured, featured));
+  }
+
+  return and(...filters);
+};
+
+const buildAdminOrderBy = ({
   sortBy,
   sortDirection,
-}: Pick<BlogListQuery, "sortBy" | "sortDirection">) => {
+}: Pick<AdminBlogListQuery, "sortBy" | "sortDirection">) => {
   if (sortBy === "publishedAt") {
     return [
       sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
-      sortDirection === "asc" ? asc(blogs.publishedAt) : desc(blogs.publishedAt),
-      desc(blogs.createdAt),
+      sortDirection === "asc"
+        ? asc(blogs.publishedAt)
+        : desc(blogs.publishedAt),
+      desc(blogs.updatedAt),
       desc(blogs.id),
     ] as const;
   }
@@ -91,6 +175,26 @@ const buildBlogOrderBy = ({
 
   return [
     sortDirection === "asc" ? asc(blogs.updatedAt) : desc(blogs.updatedAt),
+    desc(blogs.id),
+  ] as const;
+};
+
+const buildPublicOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<PublicBlogListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "title") {
+    return [
+      sortDirection === "asc" ? asc(blogs.title) : desc(blogs.title),
+      desc(blogs.publishedAt),
+      desc(blogs.id),
+    ] as const;
+  }
+
+  return [
+    sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
+    sortDirection === "asc" ? asc(blogs.publishedAt) : desc(blogs.publishedAt),
+    desc(blogs.createdAt),
     desc(blogs.id),
   ] as const;
 };
@@ -121,7 +225,7 @@ const listTagsByBlogIds = async (blogIds: string[]) => {
     .from(blogTags)
     .innerJoin(tags, eq(blogTags.tagId, tags.id))
     .where(inArray(blogTags.blogId, blogIds))
-    .orderBy(desc(tags.createdAt), desc(tags.id));
+    .orderBy(asc(tags.name), asc(tags.id));
 
   const tagsByBlogId = new Map<string, BlogTagSummary[]>();
 
@@ -155,39 +259,78 @@ const attachRelations = async (
   }));
 };
 
+const getBaseSelection = () => ({
+  blog: blogs,
+  category: {
+    id: categories.id,
+    name: categories.name,
+    slug: categories.slug,
+  },
+});
+
 export const blogRepository: BlogRepository = {
-  async list({
+  async listAdmin({
     page,
     pageSize,
     query,
-    published,
-    featured,
     categoryId,
+    tagId,
+    featured,
+    published,
     sortBy,
     sortDirection,
   }) {
     const offset = (page - 1) * pageSize;
-    const where = buildFilters({
+    const where = buildAdminWhere({
       query,
-      published,
-      featured,
       categoryId,
+      tagId,
+      featured,
+      published,
     });
 
     const [rows, total] = await Promise.all([
       db
-        .select({
-          blog: blogs,
-          category: {
-            id: categories.id,
-            name: categories.name,
-            slug: categories.slug,
-          },
-        })
+        .select(getBaseSelection())
         .from(blogs)
         .leftJoin(categories, eq(blogs.categoryId, categories.id))
         .where(where)
-        .orderBy(...buildBlogOrderBy({ sortBy, sortDirection }))
+        .orderBy(...buildAdminOrderBy({ sortBy, sortDirection }))
+        .limit(pageSize)
+        .offset(offset),
+      countBlogs(where),
+    ]);
+
+    return {
+      items: await attachRelations(rows),
+      total,
+    };
+  },
+  async listPublic({
+    page,
+    pageSize,
+    query,
+    category,
+    tag,
+    featured,
+    sortBy,
+    sortDirection,
+  }) {
+    const offset = (page - 1) * pageSize;
+    const where = buildPublicWhere({
+      query,
+      category,
+      tag,
+      featured,
+    });
+
+    const [rows, total] = await Promise.all([
+      db
+        .select(getBaseSelection())
+        .from(blogs)
+        .leftJoin(categories, eq(blogs.categoryId, categories.id))
+        .where(where)
+        .orderBy(...buildPublicOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
       countBlogs(where),
@@ -200,14 +343,7 @@ export const blogRepository: BlogRepository = {
   },
   async findById(id) {
     const rows = await db
-      .select({
-        blog: blogs,
-        category: {
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-        },
-      })
+      .select(getBaseSelection())
       .from(blogs)
       .leftJoin(categories, eq(blogs.categoryId, categories.id))
       .where(eq(blogs.id, id))
@@ -224,14 +360,7 @@ export const blogRepository: BlogRepository = {
   },
   async findBySlug(slug) {
     const rows = await db
-      .select({
-        blog: blogs,
-        category: {
-          id: categories.id,
-          name: categories.name,
-          slug: categories.slug,
-        },
-      })
+      .select(getBaseSelection())
       .from(blogs)
       .leftJoin(categories, eq(blogs.categoryId, categories.id))
       .where(eq(blogs.slug, slug))
@@ -245,6 +374,44 @@ export const blogRepository: BlogRepository = {
 
     const [blog] = await attachRelations([row]);
     return blog ?? null;
+  },
+  async listSimilar(blogId, categoryId, tagIds, limit) {
+    const tagMatchFilter =
+      tagIds.length > 0
+        ? exists(
+            db
+              .select({ one: sql`1` })
+              .from(blogTags)
+              .where(
+                and(
+                  eq(blogTags.blogId, blogs.id),
+                  inArray(blogTags.tagId, tagIds),
+                ),
+              ),
+          )
+        : undefined;
+
+    const relationFilter =
+      tagMatchFilter === undefined
+        ? eq(blogs.categoryId, categoryId)
+        : or(eq(blogs.categoryId, categoryId), tagMatchFilter)!;
+
+    const rows = await db
+      .select(getBaseSelection())
+      .from(blogs)
+      .leftJoin(categories, eq(blogs.categoryId, categories.id))
+      .where(
+        and(eq(blogs.published, true), ne(blogs.id, blogId), relationFilter),
+      )
+      .orderBy(
+        sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
+        desc(blogs.publishedAt),
+        desc(blogs.createdAt),
+        desc(blogs.id),
+      )
+      .limit(limit);
+
+    return attachRelations(rows);
   },
   async findCategoryById(id) {
     const rows = await db
@@ -286,6 +453,7 @@ export const blogRepository: BlogRepository = {
 
         await tx.insert(blogTags).values(values);
       }
+
       return insertedBlog.id;
     });
 
@@ -322,6 +490,7 @@ export const blogRepository: BlogRepository = {
           await tx.insert(blogTags).values(values);
         }
       }
+
       return updatedBlog.id;
     });
 

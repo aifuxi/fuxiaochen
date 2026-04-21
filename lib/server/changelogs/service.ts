@@ -1,34 +1,34 @@
 import { generateCuid } from "@/lib/cuid";
-import type { Changelog } from "@/lib/db/schema";
+import type { Changelog, NewChangelog } from "@/lib/db/schema";
+import type {
+  AdminChangelogCreateInput,
+  AdminChangelogUpdateInput,
+  ChangelogListQuery,
+} from "@/lib/server/changelogs/dto";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
-import type { ChangelogListQuery } from "@/lib/server/changelogs/dto";
 
 import { changelogRepository, type ChangelogRepository } from "./repository";
-
-export interface ChangelogServiceDeps {
-  repository?: ChangelogRepository;
-  now?: () => Date;
-  generateId?: () => string;
-}
-
-export interface CreateChangelogInput {
-  version: string;
-  content: string;
-  releaseDate?: string | null;
-}
-
-export type UpdateChangelogInput = Partial<CreateChangelogInput>;
 
 export interface ChangelogService {
   listChangelogs(query: ChangelogListQuery): Promise<{
     items: Changelog[];
     total: number;
   }>;
-  getChangelog(id: string): Promise<Changelog>;
-  createChangelog(input: CreateChangelogInput): Promise<Changelog>;
-  updateChangelog(id: string, input: UpdateChangelogInput): Promise<Changelog>;
+  getAdminChangelog(id: string): Promise<Changelog>;
+  getPublicChangelogByVersion(version: string): Promise<Changelog>;
+  createChangelog(input: AdminChangelogCreateInput): Promise<Changelog>;
+  updateChangelog(
+    id: string,
+    input: AdminChangelogUpdateInput,
+  ): Promise<Changelog>;
   deleteChangelog(id: string): Promise<void>;
+}
+
+export interface ChangelogServiceDeps {
+  repository?: ChangelogRepository;
+  now?: () => Date;
+  generateId?: () => string;
 }
 
 const createNotFoundError = (id: string) =>
@@ -61,11 +61,20 @@ export function createChangelogService({
     listChangelogs(query) {
       return repository.list(query);
     },
-    async getChangelog(id) {
+    async getAdminChangelog(id) {
       const changelog = await repository.findById(id);
 
       if (!changelog) {
         throw createNotFoundError(id);
+      }
+
+      return changelog;
+    },
+    async getPublicChangelogByVersion(version) {
+      const changelog = await repository.findByVersion(version);
+
+      if (!changelog) {
+        throw createNotFoundError(version);
       }
 
       return changelog;
@@ -78,11 +87,16 @@ export function createChangelogService({
       }
 
       const timestamp = now();
-      const changelog = {
+      const changelog: NewChangelog = {
         id: generateId(),
         createdAt: timestamp,
         updatedAt: timestamp,
-        ...input,
+        version: input.version,
+        title: input.title,
+        releaseDate: input.releaseDate,
+        type: input.type,
+        description: input.description,
+        changes: input.changes,
       };
 
       try {
@@ -114,7 +128,12 @@ export function createChangelogService({
 
       try {
         const updatedChangelog = await repository.update(id, {
-          ...input,
+          version: input.version,
+          title: input.title,
+          releaseDate: input.releaseDate,
+          type: input.type,
+          description: input.description,
+          changes: input.changes,
           updatedAt: now(),
         });
 

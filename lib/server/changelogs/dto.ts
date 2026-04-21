@@ -6,44 +6,60 @@ const optionalSearchQuery = z.preprocess(
     typeof value === "string" && value.trim().length === 0 ? undefined : value,
   nonEmptyString.optional(),
 );
+const dateLikeSchema = z
+  .union([z.date(), z.string(), z.number()])
+  .pipe(z.coerce.date());
+const changelogTypeSchema = z.enum([
+  "feature",
+  "improvement",
+  "bugfix",
+  "breaking",
+]);
 const sortDirectionSchema = z.enum(["asc", "desc"]);
-const changelogSortBySchema = z.enum(["releaseDate", "updatedAt"]);
-const isoDateString = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((value) => {
-    const date = new Date(`${value}T00:00:00.000Z`);
+const changelogSortBySchema = z.enum(["releaseDate", "updatedAt", "version"]);
 
-    return (
-      !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
-    );
-  });
-
-export const changelogCreateSchema = z.object({
+export const adminChangelogCreateSchema = z.object({
   version: nonEmptyString,
-  content: nonEmptyString,
-  releaseDate: isoDateString.nullable().optional(),
+  title: nonEmptyString,
+  releaseDate: dateLikeSchema,
+  type: changelogTypeSchema,
+  description: nonEmptyString,
+  changes: z.array(nonEmptyString).default([]),
 });
 
-export const changelogUpdateSchema = changelogCreateSchema
+export const adminChangelogUpdateSchema = adminChangelogCreateSchema
   .partial()
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one changelog field is required",
   });
 
-export const changelogIdParamsSchema = z.object({
+export const adminChangelogIdParamsSchema = z.object({
   id: nonEmptyString,
+});
+
+export const publicChangelogVersionParamsSchema = z.object({
+  version: nonEmptyString,
 });
 
 export const changelogListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
   query: optionalSearchQuery,
+  type: changelogTypeSchema.optional(),
   sortBy: changelogSortBySchema.default("releaseDate"),
   sortDirection: sortDirectionSchema.default("desc"),
 });
 
-export type ChangelogCreateInput = z.infer<typeof changelogCreateSchema>;
-export type ChangelogUpdateInput = z.infer<typeof changelogUpdateSchema>;
-export type ChangelogIdParams = z.infer<typeof changelogIdParamsSchema>;
+export type AdminChangelogCreateInput = z.infer<
+  typeof adminChangelogCreateSchema
+>;
+export type AdminChangelogUpdateInput = z.infer<
+  typeof adminChangelogUpdateSchema
+>;
+export type AdminChangelogIdParams = z.infer<
+  typeof adminChangelogIdParamsSchema
+>;
+export type PublicChangelogVersionParams = z.infer<
+  typeof publicChangelogVersionParamsSchema
+>;
 export type ChangelogListQuery = z.infer<typeof changelogListQuerySchema>;

@@ -1,30 +1,33 @@
 import { asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
-import type { NewTag, Tag } from "@/lib/db/schema";
-import { tags } from "@/lib/db/schema";
-import type { TagListQuery } from "@/lib/server/tags/dto";
+import { blogTags, blogs, tags, type Tag } from "@/lib/db/schema";
+import type { AdminTagListQuery } from "@/lib/server/tags/dto";
 
-export interface TagRepository {
-  list(query: TagListQuery): Promise<{
-    items: Tag[];
-    total: number;
-  }>;
-  findById(id: string): Promise<Tag | null>;
-  findBySlug(slug: string): Promise<Tag | null>;
-  create(tag: NewTag): Promise<Tag>;
-  update(
-    id: string,
-    tag: Partial<Pick<NewTag, "name" | "slug" | "description" | "updatedAt">>,
-  ): Promise<Tag | null>;
-  delete(id: string): Promise<boolean>;
-}
+import type { TagReadModel, TagRepository } from "./service";
 
 const buildTagWhere = (query?: string) =>
   query
-    ? (or(ilike(tags.name, `%${query}%`), ilike(tags.slug, `%${query}%`)) ??
-      undefined)
+    ? (or(
+        ilike(tags.name, `%${query}%`),
+        ilike(tags.slug, `%${query}%`),
+        ilike(tags.description, `%${query}%`),
+      ) ?? undefined)
     : undefined;
+
+const tagCounts = db
+  .select({
+    tagId: blogTags.tagId,
+    blogCount: sql<number>`count(*)`.mapWith(Number),
+    publishedBlogCount:
+      sql<number>`count(*) filter (where ${blogs.published} = true)`.mapWith(
+        Number,
+      ),
+  })
+  .from(blogTags)
+  .innerJoin(blogs, eq(blogTags.blogId, blogs.id))
+  .groupBy(blogTags.tagId)
+  .as("tag_counts");
 
 const countTags = async (where?: SQL<unknown>) => {
   const rows = await db
@@ -37,69 +40,127 @@ const countTags = async (where?: SQL<unknown>) => {
   return rows[0]?.total ?? 0;
 };
 
-const tagOrderByMap = {
-  createdAt: tags.createdAt,
-  updatedAt: tags.updatedAt,
+const adminOrderByMap = {
   name: tags.name,
+  updatedAt: tags.updatedAt,
 } as const;
 
-export const tagListOrderBy = [desc(tags.createdAt), desc(tags.id)] as const;
-
-const buildTagOrderBy = ({
+const buildAdminOrderBy = ({
   sortBy,
   sortDirection,
-}: Pick<TagListQuery, "sortBy" | "sortDirection">) => {
-  if (sortBy === "createdAt" && sortDirection === "desc") {
-    return tagListOrderBy;
+}: Pick<AdminTagListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "postCount") {
+    return [
+      sortDirection === "asc"
+        ? sql`coalesce(${tagCounts.blogCount}, 0) asc`
+        : sql`coalesce(${tagCounts.blogCount}, 0) desc`,
+      asc(tags.name),
+      desc(tags.id),
+    ] as const;
   }
 
-  const primaryOrder =
+  return [
     sortDirection === "asc"
-      ? asc(tagOrderByMap[sortBy])
-      : desc(tagOrderByMap[sortBy]);
-
-  if (sortBy === "name") {
-    return [primaryOrder, desc(tags.updatedAt), desc(tags.id)] as const;
-  }
-
-  return [primaryOrder, desc(tags.id)] as const;
+      ? asc(adminOrderByMap[sortBy])
+      : desc(adminOrderByMap[sortBy]),
+    asc(tags.name),
+    desc(tags.id),
+  ] as const;
 };
 
+const toTagReadModel = (
+  row: Tag & {
+    blogCount: number | null;
+    publishedBlogCount: number | null;
+  },
+): TagReadModel => ({
+  ...row,
+  blogCount: row.blogCount ?? 0,
+  publishedBlogCount: row.publishedBlogCount ?? 0,
+});
+
 export const tagRepository: TagRepository = {
-  async list({ page, pageSize, query, sortBy, sortDirection }) {
+  async listAdmin({ page, pageSize, query, sortBy, sortDirection }) {
     const offset = (page - 1) * pageSize;
     const where = buildTagWhere(query);
     const [items, total] = await Promise.all([
       db
-        .select()
+        .select({
+          ...tags,
+          blogCount: tagCounts.blogCount,
+          publishedBlogCount: tagCounts.publishedBlogCount,
+        })
         .from(tags)
+        .leftJoin(tagCounts, eq(tags.id, tagCounts.tagId))
         .where(where)
-        .orderBy(...buildTagOrderBy({ sortBy, sortDirection }))
+        .orderBy(...buildAdminOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
       countTags(where),
     ]);
 
-    return { items, total };
+    return {
+      items: items.map(toTagReadModel),
+      total,
+    };
+  },
+  async listPublic() {
+    const items = await db
+      .select({
+        ...tags,
+        blogCount: tagCounts.blogCount,
+        publishedBlogCount: tagCounts.publishedBlogCount,
+      })
+      .from(tags)
+      .leftJoin(tagCounts, eq(tags.id, tagCounts.tagId))
+      .where(sql`coalesce(${tagCounts.publishedBlogCount}, 0) > 0`)
+      .orderBy(asc(tags.name), asc(tags.id));
+
+    return items.map(toTagReadModel);
   },
   async findById(id) {
-    const rows = await db.select().from(tags).where(eq(tags.id, id)).limit(1);
+    const rows = await db
+      .select({
+        ...tags,
+        blogCount: tagCounts.blogCount,
+        publishedBlogCount: tagCounts.publishedBlogCount,
+      })
+      .from(tags)
+      .leftJoin(tagCounts, eq(tags.id, tagCounts.tagId))
+      .where(eq(tags.id, id))
+      .limit(1);
 
-    return rows[0] ?? null;
+    const row = rows[0];
+    return row ? toTagReadModel(row) : null;
   },
   async findBySlug(slug) {
     const rows = await db
-      .select()
+      .select({
+        ...tags,
+        blogCount: tagCounts.blogCount,
+        publishedBlogCount: tagCounts.publishedBlogCount,
+      })
       .from(tags)
+      .leftJoin(tagCounts, eq(tags.id, tagCounts.tagId))
       .where(eq(tags.slug, slug))
       .limit(1);
 
-    return rows[0] ?? null;
+    const row = rows[0];
+    return row ? toTagReadModel(row) : null;
   },
   async create(tag) {
     const rows = await db.insert(tags).values(tag).returning();
+    const insertedTag = rows[0] as Tag | undefined;
 
-    return rows[0] as Tag;
+    if (!insertedTag) {
+      throw new Error("Tag insert did not return a row");
+    }
+
+    return {
+      ...insertedTag,
+      blogCount: 0,
+      publishedBlogCount: 0,
+    };
   },
   async update(id, tag) {
     const rows = await db
@@ -108,7 +169,13 @@ export const tagRepository: TagRepository = {
       .where(eq(tags.id, id))
       .returning();
 
-    return rows[0] ?? null;
+    const updatedTag = rows[0];
+
+    if (!updatedTag) {
+      return null;
+    }
+
+    return this.findById(updatedTag.id);
   },
   async delete(id) {
     const rows = await db.delete(tags).where(eq(tags.id, id)).returning({
