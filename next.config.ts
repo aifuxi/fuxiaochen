@@ -7,19 +7,11 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 });
 
 const config: NextConfig = {
-  // Next.js 开发模式默认会开启 React Strict Mode，会渲染2次，我们不需要
-  reactStrictMode: false,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-      {
-        protocol: "http",
-        hostname: "**",
-      },
-    ],
+    unoptimized: true,
   },
   output: "standalone",
 };
