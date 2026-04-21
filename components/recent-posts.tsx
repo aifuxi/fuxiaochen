@@ -1,12 +1,23 @@
+"use client";
+
 import Link from "next/link";
 
 import { ArrowRight } from "lucide-react";
+import useSWR from "swr";
 
-import { blogPosts } from "@/lib/blog-data";
+import { fetchApiData } from "@/lib/api/fetcher";
+import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 export function RecentPosts() {
-  // Get the 5 most recent posts (excluding featured)
-  const recentPosts = blogPosts.filter((post) => !post.featured).slice(0, 5);
+  const { data } = useSWR<{ items: PublicBlog[] }>(
+    "/api/public/blogs?featured=false&pageSize=5&sortBy=date&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const recentPosts = data?.items ?? [];
 
   return (
     <section className="border-border border-t py-16">

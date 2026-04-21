@@ -1,29 +1,32 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   ArrowLeft,
-  Eye,
-  Save,
-  Send,
   Bold,
-  Italic,
   Code,
+  Eye,
   Heading2,
   Heading3,
+  Image as ImageIcon,
+  Italic,
+  Link2,
   List,
   ListOrdered,
-  Quote,
-  Link2,
-  Image,
   Minus,
-  X,
   Plus,
+  Quote,
+  Save,
+  Send,
   Upload,
+  X,
 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,7 +44,9 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-import { getAllCategories, getAllTags } from "@/lib/blog-data";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminCategory } from "@/lib/server/categories/mappers";
+import type { AdminTag } from "@/lib/server/tags/mappers";
 import { cn } from "@/lib/utils";
 
 const TOOLBAR_ACTIONS = [
@@ -57,26 +62,43 @@ const TOOLBAR_ACTIONS = [
   { icon: Quote, label: "Blockquote", syntax: "> ", wrap: false },
   { separator: true },
   { icon: Link2, label: "Link", syntax: "[](url)", wrap: false },
-  { icon: Image, label: "Image", syntax: "![alt](url)", wrap: false },
+  { icon: ImageIcon, label: "Image", syntax: "![alt](url)", wrap: false },
   { icon: Minus, label: "Divider", syntax: "\n---\n", wrap: false },
 ];
 
 export default function NewPostPage() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState("");
-  const [category, setCategory] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [activeTab, setActiveTab] = useState("write");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const categories = getAllCategories();
-  const allTags = getAllTags();
+  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+    "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: tagsData } = useSWR<{ items: AdminTag[] }>(
+    "/api/admin/tags?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const categories = categoriesData?.items ?? [];
+  const allTags = tagsData?.items ?? [];
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -101,22 +123,37 @@ export default function NewPostPage() {
     );
   };
 
-  const addTag = (tag: string) => {
-    const trimmed = tag.trim().toLowerCase().replace(/\s+/g, "-");
-    if (trimmed && !selectedTags.includes(trimmed)) {
-      setSelectedTags((prev) => [...prev, trimmed]);
+  const addTag = (tagId: string) => {
+    if (!tagId || selectedTagIds.includes(tagId)) {
+      return;
     }
+
+    setSelectedTagIds((current) => [...current, tagId]);
     setTagInput("");
   };
 
-  const removeTag = (tag: string) => {
-    setSelectedTags((prev) => prev.filter((t) => t !== tag));
+  const addTagFromInput = () => {
+    const matchedTag = allTags.find(
+      (tag) =>
+        tag.name.toLowerCase() === tagInput.trim().toLowerCase() ||
+        tag.slug.toLowerCase() === tagInput.trim().toLowerCase(),
+    );
+
+    if (matchedTag) {
+      addTag(matchedTag.id);
+    }
   };
 
-  const handleTagKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addTag(tagInput);
+  const removeTag = (tagId: string) => {
+    setSelectedTagIds((current) =>
+      current.filter((selectedTagId) => selectedTagId !== tagId),
+    );
+  };
+
+  const handleTagKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter" || event.key === ",") {
+      event.preventDefault();
+      addTagFromInput();
     }
   };
 
@@ -151,8 +188,8 @@ export default function NewPostPage() {
     }, 0);
   };
 
-  const renderPreview = (md: string) => {
-    return md
+  const renderPreview = (markdown: string) => {
+    return markdown
       .replace(
         /^### (.+)$/gm,
         '<h3 class="text-lg font-semibold mt-6 mb-2">$1</h3>',
@@ -184,12 +221,56 @@ export default function NewPostPage() {
       .replace(/\n/g, "<br />");
   };
 
+  const submitPost = async (shouldPublish: boolean) => {
+    if (!title || !description || !content || !categoryId) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await apiRequest("/api/admin/blogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          slug,
+          description,
+          content,
+          coverImage,
+          featured,
+          published: shouldPublish,
+          categoryId,
+          tagIds: selectedTagIds,
+        }),
+      });
+
+      router.push("/admin/posts");
+      router.refresh();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const selectedTags = allTags.filter((tag) => selectedTagIds.includes(tag.id));
+  const suggestedTags = allTags
+    .filter((tag) => !selectedTagIds.includes(tag.id))
+    .filter((tag) =>
+      tagInput
+        ? `${tag.name} ${tag.slug}`
+            .toLowerCase()
+            .includes(tagInput.trim().toLowerCase())
+        : true,
+    )
+    .slice(0, 8);
+
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
-      {/* Top bar */}
       <div className="border-border bg-background flex items-center justify-between border-b px-6 py-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
@@ -209,22 +290,28 @@ export default function NewPostPage() {
             <Eye className="mr-1.5 h-4 w-4" />
             Preview
           </Button>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={isSubmitting}
+            onClick={() => submitPost(false)}
+          >
             <Save className="mr-1.5 h-4 w-4" />
             Save Draft
           </Button>
-          <Button size="sm">
+          <Button
+            size="sm"
+            disabled={isSubmitting}
+            onClick={() => submitPost(true)}
+          >
             <Send className="mr-1.5 h-4 w-4" />
             Publish
           </Button>
         </div>
       </div>
 
-      {/* Main area */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Editor column */}
         <div className="flex flex-1 flex-col overflow-hidden">
-          {/* Title */}
           <div className="border-border border-b px-8 py-5">
             <input
               type="text"
@@ -243,13 +330,12 @@ export default function NewPostPage() {
             )}
           </div>
 
-          {/* Toolbar */}
           <div className="border-border bg-muted/30 flex items-center gap-0.5 border-b px-4 py-2">
-            {TOOLBAR_ACTIONS.map((action, i) => {
+            {TOOLBAR_ACTIONS.map((action, index) => {
               if ("separator" in action) {
                 return (
                   <Separator
-                    key={`sep-${i}`}
+                    key={`sep-${index}`}
                     orientation="vertical"
                     className="mx-1 h-5"
                   />
@@ -280,7 +366,6 @@ export default function NewPostPage() {
             </div>
           </div>
 
-          {/* Content area */}
           <div className="flex-1 overflow-auto">
             {activeTab === "write" ? (
               <textarea
@@ -303,9 +388,7 @@ export default function NewPostPage() {
           </div>
         </div>
 
-        {/* Settings sidebar */}
         <aside className="border-border bg-muted/20 flex w-72 shrink-0 flex-col overflow-y-auto border-l">
-          {/* Publish settings */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Publish
@@ -336,7 +419,6 @@ export default function NewPostPage() {
 
           <Separator />
 
-          {/* Slug */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Slug
@@ -351,7 +433,6 @@ export default function NewPostPage() {
 
           <Separator />
 
-          {/* Description */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Description
@@ -370,16 +451,17 @@ export default function NewPostPage() {
 
           <Separator />
 
-          {/* Cover Image */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Cover Image
             </h3>
             {coverImage ? (
               <div className="group border-border relative overflow-hidden rounded-lg border">
-                <img
+                <Image
                   src={coverImage}
                   alt="Cover"
+                  width={320}
+                  height={180}
                   className="aspect-video w-full object-cover"
                 />
                 <button
@@ -407,19 +489,18 @@ export default function NewPostPage() {
 
           <Separator />
 
-          {/* Category */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Category
             </h3>
-            <Select value={category} onValueChange={setCategory}>
+            <Select value={categoryId} onValueChange={setCategoryId}>
               <SelectTrigger className="text-sm">
                 <SelectValue placeholder="Select category..." />
               </SelectTrigger>
               <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -428,7 +509,6 @@ export default function NewPostPage() {
 
           <Separator />
 
-          {/* Tags */}
           <div className="p-5">
             <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
               Tags
@@ -437,13 +517,13 @@ export default function NewPostPage() {
               <div className="mb-2 flex flex-wrap gap-1.5">
                 {selectedTags.map((tag) => (
                   <Badge
-                    key={tag}
+                    key={tag.id}
                     variant="secondary"
                     className="gap-1 pr-1 text-xs"
                   >
-                    {tag}
+                    {tag.slug}
                     <button
-                      onClick={() => removeTag(tag)}
+                      onClick={() => removeTag(tag.id)}
                       className="hover:text-destructive ml-0.5 rounded-full"
                     >
                       <X className="h-2.5 w-2.5" />
@@ -457,34 +537,30 @@ export default function NewPostPage() {
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyDown}
-                placeholder="Add tag, press Enter..."
+                placeholder="Search existing tags..."
                 className="pr-8 text-xs"
               />
               <button
-                onClick={() => addTag(tagInput)}
+                onClick={addTagFromInput}
                 disabled={!tagInput.trim()}
                 className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 disabled:opacity-30"
               >
                 <Plus className="h-3.5 w-3.5" />
               </button>
             </div>
-            {/* Suggested tags */}
             <div className="mt-2 flex flex-wrap gap-1">
-              {allTags
-                .filter((t) => !selectedTags.includes(t))
-                .slice(0, 8)
-                .map((tag) => (
-                  <button
-                    key={tag}
-                    onClick={() => addTag(tag)}
-                    className={cn(
-                      "border-border text-muted-foreground rounded-full border px-2 py-0.5 text-xs",
-                      "hover:border-foreground/30 hover:text-foreground transition-colors",
-                    )}
-                  >
-                    + {tag}
-                  </button>
-                ))}
+              {suggestedTags.map((tag) => (
+                <button
+                  key={tag.id}
+                  onClick={() => addTag(tag.id)}
+                  className={cn(
+                    "border-border text-muted-foreground rounded-full border px-2 py-0.5 text-xs",
+                    "hover:border-foreground/30 hover:text-foreground transition-colors",
+                  )}
+                >
+                  + {tag.slug}
+                </button>
+              ))}
             </div>
           </div>
         </aside>

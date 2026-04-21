@@ -5,14 +5,15 @@ import { useState } from "react";
 import Link from "next/link";
 
 import {
-  Search,
-  Plus,
+  Eye,
   MoreHorizontal,
   Pencil,
-  Trash2,
-  Eye,
+  Plus,
+  Search,
   Star,
+  Trash2,
 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -41,21 +42,43 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { blogPosts, getAllCategories } from "@/lib/blog-data";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminBlog } from "@/lib/server/blogs/mappers";
+import type { AdminCategory } from "@/lib/server/categories/mappers";
 
 export default function AdminPostsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const categories = getAllCategories();
+  const { data: blogsData, mutate: mutateBlogs } = useSWR<{
+    items: AdminBlog[];
+  }>(
+    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+    "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
-  const filteredPosts = blogPosts.filter((post) => {
+  const blogs = blogsData?.items ?? [];
+  const categories = categoriesData?.items ?? [];
+
+  const filteredPosts = blogs.filter((post) => {
     const matchesSearch =
       post.title.toLowerCase().includes(search.toLowerCase()) ||
       post.description.toLowerCase().includes(search.toLowerCase());
     const matchesCategory =
-      categoryFilter === "all" || post.category === categoryFilter;
+      categoryFilter === "all" || post.category?.id === categoryFilter;
+
     return matchesSearch && matchesCategory;
   });
 
@@ -63,14 +86,38 @@ export default function AdminPostsPage() {
     if (selectedPosts.length === filteredPosts.length) {
       setSelectedPosts([]);
     } else {
-      setSelectedPosts(filteredPosts.map((p) => p.slug));
+      setSelectedPosts(filteredPosts.map((post) => post.id));
     }
   };
 
-  const toggleSelect = (slug: string) => {
-    setSelectedPosts((prev) =>
-      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug],
+  const toggleSelect = (id: string) => {
+    setSelectedPosts((current) =>
+      current.includes(id)
+        ? current.filter((selectedId) => selectedId !== id)
+        : [...current, id],
     );
+  };
+
+  const deletePosts = async (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          apiRequest(`/api/admin/blogs/${id}`, {
+            method: "DELETE",
+          }),
+        ),
+      );
+      setSelectedPosts([]);
+      await mutateBlogs();
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -90,7 +137,6 @@ export default function AdminPostsPage() {
         </Button>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 items-center gap-4">
           <div className="relative flex-1 sm:max-w-xs">
@@ -109,8 +155,8 @@ export default function AdminPostsPage() {
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
               {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -121,7 +167,12 @@ export default function AdminPostsPage() {
             <span className="text-muted-foreground text-sm">
               {selectedPosts.length} selected
             </span>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isDeleting}
+              onClick={() => deletePosts(selectedPosts)}
+            >
               <Trash2 className="mr-2 h-4 w-4" />
               Delete
             </Button>
@@ -129,7 +180,6 @@ export default function AdminPostsPage() {
         )}
       </div>
 
-      {/* Posts Table */}
       <div className="border-border rounded-lg border">
         <Table>
           <TableHeader>
@@ -152,11 +202,11 @@ export default function AdminPostsPage() {
           </TableHeader>
           <TableBody>
             {filteredPosts.map((post) => (
-              <TableRow key={post.slug}>
+              <TableRow key={post.id}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedPosts.includes(post.slug)}
-                    onCheckedChange={() => toggleSelect(post.slug)}
+                    checked={selectedPosts.includes(post.id)}
+                    onCheckedChange={() => toggleSelect(post.id)}
                   />
                 </TableCell>
                 <TableCell>
@@ -165,12 +215,7 @@ export default function AdminPostsPage() {
                       <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                     )}
                     <div>
-                      <Link
-                        href={`/admin/posts/${post.slug}`}
-                        className="font-medium hover:underline"
-                      >
-                        {post.title}
-                      </Link>
+                      <p className="font-medium">{post.title}</p>
                       <p className="text-muted-foreground max-w-md truncate text-sm">
                         {post.description}
                       </p>
@@ -178,17 +223,25 @@ export default function AdminPostsPage() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{post.category}</Badge>
+                  {post.category ? (
+                    <Badge variant="secondary">{post.category.name}</Badge>
+                  ) : null}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {post.date}
+                  {post.publishedAt
+                    ? new Date(post.publishedAt).toLocaleDateString()
+                    : "Draft"}
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
-                    className="border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
+                    className={
+                      post.published
+                        ? "border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
+                        : "border-border bg-muted text-muted-foreground"
+                    }
                   >
-                    Published
+                    {post.published ? "Published" : "Draft"}
                   </Badge>
                 </TableCell>
                 <TableCell>
@@ -213,7 +266,10 @@ export default function AdminPostsPage() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => deletePosts([post.id])}
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>
@@ -226,10 +282,9 @@ export default function AdminPostsPage() {
         </Table>
       </div>
 
-      {/* Pagination info */}
       <div className="text-muted-foreground flex items-center justify-between text-sm">
         <p>
-          Showing {filteredPosts.length} of {blogPosts.length} posts
+          Showing {filteredPosts.length} of {blogs.length} posts
         </p>
       </div>
     </div>

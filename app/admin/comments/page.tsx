@@ -16,6 +16,7 @@ import {
   User,
   ExternalLink,
 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -51,20 +52,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getPostBySlug } from "@/lib/blog-data";
+import { fetchApiData } from "@/lib/api/fetcher";
 import {
   getAllComments,
   getCommentStats,
   type Comment,
 } from "@/lib/comments-data";
+import type { AdminBlog } from "@/lib/server/blogs/mappers";
 
 export default function AdminCommentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedComments, setSelectedComments] = useState<string[]>([]);
+  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
   const allComments = getAllComments();
   const stats = getCommentStats();
+  const blogs = blogsData?.items ?? [];
 
   const filteredComments = allComments.filter((comment) => {
     const matchesSearch =
@@ -248,7 +258,9 @@ export default function AdminCommentsPage() {
               </TableHeader>
               <TableBody>
                 {filteredComments.map((comment) => {
-                  const post = getPostBySlug(comment.postSlug);
+                  const post = blogs.find(
+                    (blog) => blog.slug === comment.postSlug,
+                  );
                   return (
                     <TableRow key={comment.id}>
                       <TableCell>

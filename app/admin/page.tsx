@@ -1,86 +1,98 @@
+"use client";
+
 import Link from "next/link";
 
 import {
-  FileText,
+  ArrowDownRight,
+  ArrowUpRight,
   Eye,
+  FileText,
   MessageSquare,
   TrendingUp,
-  ArrowUpRight,
-  ArrowDownRight,
 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import { blogPosts } from "@/lib/blog-data";
-
-const stats = [
-  {
-    title: "Total Posts",
-    value: blogPosts.length.toString(),
-    change: "+2",
-    trend: "up",
-    icon: FileText,
-  },
-  {
-    title: "Total Views",
-    value: "24.5K",
-    change: "+12%",
-    trend: "up",
-    icon: Eye,
-  },
-  {
-    title: "Comments",
-    value: "142",
-    change: "+8",
-    trend: "up",
-    icon: MessageSquare,
-  },
-  {
-    title: "Engagement",
-    value: "4.2%",
-    change: "-0.3%",
-    trend: "down",
-    icon: TrendingUp,
-  },
-];
+import { fetchApiData } from "@/lib/api/fetcher";
+import type { AdminBlog } from "@/lib/server/blogs/mappers";
+import type { AdminCategory } from "@/lib/server/categories/mappers";
 
 const recentActivity = [
   {
     type: "post",
     title: "Published new post",
-    description: "Building a Design System from Scratch",
-    time: "2 hours ago",
+    description: "Latest content synced from admin API",
+    time: "Just now",
   },
   {
     type: "comment",
     title: "New comment",
-    description: "Great article! Very helpful.",
-    time: "4 hours ago",
-  },
-  {
-    type: "subscriber",
-    title: "New subscriber",
-    description: "john@example.com joined the newsletter",
-    time: "6 hours ago",
-  },
-  {
-    type: "post",
-    title: "Post updated",
-    description: "React Server Components Explained",
-    time: "1 day ago",
+    description: "Comments are still running on demo data",
+    time: "Demo",
   },
 ];
 
 export default function AdminDashboard() {
+  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+    "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const blogs = blogsData?.items ?? [];
+  const categories = categoriesData?.items ?? [];
+  const publishedPosts = blogs.filter((blog) => blog.published);
+
+  const stats = [
+    {
+      title: "Total Posts",
+      value: blogs.length.toString(),
+      change: `${publishedPosts.length} published`,
+      trend: "up" as const,
+      icon: FileText,
+    },
+    {
+      title: "Featured Posts",
+      value: blogs.filter((blog) => blog.featured).length.toString(),
+      change: "curated on homepage",
+      trend: "up" as const,
+      icon: Eye,
+    },
+    {
+      title: "Comments",
+      value: "142",
+      change: "demo data",
+      trend: "up" as const,
+      icon: MessageSquare,
+    },
+    {
+      title: "Categories",
+      value: categories.length.toString(),
+      change: "managed via API",
+      trend: "down" as const,
+      icon: TrendingUp,
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">
-            Welcome back! Here&apos;s an overview of your blog.
+            Overview of your content and admin data sources.
           </p>
         </div>
         <Button asChild>
@@ -88,7 +100,6 @@ export default function AdminDashboard() {
         </Button>
       </div>
 
-      {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <Card key={stat.title}>
@@ -113,9 +124,6 @@ export default function AdminDashboard() {
                 >
                   {stat.change}
                 </span>
-                <span className="text-muted-foreground ml-1">
-                  from last month
-                </span>
               </div>
             </CardContent>
           </Card>
@@ -123,7 +131,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Recent Posts */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Posts</CardTitle>
@@ -133,32 +140,28 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {blogPosts.slice(0, 5).map((post) => (
+              {blogs.slice(0, 5).map((post) => (
                 <div
-                  key={post.slug}
+                  key={post.id}
                   className="flex items-center justify-between"
                 >
                   <div className="min-w-0 flex-1">
-                    <Link
-                      href={`/admin/posts/${post.slug}`}
-                      className="font-medium hover:underline"
-                    >
-                      {post.title}
-                    </Link>
+                    <p className="font-medium">{post.title}</p>
                     <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                      <span>{post.date}</span>
+                      <span>{post.publishedAt ? "Published" : "Draft"}</span>
                       <span>·</span>
-                      <span>{post.readTime}</span>
+                      <span>{post.readTimeMinutes} min read</span>
                     </div>
                   </div>
-                  <Badge variant="secondary">{post.category}</Badge>
+                  {post.category && (
+                    <Badge variant="secondary">{post.category.name}</Badge>
+                  )}
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        {/* Recent Activity */}
         <Card>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
@@ -199,27 +202,21 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Quick Stats by Category */}
       <Card>
         <CardHeader>
           <CardTitle>Posts by Category</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[...new Set(blogPosts.map((p) => p.category))].map((category) => {
-              const count = blogPosts.filter(
-                (p) => p.category === category,
-              ).length;
-              return (
-                <div
-                  key={category}
-                  className="border-border flex items-center justify-between rounded-lg border p-4"
-                >
-                  <span className="font-medium">{category}</span>
-                  <Badge variant="outline">{count}</Badge>
-                </div>
-              );
-            })}
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className="border-border flex items-center justify-between rounded-lg border p-4"
+              >
+                <span className="font-medium">{category.name}</span>
+                <Badge variant="outline">{category.blogCount}</Badge>
+              </div>
+            ))}
           </div>
         </CardContent>
       </Card>

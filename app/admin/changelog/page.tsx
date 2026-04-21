@@ -3,14 +3,15 @@
 import { useState } from "react";
 
 import {
-  Plus,
-  Pencil,
-  Trash2,
-  Sparkles,
-  Zap,
-  Bug,
   AlertTriangle,
+  Bug,
+  Pencil,
+  Plus,
+  Sparkles,
+  Trash2,
+  Zap,
 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,9 +41,10 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { getAllChangelogs, type ChangelogEntry } from "@/lib/changelog-data";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 
-function getTypeIcon(type: ChangelogEntry["type"]) {
+function getTypeIcon(type: AdminChangelog["type"]) {
   switch (type) {
     case "feature":
       return <Sparkles className="size-4" />;
@@ -55,7 +57,7 @@ function getTypeIcon(type: ChangelogEntry["type"]) {
   }
 }
 
-function getTypeBadge(type: ChangelogEntry["type"]) {
+function getTypeBadge(type: AdminChangelog["type"]) {
   const styles = {
     feature: "bg-green-500/10 text-green-600",
     improvement: "bg-blue-500/10 text-blue-600",
@@ -80,11 +82,63 @@ function getTypeBadge(type: ChangelogEntry["type"]) {
 
 export default function AdminChangelogPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const changelogs = getAllChangelogs();
+  const [version, setVersion] = useState("");
+  const [title, setTitle] = useState("");
+  const [type, setType] = useState<AdminChangelog["type"]>("feature");
+  const [description, setDescription] = useState("");
+  const [changes, setChanges] = useState("");
+
+  const { data, mutate } = useSWR<{ items: AdminChangelog[] }>(
+    "/api/admin/changelogs?pageSize=100&sortBy=releaseDate&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const changelogs = data?.items ?? [];
+
+  const resetForm = () => {
+    setVersion("");
+    setTitle("");
+    setType("feature");
+    setDescription("");
+    setChanges("");
+  };
+
+  const createChangelog = async () => {
+    await apiRequest("/api/admin/changelogs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        version,
+        title,
+        type,
+        description,
+        releaseDate: new Date().toISOString(),
+        changes: changes
+          .split("\n")
+          .map((value) => value.trim())
+          .filter(Boolean),
+      }),
+    });
+
+    resetForm();
+    setIsDialogOpen(false);
+    await mutate();
+  };
+
+  const deleteChangelog = async (id: string) => {
+    await apiRequest(`/api/admin/changelogs/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
+  };
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-foreground text-2xl font-bold">Changelog</h1>
@@ -112,13 +166,22 @@ export default function AdminChangelogPage() {
                   <label className="mb-1.5 block text-sm font-medium">
                     Version
                   </label>
-                  <Input placeholder="1.0.0" />
+                  <Input
+                    placeholder="1.0.0"
+                    value={version}
+                    onChange={(e) => setVersion(e.target.value)}
+                  />
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-medium">
                     Type
                   </label>
-                  <Select defaultValue="feature">
+                  <Select
+                    value={type}
+                    onValueChange={(value) =>
+                      setType(value as AdminChangelog["type"])
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -135,7 +198,11 @@ export default function AdminChangelogPage() {
                 <label className="mb-1.5 block text-sm font-medium">
                   Title
                 </label>
-                <Input placeholder="What's new in this version?" />
+                <Input
+                  placeholder="What's new in this version?"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium">
@@ -144,6 +211,8 @@ export default function AdminChangelogPage() {
                 <Textarea
                   placeholder="Brief description of this update..."
                   rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
               <div>
@@ -151,8 +220,10 @@ export default function AdminChangelogPage() {
                   Changes (one per line)
                 </label>
                 <Textarea
-                  placeholder="• Added new feature&#10;• Fixed bug&#10;• Improved performance"
+                  placeholder="Added new feature&#10;Fixed bug&#10;Improved performance"
                   rows={4}
+                  value={changes}
+                  onChange={(e) => setChanges(e.target.value)}
                 />
               </div>
             </div>
@@ -160,13 +231,12 @@ export default function AdminChangelogPage() {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Add Entry</Button>
+              <Button onClick={createChangelog}>Add Entry</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Changelog List */}
       <Card>
         <CardHeader>
           <CardTitle>All Entries</CardTitle>
@@ -188,7 +258,7 @@ export default function AdminChangelogPage() {
                     </span>
                     {getTypeBadge(entry.type)}
                     <span className="text-muted-foreground text-sm">
-                      {entry.date}
+                      {new Date(entry.releaseDate).toLocaleDateString()}
                     </span>
                   </div>
                   <h3 className="text-foreground mb-1 font-medium">
@@ -209,6 +279,7 @@ export default function AdminChangelogPage() {
                     variant="ghost"
                     size="icon"
                     className="text-destructive"
+                    onClick={() => deleteChangelog(entry.id)}
                   >
                     <Trash2 className="size-4" />
                   </Button>

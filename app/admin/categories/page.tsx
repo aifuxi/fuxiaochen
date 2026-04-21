@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { Plus, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -33,16 +34,54 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { blogPosts, getAllCategories } from "@/lib/blog-data";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminCategory } from "@/lib/server/categories/mappers";
 
 export default function AdminCategoriesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newCategory, setNewCategory] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const categories = getAllCategories();
+  const { data, mutate } = useSWR<{ items: AdminCategory[] }>(
+    "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
-  const getCategoryCount = (category: string) => {
-    return blogPosts.filter((p) => p.category === category).length;
+  const categories = data?.items ?? [];
+
+  const createCategory = async () => {
+    if (!newCategory.trim()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await apiRequest("/api/admin/categories", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newCategory.trim(),
+        }),
+      });
+      setNewCategory("");
+      setIsDialogOpen(false);
+      await mutate();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteCategory = async (id: string) => {
+    await apiRequest(`/api/admin/categories/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
   };
 
   return (
@@ -83,13 +122,14 @@ export default function AdminCategoriesPage() {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Create</Button>
+              <Button disabled={isSubmitting} onClick={createCategory}>
+                Create
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Categories Table */}
       <div className="border-border rounded-lg border">
         <Table>
           <TableHeader>
@@ -102,15 +142,13 @@ export default function AdminCategoriesPage() {
           </TableHeader>
           <TableBody>
             {categories.map((category) => (
-              <TableRow key={category}>
-                <TableCell className="font-medium">{category}</TableCell>
+              <TableRow key={category.id}>
+                <TableCell className="font-medium">{category.name}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">
-                    {getCategoryCount(category)}
-                  </Badge>
+                  <Badge variant="secondary">{category.blogCount}</Badge>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {category.toLowerCase().replace(/\s+/g, "-")}
+                  {category.slug}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -126,7 +164,10 @@ export default function AdminCategoriesPage() {
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-destructive">
+                      <DropdownMenuItem
+                        className="text-destructive"
+                        onClick={() => deleteCategory(category.id)}
+                      >
                         <Trash2 className="mr-2 h-4 w-4" />
                         Delete
                       </DropdownMenuItem>

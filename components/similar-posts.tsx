@@ -5,10 +5,10 @@ import { ArrowUpRight } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 
-import { type BlogPost } from "@/lib/blog-data";
+import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 type SimilarPostsProps = {
-  posts: BlogPost[];
+  posts: PublicBlog[];
 };
 
 export function SimilarPosts({ posts }: SimilarPostsProps) {
