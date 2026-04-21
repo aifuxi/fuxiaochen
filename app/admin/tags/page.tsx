@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Plus, X } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,16 +19,70 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { blogPosts, getAllTags } from "@/lib/blog-data";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminBlog } from "@/lib/server/blogs/mappers";
+import type { AdminTag } from "@/lib/server/tags/mappers";
 
 export default function AdminTagsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newTag, setNewTag] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const tags = getAllTags();
+  const { data, mutate } = useSWR<{ items: AdminTag[] }>(
+    "/api/admin/tags?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
-  const getTagCount = (tag: string) => {
-    return blogPosts.filter((p) => p.tags.includes(tag)).length;
+  const tags = data?.items ?? [];
+  const blogs = blogsData?.items ?? [];
+  const mostUsedTag = [...tags].sort((a, b) => b.blogCount - a.blogCount)[0];
+  const averagePerPost =
+    blogs.length === 0
+      ? "0.0"
+      : (
+          blogs.reduce((sum, blog) => sum + blog.tags.length, 0) / blogs.length
+        ).toFixed(1);
+
+  const createTag = async () => {
+    if (!newTag.trim()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      await apiRequest("/api/admin/tags", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newTag.trim(),
+        }),
+      });
+      setNewTag("");
+      setIsDialogOpen(false);
+      await mutate();
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const deleteTag = async (id: string) => {
+    await apiRequest(`/api/admin/tags/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
   };
 
   return (
@@ -68,25 +123,29 @@ export default function AdminTagsPage() {
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button onClick={() => setIsDialogOpen(false)}>Create</Button>
+              <Button disabled={isSubmitting} onClick={createTag}>
+                Create
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Tags Grid */}
       <div className="border-border rounded-lg border p-6">
         <div className="flex flex-wrap gap-3">
           {tags.map((tag) => (
             <div
-              key={tag}
+              key={tag.id}
               className="group border-border bg-card hover:border-primary/50 flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors"
             >
-              <span className="font-medium">{tag}</span>
+              <span className="font-medium">{tag.slug}</span>
               <Badge variant="secondary" className="text-xs">
-                {getTagCount(tag)}
+                {tag.blogCount}
               </Badge>
-              <button className="ml-1 opacity-0 transition-opacity group-hover:opacity-100">
+              <button
+                className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
+                onClick={() => deleteTag(tag.id)}
+              >
                 <X className="text-muted-foreground hover:text-destructive h-3.5 w-3.5" />
                 <span className="sr-only">Remove tag</span>
               </button>
@@ -95,7 +154,6 @@ export default function AdminTagsPage() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="border-border rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">Total Tags</p>
@@ -103,16 +161,11 @@ export default function AdminTagsPage() {
         </div>
         <div className="border-border rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">Most Used</p>
-          <p className="text-2xl font-bold">react</p>
+          <p className="text-2xl font-bold">{mostUsedTag?.slug ?? "n/a"}</p>
         </div>
         <div className="border-border rounded-lg border p-4">
           <p className="text-muted-foreground text-sm">Avg. per Post</p>
-          <p className="text-2xl font-bold">
-            {(
-              blogPosts.reduce((acc, p) => acc + p.tags.length, 0) /
-              blogPosts.length
-            ).toFixed(1)}
-          </p>
+          <p className="text-2xl font-bold">{averagePerPost}</p>
         </div>
       </div>
     </div>

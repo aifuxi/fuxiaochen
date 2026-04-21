@@ -1,14 +1,26 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { ArrowUpRight } from "lucide-react";
+import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 
-import { getFeaturedPosts } from "@/lib/blog-data";
+import { fetchApiData } from "@/lib/api/fetcher";
+import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 export function FeaturedPosts() {
-  const featuredPosts = getFeaturedPosts();
+  const { data } = useSWR<{ items: PublicBlog[] }>(
+    "/api/public/blogs?featured=true&pageSize=3",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const featuredPosts = data?.items ?? [];
 
   return (
     <section className="border-border border-t py-16">
