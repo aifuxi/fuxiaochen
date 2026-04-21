@@ -2,11 +2,13 @@ import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import {
-  changelogCreateSchema,
-  changelogIdParamsSchema,
+  adminChangelogCreateSchema,
+  adminChangelogIdParamsSchema,
+  adminChangelogUpdateSchema,
   changelogListQuerySchema,
-  changelogUpdateSchema,
+  publicChangelogVersionParamsSchema,
 } from "./dto";
+import { toAdminChangelog, toPublicChangelog } from "./mappers";
 import {
   createChangelogService,
   type ChangelogService,
@@ -33,7 +35,7 @@ type ChangelogHandlerDeps = {
   serviceDeps?: ChangelogServiceDeps;
 };
 
-export function createChangelogHandlers({
+export function createAdminChangelogHandlers({
   serviceDeps,
   service = createChangelogService(serviceDeps),
 }: ChangelogHandlerDeps = {}) {
@@ -45,6 +47,7 @@ export function createChangelogHandlers({
           page: url.searchParams.get("page") ?? undefined,
           pageSize: url.searchParams.get("pageSize") ?? undefined,
           query: url.searchParams.get("query") ?? undefined,
+          type: url.searchParams.get("type") ?? undefined,
           sortBy: url.searchParams.get("sortBy") ?? undefined,
           sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
@@ -52,7 +55,7 @@ export function createChangelogHandlers({
 
         return createSuccessResponse(
           {
-            items: result.items,
+            items: result.items.map(toAdminChangelog),
           },
           {
             page: query.page,
@@ -66,10 +69,16 @@ export function createChangelogHandlers({
     },
     async handleCreateChangelog(request: Request) {
       try {
-        const body = changelogCreateSchema.parse(await toJsonBody(request));
+        const body = adminChangelogCreateSchema.parse(
+          await toJsonBody(request),
+        );
         const changelog = await service.createChangelog(body);
 
-        return createSuccessResponse(changelog, undefined, 201);
+        return createSuccessResponse(
+          toAdminChangelog(changelog),
+          undefined,
+          201,
+        );
       } catch (error) {
         return toErrorResponse(error);
       }
@@ -79,10 +88,10 @@ export function createChangelogHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
-        const { id } = changelogIdParamsSchema.parse(await params);
-        const changelog = await service.getChangelog(id);
+        const { id } = adminChangelogIdParamsSchema.parse(await params);
+        const changelog = await service.getAdminChangelog(id);
 
-        return createSuccessResponse(changelog);
+        return createSuccessResponse(toAdminChangelog(changelog));
       } catch (error) {
         return toErrorResponse(error);
       }
@@ -92,11 +101,13 @@ export function createChangelogHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
-        const { id } = changelogIdParamsSchema.parse(await params);
-        const body = changelogUpdateSchema.parse(await toJsonBody(request));
+        const { id } = adminChangelogIdParamsSchema.parse(await params);
+        const body = adminChangelogUpdateSchema.parse(
+          await toJsonBody(request),
+        );
         const changelog = await service.updateChangelog(id, body);
 
-        return createSuccessResponse(changelog);
+        return createSuccessResponse(toAdminChangelog(changelog));
       } catch (error) {
         return toErrorResponse(error);
       }
@@ -106,7 +117,7 @@ export function createChangelogHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
-        const { id } = changelogIdParamsSchema.parse(await params);
+        const { id } = adminChangelogIdParamsSchema.parse(await params);
         await service.deleteChangelog(id);
 
         return createSuccessResponse(null);
@@ -117,10 +128,70 @@ export function createChangelogHandlers({
   };
 }
 
-const defaultHandlers = createChangelogHandlers();
+export function createPublicChangelogHandlers({
+  serviceDeps,
+  service = createChangelogService(serviceDeps),
+}: ChangelogHandlerDeps = {}) {
+  return {
+    async handleListChangelogs(request: Request) {
+      try {
+        const url = new URL(request.url);
+        const query = changelogListQuerySchema.parse({
+          page: url.searchParams.get("page") ?? undefined,
+          pageSize: url.searchParams.get("pageSize") ?? undefined,
+          query: url.searchParams.get("query") ?? undefined,
+          type: url.searchParams.get("type") ?? undefined,
+          sortBy: url.searchParams.get("sortBy") ?? undefined,
+          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+        });
+        const result = await service.listChangelogs(query);
 
-export const handleListChangelogs = defaultHandlers.handleListChangelogs;
-export const handleCreateChangelog = defaultHandlers.handleCreateChangelog;
-export const handleGetChangelog = defaultHandlers.handleGetChangelog;
-export const handleUpdateChangelog = defaultHandlers.handleUpdateChangelog;
-export const handleDeleteChangelog = defaultHandlers.handleDeleteChangelog;
+        return createSuccessResponse(
+          {
+            items: result.items.map(toPublicChangelog),
+          },
+          {
+            page: query.page,
+            pageSize: query.pageSize,
+            total: result.total,
+          },
+        );
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleGetChangelog(
+      _request: Request,
+      params: Promise<{ version: string }>,
+    ) {
+      try {
+        const { version } = publicChangelogVersionParamsSchema.parse(
+          await params,
+        );
+        const changelog = await service.getPublicChangelogByVersion(version);
+
+        return createSuccessResponse(toPublicChangelog(changelog));
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+  };
+}
+
+const defaultAdminHandlers = createAdminChangelogHandlers();
+const defaultPublicHandlers = createPublicChangelogHandlers();
+
+export const handleAdminListChangelogs =
+  defaultAdminHandlers.handleListChangelogs;
+export const handleAdminCreateChangelog =
+  defaultAdminHandlers.handleCreateChangelog;
+export const handleAdminGetChangelog = defaultAdminHandlers.handleGetChangelog;
+export const handleAdminUpdateChangelog =
+  defaultAdminHandlers.handleUpdateChangelog;
+export const handleAdminDeleteChangelog =
+  defaultAdminHandlers.handleDeleteChangelog;
+
+export const handlePublicListChangelogs =
+  defaultPublicHandlers.handleListChangelogs;
+export const handlePublicGetChangelog =
+  defaultPublicHandlers.handleGetChangelog;

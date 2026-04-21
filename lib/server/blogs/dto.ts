@@ -1,6 +1,11 @@
 import { z } from "zod";
 
 const nonEmptyString = z.string().trim().min(1);
+const optionalSearchQuery = z.preprocess(
+  (value) =>
+    typeof value === "string" && value.trim().length === 0 ? undefined : value,
+  nonEmptyString.optional(),
+);
 
 const booleanLikeSchema = z.union([
   z.boolean(),
@@ -20,37 +25,36 @@ const dateLikeSchema = z
 
 const optionalBoolean = booleanLikeSchema.optional();
 const optionalDate = dateLikeSchema.nullable().optional();
+const optionalSlug = z.string().trim().min(1).max(200).optional();
 const optionalTagIds = z.array(nonEmptyString).optional();
-const optionalSearchQuery = z.preprocess(
-  (value) =>
-    typeof value === "string" && value.trim().length === 0 ? undefined : value,
-  nonEmptyString.optional(),
-);
-const sortDirectionSchema = z.enum(["asc", "desc"]);
-const blogSortBySchema = z.enum(["publishedAt", "updatedAt", "title"]);
 
-const blogMutationFields = {
+const adminBlogSortBySchema = z.enum(["publishedAt", "updatedAt", "title"]);
+const publicBlogSortBySchema = z.enum(["date", "title"]);
+const sortDirectionSchema = z.enum(["asc", "desc"]);
+
+const adminMutationFields = {
   title: nonEmptyString,
-  slug: nonEmptyString,
+  slug: optionalSlug,
   description: nonEmptyString,
   content: nonEmptyString,
-  categoryId: nonEmptyString,
-  cover: z.string().trim().optional(),
+  coverImage: z.string().trim().optional(),
+  featured: optionalBoolean,
   published: optionalBoolean,
   publishedAt: optionalDate,
-  featured: optionalBoolean,
+  categoryId: nonEmptyString,
   tagIds: optionalTagIds,
 } as const;
 
-export const blogCreateSchema = z.object({
-  ...blogMutationFields,
-  cover: z.string().trim().default(""),
-  published: optionalBoolean.default(false),
+export const adminBlogCreateSchema = z.object({
+  ...adminMutationFields,
+  coverImage: z.string().trim().default(""),
   featured: optionalBoolean.default(false),
+  published: optionalBoolean.default(false),
+  tagIds: z.array(nonEmptyString).default([]),
 });
 
-export const blogUpdateSchema = z
-  .object(blogMutationFields)
+export const adminBlogUpdateSchema = z
+  .object(adminMutationFields)
   .partial()
   .refine(
     (value) => Object.values(value).some((field) => field !== undefined),
@@ -59,22 +63,47 @@ export const blogUpdateSchema = z
     },
   );
 
-export const blogIdParamsSchema = z.object({
+export const adminBlogIdParamsSchema = z.object({
   id: nonEmptyString,
 });
 
-export const blogListQuerySchema = z.object({
+export const publicBlogSlugParamsSchema = z.object({
+  slug: nonEmptyString,
+});
+
+export const adminBlogListQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
   query: optionalSearchQuery,
-  published: optionalBoolean,
-  featured: optionalBoolean,
   categoryId: nonEmptyString.optional(),
-  sortBy: blogSortBySchema.default("publishedAt"),
+  tagId: nonEmptyString.optional(),
+  featured: optionalBoolean,
+  published: optionalBoolean,
+  sortBy: adminBlogSortBySchema.default("publishedAt"),
   sortDirection: sortDirectionSchema.default("desc"),
 });
 
-export type BlogCreateInput = z.infer<typeof blogCreateSchema>;
-export type BlogUpdateInput = z.infer<typeof blogUpdateSchema>;
-export type BlogIdParams = z.infer<typeof blogIdParamsSchema>;
-export type BlogListQuery = z.infer<typeof blogListQuerySchema>;
+export const publicBlogListQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  pageSize: z.coerce.number().int().positive().max(100).default(20),
+  query: optionalSearchQuery,
+  category: nonEmptyString.optional(),
+  tag: nonEmptyString.optional(),
+  featured: optionalBoolean,
+  sortBy: publicBlogSortBySchema.default("date"),
+  sortDirection: sortDirectionSchema.default("desc"),
+});
+
+export const publicSimilarBlogQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(12).default(3),
+});
+
+export type AdminBlogCreateInput = z.infer<typeof adminBlogCreateSchema>;
+export type AdminBlogUpdateInput = z.infer<typeof adminBlogUpdateSchema>;
+export type AdminBlogIdParams = z.infer<typeof adminBlogIdParamsSchema>;
+export type PublicBlogSlugParams = z.infer<typeof publicBlogSlugParamsSchema>;
+export type AdminBlogListQuery = z.infer<typeof adminBlogListQuerySchema>;
+export type PublicBlogListQuery = z.infer<typeof publicBlogListQuerySchema>;
+export type PublicSimilarBlogQuery = z.infer<
+  typeof publicSimilarBlogQuerySchema
+>;

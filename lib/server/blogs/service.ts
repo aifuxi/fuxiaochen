@@ -1,37 +1,16 @@
 import { generateCuid } from "@/lib/cuid";
 import type { Blog, Category, NewBlog, Tag } from "@/lib/db/schema";
 import type {
-  BlogCreateInput,
-  BlogListQuery,
-  BlogUpdateInput,
+  AdminBlogCreateInput,
+  AdminBlogListQuery,
+  AdminBlogUpdateInput,
+  PublicBlogListQuery,
 } from "@/lib/server/blogs/dto";
+import { computeReadTimeMinutes, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 
-type BlogTagIds = {
-  tagIds: string[];
-};
-
-type BlogUpdateMutation = Partial<
-  Pick<
-    NewBlog,
-    | "title"
-    | "slug"
-    | "description"
-    | "cover"
-    | "content"
-    | "published"
-    | "publishedAt"
-    | "featured"
-    | "categoryId"
-  >
-> & {
-  updatedAt: Date;
-};
-
-type BlogUpdateOptions = {
-  replaceTagIds?: string[];
-};
+import { blogRepository, type BlogRepository } from "./repository";
 
 export type BlogCategorySummary = Pick<Category, "id" | "name" | "slug">;
 export type BlogTagSummary = Pick<Tag, "id" | "name" | "slug">;
@@ -41,12 +20,22 @@ export type BlogReadModel = Blog & {
 };
 
 export interface BlogRepository {
-  list(query: BlogListQuery): Promise<{
+  listAdmin(query: AdminBlogListQuery): Promise<{
+    items: BlogReadModel[];
+    total: number;
+  }>;
+  listPublic(query: PublicBlogListQuery): Promise<{
     items: BlogReadModel[];
     total: number;
   }>;
   findById(id: string): Promise<BlogReadModel | null>;
   findBySlug(slug: string): Promise<BlogReadModel | null>;
+  listSimilar(
+    blogId: string,
+    categoryId: string,
+    tagIds: string[],
+    limit: number,
+  ): Promise<BlogReadModel[]>;
   findCategoryById(id: string): Promise<Pick<Category, "id"> | null>;
   findTagsByIds(ids: string[]): Promise<Array<Pick<Tag, "id">>>;
   create(blog: NewBlog, options: BlogTagIds): Promise<BlogReadModel>;
@@ -58,21 +47,53 @@ export interface BlogRepository {
   delete(id: string): Promise<boolean>;
 }
 
-export interface BlogServiceDeps {
-  repository: BlogRepository;
-  now?: () => Date;
-  generateId?: () => string;
-}
+type BlogTagIds = {
+  tagIds: string[];
+};
+
+type BlogUpdateMutation = Partial<
+  Pick<
+    NewBlog,
+    | "title"
+    | "slug"
+    | "description"
+    | "content"
+    | "coverImage"
+    | "featured"
+    | "published"
+    | "publishedAt"
+    | "readTimeMinutes"
+    | "categoryId"
+  >
+> & {
+  updatedAt: Date;
+};
+
+type BlogUpdateOptions = {
+  replaceTagIds?: string[];
+};
 
 export interface BlogService {
-  listBlogs(query: BlogListQuery): Promise<{
+  listAdminBlogs(query: AdminBlogListQuery): Promise<{
     items: BlogReadModel[];
     total: number;
   }>;
-  getBlog(id: string): Promise<BlogReadModel>;
-  createBlog(input: BlogCreateInput): Promise<BlogReadModel>;
-  updateBlog(id: string, input: BlogUpdateInput): Promise<BlogReadModel>;
+  listPublicBlogs(query: PublicBlogListQuery): Promise<{
+    items: BlogReadModel[];
+    total: number;
+  }>;
+  getAdminBlog(id: string): Promise<BlogReadModel>;
+  getPublicBlogBySlug(slug: string): Promise<BlogReadModel>;
+  getPublicSimilarBlogs(slug: string, limit: number): Promise<BlogReadModel[]>;
+  createBlog(input: AdminBlogCreateInput): Promise<BlogReadModel>;
+  updateBlog(id: string, input: AdminBlogUpdateInput): Promise<BlogReadModel>;
   deleteBlog(id: string): Promise<void>;
+}
+
+export interface BlogServiceDeps {
+  repository?: BlogRepository;
+  now?: () => Date;
+  generateId?: () => string;
 }
 
 const BLOG_SLUG_CONSTRAINT = "blogs_slug_key";
@@ -89,9 +110,7 @@ const createSlugConflictError = (slug: string) =>
     ERROR_CODES.BLOG_SLUG_CONFLICT,
     "Blog slug already exists",
     409,
-    {
-      slug,
-    },
+    { slug },
   );
 
 const createCategoryNotFoundError = (categoryId: string) =>
@@ -162,6 +181,20 @@ const normalizeWriteForeignKeyError = ({
 
 const dedupeTagIds = (tagIds?: string[]) => [...new Set(tagIds ?? [])];
 
+const resolveSlug = (title: string, slug?: string) => {
+  const resolvedSlug = slugify(slug ?? title);
+
+  if (!resolvedSlug) {
+    throw new AppError(
+      ERROR_CODES.COMMON_VALIDATION_ERROR,
+      "Blog slug cannot be empty",
+      400,
+    );
+  }
+
+  return resolvedSlug;
+};
+
 async function ensureCategoryExists(
   repository: BlogRepository,
   categoryId: string,
@@ -192,15 +225,18 @@ async function validateTagIds(repository: BlogRepository, tagIds?: string[]) {
 }
 
 export function createBlogService({
-  repository,
+  repository = blogRepository,
   now = () => new Date(),
   generateId = generateCuid,
-}: BlogServiceDeps): BlogService {
+}: BlogServiceDeps = {}): BlogService {
   return {
-    listBlogs(query: BlogListQuery) {
-      return repository.list(query);
+    listAdminBlogs(query) {
+      return repository.listAdmin(query);
     },
-    async getBlog(id) {
+    listPublicBlogs(query) {
+      return repository.listPublic(query);
+    },
+    async getAdminBlog(id) {
       const blog = await repository.findById(id);
 
       if (!blog) {
@@ -209,28 +245,59 @@ export function createBlogService({
 
       return blog;
     },
-    async createBlog(input: BlogCreateInput) {
-      const existingBlog = await repository.findBySlug(input.slug);
+    async getPublicBlogBySlug(slug) {
+      const blog = await repository.findBySlug(slug);
+
+      if (!blog || !blog.published) {
+        throw createNotFoundError(slug);
+      }
+
+      return blog;
+    },
+    async getPublicSimilarBlogs(slug, limit) {
+      const blog = await repository.findBySlug(slug);
+
+      if (!blog || !blog.published) {
+        throw createNotFoundError(slug);
+      }
+
+      return repository.listSimilar(
+        blog.id,
+        blog.categoryId,
+        blog.tags.map((tag) => tag.id),
+        limit,
+      );
+    },
+    async createBlog(input) {
+      const slug = resolveSlug(input.title, input.slug);
+      const existingBlog = await repository.findBySlug(slug);
 
       if (existingBlog) {
-        throw createSlugConflictError(input.slug);
+        throw createSlugConflictError(slug);
       }
 
       await ensureCategoryExists(repository, input.categoryId);
       const tagIds = await validateTagIds(repository, input.tagIds);
       const timestamp = now();
+      const shouldPublishAt =
+        input.publishedAt === undefined
+          ? input.published
+            ? timestamp
+            : null
+          : input.publishedAt;
       const blog: NewBlog = {
         id: generateId(),
         createdAt: timestamp,
         updatedAt: timestamp,
         title: input.title,
-        slug: input.slug,
+        slug,
         description: input.description,
-        cover: input.cover ?? "",
         content: input.content,
-        published: input.published,
-        publishedAt: input.publishedAt ?? null,
+        coverImage: input.coverImage ?? "",
         featured: input.featured,
+        published: input.published,
+        publishedAt: shouldPublishAt,
+        readTimeMinutes: computeReadTimeMinutes(input.content),
         categoryId: input.categoryId,
       };
 
@@ -238,7 +305,7 @@ export function createBlogService({
         return await repository.create(blog, { tagIds });
       } catch (error) {
         if (isDuplicateSlugError(error)) {
-          throw createSlugConflictError(input.slug);
+          throw createSlugConflictError(slug);
         }
 
         const normalizedError = normalizeWriteForeignKeyError({
@@ -254,18 +321,23 @@ export function createBlogService({
         throw error;
       }
     },
-    async updateBlog(id, input: BlogUpdateInput) {
+    async updateBlog(id, input) {
       const existingBlog = await repository.findById(id);
 
       if (!existingBlog) {
         throw createNotFoundError(id);
       }
 
-      if (input.slug && input.slug !== existingBlog.slug) {
-        const duplicateBlog = await repository.findBySlug(input.slug);
+      const resolvedSlug =
+        input.title !== undefined || input.slug !== undefined
+          ? resolveSlug(input.title ?? existingBlog.title, input.slug)
+          : undefined;
+
+      if (resolvedSlug && resolvedSlug !== existingBlog.slug) {
+        const duplicateBlog = await repository.findBySlug(resolvedSlug);
 
         if (duplicateBlog && duplicateBlog.id !== id) {
-          throw createSlugConflictError(input.slug);
+          throw createSlugConflictError(resolvedSlug);
         }
       }
 
@@ -280,26 +352,35 @@ export function createBlogService({
       if (input.title !== undefined) {
         mutation.title = input.title;
       }
-      if (input.slug !== undefined) {
-        mutation.slug = input.slug;
+      if (resolvedSlug !== undefined) {
+        mutation.slug = resolvedSlug;
       }
       if (input.description !== undefined) {
         mutation.description = input.description;
       }
-      if (input.cover !== undefined) {
-        mutation.cover = input.cover;
-      }
       if (input.content !== undefined) {
         mutation.content = input.content;
+        mutation.readTimeMinutes = computeReadTimeMinutes(input.content);
       }
-      if (input.published !== undefined) {
-        mutation.published = input.published;
-      }
-      if (input.publishedAt !== undefined) {
-        mutation.publishedAt = input.publishedAt;
+      if (input.coverImage !== undefined) {
+        mutation.coverImage = input.coverImage;
       }
       if (input.featured !== undefined) {
         mutation.featured = input.featured;
+      }
+      if (input.published !== undefined) {
+        mutation.published = input.published;
+
+        if (
+          input.published &&
+          existingBlog.publishedAt === null &&
+          input.publishedAt === undefined
+        ) {
+          mutation.publishedAt = now();
+        }
+      }
+      if (input.publishedAt !== undefined) {
+        mutation.publishedAt = input.publishedAt;
       }
       if (input.categoryId !== undefined) {
         mutation.categoryId = input.categoryId;
@@ -321,7 +402,7 @@ export function createBlogService({
         return updatedBlog;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
-          throw createSlugConflictError(input.slug ?? existingBlog.slug);
+          throw createSlugConflictError(resolvedSlug ?? existingBlog.slug);
         }
 
         const normalizedError = normalizeWriteForeignKeyError({
@@ -352,3 +433,5 @@ export function createBlogService({
     },
   };
 }
+
+export const blogService = createBlogService();

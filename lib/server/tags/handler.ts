@@ -2,12 +2,17 @@ import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import {
-  tagCreateSchema,
-  tagIdParamsSchema,
-  tagListQuerySchema,
-  tagUpdateSchema,
+  adminTagCreateSchema,
+  adminTagIdParamsSchema,
+  adminTagListQuerySchema,
+  adminTagUpdateSchema,
 } from "./dto";
-import { createTagService, type TagService, type TagServiceDeps } from "./service";
+import { toAdminTag, toPublicTag } from "./mappers";
+import {
+  createTagService,
+  type TagService,
+  type TagServiceDeps,
+} from "./service";
 
 import { ERROR_CODES } from "../http/error-codes";
 import { AppError } from "../http/errors";
@@ -29,7 +34,7 @@ type TagHandlerDeps = {
   serviceDeps?: TagServiceDeps;
 };
 
-export function createTagHandlers({
+export function createAdminTagHandlers({
   serviceDeps,
   service = createTagService(serviceDeps),
 }: TagHandlerDeps = {}) {
@@ -37,18 +42,19 @@ export function createTagHandlers({
     async handleListTags(request: Request) {
       try {
         const url = new URL(request.url);
-        const query = tagListQuerySchema.parse({
+        const query = adminTagListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
           pageSize: url.searchParams.get("pageSize") ?? undefined,
           query: url.searchParams.get("query") ?? undefined,
+          includeCounts: url.searchParams.get("includeCounts") ?? undefined,
           sortBy: url.searchParams.get("sortBy") ?? undefined,
           sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
-        const result = await service.listTags(query);
+        const result = await service.listAdminTags(query);
 
         return createSuccessResponse(
           {
-            items: result.items,
+            items: result.items.map(toAdminTag),
           },
           {
             page: query.page,
@@ -62,38 +68,38 @@ export function createTagHandlers({
     },
     async handleCreateTag(request: Request) {
       try {
-        const body = tagCreateSchema.parse(await toJsonBody(request));
+        const body = adminTagCreateSchema.parse(await toJsonBody(request));
         const tag = await service.createTag(body);
 
-        return createSuccessResponse(tag, undefined, 201);
+        return createSuccessResponse(toAdminTag(tag), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleGetTag(_request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = tagIdParamsSchema.parse(await params);
+        const { id } = adminTagIdParamsSchema.parse(await params);
         const tag = await service.getTag(id);
 
-        return createSuccessResponse(tag);
+        return createSuccessResponse(toAdminTag(tag));
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleUpdateTag(request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = tagIdParamsSchema.parse(await params);
-        const body = tagUpdateSchema.parse(await toJsonBody(request));
+        const { id } = adminTagIdParamsSchema.parse(await params);
+        const body = adminTagUpdateSchema.parse(await toJsonBody(request));
         const tag = await service.updateTag(id, body);
 
-        return createSuccessResponse(tag);
+        return createSuccessResponse(toAdminTag(tag));
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleDeleteTag(_request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = tagIdParamsSchema.parse(await params);
+        const { id } = adminTagIdParamsSchema.parse(await params);
         await service.deleteTag(id);
 
         return createSuccessResponse(null);
@@ -104,10 +110,32 @@ export function createTagHandlers({
   };
 }
 
-const defaultHandlers = createTagHandlers();
+export function createPublicTagHandlers({
+  serviceDeps,
+  service = createTagService(serviceDeps),
+}: TagHandlerDeps = {}) {
+  return {
+    async handleListTags() {
+      try {
+        const tags = await service.listPublicTags();
 
-export const handleListTags = defaultHandlers.handleListTags;
-export const handleCreateTag = defaultHandlers.handleCreateTag;
-export const handleGetTag = defaultHandlers.handleGetTag;
-export const handleUpdateTag = defaultHandlers.handleUpdateTag;
-export const handleDeleteTag = defaultHandlers.handleDeleteTag;
+        return createSuccessResponse({
+          items: tags.map(toPublicTag),
+        });
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+  };
+}
+
+const defaultAdminHandlers = createAdminTagHandlers();
+const defaultPublicHandlers = createPublicTagHandlers();
+
+export const handleAdminListTags = defaultAdminHandlers.handleListTags;
+export const handleAdminCreateTag = defaultAdminHandlers.handleCreateTag;
+export const handleAdminGetTag = defaultAdminHandlers.handleGetTag;
+export const handleAdminUpdateTag = defaultAdminHandlers.handleUpdateTag;
+export const handleAdminDeleteTag = defaultAdminHandlers.handleDeleteTag;
+
+export const handlePublicListTags = defaultPublicHandlers.handleListTags;

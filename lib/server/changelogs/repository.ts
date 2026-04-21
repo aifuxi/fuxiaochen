@@ -1,4 +1,4 @@
-import { asc, desc, eq, ilike, sql, type SQL } from "drizzle-orm";
+import { asc, desc, eq, ilike, or, sql, type SQL } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import type { Changelog, NewChangelog } from "@/lib/db/schema";
@@ -15,15 +15,72 @@ export interface ChangelogRepository {
   create(changelog: NewChangelog): Promise<Changelog>;
   update(
     id: string,
-    changelog: Partial<
-      Pick<NewChangelog, "version" | "content" | "releaseDate" | "updatedAt">
-    >,
+    changelog: Partial<NewChangelog>,
   ): Promise<Changelog | null>;
   delete(id: string): Promise<boolean>;
 }
 
-const buildChangelogWhere = (query?: string) =>
-  query ? ilike(changelogs.version, `%${query}%`) : undefined;
+const buildChangelogWhere = ({
+  query,
+  type,
+}: Pick<ChangelogListQuery, "query" | "type">) => {
+  const filters = [];
+
+  if (query) {
+    filters.push(
+      or(
+        ilike(changelogs.version, `%${query}%`),
+        ilike(changelogs.title, `%${query}%`),
+        ilike(changelogs.description, `%${query}%`),
+      )!,
+    );
+  }
+
+  if (type) {
+    filters.push(eq(changelogs.type, type));
+  }
+
+  if (filters.length === 0) {
+    return undefined;
+  }
+
+  if (filters.length === 1) {
+    return filters[0];
+  }
+
+  return sql`${filters[0]} and ${filters[1]}`;
+};
+
+const buildOrderBy = ({
+  sortBy,
+  sortDirection,
+}: Pick<ChangelogListQuery, "sortBy" | "sortDirection">) => {
+  if (sortBy === "version") {
+    return [
+      sortDirection === "asc"
+        ? asc(changelogs.version)
+        : desc(changelogs.version),
+      desc(changelogs.releaseDate),
+      desc(changelogs.id),
+    ] as const;
+  }
+
+  if (sortBy === "updatedAt") {
+    return [
+      sortDirection === "asc"
+        ? asc(changelogs.updatedAt)
+        : desc(changelogs.updatedAt),
+      desc(changelogs.id),
+    ] as const;
+  }
+
+  return [
+    sortDirection === "asc"
+      ? asc(changelogs.releaseDate)
+      : desc(changelogs.releaseDate),
+    desc(changelogs.id),
+  ] as const;
+};
 
 const countChangelogs = async (where?: SQL<unknown>) => {
   const rows = await db
@@ -36,48 +93,16 @@ const countChangelogs = async (where?: SQL<unknown>) => {
   return rows[0]?.total ?? 0;
 };
 
-export const changelogListOrderBy = [
-  sql`${changelogs.releaseDate} is null`,
-  desc(changelogs.releaseDate),
-  desc(changelogs.createdAt),
-  desc(changelogs.id),
-] as const;
-
-const buildChangelogOrderBy = ({
-  sortBy,
-  sortDirection,
-}: Pick<ChangelogListQuery, "sortBy" | "sortDirection">) => {
-  if (sortBy === "releaseDate") {
-    if (sortDirection === "desc") {
-      return changelogListOrderBy;
-    }
-
-    return [
-      sql`${changelogs.releaseDate} is null`,
-      asc(changelogs.releaseDate),
-      desc(changelogs.createdAt),
-      desc(changelogs.id),
-    ] as const;
-  }
-
-  return [
-    sortDirection === "asc"
-      ? asc(changelogs.updatedAt)
-      : desc(changelogs.updatedAt),
-    desc(changelogs.id),
-  ] as const;
-};
-
 export const changelogRepository: ChangelogRepository = {
-  async list({ page, pageSize, query, sortBy, sortDirection }) {
+  async list({ page, pageSize, query, type, sortBy, sortDirection }) {
     const offset = (page - 1) * pageSize;
-    const where = buildChangelogWhere(query);
+    const where = buildChangelogWhere({ query, type });
     const [items, total] = await Promise.all([
       db
         .select()
         .from(changelogs)
         .where(where)
-        .orderBy(...buildChangelogOrderBy({ sortBy, sortDirection }))
+        .orderBy(...buildOrderBy({ sortBy, sortDirection }))
         .limit(pageSize)
         .offset(offset),
       countChangelogs(where),
@@ -105,7 +130,6 @@ export const changelogRepository: ChangelogRepository = {
   },
   async create(changelog) {
     const rows = await db.insert(changelogs).values(changelog).returning();
-
     return rows[0] as Changelog;
   },
   async update(id, changelog) {

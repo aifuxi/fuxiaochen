@@ -1,26 +1,26 @@
 import {
-  handleDeleteBlog,
-  handleGetBlog,
-  handleUpdateBlog,
-} from "@/lib/server/blogs/handler";
+  handleAdminDeleteProject,
+  handleAdminGetProject,
+  handleAdminUpdateProject,
+} from "@/lib/server/projects/handler";
 
 export function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleGetBlog(request, params);
+  return handleAdminGetProject(request, params);
 }
 
 export function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleUpdateBlog(request, params);
+  return handleAdminUpdateProject(request, params);
 }
 
 export function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  return handleDeleteBlog(request, params);
+  return handleAdminDeleteProject(request, params);
 }

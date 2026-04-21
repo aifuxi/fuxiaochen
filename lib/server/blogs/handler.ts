@@ -2,12 +2,15 @@ import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import {
-  blogCreateSchema,
-  blogIdParamsSchema,
-  blogListQuerySchema,
-  blogUpdateSchema,
+  adminBlogCreateSchema,
+  adminBlogIdParamsSchema,
+  adminBlogListQuerySchema,
+  adminBlogUpdateSchema,
+  publicBlogListQuerySchema,
+  publicBlogSlugParamsSchema,
+  publicSimilarBlogQuerySchema,
 } from "./dto";
-import { blogRepository } from "./repository";
+import { toAdminBlog, toPublicBlog } from "./mappers";
 import {
   createBlogService,
   type BlogService,
@@ -34,32 +37,30 @@ type BlogHandlerDeps = {
   serviceDeps?: BlogServiceDeps;
 };
 
-export function createBlogHandlers({
+export function createAdminBlogHandlers({
   serviceDeps,
-  service = createBlogService({
-    repository: blogRepository,
-    ...serviceDeps,
-  }),
+  service = createBlogService(serviceDeps),
 }: BlogHandlerDeps = {}) {
   return {
     async handleListBlogs(request: Request) {
       try {
         const url = new URL(request.url);
-        const query = blogListQuerySchema.parse({
+        const query = adminBlogListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
           pageSize: url.searchParams.get("pageSize") ?? undefined,
           query: url.searchParams.get("query") ?? undefined,
-          published: url.searchParams.get("published") ?? undefined,
-          featured: url.searchParams.get("featured") ?? undefined,
           categoryId: url.searchParams.get("categoryId") ?? undefined,
+          tagId: url.searchParams.get("tagId") ?? undefined,
+          featured: url.searchParams.get("featured") ?? undefined,
+          published: url.searchParams.get("published") ?? undefined,
           sortBy: url.searchParams.get("sortBy") ?? undefined,
           sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
-        const result = await service.listBlogs(query);
+        const result = await service.listAdminBlogs(query);
 
         return createSuccessResponse(
           {
-            items: result.items,
+            items: result.items.map(toAdminBlog),
           },
           {
             page: query.page,
@@ -73,38 +74,38 @@ export function createBlogHandlers({
     },
     async handleCreateBlog(request: Request) {
       try {
-        const body = blogCreateSchema.parse(await toJsonBody(request));
+        const body = adminBlogCreateSchema.parse(await toJsonBody(request));
         const blog = await service.createBlog(body);
 
-        return createSuccessResponse(blog, undefined, 201);
+        return createSuccessResponse(toAdminBlog(blog), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleGetBlog(_request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = blogIdParamsSchema.parse(await params);
-        const blog = await service.getBlog(id);
+        const { id } = adminBlogIdParamsSchema.parse(await params);
+        const blog = await service.getAdminBlog(id);
 
-        return createSuccessResponse(blog);
+        return createSuccessResponse(toAdminBlog(blog));
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleUpdateBlog(request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = blogIdParamsSchema.parse(await params);
-        const body = blogUpdateSchema.parse(await toJsonBody(request));
+        const { id } = adminBlogIdParamsSchema.parse(await params);
+        const body = adminBlogUpdateSchema.parse(await toJsonBody(request));
         const blog = await service.updateBlog(id, body);
 
-        return createSuccessResponse(blog);
+        return createSuccessResponse(toAdminBlog(blog));
       } catch (error) {
         return toErrorResponse(error);
       }
     },
     async handleDeleteBlog(_request: Request, params: Promise<{ id: string }>) {
       try {
-        const { id } = blogIdParamsSchema.parse(await params);
+        const { id } = adminBlogIdParamsSchema.parse(await params);
         await service.deleteBlog(id);
 
         return createSuccessResponse(null);
@@ -115,10 +116,82 @@ export function createBlogHandlers({
   };
 }
 
-const defaultHandlers = createBlogHandlers();
+export function createPublicBlogHandlers({
+  serviceDeps,
+  service = createBlogService(serviceDeps),
+}: BlogHandlerDeps = {}) {
+  return {
+    async handleListBlogs(request: Request) {
+      try {
+        const url = new URL(request.url);
+        const query = publicBlogListQuerySchema.parse({
+          page: url.searchParams.get("page") ?? undefined,
+          pageSize: url.searchParams.get("pageSize") ?? undefined,
+          query: url.searchParams.get("query") ?? undefined,
+          category: url.searchParams.get("category") ?? undefined,
+          tag: url.searchParams.get("tag") ?? undefined,
+          featured: url.searchParams.get("featured") ?? undefined,
+          sortBy: url.searchParams.get("sortBy") ?? undefined,
+          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+        });
+        const result = await service.listPublicBlogs(query);
 
-export const handleListBlogs = defaultHandlers.handleListBlogs;
-export const handleCreateBlog = defaultHandlers.handleCreateBlog;
-export const handleGetBlog = defaultHandlers.handleGetBlog;
-export const handleUpdateBlog = defaultHandlers.handleUpdateBlog;
-export const handleDeleteBlog = defaultHandlers.handleDeleteBlog;
+        return createSuccessResponse(
+          {
+            items: result.items.map(toPublicBlog),
+          },
+          {
+            page: query.page,
+            pageSize: query.pageSize,
+            total: result.total,
+          },
+        );
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleGetBlog(_request: Request, params: Promise<{ slug: string }>) {
+      try {
+        const { slug } = publicBlogSlugParamsSchema.parse(await params);
+        const blog = await service.getPublicBlogBySlug(slug);
+
+        return createSuccessResponse(toPublicBlog(blog));
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleListSimilarBlogs(
+      request: Request,
+      params: Promise<{ slug: string }>,
+    ) {
+      try {
+        const { slug } = publicBlogSlugParamsSchema.parse(await params);
+        const url = new URL(request.url);
+        const query = publicSimilarBlogQuerySchema.parse({
+          limit: url.searchParams.get("limit") ?? undefined,
+        });
+        const items = await service.getPublicSimilarBlogs(slug, query.limit);
+
+        return createSuccessResponse({
+          items: items.map(toPublicBlog),
+        });
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+  };
+}
+
+const defaultAdminHandlers = createAdminBlogHandlers();
+const defaultPublicHandlers = createPublicBlogHandlers();
+
+export const handleAdminListBlogs = defaultAdminHandlers.handleListBlogs;
+export const handleAdminCreateBlog = defaultAdminHandlers.handleCreateBlog;
+export const handleAdminGetBlog = defaultAdminHandlers.handleGetBlog;
+export const handleAdminUpdateBlog = defaultAdminHandlers.handleUpdateBlog;
+export const handleAdminDeleteBlog = defaultAdminHandlers.handleDeleteBlog;
+
+export const handlePublicListBlogs = defaultPublicHandlers.handleListBlogs;
+export const handlePublicGetBlog = defaultPublicHandlers.handleGetBlog;
+export const handlePublicListSimilarBlogs =
+  defaultPublicHandlers.handleListSimilarBlogs;
