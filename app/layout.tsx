@@ -1,21 +1,43 @@
+import type { Metadata } from "next";
+import { Space_Grotesk, Space_Mono } from "next/font/google";
 import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Toaster } from "sonner";
 
+import "@/styles/global.css";
 import { ModalProvider } from "@/components/modal-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import { isProduction } from "@/lib/env";
 
-import "@/styles/global.css";
+import "./globals.css";
 
+const _spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+const _spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+});
+
+export const metadata: Metadata = {
+  title: "Fuxiaochen - Full Stack Developer",
+  description:
+    "Building accessible, pixel-perfect digital experiences for the web. Writing about web development, design, and productivity.",
+};
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN">
+    <html
+      lang="zh-CN"
+      className={`${_spaceGrotesk.variable} ${_spaceMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="icon" type="image/svg+xml" href="/logo.svg" />
         {/* Google Search Console 验证 */}
@@ -27,9 +49,17 @@ export default function RootLayout({
             />
           )}
       </head>
-      <body className="antialiased">
-        <ModalProvider>{children}</ModalProvider>
-        <Toaster richColors position="top-center" />
+      <body className="font-sans antialiased">
+        <ModalProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ModalProvider>
       </body>
 
       {/* Google Analytics  */}
