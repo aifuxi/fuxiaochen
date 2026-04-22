@@ -20,8 +20,10 @@
 - `pnpm lint:inspect`：打印当前生效的 Oxlint 配置。
 - `pnpm format` / `pnpm format:check`：使用 Oxfmt 格式化，或检查格式是否符合约定。
 - `pnpm db:generate`：根据 `lib/db/schema.ts` 生成 Drizzle migration。
+- `pnpm db:import:blog-content`：将 `data/` 下的博客、分类和标签内容导入当前数据库。
 - `pnpm db:migrate`：执行 Drizzle migration。
 - `pnpm db:push`：直接将 schema 推到数据库。
+- `pnpm db:reset`：使用 `drizzle-seed` 的 `reset` 清空当前 schema 下的表数据，不会重新生成 migration 或重建 schema。
 - `pnpm db:studio`：打开 Drizzle Studio。
 - `pnpm commit` / `pnpm commit:retry`：使用 Commitizen 辅助生成提交信息。
 - `make build_image`：读取 `.env` 中变量构建 Docker 镜像。
@@ -50,6 +52,7 @@
 - `lib/*-data.ts`：静态内容数据源，当前前台页面大量依赖这些文件。
 - `drizzle/`：migration 输出目录。
 - `data/`：初始化样例数据和 SQL 参考，不是运行时主数据源。
+- `scripts/`：数据库辅助脚本等命令入口，目前包含 `reset-db.ts` 与 `import-blog-content.ts`。
 - `app/globals.css` 与 `styles/global.css`：全局样式入口目前是双文件并行；`components.json` 指向 `app/globals.css`，改样式时先确认目标文件。
 
 ## 代码风格与命名约定
@@ -73,6 +76,8 @@
 - 统一错误处理在 `lib/server/http/**`，不要在各 Route Handler 里随意拼装错误响应。
 - 现有数据库表主要包括 `blogs`、`categories`、`tags`、`blog_tags`、`changelogs`。
 - 修改 schema 后，应同步更新 Drizzle migration，而不是只改 TypeScript 类型。
+- `pnpm db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `pnpm db:migrate` 或 `pnpm db:push`。
+- `pnpm db:import:blog-content` 面向真实数据库内容导入，不会自动修改 `lib/*-data.ts` 这些静态展示数据。
 - 若只是改页面展示文案或演示内容，优先检查 `lib/blog-data.ts`、`lib/projects-data.ts`、`lib/changelog-data.ts` 等静态数据文件是否才是真正来源。
 
 ## 提交与 Pull Request 规范
