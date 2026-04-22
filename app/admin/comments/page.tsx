@@ -6,15 +6,16 @@ import Link from "next/link";
 
 import {
   Check,
-  X,
-  Trash2,
-  Search,
-  MessageSquare,
-  Clock,
   CheckCircle,
   AlertTriangle,
-  User,
+  Clock,
   ExternalLink,
+  MessageSquare,
+  MoreHorizontal,
+  Search,
+  Trash2,
+  User,
+  X,
 } from "lucide-react";
 import useSWR from "swr";
 
@@ -52,55 +53,115 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { fetchApiData } from "@/lib/api/fetcher";
-import {
-  getAllComments,
-  getCommentStats,
-  type Comment,
-} from "@/lib/comments-data";
-import type { AdminBlog } from "@/lib/server/blogs/mappers";
+import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminComment } from "@/lib/server/comments/mappers";
+import type { CommentStats } from "@/lib/server/comments/service";
+
+const EMPTY_STATS: CommentStats = {
+  total: 0,
+  pending: 0,
+  approved: 0,
+  spam: 0,
+};
 
 export default function AdminCommentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedComments, setSelectedComments] = useState<string[]>([]);
-  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
-    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
-    fetchApiData,
-    {
-      revalidateOnFocus: false,
-    },
-  );
+  const [isMutating, setIsMutating] = useState(false);
 
-  const allComments = getAllComments();
-  const stats = getCommentStats();
-  const blogs = blogsData?.items ?? [];
-
-  const filteredComments = allComments.filter((comment) => {
-    const matchesSearch =
-      comment.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      comment.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      comment.email.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || comment.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const commentsUrl = buildApiUrl("/api/admin/comments", {
+    pageSize: 100,
+    query: searchQuery.trim() || undefined,
+    status: statusFilter === "all" ? undefined : statusFilter,
+    sortBy: "createdAt",
+    sortDirection: "desc",
   });
 
+  const { data, mutate } = useSWR<{
+    items: AdminComment[];
+    stats: CommentStats;
+  }>(commentsUrl, fetchApiData, {
+    revalidateOnFocus: false,
+  });
+
+  const comments = data?.items ?? [];
+  const stats = data?.stats ?? EMPTY_STATS;
+
   const toggleSelectAll = () => {
-    if (selectedComments.length === filteredComments.length) {
+    if (selectedComments.length === comments.length) {
       setSelectedComments([]);
     } else {
-      setSelectedComments(filteredComments.map((c) => c.id));
+      setSelectedComments(comments.map((comment) => comment.id));
     }
   };
 
   const toggleSelect = (id: string) => {
-    setSelectedComments((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    setSelectedComments((current) =>
+      current.includes(id)
+        ? current.filter((selectedId) => selectedId !== id)
+        : [...current, id],
     );
   };
 
-  const getStatusBadge = (status: Comment["status"]) => {
+  const updateCommentStatus = async (
+    ids: string[],
+    status: AdminComment["status"],
+  ) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setIsMutating(true);
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          apiRequest(`/api/admin/comments/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+          }),
+        ),
+      );
+      setSelectedComments((current) =>
+        current.filter((id) => !ids.includes(id)),
+      );
+      await mutate();
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const deleteComments = async (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setIsMutating(true);
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          apiRequest(`/api/admin/comments/${id}`, {
+            method: "DELETE",
+          }),
+        ),
+      );
+      setSelectedComments((current) =>
+        current.filter((id) => !ids.includes(id)),
+      );
+      await mutate();
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const getStatusBadge = (status: AdminComment["status"]) => {
     switch (status) {
       case "approved":
         return (
@@ -131,7 +192,6 @@ export default function AdminCommentsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div>
         <h1 className="text-foreground text-2xl font-bold">Comments</h1>
         <p className="text-muted-foreground">
@@ -139,7 +199,6 @@ export default function AdminCommentsPage() {
         </p>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -181,7 +240,6 @@ export default function AdminCommentsPage() {
         </Card>
       </div>
 
-      {/* Filters */}
       <Card>
         <CardHeader>
           <CardTitle>All Comments</CardTitle>
@@ -198,7 +256,7 @@ export default function AdminCommentsPage() {
                   placeholder="Search comments..."
                   className="pl-9"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(event) => setSearchQuery(event.target.value)}
                 />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -213,28 +271,44 @@ export default function AdminCommentsPage() {
                 </SelectContent>
               </Select>
             </div>
-            {selectedComments.length > 0 && (
+            {selectedComments.length > 0 ? (
               <div className="flex items-center gap-2">
                 <span className="text-muted-foreground text-sm">
                   {selectedComments.length} selected
                 </span>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isMutating}
+                  onClick={() =>
+                    updateCommentStatus(selectedComments, "approved")
+                  }
+                >
                   <Check className="mr-1 size-3" />
                   Approve
                 </Button>
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isMutating}
+                  onClick={() => updateCommentStatus(selectedComments, "spam")}
+                >
                   <X className="mr-1 size-3" />
                   Spam
                 </Button>
-                <Button size="sm" variant="destructive">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={isMutating}
+                  onClick={() => deleteComments(selectedComments)}
+                >
                   <Trash2 className="mr-1 size-3" />
                   Delete
                 </Button>
               </div>
-            )}
+            ) : null}
           </div>
 
-          {/* Comments Table */}
           <div className="border-border rounded-lg border">
             <Table>
               <TableHeader>
@@ -242,8 +316,8 @@ export default function AdminCommentsPage() {
                   <TableHead className="w-12">
                     <Checkbox
                       checked={
-                        selectedComments.length === filteredComments.length &&
-                        filteredComments.length > 0
+                        comments.length > 0 &&
+                        selectedComments.length === comments.length
                       }
                       onCheckedChange={toggleSelectAll}
                     />
@@ -257,11 +331,17 @@ export default function AdminCommentsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredComments.map((comment) => {
-                  const post = blogs.find(
-                    (blog) => blog.slug === comment.postSlug,
-                  );
-                  return (
+                {comments.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="text-muted-foreground py-8 text-center"
+                    >
+                      No comments found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  comments.map((comment) => (
                     <TableRow key={comment.id}>
                       <TableCell>
                         <Checkbox
@@ -298,54 +378,53 @@ export default function AdminCommentsPage() {
                         </p>
                       </TableCell>
                       <TableCell>
-                        {post && (
+                        {comment.blog ? (
                           <Link
-                            href={`/blog/${comment.postSlug}`}
+                            href={`/blog/${comment.blog.slug}`}
                             className="text-primary flex items-center gap-1 text-sm hover:underline"
                             target="_blank"
                           >
                             <span className="line-clamp-1 max-w-[150px]">
-                              {post.title}
+                              {comment.blog.title}
                             </span>
                             <ExternalLink className="size-3" />
                           </Link>
-                        )}
+                        ) : null}
                       </TableCell>
                       <TableCell>{getStatusBadge(comment.status)}</TableCell>
                       <TableCell className="text-muted-foreground text-sm">
-                        {comment.createdAt}
+                        {new Date(comment.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="size-4" />
                               <span className="sr-only">Actions</span>
-                              <svg
-                                className="size-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                />
-                              </svg>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateCommentStatus([comment.id], "approved")
+                              }
+                            >
                               <Check className="mr-2 size-4" />
                               Approve
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateCommentStatus([comment.id], "spam")
+                              }
+                            >
                               <X className="mr-2 size-4" />
                               Mark as Spam
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive">
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() => deleteComments([comment.id])}
+                            >
                               <Trash2 className="mr-2 size-4" />
                               Delete
                             </DropdownMenuItem>
@@ -353,8 +432,8 @@ export default function AdminCommentsPage() {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                  );
-                })}
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
