@@ -18,11 +18,11 @@ const buildTagWhere = (query?: string) =>
 const tagCounts = db
   .select({
     tagId: blogTags.tagId,
-    blogCount: sql<number>`count(*)`.mapWith(Number),
+    blogCount: sql<number>`count(*)`.mapWith(Number).as("blog_count"),
     publishedBlogCount:
-      sql<number>`count(*) filter (where ${blogs.published} = true)`.mapWith(
-        Number,
-      ),
+      sql<number>`count(*) filter (where ${blogs.published} = true)`
+        .mapWith(Number)
+        .as("published_blog_count"),
   })
   .from(blogTags)
   .innerJoin(blogs, eq(blogTags.blogId, blogs.id))
