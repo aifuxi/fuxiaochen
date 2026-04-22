@@ -1,3 +1,5 @@
+import { resolveBlogCoverImage } from "@/lib/blog-cover-image";
+
 import type { BlogReadModel } from "./service";
 
 import { formatPublicDate } from "../content-utils";
@@ -43,7 +45,7 @@ export function toPublicBlog(blog: BlogReadModel): PublicBlog {
     date: formatPublicDate(blog.publishedAt ?? blog.createdAt),
     category: blog.category?.name ?? "",
     tags: blog.tags.map((tag) => tag.slug),
-    coverImage: blog.coverImage,
+    coverImage: resolveBlogCoverImage(blog.coverImage),
     readTime: `${blog.readTimeMinutes} min read`,
     featured: blog.featured,
   };

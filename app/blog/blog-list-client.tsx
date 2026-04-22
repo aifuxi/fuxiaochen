@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { Search, X } from "lucide-react";
@@ -18,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { BlogCoverImage } from "@/components/blog-cover-image";
 
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
@@ -178,7 +179,7 @@ export function BlogListClient({
               className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
-                <Image
+                <BlogCoverImage
                   src={post.coverImage}
                   alt={post.title}
                   fill

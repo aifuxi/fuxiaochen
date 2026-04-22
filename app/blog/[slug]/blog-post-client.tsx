@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
@@ -9,6 +8,7 @@ import useSWR from "swr";
 import { Badge } from "@/components/ui/badge";
 
 import { BlogComments } from "@/components/blog-comments";
+import { BlogCoverImage } from "@/components/blog-cover-image";
 import { SimilarPosts } from "@/components/similar-posts";
 import { TableOfContents } from "@/components/table-of-contents";
 
@@ -103,7 +103,7 @@ export function BlogPostClient({
   return (
     <>
       <div className="relative h-[40vh] min-h-[300px] w-full md:h-[50vh]">
-        <Image
+        <BlogCoverImage
           src={post.coverImage}
           alt={post.title}
           fill

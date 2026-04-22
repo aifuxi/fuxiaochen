@@ -1,12 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import { ArrowUpRight } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
+
+import { BlogCoverImage } from "@/components/blog-cover-image";
 
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
@@ -45,7 +46,7 @@ export function FeaturedPosts() {
               className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
-                <Image
+                <BlogCoverImage
                   src={post.coverImage}
                   alt={post.title}
                   fill
