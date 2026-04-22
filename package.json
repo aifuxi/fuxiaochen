@@ -10,6 +10,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "build:analyzer": "cross-env ANALYZE=true next build",
     "db:generate": "drizzle-kit generate",
+    "db:import:blog-content": "tsx scripts/import-blog-content.ts",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:reset": "tsx scripts/reset-db.ts",
