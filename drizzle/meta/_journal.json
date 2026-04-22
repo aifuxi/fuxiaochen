@@ -15,6 +15,13 @@
       "when": 1776792343464,
       "tag": "0001_fantastic_jetstream",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776881155453,
+      "tag": "0002_hot_purifiers",
+      "breakpoints": true
     }
   ]
 }
