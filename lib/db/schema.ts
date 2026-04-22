@@ -12,6 +12,7 @@ import {
 
 export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
 export type CommentStatus = "pending" | "approved" | "spam";
+export type FriendCategory = "developer" | "designer" | "blogger" | "creator";
 
 const createTimestampColumns = () => ({
   createdAt: timestamp("created_at", {
@@ -120,6 +121,23 @@ export const projects = pgTable(
   },
   (table) => [
     index("projects_published_year_idx").on(table.published, table.year.desc()),
+  ],
+);
+
+export const friends = pgTable(
+  "friends",
+  {
+    id: text("id").primaryKey(),
+    ...createTimestampColumns(),
+    name: text("name").notNull(),
+    url: text("url").notNull().unique("friends_url_key"),
+    avatar: text("avatar").notNull().default(""),
+    description: text("description").notNull().default(""),
+    category: text("category").$type<FriendCategory>().notNull(),
+  },
+  (table) => [
+    index("friends_category_name_idx").on(table.category, table.name),
+    index("friends_updated_at_idx").on(table.updatedAt.desc()),
   ],
 );
 
@@ -232,6 +250,7 @@ export const schema = {
   categories,
   changelogs,
   comments,
+  friends,
   projects,
   tags,
 };
@@ -246,6 +265,8 @@ export type BlogTag = typeof blogTags.$inferSelect;
 export type NewBlogTag = typeof blogTags.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
+export type Friend = typeof friends.$inferSelect;
+export type NewFriend = typeof friends.$inferInsert;
 export type Changelog = typeof changelogs.$inferSelect;
 export type NewChangelog = typeof changelogs.$inferInsert;
 export type Comment = typeof comments.$inferSelect;
