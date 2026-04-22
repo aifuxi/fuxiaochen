@@ -19,11 +19,11 @@ const buildCategoryWhere = (query?: string) =>
 const categoryCounts = db
   .select({
     categoryId: blogs.categoryId,
-    blogCount: sql<number>`count(*)`.mapWith(Number),
+    blogCount: sql<number>`count(*)`.mapWith(Number).as("blog_count"),
     publishedBlogCount:
-      sql<number>`count(*) filter (where ${blogs.published} = true)`.mapWith(
-        Number,
-      ),
+      sql<number>`count(*) filter (where ${blogs.published} = true)`
+        .mapWith(Number)
+        .as("published_blog_count"),
   })
   .from(blogs)
   .groupBy(blogs.categoryId)
