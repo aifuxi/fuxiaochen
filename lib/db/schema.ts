@@ -11,6 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
+export type CommentStatus = "pending" | "approved" | "spam";
 
 const createTimestampColumns = () => ({
   createdAt: timestamp("created_at", {
@@ -145,6 +146,43 @@ export const changelogs = pgTable(
   ],
 );
 
+export const comments = pgTable(
+  "comments",
+  {
+    id: text("id").primaryKey(),
+    ...createTimestampColumns(),
+    blogId: text("blog_id").notNull(),
+    parentId: text("parent_id"),
+    author: text("author").notNull(),
+    email: text("email").notNull(),
+    content: text("content").notNull(),
+    avatar: text("avatar"),
+    status: text("status").$type<CommentStatus>().notNull().default("pending"),
+  },
+  (table) => [
+    foreignKey({
+      name: "comments_blog_id_fkey",
+      columns: [table.blogId],
+      foreignColumns: [blogs.id],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "comments_parent_id_fkey",
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+    }).onDelete("cascade"),
+    index("comments_blog_id_status_created_at_idx").on(
+      table.blogId,
+      table.status,
+      table.createdAt.desc(),
+    ),
+    index("comments_parent_id_idx").on(table.parentId),
+    index("comments_status_created_at_idx").on(
+      table.status,
+      table.createdAt.desc(),
+    ),
+  ],
+);
+
 export const categoriesRelations = relations(categories, ({ many }) => ({
   blogs: many(blogs),
 }));
@@ -159,6 +197,7 @@ export const blogsRelations = relations(blogs, ({ many, one }) => ({
     references: [categories.id],
   }),
   blogTags: many(blogTags),
+  comments: many(comments),
 }));
 
 export const blogTagsRelations = relations(blogTags, ({ one }) => ({
@@ -172,11 +211,27 @@ export const blogTagsRelations = relations(blogTags, ({ one }) => ({
   }),
 }));
 
+export const commentsRelations = relations(comments, ({ many, one }) => ({
+  blog: one(blogs, {
+    fields: [comments.blogId],
+    references: [blogs.id],
+  }),
+  parent: one(comments, {
+    fields: [comments.parentId],
+    references: [comments.id],
+    relationName: "comment_replies",
+  }),
+  replies: many(comments, {
+    relationName: "comment_replies",
+  }),
+}));
+
 export const schema = {
   blogs,
   blogTags,
   categories,
   changelogs,
+  comments,
   projects,
   tags,
 };
@@ -193,3 +248,5 @@ export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type Changelog = typeof changelogs.$inferSelect;
 export type NewChangelog = typeof changelogs.$inferInsert;
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;

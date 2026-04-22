@@ -3,12 +3,14 @@
 import { useState } from "react";
 
 import { MessageSquare, Send, User } from "lucide-react";
+import useSWR from "swr";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import { getCommentsByPostSlug, type Comment } from "@/lib/comments-data";
+import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
+import type { PublicComment } from "@/lib/server/comments/mappers";
 
 interface BlogCommentsProps {
   postSlug: string;
@@ -20,24 +22,58 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const comments = getCommentsByPostSlug(postSlug);
+  const commentsUrl = buildApiUrl("/api/public/comments", {
+    postSlug,
+  });
+  const { data, mutate } = useSWR<{ items: PublicComment[] }>(
+    commentsUrl,
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim() || !content.trim()) return;
+  const comments = data?.items ?? [];
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!name.trim() || !email.trim() || !content.trim()) {
+      return;
+    }
 
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setContent("");
+    setSubmitError(null);
 
-    // Reset success message after 5 seconds
-    setTimeout(() => setSubmitted(false), 5000);
+    try {
+      await apiRequest("/api/public/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postSlug,
+          author: name.trim(),
+          email: email.trim(),
+          content: content.trim(),
+        }),
+      });
+
+      setSubmitted(true);
+      setName("");
+      setEmail("");
+      setContent("");
+      await mutate();
+      window.setTimeout(() => setSubmitted(false), 5000);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to submit comment.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -49,7 +85,6 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
         </h2>
       </div>
 
-      {/* Comment Form */}
       <div className="border-border bg-card mb-10 rounded-lg border p-6">
         <h3 className="text-foreground mb-4 font-medium">Leave a Comment</h3>
 
@@ -71,7 +106,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                   id="name"
                   placeholder="Your name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(event) => setName(event.target.value)}
                   required
                 />
               </div>
@@ -87,7 +122,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                   type="email"
                   placeholder="your@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(event) => setEmail(event.target.value)}
                   required
                 />
               </div>
@@ -104,10 +139,13 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                 placeholder="Share your thoughts..."
                 rows={4}
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(event) => setContent(event.target.value)}
                 required
               />
             </div>
+            {submitError ? (
+              <p className="text-destructive text-sm">{submitError}</p>
+            ) : null}
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 "Submitting..."
@@ -122,7 +160,6 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
         )}
       </div>
 
-      {/* Comments List */}
       <div className="space-y-6">
         {comments.length === 0 ? (
           <p className="text-muted-foreground py-8 text-center">
@@ -138,7 +175,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
   );
 }
 
-function CommentCard({ comment }: { comment: Comment }) {
+function CommentCard({ comment }: { comment: PublicComment }) {
   return (
     <div className="flex gap-4">
       <div className="flex-shrink-0">
@@ -158,7 +195,7 @@ function CommentCard({ comment }: { comment: Comment }) {
         <div className="mb-1 flex items-center gap-2">
           <span className="text-foreground font-medium">{comment.author}</span>
           <span className="text-muted-foreground text-sm">
-            {comment.createdAt}
+            {new Date(comment.createdAt).toLocaleDateString()}
           </span>
         </div>
         <p className="text-muted-foreground">{comment.content}</p>
