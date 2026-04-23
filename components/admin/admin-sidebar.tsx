@@ -12,6 +12,7 @@ import {
   BarChart3,
   MessageSquare,
   Users,
+  Shield,
   History,
   Link2,
 } from "lucide-react";
@@ -22,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
 
-const navigation = [
+const getNavigation = (isAdmin: boolean) => [
   {
     title: "Overview",
     items: [
@@ -53,12 +54,18 @@ const navigation = [
   },
   {
     title: "System",
-    items: [{ name: "Settings", href: routes.admin.settings, icon: Settings }],
+    items: [
+      ...(isAdmin
+        ? [{ name: "Users", href: routes.admin.users, icon: Shield }]
+        : []),
+      { name: "Settings", href: routes.admin.settings, icon: Settings },
+    ],
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ role }: { role?: string | null }) {
   const pathname = usePathname();
+  const navigation = getNavigation(role === "admin");
 
   return (
     <aside className="border-sidebar-border bg-sidebar fixed top-0 left-0 z-40 h-screen w-64 border-r">

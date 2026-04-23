@@ -1,6 +1,6 @@
 import { AdminLayout } from "@/components/admin/admin-layout";
 
-import { requireServerSession } from "@/lib/auth-session";
+import { getSessionUserRole, requireServerSession } from "@/lib/auth-session";
 
 export default async function AdminRouteLayout({
   children,
@@ -9,5 +9,16 @@ export default async function AdminRouteLayout({
 }) {
   const session = await requireServerSession();
 
-  return <AdminLayout user={session.user}>{children}</AdminLayout>;
+  return (
+    <AdminLayout
+      user={{
+        email: session.user.email,
+        image: session.user.image,
+        name: session.user.name,
+        role: getSessionUserRole(session),
+      }}
+    >
+      {children}
+    </AdminLayout>
+  );
 }
