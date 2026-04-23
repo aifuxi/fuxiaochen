@@ -9,6 +9,7 @@ import { BlogCoverImage } from "@/components/blog-cover-image";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 type SimilarPostsProps = {
   posts: PublicBlog[];
@@ -21,7 +22,7 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
     <section className="border-border border-t py-16">
       <div className="mx-auto max-w-4xl px-6">
         <h2 className="text-foreground mb-10 text-2xl font-semibold tracking-tight">
-          Similar Articles
+          {siteCopy.blogPost.similarTitle}
         </h2>
 
         <div className="grid gap-6 md:grid-cols-3">

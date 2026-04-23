@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicChangelog } from "@/lib/server/changelogs/mappers";
 
+import { siteCopy } from "@/constants/site-copy";
+
 function getTypeIcon(type: PublicChangelog["type"]) {
   switch (type) {
     case "feature":
@@ -30,10 +32,10 @@ function getTypeBadge(type: PublicChangelog["type"]) {
   };
 
   const labels = {
-    feature: "New Feature",
-    improvement: "Improvement",
-    bugfix: "Bug Fix",
-    breaking: "Breaking Change",
+    feature: siteCopy.changelog.types.feature,
+    improvement: siteCopy.changelog.types.improvement,
+    bugfix: siteCopy.changelog.types.bugfix,
+    breaking: siteCopy.changelog.types.breaking,
   };
 
   return (
@@ -60,87 +62,97 @@ export function ChangelogPageClient() {
       <main className="mx-auto max-w-3xl px-6 py-16">
         <header className="mb-16 text-center">
           <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight">
-            Changelog
+            {siteCopy.changelog.title}
           </h1>
           <p className="text-muted-foreground text-lg">
-            All the latest updates, improvements, and fixes to my blog and
-            projects.
+            {siteCopy.changelog.description}
           </p>
         </header>
 
-        <div className="relative">
-          <div className="bg-border absolute top-0 left-0 h-full w-px md:left-1/2 md:-translate-x-1/2" />
+        {changelogs.length > 0 ? (
+          <div className="relative">
+            <div className="bg-border absolute top-0 left-0 h-full w-px md:left-1/2 md:-translate-x-1/2" />
 
-          {changelogs.map((entry, index) => (
-            <div
-              key={entry.id}
-              className={`relative mb-12 md:mb-16 ${
-                index % 2 === 0 ? "md:pr-[50%] md:text-right" : "md:pl-[50%]"
-              }`}
-            >
+            {changelogs.map((entry, index) => (
               <div
-                className={`border-background bg-primary absolute top-0 left-0 h-3 w-3 -translate-x-1/2 rounded-full border-2 md:left-1/2`}
-              />
-
-              <div
-                className={`ml-6 md:ml-0 ${
-                  index % 2 === 0 ? "md:mr-8" : "md:ml-8 md:text-left"
+                key={entry.id}
+                className={`relative mb-12 md:mb-16 ${
+                  index % 2 === 0 ? "md:pr-[50%] md:text-right" : "md:pl-[50%]"
                 }`}
               >
                 <div
-                  className={`mb-2 flex items-center gap-3 ${
-                    index % 2 === 0 ? "md:justify-end" : ""
-                  }`}
-                >
-                  <span className="text-muted-foreground font-mono text-sm">
-                    v{entry.version}
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    {entry.date}
-                  </span>
-                </div>
+                  className={`border-background bg-primary absolute top-0 left-0 h-3 w-3 -translate-x-1/2 rounded-full border-2 md:left-1/2`}
+                />
 
                 <div
-                  className={`mb-3 flex items-center gap-3 ${
-                    index % 2 === 0 ? "md:justify-end" : ""
+                  className={`ml-6 md:ml-0 ${
+                    index % 2 === 0 ? "md:mr-8" : "md:ml-8 md:text-left"
                   }`}
                 >
-                  {getTypeBadge(entry.type)}
+                  <div
+                    className={`mb-2 flex items-center gap-3 ${
+                      index % 2 === 0 ? "md:justify-end" : ""
+                    }`}
+                  >
+                    <span className="text-muted-foreground font-mono text-sm">
+                      v{entry.version}
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      {entry.date}
+                    </span>
+                  </div>
+
+                  <div
+                    className={`mb-3 flex items-center gap-3 ${
+                      index % 2 === 0 ? "md:justify-end" : ""
+                    }`}
+                  >
+                    {getTypeBadge(entry.type)}
+                  </div>
+
+                  <h2 className="text-foreground mb-2 text-xl font-semibold">
+                    {entry.title}
+                  </h2>
+
+                  <p className="text-muted-foreground mb-4">
+                    {entry.description}
+                  </p>
+
+                  <ul
+                    className={`space-y-1.5 ${
+                      index % 2 === 0 ? "md:ml-auto md:text-right" : ""
+                    }`}
+                  >
+                    {entry.changes.map((change, itemIndex) => (
+                      <li
+                        key={itemIndex}
+                        className="text-muted-foreground text-sm"
+                      >
+                        {index % 2 === 0 ? (
+                          <>
+                            <span className="hidden md:inline">{change} •</span>
+                            <span className="md:hidden">• {change}</span>
+                          </>
+                        ) : (
+                          <>• {change}</>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-
-                <h2 className="text-foreground mb-2 text-xl font-semibold">
-                  {entry.title}
-                </h2>
-
-                <p className="text-muted-foreground mb-4">
-                  {entry.description}
-                </p>
-
-                <ul
-                  className={`space-y-1.5 ${
-                    index % 2 === 0 ? "md:ml-auto md:text-right" : ""
-                  }`}
-                >
-                  {entry.changes.map((change, itemIndex) => (
-                    <li
-                      key={itemIndex}
-                      className="text-muted-foreground text-sm"
-                    >
-                      {index % 2 === 0 ? (
-                        <>
-                          <span className="hidden md:inline">{change} •</span>
-                          <span className="md:hidden">• {change}</span>
-                        </>
-                      ) : (
-                        <>• {change}</>
-                      )}
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="border-border bg-card rounded-lg border p-10 text-center">
+            <p className="text-foreground text-lg font-medium">
+              {siteCopy.changelog.emptyTitle}
+            </p>
+            <p className="text-muted-foreground mt-2">
+              {siteCopy.changelog.emptyDescription}
+            </p>
+          </div>
+        )}
       </main>
     </>
   );

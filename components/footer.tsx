@@ -8,14 +8,15 @@ import {
   GONG_AN_LINK,
   GONG_AN_NUMBER,
 } from "@/constants/info";
-import { routes, siteNavLinks } from "@/constants/routes";
+import { routes } from "@/constants/routes";
+import { siteCopy, siteNavLinks } from "@/constants/site-copy";
 
 const footerLinks = {
   main: siteNavLinks,
   social: [
     { href: "https://github.com", label: "GitHub", icon: Github },
     { href: "https://twitter.com", label: "Twitter", icon: Twitter },
-    { href: "mailto:hello@example.com", label: "Email", icon: Mail },
+    { href: "mailto:hello@example.com", label: "邮箱", icon: Mail },
   ],
 };
 
@@ -32,12 +33,14 @@ export function Footer() {
               Fuxiaochen
             </Link>
             <p className="text-muted-foreground max-w-xs text-sm">
-              Building digital experiences with code and creativity.
+              {siteCopy.footer.description}
             </p>
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-foreground text-sm font-medium">Links</span>
+            <span className="text-foreground text-sm font-medium">
+              {siteCopy.footer.linksTitle}
+            </span>
             <ul className="flex flex-col gap-2">
               {footerLinks.main.map((link) => (
                 <li key={link.href}>
@@ -53,7 +56,9 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-foreground text-sm font-medium">Connect</span>
+            <span className="text-foreground text-sm font-medium">
+              {siteCopy.footer.connectTitle}
+            </span>
             <div className="flex items-center gap-3">
               {footerLinks.social.map((link) => (
                 <Link
@@ -78,10 +83,11 @@ export function Footer() {
         <div className="border-border mt-12 border-t pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-muted-foreground text-sm">
-              {new Date().getFullYear()} Fuxiaochen. All rights reserved.
+              © {new Date().getFullYear()} Fuxiaochen.{" "}
+              {siteCopy.footer.copyright}
             </p>
             <p className="text-muted-foreground text-sm">
-              Built with Next.js and Tailwind CSS
+              {siteCopy.footer.builtWith}
             </p>
           </div>
 

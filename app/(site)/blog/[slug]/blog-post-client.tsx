@@ -13,24 +13,22 @@ import { SimilarPosts } from "@/components/similar-posts";
 import { TableOfContents } from "@/components/table-of-contents";
 
 import { fetchApiData } from "@/lib/api/fetcher";
+import { createHeadingIdGenerator } from "@/lib/markdown-headings";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 function parseMarkdown(content: string): string {
+  const nextHeadingId = createHeadingIdGenerator();
+
   return content
     .replace(/^## (.+)$/gm, (_, text) => {
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+      const id = nextHeadingId(text);
       return `<h2 id="${id}" class="scroll-mt-24 text-2xl font-semibold mt-10 mb-4 text-foreground">${text}</h2>`;
     })
     .replace(/^### (.+)$/gm, (_, text) => {
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
+      const id = nextHeadingId(text);
       return `<h3 id="${id}" class="scroll-mt-24 text-xl font-semibold mt-8 mb-3 text-foreground">${text}</h3>`;
     })
     .replace(
@@ -87,7 +85,9 @@ export function BlogPostClient({
   if (error) {
     return (
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <p className="text-foreground text-lg font-medium">Post not found.</p>
+        <p className="text-foreground text-lg font-medium">
+          {siteCopy.blogPost.notFound}
+        </p>
       </main>
     );
   }
@@ -95,7 +95,7 @@ export function BlogPostClient({
   if (!post) {
     return (
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <p className="text-muted-foreground">Loading article...</p>
+        <p className="text-muted-foreground">{siteCopy.blogPost.loading}</p>
       </main>
     );
   }
@@ -121,7 +121,7 @@ export function BlogPostClient({
           className="text-muted-foreground hover:text-foreground relative z-10 -mt-20 mb-8 inline-flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" />
-          Back to Blog
+          {siteCopy.blogPost.backToBlog}
         </Link>
 
         <header className="mb-12">

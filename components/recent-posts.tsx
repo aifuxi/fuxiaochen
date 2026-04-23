@@ -9,6 +9,7 @@ import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 export function RecentPosts() {
   const { data } = useSWR<{ items: PublicBlog[] }>(
@@ -26,13 +27,13 @@ export function RecentPosts() {
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-10 flex items-center justify-between">
           <h2 className="text-foreground text-2xl font-semibold tracking-tight">
-            Recent Posts
+            {siteCopy.home.recentTitle}
           </h2>
           <Link
             href={routes.site.blog}
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
           >
-            All posts
+            {siteCopy.home.recentAction}
             <ArrowRight className="size-3" />
           </Link>
         </div>
