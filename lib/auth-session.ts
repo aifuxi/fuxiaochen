@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { forbidden, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 import type { UserRole } from "@/lib/db/schema";
@@ -59,7 +59,11 @@ export async function requireServerAdminSession() {
   const session = await requireServerSession();
 
   if (getSessionUserRole(session) !== "admin") {
-    forbidden();
+    throw new AppError(
+      ERROR_CODES.AUTH_ADMIN_REQUIRED,
+      "Admin access required",
+      403,
+    );
   }
 
   return session;
