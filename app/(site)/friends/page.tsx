@@ -1,8 +1,5 @@
 import { type Metadata } from "next";
 
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-
 import { FriendsPageClient } from "./friends-page-client";
 
 export const metadata: Metadata = {
@@ -11,11 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function FriendsPage() {
-  return (
-    <div className="bg-background min-h-screen">
-      <Navbar />
-      <FriendsPageClient />
-      <Footer />
-    </div>
-  );
+  return <FriendsPageClient />;
 }

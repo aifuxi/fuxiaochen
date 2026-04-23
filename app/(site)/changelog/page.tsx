@@ -1,8 +1,5 @@
 import { type Metadata } from "next";
 
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-
 import { ChangelogPageClient } from "./changelog-page-client";
 
 export const metadata: Metadata = {
@@ -11,11 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ChangelogPage() {
-  return (
-    <div className="bg-background min-h-screen">
-      <Navbar />
-      <ChangelogPageClient />
-      <Footer />
-    </div>
-  );
+  return <ChangelogPageClient />;
 }
