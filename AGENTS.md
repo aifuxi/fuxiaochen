@@ -33,6 +33,7 @@
 - 仓库当前没有 `pnpm test`，不要凭空补测试命令说明。
 - 提交前至少运行 `pnpm lint` 和 `pnpm format:check`。
 - 如果改动涉及路由、构建配置、数据库 schema、服务端 API 或生产行为，额外运行 `pnpm build`。
+- 如果改动涉及 Drizzle 聚合查询、子查询字段映射，除了 `pnpm build` 以外，尽量再做一次真实运行链路验证（直接调用 repository / handler，或用真实接口请求），不要只看静态构建是否通过。
 - Husky + lint-staged 会在 `pre-commit` 阶段运行 Oxlint/Oxfmt，`commit-msg` 阶段运行 commitlint，但不要依赖钩子替代手动验证。
 
 ## 目录与架构约定
@@ -76,6 +77,8 @@
 - 统一错误处理在 `lib/server/http/**`，不要在各 Route Handler 里随意拼装错误响应。
 - 现有数据库表主要包括 `blogs`、`categories`、`tags`、`blog_tags`、`changelogs`。
 - 修改 schema 后，应同步更新 Drizzle migration，而不是只改 TypeScript 类型。
+- 在 Drizzle 里只要 `sql\`\``字段会进入子查询、聚合结果或被外层查询复用，必须显式`.as("...")` 起别名；不要依赖属性名推断，否则构建或运行时可能报 “raw SQL field doesn't have an alias”。
+- PostgreSQL 的聚合时间字段（例如 `max(timestamp with time zone)`）在运行时可能返回字符串，不要只按 TypeScript 注解把它当 `Date` 用；在 mapper/serializer 层统一按 `Date | string | null` 归一化后再调用 `toISOString()`。
 - `pnpm db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `pnpm db:migrate` 或 `pnpm db:push`。
 - `pnpm db:import:blog-content` 面向真实数据库内容导入，不会自动修改 `lib/*-data.ts` 这些静态展示数据。
 - 若只是改页面展示文案或演示内容，优先检查 `lib/blog-data.ts`、`lib/projects-data.ts`、`lib/changelog-data.ts` 等静态数据文件是否才是真正来源。
