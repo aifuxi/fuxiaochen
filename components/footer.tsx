@@ -2,15 +2,10 @@ import Link from "next/link";
 
 import { Github, Twitter, Mail } from "lucide-react";
 
-import { routes } from "@/constants/routes";
+import { routes, siteNavLinks } from "@/constants/routes";
 
 const footerLinks = {
-  main: [
-    { href: routes.site.home, label: "Home" },
-    { href: routes.site.about, label: "About" },
-    { href: routes.site.blog, label: "Blog" },
-    { href: routes.site.projects, label: "Projects" },
-  ],
+  main: siteNavLinks,
   social: [
     { href: "https://github.com", label: "GitHub", icon: Github },
     { href: "https://twitter.com", label: "Twitter", icon: Twitter },
