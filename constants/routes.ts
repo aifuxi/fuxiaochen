@@ -28,3 +28,12 @@ export const routes = {
     settings: `${ADMIN_ROOT}/settings`,
   },
 } as const;
+
+export const siteNavLinks = [
+  { href: routes.site.home, label: "Home" },
+  { href: routes.site.blog, label: "Blog" },
+  { href: routes.site.projects, label: "Projects" },
+  { href: routes.site.friends, label: "Friends" },
+  { href: routes.site.about, label: "About" },
+  { href: routes.site.changelog, label: "Changelog" },
+] as const;

@@ -4,14 +4,7 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import { routes } from "@/constants/routes";
-
-const navLinks = [
-  { href: routes.site.home, label: "Home" },
-  { href: routes.site.about, label: "About" },
-  { href: routes.site.blog, label: "Blog" },
-  { href: routes.site.projects, label: "Projects" },
-];
+import { routes, siteNavLinks } from "@/constants/routes";
 
 export function Navbar() {
   return (
@@ -26,7 +19,7 @@ export function Navbar() {
 
         <div className="flex items-center gap-6">
           <ul className="hidden items-center gap-6 md:flex">
-            {navLinks.map((link) => (
+            {siteNavLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
