@@ -13,6 +13,7 @@ import {
 export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
 export type CommentStatus = "pending" | "approved" | "spam";
 export type FriendCategory = "developer" | "designer" | "blogger" | "creator";
+export type UserRole = "admin" | "user";
 
 const createTimestampColumns = () => ({
   createdAt: timestamp("created_at", {
@@ -201,21 +202,26 @@ export const comments = pgTable(
   ],
 );
 
-export const users = pgTable("user", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique("user_email_key"),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  image: text("image"),
-  createdAt: timestamp("created_at", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-  updatedAt: timestamp("updated_at", {
-    mode: "date",
-    withTimezone: true,
-  }).notNull(),
-});
+export const users = pgTable(
+  "user",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    email: text("email").notNull().unique("user_email_key"),
+    emailVerified: boolean("email_verified").notNull().default(false),
+    image: text("image"),
+    role: text("role").$type<UserRole>().notNull().default("user"),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+  },
+  (table) => [index("user_role_idx").on(table.role)],
+);
 
 export const sessions = pgTable(
   "session",
