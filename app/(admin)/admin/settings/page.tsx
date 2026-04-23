@@ -92,7 +92,7 @@ export default function AdminSettingsPage() {
               <div className="space-y-0.5">
                 <Label>Enable RSS Feed</Label>
                 <p className="text-muted-foreground text-sm">
-                  Generate RSS feed for subscribers
+                  Generate RSS feed for readers and RSS clients
                 </p>
               </div>
               <Switch defaultChecked />
