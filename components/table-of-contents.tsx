@@ -2,13 +2,10 @@
 
 import { useEffect, useState } from "react";
 
+import { extractMarkdownHeadings } from "@/lib/markdown-headings";
 import { cn } from "@/lib/utils";
 
-type TocItem = {
-  id: string;
-  text: string;
-  level: number;
-};
+import { siteCopy } from "@/constants/site-copy";
 
 type TableOfContentsProps = {
   content: string;
@@ -16,26 +13,12 @@ type TableOfContentsProps = {
 
 export function TableOfContents({ content }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>("");
-  const [headings, setHeadings] = useState<TocItem[]>([]);
+  const [headings, setHeadings] = useState(() =>
+    extractMarkdownHeadings(content),
+  );
 
   useEffect(() => {
-    // Parse headings from markdown content
-    const headingRegex = /^(#{2,3})\s+(.+)$/gm;
-    const matches: TocItem[] = [];
-    let match;
-
-    while ((match = headingRegex.exec(content)) !== null) {
-      const level = match[1].length;
-      const text = match[2].trim();
-      const id = text
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
-
-      matches.push({ id, text, level });
-    }
-
-    setHeadings(matches);
+    setHeadings(extractMarkdownHeadings(content));
   }, [content]);
 
   useEffect(() => {
@@ -63,7 +46,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   return (
     <nav className="sticky top-24">
       <h4 className="text-foreground mb-4 text-sm font-semibold">
-        On This Page
+        {siteCopy.toc.title}
       </h4>
       <ul className="flex flex-col gap-2 text-sm">
         {headings.map((heading) => (

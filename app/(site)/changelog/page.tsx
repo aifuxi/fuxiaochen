@@ -1,10 +1,12 @@
 import { type Metadata } from "next";
 
+import { siteCopy } from "@/constants/site-copy";
+
 import { ChangelogPageClient } from "./changelog-page-client";
 
 export const metadata: Metadata = {
-  title: "Changelog | Fuxiaochen",
-  description: "See what is new and improved in my blog and projects.",
+  title: siteCopy.metadata.changelog.title,
+  description: siteCopy.metadata.changelog.description,
 };
 
 export default function ChangelogPage() {

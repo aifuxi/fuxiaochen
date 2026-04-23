@@ -13,7 +13,7 @@ export async function generateMetadata({
 
   return {
     title: `${readableSlug} | Fuxiaochen`,
-    description: `Read ${readableSlug} on Fuxiaochen.`,
+    description: `阅读 Fuxiaochen 上的《${readableSlug}》。`,
   };
 }
 

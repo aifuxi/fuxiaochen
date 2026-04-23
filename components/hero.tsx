@@ -5,6 +5,7 @@ import { ArrowRight, Github, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 export function Hero() {
   return (
@@ -15,28 +16,24 @@ export function Hero() {
             Fuxiaochen
           </h1>
           <p className="text-primary text-lg md:text-xl">
-            Full Stack Developer
+            {siteCopy.hero.role}
           </p>
           <p className="text-muted-foreground max-w-2xl text-base leading-relaxed md:text-lg">
-            I build accessible, pixel-perfect digital experiences for the web.
-            Currently focused on building products that help developers ship
-            faster and with more confidence.
+            {siteCopy.hero.summary}
           </p>
           <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
-            In the past, I&apos;ve had the opportunity to develop software
-            across a variety of settings - from startups to large corporations.
-            I also write about web development, design, and productivity.
+            {siteCopy.hero.description}
           </p>
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <Button asChild>
               <Link href={routes.site.blog}>
-                Read the blog
+                {siteCopy.hero.primaryCta}
                 <ArrowRight className="ml-1 size-4" />
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href={routes.site.about}>About me</Link>
+              <Link href={routes.site.about}>{siteCopy.hero.secondaryCta}</Link>
             </Button>
           </div>
 

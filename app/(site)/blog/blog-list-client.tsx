@@ -26,6 +26,7 @@ import type { PublicCategory } from "@/lib/server/categories/mappers";
 import type { PublicTag } from "@/lib/server/tags/mappers";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 type BlogListClientProps = {
   initialBlogs?: PublicBlog[];
@@ -105,10 +106,10 @@ export function BlogListClient({
     <main className="mx-auto max-w-4xl px-6 py-16">
       <header className="mb-12">
         <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight">
-          Blog
+          {siteCopy.blogList.title}
         </h1>
         <p className="text-muted-foreground text-lg">
-          Thoughts on web development, design, and building great products.
+          {siteCopy.blogList.description}
         </p>
       </header>
 
@@ -117,7 +118,7 @@ export function BlogListClient({
           <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
           <Input
             type="search"
-            placeholder="Search articles by title, content..."
+            placeholder={siteCopy.blogList.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -127,10 +128,14 @@ export function BlogListClient({
         <div className="flex flex-wrap items-center gap-3">
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Category" />
+              <SelectValue
+                placeholder={siteCopy.blogList.categoryPlaceholder}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="all">
+                {siteCopy.blogList.categoryAll}
+              </SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.slug} value={category.name}>
                   {category.name}
@@ -141,10 +146,10 @@ export function BlogListClient({
 
           <Select value={selectedTag} onValueChange={setSelectedTag}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Tag" />
+              <SelectValue placeholder={siteCopy.blogList.tagPlaceholder} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Tags</SelectItem>
+              <SelectItem value="all">{siteCopy.blogList.tagAll}</SelectItem>
               {tags.map((tag) => (
                 <SelectItem key={tag.slug} value={tag.slug}>
                   {tag.slug}
@@ -161,15 +166,14 @@ export function BlogListClient({
               className="text-muted-foreground gap-1"
             >
               <X className="size-3" />
-              Clear filters
+              {siteCopy.blogList.clearFilters}
             </Button>
           )}
         </div>
       </div>
 
       <p className="text-muted-foreground mb-6 text-sm">
-        {filteredPosts.length}{" "}
-        {filteredPosts.length === 1 ? "article" : "articles"} found
+        {siteCopy.blogList.resultCount(filteredPosts.length)}
       </p>
 
       {filteredPosts.length > 0 ? (
@@ -218,13 +222,13 @@ export function BlogListClient({
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <p className="text-foreground mb-2 text-lg font-medium">
-            No articles found
+            {siteCopy.blogList.emptyTitle}
           </p>
           <p className="text-muted-foreground mb-4">
-            Try adjusting your search or filters
+            {siteCopy.blogList.emptyDescription}
           </p>
           <Button variant="outline" onClick={clearFilters}>
-            Clear all filters
+            {siteCopy.blogList.clearAllFilters}
           </Button>
         </div>
       )}

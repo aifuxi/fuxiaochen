@@ -10,6 +10,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 
 import { isProduction } from "@/lib/env";
 
+import { siteCopy } from "@/constants/site-copy";
+
 import "./globals.css";
 
 const _spaceGrotesk = Space_Grotesk({
@@ -23,9 +25,8 @@ const _spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fuxiaochen - Full Stack Developer",
-  description:
-    "Building accessible, pixel-perfect digital experiences for the web. Writing about web development, design, and productivity.",
+  title: siteCopy.metadata.root.title,
+  description: siteCopy.metadata.root.description,
 };
 export default function RootLayout({
   children,

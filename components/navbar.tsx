@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import { routes, siteNavLinks } from "@/constants/routes";
+import { routes } from "@/constants/routes";
+import { siteNavLinks } from "@/constants/site-copy";
 
 export function Navbar() {
   return (

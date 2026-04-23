@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type { PublicComment } from "@/lib/server/comments/mappers";
 
+import { siteCopy } from "@/constants/site-copy";
+
 interface BlogCommentsProps {
   postSlug: string;
 }
@@ -69,7 +71,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
       window.setTimeout(() => setSubmitted(false), 5000);
     } catch (error) {
       setSubmitError(
-        error instanceof Error ? error.message : "Failed to submit comment.",
+        error instanceof Error ? error.message : siteCopy.comments.submitError,
       );
     } finally {
       setIsSubmitting(false);
@@ -81,16 +83,18 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
       <div className="mb-8 flex items-center gap-3">
         <MessageSquare className="text-foreground size-5" />
         <h2 className="text-foreground text-xl font-semibold">
-          Comments ({comments.length})
+          {siteCopy.comments.title(comments.length)}
         </h2>
       </div>
 
       <div className="border-border bg-card mb-10 rounded-lg border p-6">
-        <h3 className="text-foreground mb-4 font-medium">Leave a Comment</h3>
+        <h3 className="text-foreground mb-4 font-medium">
+          {siteCopy.comments.formTitle}
+        </h3>
 
         {submitted ? (
           <div className="bg-primary/10 text-primary rounded-lg p-4 text-sm">
-            Thank you for your comment! It will appear after moderation.
+            {siteCopy.comments.success}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -100,11 +104,11 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                   htmlFor="name"
                   className="text-muted-foreground mb-1.5 block text-sm"
                 >
-                  Name
+                  {siteCopy.comments.name}
                 </label>
                 <Input
                   id="name"
-                  placeholder="Your name"
+                  placeholder={siteCopy.comments.namePlaceholder}
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   required
@@ -115,12 +119,12 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                   htmlFor="email"
                   className="text-muted-foreground mb-1.5 block text-sm"
                 >
-                  Email
+                  {siteCopy.comments.email}
                 </label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder={siteCopy.comments.emailPlaceholder}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   required
@@ -132,11 +136,11 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
                 htmlFor="comment"
                 className="text-muted-foreground mb-1.5 block text-sm"
               >
-                Comment
+                {siteCopy.comments.content}
               </label>
               <Textarea
                 id="comment"
-                placeholder="Share your thoughts..."
+                placeholder={siteCopy.comments.contentPlaceholder}
                 rows={4}
                 value={content}
                 onChange={(event) => setContent(event.target.value)}
@@ -148,11 +152,11 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
             ) : null}
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
-                "Submitting..."
+                siteCopy.comments.submitLoading
               ) : (
                 <>
                   <Send className="mr-2 size-4" />
-                  Post Comment
+                  {siteCopy.comments.submitAction}
                 </>
               )}
             </Button>
@@ -163,7 +167,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
       <div className="space-y-6">
         {comments.length === 0 ? (
           <p className="text-muted-foreground py-8 text-center">
-            No comments yet. Be the first to share your thoughts!
+            {siteCopy.comments.empty}
           </p>
         ) : (
           comments.map((comment) => (
@@ -195,7 +199,7 @@ function CommentCard({ comment }: { comment: PublicComment }) {
         <div className="mb-1 flex items-center gap-2">
           <span className="text-foreground font-medium">{comment.author}</span>
           <span className="text-muted-foreground text-sm">
-            {new Date(comment.createdAt).toLocaleDateString()}
+            {new Date(comment.createdAt).toLocaleDateString("zh-CN")}
           </span>
         </div>
         <p className="text-muted-foreground">{comment.content}</p>

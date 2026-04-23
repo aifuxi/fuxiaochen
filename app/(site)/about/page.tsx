@@ -16,36 +16,12 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
 
 export const metadata: Metadata = {
-  title: "About - Fuxiaochen",
-  description:
-    "Learn more about Fuxiaochen, a full stack developer passionate about building great products.",
+  title: siteCopy.metadata.about.title,
+  description: siteCopy.metadata.about.description,
 };
-
-const experience = [
-  {
-    role: "Senior Full Stack Developer",
-    company: "Tech Startup",
-    period: "2022 - Present",
-    description:
-      "Leading the frontend architecture and building scalable web applications using React, Next.js, and TypeScript.",
-  },
-  {
-    role: "Full Stack Developer",
-    company: "Digital Agency",
-    period: "2020 - 2022",
-    description:
-      "Developed custom web solutions for clients across various industries, focusing on performance and accessibility.",
-  },
-  {
-    role: "Frontend Developer",
-    company: "Software Company",
-    period: "2018 - 2020",
-    description:
-      "Built responsive user interfaces and implemented design systems for enterprise applications.",
-  },
-];
 
 const skills = {
   languages: ["TypeScript", "JavaScript", "Python", "Rust", "Go"],
@@ -58,7 +34,7 @@ const socialLinks = [
   { href: "https://github.com", label: "GitHub", icon: Github },
   { href: "https://twitter.com", label: "Twitter", icon: Twitter },
   { href: "https://linkedin.com", label: "LinkedIn", icon: Linkedin },
-  { href: "mailto:hello@example.com", label: "Email", icon: Mail },
+  { href: "mailto:hello@example.com", label: "邮箱", icon: Mail },
 ];
 
 export default function AboutPage() {
@@ -78,12 +54,12 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-4">
               <h1 className="text-foreground text-3xl font-bold tracking-tight md:text-4xl">
-                About Me
+                {siteCopy.about.title}
               </h1>
-              <p className="text-primary text-lg">Full Stack Developer</p>
+              <p className="text-primary text-lg">{siteCopy.about.role}</p>
               <div className="text-muted-foreground flex items-center gap-2">
                 <MapPin className="size-4" />
-                <span className="text-sm">San Francisco, CA</span>
+                <span className="text-sm">{siteCopy.about.location}</span>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 {socialLinks.map((link) => (
@@ -108,25 +84,17 @@ export default function AboutPage() {
       <section className="border-border border-t py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <h2 className="text-foreground text-2xl font-semibold">Hello!</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              I&apos;m a full stack developer with a passion for building
-              products that make a difference. I specialize in creating
-              accessible, performant web applications using modern technologies
-              like React, Next.js, and TypeScript.
-            </p>
-            <p className="text-muted-foreground leading-relaxed">
-              My journey in software development began over 6 years ago, and
-              since then I&apos;ve had the privilege of working with startups,
-              agencies, and large corporations. I believe in writing clean,
-              maintainable code and creating user experiences that delight.
-            </p>
-            <p className="text-muted-foreground leading-relaxed">
-              When I&apos;m not coding, you can find me writing technical
-              articles, contributing to open source projects, or exploring the
-              latest developments in web technologies. I&apos;m always excited
-              to learn new things and share knowledge with the community.
-            </p>
+            <h2 className="text-foreground text-2xl font-semibold">
+              {siteCopy.about.bioTitle}
+            </h2>
+            {siteCopy.about.bio.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="text-muted-foreground leading-relaxed"
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
       </section>
@@ -137,11 +105,11 @@ export default function AboutPage() {
           <div className="mb-8 flex items-center gap-3">
             <Briefcase className="text-primary size-5" />
             <h2 className="text-foreground text-2xl font-semibold">
-              Experience
+              {siteCopy.about.experienceTitle}
             </h2>
           </div>
           <div className="flex flex-col gap-8">
-            {experience.map((exp, index) => (
+            {siteCopy.about.experience.map((exp, index) => (
               <div
                 key={index}
                 className="border-border relative flex flex-col gap-2 border-l-2 pb-2 pl-6"
@@ -170,12 +138,14 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-8 flex items-center gap-3">
             <GraduationCap className="text-primary size-5" />
-            <h2 className="text-foreground text-2xl font-semibold">Skills</h2>
+            <h2 className="text-foreground text-2xl font-semibold">
+              {siteCopy.about.skillsTitle}
+            </h2>
           </div>
           <div className="grid gap-8 sm:grid-cols-2">
             <div className="flex flex-col gap-3">
               <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
-                Languages
+                {siteCopy.about.skillLabels.languages}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.languages.map((skill) => (
@@ -190,7 +160,7 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-3">
               <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
-                Frontend
+                {siteCopy.about.skillLabels.frontend}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.frontend.map((skill) => (
@@ -205,7 +175,7 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-3">
               <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
-                Backend
+                {siteCopy.about.skillLabels.backend}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.backend.map((skill) => (
@@ -220,7 +190,7 @@ export default function AboutPage() {
             </div>
             <div className="flex flex-col gap-3">
               <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
-                Tools
+                {siteCopy.about.skillLabels.tools}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.tools.map((skill) => (
@@ -243,29 +213,23 @@ export default function AboutPage() {
           <div className="mb-8 flex items-center gap-3">
             <Heart className="text-primary size-5" />
             <h2 className="text-foreground text-2xl font-semibold">
-              Beyond Code
+              {siteCopy.about.beyondCodeTitle}
             </h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-3">
-            <div className="border-border flex flex-col gap-2 rounded-lg border p-4">
-              <h3 className="text-foreground font-medium">Open Source</h3>
-              <p className="text-muted-foreground text-sm">
-                Contributing to projects that make developers&apos; lives
-                easier.
-              </p>
-            </div>
-            <div className="border-border flex flex-col gap-2 rounded-lg border p-4">
-              <h3 className="text-foreground font-medium">Writing</h3>
-              <p className="text-muted-foreground text-sm">
-                Sharing knowledge through technical articles and tutorials.
-              </p>
-            </div>
-            <div className="border-border flex flex-col gap-2 rounded-lg border p-4">
-              <h3 className="text-foreground font-medium">Photography</h3>
-              <p className="text-muted-foreground text-sm">
-                Capturing moments and exploring visual storytelling.
-              </p>
-            </div>
+            {siteCopy.about.interests.map((interest) => (
+              <div
+                key={interest.title}
+                className="border-border flex flex-col gap-2 rounded-lg border p-4"
+              >
+                <h3 className="text-foreground font-medium">
+                  {interest.title}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {interest.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -275,21 +239,22 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="border-border bg-muted/50 flex flex-col items-center gap-6 rounded-lg border p-8 text-center">
             <h2 className="text-foreground text-2xl font-semibold">
-              Let&apos;s Work Together
+              {siteCopy.about.ctaTitle}
             </h2>
             <p className="text-muted-foreground max-w-md">
-              I&apos;m always open to discussing new projects, creative ideas,
-              or opportunities to be part of your vision.
+              {siteCopy.about.ctaDescription}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Button asChild>
                 <Link href="mailto:hello@example.com">
                   <Mail className="mr-2 size-4" />
-                  Get in Touch
+                  {siteCopy.about.ctaPrimary}
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href={routes.site.projects}>View Projects</Link>
+                <Link href={routes.site.projects}>
+                  {siteCopy.about.ctaSecondary}
+                </Link>
               </Button>
             </div>
           </div>
