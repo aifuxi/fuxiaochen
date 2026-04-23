@@ -25,6 +25,7 @@ export const routes = {
     friends: `${ADMIN_ROOT}/friends`,
     comments: `${ADMIN_ROOT}/comments`,
     subscribers: `${ADMIN_ROOT}/subscribers`,
+    users: `${ADMIN_ROOT}/users`,
     settings: `${ADMIN_ROOT}/settings`,
   },
 } as const;
