@@ -15,6 +15,8 @@ import { TableOfContents } from "@/components/table-of-contents";
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
+import { routes } from "@/constants/routes";
+
 function parseMarkdown(content: string): string {
   return content
     .replace(/^## (.+)$/gm, (_, text) => {
@@ -115,7 +117,7 @@ export function BlogPostClient({
 
       <main className="mx-auto max-w-4xl px-6">
         <Link
-          href="/blog"
+          href={routes.site.blog}
           className="text-muted-foreground hover:text-foreground relative z-10 -mt-20 mb-8 inline-flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" />

@@ -25,6 +25,8 @@ import type { PublicBlog } from "@/lib/server/blogs/mappers";
 import type { PublicCategory } from "@/lib/server/categories/mappers";
 import type { PublicTag } from "@/lib/server/tags/mappers";
 
+import { routes } from "@/constants/routes";
+
 type BlogListClientProps = {
   initialBlogs?: PublicBlog[];
   initialCategories?: PublicCategory[];
@@ -175,7 +177,7 @@ export function BlogListClient({
           {filteredPosts.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={routes.site.blogPost(post.slug)}
               className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
             >
               <div className="relative aspect-[16/9] overflow-hidden">

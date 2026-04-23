@@ -1,6 +1,8 @@
+import { routes } from "@/constants/routes";
+
 export function getSafeRedirectPath(
   redirectTo: string | string[] | null | undefined,
-  fallback = "/admin",
+  fallback = routes.admin.root,
 ) {
   const value = Array.isArray(redirectTo) ? redirectTo[0] : redirectTo;
 

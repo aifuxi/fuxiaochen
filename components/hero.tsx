@@ -4,6 +4,8 @@ import { ArrowRight, Github, Twitter } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import { routes } from "@/constants/routes";
+
 export function Hero() {
   return (
     <section className="py-16 md:py-24">
@@ -28,13 +30,13 @@ export function Hero() {
 
           <div className="flex flex-wrap items-center gap-4 pt-4">
             <Button asChild>
-              <Link href="/blog">
+              <Link href={routes.site.blog}>
                 Read the blog
                 <ArrowRight className="ml-1 size-4" />
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/about">About me</Link>
+              <Link href={routes.site.about}>About me</Link>
             </Button>
           </div>
 

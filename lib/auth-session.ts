@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/lib/auth";
 
+import { routes } from "@/constants/routes";
+
 import { getSafeRedirectPath } from "./auth-redirect";
 
 export async function getServerSession() {
@@ -15,7 +17,7 @@ export async function requireServerSession() {
   const session = await getServerSession();
 
   if (!session) {
-    redirect("/login");
+    redirect(routes.auth.login);
   }
 
   return session;

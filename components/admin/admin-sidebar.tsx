@@ -20,34 +20,40 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { cn } from "@/lib/utils";
 
+import { routes } from "@/constants/routes";
+
 const navigation = [
   {
     title: "Overview",
     items: [
-      { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+      { name: "Dashboard", href: routes.admin.root, icon: LayoutDashboard },
       { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
     ],
   },
   {
     title: "Content",
     items: [
-      { name: "Posts", href: "/admin/posts", icon: FileText },
-      { name: "Categories", href: "/admin/categories", icon: FolderOpen },
-      { name: "Tags", href: "/admin/tags", icon: Tags },
-      { name: "Changelog", href: "/admin/changelog", icon: History },
-      { name: "Friends", href: "/admin/friends", icon: Link2 },
+      { name: "Posts", href: routes.admin.posts, icon: FileText },
+      { name: "Categories", href: routes.admin.categories, icon: FolderOpen },
+      { name: "Tags", href: routes.admin.tags, icon: Tags },
+      { name: "Changelog", href: routes.admin.changelog, icon: History },
+      { name: "Friends", href: routes.admin.friends, icon: Link2 },
     ],
   },
   {
     title: "Engagement",
     items: [
-      { name: "Comments", href: "/admin/comments", icon: MessageSquare },
-      { name: "Subscribers", href: "/admin/subscribers", icon: Users },
+      { name: "Comments", href: routes.admin.comments, icon: MessageSquare },
+      {
+        name: "Subscribers",
+        href: routes.admin.subscribers,
+        icon: Users,
+      },
     ],
   },
   {
     title: "System",
-    items: [{ name: "Settings", href: "/admin/settings", icon: Settings }],
+    items: [{ name: "Settings", href: routes.admin.settings, icon: Settings }],
   },
 ];
 
@@ -57,7 +63,7 @@ export function AdminSidebar() {
   return (
     <aside className="border-sidebar-border bg-sidebar fixed top-0 left-0 z-40 h-screen w-64 border-r">
       <div className="border-sidebar-border flex h-16 items-center border-b px-6">
-        <Link href="/admin" className="flex items-center gap-2">
+        <Link href={routes.admin.root} className="flex items-center gap-2">
           <div className="bg-sidebar-primary flex h-8 w-8 items-center justify-center rounded-lg">
             <span className="text-sidebar-primary-foreground text-sm font-bold">
               B
@@ -80,7 +86,8 @@ export function AdminSidebar() {
                 {section.items.map((item) => {
                   const isActive =
                     pathname === item.href ||
-                    (item.href !== "/admin" && pathname.startsWith(item.href));
+                    (item.href !== routes.admin.root &&
+                      pathname.startsWith(item.href));
                   return (
                     <li key={item.name}>
                       <Link

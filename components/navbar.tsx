@@ -4,11 +4,13 @@ import Link from "next/link";
 
 import { ThemeToggle } from "@/components/theme-toggle";
 
+import { routes } from "@/constants/routes";
+
 const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
-  { href: "/projects", label: "Projects" },
+  { href: routes.site.home, label: "Home" },
+  { href: routes.site.about, label: "About" },
+  { href: routes.site.blog, label: "Blog" },
+  { href: routes.site.projects, label: "Projects" },
 ];
 
 export function Navbar() {
@@ -16,7 +18,7 @@ export function Navbar() {
     <header className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
       <nav className="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
         <Link
-          href="/"
+          href={routes.site.home}
           className="text-foreground hover:text-foreground/80 text-lg font-semibold tracking-tight transition-colors"
         >
           Fuxiaochen

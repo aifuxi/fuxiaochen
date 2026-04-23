@@ -8,6 +8,8 @@ import useSWR from "swr";
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
+import { routes } from "@/constants/routes";
+
 export function RecentPosts() {
   const { data } = useSWR<{ items: PublicBlog[] }>(
     "/api/public/blogs?featured=false&pageSize=5&sortBy=date&sortDirection=desc",
@@ -27,7 +29,7 @@ export function RecentPosts() {
             Recent Posts
           </h2>
           <Link
-            href="/blog"
+            href={routes.site.blog}
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm transition-colors"
           >
             All posts
@@ -39,7 +41,7 @@ export function RecentPosts() {
           {recentPosts.map((post, index) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={routes.site.blogPost(post.slug)}
               className={`group hover:text-foreground flex items-center justify-between py-4 transition-colors ${
                 index !== recentPosts.length - 1 ? "border-border border-b" : ""
               }`}

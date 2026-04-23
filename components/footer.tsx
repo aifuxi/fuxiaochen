@@ -2,12 +2,14 @@ import Link from "next/link";
 
 import { Github, Twitter, Mail } from "lucide-react";
 
+import { routes } from "@/constants/routes";
+
 const footerLinks = {
   main: [
-    { href: "/", label: "Home" },
-    { href: "/about", label: "About" },
-    { href: "/blog", label: "Blog" },
-    { href: "/projects", label: "Projects" },
+    { href: routes.site.home, label: "Home" },
+    { href: routes.site.about, label: "About" },
+    { href: routes.site.blog, label: "Blog" },
+    { href: routes.site.projects, label: "Projects" },
   ],
   social: [
     { href: "https://github.com", label: "GitHub", icon: Github },
@@ -23,7 +25,7 @@ export function Footer() {
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-4">
             <Link
-              href="/"
+              href={routes.site.home}
               className="text-foreground text-lg font-semibold tracking-tight"
             >
               Fuxiaochen
