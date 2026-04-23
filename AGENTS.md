@@ -5,10 +5,9 @@
 - 这是一个基于 Next.js 16 App Router、React 19 和 TypeScript strict 模式的个人站点项目。
 - UI 使用 Tailwind CSS v4、shadcn/ui（`components.json` 为 `new-york` 风格）、Radix UI、Lucide 图标，并启用了 `tw-animate-css`；仓库中也安装了 `framer-motion`。
 - 服务端数据层使用 Drizzle ORM + PostgreSQL，认证使用 Better Auth，部署产物通过 Next `output: "standalone"` 输出。
-- 当前仓库同时存在两套数据来源：
-  - 前台大部分页面和部分后台演示页面仍直接读取 `lib/blog-data.ts`、`lib/projects-data.ts`、`lib/changelog-data.ts` 等本地静态数据。
-  - 真正的服务端 CRUD API 位于 `app/api/**`，具体实现按 `dto` / `handler` / `service` / `repository` 分层放在 `lib/server/**`。
-- 修改功能前先确认你要改的是“静态展示数据”还是“真实 API / 数据库链路”，不要混用。
+- 当前仓库以前同时存在静态数据文件和真实 API 两套数据来源，但 `lib/*-data.ts` 这类前台静态数据文件已经移除。
+- 当前站点页面与后台 CRUD 数据链路统一以 `app/api/**` + `lib/server/**` 为准，具体实现按 `dto` / `handler` / `service` / `repository` 分层组织。
+- 修改功能前先确认你要改的是页面文案 / 常量配置，还是“真实 API / 数据库链路”，不要混用。
 
 ## 构建、检查与开发命令
 
@@ -50,7 +49,6 @@
   - `lib/db/schema.ts`：唯一 schema 来源。
   - `lib/db/index.ts`：数据库连接与开发环境全局复用逻辑。
 - `lib/auth.ts` / `app/api/auth/[...all]/route.ts`：Better Auth 服务端配置与 Next 路由接入。
-- `lib/*-data.ts`：静态内容数据源，当前前台页面大量依赖这些文件。
 - `drizzle/`：migration 输出目录。
 - `data/`：初始化样例数据和 SQL 参考，不是运行时主数据源。
 - `scripts/`：数据库辅助脚本等命令入口，目前包含 `reset-db.ts` 与 `import-blog-content.ts`。
@@ -80,8 +78,8 @@
 - 在 Drizzle 里只要 `sql\`\``字段会进入子查询、聚合结果或被外层查询复用，必须显式`.as("...")` 起别名；不要依赖属性名推断，否则构建或运行时可能报 “raw SQL field doesn't have an alias”。
 - PostgreSQL 的聚合时间字段（例如 `max(timestamp with time zone)`）在运行时可能返回字符串，不要只按 TypeScript 注解把它当 `Date` 用；在 mapper/serializer 层统一按 `Date | string | null` 归一化后再调用 `toISOString()`。
 - `pnpm db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `pnpm db:migrate` 或 `pnpm db:push`。
-- `pnpm db:import:blog-content` 面向真实数据库内容导入，不会自动修改 `lib/*-data.ts` 这些静态展示数据。
-- 若只是改页面展示文案或演示内容，优先检查 `lib/blog-data.ts`、`lib/projects-data.ts`、`lib/changelog-data.ts` 等静态数据文件是否才是真正来源。
+- `pnpm db:import:blog-content` 面向真实数据库内容导入，不会自动修改页面文案、站点常量或其他非数据库配置。
+- 若只是改页面展示文案或说明性内容，优先检查 `constants/`、页面组件和相关文案来源，不要误以为 `lib/*-data.ts` 仍是运行时数据入口。
 
 ## 提交与 Pull Request 规范
 
