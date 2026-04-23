@@ -1,8 +1,5 @@
 import { type Metadata } from "next";
 
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-
 import { ProjectsPageClient } from "./projects-page-client";
 
 export const metadata: Metadata = {
@@ -11,11 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProjectsPage() {
-  return (
-    <div className="bg-background flex min-h-screen flex-col">
-      <Navbar />
-      <ProjectsPageClient />
-      <Footer />
-    </div>
-  );
+  return <ProjectsPageClient />;
 }

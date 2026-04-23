@@ -1,6 +1,3 @@
-import { Footer } from "@/components/footer";
-import { Navbar } from "@/components/navbar";
-
 import { BlogPostClient } from "./blog-post-client";
 
 export async function generateMetadata({
@@ -27,11 +24,5 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
 
-  return (
-    <div className="bg-background min-h-screen">
-      <Navbar />
-      <BlogPostClient slug={slug} />
-      <Footer />
-    </div>
-  );
+  return <BlogPostClient slug={slug} />;
 }
