@@ -11,7 +11,6 @@ import {
   Settings,
   BarChart3,
   MessageSquare,
-  Users,
   Shield,
   History,
   Link2,
@@ -45,11 +44,6 @@ const getNavigation = (isAdmin: boolean) => [
     title: "Engagement",
     items: [
       { name: "Comments", href: routes.admin.comments, icon: MessageSquare },
-      {
-        name: "Subscribers",
-        href: routes.admin.subscribers,
-        icon: Users,
-      },
     ],
   },
   {

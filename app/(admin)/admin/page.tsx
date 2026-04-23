@@ -180,9 +180,6 @@ export default function AdminDashboard() {
                       {activity.type === "comment" && (
                         <MessageSquare className="h-4 w-4" />
                       )}
-                      {activity.type === "subscriber" && (
-                        <TrendingUp className="h-4 w-4" />
-                      )}
                     </div>
                     {index !== recentActivity.length - 1 && (
                       <div className="bg-border absolute top-8 left-4 h-full w-px" />
