@@ -205,6 +205,29 @@ export const siteCopy = {
     emptyTitle: "暂无更新记录",
     emptyDescription: "新的版本说明会在后续发布后显示在这里。",
   },
+  errors: {
+    linksLabel: "你可以继续前往",
+    notFound: {
+      code: "404",
+      eyebrow: "页面未找到",
+      title: "这个页面已经不在这里了",
+      description:
+        "你访问的链接可能已经失效、被移动，或者从未存在过。先回到首页，或者直接去博客和项目页继续浏览。",
+      primaryAction: "返回首页",
+      secondaryAction: "查看博客",
+      tertiaryAction: "浏览项目",
+    },
+    internal: {
+      code: "500",
+      eyebrow: "服务异常",
+      title: "页面加载时出了点问题",
+      description:
+        "这通常是暂时性的错误。你可以重新尝试当前操作，或者先回到首页继续浏览其他内容。",
+      primaryAction: "再试一次",
+      secondaryAction: "返回首页",
+      tertiaryAction: "查看博客",
+    },
+  },
   toc: {
     title: "本页目录",
   },
