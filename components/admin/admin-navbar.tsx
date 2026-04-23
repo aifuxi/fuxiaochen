@@ -23,6 +23,8 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 import { authClient } from "@/lib/auth-client";
 
+import { routes } from "@/constants/routes";
+
 type AdminNavbarProps = {
   user: {
     email: string;
@@ -49,7 +51,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
 
     try {
       await authClient.signOut();
-      router.replace("/login");
+      router.replace(routes.auth.login);
       router.refresh();
     } finally {
       setIsSigningOut(false);
@@ -72,7 +74,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm" asChild>
           <Link
-            href="/"
+            href={routes.site.home}
             className="text-muted-foreground flex items-center gap-2"
           >
             <span>View Site</span>

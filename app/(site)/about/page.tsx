@@ -15,6 +15,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+import { routes } from "@/constants/routes";
+
 export const metadata: Metadata = {
   title: "About - Fuxiaochen",
   description:
@@ -287,7 +289,7 @@ export default function AboutPage() {
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/projects">View Projects</Link>
+                <Link href={routes.site.projects}>View Projects</Link>
               </Button>
             </div>
           </div>

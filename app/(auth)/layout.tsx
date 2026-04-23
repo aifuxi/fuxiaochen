@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { routes } from "@/constants/routes";
+
 export default function AuthLayout({
   children,
 }: {
@@ -13,7 +15,7 @@ export default function AuthLayout({
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-12 lg:flex-row lg:items-center lg:justify-between lg:gap-16">
         <section className="mb-12 max-w-xl lg:mb-0">
           <Link
-            href="/"
+            href={routes.site.home}
             className="text-foreground inline-flex items-center gap-2"
           >
             <span className="bg-primary h-2.5 w-2.5 rounded-full" />

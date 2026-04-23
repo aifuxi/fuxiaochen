@@ -20,6 +20,8 @@ import { Label } from "@/components/ui/label";
 
 import { authClient } from "@/lib/auth-client";
 
+import { routes } from "@/constants/routes";
+
 type AuthFormProps = {
   githubEnabled: boolean;
   mode: "login" | "register";
@@ -32,7 +34,7 @@ const FORM_COPY = {
     description: "使用邮箱密码或 GitHub 登录后台。",
     submitLabel: "登录",
     alternateHrefLabel: "创建账号",
-    alternateHref: "/register",
+    alternateHref: routes.auth.register,
     alternateHint: "还没有账号？",
   },
   register: {
@@ -40,7 +42,7 @@ const FORM_COPY = {
     description: "注册后会自动登录，并跳转到后台。",
     submitLabel: "注册",
     alternateHrefLabel: "去登录",
-    alternateHref: "/login",
+    alternateHref: routes.auth.login,
     alternateHint: "已经有账号？",
   },
 } as const;
@@ -139,7 +141,7 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
   }
 
   const alternateHref =
-    redirectTo === "/admin"
+    redirectTo === routes.admin.root
       ? copy.alternateHref
       : `${copy.alternateHref}?next=${encodeURIComponent(redirectTo)}`;
 

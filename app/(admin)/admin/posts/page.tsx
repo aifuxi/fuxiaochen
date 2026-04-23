@@ -46,6 +46,8 @@ import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
+import { routes } from "@/constants/routes";
+
 export default function AdminPostsPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -130,7 +132,7 @@ export default function AdminPostsPage() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/admin/posts/new">
+          <Link href={routes.admin.postsNew}>
             <Plus className="mr-2 h-4 w-4" />
             New Post
           </Link>
@@ -254,7 +256,7 @@ export default function AdminPostsPage() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem asChild>
-                        <Link href={`/blog/${post.slug}`}>
+                        <Link href={routes.site.blogPost(post.slug)}>
                           <Eye className="mr-2 h-4 w-4" />
                           View
                         </Link>

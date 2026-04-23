@@ -8,6 +8,8 @@ import { BlogCoverImage } from "@/components/blog-cover-image";
 
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
+import { routes } from "@/constants/routes";
+
 type SimilarPostsProps = {
   posts: PublicBlog[];
 };
@@ -26,7 +28,7 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
           {posts.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={routes.site.blogPost(post.slug)}
               className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
             >
               <div className="relative aspect-[16/9] overflow-hidden">

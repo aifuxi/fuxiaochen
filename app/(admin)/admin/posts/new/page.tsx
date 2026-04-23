@@ -49,6 +49,8 @@ import type { AdminCategory } from "@/lib/server/categories/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
 import { cn } from "@/lib/utils";
 
+import { routes } from "@/constants/routes";
+
 const TOOLBAR_ACTIONS = [
   { icon: Bold, label: "Bold", syntax: "**", wrap: true },
   { icon: Italic, label: "Italic", syntax: "_", wrap: true },
@@ -247,7 +249,7 @@ export default function NewPostPage() {
         }),
       });
 
-      router.push("/admin/posts");
+      router.push(routes.admin.posts);
       router.refresh();
     } finally {
       setIsSubmitting(false);
@@ -274,7 +276,7 @@ export default function NewPostPage() {
       <div className="border-border bg-background flex items-center justify-between border-b px-6 py-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/admin/posts">
+            <Link href={routes.admin.posts}>
               <ArrowLeft className="mr-1.5 h-4 w-4" />
               Posts
             </Link>

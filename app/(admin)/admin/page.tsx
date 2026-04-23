@@ -20,6 +20,8 @@ import { fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
+import { routes } from "@/constants/routes";
+
 const recentActivity = [
   {
     type: "post",
@@ -96,7 +98,7 @@ export default function AdminDashboard() {
           </p>
         </div>
         <Button asChild>
-          <Link href="/admin/posts/new">New Post</Link>
+          <Link href={routes.admin.postsNew}>New Post</Link>
         </Button>
       </div>
 
@@ -135,7 +137,7 @@ export default function AdminDashboard() {
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Posts</CardTitle>
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/admin/posts">View all</Link>
+              <Link href={routes.admin.posts}>View all</Link>
             </Button>
           </CardHeader>
           <CardContent>

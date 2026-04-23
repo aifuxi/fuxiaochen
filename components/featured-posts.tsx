@@ -12,6 +12,8 @@ import { BlogCoverImage } from "@/components/blog-cover-image";
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
+import { routes } from "@/constants/routes";
+
 export function FeaturedPosts() {
   const { data } = useSWR<{ items: PublicBlog[] }>(
     "/api/public/blogs?featured=true&pageSize=3",
@@ -31,7 +33,7 @@ export function FeaturedPosts() {
             Featured
           </h2>
           <Link
-            href="/blog"
+            href={routes.site.blog}
             className="text-muted-foreground hover:text-foreground text-sm transition-colors"
           >
             View all
@@ -42,7 +44,7 @@ export function FeaturedPosts() {
           {featuredPosts.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={routes.site.blogPost(post.slug)}
               className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
             >
               <div className="relative aspect-[16/9] overflow-hidden">

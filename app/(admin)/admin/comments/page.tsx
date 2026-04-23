@@ -57,6 +57,8 @@ import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminComment } from "@/lib/server/comments/mappers";
 import type { CommentStats } from "@/lib/server/comments/service";
 
+import { routes } from "@/constants/routes";
+
 const EMPTY_STATS: CommentStats = {
   total: 0,
   pending: 0,
@@ -380,7 +382,7 @@ export default function AdminCommentsPage() {
                       <TableCell>
                         {comment.blog ? (
                           <Link
-                            href={`/blog/${comment.blog.slug}`}
+                            href={routes.site.blogPost(comment.blog.slug)}
                             className="text-primary flex items-center gap-1 text-sm hover:underline"
                             target="_blank"
                           >
