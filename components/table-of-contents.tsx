@@ -22,23 +22,38 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   }, [content]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id);
+    let frameId = 0;
+
+    const updateActiveHeading = () => {
+      const offset = 112;
+      const activeHeading = headings
+        .map(({ id }) => document.getElementById(id))
+        .filter((element): element is HTMLElement => Boolean(element))
+        .reduce<HTMLElement | null>((current, element) => {
+          if (element.getBoundingClientRect().top > offset) {
+            return current;
           }
-        });
-      },
-      { rootMargin: "-80px 0px -80% 0px" },
-    );
 
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id);
-      if (element) observer.observe(element);
-    });
+          return element;
+        }, null);
 
-    return () => observer.disconnect();
+      setActiveId(activeHeading?.id ?? headings[0]?.id ?? "");
+    };
+
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frameId);
+      frameId = requestAnimationFrame(updateActiveHeading);
+    };
+
+    scheduleUpdate();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+    };
   }, [headings]);
 
   if (headings.length === 0) return null;
