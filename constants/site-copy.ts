@@ -143,6 +143,9 @@ export const siteCopy = {
     loading: "文章加载中...",
     backToBlog: "返回博客",
     similarTitle: "相关文章",
+    copyCode: "复制",
+    copiedCode: "已复制",
+    copyCodeFailed: "复制失败",
   },
   comments: {
     title: (count: number) => `评论（${count}）`,

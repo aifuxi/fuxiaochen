@@ -9,48 +9,15 @@ import { Badge } from "@/components/ui/badge";
 
 import { BlogComments } from "@/components/blog-comments";
 import { BlogCoverImage } from "@/components/blog-cover-image";
+import { MarkdownPreview } from "@/components/markdown-preview";
 import { SimilarPosts } from "@/components/similar-posts";
 import { TableOfContents } from "@/components/table-of-contents";
 
 import { fetchApiData } from "@/lib/api/fetcher";
-import { createHeadingIdGenerator } from "@/lib/markdown-headings";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
-
-function parseMarkdown(content: string): string {
-  const nextHeadingId = createHeadingIdGenerator();
-
-  return content
-    .replace(/^## (.+)$/gm, (_, text) => {
-      const id = nextHeadingId(text);
-      return `<h2 id="${id}" class="scroll-mt-24 text-2xl font-semibold mt-10 mb-4 text-foreground">${text}</h2>`;
-    })
-    .replace(/^### (.+)$/gm, (_, text) => {
-      const id = nextHeadingId(text);
-      return `<h3 id="${id}" class="scroll-mt-24 text-xl font-semibold mt-8 mb-3 text-foreground">${text}</h3>`;
-    })
-    .replace(
-      /```(\w+)?\n([\s\S]*?)```/g,
-      '<pre class="bg-muted rounded-lg p-4 overflow-x-auto my-4"><code class="text-sm font-mono">$2</code></pre>',
-    )
-    .replace(
-      /`([^`]+)`/g,
-      '<code class="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">$1</code>',
-    )
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold">$1</strong>')
-    .replace(
-      /^- (.+)$/gm,
-      '<li class="ml-4 list-disc text-muted-foreground">$1</li>',
-    )
-    .replace(/(<li[^>]*>.*<\/li>\n?)+/g, '<ul class="my-4 space-y-2">$&</ul>')
-    .replace(
-      /^(?!<[hupol])(.+)$/gm,
-      '<p class="text-muted-foreground leading-relaxed my-4">$1</p>',
-    )
-    .replace(/<p[^>]*>\s*<\/p>/g, "");
-}
 
 type BlogPostClientProps = {
   slug: string;
@@ -99,8 +66,6 @@ export function BlogPostClient({
       </main>
     );
   }
-
-  const htmlContent = parseMarkdown(post.content);
 
   return (
     <>
@@ -154,13 +119,10 @@ export function BlogPostClient({
           </div>
         </header>
 
-        <div className="flex gap-12">
-          <article
-            className="prose-custom min-w-0 flex-1 pb-16"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
-          />
+        <div className="relative">
+          <MarkdownPreview cacheKey={post.slug} content={post.content} />
 
-          <aside className="hidden w-56 shrink-0 lg:block">
+          <aside className="absolute top-0 left-[calc(100%+2rem)] hidden h-full w-52 min-[1380px]:block 2xl:left-[calc(100%+3rem)] 2xl:w-56">
             <TableOfContents content={post.content} />
           </aside>
         </div>
