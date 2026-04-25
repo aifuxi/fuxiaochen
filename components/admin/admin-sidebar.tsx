@@ -62,15 +62,15 @@ export function AdminSidebar({ role }: { role?: string | null }) {
   const navigation = getNavigation(role === "admin");
 
   return (
-    <aside className="border-sidebar-border bg-sidebar fixed top-0 left-0 z-40 h-screen w-64 border-r">
-      <div className="border-sidebar-border flex h-16 items-center border-b px-6">
+    <aside className="fixed top-0 left-0 z-40 h-screen w-64 border-r border-sidebar-border bg-sidebar">
+      <div className="flex h-16 items-center border-b border-sidebar-border px-6">
         <Link href={routes.admin.root} className="flex items-center gap-2">
-          <div className="bg-sidebar-primary flex h-8 w-8 items-center justify-center rounded-lg">
-            <span className="text-sidebar-primary-foreground text-sm font-bold">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
+            <span className="text-sm font-bold text-sidebar-primary-foreground">
               B
             </span>
           </div>
-          <span className="text-sidebar-foreground font-semibold">
+          <span className="font-semibold text-sidebar-foreground">
             Blog Admin
           </span>
         </Link>
@@ -80,7 +80,7 @@ export function AdminSidebar({ role }: { role?: string | null }) {
         <nav className="space-y-6">
           {navigation.map((section) => (
             <div key={section.title}>
-              <p className="text-muted-foreground mb-2 px-3 text-xs font-medium tracking-wider uppercase">
+              <p className="mb-2 px-3 text-xs font-medium tracking-wider text-muted-foreground uppercase">
                 {section.title}
               </p>
               <ul className="space-y-1">

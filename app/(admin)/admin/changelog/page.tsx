@@ -141,7 +141,7 @@ export default function AdminChangelogPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Changelog</h1>
+          <h1 className="text-2xl font-bold text-foreground">Changelog</h1>
           <p className="text-muted-foreground">
             Manage your project changelog entries
           </p>
@@ -249,25 +249,25 @@ export default function AdminChangelogPage() {
             {changelogs.map((entry) => (
               <div
                 key={entry.id}
-                className="border-border flex items-start justify-between rounded-lg border p-4"
+                className="flex items-start justify-between rounded-lg border border-border p-4"
               >
                 <div className="flex-1">
                   <div className="mb-2 flex items-center gap-3">
-                    <span className="text-foreground font-mono text-sm font-medium">
+                    <span className="font-mono text-sm font-medium text-foreground">
                       v{entry.version}
                     </span>
                     {getTypeBadge(entry.type)}
-                    <span className="text-muted-foreground text-sm">
+                    <span className="text-sm text-muted-foreground">
                       {new Date(entry.releaseDate).toLocaleDateString()}
                     </span>
                   </div>
-                  <h3 className="text-foreground mb-1 font-medium">
+                  <h3 className="mb-1 font-medium text-foreground">
                     {entry.title}
                   </h3>
-                  <p className="text-muted-foreground mb-2 text-sm">
+                  <p className="mb-2 text-sm text-muted-foreground">
                     {entry.description}
                   </p>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-muted-foreground">
                     {entry.changes.length} changes
                   </p>
                 </div>

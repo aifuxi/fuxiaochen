@@ -42,18 +42,18 @@ export function ProjectsPageClient() {
     <main className="flex-1">
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-6">
-          <h1 className="text-foreground text-3xl font-bold tracking-tight md:text-4xl">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
             {siteCopy.projects.title}
           </h1>
-          <p className="text-muted-foreground mt-4 max-w-2xl text-lg">
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             {siteCopy.projects.description}
           </p>
         </div>
       </section>
 
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-foreground mb-8 text-xl font-semibold">
+          <h2 className="mb-8 text-xl font-semibold text-foreground">
             {siteCopy.projects.featuredTitle}
           </h2>
           {featuredProjects.length > 0 ? (
@@ -61,7 +61,7 @@ export function ProjectsPageClient() {
               {featuredProjects.map((project) => (
                 <article
                   key={project.id}
-                  className="group border-border bg-card hover:border-foreground/20 overflow-hidden rounded-lg border transition-colors"
+                  className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-foreground/20"
                 >
                   <div className="flex flex-col md:flex-row">
                     <div className="relative aspect-video w-full shrink-0 overflow-hidden md:aspect-auto md:w-72">
@@ -75,10 +75,10 @@ export function ProjectsPageClient() {
                     <div className="flex flex-1 flex-col gap-4 p-6">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h3 className="text-foreground text-xl font-semibold">
+                          <h3 className="text-xl font-semibold text-foreground">
                             {project.title}
                           </h3>
-                          <p className="text-muted-foreground mt-1 text-sm">
+                          <p className="mt-1 text-sm text-muted-foreground">
                             {project.year}
                           </p>
                         </div>
@@ -88,7 +88,7 @@ export function ProjectsPageClient() {
                               href={project.githubUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full p-2 transition-colors"
+                              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                             >
                               <Github className="size-4" />
                               <span className="sr-only">
@@ -101,7 +101,7 @@ export function ProjectsPageClient() {
                               href={project.liveUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-muted-foreground hover:bg-muted hover:text-foreground rounded-full p-2 transition-colors"
+                              className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                             >
                               <ExternalLink className="size-4" />
                               <span className="sr-only">
@@ -127,7 +127,7 @@ export function ProjectsPageClient() {
               ))}
             </div>
           ) : (
-            <div className="border-border bg-card rounded-lg border p-8 text-center">
+            <div className="rounded-lg border border-border bg-card p-8 text-center">
               <p className="text-muted-foreground">
                 {siteCopy.projects.featuredEmpty}
               </p>
@@ -136,26 +136,26 @@ export function ProjectsPageClient() {
         </div>
       </section>
 
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-foreground mb-8 text-xl font-semibold">
+          <h2 className="mb-8 text-xl font-semibold text-foreground">
             {siteCopy.projects.allTitle}
           </h2>
           {projects.length > 0 ? (
             <div className="flex flex-col gap-12">
               {years.map((year) => (
                 <div key={year}>
-                  <h3 className="text-muted-foreground mb-6 text-lg font-medium">
+                  <h3 className="mb-6 text-lg font-medium text-muted-foreground">
                     {year}
                   </h3>
                   <div className="grid gap-4 sm:grid-cols-2">
                     {(projectsByYear[year] ?? []).map((project) => (
                       <article
                         key={project.id}
-                        className="group border-border hover:border-foreground/20 hover:bg-muted/50 flex flex-col gap-3 rounded-lg border p-4 transition-colors"
+                        className="group flex flex-col gap-3 rounded-lg border border-border p-4 transition-colors hover:border-foreground/20 hover:bg-muted/50"
                       >
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-foreground font-medium">
+                          <h4 className="font-medium text-foreground">
                             {project.title}
                           </h4>
                           <div className="flex shrink-0 items-center gap-1">
@@ -164,7 +164,7 @@ export function ProjectsPageClient() {
                                 href={project.githubUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors"
+                                className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
                               >
                                 <Github className="size-4" />
                                 <span className="sr-only">
@@ -177,7 +177,7 @@ export function ProjectsPageClient() {
                                 href={project.liveUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-muted-foreground hover:text-foreground rounded p-1 transition-colors"
+                                className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
                               >
                                 <ArrowUpRight className="size-4" />
                                 <span className="sr-only">
@@ -187,20 +187,20 @@ export function ProjectsPageClient() {
                             )}
                           </div>
                         </div>
-                        <p className="text-muted-foreground line-clamp-2 text-sm">
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
                           {project.description}
                         </p>
                         <div className="mt-auto flex flex-wrap gap-1.5">
                           {project.tags.slice(0, 3).map((tag) => (
                             <span
                               key={tag}
-                              className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs"
+                              className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground"
                             >
                               {tag}
                             </span>
                           ))}
                           {project.tags.length > 3 && (
-                            <span className="bg-muted text-muted-foreground rounded px-2 py-0.5 text-xs">
+                            <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">
                               +{project.tags.length - 3}
                             </span>
                           )}
@@ -212,11 +212,11 @@ export function ProjectsPageClient() {
               ))}
             </div>
           ) : (
-            <div className="border-border bg-card rounded-lg border p-10 text-center">
-              <p className="text-foreground text-lg font-medium">
+            <div className="rounded-lg border border-border bg-card p-10 text-center">
+              <p className="text-lg font-medium text-foreground">
                 {siteCopy.projects.emptyTitle}
               </p>
-              <p className="text-muted-foreground mt-2">
+              <p className="mt-2 text-muted-foreground">
                 {siteCopy.projects.emptyDescription}
               </p>
             </div>
@@ -224,13 +224,13 @@ export function ProjectsPageClient() {
         </div>
       </section>
 
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
-          <div className="border-border bg-muted/50 flex flex-col items-center gap-6 rounded-lg border p-8 text-center">
-            <h2 className="text-foreground text-2xl font-semibold">
+          <div className="flex flex-col items-center gap-6 rounded-lg border border-border bg-muted/50 p-8 text-center">
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.projects.ctaTitle}
             </h2>
-            <p className="text-muted-foreground max-w-md">
+            <p className="max-w-md text-muted-foreground">
               {siteCopy.projects.ctaDescription}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

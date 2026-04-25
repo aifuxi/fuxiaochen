@@ -4,7 +4,6 @@ import Script from "next/script";
 
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-import "@/styles/global.css";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 

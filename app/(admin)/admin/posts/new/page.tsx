@@ -273,7 +273,7 @@ export default function NewPostPage() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="border-border bg-background flex items-center justify-between border-b px-6 py-3">
+      <div className="flex items-center justify-between border-b border-border bg-background px-6 py-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
             <Link href={routes.admin.posts}>
@@ -282,10 +282,10 @@ export default function NewPostPage() {
             </Link>
           </Button>
           <Separator orientation="vertical" className="h-5" />
-          <span className="text-muted-foreground text-sm">New Post</span>
+          <span className="text-sm text-muted-foreground">New Post</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-muted-foreground text-xs">
+          <span className="text-xs text-muted-foreground">
             {wordCount} words · {readTime} min read
           </span>
           <Button variant="outline" size="sm">
@@ -314,25 +314,25 @@ export default function NewPostPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="border-border border-b px-8 py-5">
+          <div className="border-b border-border px-8 py-5">
             <input
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Post title..."
-              className="placeholder:text-muted-foreground/40 w-full bg-transparent text-3xl font-bold tracking-tight focus:outline-none"
+              className="w-full bg-transparent text-3xl font-bold tracking-tight placeholder:text-muted-foreground/40 focus:outline-none"
             />
             {slug && (
-              <p className="text-muted-foreground mt-1.5 text-xs">
+              <p className="mt-1.5 text-xs text-muted-foreground">
                 Slug:{" "}
-                <span className="text-foreground/70 font-mono">
+                <span className="font-mono text-foreground/70">
                   /blog/{slug}
                 </span>
               </p>
             )}
           </div>
 
-          <div className="border-border bg-muted/30 flex items-center gap-0.5 border-b px-4 py-2">
+          <div className="flex items-center gap-0.5 border-b border-border bg-muted/30 px-4 py-2">
             {TOOLBAR_ACTIONS.map((action, index) => {
               if ("separator" in action) {
                 return (
@@ -348,7 +348,7 @@ export default function NewPostPage() {
                   key={action.label}
                   title={action.label}
                   onClick={() => applyToolbarAction(action)}
-                  className="text-muted-foreground hover:bg-accent hover:text-foreground flex h-7 w-7 items-center justify-center rounded transition-colors"
+                  className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                 >
                   <action.icon className="h-3.5 w-3.5" />
                 </button>
@@ -375,7 +375,7 @@ export default function NewPostPage() {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Start writing your post in Markdown..."
-                className="placeholder:text-muted-foreground/40 h-full w-full resize-none bg-transparent px-8 py-6 font-mono text-sm leading-relaxed focus:outline-none"
+                className="h-full w-full resize-none bg-transparent px-8 py-6 font-mono text-sm leading-relaxed placeholder:text-muted-foreground/40 focus:outline-none"
               />
             ) : (
               <div
@@ -390,9 +390,9 @@ export default function NewPostPage() {
           </div>
         </div>
 
-        <aside className="border-border bg-muted/20 flex w-72 shrink-0 flex-col overflow-y-auto border-l">
+        <aside className="flex w-72 shrink-0 flex-col overflow-y-auto border-l border-border bg-muted/20">
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Publish
             </h3>
             <div className="space-y-3">
@@ -422,7 +422,7 @@ export default function NewPostPage() {
           <Separator />
 
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Slug
             </h3>
             <Input
@@ -436,7 +436,7 @@ export default function NewPostPage() {
           <Separator />
 
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Description
             </h3>
             <Textarea
@@ -446,7 +446,7 @@ export default function NewPostPage() {
               className="min-h-20 resize-none text-sm"
               maxLength={160}
             />
-            <p className="text-muted-foreground mt-1.5 text-right text-xs">
+            <p className="mt-1.5 text-right text-xs text-muted-foreground">
               {description.length}/160
             </p>
           </div>
@@ -454,11 +454,11 @@ export default function NewPostPage() {
           <Separator />
 
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Cover Image
             </h3>
             {coverImage ? (
-              <div className="group border-border relative overflow-hidden rounded-lg border">
+              <div className="group relative overflow-hidden rounded-lg border border-border">
                 <Image
                   src={coverImage}
                   alt="Cover"
@@ -468,14 +468,14 @@ export default function NewPostPage() {
                 />
                 <button
                   onClick={() => setCoverImage("")}
-                  className="bg-background/80 absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100"
+                  className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-background/80 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
               </div>
             ) : (
               <div className="space-y-2">
-                <button className="border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed px-4 py-6 text-sm transition-colors">
+                <button className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-sm text-muted-foreground transition-colors hover:bg-muted/50">
                   <Upload className="h-5 w-5" />
                   <span>Upload image</span>
                 </button>
@@ -492,7 +492,7 @@ export default function NewPostPage() {
           <Separator />
 
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Category
             </h3>
             <Select value={categoryId} onValueChange={setCategoryId}>
@@ -512,7 +512,7 @@ export default function NewPostPage() {
           <Separator />
 
           <div className="p-5">
-            <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+            <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Tags
             </h3>
             {selectedTags.length > 0 && (
@@ -526,7 +526,7 @@ export default function NewPostPage() {
                     {tag.slug}
                     <button
                       onClick={() => removeTag(tag.id)}
-                      className="hover:text-destructive ml-0.5 rounded-full"
+                      className="ml-0.5 rounded-full hover:text-destructive"
                     >
                       <X className="h-2.5 w-2.5" />
                     </button>
@@ -545,7 +545,7 @@ export default function NewPostPage() {
               <button
                 onClick={addTagFromInput}
                 disabled={!tagInput.trim()}
-                className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 disabled:opacity-30"
+                className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground hover:text-foreground disabled:opacity-30"
               >
                 <Plus className="h-3.5 w-3.5" />
               </button>
@@ -556,8 +556,8 @@ export default function NewPostPage() {
                   key={tag.id}
                   onClick={() => addTag(tag.id)}
                   className={cn(
-                    "border-border text-muted-foreground rounded-full border px-2 py-0.5 text-xs",
-                    "hover:border-foreground/30 hover:text-foreground transition-colors",
+                    "rounded-full border border-border px-2 py-0.5 text-xs text-muted-foreground",
+                    "transition-colors hover:border-foreground/30 hover:text-foreground",
                   )}
                 >
                   + {tag.slug}

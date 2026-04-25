@@ -13,7 +13,7 @@ export type AdminLayoutProps = {
 
 export function AdminLayout({ children, user }: AdminLayoutProps) {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen bg-background">
       <AdminSidebar role={user.role} />
       <div className="ml-64">
         <AdminNavbar user={user} />

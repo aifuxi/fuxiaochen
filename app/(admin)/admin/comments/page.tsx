@@ -195,7 +195,7 @@ export default function AdminCommentsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-foreground text-2xl font-bold">Comments</h1>
+        <h1 className="text-2xl font-bold text-foreground">Comments</h1>
         <p className="text-muted-foreground">
           Manage and moderate user comments
         </p>
@@ -207,7 +207,7 @@ export default function AdminCommentsPage() {
             <CardTitle className="text-sm font-medium">
               Total Comments
             </CardTitle>
-            <MessageSquare className="text-muted-foreground size-4" />
+            <MessageSquare className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -253,7 +253,7 @@ export default function AdminCommentsPage() {
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-1 items-center gap-4">
               <div className="relative flex-1 sm:max-w-xs">
-                <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search comments..."
                   className="pl-9"
@@ -275,7 +275,7 @@ export default function AdminCommentsPage() {
             </div>
             {selectedComments.length > 0 ? (
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">
+                <span className="text-sm text-muted-foreground">
                   {selectedComments.length} selected
                 </span>
                 <Button
@@ -311,7 +311,7 @@ export default function AdminCommentsPage() {
             ) : null}
           </div>
 
-          <div className="border-border rounded-lg border">
+          <div className="rounded-lg border border-border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -337,7 +337,7 @@ export default function AdminCommentsPage() {
                   <TableRow>
                     <TableCell
                       colSpan={7}
-                      className="text-muted-foreground py-8 text-center"
+                      className="py-8 text-center text-muted-foreground"
                     >
                       No comments found.
                     </TableCell>
@@ -360,22 +360,22 @@ export default function AdminCommentsPage() {
                               className="size-8 rounded-full object-cover"
                             />
                           ) : (
-                            <div className="bg-muted flex size-8 items-center justify-center rounded-full">
-                              <User className="text-muted-foreground size-4" />
+                            <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                              <User className="size-4 text-muted-foreground" />
                             </div>
                           )}
                           <div>
-                            <p className="text-foreground font-medium">
+                            <p className="font-medium text-foreground">
                               {comment.author}
                             </p>
-                            <p className="text-muted-foreground text-xs">
+                            <p className="text-xs text-muted-foreground">
                               {comment.email}
                             </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="max-w-md">
-                        <p className="text-muted-foreground line-clamp-2 text-sm">
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
                           {comment.content}
                         </p>
                       </TableCell>
@@ -383,7 +383,7 @@ export default function AdminCommentsPage() {
                         {comment.blog ? (
                           <Link
                             href={routes.site.blogPost(comment.blog.slug)}
-                            className="text-primary flex items-center gap-1 text-sm hover:underline"
+                            className="flex items-center gap-1 text-sm text-primary hover:underline"
                             target="_blank"
                           >
                             <span className="line-clamp-1 max-w-[150px]">
@@ -394,7 +394,7 @@ export default function AdminCommentsPage() {
                         ) : null}
                       </TableCell>
                       <TableCell>{getStatusBadge(comment.status)}</TableCell>
-                      <TableCell className="text-muted-foreground text-sm">
+                      <TableCell className="text-sm text-muted-foreground">
                         {new Date(comment.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>

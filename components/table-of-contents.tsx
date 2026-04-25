@@ -60,7 +60,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
 
   return (
     <nav className="sticky top-24">
-      <h4 className="text-foreground mb-4 text-sm font-semibold">
+      <h4 className="mb-4 text-sm font-semibold text-foreground">
         {siteCopy.toc.title}
       </h4>
       <ul className="flex flex-col gap-2 text-sm">
@@ -78,8 +78,8 @@ export function TableOfContents({ content }: TableOfContentsProps) {
                 });
               }}
               className={cn(
-                "text-muted-foreground hover:text-foreground block transition-colors",
-                activeId === heading.id && "text-foreground font-medium",
+                "block text-muted-foreground transition-colors hover:text-foreground",
+                activeId === heading.id && "font-medium text-foreground",
               )}
             >
               {heading.text}

@@ -25,12 +25,12 @@ const socialLinks = [
 
 export function StatusScaffold({ children }: StatusScaffoldProps) {
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col">
-      <header className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm">
         <nav className="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
           <Link
             href={routes.site.home}
-            className="text-foreground hover:text-foreground/80 text-lg font-semibold tracking-tight transition-colors"
+            className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-foreground/80"
           >
             Fuxiaochen
           </Link>
@@ -41,7 +41,7 @@ export function StatusScaffold({ children }: StatusScaffoldProps) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}
                   </Link>
@@ -55,11 +55,11 @@ export function StatusScaffold({ children }: StatusScaffoldProps) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-border bg-background border-t">
+      <footer className="border-t border-border bg-background">
         <div className="mx-auto flex max-w-4xl flex-col gap-6 px-6 py-8 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
-            <p className="text-foreground text-sm font-medium">Fuxiaochen</p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm font-medium text-foreground">Fuxiaochen</p>
+            <p className="text-sm text-muted-foreground">
               {siteCopy.footer.description}
             </p>
           </div>
@@ -76,7 +76,7 @@ export function StatusScaffold({ children }: StatusScaffoldProps) {
                       ? "noopener noreferrer"
                       : undefined
                   }
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <link.icon className="size-4" />
                   <span className="sr-only">{link.label}</span>
@@ -84,13 +84,13 @@ export function StatusScaffold({ children }: StatusScaffoldProps) {
               ))}
             </div>
 
-            <div className="text-muted-foreground flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
               <span>© {new Date().getFullYear()} Fuxiaochen</span>
               <Link
                 href={BEI_AN_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="transition-colors hover:text-foreground"
               >
                 {BEI_AN_NUMBER}
               </Link>
@@ -98,7 +98,7 @@ export function StatusScaffold({ children }: StatusScaffoldProps) {
                 href={GONG_AN_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground transition-colors"
+                className="transition-colors hover:text-foreground"
               >
                 {GONG_AN_NUMBER}
               </Link>

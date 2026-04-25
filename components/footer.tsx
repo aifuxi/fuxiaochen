@@ -22,23 +22,23 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="border-border bg-background border-t">
+    <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-4xl px-6 py-12">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col gap-4">
             <Link
               href={routes.site.home}
-              className="text-foreground text-lg font-semibold tracking-tight"
+              className="text-lg font-semibold tracking-tight text-foreground"
             >
               Fuxiaochen
             </Link>
-            <p className="text-muted-foreground max-w-xs text-sm">
+            <p className="max-w-xs text-sm text-muted-foreground">
               {siteCopy.footer.description}
             </p>
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-foreground text-sm font-medium">
+            <span className="text-sm font-medium text-foreground">
               {siteCopy.footer.linksTitle}
             </span>
             <ul className="flex flex-col gap-2">
@@ -46,7 +46,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}
                   </Link>
@@ -56,7 +56,7 @@ export function Footer() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <span className="text-foreground text-sm font-medium">
+            <span className="text-sm font-medium text-foreground">
               {siteCopy.footer.connectTitle}
             </span>
             <div className="flex items-center gap-3">
@@ -70,7 +70,7 @@ export function Footer() {
                       ? "noopener noreferrer"
                       : undefined
                   }
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <link.icon className="size-5" />
                   <span className="sr-only">{link.label}</span>
@@ -80,13 +80,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-border mt-12 border-t pt-8">
+        <div className="mt-12 border-t border-border pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} Fuxiaochen.{" "}
               {siteCopy.footer.copyright}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               {siteCopy.footer.builtWith}
             </p>
           </div>
@@ -96,7 +96,7 @@ export function Footer() {
               href={BEI_AN_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {BEI_AN_NUMBER}
             </Link>
@@ -104,7 +104,7 @@ export function Footer() {
               href={GONG_AN_LINK}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               {GONG_AN_NUMBER}
             </Link>

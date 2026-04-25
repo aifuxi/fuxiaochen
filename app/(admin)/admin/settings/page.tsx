@@ -82,7 +82,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Enable Sitemap</Label>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Automatically generate sitemap.xml
                 </p>
               </div>
@@ -91,7 +91,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Enable RSS Feed</Label>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Generate RSS feed for readers and RSS clients
                 </p>
               </div>
@@ -110,7 +110,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Enable Comments</Label>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Allow readers to comment on posts
                 </p>
               </div>
@@ -119,7 +119,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Require Approval</Label>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Moderate comments before publishing
                 </p>
               </div>
@@ -128,7 +128,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Email Notifications</Label>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Receive email for new comments
                 </p>
               </div>
@@ -174,7 +174,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <p className="font-medium">Delete All Posts</p>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Permanently delete all blog posts.
                 </p>
               </div>
@@ -186,7 +186,7 @@ export default function AdminSettingsPage() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <p className="font-medium">Reset Settings</p>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   Reset all settings to defaults.
                 </p>
               </div>

@@ -7,7 +7,7 @@ export type SiteLayoutProps = {
 
 export function SiteLayout({ children }: SiteLayoutProps) {
   return (
-    <div className="bg-background text-foreground flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar />
       <div className="flex-1">{children}</div>
       <Footer />

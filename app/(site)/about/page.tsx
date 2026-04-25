@@ -44,7 +44,7 @@ export default function AboutPage() {
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-4xl px-6">
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-12">
-            <div className="border-border relative size-32 shrink-0 overflow-hidden rounded-2xl border md:size-48">
+            <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl border border-border md:size-48">
               <Image
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
                 alt="Fuxiaochen"
@@ -53,11 +53,11 @@ export default function AboutPage() {
               />
             </div>
             <div className="flex flex-col gap-4">
-              <h1 className="text-foreground text-3xl font-bold tracking-tight md:text-4xl">
+              <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                 {siteCopy.about.title}
               </h1>
-              <p className="text-primary text-lg">{siteCopy.about.role}</p>
-              <div className="text-muted-foreground flex items-center gap-2">
+              <p className="text-lg text-primary">{siteCopy.about.role}</p>
+              <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="size-4" />
                 <span className="text-sm">{siteCopy.about.location}</span>
               </div>
@@ -68,7 +68,7 @@ export default function AboutPage() {
                     href={link.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <link.icon className="size-5" />
                     <span className="sr-only">{link.label}</span>
@@ -81,16 +81,16 @@ export default function AboutPage() {
       </section>
 
       {/* Bio Section */}
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="prose prose-neutral dark:prose-invert max-w-none">
-            <h2 className="text-foreground text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.about.bioTitle}
             </h2>
             {siteCopy.about.bio.map((paragraph) => (
               <p
                 key={paragraph}
-                className="text-muted-foreground leading-relaxed"
+                className="leading-relaxed text-muted-foreground"
               >
                 {paragraph}
               </p>
@@ -100,11 +100,11 @@ export default function AboutPage() {
       </section>
 
       {/* Experience Section */}
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-8 flex items-center gap-3">
-            <Briefcase className="text-primary size-5" />
-            <h2 className="text-foreground text-2xl font-semibold">
+            <Briefcase className="size-5 text-primary" />
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.about.experienceTitle}
             </h2>
           </div>
@@ -112,19 +112,19 @@ export default function AboutPage() {
             {siteCopy.about.experience.map((exp, index) => (
               <div
                 key={index}
-                className="border-border relative flex flex-col gap-2 border-l-2 pb-2 pl-6"
+                className="relative flex flex-col gap-2 border-l-2 border-border pb-2 pl-6"
               >
-                <div className="border-primary bg-background absolute top-0 -left-[9px] size-4 rounded-full border-2" />
+                <div className="absolute top-0 -left-[9px] size-4 rounded-full border-2 border-primary bg-background" />
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <h3 className="text-foreground font-semibold">{exp.role}</h3>
-                  <span className="text-muted-foreground text-sm">
+                  <h3 className="font-semibold text-foreground">{exp.role}</h3>
+                  <span className="text-sm text-muted-foreground">
                     {exp.period}
                   </span>
                 </div>
-                <p className="text-primary text-sm font-medium">
+                <p className="text-sm font-medium text-primary">
                   {exp.company}
                 </p>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {exp.description}
                 </p>
               </div>
@@ -134,24 +134,24 @@ export default function AboutPage() {
       </section>
 
       {/* Skills Section */}
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-8 flex items-center gap-3">
-            <GraduationCap className="text-primary size-5" />
-            <h2 className="text-foreground text-2xl font-semibold">
+            <GraduationCap className="size-5 text-primary" />
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.about.skillsTitle}
             </h2>
           </div>
           <div className="grid gap-8 sm:grid-cols-2">
             <div className="flex flex-col gap-3">
-              <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
+              <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
                 {siteCopy.about.skillLabels.languages}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.languages.map((skill) => (
                   <span
                     key={skill}
-                    className="border-border bg-muted text-foreground rounded-full border px-3 py-1 text-sm"
+                    className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
                   >
                     {skill}
                   </span>
@@ -159,14 +159,14 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
+              <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
                 {siteCopy.about.skillLabels.frontend}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.frontend.map((skill) => (
                   <span
                     key={skill}
-                    className="border-border bg-muted text-foreground rounded-full border px-3 py-1 text-sm"
+                    className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
                   >
                     {skill}
                   </span>
@@ -174,14 +174,14 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
+              <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
                 {siteCopy.about.skillLabels.backend}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.backend.map((skill) => (
                   <span
                     key={skill}
-                    className="border-border bg-muted text-foreground rounded-full border px-3 py-1 text-sm"
+                    className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
                   >
                     {skill}
                   </span>
@@ -189,14 +189,14 @@ export default function AboutPage() {
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <h3 className="text-muted-foreground text-sm font-medium tracking-wider uppercase">
+              <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
                 {siteCopy.about.skillLabels.tools}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.tools.map((skill) => (
                   <span
                     key={skill}
-                    className="border-border bg-muted text-foreground rounded-full border px-3 py-1 text-sm"
+                    className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
                   >
                     {skill}
                   </span>
@@ -208,11 +208,11 @@ export default function AboutPage() {
       </section>
 
       {/* Interests Section */}
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
           <div className="mb-8 flex items-center gap-3">
-            <Heart className="text-primary size-5" />
-            <h2 className="text-foreground text-2xl font-semibold">
+            <Heart className="size-5 text-primary" />
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.about.beyondCodeTitle}
             </h2>
           </div>
@@ -220,12 +220,12 @@ export default function AboutPage() {
             {siteCopy.about.interests.map((interest) => (
               <div
                 key={interest.title}
-                className="border-border flex flex-col gap-2 rounded-lg border p-4"
+                className="flex flex-col gap-2 rounded-lg border border-border p-4"
               >
-                <h3 className="text-foreground font-medium">
+                <h3 className="font-medium text-foreground">
                   {interest.title}
                 </h3>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {interest.description}
                 </p>
               </div>
@@ -235,13 +235,13 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-border border-t py-16">
+      <section className="border-t border-border py-16">
         <div className="mx-auto max-w-4xl px-6">
-          <div className="border-border bg-muted/50 flex flex-col items-center gap-6 rounded-lg border p-8 text-center">
-            <h2 className="text-foreground text-2xl font-semibold">
+          <div className="flex flex-col items-center gap-6 rounded-lg border border-border bg-muted/50 p-8 text-center">
+            <h2 className="text-2xl font-semibold text-foreground">
               {siteCopy.about.ctaTitle}
             </h2>
-            <p className="text-muted-foreground max-w-md">
+            <p className="max-w-md text-muted-foreground">
               {siteCopy.about.ctaDescription}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">

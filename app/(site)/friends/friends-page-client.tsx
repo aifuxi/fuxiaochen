@@ -46,10 +46,10 @@ export function FriendsPageClient() {
   return (
     <main className="mx-auto max-w-4xl px-6 py-16">
       <header className="mb-16 text-center">
-        <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight">
+        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground">
           {siteCopy.friends.title}
         </h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-lg text-muted-foreground">
           {siteCopy.friends.description}
         </p>
       </header>
@@ -62,7 +62,7 @@ export function FriendsPageClient() {
 
             return (
               <section key={category}>
-                <h2 className="text-muted-foreground mb-6 text-sm font-medium tracking-wider uppercase">
+                <h2 className="mb-6 text-sm font-medium tracking-wider text-muted-foreground uppercase">
                   {getCategoryLabel(category)}
                 </h2>
 
@@ -73,7 +73,7 @@ export function FriendsPageClient() {
                       href={friend.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group border-border bg-card hover:bg-accent flex items-start gap-4 rounded-lg border p-4 transition-colors"
+                      className="group flex items-start gap-4 rounded-lg border border-border bg-card p-4 transition-colors hover:bg-accent"
                     >
                       {friend.avatar ? (
                         <img
@@ -82,21 +82,21 @@ export function FriendsPageClient() {
                           className="size-12 flex-shrink-0 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="bg-muted flex size-12 flex-shrink-0 items-center justify-center rounded-full">
-                          <User className="text-muted-foreground size-6" />
+                        <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+                          <User className="size-6 text-muted-foreground" />
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
                         <div className="mb-1 flex items-center gap-2">
-                          <span className="text-foreground group-hover:text-primary font-medium">
+                          <span className="font-medium text-foreground group-hover:text-primary">
                             {friend.name}
                           </span>
-                          <ExternalLink className="text-muted-foreground size-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                          <ExternalLink className="size-3 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                         </div>
-                        <p className="text-muted-foreground line-clamp-2 text-sm">
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
                           {friend.description}
                         </p>
-                        <p className="text-muted-foreground/70 mt-2 text-xs">
+                        <p className="mt-2 text-xs text-muted-foreground/70">
                           {friend.url.replace(/^https?:\/\//, "")}
                         </p>
                       </div>
@@ -108,24 +108,24 @@ export function FriendsPageClient() {
           })}
         </div>
       ) : (
-        <div className="border-border bg-card rounded-lg border p-10 text-center">
-          <p className="text-foreground text-lg font-medium">
+        <div className="rounded-lg border border-border bg-card p-10 text-center">
+          <p className="text-lg font-medium text-foreground">
             {siteCopy.friends.emptyTitle}
           </p>
-          <p className="text-muted-foreground mt-2">
+          <p className="mt-2 text-muted-foreground">
             {siteCopy.friends.emptyDescription}
           </p>
         </div>
       )}
 
-      <div className="border-border bg-card mt-16 rounded-lg border p-8 text-center">
-        <h2 className="text-foreground mb-2 text-xl font-semibold">
+      <div className="mt-16 rounded-lg border border-border bg-card p-8 text-center">
+        <h2 className="mb-2 text-xl font-semibold text-foreground">
           {siteCopy.friends.ctaTitle}
         </h2>
-        <p className="text-muted-foreground mb-4">
+        <p className="mb-4 text-muted-foreground">
           {siteCopy.friends.ctaDescription}
         </p>
-        <Badge variant="secondary" className="hover:bg-accent cursor-pointer">
+        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">
           {siteCopy.friends.ctaAction}
         </Badge>
       </div>

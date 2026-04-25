@@ -19,9 +19,9 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
   if (posts.length === 0) return null;
 
   return (
-    <section className="border-border border-t py-16">
+    <section className="border-t border-border py-16">
       <div className="mx-auto max-w-4xl px-6">
-        <h2 className="text-foreground mb-10 text-2xl font-semibold tracking-tight">
+        <h2 className="mb-10 text-2xl font-semibold tracking-tight text-foreground">
           {siteCopy.blogPost.similarTitle}
         </h2>
 
@@ -30,7 +30,7 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
             <Link
               key={post.slug}
               href={routes.site.blogPost(post.slug)}
-              className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
+              className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:bg-accent/50"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
                 <BlogCoverImage
@@ -43,15 +43,15 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
               <div className="flex flex-1 flex-col gap-3 p-5">
                 <div className="flex items-center justify-between">
                   <Badge variant="secondary">{post.category}</Badge>
-                  <ArrowUpRight className="text-muted-foreground size-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                  <ArrowUpRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                 </div>
-                <h3 className="text-foreground group-hover:text-foreground/90 line-clamp-2 font-medium text-balance">
+                <h3 className="line-clamp-2 font-medium text-balance text-foreground group-hover:text-foreground/90">
                   {post.title}
                 </h3>
-                <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+                <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {post.description}
                 </p>
-                <time className="text-muted-foreground mt-auto text-xs">
+                <time className="mt-auto text-xs text-muted-foreground">
                   {post.date}
                 </time>
               </div>

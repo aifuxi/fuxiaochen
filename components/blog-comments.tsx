@@ -79,21 +79,21 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
   };
 
   return (
-    <section className="border-border border-t pt-12">
+    <section className="border-t border-border pt-12">
       <div className="mb-8 flex items-center gap-3">
-        <MessageSquare className="text-foreground size-5" />
-        <h2 className="text-foreground text-xl font-semibold">
+        <MessageSquare className="size-5 text-foreground" />
+        <h2 className="text-xl font-semibold text-foreground">
           {siteCopy.comments.title(comments.length)}
         </h2>
       </div>
 
-      <div className="border-border bg-card mb-10 rounded-lg border p-6">
-        <h3 className="text-foreground mb-4 font-medium">
+      <div className="mb-10 rounded-lg border border-border bg-card p-6">
+        <h3 className="mb-4 font-medium text-foreground">
           {siteCopy.comments.formTitle}
         </h3>
 
         {submitted ? (
-          <div className="bg-primary/10 text-primary rounded-lg p-4 text-sm">
+          <div className="rounded-lg bg-primary/10 p-4 text-sm text-primary">
             {siteCopy.comments.success}
           </div>
         ) : (
@@ -102,7 +102,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
               <div>
                 <label
                   htmlFor="name"
-                  className="text-muted-foreground mb-1.5 block text-sm"
+                  className="mb-1.5 block text-sm text-muted-foreground"
                 >
                   {siteCopy.comments.name}
                 </label>
@@ -117,7 +117,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
               <div>
                 <label
                   htmlFor="email"
-                  className="text-muted-foreground mb-1.5 block text-sm"
+                  className="mb-1.5 block text-sm text-muted-foreground"
                 >
                   {siteCopy.comments.email}
                 </label>
@@ -134,7 +134,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
             <div>
               <label
                 htmlFor="comment"
-                className="text-muted-foreground mb-1.5 block text-sm"
+                className="mb-1.5 block text-sm text-muted-foreground"
               >
                 {siteCopy.comments.content}
               </label>
@@ -148,7 +148,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
               />
             </div>
             {submitError ? (
-              <p className="text-destructive text-sm">{submitError}</p>
+              <p className="text-sm text-destructive">{submitError}</p>
             ) : null}
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
@@ -166,7 +166,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
 
       <div className="space-y-6">
         {comments.length === 0 ? (
-          <p className="text-muted-foreground py-8 text-center">
+          <p className="py-8 text-center text-muted-foreground">
             {siteCopy.comments.empty}
           </p>
         ) : (
@@ -190,15 +190,15 @@ function CommentCard({ comment }: { comment: PublicComment }) {
             className="size-10 rounded-full object-cover"
           />
         ) : (
-          <div className="bg-muted flex size-10 items-center justify-center rounded-full">
-            <User className="text-muted-foreground size-5" />
+          <div className="flex size-10 items-center justify-center rounded-full bg-muted">
+            <User className="size-5 text-muted-foreground" />
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2">
-          <span className="text-foreground font-medium">{comment.author}</span>
-          <span className="text-muted-foreground text-sm">
+          <span className="font-medium text-foreground">{comment.author}</span>
+          <span className="text-sm text-muted-foreground">
             {new Date(comment.createdAt).toLocaleDateString("zh-CN")}
           </span>
         </div>
