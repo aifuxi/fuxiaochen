@@ -59,14 +59,14 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
   }
 
   return (
-    <header className="border-border bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex h-16 items-center justify-between border-b px-6 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-4">
         <div className="relative">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search posts, categories..."
-            className="bg-muted/50 w-64 pl-9"
+            className="w-64 bg-muted/50 pl-9"
           />
         </div>
       </div>
@@ -75,7 +75,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
         <Button variant="ghost" size="sm" asChild>
           <Link
             href={routes.site.home}
-            className="text-muted-foreground flex items-center gap-2"
+            className="flex items-center gap-2 text-muted-foreground"
           >
             <span>View Site</span>
             <ExternalLink className="h-3.5 w-3.5" />
@@ -86,7 +86,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
 
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
-          <span className="bg-destructive absolute top-1.5 right-1.5 h-2 w-2 rounded-full" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
           <span className="sr-only">Notifications</span>
         </Button>
 
@@ -103,7 +103,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium">{user.name}</p>
-                <p className="text-muted-foreground text-xs">{user.email}</p>
+                <p className="text-xs text-muted-foreground">{user.email}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

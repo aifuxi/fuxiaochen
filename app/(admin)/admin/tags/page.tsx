@@ -131,12 +131,12 @@ export default function AdminTagsPage() {
         </Dialog>
       </div>
 
-      <div className="border-border rounded-lg border p-6">
+      <div className="rounded-lg border border-border p-6">
         <div className="flex flex-wrap gap-3">
           {tags.map((tag) => (
             <div
               key={tag.id}
-              className="group border-border bg-card hover:border-primary/50 flex items-center gap-2 rounded-lg border px-4 py-2 transition-colors"
+              className="group flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 transition-colors hover:border-primary/50"
             >
               <span className="font-medium">{tag.slug}</span>
               <Badge variant="secondary" className="text-xs">
@@ -146,7 +146,7 @@ export default function AdminTagsPage() {
                 className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={() => deleteTag(tag.id)}
               >
-                <X className="text-muted-foreground hover:text-destructive h-3.5 w-3.5" />
+                <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                 <span className="sr-only">Remove tag</span>
               </button>
             </div>
@@ -155,16 +155,16 @@ export default function AdminTagsPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="border-border rounded-lg border p-4">
-          <p className="text-muted-foreground text-sm">Total Tags</p>
+        <div className="rounded-lg border border-border p-4">
+          <p className="text-sm text-muted-foreground">Total Tags</p>
           <p className="text-2xl font-bold">{tags.length}</p>
         </div>
-        <div className="border-border rounded-lg border p-4">
-          <p className="text-muted-foreground text-sm">Most Used</p>
+        <div className="rounded-lg border border-border p-4">
+          <p className="text-sm text-muted-foreground">Most Used</p>
           <p className="text-2xl font-bold">{mostUsedTag?.slug ?? "n/a"}</p>
         </div>
-        <div className="border-border rounded-lg border p-4">
-          <p className="text-muted-foreground text-sm">Avg. per Post</p>
+        <div className="rounded-lg border border-border p-4">
+          <p className="text-sm text-muted-foreground">Avg. per Post</p>
           <p className="text-2xl font-bold">{averagePerPost}</p>
         </div>
       </div>

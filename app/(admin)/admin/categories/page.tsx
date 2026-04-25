@@ -130,7 +130,7 @@ export default function AdminCategoriesPage() {
         </Dialog>
       </div>
 
-      <div className="border-border rounded-lg border">
+      <div className="rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow>

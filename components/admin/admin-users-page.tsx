@@ -281,7 +281,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Users</h1>
+          <h1 className="text-2xl font-bold text-foreground">Users</h1>
           <p className="text-muted-foreground">
             Manage admin access, account metadata, and active sessions.
           </p>
@@ -292,7 +292,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <UserRound className="text-muted-foreground size-4" />
+            <UserRound className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -339,7 +339,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
           <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex flex-1 flex-col gap-4 md:flex-row md:items-center">
               <div className="relative flex-1 md:max-w-sm">
-                <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Search name or email..."
                   className="pl-9"
@@ -393,12 +393,12 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
           </div>
 
           {pageError ? (
-            <div className="border-destructive/30 bg-destructive/5 text-destructive mb-6 rounded-lg border px-4 py-3 text-sm">
+            <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
               {pageError}
             </div>
           ) : null}
 
-          <div className="border-border rounded-lg border">
+          <div className="rounded-lg border border-border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -416,7 +416,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 {isLoading ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-12 text-center">
-                      <div className="text-muted-foreground inline-flex items-center gap-2">
+                      <div className="inline-flex items-center gap-2 text-muted-foreground">
                         <Loader2 className="size-4 animate-spin" />
                         Loading users...
                       </div>
@@ -427,7 +427,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   <TableRow>
                     <TableCell
                       colSpan={8}
-                      className="text-destructive py-12 text-center"
+                      className="py-12 text-center text-destructive"
                     >
                       {error.message}
                     </TableCell>
@@ -436,7 +436,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 {!isLoading && !error && users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="py-12 text-center">
-                      <div className="text-muted-foreground space-y-1">
+                      <div className="space-y-1 text-muted-foreground">
                         <p className="font-medium">No users found</p>
                         <p className="text-sm">
                           Try adjusting the search or role filter.
@@ -477,7 +477,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                     <Badge variant="outline">You</Badge>
                                   ) : null}
                                 </div>
-                                <p className="text-muted-foreground text-sm">
+                                <p className="text-sm text-muted-foreground">
                                   {user.emailVerified
                                     ? "Email verified"
                                     : "Email unverified"}
@@ -501,7 +501,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                   </Badge>
                                 ))
                               ) : (
-                                <span className="text-muted-foreground text-sm">
+                                <span className="text-sm text-muted-foreground">
                                   No linked providers
                                 </span>
                               )}
@@ -569,7 +569,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
           </div>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Showing {from}-{to} of {total} users
             </p>
             <div className="flex items-center gap-2">
@@ -581,7 +581,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
               >
                 Previous
               </Button>
-              <span className="text-muted-foreground text-sm">
+              <span className="text-sm text-muted-foreground">
                 Page {page} / {totalPages}
               </span>
               <Button
@@ -613,13 +613,13 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
 
           <div className="flex-1 overflow-y-auto px-4 pb-4">
             {selectedUserId && isDetailLoading ? (
-              <div className="text-muted-foreground flex h-full min-h-48 items-center justify-center gap-2">
+              <div className="flex h-full min-h-48 items-center justify-center gap-2 text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
                 Loading user details...
               </div>
             ) : null}
             {selectedUserId && !isDetailLoading && detailError ? (
-              <div className="text-destructive flex h-full min-h-48 items-center justify-center text-sm">
+              <div className="flex h-full min-h-48 items-center justify-center text-sm text-destructive">
                 {detailError.message}
               </div>
             ) : null}
@@ -646,7 +646,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                       {getRoleBadge(selectedUserSummary.role)}
                       {getEmailVerifiedBadge(selectedUserSummary.emailVerified)}
                     </div>
-                    <p className="text-muted-foreground text-sm break-all">
+                    <p className="text-sm break-all text-muted-foreground">
                       {selectedUserSummary.email}
                     </p>
                   </div>
@@ -654,19 +654,19 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border p-4">
-                    <p className="text-muted-foreground text-sm">Created At</p>
+                    <p className="text-sm text-muted-foreground">Created At</p>
                     <p className="mt-1 font-medium">
                       {formatDateTime(selectedUserSummary.createdAt)}
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-muted-foreground text-sm">Updated At</p>
+                    <p className="text-sm text-muted-foreground">Updated At</p>
                     <p className="mt-1 font-medium">
                       {formatDateTime(selectedUserSummary.updatedAt)}
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm text-muted-foreground">
                       Active Sessions
                     </p>
                     <p className="mt-1 font-medium">
@@ -674,7 +674,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm text-muted-foreground">
                       Most Recent Session
                     </p>
                     <p className="mt-1 font-medium">
@@ -693,7 +693,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                         </Badge>
                       ))
                     ) : (
-                      <p className="text-muted-foreground text-sm">
+                      <p className="text-sm text-muted-foreground">
                         No linked providers found.
                       </p>
                     )}

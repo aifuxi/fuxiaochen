@@ -24,7 +24,7 @@ export function AdminAccessDenied({
   description = "You are signed in, but your account does not have permission to view this page.",
 }: AdminAccessDeniedProps) {
   return (
-    <Empty className="border-border bg-card min-h-[calc(100vh-12rem)] border border-dashed">
+    <Empty className="min-h-[calc(100vh-12rem)] border border-dashed border-border bg-card">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <ShieldAlert className="size-5" />

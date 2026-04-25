@@ -171,7 +171,7 @@ export default function AdminFriendsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Friends</h1>
+          <h1 className="text-2xl font-bold text-foreground">Friends</h1>
           <p className="text-muted-foreground">
             Manage your friend links and connections
           </p>
@@ -281,7 +281,7 @@ export default function AdminFriendsPage() {
               />
             </div>
             {formError ? (
-              <p className="text-destructive text-sm">{formError}</p>
+              <p className="text-sm text-destructive">{formError}</p>
             ) : null}
           </div>
           <DialogFooter>
@@ -344,7 +344,7 @@ export default function AdminFriendsPage() {
             {friends.map((friend) => (
               <div
                 key={friend.id}
-                className="border-border flex items-start gap-4 rounded-lg border p-4"
+                className="flex items-start gap-4 rounded-lg border border-border p-4"
               >
                 {friend.avatar ? (
                   <img
@@ -353,24 +353,24 @@ export default function AdminFriendsPage() {
                     className="size-12 flex-shrink-0 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="bg-muted flex size-12 flex-shrink-0 items-center justify-center rounded-full">
-                    <User className="text-muted-foreground size-6" />
+                  <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+                    <User className="size-6 text-muted-foreground" />
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
                   <div className="mb-1 flex items-center gap-2">
-                    <span className="text-foreground font-medium">
+                    <span className="font-medium text-foreground">
                       {friend.name}
                     </span>
                     {getCategoryBadge(friend.category)}
                   </div>
-                  <p className="text-muted-foreground mb-2 line-clamp-2 text-sm">
+                  <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">
                     {friend.description}
                   </p>
                   <Link
                     href={friend.url}
                     target="_blank"
-                    className="text-primary inline-flex items-center gap-1 text-xs hover:underline"
+                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
                   >
                     {friend.url.replace(/^https?:\/\//, "")}
                     <ExternalLink className="size-3" />

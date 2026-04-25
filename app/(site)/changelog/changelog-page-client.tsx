@@ -61,17 +61,17 @@ export function ChangelogPageClient() {
     <>
       <main className="mx-auto max-w-3xl px-6 py-16">
         <header className="mb-16 text-center">
-          <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight">
+          <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground">
             {siteCopy.changelog.title}
           </h1>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-lg text-muted-foreground">
             {siteCopy.changelog.description}
           </p>
         </header>
 
         {changelogs.length > 0 ? (
           <div className="relative">
-            <div className="bg-border absolute top-0 left-0 h-full w-px md:left-1/2 md:-translate-x-1/2" />
+            <div className="absolute top-0 left-0 h-full w-px bg-border md:left-1/2 md:-translate-x-1/2" />
 
             {changelogs.map((entry, index) => (
               <div
@@ -81,7 +81,7 @@ export function ChangelogPageClient() {
                 }`}
               >
                 <div
-                  className={`border-background bg-primary absolute top-0 left-0 h-3 w-3 -translate-x-1/2 rounded-full border-2 md:left-1/2`}
+                  className={`absolute top-0 left-0 h-3 w-3 -translate-x-1/2 rounded-full border-2 border-background bg-primary md:left-1/2`}
                 />
 
                 <div
@@ -94,10 +94,10 @@ export function ChangelogPageClient() {
                       index % 2 === 0 ? "md:justify-end" : ""
                     }`}
                   >
-                    <span className="text-muted-foreground font-mono text-sm">
+                    <span className="font-mono text-sm text-muted-foreground">
                       v{entry.version}
                     </span>
-                    <span className="text-muted-foreground text-sm">
+                    <span className="text-sm text-muted-foreground">
                       {entry.date}
                     </span>
                   </div>
@@ -110,11 +110,11 @@ export function ChangelogPageClient() {
                     {getTypeBadge(entry.type)}
                   </div>
 
-                  <h2 className="text-foreground mb-2 text-xl font-semibold">
+                  <h2 className="mb-2 text-xl font-semibold text-foreground">
                     {entry.title}
                   </h2>
 
-                  <p className="text-muted-foreground mb-4">
+                  <p className="mb-4 text-muted-foreground">
                     {entry.description}
                   </p>
 
@@ -126,7 +126,7 @@ export function ChangelogPageClient() {
                     {entry.changes.map((change, itemIndex) => (
                       <li
                         key={itemIndex}
-                        className="text-muted-foreground text-sm"
+                        className="text-sm text-muted-foreground"
                       >
                         {index % 2 === 0 ? (
                           <>
@@ -144,11 +144,11 @@ export function ChangelogPageClient() {
             ))}
           </div>
         ) : (
-          <div className="border-border bg-card rounded-lg border p-10 text-center">
-            <p className="text-foreground text-lg font-medium">
+          <div className="rounded-lg border border-border bg-card p-10 text-center">
+            <p className="text-lg font-medium text-foreground">
               {siteCopy.changelog.emptyTitle}
             </p>
-            <p className="text-muted-foreground mt-2">
+            <p className="mt-2 text-muted-foreground">
               {siteCopy.changelog.emptyDescription}
             </p>
           </div>

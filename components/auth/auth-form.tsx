@@ -196,7 +196,7 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
           </div>
 
           {error && (
-            <div className="border-destructive/30 bg-destructive/8 text-destructive rounded-lg border px-3 py-2 text-sm">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/8 px-3 py-2 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -213,10 +213,10 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="border-border w-full border-t" />
+            <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background text-muted-foreground px-2">
+            <span className="bg-background px-2 text-muted-foreground">
               或者
             </span>
           </div>
@@ -234,14 +234,14 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
         </Button>
 
         {!githubEnabled && (
-          <p className="text-muted-foreground text-xs">
+          <p className="text-xs text-muted-foreground">
             当前环境未配置 `GITHUB_CLIENT_ID` 或 `GITHUB_CLIENT_SECRET`。
           </p>
         )}
 
-        <p className="text-muted-foreground text-center text-sm">
+        <p className="text-center text-sm text-muted-foreground">
           {copy.alternateHint}{" "}
-          <Link href={alternateHref} className="text-foreground font-medium">
+          <Link href={alternateHref} className="font-medium text-foreground">
             {copy.alternateHrefLabel}
           </Link>
         </p>

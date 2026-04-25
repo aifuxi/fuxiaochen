@@ -106,10 +106,10 @@ export default function AdminDashboard() {
         {stats.map((stat) => (
           <Card key={stat.title}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-muted-foreground text-sm font-medium">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
               </CardTitle>
-              <stat.icon className="text-muted-foreground h-4 w-4" />
+              <stat.icon className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{post.title}</p>
-                    <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span>{post.publishedAt ? "Published" : "Draft"}</span>
                       <span>·</span>
                       <span>{post.readTimeMinutes} min read</span>
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
               {recentActivity.map((activity, index) => (
                 <div key={index} className="flex gap-4">
                   <div className="relative">
-                    <div className="bg-muted flex h-8 w-8 items-center justify-center rounded-full">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
                       {activity.type === "post" && (
                         <FileText className="h-4 w-4" />
                       )}
@@ -182,15 +182,15 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     {index !== recentActivity.length - 1 && (
-                      <div className="bg-border absolute top-8 left-4 h-full w-px" />
+                      <div className="absolute top-8 left-4 h-full w-px bg-border" />
                     )}
                   </div>
                   <div className="flex-1 pb-4">
                     <p className="text-sm font-medium">{activity.title}</p>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-sm text-muted-foreground">
                       {activity.description}
                     </p>
-                    <p className="text-muted-foreground mt-1 text-xs">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {activity.time}
                     </p>
                   </div>
@@ -210,7 +210,7 @@ export default function AdminDashboard() {
             {categories.map((category) => (
               <div
                 key={category.id}
-                className="border-border flex items-center justify-between rounded-lg border p-4"
+                className="flex items-center justify-between rounded-lg border border-border p-4"
               >
                 <span className="font-medium">{category.name}</span>
                 <Badge variant="outline">{category.blogCount}</Badge>

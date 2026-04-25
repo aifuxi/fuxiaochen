@@ -105,17 +105,17 @@ export function BlogListClient({
   return (
     <main className="mx-auto max-w-4xl px-6 py-16">
       <header className="mb-12">
-        <h1 className="text-foreground mb-4 text-4xl font-bold tracking-tight">
+        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground">
           {siteCopy.blogList.title}
         </h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-lg text-muted-foreground">
           {siteCopy.blogList.description}
         </p>
       </header>
 
       <div className="mb-10 flex flex-col gap-4">
         <div className="relative">
-          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder={siteCopy.blogList.searchPlaceholder}
@@ -163,7 +163,7 @@ export function BlogListClient({
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="text-muted-foreground gap-1"
+              className="gap-1 text-muted-foreground"
             >
               <X className="size-3" />
               {siteCopy.blogList.clearFilters}
@@ -172,7 +172,7 @@ export function BlogListClient({
         </div>
       </div>
 
-      <p className="text-muted-foreground mb-6 text-sm">
+      <p className="mb-6 text-sm text-muted-foreground">
         {siteCopy.blogList.resultCount(filteredPosts.length)}
       </p>
 
@@ -182,7 +182,7 @@ export function BlogListClient({
             <Link
               key={post.slug}
               href={routes.site.blogPost(post.slug)}
-              className="group border-border bg-card hover:bg-accent/50 flex flex-col overflow-hidden rounded-lg border transition-colors"
+              className="group flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:bg-accent/50"
             >
               <div className="relative aspect-[16/9] overflow-hidden">
                 <BlogCoverImage
@@ -195,24 +195,24 @@ export function BlogListClient({
               <div className="flex flex-1 flex-col gap-3 p-5">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{post.category}</Badge>
-                  <span className="text-muted-foreground text-xs">
+                  <span className="text-xs text-muted-foreground">
                     {post.readTime}
                   </span>
                 </div>
-                <h2 className="text-foreground group-hover:text-foreground/90 font-semibold text-balance">
+                <h2 className="font-semibold text-balance text-foreground group-hover:text-foreground/90">
                   {post.title}
                 </h2>
-                <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+                <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {post.description}
                 </p>
                 <div className="mt-auto flex flex-wrap gap-1.5">
                   {post.tags.slice(0, 3).map((tag) => (
-                    <span key={tag} className="text-muted-foreground text-xs">
+                    <span key={tag} className="text-xs text-muted-foreground">
                       #{tag}
                     </span>
                   ))}
                 </div>
-                <time className="text-muted-foreground text-xs">
+                <time className="text-xs text-muted-foreground">
                   {post.date}
                 </time>
               </div>
@@ -221,10 +221,10 @@ export function BlogListClient({
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-foreground mb-2 text-lg font-medium">
+          <p className="mb-2 text-lg font-medium text-foreground">
             {siteCopy.blogList.emptyTitle}
           </p>
-          <p className="text-muted-foreground mb-4">
+          <p className="mb-4 text-muted-foreground">
             {siteCopy.blogList.emptyDescription}
           </p>
           <Button variant="outline" onClick={clearFilters}>

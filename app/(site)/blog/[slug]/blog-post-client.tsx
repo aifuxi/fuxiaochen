@@ -52,7 +52,7 @@ export function BlogPostClient({
   if (error) {
     return (
       <main className="mx-auto max-w-4xl px-6 py-16">
-        <p className="text-foreground text-lg font-medium">
+        <p className="text-lg font-medium text-foreground">
           {siteCopy.blogPost.notFound}
         </p>
       </main>
@@ -77,13 +77,13 @@ export function BlogPostClient({
           priority
           className="object-cover"
         />
-        <div className="from-background via-background/50 absolute inset-0 bg-gradient-to-t to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
       </div>
 
       <main className="mx-auto max-w-4xl px-6">
         <Link
           href={routes.site.blog}
-          className="text-muted-foreground hover:text-foreground relative z-10 -mt-20 mb-8 inline-flex items-center gap-2 text-sm transition-colors"
+          className="relative z-10 -mt-20 mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" />
           {siteCopy.blogPost.backToBlog}
@@ -93,21 +93,21 @@ export function BlogPostClient({
           <div className="mb-4 flex flex-wrap items-center gap-3">
             <Badge variant="secondary">{post.category}</Badge>
             {post.tags.slice(0, 3).map((tag) => (
-              <span key={tag} className="text-muted-foreground text-sm">
+              <span key={tag} className="text-sm text-muted-foreground">
                 #{tag}
               </span>
             ))}
           </div>
 
-          <h1 className="text-foreground mb-6 text-3xl font-bold tracking-tight text-balance md:text-4xl">
+          <h1 className="mb-6 text-3xl font-bold tracking-tight text-balance text-foreground md:text-4xl">
             {post.title}
           </h1>
 
-          <p className="text-muted-foreground mb-6 text-lg">
+          <p className="mb-6 text-lg text-muted-foreground">
             {post.description}
           </p>
 
-          <div className="text-muted-foreground flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
               <Calendar className="size-4" />
               {post.date}

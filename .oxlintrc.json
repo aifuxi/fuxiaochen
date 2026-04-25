@@ -76,7 +76,6 @@
         "app/**/*",
         "components/**/*",
         "pages/**/*",
-        "styles/**/*",
         "constants/**/*",
         "utils/**/*",
         "hooks/**/*",

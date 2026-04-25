@@ -142,7 +142,7 @@ export default function AdminPostsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 items-center gap-4">
           <div className="relative flex-1 sm:max-w-xs">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search posts..."
               value={search}
@@ -166,7 +166,7 @@ export default function AdminPostsPage() {
         </div>
         {selectedPosts.length > 0 && (
           <div className="flex items-center gap-2">
-            <span className="text-muted-foreground text-sm">
+            <span className="text-sm text-muted-foreground">
               {selectedPosts.length} selected
             </span>
             <Button
@@ -182,7 +182,7 @@ export default function AdminPostsPage() {
         )}
       </div>
 
-      <div className="border-border rounded-lg border">
+      <div className="rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -218,7 +218,7 @@ export default function AdminPostsPage() {
                     )}
                     <div>
                       <p className="font-medium">{post.title}</p>
-                      <p className="text-muted-foreground max-w-md truncate text-sm">
+                      <p className="max-w-md truncate text-sm text-muted-foreground">
                         {post.description}
                       </p>
                     </div>
@@ -284,7 +284,7 @@ export default function AdminPostsPage() {
         </Table>
       </div>
 
-      <div className="text-muted-foreground flex items-center justify-between text-sm">
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
         <p>
           Showing {filteredPosts.length} of {blogs.length} posts
         </p>

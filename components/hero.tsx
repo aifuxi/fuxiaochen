@@ -12,16 +12,16 @@ export function Hero() {
     <section className="py-16 md:py-24">
       <div className="mx-auto max-w-4xl px-6">
         <div className="flex flex-col gap-6">
-          <h1 className="text-foreground text-4xl font-bold tracking-tight text-balance md:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-balance text-foreground md:text-5xl lg:text-6xl">
             Fuxiaochen
           </h1>
-          <p className="text-primary text-lg md:text-xl">
+          <p className="text-lg text-primary md:text-xl">
             {siteCopy.hero.role}
           </p>
-          <p className="text-muted-foreground max-w-2xl text-base leading-relaxed md:text-lg">
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
             {siteCopy.hero.summary}
           </p>
-          <p className="text-muted-foreground max-w-2xl text-base leading-relaxed">
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">
             {siteCopy.hero.description}
           </p>
 
@@ -42,7 +42,7 @@ export function Hero() {
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               <Github className="size-5" />
               <span className="sr-only">GitHub</span>
@@ -51,7 +51,7 @@ export function Hero() {
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-foreground"
             >
               <Twitter className="size-5" />
               <span className="sr-only">Twitter</span>
