@@ -46,7 +46,7 @@ export default function AboutPage() {
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-12">
             <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl border border-border md:size-48">
               <Image
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face"
+                src="/avatar.avif"
                 alt="Fuxiaochen"
                 fill
                 className="object-cover"
