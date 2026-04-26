@@ -11,28 +11,28 @@
 
 ## 构建、检查与开发命令
 
-- `pnpm dev`：启动本地 Next.js 开发服务器。
-- `pnpm build`：生成生产构建；`postbuild` 会继续执行 sitemap 生成。
-- `pnpm start`：运行生产构建产物。
-- `pnpm build:analyzer`：带 bundle analyzer 执行生产构建。
-- `pnpm lint` / `pnpm lint:fix`：运行 Oxlint 检查，或自动修复可安全修复的问题。
-- `pnpm lint:inspect`：打印当前生效的 Oxlint 配置。
-- `pnpm format` / `pnpm format:check`：使用 Oxfmt 格式化，或检查格式是否符合约定。
-- `pnpm db:generate`：根据 `lib/db/schema.ts` 生成 Drizzle migration。
-- `pnpm db:import:blog-content`：将 `data/` 下的博客、分类和标签内容导入当前数据库。
-- `pnpm db:migrate`：执行 Drizzle migration。
-- `pnpm db:push`：直接将 schema 推到数据库。
-- `pnpm db:reset`：使用 `drizzle-seed` 的 `reset` 清空当前 schema 下的表数据，不会重新生成 migration 或重建 schema。
-- `pnpm db:studio`：打开 Drizzle Studio。
-- `pnpm commit` / `pnpm commit:retry`：使用 Commitizen 辅助生成提交信息。
+- `bun run dev`：启动本地 Next.js 开发服务器。
+- `bun run build`：生成生产构建；`postbuild` 会继续执行 sitemap 生成。
+- `bun run start`：运行生产构建产物。
+- `bun run build:analyzer`：带 bundle analyzer 执行生产构建。
+- `bun run lint` / `bun run lint:fix`：运行 Oxlint 检查，或自动修复可安全修复的问题。
+- `bun run lint:inspect`：打印当前生效的 Oxlint 配置。
+- `bun run format` / `bun run format:check`：使用 Oxfmt 格式化，或检查格式是否符合约定。
+- `bun run db:generate`：根据 `lib/db/schema.ts` 生成 Drizzle migration。
+- `bun run db:import:blog-content`：将 `data/` 下的博客、分类和标签内容导入当前数据库。
+- `bun run db:migrate`：执行 Drizzle migration。
+- `bun run db:push`：直接将 schema 推到数据库。
+- `bun run db:reset`：使用 `drizzle-seed` 的 `reset` 清空当前 schema 下的表数据，不会重新生成 migration 或重建 schema。
+- `bun run db:studio`：打开 Drizzle Studio。
+- `bun run commit` / `bun run commit:retry`：使用 Commitizen 辅助生成提交信息。
 - `make build_image`：读取 `.env` 中变量构建 Docker 镜像。
 
 ## 验证要求
 
-- 仓库当前没有 `pnpm test`，不要凭空补测试命令说明。
-- 提交前至少运行 `pnpm lint` 和 `pnpm format:check`。
-- 如果改动涉及路由、构建配置、数据库 schema、服务端 API 或生产行为，额外运行 `pnpm build`。
-- 如果改动涉及 Drizzle 聚合查询、子查询字段映射，除了 `pnpm build` 以外，尽量再做一次真实运行链路验证（直接调用 repository / handler，或用真实接口请求），不要只看静态构建是否通过。
+- 仓库当前没有 `test` 脚本，不要凭空补测试命令说明。
+- 提交前至少运行 `bun run lint` 和 `bun run format:check`。
+- 如果改动涉及路由、构建配置、数据库 schema、服务端 API 或生产行为，额外运行 `bun run build`。
+- 如果改动涉及 Drizzle 聚合查询、子查询字段映射，除了 `bun run build` 以外，尽量再做一次真实运行链路验证（直接调用 repository / handler，或用真实接口请求），不要只看静态构建是否通过。
 - Husky + lint-staged 会在 `pre-commit` 阶段运行 Oxlint/Oxfmt，`commit-msg` 阶段运行 commitlint，但不要依赖钩子替代手动验证。
 
 ## 目录与架构约定
@@ -99,15 +99,15 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - 修改 schema 后，应同步更新 Drizzle migration，而不是只改 TypeScript 类型。
 - 在 Drizzle 里只要 `sql\`\``字段会进入子查询、聚合结果或被外层查询复用，必须显式`.as("...")` 起别名；不要依赖属性名推断，否则构建或运行时可能报 “raw SQL field doesn't have an alias”。
 - PostgreSQL 的聚合时间字段（例如 `max(timestamp with time zone)`）在运行时可能返回字符串，不要只按 TypeScript 注解把它当 `Date` 用；在 mapper/serializer 层统一按 `Date | string | null` 归一化后再调用 `toISOString()`。
-- `pnpm db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `pnpm db:migrate` 或 `pnpm db:push`。
-- `pnpm db:import:blog-content` 面向真实数据库内容导入，不会自动修改页面文案、站点常量或其他非数据库配置。
+- `bun run db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `bun run db:migrate` 或 `bun run db:push`。
+- `bun run db:import:blog-content` 面向真实数据库内容导入，不会自动修改页面文案、站点常量或其他非数据库配置。
 - 若只是改页面展示文案或说明性内容，优先检查 `constants/`、页面组件和相关文案来源，不要误以为 `lib/*-data.ts` 仍是运行时数据入口。
 
 ## 提交与 Pull Request 规范
 
 - 提交信息遵循 Conventional Commits，例如 `feat(blog): improve list filtering`、`fix(api): handle invalid payload`。
 - commitlint 使用 `@commitlint/config-conventional`，本地 `commit-msg` hook 会校验提交信息。
-- 可以使用 `pnpm commit` 走 Commitizen 流程。
+- 可以使用 `bun run commit` 走 Commitizen 流程。
 - PR 描述应包含：
   - 变更摘要
   - 验证方式
@@ -117,8 +117,8 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 
 ## 环境、部署与安全提示
 
-- 使用 Node `>=20`、pnpm `>=9`；仓库内 `.nvmrc` 当前为 Node 24。
+- 使用 Node `>=20`、Bun `>=1.3.11`；仓库内 `.nvmrc` 当前为 Node 24。
 - `.env.example` 中包含数据库、OSS、GitHub OAuth、Better Auth、Umami、Google Analytics、站点 URL 等变量；新增变量时同步更新示例文件和说明。
 - 敏感信息只放在 `.env` 或 CI secret，不要提交密钥。
-- Docker 构建依赖 `.env` / build args；GitHub Actions 在 tag push 和手动触发时都会构建并推送镜像。
-- `next.config.ts` 当前开启了 `typescript.ignoreBuildErrors = true`。这意味着类型错误不一定会阻塞生产构建，改动后要主动关注 `tsc` / IDE 报错，而不是只看 `pnpm build` 是否通过。
+- Docker 构建依赖 `.env` / build args，至少需要 `DATABASE_URL`；生产运行时仍需提供 Better Auth、OSS、GitHub OAuth 等服务端环境变量。GitHub Actions 在 tag push 和手动触发时都会构建并推送镜像。
+- `next.config.ts` 当前开启了 `typescript.ignoreBuildErrors = true`。这意味着类型错误不一定会阻塞生产构建，改动后要主动关注 `tsc` / IDE 报错，而不是只看 `bun run build` 是否通过。
