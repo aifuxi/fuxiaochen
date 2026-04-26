@@ -1,13 +1,19 @@
 import type { Redis } from "ioredis";
-import { createHash, randomUUID } from "node:crypto";
 import { z } from "zod";
 
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 import { getRedisClient } from "@/lib/server/redis";
 
-const REGISTER_GUARD_VISITOR_COOKIE = "register_guard_visitor_id";
-const REGISTER_GUARD_VISITOR_MAX_AGE = 60 * 60 * 24 * 365;
+import {
+  createIdentityHash,
+  defaultGenerateAuthGuardId,
+  getAuthGuardVisitor,
+  hashValue,
+  incrementFixedWindow,
+  normalizeEmail,
+} from "./auth-guard-common";
+
 const MIN_SUBMIT_SECONDS = 3;
 const DUPLICATE_TTL_SECONDS = 60 * 60 * 24;
 
@@ -46,79 +52,6 @@ type RegisterGuardDeps = {
   generateId?: () => string;
 };
 
-const hashValue = (value: string) =>
-  createHash("sha256").update(value).digest("hex");
-
-const parseCookieHeader = (cookieHeader: string | null) => {
-  const cookies = new Map<string, string>();
-
-  for (const part of cookieHeader?.split(";") ?? []) {
-    const [rawName, ...rawValueParts] = part.trim().split("=");
-    const rawValue = rawValueParts.join("=");
-
-    if (!rawName || !rawValue) {
-      continue;
-    }
-
-    try {
-      cookies.set(rawName, decodeURIComponent(rawValue));
-    } catch {
-      cookies.set(rawName, rawValue);
-    }
-  }
-
-  return cookies;
-};
-
-const isValidVisitorId = (value: string | undefined): value is string =>
-  typeof value === "string" && /^[\da-f-]{36}$/i.test(value);
-
-const createVisitorCookie = (visitorId: string) =>
-  [
-    `${REGISTER_GUARD_VISITOR_COOKIE}=${encodeURIComponent(visitorId)}`,
-    "Path=/",
-    `Max-Age=${REGISTER_GUARD_VISITOR_MAX_AGE}`,
-    "SameSite=Lax",
-    "HttpOnly",
-  ].join("; ");
-
-const getHeaderIp = (request: Request) => {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-
-  return (
-    request.headers.get("cf-connecting-ip")?.trim() ||
-    request.headers.get("x-real-ip")?.trim() ||
-    forwardedFor?.split(",")[0]?.trim() ||
-    "unknown"
-  );
-};
-
-const getVisitor = ({
-  generateId,
-  request,
-}: {
-  generateId: () => string;
-  request: Request;
-}) => {
-  const visitorId = parseCookieHeader(request.headers.get("cookie")).get(
-    REGISTER_GUARD_VISITOR_COOKIE,
-  );
-
-  if (isValidVisitorId(visitorId)) {
-    return {
-      visitorId,
-      setCookie: undefined,
-    };
-  }
-
-  const nextVisitorId = generateId();
-
-  return {
-    visitorId: nextVisitorId,
-    setCookie: createVisitorCookie(nextVisitorId),
-  };
-};
-
 const createRateLimitedError = () =>
   new AppError(
     ERROR_CODES.AUTH_REGISTER_RATE_LIMITED,
@@ -147,7 +80,7 @@ const createGuardUnavailableError = () =>
     503,
   );
 
-async function incrementFixedWindow({
+async function assertFixedWindowLimit({
   key,
   limit,
   redis,
@@ -158,12 +91,7 @@ async function incrementFixedWindow({
   redis: Redis;
   ttlSeconds: number;
 }) {
-  const count = await redis.incr(key);
-
-  if (count === 1) {
-    await redis.expire(key, ttlSeconds);
-  }
-
+  const count = await incrementFixedWindow({ key, redis, ttlSeconds });
   if (count > limit) {
     throw createRateLimitedError();
   }
@@ -180,7 +108,7 @@ async function parseGuardBody(request: Request) {
 export function createRegisterGuard({
   getRedis = getRedisClient,
   now = () => new Date(),
-  generateId = randomUUID,
+  generateId = defaultGenerateAuthGuardId,
 }: RegisterGuardDeps = {}): RegisterGuard {
   return {
     async validateSignUpRequest(request) {
@@ -196,13 +124,12 @@ export function createRegisterGuard({
         throw createRateLimitedError();
       }
 
-      const visitor = getVisitor({ generateId, request });
-      const ip = getHeaderIp(request);
-      const userAgent = request.headers.get("user-agent")?.trim() ?? "unknown";
-      const identityHash = hashValue(
-        [ip, userAgent, visitor.visitorId].join("\n"),
-      );
-      const emailHash = hashValue(body.email.trim().toLowerCase());
+      const visitor = getAuthGuardVisitor({ generateId, request });
+      const identityHash = createIdentityHash({
+        request,
+        visitorId: visitor.visitorId,
+      });
+      const emailHash = hashValue(normalizeEmail(body.email));
 
       try {
         const redis = await getRedis();
@@ -214,17 +141,17 @@ export function createRegisterGuard({
           nowSeconds / RATE_LIMITS.identityPerHour.ttlSeconds,
         );
 
-        await incrementFixedWindow({
+        await assertFixedWindowLimit({
           key: `auth:register:guard:rate:identity:minute:${identityHash}:${minuteWindow}`,
           redis,
           ...RATE_LIMITS.identityPerMinute,
         });
-        await incrementFixedWindow({
+        await assertFixedWindowLimit({
           key: `auth:register:guard:rate:identity:hour:${identityHash}:${hourWindow}`,
           redis,
           ...RATE_LIMITS.identityPerHour,
         });
-        await incrementFixedWindow({
+        await assertFixedWindowLimit({
           key: `auth:register:guard:rate:email:hour:${emailHash}:${hourWindow}`,
           redis,
           ...RATE_LIMITS.emailPerHour,
