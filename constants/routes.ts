@@ -22,6 +22,7 @@ export const routes = {
     postsNew: `${ADMIN_ROOT}/posts/new`,
     postEdit: (slug: string) =>
       `${ADMIN_ROOT}/posts/${encodeURIComponent(slug)}/edit`,
+    projects: `${ADMIN_ROOT}/projects`,
     categories: `${ADMIN_ROOT}/categories`,
     tags: `${ADMIN_ROOT}/tags`,
     changelog: `${ADMIN_ROOT}/changelog`,

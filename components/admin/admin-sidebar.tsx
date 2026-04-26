@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
+  FolderKanban,
   FolderOpen,
   Tags,
   Settings,
@@ -34,6 +35,7 @@ const getNavigation = (isAdmin: boolean) => [
     title: "内容管理",
     items: [
       { name: "文章", href: routes.admin.posts, icon: FileText },
+      { name: "项目", href: routes.admin.projects, icon: FolderKanban },
       { name: "分类", href: routes.admin.categories, icon: FolderOpen },
       { name: "标签", href: routes.admin.tags, icon: Tags },
       { name: "更新日志", href: routes.admin.changelog, icon: History },
