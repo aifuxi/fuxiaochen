@@ -1,6 +1,6 @@
 import { generateCuid } from "@/lib/cuid";
 import type { NewTag, Tag } from "@/lib/db/schema";
-import { normalizeNullableString, slugify } from "@/lib/server/content-utils";
+import { slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 import type {
@@ -78,8 +78,8 @@ const isTagInUseError = (error: unknown) =>
   (error as { code?: unknown }).code === "23503" &&
   (error as { constraint?: unknown }).constraint === TAG_IN_USE_CONSTRAINT;
 
-const resolveSlug = (name: string, slug?: string) => {
-  const resolvedSlug = slugify(slug ?? name);
+const resolveSlug = (slug: string) => {
+  const resolvedSlug = slugify(slug);
 
   if (!resolvedSlug) {
     throw new AppError(
@@ -114,7 +114,7 @@ export function createTagService({
       return tag;
     },
     async createTag(input) {
-      const slug = resolveSlug(input.name, input.slug);
+      const slug = resolveSlug(input.slug);
       const existingTag = await repository.findBySlug(slug);
 
       if (existingTag) {
@@ -128,7 +128,6 @@ export function createTagService({
         updatedAt: timestamp,
         name: input.name,
         slug,
-        description: normalizeNullableString(input.description) ?? "",
       };
 
       try {
@@ -149,9 +148,7 @@ export function createTagService({
       }
 
       const resolvedSlug =
-        input.name !== undefined || input.slug !== undefined
-          ? resolveSlug(input.name ?? existingTag.name, input.slug)
-          : undefined;
+        input.slug !== undefined ? resolveSlug(input.slug) : undefined;
 
       if (resolvedSlug && resolvedSlug !== existingTag.slug) {
         const duplicateTag = await repository.findBySlug(resolvedSlug);
@@ -165,10 +162,6 @@ export function createTagService({
         const updatedTag = await repository.update(id, {
           name: input.name,
           slug: resolvedSlug,
-          description:
-            input.description === undefined
-              ? undefined
-              : (normalizeNullableString(input.description) ?? ""),
           updatedAt: now(),
         });
 

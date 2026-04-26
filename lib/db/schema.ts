@@ -52,7 +52,6 @@ export const categories = pgTable("categories", {
   ...createTimestampColumns(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique("categories_slug_key"),
-  description: text("description").notNull().default(""),
 });
 
 export const tags = pgTable("tags", {
@@ -60,7 +59,6 @@ export const tags = pgTable("tags", {
   ...createTimestampColumns(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique("tags_slug_key"),
-  description: text("description").notNull().default(""),
 });
 
 export const blogs = pgTable(

@@ -71,6 +71,13 @@
       "when": 1777189057832,
       "tag": "0009_quick_whizzer",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1777195977676,
+      "tag": "0010_amusing_spectrum",
+      "breakpoints": true
     }
   ]
 }

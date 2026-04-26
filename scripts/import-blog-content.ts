@@ -14,7 +14,6 @@ const sourceCategorySchema = z.object({
   updatedAt: sourceDateSchema,
   name: z.string(),
   slug: z.string().trim().min(1),
-  description: z.string(),
 });
 
 const sourceTagSchema = z.object({
@@ -23,7 +22,6 @@ const sourceTagSchema = z.object({
   updatedAt: sourceDateSchema,
   name: z.string(),
   slug: z.string().trim().min(1),
-  description: z.string(),
 });
 
 const sourceBlogSchema = z.object({
@@ -179,8 +177,7 @@ function areCategoriesEqual(left: SourceCategory, right: SourceCategory) {
     left.createdAt.getTime() === right.createdAt.getTime() &&
     left.updatedAt.getTime() === right.updatedAt.getTime() &&
     left.name === right.name &&
-    left.slug === right.slug &&
-    left.description === right.description
+    left.slug === right.slug
   );
 }
 
@@ -190,8 +187,7 @@ function areTagsEqual(left: SourceTag, right: SourceTag) {
     left.createdAt.getTime() === right.createdAt.getTime() &&
     left.updatedAt.getTime() === right.updatedAt.getTime() &&
     left.name === right.name &&
-    left.slug === right.slug &&
-    left.description === right.description
+    left.slug === right.slug
   );
 }
 
@@ -371,7 +367,6 @@ async function syncCategories(
       updatedAt: category.updatedAt,
       name: category.name,
       slug: category.slug,
-      description: category.description,
     }));
 
   if (insertValues.length > 0) {
@@ -390,7 +385,6 @@ async function syncCategories(
         updatedAt: category.updatedAt,
         name: category.name,
         slug: category.slug,
-        description: category.description,
       })
       .where(eq(categories.id, category.id));
   }
@@ -420,7 +414,6 @@ async function syncTags(
       updatedAt: tag.updatedAt,
       name: tag.name,
       slug: tag.slug,
-      description: tag.description,
     }));
 
   if (insertValues.length > 0) {
@@ -439,7 +432,6 @@ async function syncTags(
         updatedAt: tag.updatedAt,
         name: tag.name,
         slug: tag.slug,
-        description: tag.description,
       })
       .where(eq(tags.id, tag.id));
   }

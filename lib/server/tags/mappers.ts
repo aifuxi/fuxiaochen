@@ -10,7 +10,6 @@ export type AdminTag = {
   id: string;
   name: string;
   slug: string;
-  description: string;
   blogCount: number;
   publishedBlogCount: number;
   createdAt: string;
@@ -30,7 +29,6 @@ export function toAdminTag(tag: TagReadModel): AdminTag {
     id: tag.id,
     name: tag.name,
     slug: tag.slug,
-    description: tag.description,
     blogCount: tag.blogCount,
     publishedBlogCount: tag.publishedBlogCount,
     createdAt: tag.createdAt.toISOString(),

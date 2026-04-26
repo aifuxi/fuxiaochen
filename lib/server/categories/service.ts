@@ -5,7 +5,7 @@ import type {
   AdminCategoryListQuery,
   AdminCategoryUpdateInput,
 } from "@/lib/server/categories/dto";
-import { normalizeNullableString, slugify } from "@/lib/server/content-utils";
+import { slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 
@@ -87,8 +87,8 @@ const isCategoryInUseError = (error: unknown) =>
   (error as { code?: unknown }).code === "23503" &&
   (error as { constraint?: unknown }).constraint === CATEGORY_IN_USE_CONSTRAINT;
 
-const resolveSlug = (name: string, slug?: string) => {
-  const resolvedSlug = slugify(slug ?? name);
+const resolveSlug = (slug: string) => {
+  const resolvedSlug = slugify(slug);
 
   if (!resolvedSlug) {
     throw new AppError(
@@ -123,7 +123,7 @@ export function createCategoryService({
       return category;
     },
     async createCategory(input) {
-      const slug = resolveSlug(input.name, input.slug);
+      const slug = resolveSlug(input.slug);
       const existingCategory = await repository.findBySlug(slug);
 
       if (existingCategory) {
@@ -137,7 +137,6 @@ export function createCategoryService({
         updatedAt: timestamp,
         name: input.name,
         slug,
-        description: normalizeNullableString(input.description) ?? "",
       };
 
       try {
@@ -158,9 +157,7 @@ export function createCategoryService({
       }
 
       const resolvedSlug =
-        input.name !== undefined || input.slug !== undefined
-          ? resolveSlug(input.name ?? existingCategory.name, input.slug)
-          : undefined;
+        input.slug !== undefined ? resolveSlug(input.slug) : undefined;
 
       if (resolvedSlug && resolvedSlug !== existingCategory.slug) {
         const duplicateCategory = await repository.findBySlug(resolvedSlug);
@@ -174,10 +171,6 @@ export function createCategoryService({
         const updatedCategory = await repository.update(id, {
           name: input.name,
           slug: resolvedSlug,
-          description:
-            input.description === undefined
-              ? undefined
-              : (normalizeNullableString(input.description) ?? ""),
           updatedAt: now(),
         });
 

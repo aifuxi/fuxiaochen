@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { Plus, X } from "lucide-react";
+import NiceModal from "@ebay/nice-modal-react";
+import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +15,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
 
@@ -25,11 +30,147 @@ import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
 
-export default function AdminTagsPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newTag, setNewTag] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type TagFormState = {
+  name: string;
+  slug: string;
+};
 
+type TagDialogProps = {
+  onSaved: () => Promise<unknown>;
+  tag?: AdminTag;
+};
+
+const DEFAULT_TAG_FORM_STATE: TagFormState = {
+  name: "",
+  slug: "",
+};
+
+function getInitialTagFormState(tag?: AdminTag): TagFormState {
+  if (!tag) {
+    return DEFAULT_TAG_FORM_STATE;
+  }
+
+  return {
+    name: tag.name,
+    slug: tag.slug,
+  };
+}
+
+function toTagPayload(formData: TagFormState) {
+  return {
+    name: formData.name.trim(),
+    slug: formData.slug.trim(),
+  };
+}
+
+const TagDialog = NiceModal.create(({ onSaved, tag }: TagDialogProps) => {
+  const modal = NiceModal.useModal();
+  const [formData, setFormData] = useState<TagFormState>(() =>
+    getInitialTagFormState(tag),
+  );
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const isEditing = Boolean(tag);
+
+  function updateForm<Key extends keyof TagFormState>(
+    key: Key,
+    value: TagFormState[Key],
+  ) {
+    setFormData((current) => ({
+      ...current,
+      [key]: value,
+    }));
+  }
+
+  async function submitTag() {
+    const payload = toTagPayload(formData);
+
+    if (!payload.name || !payload.slug) {
+      setFormError("名称和 Slug 都不能为空。");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormError(null);
+
+    try {
+      await apiRequest(tag ? `/api/admin/tags/${tag.id}` : "/api/admin/tags", {
+        method: tag ? "PATCH" : "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        toastOnError: false,
+      });
+      await onSaved();
+      modal.remove();
+    } catch (error) {
+      setFormError(
+        error instanceof Error ? error.message : "保存失败，请稍后重试",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <Dialog
+      open={modal.visible}
+      onOpenChange={(open) => {
+        if (!open && !isSubmitting) {
+          modal.remove();
+        }
+      }}
+    >
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "编辑标签" : "新建标签"}</DialogTitle>
+          <DialogDescription>
+            {isEditing ? "更新标签名称和 Slug。" : "创建一个新的文章标签。"}
+          </DialogDescription>
+        </DialogHeader>
+
+        <FieldGroup className="py-2">
+          <Field>
+            <FieldLabel htmlFor="tag-name">名称</FieldLabel>
+            <Input
+              id="tag-name"
+              value={formData.name}
+              onChange={(event) => updateForm("name", event.target.value)}
+              placeholder="输入标签名称"
+            />
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="tag-slug">Slug</FieldLabel>
+            <Input
+              id="tag-slug"
+              value={formData.slug}
+              onChange={(event) => updateForm("slug", event.target.value)}
+              placeholder="nextjs"
+            />
+          </Field>
+          {formError ? <FieldError>{formError}</FieldError> : null}
+        </FieldGroup>
+
+        <DialogFooter>
+          <Button
+            variant="outline"
+            disabled={isSubmitting}
+            onClick={() => modal.remove()}
+          >
+            取消
+          </Button>
+          <Button disabled={isSubmitting} onClick={submitTag}>
+            {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+            {isEditing ? "保存更改" : "创建标签"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+});
+
+export default function AdminTagsPage() {
   const { data, mutate } = useSWR<{ items: AdminTag[] }>(
     "/api/admin/tags?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
@@ -55,31 +196,11 @@ export default function AdminTagsPage() {
           blogs.reduce((sum, blog) => sum + blog.tags.length, 0) / blogs.length
         ).toFixed(1);
 
-  const createTag = async () => {
-    if (!newTag.trim()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await apiRequest("/api/admin/tags", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newTag.trim(),
-        }),
-      });
-      setNewTag("");
-      setIsDialogOpen(false);
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    } finally {
-      setIsSubmitting(false);
-    }
+  const openTagDialog = (tag?: AdminTag) => {
+    void NiceModal.show(TagDialog, {
+      tag,
+      onSaved: () => mutate(),
+    });
   };
 
   const deleteTag = async (id: string) => {
@@ -108,41 +229,10 @@ export default function AdminTagsPage() {
           <h1 className="text-2xl font-bold tracking-tight">标签</h1>
           <p className="text-muted-foreground">更好地管理文章标签。</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              新建标签
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>新建标签</DialogTitle>
-              <DialogDescription>
-                添加新标签，方便后续对文章进行归类。
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">名称</Label>
-                <Input
-                  id="name"
-                  value={newTag}
-                  onChange={(e) => setNewTag(e.target.value)}
-                  placeholder="输入标签名称"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                取消
-              </Button>
-              <Button disabled={isSubmitting} onClick={createTag}>
-                创建
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => openTagDialog()}>
+          <Plus className="mr-2 h-4 w-4" />
+          新建标签
+        </Button>
       </div>
 
       <div className="rounded-lg border border-border p-6">
@@ -155,19 +245,37 @@ export default function AdminTagsPage() {
             {tags.map((tag) => (
               <div
                 key={tag.id}
-                className="group flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 transition-colors hover:border-primary/50"
+                className="group flex max-w-full items-center gap-3 rounded-lg border border-border bg-card px-4 py-2 transition-colors hover:border-primary/50"
               >
-                <span className="font-medium">{tag.slug}</span>
-                <Badge variant="secondary" className="text-xs">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{tag.name}</p>
+                  <p className="truncate font-mono text-xs text-muted-foreground">
+                    {tag.slug}
+                  </p>
+                </div>
+                <Badge variant="secondary" className="shrink-0 text-xs">
                   {tag.blogCount}
                 </Badge>
-                <button
-                  className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
-                  onClick={() => confirmDeleteTag(tag)}
-                >
-                  <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                  <span className="sr-only">移除标签</span>
-                </button>
+                <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7"
+                    onClick={() => openTagDialog(tag)}
+                  >
+                    <Pencil className="size-3.5" />
+                    <span className="sr-only">编辑标签</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="size-7 text-muted-foreground hover:text-destructive"
+                    onClick={() => confirmDeleteTag(tag)}
+                  >
+                    <Trash2 className="size-3.5" />
+                    <span className="sr-only">删除标签</span>
+                  </Button>
+                </div>
               </div>
             ))}
           </div>
@@ -181,7 +289,14 @@ export default function AdminTagsPage() {
         </div>
         <div className="rounded-lg border border-border p-4">
           <p className="text-sm text-muted-foreground">使用最多</p>
-          <p className="text-2xl font-bold">{mostUsedTag?.slug ?? "无"}</p>
+          <p className="truncate text-2xl font-bold">
+            {mostUsedTag?.name ?? "无"}
+          </p>
+          {mostUsedTag ? (
+            <p className="truncate font-mono text-xs text-muted-foreground">
+              {mostUsedTag.slug}
+            </p>
+          ) : null}
         </div>
         <div className="rounded-lg border border-border p-4">
           <p className="text-sm text-muted-foreground">平均每篇文章</p>

@@ -12,7 +12,6 @@ const buildCategoryWhere = (query?: string) =>
     ? (or(
         ilike(categories.name, `%${query}%`),
         ilike(categories.slug, `%${query}%`),
-        ilike(categories.description, `%${query}%`),
       ) ?? undefined)
     : undefined;
 
@@ -22,7 +21,6 @@ const categoryFields = {
   updatedAt: categories.updatedAt,
   name: categories.name,
   slug: categories.slug,
-  description: categories.description,
 };
 
 const categoryCounts = db

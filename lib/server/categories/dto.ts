@@ -19,15 +19,14 @@ const optionalBoolean = z
       .transform((value) => value === "true" || value === "1"),
   ])
   .optional();
-const optionalSlug = z.string().trim().min(1).max(200).optional();
+const slugSchema = z.string().trim().min(1).max(200);
 
 const sortDirectionSchema = z.enum(["asc", "desc"]);
 const adminCategorySortBySchema = z.enum(["name", "postCount", "updatedAt"]);
 
 export const adminCategoryCreateSchema = z.object({
   name: nonEmptyString,
-  slug: optionalSlug,
-  description: z.string().trim().optional(),
+  slug: slugSchema,
 });
 
 export const adminCategoryUpdateSchema = adminCategoryCreateSchema
