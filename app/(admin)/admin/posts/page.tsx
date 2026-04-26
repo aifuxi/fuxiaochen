@@ -42,6 +42,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
@@ -128,6 +130,21 @@ export default function AdminPostsPage() {
     }
   };
 
+  const confirmDeletePosts = (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    void showAdminConfirmDialog({
+      title: ids.length > 1 ? "确认删除这些文章？" : "确认删除这篇文章？",
+      description:
+        ids.length > 1
+          ? `将删除选中的 ${ids.length} 篇文章，关联评论也会一并删除。此操作无法撤销。`
+          : "将删除这篇文章，关联评论也会一并删除。此操作无法撤销。",
+      onConfirm: () => deletePosts(ids),
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -177,7 +194,7 @@ export default function AdminPostsPage() {
               variant="outline"
               size="sm"
               disabled={isDeleting}
-              onClick={() => deletePosts(selectedPosts)}
+              onClick={() => confirmDeletePosts(selectedPosts)}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               删除
@@ -286,7 +303,7 @@ export default function AdminPostsPage() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => deletePosts([post.id])}
+                          onClick={() => confirmDeletePosts([post.id])}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           删除

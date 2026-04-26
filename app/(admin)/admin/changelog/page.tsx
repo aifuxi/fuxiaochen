@@ -41,6 +41,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 
@@ -147,6 +149,14 @@ export default function AdminChangelogPage() {
     } catch {
       // The global API error listener owns toast display.
     }
+  };
+
+  const confirmDeleteChangelog = (entry: AdminChangelog) => {
+    void showAdminConfirmDialog({
+      title: "确认删除这条更新日志？",
+      description: `将删除 v${entry.version}「${entry.title}」。此操作无法撤销。`,
+      onConfirm: () => deleteChangelog(entry.id),
+    });
   };
 
   return (
@@ -288,7 +298,7 @@ export default function AdminChangelogPage() {
                       variant="ghost"
                       size="icon"
                       className="text-destructive"
-                      onClick={() => deleteChangelog(entry.id)}
+                      onClick={() => confirmDeleteChangelog(entry)}
                     >
                       <Trash2 className="size-4" />
                     </Button>

@@ -34,6 +34,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminFriend } from "@/lib/server/friends/mappers";
 
@@ -175,6 +177,14 @@ export default function AdminFriendsPage() {
     } finally {
       setDeletingFriendId(null);
     }
+  };
+
+  const confirmDeleteFriend = (friend: AdminFriend) => {
+    void showAdminConfirmDialog({
+      title: "确认删除这条友链？",
+      description: `将删除友链「${friend.name}」。此操作无法撤销。`,
+      onConfirm: () => deleteFriend(friend.id),
+    });
   };
 
   return (
@@ -398,7 +408,7 @@ export default function AdminFriendsPage() {
                       variant="ghost"
                       size="icon"
                       className="text-destructive"
-                      onClick={() => deleteFriend(friend.id)}
+                      onClick={() => confirmDeleteFriend(friend)}
                       disabled={deletingFriendId === friend.id}
                     >
                       <Trash2 className="size-4" />
