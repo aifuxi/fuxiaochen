@@ -59,6 +59,11 @@ export const adminCommentUpdateSchema = z
     },
   );
 
+export const adminCommentReplySchema = z.object({
+  parentId: nonEmptyString,
+  content: nonEmptyString.max(5000),
+});
+
 export type CommentStatusInput = z.infer<typeof commentStatusSchema>;
 export type PublicCommentListQuery = z.infer<
   typeof publicCommentListQuerySchema
@@ -69,3 +74,4 @@ export type PublicCommentCreateInput = z.infer<
 export type AdminCommentListQuery = z.infer<typeof adminCommentListQuerySchema>;
 export type AdminCommentIdParams = z.infer<typeof adminCommentIdParamsSchema>;
 export type AdminCommentUpdateInput = z.infer<typeof adminCommentUpdateSchema>;
+export type AdminCommentReplyInput = z.infer<typeof adminCommentReplySchema>;

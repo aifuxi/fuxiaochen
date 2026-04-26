@@ -1,6 +1,7 @@
 import { generateCuid } from "@/lib/cuid";
 import type { Blog, Comment as DbComment, NewComment } from "@/lib/db/schema";
 import type {
+  AdminCommentReplyInput,
   AdminCommentListQuery,
   AdminCommentUpdateInput,
   PublicCommentCreateInput,
@@ -32,6 +33,14 @@ type CommentUpdateMutation = Partial<
 
 type PublicBlogLookup = Pick<Blog, "id" | "slug" | "title" | "published">;
 
+type AdminCommentReplyActor = {
+  name: string;
+  email: string;
+  image?: string | null;
+};
+
+const MAX_COMMENT_DEPTH = 3;
+
 export interface CommentRepository {
   listAdmin(query: AdminCommentListQuery): Promise<{
     items: CommentReadModel[];
@@ -60,6 +69,10 @@ export interface CommentService {
   ): Promise<CommentReadModel[]>;
   createPublicComment(
     input: PublicCommentCreateInput,
+  ): Promise<CommentReadModel>;
+  createAdminCommentReply(
+    input: AdminCommentReplyInput,
+    actor: AdminCommentReplyActor,
   ): Promise<CommentReadModel>;
   updateComment(
     id: string,
@@ -110,16 +123,71 @@ const createParentMismatchError = (parentId: string, postSlug: string) =>
     },
   );
 
+const createParentUnavailableError = (parentId: string) =>
+  new AppError(
+    ERROR_CODES.COMMENT_PARENT_UNAVAILABLE,
+    "Parent comment is not available for replies",
+    400,
+    {
+      parentId,
+    },
+  );
+
+const createCommentDepthExceededError = (parentId: string) =>
+  new AppError(
+    ERROR_CODES.COMMENT_DEPTH_EXCEEDED,
+    "Comment reply depth cannot exceed 3 levels",
+    400,
+    {
+      parentId,
+      maxDepth: MAX_COMMENT_DEPTH,
+    },
+  );
+
+async function getCommentDepth({
+  repository,
+  comment,
+  requireApprovedAncestors,
+}: {
+  repository: CommentRepository;
+  comment: CommentReadModel;
+  requireApprovedAncestors: boolean;
+}) {
+  let depth = 1;
+  let currentComment = comment;
+  const visitedCommentIds = new Set([comment.id]);
+
+  while (currentComment.parentId) {
+    const parentComment = await repository.findById(currentComment.parentId);
+
+    if (!parentComment || visitedCommentIds.has(parentComment.id)) {
+      throw createParentNotFoundError(currentComment.parentId);
+    }
+
+    if (requireApprovedAncestors && parentComment.status !== "approved") {
+      throw createParentUnavailableError(parentComment.id);
+    }
+
+    depth += 1;
+    currentComment = parentComment;
+    visitedCommentIds.add(parentComment.id);
+  }
+
+  return depth;
+}
+
 async function validateParentComment({
   repository,
   parentId,
   blogId,
   postSlug,
+  requireApproved,
 }: {
   repository: CommentRepository;
   parentId?: string;
   blogId: string;
   postSlug: string;
+  requireApproved: boolean;
 }) {
   if (!parentId) {
     return null;
@@ -133,6 +201,20 @@ async function validateParentComment({
 
   if (parentComment.blogId !== blogId) {
     throw createParentMismatchError(parentId, postSlug);
+  }
+
+  if (requireApproved && parentComment.status !== "approved") {
+    throw createParentUnavailableError(parentId);
+  }
+
+  const parentDepth = await getCommentDepth({
+    repository,
+    comment: parentComment,
+    requireApprovedAncestors: requireApproved,
+  });
+
+  if (parentDepth >= MAX_COMMENT_DEPTH) {
+    throw createCommentDepthExceededError(parentId);
   }
 
   return parentComment;
@@ -171,6 +253,7 @@ export function createCommentService({
         parentId: input.parentId,
         blogId: blog.id,
         postSlug: input.postSlug,
+        requireApproved: true,
       });
 
       const timestamp = now();
@@ -185,6 +268,37 @@ export function createCommentService({
         content: input.content,
         avatar: null,
         status: "pending",
+      };
+
+      return repository.create(comment);
+    },
+    async createAdminCommentReply(input, actor) {
+      const parentComment = await repository.findById(input.parentId);
+
+      if (!parentComment) {
+        throw createParentNotFoundError(input.parentId);
+      }
+
+      await validateParentComment({
+        repository,
+        parentId: input.parentId,
+        blogId: parentComment.blogId,
+        postSlug: parentComment.blog?.slug ?? "",
+        requireApproved: false,
+      });
+
+      const timestamp = now();
+      const comment: NewComment = {
+        id: generateId(),
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        blogId: parentComment.blogId,
+        parentId: input.parentId,
+        author: actor.name,
+        email: actor.email,
+        content: input.content,
+        avatar: actor.image ?? null,
+        status: "approved",
       };
 
       return repository.create(comment);

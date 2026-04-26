@@ -9,6 +9,7 @@ export type PublicComment = {
   avatar: string | null;
   createdAt: string;
   parentId: string | null;
+  replies: PublicComment[];
 };
 
 export type AdminComment = {
@@ -42,7 +43,62 @@ export function toPublicComment(comment: CommentReadModel): PublicComment {
     avatar: comment.avatar,
     createdAt: comment.createdAt.toISOString(),
     parentId: comment.parentId,
+    replies: [],
   };
+}
+
+export function toPublicCommentTree(
+  comments: CommentReadModel[],
+): PublicComment[] {
+  const commentById = new Map<string, PublicComment>();
+  const roots: PublicComment[] = [];
+
+  for (const comment of comments) {
+    commentById.set(comment.id, toPublicComment(comment));
+  }
+
+  for (const comment of comments) {
+    const publicComment = commentById.get(comment.id);
+
+    if (!publicComment) {
+      continue;
+    }
+
+    if (!comment.parentId) {
+      roots.push(publicComment);
+      continue;
+    }
+
+    const parent = commentById.get(comment.parentId);
+
+    if (parent) {
+      parent.replies.push(publicComment);
+    }
+  }
+
+  const sortReplies = (items: PublicComment[]) => {
+    items.sort(
+      (first, second) =>
+        new Date(first.createdAt).getTime() -
+        new Date(second.createdAt).getTime(),
+    );
+
+    for (const item of items) {
+      sortReplies(item.replies);
+    }
+  };
+
+  roots.sort(
+    (first, second) =>
+      new Date(second.createdAt).getTime() -
+      new Date(first.createdAt).getTime(),
+  );
+
+  for (const root of roots) {
+    sortReplies(root.replies);
+  }
+
+  return roots;
 }
 
 export function toAdminComment(comment: CommentReadModel): AdminComment {
