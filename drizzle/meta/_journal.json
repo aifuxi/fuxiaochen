@@ -36,6 +36,13 @@
       "when": 1776955251629,
       "tag": "0004_far_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777084569489,
+      "tag": "0005_warm_squadron_supreme",
+      "breakpoints": true
     }
   ]
 }

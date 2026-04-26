@@ -2,25 +2,22 @@ import Link from "next/link";
 
 import { Github, Twitter, Mail } from "lucide-react";
 
-import {
-  BEI_AN_LINK,
-  BEI_AN_NUMBER,
-  GONG_AN_LINK,
-  GONG_AN_NUMBER,
-} from "@/constants/info";
+import type { SiteSettings } from "@/lib/settings/types";
+
 import { routes } from "@/constants/routes";
 import { siteCopy, siteNavLinks } from "@/constants/site-copy";
 
-const footerLinks = {
-  main: siteNavLinks,
-  social: [
-    { href: "https://github.com", label: "GitHub", icon: Github },
-    { href: "https://twitter.com", label: "Twitter", icon: Twitter },
-    { href: "mailto:hello@example.com", label: "邮箱", icon: Mail },
-  ],
+type FooterProps = {
+  settings: SiteSettings;
 };
 
-export function Footer() {
+export function Footer({ settings }: FooterProps) {
+  const socialLinks = [
+    { href: settings.social.githubUrl, label: "GitHub", icon: Github },
+    { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
+    { href: `mailto:${settings.general.email}`, label: "邮箱", icon: Mail },
+  ].filter((link) => link.href.length > 0);
+
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-4xl px-6 py-12">
@@ -30,10 +27,10 @@ export function Footer() {
               href={routes.site.home}
               className="text-lg font-semibold tracking-tight text-foreground"
             >
-              Fuxiaochen
+              {settings.general.siteName}
             </Link>
             <p className="max-w-xs text-sm text-muted-foreground">
-              {siteCopy.footer.description}
+              {settings.general.siteDescription}
             </p>
           </div>
 
@@ -42,7 +39,7 @@ export function Footer() {
               {siteCopy.footer.linksTitle}
             </span>
             <ul className="flex flex-col gap-2">
-              {footerLinks.main.map((link) => (
+              {siteNavLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -60,7 +57,7 @@ export function Footer() {
               {siteCopy.footer.connectTitle}
             </span>
             <div className="flex items-center gap-3">
-              {footerLinks.social.map((link) => (
+              {socialLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -83,7 +80,7 @@ export function Footer() {
         <div className="mt-12 border-t border-border pt-8">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} Fuxiaochen.{" "}
+              © {new Date().getFullYear()} {settings.general.siteName}.{" "}
               {siteCopy.footer.copyright}
             </p>
             <p className="text-sm text-muted-foreground">
@@ -92,22 +89,27 @@ export function Footer() {
           </div>
 
           <div className="mt-4 flex flex-col items-center gap-2 text-center md:flex-row md:flex-wrap md:justify-center md:gap-x-4 md:gap-y-2">
-            <Link
-              href={BEI_AN_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {BEI_AN_NUMBER}
-            </Link>
-            <Link
-              href={GONG_AN_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {GONG_AN_NUMBER}
-            </Link>
+            {settings.compliance.icpNumber && settings.compliance.icpLink && (
+              <Link
+                href={settings.compliance.icpLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {settings.compliance.icpNumber}
+              </Link>
+            )}
+            {settings.compliance.policeNumber &&
+              settings.compliance.policeLink && (
+                <Link
+                  href={settings.compliance.policeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {settings.compliance.policeNumber}
+                </Link>
+              )}
           </div>
         </div>
       </div>
