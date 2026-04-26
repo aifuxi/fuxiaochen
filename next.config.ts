@@ -7,9 +7,9 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 });
 
 const config: NextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
   images: {
     unoptimized: true,
   },

@@ -16,6 +16,15 @@ const buildCategoryWhere = (query?: string) =>
       ) ?? undefined)
     : undefined;
 
+const categoryFields = {
+  id: categories.id,
+  createdAt: categories.createdAt,
+  updatedAt: categories.updatedAt,
+  name: categories.name,
+  slug: categories.slug,
+  description: categories.description,
+};
+
 const categoryCounts = db
   .select({
     categoryId: blogs.categoryId,
@@ -86,7 +95,7 @@ export const categoryRepository: CategoryRepository = {
     const [items, total] = await Promise.all([
       db
         .select({
-          ...categories,
+          ...categoryFields,
           blogCount: categoryCounts.blogCount,
           publishedBlogCount: categoryCounts.publishedBlogCount,
         })
@@ -107,7 +116,7 @@ export const categoryRepository: CategoryRepository = {
   async listPublic() {
     const items = await db
       .select({
-        ...categories,
+        ...categoryFields,
         blogCount: categoryCounts.blogCount,
         publishedBlogCount: categoryCounts.publishedBlogCount,
       })
@@ -121,7 +130,7 @@ export const categoryRepository: CategoryRepository = {
   async findById(id) {
     const rows = await db
       .select({
-        ...categories,
+        ...categoryFields,
         blogCount: categoryCounts.blogCount,
         publishedBlogCount: categoryCounts.publishedBlogCount,
       })
@@ -136,7 +145,7 @@ export const categoryRepository: CategoryRepository = {
   async findBySlug(slug) {
     const rows = await db
       .select({
-        ...categories,
+        ...categoryFields,
         blogCount: categoryCounts.blogCount,
         publishedBlogCount: categoryCounts.publishedBlogCount,
       })
