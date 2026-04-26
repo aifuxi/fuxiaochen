@@ -41,6 +41,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const { settings } = await settingsService.getSettings();
+  const { googleAnalytics, googleSearchConsole, umami } = settings.analytics;
 
   return (
     <html
@@ -52,10 +53,11 @@ export default async function RootLayout({
         <link rel="icon" href={settings.general.logoUrl} />
         {/* Google Search Console 验证 */}
         {isProduction() &&
-          process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (
+          googleSearchConsole.enabled &&
+          googleSearchConsole.verificationContent && (
             <meta
               name="google-site-verification"
-              content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
+              content={googleSearchConsole.verificationContent}
             />
           )}
       </head>
@@ -75,19 +77,22 @@ export default async function RootLayout({
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
-      )}
+      {isProduction() &&
+        googleAnalytics.enabled &&
+        googleAnalytics.measurementId && (
+          <GoogleAnalytics gaId={googleAnalytics.measurementId} />
+        )}
 
       {/* umami 统计 */}
       {isProduction() &&
-        process.env.NEXT_PUBLIC_UMAMI_URL &&
-        process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+        umami.enabled &&
+        umami.scriptUrl &&
+        umami.websiteId && (
           <Script
             id="umami"
-            src={process.env.NEXT_PUBLIC_UMAMI_URL}
+            src={umami.scriptUrl}
             async
-            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            data-website-id={umami.websiteId}
           />
         )}
     </html>

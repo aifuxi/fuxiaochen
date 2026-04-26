@@ -104,12 +104,49 @@ const complianceSchema = z.object({
   policeLink: urlOrEmpty,
 });
 
+const analyticsSchema = z.object({
+  googleSearchConsole: z
+    .object({
+      enabled: z.boolean(),
+      verificationContent: z.string().trim(),
+    })
+    .refine((value) => !value.enabled || value.verificationContent.length > 0, {
+      message:
+        "Google Search Console verification content is required when enabled",
+      path: ["verificationContent"],
+    }),
+  googleAnalytics: z
+    .object({
+      enabled: z.boolean(),
+      measurementId: z.string().trim(),
+    })
+    .refine((value) => !value.enabled || value.measurementId.length > 0, {
+      message: "Google Analytics Measurement ID is required when enabled",
+      path: ["measurementId"],
+    }),
+  umami: z
+    .object({
+      enabled: z.boolean(),
+      scriptUrl: urlOrEmpty,
+      websiteId: z.string().trim(),
+    })
+    .refine((value) => !value.enabled || value.scriptUrl.length > 0, {
+      message: "Umami script URL is required when enabled",
+      path: ["scriptUrl"],
+    })
+    .refine((value) => !value.enabled || value.websiteId.length > 0, {
+      message: "Umami website ID is required when enabled",
+      path: ["websiteId"],
+    }),
+});
+
 export const siteSettingsSchema = z.object({
   general: generalSchema,
   seo: seoSchema,
   profile: profileSchema,
   social: socialSchema,
   compliance: complianceSchema,
+  analytics: analyticsSchema,
 });
 
 export const adminSiteSettingsUpdateSchema = siteSettingsSchema.partial();

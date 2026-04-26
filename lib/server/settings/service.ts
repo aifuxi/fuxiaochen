@@ -60,6 +60,22 @@ const mergeSettings = (
       ...current.compliance,
       ...input.compliance,
     },
+    analytics: {
+      ...current.analytics,
+      ...input.analytics,
+      googleSearchConsole: {
+        ...current.analytics.googleSearchConsole,
+        ...input.analytics?.googleSearchConsole,
+      },
+      googleAnalytics: {
+        ...current.analytics.googleAnalytics,
+        ...input.analytics?.googleAnalytics,
+      },
+      umami: {
+        ...current.analytics.umami,
+        ...input.analytics?.umami,
+      },
+    },
   });
 
 const normalizeSettings = (row: SiteSettingsRow | null) => {
@@ -73,6 +89,7 @@ const normalizeSettings = (row: SiteSettingsRow | null) => {
     profile: row.profile,
     social: row.social,
     compliance: row.compliance,
+    analytics: row.analytics,
   });
 
   return parsed.success ? parsed.data : cloneDefaultSettings();

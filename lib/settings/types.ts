@@ -81,10 +81,27 @@ export type SiteSettingsCompliance = {
   policeLink: string;
 };
 
+export type SiteSettingsAnalytics = {
+  googleSearchConsole: {
+    enabled: boolean;
+    verificationContent: string;
+  };
+  googleAnalytics: {
+    enabled: boolean;
+    measurementId: string;
+  };
+  umami: {
+    enabled: boolean;
+    scriptUrl: string;
+    websiteId: string;
+  };
+};
+
 export type SiteSettings = {
   general: SiteSettingsGeneral;
   seo: SiteSettingsSeo;
   profile: SiteSettingsProfile;
   social: SiteSettingsSocial;
   compliance: SiteSettingsCompliance;
+  analytics: SiteSettingsAnalytics;
 };

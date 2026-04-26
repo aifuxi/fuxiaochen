@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon, SaveIcon } from "lucide-react";
-import { useForm, type Path } from "react-hook-form";
+import { Controller, useForm, type Path } from "react-hook-form";
 import { toast } from "sonner";
 import useSWR from "swr";
 import { z } from "zod";
@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -142,6 +143,43 @@ const settingsFormSchema = z.object({
     policeNumber: z.string().trim(),
     policeLink: optionalUrl,
   }),
+  analytics: z.object({
+    googleSearchConsole: z
+      .object({
+        enabled: z.boolean(),
+        verificationContent: z.string().trim(),
+      })
+      .refine(
+        (value) => !value.enabled || value.verificationContent.length > 0,
+        {
+          message: "启用后必须填写验证码内容",
+          path: ["verificationContent"],
+        },
+      ),
+    googleAnalytics: z
+      .object({
+        enabled: z.boolean(),
+        measurementId: z.string().trim(),
+      })
+      .refine((value) => !value.enabled || value.measurementId.length > 0, {
+        message: "启用后必须填写 Measurement ID",
+        path: ["measurementId"],
+      }),
+    umami: z
+      .object({
+        enabled: z.boolean(),
+        scriptUrl: optionalUrl,
+        websiteId: z.string().trim(),
+      })
+      .refine((value) => !value.enabled || value.scriptUrl.length > 0, {
+        message: "启用后必须填写脚本地址",
+        path: ["scriptUrl"],
+      })
+      .refine((value) => !value.enabled || value.websiteId.length > 0, {
+        message: "启用后必须填写 Website ID",
+        path: ["websiteId"],
+      }),
+  }),
 });
 
 type SettingsFormValues = z.infer<typeof settingsFormSchema>;
@@ -182,6 +220,7 @@ const toFormValues = (settings: SiteSettings): SettingsFormValues => ({
   },
   social: settings.social,
   compliance: settings.compliance,
+  analytics: settings.analytics,
 });
 
 const toPayload = (values: SettingsFormValues): SiteSettings => ({
@@ -217,6 +256,7 @@ const toPayload = (values: SettingsFormValues): SiteSettings => ({
   },
   social: values.social,
   compliance: values.compliance,
+  analytics: values.analytics,
 });
 
 export default function AdminSettingsPage() {
@@ -235,6 +275,7 @@ export default function AdminSettingsPage() {
   const {
     formState: { errors, isDirty, isSubmitting },
     handleSubmit,
+    control,
     register,
     reset,
   } = useForm<SettingsFormValues>({
@@ -328,6 +369,25 @@ export default function AdminSettingsPage() {
     </Field>
   );
 
+  const renderSwitch = (name: FieldPath, label: string) => (
+    <Controller
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <Field orientation="horizontal" data-invalid={!!fieldError(name)}>
+          <FieldLabel htmlFor={name}>{label}</FieldLabel>
+          <Switch
+            id={name}
+            checked={Boolean(field.value)}
+            onCheckedChange={field.onChange}
+            aria-invalid={!!fieldError(name)}
+          />
+          <FieldError errors={fieldError(name)} />
+        </Field>
+      )}
+    />
+  );
+
   if (error) {
     return (
       <Alert variant="destructive">
@@ -369,6 +429,7 @@ export default function AdminSettingsPage() {
           <TabsTrigger value="seo">SEO</TabsTrigger>
           <TabsTrigger value="profile">个人资料</TabsTrigger>
           <TabsTrigger value="social">社交链接</TabsTrigger>
+          <TabsTrigger value="analytics">统计</TabsTrigger>
           <TabsTrigger value="compliance">备案信息</TabsTrigger>
         </TabsList>
 
@@ -491,6 +552,40 @@ export default function AdminSettingsPage() {
                 {renderInput("social.juejinUrl", "掘金链接", "url")}
                 {renderInput("social.bilibiliUrl", "B 站链接", "url")}
                 {renderInput("social.sourceCodeUrl", "源码仓库链接", "url")}
+              </FieldGroup>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <Card>
+            <CardHeader>
+              <CardTitle>统计</CardTitle>
+              <CardDescription>
+                公开站点在生产环境注入的访问统计脚本配置。
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <FieldGroup>
+                {renderSwitch(
+                  "analytics.googleSearchConsole.enabled",
+                  "启用 Google Search Console 验证",
+                )}
+                {renderInput(
+                  "analytics.googleSearchConsole.verificationContent",
+                  "Google Search Console 验证内容",
+                )}
+                {renderSwitch(
+                  "analytics.googleAnalytics.enabled",
+                  "启用 Google Analytics",
+                )}
+                {renderInput(
+                  "analytics.googleAnalytics.measurementId",
+                  "Measurement ID",
+                )}
+                {renderSwitch("analytics.umami.enabled", "启用 Umami")}
+                {renderInput("analytics.umami.scriptUrl", "Umami 脚本地址")}
+                {renderInput("analytics.umami.websiteId", "Umami Website ID")}
               </FieldGroup>
             </CardContent>
           </Card>
