@@ -142,7 +142,7 @@ export function createProjectService({
           entityId: createdProject.id,
           entityTitle: createdProject.title,
           description: `项目「${createdProject.title}」已创建。`,
-          href: "/admin",
+          href: "/admin/projects",
           metadata: {
             published: createdProject.published,
             slug: createdProject.slug,
@@ -210,7 +210,7 @@ export function createProjectService({
           entityId: updatedProject.id,
           entityTitle: updatedProject.title,
           description: `项目「${updatedProject.title}」已更新。`,
-          href: "/admin",
+          href: "/admin/projects",
           metadata: {
             published: updatedProject.published,
             slug: updatedProject.slug,
@@ -245,7 +245,7 @@ export function createProjectService({
         entityId: existingProject.id,
         entityTitle: existingProject.title,
         description: `项目「${existingProject.title}」已删除。`,
-        href: "/admin",
+        href: "/admin/projects",
         metadata: {
           slug: existingProject.slug,
         },
