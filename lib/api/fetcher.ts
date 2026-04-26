@@ -1,3 +1,5 @@
+import { emitApiError } from "@/lib/client/events";
+
 export type ApiErrorPayload = {
   success: false;
   error: {
@@ -49,17 +51,29 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
+export type ApiRequestInit = RequestInit & {
+  errorFallback?: string;
+  errorSource?: string;
+  toastOnError?: boolean;
+};
+
 export async function apiRequest<TData, TMeta = undefined>(
   input: RequestInfo | URL,
-  init?: RequestInit,
+  init?: ApiRequestInit,
 ) {
-  const response = await fetch(input, init);
+  const {
+    errorFallback = "Request failed",
+    errorSource,
+    toastOnError = true,
+    ...requestInit
+  } = init ?? {};
+  const response = await fetch(input, requestInit);
   const payload = (await response.json()) as
     | ApiSuccessPayload<TData, TMeta>
     | ApiErrorPayload;
 
   if (!response.ok || payload.success === false) {
-    throw new ApiRequestError({
+    const error = new ApiRequestError({
       status: response.status,
       message:
         payload.success === false
@@ -68,6 +82,12 @@ export async function apiRequest<TData, TMeta = undefined>(
       code: payload.success === false ? payload.error.code : undefined,
       details: payload.success === false ? payload.error.details : undefined,
     });
+
+    if (toastOnError) {
+      emitApiError(error, errorFallback, errorSource);
+    }
+
+    throw error;
   }
 
   return payload;
@@ -75,7 +95,7 @@ export async function apiRequest<TData, TMeta = undefined>(
 
 export async function fetchApiData<TData>(
   input: RequestInfo | URL,
-  init?: RequestInit,
+  init?: ApiRequestInit,
 ) {
   const payload = await apiRequest<TData>(input, init);
   return payload.data;

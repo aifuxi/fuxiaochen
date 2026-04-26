@@ -281,6 +281,7 @@ export default function AdminSettingsPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
+          toastOnError: false,
         },
       );
       await mutate(updated.data, {

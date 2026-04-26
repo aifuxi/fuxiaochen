@@ -11,7 +11,6 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
-import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -42,11 +41,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import {
-  apiRequest,
-  fetchApiData,
-  getApiErrorMessage,
-} from "@/lib/api/fetcher";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 
 function getTypeIcon(type: AdminChangelog["type"]) {
@@ -112,27 +107,31 @@ export default function AdminChangelogPage() {
   };
 
   const createChangelog = async () => {
-    await apiRequest("/api/admin/changelogs", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        version,
-        title,
-        type,
-        description,
-        releaseDate: new Date().toISOString(),
-        changes: changes
-          .split("\n")
-          .map((value) => value.trim())
-          .filter(Boolean),
-      }),
-    });
+    try {
+      await apiRequest("/api/admin/changelogs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          version,
+          title,
+          type,
+          description,
+          releaseDate: new Date().toISOString(),
+          changes: changes
+            .split("\n")
+            .map((value) => value.trim())
+            .filter(Boolean),
+        }),
+      });
 
-    resetForm();
-    setIsDialogOpen(false);
-    await mutate();
+      resetForm();
+      setIsDialogOpen(false);
+      await mutate();
+    } catch {
+      // The global API error listener owns toast display.
+    }
   };
 
   const deleteChangelog = async (id: string) => {
@@ -141,8 +140,8 @@ export default function AdminChangelogPage() {
         method: "DELETE",
       });
       await mutate();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete changelog"));
+    } catch {
+      // The global API error listener owns toast display.
     }
   };
 
