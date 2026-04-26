@@ -1,6 +1,7 @@
 import { resolveBlogCoverImage } from "@/lib/blog-cover-image";
 
 import type { BlogReadModel } from "./service";
+import type { BlogStats } from "./stats";
 
 import { formatPublicDate } from "../content-utils";
 
@@ -14,6 +15,9 @@ export type PublicBlog = {
   tags: string[];
   coverImage: string;
   readTime: string;
+  viewCount: number;
+  likeCount: number;
+  liked: boolean;
   featured?: boolean;
 };
 
@@ -36,7 +40,16 @@ export type AdminBlog = {
   updatedAt: string;
 };
 
-export function toPublicBlog(blog: BlogReadModel): PublicBlog {
+const EMPTY_BLOG_STATS: BlogStats = {
+  viewCount: 0,
+  likeCount: 0,
+  liked: false,
+};
+
+export function toPublicBlog(
+  blog: BlogReadModel,
+  stats: BlogStats = EMPTY_BLOG_STATS,
+): PublicBlog {
   return {
     slug: blog.slug,
     title: blog.title,
@@ -47,6 +60,9 @@ export function toPublicBlog(blog: BlogReadModel): PublicBlog {
     tags: blog.tags.map((tag) => tag.slug),
     coverImage: resolveBlogCoverImage(blog.coverImage),
     readTime: `${blog.readTimeMinutes} min read`,
+    viewCount: stats.viewCount,
+    likeCount: stats.likeCount,
+    liked: stats.liked,
     featured: blog.featured,
   };
 }

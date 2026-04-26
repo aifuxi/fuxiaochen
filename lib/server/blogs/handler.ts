@@ -22,6 +22,15 @@ import {
   type BlogService,
   type BlogServiceDeps,
 } from "./service";
+import {
+  applyBlogStatsVisitorCookie,
+  blogStatsService,
+  DEFAULT_BLOG_STATS,
+  ensureBlogStatsVisitor,
+  getBlogStatsVisitorId,
+  type BlogStats,
+  type BlogStatsService,
+} from "./stats";
 
 import { ERROR_CODES } from "../http/error-codes";
 import { AppError } from "../http/errors";
@@ -41,7 +50,25 @@ const toJsonBody = async (request: Request) => {
 type BlogHandlerDeps = {
   service?: BlogService;
   serviceDeps?: BlogServiceDeps;
+  statsService?: BlogStatsService;
 };
+
+const getBlogStats = async (
+  statsService: BlogStatsService,
+  blogIds: string[],
+  visitorId?: string | null,
+) => {
+  try {
+    return await statsService.getStatsByBlogIds(blogIds, visitorId);
+  } catch {
+    return new Map<string, BlogStats>();
+  }
+};
+
+const resolveBlogStats = (
+  statsByBlogId: Map<string, BlogStats>,
+  blogId: string,
+) => statsByBlogId.get(blogId) ?? DEFAULT_BLOG_STATS;
 
 export function createAdminBlogHandlers({
   serviceDeps,
@@ -162,6 +189,7 @@ export function createAdminBlogHandlers({
 export function createPublicBlogHandlers({
   serviceDeps,
   service = createBlogService(serviceDeps),
+  statsService = blogStatsService,
 }: BlogHandlerDeps = {}) {
   return {
     async handleListBlogs(request: Request) {
@@ -178,10 +206,17 @@ export function createPublicBlogHandlers({
           sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
         const result = await service.listPublicBlogs(query);
+        const statsByBlogId = await getBlogStats(
+          statsService,
+          result.items.map((blog) => blog.id),
+          getBlogStatsVisitorId(request),
+        );
 
         return createSuccessResponse(
           {
-            items: result.items.map(toPublicBlog),
+            items: result.items.map((blog) =>
+              toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+            ),
           },
           {
             page: query.page,
@@ -193,12 +228,19 @@ export function createPublicBlogHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetBlog(_request: Request, params: Promise<{ slug: string }>) {
+    async handleGetBlog(request: Request, params: Promise<{ slug: string }>) {
       try {
         const { slug } = publicBlogSlugParamsSchema.parse(await params);
         const blog = await service.getPublicBlogBySlug(slug);
+        const statsByBlogId = await getBlogStats(
+          statsService,
+          [blog.id],
+          getBlogStatsVisitorId(request),
+        );
 
-        return createSuccessResponse(toPublicBlog(blog));
+        return createSuccessResponse(
+          toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+        );
       } catch (error) {
         return toErrorResponse(error);
       }
@@ -214,10 +256,56 @@ export function createPublicBlogHandlers({
           limit: url.searchParams.get("limit") ?? undefined,
         });
         const items = await service.getPublicSimilarBlogs(slug, query.limit);
+        const statsByBlogId = await getBlogStats(
+          statsService,
+          items.map((blog) => blog.id),
+          getBlogStatsVisitorId(request),
+        );
 
         return createSuccessResponse({
-          items: items.map(toPublicBlog),
+          items: items.map((blog) =>
+            toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+          ),
         });
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleTrackBlogView(
+      request: Request,
+      params: Promise<{ slug: string }>,
+    ) {
+      try {
+        const { slug } = publicBlogSlugParamsSchema.parse(await params);
+        const blog = await service.getPublicBlogBySlug(slug);
+        const visitor = ensureBlogStatsVisitor(request);
+        const result = await statsService.trackView(blog.id, visitor.visitorId);
+
+        return applyBlogStatsVisitorCookie(
+          createSuccessResponse(result),
+          visitor,
+        );
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleToggleBlogLike(
+      request: Request,
+      params: Promise<{ slug: string }>,
+    ) {
+      try {
+        const { slug } = publicBlogSlugParamsSchema.parse(await params);
+        const blog = await service.getPublicBlogBySlug(slug);
+        const visitor = ensureBlogStatsVisitor(request);
+        const result = await statsService.toggleLike(
+          blog.id,
+          visitor.visitorId,
+        );
+
+        return applyBlogStatsVisitorCookie(
+          createSuccessResponse(result),
+          visitor,
+        );
       } catch (error) {
         return toErrorResponse(error);
       }
@@ -240,3 +328,7 @@ export const handlePublicListBlogs = defaultPublicHandlers.handleListBlogs;
 export const handlePublicGetBlog = defaultPublicHandlers.handleGetBlog;
 export const handlePublicListSimilarBlogs =
   defaultPublicHandlers.handleListSimilarBlogs;
+export const handlePublicTrackBlogView =
+  defaultPublicHandlers.handleTrackBlogView;
+export const handlePublicToggleBlogLike =
+  defaultPublicHandlers.handleToggleBlogLike;
