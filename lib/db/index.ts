@@ -3,8 +3,27 @@ import postgres from "postgres";
 
 import { schema } from "./schema";
 
+const DEFAULT_DATABASE_MAX_CONNECTIONS = 3;
+
+function getDatabaseMaxConnections() {
+  const value = process.env.DATABASE_MAX_CONNECTIONS;
+
+  if (!value) {
+    return DEFAULT_DATABASE_MAX_CONNECTIONS;
+  }
+
+  const parsedValue = Number.parseInt(value, 10);
+
+  if (!Number.isSafeInteger(parsedValue) || parsedValue < 1) {
+    throw new Error("DATABASE_MAX_CONNECTIONS must be a positive integer.");
+  }
+
+  return parsedValue;
+}
+
 export const createDb = (connectionString: string) => {
   const client = postgres(connectionString, {
+    max: getDatabaseMaxConnections(),
     prepare: false,
   });
 
@@ -14,7 +33,10 @@ export const createDb = (connectionString: string) => {
 type Db = ReturnType<typeof createDb>;
 
 const globalForDb = globalThis as typeof globalThis & {
-  __db?: Db;
+  __fuxiaochenDb?: {
+    connectionString: string;
+    db: Db;
+  };
 };
 
 export const getDb = () => {
@@ -24,15 +46,14 @@ export const getDb = () => {
     throw new Error("DATABASE_URL is required to create the Drizzle client.");
   }
 
-  if (process.env.NODE_ENV === "production") {
-    return createDb(connectionString);
+  if (globalForDb.__fuxiaochenDb?.connectionString !== connectionString) {
+    globalForDb.__fuxiaochenDb = {
+      connectionString,
+      db: createDb(connectionString),
+    };
   }
 
-  if (!globalForDb.__db) {
-    globalForDb.__db = createDb(connectionString);
-  }
-
-  return globalForDb.__db;
+  return globalForDb.__fuxiaochenDb.db;
 };
 
 export const db = new Proxy({} as Db, {
