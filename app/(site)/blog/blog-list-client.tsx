@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 
 import { BlogCoverImage } from "@/components/blog-cover-image";
+import { BlogStats } from "@/components/blog-stats";
 
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
@@ -199,6 +200,11 @@ export function BlogListClient({
                     {post.readTime}
                   </span>
                 </div>
+                <BlogStats
+                  viewCount={post.viewCount}
+                  likeCount={post.likeCount}
+                  liked={post.liked}
+                />
                 <h2 className="font-semibold text-balance text-foreground group-hover:text-foreground/90">
                   {post.title}
                 </h2>

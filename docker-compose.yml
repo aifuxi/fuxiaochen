@@ -15,10 +15,12 @@ services:
       - DATABASE_DBNAME=fuxiaochen
       - DATABASE_NAME=fuxiaochen
       - DATABASE_URL=postgresql://postgres:123456@postgresql:5432/fuxiaochen
+      - REDIS_URL=redis://redis:6379
     networks:
       - fuxiaochen-network
     depends_on:
       - postgresql
+      - redis
 
   postgresql:
     image: postgres:17
@@ -38,9 +40,22 @@ services:
     networks:
       - fuxiaochen-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - fuxiaochen-network
+
 networks:
   fuxiaochen-network:
     driver: bridge
 
 volumes:
   postgres_data:
+  redis_data:

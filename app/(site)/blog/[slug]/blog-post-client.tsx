@@ -1,20 +1,25 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
 
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Eye, Heart } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 import { BlogComments } from "@/components/blog-comments";
 import { BlogCoverImage } from "@/components/blog-cover-image";
+import { formatBlogStatCount } from "@/components/blog-stats";
 import { MarkdownPreview } from "@/components/markdown-preview";
 import { SimilarPosts } from "@/components/similar-posts";
 import { TableOfContents } from "@/components/table-of-contents";
 
-import { fetchApiData } from "@/lib/api/fetcher";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
+import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
@@ -30,14 +35,15 @@ export function BlogPostClient({
   initialPost,
   initialSimilarPosts,
 }: BlogPostClientProps) {
-  const { data: post, error } = useSWR<PublicBlog>(
-    `/api/public/blogs/${slug}`,
-    fetchApiData,
-    {
-      fallbackData: initialPost,
-      revalidateOnFocus: false,
-    },
-  );
+  const [isLikePending, setIsLikePending] = useState(false);
+  const {
+    data: post,
+    error,
+    mutate: mutatePost,
+  } = useSWR<PublicBlog>(`/api/public/blogs/${slug}`, fetchApiData, {
+    fallbackData: initialPost,
+    revalidateOnFocus: false,
+  });
   const { data: similarResponse } = useSWR<{ items: PublicBlog[] }>(
     `/api/public/blogs/${slug}/similar?limit=3`,
     fetchApiData,
@@ -48,6 +54,84 @@ export function BlogPostClient({
       revalidateOnFocus: false,
     },
   );
+
+  useEffect(() => {
+    if (!post?.slug) {
+      return;
+    }
+
+    let isActive = true;
+
+    void apiRequest<{ viewCount: number; counted: boolean }>(
+      `/api/public/blogs/${slug}/view`,
+      {
+        method: "POST",
+        toastOnError: false,
+      },
+    )
+      .then((payload) => {
+        if (!isActive) {
+          return;
+        }
+
+        void mutatePost(
+          (currentPost) =>
+            currentPost
+              ? { ...currentPost, viewCount: payload.data.viewCount }
+              : currentPost,
+          false,
+        );
+      })
+      .catch(() => {
+        // Content remains usable when Redis statistics are unavailable.
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [mutatePost, post?.slug, slug]);
+
+  const handleLike = async () => {
+    if (!post || isLikePending) {
+      return;
+    }
+
+    const previousPost = post;
+    const optimisticPost: PublicBlog = {
+      ...post,
+      liked: !post.liked,
+      likeCount: Math.max(0, post.likeCount + (post.liked ? -1 : 1)),
+    };
+
+    setIsLikePending(true);
+    await mutatePost(optimisticPost, false);
+
+    try {
+      const payload = await apiRequest<{ likeCount: number; liked: boolean }>(
+        `/api/public/blogs/${slug}/like`,
+        {
+          method: "POST",
+          errorFallback: "点赞失败，请稍后重试",
+        },
+      );
+
+      await mutatePost(
+        (currentPost) =>
+          currentPost
+            ? {
+                ...currentPost,
+                likeCount: payload.data.likeCount,
+                liked: payload.data.liked,
+              }
+            : currentPost,
+        false,
+      );
+    } catch {
+      await mutatePost(previousPost, false);
+    } finally {
+      setIsLikePending(false);
+    }
+  };
 
   if (error) {
     return (
@@ -116,6 +200,25 @@ export function BlogPostClient({
               <Clock className="size-4" />
               {post.readTime}
             </span>
+            <span className="flex items-center gap-1.5">
+              <Eye className="size-4" />
+              {formatBlogStatCount(post.viewCount)}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-pressed={post.liked}
+              disabled={isLikePending}
+              onClick={handleLike}
+              className={cn(
+                "h-auto px-2 py-1 text-muted-foreground hover:text-foreground",
+                post.liked && "text-rose-500 hover:text-rose-500",
+              )}
+            >
+              <Heart className={cn("size-4", post.liked && "fill-current")} />
+              {formatBlogStatCount(post.likeCount)}
+            </Button>
           </div>
         </header>
 

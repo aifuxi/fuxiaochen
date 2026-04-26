@@ -5,6 +5,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 import { BlogCoverImage } from "@/components/blog-cover-image";
+import { BlogStats } from "@/components/blog-stats";
 
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
@@ -48,6 +49,11 @@ export function SimilarPosts({ posts }: SimilarPostsProps) {
                 <h3 className="line-clamp-2 font-medium text-balance text-foreground group-hover:text-foreground/90">
                   {post.title}
                 </h3>
+                <BlogStats
+                  viewCount={post.viewCount}
+                  likeCount={post.likeCount}
+                  liked={post.liked}
+                />
                 <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                   {post.description}
                 </p>
