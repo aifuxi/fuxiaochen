@@ -194,35 +194,470 @@
   }
 }
 
+.markdown-editor .bytemd {
+  --markdown-editor-panel: var(--background);
+  --markdown-editor-panel-muted: color-mix(
+    in oklch,
+    var(--muted) 52%,
+    var(--background)
+  );
+  --markdown-editor-panel-hover: color-mix(
+    in oklch,
+    var(--accent) 72%,
+    var(--background)
+  );
+  --markdown-editor-selection: color-mix(
+    in oklch,
+    var(--foreground) 12%,
+    transparent
+  );
+  --markdown-editor-token-muted: color-mix(
+    in oklch,
+    var(--muted-foreground) 78%,
+    var(--foreground)
+  );
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 70vh;
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: var(--markdown-editor-panel);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.markdown-editor .bytemd-toolbar {
+  flex: none;
+  border-top: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--markdown-editor-panel-muted);
+  color: var(--muted-foreground);
+  padding: 0.4375rem 0.75rem;
+}
+
+.markdown-editor .bytemd-toolbar-tab {
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.625rem;
+  margin-inline: 0.125rem;
+  padding-inline: 0.625rem;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.markdown-editor .bytemd-toolbar-tab:hover {
+  background: var(--markdown-editor-panel-hover);
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-toolbar-tab-active {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.markdown-editor .bytemd-toolbar-icon {
+  border-radius: var(--radius-sm);
+  color: var(--muted-foreground);
+  margin-inline: 0.125rem;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.markdown-editor .bytemd-toolbar-icon svg,
+.markdown-editor .bytemd-toolbar-icon img {
+  height: 1.75rem;
+  width: 1.75rem;
+  padding: 0.375rem;
+}
+
+.markdown-editor .bytemd-toolbar-icon:hover {
+  background: var(--markdown-editor-panel-hover);
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-toolbar-icon:active {
+  transform: translateY(1px);
+}
+
+.markdown-editor .bytemd-toolbar-icon-active {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.markdown-editor .bytemd-body {
+  flex: 1 1 auto;
+  height: 0;
+  min-height: 0;
+  background: var(--markdown-editor-panel);
+  overflow: hidden;
+}
+
+.markdown-editor .bytemd-editor,
+.markdown-editor .bytemd-preview {
+  height: 100%;
+  min-height: 0;
+  background: var(--background);
+}
+
+.markdown-editor .bytemd-editor {
+  overflow: hidden;
+}
+
+.markdown-editor .bytemd-preview {
+  overflow: auto;
+}
+
+.markdown-editor .bytemd-split .bytemd-preview {
+  border-left: 1px solid var(--border);
+}
+
+.markdown-editor .bytemd-status {
+  flex: none;
+  border-top: 1px solid var(--border);
+  background: var(--markdown-editor-panel-muted);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.75rem;
+}
+
+.markdown-editor .bytemd-status-right label,
+.markdown-editor .bytemd-status-right span {
+  transition: color 160ms ease;
+}
+
+.markdown-editor .bytemd-status-right span:hover {
+  color: var(--foreground);
+}
+
+.markdown-editor .CodeMirror {
+  height: 100%;
+  min-height: 0;
+  background: var(--markdown-editor-panel);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.markdown-editor .CodeMirror-scroll {
+  height: 100%;
+  overflow: auto !important;
+}
+
+.markdown-editor .CodeMirror-lines {
+  padding-block: 1.25rem;
+}
+
+.markdown-editor .CodeMirror pre.CodeMirror-placeholder {
+  color: color-mix(in oklch, var(--muted-foreground) 62%, transparent);
+}
+
+.markdown-editor .CodeMirror-gutters,
+.markdown-editor .CodeMirror-scrollbar-filler,
+.markdown-editor .CodeMirror-gutter-filler {
+  border-color: var(--border);
+  background: var(--markdown-editor-panel-muted);
+}
+
+.markdown-editor .CodeMirror-linenumber {
+  color: var(--muted-foreground);
+}
+
+.markdown-editor .CodeMirror-cursor {
+  border-left-color: var(--foreground);
+}
+
+.markdown-editor .CodeMirror-selected,
+.markdown-editor .CodeMirror-focused .CodeMirror-selected,
+.markdown-editor .CodeMirror-line::selection,
+.markdown-editor .CodeMirror-line > span::selection,
+.markdown-editor .CodeMirror-line > span > span::selection {
+  background: var(--markdown-editor-selection);
+}
+
+.markdown-editor .CodeMirror-activeline-background {
+  background: color-mix(in oklch, var(--muted) 55%, transparent);
+}
+
+.markdown-editor .cm-s-default .cm-header,
+.markdown-editor .cm-s-default .cm-strong {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.markdown-editor .cm-s-default .cm-quote,
+.markdown-editor .cm-s-default .cm-comment,
+.markdown-editor .cm-s-default .cm-meta {
+  color: var(--markdown-editor-token-muted);
+}
+
+.markdown-editor .cm-s-default .cm-link,
+.markdown-editor .cm-s-default .cm-url,
+.markdown-editor .cm-s-default .cm-string {
+  color: var(--chart-2);
+}
+
+.markdown-editor .cm-s-default .cm-atom,
+.markdown-editor .cm-s-default .cm-number,
+.markdown-editor .cm-s-default .cm-tag,
+.markdown-editor .cm-s-default .cm-variable-2 {
+  color: var(--chart-1);
+}
+
+.markdown-editor .cm-s-default .cm-hr {
+  color: var(--border);
+}
+
+.markdown-editor .bytemd-preview {
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-preview .markdown-body {
+  --prose-code-bg: color-mix(in oklch, var(--muted) 78%, var(--background));
+  --prose-code-block-bg: oklch(0 0 0);
+  --prose-code-border: color-mix(in oklch, var(--border) 72%, transparent);
+  --prose-quote-bg: color-mix(in oklch, var(--muted) 46%, transparent);
+  --prose-table-stripe: color-mix(in oklch, var(--muted) 34%, transparent);
+
+  max-width: 52rem;
+  min-height: 100%;
+  background: var(--background);
+  color: var(--muted-foreground);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  padding: 1.5rem 2rem 3rem;
+  text-wrap: pretty;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(p) {
+  margin-block: 1rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(h1) {
+  margin-block: 0 1.25rem;
+  font-size: clamp(1.875rem, 4vw, 3rem);
+  line-height: 1;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(h2) {
+  margin-block: 2.5rem 0.875rem;
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(h3) {
+  margin-block: 2rem 0.625rem;
+  font-size: 1.25rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(h4) {
+  margin-block: 1.5rem 0.5rem;
+  font-size: 1rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(a) {
+  color: var(--foreground);
+  font-weight: 550;
+  text-decoration-color: color-mix(
+    in oklch,
+    var(--foreground) 36%,
+    transparent
+  );
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(strong, em) {
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(ul, ol) {
+  margin-block: 1.125rem;
+  padding-left: 1.35rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(ul) {
+  list-style: disc;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(ol) {
+  list-style: decimal;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(li) {
+  margin-block: 0.4rem;
+  padding-left: 0.15rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(li)::marker {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(blockquote) {
+  margin-block: 1.5rem;
+  border-left: 2px solid var(--foreground);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  background: var(--prose-quote-bg);
+  padding: 0.875rem 1rem;
+  color: var(--foreground);
+  font-family: var(--font-serif);
+  line-height: 1.7;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(code) {
+  border: 1px solid var(--prose-code-border);
+  border-radius: var(--radius-sm);
+  background: var(--prose-code-bg);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-weight: 500;
+  padding: 0.12rem 0.35rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(pre) {
+  margin-block: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--prose-code-border);
+  border-radius: var(--radius-lg);
+  background: var(--prose-code-block-bg);
+  padding: 1rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(pre code) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(hr) {
+  margin-block: 2rem;
+  border: 0;
+  border-top: 1px solid var(--border);
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(img, video, iframe) {
+  margin-block: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(table) {
+  margin-block: 1.5rem;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(th) {
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+  font-weight: 650;
+  text-align: left;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(th, td) {
+  padding: 0.625rem 0.75rem;
+  vertical-align: top;
+}
+
+.markdown-editor .bytemd-preview .markdown-body :where(tbody tr) {
+  border-bottom: 1px solid var(--border);
+}
+
+.markdown-editor
+  .bytemd-preview
+  .markdown-body
+  :where(tbody tr:nth-child(odd)) {
+  background: var(--prose-table-stripe);
+}
+
+.markdown-editor .bytemd-sidebar {
+  border-left: 1px solid var(--border);
+  background: var(--background);
+  color: var(--muted-foreground);
+}
+
+.markdown-editor .bytemd-sidebar h2,
+.markdown-editor .bytemd-toc-first {
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-sidebar-close:hover,
+.markdown-editor .bytemd-toc-active {
+  color: var(--foreground);
+}
+
+.markdown-editor .bytemd-toc-active {
+  background: var(--markdown-editor-panel-hover);
+  border-radius: var(--radius-sm);
+}
+
+.bytemd-dropdown {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-lg);
+}
+
+.bytemd-dropdown-title {
+  border-bottom: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+.bytemd-dropdown-item {
+  color: var(--popover-foreground);
+}
+
+.bytemd-dropdown-item:hover {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.tippy-box[data-theme~="light-border"] {
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: var(--shadow-lg);
+}
+
+.tippy-box[data-theme~="light-border"] > .tippy-arrow::before {
+  color: var(--popover);
+}
+
+.markdown-editor .bytemd-fullscreen.bytemd {
+  height: 100dvh !important;
+  background: var(--background);
+}
+
 @layer components {
-  .markdown-editor .bytemd {
-    height: 100%;
-    border: 0;
-    border-top: 1px solid var(--border);
-    background: var(--background);
-  }
-
-  .markdown-editor .bytemd-toolbar {
-    border-top: 0;
-    background: color-mix(in oklch, var(--muted) 30%, transparent);
-  }
-
-  .markdown-editor .bytemd-body {
-    height: calc(100% - 37px);
-  }
-
-  .markdown-editor .bytemd-editor,
-  .markdown-editor .bytemd-preview {
-    background: var(--background);
-  }
-
-  .markdown-editor .CodeMirror {
-    height: 100%;
-    font-family: var(--font-mono);
-    font-size: 0.875rem;
-    line-height: 1.7;
-  }
-
   :where(.prose, .prose-custom) {
     --prose-code-bg: color-mix(in oklch, var(--muted) 78%, var(--background));
     --prose-code-block-bg: oklch(0 0 0);
