@@ -3,6 +3,10 @@ import type { NewProject, Project } from "@/lib/db/schema";
 import { normalizeNullableString, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import {
+  notificationService,
+  type NotificationService,
+} from "@/lib/server/notifications/service";
 import type {
   AdminProjectCreateInput,
   AdminProjectListQuery,
@@ -30,6 +34,7 @@ export interface ProjectService {
 
 export interface ProjectServiceDeps {
   repository?: ProjectRepository;
+  notifications?: NotificationService;
   now?: () => Date;
   generateId?: () => string;
 }
@@ -73,6 +78,7 @@ const normalizeTags = (tags: string[]) => [
 
 export function createProjectService({
   repository = projectRepository,
+  notifications = notificationService,
   now = () => new Date(),
   generateId = generateCuid,
 }: ProjectServiceDeps = {}): ProjectService {
@@ -128,7 +134,22 @@ export function createProjectService({
       };
 
       try {
-        return await repository.create(project);
+        const createdProject = await repository.create(project);
+
+        await notifications.safeCreateEvent({
+          action: "created",
+          entityType: "project",
+          entityId: createdProject.id,
+          entityTitle: createdProject.title,
+          description: `项目「${createdProject.title}」已创建。`,
+          href: "/admin",
+          metadata: {
+            published: createdProject.published,
+            slug: createdProject.slug,
+          },
+        });
+
+        return createdProject;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
           throw createSlugConflictError(slug);
@@ -183,6 +204,19 @@ export function createProjectService({
           throw createNotFoundError(id);
         }
 
+        await notifications.safeCreateEvent({
+          action: "updated",
+          entityType: "project",
+          entityId: updatedProject.id,
+          entityTitle: updatedProject.title,
+          description: `项目「${updatedProject.title}」已更新。`,
+          href: "/admin",
+          metadata: {
+            published: updatedProject.published,
+            slug: updatedProject.slug,
+          },
+        });
+
         return updatedProject;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
@@ -204,6 +238,18 @@ export function createProjectService({
       if (!deleted) {
         throw createNotFoundError(id);
       }
+
+      await notifications.safeCreateEvent({
+        action: "deleted",
+        entityType: "project",
+        entityId: existingProject.id,
+        entityTitle: existingProject.title,
+        description: `项目「${existingProject.title}」已删除。`,
+        href: "/admin",
+        metadata: {
+          slug: existingProject.slug,
+        },
+      });
     },
   };
 }

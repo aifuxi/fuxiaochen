@@ -9,6 +9,10 @@ import type {
 } from "@/lib/server/comments/dto";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import {
+  notificationService,
+  type NotificationService,
+} from "@/lib/server/notifications/service";
 
 import { commentRepository } from "./repository";
 
@@ -83,6 +87,7 @@ export interface CommentService {
 
 export interface CommentServiceDeps {
   repository?: CommentRepository;
+  notifications?: NotificationService;
   now?: () => Date;
   generateId?: () => string;
 }
@@ -222,6 +227,7 @@ async function validateParentComment({
 
 export function createCommentService({
   repository = commentRepository,
+  notifications = notificationService,
   now = () => new Date(),
   generateId = generateCuid,
 }: CommentServiceDeps = {}): CommentService {
@@ -270,7 +276,26 @@ export function createCommentService({
         status: "pending",
       };
 
-      return repository.create(comment);
+      const createdComment = await repository.create(comment);
+
+      await notifications.safeCreateEvent({
+        action: "created",
+        entityType: "comment",
+        entityId: createdComment.id,
+        entityTitle: createdComment.blog?.title ?? input.postSlug,
+        description: `${createdComment.author} 提交了一条待审核评论。`,
+        href: "/admin/comments",
+        metadata: {
+          author: createdComment.author,
+          blogId: createdComment.blogId,
+          blogTitle: createdComment.blog?.title ?? null,
+          parentId: createdComment.parentId,
+          postSlug: input.postSlug,
+          status: createdComment.status,
+        },
+      });
+
+      return createdComment;
     },
     async createAdminCommentReply(input, actor) {
       const parentComment = await repository.findById(input.parentId);
@@ -301,7 +326,26 @@ export function createCommentService({
         status: "approved",
       };
 
-      return repository.create(comment);
+      const createdComment = await repository.create(comment);
+
+      await notifications.safeCreateEvent({
+        action: "created",
+        entityType: "comment",
+        entityId: createdComment.id,
+        entityTitle: createdComment.blog?.title ?? parentComment.id,
+        description: `${actor.name} 回复了一条评论。`,
+        href: "/admin/comments",
+        metadata: {
+          actorEmail: actor.email,
+          author: createdComment.author,
+          blogId: createdComment.blogId,
+          blogTitle: createdComment.blog?.title ?? null,
+          parentId: createdComment.parentId,
+          status: createdComment.status,
+        },
+      });
+
+      return createdComment;
     },
     async updateComment(id, input) {
       const existingComment = await repository.findById(id);
@@ -319,14 +363,52 @@ export function createCommentService({
         throw createCommentNotFoundError(id);
       }
 
+      if (
+        input.status !== undefined &&
+        input.status !== existingComment.status
+      ) {
+        await notifications.safeCreateEvent({
+          action: "updated",
+          entityType: "comment",
+          entityId: updatedComment.id,
+          entityTitle: updatedComment.blog?.title ?? existingComment.id,
+          description: `${updatedComment.author} 的评论状态更新为 ${updatedComment.status}。`,
+          href: "/admin/comments",
+          metadata: {
+            author: updatedComment.author,
+            previousStatus: existingComment.status,
+            status: updatedComment.status,
+          },
+        });
+      }
+
       return updatedComment;
     },
     async deleteComment(id) {
+      const existingComment = await repository.findById(id);
+
+      if (!existingComment) {
+        throw createCommentNotFoundError(id);
+      }
+
       const deleted = await repository.delete(id);
 
       if (!deleted) {
         throw createCommentNotFoundError(id);
       }
+
+      await notifications.safeCreateEvent({
+        action: "deleted",
+        entityType: "comment",
+        entityId: existingComment.id,
+        entityTitle: existingComment.blog?.title ?? existingComment.id,
+        description: `${existingComment.author} 的评论已删除。`,
+        href: "/admin/comments",
+        metadata: {
+          author: existingComment.author,
+          status: existingComment.status,
+        },
+      });
     },
   };
 }

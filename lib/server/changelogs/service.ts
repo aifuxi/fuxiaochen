@@ -7,6 +7,10 @@ import type {
 } from "@/lib/server/changelogs/dto";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import {
+  notificationService,
+  type NotificationService,
+} from "@/lib/server/notifications/service";
 
 import { changelogRepository, type ChangelogRepository } from "./repository";
 
@@ -27,6 +31,7 @@ export interface ChangelogService {
 
 export interface ChangelogServiceDeps {
   repository?: ChangelogRepository;
+  notifications?: NotificationService;
   now?: () => Date;
   generateId?: () => string;
 }
@@ -54,6 +59,7 @@ const isDuplicateVersionError = (error: unknown) =>
 
 export function createChangelogService({
   repository = changelogRepository,
+  notifications = notificationService,
   now = () => new Date(),
   generateId = generateCuid,
 }: ChangelogServiceDeps = {}): ChangelogService {
@@ -100,7 +106,22 @@ export function createChangelogService({
       };
 
       try {
-        return await repository.create(changelog);
+        const createdChangelog = await repository.create(changelog);
+
+        await notifications.safeCreateEvent({
+          action: "created",
+          entityType: "changelog",
+          entityId: createdChangelog.id,
+          entityTitle: createdChangelog.title,
+          description: `更新日志 ${createdChangelog.version} 已创建。`,
+          href: "/admin/changelog",
+          metadata: {
+            type: createdChangelog.type,
+            version: createdChangelog.version,
+          },
+        });
+
+        return createdChangelog;
       } catch (error) {
         if (isDuplicateVersionError(error)) {
           throw createVersionConflictError(input.version);
@@ -141,6 +162,19 @@ export function createChangelogService({
           throw createNotFoundError(id);
         }
 
+        await notifications.safeCreateEvent({
+          action: "updated",
+          entityType: "changelog",
+          entityId: updatedChangelog.id,
+          entityTitle: updatedChangelog.title,
+          description: `更新日志 ${updatedChangelog.version} 已更新。`,
+          href: "/admin/changelog",
+          metadata: {
+            type: updatedChangelog.type,
+            version: updatedChangelog.version,
+          },
+        });
+
         return updatedChangelog;
       } catch (error) {
         if (isDuplicateVersionError(error)) {
@@ -164,6 +198,19 @@ export function createChangelogService({
       if (!deleted) {
         throw createNotFoundError(id);
       }
+
+      await notifications.safeCreateEvent({
+        action: "deleted",
+        entityType: "changelog",
+        entityId: existingChangelog.id,
+        entityTitle: existingChangelog.title,
+        description: `更新日志 ${existingChangelog.version} 已删除。`,
+        href: "/admin/changelog",
+        metadata: {
+          type: existingChangelog.type,
+          version: existingChangelog.version,
+        },
+      });
     },
   };
 }

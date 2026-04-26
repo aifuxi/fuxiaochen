@@ -8,6 +8,10 @@ import type {
 } from "@/lib/server/friends/dto";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import {
+  notificationService,
+  type NotificationService,
+} from "@/lib/server/notifications/service";
 
 import { friendRepository, type FriendRepository } from "./repository";
 
@@ -25,6 +29,7 @@ export interface FriendService {
 
 export interface FriendServiceDeps {
   repository?: FriendRepository;
+  notifications?: NotificationService;
   now?: () => Date;
   generateId?: () => string;
 }
@@ -52,6 +57,7 @@ const isDuplicateUrlError = (error: unknown) =>
 
 export function createFriendService({
   repository = friendRepository,
+  notifications = notificationService,
   now = () => new Date(),
   generateId = generateCuid,
 }: FriendServiceDeps = {}): FriendService {
@@ -91,7 +97,22 @@ export function createFriendService({
       };
 
       try {
-        return await repository.create(friend);
+        const createdFriend = await repository.create(friend);
+
+        await notifications.safeCreateEvent({
+          action: "created",
+          entityType: "friend",
+          entityId: createdFriend.id,
+          entityTitle: createdFriend.name,
+          description: `友链「${createdFriend.name}」已创建。`,
+          href: "/admin/friends",
+          metadata: {
+            category: createdFriend.category,
+            url: createdFriend.url,
+          },
+        });
+
+        return createdFriend;
       } catch (error) {
         if (isDuplicateUrlError(error)) {
           throw createUrlConflictError(input.url);
@@ -135,6 +156,19 @@ export function createFriendService({
           throw createNotFoundError(id);
         }
 
+        await notifications.safeCreateEvent({
+          action: "updated",
+          entityType: "friend",
+          entityId: updatedFriend.id,
+          entityTitle: updatedFriend.name,
+          description: `友链「${updatedFriend.name}」已更新。`,
+          href: "/admin/friends",
+          metadata: {
+            category: updatedFriend.category,
+            url: updatedFriend.url,
+          },
+        });
+
         return updatedFriend;
       } catch (error) {
         if (isDuplicateUrlError(error)) {
@@ -156,6 +190,19 @@ export function createFriendService({
       if (!deleted) {
         throw createNotFoundError(id);
       }
+
+      await notifications.safeCreateEvent({
+        action: "deleted",
+        entityType: "friend",
+        entityId: existingFriend.id,
+        entityTitle: existingFriend.name,
+        description: `友链「${existingFriend.name}」已删除。`,
+        href: "/admin/friends",
+        metadata: {
+          category: existingFriend.category,
+          url: existingFriend.url,
+        },
+      });
     },
   };
 }

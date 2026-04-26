@@ -9,6 +9,12 @@ import type {
 import { computeReadTimeMinutes, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
+import {
+  notificationService,
+  type NotificationService,
+} from "@/lib/server/notifications/service";
+
+import { routes } from "@/constants/routes";
 
 import { blogRepository } from "./repository";
 
@@ -93,6 +99,7 @@ export interface BlogService {
 
 export interface BlogServiceDeps {
   repository?: BlogRepository;
+  notifications?: NotificationService;
   now?: () => Date;
   generateId?: () => string;
 }
@@ -227,6 +234,7 @@ async function validateTagIds(repository: BlogRepository, tagIds?: string[]) {
 
 export function createBlogService({
   repository = blogRepository,
+  notifications = notificationService,
   now = () => new Date(),
   generateId = generateCuid,
 }: BlogServiceDeps = {}): BlogService {
@@ -312,7 +320,22 @@ export function createBlogService({
       };
 
       try {
-        return await repository.create(blog, { tagIds });
+        const createdBlog = await repository.create(blog, { tagIds });
+
+        await notifications.safeCreateEvent({
+          action: "created",
+          entityType: "blog",
+          entityId: createdBlog.id,
+          entityTitle: createdBlog.title,
+          description: `文章《${createdBlog.title}》已创建。`,
+          href: routes.admin.postEdit(createdBlog.slug),
+          metadata: {
+            published: createdBlog.published,
+            slug: createdBlog.slug,
+          },
+        });
+
+        return createdBlog;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
           throw createSlugConflictError(slug);
@@ -409,6 +432,19 @@ export function createBlogService({
           throw createNotFoundError(id);
         }
 
+        await notifications.safeCreateEvent({
+          action: "updated",
+          entityType: "blog",
+          entityId: updatedBlog.id,
+          entityTitle: updatedBlog.title,
+          description: `文章《${updatedBlog.title}》已更新。`,
+          href: routes.admin.postEdit(updatedBlog.slug),
+          metadata: {
+            published: updatedBlog.published,
+            slug: updatedBlog.slug,
+          },
+        });
+
         return updatedBlog;
       } catch (error) {
         if (isDuplicateSlugError(error)) {
@@ -440,6 +476,18 @@ export function createBlogService({
       if (!deleted) {
         throw createNotFoundError(id);
       }
+
+      await notifications.safeCreateEvent({
+        action: "deleted",
+        entityType: "blog",
+        entityId: existingBlog.id,
+        entityTitle: existingBlog.title,
+        description: `文章《${existingBlog.title}》已删除。`,
+        href: routes.admin.posts,
+        metadata: {
+          slug: existingBlog.slug,
+        },
+      });
     },
   };
 }

@@ -4,6 +4,9 @@ import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { schema, users, type UserRole } from "@/lib/db/schema";
+import { notificationService } from "@/lib/server/notifications/service";
+
+import { routes } from "@/constants/routes";
 
 const DEFAULT_USER_ROLE: UserRole = "user";
 const ADMIN_USER_ROLE: UserRole = "admin";
@@ -64,6 +67,18 @@ export const auth = betterAuth({
                 role: ADMIN_USER_ROLE,
               })
               .where(eq(users.id, user.id));
+          });
+
+          await notificationService.safeCreateEvent({
+            action: "created",
+            entityType: "user",
+            entityId: user.id,
+            entityTitle: user.name,
+            description: `${user.name} 注册了账号。`,
+            href: routes.admin.users,
+            metadata: {
+              email: user.email,
+            },
           });
         },
       },
