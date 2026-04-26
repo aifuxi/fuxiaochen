@@ -65,7 +65,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search posts, categories..."
+            placeholder="搜索文章、分类..."
             className="w-64 bg-muted/50 pl-9"
           />
         </div>
@@ -77,7 +77,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
             href={routes.site.home}
             className="flex items-center gap-2 text-muted-foreground"
           >
-            <span>View Site</span>
+            <span>查看站点</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </Button>
@@ -87,7 +87,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-4 w-4" />
           <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-destructive" />
-          <span className="sr-only">Notifications</span>
+          <span className="sr-only">通知</span>
         </Button>
 
         <DropdownMenu>
@@ -107,8 +107,8 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>个人资料</DropdownMenuItem>
+            <DropdownMenuItem>设置</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
@@ -116,7 +116,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
               disabled={isSigningOut}
             >
               {isSigningOut && <Loader2 className="animate-spin" />}
-              Log out
+              退出登录
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

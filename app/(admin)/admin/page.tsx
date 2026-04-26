@@ -25,15 +25,15 @@ import { routes } from "@/constants/routes";
 const recentActivity = [
   {
     type: "post",
-    title: "Published new post",
-    description: "Latest content synced from admin API",
-    time: "Just now",
+    title: "发布了新文章",
+    description: "最新内容已从后台接口同步",
+    time: "刚刚",
   },
   {
     type: "comment",
-    title: "New comment",
-    description: "Comments are still running on demo data",
-    time: "Demo",
+    title: "有新评论",
+    description: "评论数据当前基于演示环境",
+    time: "演示数据",
   },
 ];
 
@@ -59,30 +59,30 @@ export default function AdminDashboard() {
 
   const stats = [
     {
-      title: "Total Posts",
+      title: "文章总数",
       value: blogs.length.toString(),
-      change: `${publishedPosts.length} published`,
+      change: `${publishedPosts.length} 条已发布`,
       trend: "up" as const,
       icon: FileText,
     },
     {
-      title: "Featured Posts",
+      title: "精选文章",
       value: blogs.filter((blog) => blog.featured).length.toString(),
-      change: "curated on homepage",
+      change: "首页展示",
       trend: "up" as const,
       icon: Eye,
     },
     {
-      title: "Comments",
+      title: "评论数",
       value: "142",
-      change: "demo data",
+      change: "演示数据",
       trend: "up" as const,
       icon: MessageSquare,
     },
     {
-      title: "Categories",
+      title: "分类数量",
       value: categories.length.toString(),
-      change: "managed via API",
+      change: "由后台接口管理",
       trend: "down" as const,
       icon: TrendingUp,
     },
@@ -92,13 +92,11 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Overview of your content and admin data sources.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">仪表盘</h1>
+          <p className="text-muted-foreground">内容与后台数据源的整体概览。</p>
         </div>
         <Button asChild>
-          <Link href={routes.admin.postsNew}>New Post</Link>
+          <Link href={routes.admin.postsNew}>新建文章</Link>
         </Button>
       </div>
 
@@ -135,9 +133,9 @@ export default function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Posts</CardTitle>
+            <CardTitle>最近文章</CardTitle>
             <Button variant="ghost" size="sm" asChild>
-              <Link href={routes.admin.posts}>View all</Link>
+              <Link href={routes.admin.posts}>查看全部</Link>
             </Button>
           </CardHeader>
           <CardContent>
@@ -150,9 +148,9 @@ export default function AdminDashboard() {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">{post.title}</p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{post.publishedAt ? "Published" : "Draft"}</span>
+                      <span>{post.publishedAt ? "已发布" : "草稿"}</span>
                       <span>·</span>
-                      <span>{post.readTimeMinutes} min read</span>
+                      <span>{post.readTimeMinutes} 分钟阅读</span>
                     </div>
                   </div>
                   {post.category && (
@@ -166,7 +164,7 @@ export default function AdminDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>最近动态</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -203,7 +201,7 @@ export default function AdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Posts by Category</CardTitle>
+          <CardTitle>按分类统计</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

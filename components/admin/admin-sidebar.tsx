@@ -24,33 +24,31 @@ import { routes } from "@/constants/routes";
 
 const getNavigation = (isAdmin: boolean) => [
   {
-    title: "Overview",
+    title: "概览",
     items: [
-      { name: "Dashboard", href: routes.admin.root, icon: LayoutDashboard },
-      { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+      { name: "仪表盘", href: routes.admin.root, icon: LayoutDashboard },
+      { name: "数据分析", href: "/admin/analytics", icon: BarChart3 },
     ],
   },
   {
-    title: "Content",
+    title: "内容管理",
     items: [
-      { name: "Posts", href: routes.admin.posts, icon: FileText },
-      { name: "Categories", href: routes.admin.categories, icon: FolderOpen },
-      { name: "Tags", href: routes.admin.tags, icon: Tags },
-      { name: "Changelog", href: routes.admin.changelog, icon: History },
-      { name: "Friends", href: routes.admin.friends, icon: Link2 },
+      { name: "文章", href: routes.admin.posts, icon: FileText },
+      { name: "分类", href: routes.admin.categories, icon: FolderOpen },
+      { name: "标签", href: routes.admin.tags, icon: Tags },
+      { name: "更新日志", href: routes.admin.changelog, icon: History },
+      { name: "友链", href: routes.admin.friends, icon: Link2 },
     ],
   },
   {
-    title: "Engagement",
-    items: [
-      { name: "Comments", href: routes.admin.comments, icon: MessageSquare },
-    ],
+    title: "用户互动",
+    items: [{ name: "评论", href: routes.admin.comments, icon: MessageSquare }],
   },
   {
-    title: "System",
+    title: "系统",
     items: [
       ...(isAdmin
-        ? [{ name: "Users", href: routes.admin.users, icon: Shield }]
+        ? [{ name: "用户", href: routes.admin.users, icon: Shield }]
         : []),
       { name: "设置", href: routes.admin.settings, icon: Settings },
     ],
@@ -71,7 +69,7 @@ export function AdminSidebar({ role }: { role?: string | null }) {
             </span>
           </div>
           <span className="font-semibold text-sidebar-foreground">
-            Blog Admin
+            博客管理
           </span>
         </Link>
       </div>

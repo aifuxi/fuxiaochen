@@ -12,7 +12,7 @@ export default async function AdminUsersRoutePage() {
 
   if (getSessionUserRole(session) !== "admin") {
     return (
-      <AdminAccessDenied description="Your account can use the admin area, but only administrators can manage users." />
+      <AdminAccessDenied description="你的账号已登录，但只有管理员可以管理用户。" />
     );
   }
 

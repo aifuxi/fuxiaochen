@@ -59,6 +59,10 @@ import type { CommentStats } from "@/lib/server/comments/service";
 
 import { routes } from "@/constants/routes";
 
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+});
+
 const EMPTY_STATS: CommentStats = {
   total: 0,
   pending: 0,
@@ -176,21 +180,21 @@ export default function AdminCommentsPage() {
             className="bg-green-500/10 text-green-600 hover:bg-green-500/20"
           >
             <CheckCircle className="mr-1 size-3" />
-            Approved
+            已通过
           </Badge>
         );
       case "pending":
         return (
           <Badge variant="secondary">
             <Clock className="mr-1 size-3" />
-            Pending
+            审核中
           </Badge>
         );
       case "spam":
         return (
           <Badge variant="destructive">
             <AlertTriangle className="mr-1 size-3" />
-            Spam
+            垃圾
           </Badge>
         );
     }
@@ -199,18 +203,14 @@ export default function AdminCommentsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Comments</h1>
-        <p className="text-muted-foreground">
-          Manage and moderate user comments
-        </p>
+        <h1 className="text-2xl font-bold text-foreground">评论</h1>
+        <p className="text-muted-foreground">管理与审核用户评论。</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total Comments
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">全部评论</CardTitle>
             <MessageSquare className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -219,7 +219,7 @@ export default function AdminCommentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+            <CardTitle className="text-sm font-medium">待审核</CardTitle>
             <Clock className="size-4 text-yellow-500" />
           </CardHeader>
           <CardContent>
@@ -228,7 +228,7 @@ export default function AdminCommentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Approved</CardTitle>
+            <CardTitle className="text-sm font-medium">已通过</CardTitle>
             <CheckCircle className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -237,7 +237,7 @@ export default function AdminCommentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Spam</CardTitle>
+            <CardTitle className="text-sm font-medium">垃圾</CardTitle>
             <AlertTriangle className="size-4 text-red-500" />
           </CardHeader>
           <CardContent>
@@ -248,10 +248,8 @@ export default function AdminCommentsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Comments</CardTitle>
-          <CardDescription>
-            Review, approve, or delete user comments
-          </CardDescription>
+          <CardTitle>全部评论</CardTitle>
+          <CardDescription>审核、通过或删除用户评论。</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -259,7 +257,7 @@ export default function AdminCommentsPage() {
               <div className="relative flex-1 sm:max-w-xs">
                 <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search comments..."
+                  placeholder="搜索评论..."
                   className="pl-9"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
@@ -267,20 +265,20 @@ export default function AdminCommentsPage() {
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Status" />
+                  <SelectValue placeholder="状态" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="approved">Approved</SelectItem>
-                  <SelectItem value="spam">Spam</SelectItem>
+                  <SelectItem value="all">全部状态</SelectItem>
+                  <SelectItem value="pending">待审核</SelectItem>
+                  <SelectItem value="approved">已通过</SelectItem>
+                  <SelectItem value="spam">垃圾</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             {selectedComments.length > 0 ? (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">
-                  {selectedComments.length} selected
+                  {selectedComments.length} 条已选择
                 </span>
                 <Button
                   size="sm"
@@ -291,7 +289,7 @@ export default function AdminCommentsPage() {
                   }
                 >
                   <Check className="mr-1 size-3" />
-                  Approve
+                  通过
                 </Button>
                 <Button
                   size="sm"
@@ -300,7 +298,7 @@ export default function AdminCommentsPage() {
                   onClick={() => updateCommentStatus(selectedComments, "spam")}
                 >
                   <X className="mr-1 size-3" />
-                  Spam
+                  标记垃圾
                 </Button>
                 <Button
                   size="sm"
@@ -309,7 +307,7 @@ export default function AdminCommentsPage() {
                   onClick={() => deleteComments(selectedComments)}
                 >
                   <Trash2 className="mr-1 size-3" />
-                  Delete
+                  删除
                 </Button>
               </div>
             ) : null}
@@ -328,11 +326,11 @@ export default function AdminCommentsPage() {
                       onCheckedChange={toggleSelectAll}
                     />
                   </TableHead>
-                  <TableHead>Author</TableHead>
-                  <TableHead className="max-w-md">Comment</TableHead>
-                  <TableHead>Post</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>作者</TableHead>
+                  <TableHead className="max-w-md">评论内容</TableHead>
+                  <TableHead>文章</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead>时间</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -343,7 +341,7 @@ export default function AdminCommentsPage() {
                       colSpan={7}
                       className="py-8 text-center text-muted-foreground"
                     >
-                      No comments found.
+                      暂无评论。
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -399,14 +397,14 @@ export default function AdminCommentsPage() {
                       </TableCell>
                       <TableCell>{getStatusBadge(comment.status)}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {new Date(comment.createdAt).toLocaleDateString()}
+                        {dateFormatter.format(new Date(comment.createdAt))}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="icon">
                               <MoreHorizontal className="size-4" />
-                              <span className="sr-only">Actions</span>
+                              <span className="sr-only">操作</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -416,7 +414,7 @@ export default function AdminCommentsPage() {
                               }
                             >
                               <Check className="mr-2 size-4" />
-                              Approve
+                              通过
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() =>
@@ -424,7 +422,7 @@ export default function AdminCommentsPage() {
                               }
                             >
                               <X className="mr-2 size-4" />
-                              Mark as Spam
+                              标记为垃圾
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -432,7 +430,7 @@ export default function AdminCommentsPage() {
                               onClick={() => deleteComments([comment.id])}
                             >
                               <Trash2 className="mr-2 size-4" />
-                              Delete
+                              删除
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

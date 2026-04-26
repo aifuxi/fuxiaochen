@@ -44,6 +44,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+});
+
 function getTypeIcon(type: AdminChangelog["type"]) {
   switch (type) {
     case "feature":
@@ -66,10 +70,10 @@ function getTypeBadge(type: AdminChangelog["type"]) {
   };
 
   const labels = {
-    feature: "Feature",
-    improvement: "Improvement",
-    bugfix: "Bug Fix",
-    breaking: "Breaking",
+    feature: "功能",
+    improvement: "改进",
+    bugfix: "修复",
+    breaking: "重大变更",
   };
 
   return (
@@ -149,30 +153,28 @@ export default function AdminChangelogPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Changelog</h1>
-          <p className="text-muted-foreground">
-            Manage your project changelog entries
-          </p>
+          <h1 className="text-2xl font-bold text-foreground">更新日志</h1>
+          <p className="text-muted-foreground">管理项目的版本更新记录。</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 size-4" />
-              Add Entry
+              新增记录
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>Add Changelog Entry</DialogTitle>
+              <DialogTitle>新增更新记录</DialogTitle>
               <DialogDescription>
-                Create a new changelog entry to document updates.
+                添加一条更新日志，记录本次发布内容。
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="mb-1.5 block text-sm font-medium">
-                    Version
+                    版本
                   </label>
                   <Input
                     placeholder="1.0.0"
@@ -182,7 +184,7 @@ export default function AdminChangelogPage() {
                 </div>
                 <div>
                   <label className="mb-1.5 block text-sm font-medium">
-                    Type
+                    类型
                   </label>
                   <Select
                     value={type}
@@ -194,30 +196,26 @@ export default function AdminChangelogPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="feature">Feature</SelectItem>
-                      <SelectItem value="improvement">Improvement</SelectItem>
-                      <SelectItem value="bugfix">Bug Fix</SelectItem>
-                      <SelectItem value="breaking">Breaking Change</SelectItem>
+                      <SelectItem value="feature">功能</SelectItem>
+                      <SelectItem value="improvement">改进</SelectItem>
+                      <SelectItem value="bugfix">修复</SelectItem>
+                      <SelectItem value="breaking">重大变更</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Title
-                </label>
+                <label className="mb-1.5 block text-sm font-medium">标题</label>
                 <Input
-                  placeholder="What's new in this version?"
+                  placeholder="本版本新增了什么？"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Description
-                </label>
+                <label className="mb-1.5 block text-sm font-medium">描述</label>
                 <Textarea
-                  placeholder="Brief description of this update..."
+                  placeholder="简述本次更新内容"
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -225,10 +223,10 @@ export default function AdminChangelogPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium">
-                  Changes (one per line)
+                  变更项（每行一项）
                 </label>
                 <Textarea
-                  placeholder="Added new feature&#10;Fixed bug&#10;Improved performance"
+                  placeholder="新增功能\n修复问题\n性能提升"
                   rows={4}
                   value={changes}
                   onChange={(e) => setChanges(e.target.value)}
@@ -237,9 +235,9 @@ export default function AdminChangelogPage() {
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
+                取消
               </Button>
-              <Button onClick={createChangelog}>Add Entry</Button>
+              <Button onClick={createChangelog}>新增</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -247,54 +245,58 @@ export default function AdminChangelogPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Entries</CardTitle>
-          <CardDescription>
-            {changelogs.length} changelog entries
-          </CardDescription>
+          <CardTitle>全部记录</CardTitle>
+          <CardDescription>{changelogs.length} 条更新日志</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {changelogs.map((entry) => (
-              <div
-                key={entry.id}
-                className="flex items-start justify-between rounded-lg border border-border p-4"
-              >
-                <div className="flex-1">
-                  <div className="mb-2 flex items-center gap-3">
-                    <span className="font-mono text-sm font-medium text-foreground">
-                      v{entry.version}
-                    </span>
-                    {getTypeBadge(entry.type)}
-                    <span className="text-sm text-muted-foreground">
-                      {new Date(entry.releaseDate).toLocaleDateString()}
-                    </span>
+          {changelogs.length === 0 ? (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              暂无更新日志，先创建一条记录。
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {changelogs.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="flex items-start justify-between rounded-lg border border-border p-4"
+                >
+                  <div className="flex-1">
+                    <div className="mb-2 flex items-center gap-3">
+                      <span className="font-mono text-sm font-medium text-foreground">
+                        v{entry.version}
+                      </span>
+                      {getTypeBadge(entry.type)}
+                      <span className="text-sm text-muted-foreground">
+                        {dateFormatter.format(new Date(entry.releaseDate))}
+                      </span>
+                    </div>
+                    <h3 className="mb-1 font-medium text-foreground">
+                      {entry.title}
+                    </h3>
+                    <p className="mb-2 text-sm text-muted-foreground">
+                      {entry.description}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {entry.changes.length} 项变更
+                    </p>
                   </div>
-                  <h3 className="mb-1 font-medium text-foreground">
-                    {entry.title}
-                  </h3>
-                  <p className="mb-2 text-sm text-muted-foreground">
-                    {entry.description}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {entry.changes.length} changes
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="icon">
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive"
+                      onClick={() => deleteChangelog(entry.id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon">
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive"
-                    onClick={() => deleteChangelog(entry.id)}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
