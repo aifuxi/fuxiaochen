@@ -9,7 +9,7 @@ import type {
   AdminTagUpdateInput,
 } from "@/lib/server/tags/dto";
 
-import { tagRepository, type TagRepository } from "./repository";
+import { tagRepository } from "./repository";
 
 export type TagReadModel = Tag & {
   blogCount: number;

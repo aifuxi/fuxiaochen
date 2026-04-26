@@ -9,7 +9,7 @@ import { normalizeNullableString, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 
-import { categoryRepository, type CategoryRepository } from "./repository";
+import { categoryRepository } from "./repository";
 
 export type CategoryReadModel = Category & {
   blogCount: number;

@@ -15,6 +15,15 @@ const buildTagWhere = (query?: string) =>
       ) ?? undefined)
     : undefined;
 
+const tagFields = {
+  id: tags.id,
+  createdAt: tags.createdAt,
+  updatedAt: tags.updatedAt,
+  name: tags.name,
+  slug: tags.slug,
+  description: tags.description,
+};
+
 const tagCounts = db
   .select({
     tagId: blogTags.tagId,
@@ -86,7 +95,7 @@ export const tagRepository: TagRepository = {
     const [items, total] = await Promise.all([
       db
         .select({
-          ...tags,
+          ...tagFields,
           blogCount: tagCounts.blogCount,
           publishedBlogCount: tagCounts.publishedBlogCount,
         })
@@ -107,7 +116,7 @@ export const tagRepository: TagRepository = {
   async listPublic() {
     const items = await db
       .select({
-        ...tags,
+        ...tagFields,
         blogCount: tagCounts.blogCount,
         publishedBlogCount: tagCounts.publishedBlogCount,
       })
@@ -121,7 +130,7 @@ export const tagRepository: TagRepository = {
   async findById(id) {
     const rows = await db
       .select({
-        ...tags,
+        ...tagFields,
         blogCount: tagCounts.blogCount,
         publishedBlogCount: tagCounts.publishedBlogCount,
       })
@@ -136,7 +145,7 @@ export const tagRepository: TagRepository = {
   async findBySlug(slug) {
     const rows = await db
       .select({
-        ...tags,
+        ...tagFields,
         blogCount: tagCounts.blogCount,
         publishedBlogCount: tagCounts.publishedBlogCount,
       })
