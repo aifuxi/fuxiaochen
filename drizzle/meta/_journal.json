@@ -50,6 +50,13 @@
       "when": 1777184985337,
       "tag": "0006_sturdy_thunderbird",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1777186747886,
+      "tag": "0007_pale_annihilus",
+      "breakpoints": true
     }
   ]
 }

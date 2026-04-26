@@ -24,6 +24,15 @@ import type {
 export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
 export type CommentStatus = "pending" | "approved" | "spam";
 export type FriendCategory = "developer" | "designer" | "blogger" | "creator";
+export type NotificationAction = "created" | "updated" | "deleted";
+export type NotificationEntityType =
+  | "blog"
+  | "changelog"
+  | "comment"
+  | "friend"
+  | "project"
+  | "user";
+export type NotificationType = "content" | "interaction" | "system" | "user";
 export type UserRole = "admin" | "user";
 
 const createTimestampColumns = () => ({
@@ -263,6 +272,45 @@ export const users = pgTable(
   (table) => [index("user_role_idx").on(table.role)],
 );
 
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: text("id").primaryKey(),
+    ...createTimestampColumns(),
+    type: text("type").$type<NotificationType>().notNull(),
+    action: text("action").$type<NotificationAction>().notNull(),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    href: text("href").notNull().default(""),
+    entityType: text("entity_type").$type<NotificationEntityType>().notNull(),
+    entityId: text("entity_id").notNull(),
+    actorUserId: text("actor_user_id"),
+    metadata: jsonb("metadata")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    readAt: timestamp("read_at", {
+      mode: "date",
+      withTimezone: true,
+    }),
+  },
+  (table) => [
+    foreignKey({
+      name: "notifications_actor_user_id_fkey",
+      columns: [table.actorUserId],
+      foreignColumns: [users.id],
+    }).onDelete("set null"),
+    index("notifications_read_at_created_at_idx").on(
+      table.readAt,
+      table.createdAt.desc(),
+    ),
+    index("notifications_entity_type_entity_id_idx").on(
+      table.entityType,
+      table.entityId,
+    ),
+  ],
+);
+
 export const siteSettings = pgTable("site_settings", {
   id: text("id").primaryKey(),
   general: jsonb("general").$type<SiteSettingsGeneral>().notNull(),
@@ -429,7 +477,15 @@ export const commentsRelations = relations(comments, ({ many, one }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  notifications: many(notifications),
   sessions: many(sessions),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  actor: one(users, {
+    fields: [notifications.actorUserId],
+    references: [users.id],
+  }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -456,6 +512,7 @@ export const schema = {
   changelogs,
   comments,
   friends,
+  notifications,
   projects,
   session: sessions,
   sessions,
@@ -485,6 +542,8 @@ export type Changelog = typeof changelogs.$inferSelect;
 export type NewChangelog = typeof changelogs.$inferInsert;
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
+export type Notification = typeof notifications.$inferSelect;
+export type NewNotification = typeof notifications.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type SiteSettingsRow = typeof siteSettings.$inferSelect;
