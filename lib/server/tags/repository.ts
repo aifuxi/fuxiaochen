@@ -8,11 +8,8 @@ import type { TagReadModel, TagRepository } from "./service";
 
 const buildTagWhere = (query?: string) =>
   query
-    ? (or(
-        ilike(tags.name, `%${query}%`),
-        ilike(tags.slug, `%${query}%`),
-        ilike(tags.description, `%${query}%`),
-      ) ?? undefined)
+    ? (or(ilike(tags.name, `%${query}%`), ilike(tags.slug, `%${query}%`)) ??
+      undefined)
     : undefined;
 
 const tagFields = {
@@ -21,7 +18,6 @@ const tagFields = {
   updatedAt: tags.updatedAt,
   name: tags.name,
   slug: tags.slug,
-  description: tags.description,
 };
 
 const tagCounts = db

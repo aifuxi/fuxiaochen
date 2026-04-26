@@ -10,7 +10,6 @@ export type AdminCategory = {
   id: string;
   name: string;
   slug: string;
-  description: string;
   blogCount: number;
   publishedBlogCount: number;
   createdAt: string;
@@ -30,7 +29,6 @@ export function toAdminCategory(category: CategoryReadModel): AdminCategory {
     id: category.id,
     name: category.name,
     slug: category.slug,
-    description: category.description,
     blogCount: category.blogCount,
     publishedBlogCount: category.publishedBlogCount,
     createdAt: category.createdAt.toISOString(),

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import NiceModal from "@ebay/nice-modal-react";
+import { Loader2, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -23,8 +23,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -39,11 +44,156 @@ import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog"
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
-export default function AdminCategoriesPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newCategory, setNewCategory] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+type CategoryFormState = {
+  name: string;
+  slug: string;
+};
 
+type CategoryDialogProps = {
+  category?: AdminCategory;
+  onSaved: () => Promise<unknown>;
+};
+
+const DEFAULT_CATEGORY_FORM_STATE: CategoryFormState = {
+  name: "",
+  slug: "",
+};
+
+function getInitialCategoryFormState(
+  category?: AdminCategory,
+): CategoryFormState {
+  if (!category) {
+    return DEFAULT_CATEGORY_FORM_STATE;
+  }
+
+  return {
+    name: category.name,
+    slug: category.slug,
+  };
+}
+
+function toCategoryPayload(formData: CategoryFormState) {
+  return {
+    name: formData.name.trim(),
+    slug: formData.slug.trim(),
+  };
+}
+
+const CategoryDialog = NiceModal.create(
+  ({ category, onSaved }: CategoryDialogProps) => {
+    const modal = NiceModal.useModal();
+    const [formData, setFormData] = useState<CategoryFormState>(() =>
+      getInitialCategoryFormState(category),
+    );
+    const [formError, setFormError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditing = Boolean(category);
+
+    function updateForm<Key extends keyof CategoryFormState>(
+      key: Key,
+      value: CategoryFormState[Key],
+    ) {
+      setFormData((current) => ({
+        ...current,
+        [key]: value,
+      }));
+    }
+
+    async function submitCategory() {
+      const payload = toCategoryPayload(formData);
+
+      if (!payload.name || !payload.slug) {
+        setFormError("名称和 Slug 都不能为空。");
+        return;
+      }
+
+      setIsSubmitting(true);
+      setFormError(null);
+
+      try {
+        await apiRequest(
+          category
+            ? `/api/admin/categories/${category.id}`
+            : "/api/admin/categories",
+          {
+            method: category ? "PATCH" : "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+            toastOnError: false,
+          },
+        );
+        await onSaved();
+        modal.remove();
+      } catch (error) {
+        setFormError(
+          error instanceof Error ? error.message : "保存失败，请稍后重试",
+        );
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+
+    return (
+      <Dialog
+        open={modal.visible}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting) {
+            modal.remove();
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{isEditing ? "编辑分类" : "新建分类"}</DialogTitle>
+            <DialogDescription>
+              {isEditing ? "更新分类名称和 Slug。" : "创建一个新的文章分类。"}
+            </DialogDescription>
+          </DialogHeader>
+
+          <FieldGroup className="py-2">
+            <Field>
+              <FieldLabel htmlFor="category-name">名称</FieldLabel>
+              <Input
+                id="category-name"
+                value={formData.name}
+                onChange={(event) => updateForm("name", event.target.value)}
+                placeholder="输入分类名称"
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="category-slug">Slug</FieldLabel>
+              <Input
+                id="category-slug"
+                value={formData.slug}
+                onChange={(event) => updateForm("slug", event.target.value)}
+                placeholder="frontend"
+              />
+            </Field>
+            {formError ? <FieldError>{formError}</FieldError> : null}
+          </FieldGroup>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={() => modal.remove()}
+            >
+              取消
+            </Button>
+            <Button disabled={isSubmitting} onClick={submitCategory}>
+              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+              {isEditing ? "保存更改" : "创建分类"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+);
+
+export default function AdminCategoriesPage() {
   const { data, mutate } = useSWR<{ items: AdminCategory[] }>(
     "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
@@ -54,31 +204,11 @@ export default function AdminCategoriesPage() {
 
   const categories = data?.items ?? [];
 
-  const createCategory = async () => {
-    if (!newCategory.trim()) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await apiRequest("/api/admin/categories", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: newCategory.trim(),
-        }),
-      });
-      setNewCategory("");
-      setIsDialogOpen(false);
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    } finally {
-      setIsSubmitting(false);
-    }
+  const openCategoryDialog = (category?: AdminCategory) => {
+    void NiceModal.show(CategoryDialog, {
+      category,
+      onSaved: () => mutate(),
+    });
   };
 
   const deleteCategory = async (id: string) => {
@@ -107,41 +237,10 @@ export default function AdminCategoriesPage() {
           <h1 className="text-2xl font-bold tracking-tight">分类</h1>
           <p className="text-muted-foreground">使用分类管理文章分组。</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              新建分类
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>新建分类</DialogTitle>
-              <DialogDescription>
-                添加新分类，便于整理博客文章。
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">名称</Label>
-                <Input
-                  id="name"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="输入分类名称"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                取消
-              </Button>
-              <Button disabled={isSubmitting} onClick={createCategory}>
-                创建
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => openCategoryDialog()}>
+          <Plus className="mr-2 h-4 w-4" />
+          新建分类
+        </Button>
       </div>
 
       <div className="rounded-lg border border-border">
@@ -150,7 +249,7 @@ export default function AdminCategoriesPage() {
             <TableRow>
               <TableHead>名称</TableHead>
               <TableHead>文章数</TableHead>
-              <TableHead>别名</TableHead>
+              <TableHead>Slug</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -171,7 +270,7 @@ export default function AdminCategoriesPage() {
                   <TableCell>
                     <Badge variant="secondary">{category.blogCount}</Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="font-mono text-sm text-muted-foreground">
                     {category.slug}
                   </TableCell>
                   <TableCell>
@@ -183,7 +282,9 @@ export default function AdminCategoriesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => openCategoryDialog(category)}
+                        >
                           <Pencil className="mr-2 h-4 w-4" />
                           编辑
                         </DropdownMenuItem>
