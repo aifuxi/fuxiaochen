@@ -73,4 +73,19 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     policeNumber: GONG_AN_NUMBER,
     policeLink: GONG_AN_LINK,
   },
+  analytics: {
+    googleSearchConsole: {
+      enabled: false,
+      verificationContent: "",
+    },
+    googleAnalytics: {
+      enabled: false,
+      measurementId: "",
+    },
+    umami: {
+      enabled: false,
+      scriptUrl: "",
+      websiteId: "",
+    },
+  },
 };

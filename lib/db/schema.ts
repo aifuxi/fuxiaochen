@@ -15,6 +15,7 @@ import {
 
 import type {
   SiteSettingsCompliance,
+  SiteSettingsAnalytics,
   SiteSettingsGeneral,
   SiteSettingsProfile,
   SiteSettingsSeo,
@@ -318,6 +319,12 @@ export const siteSettings = pgTable("site_settings", {
   profile: jsonb("profile").$type<SiteSettingsProfile>().notNull(),
   social: jsonb("social").$type<SiteSettingsSocial>().notNull(),
   compliance: jsonb("compliance").$type<SiteSettingsCompliance>().notNull(),
+  analytics: jsonb("analytics")
+    .$type<SiteSettingsAnalytics>()
+    .notNull()
+    .default(
+      sql`'{"googleSearchConsole":{"enabled":false,"verificationContent":""},"googleAnalytics":{"enabled":false,"measurementId":""},"umami":{"enabled":false,"scriptUrl":"","websiteId":""}}'::jsonb`,
+    ),
   updatedAt: timestamp("updated_at", {
     mode: "date",
     withTimezone: true,

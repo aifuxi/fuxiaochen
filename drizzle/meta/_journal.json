@@ -57,6 +57,20 @@
       "when": 1777186747886,
       "tag": "0007_pale_annihilus",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1777188746836,
+      "tag": "0008_silky_skreet",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1777189057832,
+      "tag": "0009_quick_whizzer",
+      "breakpoints": true
     }
   ]
 }
