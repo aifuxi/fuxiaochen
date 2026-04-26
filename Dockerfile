@@ -49,9 +49,6 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# 复制静态资源
-COPY --from=builder /app/public/images ./public/images
-
 # 设置权限
 RUN chown -R nextjs:nodejs /app
 
