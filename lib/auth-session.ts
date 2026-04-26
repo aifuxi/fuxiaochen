@@ -75,7 +75,7 @@ export async function getRequestSession(request: Request) {
   });
 }
 
-export async function requireAdminRequestSession(request: Request) {
+export async function requireRequestSession(request: Request) {
   const session = await getRequestSession(request);
 
   if (!session) {
@@ -85,6 +85,12 @@ export async function requireAdminRequestSession(request: Request) {
       401,
     );
   }
+
+  return session;
+}
+
+export async function requireAdminRequestSession(request: Request) {
+  const session = await requireRequestSession(request);
 
   if (getSessionUserRole(session) !== "admin") {
     throw new AppError(

@@ -45,6 +45,10 @@ export class ApiRequestError extends Error {
   }
 }
 
+export function getApiErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback;
+}
+
 export async function apiRequest<TData, TMeta = undefined>(
   input: RequestInfo | URL,
   init?: RequestInit,

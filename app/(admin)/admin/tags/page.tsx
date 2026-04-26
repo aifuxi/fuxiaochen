@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Plus, X } from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +20,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import {
+  apiRequest,
+  fetchApiData,
+  getApiErrorMessage,
+} from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
 
@@ -79,10 +84,14 @@ export default function AdminTagsPage() {
   };
 
   const deleteTag = async (id: string) => {
-    await apiRequest(`/api/admin/tags/${id}`, {
-      method: "DELETE",
-    });
-    await mutate();
+    try {
+      await apiRequest(`/api/admin/tags/${id}`, {
+        method: "DELETE",
+      });
+      await mutate();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to delete tag"));
+    }
   };
 
   return (

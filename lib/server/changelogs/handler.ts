@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -42,6 +46,8 @@ export function createAdminChangelogHandlers({
   return {
     async handleListChangelogs(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = changelogListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -69,6 +75,8 @@ export function createAdminChangelogHandlers({
     },
     async handleCreateChangelog(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminChangelogCreateSchema.parse(
           await toJsonBody(request),
         );
@@ -84,10 +92,12 @@ export function createAdminChangelogHandlers({
       }
     },
     async handleGetChangelog(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireRequestSession(request);
+
         const { id } = adminChangelogIdParamsSchema.parse(await params);
         const changelog = await service.getAdminChangelog(id);
 
@@ -101,6 +111,8 @@ export function createAdminChangelogHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminChangelogIdParamsSchema.parse(await params);
         const body = adminChangelogUpdateSchema.parse(
           await toJsonBody(request),
@@ -113,10 +125,12 @@ export function createAdminChangelogHandlers({
       }
     },
     async handleDeleteChangelog(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminChangelogIdParamsSchema.parse(await params);
         await service.deleteChangelog(id);
 

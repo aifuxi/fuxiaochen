@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -41,6 +45,8 @@ export function createAdminTagHandlers({
   return {
     async handleListTags(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = adminTagListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -68,6 +74,8 @@ export function createAdminTagHandlers({
     },
     async handleCreateTag(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminTagCreateSchema.parse(await toJsonBody(request));
         const tag = await service.createTag(body);
 
@@ -76,8 +84,10 @@ export function createAdminTagHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetTag(_request: Request, params: Promise<{ id: string }>) {
+    async handleGetTag(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireRequestSession(request);
+
         const { id } = adminTagIdParamsSchema.parse(await params);
         const tag = await service.getTag(id);
 
@@ -88,6 +98,8 @@ export function createAdminTagHandlers({
     },
     async handleUpdateTag(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminTagIdParamsSchema.parse(await params);
         const body = adminTagUpdateSchema.parse(await toJsonBody(request));
         const tag = await service.updateTag(id, body);
@@ -97,8 +109,10 @@ export function createAdminTagHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleDeleteTag(_request: Request, params: Promise<{ id: string }>) {
+    async handleDeleteTag(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminTagIdParamsSchema.parse(await params);
         await service.deleteTag(id);
 

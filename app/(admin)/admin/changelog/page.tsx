@@ -11,6 +11,7 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -41,7 +42,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import {
+  apiRequest,
+  fetchApiData,
+  getApiErrorMessage,
+} from "@/lib/api/fetcher";
 import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 
 function getTypeIcon(type: AdminChangelog["type"]) {
@@ -131,10 +136,14 @@ export default function AdminChangelogPage() {
   };
 
   const deleteChangelog = async (id: string) => {
-    await apiRequest(`/api/admin/changelogs/${id}`, {
-      method: "DELETE",
-    });
-    await mutate();
+    try {
+      await apiRequest(`/api/admin/changelogs/${id}`, {
+        method: "DELETE",
+      });
+      await mutate();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to delete changelog"));
+    }
   };
 
   return (

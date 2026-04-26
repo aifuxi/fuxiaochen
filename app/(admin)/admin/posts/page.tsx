@@ -13,6 +13,7 @@ import {
   Star,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import {
+  apiRequest,
+  fetchApiData,
+  getApiErrorMessage,
+} from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
@@ -117,6 +122,8 @@ export default function AdminPostsPage() {
       );
       setSelectedPosts([]);
       await mutateBlogs();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to delete posts"));
     } finally {
       setIsDeleting(false);
     }

@@ -1,3 +1,8 @@
+import {
+  getSessionUserRole,
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -44,6 +49,8 @@ export function createAdminBlogHandlers({
   return {
     async handleListBlogs(request: Request) {
       try {
+        const session = await requireRequestSession(request);
+        const isAdmin = getSessionUserRole(session) === "admin";
         const url = new URL(request.url);
         const query = adminBlogListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -56,7 +63,9 @@ export function createAdminBlogHandlers({
           sortBy: url.searchParams.get("sortBy") ?? undefined,
           sortDirection: url.searchParams.get("sortDirection") ?? undefined,
         });
-        const result = await service.listAdminBlogs(query);
+        const result = await service.listAdminBlogs(
+          isAdmin ? query : { ...query, published: true },
+        );
 
         return createSuccessResponse(
           {
@@ -74,6 +83,8 @@ export function createAdminBlogHandlers({
     },
     async handleCreateBlog(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminBlogCreateSchema.parse(await toJsonBody(request));
         const blog = await service.createBlog(body);
 
@@ -82,10 +93,22 @@ export function createAdminBlogHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetBlog(_request: Request, params: Promise<{ id: string }>) {
+    async handleGetBlog(request: Request, params: Promise<{ id: string }>) {
       try {
+        const session = await requireRequestSession(request);
         const { id } = adminBlogIdParamsSchema.parse(await params);
         const blog = await service.getAdminBlog(id);
+
+        if (getSessionUserRole(session) !== "admin" && !blog.published) {
+          throw new AppError(
+            ERROR_CODES.BLOG_NOT_FOUND,
+            "Blog not found",
+            404,
+            {
+              id,
+            },
+          );
+        }
 
         return createSuccessResponse(toAdminBlog(blog));
       } catch (error) {
@@ -94,6 +117,8 @@ export function createAdminBlogHandlers({
     },
     async handleUpdateBlog(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminBlogIdParamsSchema.parse(await params);
         const body = adminBlogUpdateSchema.parse(await toJsonBody(request));
         const blog = await service.updateBlog(id, body);
@@ -103,8 +128,10 @@ export function createAdminBlogHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleDeleteBlog(_request: Request, params: Promise<{ id: string }>) {
+    async handleDeleteBlog(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminBlogIdParamsSchema.parse(await params);
         await service.deleteBlog(id);
 

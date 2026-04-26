@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -41,6 +45,8 @@ export function createAdminFriendHandlers({
   return {
     async handleListFriends(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = adminFriendListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -68,6 +74,8 @@ export function createAdminFriendHandlers({
     },
     async handleCreateFriend(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminFriendCreateSchema.parse(await toJsonBody(request));
         const friend = await service.createFriend(body);
 
@@ -76,8 +84,10 @@ export function createAdminFriendHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetFriend(_request: Request, params: Promise<{ id: string }>) {
+    async handleGetFriend(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireRequestSession(request);
+
         const { id } = adminFriendIdParamsSchema.parse(await params);
         const friend = await service.getAdminFriend(id);
 
@@ -91,6 +101,8 @@ export function createAdminFriendHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminFriendIdParamsSchema.parse(await params);
         const body = adminFriendUpdateSchema.parse(await toJsonBody(request));
         const friend = await service.updateFriend(id, body);
@@ -101,10 +113,12 @@ export function createAdminFriendHandlers({
       }
     },
     async handleDeleteFriend(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminFriendIdParamsSchema.parse(await params);
         await service.deleteFriend(id);
 
