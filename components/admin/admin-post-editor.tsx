@@ -226,14 +226,13 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
   const readTime = Math.max(1, Math.ceil(wordCount / 200));
   const isEditLoading = props.mode === "edit" && isPostLoading;
-  const pageLabel = props.mode === "edit" ? "Edit Post" : "New Post";
-  const publishButtonLabel =
-    props.mode === "edit" ? "Save & Publish" : "Publish";
+  const pageLabel = props.mode === "edit" ? "编辑文章" : "新建文章";
+  const publishButtonLabel = props.mode === "edit" ? "保存并发布" : "发布文章";
 
   if (isEditLoading) {
     return (
       <div className="flex h-[calc(100dvh-7rem)] items-center justify-center text-sm text-muted-foreground">
-        Loading post...
+        正在加载文章...
       </div>
     );
   }
@@ -245,7 +244,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
           <Button variant="ghost" size="sm" asChild>
             <Link href={routes.admin.posts}>
               <ArrowLeft className="mr-1.5 h-4 w-4" />
-              Posts
+              文章列表
             </Link>
           </Button>
           <Separator orientation="vertical" className="h-5" />
@@ -253,7 +252,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
-            {wordCount} words · {readTime} min read
+            {wordCount} 字 · {readTime} 分钟阅读
           </span>
           <Button
             variant="outline"
@@ -262,7 +261,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             onClick={() => submitPost(false)}
           >
             <Save className="mr-1.5 h-4 w-4" />
-            Save Draft
+            保存草稿
           </Button>
           <Button
             size="sm"
@@ -282,12 +281,12 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
               type="text"
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
-              placeholder="Post title..."
+              placeholder="文章标题..."
               className="w-full bg-transparent text-3xl font-bold tracking-tight placeholder:text-muted-foreground/40 focus:outline-none"
             />
             {slug && (
               <p className="mt-1.5 text-xs text-muted-foreground">
-                Slug:{" "}
+                路径标识：{" "}
                 <span className="font-mono text-foreground/70">
                   /blog/{slug}
                 </span>
@@ -299,19 +298,19 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             className="min-h-0 flex-1"
             value={content}
             onChange={setContent}
-            placeholder="Start writing your post in Markdown..."
+            placeholder="从这里开始编写文章内容..."
           />
         </div>
 
         <aside className="flex min-h-0 w-72 shrink-0 flex-col overflow-y-auto border-l border-border bg-muted/20">
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Publish
+              发布设置
             </h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label htmlFor="published" className="text-sm">
-                  Published
+                  已发布
                 </Label>
                 <Switch
                   id="published"
@@ -321,7 +320,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
               </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="featured" className="text-sm">
-                  Featured
+                  精选推荐
                 </Label>
                 <Switch
                   id="featured"
@@ -336,12 +335,12 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Slug
+              路径标识
             </h3>
             <Input
               value={slug}
               onChange={(e) => handleSlugChange(e.target.value)}
-              placeholder="post-url-slug"
+              placeholder="文章路径标识"
               className="font-mono text-xs"
             />
           </div>
@@ -350,12 +349,12 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Description
+              摘要
             </h3>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="A short summary of your post..."
+              placeholder="用一句话概述这篇文章..."
               className="min-h-20 resize-none text-sm"
               maxLength={160}
             />
@@ -368,13 +367,13 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Cover Image
+              封面图
             </h3>
             {coverImage ? (
               <div className="group relative overflow-hidden rounded-lg border border-border">
                 <Image
                   src={coverImage}
-                  alt="Cover"
+                  alt="封面图"
                   width={320}
                   height={180}
                   className="aspect-video w-full object-cover"
@@ -390,12 +389,12 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
               <div className="space-y-2">
                 <button className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-sm text-muted-foreground transition-colors hover:bg-muted/50">
                   <Upload className="h-5 w-5" />
-                  <span>Upload image</span>
+                  <span>上传封面</span>
                 </button>
                 <Input
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="Or paste image URL..."
+                  placeholder="或粘贴图片地址..."
                   className="text-xs"
                 />
               </div>
@@ -406,11 +405,11 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Category
+              分类
             </h3>
             <Select value={categoryId} onValueChange={setCategoryId}>
               <SelectTrigger className="text-sm">
-                <SelectValue placeholder="Select category..." />
+                <SelectValue placeholder="选择分类..." />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((category) => (
@@ -426,7 +425,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Tags
+              标签
             </h3>
             {selectedTags.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-1.5">
@@ -452,7 +451,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleTagKeyDown}
-                placeholder="Search existing tags..."
+                placeholder="搜索已有标签..."
                 className="pr-8 text-xs"
               />
               <button

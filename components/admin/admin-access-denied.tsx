@@ -20,8 +20,8 @@ type AdminAccessDeniedProps = {
 };
 
 export function AdminAccessDenied({
-  title = "Access denied",
-  description = "You are signed in, but your account does not have permission to view this page.",
+  title = "访问被拒绝",
+  description = "你已登录，但该账号没有权限查看当前页面。",
 }: AdminAccessDeniedProps) {
   return (
     <Empty className="min-h-[calc(100vh-12rem)] border border-dashed border-border bg-card">
@@ -34,10 +34,10 @@ export function AdminAccessDenied({
       </EmptyHeader>
       <EmptyContent className="sm:flex-row sm:justify-center">
         <Button asChild>
-          <Link href={routes.admin.root}>Back to dashboard</Link>
+          <Link href={routes.admin.root}>返回仪表盘</Link>
         </Button>
         <Button variant="outline" asChild>
-          <Link href={routes.site.home}>Go to site</Link>
+          <Link href={routes.site.home}>返回站点</Link>
         </Button>
       </EmptyContent>
     </Empty>

@@ -94,42 +94,40 @@ export default function AdminCategoriesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
-          <p className="text-muted-foreground">
-            Organize your posts with categories.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">分类</h1>
+          <p className="text-muted-foreground">使用分类管理文章分组。</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Category
+              新建分类
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Category</DialogTitle>
+              <DialogTitle>新建分类</DialogTitle>
               <DialogDescription>
-                Add a new category to organize your blog posts.
+                添加新分类，便于整理博客文章。
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">名称</Label>
                 <Input
                   id="name"
                   value={newCategory}
                   onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="Enter category name"
+                  placeholder="输入分类名称"
                 />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
+                取消
               </Button>
               <Button disabled={isSubmitting} onClick={createCategory}>
-                Create
+                创建
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -140,48 +138,59 @@ export default function AdminCategoriesPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Posts</TableHead>
-              <TableHead>Slug</TableHead>
+              <TableHead>名称</TableHead>
+              <TableHead>文章数</TableHead>
+              <TableHead>别名</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((category) => (
-              <TableRow key={category.id}>
-                <TableCell className="font-medium">{category.name}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">{category.blogCount}</Badge>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {category.slug}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem>
-                        <Pencil className="mr-2 h-4 w-4" />
-                        Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-destructive"
-                        onClick={() => deleteCategory(category.id)}
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+            {categories.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4} className="py-12 text-center">
+                  <div className="space-y-1 text-muted-foreground">
+                    <p className="font-medium">暂无分类</p>
+                    <p className="text-sm">先新建一个分类，再开始整理文章。</p>
+                  </div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              categories.map((category) => (
+                <TableRow key={category.id}>
+                  <TableCell className="font-medium">{category.name}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{category.blogCount}</Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {category.slug}
+                  </TableCell>
+                  <TableCell>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">操作</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem>
+                          <Pencil className="mr-2 h-4 w-4" />
+                          编辑
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-destructive"
+                          onClick={() => deleteCategory(category.id)}
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          删除
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

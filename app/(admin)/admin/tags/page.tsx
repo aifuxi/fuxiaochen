@@ -95,42 +95,40 @@ export default function AdminTagsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Tags</h1>
-          <p className="text-muted-foreground">
-            Manage tags for better content discovery.
-          </p>
+          <h1 className="text-2xl font-bold tracking-tight">标签</h1>
+          <p className="text-muted-foreground">更好地管理文章标签。</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              New Tag
+              新建标签
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create Tag</DialogTitle>
+              <DialogTitle>新建标签</DialogTitle>
               <DialogDescription>
-                Add a new tag for categorizing your blog posts.
+                添加新标签，方便后续对文章进行归类。
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">名称</Label>
                 <Input
                   id="name"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
-                  placeholder="Enter tag name"
+                  placeholder="输入标签名称"
                 />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
+                取消
               </Button>
               <Button disabled={isSubmitting} onClick={createTag}>
-                Create
+                创建
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -138,39 +136,45 @@ export default function AdminTagsPage() {
       </div>
 
       <div className="rounded-lg border border-border p-6">
-        <div className="flex flex-wrap gap-3">
-          {tags.map((tag) => (
-            <div
-              key={tag.id}
-              className="group flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 transition-colors hover:border-primary/50"
-            >
-              <span className="font-medium">{tag.slug}</span>
-              <Badge variant="secondary" className="text-xs">
-                {tag.blogCount}
-              </Badge>
-              <button
-                className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={() => deleteTag(tag.id)}
+        {tags.length === 0 ? (
+          <div className="py-6 text-center text-sm text-muted-foreground">
+            暂无标签，先新建一个标签吧。
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-3">
+            {tags.map((tag) => (
+              <div
+                key={tag.id}
+                className="group flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 transition-colors hover:border-primary/50"
               >
-                <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                <span className="sr-only">Remove tag</span>
-              </button>
-            </div>
-          ))}
-        </div>
+                <span className="font-medium">{tag.slug}</span>
+                <Badge variant="secondary" className="text-xs">
+                  {tag.blogCount}
+                </Badge>
+                <button
+                  className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
+                  onClick={() => deleteTag(tag.id)}
+                >
+                  <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                  <span className="sr-only">移除标签</span>
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-lg border border-border p-4">
-          <p className="text-sm text-muted-foreground">Total Tags</p>
+          <p className="text-sm text-muted-foreground">标签总数</p>
           <p className="text-2xl font-bold">{tags.length}</p>
         </div>
         <div className="rounded-lg border border-border p-4">
-          <p className="text-sm text-muted-foreground">Most Used</p>
-          <p className="text-2xl font-bold">{mostUsedTag?.slug ?? "n/a"}</p>
+          <p className="text-sm text-muted-foreground">使用最多</p>
+          <p className="text-2xl font-bold">{mostUsedTag?.slug ?? "无"}</p>
         </div>
         <div className="rounded-lg border border-border p-4">
-          <p className="text-sm text-muted-foreground">Avg. per Post</p>
+          <p className="text-sm text-muted-foreground">平均每篇文章</p>
           <p className="text-2xl font-bold">{averagePerPost}</p>
         </div>
       </div>

@@ -87,14 +87,14 @@ const dateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
 });
 
 const providerLabelMap: Record<string, string> = {
-  credential: "Credentials",
-  email: "Email",
-  github: "GitHub",
+  credential: "凭证",
+  email: "邮箱",
+  github: "GitHub 账号",
 };
 
 function formatDateTime(value: string | null) {
   if (!value) {
-    return "Never";
+    return "从未";
   }
 
   return dateTimeFormatter.format(new Date(value));
@@ -118,7 +118,7 @@ function getRoleBadge(role: AdminUserListItem["role"]) {
     return (
       <Badge className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20">
         <ShieldCheck className="mr-1 size-3" />
-        Admin
+        管理员
       </Badge>
     );
   }
@@ -126,7 +126,7 @@ function getRoleBadge(role: AdminUserListItem["role"]) {
   return (
     <Badge variant="secondary">
       <UserRound className="mr-1 size-3" />
-      User
+      普通用户
     </Badge>
   );
 }
@@ -136,12 +136,12 @@ function getEmailVerifiedBadge(emailVerified: boolean) {
     return (
       <Badge className="bg-green-500/10 text-green-600 hover:bg-green-500/20">
         <CheckCircle2 className="mr-1 size-3" />
-        Verified
+        已验证
       </Badge>
     );
   }
 
-  return <Badge variant="outline">Unverified</Badge>;
+  return <Badge variant="outline">未验证</Badge>;
 }
 
 export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
@@ -249,9 +249,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       await Promise.all([mutate(), mutateSelectedUser()]);
     } catch (actionError) {
       setPageError(
-        actionError instanceof Error
-          ? actionError.message
-          : "Failed to update user role",
+        actionError instanceof Error ? actionError.message : "更新用户角色失败",
       );
     } finally {
       setIsRoleUpdating(null);
@@ -270,9 +268,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       await Promise.all([mutate(), mutateSelectedUser()]);
     } catch (actionError) {
       setPageError(
-        actionError instanceof Error
-          ? actionError.message
-          : "Failed to revoke user sessions",
+        actionError instanceof Error ? actionError.message : "撤销用户会话失败",
       );
     } finally {
       setIsRevokingSessions(null);
@@ -283,9 +279,9 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Users</h1>
+          <h1 className="text-2xl font-bold text-foreground">用户</h1>
           <p className="text-muted-foreground">
-            Manage admin access, account metadata, and active sessions.
+            管理管理员授权、账号信息与活跃会话。
           </p>
         </div>
       </div>
@@ -293,7 +289,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+            <CardTitle className="text-sm font-medium">全部用户</CardTitle>
             <UserRound className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -302,7 +298,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Admins</CardTitle>
+            <CardTitle className="text-sm font-medium">管理员</CardTitle>
             <Shield className="size-4 text-blue-500" />
           </CardHeader>
           <CardContent>
@@ -311,9 +307,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Standard Users
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">普通用户</CardTitle>
             <UserRound className="size-4 text-slate-500" />
           </CardHeader>
           <CardContent>
@@ -322,9 +316,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">
-              Verified Emails
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">已验证邮箱</CardTitle>
             <CheckCircle2 className="size-4 text-green-500" />
           </CardHeader>
           <CardContent>
@@ -335,7 +327,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
 
       <Card>
         <CardHeader>
-          <CardTitle>User Directory</CardTitle>
+          <CardTitle>用户目录</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
@@ -343,7 +335,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
               <div className="relative flex-1 md:max-w-sm">
                 <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search name or email..."
+                  placeholder="搜索姓名或邮箱..."
                   className="pl-9"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
@@ -351,12 +343,12 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
               </div>
               <Select value={roleFilter} onValueChange={setRoleFilter}>
                 <SelectTrigger className="w-full md:w-[160px]">
-                  <SelectValue placeholder="Role" />
+                  <SelectValue placeholder="角色" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Roles</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="all">全部角色</SelectItem>
+                  <SelectItem value="admin">管理员</SelectItem>
+                  <SelectItem value="user">普通用户</SelectItem>
                 </SelectContent>
               </Select>
               <Select
@@ -368,13 +360,13 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 }
               >
                 <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Sort By" />
+                  <SelectValue placeholder="排序字段" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="createdAt">Created At</SelectItem>
-                  <SelectItem value="updatedAt">Updated At</SelectItem>
-                  <SelectItem value="name">Name</SelectItem>
-                  <SelectItem value="email">Email</SelectItem>
+                  <SelectItem value="createdAt">创建时间</SelectItem>
+                  <SelectItem value="updatedAt">更新时间</SelectItem>
+                  <SelectItem value="name">姓名</SelectItem>
+                  <SelectItem value="email">邮箱</SelectItem>
                 </SelectContent>
               </Select>
               <Select
@@ -384,11 +376,11 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 }
               >
                 <SelectTrigger className="w-full md:w-[150px]">
-                  <SelectValue placeholder="Direction" />
+                  <SelectValue placeholder="排序方向" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="desc">Descending</SelectItem>
-                  <SelectItem value="asc">Ascending</SelectItem>
+                  <SelectItem value="desc">降序</SelectItem>
+                  <SelectItem value="asc">升序</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -404,13 +396,13 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Verification</TableHead>
-                  <TableHead>Providers</TableHead>
-                  <TableHead>Sessions</TableHead>
-                  <TableHead>Created</TableHead>
+                  <TableHead>用户</TableHead>
+                  <TableHead>角色</TableHead>
+                  <TableHead>邮箱</TableHead>
+                  <TableHead>验证状态</TableHead>
+                  <TableHead>登录方式</TableHead>
+                  <TableHead>会话</TableHead>
+                  <TableHead>创建时间</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -420,7 +412,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                     <TableCell colSpan={8} className="py-12 text-center">
                       <div className="inline-flex items-center gap-2 text-muted-foreground">
                         <Loader2 className="size-4 animate-spin" />
-                        Loading users...
+                        正在加载用户...
                       </div>
                     </TableCell>
                   </TableRow>
@@ -439,10 +431,8 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   <TableRow>
                     <TableCell colSpan={8} className="py-12 text-center">
                       <div className="space-y-1 text-muted-foreground">
-                        <p className="font-medium">No users found</p>
-                        <p className="text-sm">
-                          Try adjusting the search or role filter.
-                        </p>
+                        <p className="font-medium">未找到用户</p>
+                        <p className="text-sm">请调整搜索或角色筛选条件。</p>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -476,13 +466,13 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                 <div className="flex items-center gap-2">
                                   <p className="font-medium">{user.name}</p>
                                   {isCurrentAdmin ? (
-                                    <Badge variant="outline">You</Badge>
+                                    <Badge variant="outline">当前用户</Badge>
                                   ) : null}
                                 </div>
                                 <p className="text-sm text-muted-foreground">
                                   {user.emailVerified
-                                    ? "Email verified"
-                                    : "Email unverified"}
+                                    ? "邮箱已验证"
+                                    : "邮箱未验证"}
                                 </p>
                               </div>
                             </button>
@@ -504,7 +494,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                 ))
                               ) : (
                                 <span className="text-sm text-muted-foreground">
-                                  No linked providers
+                                  暂无绑定登录方式
                                 </span>
                               )}
                             </div>
@@ -520,7 +510,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="icon">
                                   <MoreHorizontal className="size-4" />
-                                  <span className="sr-only">Actions</span>
+                                  <span className="sr-only">操作</span>
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
@@ -528,7 +518,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                   onClick={() => openUserDetails(user.id)}
                                 >
                                   <Eye className="mr-2 size-4" />
-                                  View Details
+                                  查看详情
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   disabled={
@@ -543,8 +533,8 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                     <Shield className="mr-2 size-4" />
                                   )}
                                   {nextRole === "admin"
-                                    ? "Promote to Admin"
-                                    : "Change to User"}
+                                    ? "设为管理员"
+                                    : "设为普通用户"}
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
@@ -557,7 +547,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                   ) : (
                                     <UserRoundX className="mr-2 size-4" />
                                   )}
-                                  Revoke Sessions
+                                  撤销会话
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -572,7 +562,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">
-              Showing {from}-{to} of {total} users
+              显示 {from}-{to} / {total} 位用户
             </p>
             <div className="flex items-center gap-2">
               <Button
@@ -581,10 +571,10 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 disabled={page <= 1}
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
               >
-                Previous
+                上一页
               </Button>
               <span className="text-sm text-muted-foreground">
-                Page {page} / {totalPages}
+                第 {page} / {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -594,7 +584,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   setPage((current) => Math.min(totalPages, current + 1))
                 }
               >
-                Next
+                下一页
               </Button>
             </div>
           </div>
@@ -607,9 +597,9 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       >
         <SheetContent className="w-full sm:max-w-xl">
           <SheetHeader>
-            <SheetTitle>User Details</SheetTitle>
+            <SheetTitle>用户详情</SheetTitle>
             <SheetDescription>
-              Review account metadata, providers, and active sessions.
+              查看账号信息、绑定登录方式和活跃会话。
             </SheetDescription>
           </SheetHeader>
 
@@ -617,7 +607,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
             {selectedUserId && isDetailLoading ? (
               <div className="flex h-full min-h-48 items-center justify-center gap-2 text-muted-foreground">
                 <Loader2 className="size-4 animate-spin" />
-                Loading user details...
+                正在加载用户详情...
               </div>
             ) : null}
             {selectedUserId && !isDetailLoading && detailError ? (
@@ -643,7 +633,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                         {selectedUserSummary.name}
                       </h2>
                       {selectedUserSummary.id === currentAdminId ? (
-                        <Badge variant="outline">Current Admin</Badge>
+                        <Badge variant="outline">当前管理员</Badge>
                       ) : null}
                       {getRoleBadge(selectedUserSummary.role)}
                       {getEmailVerifiedBadge(selectedUserSummary.emailVerified)}
@@ -656,29 +646,25 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border p-4">
-                    <p className="text-sm text-muted-foreground">Created At</p>
+                    <p className="text-sm text-muted-foreground">创建时间</p>
                     <p className="mt-1 font-medium">
                       {formatDateTime(selectedUserSummary.createdAt)}
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-sm text-muted-foreground">Updated At</p>
+                    <p className="text-sm text-muted-foreground">更新时间</p>
                     <p className="mt-1 font-medium">
                       {formatDateTime(selectedUserSummary.updatedAt)}
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-sm text-muted-foreground">
-                      Active Sessions
-                    </p>
+                    <p className="text-sm text-muted-foreground">活跃会话</p>
                     <p className="mt-1 font-medium">
                       {selectedUserSummary.sessionCount}
                     </p>
                   </div>
                   <div className="rounded-xl border p-4">
-                    <p className="text-sm text-muted-foreground">
-                      Most Recent Session
-                    </p>
+                    <p className="text-sm text-muted-foreground">最近会话</p>
                     <p className="mt-1 font-medium">
                       {formatDateTime(selectedUserSummary.lastSessionAt)}
                     </p>
@@ -686,7 +672,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                 </div>
 
                 <div className="rounded-xl border p-4">
-                  <p className="text-sm font-medium">Linked Providers</p>
+                  <p className="text-sm font-medium">绑定登录方式</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     {selectedUserSummary.linkedProviders.length > 0 ? (
                       selectedUserSummary.linkedProviders.map((providerId) => (
@@ -696,14 +682,14 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                       ))
                     ) : (
                       <p className="text-sm text-muted-foreground">
-                        No linked providers found.
+                        暂无绑定登录方式
                       </p>
                     )}
                   </div>
                 </div>
 
                 <div className="rounded-xl border p-4">
-                  <p className="text-sm font-medium">Actions</p>
+                  <p className="text-sm font-medium">操作</p>
                   <div className="mt-4 flex flex-col gap-3">
                     <Button
                       variant="outline"
@@ -727,8 +713,8 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                         <Shield className="mr-2 size-4" />
                       )}
                       {selectedUserSummary.role === "admin"
-                        ? "Change to User"
-                        : "Promote to Admin"}
+                        ? "设为普通用户"
+                        : "设为管理员"}
                     </Button>
                     <Button
                       variant="destructive"
@@ -743,7 +729,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                       ) : (
                         <UserRoundX className="mr-2 size-4" />
                       )}
-                      Revoke All Sessions
+                      撤销全部会话
                     </Button>
                   </div>
                 </div>

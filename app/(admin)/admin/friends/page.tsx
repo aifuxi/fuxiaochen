@@ -53,6 +53,13 @@ const DEFAULT_FORM_STATE: FriendFormState = {
   category: "developer",
 };
 
+const friendCategoryLabel: Record<AdminFriend["category"], string> = {
+  developer: "开发者",
+  designer: "设计师",
+  blogger: "博主",
+  creator: "创作者",
+};
+
 function getCategoryBadge(category: AdminFriend["category"]) {
   const styles = {
     developer: "bg-blue-500/10 text-blue-600",
@@ -63,7 +70,7 @@ function getCategoryBadge(category: AdminFriend["category"]) {
 
   return (
     <Badge variant="secondary" className={styles[category]}>
-      {category.charAt(0).toUpperCase() + category.slice(1)}
+      {friendCategoryLabel[category]}
     </Badge>
   );
 }
@@ -148,7 +155,7 @@ export default function AdminFriendsPage() {
       handleDialogChange(false);
     } catch (error) {
       setFormError(
-        error instanceof Error ? error.message : "Failed to save friend",
+        error instanceof Error ? error.message : "保存失败，请稍后重试",
       );
     } finally {
       setIsSubmitting(false);
@@ -174,14 +181,14 @@ export default function AdminFriendsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Friends</h1>
+          <h1 className="text-2xl font-bold text-foreground">友链</h1>
           <p className="text-muted-foreground">
-            Manage your friend links and connections
+            管理你的友情链接与外部合作人。
           </p>
         </div>
         <Button onClick={openCreateDialog}>
           <Plus className="mr-2 size-4" />
-          Add Friend
+          添加友链
         </Button>
       </div>
 
@@ -189,20 +196,20 @@ export default function AdminFriendsPage() {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {editingFriendId ? "Edit Friend Link" : "Add Friend Link"}
+              {editingFriendId ? "编辑友链" : "新增友链"}
             </DialogTitle>
             <DialogDescription>
               {editingFriendId
-                ? "Update an existing friend link."
-                : "Add a new friend to your links page."}
+                ? "更新现有友链信息。"
+                : "添加一条新的友情链接。"}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="mb-1.5 block text-sm font-medium">Name</label>
+                <label className="mb-1.5 block text-sm font-medium">名称</label>
                 <Input
-                  placeholder="John Doe"
+                  placeholder="张三"
                   value={formData.name}
                   onChange={(event) =>
                     setFormData((current) => ({
@@ -213,9 +220,7 @@ export default function AdminFriendsPage() {
                 />
               </div>
               <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  Category
-                </label>
+                <label className="mb-1.5 block text-sm font-medium">分类</label>
                 <Select
                   value={formData.category}
                   onValueChange={(value) =>
@@ -229,18 +234,16 @@ export default function AdminFriendsPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="developer">Developer</SelectItem>
-                    <SelectItem value="designer">Designer</SelectItem>
-                    <SelectItem value="blogger">Blogger</SelectItem>
-                    <SelectItem value="creator">Creator</SelectItem>
+                    <SelectItem value="developer">开发者</SelectItem>
+                    <SelectItem value="designer">设计师</SelectItem>
+                    <SelectItem value="blogger">博主</SelectItem>
+                    <SelectItem value="creator">创作者</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Website URL
-              </label>
+              <label className="mb-1.5 block text-sm font-medium">网址</label>
               <Input
                 placeholder="https://example.com"
                 value={formData.url}
@@ -254,7 +257,7 @@ export default function AdminFriendsPage() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium">
-                Avatar URL
+                头像链接
               </label>
               <Input
                 placeholder="https://example.com/avatar.jpg"
@@ -268,11 +271,9 @@ export default function AdminFriendsPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium">
-                Description
-              </label>
+              <label className="mb-1.5 block text-sm font-medium">简介</label>
               <Textarea
-                placeholder="Brief description of this person..."
+                placeholder="一句简短的个人介绍..."
                 rows={2}
                 value={formData.description}
                 onChange={(event) =>
@@ -293,10 +294,10 @@ export default function AdminFriendsPage() {
               onClick={() => handleDialogChange(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              取消
             </Button>
             <Button disabled={isSubmitting} onClick={submitFriend}>
-              {editingFriendId ? "Save Changes" : "Add Friend"}
+              {editingFriendId ? "保存更改" : "添加友链"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -305,7 +306,7 @@ export default function AdminFriendsPage() {
       <div className="grid gap-4 sm:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
+            <CardTitle className="text-sm font-medium">总数</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>
@@ -313,7 +314,7 @@ export default function AdminFriendsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Developers</CardTitle>
+            <CardTitle className="text-sm font-medium">开发者</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.developers}</div>
@@ -321,7 +322,7 @@ export default function AdminFriendsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Designers</CardTitle>
+            <CardTitle className="text-sm font-medium">设计师</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.designers}</div>
@@ -329,7 +330,7 @@ export default function AdminFriendsPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Creators</CardTitle>
+            <CardTitle className="text-sm font-medium">创作者</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.creators}</div>
@@ -339,68 +340,74 @@ export default function AdminFriendsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Friends</CardTitle>
-          <CardDescription>Manage your friend links</CardDescription>
+          <CardTitle>全部友链</CardTitle>
+          <CardDescription>管理你的友链列表</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {friends.map((friend) => (
-              <div
-                key={friend.id}
-                className="flex items-start gap-4 rounded-lg border border-border p-4"
-              >
-                {friend.avatar ? (
-                  <img
-                    src={friend.avatar}
-                    alt={friend.name}
-                    className="size-12 flex-shrink-0 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
-                    <User className="size-6 text-muted-foreground" />
+          {friends.length === 0 ? (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              暂无友链，先添加一个友链开始整理你的伙伴列表。
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2">
+              {friends.map((friend) => (
+                <div
+                  key={friend.id}
+                  className="flex items-start gap-4 rounded-lg border border-border p-4"
+                >
+                  {friend.avatar ? (
+                    <img
+                      src={friend.avatar}
+                      alt={friend.name}
+                      className="size-12 flex-shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex size-12 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+                      <User className="size-6 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="font-medium text-foreground">
+                        {friend.name}
+                      </span>
+                      {getCategoryBadge(friend.category)}
+                    </div>
+                    <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">
+                      {friend.description}
+                    </p>
+                    <Link
+                      href={friend.url}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                    >
+                      {friend.url.replace(/^https?:\/\//, "")}
+                      <ExternalLink className="size-3" />
+                    </Link>
                   </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <div className="mb-1 flex items-center gap-2">
-                    <span className="font-medium text-foreground">
-                      {friend.name}
-                    </span>
-                    {getCategoryBadge(friend.category)}
+                  <div className="flex flex-shrink-0 items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openEditDialog(friend)}
+                      disabled={isSubmitting}
+                    >
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-destructive"
+                      onClick={() => deleteFriend(friend.id)}
+                      disabled={deletingFriendId === friend.id}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
                   </div>
-                  <p className="mb-2 line-clamp-2 text-sm text-muted-foreground">
-                    {friend.description}
-                  </p>
-                  <Link
-                    href={friend.url}
-                    target="_blank"
-                    className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
-                  >
-                    {friend.url.replace(/^https?:\/\//, "")}
-                    <ExternalLink className="size-3" />
-                  </Link>
                 </div>
-                <div className="flex flex-shrink-0 items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => openEditDialog(friend)}
-                    disabled={isSubmitting}
-                  >
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive"
-                    onClick={() => deleteFriend(friend.id)}
-                    disabled={deletingFriendId === friend.id}
-                  >
-                    <Trash2 className="size-4" />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
