@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { AdminLayout } from "@/components/admin/admin-layout";
 
-import { getSessionUserRole, requireServerSession } from "@/lib/auth-session";
+import { requireServerSession } from "@/lib/auth-session";
 
 export const metadata: Metadata = {
   robots: {
@@ -24,7 +24,6 @@ export default async function AdminRouteLayout({
         email: session.user.email,
         image: session.user.image,
         name: session.user.name,
-        role: getSessionUserRole(session),
       }}
     >
       {children}

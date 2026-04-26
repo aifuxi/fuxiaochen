@@ -7,14 +7,13 @@ export type AdminLayoutProps = {
     email: string;
     image?: string | null;
     name: string;
-    role?: string | null;
   };
 };
 
 export function AdminLayout({ children, user }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
-      <AdminSidebar role={user.role} />
+      <AdminSidebar />
       <div className="lg:ml-64">
         <AdminNavbar user={user} />
         <main className="overflow-x-hidden p-4 sm:p-6">{children}</main>

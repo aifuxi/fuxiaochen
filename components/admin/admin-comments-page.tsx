@@ -1,0 +1,578 @@
+"use client";
+
+import { useState } from "react";
+
+import Link from "next/link";
+
+import {
+  Check,
+  CheckCircle,
+  AlertTriangle,
+  Clock,
+  ExternalLink,
+  MessageSquare,
+  MoreHorizontal,
+  Reply,
+  Search,
+  Trash2,
+  User,
+  X,
+} from "lucide-react";
+import useSWR from "swr";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
+
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
+import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
+import type { AdminComment } from "@/lib/server/comments/mappers";
+import type { CommentStats } from "@/lib/server/comments/service";
+
+import { routes } from "@/constants/routes";
+
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+});
+
+const EMPTY_STATS: CommentStats = {
+  total: 0,
+  pending: 0,
+  approved: 0,
+  spam: 0,
+};
+
+export function AdminCommentsPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedComments, setSelectedComments] = useState<string[]>([]);
+  const [isMutating, setIsMutating] = useState(false);
+  const [replyTarget, setReplyTarget] = useState<AdminComment | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [isReplySubmitting, setIsReplySubmitting] = useState(false);
+
+  const commentsUrl = buildApiUrl("/api/admin/comments", {
+    pageSize: 100,
+    query: searchQuery.trim() || undefined,
+    status: statusFilter === "all" ? undefined : statusFilter,
+    sortBy: "createdAt",
+    sortDirection: "desc",
+  });
+
+  const { data, mutate } = useSWR<{
+    items: AdminComment[];
+    stats: CommentStats;
+  }>(commentsUrl, fetchApiData, {
+    revalidateOnFocus: false,
+  });
+
+  const comments = data?.items ?? [];
+  const stats = data?.stats ?? EMPTY_STATS;
+
+  const toggleSelectAll = () => {
+    if (selectedComments.length === comments.length) {
+      setSelectedComments([]);
+    } else {
+      setSelectedComments(comments.map((comment) => comment.id));
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedComments((current) =>
+      current.includes(id)
+        ? current.filter((selectedId) => selectedId !== id)
+        : [...current, id],
+    );
+  };
+
+  const updateCommentStatus = async (
+    ids: string[],
+    status: AdminComment["status"],
+  ) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setIsMutating(true);
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          apiRequest(`/api/admin/comments/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+          }),
+        ),
+      );
+      setSelectedComments((current) =>
+        current.filter((id) => !ids.includes(id)),
+      );
+      await mutate();
+    } catch {
+      // The global API error listener owns toast display.
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const deleteComments = async (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    setIsMutating(true);
+
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          apiRequest(`/api/admin/comments/${id}`, {
+            method: "DELETE",
+          }),
+        ),
+      );
+      setSelectedComments((current) =>
+        current.filter((id) => !ids.includes(id)),
+      );
+      await mutate();
+    } catch {
+      // The global API error listener owns toast display.
+    } finally {
+      setIsMutating(false);
+    }
+  };
+
+  const confirmDeleteComments = (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    void showAdminConfirmDialog({
+      title: ids.length > 1 ? "确认删除这些评论？" : "确认删除这条评论？",
+      description:
+        ids.length > 1
+          ? `将删除选中的 ${ids.length} 条评论。此操作无法撤销。`
+          : "将删除这条评论。此操作无法撤销。",
+      onConfirm: () => deleteComments(ids),
+    });
+  };
+
+  const openReplyDialog = (comment: AdminComment) => {
+    setReplyTarget(comment);
+    setReplyContent("");
+  };
+
+  const closeReplyDialog = (open: boolean) => {
+    if (open) {
+      return;
+    }
+
+    setReplyTarget(null);
+    setReplyContent("");
+  };
+
+  const createAdminReply = async () => {
+    if (!replyTarget || !replyContent.trim()) {
+      return;
+    }
+
+    setIsReplySubmitting(true);
+
+    try {
+      await apiRequest("/api/admin/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parentId: replyTarget.id,
+          content: replyContent.trim(),
+        }),
+      });
+      setReplyTarget(null);
+      setReplyContent("");
+      await mutate();
+    } catch {
+      // The global API error listener owns toast display.
+    } finally {
+      setIsReplySubmitting(false);
+    }
+  };
+
+  const getStatusBadge = (status: AdminComment["status"]) => {
+    switch (status) {
+      case "approved":
+        return (
+          <Badge
+            variant="default"
+            className="bg-green-500/10 text-green-600 hover:bg-green-500/20"
+          >
+            <CheckCircle className="mr-1 size-3" />
+            已通过
+          </Badge>
+        );
+      case "pending":
+        return (
+          <Badge variant="secondary">
+            <Clock className="mr-1 size-3" />
+            审核中
+          </Badge>
+        );
+      case "spam":
+        return (
+          <Badge variant="destructive">
+            <AlertTriangle className="mr-1 size-3" />
+            垃圾
+          </Badge>
+        );
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">评论</h1>
+        <p className="text-muted-foreground">管理与审核用户评论。</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">全部评论</CardTitle>
+            <MessageSquare className="size-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.total}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">待审核</CardTitle>
+            <Clock className="size-4 text-yellow-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.pending}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">已通过</CardTitle>
+            <CheckCircle className="size-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.approved}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">垃圾</CardTitle>
+            <AlertTriangle className="size-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.spam}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>全部评论</CardTitle>
+          <CardDescription>审核、通过或删除用户评论。</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-1 items-center gap-4">
+              <div className="relative flex-1 sm:max-w-xs">
+                <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="搜索评论..."
+                  className="pl-9"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="状态" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部状态</SelectItem>
+                  <SelectItem value="pending">待审核</SelectItem>
+                  <SelectItem value="approved">已通过</SelectItem>
+                  <SelectItem value="spam">垃圾</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedComments.length > 0 ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {selectedComments.length} 条已选择
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isMutating}
+                  onClick={() =>
+                    updateCommentStatus(selectedComments, "approved")
+                  }
+                >
+                  <Check className="mr-1 size-3" />
+                  通过
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isMutating}
+                  onClick={() => updateCommentStatus(selectedComments, "spam")}
+                >
+                  <X className="mr-1 size-3" />
+                  标记垃圾
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  disabled={isMutating}
+                  onClick={() => confirmDeleteComments(selectedComments)}
+                >
+                  <Trash2 className="mr-1 size-3" />
+                  删除
+                </Button>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="rounded-lg border border-border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={
+                        comments.length > 0 &&
+                        selectedComments.length === comments.length
+                      }
+                      onCheckedChange={toggleSelectAll}
+                    />
+                  </TableHead>
+                  <TableHead>作者</TableHead>
+                  <TableHead className="max-w-md">评论内容</TableHead>
+                  <TableHead>文章</TableHead>
+                  <TableHead>状态</TableHead>
+                  <TableHead>时间</TableHead>
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {comments.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="py-8 text-center text-muted-foreground"
+                    >
+                      暂无评论。
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  comments.map((comment) => (
+                    <TableRow key={comment.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedComments.includes(comment.id)}
+                          onCheckedChange={() => toggleSelect(comment.id)}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {comment.avatar ? (
+                            <img
+                              src={comment.avatar}
+                              alt={comment.author}
+                              className="size-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                              <User className="size-4 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-foreground">
+                              {comment.author}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {comment.email}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-md">
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                          {comment.content}
+                        </p>
+                      </TableCell>
+                      <TableCell>
+                        {comment.blog ? (
+                          <Link
+                            href={routes.site.blogPost(comment.blog.slug)}
+                            className="flex items-center gap-1 text-sm text-primary hover:underline"
+                            target="_blank"
+                          >
+                            <span className="line-clamp-1 max-w-[150px]">
+                              {comment.blog.title}
+                            </span>
+                            <ExternalLink className="size-3" />
+                          </Link>
+                        ) : null}
+                      </TableCell>
+                      <TableCell>{getStatusBadge(comment.status)}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {dateFormatter.format(new Date(comment.createdAt))}
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon">
+                              <MoreHorizontal className="size-4" />
+                              <span className="sr-only">操作</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => openReplyDialog(comment)}
+                            >
+                              <Reply className="mr-2 size-4" />
+                              回复
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateCommentStatus([comment.id], "approved")
+                              }
+                            >
+                              <Check className="mr-2 size-4" />
+                              通过
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                updateCommentStatus([comment.id], "spam")
+                              }
+                            >
+                              <X className="mr-2 size-4" />
+                              标记为垃圾
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive"
+                              onClick={() =>
+                                confirmDeleteComments([comment.id])
+                              }
+                            >
+                              <Trash2 className="mr-2 size-4" />
+                              删除
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={replyTarget !== null} onOpenChange={closeReplyDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>回复评论</DialogTitle>
+            <DialogDescription>
+              管理员回复会直接通过审核并显示在对应文章下。
+            </DialogDescription>
+          </DialogHeader>
+          {replyTarget ? (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="font-medium text-foreground">
+                    {replyTarget.author}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {dateFormatter.format(new Date(replyTarget.createdAt))}
+                  </span>
+                </div>
+                <p className="line-clamp-3 text-sm text-muted-foreground">
+                  {replyTarget.content}
+                </p>
+              </div>
+              <Textarea
+                placeholder="写下你的回复..."
+                rows={5}
+                value={replyContent}
+                onChange={(event) => setReplyContent(event.target.value)}
+              />
+            </div>
+          ) : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => closeReplyDialog(false)}
+            >
+              取消
+            </Button>
+            <Button
+              type="button"
+              disabled={isReplySubmitting || !replyContent.trim()}
+              onClick={createAdminReply}
+            >
+              {isReplySubmitting ? "提交中..." : "发布回复"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
