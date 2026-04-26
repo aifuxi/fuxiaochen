@@ -232,15 +232,15 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
 
   if (isEditLoading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center text-sm text-muted-foreground">
+      <div className="flex h-[calc(100dvh-7rem)] items-center justify-center text-sm text-muted-foreground">
         Loading post...
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <div className="flex items-center justify-between border-b border-border bg-background px-6 py-3">
+    <div className="flex h-[calc(100dvh-7rem)] min-h-0 flex-col overflow-hidden">
+      <div className="flex shrink-0 items-center justify-between border-b border-border bg-background px-6 py-3">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
             <Link href={routes.admin.posts}>
@@ -275,9 +275,9 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="border-b border-border px-8 py-5">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <div className="shrink-0 border-b border-border px-8 py-5">
             <input
               type="text"
               value={title}
@@ -296,14 +296,14 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
           </div>
 
           <MarkdownEditor
-            className="flex-1"
+            className="min-h-0 flex-1"
             value={content}
             onChange={setContent}
             placeholder="Start writing your post in Markdown..."
           />
         </div>
 
-        <aside className="flex w-72 shrink-0 flex-col overflow-y-auto border-l border-border bg-muted/20">
+        <aside className="flex min-h-0 w-72 shrink-0 flex-col overflow-y-auto border-l border-border bg-muted/20">
           <div className="p-5">
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Publish

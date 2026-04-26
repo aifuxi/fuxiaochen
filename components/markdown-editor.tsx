@@ -22,7 +22,12 @@ export function MarkdownEditor({
   value,
 }: MarkdownEditorProps) {
   return (
-    <div className={cn("markdown-editor h-full min-h-0", className)}>
+    <div
+      className={cn(
+        "markdown-editor flex h-full min-h-0 flex-col overflow-hidden",
+        className,
+      )}
+    >
       <Editor
         value={value}
         plugins={markdownEditorPlugins}
