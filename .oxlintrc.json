@@ -1,0 +1,96 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "nextjs"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "builtin": true,
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "React": "readonly",
+    "ReactDOM": "readonly"
+  },
+  "ignorePatterns": [
+    "node_modules/**/*",
+    "public/**/*",
+    ".husky/**/*",
+    ".next/**/*",
+    ".vscode/**/*",
+    "generated/**/*",
+    "**/*.md"
+  ],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "no-undef": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-console": "warn",
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
+    "typescript/no-explicit-any": "warn",
+    "typescript/no-floating-promises": "off",
+    "typescript/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
+    "typescript/no-misused-spread": "off",
+    "typescript/restrict-template-expressions": "off",
+    "typescript/no-unsafe-argument": "warn",
+    "typescript/no-unsafe-assignment": "off",
+    "typescript/no-unsafe-call": "off",
+    "typescript/no-unsafe-member-access": "warn",
+    "typescript/no-unsafe-return": "off",
+    "typescript/unbound-method": "off",
+    "react/jsx-no-comment-textnodes": "warn",
+    "react/react-in-jsx-scope": "off",
+    "nextjs/no-img-element": "off",
+    "unicorn/no-empty-file": "off"
+  },
+  "overrides": [
+    {
+      "files": [
+        "app/**/*",
+        "components/**/*",
+        "pages/**/*",
+        "constants/**/*",
+        "utils/**/*",
+        "hooks/**/*",
+        "types/**/*",
+        "lib/**/*"
+      ],
+      "rules": {
+        "unicorn/filename-case": [
+          "error",
+          {
+            "case": "kebabCase",
+            "multipleFileExtensions": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,31 +1,23 @@
 {
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    /* Strictness */
+    "target": "ES6",
+    "skipLibCheck": true,
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "checkJs": true,
-    /* Bundled projects */
-    "lib": ["dom", "dom.iterable", "ES2022"],
     "noEmit": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "jsx": "react-jsx",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "incremental": true,
-    /* Path Aliases */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     }
@@ -34,17 +26,12 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "next-env.d.ts",
-    "next.config.mjs",
+    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    "eslint.config.mjs",
-    ".prettierrc.cjs",
     ".commitlintrc.cjs",
     "postcss.config.mjs",
-    "next-sitemap.config.cjs",
-    "ecosystem.config.cjs",
-    ".storybook/*.ts",
-    ".storybook/*.tsx"
+    "next-sitemap.config.cjs"
   ],
   "exclude": ["node_modules"]
 }

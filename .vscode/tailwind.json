@@ -1,0 +1,96 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vscode-css-languageservice/main/docs/customData.schema.json",
+  "version": 1.1,
+  "atDirectives": [
+    {
+      "name": "@theme",
+      "description": "Tailwind v4 theme variables.",
+      "references": [
+        {
+          "name": "Tailwind CSS @theme",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#theme-directive"
+        }
+      ]
+    },
+    {
+      "name": "@source",
+      "description": "Tailwind v4 explicit source detection.",
+      "references": [
+        {
+          "name": "Tailwind CSS @source",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#source-directive"
+        }
+      ]
+    },
+    {
+      "name": "@utility",
+      "description": "Tailwind v4 custom utility.",
+      "references": [
+        {
+          "name": "Tailwind CSS @utility",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#utility-directive"
+        }
+      ]
+    },
+    {
+      "name": "@variant",
+      "description": "Apply a Tailwind variant inside CSS.",
+      "references": [
+        {
+          "name": "Tailwind CSS @variant",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#variant-directive"
+        }
+      ]
+    },
+    {
+      "name": "@custom-variant",
+      "description": "Register a custom Tailwind variant.",
+      "references": [
+        {
+          "name": "Tailwind CSS @custom-variant",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#custom-variant-directive"
+        }
+      ]
+    },
+    {
+      "name": "@apply",
+      "description": "Inline existing Tailwind utility classes in custom CSS.",
+      "references": [
+        {
+          "name": "Tailwind CSS @apply",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#apply-directive"
+        }
+      ]
+    },
+    {
+      "name": "@reference",
+      "description": "Import Tailwind theme variables and custom utilities for reference without emitting CSS.",
+      "references": [
+        {
+          "name": "Tailwind CSS @reference",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#reference-directive"
+        }
+      ]
+    },
+    {
+      "name": "@config",
+      "description": "Load a legacy JavaScript Tailwind configuration file.",
+      "references": [
+        {
+          "name": "Tailwind CSS @config",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#config-directive"
+        }
+      ]
+    },
+    {
+      "name": "@plugin",
+      "description": "Load a legacy JavaScript Tailwind plugin.",
+      "references": [
+        {
+          "name": "Tailwind CSS @plugin",
+          "url": "https://tailwindcss.com/docs/functions-and-directives#plugin-directive"
+        }
+      ]
+    }
+  ]
+}

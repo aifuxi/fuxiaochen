@@ -1,0 +1,95 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "tabWidth": 2,
+  "printWidth": 80,
+  "trailingComma": "all",
+  "singleQuote": false,
+  "jsxSingleQuote": false,
+  "semi": true,
+  "endOfLine": "lf",
+  "ignorePatterns": [
+    "node_modules/**/*",
+    ".next/**/*",
+    ".agents/**/*",
+    "generated/**/*"
+  ],
+  "sortImports": {
+    "sortSideEffects": false,
+    "customGroups": [
+      {
+        "groupName": "react-libs",
+        "elementNamePattern": ["react", "react/**", "react-dom", "react-dom/**"]
+      },
+      {
+        "groupName": "next-libs",
+        "elementNamePattern": ["next", "next/**"]
+      },
+      {
+        "groupName": "highlightjs",
+        "elementNamePattern": ["highlight.js", "highlight.js/**"]
+      },
+      {
+        "groupName": "alias-app",
+        "elementNamePattern": ["@/app/**"]
+      },
+      {
+        "groupName": "alias-config",
+        "elementNamePattern": ["@/config"]
+      },
+      {
+        "groupName": "alias-types",
+        "elementNamePattern": ["@/types", "@/types/**"]
+      },
+      {
+        "groupName": "alias-providers",
+        "elementNamePattern": ["@/providers", "@/providers/**"]
+      },
+      {
+        "groupName": "alias-components-ui",
+        "elementNamePattern": ["@/components/ui/**"]
+      },
+      {
+        "groupName": "alias-components",
+        "elementNamePattern": ["@/components/**"]
+      },
+      {
+        "groupName": "alias-lib",
+        "elementNamePattern": ["@/lib/**", "@/libs/**"]
+      },
+      {
+        "groupName": "alias-utils",
+        "elementNamePattern": ["@/utils/**"]
+      },
+      {
+        "groupName": "alias-routes",
+        "elementNamePattern": ["@/routes/**"]
+      }
+    ],
+    "groups": [
+      "react-libs",
+      "next-libs",
+      ["value-builtin", "value-external", "type-external"],
+      "highlightjs",
+      "alias-app",
+      "alias-config",
+      "alias-types",
+      "alias-providers",
+      "alias-components-ui",
+      "alias-components",
+      "alias-lib",
+      "alias-utils",
+      "alias-routes",
+      ["value-internal", "type-internal"],
+      ["value-sibling", "type-sibling"],
+      ["value-parent", "type-parent"],
+      ["value-index", "type-index"],
+      "style",
+      "unknown"
+    ]
+  },
+  "sortTailwindcss": {
+    "stylesheet": "app/globals.css",
+    "functions": ["cva", "cx", "twMerge", "cn", "cs"]
+  },
+  "sortPackageJson": false
+}

@@ -1,46 +1,38 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+import { auth } from "@/lib/auth";
 
-  // 定义失效链接映射表
-  const deprecatedRoutes: Record<string, string> = {
-    "/blogs": "/blog",
-    "/categories": "/blog",
-    "/tags": "/blog",
-    "/archives": "/blog",
-    "/changelogs": "/changelog",
-  };
+export async function proxy(request: NextRequest) {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
 
-  // 检查当前路径是否为失效链接
-  if (deprecatedRoutes[pathname]) {
-    return NextResponse.redirect(
-      new URL(deprecatedRoutes[pathname], request.url),
-      { status: 301 }, // 永久重定向
+  if (session) {
+    return NextResponse.next();
+  }
+
+  const { pathname, search } = request.nextUrl;
+
+  if (pathname.startsWith("/api/admin")) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: "COMMON_UNAUTHORIZED",
+          message: "Authentication required",
+        },
+      },
+      { status: 401 },
     );
   }
 
-  // 处理旧版 分类/标签 路径
-  if (pathname.startsWith("/category/") || pathname.startsWith("/tag/")) {
-    return NextResponse.redirect(
-      new URL("/blog", request.url),
-      { status: 301 }, // 永久重定向
-    );
-  }
+  const loginUrl = new URL("/login", request.url);
+  loginUrl.searchParams.set("next", `${pathname}${search}`);
 
-  // 其他请求正常通过
-  return NextResponse.next();
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
-  matcher: [
-    "/blogs",
-    "/categories",
-    "/tags",
-    "/archives",
-    "/changelogs",
-    "/category/:path*",
-    "/tag/:path*",
-  ],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };

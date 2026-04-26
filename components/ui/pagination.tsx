@@ -1,10 +1,13 @@
 import * as React from "react";
+
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MoreHorizontalIcon,
 } from "lucide-react";
+
 import { type Button, buttonVariants } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
@@ -13,7 +16,7 @@ function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
       role="navigation"
       aria-label="pagination"
       data-slot="pagination"
-      className={cn("flex items-center justify-center", className)}
+      className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
     />
   );
@@ -54,7 +57,7 @@ function PaginationLink({
       data-active={isActive}
       className={cn(
         buttonVariants({
-          variant: isActive ? "secondary" : "ghost",
+          variant: isActive ? "outline" : "ghost",
           size,
         }),
         className,
@@ -70,26 +73,13 @@ function PaginationPrevious({
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
-      aria-label="转到上一页"
+      aria-label="Go to previous page"
       size="default"
-      className={cn(
-        `
-          gap-1 px-2.5
-          sm:pl-2.5
-        `,
-        className,
-      )}
+      className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
       <ChevronLeftIcon />
-      <span
-        className={`
-          hidden
-          sm:block
-        `}
-      >
-        上一页
-      </span>
+      <span className="hidden sm:block">Previous</span>
     </PaginationLink>
   );
 }
@@ -100,25 +90,12 @@ function PaginationNext({
 }: React.ComponentProps<typeof PaginationLink>) {
   return (
     <PaginationLink
-      aria-label="转到下一页"
+      aria-label="Go to next page"
       size="default"
-      className={cn(
-        `
-          gap-1 px-2.5
-          sm:pr-2.5
-        `,
-        className,
-      )}
+      className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span
-        className={`
-          hidden
-          sm:block
-        `}
-      >
-        下一页
-      </span>
+      <span className="hidden sm:block">Next</span>
       <ChevronRightIcon />
     </PaginationLink>
   );
@@ -136,7 +113,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">更多页码</span>
+      <span className="sr-only">More pages</span>
     </span>
   );
 }

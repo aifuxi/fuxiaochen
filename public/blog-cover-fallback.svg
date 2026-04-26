@@ -1,0 +1,92 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    :root {
+      --bg: #fcfcfc;
+      --surface: #ffffff;
+      --surface-muted: #f5f5f5;
+      --surface-strong: #111111;
+      --border: rgba(17, 17, 17, 0.08);
+      --border-strong: rgba(17, 17, 17, 0.14);
+      --text-muted: rgba(17, 17, 17, 0.42);
+      --text-soft: rgba(17, 17, 17, 0.22);
+      --shadow: rgba(17, 17, 17, 0.08);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #090909;
+        --surface: #141414;
+        --surface-muted: #1d1d1d;
+        --surface-strong: #f5f5f5;
+        --border: rgba(255, 255, 255, 0.08);
+        --border-strong: rgba(255, 255, 255, 0.14);
+        --text-muted: rgba(255, 255, 255, 0.46);
+        --text-soft: rgba(255, 255, 255, 0.18);
+        --shadow: rgba(0, 0, 0, 0.32);
+      }
+    }
+  </style>
+
+  <rect width="1200" height="630" fill="var(--bg)" />
+
+  <g opacity="0.6">
+    <path d="M0 118.5H1200" stroke="var(--border)" />
+    <path d="M0 315H1200" stroke="var(--border)" />
+    <path d="M0 511.5H1200" stroke="var(--border)" />
+    <path d="M176.5 0V630" stroke="var(--border)" />
+    <path d="M600.5 0V630" stroke="var(--border)" />
+    <path d="M1024.5 0V630" stroke="var(--border)" />
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="72" y="72" width="1056" height="486" rx="30" fill="var(--surface)" />
+    <rect x="72.5" y="72.5" width="1055" height="485" rx="29.5" stroke="var(--border)" />
+  </g>
+
+  <path d="M72 150H1128" stroke="var(--border)" />
+
+  <circle cx="120" cy="111" r="8" fill="var(--surface-strong)" opacity="0.9" />
+  <circle cx="150" cy="111" r="8" fill="var(--text-soft)" />
+  <circle cx="180" cy="111" r="8" fill="var(--text-soft)" />
+
+  <rect x="236" y="101" width="156" height="20" rx="10" fill="var(--surface-muted)" />
+  <rect x="952" y="101" width="128" height="20" rx="10" fill="var(--surface-muted)" />
+
+  <rect x="120" y="198" width="148" height="18" rx="9" fill="var(--surface-strong)" opacity="0.1" />
+  <rect x="120" y="250" width="392" height="56" rx="20" fill="var(--surface-strong)" opacity="0.96" />
+  <rect x="120" y="326" width="332" height="18" rx="9" fill="var(--text-muted)" />
+  <rect x="120" y="360" width="286" height="18" rx="9" fill="var(--text-soft)" />
+
+  <rect x="120" y="446" width="116" height="42" rx="21" fill="var(--surface-strong)" />
+  <rect x="258" y="446" width="134" height="42" rx="21" fill="var(--surface-muted)" />
+  <rect x="258.5" y="446.5" width="133" height="41" rx="20.5" stroke="var(--border-strong)" />
+
+  <g>
+    <rect x="690" y="186" width="318" height="258" rx="24" fill="var(--surface-muted)" />
+    <rect x="690.5" y="186.5" width="317" height="257" rx="23.5" stroke="var(--border)" />
+
+    <rect x="726" y="222" width="126" height="12" rx="6" fill="var(--text-soft)" />
+    <rect x="726" y="248" width="86" height="12" rx="6" fill="var(--surface-strong)" opacity="0.14" />
+
+    <path d="M742 391L808 323L854 367L913 292L973 358L938 408H742V391Z" fill="var(--surface-strong)" opacity="0.9" />
+    <circle cx="919" cy="253" r="24" fill="var(--surface-strong)" opacity="0.12" />
+  </g>
+
+  <g>
+    <rect x="690" y="470" width="148" height="14" rx="7" fill="var(--text-soft)" />
+    <rect x="862" y="470" width="106" height="14" rx="7" fill="var(--text-soft)" />
+    <rect x="992" y="470" width="88" height="14" rx="7" fill="var(--text-soft)" />
+  </g>
+
+  <defs>
+    <filter id="shadow" x="48" y="56" width="1104" height="534" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dy="8" />
+      <feGaussianBlur stdDeviation="12" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.0666667 0 0 0 0 0.0666667 0 0 0 0 0.0666667 0 0 0 0.08 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape" />
+    </filter>
+  </defs>
+</svg>
