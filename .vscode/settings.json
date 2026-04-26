@@ -15,5 +15,10 @@
   "oxc.fmt.configPath": ".oxfmtrc.json",
   "oxc.typeAware": true,
   // 配置 tailwindcss 的类函数
-  "tailwindCSS.classFunctions": ["cva", "cx", "twMerge", "cn", "cs"]
+  "tailwindCSS.experimental.classRegex": [
+    ["cn\\(([^)]*)\\)", "'([^']*)'"], // 识别 cn() 中的类名
+    ["cva\\(([^)]*)\\)", "'([^']*)'"], // 识别 cva() 中的类名
+    ["clsx\\(([^)]*)\\)", "'([^']*)'"] // 识别 clsx() 中的类名
+  ],
+  "css.customData": [".vscode/tailwind.json"] // v4 自定义 at-rules 识别
 }
