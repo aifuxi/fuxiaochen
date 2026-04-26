@@ -1,5 +1,8 @@
+import { sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
+import { db } from "@/lib/db";
+import { blogDailyStats } from "@/lib/db/schema";
 import { getRedisClient } from "@/lib/server/redis";
 
 const BLOG_STATS_VISITOR_COOKIE = "blog_stats_visitor_id";
@@ -56,6 +59,46 @@ const viewCountKey = (blogId: string) => `blog:stats:${blogId}:views`;
 const viewSeenKey = (blogId: string, visitorId: string) =>
   `blog:stats:${blogId}:views:seen:${visitorId}`;
 const likeSetKey = (blogId: string) => `blog:stats:${blogId}:likes`;
+
+const recordDailyStatsDelta = async ({
+  blogId,
+  viewCount = 0,
+  likeCount = 0,
+  unlikeCount = 0,
+}: {
+  blogId: string;
+  viewCount?: number;
+  likeCount?: number;
+  unlikeCount?: number;
+}) => {
+  await db
+    .insert(blogDailyStats)
+    .values({
+      blogId,
+      metricDate: sql`current_date`,
+      viewCount,
+      likeCount,
+      unlikeCount,
+    })
+    .onConflictDoUpdate({
+      target: [blogDailyStats.blogId, blogDailyStats.metricDate],
+      set: {
+        viewCount: sql`${blogDailyStats.viewCount} + ${viewCount}`,
+        likeCount: sql`${blogDailyStats.likeCount} + ${likeCount}`,
+        unlikeCount: sql`${blogDailyStats.unlikeCount} + ${unlikeCount}`,
+      },
+    });
+};
+
+const tryRecordDailyStatsDelta = async (
+  delta: Parameters<typeof recordDailyStatsDelta>[0],
+) => {
+  try {
+    await recordDailyStatsDelta(delta);
+  } catch {
+    // Analytics persistence must not block the visitor interaction path.
+  }
+};
 
 const toCount = (value: unknown) => {
   if (typeof value === "number") {
@@ -197,8 +240,11 @@ export const blogStatsService: BlogStatsService = {
     );
 
     if (counted === "OK") {
+      const viewCount = await redis.incr(viewCountKey(blogId));
+      await tryRecordDailyStatsDelta({ blogId, viewCount: 1 });
+
       return {
-        viewCount: await redis.incr(viewCountKey(blogId)),
+        viewCount,
         counted: true,
       };
     }
@@ -221,8 +267,15 @@ export const blogStatsService: BlogStatsService = {
       throw new Error("Redis like toggle failed");
     }
 
+    const liked = toCount(result[0]) === 1;
+    await tryRecordDailyStatsDelta({
+      blogId,
+      likeCount: liked ? 1 : 0,
+      unlikeCount: liked ? 0 : 1,
+    });
+
     return {
-      liked: toCount(result[0]) === 1,
+      liked,
       likeCount: toCount(result[1]),
     };
   },

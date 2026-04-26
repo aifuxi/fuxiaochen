@@ -69,9 +69,9 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
       <div className="flex items-center gap-4">
-        <div className="relative">
+        <div className="relative hidden sm:block">
           <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
@@ -87,7 +87,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
             href={routes.site.home}
             className="flex items-center gap-2 text-muted-foreground"
           >
-            <span>查看站点</span>
+            <span className="hidden sm:inline">查看站点</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </Link>
         </Button>

@@ -1,6 +1,8 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
+  date,
   foreignKey,
   index,
   integer,
@@ -106,6 +108,35 @@ export const blogTags = pgTable(
       name: "blog_tags_pkey",
     }),
     index("blog_tags_tag_id_idx").on(table.tagId),
+  ],
+);
+
+export const blogDailyStats = pgTable(
+  "blog_daily_stats",
+  {
+    blogId: text("blog_id").notNull(),
+    metricDate: date("metric_date", { mode: "date" }).notNull(),
+    viewCount: integer("view_count").notNull().default(0),
+    likeCount: integer("like_count").notNull().default(0),
+    unlikeCount: integer("unlike_count").notNull().default(0),
+  },
+  (table) => [
+    foreignKey({
+      name: "blog_daily_stats_blog_id_fkey",
+      columns: [table.blogId],
+      foreignColumns: [blogs.id],
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.blogId, table.metricDate],
+      name: "blog_daily_stats_pkey",
+    }),
+    index("blog_daily_stats_metric_date_idx").on(table.metricDate),
+    check("blog_daily_stats_view_count_check", sql`${table.viewCount} >= 0`),
+    check("blog_daily_stats_like_count_check", sql`${table.likeCount} >= 0`),
+    check(
+      "blog_daily_stats_unlike_count_check",
+      sql`${table.unlikeCount} >= 0`,
+    ),
   ],
 );
 
@@ -359,7 +390,15 @@ export const blogsRelations = relations(blogs, ({ many, one }) => ({
     references: [categories.id],
   }),
   blogTags: many(blogTags),
+  dailyStats: many(blogDailyStats),
   comments: many(comments),
+}));
+
+export const blogDailyStatsRelations = relations(blogDailyStats, ({ one }) => ({
+  blog: one(blogs, {
+    fields: [blogDailyStats.blogId],
+    references: [blogs.id],
+  }),
 }));
 
 export const blogTagsRelations = relations(blogTags, ({ one }) => ({
@@ -411,6 +450,7 @@ export const schema = {
   account: accounts,
   accounts,
   blogs,
+  blogDailyStats,
   blogTags,
   categories,
   changelogs,
@@ -433,6 +473,8 @@ export type Tag = typeof tags.$inferSelect;
 export type NewTag = typeof tags.$inferInsert;
 export type Blog = typeof blogs.$inferSelect;
 export type NewBlog = typeof blogs.$inferInsert;
+export type BlogDailyStat = typeof blogDailyStats.$inferSelect;
+export type NewBlogDailyStat = typeof blogDailyStats.$inferInsert;
 export type BlogTag = typeof blogTags.$inferSelect;
 export type NewBlogTag = typeof blogTags.$inferInsert;
 export type Project = typeof projects.$inferSelect;

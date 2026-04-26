@@ -17,25 +17,30 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchApiData } from "@/lib/api/fetcher";
+import type { AdminAnalyticsSnapshot } from "@/lib/server/analytics/mappers";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
 import { routes } from "@/constants/routes";
 
-const recentActivity = [
-  {
-    type: "post",
-    title: "发布了新文章",
-    description: "最新内容已从后台接口同步",
-    time: "刚刚",
-  },
-  {
-    type: "comment",
-    title: "有新评论",
-    description: "评论数据当前基于演示环境",
-    time: "演示数据",
-  },
-];
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+});
+
+const getActivityLabel = (
+  type: AdminAnalyticsSnapshot["recentActivity"][number]["type"],
+) => {
+  switch (type) {
+    case "post":
+      return "文章";
+    case "comment":
+      return "评论";
+    case "project":
+      return "项目";
+    case "changelog":
+      return "更新日志";
+  }
+};
 
 export default function AdminDashboard() {
   const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
@@ -52,10 +57,19 @@ export default function AdminDashboard() {
       revalidateOnFocus: false,
     },
   );
+  const { data: analyticsData } = useSWR<AdminAnalyticsSnapshot>(
+    "/api/admin/analytics?range=30",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
 
   const blogs = blogsData?.items ?? [];
   const categories = categoriesData?.items ?? [];
+  const recentActivity = analyticsData?.recentActivity ?? [];
   const publishedPosts = blogs.filter((blog) => blog.published);
+  const commentStats = analyticsData?.overview.interactions;
 
   const stats = [
     {
@@ -74,8 +88,8 @@ export default function AdminDashboard() {
     },
     {
       title: "评论数",
-      value: "142",
-      change: "演示数据",
+      value: (commentStats?.comments ?? 0).toString(),
+      change: `${commentStats?.pendingComments ?? 0} 条待审核`,
       trend: "up" as const,
       icon: MessageSquare,
     },
@@ -168,32 +182,47 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex gap-4">
-                  <div className="relative">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                      {activity.type === "post" && (
-                        <FileText className="h-4 w-4" />
-                      )}
-                      {activity.type === "comment" && (
-                        <MessageSquare className="h-4 w-4" />
+              {recentActivity.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  暂无动态。
+                </p>
+              ) : (
+                recentActivity.map((activity, index) => (
+                  <div
+                    key={`${activity.type}-${activity.id}`}
+                    className="flex gap-4"
+                  >
+                    <div className="relative">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                        {activity.type === "comment" ? (
+                          <MessageSquare className="h-4 w-4" />
+                        ) : (
+                          <FileText className="h-4 w-4" />
+                        )}
+                      </div>
+                      {index !== recentActivity.length - 1 && (
+                        <div className="absolute top-8 left-4 h-full w-px bg-border" />
                       )}
                     </div>
-                    {index !== recentActivity.length - 1 && (
-                      <div className="absolute top-8 left-4 h-full w-px bg-border" />
-                    )}
+                    <div className="flex-1 pb-4">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-medium">
+                          {activity.title}
+                        </p>
+                        <Badge variant="outline">
+                          {getActivityLabel(activity.type)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {activity.description}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {dateFormatter.format(new Date(activity.createdAt))}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1 pb-4">
-                    <p className="text-sm font-medium">{activity.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {activity.description}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {activity.time}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>

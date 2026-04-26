@@ -15,9 +15,9 @@ export function AdminLayout({ children, user }: AdminLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <AdminSidebar role={user.role} />
-      <div className="ml-64">
+      <div className="lg:ml-64">
         <AdminNavbar user={user} />
-        <main className="p-6">{children}</main>
+        <main className="overflow-x-hidden p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
