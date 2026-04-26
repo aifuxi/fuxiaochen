@@ -61,6 +61,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
           email: email.trim(),
           content: content.trim(),
         }),
+        toastOnError: false,
       });
 
       setSubmitted(true);

@@ -244,6 +244,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
         body: JSON.stringify({
           role: nextRole,
         }),
+        toastOnError: false,
       });
       await Promise.all([mutate(), mutateSelectedUser()]);
     } catch (actionError) {
@@ -264,6 +265,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
     try {
       await apiRequest(`/api/admin/users/${userId}/sessions`, {
         method: "DELETE",
+        toastOnError: false,
       });
       await Promise.all([mutate(), mutateSelectedUser()]);
     } catch (actionError) {

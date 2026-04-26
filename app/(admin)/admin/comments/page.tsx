@@ -17,7 +17,6 @@ import {
   User,
   X,
 } from "lucide-react";
-import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -54,12 +53,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  apiRequest,
-  buildApiUrl,
-  fetchApiData,
-  getApiErrorMessage,
-} from "@/lib/api/fetcher";
+import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminComment } from "@/lib/server/comments/mappers";
 import type { CommentStats } from "@/lib/server/comments/service";
 
@@ -140,8 +134,8 @@ export default function AdminCommentsPage() {
         current.filter((id) => !ids.includes(id)),
       );
       await mutate();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to update comments"));
+    } catch {
+      // The global API error listener owns toast display.
     } finally {
       setIsMutating(false);
     }
@@ -166,8 +160,8 @@ export default function AdminCommentsPage() {
         current.filter((id) => !ids.includes(id)),
       );
       await mutate();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete comments"));
+    } catch {
+      // The global API error listener owns toast display.
     } finally {
       setIsMutating(false);
     }

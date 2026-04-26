@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { Toaster } from "@/components/ui/sonner";
 
+import { ApiErrorToastListener } from "@/components/api-error-toast-listener";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -68,6 +69,7 @@ export default async function RootLayout({
           >
             {children}
             <Toaster />
+            <ApiErrorToastListener />
           </ThemeProvider>
         </ModalProvider>
       </body>

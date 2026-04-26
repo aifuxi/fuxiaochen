@@ -251,6 +251,8 @@ export default function NewPostPage() {
 
       router.push(routes.admin.posts);
       router.refresh();
+    } catch {
+      // The global API error listener owns toast display.
     } finally {
       setIsSubmitting(false);
     }

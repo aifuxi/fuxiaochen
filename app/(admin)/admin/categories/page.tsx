@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -35,11 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  apiRequest,
-  fetchApiData,
-  getApiErrorMessage,
-} from "@/lib/api/fetcher";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
 export default function AdminCategoriesPage() {
@@ -77,6 +72,8 @@ export default function AdminCategoriesPage() {
       setNewCategory("");
       setIsDialogOpen(false);
       await mutate();
+    } catch {
+      // The global API error listener owns toast display.
     } finally {
       setIsSubmitting(false);
     }
@@ -88,8 +85,8 @@ export default function AdminCategoriesPage() {
         method: "DELETE",
       });
       await mutate();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete category"));
+    } catch {
+      // The global API error listener owns toast display.
     }
   };
 

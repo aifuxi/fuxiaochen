@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { Plus, X } from "lucide-react";
-import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -20,11 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import {
-  apiRequest,
-  fetchApiData,
-  getApiErrorMessage,
-} from "@/lib/api/fetcher";
+import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
 
@@ -78,6 +73,8 @@ export default function AdminTagsPage() {
       setNewTag("");
       setIsDialogOpen(false);
       await mutate();
+    } catch {
+      // The global API error listener owns toast display.
     } finally {
       setIsSubmitting(false);
     }
@@ -89,8 +86,8 @@ export default function AdminTagsPage() {
         method: "DELETE",
       });
       await mutate();
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, "Failed to delete tag"));
+    } catch {
+      // The global API error listener owns toast display.
     }
   };
 
