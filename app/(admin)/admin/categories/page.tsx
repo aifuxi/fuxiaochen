@@ -34,6 +34,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 
@@ -88,6 +90,14 @@ export default function AdminCategoriesPage() {
     } catch {
       // The global API error listener owns toast display.
     }
+  };
+
+  const confirmDeleteCategory = (category: AdminCategory) => {
+    void showAdminConfirmDialog({
+      title: "确认删除这个分类？",
+      description: `将删除分类「${category.name}」。如果仍有文章使用该分类，接口会阻止删除。`,
+      onConfirm: () => deleteCategory(category.id),
+    });
   };
 
   return (
@@ -180,7 +190,7 @@ export default function AdminCategoriesPage() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-destructive"
-                          onClick={() => deleteCategory(category.id)}
+                          onClick={() => confirmDeleteCategory(category)}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
                           删除

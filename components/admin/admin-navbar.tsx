@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import { authClient } from "@/lib/auth-client";
@@ -56,6 +57,15 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
     } finally {
       setIsSigningOut(false);
     }
+  }
+
+  function confirmSignOut() {
+    void showAdminConfirmDialog({
+      title: "确认退出登录？",
+      description: "退出后需要重新登录才能继续访问后台管理功能。",
+      confirmLabel: "确认退出",
+      onConfirm: handleSignOut,
+    });
   }
 
   return (
@@ -112,7 +122,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
-              onClick={handleSignOut}
+              onClick={confirmSignOut}
               disabled={isSigningOut}
             >
               {isSigningOut && <Loader2 className="animate-spin" />}

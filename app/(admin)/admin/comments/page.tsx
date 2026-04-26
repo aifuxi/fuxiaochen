@@ -63,6 +63,8 @@ import {
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminComment } from "@/lib/server/comments/mappers";
 import type { CommentStats } from "@/lib/server/comments/service";
@@ -182,6 +184,21 @@ export default function AdminCommentsPage() {
     } finally {
       setIsMutating(false);
     }
+  };
+
+  const confirmDeleteComments = (ids: string[]) => {
+    if (ids.length === 0) {
+      return;
+    }
+
+    void showAdminConfirmDialog({
+      title: ids.length > 1 ? "确认删除这些评论？" : "确认删除这条评论？",
+      description:
+        ids.length > 1
+          ? `将删除选中的 ${ids.length} 条评论。此操作无法撤销。`
+          : "将删除这条评论。此操作无法撤销。",
+      onConfirm: () => deleteComments(ids),
+    });
   };
 
   const openReplyDialog = (comment: AdminComment) => {
@@ -359,7 +376,7 @@ export default function AdminCommentsPage() {
                   size="sm"
                   variant="destructive"
                   disabled={isMutating}
-                  onClick={() => deleteComments(selectedComments)}
+                  onClick={() => confirmDeleteComments(selectedComments)}
                 >
                   <Trash2 className="mr-1 size-3" />
                   删除
@@ -488,7 +505,9 @@ export default function AdminCommentsPage() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               className="text-destructive"
-                              onClick={() => deleteComments([comment.id])}
+                              onClick={() =>
+                                confirmDeleteComments([comment.id])
+                              }
                             >
                               <Trash2 className="mr-2 size-4" />
                               删除

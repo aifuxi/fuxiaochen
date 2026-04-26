@@ -50,6 +50,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type {
   AdminUserDetail,
@@ -273,6 +275,17 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
     } finally {
       setIsRevokingSessions(null);
     }
+  };
+
+  const confirmRevokeUserSessions = (
+    user: Pick<AdminUserListItem, "id" | "name">,
+  ) => {
+    void showAdminConfirmDialog({
+      title: "确认撤销这个用户的会话？",
+      description: `将撤销「${user.name}」的全部活跃会话，对方需要重新登录。此操作无法撤销。`,
+      confirmLabel: "确认撤销",
+      onConfirm: () => revokeUserSessions(user.id),
+    });
   };
 
   return (
@@ -540,7 +553,9 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                 <DropdownMenuItem
                                   disabled={isBusy || isCurrentAdmin}
                                   className="text-destructive"
-                                  onClick={() => revokeUserSessions(user.id)}
+                                  onClick={() =>
+                                    confirmRevokeUserSessions(user)
+                                  }
                                 >
                                   {isRevokingSessions === user.id ? (
                                     <Loader2 className="mr-2 size-4 animate-spin" />
@@ -722,7 +737,9 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                         isRevokingSessions === selectedUserSummary.id ||
                         selectedUserSummary.id === currentAdminId
                       }
-                      onClick={() => revokeUserSessions(selectedUserSummary.id)}
+                      onClick={() =>
+                        confirmRevokeUserSessions(selectedUserSummary)
+                      }
                     >
                       {isRevokingSessions === selectedUserSummary.id ? (
                         <Loader2 className="mr-2 size-4 animate-spin" />

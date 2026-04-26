@@ -19,6 +19,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
@@ -91,6 +93,14 @@ export default function AdminTagsPage() {
     }
   };
 
+  const confirmDeleteTag = (tag: AdminTag) => {
+    void showAdminConfirmDialog({
+      title: "确认删除这个标签？",
+      description: `将删除标签「${tag.name}」。如果仍有文章使用该标签，接口会阻止删除。`,
+      onConfirm: () => deleteTag(tag.id),
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -153,7 +163,7 @@ export default function AdminTagsPage() {
                 </Badge>
                 <button
                   className="ml-1 opacity-0 transition-opacity group-hover:opacity-100"
-                  onClick={() => deleteTag(tag.id)}
+                  onClick={() => confirmDeleteTag(tag)}
                 >
                   <X className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
                   <span className="sr-only">移除标签</span>
