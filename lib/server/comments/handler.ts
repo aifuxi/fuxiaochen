@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -83,6 +87,8 @@ export function createAdminCommentHandlers({
   return {
     async handleListComments(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = adminCommentListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -115,6 +121,8 @@ export function createAdminCommentHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminCommentIdParamsSchema.parse(await params);
         const body = adminCommentUpdateSchema.parse(await toJsonBody(request));
         const comment = await service.updateComment(id, body);
@@ -125,10 +133,12 @@ export function createAdminCommentHandlers({
       }
     },
     async handleDeleteComment(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminCommentIdParamsSchema.parse(await params);
         await service.deleteComment(id);
 

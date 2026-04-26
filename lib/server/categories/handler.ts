@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -41,6 +45,8 @@ export function createAdminCategoryHandlers({
   return {
     async handleListCategories(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = adminCategoryListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -68,6 +74,8 @@ export function createAdminCategoryHandlers({
     },
     async handleCreateCategory(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminCategoryCreateSchema.parse(await toJsonBody(request));
         const category = await service.createCategory(body);
 
@@ -76,11 +84,10 @@ export function createAdminCategoryHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetCategory(
-      _request: Request,
-      params: Promise<{ id: string }>,
-    ) {
+    async handleGetCategory(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireRequestSession(request);
+
         const { id } = adminCategoryIdParamsSchema.parse(await params);
         const category = await service.getCategory(id);
 
@@ -94,6 +101,8 @@ export function createAdminCategoryHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminCategoryIdParamsSchema.parse(await params);
         const body = adminCategoryUpdateSchema.parse(await toJsonBody(request));
         const category = await service.updateCategory(id, body);
@@ -104,10 +113,12 @@ export function createAdminCategoryHandlers({
       }
     },
     async handleDeleteCategory(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminCategoryIdParamsSchema.parse(await params);
         await service.deleteCategory(id);
 

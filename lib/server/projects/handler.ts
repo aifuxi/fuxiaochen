@@ -1,3 +1,7 @@
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -43,6 +47,8 @@ export function createAdminProjectHandlers({
   return {
     async handleListProjects(request: Request) {
       try {
+        await requireRequestSession(request);
+
         const url = new URL(request.url);
         const query = adminProjectListQuerySchema.parse({
           page: url.searchParams.get("page") ?? undefined,
@@ -72,6 +78,8 @@ export function createAdminProjectHandlers({
     },
     async handleCreateProject(request: Request) {
       try {
+        await requireAdminRequestSession(request);
+
         const body = adminProjectCreateSchema.parse(await toJsonBody(request));
         const project = await service.createProject(body);
 
@@ -80,8 +88,10 @@ export function createAdminProjectHandlers({
         return toErrorResponse(error);
       }
     },
-    async handleGetProject(_request: Request, params: Promise<{ id: string }>) {
+    async handleGetProject(request: Request, params: Promise<{ id: string }>) {
       try {
+        await requireRequestSession(request);
+
         const { id } = adminProjectIdParamsSchema.parse(await params);
         const project = await service.getAdminProject(id);
 
@@ -95,6 +105,8 @@ export function createAdminProjectHandlers({
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminProjectIdParamsSchema.parse(await params);
         const body = adminProjectUpdateSchema.parse(await toJsonBody(request));
         const project = await service.updateProject(id, body);
@@ -105,10 +117,12 @@ export function createAdminProjectHandlers({
       }
     },
     async handleDeleteProject(
-      _request: Request,
+      request: Request,
       params: Promise<{ id: string }>,
     ) {
       try {
+        await requireAdminRequestSession(request);
+
         const { id } = adminProjectIdParamsSchema.parse(await params);
         await service.deleteProject(id);
 

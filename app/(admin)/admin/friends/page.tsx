@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { ExternalLink, Pencil, Plus, Trash2, User } from "lucide-react";
+import { toast } from "sonner";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +35,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import {
+  apiRequest,
+  fetchApiData,
+  getApiErrorMessage,
+} from "@/lib/api/fetcher";
 import type { AdminFriend } from "@/lib/server/friends/mappers";
 
 type FriendFormState = {
@@ -162,6 +167,8 @@ export default function AdminFriendsPage() {
         method: "DELETE",
       });
       await mutate();
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "Failed to delete friend"));
     } finally {
       setDeletingFriendId(null);
     }

@@ -1,6 +1,7 @@
 import {
   getSessionUserId,
   requireAdminRequestSession,
+  requireRequestSession,
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
@@ -44,7 +45,7 @@ export function createAdminUserHandlers({
   return {
     async handleListUsers(request: Request) {
       try {
-        await requireAdminRequestSession(request);
+        await requireRequestSession(request);
 
         const url = new URL(request.url);
         const query = adminUserListQuerySchema.parse({
@@ -74,7 +75,7 @@ export function createAdminUserHandlers({
     },
     async handleGetUser(request: Request, params: Promise<{ id: string }>) {
       try {
-        await requireAdminRequestSession(request);
+        await requireRequestSession(request);
 
         const { id } = adminUserIdParamsSchema.parse(await params);
         const user = await service.getAdminUser(id);

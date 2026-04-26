@@ -1,6 +1,9 @@
 import { revalidatePath } from "next/cache";
 
-import { requireAdminRequestSession } from "@/lib/auth-session";
+import {
+  requireAdminRequestSession,
+  requireRequestSession,
+} from "@/lib/auth-session";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { AppError } from "@/lib/server/http/errors";
@@ -55,7 +58,7 @@ export function createAdminSettingsHandlers({
   return {
     async handleGetSettings(request: Request) {
       try {
-        await requireAdminRequestSession(request);
+        await requireRequestSession(request);
 
         const result = await service.getSettings();
 
