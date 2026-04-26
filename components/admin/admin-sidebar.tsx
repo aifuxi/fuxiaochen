@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
 
-const getNavigation = (isAdmin: boolean) => [
+const navigation = [
   {
     title: "概览",
     items: [
@@ -49,17 +49,14 @@ const getNavigation = (isAdmin: boolean) => [
   {
     title: "系统",
     items: [
-      ...(isAdmin
-        ? [{ name: "用户", href: routes.admin.users, icon: Shield }]
-        : []),
+      { name: "用户", href: routes.admin.users, icon: Shield },
       { name: "设置", href: routes.admin.settings, icon: Settings },
     ],
   },
 ];
 
-export function AdminSidebar({ role }: { role?: string | null }) {
+export function AdminSidebar() {
   const pathname = usePathname();
-  const navigation = getNavigation(role === "admin");
 
   return (
     <aside className="fixed top-0 left-0 z-40 hidden h-screen w-64 border-r border-sidebar-border bg-sidebar lg:block">
