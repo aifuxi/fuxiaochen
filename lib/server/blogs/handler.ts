@@ -10,6 +10,7 @@ import {
   adminBlogCreateSchema,
   adminBlogIdParamsSchema,
   adminBlogListQuerySchema,
+  adminBlogSlugParamsSchema,
   adminBlogUpdateSchema,
   publicBlogListQuerySchema,
   publicBlogSlugParamsSchema,
@@ -109,6 +110,21 @@ export function createAdminBlogHandlers({
             },
           );
         }
+
+        return createSuccessResponse(toAdminBlog(blog));
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
+    async handleGetBlogBySlug(
+      request: Request,
+      params: Promise<{ slug: string }>,
+    ) {
+      try {
+        await requireAdminRequestSession(request);
+
+        const { slug } = adminBlogSlugParamsSchema.parse(await params);
+        const blog = await service.getAdminBlogBySlug(slug);
 
         return createSuccessResponse(toAdminBlog(blog));
       } catch (error) {
@@ -215,6 +231,8 @@ const defaultPublicHandlers = createPublicBlogHandlers();
 export const handleAdminListBlogs = defaultAdminHandlers.handleListBlogs;
 export const handleAdminCreateBlog = defaultAdminHandlers.handleCreateBlog;
 export const handleAdminGetBlog = defaultAdminHandlers.handleGetBlog;
+export const handleAdminGetBlogBySlug =
+  defaultAdminHandlers.handleGetBlogBySlug;
 export const handleAdminUpdateBlog = defaultAdminHandlers.handleUpdateBlog;
 export const handleAdminDeleteBlog = defaultAdminHandlers.handleDeleteBlog;
 
