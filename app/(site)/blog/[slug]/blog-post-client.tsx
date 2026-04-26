@@ -230,6 +230,42 @@ export function BlogPostClient({
           </aside>
         </div>
 
+        <section className="mt-14 mb-12 border-y border-border py-8">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight text-foreground">
+                {siteCopy.blogPost.likeCtaTitle}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                {post.liked
+                  ? siteCopy.blogPost.likeCtaLikedDescription
+                  : siteCopy.blogPost.likeCtaDescription}
+              </p>
+            </div>
+
+            <Button
+              type="button"
+              size="lg"
+              aria-pressed={post.liked}
+              disabled={isLikePending}
+              onClick={handleLike}
+              className={cn(
+                "min-w-32 active:scale-[0.98]",
+                post.liked &&
+                  "border border-rose-200 bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-950/60",
+              )}
+            >
+              <Heart className={cn("size-4", post.liked && "fill-current")} />
+              {post.liked
+                ? siteCopy.blogPost.likeCtaLikedAction
+                : siteCopy.blogPost.likeCtaAction}
+              <span className="font-mono text-xs">
+                {formatBlogStatCount(post.likeCount)}
+              </span>
+            </Button>
+          </div>
+        </section>
+
         <BlogComments postSlug={slug} />
       </main>
 
