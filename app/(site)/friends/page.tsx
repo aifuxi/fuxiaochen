@@ -10,6 +10,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return settings.seo.pages.friends;
 }
 
-export default function FriendsPage() {
-  return <FriendsPageClient />;
+export default async function FriendsPage() {
+  const { settings } = await settingsService.getSettings();
+
+  return <FriendsPageClient settings={settings} />;
 }

@@ -5,18 +5,23 @@ import Link from "next/link";
 import { ExternalLink, User } from "lucide-react";
 import useSWR from "swr";
 
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicFriend } from "@/lib/server/friends/mappers";
+import type { SiteSettings } from "@/lib/settings/types";
 
 import { siteCopy } from "@/constants/site-copy";
+
+type FriendsPageClientProps = {
+  settings: SiteSettings;
+};
 
 function getCategoryLabel(category: PublicFriend["category"]) {
   return siteCopy.friends.categories[category];
 }
 
-export function FriendsPageClient() {
+export function FriendsPageClient({ settings }: FriendsPageClientProps) {
   const { data } = useSWR<{ items: PublicFriend[] }>(
     "/api/public/friends",
     fetchApiData,
@@ -125,9 +130,11 @@ export function FriendsPageClient() {
         <p className="mb-4 text-muted-foreground">
           {siteCopy.friends.ctaDescription}
         </p>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">
-          {siteCopy.friends.ctaAction}
-        </Badge>
+        <Button asChild>
+          <Link href={`mailto:${settings.general.email}`}>
+            {siteCopy.friends.ctaAction}
+          </Link>
+        </Button>
       </div>
     </main>
   );
