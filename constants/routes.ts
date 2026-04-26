@@ -17,6 +17,7 @@ export const routes = {
   },
   admin: {
     root: ADMIN_ROOT,
+    analytics: `${ADMIN_ROOT}/analytics`,
     posts: `${ADMIN_ROOT}/posts`,
     postsNew: `${ADMIN_ROOT}/posts/new`,
     postEdit: (slug: string) =>

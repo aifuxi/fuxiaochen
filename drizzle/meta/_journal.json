@@ -43,6 +43,13 @@
       "when": 1777084569489,
       "tag": "0005_warm_squadron_supreme",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1777184985337,
+      "tag": "0006_sturdy_thunderbird",
+      "breakpoints": true
     }
   ]
 }

@@ -27,7 +27,7 @@ const getNavigation = (isAdmin: boolean) => [
     title: "概览",
     items: [
       { name: "仪表盘", href: routes.admin.root, icon: LayoutDashboard },
-      { name: "数据分析", href: "/admin/analytics", icon: BarChart3 },
+      { name: "数据分析", href: routes.admin.analytics, icon: BarChart3 },
     ],
   },
   {
@@ -60,7 +60,7 @@ export function AdminSidebar({ role }: { role?: string | null }) {
   const navigation = getNavigation(role === "admin");
 
   return (
-    <aside className="fixed top-0 left-0 z-40 h-screen w-64 border-r border-sidebar-border bg-sidebar">
+    <aside className="fixed top-0 left-0 z-40 hidden h-screen w-64 border-r border-sidebar-border bg-sidebar lg:block">
       <div className="flex h-16 items-center border-b border-sidebar-border px-6">
         <Link href={routes.admin.root} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
