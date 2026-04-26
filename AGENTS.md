@@ -65,6 +65,28 @@
 - React 组件默认遵循 App Router / RSC 语义；只有确实需要交互时才添加 `"use client"`。
 - 图片当前配置为 `images.unoptimized = true`，涉及 `next/image` 行为调整时要注意这一点。
 
+### 交互组件规范 (NiceModal)
+
+Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理：
+
+```tsx
+// 定义组件
+export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
+  const modal = NiceModal.useModal();
+
+  return (
+    <Dialog open={modal.visible} onOpenChange={modal.remove}>
+      <DialogContent>
+        <Button onClick={() => modal.remove()}>取消</Button>
+      </DialogContent>
+    </Dialog>
+  );
+});
+
+// 使用组件
+NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
+```
+
 ## 数据与接口约定
 
 - 如果在改真实数据链路，优先沿用现有模式：
