@@ -1,14 +1,17 @@
 import { type Metadata } from "next";
 
-import { siteCopy } from "@/constants/site-copy";
+import { settingsService } from "@/lib/server/settings/service";
 
 import { ProjectsPageClient } from "./projects-page-client";
 
-export const metadata: Metadata = {
-  title: siteCopy.metadata.projects.title,
-  description: siteCopy.metadata.projects.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
 
-export default function ProjectsPage() {
-  return <ProjectsPageClient />;
+  return settings.seo.pages.projects;
+}
+
+export default async function ProjectsPage() {
+  const { settings } = await settingsService.getSettings();
+
+  return <ProjectsPageClient settings={settings} />;
 }

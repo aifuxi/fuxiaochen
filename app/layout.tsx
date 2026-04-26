@@ -8,8 +8,7 @@ import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { isProduction } from "@/lib/env";
-
-import { siteCopy } from "@/constants/site-copy";
+import { settingsService } from "@/lib/server/settings/service";
 
 import "./globals.css";
 
@@ -23,15 +22,23 @@ const _spaceMono = Space_Mono({
   variable: "--font-mono",
 });
 
-export const metadata: Metadata = {
-  title: siteCopy.metadata.root.title,
-  description: siteCopy.metadata.root.description,
-};
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
+
+  return {
+    title: settings.seo.defaultTitle,
+    description: settings.seo.defaultDescription,
+    metadataBase: new URL(settings.general.siteUrl),
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { settings } = await settingsService.getSettings();
+
   return (
     <html
       lang="zh-CN"
@@ -39,7 +46,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+        <link rel="icon" href={settings.general.logoUrl} />
         {/* Google Search Console 验证 */}
         {isProduction() &&
           process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (

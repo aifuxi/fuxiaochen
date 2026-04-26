@@ -52,7 +52,7 @@ const getNavigation = (isAdmin: boolean) => [
       ...(isAdmin
         ? [{ name: "Users", href: routes.admin.users, icon: Shield }]
         : []),
-      { name: "Settings", href: routes.admin.settings, icon: Settings },
+      { name: "设置", href: routes.admin.settings, icon: Settings },
     ],
   },
 ];

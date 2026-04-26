@@ -15,29 +15,26 @@ import {
 
 import { Button } from "@/components/ui/button";
 
+import { settingsService } from "@/lib/server/settings/service";
+
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
-export const metadata: Metadata = {
-  title: siteCopy.metadata.about.title,
-  description: siteCopy.metadata.about.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
 
-const skills = {
-  languages: ["TypeScript", "JavaScript", "Python", "Rust", "Go"],
-  frontend: ["React", "Next.js", "Vue.js", "Tailwind CSS", "Framer Motion"],
-  backend: ["Node.js", "Express", "PostgreSQL", "Redis", "GraphQL"],
-  tools: ["Git", "Docker", "AWS", "Vercel", "Figma"],
-};
+  return settings.seo.pages.about;
+}
 
-const socialLinks = [
-  { href: "https://github.com", label: "GitHub", icon: Github },
-  { href: "https://twitter.com", label: "Twitter", icon: Twitter },
-  { href: "https://linkedin.com", label: "LinkedIn", icon: Linkedin },
-  { href: "mailto:hello@example.com", label: "邮箱", icon: Mail },
-];
+export default async function AboutPage() {
+  const { settings } = await settingsService.getSettings();
+  const socialLinks = [
+    { href: settings.social.githubUrl, label: "GitHub", icon: Github },
+    { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
+    { href: settings.social.linkedinUrl, label: "LinkedIn", icon: Linkedin },
+    { href: `mailto:${settings.general.email}`, label: "邮箱", icon: Mail },
+  ].filter((link) => link.href.length > 0);
 
-export default function AboutPage() {
   return (
     <>
       {/* Hero Section */}
@@ -46,20 +43,24 @@ export default function AboutPage() {
           <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-12">
             <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl border border-border md:size-48">
               <Image
-                src="/avatar.avif"
-                alt="Fuxiaochen"
+                src={settings.general.avatarUrl}
+                alt={settings.general.siteName}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="flex flex-col gap-4">
               <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-                {siteCopy.about.title}
+                {settings.profile.aboutTitle}
               </h1>
-              <p className="text-lg text-primary">{siteCopy.about.role}</p>
+              <p className="text-lg text-primary">
+                {settings.profile.aboutRole}
+              </p>
               <div className="flex items-center gap-2 text-muted-foreground">
                 <MapPin className="size-4" />
-                <span className="text-sm">{siteCopy.about.location}</span>
+                <span className="text-sm">
+                  {settings.profile.aboutLocation}
+                </span>
               </div>
               <div className="flex items-center gap-3 pt-2">
                 {socialLinks.map((link) => (
@@ -85,9 +86,9 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="prose prose-neutral dark:prose-invert max-w-none">
             <h2 className="text-2xl font-semibold text-foreground">
-              {siteCopy.about.bioTitle}
+              {settings.profile.bioTitle}
             </h2>
-            {siteCopy.about.bio.map((paragraph) => (
+            {settings.profile.bio.map((paragraph) => (
               <p
                 key={paragraph}
                 className="leading-relaxed text-muted-foreground"
@@ -105,11 +106,11 @@ export default function AboutPage() {
           <div className="mb-8 flex items-center gap-3">
             <Briefcase className="size-5 text-primary" />
             <h2 className="text-2xl font-semibold text-foreground">
-              {siteCopy.about.experienceTitle}
+              {settings.profile.experienceTitle}
             </h2>
           </div>
           <div className="flex flex-col gap-8">
-            {siteCopy.about.experience.map((exp, index) => (
+            {settings.profile.experience.map((exp, index) => (
               <div
                 key={index}
                 className="relative flex flex-col gap-2 border-l-2 border-border pb-2 pl-6"
@@ -139,7 +140,7 @@ export default function AboutPage() {
           <div className="mb-8 flex items-center gap-3">
             <GraduationCap className="size-5 text-primary" />
             <h2 className="text-2xl font-semibold text-foreground">
-              {siteCopy.about.skillsTitle}
+              {settings.profile.skillsTitle}
             </h2>
           </div>
           <div className="grid gap-8 sm:grid-cols-2">
@@ -148,7 +149,7 @@ export default function AboutPage() {
                 {siteCopy.about.skillLabels.languages}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {skills.languages.map((skill) => (
+                {settings.profile.skills.languages.map((skill) => (
                   <span
                     key={skill}
                     className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
@@ -163,7 +164,7 @@ export default function AboutPage() {
                 {siteCopy.about.skillLabels.frontend}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {skills.frontend.map((skill) => (
+                {settings.profile.skills.frontend.map((skill) => (
                   <span
                     key={skill}
                     className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
@@ -178,7 +179,7 @@ export default function AboutPage() {
                 {siteCopy.about.skillLabels.backend}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {skills.backend.map((skill) => (
+                {settings.profile.skills.backend.map((skill) => (
                   <span
                     key={skill}
                     className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
@@ -193,7 +194,7 @@ export default function AboutPage() {
                 {siteCopy.about.skillLabels.tools}
               </h3>
               <div className="flex flex-wrap gap-2">
-                {skills.tools.map((skill) => (
+                {settings.profile.skills.tools.map((skill) => (
                   <span
                     key={skill}
                     className="rounded-full border border-border bg-muted px-3 py-1 text-sm text-foreground"
@@ -213,11 +214,11 @@ export default function AboutPage() {
           <div className="mb-8 flex items-center gap-3">
             <Heart className="size-5 text-primary" />
             <h2 className="text-2xl font-semibold text-foreground">
-              {siteCopy.about.beyondCodeTitle}
+              {settings.profile.beyondCodeTitle}
             </h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-3">
-            {siteCopy.about.interests.map((interest) => (
+            {settings.profile.interests.map((interest) => (
               <div
                 key={interest.title}
                 className="flex flex-col gap-2 rounded-lg border border-border p-4"
@@ -239,14 +240,14 @@ export default function AboutPage() {
         <div className="mx-auto max-w-4xl px-6">
           <div className="flex flex-col items-center gap-6 rounded-lg border border-border bg-muted/50 p-8 text-center">
             <h2 className="text-2xl font-semibold text-foreground">
-              {siteCopy.about.ctaTitle}
+              {settings.profile.ctaTitle}
             </h2>
             <p className="max-w-md text-muted-foreground">
-              {siteCopy.about.ctaDescription}
+              {settings.profile.ctaDescription}
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Button asChild>
-                <Link href="mailto:hello@example.com">
+                <Link href={`mailto:${settings.general.email}`}>
                   <Mail className="mr-2 size-4" />
                   {siteCopy.about.ctaPrimary}
                 </Link>

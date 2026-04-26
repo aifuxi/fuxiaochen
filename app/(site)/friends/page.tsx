@@ -1,13 +1,14 @@
 import { type Metadata } from "next";
 
-import { siteCopy } from "@/constants/site-copy";
+import { settingsService } from "@/lib/server/settings/service";
 
 import { FriendsPageClient } from "./friends-page-client";
 
-export const metadata: Metadata = {
-  title: siteCopy.metadata.friends.title,
-  description: siteCopy.metadata.friends.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
+
+  return settings.seo.pages.friends;
+}
 
 export default function FriendsPage() {
   return <FriendsPageClient />;

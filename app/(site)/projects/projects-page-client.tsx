@@ -11,10 +11,15 @@ import { Button } from "@/components/ui/button";
 
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicProject } from "@/lib/server/projects/mappers";
+import type { SiteSettings } from "@/lib/settings/types";
 
 import { siteCopy } from "@/constants/site-copy";
 
-export function ProjectsPageClient() {
+type ProjectsPageClientProps = {
+  settings: SiteSettings;
+};
+
+export function ProjectsPageClient({ settings }: ProjectsPageClientProps) {
   const { data } = useSWR<{ items: PublicProject[] }>(
     "/api/public/projects?pageSize=100",
     fetchApiData,
@@ -24,6 +29,10 @@ export function ProjectsPageClient() {
   );
 
   const projects = data?.items ?? [];
+  const githubUrl =
+    settings.social.githubUrl ||
+    settings.social.sourceCodeUrl ||
+    settings.general.siteUrl;
   const featuredProjects = projects.filter((project) => project.featured);
   const projectsByYear = projects.reduce<Record<string, PublicProject[]>>(
     (grouped, project) => {
@@ -235,13 +244,13 @@ export function ProjectsPageClient() {
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
               <Button asChild>
-                <Link href="mailto:hello@example.com">
+                <Link href={`mailto:${settings.general.email}`}>
                   {siteCopy.projects.ctaPrimary}
                 </Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link
-                  href="https://github.com"
+                  href={githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

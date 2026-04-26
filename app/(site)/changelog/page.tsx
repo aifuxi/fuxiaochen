@@ -1,13 +1,14 @@
 import { type Metadata } from "next";
 
-import { siteCopy } from "@/constants/site-copy";
+import { settingsService } from "@/lib/server/settings/service";
 
 import { ChangelogPageClient } from "./changelog-page-client";
 
-export const metadata: Metadata = {
-  title: siteCopy.metadata.changelog.title,
-  description: siteCopy.metadata.changelog.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
+
+  return settings.seo.pages.changelog;
+}
 
 export default function ChangelogPage() {
   return <ChangelogPageClient />;

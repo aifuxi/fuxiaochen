@@ -4,11 +4,20 @@ import {
   foreignKey,
   index,
   integer,
+  jsonb,
   pgTable,
   primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
+
+import type {
+  SiteSettingsCompliance,
+  SiteSettingsGeneral,
+  SiteSettingsProfile,
+  SiteSettingsSeo,
+  SiteSettingsSocial,
+} from "@/lib/settings/types";
 
 export type ChangelogType = "feature" | "improvement" | "bugfix" | "breaking";
 export type CommentStatus = "pending" | "approved" | "spam";
@@ -223,6 +232,19 @@ export const users = pgTable(
   (table) => [index("user_role_idx").on(table.role)],
 );
 
+export const siteSettings = pgTable("site_settings", {
+  id: text("id").primaryKey(),
+  general: jsonb("general").$type<SiteSettingsGeneral>().notNull(),
+  seo: jsonb("seo").$type<SiteSettingsSeo>().notNull(),
+  profile: jsonb("profile").$type<SiteSettingsProfile>().notNull(),
+  social: jsonb("social").$type<SiteSettingsSocial>().notNull(),
+  compliance: jsonb("compliance").$type<SiteSettingsCompliance>().notNull(),
+  updatedAt: timestamp("updated_at", {
+    mode: "date",
+    withTimezone: true,
+  }).notNull(),
+});
+
 export const sessions = pgTable(
   "session",
   {
@@ -397,6 +419,7 @@ export const schema = {
   projects,
   session: sessions,
   sessions,
+  siteSettings,
   tags,
   user: users,
   users,
@@ -422,6 +445,8 @@ export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type SiteSettingsRow = typeof siteSettings.$inferSelect;
+export type NewSiteSettingsRow = typeof siteSettings.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;
 export type Account = typeof accounts.$inferSelect;
