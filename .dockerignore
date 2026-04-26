@@ -2,11 +2,12 @@
 .gitignore
 README.md
 AGENTS.md
+CLAUDE.md
 LICENSE
 
 # dependencies
 node_modules
-.pnpm-store
+.bun
 
 # testing
 coverage

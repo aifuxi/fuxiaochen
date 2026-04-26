@@ -1,98 +1,98 @@
 import type { Metadata } from "next";
+import { Space_Grotesk, Space_Mono } from "next/font/google";
 import Script from "next/script";
+
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { Toaster } from "sonner";
+
+import { Toaster } from "@/components/ui/sonner";
+
+import { ApiErrorToastListener } from "@/components/api-error-toast-listener";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
-import { NICKNAME, SLOGAN, WEBSITE } from "@/constants/info";
+
 import { isProduction } from "@/lib/env";
-import "@/styles/global.css";
+import { settingsService } from "@/lib/server/settings/service";
 
-export const metadata: Metadata = {
-  title: {
-    template: `%s | ${WEBSITE}`,
-    default: WEBSITE,
-  },
-  description: SLOGAN,
-  keywords: NICKNAME,
-};
+import "./globals.css";
 
-export const viewport = {
-  width: "device-width",
-  initialScale: 1.0,
-  maximumScale: 1.0,
-  minimumScale: 1.0,
-  userScalable: false,
-  viewportFit: "cover",
-};
+const _spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+const _spaceMono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+});
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await settingsService.getSettings();
+
+  return {
+    title: settings.seo.defaultTitle,
+    description: settings.seo.defaultDescription,
+    metadataBase: new URL(settings.general.siteUrl),
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { settings } = await settingsService.getSettings();
+  const { googleAnalytics, googleSearchConsole, umami } = settings.analytics;
+
   return (
-    <html lang="zh-CN" className="scroll-smooth" suppressHydrationWarning>
+    <html
+      lang="zh-CN"
+      className={`${_spaceGrotesk.variable} ${_spaceMono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
-        />
-        <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
-        />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="icon" href={settings.general.logoUrl} />
         {/* Google Search Console 验证 */}
         {isProduction() &&
-          process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT && (
+          googleSearchConsole.enabled &&
+          googleSearchConsole.verificationContent && (
             <meta
               name="google-site-verification"
-              content={process.env.NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT}
+              content={googleSearchConsole.verificationContent}
             />
           )}
       </head>
-      <body
-        className={`
-          bg-[var(--bg-color)] text-[var(--text-color)] antialiased
-          selection:bg-[var(--accent-color)] selection:text-white
-          ${isProduction() ? "" : "debug-screens"}
-        `}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ModalProvider>{children}</ModalProvider>
-          <Toaster richColors position="top-center" />
-        </ThemeProvider>
+      <body className="font-sans antialiased">
+        <ModalProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster />
+            <ApiErrorToastListener />
+          </ThemeProvider>
+        </ModalProvider>
       </body>
 
       {/* Google Analytics  */}
-      {isProduction() && process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID} />
-      )}
+      {isProduction() &&
+        googleAnalytics.enabled &&
+        googleAnalytics.measurementId && (
+          <GoogleAnalytics gaId={googleAnalytics.measurementId} />
+        )}
 
       {/* umami 统计 */}
       {isProduction() &&
-        process.env.NEXT_PUBLIC_UMAMI_URL &&
-        process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+        umami.enabled &&
+        umami.scriptUrl &&
+        umami.websiteId && (
           <Script
             id="umami"
-            src={process.env.NEXT_PUBLIC_UMAMI_URL}
+            src={umami.scriptUrl}
             async
-            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            data-website-id={umami.websiteId}
           />
         )}
     </html>

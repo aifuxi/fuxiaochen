@@ -1,18 +1,9 @@
-import { BackToTop } from "@/components/ui/back-to-top";
-import { Footer } from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
+import { SiteLayout } from "@/components/site/site-layout";
 
-export default function PortalLayout({
+export default function SiteRouteLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return (
-    <>
-      <Header />
-      {children}
-      <Footer />
-      <BackToTop />
-    </>
-  );
+}) {
+  return <SiteLayout>{children}</SiteLayout>;
 }

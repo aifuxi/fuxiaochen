@@ -1,232 +1,251 @@
+"use client";
+
 import Link from "next/link";
+
 import {
-  ArrowRight,
+  ArrowDownRight,
+  ArrowUpRight,
+  Eye,
   FileText,
-  FolderTree,
-  Tag as TagIcon,
-  Users,
+  MessageSquare,
+  TrendingUp,
 } from "lucide-react";
-import { getDashboardStatsAction } from "@/app/actions/dashboard";
+import useSWR from "swr";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AppleCard } from "@/components/ui/glass-card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatSimpleDateWithTime } from "@/lib/time";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default async function DashboardPage() {
-  const { data, success } = await getDashboardStatsAction();
+import { fetchApiData } from "@/lib/api/fetcher";
+import type { AdminAnalyticsSnapshot } from "@/lib/server/analytics/mappers";
+import type { AdminBlog } from "@/lib/server/blogs/mappers";
+import type { AdminCategory } from "@/lib/server/categories/mappers";
 
-  if (!success || !data) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center text-red-500">
-        加载仪表盘数据失败
-      </div>
-    );
+import { routes } from "@/constants/routes";
+
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+  dateStyle: "medium",
+});
+
+const getActivityLabel = (
+  type: AdminAnalyticsSnapshot["recentActivity"][number]["type"],
+) => {
+  switch (type) {
+    case "post":
+      return "文章";
+    case "comment":
+      return "评论";
+    case "project":
+      return "项目";
+    case "changelog":
+      return "更新日志";
   }
+};
 
-  const {
-    blogCount,
-    publishedBlogCount,
-    categoryCount,
-    tagCount,
-    userCount,
-    recentBlogs,
-  } = data;
+export default function AdminDashboard() {
+  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+    "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+    "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+  const { data: analyticsData } = useSWR<AdminAnalyticsSnapshot>(
+    "/api/admin/analytics?range=30",
+    fetchApiData,
+    {
+      revalidateOnFocus: false,
+    },
+  );
+
+  const blogs = blogsData?.items ?? [];
+  const categories = categoriesData?.items ?? [];
+  const recentActivity = analyticsData?.recentActivity ?? [];
+  const publishedPosts = blogs.filter((blog) => blog.published);
+  const commentStats = analyticsData?.overview.interactions;
 
   const stats = [
     {
-      title: "总文章数",
-      value: blogCount,
+      title: "文章总数",
+      value: blogs.length.toString(),
+      change: `${publishedPosts.length} 条已发布`,
+      trend: "up" as const,
       icon: FileText,
-      description: `已发布: ${publishedBlogCount}`,
-      href: "/admin/blogs",
-      color: "text-blue-500",
     },
     {
-      title: "分类总数",
-      value: categoryCount,
-      icon: FolderTree,
-      href: "/admin/categories",
-      color: "text-purple-500",
+      title: "精选文章",
+      value: blogs.filter((blog) => blog.featured).length.toString(),
+      change: "首页展示",
+      trend: "up" as const,
+      icon: Eye,
     },
     {
-      title: "标签总数",
-      value: tagCount,
-      icon: TagIcon,
-      href: "/admin/tags",
-      color: "text-pink-500",
+      title: "评论数",
+      value: (commentStats?.comments ?? 0).toString(),
+      change: `${commentStats?.pendingComments ?? 0} 条待审核`,
+      trend: "up" as const,
+      icon: MessageSquare,
     },
     {
-      title: "用户总数",
-      value: userCount,
-      icon: Users,
-      href: "/admin/users",
-      color: "text-green-500",
+      title: "分类数量",
+      value: categories.length.toString(),
+      change: "由后台接口管理",
+      trend: "down" as const,
+      icon: TrendingUp,
     },
   ];
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight text-text uppercase">
-          仪表盘
-        </h2>
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">仪表盘</h1>
+          <p className="text-muted-foreground">内容与后台数据源的整体概览。</p>
+        </div>
+        <Button asChild>
+          <Link href={routes.admin.postsNew}>新建文章</Link>
+        </Button>
       </div>
 
-      <div
-        className={`
-          grid gap-6
-          md:grid-cols-2
-          lg:grid-cols-4
-        `}
-      >
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Link key={stat.title} href={stat.href} className="block h-full">
-            <AppleCard
-              className={`
-                h-full transition-all duration-300
-                hover:border-accent/50 hover:shadow-lg
-              `}
-            >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-text-secondary">
-                  {stat.title}
-                </CardTitle>
-                <stat.icon
-                  className={`
-                    h-4 w-4
-                    ${stat.color}
-                  `}
-                />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-text">{stat.value}</div>
-                {stat.description && (
-                  <p className="text-xs text-text-secondary">
-                    {stat.description}
-                  </p>
+          <Card key={stat.title}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {stat.title}
+              </CardTitle>
+              <stat.icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <div className="flex items-center text-xs">
+                {stat.trend === "up" ? (
+                  <ArrowUpRight className="mr-1 h-3 w-3 text-green-500" />
+                ) : (
+                  <ArrowDownRight className="mr-1 h-3 w-3 text-red-500" />
                 )}
-              </CardContent>
-            </AppleCard>
-          </Link>
+                <span
+                  className={
+                    stat.trend === "up" ? "text-green-500" : "text-red-500"
+                  }
+                >
+                  {stat.change}
+                </span>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      <AppleCard className="p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-text">最新文章</h3>
-          <Link href="/admin/blogs">
-            <Button
-              variant="ghost"
-              size="sm"
-              className={`
-                text-accent
-                hover:bg-accent/10 hover:text-accent
-              `}
-            >
-              查看全部 <ArrowRight className="ml-2 h-4 w-4" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>最近文章</CardTitle>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={routes.admin.posts}>查看全部</Link>
             </Button>
-          </Link>
-        </div>
-
-        <Table>
-          <TableHeader>
-            <TableRow
-              className={`
-                border-border
-                hover:bg-surface/50
-              `}
-            >
-              <TableHead className="text-text-secondary">标题</TableHead>
-              <TableHead className="text-text-secondary">分类</TableHead>
-              <TableHead className="text-text-secondary">标签</TableHead>
-              <TableHead className="text-text-secondary">发布状态</TableHead>
-              <TableHead className="text-right text-text-secondary">
-                创建时间
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {recentBlogs.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-text-secondary"
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {blogs.slice(0, 5).map((post) => (
+                <div
+                  key={post.id}
+                  className="flex items-center justify-between"
                 >
-                  暂无文章
-                </TableCell>
-              </TableRow>
-            ) : (
-              recentBlogs.map((blog) => (
-                <TableRow
-                  key={blog.id}
-                  className={`
-                    border-border
-                    hover:bg-surface/50
-                  `}
-                >
-                  <TableCell className="font-medium text-text">
-                    {blog.title}
-                  </TableCell>
-                  <TableCell>
-                    {blog.category ? (
-                      <Badge
-                        variant="outline"
-                        className="border-accent text-accent"
-                      >
-                        {blog.category.name}
-                      </Badge>
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {blog.tags && blog.tags.length > 0
-                        ? blog.tags.map((tag) => (
-                            <Badge
-                              key={tag.id}
-                              variant="secondary"
-                              className="bg-accent/10 text-xs text-accent"
-                            >
-                              {tag.name}
-                            </Badge>
-                          ))
-                        : "-"}
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium">{post.title}</p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{post.publishedAt ? "已发布" : "草稿"}</span>
+                      <span>·</span>
+                      <span>{post.readTimeMinutes} 分钟阅读</span>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={blog.published ? "default" : "secondary"}
-                      className={
-                        blog.published
-                          ? `
-                            bg-accent/20 text-accent
-                            hover:bg-accent/30
-                          `
-                          : "bg-surface text-text-secondary"
-                      }
-                    >
-                      {blog.published ? "已发布" : "草稿"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right text-text-secondary">
-                    {formatSimpleDateWithTime(new Date(blog.createdAt))}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </AppleCard>
+                  </div>
+                  {post.category && (
+                    <Badge variant="secondary">{post.category.name}</Badge>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>最近动态</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivity.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">
+                  暂无动态。
+                </p>
+              ) : (
+                recentActivity.map((activity, index) => (
+                  <div
+                    key={`${activity.type}-${activity.id}`}
+                    className="flex gap-4"
+                  >
+                    <div className="relative">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                        {activity.type === "comment" ? (
+                          <MessageSquare className="h-4 w-4" />
+                        ) : (
+                          <FileText className="h-4 w-4" />
+                        )}
+                      </div>
+                      {index !== recentActivity.length - 1 && (
+                        <div className="absolute top-8 left-4 h-full w-px bg-border" />
+                      )}
+                    </div>
+                    <div className="flex-1 pb-4">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-medium">
+                          {activity.title}
+                        </p>
+                        <Badge variant="outline">
+                          {getActivityLabel(activity.type)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {activity.description}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {dateFormatter.format(new Date(activity.createdAt))}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>按分类统计</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className="flex items-center justify-between rounded-lg border border-border p-4"
+              >
+                <span className="font-medium">{category.name}</span>
+                <Badge variant="outline">{category.blogCount}</Badge>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

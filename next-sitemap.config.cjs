@@ -1,24 +1,29 @@
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://fuxiaochen.com";
+const { getAbsoluteSiteUrl, getPublicSiteUrl } = require("./lib/site-url.cjs");
+
+const siteUrl = getPublicSiteUrl();
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl,
   // 以下路由不生成sitemap
-  exclude: ["/api/*", "/server-sitemap.xml"],
+  exclude: [
+    "/api/*",
+    "/admin",
+    "/admin/*",
+    "/login",
+    "/register",
+    "/server-sitemap.xml",
+  ],
   generateRobotsTxt: true, // (optional)
   // ...other options
   robotsTxtOptions: {
     policies: [
       {
         userAgent: "*",
-      },
-      {
-        userAgent: "*",
         allow: "/",
+        disallow: ["/api/*", "/admin", "/admin/*", "/login", "/register"],
       },
     ],
-    additionalSitemaps: [
-      `${siteUrl}/server-sitemap.xml`, // <==== Add here
-    ],
+    additionalSitemaps: [getAbsoluteSiteUrl("/server-sitemap.xml")],
   },
 };

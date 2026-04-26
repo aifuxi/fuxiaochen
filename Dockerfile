@@ -1,24 +1,16 @@
 # 构建阶段
-FROM node:24-alpine AS builder
+FROM oven/bun:1.3.11-alpine AS builder
 
 WORKDIR /app
 
 # 定义构建参数 (仅构建阶段需要的)
 ARG DATABASE_URL
-ARG NEXT_PUBLIC_UMAMI_URL
-ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
-ARG NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
-ARG NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT
-ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_SITE_URL=https://fuxiaochen.com
 
 # 设置构建阶段环境变量
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL=$DATABASE_URL
-ENV NEXT_PUBLIC_UMAMI_URL=$NEXT_PUBLIC_UMAMI_URL
-ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=$NEXT_PUBLIC_UMAMI_WEBSITE_ID
-ENV NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=$NEXT_PUBLIC_GOOGLE_ANALYTICS_ID
-ENV NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT=$NEXT_PUBLIC_GOOGLE_SEARCH_CONSOLE_CONTENT
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 
 # 禁用husky
@@ -28,16 +20,16 @@ ENV HUSKY=0
 COPY . .
 
 # 安装依赖
-RUN corepack enable && \
-    corepack prepare pnpm@10 --activate && \
-    pnpm install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
-# 生成 Prisma 文件
-RUN pnpm db:gen
+# 生成数据库客户端与迁移文件
+RUN bun run db:generate
 
 
 # 构建应用
-RUN pnpm build
+RUN BETTER_AUTH_SECRET=build-time-placeholder-secret-for-next-build \
+    BETTER_AUTH_URL=$NEXT_PUBLIC_SITE_URL \
+    bun run build
 
 # 生产阶段
 FROM node:24-alpine AS runner

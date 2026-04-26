@@ -1,69 +1,43 @@
 "use client";
 
 import * as React from "react";
+
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Monitor, Moon, Sun } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-export function ThemeToggle({ className }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+import { siteCopy } from "@/constants/site-copy";
 
-  if (!mounted) {
-    return (
-      <div
-        className={cn(
-          "flex h-9 items-center gap-1 rounded-lg border border-border bg-surface px-1",
-          className,
-        )}
-      >
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
-        <div className="h-7 w-7 rounded-md bg-surface-hover" />
-      </div>
-    );
-  }
-
-  const modes = [
-    { name: "light", icon: Sun },
-    { name: "system", icon: Monitor },
-    { name: "dark", icon: Moon },
-  ];
+export function ThemeToggle() {
+  const { setTheme } = useTheme();
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-1 rounded-lg border border-border bg-surface px-1",
-        className,
-      )}
-    >
-      {modes.map((mode) => {
-        const Icon = mode.icon;
-        const isActive = theme === mode.name;
-
-        return (
-          <button
-            key={mode.name}
-            onClick={() => setTheme(mode.name)}
-            className={cn(
-              `flex h-7 w-7 items-center justify-center rounded-md transition-all duration-200`,
-              isActive
-                ? "bg-accent text-white"
-                : `
-                  text-text-secondary
-                  hover:bg-surface-hover hover:text-text
-                `,
-            )}
-            aria-label={`Switch to ${mode.name} theme`}
-          >
-            <Icon className="h-4 w-4" />
-          </button>
-        );
-      })}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="icon">
+          <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          <span className="sr-only">{siteCopy.theme.toggle}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme("light")}>
+          {siteCopy.theme.light}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("dark")}>
+          {siteCopy.theme.dark}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme("system")}>
+          {siteCopy.theme.system}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

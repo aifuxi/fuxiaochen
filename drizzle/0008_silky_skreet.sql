@@ -1,0 +1,1 @@
+ALTER TABLE "site_settings" ADD COLUMN "analytics" jsonb DEFAULT '{"googleAnalytics":{"enabled":false,"measurementId":""},"umami":{"enabled":false,"scriptUrl":"","websiteId":""}}'::jsonb NOT NULL;

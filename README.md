@@ -1,309 +1,225 @@
 # fuxiaochen
 
-基于 Next.js 16.1 (App Router) 构建的高性能个人博客，采用 Apple Human Interface Guidelines 设计规范。
-
-**本项目是一个个人学习技术和探索的项目，随时可能有 breaking change。不建议！！！不建议 ！！！不建议 ！！！用于生产环境，欢迎一起互相交流学习～**
-
-## 功能特性
-
-### 前台功能
-
-- **首页**：Apple 大胆风格设计，液态渐变背景
-- **博客展示**：文章列表、分类浏览、标签筛选
-- **关于页面**：个人介绍、技能展示
-- **更新日志**：时间线风格版本历史
-- **登录页面**：液态风格设计
-- **SEO 优化**：Sitemap、OpenGraph 支持
-
-### 后台管理
-
-- **仪表盘**：数据概览
-- **博客管理**：CRUD 操作、Markdown 编辑（ByteMD）
-- **分类管理**：分类创建与维护
-- **标签管理**：标签管理
-- **用户管理**：用户信息维护、角色分配
-- **更新日志**：版本记录管理
-- **图片上传**：OSS 云存储集成
-- **UI 预览**：组件预览页面
-
-### 技术亮点
-
-- **Apple Human Interface**：遵循 Apple 设计规范
-- **Server Actions**：接口优先设计模式
-- **Store 架构**：Interface-First 数据流
-- **权限管理**：基于角色的访问控制
-- **类型安全**：TypeScript + Zod 验证
-- **现代 UI**：Radix UI + Tailwind CSS 4
+基于 Next.js 16 App Router 的个人站点与后台管理系统。项目同时包含公开站点、认证页面、后台 CRUD、数据库配置化站点信息、内容导入脚本，以及 Docker standalone 部署配置。
 
 ## 技术栈
 
-| 类别     | 技术                                   |
-| -------- | -------------------------------------- |
-| 框架     | Next.js 16.1.1 (React 19.2.3)          |
-| 数据库   | MySQL/MariaDB (Prisma ORM)             |
-| 样式     | Tailwind CSS 4, Radix UI, Lucide React |
-| 编辑器   | ByteMD (Markdown)                      |
-| 状态管理 | SWR                                    |
-| 表单     | React Hook Form + Zod                  |
-| 认证     | Better Auth（GitHub OAuth + 邮箱密码） |
-| 包管理器 | pnpm                                   |
-| 部署     | PM2, Docker                            |
+- Framework: Next.js 16, React 19, TypeScript strict
+- UI: Tailwind CSS v4, shadcn/ui `new-york`, Radix UI, Lucide, Sonner, NiceModal
+- Data: PostgreSQL, Drizzle ORM, Drizzle Kit, Redis
+- Auth: Better Auth, GitHub OAuth
+- Content: ByteMD Markdown preview/rendering, Highlight.js
+- Tooling: Bun, Oxlint, Oxfmt, Husky, lint-staged, commitlint
+- Deploy: Next `output: "standalone"`, Docker, `next-sitemap`
+
+## 功能概览
+
+- 公开站点：主页、博客、项目、友链、更新日志、关于页。
+- 博客体验：分类/标签筛选、详情页、目录、代码高亮、阅读统计、点赞、相似文章、评论。
+- 后台管理：分析看板、文章、项目、分类、标签、友链、更新日志、评论、用户、站点设置。
+- 认证与权限：Better Auth 负责登录注册与会话，`proxy.ts` 保护 `/admin/**` 与 `/api/admin/**`。
+- 站点配置：站点名称、SEO、个人资料、社交链接、备案与分析配置存储在 `site_settings`，默认值在 `lib/settings/defaults.ts`。
+- 数据接口：公开接口位于 `/api/public/**`，后台接口位于 `/api/admin/**`，统一通过 `lib/server/**` 分层实现。
 
 ## 快速开始
 
 ### 环境要求
 
-- Node.js >= 20
-- MySQL/MariaDB 8.0+
-- pnpm 9.x
+- Node.js `>= 20`，推荐使用仓库 `.nvmrc` 中的 Node `24`
+- Bun `>= 1.3.11`
+- Docker / Docker Compose，用于本地 PostgreSQL 与 Redis
 
 ### 安装依赖
 
 ```bash
-pnpm install
+bun install
 ```
 
-### 环境配置
-
-参考 `.env.example` 文件配置环境变量。
+### 配置环境变量
 
 ```bash
 cp .env.example .env
 ```
 
-```shell
-# Database 必须配置
-DATABASE_HOST="localhost"
-DATABASE_PORT="3306"
-DATABASE_USER="root"
-DATABASE_PASSWORD="your_password"
-DATABASE_NAME="fuxiaochen_dev"
-DATABASE_URL="mysql://root:your_password@localhost:3306/fuxiaochen_dev"
+至少需要配置：
 
-# Better Auth 必须配置
-GITHUB_CLIENT_ID="your_github_client_id"
-GITHUB_CLIENT_SECRET="your_github_client_secret"
-BETTER_AUTH_SECRET="your_better_auth_secret"
-BETTER_AUTH_URL="http://localhost:3000"
-```
+- `DATABASE_URL`
+- `REDIS_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `NEXT_PUBLIC_SITE_URL`
+- GitHub OAuth 与 OSS 相关变量按需配置
 
-### 数据库初始化
+本地依赖服务默认可以用 Docker 启动：
 
 ```bash
-# 1. 生成 Prisma Client
-pnpm db:gen
+docker compose up -d postgresql redis
+```
 
-# 2. 推送 schema 变更到数据库
-pnpm db:push
+`.env.example` 中 PostgreSQL 端口为 `5400`，和 `docker-compose.yml` 的本地映射一致。密码、库名等值需要与本地 `.env` 保持一致。
 
-# 3. 填充种子数据(可选)
-pnpm db:seed
+### 初始化数据库
+
+```bash
+bun run db:migrate
+```
+
+如需导入 `data/` 下的博客、分类、标签示例内容：
+
+```bash
+bun run db:import:blog-content
 ```
 
 ### 启动开发服务器
 
 ```bash
-pnpm dev
+bun run dev
 ```
 
-访问 http://localhost:3000
+默认访问：
 
-## 开发命令
+- 公开站点：http://localhost:3000
+- 后台入口：http://localhost:3000/admin
 
-| 命令             | 说明                  |
-| ---------------- | --------------------- |
-| `pnpm dev`       | 启动开发服务器        |
-| `pnpm build`     | 构建生产版本          |
-| `pnpm start`     | 启动生产服务器        |
-| `pnpm lint`      | ESLint 检查           |
-| `pnpm lint:fix`  | ESLint 检查并自动修复 |
-| `pnpm format`    | Prettier 格式化代码   |
-| `pnpm db:gen`    | 生成 Prisma Client    |
-| `pnpm db:push`   | 推送 schema 变更      |
-| `pnpm db:studio` | 打开 Prisma Studio    |
-| `pnpm db:seed`   | 填充种子数据          |
-| `pnpm pm2:start` | PM2 启动应用          |
+## 常用命令
 
-## 项目结构
+| 命令                             | 说明                                           |
+| -------------------------------- | ---------------------------------------------- |
+| `bun run dev`                    | 启动 Next.js 开发服务器                        |
+| `bun run build`                  | 生产构建，并在 `postbuild` 生成 sitemap        |
+| `bun run start`                  | 启动生产构建产物                               |
+| `bun run build:analyzer`         | 启用 bundle analyzer 执行构建                  |
+| `bun run lint`                   | 运行 Oxlint                                    |
+| `bun run lint:fix`               | 运行 Oxlint 自动修复                           |
+| `bun run format`                 | 运行 Oxfmt 格式化                              |
+| `bun run format:check`           | 检查格式                                       |
+| `bun run db:generate`            | 根据 `lib/db/schema.ts` 生成 Drizzle migration |
+| `bun run db:migrate`             | 执行 Drizzle migration                         |
+| `bun run db:push`                | 直接推送 schema 到数据库                       |
+| `bun run db:reset`               | 清空已存在表数据，不重建 schema                |
+| `bun run db:studio`              | 打开 Drizzle Studio                            |
+| `bun run db:import:blog-content` | 导入 `data/` 下的博客内容                      |
+| `bun run commit`                 | 使用 Commitizen 生成提交信息                   |
 
-```
-fuxiaochen/
-├── app/                    # Next.js App Router
-│   ├── (site)/             # 前台页面组
-│   │   ├── blog/           # 博客相关
-│   │   ├── about/          # 关于页面
-│   │   ├── changelog/      # 更新日志
-│   │   ├── login/          # 登录页面
-│   │   └── ui-preview/     # UI 组件预览
-│   ├── (admin)/            # 后台管理组
-│   │   ├── admin/          # 管理功能
-│   │   │   ├── blogs/      # 博客管理
-│   │   │   ├── categories/ # 分类管理
-│   │   │   ├── tags/       # 标签管理
-│   │   │   ├── users/      # 用户管理
-│   │   │   └── changelogs/ # 更新日志管理
-│   ├── actions/            # Server Actions
-│   └── api/                # API 路由
-├── components/             # 组件库
-│   ├── ui/                 # 基础 UI 组件（Apple Human Interface）
-│   ├── admin/              # 后台业务组件
-│   ├── blog/               # 博客业务组件
-│   └── layout/             # 布局组件（header, footer）
-├── stores/                 # Store 实现 (Interface-First)
-│   └── */                  # 各模块 Store
-│       ├── interface.ts    # 接口定义
-│       └── store.ts        # 实现代码
-├── types/                  # TypeScript 类型定义
-├── hooks/                  # 自定义 Hooks
-├── lib/                    # 核心工具库
-├── styles/                 # 全局样式
-├── prisma/                 # 数据库 Schema
-└── docs/                   # 项目文档
+## 目录结构
+
+```text
+app/
+  (site)/             公开站点页面
+  (auth)/             登录、注册页面
+  (admin)/admin/      后台管理页面
+  api/                Route Handlers
+components/           业务组件与 shadcn/ui 组件
+constants/            路由、展示文案、基础信息常量
+data/                 内容导入用示例数据
+drizzle/              Drizzle migration
+hooks/                React hooks
+lib/
+  api/                前端 API fetcher
+  db/                 Drizzle schema 与数据库连接
+  server/             服务端 dto/handler/service/repository 分层
+  settings/           站点配置类型与默认值
+scripts/              数据库辅助脚本
+public/               静态资源
 ```
 
-## 架构设计
+## 数据与 API 约定
 
-### 数据流架构
+服务端资源通常按以下结构组织：
 
-```
-Client Component
-    ↓
-Server Action ('use server')
-    ↓
-Store Interface (stores/*/interface.ts)
-    ↓
-Store Implementation (stores/*/store.ts)
-    ↓
-Prisma ORM
-    ↓
-MySQL/MariaDB
+```text
+lib/server/<resource>/
+  dto.ts
+  handler.ts
+  service.ts
+  repository.ts
+  mappers.ts
 ```
 
-### 权限管理
+- `dto` 使用 Zod 校验输入。
+- `handler` 解析请求并返回统一 API envelope。
+- `service` 承载业务规则和错误归一化。
+- `repository` 承载 Drizzle 查询。
+- `mappers` 将数据库行、聚合结果或第三方返回值归一化成 API DTO。
 
-- **角色定义**：`role = 1` 管理员，`role = 2` 普通用户
-- **权限守卫**：使用 `checkAdmin()` 保护敏感操作
-- **自动提权**：首个注册用户自动获得管理员权限
+前端请求优先复用 `lib/api/fetcher.ts` 中的 `apiRequest`、`fetchApiData` 和 `buildApiUrl`。通用错误提示通过客户端事件总线集中分发，需要页面自行展示错误状态时可关闭 `toastOnError`。
 
-### Server Action 设计规范
+## 数据库
 
-项目采用 **Interface-First** 模式：
+Schema 唯一来源是 `lib/db/schema.ts`，migration 输出到 `drizzle/`。主要业务表包括：
 
-1. **Interface** (`stores/*/interface.ts`)：定义 Store 接口
-2. **Implementation** (`stores/*/store.ts`)：实现业务逻辑
-3. **Action** (`app/actions/*.ts`)：统一错误处理、缓存更新
+- `blogs`, `categories`, `tags`, `blog_tags`
+- `blog_daily_stats`
+- `projects`, `friends`, `changelogs`
+- `comments`, `notifications`
+- `site_settings`
+- Better Auth 相关的 `users`, `sessions`, `accounts`, `verifications`
 
-## 代码规范
-
-### 命名约定
-
-| 类型      | 规则           | 示例            |
-| --------- | -------------- | --------------- |
-| 文件      | Kebab Case     | `blog-list.tsx` |
-| 组件      | Pascal Case    | `BlogList`      |
-| 变量/函数 | lowerCamelCase | `fetchBlogData` |
-| 类型      | Pascal Case    | `IBlogStore`    |
-
-### 交互组件规范 (NiceModal)
-
-Dialog、Alert、Drawer 组件必须统一通过 NiceModal 管理：
-
-```tsx
-// 定义组件
-export const ExampleDialog = NiceModal.create(({ data, onSuccess }) => {
-  const modal = NiceModal.useModal();
-
-  return (
-    <Dialog open={modal.visible} onOpenChange={modal.remove}>
-      <DialogContent>
-        <Button onClick={() => modal.remove()}>取消</Button>
-      </DialogContent>
-    </Dialog>
-  );
-});
-
-// 使用组件
-NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
-```
-
-## 设计系统
-
-项目遵循 **Apple Human Interface Guidelines** 设计规范：
-
-### 配色方案
-
-**Light Mode**:
-- 背景色: `#ffffff`
-- 强调色: `#0071e3`
-- 文字色: `#1d1d1f`
-
-**Dark Mode**:
-- 背景色: `#000000`
-- 强调色: `#0a84ff`
-- 文字色: `#f5f5f7`
-
-### 圆角系统
-
-| 变量 | 值 |
-|------|-----|
-| `radius-sm` | 8px |
-| `radius-md` | 12px |
-| `radius-lg` | 16px |
-| `radius-xl` | 20px |
-
-详细设计规范请参考 [CLAUDE.md](./CLAUDE.md)。
-
-## 部署
-
-### Docker 部署
+修改 schema 后应执行：
 
 ```bash
-docker build -t fuxiaochen .
-docker run -p 3000:3000 fuxiaochen
+bun run db:generate
+bun run db:migrate
 ```
 
-### PM2 部署
+`bun run db:reset` 只清空当前 schema 下已经存在的表数据。如果目标数据库还没有建表，先运行 migration 或 `db:push`。
+
+## 质量检查
+
+提交前至少运行：
 
 ```bash
-pnpm build
-pnpm pm2:start
+bun run lint
+bun run format:check
 ```
 
-## 贡献指南
+涉及路由、构建配置、数据库 schema、服务端 API 或生产行为时，额外运行：
 
-1. Fork 本仓库
-2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 提交变更 (`git commit -m 'feat: add amazing feature'`)
-4. 推送分支 (`git push origin feature/amazing-feature`)
-5. 创建 Pull Request
+```bash
+bun run build
+```
 
-### Commit 规范
+仓库当前没有 `test` 脚本。Husky 会在提交时运行 lint-staged 与 commitlint，但本地钩子不应替代手动验证。
 
-遵循 Conventional Commits：
+## Docker
 
-- `feat`: 新功能
-- `fix`: Bug 修复
-- `docs`: 文档更新
-- `style`: 代码格式
-- `refactor`: 重构
-- `perf`: 性能优化
-- `test`: 测试
-- `chore`: 构建/工具
+构建镜像：
 
-## Star History
+```bash
+make build_image
+```
 
-<a href="https://www.star-history.com/#aifuxi/fuxiaochen&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=aifuxi/fuxiaochen&type=date&legend=top-left" />
- </picture>
-</a>
+或直接：
 
-## 许可证
+```bash
+docker build -t fuxiaochen:latest .
+```
 
-MIT License
+运行依赖服务与应用容器：
 
-## 作者
+```bash
+docker compose up -d
+```
 
-[fuxiaochen](https://github.com/aifuxi)
+Docker 构建与运行需要 `.env` 中提供数据库、Redis、Better Auth、OSS、GitHub OAuth、站点 URL 等环境变量。生产构建输出使用 Next standalone，运行入口为 `node server.js`。
+
+## 提交规范
+
+提交信息遵循 Conventional Commits，例如：
+
+```text
+feat(blog): improve list filtering
+fix(api): handle invalid payload
+```
+
+可以使用：
+
+```bash
+bun run commit
+```
+
+PR 描述建议包含变更摘要、验证方式、UI 截图或录屏，以及 schema、认证或环境变量相关的升级说明。
+
+## License
+
+MIT

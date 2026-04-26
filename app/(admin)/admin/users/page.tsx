@@ -1,36 +1,20 @@
-import { Suspense } from "react";
-import { headers } from "next/headers";
-import { AppleCard } from "@/components/ui/glass-card";
-import { auth } from "@/lib/auth";
-import UserManagementPage from "./user-list";
+import { AdminAccessDenied } from "@/components/admin/admin-access-denied";
+import { AdminUsersPage } from "@/components/admin/admin-users-page";
 
-export const dynamic = "force-dynamic";
+import {
+  getSessionUserRole,
+  getSessionUserId,
+  requireServerSession,
+} from "@/lib/auth-session";
 
-export default async function Page() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+export default async function AdminUsersRoutePage() {
+  const session = await requireServerSession();
 
-  if (session?.user?.role !== 1) {
+  if (getSessionUserRole(session) !== "admin") {
     return (
-      <div className="flex h-[calc(100vh-10rem)] items-center justify-center">
-        <AppleCard className="flex flex-col items-center space-y-4 p-12 text-center">
-          <h2 className="text-3xl font-bold tracking-widest text-red-500 uppercase">
-            拒绝访问
-          </h2>
-          <p className="text-text-secondary">
-            没有权限查看此页面
-          </p>
-        </AppleCard>
-      </div>
+      <AdminAccessDenied description="你的账号已登录，但只有管理员可以管理用户。" />
     );
   }
 
-  return (
-    <Suspense
-      fallback={<div className="text-text">Loading...</div>}
-    >
-      <UserManagementPage />
-    </Suspense>
-  );
+  return <AdminUsersPage currentAdminId={getSessionUserId(session)} />;
 }
