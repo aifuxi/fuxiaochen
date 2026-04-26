@@ -57,8 +57,11 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
   const copy = FORM_COPY[mode];
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [website, setWebsite] = useState("");
+  const [startedAt, setStartedAt] = useState(() => Date.now());
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const resetSubmissionClock = () => setStartedAt(Date.now());
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,14 +96,22 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
 
     try {
       if (mode === "register") {
-        const { error: signUpError } = await authClient.signUp.email({
+        const signUpPayload = {
           email,
           password,
           name,
-        });
+          website,
+          startedAt,
+        } as Parameters<typeof authClient.signUp.email>[0] & {
+          startedAt: number;
+          website: string;
+        };
+        const { error: signUpError } =
+          await authClient.signUp.email(signUpPayload);
 
         if (signUpError) {
           setError(signUpError.message ?? "注册失败，请稍后再试。");
+          resetSubmissionClock();
           return;
         }
       } else {
@@ -119,6 +130,9 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
       router.refresh();
     } finally {
       setIsEmailLoading(false);
+      if (mode === "register") {
+        setWebsite("");
+      }
     }
   }
 
@@ -163,6 +177,21 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
                 autoComplete="nickname"
                 disabled={isEmailLoading || isGithubLoading}
                 required
+              />
+            </div>
+          )}
+
+          {mode === "register" && (
+            <div className="hidden" aria-hidden="true">
+              <Label htmlFor="register-website">Website</Label>
+              <input
+                id="register-website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(event) => setWebsite(event.target.value)}
               />
             </div>
           )}
