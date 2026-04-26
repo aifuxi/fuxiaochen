@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
+
 import { AdminLayout } from "@/components/admin/admin-layout";
 
 import { getSessionUserRole, requireServerSession } from "@/lib/auth-session";
+
+export const metadata: Metadata = {
+  robots: {
+    follow: false,
+    index: false,
+  },
+};
 
 export default async function AdminRouteLayout({
   children,

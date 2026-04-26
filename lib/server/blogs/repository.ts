@@ -32,6 +32,7 @@ import type {
   BlogCategorySummary,
   BlogReadModel,
   BlogRepository,
+  BlogSitemapEntry,
   BlogTagSummary,
 } from "./service";
 
@@ -340,6 +341,24 @@ export const blogRepository: BlogRepository = {
       items: await attachRelations(rows),
       total,
     };
+  },
+  async listPublicSitemapEntries(): Promise<BlogSitemapEntry[]> {
+    return db
+      .select({
+        slug: blogs.slug,
+        createdAt: blogs.createdAt,
+        updatedAt: blogs.updatedAt,
+        publishedAt: blogs.publishedAt,
+      })
+      .from(blogs)
+      .where(eq(blogs.published, true))
+      .orderBy(
+        sql`case when ${blogs.publishedAt} is null then 1 else 0 end`,
+        desc(blogs.publishedAt),
+        desc(blogs.createdAt),
+        desc(blogs.updatedAt),
+        desc(blogs.id),
+      );
   },
   async findById(id) {
     const rows = await db
