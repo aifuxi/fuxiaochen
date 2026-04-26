@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "bytemd/dist/index.css";
 @import "highlight.js/styles/base16/black-metal.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -194,6 +195,34 @@
 }
 
 @layer components {
+  .markdown-editor .bytemd {
+    height: 100%;
+    border: 0;
+    border-top: 1px solid var(--border);
+    background: var(--background);
+  }
+
+  .markdown-editor .bytemd-toolbar {
+    border-top: 0;
+    background: color-mix(in oklch, var(--muted) 30%, transparent);
+  }
+
+  .markdown-editor .bytemd-body {
+    height: calc(100% - 37px);
+  }
+
+  .markdown-editor .bytemd-editor,
+  .markdown-editor .bytemd-preview {
+    background: var(--background);
+  }
+
+  .markdown-editor .CodeMirror {
+    height: 100%;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
   :where(.prose, .prose-custom) {
     --prose-code-bg: color-mix(in oklch, var(--muted) 78%, var(--background));
     --prose-code-block-bg: oklch(0 0 0);

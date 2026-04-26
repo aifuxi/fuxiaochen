@@ -174,7 +174,7 @@ function codeCopyPlugin(): BytemdPlugin {
   };
 }
 
-export const markdownPlugins: BytemdPlugin[] = [
+export const markdownEditorPlugins: BytemdPlugin[] = [
   breaks(),
   frontmatter(),
 
@@ -195,6 +195,10 @@ export const markdownPlugins: BytemdPlugin[] = [
     },
   }),
   mediumZoom(),
+];
+
+export const markdownPlugins: BytemdPlugin[] = [
+  ...markdownEditorPlugins,
   headingIdPlugin(),
   codeCopyPlugin(),
 ];

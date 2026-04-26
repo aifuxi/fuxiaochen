@@ -1,31 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import {
-  ArrowLeft,
-  Bold,
-  Code,
-  Eye,
-  Heading2,
-  Heading3,
-  Image as ImageIcon,
-  Italic,
-  Link2,
-  List,
-  ListOrdered,
-  Minus,
-  Plus,
-  Quote,
-  Save,
-  Send,
-  Upload,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Plus, Save, Send, Upload, X } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -41,8 +22,9 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+
+import { MarkdownEditor } from "@/components/markdown-editor";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
@@ -51,23 +33,6 @@ import type { AdminTag } from "@/lib/server/tags/mappers";
 import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
-
-const TOOLBAR_ACTIONS = [
-  { icon: Bold, label: "Bold", syntax: "**", wrap: true },
-  { icon: Italic, label: "Italic", syntax: "_", wrap: true },
-  { icon: Code, label: "Inline Code", syntax: "`", wrap: true },
-  { separator: true },
-  { icon: Heading2, label: "Heading 2", syntax: "## ", wrap: false },
-  { icon: Heading3, label: "Heading 3", syntax: "### ", wrap: false },
-  { separator: true },
-  { icon: List, label: "Bullet List", syntax: "- ", wrap: false },
-  { icon: ListOrdered, label: "Ordered List", syntax: "1. ", wrap: false },
-  { icon: Quote, label: "Blockquote", syntax: "> ", wrap: false },
-  { separator: true },
-  { icon: Link2, label: "Link", syntax: "[](url)", wrap: false },
-  { icon: ImageIcon, label: "Image", syntax: "![alt](url)", wrap: false },
-  { icon: Minus, label: "Divider", syntax: "\n---\n", wrap: false },
-];
 
 type AdminPostEditorProps =
   | {
@@ -96,10 +61,8 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   const [tagInput, setTagInput] = useState("");
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
-  const [activeTab, setActiveTab] = useState("write");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hydratedPostId, setHydratedPostId] = useState<string | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const editPostUrl =
     props.mode === "edit"
@@ -200,70 +163,6 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
     }
   };
 
-  const applyToolbarAction = (action: (typeof TOOLBAR_ACTIONS)[number]) => {
-    if ("separator" in action) return;
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = content.slice(start, end);
-
-    let newContent = content;
-    let newCursorPos = start;
-
-    if (action.wrap) {
-      const wrapped = `${action.syntax}${selected || "text"}${action.syntax}`;
-      newContent = content.slice(0, start) + wrapped + content.slice(end);
-      newCursorPos = selected
-        ? start + wrapped.length
-        : start + action.syntax.length;
-    } else {
-      newContent =
-        content.slice(0, start) + action.syntax + selected + content.slice(end);
-      newCursorPos = start + action.syntax.length + selected.length;
-    }
-
-    setContent(newContent);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(newCursorPos, newCursorPos);
-    }, 0);
-  };
-
-  const renderPreview = (markdown: string) => {
-    return markdown
-      .replace(
-        /^### (.+)$/gm,
-        '<h3 class="text-lg font-semibold mt-6 mb-2">$1</h3>',
-      )
-      .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold mt-8 mb-3">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>')
-      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-      .replace(/_(.+?)_/g, "<em>$1</em>")
-      .replace(
-        /`(.+?)`/g,
-        '<code class="bg-muted px-1 py-0.5 rounded text-sm font-mono">$1</code>',
-      )
-      .replace(
-        /^> (.+)$/gm,
-        '<blockquote class="border-l-4 border-border pl-4 text-muted-foreground italic my-4">$1</blockquote>',
-      )
-      .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc">$1</li>')
-      .replace(/^\d+\. (.+)$/gm, '<li class="ml-4 list-decimal">$1</li>')
-      .replace(/^---$/gm, '<hr class="border-border my-6" />')
-      .replace(
-        /\[(.+?)\]\((.+?)\)/g,
-        '<a href="$2" class="text-primary underline">$1</a>',
-      )
-      .replace(
-        /!\[(.+?)\]\((.+?)\)/g,
-        '<img src="$2" alt="$1" class="rounded-lg my-4 max-w-full" />',
-      )
-      .replace(/\n\n/g, "</p><p class='mb-4'>")
-      .replace(/\n/g, "<br />");
-  };
-
   const submitPost = async (shouldPublish: boolean) => {
     if (!title || !description || !content || !categoryId) {
       return;
@@ -356,10 +255,6 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
           <span className="text-xs text-muted-foreground">
             {wordCount} words · {readTime} min read
           </span>
-          <Button variant="outline" size="sm">
-            <Eye className="mr-1.5 h-4 w-4" />
-            Preview
-          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -400,62 +295,12 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-0.5 border-b border-border bg-muted/30 px-4 py-2">
-            {TOOLBAR_ACTIONS.map((action, index) => {
-              if ("separator" in action) {
-                return (
-                  <Separator
-                    key={`sep-${index}`}
-                    orientation="vertical"
-                    className="mx-1 h-5"
-                  />
-                );
-              }
-              return (
-                <button
-                  key={action.label}
-                  title={action.label}
-                  onClick={() => applyToolbarAction(action)}
-                  className="flex h-7 w-7 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                >
-                  <action.icon className="h-3.5 w-3.5" />
-                </button>
-              );
-            })}
-            <div className="ml-auto flex items-center">
-              <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="h-7">
-                  <TabsTrigger value="write" className="h-5 px-2.5 text-xs">
-                    Write
-                  </TabsTrigger>
-                  <TabsTrigger value="preview" className="h-5 px-2.5 text-xs">
-                    Preview
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-auto">
-            {activeTab === "write" ? (
-              <textarea
-                ref={textareaRef}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Start writing your post in Markdown..."
-                className="h-full w-full resize-none bg-transparent px-8 py-6 font-mono text-sm leading-relaxed placeholder:text-muted-foreground/40 focus:outline-none"
-              />
-            ) : (
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none px-8 py-6 text-sm leading-relaxed"
-                dangerouslySetInnerHTML={{
-                  __html: content
-                    ? `<p class='mb-4'>${renderPreview(content)}</p>`
-                    : '<p class="text-muted-foreground">Nothing to preview yet.</p>',
-                }}
-              />
-            )}
-          </div>
+          <MarkdownEditor
+            className="flex-1"
+            value={content}
+            onChange={setContent}
+            placeholder="Start writing your post in Markdown..."
+          />
         </div>
 
         <aside className="flex w-72 shrink-0 flex-col overflow-y-auto border-l border-border bg-muted/20">
