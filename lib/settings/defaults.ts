@@ -1,4 +1,5 @@
 import type { SiteSettings } from "@/lib/settings/types";
+import { getPublicSiteUrl } from "@/lib/site-url.cjs";
 
 import {
   BEI_AN_LINK,
@@ -17,7 +18,7 @@ import { siteCopy } from "@/constants/site-copy";
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   general: {
     siteName: WEBSITE,
-    siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://fuxiaochen.com",
+    siteUrl: getPublicSiteUrl(),
     siteDescription: siteCopy.metadata.root.description,
     logoUrl: "/logo.svg",
     avatarUrl: "/avatar.avif",

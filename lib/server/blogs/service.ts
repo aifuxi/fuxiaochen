@@ -25,6 +25,11 @@ export type BlogReadModel = Blog & {
   tags: BlogTagSummary[];
 };
 
+export type BlogSitemapEntry = Pick<
+  Blog,
+  "slug" | "createdAt" | "updatedAt" | "publishedAt"
+>;
+
 export interface BlogRepository {
   listAdmin(query: AdminBlogListQuery): Promise<{
     items: BlogReadModel[];
@@ -34,6 +39,7 @@ export interface BlogRepository {
     items: BlogReadModel[];
     total: number;
   }>;
+  listPublicSitemapEntries(): Promise<BlogSitemapEntry[]>;
   findById(id: string): Promise<BlogReadModel | null>;
   findBySlug(slug: string): Promise<BlogReadModel | null>;
   listSimilar(
@@ -88,6 +94,7 @@ export interface BlogService {
     items: BlogReadModel[];
     total: number;
   }>;
+  listPublicBlogSitemapEntries(): Promise<BlogSitemapEntry[]>;
   getAdminBlog(id: string): Promise<BlogReadModel>;
   getAdminBlogBySlug(slug: string): Promise<BlogReadModel>;
   getPublicBlogBySlug(slug: string): Promise<BlogReadModel>;
@@ -244,6 +251,9 @@ export function createBlogService({
     },
     listPublicBlogs(query) {
       return repository.listPublic(query);
+    },
+    listPublicBlogSitemapEntries() {
+      return repository.listPublicSitemapEntries();
     },
     async getAdminBlog(id) {
       const blog = await repository.findById(id);
