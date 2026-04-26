@@ -34,6 +34,8 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
   const [replyContent, setReplyContent] = useState("");
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replySubmittedId, setReplySubmittedId] = useState<string | null>(null);
+  const [website, setWebsite] = useState("");
+  const [startedAt, setStartedAt] = useState(() => Date.now());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [replySubmittingId, setReplySubmittingId] = useState<string | null>(
     null,
@@ -72,6 +74,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
 
   const comments = data?.items ?? [];
   const visibleCommentCount = countComments(comments);
+  const resetSubmissionClock = () => setStartedAt(Date.now());
 
   const submitComment = async ({
     commentContent,
@@ -91,6 +94,8 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
         email: email.trim(),
         content: commentContent.trim(),
         parentId,
+        website,
+        startedAt,
       }),
       toastOnError: false,
     });
@@ -123,6 +128,8 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
 
       setSubmitted(true);
       setContent("");
+      setWebsite("");
+      resetSubmissionClock();
       await mutate();
       window.setTimeout(() => setSubmitted(false), 5000);
     } catch (error) {
@@ -154,6 +161,8 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
       });
 
       setReplyContent("");
+      setWebsite("");
+      resetSubmissionClock();
       setReplyingToId(null);
       setReplySubmittedId(parentId);
       await mutate();
@@ -200,6 +209,7 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
               onEmailChange={handleEmailChange}
               onNameChange={handleNameChange}
             />
+            <CommentHoneypotField value={website} onChange={setWebsite} />
             <div>
               <label
                 htmlFor="comment"
@@ -255,12 +265,41 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
               replyingToId={replyingToId}
               replySubmittedId={replySubmittedId}
               replySubmittingId={replySubmittingId}
+              website={website}
+              setWebsite={setWebsite}
               setReplyContent={setReplyContent}
             />
           ))
         )}
       </div>
     </section>
+  );
+}
+
+function CommentHoneypotField({
+  onChange,
+  prefix = "comment",
+  value,
+}: {
+  onChange: (value: string) => void;
+  prefix?: string;
+  value: string;
+}) {
+  const id = `${prefix}-website`;
+
+  return (
+    <div className="hidden" aria-hidden="true">
+      <label htmlFor={id}>Website</label>
+      <input
+        id={id}
+        name="website"
+        type="text"
+        tabIndex={-1}
+        autoComplete="off"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
   );
 }
 
@@ -331,6 +370,8 @@ function CommentCard({
   replyingToId,
   replySubmittedId,
   replySubmittingId,
+  website,
+  setWebsite,
   setReplyContent,
 }: {
   comment: PublicComment;
@@ -349,6 +390,8 @@ function CommentCard({
   replyingToId: string | null;
   replySubmittedId: string | null;
   replySubmittingId: string | null;
+  website: string;
+  setWebsite: (value: string) => void;
   setReplyContent: (value: string) => void;
 }) {
   const canReply = depth < MAX_COMMENT_DEPTH;
@@ -417,6 +460,11 @@ function CommentCard({
               onNameChange={onNameChange}
               prefix={`reply-${comment.id}`}
             />
+            <CommentHoneypotField
+              prefix={`reply-${comment.id}`}
+              value={website}
+              onChange={setWebsite}
+            />
             <div>
               <label
                 htmlFor={`reply-content-${comment.id}`}
@@ -467,6 +515,8 @@ function CommentCard({
                 replyingToId={replyingToId}
                 replySubmittedId={replySubmittedId}
                 replySubmittingId={replySubmittingId}
+                website={website}
+                setWebsite={setWebsite}
                 setReplyContent={setReplyContent}
               />
             ))}
