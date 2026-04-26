@@ -8,13 +8,14 @@ import { createSuccessResponse } from "@/lib/server/http/response";
 import {
   adminCommentIdParamsSchema,
   adminCommentListQuerySchema,
+  adminCommentReplySchema,
   adminCommentUpdateSchema,
   publicCommentCreateSchema,
   publicCommentListQuerySchema,
 } from "./dto";
 import {
   toAdminComment,
-  toPublicComment,
+  toPublicCommentTree,
   toPublicCommentCreateResult,
 } from "./mappers";
 import {
@@ -57,7 +58,7 @@ export function createPublicCommentHandlers({
         const items = await service.listPublicComments(query);
 
         return createSuccessResponse({
-          items: items.map(toPublicComment),
+          items: toPublicCommentTree(items),
         });
       } catch (error) {
         return toErrorResponse(error);
@@ -116,6 +117,22 @@ export function createAdminCommentHandlers({
         return toErrorResponse(error);
       }
     },
+    async handleCreateComment(request: Request) {
+      try {
+        const session = await requireAdminRequestSession(request);
+
+        const body = adminCommentReplySchema.parse(await toJsonBody(request));
+        const comment = await service.createAdminCommentReply(body, {
+          email: session.user.email,
+          image: session.user.image,
+          name: session.user.name,
+        });
+
+        return createSuccessResponse(toAdminComment(comment), undefined, 201);
+      } catch (error) {
+        return toErrorResponse(error);
+      }
+    },
     async handleUpdateComment(
       request: Request,
       params: Promise<{ id: string }>,
@@ -159,6 +176,8 @@ export const handlePublicCreateComment =
   defaultPublicHandlers.handleCreateComment;
 
 export const handleAdminListComments = defaultAdminHandlers.handleListComments;
+export const handleAdminCreateComment =
+  defaultAdminHandlers.handleCreateComment;
 export const handleAdminUpdateComment =
   defaultAdminHandlers.handleUpdateComment;
 export const handleAdminDeleteComment =

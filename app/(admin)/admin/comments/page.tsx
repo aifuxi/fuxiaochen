@@ -12,6 +12,7 @@ import {
   ExternalLink,
   MessageSquare,
   MoreHorizontal,
+  Reply,
   Search,
   Trash2,
   User,
@@ -29,6 +30,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +61,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 
 import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminComment } from "@/lib/server/comments/mappers";
@@ -75,6 +85,9 @@ export default function AdminCommentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedComments, setSelectedComments] = useState<string[]>([]);
   const [isMutating, setIsMutating] = useState(false);
+  const [replyTarget, setReplyTarget] = useState<AdminComment | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [isReplySubmitting, setIsReplySubmitting] = useState(false);
 
   const commentsUrl = buildApiUrl("/api/admin/comments", {
     pageSize: 100,
@@ -168,6 +181,48 @@ export default function AdminCommentsPage() {
       // The global API error listener owns toast display.
     } finally {
       setIsMutating(false);
+    }
+  };
+
+  const openReplyDialog = (comment: AdminComment) => {
+    setReplyTarget(comment);
+    setReplyContent("");
+  };
+
+  const closeReplyDialog = (open: boolean) => {
+    if (open) {
+      return;
+    }
+
+    setReplyTarget(null);
+    setReplyContent("");
+  };
+
+  const createAdminReply = async () => {
+    if (!replyTarget || !replyContent.trim()) {
+      return;
+    }
+
+    setIsReplySubmitting(true);
+
+    try {
+      await apiRequest("/api/admin/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parentId: replyTarget.id,
+          content: replyContent.trim(),
+        }),
+      });
+      setReplyTarget(null);
+      setReplyContent("");
+      await mutate();
+    } catch {
+      // The global API error listener owns toast display.
+    } finally {
+      setIsReplySubmitting(false);
     }
   };
 
@@ -409,6 +464,12 @@ export default function AdminCommentsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem
+                              onClick={() => openReplyDialog(comment)}
+                            >
+                              <Reply className="mr-2 size-4" />
+                              回复
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
                               onClick={() =>
                                 updateCommentStatus([comment.id], "approved")
                               }
@@ -443,6 +504,56 @@ export default function AdminCommentsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={replyTarget !== null} onOpenChange={closeReplyDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>回复评论</DialogTitle>
+            <DialogDescription>
+              管理员回复会直接通过审核并显示在对应文章下。
+            </DialogDescription>
+          </DialogHeader>
+          {replyTarget ? (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <span className="font-medium text-foreground">
+                    {replyTarget.author}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {dateFormatter.format(new Date(replyTarget.createdAt))}
+                  </span>
+                </div>
+                <p className="line-clamp-3 text-sm text-muted-foreground">
+                  {replyTarget.content}
+                </p>
+              </div>
+              <Textarea
+                placeholder="写下你的回复..."
+                rows={5}
+                value={replyContent}
+                onChange={(event) => setReplyContent(event.target.value)}
+              />
+            </div>
+          ) : null}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => closeReplyDialog(false)}
+            >
+              取消
+            </Button>
+            <Button
+              type="button"
+              disabled={isReplySubmitting || !replyContent.trim()}
+              onClick={createAdminReply}
+            >
+              {isReplySubmitting ? "提交中..." : "发布回复"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
