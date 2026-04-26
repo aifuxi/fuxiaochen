@@ -264,7 +264,7 @@ export default function AdminPostsPage() {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/admin/posts/${post.slug}/edit`}>
+                        <Link href={routes.admin.postEdit(post.slug)}>
                           <Pencil className="mr-2 h-4 w-4" />
                           Edit
                         </Link>

@@ -67,6 +67,10 @@ export const adminBlogIdParamsSchema = z.object({
   id: nonEmptyString,
 });
 
+export const adminBlogSlugParamsSchema = z.object({
+  slug: nonEmptyString,
+});
+
 export const publicBlogSlugParamsSchema = z.object({
   slug: nonEmptyString,
 });
@@ -101,6 +105,7 @@ export const publicSimilarBlogQuerySchema = z.object({
 export type AdminBlogCreateInput = z.infer<typeof adminBlogCreateSchema>;
 export type AdminBlogUpdateInput = z.infer<typeof adminBlogUpdateSchema>;
 export type AdminBlogIdParams = z.infer<typeof adminBlogIdParamsSchema>;
+export type AdminBlogSlugParams = z.infer<typeof adminBlogSlugParamsSchema>;
 export type PublicBlogSlugParams = z.infer<typeof publicBlogSlugParamsSchema>;
 export type AdminBlogListQuery = z.infer<typeof adminBlogListQuerySchema>;
 export type PublicBlogListQuery = z.infer<typeof publicBlogListQuerySchema>;

@@ -10,7 +10,7 @@ import { computeReadTimeMinutes, slugify } from "@/lib/server/content-utils";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 
-import { blogRepository, type BlogRepository } from "./repository";
+import { blogRepository } from "./repository";
 
 export type BlogCategorySummary = Pick<Category, "id" | "name" | "slug">;
 export type BlogTagSummary = Pick<Tag, "id" | "name" | "slug">;
@@ -83,6 +83,7 @@ export interface BlogService {
     total: number;
   }>;
   getAdminBlog(id: string): Promise<BlogReadModel>;
+  getAdminBlogBySlug(slug: string): Promise<BlogReadModel>;
   getPublicBlogBySlug(slug: string): Promise<BlogReadModel>;
   getPublicSimilarBlogs(slug: string, limit: number): Promise<BlogReadModel[]>;
   createBlog(input: AdminBlogCreateInput): Promise<BlogReadModel>;
@@ -241,6 +242,15 @@ export function createBlogService({
 
       if (!blog) {
         throw createNotFoundError(id);
+      }
+
+      return blog;
+    },
+    async getAdminBlogBySlug(slug) {
+      const blog = await repository.findBySlug(slug);
+
+      if (!blog) {
+        throw createNotFoundError(slug);
       }
 
       return blog;
