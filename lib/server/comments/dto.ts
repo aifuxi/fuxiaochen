@@ -33,6 +33,8 @@ export const publicCommentCreateSchema = z.object({
   email: z.string().trim().email(),
   content: nonEmptyString.max(5000),
   parentId: nonEmptyString.optional(),
+  website: z.string().trim().max(200).optional(),
+  startedAt: z.coerce.number().int().positive(),
 });
 
 export const adminCommentListQuerySchema = z.object({

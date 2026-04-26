@@ -14,6 +14,11 @@ import {
   publicCommentListQuerySchema,
 } from "./dto";
 import {
+  applyCommentGuardCookie,
+  commentGuard,
+  type CommentGuard,
+} from "./guard";
+import {
   toAdminComment,
   toPublicCommentTree,
   toPublicCommentCreateResult,
@@ -42,11 +47,13 @@ const toJsonBody = async (request: Request) => {
 type CommentHandlerDeps = {
   service?: CommentService;
   serviceDeps?: CommentServiceDeps;
+  guard?: CommentGuard;
 };
 
 export function createPublicCommentHandlers({
   serviceDeps,
   service = createCommentService(serviceDeps),
+  guard = commentGuard,
 }: CommentHandlerDeps = {}) {
   return {
     async handleListComments(request: Request) {
@@ -67,12 +74,16 @@ export function createPublicCommentHandlers({
     async handleCreateComment(request: Request) {
       try {
         const body = publicCommentCreateSchema.parse(await toJsonBody(request));
+        const guardResult = await guard.validateCreateRequest(request, body);
         const comment = await service.createPublicComment(body);
 
-        return createSuccessResponse(
-          toPublicCommentCreateResult(comment),
-          undefined,
-          201,
+        return applyCommentGuardCookie(
+          createSuccessResponse(
+            toPublicCommentCreateResult(comment),
+            undefined,
+            201,
+          ),
+          guardResult,
         );
       } catch (error) {
         return toErrorResponse(error);
