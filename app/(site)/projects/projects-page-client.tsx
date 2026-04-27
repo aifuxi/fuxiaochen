@@ -88,7 +88,6 @@ export function ProjectsPageClient({
                         src={project.image}
                         alt={project.title}
                         fill
-                        loading="eager"
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     </div>

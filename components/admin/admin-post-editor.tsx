@@ -376,7 +376,6 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
                   alt="封面图"
                   width={320}
                   height={180}
-                  loading="eager"
                   className="aspect-video w-full object-cover"
                 />
                 <button
