@@ -1,4 +1,4 @@
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 
 import {
   requireAdminRequestSession,
@@ -12,6 +12,7 @@ import { createSuccessResponse } from "@/lib/server/http/response";
 import { adminSiteSettingsUpdateSchema } from "./dto";
 import { toAdminSiteSettings, toPublicSiteSettings } from "./mappers";
 import {
+  SITE_SETTINGS_CACHE_TAG,
   createSettingsService,
   type SettingsService,
   type SettingsServiceDeps,
@@ -39,6 +40,7 @@ const toJsonBody = async (request: Request) => {
 };
 
 const revalidateSiteSettingsPaths = () => {
+  revalidateTag(SITE_SETTINGS_CACHE_TAG, "max");
   revalidatePath("/", "layout");
 
   for (const path of revalidatedPaths) {
