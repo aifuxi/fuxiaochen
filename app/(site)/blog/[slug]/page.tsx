@@ -1,5 +1,5 @@
 import { blogService } from "@/lib/server/blogs/service";
-import { settingsService } from "@/lib/server/settings/service";
+import { getCachedSiteSettings } from "@/lib/server/settings/service";
 
 import { BlogPostClient } from "./blog-post-client";
 
@@ -9,7 +9,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const { settings } = await settingsService.getSettings();
+  const { settings } = await getCachedSiteSettings();
 
   try {
     const blog = await blogService.getPublicBlogBySlug(slug);

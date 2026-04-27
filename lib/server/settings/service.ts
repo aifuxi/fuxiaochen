@@ -1,3 +1,5 @@
+import { unstable_cache } from "next/cache";
+
 import type { SiteSettingsRow } from "@/lib/db/schema";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings/defaults";
 import type { SiteSettings } from "@/lib/settings/types";
@@ -8,6 +10,8 @@ import {
   type AdminSiteSettingsUpdateInput,
 } from "./dto";
 import { settingsRepository, type SettingsRepository } from "./repository";
+
+export const SITE_SETTINGS_CACHE_TAG = "site-settings";
 
 export interface SettingsService {
   getSettings(): Promise<{
@@ -129,3 +133,11 @@ export function createSettingsService({
 }
 
 export const settingsService = createSettingsService();
+
+export const getCachedSiteSettings = unstable_cache(
+  () => settingsService.getSettings(),
+  [SITE_SETTINGS_CACHE_TAG],
+  {
+    tags: [SITE_SETTINGS_CACHE_TAG],
+  },
+);

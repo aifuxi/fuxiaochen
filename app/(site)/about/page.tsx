@@ -15,19 +15,19 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import { settingsService } from "@/lib/server/settings/service";
+import { getCachedSiteSettings } from "@/lib/server/settings/service";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { settings } = await settingsService.getSettings();
+  const { settings } = await getCachedSiteSettings();
 
   return settings.seo.pages.about;
 }
 
 export default async function AboutPage() {
-  const { settings } = await settingsService.getSettings();
+  const { settings } = await getCachedSiteSettings();
   const socialLinks = [
     { href: settings.social.githubUrl, label: "GitHub", icon: Github },
     { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
