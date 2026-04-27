@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 
+import NiceModal from "@ebay/nice-modal-react";
 import {
   AlertTriangle,
   Bug,
+  Loader2,
   Pencil,
   Plus,
   Sparkles,
@@ -29,12 +31,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -49,6 +52,56 @@ import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
 const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
   dateStyle: "medium",
 });
+
+type ChangelogFormState = {
+  version: string;
+  title: string;
+  type: AdminChangelog["type"];
+  description: string;
+  changes: string;
+};
+
+type ChangelogDialogProps = {
+  changelog?: AdminChangelog;
+  onSaved: () => Promise<unknown>;
+};
+
+const DEFAULT_CHANGELOG_FORM_STATE: ChangelogFormState = {
+  version: "",
+  title: "",
+  type: "feature",
+  description: "",
+  changes: "",
+};
+
+function getInitialChangelogFormState(
+  changelog?: AdminChangelog,
+): ChangelogFormState {
+  if (!changelog) {
+    return DEFAULT_CHANGELOG_FORM_STATE;
+  }
+
+  return {
+    version: changelog.version,
+    title: changelog.title,
+    type: changelog.type,
+    description: changelog.description,
+    changes: changelog.changes.join("\n"),
+  };
+}
+
+function toChangelogPayload(formData: ChangelogFormState) {
+  return {
+    version: formData.version.trim(),
+    title: formData.title.trim(),
+    type: formData.type,
+    description: formData.description.trim(),
+    changes: formData.changes
+      .split("\n")
+      .map((value) => value.trim())
+      .filter(Boolean),
+  };
+}
 
 function getTypeIcon(type: AdminChangelog["type"]) {
   switch (type) {
@@ -86,14 +139,168 @@ function getTypeBadge(type: AdminChangelog["type"]) {
   );
 }
 
-export default function AdminChangelogPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [version, setVersion] = useState("");
-  const [title, setTitle] = useState("");
-  const [type, setType] = useState<AdminChangelog["type"]>("feature");
-  const [description, setDescription] = useState("");
-  const [changes, setChanges] = useState("");
+const ChangelogDialog = NiceModal.create(
+  ({ changelog, onSaved }: ChangelogDialogProps) => {
+    const modal = NiceModal.useModal();
+    const [formData, setFormData] = useState<ChangelogFormState>(() =>
+      getInitialChangelogFormState(changelog),
+    );
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isEditing = Boolean(changelog);
 
+    function updateForm<Key extends keyof ChangelogFormState>(
+      key: Key,
+      value: ChangelogFormState[Key],
+    ) {
+      setFormData((current) => ({
+        ...current,
+        [key]: value,
+      }));
+    }
+
+    async function submitChangelog() {
+      const payload = toChangelogPayload(formData);
+
+      setIsSubmitting(true);
+
+      try {
+        await apiRequest(
+          changelog
+            ? `/api/admin/changelogs/${changelog.id}`
+            : "/api/admin/changelogs",
+          {
+            method: changelog ? "PATCH" : "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(
+              changelog
+                ? payload
+                : {
+                    ...payload,
+                    releaseDate: new Date().toISOString(),
+                  },
+            ),
+          },
+        );
+        await onSaved();
+        modal.remove();
+      } catch {
+        // The global API error listener owns toast display.
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+
+    return (
+      <Dialog
+        open={modal.visible}
+        onOpenChange={(open) => {
+          if (!open && !isSubmitting) {
+            modal.remove();
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {isEditing ? "编辑更新记录" : "新增更新记录"}
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "更新这条版本发布记录。"
+                : "添加一条更新日志，记录本次发布内容。"}
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup className="gap-4 py-2">
+            <div className="grid grid-cols-2 gap-4">
+              <Field>
+                <FieldLabel htmlFor="changelog-version">版本</FieldLabel>
+                <Input
+                  id="changelog-version"
+                  placeholder="1.0.0"
+                  value={formData.version}
+                  onChange={(event) =>
+                    updateForm("version", event.target.value)
+                  }
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="changelog-type">类型</FieldLabel>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) =>
+                    updateForm("type", value as AdminChangelog["type"])
+                  }
+                >
+                  <SelectTrigger id="changelog-type" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="feature">功能</SelectItem>
+                      <SelectItem value="improvement">改进</SelectItem>
+                      <SelectItem value="bugfix">修复</SelectItem>
+                      <SelectItem value="breaking">重大变更</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+            <Field>
+              <FieldLabel htmlFor="changelog-title">标题</FieldLabel>
+              <Input
+                id="changelog-title"
+                placeholder="本版本新增了什么？"
+                value={formData.title}
+                onChange={(event) => updateForm("title", event.target.value)}
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="changelog-description">描述</FieldLabel>
+              <Textarea
+                id="changelog-description"
+                placeholder="简述本次更新内容"
+                rows={2}
+                value={formData.description}
+                onChange={(event) =>
+                  updateForm("description", event.target.value)
+                }
+              />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="changelog-changes">
+                变更项（每行一项）
+              </FieldLabel>
+              <Textarea
+                id="changelog-changes"
+                placeholder="新增功能\n修复问题\n性能提升"
+                rows={4}
+                value={formData.changes}
+                onChange={(event) => updateForm("changes", event.target.value)}
+              />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              disabled={isSubmitting}
+              onClick={() => modal.remove()}
+            >
+              取消
+            </Button>
+            <Button disabled={isSubmitting} onClick={submitChangelog}>
+              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+              {isEditing ? "保存更改" : "新增"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  },
+);
+
+export default function AdminChangelogPage() {
   const { data, mutate } = useSWR<{ items: AdminChangelog[] }>(
     "/api/admin/changelogs?pageSize=100&sortBy=releaseDate&sortDirection=desc",
     fetchApiData,
@@ -104,40 +311,11 @@ export default function AdminChangelogPage() {
 
   const changelogs = data?.items ?? [];
 
-  const resetForm = () => {
-    setVersion("");
-    setTitle("");
-    setType("feature");
-    setDescription("");
-    setChanges("");
-  };
-
-  const createChangelog = async () => {
-    try {
-      await apiRequest("/api/admin/changelogs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          version,
-          title,
-          type,
-          description,
-          releaseDate: new Date().toISOString(),
-          changes: changes
-            .split("\n")
-            .map((value) => value.trim())
-            .filter(Boolean),
-        }),
-      });
-
-      resetForm();
-      setIsDialogOpen(false);
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    }
+  const openChangelogDialog = (changelog?: AdminChangelog) => {
+    void NiceModal.show(ChangelogDialog, {
+      changelog,
+      onSaved: () => mutate(),
+    });
   };
 
   const deleteChangelog = async (id: string) => {
@@ -166,91 +344,10 @@ export default function AdminChangelogPage() {
           <h1 className="text-2xl font-bold text-foreground">更新日志</h1>
           <p className="text-muted-foreground">管理项目的版本更新记录。</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 size-4" />
-              新增记录
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>新增更新记录</DialogTitle>
-              <DialogDescription>
-                添加一条更新日志，记录本次发布内容。
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium">
-                    版本
-                  </label>
-                  <Input
-                    placeholder="1.0.0"
-                    value={version}
-                    onChange={(e) => setVersion(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium">
-                    类型
-                  </label>
-                  <Select
-                    value={type}
-                    onValueChange={(value) =>
-                      setType(value as AdminChangelog["type"])
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="feature">功能</SelectItem>
-                      <SelectItem value="improvement">改进</SelectItem>
-                      <SelectItem value="bugfix">修复</SelectItem>
-                      <SelectItem value="breaking">重大变更</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">标题</label>
-                <Input
-                  placeholder="本版本新增了什么？"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">描述</label>
-                <Textarea
-                  placeholder="简述本次更新内容"
-                  rows={2}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium">
-                  变更项（每行一项）
-                </label>
-                <Textarea
-                  placeholder="新增功能\n修复问题\n性能提升"
-                  rows={4}
-                  value={changes}
-                  onChange={(e) => setChanges(e.target.value)}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                取消
-              </Button>
-              <Button onClick={createChangelog}>新增</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Button onClick={() => openChangelogDialog()}>
+          <Plus className="mr-2 size-4" />
+          新增记录
+        </Button>
       </div>
 
       <Card>
@@ -291,7 +388,11 @@ export default function AdminChangelogPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => openChangelogDialog(entry)}
+                    >
                       <Pencil className="size-4" />
                     </Button>
                     <Button
