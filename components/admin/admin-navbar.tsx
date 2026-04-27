@@ -5,6 +5,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
+import NiceModal from "@ebay/nice-modal-react";
 import { Bell, ExternalLink, Loader2, Search } from "lucide-react";
 import useSWR from "swr";
 
@@ -26,6 +27,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import { AdminChangePasswordDialog } from "@/components/admin/admin-change-password-dialog";
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 
@@ -138,6 +140,10 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
       confirmLabel: "确认退出",
       onConfirm: handleSignOut,
     });
+  }
+
+  function openChangePasswordDialog() {
+    void NiceModal.show(AdminChangePasswordDialog);
   }
 
   async function handleNotificationClick(notification: AdminNotification) {
@@ -327,7 +333,17 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>个人资料</DropdownMenuItem>
-            <DropdownMenuItem>设置</DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={(event) => {
+                event.preventDefault();
+                openChangePasswordDialog();
+              }}
+            >
+              修改密码
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={routes.admin.settings}>设置</Link>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive"
