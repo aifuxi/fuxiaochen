@@ -17,14 +17,24 @@ import { siteCopy } from "@/constants/site-copy";
 
 type ProjectsPageClientProps = {
   settings: SiteSettings;
+  initialProjects?: PublicProject[];
 };
 
-export function ProjectsPageClient({ settings }: ProjectsPageClientProps) {
+export function ProjectsPageClient({
+  settings,
+  initialProjects,
+}: ProjectsPageClientProps) {
   const { data } = useSWR<{ items: PublicProject[] }>(
     "/api/public/projects?pageSize=100",
     fetchApiData,
     {
+      fallbackData: {
+        items: initialProjects ?? [],
+      },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 

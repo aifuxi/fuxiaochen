@@ -4,6 +4,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicTagContent } from "@/lib/server/public-content-cache";
 
 import {
   adminTagCreateSchema,
@@ -79,6 +80,8 @@ export function createAdminTagHandlers({
         const body = adminTagCreateSchema.parse(await toJsonBody(request));
         const tag = await service.createTag(body);
 
+        revalidatePublicTagContent();
+
         return createSuccessResponse(toAdminTag(tag), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
@@ -104,6 +107,8 @@ export function createAdminTagHandlers({
         const body = adminTagUpdateSchema.parse(await toJsonBody(request));
         const tag = await service.updateTag(id, body);
 
+        revalidatePublicTagContent();
+
         return createSuccessResponse(toAdminTag(tag));
       } catch (error) {
         return toErrorResponse(error);
@@ -115,6 +120,8 @@ export function createAdminTagHandlers({
 
         const { id } = adminTagIdParamsSchema.parse(await params);
         await service.deleteTag(id);
+
+        revalidatePublicTagContent();
 
         return createSuccessResponse(null);
       } catch (error) {

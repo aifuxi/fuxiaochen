@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 
+import { getCachedPublicFriends } from "@/lib/server/public-content-cache";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
 
 import { FriendsPageClient } from "./friends-page-client";
@@ -11,7 +12,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FriendsPage() {
-  const { settings } = await getCachedSiteSettings();
+  const [{ settings }, friends] = await Promise.all([
+    getCachedSiteSettings(),
+    getCachedPublicFriends(),
+  ]);
 
-  return <FriendsPageClient settings={settings} />;
+  return (
+    <FriendsPageClient settings={settings} initialFriends={friends.items} />
+  );
 }

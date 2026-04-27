@@ -16,11 +16,18 @@ import type { PublicBlog } from "@/lib/server/blogs/mappers";
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
-export function FeaturedPosts() {
+type FeaturedPostsProps = {
+  initialPosts?: PublicBlog[];
+};
+
+export function FeaturedPosts({ initialPosts }: FeaturedPostsProps) {
   const { data } = useSWR<{ items: PublicBlog[] }>(
     "/api/public/blogs?featured=true&pageSize=3",
     fetchApiData,
     {
+      fallbackData: {
+        items: initialPosts ?? [],
+      },
       revalidateOnFocus: false,
     },
   );

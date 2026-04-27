@@ -1,5 +1,6 @@
 import { type Metadata } from "next";
 
+import { getCachedPublicBlogPageData } from "@/lib/server/public-content-cache";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
 
 import { BlogListClient } from "./blog-list-client";
@@ -10,6 +11,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return settings.seo.pages.blog;
 }
 
-export default function BlogListPage() {
-  return <BlogListClient />;
+export default async function BlogListPage() {
+  const { items, categories, tags } = await getCachedPublicBlogPageData();
+
+  return (
+    <BlogListClient
+      initialBlogs={items}
+      initialCategories={categories}
+      initialTags={tags}
+    />
+  );
 }

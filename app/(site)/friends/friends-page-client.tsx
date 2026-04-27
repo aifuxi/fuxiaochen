@@ -15,18 +15,28 @@ import { siteCopy } from "@/constants/site-copy";
 
 type FriendsPageClientProps = {
   settings: SiteSettings;
+  initialFriends?: PublicFriend[];
 };
 
 function getCategoryLabel(category: PublicFriend["category"]) {
   return siteCopy.friends.categories[category];
 }
 
-export function FriendsPageClient({ settings }: FriendsPageClientProps) {
+export function FriendsPageClient({
+  settings,
+  initialFriends,
+}: FriendsPageClientProps) {
   const { data } = useSWR<{ items: PublicFriend[] }>(
     "/api/public/friends",
     fetchApiData,
     {
+      fallbackData: {
+        items: initialFriends ?? [],
+      },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 
