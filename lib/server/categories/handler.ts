@@ -4,6 +4,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicCategoryContent } from "@/lib/server/public-content-cache";
 
 import {
   adminCategoryCreateSchema,
@@ -79,6 +80,8 @@ export function createAdminCategoryHandlers({
         const body = adminCategoryCreateSchema.parse(await toJsonBody(request));
         const category = await service.createCategory(body);
 
+        revalidatePublicCategoryContent();
+
         return createSuccessResponse(toAdminCategory(category), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
@@ -107,6 +110,8 @@ export function createAdminCategoryHandlers({
         const body = adminCategoryUpdateSchema.parse(await toJsonBody(request));
         const category = await service.updateCategory(id, body);
 
+        revalidatePublicCategoryContent();
+
         return createSuccessResponse(toAdminCategory(category));
       } catch (error) {
         return toErrorResponse(error);
@@ -121,6 +126,8 @@ export function createAdminCategoryHandlers({
 
         const { id } = adminCategoryIdParamsSchema.parse(await params);
         await service.deleteCategory(id);
+
+        revalidatePublicCategoryContent();
 
         return createSuccessResponse(null);
       } catch (error) {

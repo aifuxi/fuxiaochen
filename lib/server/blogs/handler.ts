@@ -5,6 +5,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicBlogContent } from "@/lib/server/public-content-cache";
 
 import {
   adminBlogCreateSchema,
@@ -116,6 +117,8 @@ export function createAdminBlogHandlers({
         const body = adminBlogCreateSchema.parse(await toJsonBody(request));
         const blog = await service.createBlog(body);
 
+        revalidatePublicBlogContent();
+
         return createSuccessResponse(toAdminBlog(blog), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
@@ -166,6 +169,8 @@ export function createAdminBlogHandlers({
         const body = adminBlogUpdateSchema.parse(await toJsonBody(request));
         const blog = await service.updateBlog(id, body);
 
+        revalidatePublicBlogContent();
+
         return createSuccessResponse(toAdminBlog(blog));
       } catch (error) {
         return toErrorResponse(error);
@@ -177,6 +182,8 @@ export function createAdminBlogHandlers({
 
         const { id } = adminBlogIdParamsSchema.parse(await params);
         await service.deleteBlog(id);
+
+        revalidatePublicBlogContent();
 
         return createSuccessResponse(null);
       } catch (error) {

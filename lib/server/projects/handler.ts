@@ -4,6 +4,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicProjectContent } from "@/lib/server/public-content-cache";
 
 import {
   adminProjectCreateSchema,
@@ -83,6 +84,8 @@ export function createAdminProjectHandlers({
         const body = adminProjectCreateSchema.parse(await toJsonBody(request));
         const project = await service.createProject(body);
 
+        revalidatePublicProjectContent();
+
         return createSuccessResponse(toAdminProject(project), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
@@ -111,6 +114,8 @@ export function createAdminProjectHandlers({
         const body = adminProjectUpdateSchema.parse(await toJsonBody(request));
         const project = await service.updateProject(id, body);
 
+        revalidatePublicProjectContent();
+
         return createSuccessResponse(toAdminProject(project));
       } catch (error) {
         return toErrorResponse(error);
@@ -125,6 +130,8 @@ export function createAdminProjectHandlers({
 
         const { id } = adminProjectIdParamsSchema.parse(await params);
         await service.deleteProject(id);
+
+        revalidatePublicProjectContent();
 
         return createSuccessResponse(null);
       } catch (error) {

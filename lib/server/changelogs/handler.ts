@@ -4,6 +4,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicChangelogContent } from "@/lib/server/public-content-cache";
 
 import {
   adminChangelogCreateSchema,
@@ -82,6 +83,8 @@ export function createAdminChangelogHandlers({
         );
         const changelog = await service.createChangelog(body);
 
+        revalidatePublicChangelogContent();
+
         return createSuccessResponse(
           toAdminChangelog(changelog),
           undefined,
@@ -119,6 +122,8 @@ export function createAdminChangelogHandlers({
         );
         const changelog = await service.updateChangelog(id, body);
 
+        revalidatePublicChangelogContent();
+
         return createSuccessResponse(toAdminChangelog(changelog));
       } catch (error) {
         return toErrorResponse(error);
@@ -133,6 +138,8 @@ export function createAdminChangelogHandlers({
 
         const { id } = adminChangelogIdParamsSchema.parse(await params);
         await service.deleteChangelog(id);
+
+        revalidatePublicChangelogContent();
 
         return createSuccessResponse(null);
       } catch (error) {

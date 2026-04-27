@@ -10,6 +10,10 @@ import type { PublicChangelog } from "@/lib/server/changelogs/mappers";
 
 import { siteCopy } from "@/constants/site-copy";
 
+type ChangelogPageClientProps = {
+  initialChangelogs?: PublicChangelog[];
+};
+
 function getTypeIcon(type: PublicChangelog["type"]) {
   switch (type) {
     case "feature":
@@ -46,12 +50,20 @@ function getTypeBadge(type: PublicChangelog["type"]) {
   );
 }
 
-export function ChangelogPageClient() {
+export function ChangelogPageClient({
+  initialChangelogs,
+}: ChangelogPageClientProps) {
   const { data } = useSWR<{ items: PublicChangelog[] }>(
     "/api/public/changelogs?pageSize=100",
     fetchApiData,
     {
+      fallbackData: {
+        items: initialChangelogs ?? [],
+      },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 

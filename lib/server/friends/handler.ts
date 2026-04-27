@@ -4,6 +4,7 @@ import {
 } from "@/lib/auth-session";
 import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { createSuccessResponse } from "@/lib/server/http/response";
+import { revalidatePublicFriendContent } from "@/lib/server/public-content-cache";
 
 import {
   adminFriendCreateSchema,
@@ -79,6 +80,8 @@ export function createAdminFriendHandlers({
         const body = adminFriendCreateSchema.parse(await toJsonBody(request));
         const friend = await service.createFriend(body);
 
+        revalidatePublicFriendContent();
+
         return createSuccessResponse(toAdminFriend(friend), undefined, 201);
       } catch (error) {
         return toErrorResponse(error);
@@ -107,6 +110,8 @@ export function createAdminFriendHandlers({
         const body = adminFriendUpdateSchema.parse(await toJsonBody(request));
         const friend = await service.updateFriend(id, body);
 
+        revalidatePublicFriendContent();
+
         return createSuccessResponse(toAdminFriend(friend));
       } catch (error) {
         return toErrorResponse(error);
@@ -121,6 +126,8 @@ export function createAdminFriendHandlers({
 
         const { id } = adminFriendIdParamsSchema.parse(await params);
         await service.deleteFriend(id);
+
+        revalidatePublicFriendContent();
 
         return createSuccessResponse(null);
       } catch (error) {

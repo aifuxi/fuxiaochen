@@ -11,11 +11,18 @@ import type { PublicBlog } from "@/lib/server/blogs/mappers";
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
-export function RecentPosts() {
+type RecentPostsProps = {
+  initialPosts?: PublicBlog[];
+};
+
+export function RecentPosts({ initialPosts }: RecentPostsProps) {
   const { data } = useSWR<{ items: PublicBlog[] }>(
     "/api/public/blogs?featured=false&pageSize=5&sortBy=date&sortDirection=desc",
     fetchApiData,
     {
+      fallbackData: {
+        items: initialPosts ?? [],
+      },
       revalidateOnFocus: false,
     },
   );
