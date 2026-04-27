@@ -24,6 +24,7 @@ export function BlogCoverImage({ src, alt, ...props }: BlogCoverImageProps) {
 
   return (
     <Image
+      loading="eager"
       {...props}
       src={imageSrc}
       alt={alt}
