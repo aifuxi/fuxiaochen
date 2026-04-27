@@ -46,6 +46,7 @@ export default async function AboutPage() {
                 src={settings.general.avatarUrl}
                 alt={settings.general.siteName}
                 fill
+                loading="eager"
                 className="object-cover"
               />
             </div>
