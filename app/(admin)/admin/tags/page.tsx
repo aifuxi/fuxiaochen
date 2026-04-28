@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import NiceModal from "@ebay/nice-modal-react";
-import { Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +23,13 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminContentError,
+  AdminContentLoading,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
@@ -136,6 +141,7 @@ const TagDialog = NiceModal.create(({ onSaved, tag }: TagDialogProps) => {
             <Input
               id="tag-name"
               value={formData.name}
+              disabled={isSubmitting}
               onChange={(event) => updateForm("name", event.target.value)}
               placeholder="输入标签名称"
             />
@@ -145,6 +151,7 @@ const TagDialog = NiceModal.create(({ onSaved, tag }: TagDialogProps) => {
             <Input
               id="tag-slug"
               value={formData.slug}
+              disabled={isSubmitting}
               onChange={(event) => updateForm("slug", event.target.value)}
               placeholder="nextjs"
             />
@@ -161,7 +168,7 @@ const TagDialog = NiceModal.create(({ onSaved, tag }: TagDialogProps) => {
             取消
           </Button>
           <Button disabled={isSubmitting} onClick={submitTag}>
-            {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+            {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
             {isEditing ? "保存更改" : "创建标签"}
           </Button>
         </DialogFooter>
@@ -171,14 +178,24 @@ const TagDialog = NiceModal.create(({ onSaved, tag }: TagDialogProps) => {
 });
 
 export default function AdminTagsPage() {
-  const { data, mutate } = useSWR<{ items: AdminTag[] }>(
+  const {
+    data,
+    error: tagsError,
+    isLoading: areTagsLoading,
+    mutate,
+  } = useSWR<{ items: AdminTag[] }>(
     "/api/admin/tags?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
     {
       revalidateOnFocus: false,
     },
   );
-  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+  const {
+    data: blogsData,
+    error: blogsError,
+    isLoading: areBlogsLoading,
+    mutate: mutateBlogs,
+  } = useSWR<{ items: AdminBlog[] }>(
     "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
     fetchApiData,
     {
@@ -188,6 +205,8 @@ export default function AdminTagsPage() {
 
   const tags = data?.items ?? [];
   const blogs = blogsData?.items ?? [];
+  const isLoading = areTagsLoading || areBlogsLoading;
+  const error = tagsError ?? blogsError;
   const mostUsedTag = [...tags].sort((a, b) => b.blogCount - a.blogCount)[0];
   const averagePerPost =
     blogs.length === 0
@@ -204,22 +223,24 @@ export default function AdminTagsPage() {
   };
 
   const deleteTag = async (id: string) => {
-    try {
-      await apiRequest(`/api/admin/tags/${id}`, {
-        method: "DELETE",
-      });
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    }
+    await apiRequest(`/api/admin/tags/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
   };
 
   const confirmDeleteTag = (tag: AdminTag) => {
     void showAdminConfirmDialog({
       title: "确认删除这个标签？",
       description: `将删除标签「${tag.name}」。如果仍有文章使用该标签，接口会阻止删除。`,
+      confirmingLabel: "正在删除...",
       onConfirm: () => deleteTag(tag.id),
     });
+  };
+
+  const retryLoading = () => {
+    void mutate();
+    void mutateBlogs();
   };
 
   return (
@@ -236,11 +257,16 @@ export default function AdminTagsPage() {
       </div>
 
       <div className="rounded-lg border border-border p-6">
-        {tags.length === 0 ? (
+        {isLoading ? <AdminContentLoading label="正在加载标签..." /> : null}
+        {!isLoading && error ? (
+          <AdminContentError label="标签加载失败" onRetry={retryLoading} />
+        ) : null}
+        {!isLoading && !error && tags.length === 0 ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
             暂无标签，先新建一个标签吧。
           </div>
-        ) : (
+        ) : null}
+        {!isLoading && !error && tags.length > 0 ? (
           <div className="flex flex-wrap gap-3">
             {tags.map((tag) => (
               <div
@@ -279,7 +305,7 @@ export default function AdminTagsPage() {
               </div>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

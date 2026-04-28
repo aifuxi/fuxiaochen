@@ -16,6 +16,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import {
+  AdminCardSkeletonGrid,
+  AdminContentError,
+  AdminContentLoading,
+} from "@/components/admin/admin-loading-state";
+
 import { fetchApiData } from "@/lib/api/fetcher";
 import type { AdminAnalyticsSnapshot } from "@/lib/server/analytics/mappers";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
@@ -43,21 +49,36 @@ const getActivityLabel = (
 };
 
 export default function AdminDashboard() {
-  const { data: blogsData } = useSWR<{ items: AdminBlog[] }>(
+  const {
+    data: blogsData,
+    error: blogsError,
+    isLoading: areBlogsLoading,
+    mutate: mutateBlogs,
+  } = useSWR<{ items: AdminBlog[] }>(
     "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
     fetchApiData,
     {
       revalidateOnFocus: false,
     },
   );
-  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+  const {
+    data: categoriesData,
+    error: categoriesError,
+    isLoading: areCategoriesLoading,
+    mutate: mutateCategories,
+  } = useSWR<{ items: AdminCategory[] }>(
     "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
     {
       revalidateOnFocus: false,
     },
   );
-  const { data: analyticsData } = useSWR<AdminAnalyticsSnapshot>(
+  const {
+    data: analyticsData,
+    error: analyticsError,
+    isLoading: isAnalyticsLoading,
+    mutate: mutateAnalytics,
+  } = useSWR<AdminAnalyticsSnapshot>(
     "/api/admin/analytics?range=30",
     fetchApiData,
     {
@@ -70,6 +91,15 @@ export default function AdminDashboard() {
   const recentActivity = analyticsData?.recentActivity ?? [];
   const publishedPosts = blogs.filter((blog) => blog.published);
   const commentStats = analyticsData?.overview.interactions;
+  const isLoading =
+    areBlogsLoading || areCategoriesLoading || isAnalyticsLoading;
+  const error = blogsError ?? categoriesError ?? analyticsError;
+
+  const retryLoading = () => {
+    void mutateBlogs();
+    void mutateCategories();
+    void mutateAnalytics();
+  };
 
   const stats = [
     {
@@ -114,35 +144,42 @@ export default function AdminDashboard() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <div className="flex items-center text-xs">
-                {stat.trend === "up" ? (
-                  <ArrowUpRight className="mr-1 h-3 w-3 text-green-500" />
-                ) : (
-                  <ArrowDownRight className="mr-1 h-3 w-3 text-red-500" />
-                )}
-                <span
-                  className={
-                    stat.trend === "up" ? "text-green-500" : "text-red-500"
-                  }
-                >
-                  {stat.change}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {isLoading ? (
+        <AdminCardSkeletonGrid
+          className="md:grid-cols-2 lg:grid-cols-4"
+          count={4}
+        />
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {stats.map((stat) => (
+            <Card key={stat.title}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <stat.icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stat.value}</div>
+                <div className="flex items-center text-xs">
+                  {stat.trend === "up" ? (
+                    <ArrowUpRight className="mr-1 h-3 w-3 text-green-500" />
+                  ) : (
+                    <ArrowDownRight className="mr-1 h-3 w-3 text-red-500" />
+                  )}
+                  <span
+                    className={
+                      stat.trend === "up" ? "text-green-500" : "text-red-500"
+                    }
+                  >
+                    {stat.change}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
@@ -153,26 +190,37 @@ export default function AdminDashboard() {
             </Button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {blogs.slice(0, 5).map((post) => (
-                <div
-                  key={post.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium">{post.title}</p>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <span>{post.publishedAt ? "已发布" : "草稿"}</span>
-                      <span>·</span>
-                      <span>{post.readTimeMinutes} 分钟阅读</span>
+            {isLoading ? (
+              <AdminContentLoading label="正在加载最近文章..." />
+            ) : null}
+            {!isLoading && error ? (
+              <AdminContentError
+                label="仪表盘加载失败"
+                onRetry={retryLoading}
+              />
+            ) : null}
+            {!isLoading && !error ? (
+              <div className="space-y-4">
+                {blogs.slice(0, 5).map((post) => (
+                  <div
+                    key={post.id}
+                    className="flex items-center justify-between"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium">{post.title}</p>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <span>{post.publishedAt ? "已发布" : "草稿"}</span>
+                        <span>·</span>
+                        <span>{post.readTimeMinutes} 分钟阅读</span>
+                      </div>
                     </div>
+                    {post.category && (
+                      <Badge variant="secondary">{post.category.name}</Badge>
+                    )}
                   </div>
-                  {post.category && (
-                    <Badge variant="secondary">{post.category.name}</Badge>
-                  )}
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 
@@ -181,49 +229,57 @@ export default function AdminDashboard() {
             <CardTitle>最近动态</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {recentActivity.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">
-                  暂无动态。
-                </p>
-              ) : (
-                recentActivity.map((activity, index) => (
-                  <div
-                    key={`${activity.type}-${activity.id}`}
-                    className="flex gap-4"
-                  >
-                    <div className="relative">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                        {activity.type === "comment" ? (
-                          <MessageSquare className="h-4 w-4" />
-                        ) : (
-                          <FileText className="h-4 w-4" />
+            {isLoading ? (
+              <AdminContentLoading label="正在加载最近动态..." />
+            ) : null}
+            {!isLoading && error ? (
+              <AdminContentError label="动态加载失败" onRetry={retryLoading} />
+            ) : null}
+            {!isLoading && !error ? (
+              <div className="space-y-4">
+                {recentActivity.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    暂无动态。
+                  </p>
+                ) : (
+                  recentActivity.map((activity, index) => (
+                    <div
+                      key={`${activity.type}-${activity.id}`}
+                      className="flex gap-4"
+                    >
+                      <div className="relative">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
+                          {activity.type === "comment" ? (
+                            <MessageSquare className="h-4 w-4" />
+                          ) : (
+                            <FileText className="h-4 w-4" />
+                          )}
+                        </div>
+                        {index !== recentActivity.length - 1 && (
+                          <div className="absolute top-8 left-4 h-full w-px bg-border" />
                         )}
                       </div>
-                      {index !== recentActivity.length - 1 && (
-                        <div className="absolute top-8 left-4 h-full w-px bg-border" />
-                      )}
-                    </div>
-                    <div className="flex-1 pb-4">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-medium">
-                          {activity.title}
+                      <div className="flex-1 pb-4">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium">
+                            {activity.title}
+                          </p>
+                          <Badge variant="outline">
+                            {getActivityLabel(activity.type)}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {activity.description}
                         </p>
-                        <Badge variant="outline">
-                          {getActivityLabel(activity.type)}
-                        </Badge>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {dateFormatter.format(new Date(activity.createdAt))}
+                        </p>
                       </div>
-                      <p className="text-sm text-muted-foreground">
-                        {activity.description}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {dateFormatter.format(new Date(activity.createdAt))}
-                      </p>
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
+                  ))
+                )}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </div>

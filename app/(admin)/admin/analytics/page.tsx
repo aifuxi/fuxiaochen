@@ -149,6 +149,80 @@ const getCommentStatusLabel = (
   }
 };
 
+function TrendChartSkeleton() {
+  return (
+    <Card className="min-w-0">
+      <CardHeader>
+        <Skeleton className="h-5 w-16" />
+        <Skeleton className="h-4 w-44" />
+      </CardHeader>
+      <CardContent>
+        <div className="mb-4 flex flex-wrap gap-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <Skeleton className="size-2 rounded-full" />
+              <Skeleton className="h-3 w-10" />
+            </div>
+          ))}
+        </div>
+        <div className="relative h-[320px] w-full overflow-hidden rounded-md border bg-muted/20 p-4">
+          <div className="absolute inset-x-4 top-8 h-px bg-border/70" />
+          <div className="absolute inset-x-4 top-24 h-px bg-border/70" />
+          <div className="absolute inset-x-4 top-40 h-px bg-border/70" />
+          <div className="absolute inset-x-4 top-56 h-px bg-border/70" />
+          <div className="absolute inset-x-4 bottom-10 h-px bg-border" />
+          <div className="absolute inset-y-4 left-12 w-px bg-border" />
+          <div className="absolute right-4 bottom-10 left-12 flex h-48 items-end justify-between gap-2">
+            {[42, 58, 48, 72, 64, 86, 78, 92, 68, 84, 76, 96].map(
+              (height, index) => (
+                <Skeleton
+                  key={index}
+                  className="w-full rounded-t-sm"
+                  style={{ height: `${height}%` }}
+                />
+              ),
+            )}
+          </div>
+          <div className="absolute right-4 bottom-3 left-12 flex justify-between">
+            {Array.from({ length: 6 }, (_, index) => (
+              <Skeleton key={index} className="h-3 w-8" />
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function DistributionChartSkeleton() {
+  return (
+    <Card className="min-w-0">
+      <CardHeader>
+        <Skeleton className="h-5 w-24" />
+        <Skeleton className="h-4 w-40" />
+      </CardHeader>
+      <CardContent>
+        <div className="h-[320px] rounded-md border bg-muted/20 p-5">
+          <div className="flex h-full flex-col justify-between">
+            {[82, 68, 56, 44, 32, 24].map((width, index) => (
+              <div key={index} className="grid grid-cols-[72px_1fr] gap-3">
+                <Skeleton className="h-4 w-full" />
+                <div className="flex items-center gap-3">
+                  <Skeleton
+                    className="h-7 rounded-sm"
+                    style={{ width: `${width}%` }}
+                  />
+                  <Skeleton className="h-4 w-6" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function AnalyticsSkeleton() {
   return (
     <div className="space-y-6">
@@ -166,8 +240,8 @@ function AnalyticsSkeleton() {
         ))}
       </div>
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
-        <Skeleton className="h-[420px] rounded-lg" />
-        <Skeleton className="h-[420px] rounded-lg" />
+        <TrendChartSkeleton />
+        <DistributionChartSkeleton />
       </div>
     </div>
   );

@@ -32,9 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminCardSkeletonGrid,
+  AdminContentError,
+  AdminContentLoading,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminFriend } from "@/lib/server/friends/mappers";
@@ -85,7 +91,7 @@ export default function AdminFriendsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingFriendId, setDeletingFriendId] = useState<string | null>(null);
 
-  const { data, mutate } = useSWR<{ items: AdminFriend[] }>(
+  const { data, error, isLoading, mutate } = useSWR<{ items: AdminFriend[] }>(
     "/api/admin/friends?pageSize=100&sortBy=updatedAt&sortDirection=desc",
     fetchApiData,
     {
@@ -110,6 +116,10 @@ export default function AdminFriendsPage() {
   };
 
   const handleDialogChange = (open: boolean) => {
+    if (!open && isSubmitting) {
+      return;
+    }
+
     setIsDialogOpen(open);
 
     if (!open) {
@@ -172,8 +182,6 @@ export default function AdminFriendsPage() {
         method: "DELETE",
       });
       await mutate();
-    } catch {
-      // The global API error listener owns toast display.
     } finally {
       setDeletingFriendId(null);
     }
@@ -183,6 +191,7 @@ export default function AdminFriendsPage() {
     void showAdminConfirmDialog({
       title: "确认删除这条友链？",
       description: `将删除友链「${friend.name}」。此操作无法撤销。`,
+      confirmingLabel: "正在删除...",
       onConfirm: () => deleteFriend(friend.id),
     });
   };
@@ -221,6 +230,7 @@ export default function AdminFriendsPage() {
                 <Input
                   placeholder="张三"
                   value={formData.name}
+                  disabled={isSubmitting}
                   onChange={(event) =>
                     setFormData((current) => ({
                       ...current,
@@ -233,6 +243,7 @@ export default function AdminFriendsPage() {
                 <label className="mb-1.5 block text-sm font-medium">分类</label>
                 <Select
                   value={formData.category}
+                  disabled={isSubmitting}
                   onValueChange={(value) =>
                     setFormData((current) => ({
                       ...current,
@@ -257,6 +268,7 @@ export default function AdminFriendsPage() {
               <Input
                 placeholder="https://example.com"
                 value={formData.url}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setFormData((current) => ({
                     ...current,
@@ -272,6 +284,7 @@ export default function AdminFriendsPage() {
               <Input
                 placeholder="https://example.com/avatar.jpg"
                 value={formData.avatar}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setFormData((current) => ({
                     ...current,
@@ -286,6 +299,7 @@ export default function AdminFriendsPage() {
                 placeholder="一句简短的个人介绍..."
                 rows={2}
                 value={formData.description}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   setFormData((current) => ({
                     ...current,
@@ -307,46 +321,51 @@ export default function AdminFriendsPage() {
               取消
             </Button>
             <Button disabled={isSubmitting} onClick={submitFriend}>
+              {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
               {editingFriendId ? "保存更改" : "添加友链"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">总数</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">开发者</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.developers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">设计师</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.designers}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">创作者</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.creators}</div>
-          </CardContent>
-        </Card>
-      </div>
+      {isLoading ? (
+        <AdminCardSkeletonGrid className="sm:grid-cols-4" count={4} />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">总数</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.total}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">开发者</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.developers}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">设计师</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.designers}</div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">创作者</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.creators}</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
@@ -354,11 +373,19 @@ export default function AdminFriendsPage() {
           <CardDescription>管理你的友链列表</CardDescription>
         </CardHeader>
         <CardContent>
-          {friends.length === 0 ? (
+          {isLoading ? <AdminContentLoading label="正在加载友链..." /> : null}
+          {!isLoading && error ? (
+            <AdminContentError
+              label="友链加载失败"
+              onRetry={() => void mutate()}
+            />
+          ) : null}
+          {!isLoading && !error && friends.length === 0 ? (
             <div className="py-10 text-center text-sm text-muted-foreground">
               暂无友链，先添加一个友链开始整理你的伙伴列表。
             </div>
-          ) : (
+          ) : null}
+          {!isLoading && !error && friends.length > 0 ? (
             <div className="grid gap-4 sm:grid-cols-2">
               {friends.map((friend) => (
                 <div
@@ -400,7 +427,7 @@ export default function AdminFriendsPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => openEditDialog(friend)}
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || deletingFriendId !== null}
                     >
                       <Pencil className="size-4" />
                     </Button>
@@ -411,13 +438,17 @@ export default function AdminFriendsPage() {
                       onClick={() => confirmDeleteFriend(friend)}
                       disabled={deletingFriendId === friend.id}
                     >
-                      <Trash2 className="size-4" />
+                      {deletingFriendId === friend.id ? (
+                        <Spinner />
+                      ) : (
+                        <Trash2 className="size-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
         </CardContent>
       </Card>
     </div>
