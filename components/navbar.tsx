@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { MobileSiteNav } from "@/components/site/mobile-site-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import type { SiteSettings } from "@/lib/settings/types";
@@ -25,7 +26,7 @@ export function Navbar({ settings }: NavbarProps) {
           {settings.general.siteName}
         </Link>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-2 md:gap-6">
           <ul className="hidden items-center gap-6 md:flex">
             {siteNavLinks.map((link) => (
               <li key={link.href}>
@@ -39,6 +40,7 @@ export function Navbar({ settings }: NavbarProps) {
               </li>
             ))}
           </ul>
+          <MobileSiteNav />
           <ThemeToggle />
         </div>
       </nav>
