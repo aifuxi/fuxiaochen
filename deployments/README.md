@@ -4,7 +4,7 @@
 
 ## 文件
 
-- `nginx/fuxiaochen.conf`：面向 `fuxiaochen.com` 的 HTTPS 反向代理模板。
+- `nginx/fuxiaochen-nextjs.conf`：面向 `fuxiaochen.com` 的 Next.js HTTPS 反向代理模板。
 
 ## Nginx 使用方式
 
@@ -12,7 +12,7 @@
 
 ```bash
 sudo mkdir -p /var/cache/nginx/fuxiaochen-next-static
-sudo cp deployments/nginx/fuxiaochen.conf /etc/nginx/conf.d/fuxiaochen.conf
+sudo cp deployments/nginx/fuxiaochen-nextjs.conf /etc/nginx/conf.d/fuxiaochen-nextjs.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```
