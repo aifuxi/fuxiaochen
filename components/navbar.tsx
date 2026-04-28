@@ -19,6 +19,7 @@ export function Navbar({ settings }: NavbarProps) {
       <nav className="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
         <Link
           href={routes.site.home}
+          prefetch={false}
           className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-foreground/80"
         >
           {settings.general.siteName}
@@ -30,6 +31,7 @@ export function Navbar({ settings }: NavbarProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
+                  prefetch={false}
                   className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
                   {link.label}

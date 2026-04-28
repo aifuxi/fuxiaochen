@@ -51,7 +51,10 @@ export function BlogListClient({
       fallbackData: {
         items: initialBlogs ?? [],
       },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
   const { data: categoriesData } = useSWR<{ items: PublicCategory[] }>(
@@ -61,7 +64,10 @@ export function BlogListClient({
       fallbackData: {
         items: initialCategories ?? [],
       },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
   const { data: tagsData } = useSWR<{ items: PublicTag[] }>(
@@ -71,7 +77,10 @@ export function BlogListClient({
       fallbackData: {
         items: initialTags ?? [],
       },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 
