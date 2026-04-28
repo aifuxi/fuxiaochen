@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import NiceModal from "@ebay/nice-modal-react";
-import { Bell, ExternalLink, Loader2, Search } from "lucide-react";
+import { Bell, ExternalLink, Search } from "lucide-react";
 import useSWR from "swr";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -26,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Spinner } from "@/components/ui/spinner";
 
 import { AdminChangePasswordDialog } from "@/components/admin/admin-change-password-dialog";
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
@@ -105,6 +106,9 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
+  const [markingNotificationId, setMarkingNotificationId] = useState<
+    string | null
+  >(null);
   const notificationsUrl = buildApiUrl("/api/admin/notifications", {
     pageSize: 8,
   });
@@ -138,6 +142,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
       title: "确认退出登录？",
       description: "退出后需要重新登录才能继续访问后台管理功能。",
       confirmLabel: "确认退出",
+      confirmingLabel: "正在退出...",
       onConfirm: handleSignOut,
     });
   }
@@ -147,23 +152,34 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
   }
 
   async function handleNotificationClick(notification: AdminNotification) {
-    if (!notification.readAt) {
-      await apiRequest<AdminNotification>(
-        `/api/admin/notifications/${notification.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ read: true }),
-          errorFallback: "通知状态更新失败",
-        },
-      );
-      await mutateNotifications();
+    if (markingNotificationId) {
+      return;
     }
 
-    if (notification.href) {
-      router.push(notification.href);
+    try {
+      if (!notification.readAt) {
+        setMarkingNotificationId(notification.id);
+        await apiRequest<AdminNotification>(
+          `/api/admin/notifications/${notification.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ read: true }),
+            errorFallback: "通知状态更新失败",
+          },
+        );
+        await mutateNotifications();
+      }
+
+      if (notification.href) {
+        router.push(notification.href);
+      }
+    } catch {
+      // The global API error listener owns toast display.
+    } finally {
+      setMarkingNotificationId(null);
     }
   }
 
@@ -240,13 +256,13 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                 onClick={markAllNotificationsRead}
                 disabled={unreadCount === 0 || isMarkingAllRead}
               >
-                {isMarkingAllRead && <Loader2 className="animate-spin" />}
+                {isMarkingAllRead ? <Spinner data-icon="inline-start" /> : null}
                 全部已读
               </Button>
             </div>
             {isNotificationsLoading ? (
               <div className="flex items-center justify-center gap-2 px-4 py-8 text-sm text-muted-foreground">
-                <Loader2 className="size-4 animate-spin" />
+                <Spinner />
                 正在加载通知
               </div>
             ) : notificationsError ? (
@@ -274,16 +290,21 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                       <button
                         key={notification.id}
                         type="button"
+                        disabled={markingNotificationId !== null}
                         className="flex w-full gap-3 rounded-sm px-3 py-3 text-left transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-hidden"
                         onClick={() =>
                           void handleNotificationClick(notification)
                         }
                       >
-                        <span
-                          className={`mt-1.5 size-2 shrink-0 rounded-full ${
-                            isUnread ? "bg-destructive" : "bg-muted"
-                          }`}
-                        />
+                        {markingNotificationId === notification.id ? (
+                          <Spinner className="mt-0.5" />
+                        ) : (
+                          <span
+                            className={`mt-1.5 size-2 shrink-0 rounded-full ${
+                              isUnread ? "bg-destructive" : "bg-muted"
+                            }`}
+                          />
+                        )}
                         <span className="min-w-0 flex-1 space-y-1">
                           <span className="flex items-center justify-between gap-3">
                             <span className="truncate text-sm font-medium">
@@ -350,7 +371,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
               onClick={confirmSignOut}
               disabled={isSigningOut}
             >
-              {isSigningOut && <Loader2 className="animate-spin" />}
+              {isSigningOut ? <Spinner data-icon="inline-start" /> : null}
               退出登录
             </DropdownMenuItem>
           </DropdownMenuContent>

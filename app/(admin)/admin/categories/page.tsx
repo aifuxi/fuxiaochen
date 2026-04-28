@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import NiceModal from "@ebay/nice-modal-react";
-import { Loader2, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +30,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -40,6 +41,10 @@ import {
 } from "@/components/ui/table";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminTableErrorRow,
+  AdminTableLoadingRow,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
@@ -158,6 +163,7 @@ const CategoryDialog = NiceModal.create(
               <Input
                 id="category-name"
                 value={formData.name}
+                disabled={isSubmitting}
                 onChange={(event) => updateForm("name", event.target.value)}
                 placeholder="输入分类名称"
               />
@@ -167,6 +173,7 @@ const CategoryDialog = NiceModal.create(
               <Input
                 id="category-slug"
                 value={formData.slug}
+                disabled={isSubmitting}
                 onChange={(event) => updateForm("slug", event.target.value)}
                 placeholder="frontend"
               />
@@ -183,7 +190,7 @@ const CategoryDialog = NiceModal.create(
               取消
             </Button>
             <Button disabled={isSubmitting} onClick={submitCategory}>
-              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+              {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
               {isEditing ? "保存更改" : "创建分类"}
             </Button>
           </DialogFooter>
@@ -194,7 +201,9 @@ const CategoryDialog = NiceModal.create(
 );
 
 export default function AdminCategoriesPage() {
-  const { data, mutate } = useSWR<{ items: AdminCategory[] }>(
+  const { data, error, isLoading, mutate } = useSWR<{
+    items: AdminCategory[];
+  }>(
     "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
     {
@@ -212,20 +221,17 @@ export default function AdminCategoriesPage() {
   };
 
   const deleteCategory = async (id: string) => {
-    try {
-      await apiRequest(`/api/admin/categories/${id}`, {
-        method: "DELETE",
-      });
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    }
+    await apiRequest(`/api/admin/categories/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
   };
 
   const confirmDeleteCategory = (category: AdminCategory) => {
     void showAdminConfirmDialog({
       title: "确认删除这个分类？",
       description: `将删除分类「${category.name}」。如果仍有文章使用该分类，接口会阻止删除。`,
+      confirmingLabel: "正在删除...",
       onConfirm: () => deleteCategory(category.id),
     });
   };
@@ -254,7 +260,17 @@ export default function AdminCategoriesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.length === 0 ? (
+            {isLoading ? (
+              <AdminTableLoadingRow colSpan={4} label="正在加载分类..." />
+            ) : null}
+            {!isLoading && error ? (
+              <AdminTableErrorRow
+                colSpan={4}
+                label="分类加载失败"
+                onRetry={() => void mutate()}
+              />
+            ) : null}
+            {!isLoading && !error && categories.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="py-12 text-center">
                   <div className="space-y-1 text-muted-foreground">
@@ -263,45 +279,48 @@ export default function AdminCategoriesPage() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : (
-              categories.map((category) => (
-                <TableRow key={category.id}>
-                  <TableCell className="font-medium">{category.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{category.blogCount}</Badge>
-                  </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
-                    {category.slug}
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">操作</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={() => openCategoryDialog(category)}
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          编辑
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => confirmDeleteCategory(category)}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          删除
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            ) : null}
+            {!isLoading && !error
+              ? categories.map((category) => (
+                  <TableRow key={category.id}>
+                    <TableCell className="font-medium">
+                      {category.name}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{category.blogCount}</Badge>
+                    </TableCell>
+                    <TableCell className="font-mono text-sm text-muted-foreground">
+                      {category.slug}
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">操作</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={() => openCategoryDialog(category)}
+                          >
+                            <Pencil className="mr-2 h-4 w-4" />
+                            编辑
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            onClick={() => confirmDeleteCategory(category)}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            删除
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : null}
           </TableBody>
         </Table>
       </div>

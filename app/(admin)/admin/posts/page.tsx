@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -43,6 +44,10 @@ import {
 } from "@/components/ui/table";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminTableErrorRow,
+  AdminTableLoadingRow,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
@@ -60,7 +65,12 @@ export default function AdminPostsPage() {
   const [selectedPosts, setSelectedPosts] = useState<string[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { data: blogsData, mutate: mutateBlogs } = useSWR<{
+  const {
+    data: blogsData,
+    error: blogsError,
+    isLoading: areBlogsLoading,
+    mutate: mutateBlogs,
+  } = useSWR<{
     items: AdminBlog[];
   }>(
     "/api/admin/blogs?pageSize=100&sortBy=updatedAt&sortDirection=desc",
@@ -69,7 +79,12 @@ export default function AdminPostsPage() {
       revalidateOnFocus: false,
     },
   );
-  const { data: categoriesData } = useSWR<{ items: AdminCategory[] }>(
+  const {
+    data: categoriesData,
+    error: categoriesError,
+    isLoading: areCategoriesLoading,
+    mutate: mutateCategories,
+  } = useSWR<{ items: AdminCategory[] }>(
     "/api/admin/categories?pageSize=100&sortBy=name&sortDirection=asc",
     fetchApiData,
     {
@@ -79,6 +94,8 @@ export default function AdminPostsPage() {
 
   const blogs = blogsData?.items ?? [];
   const categories = categoriesData?.items ?? [];
+  const isLoading = areBlogsLoading || areCategoriesLoading;
+  const error = blogsError ?? categoriesError;
 
   const filteredPosts = blogs.filter((post) => {
     const matchesSearch =
@@ -123,8 +140,6 @@ export default function AdminPostsPage() {
       );
       setSelectedPosts([]);
       await mutateBlogs();
-    } catch {
-      // The global API error listener owns toast display.
     } finally {
       setIsDeleting(false);
     }
@@ -141,8 +156,14 @@ export default function AdminPostsPage() {
         ids.length > 1
           ? `将删除选中的 ${ids.length} 篇文章，关联评论也会一并删除。此操作无法撤销。`
           : "将删除这篇文章，关联评论也会一并删除。此操作无法撤销。",
+      confirmingLabel: "正在删除...",
       onConfirm: () => deletePosts(ids),
     });
+  };
+
+  const retryLoading = () => {
+    void mutateBlogs();
+    void mutateCategories();
   };
 
   return (
@@ -172,7 +193,10 @@ export default function AdminPostsPage() {
             />
           </div>
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger
+              className="w-[180px]"
+              disabled={areCategoriesLoading || Boolean(categoriesError)}
+            >
               <SelectValue placeholder="全部分类" />
             </SelectTrigger>
             <SelectContent>
@@ -196,6 +220,7 @@ export default function AdminPostsPage() {
               disabled={isDeleting}
               onClick={() => confirmDeletePosts(selectedPosts)}
             >
+              {isDeleting ? <Spinner data-icon="inline-start" /> : null}
               <Trash2 className="mr-2 h-4 w-4" />
               删除
             </Button>
@@ -213,6 +238,9 @@ export default function AdminPostsPage() {
                     selectedPosts.length === filteredPosts.length &&
                     filteredPosts.length > 0
                   }
+                  disabled={
+                    isLoading || isDeleting || filteredPosts.length === 0
+                  }
                   onCheckedChange={toggleSelectAll}
                 />
               </TableHead>
@@ -224,7 +252,17 @@ export default function AdminPostsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredPosts.length === 0 ? (
+            {isLoading ? (
+              <AdminTableLoadingRow colSpan={6} label="正在加载文章..." />
+            ) : null}
+            {!isLoading && error ? (
+              <AdminTableErrorRow
+                colSpan={6}
+                label="文章加载失败"
+                onRetry={retryLoading}
+              />
+            ) : null}
+            {!isLoading && !error && filteredPosts.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="py-12 text-center">
                   <div className="space-y-1 text-muted-foreground">
@@ -235,85 +273,92 @@ export default function AdminPostsPage() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : (
-              filteredPosts.map((post) => (
-                <TableRow key={post.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedPosts.includes(post.id)}
-                      onCheckedChange={() => toggleSelect(post.id)}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {post.featured && (
-                        <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                      )}
-                      <div>
-                        <p className="font-medium">{post.title}</p>
-                        <p className="max-w-md truncate text-sm text-muted-foreground">
-                          {post.description}
-                        </p>
+            ) : null}
+            {!isLoading && !error
+              ? filteredPosts.map((post) => (
+                  <TableRow key={post.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedPosts.includes(post.id)}
+                        disabled={isDeleting}
+                        onCheckedChange={() => toggleSelect(post.id)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {post.featured && (
+                          <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                        )}
+                        <div>
+                          <p className="font-medium">{post.title}</p>
+                          <p className="max-w-md truncate text-sm text-muted-foreground">
+                            {post.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {post.category ? (
-                      <Badge variant="secondary">{post.category.name}</Badge>
-                    ) : null}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {post.publishedAt
-                      ? dateFormatter.format(new Date(post.publishedAt))
-                      : "草稿"}
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={
-                        post.published
-                          ? "border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
-                          : "border-border bg-muted text-muted-foreground"
-                      }
-                    >
-                      {post.published ? "已发布" : "草稿"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">操作</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={routes.site.blogPost(post.slug)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            查看
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href={routes.admin.postEdit(post.slug)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            编辑
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-destructive"
-                          onClick={() => confirmDeletePosts([post.id])}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          删除
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+                    </TableCell>
+                    <TableCell>
+                      {post.category ? (
+                        <Badge variant="secondary">{post.category.name}</Badge>
+                      ) : null}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {post.publishedAt
+                        ? dateFormatter.format(new Date(post.publishedAt))
+                        : "草稿"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className={
+                          post.published
+                            ? "border-green-500/50 bg-green-500/10 text-green-600 dark:text-green-400"
+                            : "border-border bg-muted text-muted-foreground"
+                        }
+                      >
+                        {post.published ? "已发布" : "草稿"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            disabled={isDeleting}
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">操作</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem asChild>
+                            <Link href={routes.site.blogPost(post.slug)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              查看
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={routes.admin.postEdit(post.slug)}>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              编辑
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="text-destructive"
+                            disabled={isDeleting}
+                            onClick={() => confirmDeletePosts([post.id])}
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            删除
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : null}
           </TableBody>
         </Table>
       </div>

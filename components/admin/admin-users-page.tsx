@@ -5,7 +5,6 @@ import { useDeferredValue, useEffect, useState } from "react";
 import {
   CheckCircle2,
   Eye,
-  Loader2,
   MoreHorizontal,
   Search,
   Shield,
@@ -41,6 +40,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Table,
   TableBody,
@@ -272,6 +272,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       setPageError(
         actionError instanceof Error ? actionError.message : "撤销用户会话失败",
       );
+      throw actionError;
     } finally {
       setIsRevokingSessions(null);
     }
@@ -284,6 +285,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
       title: "确认撤销这个用户的会话？",
       description: `将撤销「${user.name}」的全部活跃会话，对方需要重新登录。此操作无法撤销。`,
       confirmLabel: "确认撤销",
+      confirmingLabel: "正在撤销...",
       onConfirm: () => revokeUserSessions(user.id),
     });
   };
@@ -351,11 +353,15 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   placeholder="搜索姓名或邮箱..."
                   className="pl-9"
                   value={searchQuery}
+                  disabled={isLoading}
                   onChange={(event) => setSearchQuery(event.target.value)}
                 />
               </div>
               <Select value={roleFilter} onValueChange={setRoleFilter}>
-                <SelectTrigger className="w-full md:w-[160px]">
+                <SelectTrigger
+                  className="w-full md:w-[160px]"
+                  disabled={isLoading}
+                >
                   <SelectValue placeholder="角色" />
                 </SelectTrigger>
                 <SelectContent>
@@ -372,7 +378,10 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   )
                 }
               >
-                <SelectTrigger className="w-full md:w-[180px]">
+                <SelectTrigger
+                  className="w-full md:w-[180px]"
+                  disabled={isLoading}
+                >
                   <SelectValue placeholder="排序字段" />
                 </SelectTrigger>
                 <SelectContent>
@@ -388,7 +397,10 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   setSortDirection(value as "asc" | "desc")
                 }
               >
-                <SelectTrigger className="w-full md:w-[150px]">
+                <SelectTrigger
+                  className="w-full md:w-[150px]"
+                  disabled={isLoading}
+                >
                   <SelectValue placeholder="排序方向" />
                 </SelectTrigger>
                 <SelectContent>
@@ -424,7 +436,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                   <TableRow>
                     <TableCell colSpan={8} className="py-12 text-center">
                       <div className="inline-flex items-center gap-2 text-muted-foreground">
-                        <Loader2 className="size-4 animate-spin" />
+                        <Spinner />
                         正在加载用户...
                       </div>
                     </TableCell>
@@ -464,6 +476,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                             <button
                               type="button"
                               className="flex items-center gap-3 text-left"
+                              disabled={isBusy}
                               onClick={() => openUserDetails(user.id)}
                             >
                               <Avatar className="size-9">
@@ -521,7 +534,11 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                           <TableCell>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  disabled={isBusy}
+                                >
                                   <MoreHorizontal className="size-4" />
                                   <span className="sr-only">操作</span>
                                 </Button>
@@ -541,7 +558,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                   onClick={() => updateUserRole(user, nextRole)}
                                 >
                                   {isRoleUpdating === user.id ? (
-                                    <Loader2 className="mr-2 size-4 animate-spin" />
+                                    <Spinner data-icon="inline-start" />
                                   ) : (
                                     <Shield className="mr-2 size-4" />
                                   )}
@@ -558,7 +575,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                                   }
                                 >
                                   {isRevokingSessions === user.id ? (
-                                    <Loader2 className="mr-2 size-4 animate-spin" />
+                                    <Spinner data-icon="inline-start" />
                                   ) : (
                                     <UserRoundX className="mr-2 size-4" />
                                   )}
@@ -583,7 +600,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={page <= 1}
+                disabled={isLoading || page <= 1}
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
               >
                 上一页
@@ -594,7 +611,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
               <Button
                 variant="outline"
                 size="sm"
-                disabled={page >= totalPages}
+                disabled={isLoading || page >= totalPages}
                 onClick={() =>
                   setPage((current) => Math.min(totalPages, current + 1))
                 }
@@ -621,7 +638,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
           <div className="flex-1 overflow-y-auto px-4 pb-4">
             {selectedUserId && isDetailLoading ? (
               <div className="flex h-full min-h-48 items-center justify-center gap-2 text-muted-foreground">
-                <Loader2 className="size-4 animate-spin" />
+                <Spinner />
                 正在加载用户详情...
               </div>
             ) : null}
@@ -723,7 +740,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                       }
                     >
                       {isRoleUpdating === selectedUserSummary.id ? (
-                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        <Spinner data-icon="inline-start" />
                       ) : (
                         <Shield className="mr-2 size-4" />
                       )}
@@ -742,7 +759,7 @@ export function AdminUsersPage({ currentAdminId }: AdminUsersPageProps) {
                       }
                     >
                       {isRevokingSessions === selectedUserSummary.id ? (
-                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        <Spinner data-icon="inline-start" />
                       ) : (
                         <UserRoundX className="mr-2 size-4" />
                       )}

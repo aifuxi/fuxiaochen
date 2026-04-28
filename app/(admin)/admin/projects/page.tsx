@@ -57,6 +57,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import {
   Table,
@@ -69,6 +70,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminCardSkeletonGrid,
+  AdminTableErrorRow,
+  AdminTableLoadingRow,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminProject } from "@/lib/server/projects/mappers";
@@ -270,6 +276,7 @@ const ProjectDialog = NiceModal.create(
                   id="project-title"
                   placeholder="项目名称"
                   value={formData.title}
+                  disabled={isSubmitting}
                   onChange={(event) => updateForm("title", event.target.value)}
                 />
               </Field>
@@ -279,6 +286,7 @@ const ProjectDialog = NiceModal.create(
                   id="project-slug"
                   placeholder="留空则根据标题生成"
                   value={formData.slug}
+                  disabled={isSubmitting}
                   onChange={(event) => updateForm("slug", event.target.value)}
                 />
               </Field>
@@ -292,6 +300,7 @@ const ProjectDialog = NiceModal.create(
                   inputMode="numeric"
                   placeholder={String(currentYear)}
                   value={formData.year}
+                  disabled={isSubmitting}
                   onChange={(event) => updateForm("year", event.target.value)}
                 />
               </Field>
@@ -301,6 +310,7 @@ const ProjectDialog = NiceModal.create(
                   id="project-image"
                   placeholder="/blog-cover-fallback.svg"
                   value={formData.image}
+                  disabled={isSubmitting}
                   onChange={(event) => updateForm("image", event.target.value)}
                 />
               </Field>
@@ -313,6 +323,7 @@ const ProjectDialog = NiceModal.create(
                 placeholder="用于列表卡片展示的简短介绍"
                 rows={2}
                 value={formData.description}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   updateForm("description", event.target.value)
                 }
@@ -328,6 +339,7 @@ const ProjectDialog = NiceModal.create(
                 placeholder="用于精选项目区域的完整说明"
                 rows={4}
                 value={formData.longDescription}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   updateForm("longDescription", event.target.value)
                 }
@@ -340,6 +352,7 @@ const ProjectDialog = NiceModal.create(
                 id="project-tags"
                 placeholder="Next.js, Drizzle, PostgreSQL"
                 value={formData.tagsText}
+                disabled={isSubmitting}
                 onChange={(event) => updateForm("tagsText", event.target.value)}
               />
               <FieldDescription>多个标签可用逗号或换行分隔。</FieldDescription>
@@ -352,6 +365,7 @@ const ProjectDialog = NiceModal.create(
                   id="project-github-url"
                   placeholder="https://github.com/user/repo"
                   value={formData.githubUrl}
+                  disabled={isSubmitting}
                   onChange={(event) =>
                     updateForm("githubUrl", event.target.value)
                   }
@@ -363,6 +377,7 @@ const ProjectDialog = NiceModal.create(
                   id="project-live-url"
                   placeholder="https://example.com"
                   value={formData.liveUrl}
+                  disabled={isSubmitting}
                   onChange={(event) =>
                     updateForm("liveUrl", event.target.value)
                   }
@@ -375,6 +390,7 @@ const ProjectDialog = NiceModal.create(
                 <Switch
                   id="project-published"
                   checked={formData.published}
+                  disabled={isSubmitting}
                   onCheckedChange={(checked) =>
                     updateForm("published", checked)
                   }
@@ -390,6 +406,7 @@ const ProjectDialog = NiceModal.create(
                 <Switch
                   id="project-featured"
                   checked={formData.featured}
+                  disabled={isSubmitting}
                   onCheckedChange={(checked) => updateForm("featured", checked)}
                 />
                 <FieldContent>
@@ -413,6 +430,7 @@ const ProjectDialog = NiceModal.create(
               取消
             </Button>
             <Button disabled={isSubmitting} onClick={submitProject}>
+              {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
               {isEditing ? "保存更改" : "创建项目"}
             </Button>
           </DialogFooter>
@@ -429,7 +447,9 @@ export default function AdminProjectsPage() {
   const [deletingProjectId, setDeletingProjectId] = useState<string | null>(
     null,
   );
-  const { data, mutate } = useSWR<{ items: AdminProject[] }>(
+  const { data, error, isLoading, mutate } = useSWR<{
+    items: AdminProject[];
+  }>(
     "/api/admin/projects?pageSize=100&sortBy=updatedAt&sortDirection=desc",
     fetchApiData,
     {
@@ -480,8 +500,6 @@ export default function AdminProjectsPage() {
         method: "DELETE",
       });
       await mutate();
-    } catch {
-      // The global API error listener owns toast display.
     } finally {
       setDeletingProjectId(null);
     }
@@ -491,6 +509,7 @@ export default function AdminProjectsPage() {
     void showAdminConfirmDialog({
       title: "确认删除这个项目？",
       description: `将删除项目「${project.title}」。此操作无法撤销。`,
+      confirmingLabel: "正在删除...",
       onConfirm: () => deleteProject(project.id),
     });
   }
@@ -510,40 +529,47 @@ export default function AdminProjectsPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">项目总数</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{stats.total}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">已发布</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{stats.published}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">草稿</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{stats.drafts}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">精选</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{stats.featured}</p>
-          </CardContent>
-        </Card>
-      </div>
+      {isLoading ? (
+        <AdminCardSkeletonGrid
+          className="sm:grid-cols-2 lg:grid-cols-4"
+          count={4}
+        />
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">项目总数</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">已发布</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.published}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">草稿</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.drafts}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium">精选</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stats.featured}</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
@@ -559,13 +585,17 @@ export default function AdminProjectsPage() {
               <Input
                 placeholder="搜索标题、Slug、摘要或标签..."
                 value={search}
+                disabled={isLoading || Boolean(error)}
                 onChange={(event) => setSearch(event.target.value)}
                 className="pl-9"
               />
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="sm:w-36">
+                <SelectTrigger
+                  className="sm:w-36"
+                  disabled={isLoading || Boolean(error)}
+                >
                   <SelectValue placeholder="发布状态" />
                 </SelectTrigger>
                 <SelectContent>
@@ -575,7 +605,10 @@ export default function AdminProjectsPage() {
                 </SelectContent>
               </Select>
               <Select value={featuredFilter} onValueChange={setFeaturedFilter}>
-                <SelectTrigger className="sm:w-36">
+                <SelectTrigger
+                  className="sm:w-36"
+                  disabled={isLoading || Boolean(error)}
+                >
                   <SelectValue placeholder="精选状态" />
                 </SelectTrigger>
                 <SelectContent>
@@ -601,7 +634,17 @@ export default function AdminProjectsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProjects.length === 0 ? (
+                {isLoading ? (
+                  <AdminTableLoadingRow colSpan={7} label="正在加载项目..." />
+                ) : null}
+                {!isLoading && error ? (
+                  <AdminTableErrorRow
+                    colSpan={7}
+                    label="项目加载失败"
+                    onRetry={() => void mutate()}
+                  />
+                ) : null}
+                {!isLoading && !error && filteredProjects.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="py-12 text-center">
                       <div className="flex flex-col gap-1 text-muted-foreground">
@@ -612,130 +655,140 @@ export default function AdminProjectsPage() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  filteredProjects.map((project) => (
-                    <TableRow key={project.id}>
-                      <TableCell>
-                        <div className="flex min-w-64 items-start gap-3">
-                          {project.image ? (
-                            <img
-                              src={project.image}
-                              alt={project.title}
-                              className="size-12 rounded-md border object-cover"
-                            />
-                          ) : (
-                            <div className="flex size-12 items-center justify-center rounded-md border bg-muted">
-                              <Star className="size-4 text-muted-foreground" />
-                            </div>
-                          )}
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="truncate font-medium">
-                                {project.title}
+                ) : null}
+                {!isLoading && !error
+                  ? filteredProjects.map((project) => (
+                      <TableRow key={project.id}>
+                        <TableCell>
+                          <div className="flex min-w-64 items-start gap-3">
+                            {project.image ? (
+                              <img
+                                src={project.image}
+                                alt={project.title}
+                                className="size-12 rounded-md border object-cover"
+                              />
+                            ) : (
+                              <div className="flex size-12 items-center justify-center rounded-md border bg-muted">
+                                <Star className="size-4 text-muted-foreground" />
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="truncate font-medium">
+                                  {project.title}
+                                </p>
+                                {project.featured ? (
+                                  <Star className="size-4 fill-yellow-500 text-yellow-500" />
+                                ) : null}
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                /{project.slug}
                               </p>
-                              {project.featured ? (
-                                <Star className="size-4 fill-yellow-500 text-yellow-500" />
-                              ) : null}
+                              <p className="max-w-md truncate text-sm text-muted-foreground">
+                                {project.description}
+                              </p>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                              /{project.slug}
-                            </p>
-                            <p className="max-w-md truncate text-sm text-muted-foreground">
-                              {project.description}
-                            </p>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{project.year}</TableCell>
-                      <TableCell>
-                        <div className="flex max-w-64 flex-wrap gap-1.5">
-                          {project.tags.length === 0 ? (
-                            <span className="text-sm text-muted-foreground">
-                              未设置
-                            </span>
-                          ) : (
-                            project.tags.slice(0, 4).map((tag) => (
-                              <Badge key={tag} variant="secondary">
-                                {tag}
+                        </TableCell>
+                        <TableCell>{project.year}</TableCell>
+                        <TableCell>
+                          <div className="flex max-w-64 flex-wrap gap-1.5">
+                            {project.tags.length === 0 ? (
+                              <span className="text-sm text-muted-foreground">
+                                未设置
+                              </span>
+                            ) : (
+                              project.tags.slice(0, 4).map((tag) => (
+                                <Badge key={tag} variant="secondary">
+                                  {tag}
+                                </Badge>
+                              ))
+                            )}
+                            {project.tags.length > 4 ? (
+                              <Badge variant="outline">
+                                +{project.tags.length - 4}
                               </Badge>
-                            ))
-                          )}
-                          {project.tags.length > 4 ? (
-                            <Badge variant="outline">
-                              +{project.tags.length - 4}
-                            </Badge>
-                          ) : null}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1 text-sm">
-                          {project.githubUrl ? (
-                            <Link
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                            >
-                              <Github className="size-3.5" />
-                              {safeHost(project.githubUrl)}
-                            </Link>
-                          ) : null}
-                          {project.liveUrl ? (
-                            <Link
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                            >
-                              <ExternalLink className="size-3.5" />
-                              {safeHost(project.liveUrl)}
-                            </Link>
-                          ) : null}
-                          {!project.githubUrl && !project.liveUrl ? (
-                            <span className="text-muted-foreground">无</span>
-                          ) : null}
-                        </div>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(project)}</TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {dateFormatter.format(new Date(project.updatedAt))}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="size-4" />
-                              <span className="sr-only">操作</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link href={routes.site.projects}>
-                                <ExternalLink className="mr-2 size-4" />
-                                查看项目页
+                            ) : null}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1 text-sm">
+                            {project.githubUrl ? (
+                              <Link
+                                href={project.githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                              >
+                                <Github className="size-3.5" />
+                                {safeHost(project.githubUrl)}
                               </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => openProjectDialog(project)}
-                            >
-                              <Pencil className="mr-2 size-4" />
-                              编辑
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              className="text-destructive"
-                              disabled={deletingProjectId === project.id}
-                              onClick={() => confirmDeleteProject(project)}
-                            >
-                              <Trash2 className="mr-2 size-4" />
-                              删除
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
+                            ) : null}
+                            {project.liveUrl ? (
+                              <Link
+                                href={project.liveUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                              >
+                                <ExternalLink className="size-3.5" />
+                                {safeHost(project.liveUrl)}
+                              </Link>
+                            ) : null}
+                            {!project.githubUrl && !project.liveUrl ? (
+                              <span className="text-muted-foreground">无</span>
+                            ) : null}
+                          </div>
+                        </TableCell>
+                        <TableCell>{getStatusBadge(project)}</TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {dateFormatter.format(new Date(project.updatedAt))}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                disabled={deletingProjectId !== null}
+                              >
+                                <MoreHorizontal className="size-4" />
+                                <span className="sr-only">操作</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link href={routes.site.projects}>
+                                  <ExternalLink className="mr-2 size-4" />
+                                  查看项目页
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                disabled={deletingProjectId !== null}
+                                onClick={() => openProjectDialog(project)}
+                              >
+                                <Pencil className="mr-2 size-4" />
+                                编辑
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="text-destructive"
+                                disabled={deletingProjectId === project.id}
+                                onClick={() => confirmDeleteProject(project)}
+                              >
+                                {deletingProjectId === project.id ? (
+                                  <Spinner data-icon="inline-start" />
+                                ) : (
+                                  <Trash2 className="mr-2 size-4" />
+                                )}
+                                删除
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : null}
               </TableBody>
             </Table>
           </div>

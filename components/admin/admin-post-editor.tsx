@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -62,6 +63,9 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingMode, setSubmittingMode] = useState<
+    "draft" | "publish" | null
+  >(null);
   const [hydratedPostId, setHydratedPostId] = useState<string | null>(null);
 
   const editPostUrl =
@@ -182,6 +186,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
     }
 
     setIsSubmitting(true);
+    setSubmittingMode(shouldPublish ? "publish" : "draft");
 
     try {
       await apiRequest(requestUrl, {
@@ -208,6 +213,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
       // The global API error listener owns toast display.
     } finally {
       setIsSubmitting(false);
+      setSubmittingMode(null);
     }
   };
 
@@ -232,6 +238,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   if (isEditLoading) {
     return (
       <div className="flex h-[calc(100dvh-7rem)] items-center justify-center text-sm text-muted-foreground">
+        <Spinner data-icon="inline-start" />
         正在加载文章...
       </div>
     );
@@ -260,7 +267,11 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             disabled={isSubmitting}
             onClick={() => submitPost(false)}
           >
-            <Save className="mr-1.5 h-4 w-4" />
+            {submittingMode === "draft" ? (
+              <Spinner data-icon="inline-start" />
+            ) : (
+              <Save className="mr-1.5 h-4 w-4" />
+            )}
             保存草稿
           </Button>
           <Button
@@ -268,7 +279,11 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             disabled={isSubmitting}
             onClick={() => submitPost(true)}
           >
-            <Send className="mr-1.5 h-4 w-4" />
+            {submittingMode === "publish" ? (
+              <Spinner data-icon="inline-start" />
+            ) : (
+              <Send className="mr-1.5 h-4 w-4" />
+            )}
             {publishButtonLabel}
           </Button>
         </div>
@@ -280,6 +295,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             <input
               type="text"
               value={title}
+              disabled={isSubmitting}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="文章标题..."
               className="w-full bg-transparent text-3xl font-bold tracking-tight placeholder:text-muted-foreground/40 focus:outline-none"

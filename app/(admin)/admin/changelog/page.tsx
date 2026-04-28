@@ -6,7 +6,6 @@ import NiceModal from "@ebay/nice-modal-react";
 import {
   AlertTriangle,
   Bug,
-  Loader2,
   Pencil,
   Plus,
   Sparkles,
@@ -42,9 +41,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
+import {
+  AdminContentError,
+  AdminContentLoading,
+} from "@/components/admin/admin-loading-state";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminChangelog } from "@/lib/server/changelogs/mappers";
@@ -220,6 +224,7 @@ const ChangelogDialog = NiceModal.create(
                   id="changelog-version"
                   placeholder="1.0.0"
                   value={formData.version}
+                  disabled={isSubmitting}
                   onChange={(event) =>
                     updateForm("version", event.target.value)
                   }
@@ -229,6 +234,7 @@ const ChangelogDialog = NiceModal.create(
                 <FieldLabel htmlFor="changelog-type">类型</FieldLabel>
                 <Select
                   value={formData.type}
+                  disabled={isSubmitting}
                   onValueChange={(value) =>
                     updateForm("type", value as AdminChangelog["type"])
                   }
@@ -253,6 +259,7 @@ const ChangelogDialog = NiceModal.create(
                 id="changelog-title"
                 placeholder="本版本新增了什么？"
                 value={formData.title}
+                disabled={isSubmitting}
                 onChange={(event) => updateForm("title", event.target.value)}
               />
             </Field>
@@ -263,6 +270,7 @@ const ChangelogDialog = NiceModal.create(
                 placeholder="简述本次更新内容"
                 rows={2}
                 value={formData.description}
+                disabled={isSubmitting}
                 onChange={(event) =>
                   updateForm("description", event.target.value)
                 }
@@ -277,6 +285,7 @@ const ChangelogDialog = NiceModal.create(
                 placeholder="新增功能\n修复问题\n性能提升"
                 rows={4}
                 value={formData.changes}
+                disabled={isSubmitting}
                 onChange={(event) => updateForm("changes", event.target.value)}
               />
             </Field>
@@ -290,7 +299,7 @@ const ChangelogDialog = NiceModal.create(
               取消
             </Button>
             <Button disabled={isSubmitting} onClick={submitChangelog}>
-              {isSubmitting ? <Loader2 className="animate-spin" /> : null}
+              {isSubmitting ? <Spinner data-icon="inline-start" /> : null}
               {isEditing ? "保存更改" : "新增"}
             </Button>
           </DialogFooter>
@@ -301,7 +310,9 @@ const ChangelogDialog = NiceModal.create(
 );
 
 export default function AdminChangelogPage() {
-  const { data, mutate } = useSWR<{ items: AdminChangelog[] }>(
+  const { data, error, isLoading, mutate } = useSWR<{
+    items: AdminChangelog[];
+  }>(
     "/api/admin/changelogs?pageSize=100&sortBy=releaseDate&sortDirection=desc",
     fetchApiData,
     {
@@ -319,20 +330,17 @@ export default function AdminChangelogPage() {
   };
 
   const deleteChangelog = async (id: string) => {
-    try {
-      await apiRequest(`/api/admin/changelogs/${id}`, {
-        method: "DELETE",
-      });
-      await mutate();
-    } catch {
-      // The global API error listener owns toast display.
-    }
+    await apiRequest(`/api/admin/changelogs/${id}`, {
+      method: "DELETE",
+    });
+    await mutate();
   };
 
   const confirmDeleteChangelog = (entry: AdminChangelog) => {
     void showAdminConfirmDialog({
       title: "确认删除这条更新日志？",
       description: `将删除 v${entry.version}「${entry.title}」。此操作无法撤销。`,
+      confirmingLabel: "正在删除...",
       onConfirm: () => deleteChangelog(entry.id),
     });
   };
@@ -356,11 +364,21 @@ export default function AdminChangelogPage() {
           <CardDescription>{changelogs.length} 条更新日志</CardDescription>
         </CardHeader>
         <CardContent>
-          {changelogs.length === 0 ? (
+          {isLoading ? (
+            <AdminContentLoading label="正在加载更新日志..." />
+          ) : null}
+          {!isLoading && error ? (
+            <AdminContentError
+              label="更新日志加载失败"
+              onRetry={() => void mutate()}
+            />
+          ) : null}
+          {!isLoading && !error && changelogs.length === 0 ? (
             <div className="py-10 text-center text-sm text-muted-foreground">
               暂无更新日志，先创建一条记录。
             </div>
-          ) : (
+          ) : null}
+          {!isLoading && !error && changelogs.length > 0 ? (
             <div className="space-y-4">
               {changelogs.map((entry) => (
                 <div
@@ -407,7 +425,7 @@ export default function AdminChangelogPage() {
                 </div>
               ))}
             </div>
-          )}
+          ) : null}
         </CardContent>
       </Card>
     </div>
