@@ -23,7 +23,10 @@ export function RecentPosts({ initialPosts }: RecentPostsProps) {
       fallbackData: {
         items: initialPosts ?? [],
       },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 

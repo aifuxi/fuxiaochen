@@ -25,6 +25,7 @@ export function Footer({ settings }: FooterProps) {
           <div className="flex flex-col gap-4">
             <Link
               href={routes.site.home}
+              prefetch={false}
               className="text-lg font-semibold tracking-tight text-foreground"
             >
               {settings.general.siteName}
@@ -43,6 +44,7 @@ export function Footer({ settings }: FooterProps) {
                 <li key={link.href}>
                   <Link
                     href={link.href}
+                    prefetch={false}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}

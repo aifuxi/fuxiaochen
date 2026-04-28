@@ -28,7 +28,10 @@ export function FeaturedPosts({ initialPosts }: FeaturedPostsProps) {
       fallbackData: {
         items: initialPosts ?? [],
       },
+      revalidateIfStale: false,
       revalidateOnFocus: false,
+      revalidateOnMount: false,
+      revalidateOnReconnect: false,
     },
   );
 
