@@ -3,13 +3,21 @@ import type { Metadata } from "next";
 import { AdminLayout } from "@/components/admin/admin-layout";
 
 import { requireServerSession } from "@/lib/auth-session";
+import { getCachedSiteSettings } from "@/lib/server/settings/service";
 
-export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getCachedSiteSettings();
+
+  return {
+    icons: {
+      icon: settings.general.logoUrl,
+    },
+    robots: {
+      follow: false,
+      index: false,
+    },
+  };
+}
 
 export default async function AdminRouteLayout({
   children,
