@@ -203,6 +203,8 @@ docker compose up -d
 
 Docker 构建与运行需要 `.env` 中提供数据库、Redis、Better Auth、OSS、GitHub OAuth、站点 URL 等环境变量。生产构建输出使用 Next standalone，运行入口为 `node server.js`。
 
+Nginx 反向代理与缓存模板见 [`deployments/README.md`](deployments/README.md)。
+
 ## 提交规范
 
 提交信息遵循 Conventional Commits，例如：
