@@ -22,6 +22,9 @@ const _spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "fuxiaochen",
   description: "一个简单的个人博客，使用 Next.js 构建",
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
