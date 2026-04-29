@@ -109,23 +109,19 @@ export function ChangelogPageClient({ changelogs }: ChangelogPageClientProps) {
                   </p>
 
                   <ul
-                    className={`space-y-1.5 ${
-                      index % 2 === 0 ? "md:ml-auto md:text-right" : ""
+                    className={`w-fit max-w-full space-y-2 text-left ${
+                      index % 2 === 0 ? "md:ml-auto" : ""
                     }`}
                   >
                     {entry.changes.map((change, itemIndex) => (
                       <li
                         key={itemIndex}
-                        className="text-sm text-muted-foreground"
+                        className="grid min-w-0 grid-cols-[0.75rem_minmax(0,1fr)] gap-2 text-sm leading-7 text-muted-foreground"
                       >
-                        {index % 2 === 0 ? (
-                          <>
-                            <span className="hidden md:inline">{change} •</span>
-                            <span className="md:hidden">• {change}</span>
-                          </>
-                        ) : (
-                          <>• {change}</>
-                        )}
+                        <span aria-hidden="true" className="text-center">
+                          •
+                        </span>
+                        <span className="min-w-0 break-words">{change}</span>
                       </li>
                     ))}
                   </ul>
