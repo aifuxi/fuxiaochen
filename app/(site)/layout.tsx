@@ -4,6 +4,7 @@ import Script from "next/script";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { SiteLayout } from "@/components/site/site-layout";
+import { SiteProgressProvider } from "@/components/site/site-progress-provider";
 
 import { isProduction } from "@/lib/env";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
@@ -40,7 +41,9 @@ export default async function SiteRouteLayout({
 
   return (
     <>
-      <SiteLayout settings={settings}>{children}</SiteLayout>
+      <SiteProgressProvider>
+        <SiteLayout settings={settings}>{children}</SiteLayout>
+      </SiteProgressProvider>
 
       {isProduction() &&
         googleAnalytics.enabled &&
