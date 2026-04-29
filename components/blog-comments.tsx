@@ -16,6 +16,7 @@ import type { PublicComment } from "@/lib/server/comments/mappers";
 import { siteCopy } from "@/constants/site-copy";
 
 interface BlogCommentsProps {
+  initialComments?: PublicComment[];
   postSlug: string;
 }
 
@@ -27,7 +28,7 @@ const countComments = (comments: PublicComment[]): number =>
     0,
   );
 
-export function BlogComments({ postSlug }: BlogCommentsProps) {
+export function BlogComments({ initialComments, postSlug }: BlogCommentsProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [content, setContent] = useState("");
@@ -68,6 +69,9 @@ export function BlogComments({ postSlug }: BlogCommentsProps) {
     commentsUrl,
     fetchApiData,
     {
+      fallbackData: {
+        items: initialComments ?? [],
+      },
       revalidateOnFocus: false,
     },
   );

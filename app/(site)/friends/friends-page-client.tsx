@@ -1,21 +1,17 @@
-"use client";
-
 import Link from "next/link";
 
 import { ExternalLink, User } from "lucide-react";
-import useSWR from "swr";
 
 import { Button } from "@/components/ui/button";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicFriend } from "@/lib/server/friends/mappers";
 import type { SiteSettings } from "@/lib/settings/types";
 
 import { siteCopy } from "@/constants/site-copy";
 
 type FriendsPageClientProps = {
+  friends: PublicFriend[];
   settings: SiteSettings;
-  initialFriends?: PublicFriend[];
 };
 
 function getCategoryLabel(category: PublicFriend["category"]) {
@@ -23,24 +19,9 @@ function getCategoryLabel(category: PublicFriend["category"]) {
 }
 
 export function FriendsPageClient({
+  friends,
   settings,
-  initialFriends,
 }: FriendsPageClientProps) {
-  const { data } = useSWR<{ items: PublicFriend[] }>(
-    "/api/public/friends",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialFriends ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const friends = data?.items ?? [];
   const groupedFriends = friends.reduce(
     (acc, friend) => {
       if (!acc[friend.category]) {

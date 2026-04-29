@@ -1,37 +1,17 @@
-"use client";
-
 import Link from "next/link";
 
 import { ArrowRight } from "lucide-react";
-import useSWR from "swr";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
 type RecentPostsProps = {
-  initialPosts?: PublicBlog[];
+  posts: PublicBlog[];
 };
 
-export function RecentPosts({ initialPosts }: RecentPostsProps) {
-  const { data } = useSWR<{ items: PublicBlog[] }>(
-    "/api/public/blogs?featured=false&pageSize=5&sortBy=date&sortDirection=desc",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialPosts ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const recentPosts = data?.items ?? [];
-
+export function RecentPosts({ posts }: RecentPostsProps) {
   return (
     <section className="border-t border-border py-16">
       <div className="mx-auto max-w-4xl px-6">
@@ -49,12 +29,12 @@ export function RecentPosts({ initialPosts }: RecentPostsProps) {
         </div>
 
         <div className="flex flex-col">
-          {recentPosts.map((post, index) => (
+          {posts.map((post, index) => (
             <Link
               key={post.slug}
               href={routes.site.blogPost(post.slug)}
               className={`group flex items-center justify-between py-4 transition-colors hover:text-foreground ${
-                index !== recentPosts.length - 1 ? "border-b border-border" : ""
+                index !== posts.length - 1 ? "border-b border-border" : ""
               }`}
             >
               <span className="font-medium text-foreground group-hover:text-foreground/80">

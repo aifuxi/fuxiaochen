@@ -1,17 +1,13 @@
-"use client";
-
 import { AlertTriangle, Bug, Sparkles, Zap } from "lucide-react";
-import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicChangelog } from "@/lib/server/changelogs/mappers";
 
 import { siteCopy } from "@/constants/site-copy";
 
 type ChangelogPageClientProps = {
-  initialChangelogs?: PublicChangelog[];
+  changelogs: PublicChangelog[];
 };
 
 function getTypeIcon(type: PublicChangelog["type"]) {
@@ -50,25 +46,7 @@ function getTypeBadge(type: PublicChangelog["type"]) {
   );
 }
 
-export function ChangelogPageClient({
-  initialChangelogs,
-}: ChangelogPageClientProps) {
-  const { data } = useSWR<{ items: PublicChangelog[] }>(
-    "/api/public/changelogs?pageSize=100",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialChangelogs ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const changelogs = data?.items ?? [];
-
+export function ChangelogPageClient({ changelogs }: ChangelogPageClientProps) {
   return (
     <>
       <main className="mx-auto max-w-3xl px-6 py-16">

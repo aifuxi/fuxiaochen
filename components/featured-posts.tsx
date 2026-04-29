@@ -1,42 +1,22 @@
-"use client";
-
 import Link from "next/link";
 
 import { ArrowUpRight } from "lucide-react";
-import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 
 import { BlogCoverImage } from "@/components/blog-cover-image";
 import { BlogStats } from "@/components/blog-stats";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
 
 type FeaturedPostsProps = {
-  initialPosts?: PublicBlog[];
+  posts: PublicBlog[];
 };
 
-export function FeaturedPosts({ initialPosts }: FeaturedPostsProps) {
-  const { data } = useSWR<{ items: PublicBlog[] }>(
-    "/api/public/blogs?featured=true&pageSize=3",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialPosts ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const featuredPosts = data?.items ?? [];
-
+export function FeaturedPosts({ posts }: FeaturedPostsProps) {
   return (
     <section className="border-t border-border py-16">
       <div className="mx-auto max-w-4xl px-6">
@@ -52,9 +32,9 @@ export function FeaturedPosts({ initialPosts }: FeaturedPostsProps) {
           </Link>
         </div>
 
-        {featuredPosts.length > 0 ? (
+        {posts.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-3">
-            {featuredPosts.map((post) => (
+            {posts.map((post) => (
               <Link
                 key={post.slug}
                 href={routes.site.blogPost(post.slug)}
