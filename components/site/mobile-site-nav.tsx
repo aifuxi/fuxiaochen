@@ -54,7 +54,6 @@ export function MobileSiteNav() {
               <SheetClose asChild key={link.href}>
                 <Link
                   href={link.href}
-                  prefetch={false}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "rounded-md px-3 py-2.5 text-sm font-medium transition-colors",

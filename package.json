@@ -26,6 +26,7 @@
     "commit:retry": "cz --retry"
   },
   "dependencies": {
+    "@bprogress/next": "^3.2.12",
     "@bytemd/plugin-breaks": "^1.22.0",
     "@bytemd/plugin-frontmatter": "^1.22.0",
     "@bytemd/plugin-gfm": "^1.22.0",
