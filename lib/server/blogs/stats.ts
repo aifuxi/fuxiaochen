@@ -1,9 +1,8 @@
-import { sql } from "drizzle-orm";
+import { and, eq, inArray, lte, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import { db } from "@/lib/db";
-import { blogDailyStats } from "@/lib/db/schema";
-import { getRedisClient } from "@/lib/server/redis";
+import { blogDailyStats, blogLikes, blogViewDedup } from "@/lib/db/schema";
 
 const BLOG_STATS_VISITOR_COOKIE = "blog_stats_visitor_id";
 const BLOG_STATS_VISITOR_MAX_AGE = 60 * 60 * 24 * 365;
@@ -39,39 +38,32 @@ export interface BlogStatsService {
   toggleLike(blogId: string, visitorId: string): Promise<BlogLikeResult>;
 }
 
+type StatsExecutor = Pick<typeof db, "delete" | "insert" | "select">;
+
 export const DEFAULT_BLOG_STATS: BlogStats = {
   viewCount: 0,
   likeCount: 0,
   liked: false,
 };
 
-const likeToggleScript = `
-local liked = redis.call("SISMEMBER", KEYS[1], ARGV[1])
-if liked == 1 then
-  redis.call("SREM", KEYS[1], ARGV[1])
-  return {0, redis.call("SCARD", KEYS[1])}
-end
-redis.call("SADD", KEYS[1], ARGV[1])
-return {1, redis.call("SCARD", KEYS[1])}
-`;
+const addSeconds = (date: Date, seconds: number) =>
+  new Date(date.getTime() + seconds * 1000);
 
-const viewCountKey = (blogId: string) => `blog:stats:${blogId}:views`;
-const viewSeenKey = (blogId: string, visitorId: string) =>
-  `blog:stats:${blogId}:views:seen:${visitorId}`;
-const likeSetKey = (blogId: string) => `blog:stats:${blogId}:likes`;
-
-const recordDailyStatsDelta = async ({
-  blogId,
-  viewCount = 0,
-  likeCount = 0,
-  unlikeCount = 0,
-}: {
-  blogId: string;
-  viewCount?: number;
-  likeCount?: number;
-  unlikeCount?: number;
-}) => {
-  await db
+const recordDailyStatsDelta = async (
+  executor: StatsExecutor,
+  {
+    blogId,
+    viewCount = 0,
+    likeCount = 0,
+    unlikeCount = 0,
+  }: {
+    blogId: string;
+    viewCount?: number;
+    likeCount?: number;
+    unlikeCount?: number;
+  },
+) => {
+  await executor
     .insert(blogDailyStats)
     .values({
       blogId,
@@ -90,27 +82,28 @@ const recordDailyStatsDelta = async ({
     });
 };
 
-const tryRecordDailyStatsDelta = async (
-  delta: Parameters<typeof recordDailyStatsDelta>[0],
-) => {
-  try {
-    await recordDailyStatsDelta(delta);
-  } catch {
-    // Analytics persistence must not block the visitor interaction path.
-  }
+const getViewCount = async (executor: StatsExecutor, blogId: string) => {
+  const rows = await executor
+    .select({
+      viewCount: sql<number>`coalesce(sum(${blogDailyStats.viewCount}), 0)`
+        .mapWith(Number)
+        .as("view_count"),
+    })
+    .from(blogDailyStats)
+    .where(eq(blogDailyStats.blogId, blogId));
+
+  return rows[0]?.viewCount ?? 0;
 };
 
-const toCount = (value: unknown) => {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : 0;
-  }
+const getLikeCount = async (executor: StatsExecutor, blogId: string) => {
+  const rows = await executor
+    .select({
+      likeCount: sql<number>`count(*)`.mapWith(Number).as("like_count"),
+    })
+    .from(blogLikes)
+    .where(eq(blogLikes.blogId, blogId));
 
-  if (typeof value === "string") {
-    const parsed = Number.parseInt(value, 10);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-
-  return 0;
+  return rows[0]?.likeCount ?? 0;
 };
 
 const parseCookieHeader = (cookieHeader: string | null) => {
@@ -188,95 +181,124 @@ export const blogStatsService: BlogStatsService = {
       return new Map();
     }
 
-    const redis = await getRedisClient();
-    const pipeline = redis.pipeline();
+    const [viewRows, likeRows, likedRows] = await Promise.all([
+      db
+        .select({
+          blogId: blogDailyStats.blogId,
+          viewCount: sql<number>`coalesce(sum(${blogDailyStats.viewCount}), 0)`
+            .mapWith(Number)
+            .as("view_count"),
+        })
+        .from(blogDailyStats)
+        .where(inArray(blogDailyStats.blogId, uniqueBlogIds))
+        .groupBy(blogDailyStats.blogId),
+      db
+        .select({
+          blogId: blogLikes.blogId,
+          likeCount: sql<number>`count(*)`.mapWith(Number).as("like_count"),
+        })
+        .from(blogLikes)
+        .where(inArray(blogLikes.blogId, uniqueBlogIds))
+        .groupBy(blogLikes.blogId),
+      visitorId
+        ? db
+            .select({
+              blogId: blogLikes.blogId,
+            })
+            .from(blogLikes)
+            .where(
+              and(
+                inArray(blogLikes.blogId, uniqueBlogIds),
+                eq(blogLikes.visitorId, visitorId),
+              ),
+            )
+        : Promise.resolve([]),
+    ]);
 
-    for (const blogId of uniqueBlogIds) {
-      pipeline.get(viewCountKey(blogId));
-      pipeline.scard(likeSetKey(blogId));
+    const viewCounts = new Map(
+      viewRows.map((row) => [row.blogId, row.viewCount]),
+    );
+    const likeCounts = new Map(
+      likeRows.map((row) => [row.blogId, row.likeCount]),
+    );
+    const likedBlogIds = new Set(likedRows.map((row) => row.blogId));
 
-      if (visitorId) {
-        pipeline.sismember(likeSetKey(blogId), visitorId);
-      }
-    }
-
-    const rows = await pipeline.exec();
-
-    if (!rows) {
-      throw new Error("Redis pipeline failed");
-    }
-
-    const statsByBlogId = new Map<string, BlogStats>();
-    let cursor = 0;
-
-    for (const blogId of uniqueBlogIds) {
-      const viewCountRow = rows[cursor++];
-      const likeCountRow = rows[cursor++];
-      const likedRow = visitorId ? rows[cursor++] : undefined;
-
-      const rowError = viewCountRow?.[0] ?? likeCountRow?.[0] ?? likedRow?.[0];
-
-      if (rowError) {
-        throw rowError;
-      }
-
-      statsByBlogId.set(blogId, {
-        viewCount: toCount(viewCountRow?.[1]),
-        likeCount: toCount(likeCountRow?.[1]),
-        liked: toCount(likedRow?.[1]) === 1,
-      });
-    }
-
-    return statsByBlogId;
+    return new Map(
+      uniqueBlogIds.map((blogId) => [
+        blogId,
+        {
+          viewCount: viewCounts.get(blogId) ?? 0,
+          likeCount: likeCounts.get(blogId) ?? 0,
+          liked: likedBlogIds.has(blogId),
+        },
+      ]),
+    );
   },
   async trackView(blogId, visitorId) {
-    const redis = await getRedisClient();
-    const counted = await redis.set(
-      viewSeenKey(blogId, visitorId),
-      "1",
-      "EX",
-      VIEW_DEDUP_TTL_SECONDS,
-      "NX",
-    );
+    return db.transaction(async (tx) => {
+      const now = new Date();
 
-    if (counted === "OK") {
-      const viewCount = await redis.incr(viewCountKey(blogId));
-      await tryRecordDailyStatsDelta({ blogId, viewCount: 1 });
+      await tx
+        .delete(blogViewDedup)
+        .where(
+          and(
+            eq(blogViewDedup.blogId, blogId),
+            eq(blogViewDedup.visitorId, visitorId),
+            lte(blogViewDedup.expiresAt, now),
+          ),
+        );
+
+      const dedupRows = await tx
+        .insert(blogViewDedup)
+        .values({
+          blogId,
+          visitorId,
+          createdAt: now,
+          expiresAt: addSeconds(now, VIEW_DEDUP_TTL_SECONDS),
+        })
+        .onConflictDoNothing()
+        .returning({ blogId: blogViewDedup.blogId });
+      const counted = dedupRows.length > 0;
+
+      if (counted) {
+        await recordDailyStatsDelta(tx, { blogId, viewCount: 1 });
+      }
 
       return {
-        viewCount,
-        counted: true,
+        viewCount: await getViewCount(tx, blogId),
+        counted,
       };
-    }
-
-    return {
-      viewCount: toCount(await redis.get(viewCountKey(blogId))),
-      counted: false,
-    };
+    });
   },
   async toggleLike(blogId, visitorId) {
-    const redis = await getRedisClient();
-    const result = await redis.eval(
-      likeToggleScript,
-      1,
-      likeSetKey(blogId),
-      visitorId,
-    );
+    return db.transaction(async (tx) => {
+      const now = new Date();
+      const deletedRows = await tx
+        .delete(blogLikes)
+        .where(
+          and(eq(blogLikes.blogId, blogId), eq(blogLikes.visitorId, visitorId)),
+        )
+        .returning({ blogId: blogLikes.blogId });
+      const liked = deletedRows.length === 0;
 
-    if (!Array.isArray(result)) {
-      throw new Error("Redis like toggle failed");
-    }
+      if (liked) {
+        await tx.insert(blogLikes).values({
+          blogId,
+          visitorId,
+          createdAt: now,
+        });
+      }
 
-    const liked = toCount(result[0]) === 1;
-    await tryRecordDailyStatsDelta({
-      blogId,
-      likeCount: liked ? 1 : 0,
-      unlikeCount: liked ? 0 : 1,
+      await recordDailyStatsDelta(tx, {
+        blogId,
+        likeCount: liked ? 1 : 0,
+        unlikeCount: liked ? 0 : 1,
+      });
+
+      return {
+        liked,
+        likeCount: await getLikeCount(tx, blogId),
+      };
     });
-
-    return {
-      liked,
-      likeCount: toCount(result[1]),
-    };
   },
 };

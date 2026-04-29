@@ -1,11 +1,12 @@
-import type { Redis } from "ioredis";
 import { createHash, randomUUID } from "node:crypto";
+
+import type { RequestGuardStore } from "@/lib/server/request-guard-store";
 
 const AUTH_GUARD_VISITOR_COOKIE = "auth_guard_visitor_id";
 const AUTH_GUARD_VISITOR_MAX_AGE = 60 * 60 * 24 * 365;
 
 export type AuthGuardDeps = {
-  getRedis?: () => Promise<Redis>;
+  store?: RequestGuardStore;
   now?: () => Date;
   generateId?: () => string;
 };
@@ -107,18 +108,14 @@ export const createIdentityHash = ({
 
 export async function incrementFixedWindow({
   key,
-  redis,
+  now,
+  store,
   ttlSeconds,
 }: {
   key: string;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
   ttlSeconds: number;
 }) {
-  const count = await redis.incr(key);
-
-  if (count === 1) {
-    await redis.expire(key, ttlSeconds);
-  }
-
-  return count;
+  return store.incrementFixedWindow({ key, now, ttlSeconds });
 }

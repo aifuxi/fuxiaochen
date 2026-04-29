@@ -52,7 +52,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
     skills: {
       languages: ["TypeScript", "JavaScript", "Python", "Rust", "Go"],
       frontend: ["React", "Next.js", "Vue.js", "Tailwind CSS", "Framer Motion"],
-      backend: ["Node.js", "Express", "PostgreSQL", "Redis", "GraphQL"],
+      backend: ["Node.js", "Express", "PostgreSQL", "GraphQL"],
       tools: ["Git", "Docker", "AWS", "Vercel", "Figma"],
     },
     beyondCodeTitle: siteCopy.about.beyondCodeTitle,

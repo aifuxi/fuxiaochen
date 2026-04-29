@@ -1,9 +1,11 @@
-import type { Redis } from "ioredis";
 import { z } from "zod";
 
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
-import { getRedisClient } from "@/lib/server/redis";
+import {
+  postgresRequestGuardStore,
+  type RequestGuardStore,
+} from "@/lib/server/request-guard-store";
 
 import {
   createIdentityHash,
@@ -47,7 +49,7 @@ export interface RegisterGuard {
 }
 
 type RegisterGuardDeps = {
-  getRedis?: () => Promise<Redis>;
+  store?: RequestGuardStore;
   now?: () => Date;
   generateId?: () => string;
 };
@@ -83,15 +85,17 @@ const createGuardUnavailableError = () =>
 async function assertFixedWindowLimit({
   key,
   limit,
-  redis,
+  now,
+  store,
   ttlSeconds,
 }: {
   key: string;
   limit: number;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
   ttlSeconds: number;
 }) {
-  const count = await incrementFixedWindow({ key, redis, ttlSeconds });
+  const count = await incrementFixedWindow({ key, now, store, ttlSeconds });
   if (count > limit) {
     throw createRateLimitedError();
   }
@@ -106,7 +110,7 @@ async function parseGuardBody(request: Request) {
 }
 
 export function createRegisterGuard({
-  getRedis = getRedisClient,
+  store = postgresRequestGuardStore,
   now = () => new Date(),
   generateId = defaultGenerateAuthGuardId,
 }: RegisterGuardDeps = {}): RegisterGuard {
@@ -132,8 +136,8 @@ export function createRegisterGuard({
       const emailHash = hashValue(normalizeEmail(body.email));
 
       try {
-        const redis = await getRedis();
-        const nowSeconds = Math.floor(now().getTime() / 1000);
+        const nowDate = now();
+        const nowSeconds = Math.floor(nowDate.getTime() / 1000);
         const minuteWindow = Math.floor(
           nowSeconds / RATE_LIMITS.identityPerMinute.ttlSeconds,
         );
@@ -143,29 +147,31 @@ export function createRegisterGuard({
 
         await assertFixedWindowLimit({
           key: `auth:register:guard:rate:identity:minute:${identityHash}:${minuteWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerMinute,
         });
         await assertFixedWindowLimit({
           key: `auth:register:guard:rate:identity:hour:${identityHash}:${hourWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerHour,
         });
         await assertFixedWindowLimit({
           key: `auth:register:guard:rate:email:hour:${emailHash}:${hourWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.emailPerHour,
         });
 
-        const duplicateResult = await redis.set(
-          `auth:register:guard:duplicate:${identityHash}:${emailHash}`,
-          "1",
-          "EX",
-          DUPLICATE_TTL_SECONDS,
-          "NX",
-        );
+        const duplicateCreated = await store.setIfNotExists({
+          key: `auth:register:guard:duplicate:${identityHash}:${emailHash}`,
+          type: "marker",
+          now: nowDate,
+          ttlSeconds: DUPLICATE_TTL_SECONDS,
+        });
 
-        if (duplicateResult !== "OK") {
+        if (!duplicateCreated) {
           throw createDuplicateSubmissionError();
         }
 

@@ -6,7 +6,7 @@
 
 - Framework: Next.js 16, React 19, TypeScript strict
 - UI: Tailwind CSS v4, shadcn/ui `new-york`, Radix UI, Lucide, Sonner, NiceModal
-- Data: PostgreSQL, Drizzle ORM, Drizzle Kit, Redis
+- Data: PostgreSQL, Drizzle ORM, Drizzle Kit
 - Auth: Better Auth, GitHub OAuth
 - Content: ByteMD Markdown preview/rendering, Highlight.js
 - Tooling: Bun, Oxlint, Oxfmt, Husky, lint-staged, commitlint
@@ -27,7 +27,7 @@
 
 - Node.js `>= 20`，推荐使用仓库 `.nvmrc` 中的 Node `24`
 - Bun `>= 1.3.11`
-- Docker / Docker Compose，用于本地 PostgreSQL 与 Redis
+- Docker / Docker Compose，用于本地 PostgreSQL
 
 ### 安装依赖
 
@@ -44,7 +44,6 @@ cp .env.example .env
 至少需要配置：
 
 - `DATABASE_URL`
-- `REDIS_URL`
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL`
 - `NEXT_PUBLIC_SITE_URL`
@@ -53,7 +52,7 @@ cp .env.example .env
 本地依赖服务默认可以用 Docker 启动：
 
 ```bash
-docker compose up -d postgresql redis
+docker compose up -d postgresql
 ```
 
 `.env.example` 中 PostgreSQL 端口为 `5400`，和 `docker-compose.yml` 的本地映射一致。密码、库名等值需要与本地 `.env` 保持一致。
@@ -149,7 +148,7 @@ lib/server/<resource>/
 Schema 唯一来源是 `lib/db/schema.ts`，migration 输出到 `drizzle/`。主要业务表包括：
 
 - `blogs`, `categories`, `tags`, `blog_tags`
-- `blog_daily_stats`
+- `blog_daily_stats`, `blog_likes`, `blog_view_dedup`, `request_guard_states`
 - `projects`, `friends`, `changelogs`
 - `comments`, `notifications`
 - `site_settings`
@@ -201,7 +200,7 @@ docker build -t fuxiaochen:latest .
 docker compose up -d
 ```
 
-Docker 构建与运行需要 `.env` 中提供数据库、Redis、Better Auth、OSS、GitHub OAuth、站点 URL 等环境变量。生产构建输出使用 Next standalone，运行入口为 `node server.js`。
+Docker 构建与运行需要 `.env` 中提供数据库、Better Auth、OSS、GitHub OAuth、站点 URL 等环境变量。生产构建输出使用 Next standalone，运行入口为 `node server.js`。
 
 Nginx 反向代理与缓存模板见 [`deployments/README.md`](deployments/README.md)。
 

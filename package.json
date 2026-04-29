@@ -79,7 +79,6 @@
     "globals": "^16.3.0",
     "highlight.js": "11.8.0",
     "input-otp": "1.4.2",
-    "ioredis": "^5.10.1",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.562.0",
     "mitt": "^3.0.1",

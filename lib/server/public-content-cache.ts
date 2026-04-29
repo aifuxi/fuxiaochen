@@ -3,7 +3,7 @@ import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import type { PublicBlogListQuery } from "@/lib/server/blogs/dto";
 import { toPublicBlog, type PublicBlog } from "@/lib/server/blogs/mappers";
 import { blogService } from "@/lib/server/blogs/service";
-import { DEFAULT_BLOG_STATS } from "@/lib/server/blogs/stats";
+import { blogStatsService, DEFAULT_BLOG_STATS } from "@/lib/server/blogs/stats";
 import {
   toPublicCategory,
   type PublicCategory,
@@ -95,16 +95,24 @@ const changelogListQuery = {
   sortDirection: "desc",
 } as const;
 
-const toPublicBlogsWithDefaultStats = (
+const toPublicBlogsWithStats = async (
   blogs: Awaited<ReturnType<typeof blogService.listPublicBlogs>>["items"],
-) => blogs.map((blog) => toPublicBlog(blog, DEFAULT_BLOG_STATS));
+) => {
+  const statsByBlogId = await blogStatsService
+    .getStatsByBlogIds(blogs.map((blog) => blog.id))
+    .catch(() => new Map());
+
+  return blogs.map((blog) =>
+    toPublicBlog(blog, statsByBlogId.get(blog.id) ?? DEFAULT_BLOG_STATS),
+  );
+};
 
 const getCachedPublicBlogs = unstable_cache(
   async (): Promise<PublicBlogListPayload> => {
     const result = await blogService.listPublicBlogs(publicBlogListQuery);
 
     return {
-      items: toPublicBlogsWithDefaultStats(result.items),
+      items: await toPublicBlogsWithStats(result.items),
     };
   },
   ["public-blogs-list"],
@@ -118,7 +126,7 @@ export const getCachedFeaturedBlogs = unstable_cache(
     const result = await blogService.listPublicBlogs(featuredBlogListQuery);
 
     return {
-      items: toPublicBlogsWithDefaultStats(result.items),
+      items: await toPublicBlogsWithStats(result.items),
     };
   },
   ["public-featured-blogs"],
@@ -132,7 +140,7 @@ export const getCachedRecentBlogs = unstable_cache(
     const result = await blogService.listPublicBlogs(recentBlogListQuery);
 
     return {
-      items: toPublicBlogsWithDefaultStats(result.items),
+      items: await toPublicBlogsWithStats(result.items),
     };
   },
   ["public-recent-blogs"],
