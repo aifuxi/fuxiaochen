@@ -15,6 +15,11 @@ import {
 } from "@/lib/server/changelogs/mappers";
 import { changelogService } from "@/lib/server/changelogs/service";
 import {
+  toPublicCommentTree,
+  type PublicComment,
+} from "@/lib/server/comments/mappers";
+import { createCommentService } from "@/lib/server/comments/service";
+import {
   toPublicFriend,
   type PublicFriend,
 } from "@/lib/server/friends/mappers";
@@ -58,6 +63,15 @@ type PublicBlogPageData = PublicBlogListPayload & {
   tags: PublicTag[];
 };
 
+type PublicBlogPostContentPayload = {
+  post: PublicBlog;
+  similarPosts: PublicBlog[];
+};
+
+type PublicBlogPostPageData = PublicBlogPostContentPayload & {
+  comments: PublicComment[];
+};
+
 const publicBlogListQuery = {
   page: 1,
   pageSize: 100,
@@ -95,6 +109,8 @@ const changelogListQuery = {
   sortDirection: "desc",
 } as const;
 
+const commentService = createCommentService();
+
 const toPublicBlogsWithStats = async (
   blogs: Awaited<ReturnType<typeof blogService.listPublicBlogs>>["items"],
 ) => {
@@ -105,6 +121,23 @@ const toPublicBlogsWithStats = async (
   return blogs.map((blog) =>
     toPublicBlog(blog, statsByBlogId.get(blog.id) ?? DEFAULT_BLOG_STATS),
   );
+};
+
+const toPublicBlogPostWithStats = async (
+  blog: Awaited<ReturnType<typeof blogService.getPublicBlogBySlug>>,
+  similarBlogs: Awaited<ReturnType<typeof blogService.getPublicSimilarBlogs>>,
+) => {
+  const blogs = [blog, ...similarBlogs];
+  const statsByBlogId = await blogStatsService
+    .getStatsByBlogIds(blogs.map((item) => item.id))
+    .catch(() => new Map());
+
+  return {
+    post: toPublicBlog(blog, statsByBlogId.get(blog.id) ?? DEFAULT_BLOG_STATS),
+    similarPosts: similarBlogs.map((item) =>
+      toPublicBlog(item, statsByBlogId.get(item.id) ?? DEFAULT_BLOG_STATS),
+    ),
+  };
 };
 
 const getCachedPublicBlogs = unstable_cache(
@@ -196,6 +229,39 @@ export const getCachedPublicBlogPageData = unstable_cache(
     ],
   },
 );
+
+const getCachedPublicBlogPostContent = unstable_cache(
+  async (slug: string): Promise<PublicBlogPostContentPayload> => {
+    const blog = await blogService.getPublicBlogBySlug(slug);
+    const similarBlogs = await blogService.getPublicSimilarBlogs(slug, 3);
+
+    return toPublicBlogPostWithStats(blog, similarBlogs);
+  },
+  ["public-blog-post-content"],
+  {
+    tags: [PUBLIC_CONTENT_CACHE_TAGS.blogs],
+  },
+);
+
+const getPublicBlogPostComments = async (slug: string) => {
+  const comments = await commentService.listPublicComments({ postSlug: slug });
+
+  return toPublicCommentTree(comments);
+};
+
+export const getCachedPublicBlogPostPageData = async (
+  slug: string,
+): Promise<PublicBlogPostPageData> => {
+  const [content, comments] = await Promise.all([
+    getCachedPublicBlogPostContent(slug),
+    getPublicBlogPostComments(slug),
+  ]);
+
+  return {
+    ...content,
+    comments,
+  };
+};
 
 export const getCachedPublicProjects = unstable_cache(
   async (): Promise<PublicProjectListPayload> => {

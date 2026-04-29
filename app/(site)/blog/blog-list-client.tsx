@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "next/link";
 
 import { Search, X } from "lucide-react";
-import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,6 @@ import {
 import { BlogCoverImage } from "@/components/blog-cover-image";
 import { BlogStats } from "@/components/blog-stats";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicBlog } from "@/lib/server/blogs/mappers";
 import type { PublicCategory } from "@/lib/server/categories/mappers";
 import type { PublicTag } from "@/lib/server/tags/mappers";
@@ -43,50 +41,9 @@ export function BlogListClient({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("all");
-
-  const { data: blogsData } = useSWR<{ items: PublicBlog[] }>(
-    "/api/public/blogs?pageSize=100",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialBlogs ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      revalidateOnReconnect: false,
-    },
-  );
-  const { data: categoriesData } = useSWR<{ items: PublicCategory[] }>(
-    "/api/public/categories",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialCategories ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-  const { data: tagsData } = useSWR<{ items: PublicTag[] }>(
-    "/api/public/tags",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialTags ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const blogs = blogsData?.items ?? [];
-  const categories = categoriesData?.items ?? [];
-  const tags = tagsData?.items ?? [];
+  const blogs = initialBlogs ?? [];
+  const categories = initialCategories ?? [];
+  const tags = initialTags ?? [];
 
   const filteredPosts = blogs.filter((post) => {
     const matchesSearch =
@@ -113,16 +70,7 @@ export function BlogListClient({
     searchQuery !== "" || selectedCategory !== "all" || selectedTag !== "all";
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-16">
-      <header className="mb-12">
-        <h1 className="mb-4 text-4xl font-bold tracking-tight text-foreground">
-          {siteCopy.blogList.title}
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          {siteCopy.blogList.description}
-        </p>
-      </header>
-
+    <>
       <div className="mb-10 flex flex-col gap-4">
         <div className="relative">
           <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -247,6 +195,6 @@ export function BlogListClient({
           </Button>
         </div>
       )}
-    </main>
+    </>
   );
 }

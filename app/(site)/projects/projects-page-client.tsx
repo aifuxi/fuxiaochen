@@ -1,44 +1,25 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 
 import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
-import useSWR from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-import { fetchApiData } from "@/lib/api/fetcher";
 import type { PublicProject } from "@/lib/server/projects/mappers";
 import type { SiteSettings } from "@/lib/settings/types";
 
 import { siteCopy } from "@/constants/site-copy";
 
 type ProjectsPageClientProps = {
+  projects: PublicProject[];
   settings: SiteSettings;
-  initialProjects?: PublicProject[];
 };
 
 export function ProjectsPageClient({
+  projects,
   settings,
-  initialProjects,
 }: ProjectsPageClientProps) {
-  const { data } = useSWR<{ items: PublicProject[] }>(
-    "/api/public/projects?pageSize=100",
-    fetchApiData,
-    {
-      fallbackData: {
-        items: initialProjects ?? [],
-      },
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-      revalidateOnMount: false,
-      revalidateOnReconnect: false,
-    },
-  );
-
-  const projects = data?.items ?? [];
   const githubUrl =
     settings.social.githubUrl ||
     settings.social.sourceCodeUrl ||
