@@ -5,7 +5,7 @@
 - 这是一个基于 Next.js 16 App Router、React 19 和 TypeScript strict 模式的个人站点项目。
 - UI 使用 Tailwind CSS v4、shadcn/ui（`components.json` 为 `new-york` 风格）、Radix UI、Lucide 图标，并启用了 `tw-animate-css`；仓库中也安装了 `framer-motion`。
 - 服务端数据层使用 Drizzle ORM + PostgreSQL，认证使用 Better Auth，部署产物通过 Next `output: "standalone"` 输出。
-- Redis 用于部分服务端统计/交互状态（例如博客浏览、点赞相关链路），本地环境可通过 `docker-compose.yml` 同时启动 PostgreSQL 与 Redis。
+- 博客浏览、点赞、防刷和登录锁定等服务端交互状态统一存储在 PostgreSQL；本地环境可通过 `docker-compose.yml` 启动 PostgreSQL。
 - 当前仓库以前同时存在静态数据文件和真实 API 两套数据来源，但 `lib/*-data.ts` 这类前台静态数据文件已经移除。
 - 当前站点页面与后台 CRUD 数据链路统一以 `app/api/**` + `lib/server/**` 为准，前端数据请求优先复用 `lib/api/fetcher.ts` 的 `fetchApiData` / `apiRequest`，具体服务端实现按 `dto` / `handler` / `service` / `repository` 分层组织。
 - 站点级配置已经迁移到数据库 `site_settings`，默认兜底在 `lib/settings/defaults.ts`；站点 shell、metadata、导航、页脚等运行时配置应优先走 settings 链路，而不是继续散落新增常量。
@@ -28,7 +28,7 @@
 - `bun run db:studio`：打开 Drizzle Studio。
 - `bun run commit` / `bun run commit:retry`：使用 Commitizen 辅助生成提交信息。
 - `make build_image`：读取 `.env` 中变量构建 Docker 镜像。
-- `docker compose up -d postgresql redis`：启动本地 PostgreSQL 与 Redis 依赖；应用容器也定义在 compose 文件中，但日常开发通常只需要依赖服务。
+- `docker compose up -d postgresql`：启动本地 PostgreSQL 依赖；应用容器也定义在 compose 文件中，但日常开发通常只需要依赖服务。
 
 ## 验证要求
 
@@ -105,7 +105,7 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
   - `repository`：承载 Drizzle 查询
   - `mappers`：把数据库行、聚合结果或第三方返回值归一化成 API DTO
 - 统一错误处理在 `lib/server/http/**`，不要在各 Route Handler 里随意拼装错误响应。
-- 现有数据库表主要包括 `blogs`、`categories`、`tags`、`blog_tags`、`blog_daily_stats`、`projects`、`friends`、`changelogs`、`comments`、`notifications`、`site_settings`，以及 Better Auth 相关的 `users`、`sessions`、`accounts`、`verifications`。
+- 现有数据库表主要包括 `blogs`、`categories`、`tags`、`blog_tags`、`blog_daily_stats`、`blog_likes`、`blog_view_dedup`、`request_guard_states`、`projects`、`friends`、`changelogs`、`comments`、`notifications`、`site_settings`，以及 Better Auth 相关的 `users`、`sessions`、`accounts`、`verifications`。
 - 公开接口主要位于 `/api/public/**`，后台接口主要位于 `/api/admin/**`；后台接口即使已经被 `proxy.ts` 保护，涉及敏感资源时仍应在 handler/service 层保留必要的权限与业务校验。
 - 评论链路约定为公开创建默认 `pending`，公开列表只返回 `approved`，后台接口负责审核、回复和状态管理。
 - 站点配置接口为 `/api/public/settings` 与 `/api/admin/settings`；`next-sitemap` 仍读取 `NEXT_PUBLIC_SITE_URL`，不会自动读取数据库 settings。
@@ -131,7 +131,7 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 ## 环境、部署与安全提示
 
 - 使用 Node `>=20`、Bun `>=1.3.11`；仓库内 `.nvmrc` 当前为 Node 24。
-- `.env.example` 中包含 PostgreSQL、Redis、OSS、GitHub OAuth、Better Auth 和站点 URL 变量；站点分析类开关目前属于数据库 `site_settings.analytics`，新增真实环境变量时同步更新示例文件和说明。
+- `.env.example` 中包含 PostgreSQL、OSS、GitHub OAuth、Better Auth 和站点 URL 变量；站点分析类开关目前属于数据库 `site_settings.analytics`，新增真实环境变量时同步更新示例文件和说明。
 - 敏感信息只放在 `.env` 或 CI secret，不要提交密钥。
-- Docker 构建依赖 `.env` / build args，至少需要 `DATABASE_URL` 和 `NEXT_PUBLIC_SITE_URL`；生产运行时仍需提供 Better Auth、OSS、GitHub OAuth、PostgreSQL、Redis 等服务端环境变量。GitHub Actions 在 tag push 和手动触发时都会构建并推送镜像。
+- Docker 构建依赖 `.env` / build args，至少需要 `DATABASE_URL` 和 `NEXT_PUBLIC_SITE_URL`；生产运行时仍需提供 Better Auth、OSS、GitHub OAuth、PostgreSQL 等服务端环境变量。GitHub Actions 在 tag push 和手动触发时都会构建并推送镜像。
 - `next.config.ts` 当前保留 `images.unoptimized = true` 和 `output: "standalone"`；涉及图片优化、Docker 运行方式或 standalone 输出结构时要同步检查该配置。

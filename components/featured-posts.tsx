@@ -30,7 +30,7 @@ export function FeaturedPosts({ initialPosts }: FeaturedPostsProps) {
       },
       revalidateIfStale: false,
       revalidateOnFocus: false,
-      revalidateOnMount: false,
+      revalidateOnMount: true,
       revalidateOnReconnect: false,
     },
   );

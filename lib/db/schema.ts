@@ -34,6 +34,7 @@ export type NotificationEntityType =
   | "project"
   | "user";
 export type NotificationType = "content" | "interaction" | "system" | "user";
+export type RequestGuardStateType = "counter" | "marker" | "lock";
 export type UserRole = "admin" | "user";
 
 const createTimestampColumns = () => ({
@@ -145,6 +146,83 @@ export const blogDailyStats = pgTable(
       "blog_daily_stats_unlike_count_check",
       sql`${table.unlikeCount} >= 0`,
     ),
+  ],
+);
+
+export const blogLikes = pgTable(
+  "blog_likes",
+  {
+    blogId: text("blog_id").notNull(),
+    visitorId: text("visitor_id").notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+  },
+  (table) => [
+    foreignKey({
+      name: "blog_likes_blog_id_fkey",
+      columns: [table.blogId],
+      foreignColumns: [blogs.id],
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.blogId, table.visitorId],
+      name: "blog_likes_pkey",
+    }),
+    index("blog_likes_visitor_id_idx").on(table.visitorId),
+  ],
+);
+
+export const blogViewDedup = pgTable(
+  "blog_view_dedup",
+  {
+    blogId: text("blog_id").notNull(),
+    visitorId: text("visitor_id").notNull(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+  },
+  (table) => [
+    foreignKey({
+      name: "blog_view_dedup_blog_id_fkey",
+      columns: [table.blogId],
+      foreignColumns: [blogs.id],
+    }).onDelete("cascade"),
+    primaryKey({
+      columns: [table.blogId, table.visitorId],
+      name: "blog_view_dedup_pkey",
+    }),
+    index("blog_view_dedup_expires_at_idx").on(table.expiresAt),
+  ],
+);
+
+export const requestGuardStates = pgTable(
+  "request_guard_states",
+  {
+    key: text("key").primaryKey(),
+    type: text("type").$type<RequestGuardStateType>().notNull(),
+    count: integer("count").notNull().default(0),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    updatedAt: timestamp("updated_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    expiresAt: timestamp("expires_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+  },
+  (table) => [
+    index("request_guard_states_expires_at_idx").on(table.expiresAt),
+    check("request_guard_states_count_check", sql`${table.count} >= 0`),
   ],
 );
 
@@ -444,12 +522,28 @@ export const blogsRelations = relations(blogs, ({ many, one }) => ({
   }),
   blogTags: many(blogTags),
   dailyStats: many(blogDailyStats),
+  likes: many(blogLikes),
+  viewDedupEntries: many(blogViewDedup),
   comments: many(comments),
 }));
 
 export const blogDailyStatsRelations = relations(blogDailyStats, ({ one }) => ({
   blog: one(blogs, {
     fields: [blogDailyStats.blogId],
+    references: [blogs.id],
+  }),
+}));
+
+export const blogLikesRelations = relations(blogLikes, ({ one }) => ({
+  blog: one(blogs, {
+    fields: [blogLikes.blogId],
+    references: [blogs.id],
+  }),
+}));
+
+export const blogViewDedupRelations = relations(blogViewDedup, ({ one }) => ({
+  blog: one(blogs, {
+    fields: [blogViewDedup.blogId],
     references: [blogs.id],
   }),
 }));
@@ -512,13 +606,16 @@ export const schema = {
   accounts,
   blogs,
   blogDailyStats,
+  blogLikes,
   blogTags,
+  blogViewDedup,
   categories,
   changelogs,
   comments,
   friends,
   notifications,
   projects,
+  requestGuardStates,
   session: sessions,
   sessions,
   siteSettings,
@@ -537,8 +634,12 @@ export type Blog = typeof blogs.$inferSelect;
 export type NewBlog = typeof blogs.$inferInsert;
 export type BlogDailyStat = typeof blogDailyStats.$inferSelect;
 export type NewBlogDailyStat = typeof blogDailyStats.$inferInsert;
+export type BlogLike = typeof blogLikes.$inferSelect;
+export type NewBlogLike = typeof blogLikes.$inferInsert;
 export type BlogTag = typeof blogTags.$inferSelect;
 export type NewBlogTag = typeof blogTags.$inferInsert;
+export type BlogViewDedup = typeof blogViewDedup.$inferSelect;
+export type NewBlogViewDedup = typeof blogViewDedup.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type NewProject = typeof projects.$inferInsert;
 export type Friend = typeof friends.$inferSelect;
@@ -549,6 +650,8 @@ export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type Notification = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
+export type RequestGuardState = typeof requestGuardStates.$inferSelect;
+export type NewRequestGuardState = typeof requestGuardStates.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type SiteSettingsRow = typeof siteSettings.$inferSelect;

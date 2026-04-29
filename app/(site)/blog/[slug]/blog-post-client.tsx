@@ -83,7 +83,7 @@ export function BlogPostClient({
         );
       })
       .catch(() => {
-        // Content remains usable when Redis statistics are unavailable.
+        // Content remains usable when statistics are unavailable.
       });
 
     return () => {

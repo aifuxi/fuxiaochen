@@ -8,6 +8,13 @@
       "when": 1777200932724,
       "tag": "0000_oval_fantastic_four",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777474007502,
+      "tag": "0001_bright_blizzard",
+      "breakpoints": true
     }
   ]
 }

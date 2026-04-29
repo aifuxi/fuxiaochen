@@ -53,7 +53,7 @@ export function BlogListClient({
       },
       revalidateIfStale: false,
       revalidateOnFocus: false,
-      revalidateOnMount: false,
+      revalidateOnMount: true,
       revalidateOnReconnect: false,
     },
   );

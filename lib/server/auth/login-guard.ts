@@ -1,4 +1,3 @@
-import type { Redis } from "ioredis";
 import { z } from "zod";
 
 import {
@@ -12,7 +11,10 @@ import {
 } from "@/lib/server/auth/auth-guard-common";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
-import { getRedisClient } from "@/lib/server/redis";
+import {
+  postgresRequestGuardStore,
+  type RequestGuardStore,
+} from "@/lib/server/request-guard-store";
 
 const LOGIN_LOCK_TTL_SECONDS = 15 * 60;
 
@@ -53,7 +55,7 @@ export interface LoginGuard {
 }
 
 type LoginGuardDeps = {
-  getRedis?: () => Promise<Redis>;
+  store?: RequestGuardStore;
   now?: () => Date;
   generateId?: () => string;
 };
@@ -106,15 +108,17 @@ const getEmailLockKey = (emailHash: string) =>
 async function assertFixedWindowLimit({
   key,
   limit,
-  redis,
+  now,
+  store,
   ttlSeconds,
 }: {
   key: string;
   limit: number;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
   ttlSeconds: number;
 }) {
-  const count = await incrementFixedWindow({ key, redis, ttlSeconds });
+  const count = await incrementFixedWindow({ key, now, store, ttlSeconds });
 
   if (count > limit) {
     throw createRateLimitedError();
@@ -125,17 +129,22 @@ async function assertFixedWindowLimit({
 
 async function assertNotLocked({
   attempt,
-  redis,
+  now,
+  store,
 }: {
   attempt: LoginGuardAttempt;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
 }) {
-  const lockCount = await redis.exists(
-    getIdentityEmailLockKey(attempt.identityEmailHash),
-    getEmailLockKey(attempt.emailHash),
+  const isLocked = await store.exists(
+    [
+      getIdentityEmailLockKey(attempt.identityEmailHash),
+      getEmailLockKey(attempt.emailHash),
+    ],
+    now,
   );
 
-  if (lockCount > 0) {
+  if (isLocked) {
     throw createRateLimitedError();
   }
 }
@@ -144,19 +153,26 @@ async function recordFailureWindow({
   key,
   limit,
   lockKey,
-  redis,
+  now,
+  store,
   ttlSeconds,
 }: {
   key: string;
   limit: number;
   lockKey: string;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
   ttlSeconds: number;
 }) {
-  const count = await incrementFixedWindow({ key, redis, ttlSeconds });
+  const count = await incrementFixedWindow({ key, now, store, ttlSeconds });
 
   if (count > limit) {
-    await redis.set(lockKey, "1", "EX", LOGIN_LOCK_TTL_SECONDS);
+    await store.set({
+      key: lockKey,
+      type: "lock",
+      now,
+      ttlSeconds: LOGIN_LOCK_TTL_SECONDS,
+    });
     throw createRateLimitedError();
   }
 }
@@ -185,7 +201,7 @@ function createAttempt({
 }
 
 export function createLoginGuard({
-  getRedis = getRedisClient,
+  store = postgresRequestGuardStore,
   now = () => new Date(),
   generateId = defaultGenerateAuthGuardId,
 }: LoginGuardDeps = {}): LoginGuard {
@@ -200,10 +216,10 @@ export function createLoginGuard({
       });
 
       try {
-        const redis = await getRedis();
-        await assertNotLocked({ attempt, redis });
+        const nowDate = now();
+        await assertNotLocked({ attempt, now: nowDate, store });
 
-        const nowSeconds = Math.floor(now().getTime() / 1000);
+        const nowSeconds = Math.floor(nowDate.getTime() / 1000);
         const minuteWindow = Math.floor(
           nowSeconds / RATE_LIMITS.identityPerMinute.ttlSeconds,
         );
@@ -213,12 +229,14 @@ export function createLoginGuard({
 
         await assertFixedWindowLimit({
           key: getIdentityMinuteRateKey(attempt.identityHash, minuteWindow),
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerMinute,
         });
         await assertFixedWindowLimit({
           key: getIdentityHourRateKey(attempt.identityHash, hourWindow),
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerHour,
         });
 
@@ -234,8 +252,8 @@ export function createLoginGuard({
 
     async recordFailedSignIn(attempt) {
       try {
-        const redis = await getRedis();
-        const nowSeconds = Math.floor(now().getTime() / 1000);
+        const nowDate = now();
+        const nowSeconds = Math.floor(nowDate.getTime() / 1000);
         const failureWindow = Math.floor(
           nowSeconds / RATE_LIMITS.identityEmailFailure.ttlSeconds,
         );
@@ -246,13 +264,15 @@ export function createLoginGuard({
             failureWindow,
           ),
           lockKey: getIdentityEmailLockKey(attempt.identityEmailHash),
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityEmailFailure,
         });
         await recordFailureWindow({
           key: getEmailFailureKey(attempt.emailHash, failureWindow),
           lockKey: getEmailLockKey(attempt.emailHash),
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.emailFailure,
         });
       } catch (error) {
@@ -266,18 +286,18 @@ export function createLoginGuard({
 
     async clearFailedSignIn(attempt) {
       try {
-        const redis = await getRedis();
-        const nowSeconds = Math.floor(now().getTime() / 1000);
+        const nowDate = now();
+        const nowSeconds = Math.floor(nowDate.getTime() / 1000);
         const failureWindow = Math.floor(
           nowSeconds / RATE_LIMITS.identityEmailFailure.ttlSeconds,
         );
 
-        await redis.del(
+        await store.deleteKeys([
           getIdentityEmailFailureKey(attempt.identityEmailHash, failureWindow),
           getEmailFailureKey(attempt.emailHash, failureWindow),
           getIdentityEmailLockKey(attempt.identityEmailHash),
           getEmailLockKey(attempt.emailHash),
-        );
+        ]);
       } catch {
         // Successful sign-in should not fail because cleanup is unavailable.
       }

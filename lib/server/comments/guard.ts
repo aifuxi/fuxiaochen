@@ -1,10 +1,12 @@
-import type { Redis } from "ioredis";
 import { createHash, randomUUID } from "node:crypto";
 
 import type { PublicCommentCreateInput } from "@/lib/server/comments/dto";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
-import { getRedisClient } from "@/lib/server/redis";
+import {
+  postgresRequestGuardStore,
+  type RequestGuardStore,
+} from "@/lib/server/request-guard-store";
 
 const COMMENT_GUARD_VISITOR_COOKIE = "comment_guard_visitor_id";
 const COMMENT_GUARD_VISITOR_MAX_AGE = 60 * 60 * 24 * 365;
@@ -38,7 +40,7 @@ export interface CommentGuard {
 }
 
 type CommentGuardDeps = {
-  getRedis?: () => Promise<Redis>;
+  store?: RequestGuardStore;
   now?: () => Date;
   generateId?: () => string;
 };
@@ -146,19 +148,17 @@ const createGuardUnavailableError = () =>
 async function incrementFixedWindow({
   key,
   limit,
-  redis,
+  now,
+  store,
   ttlSeconds,
 }: {
   key: string;
   limit: number;
-  redis: Redis;
+  now: Date;
+  store: RequestGuardStore;
   ttlSeconds: number;
 }) {
-  const count = await redis.incr(key);
-
-  if (count === 1) {
-    await redis.expire(key, ttlSeconds);
-  }
+  const count = await store.incrementFixedWindow({ key, now, ttlSeconds });
 
   if (count > limit) {
     throw createRateLimitedError();
@@ -166,7 +166,7 @@ async function incrementFixedWindow({
 }
 
 export function createCommentGuard({
-  getRedis = getRedisClient,
+  store = postgresRequestGuardStore,
   now = () => new Date(),
   generateId = randomUUID,
 }: CommentGuardDeps = {}): CommentGuard {
@@ -196,8 +196,8 @@ export function createCommentGuard({
       );
 
       try {
-        const redis = await getRedis();
-        const nowSeconds = Math.floor(now().getTime() / 1000);
+        const nowDate = now();
+        const nowSeconds = Math.floor(nowDate.getTime() / 1000);
         const minuteWindow = Math.floor(
           nowSeconds / RATE_LIMITS.identityPerMinute.ttlSeconds,
         );
@@ -207,29 +207,31 @@ export function createCommentGuard({
 
         await incrementFixedWindow({
           key: `comment:guard:rate:identity:minute:${identityHash}:${minuteWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerMinute,
         });
         await incrementFixedWindow({
           key: `comment:guard:rate:identity:hour:${identityHash}:${hourWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPerHour,
         });
         await incrementFixedWindow({
           key: `comment:guard:rate:post:hour:${identityHash}:${postHash}:${hourWindow}`,
-          redis,
+          now: nowDate,
+          store,
           ...RATE_LIMITS.identityPostPerHour,
         });
 
-        const duplicateResult = await redis.set(
-          `comment:guard:duplicate:${identityHash}:${submissionHash}`,
-          "1",
-          "EX",
-          DUPLICATE_TTL_SECONDS,
-          "NX",
-        );
+        const duplicateCreated = await store.setIfNotExists({
+          key: `comment:guard:duplicate:${identityHash}:${submissionHash}`,
+          type: "marker",
+          now: nowDate,
+          ttlSeconds: DUPLICATE_TTL_SECONDS,
+        });
 
-        if (duplicateResult !== "OK") {
+        if (!duplicateCreated) {
           throw createDuplicateSubmissionError();
         }
 
