@@ -1,0 +1,43 @@
+import Link from "next/link";
+
+import { ArrowRight, House, PanelsTopLeft } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+
+import { routes } from "@/constants/routes";
+import { siteCopy } from "@/constants/site-copy";
+
+import { SiteStatusPage } from "./status-page";
+
+export function SiteNotFoundStatus() {
+  return (
+    <SiteStatusPage
+      code="404"
+      eyebrow={siteCopy.errors.notFound.eyebrow}
+      title={siteCopy.errors.notFound.title}
+      description={siteCopy.errors.notFound.description}
+      actions={
+        <>
+          <Button asChild size="lg">
+            <Link href={routes.site.home}>
+              <House />
+              {siteCopy.errors.notFound.primaryAction}
+            </Link>
+          </Button>
+          <Button variant="outline" size="lg" asChild>
+            <Link href={routes.site.blog}>
+              <ArrowRight />
+              {siteCopy.errors.notFound.secondaryAction}
+            </Link>
+          </Button>
+          <Button variant="ghost" size="lg" asChild>
+            <Link href={routes.site.projects}>
+              <PanelsTopLeft />
+              {siteCopy.errors.notFound.tertiaryAction}
+            </Link>
+          </Button>
+        </>
+      }
+    />
+  );
+}
