@@ -2,7 +2,7 @@
 
 import { SiteErrorStatus } from "@/components/site/site-error-status";
 
-export default function Error({
+export default function SiteError({
   error: _error,
   reset,
 }: {
