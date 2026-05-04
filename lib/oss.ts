@@ -2,9 +2,12 @@ import OSS from "ali-oss";
 
 const globalForAliOSS = global as unknown as { aliOSS: OSS | undefined };
 
-const aliOSS =
-  globalForAliOSS.aliOSS ??
-  new OSS({
+export function getAliOSS() {
+  if (globalForAliOSS.aliOSS) {
+    return globalForAliOSS.aliOSS;
+  }
+
+  const client = new OSS({
     accessKeyId: process.env.OSS_ACCESS_KEY_ID ?? "",
     accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET ?? "",
     region: process.env.OSS_REGION ?? "",
@@ -15,8 +18,7 @@ const aliOSS =
     secure: true,
   });
 
-if (process.env.NODE_ENV !== "production") {
-  globalForAliOSS.aliOSS = aliOSS;
-}
+  globalForAliOSS.aliOSS = client;
 
-export { aliOSS };
+  return client;
+}
