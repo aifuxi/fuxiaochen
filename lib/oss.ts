@@ -13,8 +13,6 @@ const aliOSS =
     authorizationV4: true,
     // 使用https协议
     secure: true,
-  } as OSS.Options & {
-    authorizationV4?: boolean;
   });
 
 if (process.env.NODE_ENV !== "production") {
