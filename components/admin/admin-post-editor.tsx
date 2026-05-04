@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeft, Plus, Save, Send, Upload, X } from "lucide-react";
+import { toast } from "sonner";
 import useSWR, { useSWRConfig } from "swr";
 
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,12 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { MarkdownEditor } from "@/components/markdown-editor";
 
-import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
+import {
+  apiRequest,
+  fetchApiData,
+  getApiErrorMessage,
+} from "@/lib/api/fetcher";
+import { uploadImageToOss } from "@/lib/api/uploads";
 import type { AdminBlog } from "@/lib/server/blogs/mappers";
 import type { AdminCategory } from "@/lib/server/categories/mappers";
 import type { AdminTag } from "@/lib/server/tags/mappers";
@@ -53,6 +59,7 @@ const slugifyInput = (value: string) =>
 export function AdminPostEditor(props: AdminPostEditorProps) {
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -64,6 +71,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   const [featured, setFeatured] = useState(false);
   const [published, setPublished] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [submittingMode, setSubmittingMode] = useState<
     "draft" | "publish" | null
   >(null);
@@ -169,6 +177,37 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
     if (event.key === "Enter" || event.key === ",") {
       event.preventDefault();
       addTagFromInput();
+    }
+  };
+
+  const handleCoverUploadClick = () => {
+    if (isUploadingCover) {
+      return;
+    }
+
+    coverFileInputRef.current?.click();
+  };
+
+  const handleCoverFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    setIsUploadingCover(true);
+
+    try {
+      const result = await uploadImageToOss(file, "blog-cover");
+      setCoverImage(result.fileUrl);
+      toast.success("封面图已上传");
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, "封面图上传失败"));
+    } finally {
+      setIsUploadingCover(false);
     }
   };
 
@@ -417,6 +456,13 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
             <h3 className="mb-3 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               封面图
             </h3>
+            <input
+              ref={coverFileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
+              className="hidden"
+              onChange={handleCoverFileChange}
+            />
             {coverImage ? (
               <div className="group relative overflow-hidden rounded-lg border border-border">
                 <Image
@@ -428,21 +474,43 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
                 />
                 <button
                   onClick={() => setCoverImage("")}
+                  disabled={isUploadingCover}
                   className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-background/80 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
+                <button
+                  onClick={handleCoverUploadClick}
+                  disabled={isUploadingCover}
+                  className="absolute bottom-2 left-2 flex h-7 items-center gap-1.5 rounded-md bg-background/85 px-2 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isUploadingCover ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : (
+                    <Upload className="h-3.5 w-3.5" />
+                  )}
+                  更换
+                </button>
               </div>
             ) : (
               <div className="space-y-2">
-                <button className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-sm text-muted-foreground transition-colors hover:bg-muted/50">
-                  <Upload className="h-5 w-5" />
-                  <span>上传封面</span>
+                <button
+                  disabled={isUploadingCover}
+                  onClick={handleCoverUploadClick}
+                  className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-4 py-6 text-sm text-muted-foreground transition-colors hover:bg-muted/50 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isUploadingCover ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : (
+                    <Upload className="h-5 w-5" />
+                  )}
+                  <span>{isUploadingCover ? "正在上传..." : "上传封面"}</span>
                 </button>
                 <Input
                   value={coverImage}
                   onChange={(e) => setCoverImage(e.target.value)}
                   placeholder="或粘贴图片地址..."
+                  disabled={isUploadingCover}
                   className="text-xs"
                 />
               </div>

@@ -76,6 +76,7 @@
     "drizzle-orm": "^0.45.2",
     "embla-carousel-react": "8.6.0",
     "es-toolkit": "^1.39.10",
+    "file-type": "^22.0.1",
     "framer-motion": "^12.33.0",
     "globals": "^16.3.0",
     "highlight.js": "11.8.0",
