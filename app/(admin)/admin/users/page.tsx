@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+
 import { AdminAccessDenied } from "@/components/admin/admin-access-denied";
 import { AdminUsersPage } from "@/components/admin/admin-users-page";
 
@@ -6,6 +8,10 @@ import {
   getSessionUserId,
   requireServerSession,
 } from "@/lib/auth-session";
+
+import { adminMetadata } from "@/constants/admin-metadata";
+
+export const metadata: Metadata = adminMetadata.users;
 
 export default async function AdminUsersRoutePage() {
   const session = await requireServerSession();
