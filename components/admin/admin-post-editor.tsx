@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ArrowLeft, Plus, Save, Send, Upload, X } from "lucide-react";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -52,6 +52,7 @@ const slugifyInput = (value: string) =>
 
 export function AdminPostEditor(props: AdminPostEditorProps) {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -98,22 +99,26 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
   const categories = categoriesData?.items ?? [];
   const allTags = tagsData?.items ?? [];
 
+  const syncEditorWithPost = useCallback((post: AdminBlog) => {
+    setTitle(post.title);
+    setSlug(post.slug);
+    setDescription(post.description);
+    setContent(post.content);
+    setCoverImage(post.coverImage);
+    setCategoryId(post.categoryId);
+    setSelectedTagIds(post.tagIds);
+    setFeatured(post.featured);
+    setPublished(post.published);
+    setHydratedPostId(post.id);
+  }, []);
+
   useEffect(() => {
     if (!postData || hydratedPostId === postData.id) {
       return;
     }
 
-    setTitle(postData.title);
-    setSlug(postData.slug);
-    setDescription(postData.description);
-    setContent(postData.content);
-    setCoverImage(postData.coverImage);
-    setCategoryId(postData.categoryId);
-    setSelectedTagIds(postData.tagIds);
-    setFeatured(postData.featured);
-    setPublished(postData.published);
-    setHydratedPostId(postData.id);
-  }, [hydratedPostId, postData]);
+    syncEditorWithPost(postData);
+  }, [hydratedPostId, postData, syncEditorWithPost]);
 
   const handleTitleChange = (value: string) => {
     setTitle(value);
@@ -189,7 +194,7 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
     setSubmittingMode(shouldPublish ? "publish" : "draft");
 
     try {
-      await apiRequest(requestUrl, {
+      const saved = await apiRequest<AdminBlog>(requestUrl, {
         method: requestMethod,
         headers: {
           "Content-Type": "application/json",
@@ -207,8 +212,35 @@ export function AdminPostEditor(props: AdminPostEditorProps) {
         }),
       });
 
-      router.push(routes.admin.posts);
-      router.refresh();
+      const savedPost = saved.data;
+      const savedEditPostUrl = `/api/admin/blogs/by-slug/${encodeURIComponent(
+        savedPost.slug,
+      )}`;
+
+      syncEditorWithPost(savedPost);
+      await Promise.all([
+        mutate(
+          (key) =>
+            typeof key === "string" &&
+            (key === "/api/admin/blogs" || key.startsWith("/api/admin/blogs?")),
+        ),
+        mutate(savedEditPostUrl, savedPost, { revalidate: false }),
+        editPostUrl && editPostUrl !== savedEditPostUrl
+          ? mutate(editPostUrl, undefined, { revalidate: false })
+          : Promise.resolve(),
+      ]);
+
+      if (shouldPublish) {
+        router.push(routes.admin.posts);
+        router.refresh();
+        return;
+      }
+
+      const editUrl = routes.admin.postEdit(savedPost.slug);
+
+      if (!isEditing || savedPost.slug !== props.slug) {
+        router.replace(editUrl);
+      }
     } catch {
       // The global API error listener owns toast display.
     } finally {

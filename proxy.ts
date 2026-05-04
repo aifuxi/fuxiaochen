@@ -26,9 +26,23 @@ const applyApiMockDelay = async () => {
   await new Promise((resolve) => setTimeout(resolve, delay));
 };
 
+const setAdminApiNoStoreHeaders = (response: NextResponse) => {
+  response.headers.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+  response.headers.set("Pragma", "no-cache");
+  response.headers.set("Expires", "0");
+
+  return response;
+};
+
+const isAdminApiPath = (pathname: string) =>
+  pathname === "/api/admin" || pathname.startsWith("/api/admin/");
+
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  const isAdminApiRequest = pathname.startsWith("/api/admin");
+  const isAdminApiRequest = isAdminApiPath(pathname);
   const isPublicApiRequest = pathname.startsWith("/api/public");
 
   if (isAdminApiRequest || isPublicApiRequest) {
@@ -44,19 +58,25 @@ export async function proxy(request: NextRequest) {
   });
 
   if (session) {
+    if (isAdminApiRequest) {
+      return setAdminApiNoStoreHeaders(NextResponse.next());
+    }
+
     return NextResponse.next();
   }
 
   if (isAdminApiRequest) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: "COMMON_UNAUTHORIZED",
-          message: "Authentication required",
+    return setAdminApiNoStoreHeaders(
+      NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "COMMON_UNAUTHORIZED",
+            message: "Authentication required",
+          },
         },
-      },
-      { status: 401 },
+        { status: 401 },
+      ),
     );
   }
 

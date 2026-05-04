@@ -57,6 +57,25 @@ export type ApiRequestInit = RequestInit & {
   toastOnError?: boolean;
 };
 
+const isAdminApiPath = (pathname: string) =>
+  pathname === "/api/admin" || pathname.startsWith("/api/admin/");
+
+const isAdminApiRequest = (input: RequestInfo | URL) => {
+  if (typeof input === "string") {
+    try {
+      return isAdminApiPath(new URL(input, "http://local").pathname);
+    } catch {
+      return false;
+    }
+  }
+
+  if (input instanceof URL) {
+    return isAdminApiPath(input.pathname);
+  }
+
+  return isAdminApiPath(new URL(input.url).pathname);
+};
+
 export async function apiRequest<TData, TMeta = undefined>(
   input: RequestInfo | URL,
   init?: ApiRequestInit,
@@ -67,7 +86,11 @@ export async function apiRequest<TData, TMeta = undefined>(
     toastOnError = true,
     ...requestInit
   } = init ?? {};
-  const response = await fetch(input, requestInit);
+  const response = await fetch(input, {
+    ...requestInit,
+    cache:
+      requestInit.cache ?? (isAdminApiRequest(input) ? "no-store" : undefined),
+  });
   const payload = (await response.json()) as
     | ApiSuccessPayload<TData, TMeta>
     | ApiErrorPayload;
