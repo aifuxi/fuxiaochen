@@ -1,5 +1,5 @@
 import { generateCuid } from "@/lib/cuid";
-import { aliOSS } from "@/lib/oss";
+import { getAliOSS } from "@/lib/oss";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
 
@@ -122,7 +122,7 @@ export function createUploadService({
       const headers = {
         "Content-Type": input.contentType,
       };
-      const uploadUrl = await aliOSS.signatureUrlV4(
+      const uploadUrl = await getAliOSS().signatureUrlV4(
         "PUT",
         SIGNED_URL_EXPIRES_SECONDS,
         { headers },
