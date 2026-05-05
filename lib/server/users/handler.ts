@@ -3,7 +3,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import {
@@ -44,78 +44,112 @@ export function createAdminUserHandlers({
 }: UserHandlerDeps = {}) {
   return {
     async handleListUsers(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const url = new URL(request.url);
-        const query = adminUserListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          role: url.searchParams.get("role") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listAdminUsers(query);
-
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminUserListItem),
-            stats: result.stats,
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+      return withApiTiming(request, "admin.users.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminUserListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            role: url.searchParams.get("role") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
+        });
+        const result = await timing.time("service", () =>
+          service.listAdminUsers(query),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminUserListItem),
+              stats: result.stats,
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
+        );
+      });
     },
     async handleGetUser(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(request, "admin.users.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminUserIdParamsSchema.parse(await params);
-        const user = await service.getAdminUser(id);
+        const { id } = await timing.time("parse", async () =>
+          adminUserIdParamsSchema.parse(await params),
+        );
+        const user = await timing.time("service", () =>
+          service.getAdminUser(id),
+        );
 
-        return createSuccessResponse(toAdminUserDetail(user));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminUserDetail(user)),
+        );
+      });
     },
     async handleUpdateUserRole(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        const session = await requireAdminRequestSession(request);
-        const actorUserId = getSessionUserId(session);
-        const { id } = adminUserIdParamsSchema.parse(await params);
-        const body = adminUserRoleUpdateSchema.parse(await toJsonBody(request));
-        const user = await service.updateUserRole(id, body, actorUserId);
+      return withApiTiming(
+        request,
+        "admin.users.update-role",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
+          const actorUserId = getSessionUserId(session);
+          const { id, body } = await timing.time("parse", async () => ({
+            ...adminUserIdParamsSchema.parse(await params),
+            body: adminUserRoleUpdateSchema.parse(await toJsonBody(request)),
+          }));
+          const user = await timing.time("service", () =>
+            service.updateUserRole(id, body, actorUserId),
+          );
 
-        return createSuccessResponse(toAdminUserDetail(user));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminUserDetail(user)),
+          );
+        },
+      );
     },
     async handleRevokeUserSessions(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        const session = await requireAdminRequestSession(request);
-        const actorUserId = getSessionUserId(session);
-        const { id } = adminUserIdParamsSchema.parse(await params);
+      return withApiTiming(
+        request,
+        "admin.users.revoke-sessions",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
+          const actorUserId = getSessionUserId(session);
+          const { id } = await timing.time("parse", async () =>
+            adminUserIdParamsSchema.parse(await params),
+          );
 
-        await service.revokeUserSessions(id, actorUserId);
+          await timing.time("service", () =>
+            service.revokeUserSessions(id, actorUserId),
+          );
 
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () => createSuccessResponse(null));
+        },
+      );
     },
   };
 }

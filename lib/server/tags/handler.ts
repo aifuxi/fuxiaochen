@@ -2,7 +2,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 import { revalidatePublicTagContent } from "@/lib/server/public-content-cache";
 
@@ -45,88 +45,120 @@ export function createAdminTagHandlers({
 }: TagHandlerDeps = {}) {
   return {
     async handleListTags(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const url = new URL(request.url);
-        const query = adminTagListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          includeCounts: url.searchParams.get("includeCounts") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listAdminTags(query);
-
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminTag),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+      return withApiTiming(request, "admin.tags.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminTagListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            includeCounts: url.searchParams.get("includeCounts") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
+        });
+        const result = await timing.time("service", () =>
+          service.listAdminTags(query),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminTag),
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
+        );
+      });
     },
     async handleCreateTag(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.tags.create", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const body = adminTagCreateSchema.parse(await toJsonBody(request));
-        const tag = await service.createTag(body);
+        const body = await timing.time("parse", async () =>
+          adminTagCreateSchema.parse(await toJsonBody(request)),
+        );
+        const tag = await timing.time("service", async () => {
+          const createdTag = await service.createTag(body);
+          revalidatePublicTagContent();
 
-        revalidatePublicTagContent();
+          return createdTag;
+        });
 
-        return createSuccessResponse(toAdminTag(tag), undefined, 201);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminTag(tag), undefined, 201),
+        );
+      });
     },
     async handleGetTag(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(request, "admin.tags.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminTagIdParamsSchema.parse(await params);
-        const tag = await service.getTag(id);
+        const { id } = await timing.time("parse", async () =>
+          adminTagIdParamsSchema.parse(await params),
+        );
+        const tag = await timing.time("service", () => service.getTag(id));
 
-        return createSuccessResponse(toAdminTag(tag));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminTag(tag)),
+        );
+      });
     },
     async handleUpdateTag(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.tags.update", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminTagIdParamsSchema.parse(await params);
-        const body = adminTagUpdateSchema.parse(await toJsonBody(request));
-        const tag = await service.updateTag(id, body);
+        const { id, body } = await timing.time("parse", async () => ({
+          ...adminTagIdParamsSchema.parse(await params),
+          body: adminTagUpdateSchema.parse(await toJsonBody(request)),
+        }));
+        const tag = await timing.time("service", async () => {
+          const updatedTag = await service.updateTag(id, body);
+          revalidatePublicTagContent();
 
-        revalidatePublicTagContent();
+          return updatedTag;
+        });
 
-        return createSuccessResponse(toAdminTag(tag));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminTag(tag)),
+        );
+      });
     },
     async handleDeleteTag(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.tags.delete", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminTagIdParamsSchema.parse(await params);
-        await service.deleteTag(id);
+        const { id } = await timing.time("parse", async () =>
+          adminTagIdParamsSchema.parse(await params),
+        );
+        await timing.time("service", async () => {
+          await service.deleteTag(id);
+          revalidatePublicTagContent();
+        });
 
-        revalidatePublicTagContent();
-
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () => createSuccessResponse(null));
+      });
     },
   };
 }
@@ -136,16 +168,18 @@ export function createPublicTagHandlers({
   service = createTagService(serviceDeps),
 }: TagHandlerDeps = {}) {
   return {
-    async handleListTags() {
-      try {
-        const tags = await service.listPublicTags();
+    async handleListTags(request?: Request) {
+      return withApiTiming(request, "public.tags.list", async (timing) => {
+        const tags = await timing.time("service", () =>
+          service.listPublicTags(),
+        );
 
-        return createSuccessResponse({
-          items: tags.map(toPublicTag),
-        });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse({
+            items: tags.map(toPublicTag),
+          }),
+        );
+      });
     },
   };
 }

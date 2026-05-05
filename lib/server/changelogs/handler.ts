@@ -2,7 +2,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 import { revalidatePublicChangelogContent } from "@/lib/server/public-content-cache";
 
@@ -46,105 +46,143 @@ export function createAdminChangelogHandlers({
 }: ChangelogHandlerDeps = {}) {
   return {
     async handleListChangelogs(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const url = new URL(request.url);
-        const query = changelogListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          type: url.searchParams.get("type") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listChangelogs(query);
-
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminChangelog),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+      return withApiTiming(request, "admin.changelogs.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return changelogListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            type: url.searchParams.get("type") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
+        });
+        const result = await timing.time("service", () =>
+          service.listChangelogs(query),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminChangelog),
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
+        );
+      });
     },
     async handleCreateChangelog(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.changelogs.create",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const body = adminChangelogCreateSchema.parse(
-          await toJsonBody(request),
-        );
-        const changelog = await service.createChangelog(body);
+          const body = await timing.time("parse", async () =>
+            adminChangelogCreateSchema.parse(await toJsonBody(request)),
+          );
+          const changelog = await timing.time("service", async () => {
+            const createdChangelog = await service.createChangelog(body);
+            revalidatePublicChangelogContent();
 
-        revalidatePublicChangelogContent();
+            return createdChangelog;
+          });
 
-        return createSuccessResponse(
-          toAdminChangelog(changelog),
-          undefined,
-          201,
-        );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminChangelog(changelog), undefined, 201),
+          );
+        },
+      );
     },
     async handleGetChangelog(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(request, "admin.changelogs.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminChangelogIdParamsSchema.parse(await params);
-        const changelog = await service.getAdminChangelog(id);
+        const { id } = await timing.time("parse", async () =>
+          adminChangelogIdParamsSchema.parse(await params),
+        );
+        const changelog = await timing.time("service", () =>
+          service.getAdminChangelog(id),
+        );
 
-        return createSuccessResponse(toAdminChangelog(changelog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminChangelog(changelog)),
+        );
+      });
     },
     async handleUpdateChangelog(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.changelogs.update",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const { id } = adminChangelogIdParamsSchema.parse(await params);
-        const body = adminChangelogUpdateSchema.parse(
-          await toJsonBody(request),
-        );
-        const changelog = await service.updateChangelog(id, body);
+          const { id, body } = await timing.time("parse", async () => ({
+            ...adminChangelogIdParamsSchema.parse(await params),
+            body: adminChangelogUpdateSchema.parse(await toJsonBody(request)),
+          }));
+          const changelog = await timing.time("service", async () => {
+            const updatedChangelog = await service.updateChangelog(id, body);
+            revalidatePublicChangelogContent();
 
-        revalidatePublicChangelogContent();
+            return updatedChangelog;
+          });
 
-        return createSuccessResponse(toAdminChangelog(changelog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminChangelog(changelog)),
+          );
+        },
+      );
     },
     async handleDeleteChangelog(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.changelogs.delete",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const { id } = adminChangelogIdParamsSchema.parse(await params);
-        await service.deleteChangelog(id);
+          const { id } = await timing.time("parse", async () =>
+            adminChangelogIdParamsSchema.parse(await params),
+          );
+          await timing.time("service", async () => {
+            await service.deleteChangelog(id);
+            revalidatePublicChangelogContent();
+          });
 
-        revalidatePublicChangelogContent();
-
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () => createSuccessResponse(null));
+        },
+      );
     },
   };
 }
@@ -155,46 +193,56 @@ export function createPublicChangelogHandlers({
 }: ChangelogHandlerDeps = {}) {
   return {
     async handleListChangelogs(request: Request) {
-      try {
-        const url = new URL(request.url);
-        const query = changelogListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          type: url.searchParams.get("type") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listChangelogs(query);
+      return withApiTiming(
+        request,
+        "public.changelogs.list",
+        async (timing) => {
+          const query = timing.timeSync("parse", () => {
+            const url = new URL(request.url);
+            return changelogListQuerySchema.parse({
+              page: url.searchParams.get("page") ?? undefined,
+              pageSize: url.searchParams.get("pageSize") ?? undefined,
+              query: url.searchParams.get("query") ?? undefined,
+              type: url.searchParams.get("type") ?? undefined,
+              sortBy: url.searchParams.get("sortBy") ?? undefined,
+              sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+            });
+          });
+          const result = await timing.time("service", () =>
+            service.listChangelogs(query),
+          );
 
-        return createSuccessResponse(
-          {
-            items: result.items.map(toPublicChangelog),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
-        );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(
+              {
+                items: result.items.map(toPublicChangelog),
+              },
+              {
+                page: query.page,
+                pageSize: query.pageSize,
+                total: result.total,
+              },
+            ),
+          );
+        },
+      );
     },
     async handleGetChangelog(
-      _request: Request,
+      request: Request,
       params: Promise<{ version: string }>,
     ) {
-      try {
-        const { version } = publicChangelogVersionParamsSchema.parse(
-          await params,
+      return withApiTiming(request, "public.changelogs.get", async (timing) => {
+        const { version } = await timing.time("parse", async () =>
+          publicChangelogVersionParamsSchema.parse(await params),
         );
-        const changelog = await service.getPublicChangelogByVersion(version);
+        const changelog = await timing.time("service", () =>
+          service.getPublicChangelogByVersion(version),
+        );
 
-        return createSuccessResponse(toPublicChangelog(changelog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toPublicChangelog(changelog)),
+        );
+      });
     },
   };
 }

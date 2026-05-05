@@ -3,7 +3,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 import { revalidatePublicBlogContent } from "@/lib/server/public-content-cache";
 
@@ -77,118 +77,170 @@ export function createAdminBlogHandlers({
 }: BlogHandlerDeps = {}) {
   return {
     async handleListBlogs(request: Request) {
-      try {
-        const session = await requireRequestSession(request);
+      return withApiTiming(request, "admin.blogs.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
         const isAdmin = getSessionUserRole(session) === "admin";
-        const url = new URL(request.url);
-        const query = adminBlogListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          categoryId: url.searchParams.get("categoryId") ?? undefined,
-          tagId: url.searchParams.get("tagId") ?? undefined,
-          featured: url.searchParams.get("featured") ?? undefined,
-          published: url.searchParams.get("published") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminBlogListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            categoryId: url.searchParams.get("categoryId") ?? undefined,
+            tagId: url.searchParams.get("tagId") ?? undefined,
+            featured: url.searchParams.get("featured") ?? undefined,
+            published: url.searchParams.get("published") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
         });
-        const result = await service.listAdminBlogs(
-          isAdmin ? query : { ...query, published: true },
+        const result = await timing.time("service", () =>
+          service.listAdminBlogs(
+            isAdmin ? query : { ...query, published: true },
+          ),
         );
 
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminBlog),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminBlog),
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+      });
     },
     async handleCreateBlog(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.blogs.create", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const body = adminBlogCreateSchema.parse(await toJsonBody(request));
-        const blog = await service.createBlog(body);
+        const body = await timing.time("parse", async () =>
+          adminBlogCreateSchema.parse(await toJsonBody(request)),
+        );
+        const blog = await timing.time("service", async () => {
+          const createdBlog = await service.createBlog(body);
+          revalidatePublicBlogContent();
 
-        revalidatePublicBlogContent();
+          return createdBlog;
+        });
 
-        return createSuccessResponse(toAdminBlog(blog), undefined, 201);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminBlog(blog), undefined, 201),
+        );
+      });
     },
     async handleGetBlog(request: Request, params: Promise<{ id: string }>) {
-      try {
-        const session = await requireRequestSession(request);
-        const { id } = adminBlogIdParamsSchema.parse(await params);
-        const blog = await service.getAdminBlog(id);
+      return withApiTiming(request, "admin.blogs.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        if (getSessionUserRole(session) !== "admin" && !blog.published) {
-          throw new AppError(
-            ERROR_CODES.BLOG_NOT_FOUND,
-            "Blog not found",
-            404,
-            {
-              id,
-            },
-          );
-        }
+        const { id } = await timing.time("parse", async () =>
+          adminBlogIdParamsSchema.parse(await params),
+        );
+        const blog = await timing.time("service", async () => {
+          const loadedBlog = await service.getAdminBlog(id);
 
-        return createSuccessResponse(toAdminBlog(blog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          if (
+            getSessionUserRole(session) !== "admin" &&
+            !loadedBlog.published
+          ) {
+            throw new AppError(
+              ERROR_CODES.BLOG_NOT_FOUND,
+              "Blog not found",
+              404,
+              {
+                id,
+              },
+            );
+          }
+
+          return loadedBlog;
+        });
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminBlog(blog)),
+        );
+      });
     },
     async handleGetBlogBySlug(
       request: Request,
       params: Promise<{ slug: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.blogs.get-by-slug",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireAdminRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const { slug } = adminBlogSlugParamsSchema.parse(await params);
-        const blog = await service.getAdminBlogBySlug(slug);
+          const { slug } = await timing.time("parse", async () =>
+            adminBlogSlugParamsSchema.parse(await params),
+          );
+          const blog = await timing.time("service", () =>
+            service.getAdminBlogBySlug(slug),
+          );
 
-        return createSuccessResponse(toAdminBlog(blog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminBlog(blog)),
+          );
+        },
+      );
     },
     async handleUpdateBlog(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.blogs.update", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminBlogIdParamsSchema.parse(await params);
-        const body = adminBlogUpdateSchema.parse(await toJsonBody(request));
-        const blog = await service.updateBlog(id, body);
+        const { id, body } = await timing.time("parse", async () => ({
+          ...adminBlogIdParamsSchema.parse(await params),
+          body: adminBlogUpdateSchema.parse(await toJsonBody(request)),
+        }));
+        const blog = await timing.time("service", async () => {
+          const updatedBlog = await service.updateBlog(id, body);
+          revalidatePublicBlogContent();
 
-        revalidatePublicBlogContent();
+          return updatedBlog;
+        });
 
-        return createSuccessResponse(toAdminBlog(blog));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminBlog(blog)),
+        );
+      });
     },
     async handleDeleteBlog(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.blogs.delete", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminBlogIdParamsSchema.parse(await params);
-        await service.deleteBlog(id);
+        const { id } = await timing.time("parse", async () =>
+          adminBlogIdParamsSchema.parse(await params),
+        );
+        await timing.time("service", async () => {
+          await service.deleteBlog(id);
+          revalidatePublicBlogContent();
+        });
 
-        revalidatePublicBlogContent();
-
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () => createSuccessResponse(null));
+      });
     },
   };
 }
@@ -200,126 +252,191 @@ export function createPublicBlogHandlers({
 }: BlogHandlerDeps = {}) {
   return {
     async handleListBlogs(request: Request) {
-      try {
-        const url = new URL(request.url);
-        const query = publicBlogListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          category: url.searchParams.get("category") ?? undefined,
-          tag: url.searchParams.get("tag") ?? undefined,
-          featured: url.searchParams.get("featured") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+      return withApiTiming(request, "public.blogs.list", async (timing) => {
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return publicBlogListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            category: url.searchParams.get("category") ?? undefined,
+            tag: url.searchParams.get("tag") ?? undefined,
+            featured: url.searchParams.get("featured") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
         });
-        const result = await service.listPublicBlogs(query);
-        const statsByBlogId = await getBlogStats(
-          statsService,
-          result.items.map((blog) => blog.id),
-          getBlogStatsVisitorId(request),
+        const { result, statsByBlogId } = await timing.time(
+          "service",
+          async () => {
+            const blogResult = await service.listPublicBlogs(query);
+            const stats = await getBlogStats(
+              statsService,
+              blogResult.items.map((blog) => blog.id),
+              getBlogStatsVisitorId(request),
+            );
+
+            return {
+              result: blogResult,
+              statsByBlogId: stats,
+            };
+          },
         );
 
-        return createSuccessResponse(
-          {
-            items: result.items.map((blog) =>
-              toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
-            ),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map((blog) =>
+                toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+              ),
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+      });
     },
     async handleGetBlog(request: Request, params: Promise<{ slug: string }>) {
-      try {
-        const { slug } = publicBlogSlugParamsSchema.parse(await params);
-        const blog = await service.getPublicBlogBySlug(slug);
-        const statsByBlogId = await getBlogStats(
-          statsService,
-          [blog.id],
-          getBlogStatsVisitorId(request),
+      return withApiTiming(request, "public.blogs.get", async (timing) => {
+        const { slug } = await timing.time("parse", async () =>
+          publicBlogSlugParamsSchema.parse(await params),
+        );
+        const { blog, statsByBlogId } = await timing.time(
+          "service",
+          async () => {
+            const loadedBlog = await service.getPublicBlogBySlug(slug);
+            const stats = await getBlogStats(
+              statsService,
+              [loadedBlog.id],
+              getBlogStatsVisitorId(request),
+            );
+
+            return {
+              blog: loadedBlog,
+              statsByBlogId: stats,
+            };
+          },
         );
 
-        return createSuccessResponse(
-          toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+          ),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+      });
     },
     async handleListSimilarBlogs(
       request: Request,
       params: Promise<{ slug: string }>,
     ) {
-      try {
-        const { slug } = publicBlogSlugParamsSchema.parse(await params);
-        const url = new URL(request.url);
-        const query = publicSimilarBlogQuerySchema.parse({
-          limit: url.searchParams.get("limit") ?? undefined,
+      return withApiTiming(request, "public.blogs.similar", async (timing) => {
+        const { slug, query } = await timing.time("parse", async () => {
+          const parsedParams = publicBlogSlugParamsSchema.parse(await params);
+          const url = new URL(request.url);
+
+          return {
+            ...parsedParams,
+            query: publicSimilarBlogQuerySchema.parse({
+              limit: url.searchParams.get("limit") ?? undefined,
+            }),
+          };
         });
-        const items = await service.getPublicSimilarBlogs(slug, query.limit);
-        const statsByBlogId = await getBlogStats(
-          statsService,
-          items.map((blog) => blog.id),
-          getBlogStatsVisitorId(request),
+        const { items, statsByBlogId } = await timing.time(
+          "service",
+          async () => {
+            const similarItems = await service.getPublicSimilarBlogs(
+              slug,
+              query.limit,
+            );
+            const stats = await getBlogStats(
+              statsService,
+              similarItems.map((blog) => blog.id),
+              getBlogStatsVisitorId(request),
+            );
+
+            return {
+              items: similarItems,
+              statsByBlogId: stats,
+            };
+          },
         );
 
-        return createSuccessResponse({
-          items: items.map((blog) =>
-            toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
-          ),
-        });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse({
+            items: items.map((blog) =>
+              toPublicBlog(blog, resolveBlogStats(statsByBlogId, blog.id)),
+            ),
+          }),
+        );
+      });
     },
     async handleTrackBlogView(
       request: Request,
       params: Promise<{ slug: string }>,
     ) {
-      try {
-        const { slug } = publicBlogSlugParamsSchema.parse(await params);
-        const blog = await service.getPublicBlogBySlug(slug);
-        const visitor = ensureBlogStatsVisitor(request);
-        const result = await statsService.trackView(blog.id, visitor.visitorId);
+      return withApiTiming(
+        request,
+        "public.blogs.track-view",
+        async (timing) => {
+          const { slug } = await timing.time("parse", async () =>
+            publicBlogSlugParamsSchema.parse(await params),
+          );
+          const { result, visitor } = await timing.time("service", async () => {
+            const blog = await service.getPublicBlogBySlug(slug);
+            const ensuredVisitor = ensureBlogStatsVisitor(request);
+            const trackResult = await statsService.trackView(
+              blog.id,
+              ensuredVisitor.visitorId,
+            );
 
-        return applyBlogStatsVisitorCookie(
-          createSuccessResponse(result),
-          visitor,
-        );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+            return {
+              result: trackResult,
+              visitor: ensuredVisitor,
+            };
+          });
+
+          return timing.timeSync("response", () =>
+            applyBlogStatsVisitorCookie(createSuccessResponse(result), visitor),
+          );
+        },
+      );
     },
     async handleToggleBlogLike(
       request: Request,
       params: Promise<{ slug: string }>,
     ) {
-      try {
-        const { slug } = publicBlogSlugParamsSchema.parse(await params);
-        const blog = await service.getPublicBlogBySlug(slug);
-        const visitor = ensureBlogStatsVisitor(request);
-        const result = await statsService.toggleLike(
-          blog.id,
-          visitor.visitorId,
-        );
+      return withApiTiming(
+        request,
+        "public.blogs.toggle-like",
+        async (timing) => {
+          const { slug } = await timing.time("parse", async () =>
+            publicBlogSlugParamsSchema.parse(await params),
+          );
+          const { result, visitor } = await timing.time("service", async () => {
+            const blog = await service.getPublicBlogBySlug(slug);
+            const ensuredVisitor = ensureBlogStatsVisitor(request);
+            const likeResult = await statsService.toggleLike(
+              blog.id,
+              ensuredVisitor.visitorId,
+            );
 
-        return applyBlogStatsVisitorCookie(
-          createSuccessResponse(result),
-          visitor,
-        );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+            return {
+              result: likeResult,
+              visitor: ensuredVisitor,
+            };
+          });
+
+          return timing.timeSync("response", () =>
+            applyBlogStatsVisitorCookie(createSuccessResponse(result), visitor),
+          );
+        },
+      );
     },
   };
 }
-
 const defaultAdminHandlers = createAdminBlogHandlers();
 const defaultPublicHandlers = createPublicBlogHandlers();
 

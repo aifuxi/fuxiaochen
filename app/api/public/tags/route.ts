@@ -1,5 +1,5 @@
 import { handlePublicListTags } from "@/lib/server/tags/handler";
 
-export function GET() {
-  return handlePublicListTags();
+export function GET(request: Request) {
+  return handlePublicListTags(request);
 }

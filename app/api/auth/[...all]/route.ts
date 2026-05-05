@@ -1,6 +1,7 @@
 import { toNextJsHandler } from "better-auth/next-js";
 
 import { auth } from "@/lib/auth";
+import { withApiTiming } from "@/lib/server/api-timing";
 import {
   applyLoginGuardCookie,
   loginGuard,
@@ -61,20 +62,50 @@ async function handleEmailSignUp(request: Request) {
   return applyRegisterGuardCookie(response, guardResult);
 }
 
-export const GET = authHandlers.GET;
+export function GET(request: Request) {
+  return withApiTiming(
+    request,
+    "auth.get",
+    (timing) => timing.time("service", () => authHandlers.GET(request)),
+    {
+      onError: createAuthGuardErrorResponse,
+      scope: "auth",
+    },
+  );
+}
 
 export async function POST(request: Request) {
-  try {
-    if (isEmailSignInRequest(request)) {
-      return await handleEmailSignIn(request);
-    }
+  return withApiTiming(
+    request,
+    "auth.post",
+    (timing) => {
+      const authFlow = timing.timeSync("parse", () => {
+        if (isEmailSignInRequest(request)) {
+          return "email-sign-in";
+        }
 
-    if (isEmailSignUpRequest(request)) {
-      return await handleEmailSignUp(request);
-    }
+        if (isEmailSignUpRequest(request)) {
+          return "email-sign-up";
+        }
 
-    return authHandlers.POST(request);
-  } catch (error) {
-    return createAuthGuardErrorResponse(error);
-  }
+        return "default";
+      });
+
+      return timing.time("service", () => {
+        if (authFlow === "email-sign-in") {
+          return handleEmailSignIn(request);
+        }
+
+        if (authFlow === "email-sign-up") {
+          return handleEmailSignUp(request);
+        }
+
+        return authHandlers.POST(request);
+      });
+    },
+    {
+      onError: createAuthGuardErrorResponse,
+      scope: "auth",
+    },
+  );
 }

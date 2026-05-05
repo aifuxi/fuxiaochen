@@ -2,7 +2,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 import { revalidatePublicFriendContent } from "@/lib/server/public-content-cache";
 
@@ -45,94 +45,128 @@ export function createAdminFriendHandlers({
 }: FriendHandlerDeps = {}) {
   return {
     async handleListFriends(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const url = new URL(request.url);
-        const query = adminFriendListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          category: url.searchParams.get("category") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listAdminFriends(query);
-
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminFriend),
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+      return withApiTiming(request, "admin.friends.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminFriendListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            category: url.searchParams.get("category") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
+        });
+        const result = await timing.time("service", () =>
+          service.listAdminFriends(query),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminFriend),
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
+        );
+      });
     },
     async handleCreateFriend(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.friends.create", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const body = adminFriendCreateSchema.parse(await toJsonBody(request));
-        const friend = await service.createFriend(body);
+        const body = await timing.time("parse", async () =>
+          adminFriendCreateSchema.parse(await toJsonBody(request)),
+        );
+        const friend = await timing.time("service", async () => {
+          const createdFriend = await service.createFriend(body);
+          revalidatePublicFriendContent();
 
-        revalidatePublicFriendContent();
+          return createdFriend;
+        });
 
-        return createSuccessResponse(toAdminFriend(friend), undefined, 201);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminFriend(friend), undefined, 201),
+        );
+      });
     },
     async handleGetFriend(request: Request, params: Promise<{ id: string }>) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(request, "admin.friends.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminFriendIdParamsSchema.parse(await params);
-        const friend = await service.getAdminFriend(id);
+        const { id } = await timing.time("parse", async () =>
+          adminFriendIdParamsSchema.parse(await params),
+        );
+        const friend = await timing.time("service", () =>
+          service.getAdminFriend(id),
+        );
 
-        return createSuccessResponse(toAdminFriend(friend));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminFriend(friend)),
+        );
+      });
     },
     async handleUpdateFriend(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.friends.update", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminFriendIdParamsSchema.parse(await params);
-        const body = adminFriendUpdateSchema.parse(await toJsonBody(request));
-        const friend = await service.updateFriend(id, body);
+        const { id, body } = await timing.time("parse", async () => ({
+          ...adminFriendIdParamsSchema.parse(await params),
+          body: adminFriendUpdateSchema.parse(await toJsonBody(request)),
+        }));
+        const friend = await timing.time("service", async () => {
+          const updatedFriend = await service.updateFriend(id, body);
+          revalidatePublicFriendContent();
 
-        revalidatePublicFriendContent();
+          return updatedFriend;
+        });
 
-        return createSuccessResponse(toAdminFriend(friend));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminFriend(friend)),
+        );
+      });
     },
     async handleDeleteFriend(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.friends.delete", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminFriendIdParamsSchema.parse(await params);
-        await service.deleteFriend(id);
+        const { id } = await timing.time("parse", async () =>
+          adminFriendIdParamsSchema.parse(await params),
+        );
+        await timing.time("service", async () => {
+          await service.deleteFriend(id);
+          revalidatePublicFriendContent();
+        });
 
-        revalidatePublicFriendContent();
-
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () => createSuccessResponse(null));
+      });
     },
   };
 }
@@ -142,16 +176,18 @@ export function createPublicFriendHandlers({
   service = createFriendService(serviceDeps),
 }: FriendHandlerDeps = {}) {
   return {
-    async handleListFriends() {
-      try {
-        const friends = await service.listPublicFriends();
+    async handleListFriends(request?: Request) {
+      return withApiTiming(request, "public.friends.list", async (timing) => {
+        const friends = await timing.time("service", () =>
+          service.listPublicFriends(),
+        );
 
-        return createSuccessResponse({
-          items: friends.map(toPublicFriend),
-        });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse({
+            items: friends.map(toPublicFriend),
+          }),
+        );
+      });
     },
   };
 }

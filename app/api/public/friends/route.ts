@@ -1,5 +1,5 @@
 import { handlePublicListFriends } from "@/lib/server/friends/handler";
 
-export function GET() {
-  return handlePublicListFriends();
+export function GET(request: Request) {
+  return handlePublicListFriends(request);
 }

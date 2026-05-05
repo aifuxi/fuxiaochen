@@ -1,5 +1,5 @@
 import { requireRequestSession } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import { adminAnalyticsQuerySchema } from "./dto";
@@ -21,19 +21,26 @@ export function createAdminAnalyticsHandlers({
 }: AnalyticsHandlerDeps = {}) {
   return {
     async handleGetAnalytics(request: Request) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(request, "admin.analytics.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const url = new URL(request.url);
-        const query = adminAnalyticsQuerySchema.parse({
-          range: url.searchParams.get("range") ?? undefined,
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminAnalyticsQuerySchema.parse({
+            range: url.searchParams.get("range") ?? undefined,
+          });
         });
-        const snapshot = await service.getSnapshot(query);
+        const snapshot = await timing.time("service", () =>
+          service.getSnapshot(query),
+        );
 
-        return createSuccessResponse(toAdminAnalytics(snapshot));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminAnalytics(snapshot)),
+        );
+      });
     },
   };
 }

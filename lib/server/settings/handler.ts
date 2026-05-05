@@ -4,8 +4,8 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { AppError } from "@/lib/server/http/errors";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -62,35 +62,46 @@ export function createAdminSettingsHandlers({
 }: SettingsHandlerDeps = {}) {
   return {
     async handleGetSettings(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const result = await service.getSettings();
-
-        return createSuccessResponse(
-          toAdminSiteSettings(result.settings, result.row),
+      return withApiTiming(request, "admin.settings.get", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const result = await timing.time("service", () =>
+          service.getSettings(),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            toAdminSiteSettings(result.settings, result.row),
+          ),
+        );
+      });
     },
     async handleUpdateSettings(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
-
-        const body = adminSiteSettingsUpdateSchema.parse(
-          await toJsonBody(request),
+      return withApiTiming(request, "admin.settings.update", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
         );
-        const result = await service.updateSettings(body);
+        timing.setSession(session);
 
-        revalidateSiteSettingsPaths();
-
-        return createSuccessResponse(
-          toAdminSiteSettings(result.settings, result.row),
+        const body = await timing.time("parse", async () =>
+          adminSiteSettingsUpdateSchema.parse(await toJsonBody(request)),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        const result = await timing.time("service", async () => {
+          const updatedSettings = await service.updateSettings(body);
+          revalidateSiteSettingsPaths();
+
+          return updatedSettings;
+        });
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            toAdminSiteSettings(result.settings, result.row),
+          ),
+        );
+      });
     },
   };
 }
@@ -100,16 +111,18 @@ export function createPublicSettingsHandlers({
   service = createSettingsService(serviceDeps),
 }: SettingsHandlerDeps = {}) {
   return {
-    async handleGetSettings() {
-      try {
-        const result = await service.getSettings();
-
-        return createSuccessResponse(
-          toPublicSiteSettings(result.settings, result.row),
+    async handleGetSettings(request?: Request) {
+      return withApiTiming(request, "public.settings.get", async (timing) => {
+        const result = await timing.time("service", () =>
+          service.getSettings(),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            toPublicSiteSettings(result.settings, result.row),
+          ),
+        );
+      });
     },
   };
 }

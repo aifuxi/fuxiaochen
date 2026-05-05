@@ -1,6 +1,6 @@
 import { requireAdminRequestSession } from "@/lib/auth-session";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { AppError } from "@/lib/server/http/errors";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
@@ -28,16 +28,23 @@ export function createAdminUploadHandlers({
 }: UploadHandlerDeps = {}) {
   return {
     async handleCreatePresignedUploadUrl(request: Request) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.uploads.presign", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const body = adminUploadPresignSchema.parse(await toJsonBody(request));
-        const result = await service.createPresignedUploadUrl(body);
+        const body = await timing.time("parse", async () =>
+          adminUploadPresignSchema.parse(await toJsonBody(request)),
+        );
+        const result = await timing.time("service", () =>
+          service.createPresignedUploadUrl(body),
+        );
 
-        return createSuccessResponse(result, undefined, 201);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(result, undefined, 201),
+        );
+      });
     },
   };
 }

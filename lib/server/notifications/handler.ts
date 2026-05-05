@@ -1,6 +1,6 @@
 import { requireRequestSession } from "@/lib/auth-session";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
 import { AppError } from "@/lib/server/http/errors";
 import { createSuccessResponse } from "@/lib/server/http/response";
 import {
@@ -42,54 +42,83 @@ export function createAdminNotificationHandlers({
 }: NotificationHandlerDeps = {}) {
   return {
     async handleListNotifications(request: Request) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.notifications.list",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const url = new URL(request.url);
-        const query = adminNotificationListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          status: url.searchParams.get("status") ?? undefined,
-        });
-        const result = await service.listNotifications(query);
+          const query = timing.timeSync("parse", () => {
+            const url = new URL(request.url);
+            return adminNotificationListQuerySchema.parse({
+              page: url.searchParams.get("page") ?? undefined,
+              pageSize: url.searchParams.get("pageSize") ?? undefined,
+              status: url.searchParams.get("status") ?? undefined,
+            });
+          });
+          const result = await timing.time("service", () =>
+            service.listNotifications(query),
+          );
 
-        return createSuccessResponse(toAdminNotificationListPayload(result), {
-          page: query.page,
-          pageSize: query.pageSize,
-          total: result.total,
-        });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminNotificationListPayload(result), {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            }),
+          );
+        },
+      );
     },
     async handleUpdateNotification(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.notifications.update",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const { id } = adminNotificationIdParamsSchema.parse(await params);
-        const body = adminNotificationReadSchema.parse(
-          await toJsonBody(request),
-        );
-        const notification = await service.updateReadState(id, body);
+          const { id, body } = await timing.time("parse", async () => ({
+            ...adminNotificationIdParamsSchema.parse(await params),
+            body: adminNotificationReadSchema.parse(await toJsonBody(request)),
+          }));
+          const notification = await timing.time("service", () =>
+            service.updateReadState(id, body),
+          );
 
-        return createSuccessResponse(toAdminNotification(notification));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse(toAdminNotification(notification)),
+          );
+        },
+      );
     },
     async handleMarkAllRead(request: Request) {
-      try {
-        await requireRequestSession(request);
+      return withApiTiming(
+        request,
+        "admin.notifications.mark-all-read",
+        async (timing) => {
+          const session = await timing.time("auth", () =>
+            requireRequestSession(request),
+          );
+          timing.setSession(session);
 
-        const updatedCount = await service.markAllRead();
+          const updatedCount = await timing.time("service", () =>
+            service.markAllRead(),
+          );
 
-        return createSuccessResponse({ updatedCount });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+          return timing.timeSync("response", () =>
+            createSuccessResponse({ updatedCount }),
+          );
+        },
+      );
     },
   };
 }

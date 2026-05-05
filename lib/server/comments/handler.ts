@@ -2,7 +2,7 @@ import {
   requireAdminRequestSession,
   requireRequestSession,
 } from "@/lib/auth-session";
-import { toErrorResponse } from "@/lib/server/http/error-handler";
+import { withApiTiming } from "@/lib/server/api-timing";
 import { createSuccessResponse } from "@/lib/server/http/response";
 
 import {
@@ -57,37 +57,60 @@ export function createPublicCommentHandlers({
 }: CommentHandlerDeps = {}) {
   return {
     async handleListComments(request: Request) {
-      try {
-        const url = new URL(request.url);
-        const query = publicCommentListQuerySchema.parse({
-          postSlug: url.searchParams.get("postSlug") ?? undefined,
+      return withApiTiming(request, "public.comments.list", async (timing) => {
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return publicCommentListQuerySchema.parse({
+            postSlug: url.searchParams.get("postSlug") ?? undefined,
+          });
         });
-        const items = await service.listPublicComments(query);
+        const items = await timing.time("service", () =>
+          service.listPublicComments(query),
+        );
 
-        return createSuccessResponse({
-          items: toPublicCommentTree(items),
-        });
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse({
+            items: toPublicCommentTree(items),
+          }),
+        );
+      });
     },
     async handleCreateComment(request: Request) {
-      try {
-        const body = publicCommentCreateSchema.parse(await toJsonBody(request));
-        const guardResult = await guard.validateCreateRequest(request, body);
-        const comment = await service.createPublicComment(body);
+      return withApiTiming(
+        request,
+        "public.comments.create",
+        async (timing) => {
+          const body = await timing.time("parse", async () =>
+            publicCommentCreateSchema.parse(await toJsonBody(request)),
+          );
+          const { comment, guardResult } = await timing.time(
+            "service",
+            async () => {
+              const validatedGuard = await guard.validateCreateRequest(
+                request,
+                body,
+              );
+              const createdComment = await service.createPublicComment(body);
 
-        return applyCommentGuardCookie(
-          createSuccessResponse(
-            toPublicCommentCreateResult(comment),
-            undefined,
-            201,
-          ),
-          guardResult,
-        );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+              return {
+                comment: createdComment,
+                guardResult: validatedGuard,
+              };
+            },
+          );
+
+          return timing.timeSync("response", () =>
+            applyCommentGuardCookie(
+              createSuccessResponse(
+                toPublicCommentCreateResult(comment),
+                undefined,
+                201,
+              ),
+              guardResult,
+            ),
+          );
+        },
+      );
     },
   };
 }
@@ -98,82 +121,106 @@ export function createAdminCommentHandlers({
 }: CommentHandlerDeps = {}) {
   return {
     async handleListComments(request: Request) {
-      try {
-        await requireRequestSession(request);
-
-        const url = new URL(request.url);
-        const query = adminCommentListQuerySchema.parse({
-          page: url.searchParams.get("page") ?? undefined,
-          pageSize: url.searchParams.get("pageSize") ?? undefined,
-          query: url.searchParams.get("query") ?? undefined,
-          status: url.searchParams.get("status") ?? undefined,
-          postSlug: url.searchParams.get("postSlug") ?? undefined,
-          sortBy: url.searchParams.get("sortBy") ?? undefined,
-          sortDirection: url.searchParams.get("sortDirection") ?? undefined,
-        });
-        const result = await service.listAdminComments(query);
-
-        return createSuccessResponse(
-          {
-            items: result.items.map(toAdminComment),
-            stats: result.stats,
-          },
-          {
-            page: query.page,
-            pageSize: query.pageSize,
-            total: result.total,
-          },
+      return withApiTiming(request, "admin.comments.list", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireRequestSession(request),
         );
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        timing.setSession(session);
+
+        const query = timing.timeSync("parse", () => {
+          const url = new URL(request.url);
+          return adminCommentListQuerySchema.parse({
+            page: url.searchParams.get("page") ?? undefined,
+            pageSize: url.searchParams.get("pageSize") ?? undefined,
+            query: url.searchParams.get("query") ?? undefined,
+            status: url.searchParams.get("status") ?? undefined,
+            postSlug: url.searchParams.get("postSlug") ?? undefined,
+            sortBy: url.searchParams.get("sortBy") ?? undefined,
+            sortDirection: url.searchParams.get("sortDirection") ?? undefined,
+          });
+        });
+        const result = await timing.time("service", () =>
+          service.listAdminComments(query),
+        );
+
+        return timing.timeSync("response", () =>
+          createSuccessResponse(
+            {
+              items: result.items.map(toAdminComment),
+              stats: result.stats,
+            },
+            {
+              page: query.page,
+              pageSize: query.pageSize,
+              total: result.total,
+            },
+          ),
+        );
+      });
     },
     async handleCreateComment(request: Request) {
-      try {
-        const session = await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.comments.create", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const body = adminCommentReplySchema.parse(await toJsonBody(request));
-        const comment = await service.createAdminCommentReply(body, {
-          email: session.user.email,
-          image: session.user.image,
-          name: session.user.name,
-        });
+        const body = await timing.time("parse", async () =>
+          adminCommentReplySchema.parse(await toJsonBody(request)),
+        );
+        const comment = await timing.time("service", () =>
+          service.createAdminCommentReply(body, {
+            email: session.user.email,
+            image: session.user.image,
+            name: session.user.name,
+          }),
+        );
 
-        return createSuccessResponse(toAdminComment(comment), undefined, 201);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminComment(comment), undefined, 201),
+        );
+      });
     },
     async handleUpdateComment(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.comments.update", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminCommentIdParamsSchema.parse(await params);
-        const body = adminCommentUpdateSchema.parse(await toJsonBody(request));
-        const comment = await service.updateComment(id, body);
+        const { id, body } = await timing.time("parse", async () => ({
+          ...adminCommentIdParamsSchema.parse(await params),
+          body: adminCommentUpdateSchema.parse(await toJsonBody(request)),
+        }));
+        const comment = await timing.time("service", () =>
+          service.updateComment(id, body),
+        );
 
-        return createSuccessResponse(toAdminComment(comment));
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () =>
+          createSuccessResponse(toAdminComment(comment)),
+        );
+      });
     },
     async handleDeleteComment(
       request: Request,
       params: Promise<{ id: string }>,
     ) {
-      try {
-        await requireAdminRequestSession(request);
+      return withApiTiming(request, "admin.comments.delete", async (timing) => {
+        const session = await timing.time("auth", () =>
+          requireAdminRequestSession(request),
+        );
+        timing.setSession(session);
 
-        const { id } = adminCommentIdParamsSchema.parse(await params);
-        await service.deleteComment(id);
+        const { id } = await timing.time("parse", async () =>
+          adminCommentIdParamsSchema.parse(await params),
+        );
+        await timing.time("service", () => service.deleteComment(id));
 
-        return createSuccessResponse(null);
-      } catch (error) {
-        return toErrorResponse(error);
-      }
+        return timing.timeSync("response", () => createSuccessResponse(null));
+      });
     },
   };
 }
