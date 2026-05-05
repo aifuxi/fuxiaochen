@@ -15,6 +15,7 @@ import {
   Shield,
   History,
   Link2,
+  ScrollText,
 } from "lucide-react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -50,6 +51,7 @@ const navigation = [
     title: "系统",
     items: [
       { name: "用户", href: routes.admin.users, icon: Shield },
+      { name: "日志记录", href: routes.admin.logs, icon: ScrollText },
       { name: "设置", href: routes.admin.settings, icon: Settings },
     ],
   },

@@ -40,6 +40,9 @@ export const adminMetadata = {
   users: {
     title: "用户",
   },
+  logs: {
+    title: "日志记录",
+  },
   settings: {
     title: "站点设置",
   },

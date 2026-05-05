@@ -15,6 +15,13 @@
       "when": 1777474007502,
       "tag": "0001_bright_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777973936142,
+      "tag": "0002_nice_the_fury",
+      "breakpoints": true
     }
   ]
 }

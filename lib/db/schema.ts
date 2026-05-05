@@ -34,6 +34,8 @@ export type NotificationEntityType =
   | "project"
   | "user";
 export type NotificationType = "content" | "interaction" | "system" | "user";
+export type ApiTimingEvent = "api_timing" | "api_proxy_timing";
+export type ApiTimingScope = "admin" | "public" | "auth" | "other";
 export type RequestGuardStateType = "counter" | "marker" | "lock";
 export type UserRole = "admin" | "user";
 
@@ -388,6 +390,49 @@ export const notifications = pgTable(
   ],
 );
 
+export const apiTimingLogs = pgTable(
+  "api_timing_logs",
+  {
+    id: text("id").primaryKey(),
+    createdAt: timestamp("created_at", {
+      mode: "date",
+      withTimezone: true,
+    }).notNull(),
+    event: text("event").$type<ApiTimingEvent>().notNull(),
+    requestId: text("request_id").notNull(),
+    scope: text("scope").$type<ApiTimingScope>().notNull(),
+    operation: text("operation"),
+    method: text("method").notNull(),
+    path: text("path").notNull(),
+    status: integer("status").notNull(),
+    userId: text("user_id"),
+    role: text("role").$type<UserRole>(),
+    authMs: integer("auth_ms").notNull().default(0),
+    parseMs: integer("parse_ms").notNull().default(0),
+    serviceMs: integer("service_ms").notNull().default(0),
+    responseMs: integer("response_ms").notNull().default(0),
+    totalMs: integer("total_ms").notNull().default(0),
+    proxyAuthMs: integer("proxy_auth_ms"),
+    errorCode: text("error_code"),
+  },
+  (table) => [
+    index("api_timing_logs_created_at_idx").on(table.createdAt.desc()),
+    index("api_timing_logs_request_id_idx").on(table.requestId),
+    index("api_timing_logs_scope_created_at_idx").on(
+      table.scope,
+      table.createdAt.desc(),
+    ),
+    index("api_timing_logs_status_created_at_idx").on(
+      table.status,
+      table.createdAt.desc(),
+    ),
+    index("api_timing_logs_total_ms_created_at_idx").on(
+      table.totalMs,
+      table.createdAt.desc(),
+    ),
+  ],
+);
+
 export const siteSettings = pgTable("site_settings", {
   id: text("id").primaryKey(),
   general: jsonb("general").$type<SiteSettingsGeneral>().notNull(),
@@ -604,6 +649,7 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const schema = {
   account: accounts,
   accounts,
+  apiTimingLogs,
   blogs,
   blogDailyStats,
   blogLikes,
@@ -650,6 +696,8 @@ export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type Notification = typeof notifications.$inferSelect;
 export type NewNotification = typeof notifications.$inferInsert;
+export type ApiTimingLog = typeof apiTimingLogs.$inferSelect;
+export type NewApiTimingLog = typeof apiTimingLogs.$inferInsert;
 export type RequestGuardState = typeof requestGuardStates.$inferSelect;
 export type NewRequestGuardState = typeof requestGuardStates.$inferInsert;
 export type User = typeof users.$inferSelect;

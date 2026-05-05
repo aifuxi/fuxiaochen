@@ -1,5 +1,6 @@
 import { logger } from "@/lib/server/logger";
 
+import { enqueueApiTimingLog } from "./api-logs/service";
 import { normalizeError, toErrorResponse } from "./http/error-handler";
 
 export type ApiTimingScope = "admin" | "public" | "auth" | "other";
@@ -141,15 +142,14 @@ export class ApiTimingContext {
   }
 
   private log(status: number, error?: unknown) {
-    if (!isTimingEnabled() || this.logged) {
+    if (this.logged) {
       return;
     }
 
     this.logged = true;
 
     const normalizedError = error ? normalizeError(error) : undefined;
-
-    logger.info({
+    const logPayload = {
       event: "api_timing",
       requestId: this.requestId,
       scope: this.scope,
@@ -164,7 +164,13 @@ export class ApiTimingContext {
       totalMs: roundMs(performance.now() - this.startedAt),
       ...getSessionLogFields(this.session),
       ...(normalizedError ? { errorCode: normalizedError.code } : {}),
-    });
+    } as const;
+
+    if (isTimingEnabled()) {
+      logger.info(logPayload);
+    }
+
+    enqueueApiTimingLog(logPayload);
   }
 }
 
@@ -211,11 +217,7 @@ export const logApiProxyTiming = ({
   requestId: string;
   status: number;
 }) => {
-  if (!isTimingEnabled()) {
-    return;
-  }
-
-  logger.info({
+  const logPayload = {
     event: "api_proxy_timing",
     requestId,
     scope: "admin",
@@ -224,5 +226,11 @@ export const logApiProxyTiming = ({
     status,
     authenticated,
     proxyAuthMs: roundMs(proxyAuthMs),
-  });
+  } as const;
+
+  if (isTimingEnabled()) {
+    logger.info(logPayload);
+  }
+
+  enqueueApiTimingLog(logPayload);
 };
