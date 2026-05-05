@@ -82,6 +82,9 @@ const registerFormSchema = loginFormSchema.extend({
   name: z.string().trim().min(1, "请输入昵称。"),
 });
 
+type AuthFormInput =
+  | z.input<typeof loginFormSchema>
+  | z.input<typeof registerFormSchema>;
 type AuthFormValues = z.output<typeof registerFormSchema>;
 
 export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
@@ -93,7 +96,7 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
   const resetSubmissionClock = () => setStartedAt(Date.now());
-  const form = useForm<AuthFormValues>({
+  const form = useForm<AuthFormInput, unknown, AuthFormValues>({
     defaultValues: {
       email: "",
       name: "",
