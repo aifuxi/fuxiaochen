@@ -41,10 +41,12 @@ const registerGuardBodySchema = z.object({
 });
 
 export type RegisterGuardResult = {
+  duplicateKey: string;
   setCookie?: string;
 };
 
 export interface RegisterGuard {
+  recordSuccessfulSignUp(guardResult: RegisterGuardResult): Promise<void>;
   validateSignUpRequest(request: Request): Promise<RegisterGuardResult>;
 }
 
@@ -164,18 +166,15 @@ export function createRegisterGuard({
           ...RATE_LIMITS.emailPerHour,
         });
 
-        const duplicateCreated = await store.setIfNotExists({
-          key: `auth:register:guard:duplicate:${identityHash}:${emailHash}`,
-          type: "marker",
-          now: nowDate,
-          ttlSeconds: DUPLICATE_TTL_SECONDS,
-        });
+        const duplicateKey = `auth:register:guard:duplicate:${identityHash}:${emailHash}`;
+        const duplicateExists = await store.exists([duplicateKey], nowDate);
 
-        if (!duplicateCreated) {
+        if (duplicateExists) {
           throw createDuplicateSubmissionError();
         }
 
         return {
+          duplicateKey,
           setCookie: visitor.setCookie,
         };
       } catch (error) {
@@ -184,6 +183,19 @@ export function createRegisterGuard({
         }
 
         throw createGuardUnavailableError();
+      }
+    },
+    async recordSuccessfulSignUp(guardResult) {
+      try {
+        await store.set({
+          key: guardResult.duplicateKey,
+          type: "marker",
+          now: now(),
+          ttlSeconds: DUPLICATE_TTL_SECONDS,
+        });
+      } catch {
+        // The user is already created by Better Auth, so do not turn a successful
+        // registration response into a failure because duplicate marking failed.
       }
     },
   };

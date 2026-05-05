@@ -59,6 +59,10 @@ async function handleEmailSignUp(request: Request) {
   const guardResult = await registerGuard.validateSignUpRequest(request);
   const response = await authHandlers.POST(request);
 
+  if (response.ok) {
+    await registerGuard.recordSuccessfulSignUp(guardResult);
+  }
+
   return applyRegisterGuardCookie(response, guardResult);
 }
 

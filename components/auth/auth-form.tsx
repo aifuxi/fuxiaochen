@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { Github, Loader2 } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Github } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +18,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/ui/spinner";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -47,11 +56,33 @@ const FORM_COPY = {
   },
 } as const;
 
-function getFormValue(formData: FormData, key: string) {
-  const value = formData.get(key);
+const MIN_PASSWORD_LENGTH = 6;
+const MAX_PASSWORD_LENGTH = 20;
 
-  return typeof value === "string" ? value : "";
-}
+const emailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .min(1, "请输入邮箱地址。")
+  .email("请输入有效的邮箱地址。");
+
+const passwordSchema = z
+  .string()
+  .min(1, "请输入密码。")
+  .min(MIN_PASSWORD_LENGTH, `密码至少需要 ${MIN_PASSWORD_LENGTH} 位。`)
+  .max(MAX_PASSWORD_LENGTH, `密码最多 ${MAX_PASSWORD_LENGTH} 位。`);
+
+const loginFormSchema = z.object({
+  email: emailSchema,
+  name: z.string().trim().optional().default(""),
+  password: passwordSchema,
+});
+
+const registerFormSchema = loginFormSchema.extend({
+  name: z.string().trim().min(1, "请输入昵称。"),
+});
+
+type AuthFormValues = z.output<typeof registerFormSchema>;
 
 export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
   const copy = FORM_COPY[mode];
@@ -62,35 +93,24 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
   const resetSubmissionClock = () => setStartedAt(Date.now());
+  const form = useForm<AuthFormValues>({
+    defaultValues: {
+      email: "",
+      name: "",
+      password: "",
+    },
+    resolver: zodResolver(
+      mode === "register" ? registerFormSchema : loginFormSchema,
+    ),
+  });
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  const isSubmitting = isEmailLoading || isGithubLoading;
+  const fieldError = (name: keyof AuthFormValues) => {
+    const error = form.formState.errors[name];
+    return error ? [{ message: error.message }] : undefined;
+  };
 
-    const formData = new FormData(event.currentTarget);
-    const name = getFormValue(formData, "name").trim();
-    const email = getFormValue(formData, "email").trim().toLowerCase();
-    const password = getFormValue(formData, "password");
-
-    if (mode === "register" && !name) {
-      setError("请输入昵称。");
-      return;
-    }
-
-    if (!email) {
-      setError("请输入邮箱地址。");
-      return;
-    }
-
-    if (!password) {
-      setError("请输入密码。");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("密码至少需要 6 位。");
-      return;
-    }
-
+  const handleSubmit = form.handleSubmit(async ({ email, name, password }) => {
     setError(null);
     setIsEmailLoading(true);
 
@@ -134,7 +154,7 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
         setWebsite("");
       }
     }
-  }
+  });
 
   async function handleGithubSignIn() {
     setError(null);
@@ -166,76 +186,86 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
         <CardDescription>{copy.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === "register" && (
-            <div className="space-y-2">
-              <Label htmlFor="name">昵称</Label>
+        <form
+          noValidate
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-4"
+        >
+          <FieldGroup className="gap-4">
+            {mode === "register" && (
+              <Field data-invalid={!!form.formState.errors.name}>
+                <FieldLabel htmlFor="name">昵称</FieldLabel>
+                <Input
+                  id="name"
+                  placeholder="Fuxiaochen"
+                  autoComplete="nickname"
+                  disabled={isSubmitting}
+                  aria-invalid={!!form.formState.errors.name}
+                  {...form.register("name")}
+                  required
+                />
+                <FieldError errors={fieldError("name")} />
+              </Field>
+            )}
+
+            {mode === "register" && (
+              <div className="hidden" aria-hidden="true">
+                <label htmlFor="register-website">Website</label>
+                <input
+                  id="register-website"
+                  name="website"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(event) => setWebsite(event.target.value)}
+                />
+              </div>
+            )}
+
+            <Field data-invalid={!!form.formState.errors.email}>
+              <FieldLabel htmlFor="email">邮箱</FieldLabel>
               <Input
-                id="name"
-                name="name"
-                placeholder="Fuxiaochen"
-                autoComplete="nickname"
-                disabled={isEmailLoading || isGithubLoading}
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                autoComplete="email"
+                disabled={isSubmitting}
+                aria-invalid={!!form.formState.errors.email}
+                {...form.register("email")}
                 required
               />
-            </div>
-          )}
+              <FieldError errors={fieldError("email")} />
+            </Field>
 
-          {mode === "register" && (
-            <div className="hidden" aria-hidden="true">
-              <Label htmlFor="register-website">Website</Label>
-              <input
-                id="register-website"
-                name="website"
-                type="text"
-                tabIndex={-1}
-                autoComplete="off"
-                value={website}
-                onChange={(event) => setWebsite(event.target.value)}
+            <Field data-invalid={!!form.formState.errors.password}>
+              <FieldLabel htmlFor="password">密码</FieldLabel>
+              <Input
+                id="password"
+                type="password"
+                placeholder={`${MIN_PASSWORD_LENGTH}-${MAX_PASSWORD_LENGTH} 位`}
+                autoComplete={
+                  mode === "register" ? "new-password" : "current-password"
+                }
+                disabled={isSubmitting}
+                aria-invalid={!!form.formState.errors.password}
+                maxLength={MAX_PASSWORD_LENGTH}
+                minLength={MIN_PASSWORD_LENGTH}
+                {...form.register("password")}
+                required
               />
-            </div>
-          )}
+              <FieldError errors={fieldError("password")} />
+            </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">邮箱</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              disabled={isEmailLoading || isGithubLoading}
-              required
-            />
-          </div>
+            {error && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/8 px-3 py-2 text-sm text-destructive">
+                {error}
+              </div>
+            )}
+          </FieldGroup>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">密码</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="至少 6 位"
-              autoComplete={
-                mode === "register" ? "new-password" : "current-password"
-              }
-              disabled={isEmailLoading || isGithubLoading}
-              required
-            />
-          </div>
-
-          {error && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/8 px-3 py-2 text-sm text-destructive">
-              {error}
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isEmailLoading || isGithubLoading}
-          >
-            {isEmailLoading && <Loader2 className="animate-spin" />}
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isEmailLoading ? <Spinner data-icon="inline-start" /> : null}
             {copy.submitLabel}
           </Button>
         </form>
@@ -256,9 +286,13 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
           variant="outline"
           className="w-full"
           onClick={handleGithubSignIn}
-          disabled={!githubEnabled || isEmailLoading || isGithubLoading}
+          disabled={!githubEnabled || isSubmitting}
         >
-          {isGithubLoading ? <Loader2 className="animate-spin" /> : <Github />}
+          {isGithubLoading ? (
+            <Spinner data-icon="inline-start" />
+          ) : (
+            <Github data-icon="inline-start" />
+          )}
           使用 GitHub 继续
         </Button>
 
