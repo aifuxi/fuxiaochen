@@ -661,8 +661,22 @@
   color: var(--popover);
 }
 
+.markdown-editor:has(.bytemd-fullscreen.bytemd) {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  width: 100vw;
+  height: 100dvh;
+  background: var(--background);
+}
+
 .markdown-editor .bytemd-fullscreen.bytemd {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  width: 100vw;
   height: 100dvh !important;
+  border: 0;
   background: var(--background);
 }
 
