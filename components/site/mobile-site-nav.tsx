@@ -20,7 +20,11 @@ import { cn } from "@/lib/utils";
 
 import { siteNavLinks } from "@/constants/site-copy";
 
-export function MobileSiteNav() {
+type MobileSiteNavProps = {
+  triggerClassName?: string;
+};
+
+export function MobileSiteNav({ triggerClassName }: MobileSiteNavProps) {
   const pathname = usePathname();
 
   return (
@@ -29,7 +33,7 @@ export function MobileSiteNav() {
         <Button
           variant="ghost"
           size="icon"
-          className="md:hidden"
+          className={cn("md:hidden", triggerClassName)}
           aria-label="打开站点导航"
         >
           <Menu />

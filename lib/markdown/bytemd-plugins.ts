@@ -194,7 +194,7 @@ export const markdownEditorPlugins: BytemdPlugin[] = [
       asciidoc: asciidoc, // asciidoc高亮, 控制台输出信息高亮（类似把 npm run dev 后输出的控制台信息可以进行高亮）
     },
   }),
-  mediumZoom(),
+  mediumZoom({ background: "var(--background)" }),
 ];
 
 export const markdownPlugins: BytemdPlugin[] = [

@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { MobileSiteNav } from "@/components/site/mobile-site-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 import type { SiteSettings } from "@/lib/settings/types";
+import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
 import { siteNavLinks } from "@/constants/site-copy";
@@ -15,12 +17,27 @@ type NavbarProps = {
 };
 
 export function Navbar({ settings }: NavbarProps) {
+  const pathname = usePathname();
+  const isBlogPostPage = pathname.startsWith(`${routes.site.blog}/`);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-sm">
+    <header
+      className={cn(
+        "top-0 z-50 w-full",
+        isBlogPostPage
+          ? "absolute bg-transparent"
+          : "sticky border-b border-border bg-background/80 backdrop-blur-sm",
+      )}
+    >
       <nav className="mx-auto flex h-16 max-w-4xl items-center justify-between px-6">
         <Link
           href={routes.site.home}
-          className="text-lg font-semibold tracking-tight text-foreground transition-colors hover:text-foreground/80"
+          className={cn(
+            "text-lg font-semibold tracking-tight transition-colors",
+            isBlogPostPage
+              ? "text-white drop-shadow-sm hover:text-white/85"
+              : "text-foreground hover:text-foreground/80",
+          )}
         >
           {settings.general.siteName}
         </Link>
@@ -31,15 +48,32 @@ export function Navbar({ settings }: NavbarProps) {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className={cn(
+                    "text-sm transition-colors",
+                    isBlogPostPage
+                      ? "text-white/80 drop-shadow-sm hover:text-white"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
                 >
                   {link.label}
                 </Link>
               </li>
             ))}
           </ul>
-          <MobileSiteNav />
-          <ThemeToggle />
+          <MobileSiteNav
+            triggerClassName={
+              isBlogPostPage
+                ? "text-white hover:bg-white/10 hover:text-white"
+                : undefined
+            }
+          />
+          <ThemeToggle
+            className={
+              isBlogPostPage
+                ? "border-white/25 bg-black/20 text-white hover:bg-black/30 hover:text-white"
+                : undefined
+            }
+          />
         </div>
       </nav>
     </header>

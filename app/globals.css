@@ -661,6 +661,15 @@
   color: var(--popover);
 }
 
+.medium-zoom-overlay {
+  z-index: 60;
+  background: var(--background) !important;
+}
+
+.medium-zoom-image--opened {
+  z-index: 61;
+}
+
 .markdown-editor:has(.bytemd-fullscreen.bytemd) {
   position: fixed;
   inset: 0;
