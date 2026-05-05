@@ -1,5 +1,4 @@
 export type SiteSeoPageKey =
-  | "home"
   | "about"
   | "blog"
   | "projects"
@@ -23,6 +22,7 @@ export type SiteSettingsGeneral = {
 export type SiteSettingsSeo = {
   defaultTitle: string;
   defaultDescription: string;
+  titleSeparator: string;
   pages: Record<SiteSeoPageKey, SiteSeoPage>;
 };
 

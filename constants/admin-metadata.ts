@@ -1,54 +1,46 @@
 import type { Metadata } from "next";
 
-const ADMIN_TITLE_SUFFIX = "Fuxiaochen Admin";
-
-function buildAdminTitle(pageTitle?: string) {
-  return pageTitle
-    ? `${pageTitle} | ${ADMIN_TITLE_SUFFIX}`
-    : ADMIN_TITLE_SUFFIX;
-}
-
 export const adminMetadata = {
   root: {
-    title: buildAdminTitle(),
+    title: "后台管理",
   },
   dashboard: {
-    title: buildAdminTitle("仪表盘"),
+    title: "仪表盘",
   },
   analytics: {
-    title: buildAdminTitle("数据分析"),
+    title: "数据分析",
   },
   posts: {
-    title: buildAdminTitle("文章"),
+    title: "文章",
   },
   postsNew: {
-    title: buildAdminTitle("新建文章"),
+    title: "新建文章",
   },
   postEdit: {
-    title: buildAdminTitle("编辑文章"),
+    title: "编辑文章",
   },
   projects: {
-    title: buildAdminTitle("项目"),
+    title: "项目",
   },
   categories: {
-    title: buildAdminTitle("分类"),
+    title: "分类",
   },
   tags: {
-    title: buildAdminTitle("标签"),
+    title: "标签",
   },
   changelog: {
-    title: buildAdminTitle("更新日志"),
+    title: "更新日志",
   },
   friends: {
-    title: buildAdminTitle("友链"),
+    title: "友链",
   },
   comments: {
-    title: buildAdminTitle("评论"),
+    title: "评论",
   },
   users: {
-    title: buildAdminTitle("用户"),
+    title: "用户",
   },
   settings: {
-    title: buildAdminTitle("站点设置"),
+    title: "站点设置",
   },
 } satisfies Record<string, Metadata>;

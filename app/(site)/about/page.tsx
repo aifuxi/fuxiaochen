@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { getSeoPageMetadata } from "@/lib/settings/title";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
@@ -23,7 +24,7 @@ import { siteCopy } from "@/constants/site-copy";
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getCachedSiteSettings();
 
-  return settings.seo.pages.about;
+  return getSeoPageMetadata(settings, "about");
 }
 
 export default async function AboutPage() {

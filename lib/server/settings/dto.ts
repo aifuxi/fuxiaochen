@@ -1,8 +1,19 @@
 import { z } from "zod";
 
+import {
+  DEFAULT_TITLE_SEPARATOR,
+  TITLE_SEPARATOR_MAX_LENGTH,
+} from "@/lib/settings/title";
+
 export const SITE_SETTINGS_ID = "default";
 
 const nonEmptyString = z.string().trim().min(1);
+const titleSeparator = z
+  .string()
+  .trim()
+  .min(1)
+  .max(TITLE_SEPARATOR_MAX_LENGTH)
+  .default(DEFAULT_TITLE_SEPARATOR);
 const stringList = z.array(nonEmptyString).default([]);
 const urlOrEmpty = z
   .string()
@@ -41,8 +52,8 @@ const generalSchema = z.object({
 const seoSchema = z.object({
   defaultTitle: nonEmptyString,
   defaultDescription: nonEmptyString,
+  titleSeparator,
   pages: z.object({
-    home: seoPageSchema,
     about: seoPageSchema,
     blog: seoPageSchema,
     projects: seoPageSchema,

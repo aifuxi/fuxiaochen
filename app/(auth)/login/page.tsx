@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
+
 import { AuthForm } from "@/components/auth/auth-form";
 
 import { getSafeRedirectPath } from "@/lib/auth-redirect";
 import { requireGuestSession } from "@/lib/auth-session";
+
+export const metadata: Metadata = {
+  title: "登录",
+};
 
 export default async function LoginPage({
   searchParams,

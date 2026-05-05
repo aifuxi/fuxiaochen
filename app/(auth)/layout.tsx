@@ -1,20 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { buildTitleMetadata } from "@/lib/settings/title";
+
 import { routes } from "@/constants/routes";
 
-export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getCachedSiteSettings();
 
-export default function AuthLayout({
+  return {
+    title: buildTitleMetadata(settings, "登录"),
+    robots: {
+      follow: false,
+      index: false,
+    },
+  };
+}
+
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { settings } = await getCachedSiteSettings();
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-linear-to-br from-background via-muted/30 to-background">
       <div className="absolute top-0 left-0 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
@@ -27,7 +37,9 @@ export default function AuthLayout({
             className="inline-flex items-center gap-2 text-foreground"
           >
             <span className="h-2.5 w-2.5 rounded-full bg-primary" />
-            <span className="text-sm font-medium">Fuxiaochen Admin</span>
+            <span className="text-sm font-medium">
+              {settings.general.siteName} Admin
+            </span>
           </Link>
 
           <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance lg:text-5xl">

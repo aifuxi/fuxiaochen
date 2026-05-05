@@ -6,13 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { getCachedPublicChangelogs } from "@/lib/server/public-content-cache";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { getSeoPageMetadata } from "@/lib/settings/title";
 
 import { ChangelogPageClient } from "./changelog-page-client";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getCachedSiteSettings();
 
-  return settings.seo.pages.changelog;
+  return getSeoPageMetadata(settings, "changelog");
 }
 
 export default function ChangelogPage() {

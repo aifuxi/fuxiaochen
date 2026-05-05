@@ -34,6 +34,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminSiteSettings } from "@/lib/server/settings/mappers";
+import {
+  DEFAULT_TITLE_SEPARATOR,
+  TITLE_SEPARATOR_MAX_LENGTH,
+} from "@/lib/settings/title";
 import type { SiteSettings } from "@/lib/settings/types";
 
 const jsonArrayString = z
@@ -68,6 +72,13 @@ const assetPath = z
     { message: "必须是绝对路径或 URL" },
   );
 
+const titleSeparator = z
+  .string()
+  .trim()
+  .min(1, "标题分隔符不能为空")
+  .max(TITLE_SEPARATOR_MAX_LENGTH, `最多 ${TITLE_SEPARATOR_MAX_LENGTH} 个字符`)
+  .default(DEFAULT_TITLE_SEPARATOR);
+
 const settingsFormSchema = z.object({
   general: z.object({
     siteName: z.string().trim().min(1),
@@ -80,11 +91,8 @@ const settingsFormSchema = z.object({
   seo: z.object({
     defaultTitle: z.string().trim().min(1),
     defaultDescription: z.string().trim().min(1),
+    titleSeparator,
     pages: z.object({
-      home: z.object({
-        title: z.string().trim().min(1),
-        description: z.string().trim().min(1),
-      }),
       about: z.object({
         title: z.string().trim().min(1),
         description: z.string().trim().min(1),
@@ -459,15 +467,14 @@ export default function AdminSettingsPage() {
             <CardHeader>
               <CardTitle>SEO</CardTitle>
               <CardDescription>
-                运行时用于首页和公开页面的元信息。
+                默认元信息用于首页和全站兜底，其他字段用于对应公开页面。
               </CardDescription>
             </CardHeader>
             <CardContent>
               <FieldGroup>
                 {renderInput("seo.defaultTitle", "默认标题")}
+                {renderInput("seo.titleSeparator", "标题分隔符")}
                 {renderTextarea("seo.defaultDescription", "默认描述")}
-                {renderInput("seo.pages.home.title", "首页标题")}
-                {renderTextarea("seo.pages.home.description", "首页描述")}
                 {renderInput("seo.pages.about.title", "关于页标题")}
                 {renderTextarea("seo.pages.about.description", "关于页描述")}
                 {renderInput("seo.pages.blog.title", "博客页标题")}

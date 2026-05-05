@@ -6,13 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { getCachedPublicProjects } from "@/lib/server/public-content-cache";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { getSeoPageMetadata } from "@/lib/settings/title";
 
 import { ProjectsPageClient } from "./projects-page-client";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getCachedSiteSettings();
 
-  return settings.seo.pages.projects;
+  return getSeoPageMetadata(settings, "projects");
 }
 
 export default async function ProjectsPage() {

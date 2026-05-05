@@ -4,6 +4,7 @@ import { AdminLayout } from "@/components/admin/admin-layout";
 
 import { requireServerSession } from "@/lib/auth-session";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { buildTitleMetadata } from "@/lib/settings/title";
 
 import { adminMetadata } from "@/constants/admin-metadata";
 
@@ -11,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getCachedSiteSettings();
 
   return {
-    title: adminMetadata.root.title,
+    title: buildTitleMetadata(settings, adminMetadata.root.title),
     icons: {
       icon: settings.general.logoUrl,
     },

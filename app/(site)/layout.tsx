@@ -8,13 +8,14 @@ import { SiteProgressProvider } from "@/components/site/site-progress-provider";
 
 import { isProduction } from "@/lib/env";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { buildTitleMetadata } from "@/lib/settings/title";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { settings } = await getCachedSiteSettings();
   const { googleSearchConsole } = settings.analytics;
 
   return {
-    title: settings.seo.defaultTitle,
+    title: buildTitleMetadata(settings),
     description: settings.seo.defaultDescription,
     metadataBase: new URL(settings.general.siteUrl),
     icons: {

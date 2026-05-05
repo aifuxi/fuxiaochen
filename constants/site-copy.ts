@@ -12,29 +12,29 @@ export const siteNavLinks = [
 export const siteCopy = {
   metadata: {
     root: {
-      title: "Fuxiaochen - 全栈开发者",
+      title: "全栈开发者",
       description:
         "专注于构建可访问、细节扎实的 Web 产品，持续分享 Web 开发、设计与效率实践。",
     },
     about: {
-      title: "关于 | Fuxiaochen",
+      title: "关于",
       description:
         "了解 Fuxiaochen 的经历、技能栈，以及我对产品、工程与创作的长期兴趣。",
     },
     blog: {
-      title: "博客 | Fuxiaochen",
+      title: "博客",
       description: "分享关于 Web 开发、设计、工具与工作流的文章与思考。",
     },
     projects: {
-      title: "项目 | Fuxiaochen",
+      title: "项目",
       description: "浏览 Fuxiaochen 的项目实践、开源作品与长期积累。",
     },
     friends: {
-      title: "友链 | Fuxiaochen",
+      title: "友链",
       description: "这里收录了我关注的朋友，以及他们的博客、作品与主页。",
     },
     changelog: {
-      title: "更新日志 | Fuxiaochen",
+      title: "更新日志",
       description: "查看站点、内容和项目的最新迭代、优化与修复记录。",
     },
   },

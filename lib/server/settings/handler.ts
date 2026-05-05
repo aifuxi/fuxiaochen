@@ -25,6 +25,9 @@ const revalidatedPaths = [
   "/projects",
   "/friends",
   "/changelog",
+  "/login",
+  "/register",
+  "/admin",
 ] as const;
 
 const toJsonBody = async (request: Request) => {

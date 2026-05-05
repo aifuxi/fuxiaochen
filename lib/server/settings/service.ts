@@ -2,6 +2,10 @@ import { unstable_cache } from "next/cache";
 
 import type { SiteSettingsRow } from "@/lib/db/schema";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/settings/defaults";
+import {
+  normalizeSiteSettingsTitles,
+  normalizeTitleSeparator,
+} from "@/lib/settings/title";
 import type { SiteSettings } from "@/lib/settings/types";
 
 import {
@@ -34,8 +38,8 @@ const cloneDefaultSettings = () => structuredClone(DEFAULT_SITE_SETTINGS);
 const mergeSettings = (
   current: SiteSettings,
   input: AdminSiteSettingsUpdateInput,
-): SiteSettings =>
-  siteSettingsSchema.parse({
+): SiteSettings => {
+  const settings = siteSettingsSchema.parse({
     general: {
       ...current.general,
       ...input.general,
@@ -82,21 +86,74 @@ const mergeSettings = (
     },
   });
 
+  return normalizeSiteSettingsTitles(settings);
+};
+
 const normalizeSettings = (row: SiteSettingsRow | null) => {
+  const defaults = cloneDefaultSettings();
+
   if (!row) {
-    return cloneDefaultSettings();
+    return normalizeSiteSettingsTitles(defaults);
   }
 
+  const candidate = {
+    general: {
+      ...defaults.general,
+      ...row.general,
+    },
+    seo: {
+      ...defaults.seo,
+      ...row.seo,
+      titleSeparator: normalizeTitleSeparator(row.seo.titleSeparator),
+      pages: {
+        ...defaults.seo.pages,
+        ...row.seo.pages,
+      },
+    },
+    profile: {
+      ...defaults.profile,
+      ...row.profile,
+      skills: {
+        ...defaults.profile.skills,
+        ...row.profile.skills,
+      },
+    },
+    social: {
+      ...defaults.social,
+      ...row.social,
+    },
+    compliance: {
+      ...defaults.compliance,
+      ...row.compliance,
+    },
+    analytics: {
+      ...defaults.analytics,
+      ...row.analytics,
+      googleSearchConsole: {
+        ...defaults.analytics.googleSearchConsole,
+        ...row.analytics.googleSearchConsole,
+      },
+      googleAnalytics: {
+        ...defaults.analytics.googleAnalytics,
+        ...row.analytics.googleAnalytics,
+      },
+      umami: {
+        ...defaults.analytics.umami,
+        ...row.analytics.umami,
+      },
+    },
+  };
+
   const parsed = siteSettingsSchema.safeParse({
-    general: row.general,
-    seo: row.seo,
-    profile: row.profile,
-    social: row.social,
-    compliance: row.compliance,
-    analytics: row.analytics,
+    general: candidate.general,
+    seo: candidate.seo,
+    profile: candidate.profile,
+    social: candidate.social,
+    compliance: candidate.compliance,
+    analytics: candidate.analytics,
   });
 
-  return parsed.success ? parsed.data : cloneDefaultSettings();
+  return normalizeSiteSettingsTitles(parsed.success ? parsed.data : defaults);
 };
 
 export function createSettingsService({

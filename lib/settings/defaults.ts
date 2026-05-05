@@ -1,3 +1,4 @@
+import { DEFAULT_TITLE_SEPARATOR } from "@/lib/settings/title";
 import type { SiteSettings } from "@/lib/settings/types";
 import { getPublicSiteUrl } from "@/lib/site-url.cjs";
 
@@ -27,8 +28,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   seo: {
     defaultTitle: siteCopy.metadata.root.title,
     defaultDescription: siteCopy.metadata.root.description,
+    titleSeparator: DEFAULT_TITLE_SEPARATOR,
     pages: {
-      home: siteCopy.metadata.root,
       about: siteCopy.metadata.about,
       blog: siteCopy.metadata.blog,
       projects: siteCopy.metadata.projects,

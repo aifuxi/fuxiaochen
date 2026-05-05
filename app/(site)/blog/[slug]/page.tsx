@@ -15,6 +15,7 @@ import { blogService } from "@/lib/server/blogs/service";
 import { AppError } from "@/lib/server/http/errors";
 import { getCachedPublicBlogPostPageData } from "@/lib/server/public-content-cache";
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { normalizeTitleBase } from "@/lib/settings/title";
 
 import { routes } from "@/constants/routes";
 import { siteCopy } from "@/constants/site-copy";
@@ -33,7 +34,11 @@ export async function generateMetadata({
     const blog = await blogService.getPublicBlogBySlug(slug);
 
     return {
-      title: `${blog.title} | ${settings.general.siteName}`,
+      title: normalizeTitleBase(
+        blog.title,
+        settings.general.siteName,
+        settings.seo.titleSeparator,
+      ),
       description: blog.description,
     };
   } catch {
@@ -43,7 +48,7 @@ export async function generateMetadata({
       .join(" ");
 
     return {
-      title: `${readableSlug} | ${settings.general.siteName}`,
+      title: readableSlug,
       description: `阅读 ${settings.general.siteName} 上的《${readableSlug}》。`,
     };
   }

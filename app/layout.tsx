@@ -7,6 +7,9 @@ import { ApiErrorToastListener } from "@/components/api-error-toast-listener";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
+import { getCachedSiteSettings } from "@/lib/server/settings/service";
+import { buildFullTitle } from "@/lib/settings/title";
+
 import "./globals.css";
 
 const _spaceGrotesk = Space_Grotesk({
@@ -19,13 +22,17 @@ const _spaceMono = Space_Mono({
   variable: "--font-mono",
 });
 
-export const metadata: Metadata = {
-  title: "fuxiaochen",
-  description: "一个简单的个人博客，使用 Next.js 构建",
-  icons: {
-    icon: "/logo.svg",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getCachedSiteSettings();
+
+  return {
+    title: buildFullTitle(settings),
+    description: settings.seo.defaultDescription,
+    icons: {
+      icon: settings.general.logoUrl,
+    },
+  };
+}
 
 export default function RootLayout({
   children,
