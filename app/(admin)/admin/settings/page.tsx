@@ -190,8 +190,9 @@ const settingsFormSchema = z.object({
   }),
 });
 
-type SettingsFormValues = z.infer<typeof settingsFormSchema>;
-type FieldPath = Path<SettingsFormValues>;
+type SettingsFormInput = z.input<typeof settingsFormSchema>;
+type SettingsFormValues = z.output<typeof settingsFormSchema>;
+type FieldPath = Path<SettingsFormInput>;
 
 const toLines = (value: string) =>
   value
@@ -286,7 +287,7 @@ export default function AdminSettingsPage() {
     control,
     register,
     reset,
-  } = useForm<SettingsFormValues>({
+  } = useForm<SettingsFormInput, unknown, SettingsFormValues>({
     resolver: zodResolver(settingsFormSchema),
     values: fallbackValues,
   });
