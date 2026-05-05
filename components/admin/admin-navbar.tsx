@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import NiceModal from "@ebay/nice-modal-react";
 import { Bell, ExternalLink, Search } from "lucide-react";
-import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -32,12 +32,13 @@ import { AdminChangePasswordDialog } from "@/components/admin/admin-change-passw
 import { showAdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-import { apiRequest, buildApiUrl, fetchApiData } from "@/lib/api/fetcher";
+import { apiRequest, buildApiUrl } from "@/lib/api/fetcher";
 import { authClient } from "@/lib/auth-client";
 import type {
   AdminNotification,
   AdminNotificationListPayload,
 } from "@/lib/server/notifications/mappers";
+import { cn } from "@/lib/utils";
 
 import { routes } from "@/constants/routes";
 
@@ -47,6 +48,19 @@ type AdminNavbarProps = {
     image?: string | null;
     name: string;
   };
+};
+
+const NOTIFICATION_PAGE_SIZE = 8;
+
+type NotificationListMeta = {
+  page: number;
+  pageSize: number;
+  total: number;
+};
+
+type NotificationListPage = {
+  data: AdminNotificationListPayload;
+  meta: NotificationListMeta;
 };
 
 function getInitials(name: string) {
@@ -109,21 +123,52 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
   const [markingNotificationId, setMarkingNotificationId] = useState<
     string | null
   >(null);
-  const notificationsUrl = buildApiUrl("/api/admin/notifications", {
-    pageSize: 8,
-  });
+  const getNotificationsKey = (
+    pageIndex: number,
+    previousPageData: NotificationListPage | null,
+  ) => {
+    if (
+      previousPageData &&
+      pageIndex * NOTIFICATION_PAGE_SIZE >= previousPageData.meta.total
+    ) {
+      return null;
+    }
+
+    return buildApiUrl("/api/admin/notifications", {
+      page: pageIndex + 1,
+      pageSize: NOTIFICATION_PAGE_SIZE,
+    });
+  };
   const {
-    data: notificationsData,
+    data: notificationPages,
     error: notificationsError,
     isLoading: isNotificationsLoading,
+    size: notificationPageCount,
+    setSize: setNotificationPageCount,
     mutate: mutateNotifications,
-  } = useSWR<AdminNotificationListPayload>(notificationsUrl, fetchApiData, {
-    refreshInterval: 30_000,
-    revalidateOnFocus: true,
-  });
+  } = useSWRInfinite<NotificationListPage>(
+    getNotificationsKey,
+    (url: string) =>
+      apiRequest<AdminNotificationListPayload, NotificationListMeta>(
+        url,
+      ) as Promise<NotificationListPage>,
+    {
+      refreshInterval: 30_000,
+      revalidateOnFocus: true,
+    },
+  );
 
-  const notifications = notificationsData?.items ?? [];
-  const unreadCount = notificationsData?.unreadCount ?? 0;
+  const notifications =
+    notificationPages?.flatMap((page) => page.data.items) ?? [];
+  const unreadCount = notificationPages?.[0]?.data.unreadCount ?? 0;
+  const totalNotifications = notificationPages?.[0]?.meta.total ?? 0;
+  const hasMoreNotifications = notifications.length < totalNotifications;
+  const isLoadingMoreNotifications =
+    isNotificationsLoading ||
+    (notificationPages !== undefined &&
+      notificationPages.length < notificationPageCount);
+  const hasInitialNotificationsError =
+    Boolean(notificationsError) && notifications.length === 0;
 
   async function handleSignOut() {
     setIsSigningOut(true);
@@ -204,6 +249,18 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
     }
   }
 
+  function loadMoreNotifications() {
+    if (
+      !hasMoreNotifications ||
+      isLoadingMoreNotifications ||
+      markingNotificationId
+    ) {
+      return;
+    }
+
+    void setNotificationPageCount((currentPageCount) => currentPageCount + 1);
+  }
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6">
       <div className="flex items-center gap-4">
@@ -242,7 +299,10 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
               <span className="sr-only">通知</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-88 p-0">
+          <PopoverContent
+            align="end"
+            className="w-[calc(100vw-2rem)] p-0 sm:w-88"
+          >
             <div className="flex items-center justify-between border-b px-4 py-3">
               <div>
                 <p className="text-sm font-medium">消息通知</p>
@@ -265,8 +325,8 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                 <Spinner />
                 正在加载通知
               </div>
-            ) : notificationsError ? (
-              <div className="space-y-3 px-4 py-8 text-center">
+            ) : hasInitialNotificationsError ? (
+              <div className="flex flex-col items-center gap-3 px-4 py-8 text-center">
                 <p className="text-sm text-muted-foreground">通知加载失败</p>
                 <Button
                   variant="outline"
@@ -281,7 +341,7 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                 暂无通知
               </div>
             ) : (
-              <ScrollArea className="max-h-96">
+              <ScrollArea className="h-[min(24rem,calc(100vh-12rem))]">
                 <div className="p-1">
                   {notifications.map((notification) => {
                     const isUnread = !notification.readAt;
@@ -300,12 +360,13 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                           <Spinner className="mt-0.5" />
                         ) : (
                           <span
-                            className={`mt-1.5 size-2 shrink-0 rounded-full ${
-                              isUnread ? "bg-destructive" : "bg-muted"
-                            }`}
+                            className={cn(
+                              "mt-1.5 size-2 shrink-0 rounded-full",
+                              isUnread ? "bg-destructive" : "bg-muted",
+                            )}
                           />
                         )}
-                        <span className="min-w-0 flex-1 space-y-1">
+                        <span className="flex min-w-0 flex-1 flex-col gap-1">
                           <span className="flex items-center justify-between gap-3">
                             <span className="truncate text-sm font-medium">
                               {notification.title}
@@ -330,6 +391,38 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
                       </button>
                     );
                   })}
+                  <div className="border-t px-3 py-2">
+                    {notificationsError ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => void mutateNotifications()}
+                      >
+                        加载失败，重试
+                      </Button>
+                    ) : hasMoreNotifications ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full"
+                        onClick={loadMoreNotifications}
+                        disabled={
+                          isLoadingMoreNotifications ||
+                          markingNotificationId !== null
+                        }
+                      >
+                        {isLoadingMoreNotifications ? (
+                          <Spinner data-icon="inline-start" />
+                        ) : null}
+                        加载更多
+                      </Button>
+                    ) : (
+                      <p className="py-1 text-center text-xs text-muted-foreground">
+                        已显示全部通知
+                      </p>
+                    )}
+                  </div>
                 </div>
               </ScrollArea>
             )}
