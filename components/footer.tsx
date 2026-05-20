@@ -1,6 +1,8 @@
 import Link from "next/link";
 
-import { Github, Twitter, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+
+import { GithubIcon, TwitterIcon } from "@/components/icons/brand-icons";
 
 import type { SiteSettings } from "@/lib/settings/types";
 
@@ -13,8 +15,8 @@ type FooterProps = {
 
 export function Footer({ settings }: FooterProps) {
   const socialLinks = [
-    { href: settings.social.githubUrl, label: "GitHub", icon: Github },
-    { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
+    { href: settings.social.githubUrl, label: "GitHub", icon: GithubIcon },
+    { href: settings.social.twitterUrl, label: "Twitter", icon: TwitterIcon },
     { href: `mailto:${settings.general.email}`, label: "邮箱", icon: Mail },
   ].filter((link) => link.href.length > 0);
 

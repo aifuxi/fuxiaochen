@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Github } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -26,6 +25,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+
+import { GithubIcon } from "@/components/icons/brand-icons";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -294,7 +295,7 @@ export function AuthForm({ githubEnabled, mode, redirectTo }: AuthFormProps) {
           {isGithubLoading ? (
             <Spinner data-icon="inline-start" />
           ) : (
-            <Github data-icon="inline-start" />
+            <GithubIcon data-icon="inline-start" />
           )}
           使用 GitHub 继续
         </Button>

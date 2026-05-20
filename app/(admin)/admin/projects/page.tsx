@@ -7,7 +7,6 @@ import Link from "next/link";
 import NiceModal from "@ebay/nice-modal-react";
 import {
   ExternalLink,
-  Github,
   MoreHorizontal,
   Pencil,
   Plus,
@@ -75,6 +74,7 @@ import {
   AdminTableErrorRow,
   AdminTableLoadingRow,
 } from "@/components/admin/admin-loading-state";
+import { GithubIcon } from "@/components/icons/brand-icons";
 
 import { apiRequest, fetchApiData } from "@/lib/api/fetcher";
 import type { AdminProject } from "@/lib/server/projects/mappers";
@@ -720,7 +720,7 @@ export default function AdminProjectsPage() {
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground"
                               >
-                                <Github className="size-3.5" />
+                                <GithubIcon className="size-3.5" />
                                 {safeHost(project.githubUrl)}
                               </Link>
                             ) : null}
