@@ -2,8 +2,10 @@ import { type NextConfig } from "next";
 
 import NextBundleAnalyzer from "@next/bundle-analyzer";
 
+import { env } from "./lib/env";
+
 const withBundleAnalyzer = NextBundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
+  enabled: env.ANALYZE,
 });
 
 const config: NextConfig = {
@@ -14,6 +16,7 @@ const config: NextConfig = {
     unoptimized: true,
   },
   output: "standalone",
+  transpilePackages: ["@t3-oss/env-nextjs", "@t3-oss/env-core"],
 };
 
 export default withBundleAnalyzer(config);

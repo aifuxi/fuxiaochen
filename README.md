@@ -63,12 +63,6 @@ docker compose up -d postgresql
 bun run db:migrate
 ```
 
-如需导入 `data/` 下的博客、分类、标签示例内容：
-
-```bash
-bun run db:import:blog-content
-```
-
 ### 启动开发服务器
 
 ```bash
@@ -82,23 +76,21 @@ bun run dev
 
 ## 常用命令
 
-| 命令                             | 说明                                           |
-| -------------------------------- | ---------------------------------------------- |
-| `bun run dev`                    | 启动 Next.js 开发服务器                        |
-| `bun run build`                  | 生产构建，并在 `postbuild` 生成 sitemap        |
-| `bun run start`                  | 启动生产构建产物                               |
-| `bun run build:analyzer`         | 启用 bundle analyzer 执行构建                  |
-| `bun run lint`                   | 运行 Oxlint                                    |
-| `bun run lint:fix`               | 运行 Oxlint 自动修复                           |
-| `bun run format`                 | 运行 Oxfmt 格式化                              |
-| `bun run format:check`           | 检查格式                                       |
-| `bun run db:generate`            | 根据 `lib/db/schema.ts` 生成 Drizzle migration |
-| `bun run db:migrate`             | 执行 Drizzle migration                         |
-| `bun run db:push`                | 直接推送 schema 到数据库                       |
-| `bun run db:reset`               | 清空已存在表数据，不重建 schema                |
-| `bun run db:studio`              | 打开 Drizzle Studio                            |
-| `bun run db:import:blog-content` | 导入 `data/` 下的博客内容                      |
-| `bun run commit`                 | 使用 Commitizen 生成提交信息                   |
+| 命令                     | 说明                                           |
+| ------------------------ | ---------------------------------------------- |
+| `bun run dev`            | 启动 Next.js 开发服务器                        |
+| `bun run build`          | 生产构建，并在 `postbuild` 生成 sitemap        |
+| `bun run start`          | 启动生产构建产物                               |
+| `bun run build:analyzer` | 启用 bundle analyzer 执行构建                  |
+| `bun run lint`           | 运行 Oxlint                                    |
+| `bun run lint:fix`       | 运行 Oxlint 自动修复                           |
+| `bun run format`         | 运行 Oxfmt 格式化                              |
+| `bun run format:check`   | 检查格式                                       |
+| `bun run db:generate`    | 根据 `lib/db/schema.ts` 生成 Drizzle migration |
+| `bun run db:migrate`     | 执行 Drizzle migration                         |
+| `bun run db:push`        | 直接推送 schema 到数据库                       |
+| `bun run db:studio`      | 打开 Drizzle Studio                            |
+| `bun run commit`         | 使用 Commitizen 生成提交信息                   |
 
 ## 目录结构
 
@@ -160,8 +152,6 @@ Schema 唯一来源是 `lib/db/schema.ts`，migration 输出到 `drizzle/`。主
 bun run db:generate
 bun run db:migrate
 ```
-
-`bun run db:reset` 只清空当前 schema 下已经存在的表数据。如果目标数据库还没有建表，先运行 migration 或 `db:push`。
 
 ## 质量检查
 

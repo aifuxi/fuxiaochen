@@ -15,7 +15,6 @@ services:
       - DATABASE_DBNAME=fuxiaochen
       - DATABASE_NAME=fuxiaochen
       - DATABASE_URL=postgresql://postgres:123456@postgresql:5432/fuxiaochen
-      - DATABASE_MAX_CONNECTIONS=3
     networks:
       - fuxiaochen-network
     depends_on:

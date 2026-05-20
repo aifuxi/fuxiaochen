@@ -1,7 +1,7 @@
 import { getServerSideSitemap, type ISitemapField } from "next-sitemap";
 
+import { getAbsoluteSiteUrl } from "@/lib/env";
 import { blogService } from "@/lib/server/blogs/service";
-import { getAbsoluteSiteUrl } from "@/lib/site-url.cjs";
 
 import { routes } from "@/constants/routes";
 

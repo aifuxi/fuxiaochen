@@ -1,6 +1,6 @@
+import { getPublicSiteUrl } from "@/lib/env";
 import { DEFAULT_TITLE_SEPARATOR } from "@/lib/settings/title";
 import type { SiteSettings } from "@/lib/settings/types";
-import { getPublicSiteUrl } from "@/lib/site-url.cjs";
 
 import {
   BEI_AN_LINK,

@@ -1,3 +1,4 @@
+import { env } from "@/lib/env";
 import { logger } from "@/lib/server/logger";
 
 import type {
@@ -44,32 +45,15 @@ export interface ApiTimingLogServiceDeps {
 }
 
 const ADMIN_LOGS_PATH_PREFIX = "/api/admin/logs";
-const DEFAULT_SLOW_MS = 1000;
-const DEFAULT_RETENTION_DAYS = 30;
 const CLEANUP_THROTTLE_MS = 24 * 60 * 60 * 1000;
 
 let lastCleanupStartedAt = 0;
 
-const parsePositiveInteger = (value: string | undefined, fallback: number) => {
-  if (!value) {
-    return fallback;
-  }
+const isDbLoggingEnabled = () => env.API_TIMING_DB_LOGS;
 
-  const parsed = Number.parseInt(value, 10);
+const getSlowThresholdMs = () => env.API_TIMING_DB_SLOW_MS;
 
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-};
-
-const isDbLoggingEnabled = () => process.env.API_TIMING_DB_LOGS === "true";
-
-const getSlowThresholdMs = () =>
-  parsePositiveInteger(process.env.API_TIMING_DB_SLOW_MS, DEFAULT_SLOW_MS);
-
-const getRetentionDays = () =>
-  parsePositiveInteger(
-    process.env.API_TIMING_LOG_RETENTION_DAYS,
-    DEFAULT_RETENTION_DAYS,
-  );
+const getRetentionDays = () => env.API_TIMING_LOG_RETENTION_DAYS;
 
 const normalizeMs = (value: number | undefined) =>
   Math.max(0, Math.round(value ?? 0));
