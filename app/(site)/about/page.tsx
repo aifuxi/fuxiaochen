@@ -2,18 +2,15 @@ import { type Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import {
-  Github,
-  Twitter,
-  Linkedin,
-  Mail,
-  MapPin,
-  Briefcase,
-  GraduationCap,
-  Heart,
-} from "lucide-react";
+import { Mail, MapPin, Briefcase, GraduationCap, Heart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import {
+  GithubIcon,
+  LinkedinIcon,
+  TwitterIcon,
+} from "@/components/icons/brand-icons";
 
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
 import { getSeoPageMetadata } from "@/lib/settings/title";
@@ -30,9 +27,13 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const { settings } = await getCachedSiteSettings();
   const socialLinks = [
-    { href: settings.social.githubUrl, label: "GitHub", icon: Github },
-    { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
-    { href: settings.social.linkedinUrl, label: "LinkedIn", icon: Linkedin },
+    { href: settings.social.githubUrl, label: "GitHub", icon: GithubIcon },
+    { href: settings.social.twitterUrl, label: "Twitter", icon: TwitterIcon },
+    {
+      href: settings.social.linkedinUrl,
+      label: "LinkedIn",
+      icon: LinkedinIcon,
+    },
     { href: `mailto:${settings.general.email}`, label: "邮箱", icon: Mail },
   ].filter((link) => link.href.length > 0);
 

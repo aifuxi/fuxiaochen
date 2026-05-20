@@ -1,10 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { ArrowUpRight, ExternalLink, Github } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+
+import { GithubIcon } from "@/components/icons/brand-icons";
 
 import type { PublicProject } from "@/lib/server/projects/mappers";
 import type { SiteSettings } from "@/lib/settings/types";
@@ -90,7 +92,7 @@ export function ProjectsPageClient({
                               rel="noopener noreferrer"
                               className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                             >
-                              <Github className="size-4" />
+                              <GithubIcon className="size-4" />
                               <span className="sr-only">
                                 {siteCopy.projects.githubLabel}
                               </span>
@@ -166,7 +168,7 @@ export function ProjectsPageClient({
                                 rel="noopener noreferrer"
                                 className="rounded p-1 text-muted-foreground transition-colors hover:text-foreground"
                               >
-                                <Github className="size-4" />
+                                <GithubIcon className="size-4" />
                                 <span className="sr-only">
                                   {siteCopy.projects.githubLabel}
                                 </span>
@@ -245,7 +247,7 @@ export function ProjectsPageClient({
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="mr-2 size-4" />
+                  <GithubIcon className="mr-2 size-4" />
                   {siteCopy.projects.ctaSecondary}
                 </Link>
               </Button>

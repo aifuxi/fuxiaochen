@@ -2,17 +2,19 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { ApiErrorToastListener } from "@/components/api-error-toast-listener";
 import { ModalProvider } from "@/components/modal-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import { getCachedSiteSettings } from "@/lib/server/settings/service";
-import { buildFullTitle } from "@/lib/settings/title";
 
 import "./globals.css";
+import { buildFullTitle } from "@/lib/settings/title";
+import { cn } from "@/lib/utils";
 
-const _spaceGrotesk = Space_Grotesk({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-sans",
 });
@@ -42,7 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-CN"
-      className={`${_spaceGrotesk.variable} ${_spaceMono.variable}`}
+      className={cn(_spaceMono.variable, "font-sans", spaceGrotesk.variable)}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
@@ -53,7 +55,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
             <Toaster />
             <ApiErrorToastListener />
           </ThemeProvider>

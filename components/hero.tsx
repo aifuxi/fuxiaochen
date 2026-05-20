@@ -1,8 +1,10 @@
 import Link from "next/link";
 
-import { ArrowRight, Github, Twitter } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+import { GithubIcon, TwitterIcon } from "@/components/icons/brand-icons";
 
 import type { SiteSettings } from "@/lib/settings/types";
 
@@ -15,8 +17,8 @@ type HeroProps = {
 
 export function Hero({ settings }: HeroProps) {
   const socialLinks = [
-    { href: settings.social.githubUrl, label: "GitHub", icon: Github },
-    { href: settings.social.twitterUrl, label: "Twitter", icon: Twitter },
+    { href: settings.social.githubUrl, label: "GitHub", icon: GithubIcon },
+    { href: settings.social.twitterUrl, label: "Twitter", icon: TwitterIcon },
   ].filter((link) => link.href.length > 0);
 
   return (
