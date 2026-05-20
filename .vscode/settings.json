@@ -4,7 +4,9 @@
     "**/node_modules": true,
     "**/bower_components": true,
     "**/*.code-search": true,
-    "**/.trae": true
+    "**/.trae": true,
+    "**/.agents": true,
+    "**/.claude": true
   },
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "always"
