@@ -1,3 +1,4 @@
+import { env } from "@/lib/env";
 import { logger } from "@/lib/server/logger";
 
 import { enqueueApiTimingLog } from "./api-logs/service";
@@ -37,7 +38,7 @@ const createEmptyDurations = (): ApiTimingDurations => ({
 
 const roundMs = (value: number) => Math.round(value * 10) / 10;
 
-const isTimingEnabled = () => process.env.API_TIMING_LOGS === "true";
+const isTimingEnabled = () => env.API_TIMING_LOGS;
 
 const getRequestPath = (request?: Request) => {
   if (!request) {

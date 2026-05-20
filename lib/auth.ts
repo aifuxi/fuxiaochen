@@ -4,6 +4,7 @@ import { eq, sql } from "drizzle-orm";
 
 import { db } from "@/lib/db";
 import { schema, users, type UserRole } from "@/lib/db/schema";
+import { env } from "@/lib/env";
 import { notificationService } from "@/lib/server/notifications/service";
 
 import { routes } from "@/constants/routes";
@@ -11,10 +12,12 @@ import { routes } from "@/constants/routes";
 const DEFAULT_USER_ROLE: UserRole = "user";
 const ADMIN_USER_ROLE: UserRole = "admin";
 const FIRST_ADMIN_ADVISORY_LOCK_ID = 2_024_042_301;
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } = env;
 
 export const auth = betterAuth({
   appName: "Fuxiaochen",
-  baseURL: process.env.BETTER_AUTH_URL,
+  baseURL: env.BETTER_AUTH_URL,
+  secret: env.BETTER_AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,
@@ -85,11 +88,11 @@ export const auth = betterAuth({
     },
   },
   socialProviders:
-    process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+    GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET
       ? {
           github: {
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            clientId: GITHUB_CLIENT_ID,
+            clientSecret: GITHUB_CLIENT_SECRET,
           },
         }
       : {},

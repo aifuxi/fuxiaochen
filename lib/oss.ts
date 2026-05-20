@@ -1,5 +1,7 @@
 import OSS from "ali-oss";
 
+import { env } from "@/lib/env";
+
 const globalForAliOSS = global as unknown as { aliOSS: OSS | undefined };
 
 export function getAliOSS() {
@@ -8,10 +10,10 @@ export function getAliOSS() {
   }
 
   const client = new OSS({
-    accessKeyId: process.env.OSS_ACCESS_KEY_ID ?? "",
-    accessKeySecret: process.env.OSS_ACCESS_KEY_SECRET ?? "",
-    region: process.env.OSS_REGION ?? "",
-    bucket: process.env.OSS_BUCKET ?? "",
+    accessKeyId: env.OSS_ACCESS_KEY_ID ?? "",
+    accessKeySecret: env.OSS_ACCESS_KEY_SECRET ?? "",
+    region: env.OSS_REGION ?? "",
+    bucket: env.OSS_BUCKET ?? "",
     // 使用V4签名算法
     authorizationV4: true,
     // 使用https协议

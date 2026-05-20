@@ -1,4 +1,5 @@
 import { generateCuid } from "@/lib/cuid";
+import { env } from "@/lib/env";
 import { getAliOSS } from "@/lib/oss";
 import { ERROR_CODES } from "@/lib/server/http/error-codes";
 import { AppError } from "@/lib/server/http/errors";
@@ -47,11 +48,13 @@ const normalizeUploadDir = (value: string | undefined) =>
 
 const assertOssConfigured = () => {
   const missingKeys = [
-    "OSS_ACCESS_KEY_ID",
-    "OSS_ACCESS_KEY_SECRET",
-    "OSS_REGION",
-    "OSS_BUCKET",
-  ].filter((key) => !process.env[key]);
+    ["OSS_ACCESS_KEY_ID", env.OSS_ACCESS_KEY_ID],
+    ["OSS_ACCESS_KEY_SECRET", env.OSS_ACCESS_KEY_SECRET],
+    ["OSS_REGION", env.OSS_REGION],
+    ["OSS_BUCKET", env.OSS_BUCKET],
+  ]
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
 
   if (missingKeys.length > 0) {
     throw new AppError(
@@ -82,7 +85,7 @@ const buildObjectKey = ({
   input: AdminUploadPresignInput;
   generateId: () => string;
 }) => {
-  const uploadDir = normalizeUploadDir(process.env.OSS_UPLOAD_DIR);
+  const uploadDir = normalizeUploadDir(env.OSS_UPLOAD_DIR);
   const segments = [uploadDir, `${generateId()}.${input.extension}`].filter(
     Boolean,
   );

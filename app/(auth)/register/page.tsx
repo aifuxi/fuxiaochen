@@ -4,6 +4,7 @@ import { AuthForm } from "@/components/auth/auth-form";
 
 import { getSafeRedirectPath } from "@/lib/auth-redirect";
 import { requireGuestSession } from "@/lib/auth-session";
+import { isGithubOAuthConfigured } from "@/lib/env";
 
 export const metadata: Metadata = {
   title: "注册",
@@ -23,10 +24,7 @@ export default async function RegisterPage({
     <AuthForm
       mode="register"
       redirectTo={redirectTo}
-      githubEnabled={
-        Boolean(process.env.GITHUB_CLIENT_ID) &&
-        Boolean(process.env.GITHUB_CLIENT_SECRET)
-      }
+      githubEnabled={isGithubOAuthConfigured()}
     />
   );
 }

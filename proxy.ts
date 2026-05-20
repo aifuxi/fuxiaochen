@@ -2,24 +2,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { auth } from "@/lib/auth";
+import { env } from "@/lib/env";
 import {
   getOrCreateRequestId,
   logApiProxyTiming,
 } from "@/lib/server/api-timing";
 
-const MAX_API_MOCK_DELAY_MS = 10_000;
 const REQUEST_ID_HEADER = "x-request-id";
 
-const getApiMockDelayMs = () => {
-  const rawDelay = process.env.API_MOCK_DELAY_MS;
-  const delay = rawDelay ? Number.parseInt(rawDelay, 10) : 0;
-
-  if (!Number.isFinite(delay) || delay <= 0) {
-    return 0;
-  }
-
-  return Math.min(delay, MAX_API_MOCK_DELAY_MS);
-};
+const getApiMockDelayMs = () => env.API_MOCK_DELAY_MS;
 
 const applyApiMockDelay = async () => {
   const delay = getApiMockDelayMs();
