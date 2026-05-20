@@ -21,10 +21,8 @@
 - `bun run lint:inspect`：打印当前生效的 Oxlint 配置。
 - `bun run format` / `bun run format:check`：使用 Oxfmt 格式化，或检查格式是否符合约定。
 - `bun run db:generate`：根据 `lib/db/schema.ts` 生成 Drizzle migration。
-- `bun run db:import:blog-content`：将 `data/` 下的博客、分类和标签内容导入当前数据库。
 - `bun run db:migrate`：执行 Drizzle migration。
 - `bun run db:push`：直接将 schema 推到数据库。
-- `bun run db:reset`：使用 `drizzle-seed` 的 `reset` 清空当前 schema 下的表数据，不会重新生成 migration 或重建 schema。
 - `bun run db:studio`：打开 Drizzle Studio。
 - `bun run commit` / `bun run commit:retry`：使用 Commitizen 辅助生成提交信息。
 - `make build_image`：读取 `.env` 中变量构建 Docker 镜像。
@@ -60,7 +58,7 @@
 - `constants/site-copy.ts`：公开站点展示文案集中入口；纯文案调整优先查这里。
 - `drizzle/`：migration 输出目录。
 - `data/`：初始化样例数据和 SQL 参考，不是运行时主数据源。
-- `scripts/`：数据库辅助脚本等命令入口，目前包含 `reset-db.ts` 与 `import-blog-content.ts`。
+- `scripts/`：项目辅助脚本入口。
 - `app/globals.css`：全局样式入口；`components.json` 与 `.oxfmtrc.json` 的 Tailwind 类名排序都指向该文件。当前没有 `styles/global.css`，不要再新增或引用旧路径，除非是有意识的样式结构调整。
 
 ## 代码风格与命名约定
@@ -112,8 +110,6 @@ NiceModal.show(ExampleDialog, { data, onSuccess: () => mutate() });
 - 修改 schema 后，应同步更新 Drizzle migration，而不是只改 TypeScript 类型。
 - 在 Drizzle 里只要 `sql\`\``字段会进入子查询、聚合结果或被外层查询复用，必须显式`.as("...")` 起别名；不要依赖属性名推断，否则构建或运行时可能报 “raw SQL field doesn't have an alias”。
 - PostgreSQL 的聚合时间字段（例如 `max(timestamp with time zone)`）在运行时可能返回字符串，不要只按 TypeScript 注解把它当 `Date` 用；在 mapper/serializer 层统一按 `Date | string | null` 归一化后再调用 `toISOString()`。
-- `bun run db:reset` 只会清空已存在表中的数据；如果目标库还没建表，先运行 `bun run db:migrate` 或 `bun run db:push`。
-- `bun run db:import:blog-content` 面向真实数据库内容导入，不会自动修改页面文案、站点常量或其他非数据库配置。
 - 若只是改页面展示文案或说明性内容，优先检查 `constants/`、页面组件和相关文案来源，不要误以为 `lib/*-data.ts` 仍是运行时数据入口。
 
 ## 提交与 Pull Request 规范
