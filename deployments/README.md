@@ -11,13 +11,12 @@
 复制模板到服务器 Nginx 配置目录：
 
 ```bash
-sudo mkdir -p /var/cache/nginx/fuxiaochen-next-static
 sudo cp deployments/nginx/fuxiaochen-nextjs.conf /etc/nginx/conf.d/fuxiaochen-nextjs.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-如果服务器使用 `sites-available` / `sites-enabled`，也可以复制到对应目录后创建软链接，但要确保该文件被包含在 Nginx 的 `http` 上下文中。`proxy_cache_path` 和 `upstream` 不能放在 `server` 或 `location` 内。
+如果服务器使用 `sites-available` / `sites-enabled`，也可以复制到对应目录后创建软链接，但要确保该文件被包含在 Nginx 的 `http` 上下文中。`upstream` 不能放在 `server` 或 `location` 内。
 
 ## 上线前检查
 
@@ -34,7 +33,7 @@ sudo test -f /root/my-projects/ssl/fuxiaochen.key
 
 ## 路由策略
 
-- `/_next/static/**`：Next 构建静态资源，Nginx 开启磁盘缓存并透出 `X-Cache-Status`。这些资源文件名带内容哈希，适合长期缓存。
+- `/_next/static/**`：Next 构建静态资源，直接反向代理到 standalone 服务。资源文件名带内容哈希，Next 会返回长期 immutable 缓存头。
 - `/api/**`：认证、后台 CRUD、评论、点赞、浏览统计等接口，统一 `Cache-Control: no-store`，避免浏览器或中间层缓存状态数据。
 - `/admin/**`、`/login`、`/register`：登录态相关页面，统一 `private, no-store`。
 - `robots.txt`、`sitemap.xml`、`sitemap-*.xml`、`server-sitemap.xml`：短缓存 5 分钟，兼顾爬虫访问和后台内容更新。
@@ -50,20 +49,13 @@ curl -I https://fuxiaochen.com/api/public/settings
 curl -I https://fuxiaochen.com/_next/static/你的实际资源路径
 ```
 
-`/_next/static/**` 第一次通常是 `X-Cache-Status: MISS`，第二次应变成 `HIT`：
-
-```bash
-curl -I https://fuxiaochen.com/_next/static/你的实际资源路径 | grep -i x-cache-status
-curl -I https://fuxiaochen.com/_next/static/你的实际资源路径 | grep -i x-cache-status
-```
-
 API 应返回：
 
 ```text
 Cache-Control: no-store
 ```
 
-如果静态资源始终没有 `HIT`，优先检查 `/var/cache/nginx/fuxiaochen-next-static` 目录权限，以及当前 Nginx 配置是否真的加载了这个文件。
+如果静态资源请求失败，先用 `curl` 直连 `http://127.0.0.1:3000/_next/static/实际资源路径` 区分 standalone 服务和 Nginx 代理层问题。
 
 ## 注意事项
 
