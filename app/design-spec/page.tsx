@@ -39,13 +39,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 
 const nav = [
   ["01", "概览", "overview"],
   ["02", "视觉基础", "foundations"],
   ["03", "组件", "components"],
-  ["04", "动效", "motion"],
-  ["05", "实现规范", "guidelines"],
+  ["04", "表单", "forms"],
+  ["05", "动效", "motion"],
+  ["06", "实现规范", "guidelines"],
 ];
 const principles = [
   {
@@ -669,9 +671,143 @@ export default function Page() {
             </Tabs>
           </section>
 
+          <section id="forms" className="scroll-mt-20 pb-20">
+            <SectionHead
+              index="04 / FORMS"
+              title="表单组件"
+              description="从字段标签到错误提示，把输入、选择与提交放在同一个可操作的预览中。"
+            />
+            <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
+              <Card className="p-3">
+                <CardStage className="p-5 md:p-7">
+                  <div className="mb-6 flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-[15px] font-medium text-white">联系表单</h3>
+                      <p className="mt-1 text-xs text-[var(--color-muted)]">
+                        填写并提交，查看交互反馈
+                      </p>
+                    </div>
+                    <span className="font-mono text-[10px] text-[var(--color-subtle)]">
+                      LIVE PREVIEW
+                    </span>
+                  </div>
+                  <form
+                    className="space-y-5"
+                    onSubmit={(event) => {
+                      event.preventDefault();
+                      showNotice("表单预览 · 已提交");
+                    }}
+                  >
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <label htmlFor="form-name" className="block text-[13px] font-medium">
+                          姓名
+                        </label>
+                        <Input
+                          id="form-name"
+                          name="name"
+                          autoComplete="name"
+                          placeholder="如何称呼你"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="form-email" className="block text-[13px] font-medium">
+                          邮箱
+                        </label>
+                        <Input
+                          id="form-email"
+                          name="email"
+                          type="email"
+                          autoComplete="email"
+                          placeholder="name@example.com"
+                          required
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="form-message" className="block text-[13px] font-medium">
+                        留言
+                      </label>
+                      <Textarea
+                        id="form-message"
+                        name="message"
+                        placeholder="写下你的想法"
+                        required
+                      />
+                      <p className="text-[11px] text-[var(--color-muted)]">
+                        支持多行输入，可拖动右下角调整高度。
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/[.07] pt-5">
+                      <div className="flex items-center gap-3">
+                        <Switch id="form-updates" aria-label="接收后续更新" defaultChecked />
+                        <label htmlFor="form-updates" className="cursor-pointer text-[13px]">
+                          接收后续更新
+                        </label>
+                      </div>
+                      <Button type="submit" variant="primary">
+                        提交预览 <ArrowRight size={14} aria-hidden="true" />
+                      </Button>
+                    </div>
+                  </form>
+                </CardStage>
+              </Card>
+              <Card className="p-6">
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-[15px] font-medium text-white">输入状态</h3>
+                    <p className="mt-1 text-xs text-[var(--color-muted)]">默认、错误与禁用</p>
+                  </div>
+                  <span className="font-mono text-[10px] text-[var(--color-subtle)]">
+                    INPUT / STATES
+                  </span>
+                </div>
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <label htmlFor="state-default" className="block text-[13px] font-medium">
+                      默认
+                    </label>
+                    <Input id="state-default" placeholder="点击或按 Tab 聚焦" className="w-full" />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="state-error" className="block text-[13px] font-medium">
+                      错误
+                    </label>
+                    <Input
+                      id="state-error"
+                      type="email"
+                      defaultValue="invalid-email"
+                      aria-invalid="true"
+                      aria-describedby="state-error-message"
+                      className="w-full"
+                    />
+                    <p id="state-error-message" className="text-[11px] text-[var(--color-danger)]">
+                      请输入有效的邮箱地址。
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="state-disabled"
+                      className="block text-[13px] font-medium text-[var(--color-muted)]"
+                    >
+                      禁用
+                    </label>
+                    <Input id="state-disabled" value="暂不可编辑" disabled className="w-full" />
+                  </div>
+                </div>
+                <p className="mt-6 border-t border-white/[.07] pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
+                  字段保留可见标签；错误同时使用文字与边框提示，键盘焦点使用独立的蓝色轮廓。
+                </p>
+              </Card>
+            </div>
+          </section>
+
           <section id="motion" className="scroll-mt-20 pb-20">
             <SectionHead
-              index="04 / MOTION"
+              index="05 / MOTION"
               title="动效语言"
               description="快而轻的操作反馈，慢而柔的氛围演示。节奏有差别，视觉体验才有呼吸。"
             />
@@ -742,7 +878,7 @@ export default function Page() {
 
           <section id="guidelines" className="scroll-mt-20">
             <SectionHead
-              index="05 / IMPLEMENTATION"
+              index="06 / IMPLEMENTATION"
               title="从规范到组件"
               description="设计规则被写入仓库，作为之后所有页面和组件的共同依据。"
             />

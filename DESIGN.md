@@ -183,6 +183,7 @@ components:
 - **Motion demo：** 边框流光使用 `border-beam`，柔和光球使用 `thinking-orbs`，悬停浮起沿用本地 CSS。相邻展示卡一次只播放一个效果；边框流光遵循减少动态效果偏好并关闭循环，光球暂停后保留静态画面。动画层不截获指针事件，装饰图形从辅助技术中隐藏。Hero 中的微型图形保留现有 CSS 演示，不叠加第三种效果库。
 - **Pointer feedback：** 在根布局挂载一个全站共用的装饰层，由鼠标目标的语义决定箭头、圆环或文本光标。交互状态与页面动效开关保持同步；不改变真实控件的点击区域、焦点、禁用行为。
 - **Pointer preview：** 动效章节提供普通表面、可点击按钮和可输入文本框三个目标，便于直接检查指针状态。文本框沿用既有 input token，保留 hover 边线、active / focus-visible 焦点环与 disabled 状态。
+- **Form preview：** 表单章节组合 Input、Textarea、Switch 与 Button，展示可填写的完整表单及输入框的默认、错误和禁用状态。Textarea 沿用 input 的表面、边框、8px 圆角和焦点样式，可纵向调整高度。字段使用可见标签；错误以 danger 边框和文字同时表达，并通过 `aria-invalid`、`aria-describedby` 关联；预览提交仅显示本地反馈。
 
 组件以 `components/ui/` 为单元组织，导出清晰的 variant API；业务页面仅组合组件，不重复写基础状态样式。Tailwind 主题变量应与本文件同步。
 

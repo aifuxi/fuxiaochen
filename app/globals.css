@@ -224,6 +224,9 @@ html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]
   cursor: not-allowed;
   opacity: 0.45;
 }
+.ds-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
 .ds-accordion-panel {
   height: var(--accordion-panel-height);
   transition:
