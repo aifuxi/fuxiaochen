@@ -68,7 +68,10 @@ spacing:
 pointer:
   size: 22px
   stateTransition: 120ms
-  ringFill: "color-mix(in srgb, {colors.primary} 12%, transparent)"
+  ringFill: "rgba(255,255,255,0.12)"
+  ringBorder: "rgba(255,255,255,0.5)"
+  ringHighlight: "rgba(255,255,255,0.22)"
+  ringBlur: 6px
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -159,7 +162,7 @@ components:
 
 ### 指针反馈
 
-参考 [VibeHub](https://vibe-hub.org/) 的桌面指针：普通区域显示品牌蓝色箭头；悬停可点击元素时，箭头在 120ms 内淡出并切换为 22px 细线圆环；进入文本输入区时切换为细竖线。圆环使用 `primary` 描边和 12% 同色填充。位置直接跟随真实指针，状态切换才使用短过渡，不添加拖尾或持续循环。效果层不截获事件，也不参与布局。
+参考 [VibeHub](https://vibe-hub.org/) 的桌面指针状态：普通区域显示品牌蓝色箭头；悬停可点击元素时，箭头在 120ms 内淡出并切换为 22px 圆环；进入文本输入区时切换为细竖线。圆环采用中性半透明材质：12% 白色填充、50% 白色细边、轻微内高光和 6px 背景模糊，呈现小滑块般的透明感，不使用蓝色。位置直接跟随真实指针，状态切换才使用短过渡，不添加拖尾或持续循环。效果层不截获事件，也不参与布局。
 
 仅在支持 hover 的精确鼠标设备上启用，并在第一次鼠标移动后替换系统指针；触屏、粗指针、`prefers-reduced-motion`、页面动效开关关闭时使用原生指针。离开窗口或窗口失焦时隐藏效果。禁用控件保留 `not-allowed` 指针；可编辑文本、链接及按钮的语义不能由装饰指针代替，键盘 `focus-visible` 仍需清晰可见。
 
@@ -201,4 +204,4 @@ components:
 | 动效节奏   | 源码提供 80、150、250、350、400、500ms 阶梯与 `cubic-bezier(0.22,1,0.36,1)`                                             | 使用 80–350ms 操作节奏；长循环仅用于效果预览                            |
 | 可访问性   | 源码多处针对 `prefers-reduced-motion` 关闭过渡                                                                          | 所有组件保留焦点状态，并对减少动态效果偏好停止循环及位移                |
 
-另参考 [VibeHub 首页](https://vibe-hub.org/) 的实际交互与页面样式：桌面端隐藏原生指针，以绝对跟随的箭头和 120ms 淡入缩放切换圆环、文本竖线；本项目沿用这一交互结构，但使用自己的 `primary` 色与可访问性条件。
+另参考 [VibeHub 首页](https://vibe-hub.org/) 的实际交互与页面样式：桌面端隐藏原生指针，以绝对跟随的箭头和 120ms 淡入缩放切换圆环、文本竖线；本项目沿用这一交互结构，箭头与文本光标使用自身 `primary` 色，圆环使用中性透明材质。

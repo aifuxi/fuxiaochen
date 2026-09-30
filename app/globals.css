@@ -31,6 +31,10 @@
   color-scheme: dark;
   --cursor-size: 22px;
   --cursor-state-transition: 120ms;
+  --cursor-ring-fill: rgba(255, 255, 255, 0.12);
+  --cursor-ring-border: rgba(255, 255, 255, 0.5);
+  --cursor-ring-highlight: rgba(255, 255, 255, 0.22);
+  --cursor-ring-blur: 6px;
 }
 html {
   scroll-behavior: smooth;
@@ -98,9 +102,12 @@ html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]
   box-sizing: border-box;
   width: var(--cursor-size);
   height: var(--cursor-size);
-  border: 1.5px solid var(--color-primary);
+  border: 1px solid var(--cursor-ring-border);
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  background: var(--cursor-ring-fill);
+  box-shadow: inset 0 1px 0 var(--cursor-ring-highlight);
+  -webkit-backdrop-filter: blur(var(--cursor-ring-blur));
+  backdrop-filter: blur(var(--cursor-ring-blur));
   transform: translate(-50%, -50%) scale(0.5);
 }
 .cursor-fx-text {
