@@ -51,7 +51,7 @@ const nav = [
   { name: "仪表盘", icon: Home, href: "/admin" },
   { name: "内容管理", icon: FileText, href: "/admin/posts" },
   { name: "评论管理", icon: MessageCircle, href: "/admin/comments" },
-  { name: "媒体库", icon: ImageIcon },
+  { name: "媒体库", icon: ImageIcon, href: "/admin/media" },
   { name: "分类与标签", icon: Tags },
   { name: "数据分析", icon: BarChart3 },
   { name: "访客日志", icon: Users },

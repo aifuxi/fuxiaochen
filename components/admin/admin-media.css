@@ -1,0 +1,208 @@
+.admin-media {
+  display: grid;
+  gap: 24px;
+}
+.admin-media-note {
+  margin: -12px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-media-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+.admin-media-search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: min(100%, 360px);
+  min-width: 0;
+}
+.admin-media-search .admin-search-field {
+  flex: 1;
+  min-width: 0;
+}
+.admin-media-count {
+  color: var(--color-muted);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.admin-media-count strong {
+  color: var(--color-focus);
+  font-family: var(--font-mono);
+}
+.admin-media-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.admin-media-card {
+  min-width: 0;
+  padding: 12px;
+}
+.admin-media-thumbnail {
+  height: 176px;
+  position: relative;
+  overflow: hidden;
+}
+.admin-media-thumbnail > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.admin-media-actions {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgb(0 0 0 / 45%);
+  opacity: 0;
+  transition: opacity 150ms;
+}
+.admin-media-thumbnail:hover .admin-media-actions,
+.admin-media-thumbnail:focus-within .admin-media-actions {
+  opacity: 1;
+}
+.admin-media-thumbnail:hover > img {
+  transform: scale(1.04);
+}
+.admin-media-details {
+  padding: 12px 2px 0;
+}
+.admin-media-details h2 {
+  font: 500 13px/1.5 var(--font-sans);
+  margin: 0 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-media-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--color-muted);
+  font: 12px/1.5 var(--font-mono);
+}
+.admin-media-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  border-top: 1px solid var(--color-outline);
+  margin-top: 8px;
+  padding-top: 6px;
+  color: var(--color-muted);
+  font: 11px/1.5 var(--font-mono);
+}
+.admin-media-delete {
+  color: var(--color-danger);
+}
+.admin-media-empty {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--color-muted);
+  gap: 12px;
+}
+.admin-media-empty h2 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-foreground);
+}
+.admin-media-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+.admin-media-empty .admin-form-actions {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.admin-media-preview {
+  max-width: 760px;
+}
+.admin-media-preview .admin-modal-heading {
+  overflow-wrap: anywhere;
+}
+.admin-media-preview-frame {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+.admin-media-preview-frame img {
+  max-width: 100%;
+  height: auto;
+  max-height: 384px;
+  object-fit: contain;
+}
+.admin-media-preview-meta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-stage);
+  border-radius: 14px;
+  font-size: 12px;
+}
+.admin-media-preview-meta dt {
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+.admin-media-preview-meta dd {
+  margin: 0;
+  font: 12px/1.5 var(--font-mono);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1200px) {
+  .admin-media-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1000px) {
+  .admin-media-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .admin-media-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .admin-media-filter {
+    flex-wrap: wrap;
+  }
+  .admin-media-search {
+    width: 100%;
+  }
+  .admin-media-preview-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .admin-media-preview .admin-form-actions {
+    flex-wrap: wrap;
+  }
+  .admin-media .admin-page-heading > .ds-button {
+    width: 100%;
+  }
+}
+@media (hover: none), (pointer: coarse) {
+  .admin-media-actions {
+    opacity: 1;
+    align-items: end;
+    padding-bottom: 12px;
+    background: linear-gradient(transparent 45%, rgb(0 0 0 / 55%));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .admin-media-thumbnail > img,
+  .admin-media-actions {
+    transition: none;
+  }
+  .admin-media-thumbnail:hover > img {
+    transform: none;
+  }
+}

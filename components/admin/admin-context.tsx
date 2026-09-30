@@ -3,9 +3,14 @@
 import { createContext, useContext } from "react";
 
 import type { AdminPanel } from "./admin-shell";
-import type { Comment, Post, Schedule } from "./mock-data";
+import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
 
 type AdminState = {
+  media: MediaItem[];
+  onUploadMedia: (files: File[]) => Promise<void>;
+  onDeleteMedia: (id: string) => void;
+  onMessage: (message: string) => void;
+  uploadingMedia: boolean;
   posts: Post[];
   comments: Comment[];
   schedules: Schedule[];

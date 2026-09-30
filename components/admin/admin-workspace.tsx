@@ -2,7 +2,15 @@
 
 import { Search, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState, type ReactNode, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type FormEvent,
+} from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -19,6 +27,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import {
+  initialMedia,
+  type MediaItem,
   initialCategories,
   initialComments,
   initialNotices,
@@ -44,6 +54,10 @@ const panelTitles: Record<AdminPanel, string> = {
   schedule: "定时发布计划",
 };
 
+function mediaUploadTime() {
+  return new Date().toLocaleString("sv-SE", { timeZone: "Asia/Shanghai" }).slice(0, 16);
+}
+
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
@@ -63,7 +77,84 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [tags, setTags] = useState("");
   const [publishDate, setPublishDate] = useState("");
   const [postDeleteId, setPostDeleteId] = useState<string | null>(null);
-  const [files, setFiles] = useState<string[]>([]);
+  const [media, setMedia] = useState(initialMedia);
+  const [uploadingMedia, setUploadingMedia] = useState(false);
+  const objectUrls = useRef(new Set<string>());
+  const uploadPending = useRef(false);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    mounted.current = true;
+    const urls = objectUrls.current;
+    return () => {
+      mounted.current = false;
+      urls.forEach((url) => URL.revokeObjectURL(url));
+      urls.clear();
+    };
+  }, []);
+
+  const uploadMedia = async (files: File[]) => {
+    if (!files.length || uploadPending.current) return;
+    uploadPending.current = true;
+    setUploadingMedia(true);
+    const added: MediaItem[] = [];
+    const failed: string[] = [];
+    for (const file of files) {
+      if (!mounted.current) break;
+      if (!file.type.startsWith("image/")) {
+        failed.push(file.name);
+        continue;
+      }
+      const url = URL.createObjectURL(file);
+      objectUrls.current.add(url);
+      try {
+        const image = new window.Image();
+        image.src = url;
+        await image.decode();
+        if (!mounted.current) break;
+        added.push({
+          id: crypto.randomUUID(),
+          name: file.name,
+          url,
+          size:
+            file.size < 1024 * 1024
+              ? `${(file.size / 1024).toFixed(1)} KB`
+              : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+          dimension: `${image.naturalWidth}×${image.naturalHeight}`,
+          time: mediaUploadTime(),
+          type: file.type,
+          temporary: true,
+        });
+      } catch {
+        URL.revokeObjectURL(url);
+        objectUrls.current.delete(url);
+        failed.push(file.name);
+      }
+    }
+    uploadPending.current = false;
+    if (!mounted.current) return;
+    setUploadingMedia(false);
+    if (added.length) setMedia((current) => [...added, ...current]);
+    setMessage(
+      [
+        added.length ? `已添加 ${added.length} 张本地图片（模拟，未上传服务器）` : "",
+        failed.length ? `无法读取图片：${failed.join("、")}` : "",
+      ]
+        .filter(Boolean)
+        .join("；"),
+    );
+  };
+
+  const deleteMedia = (id: string) => {
+    const item = media.find((candidate) => candidate.id === id);
+    if (!item) return;
+    if (item.temporary) {
+      URL.revokeObjectURL(item.url);
+      objectUrls.current.delete(item.url);
+    }
+    setMedia((current) => current.filter((candidate) => candidate.id !== id));
+    setMessage("素材已移除（模拟，刷新后恢复初始数据）");
+  };
   const [newCategory, setNewCategory] = useState("");
   const [scheduleTitle, setScheduleTitle] = useState("");
   const [scheduleDate, setScheduleDate] = useState("");
@@ -268,6 +359,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
+        media,
+        onUploadMedia: uploadMedia,
+        onDeleteMedia: deleteMedia,
+        onMessage: setMessage,
+        uploadingMedia,
         posts,
         comments,
         schedules,
@@ -511,43 +607,34 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               )}
               {panel === "upload" && (
                 <div className="admin-modal-section">
-                  <label htmlFor="admin-upload">选择本地图片或文件</label>
+                  <label htmlFor="admin-upload">选择本地图片</label>
                   <input
                     id="admin-upload"
                     className="admin-file-input"
                     type="file"
+                    accept="image/*"
                     multiple
-                    onChange={(event) =>
-                      setFiles((current) => [
-                        ...current,
-                        ...Array.from(event.target.files ?? []).map((file) => file.name),
-                      ])
-                    }
+                    disabled={uploadingMedia}
+                    onChange={(event) => {
+                      const selected = Array.from(event.target.files ?? []);
+                      event.target.value = "";
+                      void uploadMedia(selected);
+                    }}
                   />
-                  <p className="admin-muted">仅展示文件名，不会上传到服务器。</p>
-                  <div className="admin-result-list">
-                    {files.length ? (
-                      files.map((file, index) => (
-                        <div className="admin-managed-row" key={`${file}-${index}`}>
-                          <span>{file}</span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            aria-label={`移除 ${file}`}
-                            onClick={() =>
-                              setFiles((current) =>
-                                current.filter((_, itemIndex) => itemIndex !== index),
-                              )
-                            }
-                          >
-                            <X size={15} />
-                          </Button>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="admin-empty">尚未选择文件。</p>
-                    )}
-                  </div>
+                  <p className="admin-muted">
+                    仅在当前会话预览，不会上传到服务器。刷新后恢复初始素材。
+                  </p>
+                  <output>
+                    {uploadingMedia ? "正在读取图片…" : `当前媒体库共 ${media.length} 份素材`}
+                  </output>
+                  <Button
+                    onClick={() => {
+                      setPanel(null);
+                      router.push("/admin/media");
+                    }}
+                  >
+                    查看媒体库
+                  </Button>
                 </div>
               )}
               {panel === "categories" && (

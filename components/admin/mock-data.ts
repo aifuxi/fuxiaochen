@@ -222,3 +222,71 @@ export const traffic30Days = visits.map((count, index) => {
 });
 
 export const initialCategories = ["生活随感", "效率工具", "创作心得", "探店记录", "旅行指南"];
+
+export type MediaItem = {
+  id: string;
+  name: string;
+  url: string;
+  size: string;
+  dimension: string;
+  time: string;
+  type: string;
+  temporary?: boolean;
+};
+
+export const initialMedia: MediaItem[] = [
+  {
+    id: "media-1",
+    name: "在路上的风景.jpg",
+    url: "/media/road.jpg",
+    size: "1.2 MB",
+    dimension: "1920×1080",
+    time: "2025-05-19 20:12",
+    type: "image/jpeg",
+  },
+  {
+    id: "media-2",
+    name: "极简咖啡杯.jpg",
+    url: "/media/coffee.jpg",
+    size: "840 KB",
+    dimension: "1200×1200",
+    time: "2025-05-18 15:30",
+    type: "image/jpeg",
+  },
+  {
+    id: "media-3",
+    name: "摄影镜头微距.jpg",
+    url: "/media/camera.jpg",
+    size: "2.1 MB",
+    dimension: "2400×1600",
+    time: "2025-05-16 11:24",
+    type: "image/jpeg",
+  },
+  {
+    id: "media-4",
+    name: "复古黑胶唱片.jpg",
+    url: "/media/vinyl.jpg",
+    size: "1.5 MB",
+    dimension: "1800×1200",
+    time: "2025-05-15 09:40",
+    type: "image/jpeg",
+  },
+  {
+    id: "media-5",
+    name: "博主精选写字台.jpg",
+    url: "/media/desk.jpg",
+    size: "1.8 MB",
+    dimension: "2000×1333",
+    time: "2025-05-14 14:15",
+    type: "image/jpeg",
+  },
+  {
+    id: "media-6",
+    name: "绿色苔藓森林.jpg",
+    url: "/media/forest.jpg",
+    size: "2.4 MB",
+    dimension: "2560×1440",
+    time: "2025-05-12 18:22",
+    type: "image/jpeg",
+  },
+];
