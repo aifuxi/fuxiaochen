@@ -1,42 +1,47 @@
-# 数据分析页面视觉核对
+# 友情链接页面核对
+
+## 范围与视觉来源
+
+- 参考：`http://localhost:6121/admin/friends-links`，源码位于 `semi-shiguang-notes/src/components/FriendsLinks.tsx`。
+- 实现：`http://localhost:3000/admin/friends-links`。
+- 以参考页的信息结构和功能为依据；字体、暗色 token、组件、布局壳遵循本项目 `DESIGN.md`，这是用户要求的适配。
+- 截图目录：`/Users/chen/.codex/visualizations/2026/09/30/01a0f309-21db-7082-b093-8c9ff77af0b6/friends-links/`。
+- source visual truth path：上述目录的 `source-desktop.png`、`source-mobile.png`、`source-form.png`。
+- implementation screenshot path：上述目录的 `implementation-desktop.png`、`implementation-mobile.png`、`implementation-form.png`、`implementation-mobile-form.png`。
+
+## 对照证据
+
+- 桌面 viewport：1440 × 1000 CSS px，参考与实现截图均为 1440 × 1000 像素，以原尺寸并排比较。
+- 窄屏 viewport：390 × 844 CSS px；浏览器截图输出分别为 384 × 831、380 × 822 像素。对照时分别等比例近似归一到 390 × 844，不将输出缩放差异判断为布局缺陷。
+- 状态：全部分类、全部状态、空搜索、五条初始数据；表单为新增状态。
+- 全页对照：`comparison-desktop.png`、`comparison-mobile.png`。
+- 局部对照：`comparison-form.png`，在相同桌面坐标裁剪并排检查字段、标签、选择器、按钮与焦点环。
+
+## 五项视觉检查
+
+- 字体与排版：使用项目既有 Space Grotesk／Inter 字体栈及后台标题、正文层级，站点名称和地址自然换行。
+- 间距与布局：沿用后台外边距、24px 卡片圆角和 14px 表单圆角；标题、筛选、表格及分页顺序与参考一致。窄屏筛选纵向排列，表格内部横向滚动。
+- 色彩与 token：使用现有 surface、stage、outline、focus、success、danger；待审核以中性色和文字表达，不复制参考站的浅色 Semi 主题。
+- 图片与图标：mock 图标复用项目本地媒体，使用 36px 圆形裁切；操作图标复用 Lucide，缺少图片时显示 Link2，不引用参考站的远程头像。
+- 文案：保留参考页标题、说明、分类、状态和初始列表内容；补充明确的当前会话模拟说明。
+
+## 交互与布局验证
+
+- 分类与状态组合筛选、关键词搜索、无结果提示及重置均正常。
+- 新增必填校验正常；拒绝 `javascript:` 网站地址；名称首尾空格去除；新记录立即可见。
+- 编辑名称与分类成功，待审核记录通过后显示正常。
+- 站内切换至内容管理再返回，操作结果保留；刷新恢复五条初始数据。
+- 新增记录至九条后每页八条；第二页删除唯一记录后回退第一页。
+- 删除取消保留记录并将焦点返回触发按钮；触发按钮删除后焦点返回新增入口。
+- 390px 下页面 scrollWidth 为 380px，表格容器宽 350px、内部 scrollWidth 为 900px；没有页面级横向溢出。
+- 窄屏新增 Dialog 可见全部字段及保存、取消按钮，表单空间不足时可内部滚动。
+- 当前页面捕获的控制台 error 日志为空。
+- 按项目要求，未添加或运行自动化测试；以上为浏览器交互验证。
+
+## 核对迭代
+
+1. 初次窄屏对照发现 [P2] 筛选栏沿用 flex 的 `justify-content: space-between`，切换为 grid 后控件列仅约 237px，未填满卡片。
+2. 设置单列 `minmax(0, 1fr)` 并改为 `justify-content: stretch`；再次采集 `implementation-mobile.png`、生成 `comparison-mobile.png` 并对照。
+3. 修正后筛选内容宽 322px、卡片宽 350px，控件填满内层；没有剩余可操作的 P0／P1／P2 发现。
 
 final result: passed
-
-## 对比依据
-
-- 参考：`http://localhost:6121/admin/analytics`，默认近 30 天。
-- 实现：`http://localhost:3000/admin/analytics`，默认近 30 天。
-- 视觉约束：用户要求复用当前项目组件与设计规范，因此暗色主题、字体、24px 卡片圆角、后台壳及导航均以 `DESIGN.md` 为准。
-- 截图目录：`/Users/chen/.codex/visualizations/2026/09/30/01a0f2f4-8729-7ee2-bb41-8f58c83bd703/`。
-- 参考截图：`analytics-source-desktop.jpg`、`analytics-source-mobile.jpg`。
-- 实现截图：`analytics-desktop.jpg`、`analytics-mobile.jpg`。
-- 完整并排对比：`analytics-comparison-desktop.jpg`、`analytics-comparison-mobile.jpg`。
-- 桌面 CSS viewport：1274 × 900；参考截图 1268 × 1161，实现截图 1264 × 1382。
-- 窄屏 CSS viewport：390 × 844；参考截图 384 × 2090，实现截图 380 × 1809。
-- 截图为 1 倍像素密度的完整文档；宽度差来自两站滚动条，文档高度差来自项目字体、区间说明与局部滚动布局，不拉伸截图。
-
-## 核对结果
-
-没有未解决的 P0/P1/P2 问题。
-
-- 字体与排版：使用项目 display / sans / mono；标题、辅助说明和统计数字层级清楚，390px 下指标可读。
-- 间距与布局：保留四项指标、约 2:1 趋势与设备区、五行排行榜的结构。窄屏为两列指标与单列分析卡；图表和表格在内部滚动，页面无横向溢出。
-- 颜色与 token：采用项目暗色表面，PV 使用 primary，UV 与改善趋势使用 success，排名与平板使用中性色；按用户要求替换参考站的浅色与装饰色。
-- 图像与图标：复用后台品牌资源与现有 Lucide 图标；本页没有新增图片资产，折线是数据可视化。
-- 文案与内容：默认核心指标、设备比例和热门文章内容对应参考页；补充 mock 标识、固定统计区间及 UV 去重口径。三个时间范围具有独立数据，折线按真实演示天数展示，而非参考页固定的七个点。
-- 聚焦检查：对比指标卡、设备条与排行榜区域，数值、比例与内容均可读，无裁切、重叠或状态歧义。
-
-## 交互验证
-
-- 近 7 天、近 30 天、本季度同步切换指标、折线、设备比例和排行榜。
-- 图表点击显示日期、PV 和 UV；切换范围清除旧详情。
-- Tabs 方向键移动焦点，Enter 激活；图表数据点使用本地 Button，支持键盘聚焦。
-- 移动导航打开后点击数据分析入口关闭抽屉。
-- 390px 下观察到页面宽度 380px，图表内部宽度 540px，排行榜内部宽度 670px。
-- 浏览器控制台检查没有 error 或 warn。
-
-## 对比记录与完成检查
-
-- 首次同尺寸有效截图对比未发现需要修复的 P0/P1/P2 差异；主题、壳组件、字体和局部滚动为用户明确要求的项目适配。
-- 源码检查发现 SVG 交互语义不符合 lint，已改用本地 Button；最终截图来自修改后的实现。
-- 已完成桌面与窄屏完整对比及关键区域检查；截图保留在工作区外，不作为仓库生成资产提交。

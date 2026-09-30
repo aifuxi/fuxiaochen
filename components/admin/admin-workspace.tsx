@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
+import { initialFriendsLinks } from "./friends-links-mock-data";
 import {
   initialMedia,
   type MediaItem,
@@ -61,6 +62,7 @@ function mediaUploadTime() {
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
+  const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [comments, setComments] = useState(initialComments);
   const [manualSchedules, setSchedules] = useState(initialSchedules);
   const [notices, setNotices] = useState(initialNotices);
@@ -359,6 +361,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
+        friendsLinks,
+        setFriendsLinks,
         media,
         onUploadMedia: uploadMedia,
         onDeleteMedia: deleteMedia,

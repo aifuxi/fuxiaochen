@@ -1,11 +1,14 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
 
 import type { AdminPanel } from "./admin-shell";
+import type { FriendLink } from "./friends-links-mock-data";
 import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
 
 type AdminState = {
+  friendsLinks: FriendLink[];
+  setFriendsLinks: Dispatch<SetStateAction<FriendLink[]>>;
   media: MediaItem[];
   onUploadMedia: (files: File[]) => Promise<void>;
   onDeleteMedia: (id: string) => void;
