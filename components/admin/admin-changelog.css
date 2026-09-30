@@ -1,0 +1,171 @@
+.admin-changelog-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px;
+}
+.admin-changelog-filters output {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-changelog-filters strong {
+  color: var(--color-focus);
+  font-family: var(--font-mono, ui-monospace);
+}
+.admin-release-search {
+  position: relative;
+  width: min(100%, 340px);
+}
+.admin-release-search > svg {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  color: var(--color-muted);
+  pointer-events: none;
+}
+.admin-release-search > .ds-input {
+  width: 100%;
+  padding-inline: 40px;
+}
+.admin-release-search > .ds-button {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  width: 32px;
+  padding: 0;
+}
+.admin-release-card {
+  padding: 28px;
+}
+.admin-release-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.admin-release-item {
+  position: relative;
+  padding: 0 0 32px 24px;
+  margin-left: 7px;
+  border-left: 1px solid var(--color-outline);
+  overflow-wrap: anywhere;
+}
+.admin-release-item:last-child {
+  border-color: transparent;
+  padding-bottom: 0;
+}
+.admin-release-item::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-subtle);
+  box-shadow: 0 0 0 5px var(--color-surface);
+}
+.admin-release-item.is-security::before {
+  background: var(--color-danger);
+}
+.admin-release-item.is-performance::before {
+  background: var(--color-success);
+}
+.admin-release-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.admin-release-version {
+  font: 600 17px/1.5 var(--font-mono, ui-monospace);
+}
+.admin-release-heading h2 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+.admin-release-tag {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--color-stage);
+  color: var(--color-muted);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.admin-release-tag.is-feature {
+  color: var(--color-focus);
+}
+.admin-release-tag.is-security {
+  color: var(--color-danger);
+}
+.admin-release-tag.is-performance {
+  color: var(--color-success);
+}
+.admin-release-changes {
+  margin: 12px 0 24px;
+  border-left: 2px solid var(--color-outline);
+  padding: 0 0 0 28px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.8;
+  list-style: disc;
+}
+.admin-release-changes li + li {
+  margin-top: 8px;
+}
+.admin-release-changes li::marker {
+  color: var(--color-primary);
+}
+.admin-release-item time {
+  color: var(--color-subtle);
+  font: 12px/1.5 var(--font-mono, ui-monospace);
+}
+.admin-release-modal {
+  max-width: 560px;
+  max-height: 85dvh;
+  overflow-y: auto;
+}
+.admin-release-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.admin-release-fields > label,
+.admin-release-fields > div {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-release-required,
+.admin-release-error {
+  color: var(--color-danger);
+}
+@media (max-width: 600px) {
+  .admin-changelog .admin-page-heading > .ds-button {
+    width: 100%;
+  }
+  .admin-changelog-filters {
+    padding: 16px;
+  }
+  .admin-release-search {
+    width: 100%;
+  }
+  .admin-release-card {
+    padding: 22px 16px;
+  }
+  .admin-release-item {
+    padding-left: 20px;
+  }
+  .admin-release-heading h2 {
+    flex-basis: 100%;
+  }
+  .admin-release-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

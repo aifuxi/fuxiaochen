@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
+import { initialReleaseLogs } from "./changelog-mock-data";
 import { initialFriendsLinks } from "./friends-links-mock-data";
 import {
   initialMedia,
@@ -62,6 +63,7 @@ function mediaUploadTime() {
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
+  const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
   const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [comments, setComments] = useState(initialComments);
   const [manualSchedules, setSchedules] = useState(initialSchedules);
@@ -361,6 +363,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
+        releaseLogs,
+        setReleaseLogs,
         friendsLinks,
         setFriendsLinks,
         media,

@@ -3,10 +3,13 @@
 import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
 
 import type { AdminPanel } from "./admin-shell";
+import type { ReleaseLog } from "./changelog-mock-data";
 import type { FriendLink } from "./friends-links-mock-data";
 import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
 
 type AdminState = {
+  releaseLogs: ReleaseLog[];
+  setReleaseLogs: Dispatch<SetStateAction<ReleaseLog[]>>;
   friendsLinks: FriendLink[];
   setFriendsLinks: Dispatch<SetStateAction<FriendLink[]>>;
   media: MediaItem[];

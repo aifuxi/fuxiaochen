@@ -56,7 +56,7 @@ const nav = [
   { name: "数据分析", icon: BarChart3, href: "/admin/analytics" },
   { name: "访客日志", icon: Users, href: "/admin/visitors" },
   { name: "友情链接", icon: Link2, href: "/admin/friends-links" },
-  { name: "更新日志", icon: Clock3 },
+  { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
   { name: "系统设置", icon: Settings },
 ];
 
