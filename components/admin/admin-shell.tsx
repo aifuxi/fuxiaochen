@@ -53,7 +53,7 @@ const nav = [
   { name: "评论管理", icon: MessageCircle, href: "/admin/comments" },
   { name: "媒体库", icon: ImageIcon, href: "/admin/media" },
   { name: "分类与标签", icon: Tags, href: "/admin/categories" },
-  { name: "数据分析", icon: BarChart3 },
+  { name: "数据分析", icon: BarChart3, href: "/admin/analytics" },
   { name: "访客日志", icon: Users },
   { name: "友情链接", icon: Link2 },
   { name: "更新日志", icon: Clock3 },
