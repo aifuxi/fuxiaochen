@@ -29,6 +29,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import {
+  Combobox,
+  ComboboxClear,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxInputGroup,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxTrigger,
+} from "@/components/ui/combobox";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -37,6 +47,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
@@ -76,6 +94,21 @@ const swatches = [
   ["Raised", "#2A2A2A"],
   ["Primary", "#0066DF"],
   ["Foreground", "#F5F5F5"],
+];
+const contactTopics = [
+  { label: "产品设计", value: "design" },
+  { label: "前端开发", value: "frontend" },
+  { label: "其他合作", value: "collaboration" },
+];
+const technologies = [
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Tailwind CSS",
+  "Base UI",
+  "Figma",
+  "Node.js",
+  "Python",
 ];
 
 function SectionHead({
@@ -724,6 +757,46 @@ export default function Page() {
                         required
                         className="w-full"
                       />
+                    </div>
+                  </div>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Select items={contactTopics} name="topic">
+                      <div className="space-y-2">
+                        <SelectLabel className="block text-[13px] font-medium">
+                          咨询类型
+                        </SelectLabel>
+                        <SelectTrigger>
+                          <SelectValue placeholder="选择咨询类型" />
+                        </SelectTrigger>
+                      </div>
+                      <SelectContent>
+                        {contactTopics.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="space-y-2">
+                      <label htmlFor="form-technology" className="block text-[13px] font-medium">
+                        相关技术
+                      </label>
+                      <Combobox items={technologies} name="technology">
+                        <ComboboxInputGroup>
+                          <ComboboxInput id="form-technology" placeholder="搜索或选择技术" />
+                          <ComboboxClear />
+                          <ComboboxTrigger />
+                        </ComboboxInputGroup>
+                        <ComboboxContent>
+                          <ComboboxList className="max-h-60 overflow-y-auto p-1">
+                            {(item: string) => (
+                              <ComboboxItem key={item} value={item}>
+                                {item}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxList>
+                        </ComboboxContent>
+                      </Combobox>
                     </div>
                   </div>
                   <div className="space-y-2">

@@ -183,10 +183,11 @@ components:
 - **Card：** 外壳、舞台、标题、描述、可选操作四部分。可点击卡片应是整块链接或按钮；卡片内有独立操作时，外层不要再做嵌套点击。悬停提亮或上浮，内容不跳动。
 - **Tabs：** 轨道内的选中胶囊是独立于文字的底层，随选中项的位置与宽度以 `cubic-bezier(0.22, 1, 0.36, 1)` 滑动 250ms；文字只做颜色过渡，不让背景在两个 Tab 间瞬间跳变。胶囊使用 `#2A2A2A` 表面和轻微顶部内高光，键盘可切换。切换面板使用短暂淡入，不能让内容被动画延迟阻塞；`prefers-reduced-motion` 下取消滑动。
 - **Accordion / Dialog / Switch：** 交互语义与焦点管理由 Base UI 负责，视觉由本地组件文件和 Tailwind class 负责。浮层沿用 surface 材质与 14–24px 圆角。
+- **Select / Combobox：** 由 Base UI 提供选择、筛选、键盘导航与弹层定位；本地组件封装触发器、输入区、菜单和选项。触发器与输入区沿用 44px 的 input 填充表面及 14px 圆角，弹层沿用 raised 材质；高亮项使用中性提亮，选中项保留文字与勾选标记。Select 用于少量固定选项，Combobox 用于需要输入筛选的固定选项；可见标签与控件语义必须关联。覆盖 hover、active、focus-visible、disabled 和减少动态效果偏好。
 - **Motion demo：** 边框流光使用 `border-beam`，柔和光球使用 `thinking-orbs`，悬停浮起沿用本地 CSS。相邻展示卡一次只播放一个效果；边框流光遵循减少动态效果偏好并关闭循环，光球暂停后保留静态画面。动画层不截获指针事件，装饰图形从辅助技术中隐藏。Hero 中的微型图形保留现有 CSS 演示，不叠加第三种效果库。
 - **Pointer feedback：** 在根布局挂载一个全站共用的装饰层，由鼠标目标的语义决定箭头、圆环或文本光标。交互状态与页面动效开关保持同步；不改变真实控件的点击区域、焦点、禁用行为。
-- **Pointer preview：** 动效章节提供普通表面、可点击按钮和可输入文本框三个目标，便于直接检查指针状态。文本框沿用既有 input token，保留 hover 边线、active / focus-visible 焦点环与 disabled 状态。
-- **Form preview：** 表单章节组合 Input、Textarea、Switch 与 Button，展示可填写的完整表单及输入框的默认、错误和禁用状态。Input 和 Textarea 使用无常驻描边的填充表面与 14px 圆角，hover 提亮、按下压暗、聚焦显示蓝色内边线，键盘 `focus-visible` 改用清晰的单层焦点环；Textarea 可纵向调整高度。字段使用可见标签；错误以 danger 底部标记和文字同时表达，并通过 `aria-invalid`、`aria-describedby` 关联；预览提交仅显示本地反馈。
+- **Pointer preview：** 动效章节提供普通表面、可点击按钮和可输入文本框三个目标，便于直接检查指针状态。文本框沿用既有 input token，保留 hover 表面提亮、active 压暗、focus-visible 焦点环与 disabled 状态。
+- **Form preview：** 表单章节组合 Input、Textarea、Select、Combobox、Switch 与 Button，展示可填写的完整表单、固定选项和输入筛选，以及输入框的默认、错误和禁用状态。Input 和 Textarea 使用无常驻描边的填充表面与 14px 圆角，hover 提亮、按下压暗、聚焦显示蓝色内边线，键盘 `focus-visible` 改用清晰的单层焦点环；Textarea 可纵向调整高度。字段使用可见标签；错误以 danger 底部标记和文字同时表达，并通过 `aria-invalid`、`aria-describedby` 关联；预览提交仅显示本地反馈。
 
 组件以 `components/ui/` 为单元组织，导出清晰的 variant API；业务页面仅组合组件，不重复写基础状态样式。Tailwind 主题变量应与本文件同步。
 
