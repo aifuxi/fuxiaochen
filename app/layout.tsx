@@ -2,8 +2,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Fuxiaochen Afterglow · Design spec",
-  description: "暗色材质、组件状态与流畅微交互的设计系统规范。",
+  title: "fuxiaochen",
+  description: "fuxiaochen 个人站点。",
 };
 
 export default function RootLayout({
