@@ -73,3 +73,5 @@ __pycache__/
 
 # codegraph 索引
 /.codegraph/
+
+/.codex/
