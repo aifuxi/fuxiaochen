@@ -11,6 +11,8 @@ colors:
   surface-hover: "#1C1C1C"
   stage: "#131313"
   raised: "#2A2A2A"
+  input: "#262626"
+  input-hover: "#303030"
   foreground: "#F5F5F5"
   foreground-muted: "#B5B5B5"
   foreground-subtle: "#8F8F8F"
@@ -54,6 +56,7 @@ typography:
 rounded:
   sm: 8px
   md: 14px
+  form: 14px
   lg: 24px
   pill: 999px
 spacing:
@@ -106,11 +109,11 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.md}"
   input:
-    backgroundColor: "{colors.stage}"
+    backgroundColor: "{colors.input}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.sm}"
-    height: 40px
-    padding: 12px
+    rounded: "{rounded.form}"
+    height: 44px
+    padding: 14px
   caption:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.foreground-muted}"
@@ -136,7 +139,7 @@ components:
 
 ## Colors
 
-`background` 是连续的页面底色，`surface` 是卡片外壳，`stage` 是卡片内嵌的展示区。三者只差少量亮度，靠边缘细线与顶部内高光建立层级。`surface-hover` 仅用于悬停，不能作为另一种常驻卡片色。`raised` 用于次级按钮和浮层。按钮表面不能只用一块纯色填充：参考站的胶囊还叠加了底部暗线、顶部内高光和低对比内边线。
+`background` 是连续的页面底色，`surface` 是卡片外壳，`stage` 是卡片内嵌的展示区。三者只差少量亮度，靠边缘细线与顶部内高光建立层级。`surface-hover` 仅用于悬停，不能作为另一种常驻卡片色。`raised` 用于次级按钮和浮层。`input` 与 `input-hover` 是表单控件的填充表面，以亮度变化反馈悬停。按钮表面不能只用一块纯色填充：参考站的胶囊还叠加了底部暗线、顶部内高光和低对比内边线。
 
 正文用 `foreground`，说明文字用 `foreground-muted`，元数据用 `foreground-subtle`。`primary` 只用于主要 CTA、选中状态及少量交互指示；不要把蓝色变成大面积背景。参考站使用 `#0071FC`；本系统将按钮蓝色略压暗至 `#0066DF`，确保浅色小字达到 WCAG AA 对比度。不要用 subtle 颜色承载小字号的必要说明。
 
@@ -172,7 +175,7 @@ components:
 
 ## Shapes
 
-交互按钮与标签使用完整胶囊圆角；外层卡片 24px，内嵌舞台 14px，输入框 8px。圆角是层级语言的一部分：外壳比内层更圆，按钮比两者更圆。图标线条轻、尺寸 16–20px。边框与焦点环必须可辨，不能只靠发光表示焦点。
+交互按钮与标签使用完整胶囊圆角；外层卡片 24px，内嵌舞台和表单输入框 14px。圆角是层级语言的一部分：外壳比内层更圆，按钮比两者更圆。图标线条轻、尺寸 16–20px。默认输入框以填充表面代替描边；聚焦与错误状态的边缘提示必须可辨，不能只靠发光表示焦点。
 
 ## Components
 
@@ -183,7 +186,7 @@ components:
 - **Motion demo：** 边框流光使用 `border-beam`，柔和光球使用 `thinking-orbs`，悬停浮起沿用本地 CSS。相邻展示卡一次只播放一个效果；边框流光遵循减少动态效果偏好并关闭循环，光球暂停后保留静态画面。动画层不截获指针事件，装饰图形从辅助技术中隐藏。Hero 中的微型图形保留现有 CSS 演示，不叠加第三种效果库。
 - **Pointer feedback：** 在根布局挂载一个全站共用的装饰层，由鼠标目标的语义决定箭头、圆环或文本光标。交互状态与页面动效开关保持同步；不改变真实控件的点击区域、焦点、禁用行为。
 - **Pointer preview：** 动效章节提供普通表面、可点击按钮和可输入文本框三个目标，便于直接检查指针状态。文本框沿用既有 input token，保留 hover 边线、active / focus-visible 焦点环与 disabled 状态。
-- **Form preview：** 表单章节组合 Input、Textarea、Switch 与 Button，展示可填写的完整表单及输入框的默认、错误和禁用状态。Textarea 沿用 input 的表面、边框、8px 圆角和焦点样式，可纵向调整高度。字段使用可见标签；错误以 danger 边框和文字同时表达，并通过 `aria-invalid`、`aria-describedby` 关联；预览提交仅显示本地反馈。
+- **Form preview：** 表单章节组合 Input、Textarea、Switch 与 Button，展示可填写的完整表单及输入框的默认、错误和禁用状态。Input 和 Textarea 使用无常驻描边的填充表面与 14px 圆角，hover 提亮、按下压暗、聚焦显示蓝色内边线，键盘 `focus-visible` 改用清晰的单层焦点环；Textarea 可纵向调整高度。字段使用可见标签；错误以 danger 底部标记和文字同时表达，并通过 `aria-invalid`、`aria-describedby` 关联；预览提交仅显示本地反馈。
 
 组件以 `components/ui/` 为单元组织，导出清晰的 variant API；业务页面仅组合组件，不重复写基础状态样式。Tailwind 主题变量应与本文件同步。
 

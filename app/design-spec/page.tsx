@@ -678,82 +678,80 @@ export default function Page() {
               description="从字段标签到错误提示，把输入、选择与提交放在同一个可操作的预览中。"
             />
             <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
-              <Card className="p-3">
-                <CardStage className="p-5 md:p-7">
-                  <div className="mb-6 flex items-start justify-between gap-4">
-                    <div>
-                      <h3 className="text-[15px] font-medium text-white">联系表单</h3>
-                      <p className="mt-1 text-xs text-[var(--color-muted)]">
-                        填写并提交，查看交互反馈
-                      </p>
-                    </div>
-                    <span className="font-mono text-[10px] text-[var(--color-subtle)]">
-                      LIVE PREVIEW
-                    </span>
+              <Card className="p-5 md:p-7">
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-[15px] font-medium text-white">联系表单</h3>
+                    <p className="mt-1 text-xs text-[var(--color-muted)]">
+                      填写并提交，查看交互反馈
+                    </p>
                   </div>
-                  <form
-                    className="space-y-5"
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      showNotice("表单预览 · 已提交");
-                    }}
-                  >
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <label htmlFor="form-name" className="block text-[13px] font-medium">
-                          姓名
-                        </label>
-                        <Input
-                          id="form-name"
-                          name="name"
-                          autoComplete="name"
-                          placeholder="如何称呼你"
-                          required
-                          className="w-full"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <label htmlFor="form-email" className="block text-[13px] font-medium">
-                          邮箱
-                        </label>
-                        <Input
-                          id="form-email"
-                          name="email"
-                          type="email"
-                          autoComplete="email"
-                          placeholder="name@example.com"
-                          required
-                          className="w-full"
-                        />
-                      </div>
+                  <span className="font-mono text-[10px] text-[var(--color-subtle)]">
+                    LIVE PREVIEW
+                  </span>
+                </div>
+                <form
+                  className="space-y-5"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    showNotice("表单预览 · 已提交");
+                  }}
+                >
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <label htmlFor="form-name" className="block text-[13px] font-medium">
+                        姓名
+                      </label>
+                      <Input
+                        id="form-name"
+                        name="name"
+                        autoComplete="name"
+                        placeholder="如何称呼你"
+                        required
+                        className="w-full"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="form-message" className="block text-[13px] font-medium">
-                        留言
+                      <label htmlFor="form-email" className="block text-[13px] font-medium">
+                        邮箱
                       </label>
-                      <Textarea
-                        id="form-message"
-                        name="message"
-                        placeholder="写下你的想法"
+                      <Input
+                        id="form-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="name@example.com"
                         required
+                        className="w-full"
                       />
-                      <p className="text-[11px] text-[var(--color-muted)]">
-                        支持多行输入，可拖动右下角调整高度。
-                      </p>
                     </div>
-                    <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/[.07] pt-5">
-                      <div className="flex items-center gap-3">
-                        <Switch id="form-updates" aria-label="接收后续更新" defaultChecked />
-                        <label htmlFor="form-updates" className="cursor-pointer text-[13px]">
-                          接收后续更新
-                        </label>
-                      </div>
-                      <Button type="submit" variant="primary">
-                        提交预览 <ArrowRight size={14} aria-hidden="true" />
-                      </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="form-message" className="block text-[13px] font-medium">
+                      留言
+                    </label>
+                    <Textarea
+                      id="form-message"
+                      name="message"
+                      placeholder="写下你的想法"
+                      required
+                    />
+                    <p className="text-[11px] text-[var(--color-muted)]">
+                      支持多行输入，可拖动右下角调整高度。
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/[.07] pt-5">
+                    <div className="flex items-center gap-3">
+                      <Switch id="form-updates" aria-label="接收后续更新" defaultChecked />
+                      <label htmlFor="form-updates" className="cursor-pointer text-[13px]">
+                        接收后续更新
+                      </label>
                     </div>
-                  </form>
-                </CardStage>
+                    <Button type="submit" variant="primary">
+                      提交预览 <ArrowRight size={14} aria-hidden="true" />
+                    </Button>
+                  </div>
+                </form>
               </Card>
               <Card className="p-6">
                 <div className="mb-6 flex items-start justify-between gap-4">
@@ -799,7 +797,7 @@ export default function Page() {
                   </div>
                 </div>
                 <p className="mt-6 border-t border-white/[.07] pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
-                  字段保留可见标签；错误同时使用文字与边框提示，键盘焦点使用独立的蓝色轮廓。
+                  字段保留可见标签；错误同时使用文字与底部标记，键盘焦点使用独立的蓝色轮廓。
                 </p>
               </Card>
             </div>
