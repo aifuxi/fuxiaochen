@@ -65,6 +65,10 @@ spacing:
   2xl: 32px
   3xl: 48px
   4xl: 72px
+pointer:
+  size: 22px
+  stateTransition: 120ms
+  ringFill: "color-mix(in srgb, {colors.primary} 12%, transparent)"
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
@@ -153,6 +157,12 @@ components:
 
 动效采用先快后慢的 `cubic-bezier(0.22, 1, 0.36, 1)`。反馈节奏分为 80ms micro、150ms quick、250ms standard、350ms expressive；卡片上浮可用 `cubic-bezier(0.34, 1.36, 0.64, 1)`。持续循环只用于明确展示动画的舞台，不用于正文、导航或输入控件。支持 `prefers-reduced-motion`：停止循环、缩短或取消位移，保留状态变化的可理解性。
 
+### 指针反馈
+
+参考 [VibeHub](https://vibe-hub.org/) 的桌面指针：普通区域显示品牌蓝色箭头；悬停可点击元素时，箭头在 120ms 内淡出并切换为 22px 细线圆环；进入文本输入区时切换为细竖线。圆环使用 `primary` 描边和 12% 同色填充。位置直接跟随真实指针，状态切换才使用短过渡，不添加拖尾或持续循环。效果层不截获事件，也不参与布局。
+
+仅在支持 hover 的精确鼠标设备上启用，并在第一次鼠标移动后替换系统指针；触屏、粗指针、`prefers-reduced-motion`、页面动效开关关闭时使用原生指针。离开窗口或窗口失焦时隐藏效果。禁用控件保留 `not-allowed` 指针；可编辑文本、链接及按钮的语义不能由装饰指针代替，键盘 `focus-visible` 仍需清晰可见。
+
 ## Shapes
 
 交互按钮与标签使用完整胶囊圆角；外层卡片 24px，内嵌舞台 14px，输入框 8px。圆角是层级语言的一部分：外壳比内层更圆，按钮比两者更圆。图标线条轻、尺寸 16–20px。边框与焦点环必须可辨，不能只靠发光表示焦点。
@@ -164,6 +174,8 @@ components:
 - **Tabs：** 轨道内的选中胶囊是独立于文字的底层，随选中项的位置与宽度以 `cubic-bezier(0.22, 1, 0.36, 1)` 滑动 250ms；文字只做颜色过渡，不让背景在两个 Tab 间瞬间跳变。胶囊使用 `#2A2A2A` 表面和轻微顶部内高光，键盘可切换。切换面板使用短暂淡入，不能让内容被动画延迟阻塞；`prefers-reduced-motion` 下取消滑动。
 - **Accordion / Dialog / Switch：** 交互语义与焦点管理由 Base UI 负责，视觉由本地组件文件和 Tailwind class 负责。浮层沿用 surface 材质与 14–24px 圆角。
 - **Motion demo：** 边框流光使用 `border-beam`，柔和光球使用 `thinking-orbs`，悬停浮起沿用本地 CSS。相邻展示卡一次只播放一个效果；边框流光遵循减少动态效果偏好并关闭循环，光球暂停后保留静态画面。动画层不截获指针事件，装饰图形从辅助技术中隐藏。Hero 中的微型图形保留现有 CSS 演示，不叠加第三种效果库。
+- **Pointer feedback：** 全页只挂载一个可复用的装饰层，由鼠标目标的语义决定箭头、圆环或文本光标。交互状态与页面动效开关保持同步；不改变真实控件的点击区域、焦点、禁用行为。
+- **Pointer preview：** 动效章节提供普通表面、可点击按钮和可输入文本框三个目标，便于直接检查指针状态。文本框沿用既有 input token，保留 hover 边线、active / focus-visible 焦点环与 disabled 状态。
 
 组件以 `components/ui/` 为单元组织，导出清晰的 variant API；业务页面仅组合组件，不重复写基础状态样式。Tailwind 主题变量应与本文件同步。
 
@@ -188,3 +200,5 @@ components:
 | 悬浮预览   | 首页预览 tile 悬停上浮约 6px，350ms 弹性曲线；标签以缩放和透明度出现                                                    | 在展示型卡片中使用同一节奏；常规信息卡不循环动画                        |
 | 动效节奏   | 源码提供 80、150、250、350、400、500ms 阶梯与 `cubic-bezier(0.22,1,0.36,1)`                                             | 使用 80–350ms 操作节奏；长循环仅用于效果预览                            |
 | 可访问性   | 源码多处针对 `prefers-reduced-motion` 关闭过渡                                                                          | 所有组件保留焦点状态，并对减少动态效果偏好停止循环及位移                |
+
+另参考 [VibeHub 首页](https://vibe-hub.org/) 的实际交互与页面样式：桌面端隐藏原生指针，以绝对跟随的箭头和 120ms 淡入缩放切换圆环、文本竖线；本项目沿用这一交互结构，但使用自己的 `primary` 色与可访问性条件。

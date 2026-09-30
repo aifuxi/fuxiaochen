@@ -29,6 +29,8 @@
 
 :root {
   color-scheme: dark;
+  --cursor-size: 22px;
+  --cursor-state-transition: 120ms;
 }
 html {
   scroll-behavior: smooth;
@@ -41,6 +43,82 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+html[data-cursor-fx="on"],
+html[data-cursor-fx="on"] * {
+  cursor: none !important;
+}
+html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]),
+html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]) * {
+  cursor: not-allowed !important;
+}
+.cursor-fx {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--cursor-state-transition) ease-out;
+}
+.cursor-fx[data-visible="true"][data-native="false"] {
+  opacity: 1;
+}
+.cursor-fx-arrow {
+  display: block;
+  margin: -3px 0 0 -4px;
+  transform-origin: 4px 3px;
+}
+.cursor-fx-arrow path {
+  fill: var(--color-primary);
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.cursor-fx-ring,
+.cursor-fx-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  opacity: 0;
+}
+.cursor-fx-arrow,
+.cursor-fx-ring,
+.cursor-fx-text {
+  transition:
+    opacity var(--cursor-state-transition) ease-out,
+    transform var(--cursor-state-transition) ease-out;
+}
+.cursor-fx-ring {
+  box-sizing: border-box;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  border: 1.5px solid var(--color-primary);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  transform: translate(-50%, -50%) scale(0.5);
+}
+.cursor-fx-text {
+  width: 2px;
+  height: 20px;
+  border-radius: 2px;
+  background: var(--color-primary);
+  transform: translate(-50%, -50%) scale(0.5);
+}
+.cursor-fx[data-state="interactive"] .cursor-fx-arrow,
+.cursor-fx[data-state="text"] .cursor-fx-arrow {
+  opacity: 0;
+  transform: scale(0.5);
+}
+.cursor-fx[data-state="interactive"] .cursor-fx-ring,
+.cursor-fx[data-state="text"] .cursor-fx-text {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .ds-card,
@@ -111,6 +189,31 @@ a {
 .ds-button-ghost:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
+}
+.ds-input {
+  border: 1px solid var(--color-outline);
+  background: var(--color-stage);
+  color: var(--color-foreground);
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+.ds-input::placeholder {
+  color: var(--color-subtle);
+}
+.ds-input:hover:not(:disabled) {
+  border-color: #484848;
+}
+.ds-input:active:not(:disabled) {
+  border-color: var(--color-primary);
+}
+.ds-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.ds-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 .ds-accordion-panel {
   height: var(--accordion-panel-height);

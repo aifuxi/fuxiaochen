@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
+import { CursorEffect } from "@/components/ui/cursor-effect";
 import {
   Dialog,
   DialogClose,
@@ -35,6 +36,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 
@@ -696,6 +698,25 @@ export default function Page() {
               />
               <DemoCard kind="lift" title="Micro lift" caption="上浮 6px / 350ms" />
             </div>
+            <Card className="mt-4 flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
+              <div>
+                <h3 className="text-[13px] font-medium text-white">指针反馈</h3>
+                <p className="mt-1 text-[11px] text-[#999]">
+                  移过空白、按钮与输入框，观察箭头、圆环和文本光标。
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Button size="sm" onClick={() => showNotice("指针按钮 · 已触发")}>
+                  悬停或点击
+                </Button>
+                <Input
+                  type="text"
+                  aria-label="指针文本状态演示"
+                  placeholder="在这里输入文字"
+                  className="w-full sm:w-52"
+                />
+              </div>
+            </Card>
             <div className="mt-4 grid gap-4 rounded-[18px] border border-white/[.06] bg-[#181818] p-5 sm:grid-cols-4">
               {[
                 ["80ms", "Micro"],
@@ -775,6 +796,7 @@ export default function Page() {
           {notice}
         </output>
       )}
+      <CursorEffect enabled={motion && !reducedMotion} />
     </div>
   );
 }
