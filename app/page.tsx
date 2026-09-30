@@ -10,6 +10,12 @@ export default function HomePage() {
           〰
         </span>
         <span className="ml-3 text-[14px] font-medium tracking-[-.03em]">fuxiaochen</span>
+        <Link
+          href="/login"
+          className="ml-auto text-xs text-[var(--color-muted)] transition-colors hover:text-white focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--color-focus)]"
+        >
+          登录 <ArrowRight className="inline-block" size={13} aria-hidden="true" />
+        </Link>
       </header>
       <main className="relative mx-auto flex w-full max-w-[1200px] flex-1 flex-col justify-center px-5 pb-24 md:px-8">
         <p className="mb-5 font-mono text-[11px] tracking-[.18em] text-[var(--color-subtle)] uppercase">

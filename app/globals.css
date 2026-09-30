@@ -23,6 +23,8 @@
   --color-subtle: #8f8f8f;
   --color-outline: #303030;
   --color-focus: #7db4ff;
+  --color-success: #73d6a1;
+  --color-danger: #ff7b7b;
   --font-display: "Space Grotesk", Inter, Arial, sans-serif;
   --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
