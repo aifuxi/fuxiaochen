@@ -14,6 +14,8 @@ type AdminState = {
   onEdit: (post: Post) => void;
   onDeletePost: (id: string) => void;
   onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+  onReply: (id: string, content: string) => boolean;
   onDeleteComment: (id: string) => void;
   onBackup: () => void;
 };

@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Search, Trash2, X } from "lucide-react";
+import { Search, Trash2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, type ReactNode, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,6 @@ import {
   initialSchedules,
   initialSources,
   traffic30Days,
-  type Comment,
   type Post,
   type PostStatus,
   type Schedule,
@@ -45,6 +45,7 @@ const panelTitles: Record<AdminPanel, string> = {
 };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
   const [comments, setComments] = useState(initialComments);
   const [manualSchedules, setSchedules] = useState(initialSchedules);
@@ -73,18 +74,25 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     return () => window.clearTimeout(timeout);
   }, [message]);
 
-  const openPanel = useCallback((name: AdminPanel) => {
-    if (name === "compose") {
-      setEditingId(null);
-      setTitle("");
-      setBody("");
-      setCategory(initialCategories[0]);
-      setPostStatus("草稿");
-      setTags("");
-      setPublishDate("");
-    }
-    setPanel(name);
-  }, []);
+  const openPanel = useCallback(
+    (name: AdminPanel) => {
+      if (name === "comments") {
+        router.push("/admin/comments");
+        return;
+      }
+      if (name === "compose") {
+        setEditingId(null);
+        setTitle("");
+        setBody("");
+        setCategory(initialCategories[0]);
+        setPostStatus("草稿");
+        setTags("");
+        setPublishDate("");
+      }
+      setPanel(name);
+    },
+    [router],
+  );
 
   const openEditor = (post: Post) => {
     setEditingId(post.id);
@@ -112,6 +120,35 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       current.map((comment) => (comment.id === id ? { ...comment, status: "已通过" } : comment)),
     );
     setMessage("评论已通过审核（模拟）");
+  };
+
+  const rejectComment = (id: string) => {
+    setComments((current) =>
+      current.map((comment) => (comment.id === id ? { ...comment, status: "已拒绝" } : comment)),
+    );
+    setMessage("评论已标记为垃圾（模拟）");
+  };
+
+  const replyComment = (id: string, content: string) => {
+    const target = comments.find((comment) => comment.id === id);
+    const cleanContent = content.trim();
+    if (!target || !cleanContent) return false;
+    setComments((current) => [
+      {
+        id: crypto.randomUUID(),
+        author: "fuxiaochen（博主）",
+        email: "admin@example.test",
+        time: "刚刚",
+        timestamp: new Date().toISOString(),
+        content: `回复 @${target.author}：${cleanContent}`,
+        status: "已通过",
+        postTitle: target.postTitle,
+        replyTo: target.id,
+      },
+      ...current,
+    ]);
+    setMessage("模拟回复已保存；未发送邮件或通知");
+    return true;
   };
 
   const savePost = (event: FormEvent<HTMLFormElement>) => {
@@ -240,6 +277,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onDeletePost: setPostDeleteId,
         onApprove: approveComment,
         onDeleteComment: setDeleteId,
+        onReject: rejectComment,
+        onReply: replyComment,
         onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
       }}
     >
@@ -468,47 +507,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                       退出登录
                     </Button>
                   </form>
-                </div>
-              )}
-              {panel === "comments" && (
-                <div className="admin-modal-section">
-                  <div className="admin-result-list">
-                    {comments.length ? (
-                      comments.map((comment: Comment) => (
-                        <div className="admin-managed-row" key={comment.id}>
-                          <div>
-                            <strong>{comment.author}</strong>
-                            <span>{comment.content}</span>
-                            <small>
-                              {comment.postTitle} · {comment.status}
-                            </small>
-                          </div>
-                          <div>
-                            {comment.status === "待审核" && (
-                              <Button
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => approveComment(comment.id)}
-                                aria-label={`通过 ${comment.author} 的评论`}
-                              >
-                                <Check size={14} />
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setDeleteId(comment.id)}
-                              aria-label={`删除 ${comment.author} 的评论`}
-                            >
-                              <Trash2 size={15} />
-                            </Button>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="admin-empty">暂无评论。</p>
-                    )}
-                  </div>
                 </div>
               )}
               {panel === "upload" && (

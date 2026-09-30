@@ -1256,3 +1256,131 @@
     flex-wrap: wrap;
   }
 }
+
+.admin-comments-search-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.admin-comments-table {
+  min-width: 960px;
+}
+.admin-comments-table th:first-child {
+  width: 23%;
+}
+.admin-comments-table td:first-child {
+  min-width: 220px;
+}
+.admin-comments-table th:nth-child(2) {
+  width: 46%;
+}
+.admin-comments-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.admin-comments-author img,
+.admin-comments-avatar {
+  flex: none;
+  border-radius: 50%;
+}
+.admin-comments-avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-raised);
+  color: var(--color-muted);
+  font-size: 13px;
+}
+.admin-comments-author > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.admin-comments-author strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.admin-comments-author > div > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-muted);
+  font:
+    11px ui-monospace,
+    monospace;
+  overflow-wrap: anywhere;
+}
+.admin-comments-text {
+  margin: 0 0 8px;
+  color: var(--color-muted);
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.admin-comments-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+.admin-comments-meta > span {
+  overflow-wrap: anywhere;
+}
+.admin-comments-meta time {
+  white-space: nowrap;
+  color: var(--color-subtle);
+}
+.admin-comments-actions {
+  display: flex;
+  gap: 4px;
+}
+.admin-comments-actions .ds-button {
+  flex: none;
+  width: 32px;
+  padding: 0;
+}
+.admin-comments-actions .ds-button[title="通过审核"],
+.admin-comments-actions .ds-button[title="回复评论"] {
+  color: var(--color-focus);
+}
+.admin-comments-actions .ds-button[title="删除评论"] {
+  color: var(--color-danger);
+}
+.admin-post-status.is-rejected {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+}
+.admin-comments-quote {
+  margin: 0 0 20px;
+  padding: 16px;
+  border-left: 2px solid var(--color-outline);
+  border-radius: 14px;
+  background: var(--color-stage);
+  color: var(--color-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.admin-comments-quote p {
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+}
+.admin-comments-quote cite {
+  font-style: normal;
+  font-size: 11px;
+}
+@media (max-width: 600px) {
+  .admin-comments-search-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    margin-top: 14px;
+  }
+  .admin-comments .admin-post-search {
+    width: 100%;
+  }
+}
