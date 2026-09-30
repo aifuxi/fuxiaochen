@@ -591,7 +591,7 @@ export default function Page() {
                         </AccordionHeader>
                         <AccordionPanel>
                           <div className="pb-4">
-                            以 design.md 为规范，Tailwind 主题变量为实现层，组件复用这些变量。
+                            以 DESIGN.md 为规范，Tailwind 主题变量为实现层，组件复用这些变量。
                           </div>
                         </AccordionPanel>
                       </AccordionItem>
@@ -667,7 +667,7 @@ export default function Page() {
                 </div>
                 <div className="space-y-2 font-mono text-[12px]">
                   {[
-                    ["design.md", "规范来源"],
+                    ["DESIGN.md", "规范来源"],
                     ["app/globals.css", "Tailwind theme"],
                     ["components/ui/*", "Base UI + 样式"],
                   ].map(([path, role]) => (

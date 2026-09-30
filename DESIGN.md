@@ -125,7 +125,7 @@ components:
 
 这是一个“暗色交互展厅”：中性的近黑背景让少量高精度动效成为主角。静态内容保持安静，用户把指针移到按钮、卡片或控件上时，表面才轻微提亮。蓝色只表示最重要的操作或当前状态。参考 [Libraries.dev](https://libraries.dev/) 的实际页面及其[开源实现](https://github.com/Jakubantalik/Libraries.dev)，借鉴其材质、节奏和交互原则；不复制品牌资产、文案或付费功能。
 
-设计供 Fuxiaochen 项目的产品页和组件使用。`design.md` 的 YAML token 是准确值；下文解释使用方式。实现采用 Tailwind CSS v4 主题变量、Base UI 无样式行为原语，以及类似 shadcn/ui 的本地可编辑组件目录。
+设计供 Fuxiaochen 项目的产品页和组件使用。`DESIGN.md` 的 YAML token 是准确值；下文解释使用方式。实现采用 Tailwind CSS v4 主题变量、Base UI 无样式行为原语，以及类似 shadcn/ui 的本地可编辑组件目录。
 
 ## Colors
 
