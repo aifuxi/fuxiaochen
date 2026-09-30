@@ -1,0 +1,193 @@
+.admin-categories {
+  display: grid;
+  gap: 24px;
+}
+.admin-taxonomy-note {
+  margin: -12px 0 0;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-taxonomy-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+.admin-taxonomy-card {
+  min-width: 0;
+  overflow: hidden;
+}
+.admin-taxonomy-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border-bottom: 1px solid var(--color-outline);
+}
+.admin-taxonomy-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font: 500 14px/1.5 var(--font-sans);
+}
+.admin-taxonomy-heading svg {
+  color: var(--color-focus);
+  flex: none;
+}
+.admin-taxonomy-badge {
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--color-focus);
+  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
+  font: 12px/1.5 var(--font-mono);
+}
+.admin-taxonomy-tag-heading svg,
+.admin-taxonomy-tag-heading .admin-taxonomy-badge {
+  color: var(--color-success);
+}
+.admin-taxonomy-tag-heading .admin-taxonomy-badge {
+  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
+}
+.admin-taxonomy-body {
+  padding: 20px;
+}
+.admin-taxonomy-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-taxonomy-form .ds-input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+}
+.admin-taxonomy-error {
+  color: var(--color-danger);
+  margin: 8px 0 0;
+  font-size: 12px;
+}
+.admin-taxonomy-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 20px;
+  text-align: left;
+  font-size: 13px;
+}
+.admin-taxonomy-table th {
+  background: var(--color-stage);
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.admin-taxonomy-table th,
+.admin-taxonomy-table td {
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--color-outline);
+}
+.admin-taxonomy-table th:nth-child(2) {
+  width: 88px;
+}
+.admin-taxonomy-table th:last-child {
+  width: 60px;
+}
+.admin-taxonomy-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+.admin-taxonomy-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.admin-taxonomy-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.admin-taxonomy-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: none;
+}
+.admin-taxonomy-count {
+  color: var(--color-muted);
+  font: 12px/1.5 var(--font-mono);
+  white-space: nowrap;
+}
+.admin-taxonomy-delete {
+  color: var(--color-danger);
+}
+.admin-taxonomy-cloud {
+  list-style: none;
+  margin: 0;
+  display: flex;
+  align-content: start;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 220px;
+  padding: 16px;
+}
+.admin-taxonomy-cloud-stage {
+  margin-top: 20px;
+}
+.admin-taxonomy-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 3px 5px 3px 12px;
+  border: 1px solid var(--color-outline);
+  border-radius: 999px;
+  background: var(--color-raised);
+  font-size: 12px;
+}
+.admin-taxonomy-tag-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-taxonomy-tag-remove {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  flex: none;
+  color: var(--color-muted);
+}
+.admin-taxonomy-empty {
+  color: var(--color-muted);
+  padding: 24px 8px;
+  font-size: 13px;
+  text-align: center;
+  margin: auto;
+}
+.admin-categories .admin-confirm {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1100px) {
+  .admin-taxonomy-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .admin-taxonomy-heading,
+  .admin-taxonomy-body {
+    padding: 16px;
+  }
+  .admin-taxonomy-form .ds-button {
+    padding-inline: 12px;
+  }
+  .admin-taxonomy-table th:nth-child(2) {
+    width: 76px;
+  }
+  .admin-taxonomy-table th:last-child {
+    width: 48px;
+  }
+  .admin-taxonomy-table th,
+  .admin-taxonomy-table td {
+    padding-inline: 4px;
+  }
+  .admin-taxonomy-cloud {
+    padding: 12px;
+    gap: 8px;
+  }
+}

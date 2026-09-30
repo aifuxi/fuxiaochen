@@ -1,0 +1,41 @@
+.ds-color-input {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--color-input);
+  cursor: pointer;
+  transition: background 150ms;
+}
+.ds-color-input:hover {
+  background: var(--color-input-hover);
+}
+.ds-color-input:active {
+  background: var(--color-raised);
+}
+.ds-color-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.ds-color-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ds-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+.ds-color-input::-webkit-color-swatch {
+  border: 0;
+  border-radius: 4px;
+}
+.ds-color-input::-moz-color-swatch {
+  border: 0;
+  border-radius: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-color-input {
+    transition: none;
+  }
+}
