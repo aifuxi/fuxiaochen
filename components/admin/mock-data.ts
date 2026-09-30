@@ -1,4 +1,4 @@
-export type PostStatus = "已发布" | "草稿";
+export type PostStatus = "已发布" | "草稿" | "已排期";
 export type Post = {
   id: string;
   title: string;
@@ -7,6 +7,8 @@ export type Post = {
   content: string;
   status: PostStatus;
   date: string;
+  views: number | null;
+  scheduledFor?: string;
 };
 export type Comment = {
   id: string;
@@ -28,6 +30,7 @@ export const initialPosts: Post[] = [
     content: "记录旅途中那些微小而确实的喜悦。",
     status: "已发布",
     date: "2025-05-19",
+    views: 2458,
   },
   {
     id: "post-2",
@@ -37,6 +40,7 @@ export const initialPosts: Post[] = [
     content: "整理日常使用的效率工具与写作工作流。",
     status: "已发布",
     date: "2025-05-18",
+    views: 1876,
   },
   {
     id: "post-3",
@@ -46,6 +50,7 @@ export const initialPosts: Post[] = [
     content: "从灵感收集、自由写作和阅读输入开始，建立稳定的创作节奏。",
     status: "已发布",
     date: "2025-05-16",
+    views: 3241,
   },
   {
     id: "post-4",
@@ -55,6 +60,7 @@ export const initialPosts: Post[] = [
     content: "一个适合慢下来的周末下午。",
     status: "草稿",
     date: "2025-05-20",
+    views: null,
   },
   {
     id: "post-5",
@@ -64,6 +70,7 @@ export const initialPosts: Post[] = [
     content: "从路线到行李，整理让旅途更轻松的方法。",
     status: "草稿",
     date: "2025-05-18",
+    views: null,
   },
 ];
 

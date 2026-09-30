@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { AdminWorkspace } from "@/components/admin/admin-workspace";
+import { AdminOverview } from "@/components/admin/admin-overview";
 
 export const metadata: Metadata = {
   title: "管理仪表盘 · fuxiaochen",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminPage() {
-  return <AdminWorkspace />;
+  return <AdminOverview />;
 }

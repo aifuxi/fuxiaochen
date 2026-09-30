@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -47,8 +48,8 @@ type Props = {
 };
 
 const nav = [
-  { name: "仪表盘", icon: Home, active: true },
-  { name: "内容管理", icon: FileText },
+  { name: "仪表盘", icon: Home, href: "/admin" },
+  { name: "内容管理", icon: FileText, href: "/admin/posts" },
   { name: "评论管理", icon: MessageCircle },
   { name: "媒体库", icon: ImageIcon },
   { name: "分类与标签", icon: Tags },
@@ -60,6 +61,7 @@ const nav = [
 ];
 
 export function AdminShell({ children, pendingCount, unreadCount, onOpen, onUnavailable }: Props) {
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -99,23 +101,42 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen, onUnav
         <nav className="admin-nav" aria-label="管理导航">
           {nav.map((item) => {
             const Icon = item.icon;
-            return (
-              <button
-                key={item.name}
-                type="button"
-                className={`admin-nav-item ${item.active ? "is-active" : ""}`}
-                aria-current={item.active ? "page" : undefined}
-                title={collapsed && !mobile ? item.name : undefined}
-                onClick={() => {
-                  if (mobile) setMobileOpen(false);
-                  if (!item.active) onUnavailable(item.name);
-                }}
-              >
+            const active = "href" in item && pathname === item.href;
+            const content = (
+              <>
                 <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
                 {(!collapsed || mobile) && <span>{item.name}</span>}
                 {item.name === "评论管理" && pendingCount > 0 && (!collapsed || mobile) && (
                   <span className="admin-nav-badge">{pendingCount}</span>
                 )}
+              </>
+            );
+            const sharedProps = {
+              className: `admin-nav-item ${active ? "is-active" : ""}`,
+              "aria-label": item.name,
+              title: collapsed && !mobile ? item.name : undefined,
+            };
+            return "href" in item ? (
+              <Link
+                key={item.name}
+                href={item.href!}
+                {...sharedProps}
+                aria-current={active ? "page" : undefined}
+                onClick={() => setMobileOpen(false)}
+              >
+                {content}
+              </Link>
+            ) : (
+              <button
+                key={item.name}
+                type="button"
+                {...sharedProps}
+                onClick={() => {
+                  if (mobile) setMobileOpen(false);
+                  onUnavailable(item.name);
+                }}
+              >
+                {content}
               </button>
             );
           })}

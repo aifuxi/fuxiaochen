@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Search, Trash2, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { AdminDashboard } from "./admin-dashboard";
+import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import {
   initialCategories,
@@ -44,10 +44,10 @@ const panelTitles: Record<AdminPanel, string> = {
   schedule: "定时发布计划",
 };
 
-export function AdminWorkspace() {
+export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [posts, setPosts] = useState(initialPosts);
   const [comments, setComments] = useState(initialComments);
-  const [schedules, setSchedules] = useState(initialSchedules);
+  const [manualSchedules, setSchedules] = useState(initialSchedules);
   const [notices, setNotices] = useState(initialNotices);
   const [categories, setCategories] = useState(initialCategories);
   const [panel, setPanel] = useState<AdminPanel | null>(null);
@@ -59,6 +59,9 @@ export function AdminWorkspace() {
   const [body, setBody] = useState("");
   const [category, setCategory] = useState(initialCategories[0]);
   const [postStatus, setPostStatus] = useState<PostStatus>("草稿");
+  const [tags, setTags] = useState("");
+  const [publishDate, setPublishDate] = useState("");
+  const [postDeleteId, setPostDeleteId] = useState<string | null>(null);
   const [files, setFiles] = useState<string[]>([]);
   const [newCategory, setNewCategory] = useState("");
   const [scheduleTitle, setScheduleTitle] = useState("");
@@ -77,6 +80,8 @@ export function AdminWorkspace() {
       setBody("");
       setCategory(initialCategories[0]);
       setPostStatus("草稿");
+      setTags("");
+      setPublishDate("");
     }
     setPanel(name);
   }, []);
@@ -87,6 +92,8 @@ export function AdminWorkspace() {
     setBody(post.content);
     setCategory(post.category);
     setPostStatus(post.status);
+    setTags(post.tags.join(", "));
+    setPublishDate(post.scheduledFor ?? "");
     setPanel("compose");
   };
 
@@ -111,12 +118,44 @@ export function AdminWorkspace() {
     event.preventDefault();
     const cleanTitle = title.trim();
     const cleanBody = body.trim();
-    if (!cleanTitle || !cleanBody) return;
+    const dateValue = new FormData(event.currentTarget).get("publish-date");
+    const nextPublishDate = typeof dateValue === "string" ? dateValue : "";
+    if (!cleanTitle || !cleanBody) {
+      setMessage("标题和正文不能只包含空格");
+      return;
+    }
+    if (
+      postStatus === "已排期" &&
+      (!nextPublishDate ||
+        Date.parse(`${nextPublishDate}+08:00`) <= Date.now() ||
+        !Number.isFinite(Date.parse(`${nextPublishDate}+08:00`)))
+    ) {
+      setMessage("请选择未来的发布时间（北京时间）");
+      return;
+    }
+    const cleanTags = [
+      ...new Set(
+        tags
+          .split(/[,，\n]/)
+          .map((tag) => tag.trim())
+          .filter(Boolean),
+      ),
+    ];
+    const scheduledFor = postStatus === "已排期" ? nextPublishDate : undefined;
     if (editingId) {
       setPosts((current) =>
         current.map((post) =>
           post.id === editingId
-            ? { ...post, title: cleanTitle, content: cleanBody, category, status: postStatus }
+            ? {
+                ...post,
+                title: cleanTitle,
+                content: cleanBody,
+                category,
+                status: postStatus,
+                tags: cleanTags,
+                scheduledFor,
+                views: postStatus === "已发布" ? (post.views ?? 0) : null,
+              }
             : post,
         ),
       );
@@ -127,9 +166,11 @@ export function AdminWorkspace() {
           title: cleanTitle,
           content: cleanBody,
           category,
-          tags: [],
+          tags: cleanTags,
+          scheduledFor,
+          views: postStatus === "已发布" ? 0 : null,
           status: postStatus,
-          date: new Date().toISOString().slice(0, 10),
+          date: new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Shanghai" }),
         },
         ...current,
       ]);
@@ -171,27 +212,44 @@ export function AdminWorkspace() {
     setMessage("计划已添加（仅当前页面）");
   };
 
+  const schedules: Schedule[] = [
+    ...manualSchedules,
+    ...posts
+      .filter((post) => post.status === "已排期" && post.scheduledFor)
+      .map((post) => ({
+        id: post.id,
+        title: post.title,
+        date: post.scheduledFor!.replace("T", " "),
+      })),
+  ].toSorted((a, b) => a.date.localeCompare(b.date));
+  const targetPost = posts.find((post) => post.id === postDeleteId);
+
   const pendingCount = comments.filter((comment) => comment.status === "待审核").length;
   const unreadCount = notices.filter((notice) => !notice.read).length;
   const targetComment = comments.find((comment) => comment.id === deleteId);
 
   return (
-    <>
+    <AdminContext.Provider
+      value={{
+        posts,
+        comments,
+        schedules,
+        categories,
+        onOpen: openPanel,
+        onEdit: openEditor,
+        onDeletePost: setPostDeleteId,
+        onApprove: approveComment,
+        onDeleteComment: setDeleteId,
+        onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
+      }}
+    >
       <AdminShell
         pendingCount={pendingCount}
         unreadCount={unreadCount}
         onOpen={openPanel}
         onUnavailable={(name) => setMessage(`${name}页面待建设`)}
       >
-        <AdminDashboard
-          posts={posts}
-          comments={comments}
-          schedules={schedules}
-          onOpen={openPanel}
-          onApprove={approveComment}
-          onDelete={setDeleteId}
-          onBackup={() => setMessage("模拟备份已完成；未连接真实服务器")}
-        />
+        {children}
       </AdminShell>
       {message && (
         <output className="admin-toast">
@@ -297,6 +355,16 @@ export function AdminWorkspace() {
                       </SelectContent>
                     </Select>
                   </label>
+                  <label htmlFor="admin-post-tags">
+                    标签（逗号分隔）
+                    <Input
+                      id="admin-post-tags"
+                      value={tags}
+                      maxLength={300}
+                      onChange={(event) => setTags(event.target.value)}
+                      placeholder="例如：写作, 灵感"
+                    />
+                  </label>
                   <fieldset className="admin-status-options">
                     <legend>文章状态</legend>
                     <label>
@@ -317,7 +385,29 @@ export function AdminWorkspace() {
                       />
                       已发布
                     </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="post-status"
+                        checked={postStatus === "已排期"}
+                        onChange={() => setPostStatus("已排期")}
+                      />
+                      已排期
+                    </label>
                   </fieldset>
+                  {postStatus === "已排期" && (
+                    <label htmlFor="admin-post-publish-date">
+                      计划发布时间（北京时间，仅模拟，不会自动发布）
+                      <Input
+                        id="admin-post-publish-date"
+                        name="publish-date"
+                        type="datetime-local"
+                        required
+                        value={publishDate}
+                        onChange={(event) => setPublishDate(event.target.value)}
+                      />
+                    </label>
+                  )}
                   <div className="admin-form-actions">
                     <Button type="button" variant="ghost" onClick={() => setPanel(null)}>
                       取消
@@ -570,11 +660,19 @@ export function AdminWorkspace() {
                           variant="ghost"
                           size="sm"
                           aria-label={`移除计划 ${schedule.title}`}
-                          onClick={() =>
+                          onClick={() => {
                             setSchedules((current) =>
                               current.filter((item) => item.id !== schedule.id),
-                            )
-                          }
+                            );
+                            setPosts((current) =>
+                              current.map((post) =>
+                                post.id === schedule.id
+                                  ? { ...post, status: "草稿", scheduledFor: undefined }
+                                  : post,
+                              ),
+                            );
+                            setMessage("计划已移除（仅当前页面）");
+                          }}
                         >
                           <Trash2 size={15} />
                         </Button>
@@ -615,6 +713,34 @@ export function AdminWorkspace() {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+      <Dialog
+        open={postDeleteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setPostDeleteId(null);
+        }}
+      >
+        <DialogContent className="admin-confirm">
+          <DialogTitle>删除文章？</DialogTitle>
+          <DialogDescription>
+            确认移除《{targetPost?.title}》及其文章排期。仅影响当前模拟会话，刷新后恢复。
+          </DialogDescription>
+          <div className="admin-form-actions">
+            <Button variant="ghost" onClick={() => setPostDeleteId(null)}>
+              取消
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setPosts((current) => current.filter((post) => post.id !== postDeleteId));
+                setPostDeleteId(null);
+                setMessage("文章已删除（仅当前页面）");
+              }}
+            >
+              确认删除
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </AdminContext.Provider>
   );
 }

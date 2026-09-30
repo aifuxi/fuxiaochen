@@ -1,0 +1,27 @@
+"use client";
+
+import { createContext, useContext } from "react";
+
+import type { AdminPanel } from "./admin-shell";
+import type { Comment, Post, Schedule } from "./mock-data";
+
+type AdminState = {
+  posts: Post[];
+  comments: Comment[];
+  schedules: Schedule[];
+  categories: string[];
+  onOpen: (panel: AdminPanel) => void;
+  onEdit: (post: Post) => void;
+  onDeletePost: (id: string) => void;
+  onApprove: (id: string) => void;
+  onDeleteComment: (id: string) => void;
+  onBackup: () => void;
+};
+
+export const AdminContext = createContext<AdminState | null>(null);
+
+export function useAdminWorkspace() {
+  const state = useContext(AdminContext);
+  if (!state) throw new Error("管理页面必须位于 AdminWorkspace 中");
+  return state;
+}
