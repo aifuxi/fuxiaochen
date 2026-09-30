@@ -306,61 +306,9 @@ a {
   initial-value: 0deg;
   inherits: false;
 }
-.beam-frame {
-  background: conic-gradient(
-    from var(--beam-angle),
-    #25252b 0 65%,
-    #79aaff 73%,
-    #f4f7ff 77%,
-    #0071fc 81%,
-    #25252b 88%
-  );
-  box-shadow: 0 0 25px rgba(0, 113, 252, 0.1);
-  animation: beam-spin 3s linear infinite;
-}
 @keyframes beam-spin {
   to {
     --beam-angle: 360deg;
-  }
-}
-.orb-core {
-  position: relative;
-  width: 94px;
-  height: 94px;
-  filter: blur(0.2px);
-}
-.orb {
-  position: absolute;
-  width: 68px;
-  height: 68px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 28%, #d8d3ff, #8576c5 35%, #35315d 72%, transparent);
-  box-shadow: 0 0 24px rgba(126, 110, 210, 0.3);
-  animation: orb-drift 3.4s ease-in-out infinite alternate;
-}
-.orb-one {
-  top: 4px;
-  left: 3px;
-}
-.orb-two {
-  top: 22px;
-  left: 28px;
-  width: 58px;
-  height: 58px;
-  opacity: 0.75;
-  animation-delay: -1.2s;
-}
-.orb-three {
-  top: 36px;
-  left: 9px;
-  width: 42px;
-  height: 42px;
-  opacity: 0.5;
-  animation-delay: -2s;
-}
-@keyframes orb-drift {
-  to {
-    transform: translate(9px, -7px) scale(1.08);
   }
 }
 @keyframes orb-pulse {
@@ -391,9 +339,7 @@ a {
 [data-motion="off"] .hero-tile,
 [data-motion="off"] .mini-orb,
 [data-motion="off"] .mini-beam,
-[data-motion="off"] .gooey-blobs i,
-[data-motion="off"] .beam-frame,
-[data-motion="off"] .orb {
+[data-motion="off"] .gooey-blobs i {
   animation-play-state: paused !important;
 }
 @media (prefers-reduced-motion: reduce) {

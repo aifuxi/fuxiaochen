@@ -1,5 +1,6 @@
 "use client";
 
+import { BorderBeam } from "border-beam";
 import {
   ArrowRight,
   Check,
@@ -14,7 +15,8 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ThinkingOrb } from "thinking-orbs";
 
 import {
   Accordion,
@@ -94,26 +96,29 @@ function SectionHead({
   );
 }
 
-function Beam() {
+function Beam({ active }: { active: boolean }) {
   return (
     <div className="flex h-full min-h-[180px] items-center justify-center">
-      <div className="beam-frame rounded-[21px] p-[1px]">
+      <BorderBeam
+        size="md"
+        colorVariant="ocean"
+        theme="dark"
+        active={active}
+        style={{ width: 185 }}
+      >
         <div className="flex h-[100px] w-[185px] items-center justify-center rounded-[20px] bg-[#171719] text-[13px] text-[#e7e7e7]">
           Border beam
         </div>
-      </div>
+      </BorderBeam>
     </div>
   );
 }
 
-function Orb() {
+function Orb({ paused }: { paused: boolean }) {
   return (
-    <div className="flex h-full min-h-[180px] items-center justify-center">
-      <div className="orb-core">
-        <i className="orb orb-one" />
-        <i className="orb orb-two" />
-        <i className="orb orb-three" />
-      </div>
+    <div className="flex h-full min-h-[180px] flex-col items-center justify-center gap-3">
+      <ThinkingOrb state="breathing" size={64} theme="dark" paused={paused} aria-hidden="true" />
+      <span className="text-[11px] text-[#999]">构思中</span>
     </div>
   );
 }
@@ -122,18 +127,24 @@ function DemoCard({
   kind,
   title,
   caption,
+  selected = false,
+  playing = false,
+  onSelect,
 }: {
   kind: "beam" | "orb" | "lift";
   title: string;
   caption: string;
+  selected?: boolean;
+  playing?: boolean;
+  onSelect?: () => void;
 }) {
   return (
     <Card className="showcase-card group p-3">
       <CardStage className="h-[190px] overflow-hidden">
         {kind === "beam" ? (
-          <Beam />
+          <Beam active={playing} />
         ) : kind === "orb" ? (
-          <Orb />
+          <Orb paused={!playing} />
         ) : (
           <div className="flex h-full items-center justify-center">
             <div className="lift-object flex h-20 w-20 items-center justify-center rounded-[20px] bg-[#242424] shadow-[inset_0_1px_0_rgba(255,255,255,.08)]">
@@ -147,10 +158,22 @@ function DemoCard({
           <h3 className="text-[13px] font-medium text-white">{title}</h3>
           <p className="mt-1 text-[11px] text-[#777]">{caption}</p>
         </div>
-        <ArrowRight
-          size={16}
-          className="-rotate-45 text-[#777] transition-transform group-hover:translate-x-1 group-hover:text-white"
-        />
+        {onSelect ? (
+          <button
+            type="button"
+            onClick={onSelect}
+            aria-pressed={selected}
+            aria-label={selected ? `正在预览 ${title}` : `预览 ${title}`}
+            className="rounded-full border border-white/[.1] px-2.5 py-1 text-[11px] text-[#aaa] transition-colors hover:border-white/25 hover:text-white aria-pressed:bg-white/[.08] aria-pressed:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+          >
+            {selected ? "已选中" : "预览"}
+          </button>
+        ) : (
+          <ArrowRight
+            size={16}
+            className="-rotate-45 text-[#777] transition-transform group-hover:translate-x-1 group-hover:text-white"
+          />
+        )}
       </div>
     </Card>
   );
@@ -158,10 +181,20 @@ function DemoCard({
 
 export default function Page() {
   const [motion, setMotion] = useState(true);
+  const [reducedMotion, setReducedMotion] = useState(true);
+  const [selectedEffect, setSelectedEffect] = useState<"beam" | "orb">("beam");
   const [replay, setReplay] = useState(0);
   const [notice, setNotice] = useState("");
   const [mobileNav, setMobileNav] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(preference.matches);
+    updatePreference();
+    preference.addEventListener("change", updatePreference);
+    return () => preference.removeEventListener("change", updatePreference);
+  }, []);
 
   function showNotice(message: string) {
     setNotice(message);
@@ -506,8 +539,22 @@ export default function Page() {
               </TabsPanel>
               <TabsPanel value="cards">
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  <DemoCard kind="beam" title="Border beam" caption="边缘流光 · Highlight" />
-                  <DemoCard kind="orb" title="Thinking orb" caption="柔和等待反馈 · Ambient" />
+                  <DemoCard
+                    kind="beam"
+                    title="Border beam"
+                    caption="边缘流光 · Highlight"
+                    selected={selectedEffect === "beam"}
+                    playing={selectedEffect === "beam" && motion && !reducedMotion}
+                    onSelect={() => setSelectedEffect("beam")}
+                  />
+                  <DemoCard
+                    kind="orb"
+                    title="Thinking orb"
+                    caption="柔和等待反馈 · Ambient"
+                    selected={selectedEffect === "orb"}
+                    playing={selectedEffect === "orb" && motion && !reducedMotion}
+                    onSelect={() => setSelectedEffect("orb")}
+                  />
                   <DemoCard kind="lift" title="Surface lift" caption="表面上浮 · Hover" />
                 </div>
               </TabsPanel>
@@ -631,8 +678,22 @@ export default function Page() {
               </Button>
             </div>
             <div key={replay} className="grid gap-4 md:grid-cols-3">
-              <DemoCard kind="beam" title="Border beam" caption="沿边界移动 / loop" />
-              <DemoCard kind="orb" title="Ambient orb" caption="低对比度呼吸 / loop" />
+              <DemoCard
+                kind="beam"
+                title="Border beam"
+                caption="沿边界移动 / loop"
+                selected={selectedEffect === "beam"}
+                playing={selectedEffect === "beam" && motion && !reducedMotion}
+                onSelect={() => setSelectedEffect("beam")}
+              />
+              <DemoCard
+                kind="orb"
+                title="Thinking orb"
+                caption="低对比度呼吸 / loop"
+                selected={selectedEffect === "orb"}
+                playing={selectedEffect === "orb" && motion && !reducedMotion}
+                onSelect={() => setSelectedEffect("orb")}
+              />
               <DemoCard kind="lift" title="Micro lift" caption="上浮 6px / 350ms" />
             </div>
             <div className="mt-4 grid gap-4 rounded-[18px] border border-white/[.06] bg-[#181818] p-5 sm:grid-cols-4">
