@@ -54,7 +54,7 @@ const principles = [
     Icon: MousePointer2,
     number: "02",
     title: "即时反馈",
-    text: "悬停提亮、按下收紧，让控件回应每次操作。",
+    text: "悬停提亮、按下压暗，让控件回应每次操作。",
   },
   {
     Icon: Sparkles,
@@ -280,18 +280,18 @@ export default function Page() {
                 <p className="mt-7 max-w-[560px] text-[15px] leading-[1.8] text-[#a0a0a0]">
                   一套以深色材质、克制的蓝色信号和流畅微交互构成的设计系统。把按钮、卡片与动效放进同一种视觉语言。
                 </p>
-                <div className="mt-8 flex flex-wrap gap-2.5">
-                  <a
-                    href="#components"
-                    className="ds-button inline-flex h-9 items-center gap-2 rounded-full bg-[var(--color-primary)] px-4 text-[13px] font-medium text-white hover:bg-[var(--color-primary-hover)] focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
-                  >
-                    探索组件 <ArrowRight size={14} />
-                  </a>
+                <div className="mt-8 flex flex-wrap gap-[11px]">
                   <a
                     href="#foundations"
-                    className="ds-button inline-flex h-9 items-center rounded-full bg-[#2a2a2a] px-4 text-[13px] font-medium text-white hover:bg-[#333] focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+                    className="ds-button ds-button-secondary inline-flex h-8 items-center rounded-full px-3"
                   >
                     查看设计原则
+                  </a>
+                  <a
+                    href="#components"
+                    className="ds-button ds-button-primary inline-flex h-8 items-center gap-2 rounded-full px-3"
+                  >
+                    探索组件 <ArrowRight size={14} />
                   </a>
                 </div>
               </div>
@@ -433,13 +433,29 @@ export default function Page() {
               <TabsPanel value="buttons">
                 <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
                   <Card className="p-3">
-                    <CardStage className="flex min-h-[250px] flex-col items-center justify-center gap-6 p-5">
+                    <CardStage className="flex min-h-[250px] flex-col items-center justify-center gap-5 p-5">
+                      <div className="flex flex-wrap justify-center gap-[11px]">
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => showNotice("Small secondary · 已触发")}
+                        >
+                          浏览组件
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => showNotice("Small primary · 已触发")}
+                        >
+                          主要操作
+                        </Button>
+                      </div>
                       <div className="flex flex-wrap justify-center gap-3">
                         <Button
                           variant="primary"
                           onClick={() => showNotice("Primary button · 已触发")}
                         >
-                          主要操作 <ArrowRight size={14} />
+                          标准按钮 <ArrowRight size={14} />
                         </Button>
                         <Button
                           variant="secondary"
@@ -452,13 +468,6 @@ export default function Page() {
                         </Button>
                       </div>
                       <div className="flex flex-wrap justify-center gap-3">
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => showNotice("Small button · 已触发")}
-                        >
-                          Small button
-                        </Button>
                         <Button variant="secondary" size="sm" disabled>
                           Disabled
                         </Button>
@@ -474,13 +483,14 @@ export default function Page() {
                         <span className="text-[14px] font-medium">Button anatomy</span>
                       </div>
                       <p className="text-[13px] leading-6 text-[#999]">
-                        32 / 40px 高度，胶囊圆角。默认稳定，悬停微亮，按下收紧。焦点环始终可见。
+                        32 / 40px
+                        胶囊。顶部高光、底部暗线和细内边线形成材质；悬停提亮，按下压暗，焦点环始终可见。
                       </p>
                     </div>
                     <div className="mt-6 space-y-1 border-t border-white/[.07] pt-4 font-mono text-[11px] text-[#888]">
                       <p className="flex justify-between">
                         <span>hover</span>
-                        <span className="text-[#ccc]">150ms / ease-out</span>
+                        <span className="text-[#ccc]">200ms / smooth-out</span>
                       </p>
                       <p className="flex justify-between">
                         <span>focus</span>
@@ -526,7 +536,7 @@ export default function Page() {
                       />
                     </div>
                     <Dialog>
-                      <DialogTrigger className="ds-button mt-5 inline-flex h-9 items-center gap-2 rounded-full bg-[#2a2a2a] px-4 text-[13px] text-white hover:bg-[#333] focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]">
+                      <DialogTrigger className="ds-button ds-button-secondary mt-5 inline-flex h-8 items-center gap-2 rounded-full px-3">
                         打开 Dialog <ArrowRight size={14} />
                       </DialogTrigger>
                       <DialogContent>
@@ -549,7 +559,7 @@ export default function Page() {
                           或点击背景即可关闭。
                         </DialogDescription>
                         <div className="mt-7 flex justify-end">
-                          <DialogClose className="ds-button rounded-full bg-[var(--color-primary)] px-4 py-2 text-[13px] text-white hover:bg-[var(--color-primary-hover)]">
+                          <DialogClose className="ds-button ds-button-primary inline-flex h-8 items-center rounded-full px-3">
                             完成
                           </DialogClose>
                         </div>
