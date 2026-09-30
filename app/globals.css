@@ -24,6 +24,9 @@
   --color-muted: #b5b5b5;
   --color-subtle: #8f8f8f;
   --color-outline: #303030;
+  --color-scrollbar: #737373;
+  --color-scrollbar-hover: #929292;
+  --color-scrollbar-pressed: #b5b5b5;
   --color-focus: #7db4ff;
   --color-success: #73d6a1;
   --color-danger: #ff7b7b;
@@ -49,6 +52,39 @@ body {
   background: #121212;
   font-family: var(--font-sans);
 }
+
+@media (forced-colors: none) {
+  @supports not selector(::-webkit-scrollbar-thumb) {
+    * {
+      scrollbar-color: var(--color-scrollbar) transparent;
+      scrollbar-width: thin;
+    }
+  }
+
+  @supports selector(::-webkit-scrollbar-thumb) {
+    *::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    *::-webkit-scrollbar-track,
+    *::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+      min-height: 32px;
+      border: 2px solid transparent;
+      border-radius: 999px;
+      background: var(--color-scrollbar) padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-scrollbar-hover);
+    }
+    *::-webkit-scrollbar-thumb:active {
+      background-color: var(--color-scrollbar-pressed);
+    }
+  }
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
