@@ -42,6 +42,7 @@ import {
   type PostStatus,
   type Schedule,
 } from "./mock-data";
+import { initialSettings } from "./settings-mock-data";
 import "./admin.css";
 
 const panelTitles: Record<AdminPanel, string> = {
@@ -64,6 +65,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
   const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
+  const [settings, setSettings] = useState(initialSettings);
   const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [comments, setComments] = useState(initialComments);
   const [manualSchedules, setSchedules] = useState(initialSchedules);
@@ -363,6 +365,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
+        settings,
+        setSettings,
         releaseLogs,
         setReleaseLogs,
         friendsLinks,
@@ -386,12 +390,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
       }}
     >
-      <AdminShell
-        pendingCount={pendingCount}
-        unreadCount={unreadCount}
-        onOpen={openPanel}
-        onUnavailable={(name) => setMessage(`${name}页面待建设`)}
-      >
+      <AdminShell pendingCount={pendingCount} unreadCount={unreadCount} onOpen={openPanel}>
         {children}
       </AdminShell>
       {message && (

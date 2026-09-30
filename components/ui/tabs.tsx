@@ -27,7 +27,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof BaseT
   return (
     <BaseTabs.Tab
       className={cn(
-        "ds-tabs-trigger rounded-full px-4 text-[13px] text-[var(--color-subtle)] transition-colors duration-200 hover:text-white data-active:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
+        "ds-tabs-trigger rounded-full px-4 text-[13px] text-[var(--color-subtle)] transition-colors duration-200 enabled:hover:text-white enabled:active:text-[var(--color-muted)] data-active:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] data-disabled:cursor-not-allowed data-disabled:opacity-40",
         className,
       )}
       {...props}

@@ -44,7 +44,6 @@ type Props = {
   pendingCount: number;
   unreadCount: number;
   onOpen: (panel: AdminPanel) => void;
-  onUnavailable: (name: string) => void;
 };
 
 const nav = [
@@ -57,10 +56,10 @@ const nav = [
   { name: "访客日志", icon: Users, href: "/admin/visitors" },
   { name: "友情链接", icon: Link2, href: "/admin/friends-links" },
   { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
-  { name: "系统设置", icon: Settings },
+  { name: "系统设置", icon: Settings, href: "/admin/settings" },
 ];
 
-export function AdminShell({ children, pendingCount, unreadCount, onOpen, onUnavailable }: Props) {
+export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Props) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -101,7 +100,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen, onUnav
         <nav className="admin-nav" aria-label="管理导航">
           {nav.map((item) => {
             const Icon = item.icon;
-            const active = "href" in item && pathname === item.href;
+            const active = pathname === item.href;
             const content = (
               <>
                 <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
@@ -116,28 +115,16 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen, onUnav
               "aria-label": item.name,
               title: collapsed && !mobile ? item.name : undefined,
             };
-            return "href" in item ? (
+            return (
               <Link
                 key={item.name}
-                href={item.href!}
+                href={item.href}
                 {...sharedProps}
                 aria-current={active ? "page" : undefined}
                 onClick={() => setMobileOpen(false)}
               >
                 {content}
               </Link>
-            ) : (
-              <button
-                key={item.name}
-                type="button"
-                {...sharedProps}
-                onClick={() => {
-                  if (mobile) setMobileOpen(false);
-                  onUnavailable(item.name);
-                }}
-              >
-                {content}
-              </button>
             );
           })}
         </nav>

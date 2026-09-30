@@ -6,8 +6,11 @@ import type { AdminPanel } from "./admin-shell";
 import type { ReleaseLog } from "./changelog-mock-data";
 import type { FriendLink } from "./friends-links-mock-data";
 import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
+import type { BlogSettings } from "./settings-mock-data";
 
 type AdminState = {
+  settings: BlogSettings;
+  setSettings: Dispatch<SetStateAction<BlogSettings>>;
   releaseLogs: ReleaseLog[];
   setReleaseLogs: Dispatch<SetStateAction<ReleaseLog[]>>;
   friendsLinks: FriendLink[];
