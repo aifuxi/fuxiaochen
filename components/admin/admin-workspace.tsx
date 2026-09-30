@@ -1,0 +1,620 @@
+"use client";
+
+import { Check, Search, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+import { AdminDashboard } from "./admin-dashboard";
+import { AdminShell, type AdminPanel } from "./admin-shell";
+import {
+  initialCategories,
+  initialComments,
+  initialNotices,
+  initialPosts,
+  initialSchedules,
+  initialSources,
+  traffic30Days,
+  type Comment,
+  type Post,
+  type PostStatus,
+  type Schedule,
+} from "./mock-data";
+import "./admin.css";
+
+const panelTitles: Record<AdminPanel, string> = {
+  search: "全局内容检索",
+  compose: "文章编辑",
+  notifications: "系统通知",
+  profile: "管理账户",
+  comments: "评论管理",
+  upload: "模拟上传媒体",
+  categories: "分类与标签",
+  analytics: "流量详细分析",
+  schedule: "定时发布计划",
+};
+
+export function AdminWorkspace() {
+  const [posts, setPosts] = useState(initialPosts);
+  const [comments, setComments] = useState(initialComments);
+  const [schedules, setSchedules] = useState(initialSchedules);
+  const [notices, setNotices] = useState(initialNotices);
+  const [categories, setCategories] = useState(initialCategories);
+  const [panel, setPanel] = useState<AdminPanel | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [query, setQuery] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [category, setCategory] = useState(initialCategories[0]);
+  const [postStatus, setPostStatus] = useState<PostStatus>("草稿");
+  const [files, setFiles] = useState<string[]>([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [scheduleTitle, setScheduleTitle] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+
+  useEffect(() => {
+    if (!message) return undefined;
+    const timeout = window.setTimeout(() => setMessage(""), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [message]);
+
+  const openPanel = useCallback((name: AdminPanel) => {
+    if (name === "compose") {
+      setEditingId(null);
+      setTitle("");
+      setBody("");
+      setCategory(initialCategories[0]);
+      setPostStatus("草稿");
+    }
+    setPanel(name);
+  }, []);
+
+  const openEditor = (post: Post) => {
+    setEditingId(post.id);
+    setTitle(post.title);
+    setBody(post.content);
+    setCategory(post.category);
+    setPostStatus(post.status);
+    setPanel("compose");
+  };
+
+  const filteredPosts = useMemo(() => {
+    const term = query.trim().toLocaleLowerCase();
+    if (!term) return [];
+    return posts.filter((post) =>
+      [post.title, post.content, post.category, ...post.tags].some((value) =>
+        value.toLocaleLowerCase().includes(term),
+      ),
+    );
+  }, [posts, query]);
+
+  const approveComment = (id: string) => {
+    setComments((current) =>
+      current.map((comment) => (comment.id === id ? { ...comment, status: "已通过" } : comment)),
+    );
+    setMessage("评论已通过审核（模拟）");
+  };
+
+  const savePost = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const cleanTitle = title.trim();
+    const cleanBody = body.trim();
+    if (!cleanTitle || !cleanBody) return;
+    if (editingId) {
+      setPosts((current) =>
+        current.map((post) =>
+          post.id === editingId
+            ? { ...post, title: cleanTitle, content: cleanBody, category, status: postStatus }
+            : post,
+        ),
+      );
+    } else {
+      setPosts((current) => [
+        {
+          id: crypto.randomUUID(),
+          title: cleanTitle,
+          content: cleanBody,
+          category,
+          tags: [],
+          status: postStatus,
+          date: new Date().toISOString().slice(0, 10),
+        },
+        ...current,
+      ]);
+    }
+    setPanel(null);
+    setMessage(editingId ? "文章已更新（仅当前页面）" : "文章已创建（仅当前页面）");
+  };
+
+  const addCategory = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const name = newCategory.trim();
+    if (!name || categories.includes(name)) {
+      setMessage("请输入未使用的分类名称");
+      return;
+    }
+    setCategories((current) => [...current, name]);
+    setNewCategory("");
+    setMessage("分类已添加（仅当前页面）");
+  };
+
+  const addSchedule = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const titleValue = form.get("title");
+    const dateValue = form.get("date");
+    const nextTitle = typeof titleValue === "string" ? titleValue.trim() : "";
+    const nextDate = typeof dateValue === "string" ? dateValue : "";
+    if (!nextTitle || !nextDate) return;
+    setSchedules((current) => [
+      ...current,
+      {
+        id: crypto.randomUUID(),
+        title: nextTitle,
+        date: nextDate.replace("T", " "),
+      },
+    ]);
+    setScheduleTitle("");
+    setScheduleDate("");
+    setMessage("计划已添加（仅当前页面）");
+  };
+
+  const pendingCount = comments.filter((comment) => comment.status === "待审核").length;
+  const unreadCount = notices.filter((notice) => !notice.read).length;
+  const targetComment = comments.find((comment) => comment.id === deleteId);
+
+  return (
+    <>
+      <AdminShell
+        pendingCount={pendingCount}
+        unreadCount={unreadCount}
+        onOpen={openPanel}
+        onUnavailable={(name) => setMessage(`${name}页面待建设`)}
+      >
+        <AdminDashboard
+          posts={posts}
+          comments={comments}
+          schedules={schedules}
+          onOpen={openPanel}
+          onApprove={approveComment}
+          onDelete={setDeleteId}
+          onBackup={() => setMessage("模拟备份已完成；未连接真实服务器")}
+        />
+      </AdminShell>
+      {message && (
+        <output className="admin-toast">
+          {message}
+          <button type="button" aria-label="关闭提示" onClick={() => setMessage("")}>
+            <X size={14} />
+          </button>
+        </output>
+      )}
+      <Dialog
+        open={panel !== null}
+        onOpenChange={(open) => {
+          if (!open) setPanel(null);
+        }}
+      >
+        <DialogContent className="admin-modal">
+          {panel && (
+            <>
+              <div className="admin-modal-heading">
+                <div>
+                  <DialogTitle>{panelTitles[panel]}</DialogTitle>
+                  <DialogDescription>
+                    此处操作使用演示数据，刷新页面后恢复初始状态。
+                  </DialogDescription>
+                </div>
+                <Button variant="ghost" size="sm" aria-label="关闭" onClick={() => setPanel(null)}>
+                  <X size={18} />
+                </Button>
+              </div>
+              {panel === "search" && (
+                <div className="admin-modal-section">
+                  <label htmlFor="admin-search-input">搜索文章标题、正文、标签和分类</label>
+                  <div className="admin-search-field">
+                    <Search size={18} aria-hidden="true" />
+                    <Input
+                      id="admin-search-input"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="输入关键词…"
+                    />
+                  </div>
+                  <div className="admin-result-list">
+                    {!query.trim() ? (
+                      <p className="admin-empty">输入关键词开始搜索。</p>
+                    ) : filteredPosts.length ? (
+                      filteredPosts.map((post) => (
+                        <button
+                          className="admin-result"
+                          type="button"
+                          key={post.id}
+                          onClick={() => openEditor(post)}
+                        >
+                          <strong>{post.title}</strong>
+                          <span>
+                            {post.category} · {post.status} · {post.date}
+                          </span>
+                        </button>
+                      ))
+                    ) : (
+                      <p className="admin-empty">没有找到相关文章。</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {panel === "compose" && (
+                <form className="admin-form" onSubmit={savePost}>
+                  <label htmlFor="admin-post-title">
+                    文章标题
+                    <Input
+                      id="admin-post-title"
+                      required
+                      maxLength={120}
+                      value={title}
+                      onChange={(event) => setTitle(event.target.value)}
+                      placeholder="输入标题"
+                    />
+                  </label>
+                  <label htmlFor="admin-post-body">
+                    正文内容
+                    <Textarea
+                      id="admin-post-body"
+                      required
+                      value={body}
+                      onChange={(event) => setBody(event.target.value)}
+                      placeholder="开始写作…"
+                    />
+                  </label>
+                  <label htmlFor="admin-post-category">
+                    分类
+                    <Select
+                      value={category}
+                      onValueChange={(value) => setCategory(value ?? initialCategories[0])}
+                    >
+                      <SelectTrigger id="admin-post-category">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((item) => (
+                          <SelectItem value={item} key={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </label>
+                  <fieldset className="admin-status-options">
+                    <legend>文章状态</legend>
+                    <label>
+                      <input
+                        type="radio"
+                        name="post-status"
+                        checked={postStatus === "草稿"}
+                        onChange={() => setPostStatus("草稿")}
+                      />
+                      草稿
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        name="post-status"
+                        checked={postStatus === "已发布"}
+                        onChange={() => setPostStatus("已发布")}
+                      />
+                      已发布
+                    </label>
+                  </fieldset>
+                  <div className="admin-form-actions">
+                    <Button type="button" variant="ghost" onClick={() => setPanel(null)}>
+                      取消
+                    </Button>
+                    <Button type="submit" variant="primary">
+                      {editingId ? "保存修改" : "创建文章"}
+                    </Button>
+                  </div>
+                </form>
+              )}
+              {panel === "notifications" && (
+                <div className="admin-modal-section">
+                  <div className="admin-modal-toolbar">
+                    <span>{unreadCount} 条未读</span>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={unreadCount === 0}
+                      onClick={() =>
+                        setNotices((current) =>
+                          current.map((notice) => ({ ...notice, read: true })),
+                        )
+                      }
+                    >
+                      全部已读
+                    </Button>
+                  </div>
+                  <div className="admin-result-list">
+                    {notices.map((notice) => (
+                      <button
+                        type="button"
+                        className={`admin-notice ${notice.read ? "" : "is-unread"}`}
+                        key={notice.id}
+                        onClick={() =>
+                          setNotices((current) =>
+                            current.map((item) =>
+                              item.id === notice.id ? { ...item, read: true } : item,
+                            ),
+                          )
+                        }
+                      >
+                        <strong>{notice.title}</strong>
+                        <span>{notice.detail}</span>
+                        <small>
+                          {notice.time} · {notice.read ? "已读" : "未读"}
+                        </small>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {panel === "profile" && (
+                <div className="admin-modal-section">
+                  <p>fuxiaochen · 管理账户</p>
+                  <p className="admin-muted">当前使用本项目的现有登录会话。</p>
+                  <form action="/api/logout" method="post">
+                    <Button type="submit" variant="secondary">
+                      退出登录
+                    </Button>
+                  </form>
+                </div>
+              )}
+              {panel === "comments" && (
+                <div className="admin-modal-section">
+                  <div className="admin-result-list">
+                    {comments.length ? (
+                      comments.map((comment: Comment) => (
+                        <div className="admin-managed-row" key={comment.id}>
+                          <div>
+                            <strong>{comment.author}</strong>
+                            <span>{comment.content}</span>
+                            <small>
+                              {comment.postTitle} · {comment.status}
+                            </small>
+                          </div>
+                          <div>
+                            {comment.status === "待审核" && (
+                              <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => approveComment(comment.id)}
+                                aria-label={`通过 ${comment.author} 的评论`}
+                              >
+                                <Check size={14} />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setDeleteId(comment.id)}
+                              aria-label={`删除 ${comment.author} 的评论`}
+                            >
+                              <Trash2 size={15} />
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="admin-empty">暂无评论。</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {panel === "upload" && (
+                <div className="admin-modal-section">
+                  <label htmlFor="admin-upload">选择本地图片或文件</label>
+                  <input
+                    id="admin-upload"
+                    className="admin-file-input"
+                    type="file"
+                    multiple
+                    onChange={(event) =>
+                      setFiles((current) => [
+                        ...current,
+                        ...Array.from(event.target.files ?? []).map((file) => file.name),
+                      ])
+                    }
+                  />
+                  <p className="admin-muted">仅展示文件名，不会上传到服务器。</p>
+                  <div className="admin-result-list">
+                    {files.length ? (
+                      files.map((file, index) => (
+                        <div className="admin-managed-row" key={`${file}-${index}`}>
+                          <span>{file}</span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            aria-label={`移除 ${file}`}
+                            onClick={() =>
+                              setFiles((current) =>
+                                current.filter((_, itemIndex) => itemIndex !== index),
+                              )
+                            }
+                          >
+                            <X size={15} />
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="admin-empty">尚未选择文件。</p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {panel === "categories" && (
+                <div className="admin-modal-section">
+                  <form className="admin-inline-form" onSubmit={addCategory}>
+                    <label htmlFor="admin-new-category">新增分类</label>
+                    <div>
+                      <Input
+                        id="admin-new-category"
+                        maxLength={40}
+                        value={newCategory}
+                        onChange={(event) => setNewCategory(event.target.value)}
+                        placeholder="分类名称"
+                      />
+                      <Button type="submit" variant="primary">
+                        添加
+                      </Button>
+                    </div>
+                  </form>
+                  <div className="admin-category-list">
+                    {categories.map((item) => (
+                      <div key={item}>
+                        <span>{item}</span>
+                        <small>
+                          {posts.filter((post) => post.category === item).length} 篇文章
+                        </small>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={posts.some((post) => post.category === item)}
+                          onClick={() =>
+                            setCategories((current) => current.filter((name) => name !== item))
+                          }
+                          aria-label={`删除分类 ${item}`}
+                        >
+                          <Trash2 size={15} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {panel === "analytics" && (
+                <div className="admin-modal-section">
+                  <div className="admin-analytics-summary">
+                    <div>
+                      <span>30 天访问量</span>
+                      <strong>
+                        {traffic30Days
+                          .reduce((sum, point) => sum + point.visits, 0)
+                          .toLocaleString()}
+                      </strong>
+                    </div>
+                    <div>
+                      <span>主要来源</span>
+                      <strong>{initialSources[0].name}</strong>
+                    </div>
+                  </div>
+                  <h3>来源构成</h3>
+                  <div className="admin-category-list">
+                    {initialSources.map((source) => (
+                      <div key={source.name}>
+                        <span>{source.name}</span>
+                        <strong>{source.percentage}%</strong>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="admin-muted">图表范围可在仪表盘切换，以上为固定演示数据。</p>
+                </div>
+              )}
+              {panel === "schedule" && (
+                <div className="admin-modal-section">
+                  <form className="admin-form" onSubmit={addSchedule}>
+                    <label htmlFor="admin-schedule-title">
+                      文章标题
+                      <Input
+                        id="admin-schedule-title"
+                        name="title"
+                        value={scheduleTitle}
+                        onChange={(event) => setScheduleTitle(event.target.value)}
+                        required
+                        placeholder="输入排期文章标题"
+                      />
+                    </label>
+                    <label htmlFor="admin-schedule-date">
+                      计划发布时间
+                      <Input
+                        id="admin-schedule-date"
+                        name="date"
+                        type="datetime-local"
+                        value={scheduleDate}
+                        onChange={(event) => setScheduleDate(event.target.value)}
+                        required
+                      />
+                    </label>
+                    <Button type="submit" variant="primary">
+                      添加计划
+                    </Button>
+                  </form>
+                  <div className="admin-result-list">
+                    {schedules.map((schedule: Schedule) => (
+                      <div className="admin-managed-row" key={schedule.id}>
+                        <div>
+                          <strong>{schedule.title}</strong>
+                          <small>{schedule.date}</small>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`移除计划 ${schedule.title}`}
+                          onClick={() =>
+                            setSchedules((current) =>
+                              current.filter((item) => item.id !== schedule.id),
+                            )
+                          }
+                        >
+                          <Trash2 size={15} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={deleteId !== null}
+        onOpenChange={(open) => {
+          if (!open) setDeleteId(null);
+        }}
+      >
+        <DialogContent className="admin-confirm">
+          <DialogTitle>删除评论？</DialogTitle>
+          <DialogDescription>
+            确认从当前模拟页面移除 {targetComment?.author} 的评论。刷新页面后会恢复。
+          </DialogDescription>
+          <div className="admin-form-actions">
+            <Button variant="ghost" onClick={() => setDeleteId(null)}>
+              取消
+            </Button>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setComments((current) => current.filter((comment) => comment.id !== deleteId));
+                setDeleteId(null);
+                setMessage("评论已删除（仅当前页面）");
+              }}
+            >
+              确认删除
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
