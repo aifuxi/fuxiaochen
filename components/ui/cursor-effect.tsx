@@ -8,14 +8,15 @@ const textSelector =
 const interactiveSelector =
   'a[href], button, select, summary, label, [role="button"], [role="link"], [role="tab"], [role="switch"], [role="checkbox"], [data-cursor-interactive]';
 
-export function CursorEffect({ enabled = true }: { enabled?: boolean }) {
+export function CursorEffect() {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cursor = cursorRef.current;
-    if (!cursor || !enabled) return undefined;
+    if (!cursor) return undefined;
 
     const root = document.documentElement;
+    let lastTarget: Element | null = null;
     const finePointer = window.matchMedia(
       "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)",
     );
@@ -24,22 +25,30 @@ export function CursorEffect({ enabled = true }: { enabled?: boolean }) {
       cursor.dataset.visible = "false";
     };
 
-    const updateAvailability = () => {
-      if (finePointer.matches) return;
+    const useNativeCursor = () => {
       root.removeAttribute("data-cursor-fx");
       hide();
     };
 
+    const updateAvailability = () => {
+      if (finePointer.matches) return;
+      useNativeCursor();
+    };
+
     const onPointerMove = (event: PointerEvent) => {
       if (event.pointerType !== "mouse") {
-        root.removeAttribute("data-cursor-fx");
-        hide();
+        useNativeCursor();
         return;
       }
       if (!finePointer.matches) return;
 
       const target = event.target;
       if (!(target instanceof Element)) return;
+      lastTarget = target;
+      if (target.closest('[data-motion="off"]')) {
+        useNativeCursor();
+        return;
+      }
 
       cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
       cursor.dataset.native = target.closest(disabledSelector) ? "true" : "false";
@@ -60,6 +69,15 @@ export function CursorEffect({ enabled = true }: { enabled?: boolean }) {
       if (document.hidden) hide();
     };
 
+    const motionObserver = new MutationObserver(() => {
+      if (lastTarget?.closest('[data-motion="off"]')) useNativeCursor();
+    });
+    motionObserver.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["data-motion"],
+      subtree: true,
+    });
+
     finePointer.addEventListener("change", updateAvailability);
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerout", onPointerOut);
@@ -72,10 +90,11 @@ export function CursorEffect({ enabled = true }: { enabled?: boolean }) {
       window.removeEventListener("pointerout", onPointerOut);
       window.removeEventListener("blur", hide);
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      motionObserver.disconnect();
       root.removeAttribute("data-cursor-fx");
       hide();
     };
-  }, [enabled]);
+  }, []);
 
   return (
     <div

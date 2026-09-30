@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
-import { CursorEffect } from "@/components/ui/cursor-effect";
 import {
   Dialog,
   DialogClose,
@@ -802,7 +801,6 @@ export default function Page() {
           {notice}
         </output>
       )}
-      <CursorEffect enabled={motion && !reducedMotion} />
     </div>
   );
 }
