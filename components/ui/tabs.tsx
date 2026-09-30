@@ -8,12 +8,18 @@ import { cn } from "@/lib/utils";
 
 export const Tabs = BaseTabs.Root;
 
-export function TabsList({ className, ...props }: ComponentProps<typeof BaseTabs.List>) {
+export function TabsList({ children, className, ...props }: ComponentProps<typeof BaseTabs.List>) {
   return (
     <BaseTabs.List
-      className={cn("inline-flex h-10 gap-1 rounded-full bg-white/[0.05] p-1", className)}
+      className={cn(
+        "ds-tabs-list inline-flex h-10 gap-1 rounded-full bg-white/[0.05] p-1",
+        className,
+      )}
       {...props}
-    />
+    >
+      {children}
+      <BaseTabs.Indicator className="ds-tabs-indicator" renderBeforeHydration />
+    </BaseTabs.List>
   );
 }
 
@@ -21,7 +27,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof BaseT
   return (
     <BaseTabs.Tab
       className={cn(
-        "rounded-full px-4 text-[13px] text-[var(--color-subtle)] transition-colors duration-200 hover:text-white data-active:bg-[var(--color-raised)] data-active:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
+        "ds-tabs-trigger rounded-full px-4 text-[13px] text-[var(--color-subtle)] transition-colors duration-200 hover:text-white data-active:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
         className,
       )}
       {...props}
