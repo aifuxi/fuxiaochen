@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
+    "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "target": "ES6",
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
@@ -23,15 +23,12 @@
     }
   },
   "include": [
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
     "next-env.d.ts",
-    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".commitlintrc.cjs",
-    "postcss.config.mjs",
-    "next-sitemap.config.cjs"
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
   ],
   "exclude": ["node_modules"]
 }

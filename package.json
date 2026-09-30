@@ -17,49 +17,26 @@
     "commit:retry": "cz --retry"
   },
   "dependencies": {
-    "@bprogress/next": "^3.2.12",
-    "@bytemd/plugin-breaks": "^1.22.0",
-    "@bytemd/plugin-frontmatter": "^1.22.0",
-    "@bytemd/plugin-gfm": "^1.22.0",
-    "@bytemd/plugin-highlight-ssr": "^1.22.0",
-    "@bytemd/plugin-medium-zoom": "^1.22.0",
-    "@bytemd/react": "^1.22.0",
-    "@ebay/nice-modal-react": "^1.2.13",
-    "@hookform/resolvers": "^5.2.2",
-    "@next/third-parties": "16.2.4",
     "globals": "^16.3.0",
-    "next": "16.2.4",
-    "react": "19.2.5",
-    "react-dom": "19.2.5",
-    "tailwind-merge": "^3.6.0"
+    "next": "16.3.7",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.0",
     "@commitlint/config-conventional": "^19.6.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "22.19.3",
-    "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "autoprefixer": "^10.4.20",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
-    "oxfmt": "^0.45.0",
-    "oxlint": "^1.60.0",
-    "oxlint-tsgolint": "^0.21.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "typescript": "5.9.3"
-  },
-  "lint-staged": {
-    "*.{js,cjs,mjs,mts,cts,jsx,ts,tsx}": [
-      "oxlint --fix --quiet --no-error-on-unmatched-pattern",
-      "oxfmt --no-error-on-unmatched-pattern"
-    ],
-    "*.{css,scss,less,md,mdx,json,jsonc,json5,yaml,yml,toml,html,graphql,gql,hbs}": [
-      "oxfmt --no-error-on-unmatched-pattern"
-    ]
   },
   "config": {
     "commitizen": {
@@ -80,5 +57,9 @@
   },
   "engines": {
     "node": ">= 24"
+  },
+  "overrides": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0"
   }
 }
