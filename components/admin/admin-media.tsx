@@ -7,7 +7,12 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 
 import type { MediaItem } from "./mock-data";
 
@@ -86,20 +91,24 @@ export function AdminMedia() {
           <label htmlFor="media-search" className="sr-only">
             搜索图片文件名
           </label>
-          <div className="admin-search-field">
-            <Search size={17} aria-hidden="true" />
-            <Input
+          <InputGroup>
+            <InputGroupInput
               id="media-search"
               placeholder="搜索图片文件名…"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
-          </div>
-          {query && (
-            <Button variant="ghost" size="sm" aria-label="清空搜索" onClick={() => setQuery("")}>
-              <X size={16} />
-            </Button>
-          )}
+            <InputGroupAddon>
+              <Search size={16} aria-hidden="true" />
+            </InputGroupAddon>
+            {query && (
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton aria-label="清空搜索" onClick={() => setQuery("")}>
+                  <X size={16} aria-hidden="true" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            )}
+          </InputGroup>
         </div>
         <output className="admin-media-count">
           共计 <strong>{filtered.length}</strong> 份素材

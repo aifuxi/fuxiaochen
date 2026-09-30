@@ -16,7 +16,7 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -97,9 +97,8 @@ export function AdminComments() {
             </TabsList>
           </div>
           <div className="admin-comments-search-controls">
-            <div className="admin-search-field admin-post-search">
-              <Search size={17} aria-hidden="true" />
-              <Input
+            <InputGroup className="admin-post-search">
+              <InputGroupInput
                 aria-label="搜索评论内容、留言者、邮箱或文章"
                 value={query}
                 onChange={(event) => {
@@ -108,7 +107,10 @@ export function AdminComments() {
                 }}
                 placeholder="搜索评论内容、留言者或文章…"
               />
-            </div>
+              <InputGroupAddon>
+                <Search size={16} aria-hidden="true" />
+              </InputGroupAddon>
+            </InputGroup>
             {term && (
               <Button
                 size="sm"

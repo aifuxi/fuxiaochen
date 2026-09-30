@@ -19,6 +19,12 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -228,9 +234,8 @@ export function AdminFriendsLinks() {
             </SelectContent>
           </Select>
         </div>
-        <div className="admin-friend-search">
-          <Search size={16} aria-hidden="true" />
-          <Input
+        <InputGroup className="admin-friend-search">
+          <InputGroupInput
             aria-label="搜索友链"
             placeholder="搜索友链名称、地址或描述…"
             value={query}
@@ -239,20 +244,23 @@ export function AdminFriendsLinks() {
               setPage(1);
             }}
           />
+          <InputGroupAddon>
+            <Search size={16} aria-hidden="true" />
+          </InputGroupAddon>
           {query && (
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="清空友链搜索"
-              onClick={() => {
-                setQuery("");
-                setPage(1);
-              }}
-            >
-              <X size={14} />
-            </Button>
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                aria-label="清空友链搜索"
+                onClick={() => {
+                  setQuery("");
+                  setPage(1);
+                }}
+              >
+                <X size={14} aria-hidden="true" />
+              </InputGroupButton>
+            </InputGroupAddon>
           )}
-        </div>
+        </InputGroup>
       </Card>
       <Card className="admin-post-list">
         <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">

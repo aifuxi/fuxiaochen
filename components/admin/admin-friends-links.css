@@ -14,26 +14,7 @@
   width: 148px;
 }
 .admin-friend-search {
-  position: relative;
   width: min(100%, 320px);
-}
-.admin-friend-search > svg {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  color: var(--color-muted);
-  pointer-events: none;
-}
-.admin-friend-search > .ds-input {
-  width: 100%;
-  padding-inline: 40px;
-}
-.admin-friend-search > .ds-button {
-  position: absolute;
-  right: 6px;
-  top: 6px;
-  width: 32px;
-  padding: 0;
 }
 .admin-friend-table {
   min-width: 900px;

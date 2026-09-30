@@ -15,7 +15,12 @@ import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 
 import { initialVisitorLogs, visitorStreamSamples, visitorSummary } from "./visitors-mock-data";
 import "./admin-visitors.css";
@@ -129,20 +134,24 @@ export function AdminVisitors() {
             )}
             {paused ? "恢复更新" : "暂停更新"}
           </Button>
-          <div className="admin-search-field visitors-search">
-            <Search size={16} aria-hidden="true" />
-            <Input
+          <InputGroup className="visitors-search">
+            <InputGroupInput
               aria-label="搜索 IP、城市或受访页面"
               placeholder="搜索 IP、城市或受访页面…"
               value={query}
               onChange={(event) => updateQuery(event.target.value)}
             />
-          </div>
-          {query && (
-            <Button variant="ghost" size="sm" aria-label="清空搜索" onClick={() => updateQuery("")}>
-              <X size={16} aria-hidden="true" />
-            </Button>
-          )}
+            <InputGroupAddon>
+              <Search size={16} aria-hidden="true" />
+            </InputGroupAddon>
+            {query && (
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton aria-label="清空搜索" onClick={() => updateQuery("")}>
+                  <X size={16} aria-hidden="true" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            )}
+          </InputGroup>
         </div>
       </Card>
 

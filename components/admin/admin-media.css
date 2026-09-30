@@ -21,7 +21,7 @@
   width: min(100%, 360px);
   min-width: 0;
 }
-.admin-media-search .admin-search-field {
+.admin-media-search .ds-input-group {
   flex: 1;
   min-width: 0;
 }

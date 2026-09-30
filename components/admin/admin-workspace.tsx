@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -424,15 +425,17 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               {panel === "search" && (
                 <div className="admin-modal-section">
                   <label htmlFor="admin-search-input">搜索文章标题、正文、标签和分类</label>
-                  <div className="admin-search-field">
-                    <Search size={18} aria-hidden="true" />
-                    <Input
+                  <InputGroup>
+                    <InputGroupInput
                       id="admin-search-input"
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="输入关键词…"
                     />
-                  </div>
+                    <InputGroupAddon>
+                      <Search size={16} aria-hidden="true" />
+                    </InputGroupAddon>
+                  </InputGroup>
                   <div className="admin-result-list">
                     {!query.trim() ? (
                       <p className="admin-empty">输入关键词开始搜索。</p>

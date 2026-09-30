@@ -16,26 +16,7 @@
   font-family: var(--font-mono, ui-monospace);
 }
 .admin-release-search {
-  position: relative;
   width: min(100%, 340px);
-}
-.admin-release-search > svg {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  color: var(--color-muted);
-  pointer-events: none;
-}
-.admin-release-search > .ds-input {
-  width: 100%;
-  padding-inline: 40px;
-}
-.admin-release-search > .ds-button {
-  position: absolute;
-  right: 6px;
-  top: 6px;
-  width: 32px;
-  padding: 0;
 }
 .admin-release-card {
   padding: 28px;

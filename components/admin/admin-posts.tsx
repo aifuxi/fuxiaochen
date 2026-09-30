@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -116,9 +116,8 @@ export function AdminPosts() {
                 </SelectContent>
               </Select>
             </div>
-            <div className="admin-search-field admin-post-search">
-              <Search size={17} aria-hidden="true" />
-              <Input
+            <InputGroup className="admin-post-search">
+              <InputGroupInput
                 aria-label="搜索文章标题、标签、分类和内容"
                 value={query}
                 onChange={(event) => {
@@ -127,7 +126,10 @@ export function AdminPosts() {
                 }}
                 placeholder="搜索文章标题 / 标签 / 内容…"
               />
-            </div>
+              <InputGroupAddon>
+                <Search size={16} aria-hidden="true" />
+              </InputGroupAddon>
+            </InputGroup>
             {(term || category !== "all") && (
               <Button size="sm" variant="ghost" onClick={resetFilters}>
                 重置筛选

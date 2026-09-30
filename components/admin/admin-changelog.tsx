@@ -8,6 +8,12 @@ import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -97,29 +103,31 @@ export function AdminChangelog() {
       </div>
 
       <Card className="admin-changelog-filters">
-        <div className="admin-release-search">
-          <Search size={16} aria-hidden="true" />
-          <Input
+        <InputGroup className="admin-release-search">
+          <InputGroupInput
             ref={searchInput}
             aria-label="搜索更新日志"
             placeholder="搜索版本号、功能词或特性..."
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
+          <InputGroupAddon>
+            <Search size={16} aria-hidden="true" />
+          </InputGroupAddon>
           {query && (
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label="清空搜索"
-              onClick={() => {
-                setQuery("");
-                searchInput.current?.focus();
-              }}
-            >
-              <X size={15} aria-hidden="true" />
-            </Button>
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                aria-label="清空搜索"
+                onClick={() => {
+                  setQuery("");
+                  searchInput.current?.focus();
+                }}
+              >
+                <X size={15} aria-hidden="true" />
+              </InputGroupButton>
+            </InputGroupAddon>
           )}
-        </div>
+        </InputGroup>
         <output>
           已记录 <strong>{filtered.length}</strong> 个迭代里程碑
         </output>

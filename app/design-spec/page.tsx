@@ -12,6 +12,7 @@ import {
   Menu,
   MousePointer2,
   RotateCcw,
+  Search,
   Sparkles,
   X,
 } from "lucide-react";
@@ -47,6 +48,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -224,6 +231,7 @@ export default function Page() {
   const [notice, setNotice] = useState("");
   const [mobileNav, setMobileNav] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [searchPreview, setSearchPreview] = useState("");
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -874,6 +882,92 @@ export default function Page() {
                 </p>
               </Card>
             </div>
+            <Card className="mt-6 p-6">
+              <h3 className="text-[15px] font-medium">组合输入框</h3>
+              <p className="mt-1 mb-5 text-xs text-[var(--color-muted)]">
+                图标、输入区与操作按钮共享完整外框。
+              </p>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label htmlFor="group-search" className="block text-[13px] font-medium">
+                    搜索与清空
+                  </label>
+                  <InputGroup>
+                    <InputGroupInput
+                      id="group-search"
+                      placeholder="输入关键词…"
+                      value={searchPreview}
+                      onChange={(event) => setSearchPreview(event.target.value)}
+                    />
+                    <InputGroupAddon>
+                      <Search size={16} aria-hidden="true" />
+                    </InputGroupAddon>
+                    {searchPreview && (
+                      <InputGroupAddon align="inline-end">
+                        <InputGroupButton
+                          aria-label="清空预览搜索"
+                          onClick={() => {
+                            setSearchPreview("");
+                            document.getElementById("group-search")?.focus();
+                          }}
+                        >
+                          <X size={16} aria-hidden="true" />
+                        </InputGroupButton>
+                      </InputGroupAddon>
+                    )}
+                  </InputGroup>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="group-icon" className="block text-[13px] font-medium">
+                    带图标
+                  </label>
+                  <InputGroup>
+                    <InputGroupInput id="group-icon" placeholder="点击图标或按 Tab 聚焦" />
+                    <InputGroupAddon>
+                      <Search size={16} aria-hidden="true" />
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="group-error" className="block text-[13px] font-medium">
+                    错误
+                  </label>
+                  <InputGroup>
+                    <InputGroupInput
+                      id="group-error"
+                      defaultValue="无效条件"
+                      aria-invalid="true"
+                      aria-describedby="group-error-message"
+                    />
+                    <InputGroupAddon>
+                      <Search size={16} aria-hidden="true" />
+                    </InputGroupAddon>
+                  </InputGroup>
+                  <p id="group-error-message" className="text-[11px] text-[var(--color-danger)]">
+                    请输入有效的搜索条件。
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="group-disabled"
+                    className="block text-[13px] font-medium text-[var(--color-muted)]"
+                  >
+                    禁用
+                  </label>
+                  <InputGroup>
+                    <InputGroupInput id="group-disabled" value="暂不可搜索" disabled />
+                    <InputGroupAddon>
+                      <Search size={16} aria-hidden="true" />
+                    </InputGroupAddon>
+                    <InputGroupAddon align="inline-end">
+                      <InputGroupButton aria-label="清空禁用搜索" disabled>
+                        <X size={16} aria-hidden="true" />
+                      </InputGroupButton>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </div>
+              </div>
+            </Card>
           </section>
 
           <section id="motion" className="scroll-mt-20 pb-20">
