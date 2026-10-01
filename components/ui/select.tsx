@@ -3,8 +3,8 @@
 import type { ComponentProps } from "react";
 
 import { Select as BaseSelect } from "@base-ui/react/select";
+import { Check, ChevronDown } from "lucide-react";
 
-import { Check, ChevronDown } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export const Select = BaseSelect.Root;

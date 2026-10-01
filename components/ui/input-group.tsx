@@ -17,8 +17,6 @@ export function InputGroup({
   return (
     // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- 外框仅代理鼠标聚焦，键盘通过原生 input 与 button 导航，不增加焦点停靠点。
     <div
-      data-icon-animation-scope=""
-      data-icon-input-scope=""
       className={cn("ds-input-group", size === "compact" && "ds-control-compact", className)}
       onClick={(event) => {
         onClick?.(event);

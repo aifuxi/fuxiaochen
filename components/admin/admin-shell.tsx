@@ -1,10 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
-
 import {
   BarChart3,
   Bell,
@@ -24,7 +19,12 @@ import {
   Users,
   X,
   Globe2,
-} from "@/components/icons";
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState, type ReactNode } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 

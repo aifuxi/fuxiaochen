@@ -1,8 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import { useRef, useState, type FormEvent } from "react";
-
 import {
   Check,
   ChevronLeft,
@@ -13,7 +10,10 @@ import {
   Search,
   Trash2,
   X,
-} from "@/components/icons";
+} from "lucide-react";
+import Image from "next/image";
+import { useRef, useState, type FormEvent } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

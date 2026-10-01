@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   Activity,
   ArrowRight,
@@ -21,7 +19,9 @@ import {
   Trash2,
   UploadCloud,
   Users,
-} from "@/components/icons";
+} from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 

@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   ArrowDown,
   ArrowUp,
@@ -14,7 +12,9 @@ import {
   Smartphone,
   Tablet,
   Users,
-} from "@/components/icons";
+} from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";

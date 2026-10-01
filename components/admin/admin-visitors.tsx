@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 import {
   ChevronLeft,
   ChevronRight,
@@ -12,7 +10,9 @@ import {
   ShieldCheck,
   Users,
   X,
-} from "@/components/icons";
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import {

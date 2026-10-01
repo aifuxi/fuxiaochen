@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 
+import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { ArrowRight, ArrowUpRight, LockKeyhole } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SESSION_COOKIE, validSession } from "@/lib/auth";

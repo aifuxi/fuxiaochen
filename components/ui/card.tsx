@@ -4,11 +4,7 @@ import { cn } from "@/lib/utils";
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      data-icon-animation-scope=""
-      className={cn("ds-card rounded-[24px] bg-[var(--color-surface)]", className)}
-      {...props}
-    />
+    <div className={cn("ds-card rounded-[24px] bg-[var(--color-surface)]", className)} {...props} />
   );
 }
 
