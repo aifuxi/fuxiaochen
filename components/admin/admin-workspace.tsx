@@ -1,6 +1,5 @@
 "use client";
 
-import { Search, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   useCallback,
@@ -12,6 +11,7 @@ import {
   type FormEvent,
 } from "react";
 
+import { Search, Trash2, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

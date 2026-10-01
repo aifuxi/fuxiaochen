@@ -309,15 +309,6 @@
   border-radius: var(--radius-form);
   font-size: 13px;
 }
-.login-submit svg {
-  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-.login-submit:hover:not(:disabled) svg {
-  transform: translateX(3px);
-}
-.login-submit:active:not(:disabled) svg {
-  transform: translateX(1px);
-}
 .login-panel-bottom {
   display: flex;
   align-items: center;
@@ -399,14 +390,5 @@
   }
   .login-form {
     margin-top: 32px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .login-submit svg {
-    transition: none;
-  }
-  .login-submit:hover:not(:disabled) svg,
-  .login-submit:active:not(:disabled) svg {
-    transform: none;
   }
 }

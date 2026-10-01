@@ -1,8 +1,8 @@
 "use client";
 
-import { History, Plus, Search, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
+import { History, Plus, Search, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

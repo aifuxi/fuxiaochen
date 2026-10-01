@@ -1,5 +1,6 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+
+import { ArrowRight } from "@/components/icons";
 
 export default function HomePage() {
   return (

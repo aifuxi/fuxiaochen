@@ -1,9 +1,9 @@
 "use client";
 
-import { Copy, Eye, ImageIcon, Search, Trash2, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
+import { Copy, Eye, ImageIcon, Search, Trash2, Upload, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";

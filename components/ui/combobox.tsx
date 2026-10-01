@@ -3,8 +3,8 @@
 import type { ComponentProps, ReactNode } from "react";
 
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
-import { Check, ChevronDown, X } from "lucide-react";
 
+import { Check, ChevronDown, X } from "@/components/icons";
 import { cn } from "@/lib/utils";
 
 export const Combobox = BaseCombobox.Root;
@@ -16,6 +16,8 @@ export function ComboboxInputGroup({
 }: ComponentProps<typeof BaseCombobox.InputGroup>) {
   return (
     <BaseCombobox.InputGroup
+      data-icon-animation-scope=""
+      data-icon-input-scope=""
       className={cn("ds-input ds-combobox-group flex h-11 w-full items-center", className)}
       {...props}
     />

@@ -1,8 +1,16 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import {

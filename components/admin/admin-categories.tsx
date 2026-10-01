@@ -1,8 +1,8 @@
 "use client";
 
-import { Folder, Plus, Tags, Trash2, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
+import { Folder, Plus, Tags, Trash2, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
 import { ColorInput } from "@/components/ui/color-input";

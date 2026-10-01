@@ -1,9 +1,9 @@
 "use client";
 
-import { Check, Code2, Info, Save, Settings, UserRound, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, type FormEvent } from "react";
 
+import { Check, Code2, Info, Save, Settings, UserRound, X } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";

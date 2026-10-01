@@ -1,6 +1,10 @@
 "use client";
 
 import { BorderBeam } from "border-beam";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ThinkingOrb } from "thinking-orbs";
+
 import {
   ArrowRight,
   Check,
@@ -15,11 +19,8 @@ import {
   Search,
   Sparkles,
   X,
-} from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ThinkingOrb } from "thinking-orbs";
-
+} from "@/components/icons";
+import { IconMotionProvider } from "@/components/icons/motion-provider";
 import {
   Accordion,
   AccordionHeader,
@@ -252,7 +253,8 @@ export default function Page() {
   }
 
   return (
-    <div
+    <IconMotionProvider
+      enabled={motion}
       className="min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]"
       data-motion={motion ? "on" : "off"}
       id="top"
@@ -1102,6 +1104,6 @@ export default function Page() {
           {notice}
         </output>
       )}
-    </div>
+    </IconMotionProvider>
   );
 }
