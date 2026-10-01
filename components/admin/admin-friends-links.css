@@ -1,42 +1,52 @@
-.admin-friend-filters {
+.admin-friends-links .admin-friend-filter-selects {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  padding: 18px;
-}
-.admin-friend-filter-selects {
-  display: flex;
+  min-width: 0;
   gap: 12px;
 }
-.admin-friend-filter-selects > .ds-input {
+.admin-friends-links .admin-friend-filter-selects > .ds-input {
   width: 148px;
 }
-.admin-friend-search {
-  width: min(100%, 320px);
+.admin-friends-links .admin-friend-search {
+  flex: 0 1 300px;
+  width: 300px;
+  max-width: 100%;
 }
-.admin-friend-table {
-  min-width: 900px;
-  table-layout: fixed;
+.admin-friends-links .admin-friend-search .ds-input-group-button {
+  width: 36px;
 }
-.admin-friend-table th:first-child {
-  width: 32%;
+.admin-friends-links .admin-friend-table {
+  min-width: 960px;
 }
-.admin-friend-table th:nth-child(2) {
-  width: 32%;
+.admin-friends-links .admin-friend-table col:nth-child(1),
+.admin-friends-links .admin-friend-table col:nth-child(2),
+.admin-friends-links .admin-friend-table th:first-child,
+.admin-friends-links .admin-friend-table th:nth-child(2) {
+  width: 30%;
 }
-.admin-friend-table th:nth-child(3) {
+.admin-friends-links .admin-friend-table col:nth-child(3) {
   width: 12%;
 }
-.admin-friend-table th:nth-child(4) {
+.admin-friends-links .admin-friend-table col:nth-child(4) {
   width: 10%;
 }
-.admin-friend-table th:last-child {
-  width: 14%;
+.admin-friends-links .admin-friend-table col:nth-child(5) {
+  width: 18%;
 }
-.admin-friend-table td {
-  padding-block: 20px;
+.admin-friends-links .admin-post-category {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: normal;
+}
+.admin-friends-links .admin-post-status.is-rejected {
+  background: transparent;
+}
+.admin-friends-links .admin-post-row-actions .ds-button {
+  flex: none;
+  width: 36px;
 }
 .admin-friend-identity {
   display: flex;
@@ -61,17 +71,19 @@
 }
 .admin-friend-identity > div {
   display: grid;
-  gap: 5px;
+  gap: 4px;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .admin-friend-identity strong {
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: 500;
 }
 .admin-friend-identity a {
   color: var(--color-focus);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 18px;
   text-decoration: none;
   transition: color 150ms;
 }
@@ -89,7 +101,7 @@
 .admin-friend-description {
   margin: 0;
   color: var(--color-muted);
-  line-height: 1.65;
+  line-height: 20px;
   overflow-wrap: anywhere;
 }
 .admin-friend-form-selects {
@@ -114,19 +126,16 @@
   overflow-wrap: anywhere;
 }
 @media (max-width: 600px) {
-  .admin-friend-filters {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-content: stretch;
-    padding: 14px;
-  }
-  .admin-friend-filter-selects {
+  .admin-friends-links .admin-friend-filter-selects {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
   }
-  .admin-friend-filter-selects > .ds-input,
-  .admin-friend-search {
+  .admin-friends-links .admin-friend-filter-selects > .ds-input,
+  .admin-friends-links .admin-friend-search {
     width: 100%;
+  }
+  .admin-friends-links .admin-friend-search {
+    flex: none;
   }
   .admin-friend-form-selects {
     grid-template-columns: minmax(0, 1fr);
@@ -134,6 +143,12 @@
   .admin-friend-modal {
     max-height: 85dvh;
     overflow-y: auto;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-friends-links .admin-post-row-actions .ds-button,
+  .admin-friends-links .admin-friend-search .ds-input-group-button {
+    width: 44px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

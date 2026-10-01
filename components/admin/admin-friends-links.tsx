@@ -15,7 +15,6 @@ import Image from "next/image";
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -35,6 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { useAdminWorkspace } from "./admin-context";
 import { friendCategories, friendStatuses, type FriendLink } from "./friends-links-mock-data";
+import "./admin-data-workspace.css";
 import "./admin-friends-links.css";
 
 type LinkDraft = Omit<FriendLink, "id">;
@@ -93,6 +93,7 @@ export function AdminFriendsLinks() {
   const nameInput = useRef<HTMLInputElement>(null);
   const urlInput = useRef<HTMLInputElement>(null);
   const avatarInput = useRef<HTMLInputElement>(null);
+  const searchInput = useRef<HTMLInputElement>(null);
   const cancelDelete = useRef<HTMLButtonElement>(null);
 
   const keyword = query.trim().toLowerCase();
@@ -166,234 +167,252 @@ export function AdminFriendsLinks() {
   };
 
   return (
-    <div className="admin-posts admin-friends-links">
+    <div className="admin-posts admin-data-page admin-friends-links">
       <div className="admin-page-heading">
         <div>
-          <p className="admin-eyebrow">CONNECTIONS / 友情链接</p>
           <h1>友情链接管理</h1>
-          <p>与优质博客建立网状互联，拓展内容传播圈层。</p>
+          <p>管理友链、站点分类与审核状态。</p>
         </div>
         <Button
           ref={addButton}
           variant="primary"
+          size="compact"
           onClick={(event) => openForm(event.currentTarget)}
         >
           <Plus size={16} aria-hidden="true" />
           新增友链
         </Button>
       </div>
+      <div className="admin-data-workspace">
+        <div className="admin-post-filters">
+          <div className="admin-friend-filter-selects">
+            <Select
+              items={[
+                { value: "all", label: "全部分类" },
+                ...friendCategories.map((value) => ({ value, label: value })),
+              ]}
+              value={category}
+              onValueChange={(value) => {
+                setCategory(value ?? "all");
+                setPage(1);
+              }}
+            >
+              <SelectTrigger size="compact" aria-label="筛选友链分类">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部分类</SelectItem>
+                {friendCategories.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              items={[
+                { value: "all", label: "全部状态" },
+                ...friendStatuses.map((value) => ({ value, label: value })),
+              ]}
+              value={status}
+              onValueChange={(value) => {
+                setStatus(value ?? "all");
+                setPage(1);
+              }}
+            >
+              <SelectTrigger size="compact" aria-label="筛选友链状态">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部状态</SelectItem>
+                {friendStatuses.map((value) => (
+                  <SelectItem key={value} value={value}>
+                    {value}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <InputGroup size="compact" className="admin-friend-search">
+            <InputGroupInput
+              ref={searchInput}
+              aria-label="搜索友链"
+              placeholder="搜索友链名称、地址或描述…"
+              value={query}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(1);
+              }}
+            />
+            <InputGroupAddon>
+              <Search size={16} aria-hidden="true" />
+            </InputGroupAddon>
+            {query && (
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="compact"
+                  aria-label="清空友链搜索"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(1);
+                    searchInput.current?.focus();
+                  }}
+                >
+                  <X size={14} aria-hidden="true" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            )}
+          </InputGroup>
+        </div>
+        <div className="admin-post-list">
+          <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">
+            <table className="admin-post-table admin-friend-table">
+              <caption className="sr-only">友情链接及模拟健康状态</caption>
+              <colgroup>
+                <col />
+                <col />
+                <col />
+                <col />
+                <col />
+              </colgroup>
+              <thead>
+                <tr>
+                  {["博客名称 / 地址", "站点描述", "分类", "状态", "操作"].map((title) => (
+                    <th scope="col" key={title}>
+                      {title}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((link) => (
+                  <tr key={link.id}>
+                    <td>
+                      <div className="admin-friend-identity">
+                        <FriendAvatar src={link.avatar} />
+                        <div>
+                          <strong>{link.name}</strong>
+                          <a href={link.url} target="_blank" rel="noopener noreferrer">
+                            {link.url}
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p className="admin-friend-description">{link.description}</p>
+                    </td>
+                    <td>
+                      <span className="admin-post-category">{link.category}</span>
+                    </td>
+                    <td>
+                      <span
+                        className={`admin-post-status ${link.status === "正常" ? "is-published" : link.status === "异常" ? "is-rejected" : ""}`}
+                      >
+                        {link.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="admin-post-row-actions">
+                        {link.status === "待审核" && (
+                          <Button
+                            variant="ghost"
+                            size="compact"
+                            title="通过审核"
+                            aria-label={`通过 ${link.name} 的友链审核`}
+                            onClick={() => {
+                              setFriendsLinks((current) =>
+                                current.map((item) =>
+                                  item.id === link.id ? { ...item, status: "正常" } : item,
+                                ),
+                              );
+                              setPage(currentPage);
+                              onMessage("友链已通过审核（模拟，仅当前会话）");
+                            }}
+                          >
+                            <Check size={16} />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="compact"
+                          title="编辑友链"
+                          aria-label={`编辑友链 ${link.name}`}
+                          onClick={(event) => openForm(event.currentTarget, link)}
+                        >
+                          <Pencil size={16} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="compact"
+                          title="删除友链"
+                          aria-label={`删除友链 ${link.name}`}
+                          onClick={(event) => {
+                            trigger.current = event.currentTarget;
+                            setDeleting(link);
+                          }}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+          {!filtered.length && (
+            <div className="admin-post-empty">
+              <Link2 size={28} aria-hidden="true" />
+              <h2>暂无对应友链数据</h2>
+              <p>调整筛选条件，或添加第一条友情链接。</p>
+              <div className="admin-form-actions">
+                <Button size="compact" variant="secondary" onClick={resetFilters}>
+                  重置筛选
+                </Button>
+                <Button
+                  size="compact"
+                  variant="primary"
+                  onClick={(event) => openForm(event.currentTarget)}
+                >
+                  新增友链
+                </Button>
+              </div>
+            </div>
+          )}
+          <div className="admin-post-pagination">
+            <output>
+              显示第 {filtered.length ? (currentPage - 1) * pageSize + 1 : 0}–
+              {Math.min(currentPage * pageSize, filtered.length)} 条，共 {filtered.length} 条
+            </output>
+            <nav aria-label="友链分页">
+              <Button
+                size="compact"
+                variant="ghost"
+                aria-label="上一页友链"
+                disabled={currentPage === 1}
+                onClick={() => setPage(currentPage - 1)}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <span aria-current="page">
+                {currentPage} / {pageCount}
+              </span>
+              <Button
+                size="compact"
+                variant="ghost"
+                aria-label="下一页友链"
+                disabled={currentPage === pageCount}
+                onClick={() => setPage(currentPage + 1)}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </nav>
+          </div>
+        </div>
+      </div>
       <p className="admin-post-session-note">
         演示数据 · 操作仅影响当前会话，刷新后恢复；健康状态为模拟值。
       </p>
-      <Card className="admin-friend-filters">
-        <div className="admin-friend-filter-selects">
-          <Select
-            items={[
-              { value: "all", label: "全部分类" },
-              ...friendCategories.map((value) => ({ value, label: value })),
-            ]}
-            value={category}
-            onValueChange={(value) => {
-              setCategory(value ?? "all");
-              setPage(1);
-            }}
-          >
-            <SelectTrigger aria-label="筛选友链分类">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部分类</SelectItem>
-              {friendCategories.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {value}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            items={[
-              { value: "all", label: "全部状态" },
-              ...friendStatuses.map((value) => ({ value, label: value })),
-            ]}
-            value={status}
-            onValueChange={(value) => {
-              setStatus(value ?? "all");
-              setPage(1);
-            }}
-          >
-            <SelectTrigger aria-label="筛选友链状态">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">全部状态</SelectItem>
-              {friendStatuses.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {value}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <InputGroup className="admin-friend-search">
-          <InputGroupInput
-            aria-label="搜索友链"
-            placeholder="搜索友链名称、地址或描述…"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
-              setPage(1);
-            }}
-          />
-          <InputGroupAddon>
-            <Search size={16} aria-hidden="true" />
-          </InputGroupAddon>
-          {query && (
-            <InputGroupAddon align="inline-end">
-              <InputGroupButton
-                aria-label="清空友链搜索"
-                onClick={() => {
-                  setQuery("");
-                  setPage(1);
-                }}
-              >
-                <X size={14} aria-hidden="true" />
-              </InputGroupButton>
-            </InputGroupAddon>
-          )}
-        </InputGroup>
-      </Card>
-      <Card className="admin-post-list">
-        <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">
-          <table className="admin-post-table admin-friend-table">
-            <caption className="sr-only">友情链接及模拟健康状态</caption>
-            <thead>
-              <tr>
-                {["博客名称 / 地址", "站点描述", "分类", "状态", "操作"].map((title) => (
-                  <th scope="col" key={title}>
-                    {title}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((link) => (
-                <tr key={link.id}>
-                  <td>
-                    <div className="admin-friend-identity">
-                      <FriendAvatar src={link.avatar} />
-                      <div>
-                        <strong>{link.name}</strong>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer">
-                          {link.url}
-                        </a>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <p className="admin-friend-description">{link.description}</p>
-                  </td>
-                  <td>
-                    <span className="admin-post-category">{link.category}</span>
-                  </td>
-                  <td>
-                    <span
-                      className={`admin-post-status ${link.status === "正常" ? "is-published" : link.status === "异常" ? "is-rejected" : ""}`}
-                    >
-                      {link.status}
-                    </span>
-                  </td>
-                  <td>
-                    <div className="admin-post-row-actions">
-                      {link.status === "待审核" && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          title="通过审核"
-                          aria-label={`通过 ${link.name} 的友链审核`}
-                          onClick={() => {
-                            setFriendsLinks((current) =>
-                              current.map((item) =>
-                                item.id === link.id ? { ...item, status: "正常" } : item,
-                              ),
-                            );
-                            setPage(currentPage);
-                            onMessage("友链已通过审核（模拟，仅当前会话）");
-                          }}
-                        >
-                          <Check size={16} />
-                        </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        title="编辑友链"
-                        aria-label={`编辑友链 ${link.name}`}
-                        onClick={(event) => openForm(event.currentTarget, link)}
-                      >
-                        <Pencil size={16} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        title="删除友链"
-                        aria-label={`删除友链 ${link.name}`}
-                        onClick={(event) => {
-                          trigger.current = event.currentTarget;
-                          setDeleting(link);
-                        }}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-        {!filtered.length && (
-          <div className="admin-post-empty">
-            <Link2 size={28} aria-hidden="true" />
-            <h2>暂无对应友链数据</h2>
-            <p>调整筛选条件，或添加第一条友情链接。</p>
-            <div className="admin-form-actions">
-              <Button onClick={resetFilters}>重置筛选</Button>
-              <Button variant="primary" onClick={(event) => openForm(event.currentTarget)}>
-                新增友链
-              </Button>
-            </div>
-          </div>
-        )}
-        <div className="admin-post-pagination">
-          <output>
-            显示第 {filtered.length ? (currentPage - 1) * pageSize + 1 : 0}–
-            {Math.min(currentPage * pageSize, filtered.length)} 条，共 {filtered.length} 条
-          </output>
-          <nav aria-label="友链分页">
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-label="上一页友链"
-              disabled={currentPage === 1}
-              onClick={() => setPage(currentPage - 1)}
-            >
-              <ChevronLeft size={16} />
-            </Button>
-            <span aria-current="page">
-              {currentPage} / {pageCount}
-            </span>
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-label="下一页友链"
-              disabled={currentPage === pageCount}
-              onClick={() => setPage(currentPage + 1)}
-            >
-              <ChevronRight size={16} />
-            </Button>
-          </nav>
-        </div>
-      </Card>
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent
           className="admin-modal admin-friend-modal"

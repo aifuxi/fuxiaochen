@@ -154,6 +154,9 @@
 .admin-menu-button {
   display: none !important;
 }
+.admin-layout-workspace .admin-topbar-start {
+  min-width: 0;
+}
 .admin-search-trigger {
   width: 260px;
   min-height: 34px;

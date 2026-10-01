@@ -62,7 +62,10 @@ const nav = [
 export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Props) {
   const pathname = usePathname();
   const workspacePage =
-    pathname === "/admin/posts" || pathname === "/admin/settings" || pathname === "/admin/comments";
+    pathname === "/admin/posts" ||
+    pathname === "/admin/settings" ||
+    pathname === "/admin/comments" ||
+    pathname === "/admin/friends-links";
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
