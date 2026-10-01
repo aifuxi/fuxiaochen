@@ -1,0 +1,177 @@
+[
+  {
+    "id": "table.admin",
+    "label": "Create table admin",
+    "summary": "Creates table admin with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "admin"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"admin\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "admin"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"admin\"",
+        "sql": "CREATE TABLE \"admin\" (\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" INTEGER NOT NULL,\n  \"passwordHash\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"username\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"username\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"admin\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "admin"]
+      }
+    ]
+  },
+  {
+    "id": "table.login_rate_limit",
+    "label": "Create table login_rate_limit",
+    "summary": "Creates table login_rate_limit with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "login_rate_limit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"login_rate_limit\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "login_rate_limit"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"login_rate_limit\"",
+        "sql": "CREATE TABLE \"login_rate_limit\" (\n  \"count\" INTEGER NOT NULL,\n  \"id\" INTEGER NOT NULL,\n  \"window\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"login_rate_limit\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "login_rate_limit"]
+      }
+    ]
+  },
+  {
+    "id": "table.session",
+    "label": "Create table session",
+    "summary": "Creates table session with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"session\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "session"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"session\"",
+        "sql": "CREATE TABLE \"session\" (\n  \"adminId\" INTEGER NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"expiresAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  FOREIGN KEY (\"adminId\") REFERENCES \"admin\" (\"id\") ON DELETE CASCADE\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"session\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "session"]
+      }
+    ]
+  },
+  {
+    "id": "index.session.session_adminId_idx_530179db",
+    "label": "Create index session_adminId_idx_530179db on session",
+    "summary": "Creates index session_adminId_idx_530179db on session",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "session_adminId_idx_530179db",
+        "table": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"session_adminId_idx_530179db\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "session_adminId_idx_530179db"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"session_adminId_idx_530179db\"",
+        "sql": "CREATE INDEX \"session_adminId_idx_530179db\" ON \"session\" (\"adminId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"session_adminId_idx_530179db\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "session_adminId_idx_530179db"]
+      }
+    ]
+  },
+  {
+    "id": "index.session.session_expiresAt_idx_6b6b8c10",
+    "label": "Create index session_expiresAt_idx_6b6b8c10 on session",
+    "summary": "Creates index session_expiresAt_idx_6b6b8c10 on session",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "session_expiresAt_idx_6b6b8c10",
+        "table": "session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"session_expiresAt_idx_6b6b8c10\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "session_expiresAt_idx_6b6b8c10"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"session_expiresAt_idx_6b6b8c10\"",
+        "sql": "CREATE INDEX \"session_expiresAt_idx_6b6b8c10\" ON \"session\" (\"expiresAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"session_expiresAt_idx_6b6b8c10\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "session_expiresAt_idx_6b6b8c10"]
+      }
+    ]
+  }
+]

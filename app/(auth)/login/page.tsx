@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 
 import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SESSION_COOKIE, validSession } from "@/lib/auth";
+import { currentSession } from "@/lib/auth";
 
 import "./login.css";
 
@@ -21,8 +20,7 @@ export default async function LoginPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const session = (await cookies()).get(SESSION_COOKIE)?.value;
-  if (validSession(session)) redirect("/admin");
+  if (await currentSession()) redirect("/admin");
 
   const { error } = await searchParams;
 
@@ -104,6 +102,7 @@ export default async function LoginPage({
                   autoComplete="current-password"
                   placeholder="输入密码"
                   required
+                  maxLength={128}
                 />
               </div>
               {error === "invalid" && (

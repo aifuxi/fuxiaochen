@@ -17,6 +17,9 @@ coverage
 
 # production
 build
+generated
+data
+.codegraph
 
 # misc
 .DS_Store
