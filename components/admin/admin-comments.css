@@ -1,0 +1,81 @@
+.admin-comments-page .admin-comments-search-controls {
+  flex: 1 1 300px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0;
+}
+
+.admin-comments-page .admin-comments-table {
+  min-width: 960px;
+}
+
+.admin-comments-page .admin-comments-table col:nth-child(1),
+.admin-comments-page .admin-comments-table th:first-child {
+  width: 22%;
+}
+
+.admin-comments-page .admin-comments-table td:first-child {
+  min-width: 0;
+}
+
+.admin-comments-page .admin-comments-table col:nth-child(2),
+.admin-comments-page .admin-comments-table th:nth-child(2) {
+  width: 44%;
+}
+
+.admin-comments-page .admin-comments-table col:nth-child(3) {
+  width: 10%;
+}
+
+.admin-comments-page .admin-comments-table col:nth-child(4) {
+  width: 24%;
+}
+
+.admin-comments-page .admin-comments-author strong {
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.admin-comments-page .admin-comments-author > div > span {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.admin-comments-page .admin-comments-text {
+  margin-bottom: 4px;
+  color: var(--color-foreground);
+  line-height: 20px;
+}
+
+.admin-comments-page .admin-comments-meta {
+  gap: 4px 8px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.admin-comments-page .admin-comments-meta svg {
+  flex: none;
+}
+
+.admin-comments-page .admin-post-status.is-rejected {
+  background: transparent;
+}
+
+.admin-comments-page .admin-comments-actions .ds-button {
+  width: 36px;
+}
+
+@media (max-width: 600px) {
+  .admin-comments-page .admin-comments-search-controls {
+    flex: none;
+    justify-content: stretch;
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-comments-page .admin-comments-actions .ds-button {
+    width: 44px;
+  }
+}

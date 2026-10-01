@@ -74,6 +74,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [categories, setCategories] = useState(initialCategories);
   const [panel, setPanel] = useState<AdminPanel | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const commentDeleteFocus = useRef<{ deleted: boolean; fallback: HTMLElement | null }>({
+    deleted: false,
+    fallback: null,
+  });
   const [message, setMessage] = useState("");
   const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -385,7 +389,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onEdit: openEditor,
         onDeletePost: setPostDeleteId,
         onApprove: approveComment,
-        onDeleteComment: setDeleteId,
+        onDeleteComment: (id, fallbackFocus) => {
+          commentDeleteFocus.current = { deleted: false, fallback: fallbackFocus ?? null };
+          setDeleteId(id);
+        },
         onReject: rejectComment,
         onReply: replyComment,
         onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
@@ -786,7 +793,14 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open) setDeleteId(null);
         }}
       >
-        <DialogContent className="admin-confirm">
+        <DialogContent
+          className="admin-confirm"
+          finalFocus={() =>
+            commentDeleteFocus.current.deleted && commentDeleteFocus.current.fallback?.isConnected
+              ? commentDeleteFocus.current.fallback
+              : true
+          }
+        >
           <DialogTitle>删除评论？</DialogTitle>
           <DialogDescription>
             确认从当前模拟页面移除 {targetComment?.author} 的评论。刷新页面后会恢复。
@@ -798,6 +812,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
             <Button
               variant="primary"
               onClick={() => {
+                commentDeleteFocus.current.deleted = true;
                 setComments((current) => current.filter((comment) => comment.id !== deleteId));
                 setDeleteId(null);
                 setMessage("评论已删除（仅当前页面）");

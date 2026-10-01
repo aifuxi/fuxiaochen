@@ -17,6 +17,7 @@ import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import type { PostStatus } from "./mock-data";
 
 import { useAdminWorkspace } from "./admin-context";
+import "./admin-data-workspace.css";
 import "./admin-posts.css";
 
 const filters: { value: "all" | PostStatus; label: string }[] = [
@@ -56,7 +57,7 @@ export function AdminPosts() {
   };
 
   return (
-    <div className="admin-posts admin-posts-page">
+    <div className="admin-posts admin-data-page admin-posts-page">
       <div className="admin-page-heading">
         <div>
           <h1>内容管理</h1>
@@ -67,7 +68,7 @@ export function AdminPosts() {
           新建博文
         </Button>
       </div>
-      <div className="admin-post-workspace">
+      <div className="admin-data-workspace">
         <Tabs
           value={status}
           onValueChange={(value) => {

@@ -30,7 +30,7 @@ type AdminState = {
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
   onReply: (id: string, content: string) => boolean;
-  onDeleteComment: (id: string) => void;
+  onDeleteComment: (id: string, fallbackFocus?: HTMLElement | null) => void;
   onBackup: () => void;
 };
 
