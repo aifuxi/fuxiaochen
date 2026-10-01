@@ -192,6 +192,44 @@ html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]
     color 200ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 200ms cubic-bezier(0.22, 1, 0.36, 1);
 }
+.ds-control-compact,
+.ds-input-group.ds-control-compact {
+  height: 36px;
+}
+.ds-tabs-list.ds-control-compact {
+  padding: 0;
+  background: transparent;
+}
+.ds-tabs-list.ds-control-compact .ds-tabs-trigger {
+  padding-inline: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.ds-switch.ds-switch-touch {
+  height: 44px;
+  align-items: center;
+  background: transparent;
+}
+.ds-switch-touch::before {
+  content: "";
+  position: absolute;
+  inset: 10px 0;
+  border-radius: 999px;
+  background: #393939;
+}
+.ds-switch-touch[data-checked]::before {
+  background: var(--color-primary);
+}
+.ds-switch-touch .ds-switch-thumb {
+  position: relative;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .ds-control-compact,
+  .ds-input-group.ds-control-compact {
+    height: 44px;
+  }
+}
 .ds-button:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;

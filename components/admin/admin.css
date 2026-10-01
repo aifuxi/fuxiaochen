@@ -259,6 +259,18 @@
   color: var(--color-muted);
   font-size: 13px;
 }
+.admin-layout-workspace .admin-page-heading {
+  align-items: start;
+}
+.admin-layout-workspace .admin-page-heading h1 {
+  font: 500 24px/32px var(--font-display);
+  letter-spacing: -0.02em;
+}
+.admin-layout-workspace .admin-page-heading p:last-child {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
 .admin-page-actions {
   display: flex;
   align-items: center;
@@ -952,6 +964,9 @@
   }
   .admin-content {
     padding: 22px 15px;
+  }
+  .admin-layout-workspace .admin-content {
+    padding: 22px 20px;
   }
   .admin-dashboard {
     gap: 15px;

@@ -14,13 +14,15 @@ export const SelectValue = BaseSelect.Value;
 export function SelectTrigger({
   className,
   children,
+  size = "default",
   ...props
-}: ComponentProps<typeof BaseSelect.Trigger>) {
+}: ComponentProps<typeof BaseSelect.Trigger> & { size?: "default" | "compact" }) {
   return (
     <BaseSelect.Trigger
       type="button"
       className={cn(
         "ds-input flex h-11 w-full items-center justify-between gap-3 px-3.5 text-left text-sm data-placeholder:text-[var(--color-subtle)]",
+        size === "compact" && "ds-control-compact",
         className,
       )}
       {...props}

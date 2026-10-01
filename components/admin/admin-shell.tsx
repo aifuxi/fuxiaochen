@@ -61,6 +61,7 @@ const nav = [
 
 export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Props) {
   const pathname = usePathname();
+  const workspacePage = pathname === "/admin/posts" || pathname === "/admin/settings";
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -157,7 +158,9 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
   );
 
   return (
-    <div className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""}`}>
+    <div
+      className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""} ${workspacePage ? "admin-layout-workspace" : ""}`}
+    >
       <aside className="admin-sidebar" aria-label="侧边栏">
         {sidebar(false)}
       </aside>
@@ -186,8 +189,8 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
           </div>
           <div className="admin-topbar-actions">
             <Button
-              size="sm"
-              variant="primary"
+              size={workspacePage ? "compact" : "sm"}
+              variant={workspacePage ? "secondary" : "primary"}
               className="admin-create"
               onClick={() => onOpen("compose")}
             >

@@ -6,13 +6,18 @@ import { Switch as BaseSwitch } from "@base-ui/react/switch";
 
 import { cn } from "@/lib/utils";
 
-export function Switch({ className, ...props }: ComponentProps<typeof BaseSwitch.Root>) {
+export function Switch({
+  className,
+  touchTarget = false,
+  ...props
+}: ComponentProps<typeof BaseSwitch.Root> & { touchTarget?: boolean }) {
   return (
     <BaseSwitch.Root
       nativeButton
       render={<button type="button" aria-label={props["aria-label"] ?? "开关"} />}
       className={cn(
         "ds-switch relative inline-flex h-6 w-11 shrink-0 rounded-full bg-[#393939] p-[3px] transition-colors duration-200 data-checked:bg-[var(--color-primary)] enabled:hover:brightness-110 enabled:active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--color-focus)] data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        touchTarget && "ds-switch-touch",
         className,
       )}
       {...props}

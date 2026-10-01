@@ -1,8 +1,14 @@
-.admin-settings-card {
-  padding: 24px;
+.admin-settings {
   min-width: 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+.admin-settings > .admin-page-heading {
+  margin-bottom: 24px;
 }
 .admin-settings-tab-scroll {
+  max-width: 100%;
+  min-width: 0;
   overflow-x: auto;
   padding: 3px;
   margin: -3px;
@@ -16,39 +22,91 @@
   gap: 8px;
   white-space: nowrap;
 }
+.admin-settings .admin-settings-panel {
+  padding-top: 32px;
+}
 .admin-settings-stack {
   display: grid;
-  gap: 24px;
+  gap: 32px;
 }
-.admin-settings-identity,
-.admin-settings-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  padding: 20px;
+.admin-settings-section + .admin-settings-section,
+.admin-settings-notice + .admin-settings-section {
+  padding-top: 32px;
+  border-top: 1px solid var(--color-outline);
 }
-.admin-settings-identity {
-  justify-content: flex-start;
+.admin-settings-section-heading {
+  margin-bottom: 20px;
 }
-.admin-settings h2 {
-  margin: 0;
-  font-size: 14px;
+.admin-settings-section-heading h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 24px;
 }
-.admin-settings-identity p,
-.admin-settings-toggle p {
-  margin: 4px 0 0;
+.admin-settings-section-heading p {
+  margin: 0;
   color: var(--color-muted);
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 18px;
+}
+.admin-settings-fields {
+  display: grid;
+  gap: 16px;
+}
+.admin-settings-field {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+  min-width: 0;
+}
+.admin-settings-field label,
+.admin-settings-field-label {
+  padding-top: 12px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 20px;
+}
+.admin-settings-field-body {
+  min-width: 0;
+  width: 100%;
+  max-width: 480px;
+}
+.admin-settings-field-wide {
+  max-width: 640px;
+}
+.admin-settings-field .ds-input,
+.admin-settings-field textarea {
+  width: 100%;
+}
+.admin-settings-field textarea {
+  min-height: 112px;
+  line-height: 20px;
+}
+.admin-settings-avatar-row {
+  align-items: center;
+}
+.admin-settings-avatar-row .admin-settings-field-label {
+  padding-top: 0;
+}
+.admin-settings-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-settings-identity p {
+  margin: 4px 0 0;
+  color: var(--color-subtle);
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-settings-avatar {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
+  width: 56px;
+  height: 56px;
   flex-shrink: 0;
   overflow: hidden;
   border-radius: 50%;
@@ -60,77 +118,92 @@
   height: 100%;
   object-fit: cover;
 }
-.admin-settings-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px 20px;
+.admin-settings-help,
+.admin-settings-error {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 18px;
 }
-.admin-settings-field {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-  min-width: 0;
-}
-.admin-settings-field label {
-  font-size: 13px;
-  font-weight: 500;
-}
-.admin-settings-field .ds-input {
-  width: 100%;
-}
-.admin-settings-full {
-  grid-column: 1 / -1;
-}
-.admin-settings-quantity {
-  max-width: 220px;
+.admin-settings-help {
+  color: var(--color-subtle);
 }
 .admin-settings-error {
-  margin: 0;
-  font-size: 12px;
   color: var(--color-danger);
+}
+.admin-settings-toggle-list {
+  max-width: 864px;
+}
+.admin-settings-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--color-outline);
+}
+.admin-settings-toggle:first-child {
+  padding-top: 0;
+}
+.admin-settings-toggle h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.admin-settings-toggle p {
+  max-width: 680px;
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-settings-notice {
   display: flex;
   align-items: start;
   gap: 12px;
-  padding: 16px;
-  border-radius: 14px;
-  color: var(--color-focus);
-  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-stage));
+  padding: 0 0 20px;
+  color: var(--color-muted);
 }
 .admin-settings-notice > svg {
   flex-shrink: 0;
   margin-top: 4px;
+  color: var(--color-focus);
 }
 .admin-settings-notice p {
   margin: 0;
   flex: 1;
-  font-size: 13px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-settings-notice .ds-button {
   width: 32px;
   padding: 0;
   flex-shrink: 0;
 }
-.admin-settings-service {
-  gap: 8px;
-}
 .admin-settings-status {
-  padding: 20px;
   display: grid;
-  gap: 12px;
-  font: 12px/1.7 var(--font-mono, ui-monospace);
+  max-width: 864px;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 20px;
   overflow-wrap: anywhere;
 }
 .admin-settings-status > div {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 20px;
 }
 .admin-settings-status > div + div {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--color-outline);
   color: var(--color-muted);
+  font: 12px/18px var(--font-mono, ui-monospace);
+}
+.admin-settings-status small {
+  color: var(--color-subtle);
+  font: 12px/18px var(--font-sans);
 }
 .admin-settings-ready {
   display: inline-flex;
@@ -139,31 +212,49 @@
   color: var(--color-success);
 }
 .admin-settings-footnote {
-  margin: 0;
+  margin: 16px 0 0;
   color: var(--color-subtle);
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 18px;
+  overflow-wrap: anywhere;
 }
-@media (max-width: 640px) {
-  .admin-settings-card {
-    padding: 18px;
-  }
-  .admin-settings-fields {
+@media (max-width: 900px) {
+  .admin-settings-field {
     grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .admin-settings-field label,
+  .admin-settings-field-label {
+    padding-top: 0;
+  }
+}
+@media (max-width: 600px) {
+  .admin-settings > .admin-page-heading {
+    margin-bottom: 20px;
   }
   .admin-settings .admin-page-heading > .ds-button {
     width: 100%;
   }
-  .admin-settings-identity,
+  .admin-settings-field-body,
+  .admin-settings-field-wide {
+    max-width: 100%;
+  }
   .admin-settings-toggle {
-    padding: 16px;
-    gap: 12px;
+    gap: 16px;
   }
-  .admin-settings-avatar {
-    width: 56px;
-    height: 56px;
+  .admin-settings-notice .ds-button {
+    width: 44px;
+    min-height: 44px;
   }
-  .admin-settings-status {
-    padding: 16px;
+  .admin-settings-status > div {
+    align-items: start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+@media (pointer: coarse) {
+  .admin-settings-notice .ds-button {
+    width: 44px;
+    min-height: 44px;
   }
 }

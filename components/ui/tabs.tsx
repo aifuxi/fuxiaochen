@@ -8,11 +8,17 @@ import { cn } from "@/lib/utils";
 
 export const Tabs = BaseTabs.Root;
 
-export function TabsList({ children, className, ...props }: ComponentProps<typeof BaseTabs.List>) {
+export function TabsList({
+  children,
+  className,
+  size = "default",
+  ...props
+}: ComponentProps<typeof BaseTabs.List> & { size?: "default" | "compact" }) {
   return (
     <BaseTabs.List
       className={cn(
         "ds-tabs-list inline-flex h-10 gap-1 rounded-full bg-white/[0.05] p-1",
+        size === "compact" && "ds-control-compact",
         className,
       )}
       {...props}
