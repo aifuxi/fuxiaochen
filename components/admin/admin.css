@@ -121,9 +121,12 @@
   justify-content: flex-start;
   padding-left: 11px;
 }
-.admin-layout-collapsed .admin-collapse {
+.admin-layout-collapsed .admin-sidebar .admin-brand,
+.admin-layout-collapsed .admin-sidebar .admin-nav-item,
+.admin-layout-collapsed .admin-sidebar .admin-front-link,
+.admin-layout-collapsed .admin-sidebar .admin-collapse {
   justify-content: center;
-  padding: 0;
+  padding-inline: 0;
 }
 .admin-main-column {
   min-width: 0;
