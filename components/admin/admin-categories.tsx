@@ -10,13 +10,23 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { Input } from "@/components/ui/input";
 
 import { useAdminWorkspace } from "./admin-context";
-import { initialDemoCategories, initialDemoTags } from "./category-mock-data";
+import { TaxonomyStatus } from "./taxonomy-status";
 import "./admin-categories.css";
 
 export function AdminCategories() {
-  const { onMessage } = useAdminWorkspace();
-  const [categories, setCategories] = useState(initialDemoCategories);
-  const [tags, setTags] = useState(initialDemoTags);
+  const {
+    onMessage,
+    categoryItems: categories,
+    tagItems: tags,
+    createCategory,
+    createTag,
+    deleteCategory,
+    deleteTag,
+    taxonomyLoading,
+    taxonomyError,
+    taxonomyPending,
+  } = useAdminWorkspace();
+  const disabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
   const [categoryName, setCategoryName] = useState("");
   const [color, setColor] = useState("#0066df");
   const [tagName, setTagName] = useState("");
@@ -29,50 +39,45 @@ export function AdminCategories() {
   const tagTriggers = useRef(new Map<string, HTMLElement>());
   const cancelButton = useRef<HTMLButtonElement>(null);
 
-  const addCategory = (event: FormEvent) => {
+  const [deleteError, setDeleteError] = useState("");
+  const addCategory = async (event: FormEvent) => {
     event.preventDefault();
-    const name = categoryName.trim();
-    const error = !name
-      ? "请输入分类名称"
-      : categories.some((item) => item.name.toLowerCase() === name.toLowerCase())
-        ? "该分类已存在"
-        : "";
-    setCategoryError(error);
-    if (error) {
-      categoryInput.current?.focus();
-      return;
+    setCategoryError("");
+    try {
+      await createCategory({ name: categoryName.trim(), color });
+      setCategoryName("");
+      requestAnimationFrame(() => categoryInput.current?.focus());
+      onMessage("分类已创建");
+    } catch (error) {
+      setCategoryError(error instanceof Error ? error.message : "分类创建失败。");
+      requestAnimationFrame(() => categoryInput.current?.focus());
     }
-    setCategories((current) => [...current, { name, color, count: 0 }]);
-    setCategoryName("");
-    categoryInput.current?.focus();
-    onMessage("分类已创建（模拟，仅修改此页演示列表）");
   };
-
-  const addTag = (event: FormEvent) => {
+  const addTag = async (event: FormEvent) => {
     event.preventDefault();
-    const name = tagName.trim();
-    const error = !name
-      ? "请输入标签名称"
-      : tags.some((item) => item.name.toLowerCase() === name.toLowerCase())
-        ? "该标签已存在"
-        : "";
-    setTagError(error);
-    if (error) {
-      tagInput.current?.focus();
-      return;
+    setTagError("");
+    try {
+      await createTag({ name: tagName.trim() });
+      setTagName("");
+      requestAnimationFrame(() => tagInput.current?.focus());
+      onMessage("标签已创建");
+    } catch (error) {
+      setTagError(error instanceof Error ? error.message : "标签创建失败。");
+      requestAnimationFrame(() => tagInput.current?.focus());
     }
-    setTags((current) => [...current, { name, count: 0 }]);
-    setTagName("");
-    tagInput.current?.focus();
-    onMessage("标签已创建（模拟，仅修改此页演示列表）");
   };
-
-  const removeTag = (name: string) => {
-    const index = tags.findIndex((item) => item.name === name);
+  const removeTag = async (id: string) => {
+    const index = tags.findIndex((item) => item.id === id);
     const next = tags[index + 1] ?? tags[index - 1];
-    setTags((current) => current.filter((item) => item.name !== name));
-    (next ? tagTriggers.current.get(next.name) : tagInput.current)?.focus();
-    onMessage("标签已移除（模拟，文章标签未变更）");
+    try {
+      await deleteTag(id);
+      requestAnimationFrame(() =>
+        (next ? tagTriggers.current.get(next.id) : tagInput.current)?.focus(),
+      );
+      onMessage("标签已移除");
+    } catch (error) {
+      onMessage(error instanceof Error ? error.message : "标签删除失败。");
+    }
   };
 
   return (
@@ -85,9 +90,10 @@ export function AdminCategories() {
         </div>
       </div>
       <p className="admin-taxonomy-note">
-        独立演示数据 · 关联数量为模拟值，操作不影响文章，刷新后恢复初始列表。
+        分类与标签保存到数据库 · 文章关联尚未接入，删除不会修改演示文章。
       </p>
-      <div className="admin-taxonomy-grid">
+      <TaxonomyStatus />
+      <div className="admin-taxonomy-grid" aria-busy={taxonomyLoading || taxonomyPending}>
         <Card className="admin-taxonomy-card">
           <div className="admin-taxonomy-heading">
             <h2>
@@ -100,45 +106,48 @@ export function AdminCategories() {
           </div>
           <div className="admin-taxonomy-body">
             <form onSubmit={addCategory} noValidate>
-              <label className="sr-only" htmlFor="demo-category-name">
+              <label className="sr-only" htmlFor="admin-category-name">
                 新增分类名称
               </label>
               <div className="admin-taxonomy-form">
                 <Input
-                  id="demo-category-name"
+                  id="admin-category-name"
                   ref={categoryInput}
                   placeholder="新增分类标题…"
+                  disabled={taxonomyPending}
+                  maxLength={40}
                   value={categoryName}
                   aria-invalid={Boolean(categoryError)}
-                  aria-describedby={categoryError ? "demo-category-error" : undefined}
+                  aria-describedby={categoryError ? "admin-category-error" : undefined}
                   onChange={(event) => {
                     setCategoryName(event.target.value);
                     setCategoryError("");
                   }}
                 />
-                <label className="sr-only" htmlFor="demo-category-color">
+                <label className="sr-only" htmlFor="admin-category-color">
                   选择分类主题色
                 </label>
                 <ColorInput
-                  id="demo-category-color"
+                  id="admin-category-color"
+                  disabled={taxonomyPending}
                   aria-label="选择分类主题色"
                   value={color}
                   onInput={(event) => setColor(event.currentTarget.value)}
                   onChange={(event) => setColor(event.target.value)}
                 />
-                <Button type="submit" variant="primary">
+                <Button type="submit" variant="primary" disabled={disabled}>
                   <Plus size={16} aria-hidden="true" />
-                  添加
+                  {taxonomyPending ? "正在保存…" : "添加"}
                 </Button>
               </div>
               {categoryError && (
-                <p id="demo-category-error" className="admin-taxonomy-error" role="alert">
+                <p id="admin-category-error" className="admin-taxonomy-error" role="alert">
                   {categoryError}
                 </p>
               )}
             </form>
             <table className="admin-taxonomy-table">
-              <caption className="sr-only">博文分类及模拟关联数量</caption>
+              <caption className="sr-only">博文分类，关联数量尚未接入</caption>
               <thead>
                 <tr>
                   <th scope="col">分类名称</th>
@@ -148,7 +157,7 @@ export function AdminCategories() {
               </thead>
               <tbody>
                 {categories.map((item) => (
-                  <tr key={item.name}>
+                  <tr key={item.id}>
                     <td aria-label={item.name}>
                       <div className="admin-taxonomy-name">
                         <span
@@ -159,16 +168,18 @@ export function AdminCategories() {
                         <span>{item.name}</span>
                       </div>
                     </td>
-                    <td className="admin-taxonomy-count">{item.count} 篇</td>
+                    <td className="admin-taxonomy-count">尚未接入</td>
                     <td>
                       <Button
                         variant="ghost"
                         size="sm"
                         className="admin-taxonomy-delete"
+                        disabled={disabled}
                         aria-label={`删除分类 ${item.name}`}
                         onClick={(event) => {
                           deleteTrigger.current = event.currentTarget;
-                          setDeleteName(item.name);
+                          setDeleteName(item.id);
+                          setDeleteError("");
                         }}
                       >
                         <Trash2 size={16} aria-hidden="true" />
@@ -176,7 +187,7 @@ export function AdminCategories() {
                     </td>
                   </tr>
                 ))}
-                {!categories.length && (
+                {!taxonomyLoading && !taxonomyError && !categories.length && (
                   <tr>
                     <td colSpan={3} className="admin-taxonomy-empty">
                       暂无分类，可在上方添加新分类。
@@ -199,29 +210,31 @@ export function AdminCategories() {
           </div>
           <div className="admin-taxonomy-body">
             <form onSubmit={addTag} noValidate>
-              <label className="sr-only" htmlFor="demo-tag-name">
+              <label className="sr-only" htmlFor="admin-tag-name">
                 新增标签名称
               </label>
               <div className="admin-taxonomy-form">
                 <Input
-                  id="demo-tag-name"
+                  id="admin-tag-name"
                   ref={tagInput}
                   placeholder="新增标签词…"
+                  disabled={taxonomyPending}
+                  maxLength={40}
                   value={tagName}
                   aria-invalid={Boolean(tagError)}
-                  aria-describedby={tagError ? "demo-tag-error" : undefined}
+                  aria-describedby={tagError ? "admin-tag-error" : undefined}
                   onChange={(event) => {
                     setTagName(event.target.value);
                     setTagError("");
                   }}
                 />
-                <Button type="submit" variant="primary">
+                <Button type="submit" variant="primary" disabled={disabled}>
                   <Plus size={16} aria-hidden="true" />
-                  添加
+                  {taxonomyPending ? "正在保存…" : "添加"}
                 </Button>
               </div>
               {tagError && (
-                <p id="demo-tag-error" className="admin-taxonomy-error" role="alert">
+                <p id="admin-tag-error" className="admin-taxonomy-error" role="alert">
                   {tagError}
                 </p>
               )}
@@ -229,25 +242,26 @@ export function AdminCategories() {
             <CardStage className="admin-taxonomy-cloud-stage">
               <ul className="admin-taxonomy-cloud" aria-label="标签列表">
                 {tags.map((item) => (
-                  <li key={item.name} className="admin-taxonomy-tag">
+                  <li key={item.id} className="admin-taxonomy-tag">
                     <span className="admin-taxonomy-tag-name">#{item.name}</span>
-                    <span className="admin-taxonomy-count">({item.count})</span>
+                    <span className="admin-taxonomy-count">尚未接入</span>
                     <Button
                       ref={(node) => {
-                        if (node) tagTriggers.current.set(item.name, node);
-                        else tagTriggers.current.delete(item.name);
+                        if (node) tagTriggers.current.set(item.id, node);
+                        else tagTriggers.current.delete(item.id);
                       }}
                       variant="ghost"
                       size="sm"
                       className="admin-taxonomy-tag-remove"
                       aria-label={`移除标签 ${item.name}`}
-                      onClick={() => removeTag(item.name)}
+                      disabled={disabled}
+                      onClick={() => void removeTag(item.id)}
                     >
                       <X size={14} aria-hidden="true" />
                     </Button>
                   </li>
                 ))}
-                {!tags.length && (
+                {!taxonomyLoading && !taxonomyError && !tags.length && (
                   <li className="admin-taxonomy-empty">暂无标签，可在上方添加新标签。</li>
                 )}
               </ul>
@@ -258,7 +272,7 @@ export function AdminCategories() {
       <Dialog
         open={deleteName !== null}
         onOpenChange={(open) => {
-          if (!open) setDeleteName(null);
+          if (!open && !taxonomyPending) setDeleteName(null);
         }}
       >
         <DialogContent
@@ -268,22 +282,37 @@ export function AdminCategories() {
             deleteTrigger.current?.isConnected ? deleteTrigger.current : categoryInput.current
           }
         >
-          <DialogTitle>确认删除分类“{deleteName}”？</DialogTitle>
-          <DialogDescription>仅从此页演示列表删除，文章分类与关联数据不会变更。</DialogDescription>
+          <DialogTitle>
+            确认删除分类“{categories.find((item) => item.id === deleteName)?.name}”？
+          </DialogTitle>
+          <DialogDescription>
+            将从数据库删除分类。文章关联尚未接入，演示文章不会变更。
+          </DialogDescription>
+          {deleteError && <p role="alert">{deleteError}</p>}
           <div className="admin-form-actions">
-            <Button ref={cancelButton} onClick={() => setDeleteName(null)}>
+            <Button
+              ref={cancelButton}
+              disabled={taxonomyPending}
+              onClick={() => setDeleteName(null)}
+            >
               取消
             </Button>
             <Button
               className="admin-taxonomy-delete"
-              disabled={deleteName === null}
-              onClick={() => {
-                setCategories((current) => current.filter((item) => item.name !== deleteName));
-                setDeleteName(null);
-                onMessage("分类已删除（模拟，文章分类未变更）");
+              disabled={deleteName === null || disabled}
+              onClick={async () => {
+                if (!deleteName) return;
+                setDeleteError("");
+                try {
+                  await deleteCategory(deleteName);
+                  setDeleteName(null);
+                  onMessage("分类已删除");
+                } catch (error) {
+                  setDeleteError(error instanceof Error ? error.message : "分类删除失败。");
+                }
               }}
             >
-              确认删除
+              {taxonomyPending ? "正在删除…" : "确认删除"}
             </Button>
           </div>
         </DialogContent>

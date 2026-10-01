@@ -7,8 +7,9 @@ import type { ReleaseLog } from "./changelog-mock-data";
 import type { FriendLink } from "./friends-links-mock-data";
 import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
 import type { BlogSettings } from "./settings-mock-data";
+import type { TaxonomyState } from "./use-taxonomy";
 
-type AdminState = {
+type AdminState = TaxonomyState & {
   settings: BlogSettings;
   setSettings: Dispatch<SetStateAction<BlogSettings>>;
   releaseLogs: ReleaseLog[];

@@ -1,6 +1,7 @@
 "use client";
 
 import { Search, Trash2, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   useCallback,
@@ -13,6 +14,15 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Combobox,
+  ComboboxInputGroup,
+  ComboboxInput,
+  ComboboxTrigger,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+} from "@/components/ui/combobox";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
@@ -32,7 +42,6 @@ import { initialFriendsLinks } from "./friends-links-mock-data";
 import {
   initialMedia,
   type MediaItem,
-  initialCategories,
   initialComments,
   initialNotices,
   initialPosts,
@@ -44,6 +53,8 @@ import {
   type Schedule,
 } from "./mock-data";
 import { initialSettings } from "./settings-mock-data";
+import { TaxonomyStatus } from "./taxonomy-status";
+import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
 const panelTitles: Record<AdminPanel, string> = {
@@ -58,6 +69,11 @@ const panelTitles: Record<AdminPanel, string> = {
   schedule: "定时发布计划",
 };
 
+function isFuturePublishDate(value: string) {
+  const timestamp = Date.parse(`${value}+08:00`);
+  return Number.isFinite(timestamp) && timestamp > Date.now();
+}
+
 function mediaUploadTime() {
   return new Date().toLocaleString("sv-SE", { timeZone: "Asia/Shanghai" }).slice(0, 16);
 }
@@ -71,7 +87,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [comments, setComments] = useState(initialComments);
   const [manualSchedules, setSchedules] = useState(initialSchedules);
   const [notices, setNotices] = useState(initialNotices);
-  const [categories, setCategories] = useState(initialCategories);
+  const taxonomy = useTaxonomy();
+  const categories = taxonomy.categoryItems.map((item) => item.name);
+  const taxonomyDisabled =
+    taxonomy.taxonomyLoading || Boolean(taxonomy.taxonomyError) || taxonomy.taxonomyPending;
   const [panel, setPanel] = useState<AdminPanel | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const commentDeleteFocus = useRef<{ deleted: boolean; fallback: HTMLElement | null }>({
@@ -83,9 +102,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [category, setCategory] = useState(initialCategories[0]);
+  const [category, setCategory] = useState("");
   const [postStatus, setPostStatus] = useState<PostStatus>("草稿");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [publishDate, setPublishDate] = useState("");
   const [postDeleteId, setPostDeleteId] = useState<string | null>(null);
   const [media, setMedia] = useState(initialMedia);
@@ -186,9 +205,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         setEditingId(null);
         setTitle("");
         setBody("");
-        setCategory(initialCategories[0]);
+        setCategory("");
         setPostStatus("草稿");
-        setTags("");
+        setTags([]);
         setPublishDate("");
       }
       setPanel(name);
@@ -202,7 +221,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     setBody(post.content);
     setCategory(post.category);
     setPostStatus(post.status);
-    setTags(post.tags.join(", "));
+    setTags(post.tags);
     setPublishDate(post.scheduledFor ?? "");
     setPanel("compose");
   };
@@ -263,23 +282,19 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       setMessage("标题和正文不能只包含空格");
       return;
     }
-    if (
-      postStatus === "已排期" &&
-      (!nextPublishDate ||
-        Date.parse(`${nextPublishDate}+08:00`) <= Date.now() ||
-        !Number.isFinite(Date.parse(`${nextPublishDate}+08:00`)))
-    ) {
+    if (postStatus === "已排期" && !isFuturePublishDate(nextPublishDate)) {
       setMessage("请选择未来的发布时间（北京时间）");
       return;
     }
-    const cleanTags = [
-      ...new Set(
-        tags
-          .split(/[,，\n]/)
-          .map((tag) => tag.trim())
-          .filter(Boolean),
-      ),
-    ];
+    if (taxonomyDisabled || !categories.includes(category)) {
+      setMessage("请选择已登记的分类；没有分类时请先创建。");
+      return;
+    }
+    if (tags.some((name) => !taxonomy.tagItems.some((item) => item.name === name))) {
+      setMessage("请移除历史演示标签或重新选择已登记的标签。");
+      return;
+    }
+    const cleanTags = [...new Set(tags)];
     const scheduledFor = postStatus === "已排期" ? nextPublishDate : undefined;
     if (editingId) {
       setPosts((current) =>
@@ -318,16 +333,15 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     setMessage(editingId ? "文章已更新（仅当前页面）" : "文章已创建（仅当前页面）");
   };
 
-  const addCategory = (event: FormEvent<HTMLFormElement>) => {
+  const addCategory = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const name = newCategory.trim();
-    if (!name || categories.includes(name)) {
-      setMessage("请输入未使用的分类名称");
-      return;
+    try {
+      await taxonomy.createCategory({ name: newCategory.trim(), color: "#0066df" });
+      setNewCategory("");
+      setMessage("分类已添加");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "分类创建失败。");
     }
-    setCategories((current) => [...current, name]);
-    setNewCategory("");
-    setMessage("分类已添加（仅当前页面）");
   };
 
   const addSchedule = (event: FormEvent<HTMLFormElement>) => {
@@ -385,6 +399,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         comments,
         schedules,
         categories,
+        ...taxonomy,
         onOpen: openPanel,
         onEdit: openEditor,
         onDeletePost: setPostDeleteId,
@@ -422,7 +437,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                 <div>
                   <DialogTitle>{panelTitles[panel]}</DialogTitle>
                   <DialogDescription>
-                    此处操作使用演示数据，刷新页面后恢复初始状态。
+                    {panel === "categories"
+                      ? "分类与标签已持久化；文章关联尚未接入。"
+                      : "文章及其他操作仍使用会话内演示数据。"}
                   </DialogDescription>
                 </div>
                 <Button variant="ghost" size="sm" aria-label="关闭" onClick={() => setPanel(null)}>
@@ -468,6 +485,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               )}
               {panel === "compose" && (
                 <form className="admin-form" onSubmit={savePost}>
+                  <TaxonomyStatus />
                   <label htmlFor="admin-post-title">
                     文章标题
                     <Input
@@ -493,10 +511,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                     分类
                     <Select
                       value={category}
-                      onValueChange={(value) => setCategory(value ?? initialCategories[0])}
+                      disabled={taxonomyDisabled || !categories.length}
+                      onValueChange={(value) => setCategory(value ?? "")}
                     >
                       <SelectTrigger id="admin-post-category">
-                        <SelectValue />
+                        <SelectValue placeholder="请选择分类" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((item) => (
@@ -507,16 +526,55 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                       </SelectContent>
                     </Select>
                   </label>
-                  <label htmlFor="admin-post-tags">
-                    标签（逗号分隔）
-                    <Input
-                      id="admin-post-tags"
-                      value={tags}
-                      maxLength={300}
-                      onChange={(event) => setTags(event.target.value)}
-                      placeholder="例如：写作, 灵感"
-                    />
-                  </label>
+                  {category && !categories.includes(category) && (
+                    <p role="alert">历史演示分类“{category}”未登记，请重新选择。</p>
+                  )}
+                  {!taxonomy.taxonomyLoading && !taxonomy.taxonomyError && !categories.length && (
+                    <p>
+                      请先在 <Link href="/admin/categories">分类与标签</Link> 创建分类。
+                    </p>
+                  )}
+                  <label htmlFor="admin-post-tags">标签</label>
+                  <Combobox
+                    multiple
+                    items={taxonomy.tagItems.map((item) => item.name)}
+                    value={tags}
+                    onValueChange={setTags}
+                    disabled={taxonomyDisabled}
+                  >
+                    <ComboboxInputGroup>
+                      <ComboboxInput id="admin-post-tags" placeholder="选择已有标签" />
+                      <ComboboxTrigger />
+                    </ComboboxInputGroup>
+                    <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
+                      <ComboboxList>
+                        {(name: string) => (
+                          <ComboboxItem key={name} value={name}>
+                            {name}
+                          </ComboboxItem>
+                        )}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                  <div aria-label="已选标签">
+                    {tags.map((name) => (
+                      <Button
+                        type="button"
+                        key={name}
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setTags((current) => current.filter((item) => item !== name))
+                        }
+                        aria-label={`移除标签 ${name}`}
+                      >
+                        {name}
+                        {!taxonomy.tagItems.some((item) => item.name === name) &&
+                          "（历史演示值，未登记）"}
+                        <X size={14} aria-hidden="true" />
+                      </Button>
+                    ))}
+                  </div>
                   <fieldset className="admin-status-options">
                     <legend>文章状态</legend>
                     <label>
@@ -564,7 +622,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                     <Button type="button" variant="ghost" onClick={() => setPanel(null)}>
                       取消
                     </Button>
-                    <Button type="submit" variant="primary">
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      disabled={taxonomyDisabled || !categories.length}
+                    >
                       {editingId ? "保存修改" : "创建文章"}
                     </Button>
                   </div>
@@ -656,41 +718,48 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               )}
               {panel === "categories" && (
                 <div className="admin-modal-section">
+                  <TaxonomyStatus />
                   <form className="admin-inline-form" onSubmit={addCategory}>
                     <label htmlFor="admin-new-category">新增分类</label>
                     <div>
                       <Input
                         id="admin-new-category"
+                        disabled={taxonomy.taxonomyPending}
                         maxLength={40}
                         value={newCategory}
                         onChange={(event) => setNewCategory(event.target.value)}
                         placeholder="分类名称"
                       />
-                      <Button type="submit" variant="primary">
-                        添加
+                      <Button type="submit" variant="primary" disabled={taxonomyDisabled}>
+                        {taxonomy.taxonomyPending ? "正在保存…" : "添加"}
                       </Button>
                     </div>
                   </form>
                   <div className="admin-category-list">
-                    {categories.map((item) => (
-                      <div key={item}>
-                        <span>{item}</span>
-                        <small>
-                          {posts.filter((post) => post.category === item).length} 篇文章
-                        </small>
+                    {taxonomy.categoryItems.map((item) => (
+                      <div key={item.id}>
+                        <span>{item.name}</span>
+                        <small>关联数量尚未接入</small>
                         <Button
                           variant="ghost"
                           size="sm"
-                          disabled={posts.some((post) => post.category === item)}
-                          onClick={() =>
-                            setCategories((current) => current.filter((name) => name !== item))
-                          }
-                          aria-label={`删除分类 ${item}`}
+                          disabled={taxonomyDisabled}
+                          onClick={async () => {
+                            try {
+                              await taxonomy.deleteCategory(item.id);
+                              setMessage("分类已删除");
+                            } catch (error) {
+                              setMessage(error instanceof Error ? error.message : "删除失败。");
+                            }
+                          }}
+                          aria-label={`删除分类 ${item.name}`}
                         >
                           <Trash2 size={15} />
                         </Button>
                       </div>
                     ))}
+                    {!taxonomyDisabled && !categories.length && <p>暂无分类，请先添加分类。</p>}
+                    <Link href="/admin/categories">管理分类与标签</Link>
                   </div>
                 </div>
               )}

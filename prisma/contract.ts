@@ -37,5 +37,24 @@ export const contract = defineContract({}, ({ field, model }) => {
     },
   }).sql({ table: "login_rate_limit" });
 
-  return { models: { Admin, Session, LoginRateLimit } };
+  const Category = model("Category", {
+    fields: {
+      id: field.column(textColumn).id(),
+      name: field.column(textColumn),
+      nameKey: field.column(textColumn).unique(),
+      color: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+    },
+  }).sql({ table: "category" });
+
+  const Tag = model("Tag", {
+    fields: {
+      id: field.column(textColumn).id(),
+      name: field.column(textColumn),
+      nameKey: field.column(textColumn).unique(),
+      createdAt: field.column(datetimeColumn),
+    },
+  }).sql({ table: "tag" });
+
+  return { models: { Admin, Session, LoginRateLimit, Category, Tag } };
 });

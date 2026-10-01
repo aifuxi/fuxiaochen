@@ -1,0 +1,72 @@
+[
+  {
+    "id": "table.category",
+    "label": "Create table category",
+    "summary": "Creates table category with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "category"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"category\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "category"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"category\"",
+        "sql": "CREATE TABLE \"category\" (\n  \"color\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"name\" TEXT NOT NULL,\n  \"nameKey\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"nameKey\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"category\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "category"]
+      }
+    ]
+  },
+  {
+    "id": "table.tag",
+    "label": "Create table tag",
+    "summary": "Creates table tag with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"tag\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "tag"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"tag\"",
+        "sql": "CREATE TABLE \"tag\" (\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"name\" TEXT NOT NULL,\n  \"nameKey\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"nameKey\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"tag\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "tag"]
+      }
+    ]
+  }
+]

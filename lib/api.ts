@@ -14,6 +14,7 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE,
 } from "./auth/service";
+import { taxonomyRoutes } from "./taxonomy/routes";
 
 function appOrigin() {
   const configured = z.url().parse(process.env.APP_ORIGIN);
@@ -32,13 +33,29 @@ export const api = new Hono().basePath("/api");
 
 api.use("*", async (c, next) => {
   c.header("Cache-Control", "no-store");
-  if (c.req.method === "POST" && c.req.header("origin") !== appOrigin()) {
+  if (
+    ["POST", "PUT", "PATCH", "DELETE"].includes(c.req.method) &&
+    c.req.header("origin") !== appOrigin()
+  ) {
+    if (c.req.path.startsWith("/api/admin/"))
+      return c.json({ error: { code: "FORBIDDEN_ORIGIN", message: "请求来源不被允许。" } }, 403);
     return c.text("请求来源不被允许。", 403);
   }
   return next();
 });
 
-api.use("*", bodyLimit({ maxSize: 16 * 1024, onError: (c) => c.text("请求内容过大。", 413) }));
+api.use(
+  "*",
+  bodyLimit({
+    maxSize: 16 * 1024,
+    onError: (c) =>
+      c.req.path.startsWith("/api/admin/")
+        ? c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "请求内容过大。" } }, 413)
+        : c.text("请求内容过大。", 413),
+  }),
+);
+
+api.route("/admin", taxonomyRoutes);
 
 api.post(
   "/login",
@@ -82,6 +99,13 @@ api.post("/logout", async (c) => {
 });
 
 api.onError((error, c) => {
+  if (c.req.path.startsWith("/api/admin/")) {
+    console.error("后台业务接口失败", { name: error.name });
+    return c.json(
+      { error: { code: "SERVICE_UNAVAILABLE", message: "服务暂时不可用，请稍后重试。" } },
+      503,
+    );
+  }
   if (error instanceof HTTPException && error.status === 400) {
     return c.redirect("/login?error=invalid", 303);
   }

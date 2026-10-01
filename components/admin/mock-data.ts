@@ -221,8 +221,6 @@ export const traffic30Days = visits.map((count, index) => {
   };
 });
 
-export const initialCategories = ["生活随感", "效率工具", "创作心得", "探店记录", "旅行指南"];
-
 export type MediaItem = {
   id: string;
   name: string;

@@ -22,7 +22,7 @@ export function getDatabase() {
 
 type Transaction = Parameters<Parameters<ReturnType<typeof createDatabase>["transaction"]>[0]>[0];
 
-export function authTransaction<T>(work: (tx: Transaction) => PromiseLike<T>) {
+export function writeTransaction<T>(work: (tx: Transaction) => PromiseLike<T>) {
   // node:sqlite 使用同步锁等待；同一进程的写事务排队，避免等待阻塞持锁请求继续执行。
   const result = (databaseGlobal.authWriteQueue ?? Promise.resolve()).then(() =>
     getDatabase().transaction(work),
@@ -33,3 +33,6 @@ export function authTransaction<T>(work: (tx: Transaction) => PromiseLike<T>) {
   );
   return result;
 }
+
+// 鉴权和业务写入必须使用同一队列。
+export const authTransaction = writeTransaction;
