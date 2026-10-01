@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/input-group";
 
 import { initialVisitorLogs, visitorStreamSamples, visitorSummary } from "./visitors-mock-data";
+import "./admin-data-workspace.css";
 import "./admin-visitors.css";
 
 const pageSize = 10;
@@ -35,6 +36,7 @@ export function AdminVisitors() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const heartbeat = useRef(0);
+  const searchInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (paused) return undefined;
@@ -66,6 +68,10 @@ export function AdminVisitors() {
     setQuery(value);
     setPage(1);
   };
+  const clearSearch = () => {
+    updateQuery("");
+    searchInput.current?.focus();
+  };
   const metrics = [
     {
       label: "当前实时在线",
@@ -91,10 +97,9 @@ export function AdminVisitors() {
   ];
 
   return (
-    <div className="admin-posts admin-visitors">
+    <div className="admin-posts admin-data-page admin-visitors">
       <div className="admin-page-heading">
         <div>
-          <p className="admin-eyebrow">VISITOR LOGS</p>
           <h1>实时访客日志</h1>
           <p>观察读者的实时流式接入情况，监控地域分布与搜索引擎爬虫动态。</p>
         </div>
@@ -117,55 +122,67 @@ export function AdminVisitors() {
         ))}
       </section>
 
-      <Card className="visitors-controls">
-        <div className="visitors-stream-status">
-          <span className={`visitors-status-dot ${paused ? "is-paused" : ""}`} aria-hidden="true" />
-          <div>
-            <strong>{paused ? "实时访问流已暂停" : "实时访问流已连接"}</strong>
-            <p>模拟心跳 · 每 4.5 秒更新 · 无真实 WebSocket 连接</p>
+      <section className="admin-data-workspace" aria-label="访客日志工作区">
+        <div className="admin-data-toolbar visitors-controls">
+          <div className="visitors-stream-status">
+            <span
+              className={`visitors-status-dot ${paused ? "is-paused" : ""}`}
+              aria-hidden="true"
+            />
+            <div>
+              <strong>{paused ? "实时访问流已暂停" : "实时访问流已连接"}</strong>
+              <p>模拟心跳 · 每 4.5 秒更新 · 无真实 WebSocket 连接</p>
+            </div>
+          </div>
+          <div className="visitors-search-controls">
+            <Button
+              size="compact"
+              onClick={() => setPaused((value) => !value)}
+              aria-pressed={paused}
+            >
+              {paused ? (
+                <Play size={14} aria-hidden="true" />
+              ) : (
+                <Pause size={14} aria-hidden="true" />
+              )}
+              {paused ? "恢复更新" : "暂停更新"}
+            </Button>
+            <InputGroup size="compact" className="visitors-search">
+              <InputGroupInput
+                ref={searchInput}
+                aria-label="搜索 IP、城市或受访页面"
+                placeholder="搜索 IP、城市或受访页面…"
+                value={query}
+                onChange={(event) => updateQuery(event.target.value)}
+              />
+              <InputGroupAddon>
+                <Search size={16} aria-hidden="true" />
+              </InputGroupAddon>
+              {query && (
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton size="compact" aria-label="清空搜索" onClick={clearSearch}>
+                    <X size={16} aria-hidden="true" />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              )}
+            </InputGroup>
           </div>
         </div>
-        <div className="visitors-search-controls">
-          <Button size="sm" onClick={() => setPaused((value) => !value)} aria-pressed={paused}>
-            {paused ? (
-              <Play size={14} aria-hidden="true" />
-            ) : (
-              <Pause size={14} aria-hidden="true" />
-            )}
-            {paused ? "恢复更新" : "暂停更新"}
-          </Button>
-          <InputGroup className="visitors-search">
-            <InputGroupInput
-              aria-label="搜索 IP、城市或受访页面"
-              placeholder="搜索 IP、城市或受访页面…"
-              value={query}
-              onChange={(event) => updateQuery(event.target.value)}
-            />
-            <InputGroupAddon>
-              <Search size={16} aria-hidden="true" />
-            </InputGroupAddon>
-            {query && (
-              <InputGroupAddon align="inline-end">
-                <InputGroupButton aria-label="清空搜索" onClick={() => updateQuery("")}>
-                  <X size={16} aria-hidden="true" />
-                </InputGroupButton>
-              </InputGroupAddon>
-            )}
-          </InputGroup>
-        </div>
-      </Card>
-
-      <Card className="admin-post-list">
         <section
           className="admin-post-table-scroll"
           aria-label="访客日志表格，可横向滚动"
           // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 允许键盘用户滚动宽表格。
           tabIndex={0}
         >
-          <table className="visitors-table">
+          <table className="admin-post-table visitors-table">
             <caption className="sr-only">
               模拟访客日志，访问时间为北京时间，停留时长格式为分:秒
             </caption>
+            <colgroup>
+              {Array.from({ length: 6 }, (_, index) => (
+                <col key={index} />
+              ))}
+            </colgroup>
             <thead>
               <tr>
                 {["访问者 IP", "地理位置", "受访入口", "终端与系统", "停留时长", "访问时间"].map(
@@ -212,7 +229,7 @@ export function AdminVisitors() {
             <Search size={26} aria-hidden="true" />
             <h2>没有匹配的访客日志</h2>
             <p>试试其他 IP、城市或页面关键词。</p>
-            <Button size="sm" onClick={() => updateQuery("")}>
+            <Button size="compact" onClick={clearSearch}>
               清空搜索
             </Button>
           </div>
@@ -225,7 +242,7 @@ export function AdminVisitors() {
           <nav aria-label="访客日志分页">
             <Button
               variant="ghost"
-              size="sm"
+              size="compact"
               aria-label="上一页"
               disabled={currentPage === 1}
               onClick={() => setPage(currentPage - 1)}
@@ -237,7 +254,7 @@ export function AdminVisitors() {
             </span>
             <Button
               variant="ghost"
-              size="sm"
+              size="compact"
               aria-label="下一页"
               disabled={currentPage === pageCount}
               onClick={() => setPage(currentPage + 1)}
@@ -246,7 +263,7 @@ export function AdminVisitors() {
             </Button>
           </nav>
         </div>
-      </Card>
+      </section>
       <p className="admin-post-session-note">
         以上均为演示数据，访问流最多保留最新 16 条日志；离开页面后停止更新，再次进入恢复初始数据。
       </p>

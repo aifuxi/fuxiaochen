@@ -65,7 +65,10 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
     pathname === "/admin/posts" ||
     pathname === "/admin/settings" ||
     pathname === "/admin/comments" ||
-    pathname === "/admin/friends-links";
+    pathname === "/admin/friends-links" ||
+    pathname === "/admin/visitors" ||
+    pathname === "/admin/media" ||
+    pathname === "/admin/changelog";
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

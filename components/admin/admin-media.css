@@ -1,24 +1,14 @@
-.admin-media {
-  display: grid;
-  gap: 24px;
-}
 .admin-media-note {
-  margin: -12px 0 0;
+  margin: 0;
   color: var(--color-muted);
   font-size: 12px;
-}
-.admin-media-filter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
+  line-height: 18px;
 }
 .admin-media-search {
   display: flex;
   align-items: center;
   gap: 4px;
-  width: min(100%, 360px);
+  width: min(100%, 300px);
   min-width: 0;
 }
 .admin-media-search .ds-input-group {
@@ -28,6 +18,7 @@
 .admin-media-count {
   color: var(--color-muted);
   font-size: 12px;
+  line-height: 18px;
   flex-shrink: 0;
 }
 .admin-media-count strong {
@@ -37,6 +28,7 @@
 .admin-media-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 16px;
   gap: 16px;
 }
 .admin-media-card {
@@ -76,11 +68,9 @@
   padding: 12px 2px 0;
 }
 .admin-media-details h2 {
-  font: 500 13px/1.5 var(--font-sans);
+  font: 500 14px/20px var(--font-sans);
   margin: 0 0 6px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .admin-media-meta {
   display: flex;
@@ -101,6 +91,8 @@
   font: 11px/1.5 var(--font-mono);
 }
 .admin-media-delete {
+  width: 36px;
+  padding: 0;
   color: var(--color-danger);
 }
 .admin-media-empty {
@@ -114,11 +106,14 @@
 .admin-media-empty h2 {
   margin: 0;
   font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
   color: var(--color-foreground);
 }
 .admin-media-empty p {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
+  line-height: 20px;
 }
 .admin-media-empty .admin-form-actions {
   justify-content: center;
@@ -173,9 +168,6 @@
   .admin-media-grid {
     grid-template-columns: minmax(0, 1fr);
   }
-  .admin-media-filter {
-    flex-wrap: wrap;
-  }
   .admin-media-search {
     width: 100%;
   }
@@ -185,8 +177,10 @@
   .admin-media-preview .admin-form-actions {
     flex-wrap: wrap;
   }
-  .admin-media .admin-page-heading > .ds-button {
-    width: 100%;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-media-delete {
+    width: 44px;
   }
 }
 @media (hover: none), (pointer: coarse) {

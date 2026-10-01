@@ -4,7 +4,6 @@ import { History, Plus, Search, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -24,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { useAdminWorkspace } from "./admin-context";
 import { releaseTypes, type ReleaseType } from "./changelog-mock-data";
+import "./admin-data-workspace.css";
 import "./admin-changelog.css";
 
 const typeOptions: ReleaseType[] = ["feature", "fix", "performance", "security"];
@@ -78,16 +78,16 @@ export function AdminChangelog() {
   };
 
   return (
-    <div className="admin-dashboard admin-changelog">
+    <div className="admin-changelog admin-data-page">
       <div className="admin-page-heading">
         <div>
-          <p className="admin-eyebrow">CHANGELOG / 更新日志</p>
           <h1>系统版本迭代日志</h1>
           <p>记录每一次演进脉络，回溯功能迭代与架构优化。演示数据，刷新后恢复。</p>
         </div>
         <Button
           ref={publishButton}
           variant="primary"
+          size="compact"
           onClick={() => {
             setVersion("");
             setTitle("");
@@ -102,64 +102,68 @@ export function AdminChangelog() {
         </Button>
       </div>
 
-      <Card className="admin-changelog-filters">
-        <InputGroup className="admin-release-search">
-          <InputGroupInput
-            ref={searchInput}
-            aria-label="搜索更新日志"
-            placeholder="搜索版本号、功能词或特性..."
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <InputGroupAddon>
-            <Search size={16} aria-hidden="true" />
-          </InputGroupAddon>
-          {query && (
-            <InputGroupAddon align="inline-end">
-              <InputGroupButton
-                aria-label="清空搜索"
-                onClick={() => {
-                  setQuery("");
-                  searchInput.current?.focus();
-                }}
-              >
-                <X size={15} aria-hidden="true" />
-              </InputGroupButton>
+      <section className="admin-data-workspace" aria-label="版本更新记录">
+        <div className="admin-data-toolbar admin-changelog-filters">
+          <InputGroup size="compact" className="admin-release-search">
+            <InputGroupInput
+              ref={searchInput}
+              aria-label="搜索更新日志"
+              placeholder="搜索版本号、功能词或特性..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <InputGroupAddon>
+              <Search size={16} aria-hidden="true" />
             </InputGroupAddon>
-          )}
-        </InputGroup>
-        <output>
-          已记录 <strong>{filtered.length}</strong> 个迭代里程碑
-        </output>
-      </Card>
+            {query && (
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="compact"
+                  aria-label="清空搜索"
+                  onClick={() => {
+                    setQuery("");
+                    searchInput.current?.focus();
+                  }}
+                >
+                  <X size={15} aria-hidden="true" />
+                </InputGroupButton>
+              </InputGroupAddon>
+            )}
+          </InputGroup>
+          <output>
+            已记录 <strong>{filtered.length}</strong> 个迭代里程碑
+          </output>
+        </div>
 
-      <Card className="admin-release-card">
         {filtered.length ? (
-          <ol className="admin-release-timeline" aria-label="版本迭代时间线">
-            {filtered.map((log) => (
-              <li key={log.id} className={`admin-release-item is-${log.type}`}>
-                <div className="admin-release-heading">
-                  <span className="admin-release-version">{log.version}</span>
-                  <span className={`admin-release-tag is-${log.type}`}>
-                    {releaseTypes[log.type]}
-                  </span>
-                  <h2>{log.title}</h2>
-                </div>
-                <ul className="admin-release-changes">
-                  {log.changes.map((change, index) => (
-                    <li key={index}>{change}</li>
-                  ))}
-                </ul>
-                <time dateTime={log.date}>{log.date}</time>
-              </li>
-            ))}
-          </ol>
+          <div className="admin-release-content">
+            <ol className="admin-release-timeline" aria-label="版本迭代时间线">
+              {filtered.map((log) => (
+                <li key={log.id} className={`admin-release-item is-${log.type}`}>
+                  <div className="admin-release-heading">
+                    <span className="admin-release-version">{log.version}</span>
+                    <span className={`admin-release-tag is-${log.type}`}>
+                      {releaseTypes[log.type]}
+                    </span>
+                    <h2>{log.title}</h2>
+                  </div>
+                  <ul className="admin-release-changes">
+                    {log.changes.map((change, index) => (
+                      <li key={index}>{change}</li>
+                    ))}
+                  </ul>
+                  <time dateTime={log.date}>{log.date}</time>
+                </li>
+              ))}
+            </ol>
+          </div>
         ) : (
           <div className="admin-post-empty">
             <History size={28} aria-hidden="true" />
             <h2>没有匹配的版本记录</h2>
             <p>试试其他版本号或更新关键词。</p>
             <Button
+              size="compact"
               onClick={() => {
                 setQuery("");
                 searchInput.current?.focus();
@@ -169,7 +173,7 @@ export function AdminChangelog() {
             </Button>
           </div>
         )}
-      </Card>
+      </section>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent

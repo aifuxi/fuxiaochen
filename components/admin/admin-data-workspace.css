@@ -1,3 +1,12 @@
+.admin-data-page {
+  display: grid;
+  gap: 24px;
+}
+
+.admin-data-page > * {
+  min-width: 0;
+}
+
 .admin-data-page .admin-data-workspace {
   min-width: 0;
   overflow: hidden;
@@ -6,7 +15,8 @@
   background: var(--color-surface);
 }
 
-.admin-data-page .admin-post-filters {
+.admin-data-page .admin-post-filters,
+.admin-data-page .admin-data-toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -14,6 +24,10 @@
   gap: 12px;
   padding: 16px;
   border-bottom: 1px solid var(--color-outline);
+}
+
+.admin-data-page .admin-data-toolbar .ds-input-group-button {
+  width: 36px;
 }
 
 .admin-data-page .admin-post-tabs-scroll {
@@ -106,13 +120,23 @@
 }
 
 @media (max-width: 600px) {
-  .admin-data-page .admin-post-filters {
+  .admin-data-page {
+    gap: 20px;
+  }
+
+  .admin-data-page .admin-page-heading > .ds-button {
+    width: 100%;
+  }
+
+  .admin-data-page .admin-post-filters,
+  .admin-data-page .admin-data-toolbar {
     flex-direction: column;
     align-items: stretch;
   }
 }
 
 @media (max-width: 600px), (pointer: coarse) {
+  .admin-data-page .admin-data-toolbar .ds-input-group-button,
   .admin-data-page .admin-post-pagination nav .ds-button {
     width: 44px;
   }

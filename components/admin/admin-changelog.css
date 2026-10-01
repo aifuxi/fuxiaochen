@@ -1,25 +1,20 @@
-.admin-changelog-filters {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 20px;
-}
 .admin-changelog-filters output {
   margin: 0;
   color: var(--color-muted);
   font-size: 12px;
+  line-height: 18px;
 }
 .admin-changelog-filters strong {
   color: var(--color-focus);
   font-family: var(--font-mono, ui-monospace);
 }
 .admin-release-search {
-  width: min(100%, 340px);
+  flex: 0 1 300px;
+  width: 300px;
+  max-width: 100%;
 }
-.admin-release-card {
-  padding: 28px;
+.admin-release-content {
+  padding: 24px;
 }
 .admin-release-timeline {
   list-style: none;
@@ -64,17 +59,19 @@
   font: 600 17px/1.5 var(--font-mono, ui-monospace);
 }
 .admin-release-heading h2 {
+  min-width: 0;
   margin: 0;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 20px;
 }
 .admin-release-tag {
   padding: 4px 9px;
   border-radius: 999px;
   background: var(--color-stage);
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 18px;
   white-space: nowrap;
 }
 .admin-release-tag.is-feature {
@@ -91,8 +88,8 @@
   border-left: 2px solid var(--color-outline);
   padding: 0 0 0 28px;
   color: var(--color-muted);
-  font-size: 13px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 20px;
   list-style: disc;
 }
 .admin-release-changes li + li {
@@ -128,17 +125,12 @@
   color: var(--color-danger);
 }
 @media (max-width: 600px) {
-  .admin-changelog .admin-page-heading > .ds-button {
-    width: 100%;
-  }
-  .admin-changelog-filters {
-    padding: 16px;
-  }
   .admin-release-search {
+    flex: none;
     width: 100%;
   }
-  .admin-release-card {
-    padding: 22px 16px;
+  .admin-release-content {
+    padding: 16px;
   }
   .admin-release-item {
     padding-left: 20px;
