@@ -89,7 +89,6 @@
 }
 .admin-nav-item:focus-visible,
 .admin-front-link:focus-visible,
-.admin-search-trigger:focus-visible,
 .admin-range button:focus-visible,
 .admin-result:focus-visible,
 .admin-notice:focus-visible,
@@ -154,40 +153,46 @@
 .admin-menu-button {
   display: none !important;
 }
-.admin-layout-workspace .admin-topbar-start {
+.admin-topbar-start {
   min-width: 0;
 }
-.admin-search-trigger {
+.admin-search-trigger.ds-button {
   width: 260px;
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 0 10px;
-  border: 1px solid var(--color-outline);
-  border-radius: 9px;
-  background: var(--color-surface);
-  color: var(--color-subtle);
-  font: 12px var(--font-sans);
+  min-width: 0;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 10px 0 14px;
+  border-radius: var(--radius-form);
+  background: var(--color-input);
+  color: var(--color-muted);
+  font: 400 14px/20px var(--font-sans);
   text-align: left;
-  cursor: pointer;
 }
-.admin-search-trigger:hover {
-  background: var(--color-surface-hover);
+.admin-search-trigger.ds-button:hover:not(:disabled) {
+  background: var(--color-input-hover);
   color: var(--color-foreground);
 }
-.admin-search-trigger:active {
+.admin-search-trigger.ds-button:active:not(:disabled) {
   background: var(--color-raised);
+}
+.admin-search-trigger svg,
+.admin-search-trigger kbd {
+  flex: none;
 }
 .admin-search-trigger span {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .admin-search-trigger kbd {
-  padding: 3px 5px;
-  border-radius: 4px;
-  background: var(--color-raised);
+  padding: 2px 6px;
+  border: 1px solid var(--color-outline);
+  border-radius: 6px;
+  background: var(--color-stage);
   color: var(--color-muted);
-  font: 11px var(--font-mono, ui-monospace);
+  font: 12px/18px var(--font-mono, ui-monospace);
 }
 .admin-icon-button {
   position: relative;
@@ -947,8 +952,9 @@
   .admin-topbar-actions {
     gap: 5px;
   }
-  .admin-search-trigger {
-    width: 38px;
+  .admin-search-trigger.ds-button {
+    width: 44px;
+    flex: none;
     justify-content: center;
     padding: 0;
   }

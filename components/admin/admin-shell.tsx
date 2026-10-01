@@ -183,16 +183,20 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
             >
               <Menu size={20} />
             </Button>
-            <button
+            <Button
+              variant="ghost"
+              size="compact"
               className="admin-search-trigger"
               type="button"
               aria-label="搜索文章或分类"
+              aria-haspopup="dialog"
+              aria-keyshortcuts="Meta+K Control+K"
               onClick={() => onOpen("search")}
             >
               <Search size={16} aria-hidden="true" />
-              <span>搜索文章 / 分类...</span>
-              <kbd>⌘K</kbd>
-            </button>
+              <span>搜索文章 / 分类…</span>
+              <kbd aria-hidden="true">⌘K</kbd>
+            </Button>
           </div>
           <div className="admin-topbar-actions">
             <Button
