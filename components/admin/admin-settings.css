@@ -158,27 +158,28 @@
   line-height: 18px;
 }
 .admin-settings-notice {
-  display: flex;
-  align-items: start;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
   gap: 12px;
-  padding: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-form);
+  background: var(--color-surface);
   color: var(--color-muted);
 }
 .admin-settings-notice > svg {
-  flex-shrink: 0;
-  margin-top: 4px;
   color: var(--color-focus);
 }
-.admin-settings-notice p {
-  margin: 0;
-  flex: 1;
-  font-size: 12px;
-  line-height: 18px;
+.admin-settings-notice > span {
+  min-width: 0;
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
 }
 .admin-settings-notice .ds-button {
   width: 32px;
   padding: 0;
-  flex-shrink: 0;
 }
 .admin-settings-status {
   display: grid;

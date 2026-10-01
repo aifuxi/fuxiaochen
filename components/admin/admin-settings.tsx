@@ -298,9 +298,9 @@ export function AdminSettings() {
             {showNotice && (
               <output className="admin-settings-notice">
                 <Info size={18} aria-hidden="true" />
-                <p>
+                <span>
                   安全提示：真实 API 密钥应仅在服务端使用。此处仅展示演示占位，不读取或暴露凭证。
-                </p>
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
