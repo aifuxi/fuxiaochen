@@ -12,8 +12,8 @@ const links = [
   ["/posts", "文章"],
   ["/categories", "分类"],
   ["/tags", "标签"],
-  ["/changelog", "更新日志"],
-  ["/friends-links", "友情链接"],
+  ["/changelog", "日志"],
+  ["/friends-links", "友链"],
   ["/about", "关于"],
 ] as const;
 export function SiteHeader({ title }: { title: string }) {
