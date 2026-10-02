@@ -10,7 +10,7 @@ import { taxonomyNameKey } from "./schema";
 
 export class TaxonomyError extends Error {
   constructor(
-    public code: "UNAUTHORIZED" | "DUPLICATE_NAME" | "NOT_FOUND",
+    public code: "UNAUTHORIZED" | "DUPLICATE_NAME" | "NOT_FOUND" | "RESOURCE_IN_USE",
     message: string,
   ) {
     super(message);
@@ -30,13 +30,15 @@ async function authorize(actor: TaxonomyActor) {
 export async function listCategories(actor: TaxonomyActor) {
   await authorize(actor);
   return getDatabase()
-    .orm.Category.orderBy([(c) => c.createdAt.asc(), (c) => c.id.asc()])
+    .orm.Category.include("posts", (posts) => posts.count())
+    .orderBy([(c) => c.createdAt.asc(), (c) => c.id.asc()])
     .all();
 }
 export async function listTags(actor: TaxonomyActor) {
   await authorize(actor);
   return getDatabase()
-    .orm.Tag.orderBy([(t) => t.createdAt.asc(), (t) => t.id.asc()])
+    .orm.Tag.include("postLinks", (links) => links.count())
+    .orderBy([(t) => t.createdAt.asc(), (t) => t.id.asc()])
     .all();
 }
 
@@ -63,6 +65,8 @@ export async function createTag(input: TagInput, actor: TaxonomyActor) {
 export async function deleteCategory(id: string, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorize(actor);
+    if (await tx.orm.Post.where({ categoryId: id }).first())
+      throw new TaxonomyError("RESOURCE_IN_USE", "分类已被文章引用，请先修改或删除关联文章。");
     if (!(await tx.orm.Category.where({ id }).deleteAndCount())) {
       throw new TaxonomyError("NOT_FOUND", "分类不存在。");
     }
@@ -72,6 +76,8 @@ export async function deleteCategory(id: string, actor: TaxonomyActor) {
 export async function deleteTag(id: string, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorize(actor);
+    if (await tx.orm.PostTag.where({ tagId: id }).first())
+      throw new TaxonomyError("RESOURCE_IN_USE", "标签已被文章引用，请先移除文章中的标签。");
     if (!(await tx.orm.Tag.where({ id }).deleteAndCount())) {
       throw new TaxonomyError("NOT_FOUND", "标签不存在。");
     }

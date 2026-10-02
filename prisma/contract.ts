@@ -45,7 +45,9 @@ export const contract = defineContract({}, ({ field, model }) => {
       color: field.column(textColumn),
       createdAt: field.column(datetimeColumn),
     },
-  }).sql({ table: "category" });
+  })
+    .relations({ posts: rel.hasMany("Post", { by: "categoryId" }) })
+    .sql({ table: "category" });
 
   const Tag = model("Tag", {
     fields: {
@@ -54,7 +56,58 @@ export const contract = defineContract({}, ({ field, model }) => {
       nameKey: field.column(textColumn).unique(),
       createdAt: field.column(datetimeColumn),
     },
-  }).sql({ table: "tag" });
+  })
+    .relations({ postLinks: rel.hasMany("PostTag", { by: "tagId" }) })
+    .sql({ table: "tag" });
 
-  return { models: { Admin, Session, LoginRateLimit, Category, Tag } };
+  const Post = model("Post", {
+    fields: {
+      id: field.column(textColumn).id(),
+      title: field.column(textColumn),
+      content: field.column(textColumn),
+      categoryId: field.column(textColumn),
+      status: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+      updatedAt: field.column(datetimeColumn),
+      publishedAt: field.column(datetimeColumn).optional(),
+      scheduledFor: field.column(datetimeColumn).optional(),
+      version: field.column(integerColumn),
+    },
+  })
+    .relations({
+      category: rel.belongsTo(Category, { from: "categoryId", to: "id" }),
+      tagLinks: rel.hasMany("PostTag", { by: "postId" }),
+    })
+    .sql(({ cols, constraints }) => ({
+      table: "post",
+      indexes: [
+        constraints.index([cols.createdAt, cols.id]),
+        constraints.index([cols.categoryId]),
+        constraints.index([cols.status, cols.scheduledFor]),
+      ],
+      foreignKeys: [
+        constraints.foreignKey(cols.categoryId, Category.refs.id, { onDelete: "restrict" }),
+      ],
+    }));
+
+  const PostTag = model("PostTag", {
+    fields: { postId: field.column(textColumn), tagId: field.column(textColumn) },
+  })
+    .attributes(({ fields, constraints }) => ({
+      id: constraints.id([fields.postId, fields.tagId]),
+    }))
+    .relations({
+      post: rel.belongsTo(Post, { from: "postId", to: "id" }),
+      tag: rel.belongsTo(Tag, { from: "tagId", to: "id" }),
+    })
+    .sql(({ cols, constraints }) => ({
+      table: "post_tag",
+      indexes: [constraints.index([cols.tagId])],
+      foreignKeys: [
+        constraints.foreignKey(cols.postId, Post.refs.id, { onDelete: "cascade" }),
+        constraints.foreignKey(cols.tagId, Tag.refs.id, { onDelete: "restrict" }),
+      ],
+    }));
+
+  return { models: { Admin, Session, LoginRateLimit, Category, Tag, Post, PostTag } };
 });

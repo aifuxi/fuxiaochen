@@ -4,12 +4,12 @@
 
 `app/layout.tsx` 是全站共用的根布局，负责 `html/body`、全局暗色样式、字体、默认 metadata 和唯一的指针动效层。业务布局通过路由分组拆分，括号目录不进入 URL：
 
-| 分组                          | 职责                                                        | URL                  |
-| ----------------------------- | ----------------------------------------------------------- | -------------------- |
-| `app/(frontend)/`             | 前台页面，首页为 `page.tsx`，独立布局入口为 `layout.tsx`    | `/` 及后续前台路径   |
-| `app/(backend)/admin/`        | 管理后台，`layout.tsx` 负责会话校验、后台壳与共享 mock 状态 | `/admin`、`/admin/*` |
-| `app/(auth)/login/`           | 登录页面及其专属样式                                        | `/login`             |
-| `app/(showcase)/design-spec/` | 设计系统展示及独立 metadata                                 | `/design-spec`       |
+| 分组                          | 职责                                                                      | URL                  |
+| ----------------------------- | ------------------------------------------------------------------------- | -------------------- |
+| `app/(frontend)/`             | 前台页面，首页为 `page.tsx`，独立布局入口为 `layout.tsx`                  | `/` 及后续前台路径   |
+| `app/(backend)/admin/`        | 管理后台，`layout.tsx` 负责会话校验、后台壳、文章查询与其他模块的演示状态 | `/admin`、`/admin/*` |
+| `app/(auth)/login/`           | 登录页面及其专属样式                                                      | `/login`             |
+| `app/(showcase)/design-spec/` | 设计系统展示及独立 metadata                                               | `/design-spec`       |
 
 新增前台页面放在 `app/(frontend)/` 下，例如 `about/page.tsx` 对应 `/about`。前台共享导航、页脚等写在该分组的 `layout.tsx` 中，仅作用于前台页面，不影响后台、登录或设计展示。分组布局不重复声明 `html/body`，也不重复挂载指针动效。
 
@@ -17,7 +17,7 @@
 
 ## 管理员登录
 
-后台登录使用 Hono + Zod，管理员和会话保存在 Prisma 8 SQLite 数据库中。分类与标签已接入数据库，文章及其他后台业务仍使用演示数据。
+后台登录使用 Hono + Zod，管理员和会话保存在 Prisma 8 SQLite 数据库中。文章、分类与标签已接入数据库，评论、媒体及其他后台业务仍使用演示数据。
 
 ### 本地初始化
 
@@ -97,10 +97,44 @@ npm run build
 
 分类页、快捷分类弹窗和文章编辑器共享 `/api/admin/categories`、`/api/admin/tags` 数据。两个集合支持 GET 查询、POST 创建及 DELETE `/:id` 删除。POST 分类接收 `{ name, color }`，标签接收 `{ name }`；颜色可省略，默认为 `#0066df`。名称去除首尾空白、长度 1–40 个字符，唯一键按 NFC 规范化及小写转换；分类、标签分别唯一，数据库约束保证并发重名请求返回 409。
 
-响应为 `{ data }`，分类包含 `id/name/color/createdAt`，标签包含 `id/name/createdAt`，时间为 ISO 字符串。列表按创建时间和 ID 升序排列；创建返回 201，删除返回 200 和 `{ data: { id } }`。错误为 `{ error: { code, message } }`：400 `INVALID_INPUT`、401 `UNAUTHORIZED`、403 `FORBIDDEN_ORIGIN`、404 `NOT_FOUND`、409 `DUPLICATE_NAME`、413 `PAYLOAD_TOO_LARGE`、415 `UNSUPPORTED_MEDIA_TYPE`、503 `SERVICE_UNAVAILABLE`。JSON 请求最多 16 KiB，写请求必须携带与 APP_ORIGIN 一致的 Origin，所有后台业务响应禁止缓存，业务错误不重定向登录页。
+响应为 `{ data }`，分类包含 `id/name/color/createdAt/postCount`，标签包含 `id/name/createdAt/postCount`，时间为 ISO 字符串。列表按创建时间和 ID 升序排列；创建返回 201，删除返回 200 和 `{ data: { id } }`。错误为 `{ error: { code, message } }`：400 `INVALID_INPUT`、401 `UNAUTHORIZED`、403 `FORBIDDEN_ORIGIN`、404 `NOT_FOUND`、409 `DUPLICATE_NAME` 或 `RESOURCE_IN_USE`、413 `PAYLOAD_TOO_LARGE`、415 `UNSUPPORTED_MEDIA_TYPE`、503 `SERVICE_UNAVAILABLE`。JSON 请求最多 16 KiB，写请求必须携带与 APP_ORIGIN 一致的 Origin，所有后台业务响应禁止缓存，业务错误不重定向登录页。
 
 本阶段不导入 Mock 数据，新库分类与标签为空。已有数据库执行 `npm run db:migrate` 应用新增表迁移，管理员与会话保持不变。若本地缺少 `db` ref，规划下一迁移时使用 `--from` 显式指定当前已应用的 contract 快照，不能从空库规划。
 
-关联文章数量显示“尚未接入”；删除不修改会话内演示文章。编辑器选择已登记分类和标签，未登记的历史演示值须重新选择或移除后保存。文章仍未持久化，刷新恢复演示文章；第二阶段才引入文章外键与被引用分类、标签的删除限制。
+关联数量统计所有状态的文章；被文章引用的分类、标签无法删除，返回 409 `RESOURCE_IN_USE`。请先修改或删除关联文章，或移除文章中的标签。
 
 构建可使用 `NEXT_BUILD_DIR=.next-build npm run build`，与现有开发服务器的 `.next` 输出隔离。
+
+## 文章管理 API（第二阶段）
+
+文章正文为纯文本，后台持久化文章及分类、标签关联，不自动导入演示文章，不提供前台文章接口。管理员、会话、已有分类和标签保留；本地与部署环境执行 `npm run db:migrate` 应用 `add_posts` 增量迁移，启动应用前生成最新 contract。已有开发进程需重启，以重新创建采用最新 contract 的数据库单例。
+
+| 接口                                    | 行为                                                 |
+| --------------------------------------- | ---------------------------------------------------- |
+| `GET /api/admin/posts`                  | 筛选、字面搜索、分页查询摘要                         |
+| `GET /api/admin/posts/summary`          | 全局状态数量与按排期时间升序的前 5 条排期            |
+| `GET /api/admin/posts/:id`              | 完整详情，含正文和版本号                             |
+| `POST /api/admin/posts`                 | 创建文章，返回 201                                   |
+| `PUT /api/admin/posts/:id`              | 按版本完整更新，返回 200                             |
+| `DELETE /api/admin/posts/:id?version=1` | 按确认时版本永久删除，返回 200 和 `{ data: { id } }` |
+
+列表参数为 `q/status/categoryId/page/pageSize`。关键词去除首尾空白，最多 200 个字符，覆盖标题、正文、分类和标签；`instr(lower(...))` 使用绑定参数，按字面包含匹配，`%`、`_` 没有通配符含义。SQLite 内置 `lower` 忽略 ASCII 大小写，其他字符按字面匹配。页码从 1 开始，默认每页 8 条，最多 100 条；按创建时间、ID 降序排列，超出范围的页码回退到最后一页。列表响应 `{ data: { items, total, page, pageSize, pageCount, statusCounts } }`，`statusCounts` 始终为全局数量 `{ all, draft, published, scheduled }`。列表不含正文；摘要与详情包含分类 `{ id, name, color }` 和标签数组 `{ id, name }`，时间统一为 ISO 字符串。
+
+创建输入为 `{ title, content, categoryId, tagIds, status, scheduledFor }`，更新额外要求 `version`。标题去除首尾空白后为 1–120 个字符；正文原样保存，必须包含非空白内容，最多 100,000 个字符。分类必选且已存在，标签可为空，重复 ID 去重，所有关联 ID 必须存在。状态为 `draft/published/scheduled`；非排期文章的 `scheduledFor` 必须为 `null`，排期文章传入含时区的 ISO 时间。界面使用北京时间。新设或调整排期必须晚于服务端当前时间；过期排期可保留原时间修改其他内容，不自动转为已发布。进入已发布时设置 `publishedAt`，普通编辑保留；转为其他状态清空，取消排期清空 `scheduledFor` 并转为草稿。
+
+版本从 1 开始，每次更新增加 1，更新与删除拒绝旧版本并返回 409 `VERSION_CONFLICT`。文章及标签关联在同一事务写入；删除文章级联清理标签关联，分类、标签本身保留。错误沿用业务 JSON 格式，新增 `VERSION_CONFLICT`；输入校验失败可返回 `error.fieldErrors`。页面、API 和数据访问入口均鉴权，写事务内重新核对会话，同源与 Cookie 规则不变。仅文章 POST、PUT 请求体上限为 1 MiB，其他接口仍为 16 KiB。
+
+编辑器在冲突时保留草稿，重新载入前确认替换；提交中禁止重复提交与关闭。写入成功后刷新文章、控制台摘要和分类标签数量，查询刷新失败单独显示重试，不将已完成的写入报成失败。全局搜索与排期管理同样分页读取数据库。排期入口仅管理真实文章，不再创建独立的演示计划；控制台其他统计仍标记演示，文章浏览量显示“尚未接入”。
+
+### 人工验收场景（待执行）
+
+项目默认不新增或运行测试；下列场景作为人工验收清单，不代表已经验证：
+
+- 新建文章并选择分类、标签，刷新或重新登录后读取；编辑保留正文空白及关联变化。
+- 超过 8 篇文章后跨页筛选搜索，检查全局状态数量；删除末页最后一篇后回退有效页。
+- 搜索标题、正文、分类、标签及包含 `%`、`_` 的关键词；清空、切换筛选或关闭弹窗时旧请求不覆盖新结果。
+- 被引用分类、标签删除返回冲突；文章永久删除后关联清理，未被引用的分类、标签可删除。
+- 设置未来排期、调整或取消排期；过期排期保留状态并提示，原时间不变时仍可编辑正文。
+- 两个浏览器页面编辑同一文章，旧版本保存保留草稿；旧版本删除要求重新确认，失败不修改关联。
+- 未登录、会话撤销、错误 Origin、无效 ID、空白正文、不存在的关联、非法 JSON、错误 Content-Type、请求体超限及服务失败，检查错误反馈与重试。
+- 保存成功后列表刷新失败，检查写入成功反馈与独立查询错误；检查加载、空数据、重复提交、键盘焦点和减少动态效果。

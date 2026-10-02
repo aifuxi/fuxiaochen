@@ -23,3 +23,5 @@ function route(request: Request) {
 export const POST = route;
 export const GET = route;
 export const DELETE = route;
+
+export const PUT = route;

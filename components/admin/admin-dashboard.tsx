@@ -24,15 +24,20 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { postTime, type PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 
-import { initialSources, traffic30Days, type Comment, type Post, type Schedule } from "./mock-data";
+import { initialSources, traffic30Days, type Comment } from "./mock-data";
+import { PostQueryStatus } from "./post-status";
+import { usePostClock } from "./use-posts";
 
 type Props = {
-  posts: Post[];
+  postSummary: PostSummary | null;
+  postSummaryLoading: boolean;
+  postSummaryError: string;
+  reloadPostSummary: () => void;
   comments: Comment[];
-  schedules: Schedule[];
   onOpen: (panel: AdminPanel) => void;
   onApprove: (id: string) => void;
   onDelete: (id: string) => void;
@@ -199,28 +204,31 @@ function TrafficChart() {
 }
 
 export function AdminDashboard({
-  posts,
+  postSummary,
+  postSummaryLoading,
+  postSummaryError,
+  reloadPostSummary,
   comments,
-  schedules,
   onOpen,
   onApprove,
   onDelete,
   onBackup,
 }: Props) {
+  const now = usePostClock();
   const pending = comments.filter((comment) => comment.status === "待审核");
   const stats = [
     { label: "总访问量", value: "128,942", trend: "+18.6%", note: "较上周", icon: BarChart3 },
     { label: "本周访客", value: "8,432", trend: "+12.3%", note: "较上周", icon: Users },
     {
       label: "已发布文章",
-      value: String(posts.filter((post) => post.status === "已发布").length),
+      value: postSummary ? String(postSummary.statusCounts.published) : "—",
       trend: "本期",
       note: "篇文章",
       icon: FileText,
     },
     {
       label: "草稿箱",
-      value: String(posts.filter((post) => post.status === "草稿").length),
+      value: postSummary ? String(postSummary.statusCounts.draft) : "—",
       trend: "待编辑",
       note: "篇草稿",
       icon: Pencil,
@@ -241,7 +249,7 @@ export function AdminDashboard({
         <div>
           <p className="admin-eyebrow">OVERVIEW / 001</p>
           <h1>仪表盘概览</h1>
-          <p>欢迎回来。这是你的模拟运营概览。</p>
+          <p>文章数量与排期来自数据库；其他运营数据仍为演示。</p>
         </div>
         <div className="admin-page-actions">
           <span className="admin-date">
@@ -355,19 +363,31 @@ export function AdminDashboard({
             }
           >
             <div className="admin-schedule-list">
-              {schedules.length ? (
-                schedules.map((schedule) => (
+              <PostQueryStatus
+                loading={postSummaryLoading}
+                error={postSummaryError}
+                reload={reloadPostSummary}
+              />
+              <p className="admin-muted">暂未启用自动发布 · 显示最近 5 条排期</p>
+              {postSummary?.schedules.length ? (
+                postSummary.schedules.map((schedule) => (
                   <div className="admin-schedule" key={schedule.id}>
                     <div>
                       <strong>{schedule.title}</strong>
-                      <small>{schedule.date}</small>
+                      <small>{postTime(schedule.scheduledFor)}</small>
                     </div>
-                    <span>准备就绪</span>
+                    <span>
+                      {schedule.scheduledFor &&
+                      now !== null &&
+                      Date.parse(schedule.scheduledFor) <= now
+                        ? "已过期"
+                        : "已排期"}
+                    </span>
                   </div>
                 ))
-              ) : (
+              ) : postSummary ? (
                 <p className="admin-empty">暂无排期。</p>
-              )}
+              ) : null}
             </div>
           </PanelCard>
           <PanelCard title="站点运行健康度" icon={Activity}>
@@ -399,7 +419,7 @@ export function AdminDashboard({
       <Card className="admin-quick">
         <div>
           <strong>快捷管理通道</strong>
-          <span>常用模拟操作</span>
+          <span>常用操作</span>
         </div>
         <div className="admin-quick-buttons">
           <Button size="sm" variant="secondary" onClick={() => onOpen("compose")}>

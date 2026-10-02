@@ -89,9 +89,7 @@ export function AdminCategories() {
           <p>建立清晰的知识架构与多维标签索引，帮助读者快速探索感兴趣的领域。</p>
         </div>
       </div>
-      <p className="admin-taxonomy-note">
-        分类与标签保存到数据库 · 文章关联尚未接入，删除不会修改演示文章。
-      </p>
+      <p className="admin-taxonomy-note">分类与标签保存到数据库 · 被文章引用时无法删除。</p>
       <TaxonomyStatus />
       <div className="admin-taxonomy-grid" aria-busy={taxonomyLoading || taxonomyPending}>
         <Card className="admin-taxonomy-card">
@@ -147,7 +145,7 @@ export function AdminCategories() {
               )}
             </form>
             <table className="admin-taxonomy-table">
-              <caption className="sr-only">博文分类，关联数量尚未接入</caption>
+              <caption className="sr-only">博文分类及关联文章数量</caption>
               <thead>
                 <tr>
                   <th scope="col">分类名称</th>
@@ -168,7 +166,7 @@ export function AdminCategories() {
                         <span>{item.name}</span>
                       </div>
                     </td>
-                    <td className="admin-taxonomy-count">尚未接入</td>
+                    <td className="admin-taxonomy-count">{item.postCount}</td>
                     <td>
                       <Button
                         variant="ghost"
@@ -244,7 +242,7 @@ export function AdminCategories() {
                 {tags.map((item) => (
                   <li key={item.id} className="admin-taxonomy-tag">
                     <span className="admin-taxonomy-tag-name">#{item.name}</span>
-                    <span className="admin-taxonomy-count">尚未接入</span>
+                    <span className="admin-taxonomy-count">{item.postCount}</span>
                     <Button
                       ref={(node) => {
                         if (node) tagTriggers.current.set(item.id, node);
@@ -286,7 +284,7 @@ export function AdminCategories() {
             确认删除分类“{categories.find((item) => item.id === deleteName)?.name}”？
           </DialogTitle>
           <DialogDescription>
-            将从数据库删除分类。文章关联尚未接入，演示文章不会变更。
+            将永久删除分类。被文章引用的分类无法删除，请先调整关联文章。
           </DialogDescription>
           {deleteError && <p role="alert">{deleteError}</p>}
           <div className="admin-form-actions">

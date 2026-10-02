@@ -14,6 +14,7 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE,
 } from "./auth/service";
+import { postRoutes } from "./posts/routes";
 import { taxonomyRoutes } from "./taxonomy/routes";
 
 function appOrigin() {
@@ -44,16 +45,25 @@ api.use("*", async (c, next) => {
   return next();
 });
 
-api.use(
-  "*",
-  bodyLimit({
-    maxSize: 16 * 1024,
-    onError: (c) =>
-      c.req.path.startsWith("/api/admin/")
-        ? c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "请求内容过大。" } }, 413)
-        : c.text("请求内容过大。", 413),
-  }),
-);
+const smallBodyLimit = bodyLimit({
+  maxSize: 16 * 1024,
+  onError: (c) =>
+    c.req.path.startsWith("/api/admin/")
+      ? c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "请求内容过大。" } }, 413)
+      : c.text("请求内容过大。", 413),
+});
+const articleBodyLimit = bodyLimit({
+  maxSize: 1024 * 1024,
+  onError: (c) =>
+    c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "文章请求最多 1 MiB。" } }, 413),
+});
+api.use("*", (c, next) => {
+  const articleWrite =
+    (c.req.method === "POST" && c.req.path === "/api/admin/posts") ||
+    (c.req.method === "PUT" && /^\/api\/admin\/posts\/[^/]+$/.test(c.req.path));
+  return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
+});
+api.route("/admin/posts", postRoutes);
 
 api.route("/admin", taxonomyRoutes);
 

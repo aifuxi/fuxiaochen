@@ -23,11 +23,15 @@ export function useTaxonomy() {
   const [taxonomyError, setError] = useState("");
   const [taxonomyPending, setPending] = useState(false);
   const pending = useRef(false);
+  const refreshAfterMutation = useRef(false);
   const mounted = useRef(false);
   const loadController = useRef<AbortController | null>(null);
 
   const reloadTaxonomy = useCallback(async () => {
-    if (pending.current) return;
+    if (pending.current) {
+      refreshAfterMutation.current = true;
+      return;
+    }
     loadController.current?.abort();
     const controller = new AbortController();
     loadController.current = controller;
@@ -39,6 +43,7 @@ export function useTaxonomy() {
       if (mounted.current && !controller.signal.aborted) {
         setCategories(categories);
         setTags(tags);
+        setError("");
       }
     } catch (error) {
       if (mounted.current && !controller.signal.aborted)
@@ -67,7 +72,13 @@ export function useTaxonomy() {
       return await work();
     } finally {
       pending.current = false;
-      if (mounted.current) setPending(false);
+      if (mounted.current) {
+        setPending(false);
+        if (refreshAfterMutation.current) {
+          refreshAfterMutation.current = false;
+          void reloadTaxonomy();
+        }
+      }
     }
   }
   const createCategory = (input: CategoryInput) =>
@@ -101,7 +112,10 @@ export function useTaxonomy() {
       if (mounted.current) setTags((items) => items.filter((item) => item.id !== id));
     });
   const retry = () => {
-    if (pending.current) return Promise.resolve();
+    if (pending.current) {
+      refreshAfterMutation.current = true;
+      return Promise.resolve();
+    }
     setLoading(true);
     setError("");
     return reloadTaxonomy();

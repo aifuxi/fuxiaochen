@@ -12,7 +12,7 @@ export const tagSchema = z.object({ name: nameSchema });
 export const taxonomyIdSchema = z.object({ id: z.uuid() });
 export type CategoryInput = z.infer<typeof categorySchema>;
 export type TagInput = z.infer<typeof tagSchema>;
-export type Tag = TagInput & { id: string; createdAt: string };
+export type Tag = TagInput & { id: string; createdAt: string; postCount: number };
 export type Category = Tag & { color: string };
 export function taxonomyNameKey(name: string) {
   return name.normalize("NFC").toLowerCase();

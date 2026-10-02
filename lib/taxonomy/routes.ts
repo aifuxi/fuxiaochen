@@ -65,18 +65,28 @@ const idValidator = zValidator("param", taxonomyIdSchema, (result, c) => {
 });
 const actor = (c: Context<TaxonomyEnv>) => c.get("admin");
 taxonomyRoutes.get("/categories", async (c) =>
-  c.json({ data: (await listCategories(actor(c))).map(({ nameKey: _nameKey, ...item }) => item) }),
+  c.json({
+    data: (await listCategories(actor(c))).map(({ nameKey: _nameKey, posts, ...item }) => ({
+      ...item,
+      postCount: posts,
+    })),
+  }),
 );
 taxonomyRoutes.get("/tags", async (c) =>
-  c.json({ data: (await listTags(actor(c))).map(({ nameKey: _nameKey, ...item }) => item) }),
+  c.json({
+    data: (await listTags(actor(c))).map(({ nameKey: _nameKey, postLinks, ...item }) => ({
+      ...item,
+      postCount: postLinks,
+    })),
+  }),
 );
 taxonomyRoutes.post("/categories", categoryValidator, async (c) => {
   const { nameKey: _nameKey, ...item } = await createCategory(c.req.valid("json"), actor(c));
-  return c.json({ data: item }, 201);
+  return c.json({ data: { ...item, postCount: 0 } }, 201);
 });
 taxonomyRoutes.post("/tags", tagValidator, async (c) => {
   const { nameKey: _nameKey, ...item } = await createTag(c.req.valid("json"), actor(c));
-  return c.json({ data: item }, 201);
+  return c.json({ data: { ...item, postCount: 0 } }, 201);
 });
 taxonomyRoutes.delete("/categories/:id", idValidator, async (c) =>
   c.json({ data: await deleteCategory(c.req.valid("param").id, actor(c)) }),

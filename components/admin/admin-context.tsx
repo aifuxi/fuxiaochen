@@ -2,10 +2,12 @@
 
 import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
 
+import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
+
 import type { AdminPanel } from "./admin-shell";
 import type { ReleaseLog } from "./changelog-mock-data";
 import type { FriendLink } from "./friends-links-mock-data";
-import type { Comment, MediaItem, Post, Schedule } from "./mock-data";
+import type { Comment, MediaItem } from "./mock-data";
 import type { BlogSettings } from "./settings-mock-data";
 import type { TaxonomyState } from "./use-taxonomy";
 
@@ -21,13 +23,18 @@ type AdminState = TaxonomyState & {
   onDeleteMedia: (id: string) => void;
   onMessage: (message: string) => void;
   uploadingMedia: boolean;
-  posts: Post[];
+  postRevision: number;
+  postPending: boolean;
+  postSummary: PostSummary | null;
+  postSummaryLoading: boolean;
+  postSummaryError: string;
+  reloadPostSummary: () => void;
+  savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
+  cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
   comments: Comment[];
-  schedules: Schedule[];
-  categories: string[];
   onOpen: (panel: AdminPanel) => void;
-  onEdit: (post: Post) => void;
-  onDeletePost: (id: string) => void;
+  onEdit: (id: string) => void;
+  onDeletePost: (post: PostItem) => void;
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
   onReply: (id: string, content: string) => boolean;

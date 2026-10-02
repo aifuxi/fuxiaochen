@@ -13,42 +13,41 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
-
-import type { PostStatus } from "./mock-data";
+import { postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { PostQueryStatus } from "./post-status";
+import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-posts.css";
 
 const filters: { value: "all" | PostStatus; label: string }[] = [
   { value: "all", label: "全部文章" },
-  { value: "已发布", label: "已发布" },
-  { value: "草稿", label: "草稿箱" },
-  { value: "已排期", label: "发布计划" },
+  { value: "published", label: "已发布" },
+  { value: "draft", label: "草稿箱" },
+  { value: "scheduled", label: "发布计划" },
 ];
 const pageSize = 8;
 
 export function AdminPosts() {
-  const { posts, categories, onOpen, onEdit, onDeletePost } = useAdminWorkspace();
+  const now = usePostClock();
+  const { categoryItems, postRevision, postPending, onOpen, onEdit, onDeletePost } =
+    useAdminWorkspace();
   const [status, setStatus] = useState<string>("all");
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const term = query.trim().toLocaleLowerCase();
-  const filtered = posts.filter(
-    (post) =>
-      (status === "all" || post.status === status) &&
-      (category === "all" || post.category === category) &&
-      (!term ||
-        [post.title, post.category, post.content, ...post.tags].some((value) =>
-          value.toLocaleLowerCase().includes(term),
-        )),
+  const term = useDebouncedPostQuery(query);
+  const result = usePostList(
+    { status, categoryId: category, q: term, page, pageSize },
+    postRevision,
   );
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  // 删除最后一页文章后，直接从有效页码派生列表，避免短暂空页。
-  const currentPage = Math.min(page, pageCount);
+  const data = result.data;
+  const total = data?.total ?? 0;
+  const pageCount = data?.pageCount ?? 1;
+  const currentPage = data?.page ?? page;
   const start = (currentPage - 1) * pageSize;
-  const visiblePosts = filtered.slice(start, start + pageSize);
+  const visiblePosts = data?.items ?? [];
   const resetFilters = () => {
     setStatus("all");
     setCategory("all");
@@ -63,7 +62,12 @@ export function AdminPosts() {
           <h1>内容管理</h1>
           <p>管理文章、草稿与发布计划。</p>
         </div>
-        <Button variant="primary" size="compact" onClick={() => onOpen("compose")}>
+        <Button
+          variant="primary"
+          size="compact"
+          disabled={postPending}
+          onClick={() => onOpen("compose")}
+        >
           <Plus size={16} aria-hidden="true" />
           新建博文
         </Button>
@@ -81,11 +85,7 @@ export function AdminPosts() {
               <TabsList size="compact" aria-label="按文章状态筛选">
                 {filters.map((filter) => (
                   <TabsTrigger key={filter.value} value={filter.value}>
-                    {filter.label} (
-                    {filter.value === "all"
-                      ? posts.length
-                      : posts.filter((post) => post.status === filter.value).length}
-                    )
+                    {filter.label} ({data ? data.statusCounts[filter.value] : "…"})
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -103,23 +103,27 @@ export function AdminPosts() {
                   }}
                 >
                   <SelectTrigger size="compact" id="admin-post-category-filter">
-                    <SelectValue>{category === "all" ? "全部分类" : category}</SelectValue>
+                    <SelectValue>
+                      {category === "all"
+                        ? "全部分类"
+                        : (categoryItems.find((item) => item.id === category)?.name ??
+                          "分类已移除")}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">全部分类</SelectItem>
-                    {[...new Set([...categories, ...posts.map((post) => post.category)])].map(
-                      (name) => (
-                        <SelectItem key={name} value={name}>
-                          {name}
-                        </SelectItem>
-                      ),
-                    )}
+                    {categoryItems.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <InputGroup size="compact" className="admin-post-search">
                 <InputGroupInput
                   aria-label="搜索文章标题、标签、分类和内容"
+                  maxLength={200}
                   value={query}
                   onChange={(event) => {
                     setQuery(event.target.value);
@@ -139,11 +143,12 @@ export function AdminPosts() {
             </div>
           </div>
           <TabsPanel value={status} className="admin-post-panel">
-            <div className="admin-post-list">
+            <div className="admin-post-list" aria-busy={result.loading}>
+              <PostQueryStatus {...result} />
               <section className="admin-post-table-scroll" aria-label="文章列表，可横向滚动">
                 <table className="admin-post-table">
                   <caption className="sr-only">
-                    文章列表，共 {filtered.length} 篇，第 {currentPage} 页
+                    文章列表，共 {total} 篇，第 {currentPage} 页
                   </caption>
                   <colgroup>
                     <col />
@@ -170,33 +175,41 @@ export function AdminPosts() {
                           <button
                             type="button"
                             className="admin-post-title"
-                            onClick={() => onEdit(post)}
+                            disabled={postPending}
+                            onClick={() => onEdit(post.id)}
                           >
                             {post.title}
                           </button>
                           <div className="admin-post-tags">
                             {post.tags.map((tag) => (
-                              <span key={tag}>#{tag}</span>
+                              <span key={tag.id}>#{tag.name}</span>
                             ))}
                           </div>
                         </td>
                         <td>
-                          <span className="admin-post-category">{post.category}</span>
+                          <span className="admin-post-category">{post.category.name}</span>
                         </td>
                         <td>
                           <span
-                            className={`admin-post-status ${post.status === "已发布" ? "is-published" : post.status === "已排期" ? "is-scheduled" : ""}`}
+                            className={`admin-post-status ${post.status === "published" ? "is-published" : post.status === "scheduled" ? "is-scheduled" : ""}`}
                           >
-                            {post.status}
+                            {postStatusLabels[post.status]}
                           </span>
                         </td>
                         <td className="admin-post-metric">
-                          {post.status === "已发布" ? (post.views ?? 0).toLocaleString() : "—"}
+                          {post.status === "published" ? "尚未接入" : "—"}
                         </td>
                         <td className="admin-post-metric">
-                          {post.status === "已排期"
-                            ? post.scheduledFor?.replace("T", " ")
-                            : post.date}
+                          {postTime(
+                            post.status === "scheduled"
+                              ? post.scheduledFor
+                              : (post.publishedAt ?? post.updatedAt),
+                            post.status !== "scheduled",
+                          )}
+                          {post.status === "scheduled" &&
+                            post.scheduledFor &&
+                            now !== null &&
+                            Date.parse(post.scheduledFor) <= now && <span> · 已过期</span>}
                         </td>
                         <td>
                           <div className="admin-post-row-actions">
@@ -205,7 +218,8 @@ export function AdminPosts() {
                               size="compact"
                               aria-label={`编辑文章 ${post.title}`}
                               title="编辑文章"
-                              onClick={() => onEdit(post)}
+                              disabled={postPending}
+                              onClick={() => onEdit(post.id)}
                             >
                               <Pencil size={16} />
                             </Button>
@@ -214,7 +228,8 @@ export function AdminPosts() {
                               size="compact"
                               aria-label={`删除文章 ${post.title}`}
                               title="删除文章"
-                              onClick={() => onDeletePost(post.id)}
+                              disabled={postPending}
+                              onClick={() => onDeletePost(post)}
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -225,33 +240,35 @@ export function AdminPosts() {
                   </tbody>
                 </table>
               </section>
-              {!filtered.length && (
+              {data && !total && (
                 <div className="admin-post-empty">
                   <FileText size={32} aria-hidden="true" />
-                  <h2>{posts.length ? "未匹配到相关博文" : "还没有文章"}</h2>
+                  <h2>{data.statusCounts.all ? "未匹配到相关博文" : "还没有文章"}</h2>
                   <p>
-                    {posts.length ? "请调整状态、分类或搜索关键词。" : "从第一篇文章开始记录。"}
+                    {data.statusCounts.all
+                      ? "请调整状态、分类或搜索关键词。"
+                      : "从第一篇文章开始记录。"}
                   </p>
                   <Button
                     variant="secondary"
                     size="compact"
-                    onClick={posts.length ? resetFilters : () => onOpen("compose")}
+                    onClick={data.statusCounts.all ? resetFilters : () => onOpen("compose")}
                   >
-                    {posts.length ? "重置筛选" : "新建文章"}
+                    {data.statusCounts.all ? "重置筛选" : "新建文章"}
                   </Button>
                 </div>
               )}
               <div className="admin-post-pagination">
                 <span aria-live="polite">
-                  显示第 {filtered.length ? start + 1 : 0}–
-                  {Math.min(start + pageSize, filtered.length)} 条，共 {filtered.length} 条
+                  显示第 {total ? start + 1 : 0}–{Math.min(start + pageSize, total)} 条，共 {total}{" "}
+                  条
                 </span>
                 <nav aria-label="文章分页">
                   <Button
                     size="compact"
                     variant="ghost"
                     aria-label="上一页"
-                    disabled={currentPage === 1}
+                    disabled={result.loading || Boolean(result.error) || currentPage <= 1}
                     onClick={() => setPage(currentPage - 1)}
                   >
                     <ChevronLeft size={17} />
@@ -263,7 +280,7 @@ export function AdminPosts() {
                     size="compact"
                     variant="ghost"
                     aria-label="下一页"
-                    disabled={currentPage === pageCount}
+                    disabled={result.loading || Boolean(result.error) || currentPage >= pageCount}
                     onClick={() => setPage(currentPage + 1)}
                   >
                     <ChevronRight size={17} />
@@ -275,7 +292,7 @@ export function AdminPosts() {
         </Tabs>
       </div>
       <p className="admin-post-session-note">
-        演示数据 · 修改仅保留在当前会话，刷新后恢复。排期不会自动发布。
+        文章保存到数据库 · 排期暂未启用自动发布。浏览量尚未接入访问采集。
       </p>
     </div>
   );

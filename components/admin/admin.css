@@ -760,11 +760,11 @@
   text-align: left;
   cursor: pointer;
 }
-.admin-result:hover,
+.admin-result:hover:not(:disabled),
 .admin-notice:hover {
   background: var(--color-surface-hover);
 }
-.admin-result:active,
+.admin-result:active:not(:disabled),
 .admin-notice:active {
   background: var(--color-raised);
 }
@@ -1397,4 +1397,28 @@
   .admin-comments .admin-post-search {
     width: 100%;
   }
+}
+
+.admin-post-feedback {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+.admin-post-error {
+  color: var(--color-danger);
+  overflow-wrap: anywhere;
+}
+.admin-result:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-post-browser .admin-result {
+  flex: 1;
+  min-width: 0;
+  border-bottom: 0;
+  overflow-wrap: anywhere;
+}
+.admin-post-browser .admin-managed-row > .ds-button {
+  flex-shrink: 0;
 }

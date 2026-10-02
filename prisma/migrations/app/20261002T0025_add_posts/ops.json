@@ -1,0 +1,247 @@
+[
+  {
+    "id": "table.post",
+    "label": "Create table post",
+    "summary": "Creates table post with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"post\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"post\"",
+        "sql": "CREATE TABLE \"post\" (\n  \"categoryId\" TEXT NOT NULL,\n  \"content\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"publishedAt\" TEXT,\n  \"scheduledFor\" TEXT,\n  \"status\" TEXT NOT NULL,\n  \"title\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\"),\n  FOREIGN KEY (\"categoryId\") REFERENCES \"category\" (\"id\") ON DELETE RESTRICT\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"post\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post"]
+      }
+    ]
+  },
+  {
+    "id": "table.post_tag",
+    "label": "Create table post_tag",
+    "summary": "Creates table post_tag with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "post_tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"post_tag\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post_tag"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"post_tag\"",
+        "sql": "CREATE TABLE \"post_tag\" (\n  \"postId\" TEXT NOT NULL,\n  \"tagId\" TEXT NOT NULL,\n  PRIMARY KEY (\"postId\", \"tagId\"),\n  FOREIGN KEY (\"postId\") REFERENCES \"post\" (\"id\") ON DELETE CASCADE,\n  FOREIGN KEY (\"tagId\") REFERENCES \"tag\" (\"id\") ON DELETE RESTRICT\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"post_tag\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post_tag"]
+      }
+    ]
+  },
+  {
+    "id": "index.post.post_categoryId_idx_15c304f2",
+    "label": "Create index post_categoryId_idx_15c304f2 on post",
+    "summary": "Creates index post_categoryId_idx_15c304f2 on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_categoryId_idx_15c304f2",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_categoryId_idx_15c304f2\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_categoryId_idx_15c304f2"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_categoryId_idx_15c304f2\"",
+        "sql": "CREATE INDEX \"post_categoryId_idx_15c304f2\" ON \"post\" (\"categoryId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_categoryId_idx_15c304f2\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_categoryId_idx_15c304f2"]
+      }
+    ]
+  },
+  {
+    "id": "index.post.post_createdAt_id_idx_3855cff1",
+    "label": "Create index post_createdAt_id_idx_3855cff1 on post",
+    "summary": "Creates index post_createdAt_id_idx_3855cff1 on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_createdAt_id_idx_3855cff1",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"post_createdAt_id_idx_3855cff1\" ON \"post\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.post.post_status_scheduledFor_idx_e20b7d95",
+    "label": "Create index post_status_scheduledFor_idx_e20b7d95 on post",
+    "summary": "Creates index post_status_scheduledFor_idx_e20b7d95 on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_status_scheduledFor_idx_e20b7d95",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_status_scheduledFor_idx_e20b7d95\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_status_scheduledFor_idx_e20b7d95"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_status_scheduledFor_idx_e20b7d95\"",
+        "sql": "CREATE INDEX \"post_status_scheduledFor_idx_e20b7d95\" ON \"post\" (\"status\", \"scheduledFor\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_status_scheduledFor_idx_e20b7d95\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_status_scheduledFor_idx_e20b7d95"]
+      }
+    ]
+  },
+  {
+    "id": "index.post_tag.post_tag_postId_idx_a7a72715",
+    "label": "Create index post_tag_postId_idx_a7a72715 on post_tag",
+    "summary": "Creates index post_tag_postId_idx_a7a72715 on post_tag",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_tag_postId_idx_a7a72715",
+        "table": "post_tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_tag_postId_idx_a7a72715\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_tag_postId_idx_a7a72715"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_tag_postId_idx_a7a72715\"",
+        "sql": "CREATE INDEX \"post_tag_postId_idx_a7a72715\" ON \"post_tag\" (\"postId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_tag_postId_idx_a7a72715\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_tag_postId_idx_a7a72715"]
+      }
+    ]
+  },
+  {
+    "id": "index.post_tag.post_tag_tagId_idx_86854244",
+    "label": "Create index post_tag_tagId_idx_86854244 on post_tag",
+    "summary": "Creates index post_tag_tagId_idx_86854244 on post_tag",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_tag_tagId_idx_86854244",
+        "table": "post_tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_tag_tagId_idx_86854244\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_tag_tagId_idx_86854244"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_tag_tagId_idx_86854244\"",
+        "sql": "CREATE INDEX \"post_tag_tagId_idx_86854244\" ON \"post_tag\" (\"tagId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_tag_tagId_idx_86854244\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_tag_tagId_idx_86854244"]
+      }
+    ]
+  }
+]

@@ -4,13 +4,24 @@ import { useAdminWorkspace } from "./admin-context";
 import { AdminDashboard } from "./admin-dashboard";
 
 export function AdminOverview() {
-  const { posts, comments, schedules, onOpen, onApprove, onDeleteComment, onBackup } =
-    useAdminWorkspace();
+  const {
+    postSummary,
+    postSummaryLoading,
+    postSummaryError,
+    reloadPostSummary,
+    comments,
+    onOpen,
+    onApprove,
+    onDeleteComment,
+    onBackup,
+  } = useAdminWorkspace();
   return (
     <AdminDashboard
-      posts={posts}
+      postSummary={postSummary}
+      postSummaryLoading={postSummaryLoading}
+      postSummaryError={postSummaryError}
+      reloadPostSummary={reloadPostSummary}
       comments={comments}
-      schedules={schedules}
       onOpen={onOpen}
       onApprove={onApprove}
       onDelete={onDeleteComment}

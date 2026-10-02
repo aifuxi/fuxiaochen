@@ -1,39 +1,15 @@
 "use client";
 
-import { Search, Trash2, X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-  type FormEvent,
-} from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode, type FormEvent } from "react";
+
+import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
-import {
-  Combobox,
-  ComboboxInputGroup,
-  ComboboxInput,
-  ComboboxTrigger,
-  ComboboxContent,
-  ComboboxList,
-  ComboboxItem,
-} from "@/components/ui/combobox";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
@@ -44,16 +20,14 @@ import {
   type MediaItem,
   initialComments,
   initialNotices,
-  initialPosts,
-  initialSchedules,
   initialSources,
   traffic30Days,
-  type Post,
-  type PostStatus,
-  type Schedule,
 } from "./mock-data";
+import { PostBrowser } from "./post-browser";
+import { PostEditor } from "./post-editor";
 import { initialSettings } from "./settings-mock-data";
 import { TaxonomyStatus } from "./taxonomy-status";
+import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
@@ -69,26 +43,22 @@ const panelTitles: Record<AdminPanel, string> = {
   schedule: "定时发布计划",
 };
 
-function isFuturePublishDate(value: string) {
-  const timestamp = Date.parse(`${value}+08:00`);
-  return Number.isFinite(timestamp) && timestamp > Date.now();
-}
-
 function mediaUploadTime() {
   return new Date().toLocaleString("sv-SE", { timeZone: "Asia/Shanghai" }).slice(0, 16);
 }
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const [posts, setPosts] = useState(initialPosts);
+  const [postRevision, setPostRevision] = useState(0);
+  const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
+  const [postPending, setPostPending] = useState(false);
+  const postMutation = useRef(false);
   const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
   const [settings, setSettings] = useState(initialSettings);
   const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [comments, setComments] = useState(initialComments);
-  const [manualSchedules, setSchedules] = useState(initialSchedules);
   const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
-  const categories = taxonomy.categoryItems.map((item) => item.name);
   const taxonomyDisabled =
     taxonomy.taxonomyLoading || Boolean(taxonomy.taxonomyError) || taxonomy.taxonomyPending;
   const [panel, setPanel] = useState<AdminPanel | null>(null);
@@ -98,15 +68,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     fallback: null,
   });
   const [message, setMessage] = useState("");
-  const [query, setQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [category, setCategory] = useState("");
-  const [postStatus, setPostStatus] = useState<PostStatus>("草稿");
-  const [tags, setTags] = useState<string[]>([]);
-  const [publishDate, setPublishDate] = useState("");
-  const [postDeleteId, setPostDeleteId] = useState<string | null>(null);
+  const [postDeleteTarget, setPostDeleteTarget] = useState<PostItem | null>(null);
+  const [postDeleteError, setPostDeleteError] = useState("");
+  const [postDeleteConflict, setPostDeleteConflict] = useState(false);
   const [media, setMedia] = useState(initialMedia);
   const [uploadingMedia, setUploadingMedia] = useState(false);
   const objectUrls = useRef(new Set<string>());
@@ -186,8 +151,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     setMessage("素材已移除（模拟，刷新后恢复初始数据）");
   };
   const [newCategory, setNewCategory] = useState("");
-  const [scheduleTitle, setScheduleTitle] = useState("");
-  const [scheduleDate, setScheduleDate] = useState("");
 
   useEffect(() => {
     if (!message) return undefined;
@@ -201,40 +164,62 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         router.push("/admin/comments");
         return;
       }
-      if (name === "compose") {
-        setEditingId(null);
-        setTitle("");
-        setBody("");
-        setCategory("");
-        setPostStatus("草稿");
-        setTags([]);
-        setPublishDate("");
-      }
+      if (postMutation.current) return;
+      if (name === "compose") setEditingId(null);
       setPanel(name);
     },
     [router],
   );
 
-  const openEditor = (post: Post) => {
-    setEditingId(post.id);
-    setTitle(post.title);
-    setBody(post.content);
-    setCategory(post.category);
-    setPostStatus(post.status);
-    setTags(post.tags);
-    setPublishDate(post.scheduledFor ?? "");
+  const openEditor = (id: string) => {
+    if (postMutation.current) return;
+    setEditingId(id);
     setPanel("compose");
   };
-
-  const filteredPosts = useMemo(() => {
-    const term = query.trim().toLocaleLowerCase();
-    if (!term) return [];
-    return posts.filter((post) =>
-      [post.title, post.content, post.category, ...post.tags].some((value) =>
-        value.toLocaleLowerCase().includes(term),
-      ),
+  const mutatePost = async <T,>(work: () => Promise<T>, success: string) => {
+    if (postMutation.current) throw new Error("请等待当前文章操作完成。");
+    postMutation.current = true;
+    setPostPending(true);
+    try {
+      const result = await work();
+      if (mounted.current) {
+        setPostRevision((value) => value + 1);
+        void taxonomy.reloadTaxonomy();
+        setMessage(success);
+      }
+      return result;
+    } finally {
+      postMutation.current = false;
+      if (mounted.current) setPostPending(false);
+    }
+  };
+  const savePost = (input: PostInput, initial: PostDetail | null) =>
+    mutatePost(
+      () =>
+        postRequest<PostDetail>(initial ? `/${initial.id}` : "", {
+          method: initial ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(initial ? { ...input, version: initial.version } : input),
+        }),
+      initial ? "文章已更新" : "文章已创建",
     );
-  }, [posts, query]);
+  const cancelPostSchedule = (post: PostItem) =>
+    mutatePost(async () => {
+      const latest = await postRequest<PostDetail>(`/${post.id}`);
+      return postRequest<PostDetail>(`/${post.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: latest.title,
+          content: latest.content,
+          categoryId: latest.categoryId,
+          tagIds: latest.tags.map((tag) => tag.id),
+          status: "draft",
+          scheduledFor: null,
+          version: post.version,
+        }),
+      });
+    }, "排期已取消，文章已转为草稿");
 
   const approveComment = (id: string) => {
     setComments((current) =>
@@ -272,67 +257,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     return true;
   };
 
-  const savePost = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const cleanTitle = title.trim();
-    const cleanBody = body.trim();
-    const dateValue = new FormData(event.currentTarget).get("publish-date");
-    const nextPublishDate = typeof dateValue === "string" ? dateValue : "";
-    if (!cleanTitle || !cleanBody) {
-      setMessage("标题和正文不能只包含空格");
-      return;
-    }
-    if (postStatus === "已排期" && !isFuturePublishDate(nextPublishDate)) {
-      setMessage("请选择未来的发布时间（北京时间）");
-      return;
-    }
-    if (taxonomyDisabled || !categories.includes(category)) {
-      setMessage("请选择已登记的分类；没有分类时请先创建。");
-      return;
-    }
-    if (tags.some((name) => !taxonomy.tagItems.some((item) => item.name === name))) {
-      setMessage("请移除历史演示标签或重新选择已登记的标签。");
-      return;
-    }
-    const cleanTags = [...new Set(tags)];
-    const scheduledFor = postStatus === "已排期" ? nextPublishDate : undefined;
-    if (editingId) {
-      setPosts((current) =>
-        current.map((post) =>
-          post.id === editingId
-            ? {
-                ...post,
-                title: cleanTitle,
-                content: cleanBody,
-                category,
-                status: postStatus,
-                tags: cleanTags,
-                scheduledFor,
-                views: postStatus === "已发布" ? (post.views ?? 0) : null,
-              }
-            : post,
-        ),
-      );
-    } else {
-      setPosts((current) => [
-        {
-          id: crypto.randomUUID(),
-          title: cleanTitle,
-          content: cleanBody,
-          category,
-          tags: cleanTags,
-          scheduledFor,
-          views: postStatus === "已发布" ? 0 : null,
-          status: postStatus,
-          date: new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Shanghai" }),
-        },
-        ...current,
-      ]);
-    }
-    setPanel(null);
-    setMessage(editingId ? "文章已更新（仅当前页面）" : "文章已创建（仅当前页面）");
-  };
-
   const addCategory = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -343,39 +267,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       setMessage(error instanceof Error ? error.message : "分类创建失败。");
     }
   };
-
-  const addSchedule = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const titleValue = form.get("title");
-    const dateValue = form.get("date");
-    const nextTitle = typeof titleValue === "string" ? titleValue.trim() : "";
-    const nextDate = typeof dateValue === "string" ? dateValue : "";
-    if (!nextTitle || !nextDate) return;
-    setSchedules((current) => [
-      ...current,
-      {
-        id: crypto.randomUUID(),
-        title: nextTitle,
-        date: nextDate.replace("T", " "),
-      },
-    ]);
-    setScheduleTitle("");
-    setScheduleDate("");
-    setMessage("计划已添加（仅当前页面）");
-  };
-
-  const schedules: Schedule[] = [
-    ...manualSchedules,
-    ...posts
-      .filter((post) => post.status === "已排期" && post.scheduledFor)
-      .map((post) => ({
-        id: post.id,
-        title: post.title,
-        date: post.scheduledFor!.replace("T", " "),
-      })),
-  ].toSorted((a, b) => a.date.localeCompare(b.date));
-  const targetPost = posts.find((post) => post.id === postDeleteId);
 
   const pendingCount = comments.filter((comment) => comment.status === "待审核").length;
   const unreadCount = notices.filter((notice) => !notice.read).length;
@@ -395,14 +286,23 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onDeleteMedia: deleteMedia,
         onMessage: setMessage,
         uploadingMedia,
-        posts,
+        postRevision,
+        postPending,
+        postSummary: summary.data,
+        postSummaryLoading: summary.loading,
+        postSummaryError: summary.error,
+        reloadPostSummary: summary.reload,
+        savePost,
+        cancelPostSchedule,
         comments,
-        schedules,
-        categories,
         ...taxonomy,
         onOpen: openPanel,
         onEdit: openEditor,
-        onDeletePost: setPostDeleteId,
+        onDeletePost: (post) => {
+          setPostDeleteTarget(post);
+          setPostDeleteError("");
+          setPostDeleteConflict(false);
+        },
         onApprove: approveComment,
         onDeleteComment: (id, fallbackFocus) => {
           commentDeleteFocus.current = { deleted: false, fallback: fallbackFocus ?? null };
@@ -427,7 +327,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       <Dialog
         open={panel !== null}
         onOpenChange={(open) => {
-          if (!open) setPanel(null);
+          if (!open && !postMutation.current) setPanel(null);
         }}
       >
         <DialogContent className="admin-modal">
@@ -437,200 +337,28 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                 <div>
                   <DialogTitle>{panelTitles[panel]}</DialogTitle>
                   <DialogDescription>
-                    {panel === "categories"
-                      ? "分类与标签已持久化；文章关联尚未接入。"
-                      : "文章及其他操作仍使用会话内演示数据。"}
+                    {["categories", "compose", "search", "schedule"].includes(panel)
+                      ? "文章、分类与标签已持久化；暂未启用自动发布。"
+                      : "此模块仍使用会话内演示数据。"}
                   </DialogDescription>
                 </div>
-                <Button variant="ghost" size="sm" aria-label="关闭" onClick={() => setPanel(null)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  aria-label="关闭"
+                  disabled={postPending}
+                  onClick={() => setPanel(null)}
+                >
                   <X size={18} />
                 </Button>
               </div>
-              {panel === "search" && (
-                <div className="admin-modal-section">
-                  <label htmlFor="admin-search-input">搜索文章标题、正文、标签和分类</label>
-                  <InputGroup>
-                    <InputGroupInput
-                      id="admin-search-input"
-                      value={query}
-                      onChange={(event) => setQuery(event.target.value)}
-                      placeholder="输入关键词…"
-                    />
-                    <InputGroupAddon>
-                      <Search size={16} aria-hidden="true" />
-                    </InputGroupAddon>
-                  </InputGroup>
-                  <div className="admin-result-list">
-                    {!query.trim() ? (
-                      <p className="admin-empty">输入关键词开始搜索。</p>
-                    ) : filteredPosts.length ? (
-                      filteredPosts.map((post) => (
-                        <button
-                          className="admin-result"
-                          type="button"
-                          key={post.id}
-                          onClick={() => openEditor(post)}
-                        >
-                          <strong>{post.title}</strong>
-                          <span>
-                            {post.category} · {post.status} · {post.date}
-                          </span>
-                        </button>
-                      ))
-                    ) : (
-                      <p className="admin-empty">没有找到相关文章。</p>
-                    )}
-                  </div>
-                </div>
-              )}
+              {panel === "search" && <PostBrowser mode="search" />}
               {panel === "compose" && (
-                <form className="admin-form" onSubmit={savePost}>
-                  <TaxonomyStatus />
-                  <label htmlFor="admin-post-title">
-                    文章标题
-                    <Input
-                      id="admin-post-title"
-                      required
-                      maxLength={120}
-                      value={title}
-                      onChange={(event) => setTitle(event.target.value)}
-                      placeholder="输入标题"
-                    />
-                  </label>
-                  <label htmlFor="admin-post-body">
-                    正文内容
-                    <Textarea
-                      id="admin-post-body"
-                      required
-                      value={body}
-                      onChange={(event) => setBody(event.target.value)}
-                      placeholder="开始写作…"
-                    />
-                  </label>
-                  <label htmlFor="admin-post-category">
-                    分类
-                    <Select
-                      value={category}
-                      disabled={taxonomyDisabled || !categories.length}
-                      onValueChange={(value) => setCategory(value ?? "")}
-                    >
-                      <SelectTrigger id="admin-post-category">
-                        <SelectValue placeholder="请选择分类" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories.map((item) => (
-                          <SelectItem value={item} key={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </label>
-                  {category && !categories.includes(category) && (
-                    <p role="alert">历史演示分类“{category}”未登记，请重新选择。</p>
-                  )}
-                  {!taxonomy.taxonomyLoading && !taxonomy.taxonomyError && !categories.length && (
-                    <p>
-                      请先在 <Link href="/admin/categories">分类与标签</Link> 创建分类。
-                    </p>
-                  )}
-                  <label htmlFor="admin-post-tags">标签</label>
-                  <Combobox
-                    multiple
-                    items={taxonomy.tagItems.map((item) => item.name)}
-                    value={tags}
-                    onValueChange={setTags}
-                    disabled={taxonomyDisabled}
-                  >
-                    <ComboboxInputGroup>
-                      <ComboboxInput id="admin-post-tags" placeholder="选择已有标签" />
-                      <ComboboxTrigger />
-                    </ComboboxInputGroup>
-                    <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
-                      <ComboboxList>
-                        {(name: string) => (
-                          <ComboboxItem key={name} value={name}>
-                            {name}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                  <div aria-label="已选标签">
-                    {tags.map((name) => (
-                      <Button
-                        type="button"
-                        key={name}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          setTags((current) => current.filter((item) => item !== name))
-                        }
-                        aria-label={`移除标签 ${name}`}
-                      >
-                        {name}
-                        {!taxonomy.tagItems.some((item) => item.name === name) &&
-                          "（历史演示值，未登记）"}
-                        <X size={14} aria-hidden="true" />
-                      </Button>
-                    ))}
-                  </div>
-                  <fieldset className="admin-status-options">
-                    <legend>文章状态</legend>
-                    <label>
-                      <input
-                        type="radio"
-                        name="post-status"
-                        checked={postStatus === "草稿"}
-                        onChange={() => setPostStatus("草稿")}
-                      />
-                      草稿
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="post-status"
-                        checked={postStatus === "已发布"}
-                        onChange={() => setPostStatus("已发布")}
-                      />
-                      已发布
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="post-status"
-                        checked={postStatus === "已排期"}
-                        onChange={() => setPostStatus("已排期")}
-                      />
-                      已排期
-                    </label>
-                  </fieldset>
-                  {postStatus === "已排期" && (
-                    <label htmlFor="admin-post-publish-date">
-                      计划发布时间（北京时间，仅模拟，不会自动发布）
-                      <Input
-                        id="admin-post-publish-date"
-                        name="publish-date"
-                        type="datetime-local"
-                        required
-                        value={publishDate}
-                        onChange={(event) => setPublishDate(event.target.value)}
-                      />
-                    </label>
-                  )}
-                  <div className="admin-form-actions">
-                    <Button type="button" variant="ghost" onClick={() => setPanel(null)}>
-                      取消
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={taxonomyDisabled || !categories.length}
-                    >
-                      {editingId ? "保存修改" : "创建文章"}
-                    </Button>
-                  </div>
-                </form>
+                <PostEditor
+                  key={editingId ?? "new"}
+                  id={editingId}
+                  onClose={() => setPanel(null)}
+                />
               )}
               {panel === "notifications" && (
                 <div className="admin-modal-section">
@@ -739,7 +467,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                     {taxonomy.categoryItems.map((item) => (
                       <div key={item.id}>
                         <span>{item.name}</span>
-                        <small>关联数量尚未接入</small>
+                        <small>关联 {item.postCount} 篇文章</small>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -758,7 +486,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                         </Button>
                       </div>
                     ))}
-                    {!taxonomyDisabled && !categories.length && <p>暂无分类，请先添加分类。</p>}
+                    {!taxonomyDisabled && !taxonomy.categoryItems.length && (
+                      <p>暂无分类，请先添加分类。</p>
+                    )}
                     <Link href="/admin/categories">管理分类与标签</Link>
                   </div>
                 </div>
@@ -791,67 +521,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   <p className="admin-muted">图表范围可在仪表盘切换，以上为固定演示数据。</p>
                 </div>
               )}
-              {panel === "schedule" && (
-                <div className="admin-modal-section">
-                  <form className="admin-form" onSubmit={addSchedule}>
-                    <label htmlFor="admin-schedule-title">
-                      文章标题
-                      <Input
-                        id="admin-schedule-title"
-                        name="title"
-                        value={scheduleTitle}
-                        onChange={(event) => setScheduleTitle(event.target.value)}
-                        required
-                        placeholder="输入排期文章标题"
-                      />
-                    </label>
-                    <label htmlFor="admin-schedule-date">
-                      计划发布时间
-                      <Input
-                        id="admin-schedule-date"
-                        name="date"
-                        type="datetime-local"
-                        value={scheduleDate}
-                        onChange={(event) => setScheduleDate(event.target.value)}
-                        required
-                      />
-                    </label>
-                    <Button type="submit" variant="primary">
-                      添加计划
-                    </Button>
-                  </form>
-                  <div className="admin-result-list">
-                    {schedules.map((schedule: Schedule) => (
-                      <div className="admin-managed-row" key={schedule.id}>
-                        <div>
-                          <strong>{schedule.title}</strong>
-                          <small>{schedule.date}</small>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          aria-label={`移除计划 ${schedule.title}`}
-                          onClick={() => {
-                            setSchedules((current) =>
-                              current.filter((item) => item.id !== schedule.id),
-                            );
-                            setPosts((current) =>
-                              current.map((post) =>
-                                post.id === schedule.id
-                                  ? { ...post, status: "草稿", scheduledFor: undefined }
-                                  : post,
-                              ),
-                            );
-                            setMessage("计划已移除（仅当前页面）");
-                          }}
-                        >
-                          <Trash2 size={15} />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {panel === "schedule" && <PostBrowser mode="schedule" />}
             </>
           )}
         </DialogContent>
@@ -893,29 +563,67 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         </DialogContent>
       </Dialog>
       <Dialog
-        open={postDeleteId !== null}
+        open={postDeleteTarget !== null}
         onOpenChange={(open) => {
-          if (!open) setPostDeleteId(null);
+          if (!open && !postMutation.current) setPostDeleteTarget(null);
         }}
       >
         <DialogContent className="admin-confirm">
           <DialogTitle>删除文章？</DialogTitle>
           <DialogDescription>
-            确认移除《{targetPost?.title}》及其文章排期。仅影响当前模拟会话，刷新后恢复。
+            永久删除《{postDeleteTarget?.title}》及其标签关联和文章排期，删除后无法恢复。
           </DialogDescription>
+          {postDeleteError && (
+            <p className="admin-post-error" role="alert">
+              {postDeleteError}
+            </p>
+          )}
+          {postDeleteConflict && (
+            <Button
+              variant="secondary"
+              disabled={postPending}
+              onClick={() => {
+                setPostDeleteTarget(null);
+                setPostRevision((value) => value + 1);
+              }}
+            >
+              刷新列表后重新确认
+            </Button>
+          )}
           <div className="admin-form-actions">
-            <Button variant="ghost" onClick={() => setPostDeleteId(null)}>
+            <Button
+              variant="ghost"
+              disabled={postPending}
+              onClick={() => setPostDeleteTarget(null)}
+            >
               取消
             </Button>
             <Button
               variant="primary"
-              onClick={() => {
-                setPosts((current) => current.filter((post) => post.id !== postDeleteId));
-                setPostDeleteId(null);
-                setMessage("文章已删除（仅当前页面）");
+              disabled={postPending}
+              onClick={async () => {
+                if (!postDeleteTarget) return;
+                setPostDeleteError("");
+                try {
+                  await mutatePost(
+                    () =>
+                      postRequest<{ id: string }>(
+                        `/${postDeleteTarget.id}?version=${postDeleteTarget.version}`,
+                        { method: "DELETE" },
+                      ),
+                    "文章已永久删除",
+                  );
+                  setPostDeleteTarget(null);
+                } catch (error) {
+                  setPostDeleteError(error instanceof Error ? error.message : "删除失败，请重试。");
+                  setPostDeleteConflict(
+                    error instanceof AdminRequestError &&
+                      ["VERSION_CONFLICT", "NOT_FOUND"].includes(error.code),
+                  );
+                }
               }}
             >
-              确认删除
+              {postPending ? "正在删除…" : "确认删除"}
             </Button>
           </div>
         </DialogContent>
