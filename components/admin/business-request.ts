@@ -6,6 +6,9 @@ export function resourceRequest(base: string) {
       ...init,
       credentials: "same-origin",
       cache: "no-store",
+    }).catch((error: unknown) => {
+      if (init?.signal?.aborted) throw error;
+      throw new AdminRequestError("网络连接失败，请确认服务可用后重新查询核对。", "REQUEST_FAILED");
     });
     const body = await response.json().catch(() => {
       throw new AdminRequestError("无法读取服务响应，请重新载入核对。", "INVALID_RESPONSE");
