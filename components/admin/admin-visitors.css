@@ -120,7 +120,7 @@
 }
 .visitors-table td,
 .visitors-table tbody th {
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
   color: var(--color-muted);
 }
 .visitors-table tbody th {

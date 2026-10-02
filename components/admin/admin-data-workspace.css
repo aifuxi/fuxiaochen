@@ -10,7 +10,6 @@
 .admin-data-page .admin-data-workspace {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--color-outline);
   border-radius: 14px;
   background: var(--color-surface);
 }
@@ -23,7 +22,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px;
-  border-bottom: 1px solid var(--color-outline);
+  border-bottom: 1px solid var(--admin-divider);
 }
 
 .admin-data-page .admin-data-toolbar .ds-input-group-button {

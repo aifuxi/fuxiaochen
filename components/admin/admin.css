@@ -1,3 +1,7 @@
+.admin-layout,
+.admin-modal {
+  --admin-divider: color-mix(in srgb, var(--color-outline) 60%, transparent);
+}
 .admin-layout {
   min-height: 100vh;
   display: grid;
@@ -12,8 +16,7 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  border-right: 1px solid var(--color-outline);
-  background: var(--color-stage);
+  background: var(--color-surface);
 }
 .admin-sidebar-inner {
   height: 100%;
@@ -28,7 +31,6 @@
   align-items: center;
   gap: 10px;
   padding: 0 17px;
-  border-bottom: 1px solid var(--color-outline);
 }
 .admin-brand-logo {
   border-radius: 9px;
@@ -109,7 +111,6 @@
 }
 .admin-sidebar-bottom {
   padding: 11px 9px;
-  border-top: 1px solid var(--color-outline);
 }
 .admin-front-link {
   color: var(--color-focus);
@@ -143,9 +144,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  border-bottom: 1px solid var(--color-outline);
-  background: color-mix(in srgb, var(--color-background) 94%, transparent);
-  backdrop-filter: blur(14px);
+  background: var(--color-background);
 }
 .admin-topbar-start,
 .admin-topbar-actions {
@@ -240,7 +239,6 @@
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  border-top: 1px solid var(--color-outline);
   color: var(--color-subtle);
   font-size: 11px;
 }
@@ -364,7 +362,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  border-bottom: 1px solid var(--color-outline);
 }
 .admin-panel-heading h2 {
   margin: 0;
@@ -488,7 +485,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-top: 1px solid var(--color-outline);
   color: var(--color-subtle);
   font-size: 11px;
 }
@@ -504,7 +500,7 @@
 }
 .admin-comment + .admin-comment,
 .admin-schedule + .admin-schedule {
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
 }
 .admin-comment {
   padding: 12px 0;
@@ -754,7 +750,7 @@
   gap: 5px;
   padding: 12px;
   border: 0;
-  border-bottom: 1px solid var(--color-outline);
+  border-bottom: 1px solid var(--admin-divider);
   background: transparent;
   color: var(--color-foreground);
   text-align: left;
@@ -795,7 +791,7 @@
   align-items: center;
   gap: 12px;
   padding: 11px 0;
-  border-bottom: 1px solid var(--color-outline);
+  border-bottom: 1px solid var(--admin-divider);
 }
 .admin-managed-row > div:first-child {
   min-width: 0;
@@ -856,7 +852,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid var(--color-outline);
+  border-bottom: 1px solid var(--admin-divider);
   color: var(--color-muted);
   font-size: 12px;
 }
@@ -1116,7 +1112,7 @@
 }
 .admin-post-table td {
   padding: 20px 18px;
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
 }
 .admin-post-table th:first-child {
   width: 38%;
@@ -1203,7 +1199,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 16px 18px;
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
   color: var(--color-muted);
   font-size: 12px;
 }

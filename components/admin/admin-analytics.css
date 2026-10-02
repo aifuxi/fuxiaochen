@@ -161,6 +161,7 @@
   background: var(--color-muted);
 }
 .analytics-device-note {
+  box-shadow: none;
   display: flex;
   align-items: start;
   gap: 9px;
@@ -194,7 +195,7 @@
 .analytics-table td,
 .analytics-table th {
   padding: 18px;
-  border-bottom: 1px solid var(--color-outline);
+  border-bottom: 1px solid var(--admin-divider);
 }
 .analytics-table tbody tr:last-child > * {
   border-bottom: 0;

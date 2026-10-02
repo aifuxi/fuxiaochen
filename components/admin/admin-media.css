@@ -97,7 +97,7 @@
   padding: 10px 0;
   font-size: 12px;
   color: var(--color-muted);
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
 }
 .admin-media-upload-name {
   flex: 1;
@@ -122,11 +122,13 @@
 .admin-media-card {
   min-width: 0;
   padding: 12px;
+  box-shadow: none;
 }
 .admin-media-thumbnail {
   height: 176px;
   position: relative;
   overflow: hidden;
+  box-shadow: none;
 }
 .admin-media-thumbnail > img {
   width: 100%;
@@ -172,7 +174,6 @@
   justify-content: space-between;
   align-items: center;
   gap: 4px;
-  border-top: 1px solid var(--color-outline);
   margin-top: 8px;
   padding-top: 6px;
   color: var(--color-muted);

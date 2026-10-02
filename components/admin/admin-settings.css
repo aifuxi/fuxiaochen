@@ -27,12 +27,7 @@
 }
 .admin-settings-stack {
   display: grid;
-  gap: 32px;
-}
-.admin-settings-section + .admin-settings-section,
-.admin-settings-notice + .admin-settings-section {
-  padding-top: 32px;
-  border-top: 1px solid var(--color-outline);
+  gap: 48px;
 }
 .admin-settings-section-heading {
   margin-bottom: 20px;
@@ -139,7 +134,9 @@
   justify-content: space-between;
   gap: 24px;
   padding: 16px 0;
-  border-bottom: 1px solid var(--color-outline);
+}
+.admin-settings-toggle + .admin-settings-toggle {
+  border-top: 1px solid var(--admin-divider);
 }
 .admin-settings-toggle:first-child {
   padding-top: 0;
@@ -198,7 +195,7 @@
 .admin-settings-status > div + div {
   padding-top: 16px;
   margin-top: 16px;
-  border-top: 1px solid var(--color-outline);
+  border-top: 1px solid var(--admin-divider);
   color: var(--color-muted);
   font: 12px/18px var(--font-mono, ui-monospace);
 }
@@ -230,6 +227,9 @@
   }
 }
 @media (max-width: 600px) {
+  .admin-settings-stack {
+    gap: 32px;
+  }
   .admin-settings > .admin-page-heading {
     margin-bottom: 20px;
   }
@@ -270,7 +270,9 @@
 }
 .admin-social-editor {
   padding: 20px 0;
-  border-top: 1px solid var(--color-outline);
+}
+.admin-social-editor + .admin-social-editor {
+  border-top: 1px solid var(--admin-divider);
 }
 .admin-social-actions {
   display: flex;
