@@ -48,6 +48,8 @@ type Props = {
   onReadNotice: (id: string) => void;
   onReadAllNotices: () => void;
   onOpen: (panel: AdminPanel) => void;
+  writingFocused: boolean;
+  postPending: boolean;
 };
 
 const nav = [
@@ -70,6 +72,8 @@ export function AdminShell({
   onReadNotice,
   onReadAllNotices,
   onOpen,
+  writingFocused,
+  postPending,
 }: Props) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -127,6 +131,7 @@ export function AdminShell({
               className: `admin-nav-item ${active ? "is-active" : ""}`,
               "aria-label": item.name,
               title: collapsed && !mobile ? item.name : undefined,
+              "aria-disabled": postPending || undefined,
             };
             return (
               <Link
@@ -134,7 +139,10 @@ export function AdminShell({
                 href={item.href}
                 {...sharedProps}
                 aria-current={active ? "page" : undefined}
-                onClick={() => setMobileOpen(false)}
+                onClick={(event) => {
+                  if (postPending) event.preventDefault();
+                  else setMobileOpen(false);
+                }}
               >
                 {content}
               </Link>
@@ -143,7 +151,15 @@ export function AdminShell({
         </nav>
       </div>
       <div className="admin-sidebar-bottom">
-        <Link href="/" className="admin-front-link" title="前往网站首页">
+        <Link
+          href="/"
+          className="admin-front-link"
+          title="前往网站首页"
+          aria-disabled={postPending || undefined}
+          onClick={(event) => {
+            if (postPending) event.preventDefault();
+          }}
+        >
           <Globe2 size={16} aria-hidden="true" />
           {(!collapsed || mobile) && <span>前往网站首页</span>}
         </Link>
@@ -170,7 +186,9 @@ export function AdminShell({
   );
 
   return (
-    <div className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""}`}>
+    <div
+      className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""} ${writingFocused ? "admin-layout-writing" : ""}`}
+    >
       <aside className="admin-sidebar" aria-label="侧边栏">
         {sidebar(false)}
       </aside>
@@ -192,6 +210,7 @@ export function AdminShell({
               className="admin-search-trigger"
               type="button"
               aria-label="搜索文章或分类"
+              disabled={postPending}
               aria-haspopup="dialog"
               aria-keyshortcuts="Meta+K Control+K"
               onClick={() => onOpen("search")}
@@ -207,6 +226,7 @@ export function AdminShell({
               variant="secondary"
               className="admin-create"
               aria-label="新建文章"
+              disabled={postPending}
               onClick={() => onOpen("compose")}
             >
               <Plus size={16} aria-hidden="true" />
@@ -224,6 +244,7 @@ export function AdminShell({
               className="admin-profile"
               onClick={() => onOpen("profile")}
               aria-label="账户菜单"
+              disabled={postPending}
             >
               <Image src="/avatar.avif" width={30} height={30} alt="" />
               <span>管理账户</span>

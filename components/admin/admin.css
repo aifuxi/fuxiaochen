@@ -1526,3 +1526,25 @@
 .admin-post-browser .admin-managed-row > .ds-button {
   flex-shrink: 0;
 }
+
+.admin-layout {
+  --writing-top-offset: 70px;
+}
+.admin-layout a[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+@media (max-width: 600px) {
+  .admin-layout {
+    --writing-top-offset: 62px;
+  }
+}
+.admin-layout.admin-layout-writing {
+  --writing-top-offset: 0px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.admin-layout-writing > .admin-sidebar,
+.admin-layout-writing .admin-topbar,
+.admin-layout-writing .admin-footer {
+  display: none;
+}

@@ -22,6 +22,8 @@ type AdminState = TaxonomyState &
     uploadingMedia: boolean;
     postRevision: number;
     postPending: boolean;
+    writingFocused: boolean;
+    setWritingFocused: (focused: boolean) => void;
     postSummary: PostSummary | null;
     postSummaryLoading: boolean;
     postSummaryError: string;

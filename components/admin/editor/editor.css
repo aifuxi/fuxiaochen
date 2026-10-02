@@ -7,44 +7,201 @@
   min-width: 0;
 }
 .admin-post-editor-page {
+  min-width: 0;
+}
+.post-editor-form {
   display: grid;
   gap: 24px;
 }
-.admin-post-editor-page .admin-form-actions > .ds-button {
+.post-writing-bar {
+  position: sticky;
+  top: var(--writing-top-offset, 70px);
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  min-height: 56px;
+  gap: 12px;
+  padding: 6px 0;
+  background: var(--color-background);
+}
+.post-writing-bar-start,
+.post-writing-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.post-writing-bar-actions {
+  flex-wrap: wrap;
+}
+.post-writing-bar [type="submit"],
+.post-settings-drawer-actions .ds-button {
   min-height: 44px;
 }
-.post-editor-layout {
+.post-writing-save-status,
+.post-writing-settings-hint {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.post-writing-settings-error {
+  color: var(--color-danger);
+  font-size: 12px;
+}
+.post-writing-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
-.post-editor-main,
+.post-writing-layout.has-settings {
+  grid-template-columns: minmax(0, 1fr) 320px;
+}
+.post-editor-main {
+  display: grid;
+  gap: 16px;
+  width: min(100%, 800px);
+  margin: 0 auto;
+  min-width: 0;
+}
+.post-writing-title.ds-input {
+  min-height: 44px;
+  width: 100%;
+  padding: 0 22px 0 52px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  resize: none;
+  overflow: hidden;
+  color: var(--color-foreground);
+  font: 500 32px/44px var(--font-display);
+  letter-spacing: -0.03em;
+}
+.post-writing-title.ds-input:hover:not(:disabled),
+.post-writing-title.ds-input:focus {
+  background: transparent;
+  box-shadow: none;
+}
+.post-writing-title.ds-input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+.post-writing-title.ds-input:disabled {
+  opacity: 0.65;
+}
+.post-writing-title.ds-input[aria-invalid="true"] {
+  box-shadow: inset 0 -2px 0 var(--color-danger);
+}
+.post-writing-title::placeholder {
+  color: var(--color-subtle);
+}
 .post-editor-settings {
+  position: sticky;
+  top: calc(var(--writing-top-offset, 70px) + 80px);
+  max-height: calc(100dvh - var(--writing-top-offset, 70px) - 100px);
+  overflow-y: auto;
+  min-width: 0;
+  padding: 0 0 16px 16px;
+  border-left: 1px solid var(--admin-divider);
+}
+.post-editor-settings-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.post-editor-settings-heading h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+.post-editor-settings-fields {
   display: grid;
   gap: 16px;
   min-width: 0;
 }
-.post-editor-main > label,
-.post-editor-settings > label,
-.post-editor-field {
+.post-editor-settings-fields > label {
   display: grid;
   gap: 8px;
   color: var(--color-muted);
   font-size: 13px;
 }
-.post-editor-main > p {
+.post-editor-settings-fields > p,
+.post-editor-settings-fields > output {
+  margin: 0;
   color: var(--color-muted);
   font-size: 12px;
+  line-height: 1.6;
   overflow-wrap: anywhere;
 }
-.post-editor-body-label {
-  color: var(--color-muted);
-  font-size: 13px;
-  margin-bottom: -8px;
+.post-editor-settings-fields .admin-post-error {
+  color: var(--color-danger);
 }
-.post-editor-settings .admin-status-options {
+.post-editor-settings-fields .admin-status-options {
   flex-wrap: wrap;
+}
+.post-editor-settings-fields [aria-label="已选标签"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.post-settings-drawer.ds-dialog-popup {
+  display: flex;
+  flex-direction: column;
+  width: min(360px, 100vw);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  padding: 24px;
+  color: var(--color-foreground);
+  background: var(--color-surface);
+  --admin-divider: color-mix(in srgb, var(--color-outline) 60%, transparent);
+  transition: none;
+  transform: none;
+  opacity: 1;
+}
+.post-settings-drawer .post-editor-settings-heading {
+  flex: none;
+}
+.post-settings-drawer .post-editor-settings-fields {
+  overflow-y: auto;
+  flex: 1;
+  padding: 4px;
+  margin: -4px;
+  align-content: start;
+}
+.post-settings-drawer-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 24px;
+  flex: none;
+}
+.post-writing-feedback {
+  margin: 0;
+  justify-self: start;
+  max-width: 100%;
+}
+.post-writing-title,
+.post-editor-canvas .tiptap,
+.post-editor-settings-fields [id] {
+  scroll-margin-top: calc(var(--writing-top-offset, 70px) + 100px);
+}
+.admin-post-editor-page .post-block-editor {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.admin-post-editor-page .post-editor-canvas .tiptap {
+  min-height: max(360px, calc(100dvh - 300px));
+}
+.admin-post-editor-page .post-editor-toolbar {
+  padding-left: 44px;
 }
 .post-block-editor {
   position: relative;
@@ -400,12 +557,6 @@
   margin: 16px 0;
 }
 
-@media (max-width: 900px) {
-  .post-editor-layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-  }
-}
 @media (max-width: 600px), (pointer: coarse) {
   .post-editor-icon.ds-button,
   .post-editor-insert.ds-button {
@@ -436,14 +587,41 @@
   }
 }
 @media (max-width: 600px) {
-  .admin-post-editor-page {
+  .post-editor-form {
     gap: 20px;
   }
-  .admin-post-editor-page .admin-form-actions {
-    flex-wrap: wrap;
+  .post-writing-bar {
+    gap: 4px 8px;
   }
-  .admin-post-editor-page .admin-form-actions > [type="submit"] {
-    width: 100%;
+  .post-writing-bar-start,
+  .post-writing-bar-actions {
+    gap: 4px;
+  }
+  .post-writing-bar-actions {
+    margin-left: auto;
+  }
+  .post-writing-back-label,
+  .post-writing-focus-label {
+    display: none;
+  }
+  .post-writing-bar-start .ds-button,
+  .post-writing-bar-actions .ds-button[aria-pressed] {
+    width: 44px;
+    padding: 0;
+  }
+  .post-writing-title.ds-input {
+    padding: 0 14px;
+    font-size: 28px;
+    line-height: 40px;
+  }
+  .admin-post-editor-page .post-editor-toolbar {
+    padding-left: 4px;
+  }
+  .post-settings-drawer.ds-dialog-popup {
+    padding: 20px;
+  }
+  .post-editor-settings-fields .admin-status-options label {
+    min-height: 44px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

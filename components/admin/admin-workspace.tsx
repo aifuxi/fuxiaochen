@@ -42,6 +42,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postRevision, setPostRevision] = useState(0);
   const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
   const [postPending, setPostPending] = useState(false);
+  const [writingFocused, setWritingFocused] = useState(false);
   const postMutation = useRef(false);
   const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
@@ -80,11 +81,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
 
   const openPanel = useCallback(
     (name: AdminPanel) => {
+      if (postMutation.current) return;
       if (name === "comments") {
         router.push("/admin/comments");
         return;
       }
-      if (postMutation.current) return;
       if (name === "compose") {
         setPanel(null);
         router.push("/admin/posts/new");
@@ -165,6 +166,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onMessage: setMessage,
         postRevision,
         postPending,
+        writingFocused,
+        setWritingFocused,
         postSummary: summary.data,
         postSummaryLoading: summary.loading,
         postSummaryError: summary.error,
@@ -190,6 +193,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       }}
     >
       <AdminShell
+        writingFocused={writingFocused}
+        postPending={postPending}
         pendingCount={pendingCount}
         notices={notices}
         onReadNotice={(id) =>

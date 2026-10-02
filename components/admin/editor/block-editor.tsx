@@ -49,6 +49,7 @@ import "./editor.css";
 type Props = {
   initialContent: string;
   onChange: (content: string) => void;
+  onReady?: (content: string) => void;
   disabled: boolean;
   invalid: boolean;
   describedBy?: string;
@@ -191,7 +192,14 @@ function BlockMenu({
   );
 }
 
-export function BlockEditor({ initialContent, onChange, disabled, invalid, describedBy }: Props) {
+export function BlockEditor({
+  initialContent,
+  onChange,
+  onReady,
+  disabled,
+  invalid,
+  describedBy,
+}: Props) {
   const host = useRef<HTMLDivElement>(null);
   const hovered = useRef<number | null>(null);
   const [imageSelection, setImageSelection] = useState({ from: 1, to: 1 });
@@ -271,8 +279,12 @@ export function BlockEditor({ initialContent, onChange, disabled, invalid, descr
   }, [editor, disabled, initial.error, invalid, describedBy]);
   // 旧文章只在用户主动保存时转成 JSON，不在初始化时发送写请求。
   useEffect(() => {
-    if (editor && !initial.error) onChange(serializeDocument(editor.getJSON()));
-  }, [editor, initial.error, onChange]);
+    if (editor && !initial.error) {
+      const content = serializeDocument(editor.getJSON());
+      if (onReady) onReady(content);
+      else onChange(content);
+    }
+  }, [editor, initial.error, onChange, onReady]);
   if (initial.error)
     return (
       <p className="admin-post-error" role="alert">
