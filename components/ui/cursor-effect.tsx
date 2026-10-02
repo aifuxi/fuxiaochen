@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-const disabledSelector = ':disabled, [aria-disabled="true"], [data-disabled]';
+const disabledSelector =
+  ':disabled, [aria-disabled="true"], [data-disabled]:not([data-disabled="false"])';
 const textSelector =
   'textarea, [contenteditable="true"], input:not([type]), input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"])';
 const interactiveSelector =

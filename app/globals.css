@@ -94,8 +94,11 @@ html[data-cursor-fx="on"],
 html[data-cursor-fx="on"] * {
   cursor: none !important;
 }
-html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]),
-html[data-cursor-fx="on"] :is(:disabled, [aria-disabled="true"], [data-disabled]) * {
+html[data-cursor-fx="on"]
+  :is(:disabled, [aria-disabled="true"], [data-disabled]:not([data-disabled="false"])),
+html[data-cursor-fx="on"]
+  :is(:disabled, [aria-disabled="true"], [data-disabled]:not([data-disabled="false"]))
+  * {
   cursor: not-allowed !important;
 }
 .cursor-fx {
