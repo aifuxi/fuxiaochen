@@ -50,17 +50,25 @@
 }
 .site-profile {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 16px;
-  margin-top: 32px;
+  margin-top: 48px;
   max-width: 640px;
   overflow-wrap: anywhere;
 }
+.site-profile > div {
+  min-width: 0;
+}
 .site-profile p {
-  margin-top: 8px;
   color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.site-profile .site-profile-name {
+  margin-bottom: 4px;
+  color: var(--color-foreground);
   font-size: 14px;
-  white-space: pre-wrap;
+  font-weight: 500;
 }
 @media (max-width: 600px) {
   .site-footer {
@@ -245,21 +253,29 @@
 .site-reading {
   max-width: 720px;
 }
-.site-intro {
-  margin-bottom: 64px;
-}
-.site-intro h1 {
+.site-home h1 {
   font-family: var(--font-display), sans-serif;
   font-size: clamp(36px, 5vw, 56px);
   font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 1.12;
-  margin: 12px 0 20px;
+  margin: 0;
 }
-.site-intro > p:last-child {
+.site-home-description {
+  max-width: 42ch;
+  margin-top: 16px;
   color: var(--color-muted);
   font-size: 16px;
   line-height: 1.8;
+}
+.site-home > .ds-button {
+  margin-top: 24px;
+}
+.site-home > .ds-button:active {
+  color: var(--color-foreground);
+}
+.site-home > .ds-button:focus-visible {
+  border-radius: 999px;
 }
 .site-eyebrow {
   font-size: 13px;
@@ -761,9 +777,6 @@
     width: calc(100% - 40px);
     padding: 40px 0 56px;
   }
-  .site-intro {
-    margin-bottom: 40px;
-  }
   .site-post-row h3 {
     font-size: 20px;
   }
@@ -796,6 +809,12 @@
   .site-comments .ds-button,
   .site-mobile-menu .ds-button {
     min-height: 44px;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .site-home > .ds-button {
+    min-height: 44px;
+    padding-inline: 16px;
   }
 }
 @media (prefers-reduced-motion: reduce) {
