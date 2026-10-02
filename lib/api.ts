@@ -15,6 +15,7 @@ import {
   SESSION_MAX_AGE,
 } from "./auth/service";
 import { commentRoutes } from "./comments/routes";
+import { friendRoutes } from "./friends-links/routes";
 import { mediaRoutes } from "./media/routes";
 import { postRoutes } from "./posts/routes";
 import { settingsRoutes } from "./settings/routes";
@@ -77,6 +78,7 @@ api.route("/admin/posts", postRoutes);
 api.route("/admin/media", mediaRoutes);
 api.route("/admin/comments", commentRoutes);
 api.route("/admin/settings", settingsRoutes);
+api.route("/admin/friends-links", friendRoutes);
 
 api.route("/admin", taxonomyRoutes);
 

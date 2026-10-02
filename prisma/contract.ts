@@ -235,6 +235,28 @@ export const contract = defineContract({}, ({ field, model }) => {
     ],
   }));
 
+  const FriendLink = model("FriendLink", {
+    fields: {
+      id: field.column(textColumn).id(),
+      name: field.column(textColumn),
+      url: field.column(textColumn),
+      avatar: field.column(textColumn),
+      description: field.column(textColumn),
+      category: field.column(textColumn),
+      status: field.column(textColumn),
+      enabled: field.column(integerColumn),
+      version: field.column(integerColumn),
+      createdAt: field.column(datetimeColumn),
+      updatedAt: field.column(datetimeColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "friend_link",
+    indexes: [
+      constraints.index([cols.createdAt, cols.id]),
+      constraints.index([cols.status, cols.enabled]),
+    ],
+  }));
+
   return {
     models: {
       Admin,
@@ -249,6 +271,7 @@ export const contract = defineContract({}, ({ field, model }) => {
       Comment,
       SiteSetting,
       SocialAccount,
+      FriendLink,
     },
   };
 });

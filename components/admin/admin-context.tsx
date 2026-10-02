@@ -7,7 +7,6 @@ import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/s
 
 import type { AdminPanel } from "./admin-shell";
 import type { ReleaseLog } from "./changelog-mock-data";
-import type { FriendLink } from "./friends-links-mock-data";
 import type { useComments } from "./use-comments";
 import type { UploadJob } from "./use-media";
 import type { TaxonomyState } from "./use-taxonomy";
@@ -16,8 +15,6 @@ type AdminState = TaxonomyState &
   Omit<ReturnType<typeof useComments>, "deleteComment"> & {
     releaseLogs: ReleaseLog[];
     setReleaseLogs: Dispatch<SetStateAction<ReleaseLog[]>>;
-    friendsLinks: FriendLink[];
-    setFriendsLinks: Dispatch<SetStateAction<FriendLink[]>>;
     mediaRevision: number;
     mediaUploads: UploadJob[];
     retryMediaUpload: (id: string) => Promise<void>;

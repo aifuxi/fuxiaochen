@@ -1,0 +1,107 @@
+[
+  {
+    "id": "table.friend_link",
+    "label": "Create table friend_link",
+    "summary": "Creates table friend_link with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "friend_link"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"friend_link\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "friend_link"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"friend_link\"",
+        "sql": "CREATE TABLE \"friend_link\" (\n  \"avatar\" TEXT NOT NULL,\n  \"category\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"description\" TEXT NOT NULL,\n  \"enabled\" INTEGER NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"name\" TEXT NOT NULL,\n  \"status\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"url\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"friend_link\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "friend_link"]
+      }
+    ]
+  },
+  {
+    "id": "index.friend_link.friend_link_createdAt_id_idx_3855cff1",
+    "label": "Create index friend_link_createdAt_id_idx_3855cff1 on friend_link",
+    "summary": "Creates index friend_link_createdAt_id_idx_3855cff1 on friend_link",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "friend_link_createdAt_id_idx_3855cff1",
+        "table": "friend_link"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"friend_link_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "friend_link_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"friend_link_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"friend_link_createdAt_id_idx_3855cff1\" ON \"friend_link\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"friend_link_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "friend_link_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.friend_link.friend_link_status_enabled_idx_d0122654",
+    "label": "Create index friend_link_status_enabled_idx_d0122654 on friend_link",
+    "summary": "Creates index friend_link_status_enabled_idx_d0122654 on friend_link",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "friend_link_status_enabled_idx_d0122654",
+        "table": "friend_link"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"friend_link_status_enabled_idx_d0122654\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "friend_link_status_enabled_idx_d0122654"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"friend_link_status_enabled_idx_d0122654\"",
+        "sql": "CREATE INDEX \"friend_link_status_enabled_idx_d0122654\" ON \"friend_link\" (\"status\", \"enabled\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"friend_link_status_enabled_idx_d0122654\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "friend_link_status_enabled_idx_d0122654"]
+      }
+    ]
+  }
+]

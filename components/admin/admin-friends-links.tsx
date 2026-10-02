@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Check,
   ChevronLeft,
@@ -11,9 +10,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import Image from "next/image";
 import { useRef, useState, type FormEvent } from "react";
 
+import { ConfiguredImage } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -30,390 +29,514 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  friendCategories,
+  friendStatuses,
+  friendStatusLabels,
+  createFriendSchema,
+  updateFriendSchema,
+  type FriendInput,
+  type FriendLink,
+  type FriendList,
+} from "@/lib/friends-links/schema";
 
 import { useAdminWorkspace } from "./admin-context";
-import { friendCategories, friendStatuses, type FriendLink } from "./friends-links-mock-data";
+import { resourceRequest } from "./business-request";
+import { BusinessStatus } from "./business-status";
+import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-friends-links.css";
-
-type LinkDraft = Omit<FriendLink, "id">;
-type FieldErrors = Partial<Record<"name" | "url" | "avatar", string>>;
-const pageSize = 8;
-const emptyDraft: LinkDraft = {
+import "./admin-business.css";
+const request = resourceRequest("/api/admin/friends-links");
+const load = request<FriendList>;
+const emptyDraft: FriendInput = {
   name: "",
   url: "",
   avatar: "",
   description: "",
   category: "技术博客",
-  status: "正常",
+  status: "pending",
+  enabled: true,
 };
-
-function isWebUrl(value: string) {
-  try {
-    return ["http:", "https:"].includes(new URL(value).protocol);
-  } catch {
-    return false;
-  }
-}
-
-function FriendAvatar({ src }: { src: string }) {
-  const [failedSource, setFailedSource] = useState<string | null>(null);
+function FriendSelect({
+  id,
+  label,
+  value,
+  options,
+  onChange,
+  disabled = false,
+  compact = false,
+}: {
+  id?: string;
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  compact?: boolean;
+}) {
   return (
-    <span className="admin-friend-avatar" aria-hidden="true">
-      {src && failedSource !== src ? (
-        <Image
-          src={src}
-          alt=""
-          width={36}
-          height={36}
-          unoptimized
-          onError={() => setFailedSource(src)}
-        />
-      ) : (
-        <Link2 size={18} />
-      )}
-    </span>
+    <Select
+      items={options}
+      value={value}
+      disabled={disabled}
+      onValueChange={(v) => {
+        if (v) onChange(v);
+      }}
+    >
+      <SelectTrigger id={id} size={compact ? "compact" : "default"} aria-label={label}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((o) => (
+          <SelectItem key={o.value} value={o.value}>
+            {o.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
-
+const categories = friendCategories.map((value) => ({ value, label: value }));
+const statuses = friendStatuses.map((value) => ({ value, label: friendStatusLabels[value] }));
 export function AdminFriendsLinks() {
-  const { friendsLinks, setFriendsLinks, onMessage } = useAdminWorkspace();
+  const { onMessage } = useAdminWorkspace();
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
-  const [query, setQuery] = useState("");
+  const [enabled, setEnabled] = useState("all");
+  const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
+  const [revision, setRevision] = useState(0);
+  const keyword = useDebouncedPostQuery(q);
+  const params = new URLSearchParams({ q: keyword, page: String(page) });
+  for (const [key, value] of Object.entries({ category, status, enabled }))
+    if (value !== "all") params.set(key, value);
+  const query = usePostQuery(`?${params}`, revision, load);
   const [formOpen, setFormOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [draft, setDraft] = useState<LinkDraft>(emptyDraft);
-  const [errors, setErrors] = useState<FieldErrors>({});
+  const [editing, setEditing] = useState<FriendLink | null>(null);
+  const [draft, setDraft] = useState(emptyDraft);
   const [deleting, setDeleting] = useState<FriendLink | null>(null);
+  const [pending, setPending] = useState(false);
+  const busy = useRef(false);
+  const [error, setError] = useState("");
+  const [conflict, setConflict] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const trigger = useRef<HTMLElement | null>(null);
-  const addButton = useRef<HTMLButtonElement>(null);
+  const search = useRef<HTMLInputElement>(null);
+  const add = useRef<HTMLButtonElement>(null);
+  const form = useRef<HTMLFormElement>(null);
   const nameInput = useRef<HTMLInputElement>(null);
-  const urlInput = useRef<HTMLInputElement>(null);
-  const avatarInput = useRef<HTMLInputElement>(null);
-  const searchInput = useRef<HTMLInputElement>(null);
   const cancelDelete = useRef<HTMLButtonElement>(null);
-
-  const keyword = query.trim().toLowerCase();
-  const filtered = friendsLinks.filter(
-    (link) =>
-      (category === "all" || link.category === category) &&
-      (status === "all" || link.status === status) &&
-      [link.name, link.url, link.description].some((value) =>
-        value.toLowerCase().includes(keyword),
-      ),
-  );
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const currentPage = Math.min(page, pageCount);
-  const visible = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  const returnFocus = () => (trigger.current?.isConnected ? trigger.current : addButton.current);
-
-  const resetFilters = () => {
+  const deleted = useRef(false);
+  const reset = () => {
     setCategory("all");
     setStatus("all");
-    setQuery("");
+    setEnabled("all");
+    setQ("");
     setPage(1);
   };
-  const openForm = (element: HTMLElement, link?: FriendLink) => {
+  const returnFocus = () =>
+    deleted.current ? search.current : trigger.current?.isConnected ? trigger.current : add.current;
+  function open(element: HTMLElement, link?: FriendLink) {
+    if (busy.current) return;
     trigger.current = element;
-    setEditingId(link?.id ?? null);
-    setDraft(link ? { ...link } : { ...emptyDraft });
+    deleted.current = false;
+    setEditing(link ?? null);
+    setDraft(
+      link
+        ? {
+            name: link.name,
+            url: link.url,
+            avatar: link.avatar,
+            description: link.description,
+            category: link.category,
+            status: link.status,
+            enabled: link.enabled,
+          }
+        : { ...emptyDraft },
+    );
     setErrors({});
+    setError("");
+    setConflict(false);
     setFormOpen(true);
-  };
-  const updateDraft = <K extends keyof LinkDraft>(key: K, value: LinkDraft[K]) => {
-    setDraft((current) => ({ ...current, [key]: value }));
-    setErrors((current) => ({ ...current, [key]: undefined }));
-  };
-  const save = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const name = draft.name.trim();
-    const url = draft.url.trim();
-    const avatar = draft.avatar.trim();
-    const nextErrors: FieldErrors = {};
-    if (!name) nextErrors.name = "请输入网站名称";
-    if (!isWebUrl(url)) nextErrors.url = "请输入完整的 http:// 或 https:// 网站地址";
-    if (
-      avatar &&
-      !isWebUrl(avatar) &&
-      !(avatar.startsWith("/") && !avatar.startsWith("//") && !avatar.includes("\\"))
-    ) {
-      nextErrors.avatar = "请输入 HTTP(S) 图标地址或以 / 开头的本地路径";
+  }
+  async function mutate(work: () => Promise<unknown>, success: () => void) {
+    if (busy.current) return;
+    busy.current = true;
+    setPending(true);
+    setError("");
+    setConflict(false);
+    try {
+      await work();
+      success();
+      setRevision((v) => v + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "请求失败，请重新加载列表核对。");
+      if (e instanceof AdminRequestError) {
+        setConflict(e.code === "VERSION_CONFLICT");
+        const fields = Object.fromEntries(
+          Object.entries(e.fieldErrors).map(([key, messages]) => [key, messages[0]]),
+        );
+        setErrors(fields);
+        requestAnimationFrame(() =>
+          document.getElementById(`friend-${Object.keys(fields)[0]}`)?.focus(),
+        );
+      }
+    } finally {
+      busy.current = false;
+      setPending(false);
     }
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length) {
-      (nextErrors.name ? nameInput : nextErrors.url ? urlInput : avatarInput).current?.focus();
+  }
+  function save(event: FormEvent) {
+    event.preventDefault();
+    if (busy.current || conflict) return;
+    const { status: _status, ...newFields } = draft;
+    const parsed = editing
+      ? updateFriendSchema.safeParse({ ...draft, version: editing.version })
+      : createFriendSchema.safeParse(newFields);
+    if (!parsed.success) {
+      const fields = Object.fromEntries(
+        parsed.error.issues.map((i) => [i.path.join("."), i.message]),
+      );
+      setErrors(fields);
+      requestAnimationFrame(() =>
+        document.getElementById(`friend-${Object.keys(fields)[0]}`)?.focus(),
+      );
       return;
     }
-    const saved: FriendLink = {
-      ...draft,
-      id: editingId ?? `friend-${crypto.randomUUID()}`,
-      name,
-      url,
-      avatar,
-      description: draft.description.trim() || "暂无站点简介",
-    };
-    setFriendsLinks((current) =>
-      editingId
-        ? current.map((link) => (link.id === editingId ? saved : link))
-        : [saved, ...current],
+    void mutate(
+      () =>
+        request(editing ? `/${editing.id}` : "", {
+          method: editing ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(parsed.data),
+        }),
+      () => {
+        if (!editing) reset();
+        setFormOpen(false);
+        onMessage(`友链已${editing ? "更新" : "添加"}。`);
+      },
     );
-    if (!editingId) resetFilters();
-    else setPage(currentPage);
-    setFormOpen(false);
-    onMessage(`友链已${editingId ? "更新" : "添加"}（模拟，仅当前会话）`);
-  };
-
+  }
+  async function reloadDetail() {
+    const target = deleting ?? editing;
+    if (!target || busy.current) return;
+    busy.current = true;
+    setPending(true);
+    try {
+      const latest = await request<FriendLink>(`/${target.id}`);
+      if (deleting) setDeleting(latest);
+      else {
+        setEditing(latest);
+        setDraft({
+          name: latest.name,
+          url: latest.url,
+          avatar: latest.avatar,
+          description: latest.description,
+          category: latest.category,
+          status: latest.status,
+          enabled: latest.enabled,
+        });
+      }
+      setError("");
+      setErrors({});
+      setConflict(false);
+      setRevision((v) => v + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "载入失败，草稿已保留。");
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  }
+  const data = query.data;
+  const currentPage = data?.page ?? page;
+  const pageCount = data?.pageCount ?? 1;
+  const errorBlock = error && (
+    <div className="admin-business-feedback" role="alert">
+      <p className="admin-business-error">{error}</p>
+      {conflict && (editing || deleting) && (
+        <Button
+          type="button"
+          size="sm"
+          variant="secondary"
+          disabled={pending}
+          onClick={() => void reloadDetail()}
+        >
+          {deleting ? "重新载入后再次确认删除" : "放弃草稿并重新载入"}
+        </Button>
+      )}
+      {error.includes("登录") && (
+        <Button type="button" size="sm" onClick={() => window.location.assign("/login")}>
+          重新登录
+        </Button>
+      )}
+    </div>
+  );
   return (
     <div className="admin-posts admin-data-page admin-friends-links">
       <div className="admin-page-heading">
         <div>
           <h1>友情链接管理</h1>
-          <p>管理友链、站点分类与审核状态。</p>
+          <p>管理站点资料、审核与展示状态。</p>
         </div>
         <Button
-          ref={addButton}
-          variant="primary"
+          ref={add}
           size="compact"
-          onClick={(event) => openForm(event.currentTarget)}
+          variant="primary"
+          disabled={pending}
+          onClick={(e) => open(e.currentTarget)}
         >
-          <Plus size={16} aria-hidden="true" />
+          <Plus size={16} />
           新增友链
         </Button>
       </div>
+      {!formOpen && !deleting && errorBlock}
       <div className="admin-data-workspace">
         <div className="admin-post-filters">
           <div className="admin-friend-filter-selects">
-            <Select
-              items={[
-                { value: "all", label: "全部分类" },
-                ...friendCategories.map((value) => ({ value, label: value })),
-              ]}
+            <FriendSelect
+              label="筛选友链分类"
               value={category}
-              onValueChange={(value) => {
-                setCategory(value ?? "all");
+              options={[{ value: "all", label: "全部分类" }, ...categories]}
+              onChange={(v) => {
+                setCategory(v);
                 setPage(1);
               }}
-            >
-              <SelectTrigger size="compact" aria-label="筛选友链分类">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部分类</SelectItem>
-                {friendCategories.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              items={[
-                { value: "all", label: "全部状态" },
-                ...friendStatuses.map((value) => ({ value, label: value })),
-              ]}
+              compact
+            />
+            <FriendSelect
+              label="筛选审核状态"
               value={status}
-              onValueChange={(value) => {
-                setStatus(value ?? "all");
+              options={[{ value: "all", label: "全部审核状态" }, ...statuses]}
+              onChange={(v) => {
+                setStatus(v);
                 setPage(1);
               }}
-            >
-              <SelectTrigger size="compact" aria-label="筛选友链状态">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部状态</SelectItem>
-                {friendStatuses.map((value) => (
-                  <SelectItem key={value} value={value}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              compact
+            />
+            <FriendSelect
+              label="筛选展示状态"
+              value={enabled}
+              options={[
+                { value: "all", label: "全部展示状态" },
+                { value: "true", label: "展示启用" },
+                { value: "false", label: "展示停用" },
+              ]}
+              onChange={(v) => {
+                setEnabled(v);
+                setPage(1);
+              }}
+              compact
+            />
           </div>
           <InputGroup size="compact" className="admin-friend-search">
             <InputGroupInput
-              ref={searchInput}
+              ref={search}
               aria-label="搜索友链"
               placeholder="搜索友链名称、地址或描述…"
-              value={query}
-              onChange={(event) => {
-                setQuery(event.target.value);
+              maxLength={200}
+              value={q}
+              onChange={(e) => {
+                setQ(e.target.value);
                 setPage(1);
               }}
             />
             <InputGroupAddon>
-              <Search size={16} aria-hidden="true" />
+              <Search size={16} />
             </InputGroupAddon>
-            {query && (
+            {q && (
               <InputGroupAddon align="inline-end">
                 <InputGroupButton
                   size="compact"
                   aria-label="清空友链搜索"
                   onClick={() => {
-                    setQuery("");
+                    setQ("");
                     setPage(1);
-                    searchInput.current?.focus();
+                    search.current?.focus();
                   }}
                 >
-                  <X size={14} aria-hidden="true" />
+                  <X size={16} />
                 </InputGroupButton>
               </InputGroupAddon>
             )}
           </InputGroup>
+          <Button size="compact" variant="secondary" onClick={query.reload}>
+            刷新列表
+          </Button>
         </div>
-        <div className="admin-post-list">
-          <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">
-            <table className="admin-post-table admin-friend-table">
-              <caption className="sr-only">友情链接及模拟健康状态</caption>
-              <colgroup>
-                <col />
-                <col />
-                <col />
-                <col />
-                <col />
-              </colgroup>
-              <thead>
-                <tr>
-                  {["博客名称 / 地址", "站点描述", "分类", "状态", "操作"].map((title) => (
-                    <th scope="col" key={title}>
-                      {title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((link) => (
-                  <tr key={link.id}>
-                    <td>
-                      <div className="admin-friend-identity">
-                        <FriendAvatar src={link.avatar} />
-                        <div>
-                          <strong>{link.name}</strong>
-                          <a href={link.url} target="_blank" rel="noopener noreferrer">
-                            {link.url}
-                          </a>
+        <BusinessStatus {...query} />
+        {data && (
+          <div className="admin-post-list">
+            <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">
+              <table className="admin-post-table admin-friend-table">
+                <caption className="sr-only">友情链接审核与展示状态</caption>
+                <colgroup>
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                  <col />
+                </colgroup>
+                <thead>
+                  <tr>
+                    {["博客名称 / 地址", "站点描述", "分类", "审核 / 展示", "操作"].map((title) => (
+                      <th scope="col" key={title}>
+                        {title}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.items.map((link) => (
+                    <tr key={link.id}>
+                      <td aria-label={`${link.name}，${link.url}`}>
+                        <div className="admin-friend-identity">
+                          <span className="admin-friend-avatar">
+                            <ConfiguredImage src={link.avatar} size={36} />
+                          </span>
+                          <div>
+                            <strong>{link.name}</strong>
+                            <a href={link.url} target="_blank" rel="noopener noreferrer">
+                              {link.url}
+                            </a>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <p className="admin-friend-description">{link.description}</p>
-                    </td>
-                    <td>
-                      <span className="admin-post-category">{link.category}</span>
-                    </td>
-                    <td>
-                      <span
-                        className={`admin-post-status ${link.status === "正常" ? "is-published" : link.status === "异常" ? "is-rejected" : ""}`}
-                      >
-                        {link.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="admin-post-row-actions">
-                        {link.status === "待审核" && (
+                      </td>
+                      <td>
+                        <p className="admin-friend-description">
+                          {link.description || "未填写简介"}
+                        </p>
+                      </td>
+                      <td>
+                        <span className="admin-post-category">{link.category}</span>
+                      </td>
+                      <td>
+                        <span
+                          className={`admin-post-status ${link.status === "approved" ? "is-published" : link.status === "rejected" ? "is-rejected" : ""}`}
+                        >
+                          {friendStatusLabels[link.status]}
+                        </span>
+                        <p className="admin-muted">{link.enabled ? "展示启用" : "展示停用"}</p>
+                      </td>
+                      <td>
+                        <div className="admin-post-row-actions">
+                          {link.status === "pending" && (
+                            <Button
+                              size="compact"
+                              variant="ghost"
+                              disabled={pending}
+                              aria-label={`通过 ${link.name} 的友链审核`}
+                              onClick={() => {
+                                const {
+                                  id: _id,
+                                  createdAt: _created,
+                                  updatedAt: _updated,
+                                  ...fields
+                                } = link;
+                                void mutate(
+                                  () =>
+                                    request(`/${link.id}`, {
+                                      method: "PUT",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ ...fields, status: "approved" }),
+                                    }),
+                                  () => onMessage("友链已通过审核。"),
+                                );
+                              }}
+                            >
+                              <Check size={16} />
+                            </Button>
+                          )}
                           <Button
-                            variant="ghost"
                             size="compact"
-                            title="通过审核"
-                            aria-label={`通过 ${link.name} 的友链审核`}
-                            onClick={() => {
-                              setFriendsLinks((current) =>
-                                current.map((item) =>
-                                  item.id === link.id ? { ...item, status: "正常" } : item,
-                                ),
-                              );
-                              setPage(currentPage);
-                              onMessage("友链已通过审核（模拟，仅当前会话）");
+                            variant="ghost"
+                            disabled={pending}
+                            aria-label={`编辑友链 ${link.name}`}
+                            onClick={(e) => open(e.currentTarget, link)}
+                          >
+                            <Pencil size={16} />
+                          </Button>
+                          <Button
+                            size="compact"
+                            variant="ghost"
+                            disabled={pending}
+                            aria-label={`删除友链 ${link.name}`}
+                            onClick={(e) => {
+                              trigger.current = e.currentTarget;
+                              deleted.current = false;
+                              setDeleting(link);
+                              setError("");
+                              setConflict(false);
                             }}
                           >
-                            <Check size={16} />
+                            <Trash2 size={16} />
                           </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="compact"
-                          title="编辑友链"
-                          aria-label={`编辑友链 ${link.name}`}
-                          onClick={(event) => openForm(event.currentTarget, link)}
-                        >
-                          <Pencil size={16} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="compact"
-                          title="删除友链"
-                          aria-label={`删除友链 ${link.name}`}
-                          onClick={(event) => {
-                            trigger.current = event.currentTarget;
-                            setDeleting(link);
-                          }}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
-          {!filtered.length && (
-            <div className="admin-post-empty">
-              <Link2 size={28} aria-hidden="true" />
-              <h2>暂无对应友链数据</h2>
-              <p>调整筛选条件，或添加第一条友情链接。</p>
-              <div className="admin-form-actions">
-                <Button size="compact" variant="secondary" onClick={resetFilters}>
-                  重置筛选
-                </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </section>
+            {!data.total && (
+              <div className="admin-post-empty">
+                <Link2 size={28} />
+                <h2>暂无对应友链数据</h2>
+                <p>调整筛选条件，或添加第一条友情链接。</p>
+                <div className="admin-form-actions">
+                  <Button size="compact" variant="secondary" onClick={reset}>
+                    重置筛选
+                  </Button>
+                  <Button size="compact" disabled={pending} onClick={(e) => open(e.currentTarget)}>
+                    新增友链
+                  </Button>
+                </div>
+              </div>
+            )}
+            <div className="admin-post-pagination">
+              <output>
+                显示第 {data.total ? (currentPage - 1) * data.pageSize + 1 : 0}–
+                {Math.min(currentPage * data.pageSize, data.total)} 条，共 {data.total} 条
+              </output>
+              <nav aria-label="友链分页">
                 <Button
                   size="compact"
-                  variant="primary"
-                  onClick={(event) => openForm(event.currentTarget)}
+                  variant="ghost"
+                  aria-label="上一页友链"
+                  disabled={currentPage === 1}
+                  onClick={() => setPage(currentPage - 1)}
                 >
-                  新增友链
+                  <ChevronLeft size={16} />
                 </Button>
-              </div>
+                <span aria-current="page">
+                  {currentPage} / {pageCount}
+                </span>
+                <Button
+                  size="compact"
+                  variant="ghost"
+                  aria-label="下一页友链"
+                  disabled={currentPage === pageCount}
+                  onClick={() => setPage(currentPage + 1)}
+                >
+                  <ChevronRight size={16} />
+                </Button>
+              </nav>
             </div>
-          )}
-          <div className="admin-post-pagination">
-            <output>
-              显示第 {filtered.length ? (currentPage - 1) * pageSize + 1 : 0}–
-              {Math.min(currentPage * pageSize, filtered.length)} 条，共 {filtered.length} 条
-            </output>
-            <nav aria-label="友链分页">
-              <Button
-                size="compact"
-                variant="ghost"
-                aria-label="上一页友链"
-                disabled={currentPage === 1}
-                onClick={() => setPage(currentPage - 1)}
-              >
-                <ChevronLeft size={16} />
-              </Button>
-              <span aria-current="page">
-                {currentPage} / {pageCount}
-              </span>
-              <Button
-                size="compact"
-                variant="ghost"
-                aria-label="下一页友链"
-                disabled={currentPage === pageCount}
-                onClick={() => setPage(currentPage + 1)}
-              >
-                <ChevronRight size={16} />
-              </Button>
-            </nav>
           </div>
-        </div>
+        )}
       </div>
       <p className="admin-post-session-note">
-        演示数据 · 操作仅影响当前会话，刷新后恢复；健康状态为模拟值。
+        数据已持久化。公开展示须已通过且启用；本期尚无前台友链页或健康检测。
       </p>
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+      <Dialog
+        open={formOpen}
+        onOpenChange={(v) => {
+          if (!pending) setFormOpen(v);
+        }}
+      >
         <DialogContent
           className="admin-modal admin-friend-modal"
           initialFocus={nameInput}
@@ -421,175 +544,159 @@ export function AdminFriendsLinks() {
         >
           <div className="admin-modal-heading">
             <div>
-              <DialogTitle>{editingId ? "编辑友情链接" : "添加友情链接"}</DialogTitle>
-              <DialogDescription>使用演示数据，保存仅影响当前会话。</DialogDescription>
+              <DialogTitle>{editing ? "编辑友情链接" : "添加友情链接"}</DialogTitle>
+              <DialogDescription>新建友链进入待审核，审核通过后才具备展示资格。</DialogDescription>
             </div>
             <Button
-              variant="ghost"
               size="sm"
+              variant="ghost"
+              disabled={pending}
               aria-label="关闭友链表单"
               onClick={() => setFormOpen(false)}
             >
               <X size={18} />
             </Button>
           </div>
-          <form className="admin-form" onSubmit={save} noValidate>
-            <label htmlFor="friend-name">
-              网站名称（必填）
-              <Input
-                id="friend-name"
-                ref={nameInput}
-                required
-                maxLength={100}
-                placeholder="例如：拾光漫步"
-                value={draft.name}
-                onChange={(event) => updateDraft("name", event.target.value)}
-                aria-invalid={Boolean(errors.name)}
-                aria-describedby={errors.name ? "friend-name-error" : undefined}
-              />
-              {errors.name && (
-                <span id="friend-name-error" className="admin-friend-error" role="alert">
-                  {errors.name}
-                </span>
-              )}
-            </label>
-            <label htmlFor="friend-url">
-              网站链接（必填）
-              <Input
-                id="friend-url"
-                ref={urlInput}
-                required
-                type="url"
-                placeholder="https://example.com"
-                value={draft.url}
-                onChange={(event) => updateDraft("url", event.target.value)}
-                aria-invalid={Boolean(errors.url)}
-                aria-describedby={errors.url ? "friend-url-error" : undefined}
-              />
-              {errors.url && (
-                <span id="friend-url-error" className="admin-friend-error" role="alert">
-                  {errors.url}
-                </span>
-              )}
-            </label>
-            <label htmlFor="friend-avatar">
-              站点图标（可选）
-              <Input
-                id="friend-avatar"
-                ref={avatarInput}
-                placeholder="https://example.com/avatar.png"
-                value={draft.avatar}
-                onChange={(event) => updateDraft("avatar", event.target.value)}
-                aria-invalid={Boolean(errors.avatar)}
-                aria-describedby={errors.avatar ? "friend-avatar-error" : undefined}
-              />
-              {errors.avatar && (
-                <span id="friend-avatar-error" className="admin-friend-error" role="alert">
-                  {errors.avatar}
-                </span>
-              )}
-            </label>
-            <label htmlFor="friend-description">
-              站点简介
-              <Textarea
-                id="friend-description"
-                className="admin-friend-textarea"
-                maxLength={500}
-                placeholder="用一句话描述该站点的调性与核心关注…"
-                value={draft.description}
-                onChange={(event) => updateDraft("description", event.target.value)}
-              />
-            </label>
-            <div className="admin-friend-form-selects">
-              <div>
-                <label id="friend-category-label" htmlFor="friend-category">
-                  所属分类
+          {errorBlock}
+          <form className="admin-form" ref={form} onSubmit={save} noValidate>
+            <fieldset disabled={pending} className="admin-business-fieldset admin-form">
+              {(
+                [
+                  ["name", "网站名称（必填）", 100],
+                  ["url", "网站链接（必填）", 2048],
+                  ["avatar", "站点图标（可选）", 2048],
+                ] as const
+              ).map(([key, label, max]) => (
+                <label htmlFor={`friend-${key}`} key={key}>
+                  {label}
+                  <Input
+                    id={`friend-${key}`}
+                    ref={key === "name" ? nameInput : undefined}
+                    value={draft[key]}
+                    maxLength={max}
+                    onChange={(e) => setDraft((v) => ({ ...v, [key]: e.target.value }))}
+                    aria-invalid={!!errors[key]}
+                    aria-describedby={errors[key] ? `friend-${key}-error` : undefined}
+                  />
+                  {errors[key] && (
+                    <span id={`friend-${key}-error`} className="admin-friend-error" role="alert">
+                      {errors[key]}
+                    </span>
+                  )}
                 </label>
-                <Select
-                  value={draft.category}
-                  onValueChange={(value) => {
-                    if (value) updateDraft("category", value);
-                  }}
-                >
-                  <SelectTrigger id="friend-category" aria-labelledby="friend-category-label">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {friendCategories.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              ))}
+              <label htmlFor="friend-description">
+                站点简介
+                <Textarea
+                  id="friend-description"
+                  className="admin-friend-textarea"
+                  value={draft.description}
+                  maxLength={500}
+                  onChange={(e) => setDraft((v) => ({ ...v, description: e.target.value }))}
+                />
+              </label>
+              <div className="admin-friend-form-selects">
+                <div>
+                  <label htmlFor="friend-category">所属分类</label>
+                  <FriendSelect
+                    id="friend-category"
+                    label="所属分类"
+                    value={draft.category}
+                    options={categories}
+                    disabled={pending}
+                    onChange={(v) => setDraft((d) => ({ ...d, category: friendSchemaCategory(v) }))}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="friend-status">审核状态</label>
+                  <FriendSelect
+                    id="friend-status"
+                    label="审核状态"
+                    value={draft.status}
+                    options={statuses}
+                    disabled={pending || !editing}
+                    onChange={(v) => setDraft((d) => ({ ...d, status: friendSchemaStatus(v) }))}
+                  />
+                </div>
               </div>
-              <div>
-                <label id="friend-status-label" htmlFor="friend-status">
-                  健康状态
-                </label>
-                <Select
-                  value={draft.status}
-                  onValueChange={(value) => {
-                    if (value) updateDraft("status", value);
-                  }}
-                >
-                  <SelectTrigger id="friend-status" aria-labelledby="friend-status-label">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {friendStatuses.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {value}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="admin-business-actions">
+                <span id="friend-enabled-label">启用展示</span>
+                <Switch
+                  disabled={pending}
+                  touchTarget
+                  checked={draft.enabled}
+                  onCheckedChange={(v) => setDraft((d) => ({ ...d, enabled: v }))}
+                  aria-labelledby="friend-enabled-label"
+                />
               </div>
-            </div>
-            <div className="admin-form-actions">
-              <Button type="button" onClick={() => setFormOpen(false)}>
-                取消
-              </Button>
-              <Button variant="primary" type="submit">
-                保存
-              </Button>
-            </div>
+              <div className="admin-form-actions">
+                <Button
+                  type="button"
+                  disabled={pending}
+                  variant="secondary"
+                  onClick={() => setFormOpen(false)}
+                >
+                  取消
+                </Button>
+                <Button type="submit" variant="primary" disabled={pending || conflict}>
+                  {pending ? "正在保存…" : "保存"}
+                </Button>
+              </div>
+            </fieldset>
           </form>
         </DialogContent>
       </Dialog>
       <Dialog
-        open={deleting !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleting(null);
+        open={!!deleting}
+        onOpenChange={(v) => {
+          if (!pending && !v) setDeleting(null);
         }}
       >
         <DialogContent
-          className="admin-confirm admin-friend-modal"
+          className="admin-modal admin-friend-modal"
           initialFocus={cancelDelete}
           finalFocus={returnFocus}
         >
-          <DialogTitle>确认删除友链“{deleting?.name}”？</DialogTitle>
-          <DialogDescription>仅从当前会话的演示列表移除，刷新后恢复初始数据。</DialogDescription>
+          <DialogTitle>删除友情链接</DialogTitle>
+          <DialogDescription>
+            永久删除「{deleting?.name}」的友链记录，此操作无法撤销。
+          </DialogDescription>
+          {errorBlock}
           <div className="admin-form-actions">
-            <Button ref={cancelDelete} onClick={() => setDeleting(null)}>
+            <Button
+              ref={cancelDelete}
+              disabled={pending}
+              variant="secondary"
+              onClick={() => setDeleting(null)}
+            >
               取消
             </Button>
             <Button
-              className="admin-friend-delete"
-              disabled={!deleting}
+              disabled={pending || conflict || !deleting}
               onClick={() => {
                 if (!deleting) return;
-                setFriendsLinks((current) => current.filter((link) => link.id !== deleting.id));
-                setPage(currentPage);
-                setDeleting(null);
-                onMessage("友链已删除（模拟，仅当前会话）");
+                void mutate(
+                  () =>
+                    request(`/${deleting.id}?version=${deleting.version}`, { method: "DELETE" }),
+                  () => {
+                    deleted.current = true;
+                    setDeleting(null);
+                    onMessage("友链已删除。");
+                  },
+                );
               }}
             >
-              确认删除
+              {pending ? "正在删除…" : "确认删除"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
     </div>
   );
+}
+function friendSchemaCategory(value: string) {
+  return friendCategories.find((v) => v === value) ?? "技术博客";
+}
+function friendSchemaStatus(value: string) {
+  return friendStatuses.find((v) => v === value) ?? "pending";
 }

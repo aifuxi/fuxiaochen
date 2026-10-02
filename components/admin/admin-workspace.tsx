@@ -16,7 +16,6 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { initialReleaseLogs } from "./changelog-mock-data";
-import { initialFriendsLinks } from "./friends-links-mock-data";
 import { MediaUploadStatus } from "./media-upload-status";
 import { initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
@@ -47,7 +46,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postPending, setPostPending] = useState(false);
   const postMutation = useRef(false);
   const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
-  const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
   const taxonomyDisabled =
@@ -166,8 +164,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       value={{
         releaseLogs,
         setReleaseLogs,
-        friendsLinks,
-        setFriendsLinks,
         ...mediaState,
         onMessage: setMessage,
         postRevision,

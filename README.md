@@ -316,3 +316,11 @@ GA4 使用 `send_page_view: false`；同时必须在 GA4 的 Web 数据流 → �
 沿用 Hono4.13.12、Zod4.6.5、Prisma CLI8.0.0-rc.19 和 SQLite runtime8.0.0-rc.14（RC／experimental）。新增迁移只创建 `site_setting/social_account`；执行 `npm run db:migrate` 后重启已有应用进程，使数据库单例载入新 contract。无 `db` ref 时规划迁移须通过 `--from <上一迁移的目标hash>` 明确起点，避免以空库为起点。CLI与应用继续共享 `DATABASE_PATH`。
 
 人工验收清单：保存及刷新持久化；备案留空与成对错误；多个同平台账号、排序、停用、图片失败回退；版本冲突保留草稿；非法URL/ID/JSON、未知字段、错误Origin、会话失效和请求超限；前台名称与metadata同步、开发环境不采集、生产PV无重复；1440px/390px、键盘焦点、禁用与减少动态效果。真实第三方收数需要实际账号配置，不能由静态检查确认。
+
+## 友情链接 API（第五阶段）
+
+`GET/POST /api/admin/friends-links` 提供分页查询与创建；`GET/PUT/DELETE /api/admin/friends-links/:id` 读取、编辑、删除单条。输入模型见 `lib/friends-links/schema.ts`，创建不接受status，服务端固定为pending；编辑需包含完整字段和version，删除在query携带version。审核为pending/approved/rejected，enabled独立表示展示偏好；只有approved且enabled才具备公开展示资格，本期没有公开友链页或健康检测，也不访问所填URL。
+
+查询支持q/category/status/enabled/page/pageSize；enabled为true/false字符串，默认8条、最多100条，按创建时间与ID降序，超范围页码回退末页。q搜索名称、链接、简介，SQLite字面包含匹配，ASCII忽略大小写，百分号和下划线不作通配符。列表返回 `{ data: { items, total, page, pageSize, pageCount } }`，时间为ISO，版本从1开始。更新和删除旧版本返回409 VERSION_CONFLICT，不静默覆盖；编辑冲突保留草稿，显式放弃草稿重新载入后才能保存，删除冲突须重新载入并再次确认。
+
+同样要求会话、Origin、严格JSON与16 KiB上限，使用统一JSON错误，不泄漏内部异常。名称1–100字符，简介最多500字符，链接不含凭据，图标接受HTTPS或站内绝对路径。空库不导入Mock。新增friend_link表及索引，应用迁移后重启已有进程。验收关注持久化、审核与展示组合、字面搜索、分页回退、冲突、会话失效、查询失败与写入成功后刷新失败的分别反馈。
