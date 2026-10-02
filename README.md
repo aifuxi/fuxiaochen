@@ -324,3 +324,13 @@ GA4 使用 `send_page_view: false`；同时必须在 GA4 的 Web 数据流 → �
 查询支持q/category/status/enabled/page/pageSize；enabled为true/false字符串，默认8条、最多100条，按创建时间与ID降序，超范围页码回退末页。q搜索名称、链接、简介，SQLite字面包含匹配，ASCII忽略大小写，百分号和下划线不作通配符。列表返回 `{ data: { items, total, page, pageSize, pageCount } }`，时间为ISO，版本从1开始。更新和删除旧版本返回409 VERSION_CONFLICT，不静默覆盖；编辑冲突保留草稿，显式放弃草稿重新载入后才能保存，删除冲突须重新载入并再次确认。
 
 同样要求会话、Origin、严格JSON与16 KiB上限，使用统一JSON错误，不泄漏内部异常。名称1–100字符，简介最多500字符，链接不含凭据，图标接受HTTPS或站内绝对路径。空库不导入Mock。新增friend_link表及索引，应用迁移后重启已有进程。验收关注持久化、审核与展示组合、字面搜索、分页回退、冲突、会话失效、查询失败与写入成功后刷新失败的分别反馈。
+
+## 更新日志 API（第五阶段）
+
+`GET /api/admin/changelog` 使用q/page/pageSize查询，返回 `{ data: { items, total, page, pageSize, pageCount } }`；`POST /api/admin/changelog` 接收 `{ version, title, type, changes }`，201返回保存的记录。本期只提供读取与新增，不提供修改、删除或软件部署。version是1–80字符的展示文案，不要求SemVer或唯一；title为1–200字符；type为feature/fix/performance/security；changes为最多20项的字符串数组，每项1–200字符，也可为空。空条目显示“未填写更新详情”，不会补造内容。
+
+服务端生成UUID和创建时间，条目经过Zod校验后存为JSON文本。默认每页8条、最多100条，按创建时间和ID降序；字面搜索版本、主题与实际条目内容，百分号和下划线不作通配符。API返回ISO时间，界面以Asia/Shanghai显示北京时间。新增release_log表及索引，迁移不导入演示数据。
+
+页面按需查询，覆盖加载、空库、搜索无结果、读取失败重试、发布中禁用与字段错误焦点。成功写入与后续查询失败分别反馈。发布响应不确定时保留草稿、禁止继续发布；先查询核对相同版本的最新记录及时间，再明确确认未发布才能重新提交，避免自动重试造成重复记录。接口沿用管理员鉴权、Origin校验、16 KiB限制及严格JSON错误格式，未知字段、非法类型和超长条目拒绝。
+
+验收清单：新增后刷新与重新登录一致、三个文本范围的字面搜索、任意版本文案与重复版本、空条目、服务端时间与北京时间、分页；未知字段与请求超限、失效会话和错误Origin；发布成功后刷新失败、响应不确定先核对；1440px/390px布局、弹窗焦点、键盘、disabled与减少动态效果。新增/搜索通过临时记录人工验证后应清理临时数据，数据库不保留Mock内容；此清单不代表所有场景已经完成。

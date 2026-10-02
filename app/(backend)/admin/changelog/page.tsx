@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "更新日志 · fuxiaochen",
-  description: "使用演示数据记录版本迭代、搜索更新条目与模拟发布。",
+  description: "记录版本迭代、搜索更新条目与保存更新日志。",
 };
 
 export default async function ChangelogPage() {

@@ -1,20 +1,17 @@
 "use client";
 
-import { createContext, useContext, type Dispatch, type SetStateAction } from "react";
+import { createContext, useContext } from "react";
 
 import type { CommentItem } from "@/lib/comments/schema";
 import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
-import type { ReleaseLog } from "./changelog-mock-data";
 import type { useComments } from "./use-comments";
 import type { UploadJob } from "./use-media";
 import type { TaxonomyState } from "./use-taxonomy";
 
 type AdminState = TaxonomyState &
   Omit<ReturnType<typeof useComments>, "deleteComment"> & {
-    releaseLogs: ReleaseLog[];
-    setReleaseLogs: Dispatch<SetStateAction<ReleaseLog[]>>;
     mediaRevision: number;
     mediaUploads: UploadJob[];
     retryMediaUpload: (id: string) => Promise<void>;

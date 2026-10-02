@@ -15,7 +15,6 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
-import { initialReleaseLogs } from "./changelog-mock-data";
 import { MediaUploadStatus } from "./media-upload-status";
 import { initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
@@ -45,7 +44,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
   const [postPending, setPostPending] = useState(false);
   const postMutation = useRef(false);
-  const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
   const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
   const taxonomyDisabled =
@@ -162,8 +160,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
-        releaseLogs,
-        setReleaseLogs,
         ...mediaState,
         onMessage: setMessage,
         postRevision,

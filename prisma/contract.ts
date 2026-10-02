@@ -257,6 +257,20 @@ export const contract = defineContract({}, ({ field, model }) => {
     ],
   }));
 
+  const ReleaseLog = model("ReleaseLog", {
+    fields: {
+      id: field.column(textColumn).id(),
+      version: field.column(textColumn),
+      title: field.column(textColumn),
+      type: field.column(textColumn),
+      changes: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "release_log",
+    indexes: [constraints.index([cols.createdAt, cols.id])],
+  }));
+
   return {
     models: {
       Admin,
@@ -272,6 +286,7 @@ export const contract = defineContract({}, ({ field, model }) => {
       SiteSetting,
       SocialAccount,
       FriendLink,
+      ReleaseLog,
     },
   };
 });

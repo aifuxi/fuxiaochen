@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Plus, Search, X } from "lucide-react";
+import { History, Plus, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,61 +20,127 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  releaseTypes,
+  releaseSchema,
+  type ReleaseType,
+  type ReleaseList,
+  type ReleaseLog,
+} from "@/lib/changelog/schema";
 
 import { useAdminWorkspace } from "./admin-context";
-import { releaseTypes, type ReleaseType } from "./changelog-mock-data";
+import { resourceRequest } from "./business-request";
+import { BusinessStatus } from "./business-status";
+import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
+import "./admin-business.css";
 import "./admin-data-workspace.css";
 import "./admin-changelog.css";
 
+const request = resourceRequest("/api/admin/changelog");
+const load = request<ReleaseList>;
 const typeOptions: ReleaseType[] = ["feature", "fix", "performance", "security"];
 
 export function AdminChangelog() {
-  const { releaseLogs, setReleaseLogs, onMessage } = useAdminWorkspace();
+  const { onMessage } = useAdminWorkspace();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [version, setVersion] = useState("");
   const [title, setTitle] = useState("");
   const [type, setType] = useState<ReleaseType>("feature");
   const [changes, setChanges] = useState("");
-  const [errors, setErrors] = useState<{ version?: string; title?: string }>({});
+  const [errors, setErrors] = useState<{ version?: string; title?: string; changes?: string }>({});
   const publishButton = useRef<HTMLButtonElement>(null);
   const versionInput = useRef<HTMLInputElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
-  const keyword = query.trim().toLowerCase();
-  const filtered = releaseLogs.filter((log) =>
-    [log.version, log.title, ...log.changes].some((text) => text.toLowerCase().includes(keyword)),
+  const keyword = useDebouncedPostQuery(query);
+  const [page, setPage] = useState(1);
+  const [revision, setRevision] = useState(0);
+  const result = usePostQuery(
+    `?${new URLSearchParams({ q: keyword, page: String(page) })}`,
+    revision,
+    load,
   );
-
-  const publish = (event: FormEvent<HTMLFormElement>) => {
+  const filtered = result.data?.items ?? [];
+  const [pending, setPending] = useState(false);
+  const busy = useRef(false);
+  const [error, setError] = useState("");
+  const [uncertain, setUncertain] = useState(false);
+  const [checked, setChecked] = useState<ReleaseList | null>(null);
+  const submittedVersion = useRef("");
+  const publish = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const nextErrors = {
-      version: version.trim() ? undefined : "请输入版本号",
-      title: title.trim() ? undefined : "请输入版本更新主题",
-    };
-    setErrors(nextErrors);
-    if (nextErrors.version || nextErrors.title) {
-      (nextErrors.version ? versionInput : titleInput).current?.focus();
+    if (busy.current || uncertain) return;
+    const parsed = releaseSchema.safeParse({
+      version,
+      title,
+      type,
+      changes: changes
+        .split("\n")
+        .map((v) => v.trim())
+        .filter(Boolean),
+    });
+    if (!parsed.success) {
+      const fields = Object.fromEntries(
+        parsed.error.issues.map((i) => [String(i.path[0]), i.message]),
+      );
+      setErrors(fields);
+      requestAnimationFrame(() =>
+        document.getElementById(`release-${Object.keys(fields)[0]}`)?.focus(),
+      );
       return;
     }
-    const items = changes
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean);
-    setReleaseLogs((current) => [
-      {
-        id: crypto.randomUUID(),
-        version: version.trim(),
-        title: title.trim(),
-        type,
-        date: new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Shanghai" }),
-        changes: items.length ? items : ["常规细节优化与稳定性提升"],
-      },
-      ...current,
-    ]);
-    setQuery("");
-    setOpen(false);
-    onMessage("版本记录已发布（模拟，仅当前会话；未部署软件）");
+    busy.current = true;
+    setPending(true);
+    setError("");
+    setErrors({});
+    submittedVersion.current = parsed.data.version;
+    try {
+      await request<ReleaseLog>("", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed.data),
+      });
+      setQuery("");
+      setPage(1);
+      setRevision((v) => v + 1);
+      setOpen(false);
+      onMessage("版本记录已保存；此操作不会部署软件。");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "无法确认发布结果。");
+      if (e instanceof AdminRequestError && e.code === "INVALID_INPUT") {
+        const fields = Object.fromEntries(
+          Object.entries(e.fieldErrors).map(([key, values]) => [key.split(".")[0], values[0]]),
+        );
+        setErrors(fields);
+        requestAnimationFrame(() =>
+          document.getElementById(`release-${Object.keys(fields)[0]}`)?.focus(),
+        );
+      } else if (
+        !(e instanceof AdminRequestError) ||
+        ["INVALID_RESPONSE", "SERVICE_UNAVAILABLE", "REQUEST_FAILED"].includes(e.code)
+      ) {
+        setUncertain(true);
+        setChecked(null);
+      }
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  };
+  const checkOutcome = async () => {
+    if (busy.current) return;
+    busy.current = true;
+    setPending(true);
+    try {
+      setChecked(await load(`?${new URLSearchParams({ q: submittedVersion.current })}`));
+      setRevision((v) => v + 1);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "查询失败，请稍后再核对。");
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
   };
 
   return (
@@ -82,13 +148,19 @@ export function AdminChangelog() {
       <div className="admin-page-heading">
         <div>
           <h1>系统版本迭代日志</h1>
-          <p>记录每一次演进脉络，回溯功能迭代与架构优化。演示数据，刷新后恢复。</p>
+          <p>记录已持久化的版本变更；发布日志不会部署软件。</p>
         </div>
         <Button
           ref={publishButton}
           variant="primary"
           size="compact"
+          disabled={pending}
           onClick={() => {
+            if (uncertain) {
+              setOpen(true);
+              return;
+            }
+            setError("");
             setVersion("");
             setTitle("");
             setType("feature");
@@ -110,7 +182,11 @@ export function AdminChangelog() {
               aria-label="搜索更新日志"
               placeholder="搜索版本号、功能词或特性..."
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              maxLength={200}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setPage(1);
+              }}
             />
             <InputGroupAddon>
               <Search size={16} aria-hidden="true" />
@@ -122,6 +198,7 @@ export function AdminChangelog() {
                   aria-label="清空搜索"
                   onClick={() => {
                     setQuery("");
+                    setPage(1);
                     searchInput.current?.focus();
                   }}
                 >
@@ -131,51 +208,94 @@ export function AdminChangelog() {
             )}
           </InputGroup>
           <output>
-            已记录 <strong>{filtered.length}</strong> 个迭代里程碑
+            已记录 <strong>{result.data?.total ?? "—"}</strong> 个迭代里程碑
           </output>
         </div>
 
-        {filtered.length ? (
-          <div className="admin-release-content">
-            <ol className="admin-release-timeline" aria-label="版本迭代时间线">
-              {filtered.map((log) => (
-                <li key={log.id} className={`admin-release-item is-${log.type}`}>
-                  <div className="admin-release-heading">
-                    <span className="admin-release-version">{log.version}</span>
-                    <span className={`admin-release-tag is-${log.type}`}>
-                      {releaseTypes[log.type]}
-                    </span>
-                    <h2>{log.title}</h2>
-                  </div>
-                  <ul className="admin-release-changes">
-                    {log.changes.map((change, index) => (
-                      <li key={index}>{change}</li>
-                    ))}
-                  </ul>
-                  <time dateTime={log.date}>{log.date}</time>
-                </li>
-              ))}
-            </ol>
-          </div>
-        ) : (
-          <div className="admin-post-empty">
-            <History size={28} aria-hidden="true" />
-            <h2>没有匹配的版本记录</h2>
-            <p>试试其他版本号或更新关键词。</p>
-            <Button
-              size="compact"
-              onClick={() => {
-                setQuery("");
-                searchInput.current?.focus();
-              }}
-            >
-              清空搜索
-            </Button>
+        <BusinessStatus {...result} />
+        {result.data &&
+          (filtered.length ? (
+            <div className="admin-release-content">
+              <ol className="admin-release-timeline" aria-label="版本迭代时间线">
+                {filtered.map((log) => (
+                  <li key={log.id} className={`admin-release-item is-${log.type}`}>
+                    <div className="admin-release-heading">
+                      <span className="admin-release-version">{log.version}</span>
+                      <span className={`admin-release-tag is-${log.type}`}>
+                        {releaseTypes[log.type]}
+                      </span>
+                      <h2>{log.title}</h2>
+                    </div>
+                    {!log.changes.length && <p className="admin-muted">未填写更新详情</p>}
+                    <ul className="admin-release-changes">
+                      {log.changes.map((change, index) => (
+                        <li key={index}>{change}</li>
+                      ))}
+                    </ul>
+                    <time dateTime={log.createdAt}>
+                      {new Date(log.createdAt).toLocaleDateString("sv-SE", {
+                        timeZone: "Asia/Shanghai",
+                      })}
+                    </time>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ) : (
+            <div className="admin-post-empty">
+              <History size={28} aria-hidden="true" />
+              <h2>{keyword ? "没有匹配的版本记录" : "尚无版本记录"}</h2>
+              <p>{keyword ? "试试其他版本号或更新关键词。" : "发布第一条日志以记录实际变更。"}</p>
+              {keyword && (
+                <Button
+                  size="compact"
+                  onClick={() => {
+                    setQuery("");
+                    setPage(1);
+                    searchInput.current?.focus();
+                  }}
+                >
+                  清空搜索
+                </Button>
+              )}
+            </div>
+          ))}
+        {result.data && (
+          <div className="admin-post-pagination">
+            <output>共 {result.data.total} 条</output>
+            <nav aria-label="更新日志分页">
+              <Button
+                size="compact"
+                variant="ghost"
+                aria-label="上一页日志"
+                disabled={result.data.page === 1}
+                onClick={() => setPage(result.data!.page - 1)}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <span aria-current="page">
+                {result.data.page} / {result.data.pageCount}
+              </span>
+              <Button
+                size="compact"
+                variant="ghost"
+                aria-label="下一页日志"
+                disabled={result.data.page === result.data.pageCount}
+                onClick={() => setPage(result.data!.page + 1)}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </nav>
           </div>
         )}
       </section>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog
+        open={open}
+        onOpenChange={(v) => {
+          if (!pending) setOpen(v);
+        }}
+      >
         <DialogContent
           className="admin-release-modal"
           initialFocus={versionInput}
@@ -184,109 +304,169 @@ export function AdminChangelog() {
           <div className="admin-modal-heading">
             <div>
               <DialogTitle>发布版本更新日志</DialogTitle>
-              <DialogDescription>
-                仅添加当前会话的模拟记录，不部署软件或修改服务器。
-              </DialogDescription>
+              <DialogDescription>保存真实版本记录，不部署软件。</DialogDescription>
             </div>
             <Button
               variant="ghost"
               size="sm"
+              disabled={pending}
               aria-label="关闭发布弹窗"
               onClick={() => setOpen(false)}
             >
               <X size={18} aria-hidden="true" />
             </Button>
           </div>
+          {error && (
+            <div role="alert" className="admin-business-feedback">
+              <p className="admin-business-error">{error}</p>
+            </div>
+          )}
+          {uncertain && (
+            <section aria-label="核对发布结果">
+              <p>响应未确认，请先查询核对已有记录；不会自动重试发布。</p>
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={pending}
+                onClick={() => void checkOutcome()}
+              >
+                查询并核对发布结果
+              </Button>
+              {checked && (
+                <>
+                  <p>匹配记录共 {checked.total} 条；以下为最新8条：</p>
+                  <ul>
+                    {checked.items.map((item) => (
+                      <li key={item.id}>
+                        {item.version} · {item.title} ·{" "}
+                        {new Date(item.createdAt).toLocaleString("zh-CN", {
+                          timeZone: "Asia/Shanghai",
+                        })}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    disabled={pending}
+                    onClick={() => {
+                      setUncertain(false);
+                      setChecked(null);
+                      setError("");
+                    }}
+                  >
+                    已核对未发布，允许重新提交
+                  </Button>
+                </>
+              )}
+            </section>
+          )}
           <form className="admin-form" noValidate onSubmit={publish}>
-            <div className="admin-release-fields">
-              <label htmlFor="release-version">
+            <fieldset
+              disabled={pending || uncertain}
+              className="admin-business-fieldset admin-form"
+            >
+              <div className="admin-release-fields">
+                <label htmlFor="release-version">
+                  <span>
+                    版本号 <span className="admin-release-required">*</span>
+                  </span>
+                  <Input
+                    id="release-version"
+                    ref={versionInput}
+                    required
+                    placeholder="v2.3.0"
+                    maxLength={80}
+                    value={version}
+                    aria-invalid={!!errors.version}
+                    aria-describedby={errors.version ? "release-version-error" : undefined}
+                    onChange={(event) => {
+                      setVersion(event.target.value);
+                      setErrors((current) => ({ ...current, version: undefined }));
+                    }}
+                  />
+                  {errors.version && (
+                    <span id="release-version-error" className="admin-release-error">
+                      {errors.version}
+                    </span>
+                  )}
+                </label>
+                <div>
+                  <label id="release-type-label" htmlFor="release-type">
+                    更新类型
+                  </label>
+                  <Select
+                    disabled={pending || uncertain}
+                    value={type}
+                    onValueChange={(value) => {
+                      if (value) setType(value);
+                    }}
+                    items={Object.entries(releaseTypes).map(([value, label]) => ({ value, label }))}
+                  >
+                    <SelectTrigger id="release-type" aria-labelledby="release-type-label">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {typeOptions.map((value) => (
+                        <SelectItem key={value} value={value}>
+                          {releaseTypes[value]}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <label htmlFor="release-title">
                 <span>
-                  版本号 <span className="admin-release-required">*</span>
+                  版本更新主题 <span className="admin-release-required">*</span>
                 </span>
                 <Input
-                  id="release-version"
-                  ref={versionInput}
+                  id="release-title"
+                  ref={titleInput}
                   required
-                  placeholder="v2.3.0"
-                  value={version}
-                  aria-invalid={!!errors.version}
-                  aria-describedby={errors.version ? "release-version-error" : undefined}
+                  placeholder="简要概括此次升级核心..."
+                  maxLength={200}
+                  value={title}
+                  aria-invalid={!!errors.title}
+                  aria-describedby={errors.title ? "release-title-error" : undefined}
                   onChange={(event) => {
-                    setVersion(event.target.value);
-                    setErrors((current) => ({ ...current, version: undefined }));
+                    setTitle(event.target.value);
+                    setErrors((current) => ({ ...current, title: undefined }));
                   }}
                 />
-                {errors.version && (
-                  <span id="release-version-error" className="admin-release-error">
-                    {errors.version}
+                {errors.title && (
+                  <span id="release-title-error" className="admin-release-error">
+                    {errors.title}
                   </span>
                 )}
               </label>
-              <div>
-                <label id="release-type-label" htmlFor="release-type">
-                  更新类型
-                </label>
-                <Select
-                  value={type}
-                  onValueChange={(value) => {
-                    if (value) setType(value);
-                  }}
-                  items={Object.entries(releaseTypes).map(([value, label]) => ({ value, label }))}
-                >
-                  <SelectTrigger id="release-type" aria-labelledby="release-type-label">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {typeOptions.map((value) => (
-                      <SelectItem key={value} value={value}>
-                        {releaseTypes[value]}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <label htmlFor="release-changes">
+                更新条目清单（每行一条，最多20条、每条200字符）
+                <Textarea
+                  id="release-changes"
+                  rows={5}
+                  placeholder={"新增某个核心模块...\n优化某些交互细节...\n修复某些显示缺陷..."}
+                  maxLength={4020}
+                  aria-invalid={!!errors.changes}
+                  aria-describedby={errors.changes ? "release-changes-error" : undefined}
+                  value={changes}
+                  onChange={(event) => setChanges(event.target.value)}
+                />
+                {errors.changes && (
+                  <span id="release-changes-error" className="admin-release-error" role="alert">
+                    {errors.changes}
+                  </span>
+                )}
+              </label>
+              <div className="admin-form-actions">
+                <Button type="button" onClick={() => setOpen(false)}>
+                  取消
+                </Button>
+                <Button type="submit" variant="primary" disabled={pending || uncertain}>
+                  {pending ? "正在发布…" : "确认发布"}
+                </Button>
               </div>
-            </div>
-            <label htmlFor="release-title">
-              <span>
-                版本更新主题 <span className="admin-release-required">*</span>
-              </span>
-              <Input
-                id="release-title"
-                ref={titleInput}
-                required
-                placeholder="简要概括此次升级核心..."
-                value={title}
-                aria-invalid={!!errors.title}
-                aria-describedby={errors.title ? "release-title-error" : undefined}
-                onChange={(event) => {
-                  setTitle(event.target.value);
-                  setErrors((current) => ({ ...current, title: undefined }));
-                }}
-              />
-              {errors.title && (
-                <span id="release-title-error" className="admin-release-error">
-                  {errors.title}
-                </span>
-              )}
-            </label>
-            <label htmlFor="release-changes">
-              更新条目清单（每行一条）
-              <Textarea
-                id="release-changes"
-                rows={5}
-                placeholder={"新增某个核心模块...\n优化某些交互细节...\n修复某些显示缺陷..."}
-                value={changes}
-                onChange={(event) => setChanges(event.target.value)}
-              />
-            </label>
-            <div className="admin-form-actions">
-              <Button type="button" onClick={() => setOpen(false)}>
-                取消
-              </Button>
-              <Button type="submit" variant="primary">
-                确认发布
-              </Button>
-            </div>
+            </fieldset>
           </form>
         </DialogContent>
       </Dialog>

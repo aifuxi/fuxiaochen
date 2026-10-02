@@ -14,6 +14,7 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE,
 } from "./auth/service";
+import { changelogRoutes } from "./changelog/routes";
 import { commentRoutes } from "./comments/routes";
 import { friendRoutes } from "./friends-links/routes";
 import { mediaRoutes } from "./media/routes";
@@ -79,6 +80,7 @@ api.route("/admin/media", mediaRoutes);
 api.route("/admin/comments", commentRoutes);
 api.route("/admin/settings", settingsRoutes);
 api.route("/admin/friends-links", friendRoutes);
+api.route("/admin/changelog", changelogRoutes);
 
 api.route("/admin", taxonomyRoutes);
 
