@@ -109,7 +109,7 @@ function createStorage(config: StorageConfig) {
       requestChecksumCalculation: "WHEN_REQUIRED",
       responseChecksumValidation: "WHEN_REQUIRED",
       maxAttempts: 3,
-      requestHandler: { connectionTimeout: 10_000, requestTimeout: 60_000 },
+      requestHandler: { connectionTimeout: 10_000, requestTimeout: 5 * 60_000 },
     });
   return {
     config,

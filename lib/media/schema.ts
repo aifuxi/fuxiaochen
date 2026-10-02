@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-export const IMAGE_MAX_BYTES = 10 * 1024 * 1024;
-export const ATTACHMENT_MAX_BYTES = 50 * 1024 * 1024;
+export const IMAGE_MAX_BYTES = 20 * 1024 * 1024;
+export const ATTACHMENT_MAX_BYTES = 100 * 1024 * 1024;
+export const MEDIA_SIZE_HINT = `图片最多 ${IMAGE_MAX_BYTES / (1024 * 1024)} MiB，附件最多 ${ATTACHMENT_MAX_BYTES / (1024 * 1024)} MiB。`;
 export const mediaKindSchema = z.enum(["image", "attachment"]);
 export const mediaIdSchema = z.object({ id: z.uuid() });
 export const uploadSchema = z
@@ -24,10 +25,17 @@ export const uploadSchema = z
         "文件名无效。",
       ),
     kind: mediaKindSchema,
-    bytes: z.number().int().min(1).max(ATTACHMENT_MAX_BYTES),
+    bytes: z
+      .number()
+      .int()
+      .min(1, "文件不能为空。")
+      .max(ATTACHMENT_MAX_BYTES, `文件最多 ${ATTACHMENT_MAX_BYTES / (1024 * 1024)} MiB。`),
     sha256: z.string().regex(/^[a-f0-9]{64}$/),
   })
-  .refine((input) => input.kind !== "image" || input.bytes <= IMAGE_MAX_BYTES, "图片最多 10 MiB。");
+  .refine(
+    (input) => input.kind !== "image" || input.bytes <= IMAGE_MAX_BYTES,
+    `图片最多 ${IMAGE_MAX_BYTES / (1024 * 1024)} MiB。`,
+  );
 export const mediaQuerySchema = z.object({
   q: z.string().trim().max(200).default(""),
   kind: mediaKindSchema.optional(),

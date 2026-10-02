@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { MediaItem, MediaList, UploadTicket } from "@/lib/media/schema";
 
+import { fileSha256 } from "@/lib/media/file-hash";
 import { ATTACHMENT_MAX_BYTES, fileKind, IMAGE_MAX_BYTES, uploadSchema } from "@/lib/media/schema";
 
 import { AdminRequestError, usePostQuery } from "./use-posts";
@@ -64,7 +65,7 @@ function directUpload(
       else resolve();
     };
     xhr.open("PUT", ticket.url);
-    xhr.timeout = 5 * 60_000;
+    xhr.timeout = 15 * 60_000;
     xhr.withCredentials = false;
     for (const [name, value] of Object.entries(ticket.headers)) xhr.setRequestHeader(name, value);
     xhr.upload.addEventListener("progress", (event) => {
@@ -143,15 +144,10 @@ export function useMediaUploads(onMessage: (message: string) => void) {
         const cap = kind === "image" ? IMAGE_MAX_BYTES : ATTACHMENT_MAX_BYTES;
         if (!job.file.size || job.file.size > cap)
           throw new Error(
-            kind === "image"
-              ? "图片必须大于 0 字节且最多 10 MiB。"
-              : "附件必须大于 0 字节且最多 50 MiB。",
+            `${kind === "image" ? "图片" : "附件"}必须大于 0 字节且最多 ${cap / (1024 * 1024)} MiB。`,
           );
         if (!job.sha256) {
-          const hash = await crypto.subtle.digest("SHA-256", await job.file.arrayBuffer());
-          job.sha256 = Array.from(new Uint8Array(hash), (byte) =>
-            byte.toString(16).padStart(2, "0"),
-          ).join("");
+          job.sha256 = await fileSha256(job.file, controller.signal);
         }
         if (controller.signal.aborted) return false;
         if (

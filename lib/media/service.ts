@@ -157,7 +157,8 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
     return { ...current, status: "finalizing", leaseToken: token, leaseUntil };
   });
   if (row.status === "ready") return serialize(row);
-  const signal = AbortSignal.timeout(120_000);
+  // 100 MiB 附件需要更长的读取与发布时间；总时限仍短于 10 分钟处理租约。
+  const signal = AbortSignal.timeout(5 * 60_000);
   let committed = false;
   try {
     const data = await verifyAndPublish(

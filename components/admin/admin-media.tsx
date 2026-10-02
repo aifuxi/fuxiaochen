@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { MediaUploadStatus } from "./media-upload-status";
@@ -359,9 +360,7 @@ export function AdminMedia() {
             </div>
           ))}
       </div>
-      <p className="admin-media-note">
-        图片最多 10 MiB，附件最多 50 MiB。文件上传并通过核验后保存；附件强制下载。
-      </p>
+      <p className="admin-media-note">{MEDIA_SIZE_HINT}文件上传并通过核验后保存；附件强制下载。</p>
       <Dialog
         open={Boolean(preview)}
         onOpenChange={(open) => {

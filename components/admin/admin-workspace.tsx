@@ -10,6 +10,7 @@ import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/s
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
@@ -346,7 +347,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                     }}
                   />
                   <p className="admin-muted">
-                    图片最多 10 MiB，附件最多 50 MiB。文件上传并通过核验后可复制永久链接。
+                    {MEDIA_SIZE_HINT}文件上传并通过核验后可复制永久链接。
                   </p>
                   <MediaUploadStatus />
                   <Button
