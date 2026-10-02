@@ -29,7 +29,6 @@ import "./admin.css";
 const panelTitles: Record<AdminPanel, string> = {
   search: "全局内容检索",
   compose: "文章编辑",
-  notifications: "系统通知",
   profile: "管理账户",
   comments: "评论管理",
   upload: "上传媒体",
@@ -155,7 +154,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   };
 
   const pendingCount = commentState.commentSummary?.statusCounts.pending ?? null;
-  const unreadCount = notices.filter((notice) => !notice.read).length;
 
   return (
     <AdminContext.Provider
@@ -188,7 +186,19 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
       }}
     >
-      <AdminShell pendingCount={pendingCount} unreadCount={unreadCount} onOpen={openPanel}>
+      <AdminShell
+        pendingCount={pendingCount}
+        notices={notices}
+        onReadNotice={(id) =>
+          setNotices((current) =>
+            current.map((notice) => (notice.id === id ? { ...notice, read: true } : notice)),
+          )
+        }
+        onReadAllNotices={() =>
+          setNotices((current) => current.map((notice) => ({ ...notice, read: true })))
+        }
+        onOpen={openPanel}
+      >
         {children}
       </AdminShell>
       {message && (
@@ -244,48 +254,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   id={editingId}
                   onClose={() => setPanel(null)}
                 />
-              )}
-              {panel === "notifications" && (
-                <div className="admin-modal-section">
-                  <div className="admin-modal-toolbar">
-                    <span>{unreadCount} 条未读</span>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled={unreadCount === 0}
-                      onClick={() =>
-                        setNotices((current) =>
-                          current.map((notice) => ({ ...notice, read: true })),
-                        )
-                      }
-                    >
-                      全部已读
-                    </Button>
-                  </div>
-                  <div className="admin-result-list">
-                    {notices.map((notice) => (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        className={`admin-notice ${notice.read ? "" : "is-unread"}`}
-                        key={notice.id}
-                        onClick={() =>
-                          setNotices((current) =>
-                            current.map((item) =>
-                              item.id === notice.id ? { ...item, read: true } : item,
-                            ),
-                          )
-                        }
-                      >
-                        <strong>{notice.title}</strong>
-                        <span>{notice.detail}</span>
-                        <small>
-                          {notice.time} · {notice.read ? "已读" : "未读"}
-                        </small>
-                      </Button>
-                    ))}
-                  </div>
-                </div>
               )}
               {panel === "profile" && (
                 <div className="admin-modal-section">

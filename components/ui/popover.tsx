@@ -1,0 +1,34 @@
+"use client";
+
+import type { ComponentProps } from "react";
+
+import { Popover as BasePopover } from "@base-ui/react/popover";
+
+import { cn } from "@/lib/utils";
+
+export const Popover = BasePopover.Root;
+export const PopoverTrigger = BasePopover.Trigger;
+export const PopoverTitle = BasePopover.Title;
+export const PopoverDescription = BasePopover.Description;
+
+export function PopoverContent({
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof BasePopover.Popup>) {
+  return (
+    <BasePopover.Portal>
+      <BasePopover.Positioner align="end" sideOffset={12} collisionPadding={12} className="z-50">
+        <BasePopover.Popup
+          className={cn(
+            "ds-popover-popup rounded-[24px] bg-[var(--color-surface)] outline-none",
+            className,
+          )}
+          {...props}
+        >
+          {children}
+        </BasePopover.Popup>
+      </BasePopover.Positioner>
+    </BasePopover.Portal>
+  );
+}

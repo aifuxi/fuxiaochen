@@ -2,7 +2,6 @@
 
 import {
   BarChart3,
-  Bell,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -28,10 +27,13 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
+import type { Notice } from "./mock-data";
+
+import { AdminNotifications } from "./admin-notifications";
+
 export type AdminPanel =
   | "search"
   | "compose"
-  | "notifications"
   | "profile"
   | "comments"
   | "upload"
@@ -42,7 +44,9 @@ export type AdminPanel =
 type Props = {
   children: ReactNode;
   pendingCount: number | null;
-  unreadCount: number;
+  notices: Notice[];
+  onReadNotice: (id: string) => void;
+  onReadAllNotices: () => void;
   onOpen: (panel: AdminPanel) => void;
 };
 
@@ -59,7 +63,14 @@ const nav = [
   { name: "系统设置", icon: Settings, href: "/admin/settings" },
 ];
 
-export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Props) {
+export function AdminShell({
+  children,
+  pendingCount,
+  notices,
+  onReadNotice,
+  onReadAllNotices,
+  onOpen,
+}: Props) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -199,16 +210,12 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
               <Plus size={16} aria-hidden="true" />
               <span>新建文章</span>
             </Button>
-            <Button
-              size="compact"
-              variant="ghost"
-              className="admin-icon-button"
-              aria-label={`通知，${unreadCount} 条未读`}
-              onClick={() => onOpen("notifications")}
-            >
-              <Bell size={18} aria-hidden="true" />
-              {unreadCount > 0 && <span className="admin-count">{unreadCount}</span>}
-            </Button>
+            <AdminNotifications
+              key={pathname}
+              notices={notices}
+              onRead={onReadNotice}
+              onReadAll={onReadAllNotices}
+            />
             <Button
               size="compact"
               variant="ghost"

@@ -1,8 +1,16 @@
-export type Notice = { id: string; title: string; detail: string; time: string; read: boolean };
+export type Notice = {
+  id: string;
+  kind: "comment" | "publication" | "backup";
+  title: string;
+  detail: string;
+  time: string;
+  read: boolean;
+};
 
 export const initialNotices: Notice[] = [
   {
     id: "notice-1",
+    kind: "comment",
     title: "有新的评论待审核",
     detail: "小雨评论了你的文章",
     time: "10 分钟前",
@@ -10,6 +18,7 @@ export const initialNotices: Notice[] = [
   },
   {
     id: "notice-2",
+    kind: "publication",
     title: "文章发布计划完成",
     detail: "定时文章已发布",
     time: "1 小时前",
@@ -17,6 +26,7 @@ export const initialNotices: Notice[] = [
   },
   {
     id: "notice-3",
+    kind: "backup",
     title: "模拟备份检查完成",
     detail: "演示数据状态正常",
     time: "4 小时前",

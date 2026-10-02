@@ -1,5 +1,6 @@
 .admin-layout,
-.admin-modal {
+.admin-modal,
+.admin-notifications {
   --admin-divider: color-mix(in srgb, var(--color-outline) 60%, transparent);
 }
 .admin-layout {
@@ -92,7 +93,6 @@
 .admin-nav-item:focus-visible,
 .admin-front-link:focus-visible,
 .admin-result:focus-visible,
-.admin-notice:focus-visible,
 .admin-toast button:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
@@ -200,20 +200,6 @@
   width: 36px;
   padding: 0;
 }
-.admin-count {
-  position: absolute;
-  top: -5px;
-  right: -2px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #fff;
-  font: 10px var(--font-sans);
-}
 .admin-profile {
   gap: 8px;
   padding: 2px 4px;
@@ -312,9 +298,6 @@
 .admin-social-actions .ds-button,
 .admin-settings-panel > .admin-settings-section > .ds-button {
   min-height: 44px;
-}
-.admin-modal .admin-notice {
-  white-space: normal;
 }
 .admin-toast button:active {
   background: var(--color-input);
@@ -757,8 +740,7 @@
   max-height: 360px;
   overflow-y: auto;
 }
-.admin-result,
-.admin-notice {
+.admin-result {
   display: grid;
   gap: 5px;
   height: auto;
@@ -771,27 +753,149 @@
   text-align: left;
   cursor: pointer;
 }
-.admin-result:hover:not(:disabled),
-.admin-notice:hover {
+.admin-result:hover:not(:disabled) {
   background: var(--color-surface-hover);
 }
-.admin-result:active:not(:disabled),
-.admin-notice:active {
+.admin-result:active:not(:disabled) {
   background: var(--color-raised);
 }
-.admin-result strong,
-.admin-notice strong {
+.admin-result strong {
   font-size: 13px;
   font-weight: 500;
 }
-.admin-result span,
-.admin-notice span,
-.admin-notice small {
+.admin-result span {
   color: var(--color-subtle);
   font-size: 11px;
 }
-.admin-notice.is-unread {
-  box-shadow: inset 3px 0 var(--color-primary);
+.admin-notification-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-danger);
+}
+.admin-notification-trigger > .admin-notification-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+.admin-notification-trigger[data-popup-open] {
+  background: var(--color-raised);
+  color: var(--color-foreground);
+}
+.admin-notifications {
+  display: flex;
+  flex-direction: column;
+  width: min(360px, calc(100vw - 24px));
+  max-height: var(--available-height);
+  overflow: hidden;
+  border: 1px solid var(--color-outline);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+.admin-notifications-heading {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--admin-divider);
+}
+.admin-notifications-heading h2 {
+  margin: 0;
+  color: var(--color-muted);
+  font: 500 16px/24px var(--font-sans);
+}
+.admin-notifications-heading .ds-button {
+  padding-inline: 8px;
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-notifications-heading .ds-button:active:not(:disabled) {
+  background: var(--color-raised);
+}
+.admin-notifications-list {
+  min-height: 0;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+.admin-notification-row.ds-button {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  height: auto;
+  padding: 16px 8px;
+  border-radius: 14px;
+  color: var(--color-foreground);
+  text-align: left;
+  white-space: normal;
+}
+.admin-notification-row.ds-button:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+.admin-notification-row.ds-button:active:not(:disabled) {
+  background: var(--color-raised);
+}
+.admin-notification-row.ds-button:focus-visible {
+  outline-offset: -2px;
+}
+.admin-notification-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-raised);
+  color: var(--color-muted);
+}
+.admin-notification-copy {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+}
+.admin-notification-title {
+  font: 500 14px/20px var(--font-sans);
+  overflow-wrap: anywhere;
+}
+.admin-notification-detail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-muted);
+  font: 400 14px/20px var(--font-sans);
+}
+.admin-notification-time {
+  color: var(--color-subtle);
+  font: 400 12px/18px var(--font-sans);
+}
+.admin-notification-row > .admin-notification-dot {
+  margin-top: 6px;
+}
+.admin-notifications-footnote {
+  flex: none;
+  margin: 0;
+  padding: 0 16px 16px;
+  color: var(--color-subtle);
+  font: 400 12px/18px var(--font-sans);
+}
+.admin-notifications-empty {
+  padding: 32px 16px;
+  color: var(--color-muted);
+  text-align: center;
+  font-size: 14px;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-notifications-heading .ds-button {
+    min-height: 44px;
+  }
 }
 .admin-modal-toolbar {
   display: flex;
