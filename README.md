@@ -300,3 +300,19 @@ kind 为 `image/attachment`。q 去除首尾空白、最多 200 字符，SQLite 
 - 两个页面并发审核、回复与删除，旧版本返回冲突；重新载入不清空回复草稿，同版本重试不重复创建。
 - 会话撤销、错误 Origin、非法 UUID、非法 JSON、错误 Content-Type、空正文、正文过长、伪造未知字段、请求体超限、服务失败时检查错误与重试。
 - 写入成功后刷新失败单独提示，检查摘要、列表与侧栏一致；检查提交中关闭和重复点击、焦点返回、390px 布局与减少动态效果。
+
+## 站点设置 API（第五阶段）
+
+`GET /api/admin/settings` 读取完整设置，`PUT /api/admin/settings` 提交设置与 `socials` 全量列表，响应均为 `{ data: ... }`。PUT 包含当前 `version`，成功递增版本并返回 ISO `updatedAt`；旧版本返回409 `VERSION_CONFLICT`，页面保留草稿，重新载入需要确认替换。站点默认设置在首次读取时于事务内初始化，备案为空、统计关闭、社交为空，不导入演示数据。字段与默认值以 `lib/settings/schema.ts` 为准。单例记录 ID 为1，社交记录保留 UUID，按列表顺序原子替换；最多20条，同平台可重复。
+
+两类备案各配置展示文案与 HTTPS 查询链接，整项留空不展示；填写时两字段完整。社交账号配置 `label/url/icon/imageUrl/enabled`，链接只接受不含凭据的 HTTP(S)，图片接受 HTTPS 或站内绝对路径；不接收 SVG／HTML 代码。预置图标来自已有 Lucide：代码、视频、相机等通用图标对应平台名称，不包含品牌商标素材。图片失败显示通用图标。单次设置请求上限256 KiB，其余小型接口仍为16 KiB；严格 Zod 校验拒绝未知字段，字段错误使用点分路径，如 `socials.0.url`。
+
+设置由前台服务端按请求读取，首页资料、metadata、备案与启用社交账号在保存后完整刷新生效，不需重新构建。公开读取只输出展示字段和启用的统计 ID，不输出设置版本、阅读偏好或开发配置。阅读数量与评论开关仅持久化，前台文章列表和匿名留言入口尚未接入；自动备份和 Gemini AI 未接入，不能由本页启动。
+
+Google 支持 GA4 `G-…` Measurement ID，百度使用统计代码 `hm.js?` 后的32位十六进制站点 ID。二者分别启停，默认关闭，可同时启用；这些公开 ID 不是服务端密钥。固定脚本域名为 `www.googletagmanager.com` 与 `hm.baidu.com`，不允许配置任意脚本。仅生产环境前台布局加载，开发模式、后台、登录与设计展示页不加载。首次访问和路径变化手动发送 PV，查询参数与 hash 不进入手动 PV 路径；脚本加载失败不阻塞页面。本期不读取第三方统计报表，后台分析仍属于第六阶段。
+
+GA4 使用 `send_page_view: false`；同时必须在 GA4 的 Web 数据流 → 增强型衡量 → 网页浏览中关闭“基于浏览器历史记录事件的网页更改”，否则仍会重复收集历史变化 PV。参见 [Google 官方页面浏览说明](https://developers.google.com/analytics/devguides/collection/ga4/views)。百度在脚本前初始化 `_setAutoPageview: false`，用 `_trackPageview` 上报路径，参见 [百度官方说明](https://tongji.baidu.com/web/help/article?id=235&type=0)。真实收数需配置有效账号，并在生产环境核对平台实时报告。
+
+沿用 Hono4.13.12、Zod4.6.5、Prisma CLI8.0.0-rc.19 和 SQLite runtime8.0.0-rc.14（RC／experimental）。新增迁移只创建 `site_setting/social_account`；执行 `npm run db:migrate` 后重启已有应用进程，使数据库单例载入新 contract。无 `db` ref 时规划迁移须通过 `--from <上一迁移的目标hash>` 明确起点，避免以空库为起点。CLI与应用继续共享 `DATABASE_PATH`。
+
+人工验收清单：保存及刷新持久化；备案留空与成对错误；多个同平台账号、排序、停用、图片失败回退；版本冲突保留草稿；非法URL/ID/JSON、未知字段、错误Origin、会话失效和请求超限；前台名称与metadata同步、开发环境不采集、生产PV无重复；1440px/390px、键盘焦点、禁用与减少动态效果。真实第三方收数需要实际账号配置，不能由静态检查确认。

@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "系统设置 · fuxiaochen",
-  description: "使用演示数据管理站点资料、系统偏好与开发配置。",
+  description: "管理站点资料、备案、社交账号与访问统计配置。",
 };
 
 export default async function SettingsPage() {

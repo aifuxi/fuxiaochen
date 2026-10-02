@@ -1,0 +1,27 @@
+.admin-business-feedback {
+  padding: 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.admin-business-feedback p {
+  margin: 0;
+}
+.admin-business-error {
+  color: var(--color-danger);
+  overflow-wrap: anywhere;
+}
+.admin-business-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.admin-business-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}

@@ -21,7 +21,6 @@ import { MediaUploadStatus } from "./media-upload-status";
 import { initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
 import { PostEditor } from "./post-editor";
-import { initialSettings } from "./settings-mock-data";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { commentRequest, useComments } from "./use-comments";
 import { useMediaUploads } from "./use-media";
@@ -48,7 +47,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postPending, setPostPending] = useState(false);
   const postMutation = useRef(false);
   const [releaseLogs, setReleaseLogs] = useState(initialReleaseLogs);
-  const [settings, setSettings] = useState(initialSettings);
   const [friendsLinks, setFriendsLinks] = useState(initialFriendsLinks);
   const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
@@ -166,8 +164,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
-        settings,
-        setSettings,
         releaseLogs,
         setReleaseLogs,
         friendsLinks,

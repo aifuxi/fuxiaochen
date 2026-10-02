@@ -17,6 +17,7 @@ import {
 import { commentRoutes } from "./comments/routes";
 import { mediaRoutes } from "./media/routes";
 import { postRoutes } from "./posts/routes";
+import { settingsRoutes } from "./settings/routes";
 import { taxonomyRoutes } from "./taxonomy/routes";
 
 function appOrigin() {
@@ -59,15 +60,23 @@ const articleBodyLimit = bodyLimit({
   onError: (c) =>
     c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "文章请求最多 1 MiB。" } }, 413),
 });
+const settingsBodyLimit = bodyLimit({
+  maxSize: 256 * 1024,
+  onError: (c) =>
+    c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "设置请求最多256 KiB。" } }, 413),
+});
 api.use("*", (c, next) => {
   const articleWrite =
     (c.req.method === "POST" && c.req.path === "/api/admin/posts") ||
     (c.req.method === "PUT" && /^\/api\/admin\/posts\/[^/]+$/.test(c.req.path));
+  if (c.req.method === "PUT" && /^\/api\/admin\/settings\/?$/.test(c.req.path))
+    return settingsBodyLimit(c, next);
   return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
 });
 api.route("/admin/posts", postRoutes);
 api.route("/admin/media", mediaRoutes);
 api.route("/admin/comments", commentRoutes);
+api.route("/admin/settings", settingsRoutes);
 
 api.route("/admin", taxonomyRoutes);
 

@@ -193,6 +193,48 @@ export const contract = defineContract({}, ({ field, model }) => {
     ],
   }));
 
+  const SiteSetting = model("SiteSetting", {
+    fields: {
+      id: field.column(integerColumn).id(),
+      title: field.column(textColumn),
+      subtitle: field.column(textColumn),
+      authorName: field.column(textColumn),
+      authorRole: field.column(textColumn),
+      avatarUrl: field.column(textColumn),
+      aboutMe: field.column(textColumn),
+      postsPerPage: field.column(integerColumn),
+      enableComments: field.column(integerColumn),
+      icpText: field.column(textColumn),
+      icpUrl: field.column(textColumn),
+      policeText: field.column(textColumn),
+      policeUrl: field.column(textColumn),
+      googleEnabled: field.column(integerColumn),
+      googleId: field.column(textColumn),
+      baiduEnabled: field.column(integerColumn),
+      baiduId: field.column(textColumn),
+      version: field.column(integerColumn),
+      updatedAt: field.column(datetimeColumn),
+    },
+  }).sql({ table: "site_setting" });
+  const SocialAccount = model("SocialAccount", {
+    fields: {
+      id: field.column(textColumn).id(),
+      settingId: field.column(integerColumn),
+      label: field.column(textColumn),
+      url: field.column(textColumn),
+      icon: field.column(textColumn),
+      imageUrl: field.column(textColumn),
+      enabled: field.column(integerColumn),
+      position: field.column(integerColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "social_account",
+    indexes: [constraints.index([cols.settingId, cols.position])],
+    foreignKeys: [
+      constraints.foreignKey(cols.settingId, SiteSetting.refs.id, { onDelete: "cascade" }),
+    ],
+  }));
+
   return {
     models: {
       Admin,
@@ -205,6 +247,8 @@ export const contract = defineContract({}, ({ field, model }) => {
       Media,
       MediaUploadLimit,
       Comment,
+      SiteSetting,
+      SocialAccount,
     },
   };
 });
