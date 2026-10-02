@@ -26,7 +26,7 @@ export function ArticleFilters({
   const [category, setCategory] = useState(categoryId);
   const [tag, setTag] = useState(tagId);
   return (
-    <form action="/" className="site-filters" aria-label="文章筛选">
+    <form action="/posts" className="site-filters" aria-label="文章筛选">
       <label className="site-search" htmlFor="post-search">
         <span className="sr-only">搜索文章</span>
         <Input

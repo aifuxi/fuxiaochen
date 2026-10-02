@@ -13,7 +13,7 @@ export default async function TagsPage() {
       {tags.length ? (
         <div className="site-tag-cloud">
           {tags.map((t) => (
-            <Link key={t.id} href={`/?tagId=${t.id}`}>
+            <Link key={t.id} href={`/posts?tagId=${t.id}`}>
               #{t.name}
               <span>{t.count}</span>
             </Link>

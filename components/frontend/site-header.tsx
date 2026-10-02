@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 
 const links = [
   ["/", "首页"],
+  ["/posts", "文章"],
   ["/categories", "分类"],
   ["/tags", "标签"],
   ["/changelog", "更新日志"],
@@ -17,7 +18,7 @@ const links = [
 ] as const;
 export function SiteHeader({ title }: { title: string }) {
   const pathname = usePathname();
-  const active = pathname.startsWith("/posts/") ? "/" : pathname;
+  const active = pathname.startsWith("/posts/") ? "/posts" : pathname;
   const header = useRef<HTMLElement>(null);
   const nav = useRef<HTMLElement>(null);
   const brand = useRef<HTMLAnchorElement>(null);

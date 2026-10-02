@@ -33,21 +33,21 @@ export default async function PostPage({ params }: Props) {
   return (
     <main id="main-content" className="site-main site-reading">
       <article>
-        <Link className="site-back" href="/">
+        <Link className="site-back" href="/posts">
           返回文章列表
         </Link>
         <header className="site-article-heading">
           <div className="site-post-meta">
             <time dateTime={post.publishedAt ?? undefined}>{postTime(post.publishedAt, true)}</time>
             {post.category && (
-              <Link href={`/?categoryId=${post.category.id}`}>{post.category.name}</Link>
+              <Link href={`/posts?categoryId=${post.category.id}`}>{post.category.name}</Link>
             )}
           </div>
           <h1>{post.title}</h1>
           {post.tags.length > 0 && (
             <div className="site-tags">
               {post.tags.map((tag) => (
-                <Link key={tag.id} href={`/?tagId=${tag.id}`}>
+                <Link key={tag.id} href={`/posts?tagId=${tag.id}`}>
                   #{tag.name}
                 </Link>
               ))}

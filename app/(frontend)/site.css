@@ -316,13 +316,13 @@
 .site-post-row:first-child {
   padding-top: 16px;
 }
-.site-post-row h3 {
+.site-post-row h2 {
   font-size: 22px;
   line-height: 1.5;
   font-weight: 500;
   margin: 12px 0;
 }
-.site-post-row h3 a:hover {
+.site-post-row h2 a:hover {
   color: var(--color-focus);
 }
 .site-post-meta {

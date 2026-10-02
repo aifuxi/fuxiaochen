@@ -13,7 +13,7 @@ export default async function CategoriesPage() {
       {categories.length ? (
         <div className="site-taxonomy-list">
           {categories.map((c) => (
-            <Link key={c.id} href={`/?categoryId=${c.id}`}>
+            <Link key={c.id} href={`/posts?categoryId=${c.id}`}>
               <span>{c.name}</span>
               <span>{c.count} 篇</span>
             </Link>
