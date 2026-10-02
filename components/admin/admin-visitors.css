@@ -11,20 +11,6 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
-.visitors-icon {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 48px;
-  height: 48px;
-  color: var(--color-muted);
-}
-.visitors-icon.is-online {
-  color: var(--color-success);
-}
-.visitors-icon.is-coverage {
-  color: var(--color-focus);
-}
 .visitors-metric h2 {
   margin: 0 0 8px;
   color: var(--color-muted);

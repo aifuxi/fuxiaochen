@@ -2,11 +2,6 @@
   display: grid;
   gap: 24px;
 }
-.admin-taxonomy-note {
-  margin: -12px 0 0;
-  color: var(--color-muted);
-  font-size: 12px;
-}
 .admin-taxonomy-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -28,28 +23,17 @@
   align-items: center;
   gap: 8px;
   margin: 0;
-  font: 500 14px/1.5 var(--font-sans);
-}
-.admin-taxonomy-heading svg {
-  color: var(--color-focus);
-  flex: none;
+  font: 500 16px/24px var(--font-sans);
 }
 .admin-taxonomy-badge {
   border-radius: 999px;
   padding: 2px 8px;
-  color: var(--color-focus);
-  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
+  color: var(--color-muted);
+  background: var(--color-raised);
   font: 12px/1.5 var(--font-mono);
 }
-.admin-taxonomy-tag-heading svg,
-.admin-taxonomy-tag-heading .admin-taxonomy-badge {
-  color: var(--color-success);
-}
-.admin-taxonomy-tag-heading .admin-taxonomy-badge {
-  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
-}
 .admin-taxonomy-body {
-  padding: 20px;
+  padding: 0 20px 20px;
 }
 .admin-taxonomy-form {
   display: flex;
@@ -124,13 +108,8 @@
   align-content: start;
   flex-wrap: wrap;
   gap: 12px;
-  min-height: 220px;
-  padding: 16px;
-}
-.admin-taxonomy-cloud-stage {
   margin-top: 20px;
-  background: transparent;
-  box-shadow: none;
+  padding: 0;
 }
 .admin-taxonomy-tag {
   display: flex;
@@ -147,8 +126,8 @@
   overflow-wrap: anywhere;
 }
 .admin-taxonomy-tag-remove {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   padding: 0;
   flex: none;
   color: var(--color-muted);
@@ -169,9 +148,11 @@
   }
 }
 @media (max-width: 480px) {
-  .admin-taxonomy-heading,
-  .admin-taxonomy-body {
+  .admin-taxonomy-heading {
     padding: 16px;
+  }
+  .admin-taxonomy-body {
+    padding: 0 16px 16px;
   }
   .admin-taxonomy-form .ds-button {
     padding-inline: 12px;
@@ -187,7 +168,25 @@
     padding-inline: 4px;
   }
   .admin-taxonomy-cloud {
-    padding: 12px;
     gap: 8px;
+  }
+}
+
+.admin-taxonomy-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-muted);
+}
+.admin-taxonomy-delete {
+  width: 36px;
+  padding: 0;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-taxonomy-tag-remove,
+  .admin-taxonomy-delete {
+    width: 44px;
+    height: 44px;
   }
 }

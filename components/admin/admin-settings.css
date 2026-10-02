@@ -266,7 +266,7 @@
   min-width: 0;
 }
 .admin-settings-tab-scroll {
-  margin-top: 20px;
+  margin-top: 0;
 }
 .admin-social-editor {
   padding: 20px 0;
@@ -283,4 +283,19 @@
 }
 .admin-social-actions > span {
   margin-right: auto;
+}
+
+.admin-settings-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-settings-toolbar .admin-settings-tab-scroll {
+  flex: 0 1 auto;
+}
+.admin-settings-toolbar > .ds-button {
+  flex-shrink: 0;
+  margin-left: auto;
 }

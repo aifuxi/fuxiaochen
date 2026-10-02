@@ -85,8 +85,7 @@
 }
 .admin-release-changes {
   margin: 12px 0 24px;
-  border-left: 2px solid var(--color-outline);
-  padding: 0 0 0 28px;
+  padding: 0 0 0 20px;
   color: var(--color-muted);
   font-size: 14px;
   line-height: 20px;
@@ -96,7 +95,7 @@
   margin-top: 8px;
 }
 .admin-release-changes li::marker {
-  color: var(--color-primary);
+  color: var(--color-muted);
 }
 .admin-release-item time {
   color: var(--color-subtle);

@@ -194,9 +194,15 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       {message && (
         <output className="admin-toast">
           {message}
-          <button type="button" aria-label="关闭提示" onClick={() => setMessage("")}>
+          <Button
+            type="button"
+            size="compact"
+            variant="ghost"
+            aria-label="关闭提示"
+            onClick={() => setMessage("")}
+          >
             <X size={14} />
-          </button>
+          </Button>
         </output>
       )}
       <Dialog
@@ -214,7 +220,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   <DialogDescription>
                     {["categories", "compose", "search", "schedule"].includes(panel)
                       ? "文章、分类与标签已持久化；暂未启用自动发布。"
-                      : "此模块仍使用会话内演示数据。"}
+                      : panel === "upload"
+                        ? "文件上传并通过核验后保存到媒体库。"
+                        : panel === "profile"
+                          ? "当前账户使用真实登录会话。"
+                          : "演示数据，不代表实际通知或监控结果。"}
                   </DialogDescription>
                 </div>
                 <Button
@@ -254,8 +264,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   </div>
                   <div className="admin-result-list">
                     {notices.map((notice) => (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         className={`admin-notice ${notice.read ? "" : "is-unread"}`}
                         key={notice.id}
                         onClick={() =>
@@ -271,7 +282,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                         <small>
                           {notice.time} · {notice.read ? "已读" : "未读"}
                         </small>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>

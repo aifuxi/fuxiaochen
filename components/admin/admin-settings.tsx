@@ -240,24 +240,26 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
           {error.includes("登录") && <Link href="/login">重新登录</Link>}
         </div>
       )}
-      <Button
-        type="button"
-        size="sm"
-        variant="secondary"
-        disabled={pending}
-        onClick={() => setReloadOpen(true)}
-      >
-        重新载入已保存设置
-      </Button>
       <Tabs value={tab} onValueChange={(v) => setTab(String(v))}>
-        <div className="admin-settings-tab-scroll">
-          <TabsList size="compact" aria-label="设置分组">
-            {Object.entries(groups).map(([key, label]) => (
-              <TabsTrigger value={key} key={key}>
-                {label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+        <div className="admin-settings-toolbar">
+          <div className="admin-settings-tab-scroll">
+            <TabsList size="compact" aria-label="设置分组">
+              {Object.entries(groups).map(([key, label]) => (
+                <TabsTrigger value={key} key={key}>
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+          <Button
+            type="button"
+            size="compact"
+            variant="ghost"
+            disabled={pending}
+            onClick={() => setReloadOpen(true)}
+          >
+            重新载入已保存设置
+          </Button>
         </div>
         <fieldset disabled={pending} className="admin-settings-fieldset">
           <TabsPanel value="profile" className="admin-settings-panel">
@@ -269,7 +271,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
                 </div>
                 <div className="admin-settings-fields">
                   {text("title", "站点名称")}
-                  {text("subtitle", "副标题 / Slogan")}
+                  {text("subtitle", "站点副标题")}
                 </div>
               </section>
               <section className="admin-settings-section">
@@ -311,7 +313,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>阅读与评论偏好</h2>
-                  <p>设置已持久化；前台文章列表及匿名留言入口尚未接入。</p>
+                  <p>控制前台文章分页与新评论；关闭评论后保留已通过的历史留言。</p>
                 </div>
                 {field(
                   "postsPerPage",
@@ -330,11 +332,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
                   />,
                   "1–100之间的整数。",
                 )}
-                {toggle(
-                  "enableComments",
-                  "允许读者发表评论",
-                  "用于后续前台留言入口，开启后也不会创建匿名评论接口。",
-                )}
+                {toggle("enableComments", "允许读者发表评论", "关闭后停止接收新评论和回复。")}
               </section>
               <section className="admin-settings-section">
                 <div className="admin-settings-toggle">

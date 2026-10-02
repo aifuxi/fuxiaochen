@@ -69,7 +69,7 @@ export function AdminPosts() {
           onClick={() => onOpen("compose")}
         >
           <Plus size={16} aria-hidden="true" />
-          新建博文
+          新建文章
         </Button>
       </div>
       <div className="admin-data-workspace">
@@ -291,9 +291,7 @@ export function AdminPosts() {
           </TabsPanel>
         </Tabs>
       </div>
-      <p className="admin-post-session-note">
-        文章保存到数据库 · 排期暂未启用自动发布。浏览量尚未接入访问采集。
-      </p>
+      <p className="admin-post-session-note">排期暂未启用自动发布；浏览量尚未接入访问采集。</p>
     </div>
   );
 }

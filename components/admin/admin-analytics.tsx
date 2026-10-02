@@ -1,22 +1,10 @@
 "use client";
 
-import {
-  ArrowDown,
-  ArrowUp,
-  Clock3,
-  Eye,
-  Lightbulb,
-  LineChart,
-  Monitor,
-  PieChart,
-  Smartphone,
-  Tablet,
-  Users,
-} from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardStage } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 
 import { analyticsRanges, analyticsSnapshots, type AnalyticsRange } from "./analytics-mock-data";
@@ -24,9 +12,9 @@ import "./admin-analytics.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
 const deviceTypes = [
-  { name: "桌面电脑", icon: Monitor, tone: "pv" },
-  { name: "移动手机", icon: Smartphone, tone: "uv" },
-  { name: "平板设备", icon: Tablet, tone: "neutral" },
+  { name: "桌面电脑", tone: "pv" },
+  { name: "移动手机", tone: "uv" },
+  { name: "平板设备", tone: "neutral" },
 ];
 
 function AnalyticsContent({ range }: { range: AnalyticsRange }) {
@@ -34,10 +22,10 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
   const [active, setActive] = useState<number | null>(null);
   const totalPv = snapshot.trend.reduce((sum, item) => sum + item.pv, 0);
   const metrics = [
-    { label: "总浏览量 (PV)", value: number(totalPv), icon: Eye },
-    { label: "独立访客 (UV)", value: number(snapshot.uv), icon: Users },
-    { label: "平均阅读时长", value: snapshot.duration, icon: Clock3 },
-    { label: "整站跳出率", value: snapshot.bounce, icon: PieChart },
+    { label: "总浏览量 (PV)", value: number(totalPv) },
+    { label: "独立访客 (UV)", value: number(snapshot.uv) },
+    { label: "平均阅读时长", value: snapshot.duration },
+    { label: "整站跳出率", value: snapshot.bounce },
   ];
   const max = Math.ceil(Math.max(...snapshot.trend.map((item) => item.pv)) / 2000) * 2000;
   const points = snapshot.trend.map((item, i) => ({
@@ -52,21 +40,21 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
 
   return (
     <div className="analytics-sections">
-      <p className="analytics-period">
-        演示数据 · {snapshot.trend[0].date} 至 {snapshot.trend.at(-1)?.date}（北京时间）
-      </p>
       <div className="analytics-stats">
-        {metrics.map(({ label, value, icon: Icon }, i) => (
+        {metrics.map(({ label, value }, i) => (
           <Card className="analytics-stat" key={label}>
             <div className="analytics-stat-heading">
               <span>{label}</span>
-              <Icon size={18} aria-hidden="true" />
             </div>
             <strong>{value}</strong>
             <div className="analytics-change">
               <span>
-                {i === 3 ? <ArrowDown size={13} /> : <ArrowUp size={13} />}
-                {snapshot.changes[i]}
+                {i === 3 ? (
+                  <ArrowDown size={13} aria-hidden="true" />
+                ) : (
+                  <ArrowUp size={13} aria-hidden="true" />
+                )}
+                {i === 3 ? "下降" : "上升"} {snapshot.changes[i]}
               </span>
               <small>环比前一周期</small>
             </div>
@@ -76,10 +64,7 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
       <div className="analytics-grid">
         <Card className="admin-panel">
           <div className="admin-panel-heading">
-            <h2>
-              <LineChart size={17} aria-hidden="true" />
-              PV / UV 双指标对比走势
-            </h2>
+            <h2>访问趋势</h2>
           </div>
           <div className="admin-panel-body">
             <div className="analytics-legend">
@@ -98,7 +83,12 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
                 : "悬停、点击或聚焦数据点查看详情"}
             </div>
             <section className="analytics-chart-scroll" aria-label="访问趋势图，可横向滚动">
-              <div className="analytics-chart-frame">
+              <div
+                className="analytics-chart-frame"
+                style={{
+                  minWidth: `max(540px, ${points.length * 51}px * var(--admin-chart-touch, 0))`,
+                }}
+              >
                 <svg
                   viewBox="0 0 630 270"
                   className="analytics-chart"
@@ -170,19 +160,13 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
         </Card>
         <Card className="admin-panel">
           <div className="admin-panel-heading">
-            <h2>
-              <Monitor size={17} aria-hidden="true" />
-              终端设备分布
-            </h2>
+            <h2>设备分布</h2>
           </div>
           <div className="admin-panel-body analytics-devices">
-            {deviceTypes.map(({ name, icon: Icon, tone }, i) => (
+            {deviceTypes.map(({ name, tone }, i) => (
               <div key={name} className="analytics-device">
                 <div>
-                  <span>
-                    <Icon size={16} aria-hidden="true" />
-                    {name}
-                  </span>
+                  <span>{name}</span>
                   <strong>{snapshot.devices[i].toFixed(1)}%</strong>
                 </div>
                 <progress
@@ -193,19 +177,12 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
                 />
               </div>
             ))}
-            <CardStage className="analytics-device-note">
-              <Lightbulb size={17} aria-hidden="true" />
-              <p>
-                提示：{snapshot.devices[1].toFixed(1)}%
-                的读者通过移动手机访问，建议保持移动端排版简洁清晰。
-              </p>
-            </CardStage>
           </div>
         </Card>
       </div>
       <Card className="admin-panel analytics-ranking">
         <div className="admin-panel-heading">
-          <h2>热门文章留存与传播排行榜</h2>
+          <h2>热门文章</h2>
         </div>
         <section
           className="admin-post-table-scroll"
@@ -250,6 +227,7 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
 
 export function AdminAnalytics() {
   const [range, setRange] = useState<AnalyticsRange>("30d");
+  const snapshot = analyticsSnapshots[range];
   return (
     <Tabs
       value={range}
@@ -260,17 +238,21 @@ export function AdminAnalytics() {
     >
       <div className="admin-page-heading">
         <div>
-          <p className="admin-eyebrow">ANALYTICS / MOCK</p>
-          <h1>数据深度洞察</h1>
-          <p>洞察受众画像、内容传播力与读者留存表现。</p>
+          <h1>数据分析</h1>
+          <p>演示快照，查看访问趋势、设备分布与文章表现。</p>
         </div>
-        <TabsList aria-label="统计时间范围">
+      </div>
+      <div className="analytics-toolbar">
+        <TabsList size="compact" aria-label="统计时间范围">
           {analyticsRanges.map((item) => (
             <TabsTrigger key={item.value} value={item.value}>
               {item.label}
             </TabsTrigger>
           ))}
         </TabsList>
+        <p className="analytics-period">
+          {snapshot.trend[0].date} 至 {snapshot.trend.at(-1)?.date}（北京时间）
+        </p>
       </div>
       {analyticsRanges.map((item) => (
         <TabsPanel key={item.value} value={item.value}>

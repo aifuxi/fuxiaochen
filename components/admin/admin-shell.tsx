@@ -61,14 +61,6 @@ const nav = [
 
 export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Props) {
   const pathname = usePathname();
-  const workspacePage =
-    pathname === "/admin/posts" ||
-    pathname === "/admin/settings" ||
-    pathname === "/admin/comments" ||
-    pathname === "/admin/friends-links" ||
-    pathname === "/admin/visitors" ||
-    pathname === "/admin/media" ||
-    pathname === "/admin/changelog";
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -96,7 +88,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
           {mobile && (
             <Button
               variant="ghost"
-              size="sm"
+              size="compact"
               className="admin-mobile-close"
               aria-label="关闭导航"
               onClick={() => setMobileOpen(false)}
@@ -144,7 +136,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
         </Link>
         {!mobile && (
           <Button
-            size="sm"
+            size="compact"
             variant="ghost"
             className="admin-collapse"
             onClick={() => setCollapsed((value) => !value)}
@@ -165,9 +157,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
   );
 
   return (
-    <div
-      className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""} ${workspacePage ? "admin-layout-workspace" : ""}`}
-    >
+    <div className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""}`}>
       <aside className="admin-sidebar" aria-label="侧边栏">
         {sidebar(false)}
       </aside>
@@ -175,7 +165,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
         <header className="admin-topbar">
           <div className="admin-topbar-start">
             <Button
-              size="sm"
+              size="compact"
               variant="ghost"
               className="admin-menu-button"
               aria-label="打开导航"
@@ -200,16 +190,17 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
           </div>
           <div className="admin-topbar-actions">
             <Button
-              size={workspacePage ? "compact" : "sm"}
-              variant={workspacePage ? "secondary" : "primary"}
+              size="compact"
+              variant="secondary"
               className="admin-create"
+              aria-label="新建文章"
               onClick={() => onOpen("compose")}
             >
               <Plus size={16} aria-hidden="true" />
               <span>新建文章</span>
             </Button>
             <Button
-              size="sm"
+              size="compact"
               variant="ghost"
               className="admin-icon-button"
               aria-label={`通知，${unreadCount} 条未读`}
@@ -219,7 +210,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
               {unreadCount > 0 && <span className="admin-count">{unreadCount}</span>}
             </Button>
             <Button
-              size="sm"
+              size="compact"
               variant="ghost"
               className="admin-profile"
               onClick={() => onOpen("profile")}
@@ -232,8 +223,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
         </header>
         <main className="admin-content">{children}</main>
         <footer className="admin-footer">
-          <span>© fuxiaochen · 演示数据</span>
-          <span>管理空间 / 001</span>
+          <span>© fuxiaochen</span>
         </footer>
       </div>
       <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>

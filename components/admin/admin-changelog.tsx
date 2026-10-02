@@ -147,8 +147,8 @@ export function AdminChangelog() {
     <div className="admin-changelog admin-data-page">
       <div className="admin-page-heading">
         <div>
-          <h1>系统版本迭代日志</h1>
-          <p>记录已持久化的版本变更；发布日志不会部署软件。</p>
+          <h1>更新日志</h1>
+          <p>记录版本变更；发布日志不会部署软件。</p>
         </div>
         <Button
           ref={publishButton}
@@ -170,7 +170,7 @@ export function AdminChangelog() {
           }}
         >
           <Plus size={16} aria-hidden="true" />
-          发布新版本
+          发布日志
         </Button>
       </div>
 

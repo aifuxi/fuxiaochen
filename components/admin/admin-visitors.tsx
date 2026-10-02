@@ -1,20 +1,10 @@
 "use client";
 
-import {
-  ChevronLeft,
-  ChevronRight,
-  Globe2,
-  Pause,
-  Play,
-  Search,
-  ShieldCheck,
-  Users,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe2, Pause, Play, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardStage } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   InputGroup,
   InputGroupInput,
@@ -76,21 +66,18 @@ export function AdminVisitors() {
     {
       label: "当前实时在线",
       value: online,
-      icon: Users,
       tone: "online",
       detail: paused ? "更新已暂停" : "实时活跃（模拟）",
     },
     {
       label: "今日独立 IP 覆盖",
       value: visitorSummary.uniqueIps,
-      icon: Globe2,
       tone: "coverage",
       detail: `涵盖 ${visitorSummary.cities} 个城市`,
     },
     {
       label: "合规搜索引擎蜘蛛",
       value: visitorSummary.crawlers,
-      icon: ShieldCheck,
       tone: "crawler",
       detail: "Google / Baidu Bot",
     },
@@ -100,17 +87,14 @@ export function AdminVisitors() {
     <div className="admin-posts admin-data-page admin-visitors">
       <div className="admin-page-heading">
         <div>
-          <h1>实时访客日志</h1>
-          <p>观察读者的实时流式接入情况，监控地域分布与搜索引擎爬虫动态。</p>
+          <h1>访客日志</h1>
+          <p>演示数据，模拟访问记录与在线人数；未接入真实访问采集。</p>
         </div>
       </div>
 
       <section className="visitors-metrics" aria-label="模拟访客统计">
-        {metrics.map(({ label, value, icon: Icon, tone, detail }) => (
+        {metrics.map(({ label, value, tone, detail }) => (
           <Card className="visitors-metric" key={label}>
-            <CardStage className={`visitors-icon is-${tone}`}>
-              <Icon size={22} aria-hidden="true" />
-            </CardStage>
             <div>
               <h2>{label}</h2>
               <div className="visitors-value">
@@ -130,8 +114,8 @@ export function AdminVisitors() {
               aria-hidden="true"
             />
             <div>
-              <strong>{paused ? "实时访问流已暂停" : "实时访问流已连接"}</strong>
-              <p>模拟心跳 · 每 4.5 秒更新 · 无真实 WebSocket 连接</p>
+              <strong>{paused ? "模拟访问流已暂停" : "模拟访问流更新中"}</strong>
+              <p>每 4.5 秒更新，最多保留 16 条日志</p>
             </div>
           </div>
           <div className="visitors-search-controls">
@@ -264,9 +248,7 @@ export function AdminVisitors() {
           </nav>
         </div>
       </section>
-      <p className="admin-post-session-note">
-        以上均为演示数据，访问流最多保留最新 16 条日志；离开页面后停止更新，再次进入恢复初始数据。
-      </p>
+      <p className="admin-post-session-note">离开页面后停止模拟更新，再次进入恢复初始数据。</p>
     </div>
   );
 }

@@ -353,7 +353,7 @@ export function AdminComments() {
         </Tabs>
       </div>
       <p className="admin-post-session-note">
-        评论与回复已保存到数据库；待审核评论须先通过审核才能回复。本阶段不发送邮件或通知。
+        待审核评论须先通过审核才能回复；审核与回复不会发送邮件或通知。
       </p>
       <Dialog
         open={targetComment !== null}

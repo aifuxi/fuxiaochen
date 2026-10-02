@@ -1,10 +1,10 @@
 "use client";
 
-import { Folder, Plus, Tags, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardStage } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { ColorInput } from "@/components/ui/color-input";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -84,34 +84,29 @@ export function AdminCategories() {
     <div className="admin-categories">
       <div className="admin-page-heading">
         <div>
-          <p className="admin-eyebrow">TAXONOMY / 分类与标签</p>
           <h1>分类与标签</h1>
-          <p>建立清晰的知识架构与多维标签索引，帮助读者快速探索感兴趣的领域。</p>
+          <p>管理文章分类与标签；被文章引用时无法删除。</p>
         </div>
       </div>
-      <p className="admin-taxonomy-note">分类与标签保存到数据库 · 被文章引用时无法删除。</p>
       <TaxonomyStatus />
       <div className="admin-taxonomy-grid" aria-busy={taxonomyLoading || taxonomyPending}>
         <Card className="admin-taxonomy-card">
           <div className="admin-taxonomy-heading">
-            <h2>
-              <Folder size={18} aria-hidden="true" />
-              博文分类体系
-            </h2>
+            <h2>分类</h2>
             <span className="admin-taxonomy-badge" aria-label={`${categories.length} 个分类`}>
               {categories.length}
             </span>
           </div>
           <div className="admin-taxonomy-body">
             <form onSubmit={addCategory} noValidate>
-              <label className="sr-only" htmlFor="admin-category-name">
-                新增分类名称
+              <label className="admin-taxonomy-label" htmlFor="admin-category-name">
+                分类名称
               </label>
               <div className="admin-taxonomy-form">
                 <Input
                   id="admin-category-name"
                   ref={categoryInput}
-                  placeholder="新增分类标题…"
+                  placeholder="输入分类名称"
                   disabled={taxonomyPending}
                   maxLength={40}
                   value={categoryName}
@@ -123,12 +118,12 @@ export function AdminCategories() {
                   }}
                 />
                 <label className="sr-only" htmlFor="admin-category-color">
-                  选择分类主题色
+                  选择分类颜色
                 </label>
                 <ColorInput
                   id="admin-category-color"
                   disabled={taxonomyPending}
-                  aria-label="选择分类主题色"
+                  aria-label="选择分类颜色"
                   value={color}
                   onInput={(event) => setColor(event.currentTarget.value)}
                   onChange={(event) => setColor(event.target.value)}
@@ -170,7 +165,7 @@ export function AdminCategories() {
                     <td>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="compact"
                         className="admin-taxonomy-delete"
                         disabled={disabled}
                         aria-label={`删除分类 ${item.name}`}
@@ -197,25 +192,22 @@ export function AdminCategories() {
           </div>
         </Card>
         <Card className="admin-taxonomy-card">
-          <div className="admin-taxonomy-heading admin-taxonomy-tag-heading">
-            <h2>
-              <Tags size={18} aria-hidden="true" />
-              标签云检索
-            </h2>
+          <div className="admin-taxonomy-heading">
+            <h2>标签</h2>
             <span className="admin-taxonomy-badge" aria-label={`${tags.length} 个标签`}>
               {tags.length}
             </span>
           </div>
           <div className="admin-taxonomy-body">
             <form onSubmit={addTag} noValidate>
-              <label className="sr-only" htmlFor="admin-tag-name">
-                新增标签名称
+              <label className="admin-taxonomy-label" htmlFor="admin-tag-name">
+                标签名称
               </label>
               <div className="admin-taxonomy-form">
                 <Input
                   id="admin-tag-name"
                   ref={tagInput}
-                  placeholder="新增标签词…"
+                  placeholder="输入标签名称"
                   disabled={taxonomyPending}
                   maxLength={40}
                   value={tagName}
@@ -237,33 +229,31 @@ export function AdminCategories() {
                 </p>
               )}
             </form>
-            <CardStage className="admin-taxonomy-cloud-stage">
-              <ul className="admin-taxonomy-cloud" aria-label="标签列表">
-                {tags.map((item) => (
-                  <li key={item.id} className="admin-taxonomy-tag">
-                    <span className="admin-taxonomy-tag-name">#{item.name}</span>
-                    <span className="admin-taxonomy-count">{item.postCount}</span>
-                    <Button
-                      ref={(node) => {
-                        if (node) tagTriggers.current.set(item.id, node);
-                        else tagTriggers.current.delete(item.id);
-                      }}
-                      variant="ghost"
-                      size="sm"
-                      className="admin-taxonomy-tag-remove"
-                      aria-label={`移除标签 ${item.name}`}
-                      disabled={disabled}
-                      onClick={() => void removeTag(item.id)}
-                    >
-                      <X size={14} aria-hidden="true" />
-                    </Button>
-                  </li>
-                ))}
-                {!taxonomyLoading && !taxonomyError && !tags.length && (
-                  <li className="admin-taxonomy-empty">暂无标签，可在上方添加新标签。</li>
-                )}
-              </ul>
-            </CardStage>
+            <ul className="admin-taxonomy-cloud" aria-label="标签列表">
+              {tags.map((item) => (
+                <li key={item.id} className="admin-taxonomy-tag">
+                  <span className="admin-taxonomy-tag-name">#{item.name}</span>
+                  <span className="admin-taxonomy-count">{item.postCount}</span>
+                  <Button
+                    ref={(node) => {
+                      if (node) tagTriggers.current.set(item.id, node);
+                      else tagTriggers.current.delete(item.id);
+                    }}
+                    variant="ghost"
+                    size="compact"
+                    className="admin-taxonomy-tag-remove"
+                    aria-label={`移除标签 ${item.name}`}
+                    disabled={disabled}
+                    onClick={() => void removeTag(item.id)}
+                  >
+                    <X size={14} aria-hidden="true" />
+                  </Button>
+                </li>
+              ))}
+              {!taxonomyLoading && !taxonomyError && !tags.length && (
+                <li className="admin-taxonomy-empty">暂无标签，可在上方添加新标签。</li>
+              )}
+            </ul>
           </div>
         </Card>
       </div>

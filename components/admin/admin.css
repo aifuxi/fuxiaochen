@@ -91,7 +91,6 @@
 }
 .admin-nav-item:focus-visible,
 .admin-front-link:focus-visible,
-.admin-range button:focus-visible,
 .admin-result:focus-visible,
 .admin-notice:focus-visible,
 .admin-toast button:focus-visible {
@@ -198,7 +197,7 @@
 }
 .admin-icon-button {
   position: relative;
-  width: 34px;
+  width: 36px;
   padding: 0;
 }
 .admin-count {
@@ -242,41 +241,136 @@
   color: var(--color-subtle);
   font-size: 11px;
 }
+
+.admin-content > *,
+.admin-page-heading > div,
+.admin-analysis-grid > *,
+.admin-lower-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-page-heading > .ds-button {
+  flex-shrink: 0;
+}
+.admin-layout .ds-button {
+  min-height: 36px;
+}
+.admin-layout
+  :is(.admin-stat, .admin-panel, .admin-taxonomy-card, .analytics-stat, .visitors-metric) {
+  box-shadow: inset 0 0 0 1px var(--admin-divider);
+}
+.admin-layout .animate-panel-in {
+  animation: none;
+}
+.admin-stat-top {
+  flex-wrap: wrap;
+}
+.admin-stat-top small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-subtle);
+}
+.admin-module-note {
+  margin: 0 0 16px;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.admin-quick h2 {
+  margin: 0;
+  font: 500 14px/20px var(--font-sans);
+}
+.admin-chart-panel .admin-chart-content {
+  padding-top: 0;
+}
+.admin-chart-scroll {
+  min-width: 0;
+  overflow-x: auto;
+}
+.admin-chart-point.ds-button {
+  position: absolute;
+  top: 7%;
+  height: 78%;
+  padding: 0;
+  border-radius: 4px;
+  transform: translateX(-50%);
+  background: transparent;
+}
+.admin-chart-point.ds-button:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.admin-chart-point.ds-button:active {
+  background: color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+.admin-chart-point.ds-button:focus-visible {
+  outline-offset: -2px;
+}
+.admin-modal .ds-button,
+.admin-confirm .ds-button,
+.admin-taxonomy-form .ds-button,
+.admin-social-actions .ds-button,
+.admin-settings-panel > .admin-settings-section > .ds-button {
+  min-height: 44px;
+}
+.admin-modal .admin-notice {
+  white-space: normal;
+}
+.admin-toast button:active {
+  background: var(--color-input);
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-layout {
+    --admin-chart-touch: 1;
+  }
+  .admin-layout .ds-button {
+    min-height: 44px;
+  }
+  .admin-layout
+    :is(.admin-icon-button, .admin-profile, .admin-menu-button, .admin-mobile-close, .admin-create),
+  .admin-comment-actions .ds-button:last-child,
+  .admin-toast button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .admin-mobile-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .admin-post-title {
+    min-height: 44px;
+  }
+  .admin-nav-item,
+  .admin-front-link {
+    min-height: 44px;
+  }
+}
+@media (max-width: 600px) {
+  .admin-page-heading > .ds-button {
+    width: 100%;
+  }
+}
+
 .admin-dashboard {
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 .admin-page-heading {
   display: flex;
-  align-items: end;
+  align-items: start;
   justify-content: space-between;
-  gap: 18px;
-}
-.admin-eyebrow {
-  margin: 0 0 9px;
-  color: var(--color-focus);
-  font: 11px var(--font-mono, ui-monospace);
-  letter-spacing: 0.14em;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 .admin-page-heading h1 {
   margin: 0;
-  font: 500 clamp(26px, 3vw, 36px)/1.12 var(--font-display);
-  letter-spacing: -0.035em;
-}
-.admin-page-heading p:last-child {
-  margin: 9px 0 0;
-  color: var(--color-muted);
-  font-size: 13px;
-}
-.admin-layout-workspace .admin-page-heading {
-  align-items: start;
-}
-.admin-layout-workspace .admin-page-heading h1 {
   font: 500 24px/32px var(--font-display);
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
-.admin-layout-workspace .admin-page-heading p:last-child {
-  margin-top: 8px;
+.admin-page-heading p:last-child {
+  margin: 8px 0 0;
+  color: var(--color-muted);
   font-size: 14px;
   line-height: 20px;
 }
@@ -285,17 +379,6 @@
   align-items: center;
   gap: 9px;
   flex-wrap: wrap;
-}
-.admin-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 11px;
-  border-radius: 9px;
-  background: color-mix(in srgb, var(--color-primary) 11%, var(--color-surface));
-  color: var(--color-focus);
-  white-space: nowrap;
-  font: 11px var(--font-mono, ui-monospace);
 }
 .admin-stats {
   display: grid;
@@ -321,10 +404,6 @@
   font-size: 12px;
   font-weight: 500;
 }
-.admin-stat-top svg {
-  color: var(--color-focus);
-  flex: none;
-}
 .admin-stat strong {
   font:
     600 clamp(19px, 2vw, 26px)/1.1 ui-monospace,
@@ -335,16 +414,10 @@
 .admin-stat-bottom {
   justify-content: flex-start;
 }
-.admin-stat-bottom span {
-  padding: 3px 6px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--color-success) 13%, var(--color-surface));
-  color: var(--color-success);
-  font-size: 11px;
-}
 .admin-stat-bottom small {
   color: var(--color-subtle);
-  font-size: 10px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-analysis-grid {
   display: grid;
@@ -357,7 +430,8 @@
 }
 .admin-panel-heading {
   min-height: 58px;
-  padding: 0 19px;
+  padding: 12px 16px;
+  flex-wrap: wrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -368,13 +442,10 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font: 500 14px var(--font-sans);
-}
-.admin-panel-heading h2 svg {
-  color: var(--color-focus);
+  font: 500 16px/24px var(--font-sans);
 }
 .admin-panel-body {
-  padding: 18px 19px;
+  padding: 0 16px 16px;
 }
 .admin-chart-wrap {
   position: relative;
@@ -391,56 +462,11 @@
     11px ui-monospace,
     monospace;
 }
-.admin-chart-wrap svg circle {
-  cursor: pointer;
-}
-.admin-chart-wrap svg circle:focus-visible {
-  outline: none;
-  stroke: var(--color-focus);
-  stroke-width: 5;
-}
-.admin-chart-tooltip {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  padding: 7px 9px;
-  border: 1px solid var(--color-outline);
-  border-radius: 8px;
-  background: var(--color-raised);
-  color: var(--color-foreground);
-  font:
-    11px ui-monospace,
-    monospace;
-  pointer-events: none;
-}
-.admin-range {
-  display: flex;
-  margin: 0;
-  padding: 3px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--color-input);
-}
-.admin-range button {
-  border: 0;
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: transparent;
+.admin-chart-detail {
+  display: block;
+  min-height: 36px;
   color: var(--color-muted);
-  font: 11px var(--font-sans);
-  cursor: pointer;
-}
-.admin-range button:hover {
-  color: var(--color-foreground);
-  background: var(--color-input-hover);
-}
-.admin-range button:active {
-  background: var(--color-raised);
-}
-.admin-range button.is-selected {
-  background: var(--color-raised);
-  color: var(--color-foreground);
-  box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+  font: 12px/18px var(--font-mono, ui-monospace);
 }
 .admin-sources {
   display: grid;
@@ -535,8 +561,10 @@
 .admin-comment p {
   margin: 6px 0;
   color: var(--color-muted);
-  font-size: 12px;
-  line-height: 1.55;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .admin-comment-actions {
   display: flex;
@@ -545,7 +573,7 @@
   gap: 3px;
 }
 .admin-comment-actions .ds-button:last-child {
-  width: 32px;
+  width: 36px;
   padding: 0;
   color: var(--color-danger);
 }
@@ -568,10 +596,9 @@
   gap: 4px;
 }
 .admin-schedule strong {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: 500;
 }
 .admin-schedule > span {
@@ -594,9 +621,6 @@
   gap: 6px;
   text-align: center;
 }
-.admin-health svg {
-  color: var(--color-success);
-}
 .admin-health span {
   color: var(--color-subtle);
   font-size: 10px;
@@ -610,19 +634,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 15px;
-  padding: 15px 18px;
-}
-.admin-quick > div:first-child {
-  display: grid;
-  gap: 4px;
-}
-.admin-quick strong {
-  font-size: 12px;
-  font-weight: 600;
-}
-.admin-quick span {
-  color: var(--color-subtle);
-  font-size: 11px;
+  padding: 0;
 }
 .admin-quick-buttons {
   display: flex;
@@ -657,8 +669,9 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 0;
   border-radius: 6px;
   background: transparent;
@@ -748,6 +761,8 @@
 .admin-notice {
   display: grid;
   gap: 5px;
+  height: auto;
+  justify-content: stretch;
   padding: 12px;
   border: 0;
   border-bottom: 1px solid var(--admin-divider);
@@ -959,9 +974,12 @@
   }
   .admin-search-trigger span,
   .admin-search-trigger kbd,
-  .admin-create,
+  .admin-create span,
   .admin-profile span {
     display: none;
+  }
+  .admin-create {
+    padding: 0;
   }
   .admin-profile {
     padding: 2px;
@@ -971,13 +989,10 @@
     height: 28px;
   }
   .admin-content {
-    padding: 22px 15px;
-  }
-  .admin-layout-workspace .admin-content {
     padding: 22px 20px;
   }
   .admin-dashboard {
-    gap: 15px;
+    gap: 20px;
   }
   .admin-page-heading {
     align-items: start;
@@ -985,9 +1000,6 @@
   }
   .admin-page-actions {
     width: 100%;
-  }
-  .admin-date {
-    white-space: normal;
   }
   .admin-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1001,17 +1013,10 @@
     font-size: 21px;
   }
   .admin-panel-heading {
-    padding: 0 14px;
-  }
-  .admin-panel-heading h2 {
-    font-size: 12px;
+    padding: 12px 14px;
   }
   .admin-panel-body {
-    padding: 15px 14px;
-  }
-  .admin-range button {
-    padding: 6px;
-    font-size: 10px;
+    padding: 0 14px 14px;
   }
   .admin-health {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1027,7 +1032,7 @@
     flex-direction: column;
   }
   .admin-footer {
-    padding: 15px;
+    padding: 16px 20px;
   }
   .admin-modal {
     width: min(100%, calc(100vw - 24px));
@@ -1037,8 +1042,7 @@
 @media (prefers-reduced-motion: reduce) {
   .admin-nav-item,
   .admin-front-link,
-  .admin-search-trigger,
-  .admin-range button {
+  .admin-search-trigger {
     transition: none;
   }
 }

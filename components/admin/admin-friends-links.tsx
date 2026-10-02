@@ -529,7 +529,7 @@ export function AdminFriendsLinks() {
         )}
       </div>
       <p className="admin-post-session-note">
-        数据已持久化。公开展示须已通过且启用；本期尚无前台友链页或健康检测。
+        前台仅展示已通过且启用的友链；尚未接入外站健康检测。
       </p>
       <Dialog
         open={formOpen}
