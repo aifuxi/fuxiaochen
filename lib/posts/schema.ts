@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { postContentSchema } from "./document";
+
 export const postStatusSchema = z.enum(["draft", "published", "scheduled"]);
 export type PostStatus = z.infer<typeof postStatusSchema>;
 export const postStatusLabels: Record<PostStatus, string> = {
@@ -17,10 +19,7 @@ export const postSchema = z
   .object({
     slug: slugSchema,
     title: z.string().trim().min(1, "请输入文章标题").max(120, "标题最多 120 个字符"),
-    content: z
-      .string()
-      .max(100_000, "正文最多 100,000 个字符")
-      .refine((value) => Boolean(value.trim()), "请输入正文内容"),
+    content: postContentSchema,
     categoryId: z.uuid("请选择已登记的分类"),
     tagIds: z.array(z.uuid("标签 ID 无效")).transform((ids) => [...new Set(ids)]),
     status: postStatusSchema,

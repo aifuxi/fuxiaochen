@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { cache } from "react";
 import { z } from "zod";
 
+import { CONTENT_FORMAT } from "@/lib/posts/document";
 import { slugSchema } from "@/lib/posts/schema";
 import { getPublicSettings } from "@/lib/settings/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
@@ -84,7 +85,10 @@ export async function listPublicPosts(params: SearchParams) {
       filtered = filtered.where((p) =>
         db.raw.sql`(
       instr(lower(${p.title}), lower(${query.q})) > 0 OR
-      instr(lower((SELECT body.content FROM post body WHERE body.id = ${p.id})), lower(${query.q})) > 0 OR
+      instr(lower((SELECT CASE WHEN json_valid(body.content) THEN
+        CASE WHEN json_extract(body.content, '$.format') = ${CONTENT_FORMAT}
+          THEN json_extract(body.content, '$.text') ELSE body.content END
+        ELSE body.content END FROM post body WHERE body.id = ${p.id})), lower(${query.q})) > 0 OR
       EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0) OR
       EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt.tagId WHERE pt.postId = ${p.id} AND instr(lower(t.name), lower(${query.q})) > 0)
     )`

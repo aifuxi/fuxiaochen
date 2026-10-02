@@ -221,7 +221,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open && !postMutation.current) setPanel(null);
         }}
       >
-        <DialogContent className="admin-modal">
+        <DialogContent
+          className={`admin-modal${panel === "compose" ? " admin-compose-modal" : ""}`}
+        >
           {panel && (
             <>
               <div className="admin-modal-heading">

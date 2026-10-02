@@ -667,6 +667,18 @@
 .site-markdown input[type="checkbox"] {
   margin-right: 8px;
 }
+.site-markdown .article-task-list {
+  list-style: none;
+  padding-left: 0;
+}
+.site-markdown .article-task-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.site-markdown .article-task-item > div {
+  min-width: 0;
+}
 .site-comments {
   margin-top: 64px;
   padding-top: 40px;

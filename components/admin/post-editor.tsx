@@ -1,5 +1,6 @@
 "use client";
 import { X } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 
@@ -22,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import {
   postLocalTime,
   postSchema,
@@ -35,6 +35,14 @@ import { useAdminWorkspace } from "./admin-context";
 import { PostQueryStatus } from "./post-status";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { AdminRequestError, postRequest, usePostQuery, usePostClock } from "./use-posts";
+
+const BlockEditor = dynamic(
+  () => import("./editor/block-editor").then((module) => module.BlockEditor),
+  {
+    ssr: false,
+    loading: () => <output>正在载入编辑器…</output>,
+  },
+);
 
 type Props = { id: string | null; onClose: () => void };
 export function PostEditor({ id, onClose }: Props) {
@@ -143,7 +151,12 @@ function PostEditorForm({
   };
   return (
     <>
-      <form className="admin-form" onSubmit={submit} noValidate aria-busy={postPending}>
+      <form
+        className="admin-form post-editor-form"
+        onSubmit={submit}
+        noValidate
+        aria-busy={postPending}
+      >
         <TaxonomyStatus />
         {error && (
           <p className="admin-post-error" role="alert">
@@ -160,164 +173,171 @@ function PostEditorForm({
             重新载入最新内容
           </Button>
         )}
-        <label htmlFor="admin-post-title">
-          文章标题
-          <Input
-            id="admin-post-title"
-            value={title}
-            maxLength={120}
-            disabled={postPending}
-            onChange={(event) => setTitle(event.target.value)}
-            aria-invalid={Boolean(fieldErrors.title)}
-            aria-describedby={fieldErrors.title ? "post-error-title" : undefined}
-          />
-        </label>
-        {fieldError("title")}
-        <label htmlFor="admin-post-slug">
-          文章 slug
-          <Input
-            id="admin-post-slug"
-            value={slug}
-            maxLength={120}
-            readOnly={Boolean(initial?.slugLockedAt)}
-            disabled={postPending}
-            onChange={(event) => setSlug(event.target.value)}
-            aria-invalid={Boolean(fieldErrors.slug)}
-            aria-describedby="post-slug-help post-error-slug"
-          />
-        </label>
-        <p id="post-slug-help">
-          链接：/posts/{slug || "your-article-slug"}。
-          {initial?.slugLockedAt
-            ? "首次发布后已锁定。"
-            : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
-        </p>
-        {fieldError("slug")}
-        <label htmlFor="admin-post-body">
-          正文内容（Markdown）
-          <Textarea
-            id="admin-post-body"
-            value={content}
-            maxLength={100_000}
-            disabled={postPending}
-            onChange={(event) => setContent(event.target.value)}
-            aria-invalid={Boolean(fieldErrors.content)}
-            aria-describedby={fieldErrors.content ? "post-error-content" : undefined}
-          />
-        </label>
-        <p>支持 Markdown 标题、列表、链接、代码块和表格；原始 HTML 按文本显示。</p>
-        {fieldError("content")}
-        <label htmlFor="admin-post-category">分类</label>
-        <Select
-          value={categoryId}
-          disabled={disabled || !categoryItems.length}
-          onValueChange={(value) => setCategoryId(value ?? "")}
-        >
-          <SelectTrigger
-            id="admin-post-category"
-            aria-invalid={Boolean(fieldErrors.categoryId)}
-            aria-describedby={fieldErrors.categoryId ? "post-error-categoryId" : undefined}
-          >
-            <SelectValue placeholder="请选择分类">
-              {categoryItems.find((item) => item.id === categoryId)?.name ?? "请选择分类"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {categoryItems.map((item) => (
-              <SelectItem value={item.id} key={item.id}>
-                {item.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {fieldError("categoryId")}
-        {!taxonomyLoading && !taxonomyError && !categoryItems.length && (
-          <p>
-            请先在 <Link href="/admin/categories">分类与标签</Link> 创建分类。
-          </p>
-        )}
-        <label htmlFor="admin-post-tags">标签</label>
-        <Combobox
-          multiple
-          items={tagItems.map((item) => item.id)}
-          value={tagIds}
-          onValueChange={setTagIds}
-          disabled={disabled}
-          itemToStringLabel={(value: string) =>
-            tagItems.find((tag) => tag.id === value)?.name ?? value
-          }
-        >
-          <ComboboxInputGroup>
-            <ComboboxInput
-              id="admin-post-tags"
-              placeholder="选择已有标签"
-              aria-invalid={Boolean(fieldErrors.tagIds)}
-              aria-describedby={fieldErrors.tagIds ? "post-error-tagIds" : undefined}
-            />
-            <ComboboxTrigger />
-          </ComboboxInputGroup>
-          <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
-            <ComboboxList>
-              {(tagId: string) => (
-                <ComboboxItem key={tagId} value={tagId}>
-                  {tagItems.find((tag) => tag.id === tagId)?.name}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-        {fieldError("tagIds")}
-        <div aria-label="已选标签">
-          {tagIds.map((tagId) => (
-            <Button
-              type="button"
-              key={tagId}
-              variant="ghost"
-              size="sm"
-              disabled={postPending}
-              onClick={() => setTagIds((current) => current.filter((id) => id !== tagId))}
-              aria-label={`移除标签 ${tagItems.find((tag) => tag.id === tagId)?.name ?? tagId}`}
-            >
-              {tagItems.find((tag) => tag.id === tagId)?.name ?? "标签已移除"}
-              <X size={14} aria-hidden="true" />
-            </Button>
-          ))}
-        </div>
-        <fieldset className="admin-status-options" disabled={postPending}>
-          <legend>文章状态</legend>
-          {(["draft", "published", "scheduled"] as const).map((value) => (
-            <label key={value}>
-              <input
-                type="radio"
-                name="post-status"
-                checked={status === value}
-                onChange={() => setStatus(value)}
+        <div className="post-editor-layout">
+          <div className="post-editor-main">
+            <label htmlFor="admin-post-title">
+              文章标题
+              <Input
+                id="admin-post-title"
+                value={title}
+                maxLength={120}
+                disabled={postPending}
+                onChange={(event) => setTitle(event.target.value)}
+                aria-invalid={Boolean(fieldErrors.title)}
+                aria-describedby={fieldErrors.title ? "post-error-title" : undefined}
               />
-              {postStatusLabels[value]}
             </label>
-          ))}
-        </fieldset>
-        {status === "scheduled" && (
-          <label htmlFor="admin-post-publish-date">
-            计划发布时间（北京时间，到期后需手动发布）
-            <Input
-              id="admin-post-publish-date"
-              type="datetime-local"
-              value={scheduledTime}
+            {fieldError("title")}
+            <label htmlFor="admin-post-slug">
+              文章 slug
+              <Input
+                id="admin-post-slug"
+                value={slug}
+                maxLength={120}
+                readOnly={Boolean(initial?.slugLockedAt)}
+                disabled={postPending}
+                onChange={(event) => setSlug(event.target.value)}
+                aria-invalid={Boolean(fieldErrors.slug)}
+                aria-describedby="post-slug-help post-error-slug"
+              />
+            </label>
+            <p id="post-slug-help">
+              链接：/posts/{slug || "your-article-slug"}。
+              {initial?.slugLockedAt
+                ? "首次发布后已锁定。"
+                : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
+            </p>
+            {fieldError("slug")}
+            <div id="admin-post-body-label" className="post-editor-body-label">
+              正文内容
+            </div>
+            <BlockEditor
+              initialContent={initial?.content ?? ""}
+              onChange={setContent}
               disabled={postPending}
-              onChange={(event) => setScheduledTime(event.target.value)}
-              aria-invalid={Boolean(fieldErrors.scheduledFor)}
-              aria-describedby={fieldErrors.scheduledFor ? "post-error-scheduledFor" : undefined}
+              invalid={Boolean(fieldErrors.content)}
+              describedBy={fieldErrors.content ? "post-error-content" : undefined}
             />
-          </label>
-        )}
-        {fieldError("scheduledFor")}
-        {status === "scheduled" &&
-          initial?.scheduledFor &&
-          now !== null &&
-          Date.parse(initial.scheduledFor) <= now && (
-            <output>原排期已过期，文章仍未自动发布。可保留时间编辑其他字段，或调整排期。</output>
-          )}
+            {fieldError("content")}
+          </div>
+          <aside className="post-editor-settings" aria-label="文章发布设置">
+            <label htmlFor="admin-post-category">分类</label>
+            <Select
+              value={categoryId}
+              disabled={disabled || !categoryItems.length}
+              onValueChange={(value) => setCategoryId(value ?? "")}
+            >
+              <SelectTrigger
+                id="admin-post-category"
+                aria-invalid={Boolean(fieldErrors.categoryId)}
+                aria-describedby={fieldErrors.categoryId ? "post-error-categoryId" : undefined}
+              >
+                <SelectValue placeholder="请选择分类">
+                  {categoryItems.find((item) => item.id === categoryId)?.name ?? "请选择分类"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {categoryItems.map((item) => (
+                  <SelectItem value={item.id} key={item.id}>
+                    {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {fieldError("categoryId")}
+            {!taxonomyLoading && !taxonomyError && !categoryItems.length && (
+              <p>
+                请先在 <Link href="/admin/categories">分类与标签</Link> 创建分类。
+              </p>
+            )}
+            <label htmlFor="admin-post-tags">标签</label>
+            <Combobox
+              multiple
+              items={tagItems.map((item) => item.id)}
+              value={tagIds}
+              onValueChange={setTagIds}
+              disabled={disabled}
+              itemToStringLabel={(value: string) =>
+                tagItems.find((tag) => tag.id === value)?.name ?? value
+              }
+            >
+              <ComboboxInputGroup>
+                <ComboboxInput
+                  id="admin-post-tags"
+                  placeholder="选择已有标签"
+                  aria-invalid={Boolean(fieldErrors.tagIds)}
+                  aria-describedby={fieldErrors.tagIds ? "post-error-tagIds" : undefined}
+                />
+                <ComboboxTrigger />
+              </ComboboxInputGroup>
+              <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
+                <ComboboxList>
+                  {(tagId: string) => (
+                    <ComboboxItem key={tagId} value={tagId}>
+                      {tagItems.find((tag) => tag.id === tagId)?.name}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
+            {fieldError("tagIds")}
+            <div aria-label="已选标签">
+              {tagIds.map((tagId) => (
+                <Button
+                  type="button"
+                  key={tagId}
+                  variant="ghost"
+                  size="sm"
+                  disabled={postPending}
+                  onClick={() => setTagIds((current) => current.filter((id) => id !== tagId))}
+                  aria-label={`移除标签 ${tagItems.find((tag) => tag.id === tagId)?.name ?? tagId}`}
+                >
+                  {tagItems.find((tag) => tag.id === tagId)?.name ?? "标签已移除"}
+                  <X size={14} aria-hidden="true" />
+                </Button>
+              ))}
+            </div>
+            <fieldset className="admin-status-options" disabled={postPending}>
+              <legend>文章状态</legend>
+              {(["draft", "published", "scheduled"] as const).map((value) => (
+                <label key={value}>
+                  <input
+                    type="radio"
+                    name="post-status"
+                    checked={status === value}
+                    onChange={() => setStatus(value)}
+                  />
+                  {postStatusLabels[value]}
+                </label>
+              ))}
+            </fieldset>
+            {status === "scheduled" && (
+              <label htmlFor="admin-post-publish-date">
+                计划发布时间（北京时间，到期后需手动发布）
+                <Input
+                  id="admin-post-publish-date"
+                  type="datetime-local"
+                  value={scheduledTime}
+                  disabled={postPending}
+                  onChange={(event) => setScheduledTime(event.target.value)}
+                  aria-invalid={Boolean(fieldErrors.scheduledFor)}
+                  aria-describedby={
+                    fieldErrors.scheduledFor ? "post-error-scheduledFor" : undefined
+                  }
+                />
+              </label>
+            )}
+            {fieldError("scheduledFor")}
+            {status === "scheduled" &&
+              initial?.scheduledFor &&
+              now !== null &&
+              Date.parse(initial.scheduledFor) <= now && (
+                <output>
+                  原排期已过期，文章仍未自动发布。可保留时间编辑其他字段，或调整排期。
+                </output>
+              )}
+          </aside>
+        </div>
         <div className="admin-form-actions">
           <Button type="button" variant="ghost" onClick={onClose} disabled={postPending}>
             取消
