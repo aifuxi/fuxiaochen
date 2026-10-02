@@ -145,32 +145,36 @@ npm run build
 
 依赖锁定 AWS S3 SDK / presigner `3.1145.0`、`@alicloud/credentials` `2.4.7` 和 `sharp` `0.35.5`。Prisma 继续使用 CLI `8.0.0-rc.19`、SQLite `8.0.0-rc.14`（RC / experimental），通过 contract 和增量迁移新增 `media`、`media_upload_limit`，保留原有数据。升级时执行 `npm run db:migrate`，重启已有开发进程，使数据库单例使用最新 contract。
 
-### OSS 连接与凭证
+### 本地 OSS 连接与凭证
 
-将 `.env.example` 的 OSS 字段补充到已有 `.env`，不要覆盖数据库及应用配置。配置只在服务端读取，不使用 `NEXT_PUBLIC_`，不要将凭证提交到仓库。
+应用和清理 CLI 均在本地 Node.js 环境运行，文件仍上传到真实阿里云 OSS。使用 OSS 默认外网域名和环境变量中的 RAM 用户凭证，无需配置 ECS、RAM Role、自定义域名、CNAME 或自有 HTTPS 证书。
 
-| 配置                                                              | 含义                                                                                               |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `OSS_BUCKET` / `OSS_REGION`                                       | 真实桶名与对应地域，如 `cn-hangzhou`                                                               |
-| `OSS_SERVER_ENDPOINT` / `OSS_SERVER_ENDPOINT_MODE`                | 服务端下载、复制、删除 endpoint；`service` 用标准 S3 服务域名，`bucket` 用绑定到该桶的 HTTPS CNAME |
-| `OSS_UPLOAD_ENDPOINT` / `OSS_UPLOAD_ENDPOINT_MODE`                | 浏览器能访问的签名 endpoint；两种 mode 与上项相同，不能填内网地址                                  |
-| `OSS_PUBLIC_ORIGIN`                                               | 公开文件的 HTTPS 媒体域名，不含路径；hostname 必须与应用不同                                       |
-| `OSS_CREDENTIAL_MODE`                                             | 本地 `environment`；ECS 部署推荐 `ecs_ram_role`                                                    |
-| `OSS_RAM_ROLE_NAME`                                               | ECS 实例绑定角色名称；空值由 provider 查询，禁用 IMDSv1                                            |
-| `ALIBABA_CLOUD_ACCESS_KEY_ID` / `ALIBABA_CLOUD_ACCESS_KEY_SECRET` | 本地最小权限 RAM 凭证，仅 environment 模式读取                                                     |
-| `ALIBABA_CLOUD_SECURITY_TOKEN`                                    | 可选的本地 STS token；不是自动刷新的 provider，过期后更新环境并重启                                |
+将 `.env.example` 的 OSS 字段补充到已有项目根目录 `.env`，不要覆盖数据库及应用配置。配置只在服务端读取，不使用 `NEXT_PUBLIC_`，不要将凭证提交到仓库；修改连接或凭证后重启应用。
 
-标准 S3 服务 endpoint 使用 `https://s3.oss-{region}.aliyuncs.com`，同 VPC 的服务端可使用 `https://s3.oss-{region}-internal.aliyuncs.com`。使用 virtual-hosted style，不启用 path-style。已绑定桶的 CNAME 必须选择 `bucket` 模式，适配层将完整 endpoint 作为 SDK v3 的 Bucket 寻址输入，CopySource 仍使用真实桶名；不改写签名后的 URL。服务端与浏览器 endpoint 可以不同，地域及 Bucket 必须一致。
+| 配置                                                              | 本地填写方式                                                                                 |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `OSS_BUCKET` / `OSS_REGION`                                       | 实际桶名和地域，例如 `my-media-bucket`、`cn-hangzhou`                                        |
+| `OSS_SERVER_ENDPOINT`                                             | `https://s3.oss-{region}.aliyuncs.com`，本地服务端用此地址核验、复制和删除对象               |
+| `OSS_UPLOAD_ENDPOINT`                                             | 与服务端填相同的默认 S3 外网服务 endpoint，浏览器用它生成的预签名 URL 上传                   |
+| `OSS_SERVER_ENDPOINT_MODE` / `OSS_UPLOAD_ENDPOINT_MODE`           | 两项均为 `service`，SDK 使用 virtual-hosted 寻址自动添加桶名                                 |
+| `OSS_PUBLIC_ORIGIN`                                               | 默认 Bucket HTTPS 访问地址：`https://{bucket}.oss-{region}.aliyuncs.com`，不含路径或查询参数 |
+| `OSS_CREDENTIAL_MODE`                                             | 固定填 `environment`                                                                         |
+| `ALIBABA_CLOUD_ACCESS_KEY_ID` / `ALIBABA_CLOUD_ACCESS_KEY_SECRET` | 最小权限 RAM 用户 AccessKey，仅填到未提交的 `.env`                                           |
+| `ALIBABA_CLOUD_SECURITY_TOKEN`                                    | RAM 用户 AccessKey 时留空；使用临时 STS 凭证时填写 token，过期后手动更新并重启               |
 
-根据 [阿里云 AWS SDK 接入文档](https://www.alibabacloud.com/help/zh/oss/developer-reference/use-aws-sdks-to-access-oss)，自 2025-03-20 起新开通 OSS 服务的用户在中国内地地域需通过自定义域名访问数据 API。为上传与公开访问域名配置 OSS CNAME 和有效 HTTPS 证书；不能假设默认公网域名可上传下载。遇到 `0002-00000033` 时按 [S3 兼容鉴权错误说明](https://help.aliyun.com/en/oss/user-guide/0002-00000033) 联系支持确认兼容模式。尚未配置时上传返回 503 `STORAGE_NOT_CONFIGURED`，空库仍可查询。
+例如，Bucket 为 `my-media-bucket`、地域为 `cn-hangzhou` 时，两个服务 endpoint 都填 `https://s3.oss-cn-hangzhou.aliyuncs.com`，公开访问地址填 `https://my-media-bucket.oss-cn-hangzhou.aliyuncs.com`。公开地址与上传服务地址的格式不同，不要混用；示例里的 `your-bucket` 必须手动替换，配置不会自动插入 `OSS_BUCKET` 或 `OSS_REGION`。本地不要使用 `-internal` 内网 endpoint，不改写签名后的 URL。
 
-ECS provider 自行刷新 STS；适配层定期重新取凭证，避免 AWS SDK 缓存为永久凭证。S3 SDK 的 request / response checksum 模式为 `WHEN_REQUIRED`，避免不兼容的默认 CRC / aws-chunked 请求；应用仍逐字节计算 SHA-256，校验真实内容，兼容性回退 PUT 额外发送 Content-MD5。不能将 ETag 当作 SHA-256 或通用内容校验和。参见 [AWS checksum 配置](https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html)。
+默认公网域名的可用性须先核对。根据 [阿里云 AWS SDK 接入文档](https://www.alibabacloud.com/help/zh/oss/developer-reference/use-aws-sdks-to-access-oss)，自 2025-03-20 起新开通 OSS 服务的用户在中国内地地域无法通过默认外网域名调用上传、下载等数据 API。若账号与 Bucket 命中此限制，本方案无法完成真实联调，本地运行或修改 `.env` 不能解除云端策略。遇到 `0002-00000033` 时按 [S3 兼容鉴权错误说明](https://help.aliyun.com/en/oss/user-guide/0002-00000033) 确认账号的兼容鉴权能力。配置缺失时上传返回 503 `STORAGE_NOT_CONFIGURED`，空库仍可查询。
+
+默认域名可能按地域、Bucket 创建时间和文件类型强制返回下载响应头。图片的永久链接在浏览器直接打开时可能下载，即使应用发布时设置了 `inline`；图片网格与预览以真实浏览器行为验收，不承诺默认域名始终支持在线打开。参见 [OSS 默认域名强制下载规则](https://help.aliyun.com/zh/oss/how-to-ensure-an-object-is-previewed-when-you-access-the-object/)。附件始终按应用规定强制下载。
+
+S3 SDK 的 request / response checksum 模式为 `WHEN_REQUIRED`，避免不兼容的默认 CRC / aws-chunked 请求；应用仍逐字节计算 SHA-256，校验真实内容，兼容性回退 PUT 额外发送 Content-MD5。不能将 ETag 当作 SHA-256 或通用内容校验和。参见 [AWS checksum 配置](https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html)。
 
 ### 权限、跨域与生命周期模板
 
 Bucket ACL 保持 private；正式 key 为 `media/<随机 UUID>`，临时 key 为 `staging/<随机 UUID>`。以下模板的账号和桶名须替换为实际值，Bucket Policy 不使用 AWS 的 ARN 或 Action 名称。
 
-服务端 RAM 角色或用户仅需对象读写与删除，不需要建桶、修改 ACL、匿名写入或列举权限：
+本地服务端使用的 RAM 用户仅需对象读写与删除，不需要建桶、修改 ACL、匿名写入或列举权限：
 
 ```json
 {
@@ -204,22 +208,24 @@ Bucket Policy 仅允许匿名读取正式前缀（包含公开图片与所有正
 
 核对桶及账号的阻止公共访问配置，使此限定前缀的策略能够生效；不要改为整桶 public-read。确认匿名请求不能读取 `staging/`、列举对象或上传文件。参见 [Bucket Policy](https://help.aliyun.com/zh/oss/user-guide/oss-bucket-policy/) 与 [S3 兼容范围](https://help.aliyun.com/zh/oss/developer-reference/compatibility-with-amazon-s3)。
 
-OSS 控制台 CORS 设置：AllowedOrigin 为应用实际 `APP_ORIGIN`（本地可另加 `http://localhost:3000`），AllowedMethod 为 PUT，AllowedHeader 为 `Content-Type`，ExposeHeader 可留空，MaxAgeSeconds 为 300；不要使用通配 Origin。浏览器不携带 Cookie 或直接接收访问凭证。对象读取若不需要跨域脚本访问，无需额外开放 GET CORS。
+OSS 控制台 CORS 设置：AllowedOrigin 为本地实际 `APP_ORIGIN`（示例为 `http://localhost:3000`；用 `127.0.0.1` 或其他端口访问时须同步修改应用配置与 CORS），AllowedMethod 为 PUT，AllowedHeader 为 `Content-Type`，ExposeHeader 可留空，MaxAgeSeconds 为 300；不要使用通配 Origin。浏览器不携带 Cookie 或直接接收访问凭证。对象读取若不需要跨域脚本访问，无需额外开放 GET CORS。
 
 上传 URL 绑定 `Content-Type: application/octet-stream` 和精确字节数。浏览器自动设置已签名的 Content-Length，不手动添加该禁止写入的请求头；对象元数据、尺寸及摘要仍需服务端复核。正式图片按真实格式返回 MIME / inline；其他附件统一返回 `application/octet-stream` / attachment，并使用 RFC 5987 编码下载文件名，SVG、HTML、脚本和可执行文件不内嵌打开、不解压或执行。本阶段没有病毒扫描。
 
-在 OSS 控制台为 `staging/` 配置 1 天过期删除规则；不要对 `media/` 配置过期删除。本阶段不实现分片上传，不需要应用侧分片清理。应用清理 CLI 作为部署任务每 15 分钟运行：
+在 OSS 控制台为 `staging/` 配置 1 天过期删除规则；不要对 `media/` 配置过期删除。本阶段不实现分片上传，不需要应用侧分片清理。本地运行期间每 15 分钟执行清理 CLI，可先用 `--dry-run` 查看待处理数量：
 
 ```sh
 npm run media:cleanup -- --dry-run
 npm run media:cleanup
 ```
 
-单实例部署的 cron 示例（替换项目路径与 PATH，Node.js >=24）：
+如需本地定时执行，可使用操作系统的任务调度；以下为 cron 模板，须替换项目路径和通过 `command -v npm` 查到的 npm 绝对路径，并设置包含 Node.js >=24 的 PATH：
 
 ```cron
-*/15 * * * * cd /srv/fuxiaochen && /usr/bin/npm run media:cleanup >> /var/log/fuxiaochen-media-cleanup.log 2>&1
+*/15 * * * * cd /absolute/path/to/fuxiaochen && /absolute/path/to/npm run media:cleanup >> ./data/media-cleanup.log 2>&1
 ```
+
+电脑关机或休眠时本地任务不会运行；恢复开发后执行一次清理。OSS 的 `staging/` 生命周期规则在云端继续生效。
 
 CLI 读取与应用相同的 `.env`、数据库路径及凭证，正常退出释放数据库和 SDK 资源，失败返回非零退出码。`--dry-run` 只统计待处理记录，不请求 OSS 或修改记录。清理过期 pending、租约到期 finalizing、未完成删除及墓碑；ready 记录只回收临时对象，不删除正式文件。墓碑保留至少一天并重复回收残留，兜底处理签名重放和中断操作；临时目录生命周期继续处理迟到的临时对象。
 
@@ -248,9 +254,9 @@ kind 为 `image/attachment`。q 去除首尾空白、最多 200 字符，SQLite 
 
 以下为验收清单，不代表已完成真实 OSS 联调；不新增或运行测试。
 
-- 配置真实 OSS 后上传常用位图及附件，刷新或重新登录后读取，检查永久 HTTPS 链接、字节数、宽高和北京时间。
+- 配置默认域名与本地 RAM 用户凭证后上传常用位图及附件，刷新或重新登录后读取，检查永久 HTTPS 链接、字节数、宽高和北京时间；核对默认域名访问限制及图片直接打开时的强制下载响应。
 - SVG、HTML、脚本、EXE 与任意未知扩展名均按附件强制下载；损坏图片、摘要不匹配、零字节、大小及总像素超限被拒绝。
-- 标准服务 endpoint 和 Bucket CNAME 分别验证，检查签名 host、精确长度、Content-Type、CORS 与角色凭证刷新；确认账号的 S3 兼容鉴权能力。
+- 验证默认 S3 服务 endpoint 的签名 host、精确长度、Content-Type，以及本地 Origin 的 CORS；公开链接使用默认 Bucket 域名，临时 STS 过期后手动更新凭证并重启。
 - 检查错误 Origin、会话撤销、错误 Content-Type、非法 JSON、请求体超限、限流与 20 个未完成上传限制。
 - 并发完成同一上传、响应丢失后重试、签名过期、重放临时上传；ready 记录不重复创建，正式对象不被浏览器覆写。
 - 超过 12 个文件后跨页搜索筛选，关键词含 `%`、`_`，删除末页最后一项后回退有效页；旧查询不覆盖新结果。

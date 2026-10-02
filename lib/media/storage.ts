@@ -93,7 +93,8 @@ function createStorage(config: StorageConfig) {
       accessKeyId: value.accessKeyId,
       secretAccessKey: value.accessKeySecret,
       sessionToken: value.securityToken || undefined,
-      // 凭证包不公开真实过期时间；让 AWS SDK 定期重新询问会自行刷新 STS 的 provider。
+      // 仅 RAM Role 分支需要定期重新询问会刷新 STS 的 provider，凭证包不公开真实过期时间。
+      // 本地 environment 分支不自动刷新；更换 AccessKey 或临时 STS 后需重启进程。
       expiration:
         config.credentialMode === "ecs_ram_role" ? new Date(Date.now() + 60_000) : undefined,
     };
@@ -130,10 +131,12 @@ export function closeStorage() {
   delete storageGlobal.mediaStorage;
 }
 function target(mode: "service" | "bucket", endpoint: string, bucket: string) {
-  // v3 的 bucketEndpoint 模式要求 Bucket 参数是完整桶域名，CopySource 仍使用真实桶名。
+  // 本地 service 模式由 SDK 将桶名拼到 S3 服务域名；bucketEndpoint 兼容分支要求完整桶域名。
+  // CopySource 始终使用真实桶名，与访问域名无关。
   return mode === "bucket" ? endpoint : bucket;
 }
 export function publicMediaUrl(key: string) {
+  // 本地示例使用默认 Bucket HTTPS 域名；S3 服务 endpoint 本身不包含桶名，不能直接生成公开链接。
   return new URL(
     key.split("/").map(encodeURIComponent).join("/"),
     `${storageConfig().publicOrigin.replace(/\/$/, "")}/`,
