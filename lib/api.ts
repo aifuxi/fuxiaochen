@@ -19,6 +19,7 @@ import { commentRoutes } from "./comments/routes";
 import { friendRoutes } from "./friends-links/routes";
 import { mediaRoutes } from "./media/routes";
 import { postRoutes } from "./posts/routes";
+import { publicRoutes } from "./public/routes";
 import { settingsRoutes } from "./settings/routes";
 import { taxonomyRoutes } from "./taxonomy/routes";
 
@@ -43,7 +44,7 @@ api.use("*", async (c, next) => {
     ["POST", "PUT", "PATCH", "DELETE"].includes(c.req.method) &&
     c.req.header("origin") !== appOrigin()
   ) {
-    if (c.req.path.startsWith("/api/admin/"))
+    if (c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/"))
       return c.json({ error: { code: "FORBIDDEN_ORIGIN", message: "请求来源不被允许。" } }, 403);
     return c.text("请求来源不被允许。", 403);
   }
@@ -53,7 +54,7 @@ api.use("*", async (c, next) => {
 const smallBodyLimit = bodyLimit({
   maxSize: 16 * 1024,
   onError: (c) =>
-    c.req.path.startsWith("/api/admin/")
+    c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/")
       ? c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "请求内容过大。" } }, 413)
       : c.text("请求内容过大。", 413),
 });
@@ -75,6 +76,7 @@ api.use("*", (c, next) => {
     return settingsBodyLimit(c, next);
   return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
 });
+api.route("/public", publicRoutes);
 api.route("/admin/posts", postRoutes);
 api.route("/admin/media", mediaRoutes);
 api.route("/admin/comments", commentRoutes);
@@ -126,7 +128,7 @@ api.post("/logout", async (c) => {
 });
 
 api.onError((error, c) => {
-  if (c.req.path.startsWith("/api/admin/")) {
+  if (c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/")) {
     console.error("后台业务接口失败", { name: error.name });
     return c.json(
       { error: { code: "SERVICE_UNAVAILABLE", message: "服务暂时不可用，请稍后重试。" } },

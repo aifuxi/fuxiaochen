@@ -7,8 +7,15 @@ export const postStatusLabels: Record<PostStatus, string> = {
   published: "已发布",
   scheduled: "已排期",
 };
+export const slugSchema = z
+  .string()
+  .trim()
+  .min(1, "请输入 slug")
+  .max(120, "slug 最多 120 个字符")
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug 仅支持小写英文字母、数字和单个连字符");
 export const postSchema = z
   .object({
+    slug: slugSchema,
     title: z.string().trim().min(1, "请输入文章标题").max(120, "标题最多 120 个字符"),
     content: z
       .string()
@@ -46,6 +53,8 @@ export type PostQuery = z.infer<typeof postQuerySchema>;
 export type PostItem = {
   id: string;
   title: string;
+  slug: string;
+  slugLockedAt: string | null;
   categoryId: string;
   category: { id: string; name: string; color: string };
   tags: { id: string; name: string }[];

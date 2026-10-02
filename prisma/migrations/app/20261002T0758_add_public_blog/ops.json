@@ -1,0 +1,468 @@
+[
+  {
+    "id": "table.comment_rate_limit",
+    "label": "Create table comment_rate_limit",
+    "summary": "Creates table comment_rate_limit with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "comment_rate_limit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"comment_rate_limit\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment_rate_limit"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"comment_rate_limit\"",
+        "sql": "CREATE TABLE \"comment_rate_limit\" (\n  \"count\" INTEGER NOT NULL,\n  \"expiresAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"window\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"comment_rate_limit\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment_rate_limit"]
+      }
+    ]
+  },
+  {
+    "id": "column.comment.authorKind",
+    "label": "Add column authorKind on comment",
+    "summary": "Adds column authorKind on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "authorKind",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"authorKind\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "authorKind"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"authorKind\"",
+        "sql": "ALTER TABLE \"comment\" ADD COLUMN \"authorKind\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"authorKind\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "authorKind"]
+      }
+    ]
+  },
+  {
+    "id": "column.comment.submissionHash",
+    "label": "Add column submissionHash on comment",
+    "summary": "Adds column submissionHash on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "submissionHash",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"submissionHash\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "submissionHash"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"submissionHash\"",
+        "sql": "ALTER TABLE \"comment\" ADD COLUMN \"submissionHash\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"submissionHash\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "submissionHash"]
+      }
+    ]
+  },
+  {
+    "id": "column.comment.submissionId",
+    "label": "Add column submissionId on comment",
+    "summary": "Adds column submissionId on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "submissionId",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"submissionId\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "submissionId"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"submissionId\"",
+        "sql": "ALTER TABLE \"comment\" ADD COLUMN \"submissionId\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"submissionId\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["comment", "submissionId"]
+      }
+    ]
+  },
+  {
+    "id": "column.post.slug",
+    "label": "Add column slug on post",
+    "summary": "Adds column slug on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "slug",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"slug\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "slug"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"slug\"",
+        "sql": "ALTER TABLE \"post\" ADD COLUMN \"slug\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"slug\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "slug"]
+      }
+    ]
+  },
+  {
+    "id": "column.post.slugLockedAt",
+    "label": "Add column slugLockedAt on post",
+    "summary": "Adds column slugLockedAt on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "slugLockedAt",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"slugLockedAt\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "slugLockedAt"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"slugLockedAt\"",
+        "sql": "ALTER TABLE \"post\" ADD COLUMN \"slugLockedAt\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"slugLockedAt\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "slugLockedAt"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment_rate_limit.comment_rate_limit_expiresAt_idx_6b6b8c10",
+    "label": "Create index comment_rate_limit_expiresAt_idx_6b6b8c10 on comment_rate_limit",
+    "summary": "Creates index comment_rate_limit_expiresAt_idx_6b6b8c10 on comment_rate_limit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_rate_limit_expiresAt_idx_6b6b8c10",
+        "table": "comment_rate_limit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_rate_limit_expiresAt_idx_6b6b8c10\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_rate_limit_expiresAt_idx_6b6b8c10"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_rate_limit_expiresAt_idx_6b6b8c10\"",
+        "sql": "CREATE INDEX \"comment_rate_limit_expiresAt_idx_6b6b8c10\" ON \"comment_rate_limit\" (\"expiresAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_rate_limit_expiresAt_idx_6b6b8c10\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_rate_limit_expiresAt_idx_6b6b8c10"]
+      }
+    ]
+  },
+  {
+    "id": "index.post.post_status_publishedAt_id_idx_a01ed76d",
+    "label": "Create index post_status_publishedAt_id_idx_a01ed76d on post",
+    "summary": "Creates index post_status_publishedAt_id_idx_a01ed76d on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "post_status_publishedAt_id_idx_a01ed76d",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"post_status_publishedAt_id_idx_a01ed76d\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_status_publishedAt_id_idx_a01ed76d"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"post_status_publishedAt_id_idx_a01ed76d\"",
+        "sql": "CREATE INDEX \"post_status_publishedAt_id_idx_a01ed76d\" ON \"post\" (\"status\", \"publishedAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"post_status_publishedAt_id_idx_a01ed76d\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "post_status_publishedAt_id_idx_a01ed76d"]
+      }
+    ]
+  },
+  {
+    "id": "backfill.comment.authorKind",
+    "label": "保留历史评论身份",
+    "summary": "历史回复均来自管理员；显式保存身份以支持读者回复",
+    "operationClass": "data",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "comment"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "历史回复均来自管理员；显式保存身份以支持读者回复",
+        "sql": "UPDATE comment SET authorKind = CASE WHEN adminId IS NOT NULL OR parentId IS NOT NULL THEN 'admin' ELSE 'reader' END"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "recreateTable.comment",
+    "label": "Recreate table comment",
+    "summary": "Recreates table comment to apply schema changes: database/comment/unique:submissionId",
+    "operationClass": "destructive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"comment\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment"]
+      },
+      {
+        "description": "ensure temp table \"_prisma_new_comment\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "_prisma_new_comment"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create new table \"_prisma_new_comment\" with desired schema",
+        "sql": "CREATE TABLE \"_prisma_new_comment\" (\n  \"adminId\" INTEGER,\n  \"author\" TEXT NOT NULL,\n  \"authorKind\" TEXT NOT NULL,\n  \"content\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"email\" TEXT,\n  \"id\" TEXT NOT NULL,\n  \"parentId\" TEXT,\n  \"postId\" TEXT NOT NULL,\n  \"status\" TEXT NOT NULL,\n  \"submissionHash\" TEXT,\n  \"submissionId\" TEXT,\n  \"updatedAt\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"submissionId\"),\n  UNIQUE (\"id\", \"postId\"),\n  FOREIGN KEY (\"postId\") REFERENCES \"post\" (\"id\") ON DELETE CASCADE,\n  FOREIGN KEY (\"parentId\", \"postId\") REFERENCES \"comment\" (\"id\", \"postId\") ON DELETE CASCADE,\n  FOREIGN KEY (\"adminId\") REFERENCES \"admin\" (\"id\") ON DELETE SET NULL\n)"
+      },
+      {
+        "description": "copy data from \"comment\" to \"_prisma_new_comment\"",
+        "sql": "INSERT INTO \"_prisma_new_comment\" (\"adminId\", \"author\", \"authorKind\", \"content\", \"createdAt\", \"email\", \"id\", \"parentId\", \"postId\", \"status\", \"submissionHash\", \"submissionId\", \"updatedAt\", \"version\") SELECT \"adminId\", \"author\", \"authorKind\", \"content\", \"createdAt\", \"email\", \"id\", \"parentId\", \"postId\", \"status\", \"submissionHash\", \"submissionId\", \"updatedAt\", \"version\" FROM \"comment\""
+      },
+      {
+        "description": "drop old table \"comment\"",
+        "sql": "DROP TABLE \"comment\""
+      },
+      {
+        "description": "rename \"_prisma_new_comment\" to \"comment\"",
+        "sql": "ALTER TABLE \"_prisma_new_comment\" RENAME TO \"comment\""
+      },
+      {
+        "description": "recreate index \"comment_adminId_idx_530179db\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_adminId_idx_530179db\" ON \"comment\" (\"adminId\")"
+      },
+      {
+        "description": "recreate index \"comment_createdAt_id_idx_3855cff1\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_createdAt_id_idx_3855cff1\" ON \"comment\" (\"createdAt\", \"id\")"
+      },
+      {
+        "description": "recreate index \"comment_parentId_idx_6a68f597\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_parentId_idx_6a68f597\" ON \"comment\" (\"parentId\")"
+      },
+      {
+        "description": "recreate index \"comment_parentId_postId_idx_1317b68e\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_parentId_postId_idx_1317b68e\" ON \"comment\" (\"parentId\", \"postId\")"
+      },
+      {
+        "description": "recreate index \"comment_postId_idx_a7a72715\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_postId_idx_a7a72715\" ON \"comment\" (\"postId\")"
+      },
+      {
+        "description": "recreate index \"comment_status_createdAt_id_idx_ffb42ad8\" on \"comment\"",
+        "sql": "CREATE INDEX \"comment_status_createdAt_id_idx_ffb42ad8\" ON \"comment\" (\"status\", \"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"comment\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment"]
+      },
+      {
+        "description": "verify temp table \"_prisma_new_comment\" is gone",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "_prisma_new_comment"]
+      },
+      {
+        "description": "verify unique constraint (submissionId) on \"comment\"",
+        "sql": "SELECT EXISTS (SELECT 1 FROM pragma_index_list('comment') l WHERE l.\"unique\" = 1 AND (SELECT COUNT(*) FROM pragma_index_info(l.name)) = 1 AND (SELECT COUNT(*) FROM pragma_index_info(l.name) WHERE name IN ('submissionId')) = 1)"
+      },
+      {
+        "description": "verify unique constraint (id, postId) on \"comment\"",
+        "sql": "SELECT EXISTS (SELECT 1 FROM pragma_index_list('comment') l WHERE l.\"unique\" = 1 AND (SELECT COUNT(*) FROM pragma_index_info(l.name)) = 2 AND (SELECT COUNT(*) FROM pragma_index_info(l.name) WHERE name IN ('id', 'postId')) = 2)"
+      }
+    ]
+  },
+  {
+    "id": "recreateTable.post",
+    "label": "Recreate table post",
+    "summary": "Recreates table post to apply schema changes: database/post/unique:slug",
+    "operationClass": "destructive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"post\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post"]
+      },
+      {
+        "description": "ensure temp table \"_prisma_new_post\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "_prisma_new_post"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create new table \"_prisma_new_post\" with desired schema",
+        "sql": "CREATE TABLE \"_prisma_new_post\" (\n  \"categoryId\" TEXT NOT NULL,\n  \"content\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"publishedAt\" TEXT,\n  \"scheduledFor\" TEXT,\n  \"slug\" TEXT NOT NULL,\n  \"slugLockedAt\" TEXT,\n  \"status\" TEXT NOT NULL,\n  \"title\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"slug\"),\n  FOREIGN KEY (\"categoryId\") REFERENCES \"category\" (\"id\") ON DELETE RESTRICT\n)"
+      },
+      {
+        "description": "copy data from \"post\" to \"_prisma_new_post\"",
+        "sql": "INSERT INTO \"_prisma_new_post\" (\"categoryId\", \"content\", \"createdAt\", \"id\", \"publishedAt\", \"scheduledFor\", \"slug\", \"slugLockedAt\", \"status\", \"title\", \"updatedAt\", \"version\") SELECT \"categoryId\", \"content\", \"createdAt\", \"id\", \"publishedAt\", \"scheduledFor\", \"slug\", \"slugLockedAt\", \"status\", \"title\", \"updatedAt\", \"version\" FROM \"post\""
+      },
+      {
+        "description": "drop old table \"post\"",
+        "sql": "DROP TABLE \"post\""
+      },
+      {
+        "description": "rename \"_prisma_new_post\" to \"post\"",
+        "sql": "ALTER TABLE \"_prisma_new_post\" RENAME TO \"post\""
+      },
+      {
+        "description": "recreate index \"post_categoryId_idx_15c304f2\" on \"post\"",
+        "sql": "CREATE INDEX \"post_categoryId_idx_15c304f2\" ON \"post\" (\"categoryId\")"
+      },
+      {
+        "description": "recreate index \"post_createdAt_id_idx_3855cff1\" on \"post\"",
+        "sql": "CREATE INDEX \"post_createdAt_id_idx_3855cff1\" ON \"post\" (\"createdAt\", \"id\")"
+      },
+      {
+        "description": "recreate index \"post_status_publishedAt_id_idx_a01ed76d\" on \"post\"",
+        "sql": "CREATE INDEX \"post_status_publishedAt_id_idx_a01ed76d\" ON \"post\" (\"status\", \"publishedAt\", \"id\")"
+      },
+      {
+        "description": "recreate index \"post_status_scheduledFor_idx_e20b7d95\" on \"post\"",
+        "sql": "CREATE INDEX \"post_status_scheduledFor_idx_e20b7d95\" ON \"post\" (\"status\", \"scheduledFor\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"post\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "post"]
+      },
+      {
+        "description": "verify temp table \"_prisma_new_post\" is gone",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "_prisma_new_post"]
+      },
+      {
+        "description": "verify unique constraint (slug) on \"post\"",
+        "sql": "SELECT EXISTS (SELECT 1 FROM pragma_index_list('post') l WHERE l.\"unique\" = 1 AND (SELECT COUNT(*) FROM pragma_index_info(l.name)) = 1 AND (SELECT COUNT(*) FROM pragma_index_info(l.name) WHERE name IN ('slug')) = 1)"
+      }
+    ]
+  }
+]

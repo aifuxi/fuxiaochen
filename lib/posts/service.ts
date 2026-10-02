@@ -12,8 +12,15 @@ import { emptyPostCounts, postStatusSchema } from "./schema";
 
 export class PostError extends Error {
   constructor(
-    public code: "UNAUTHORIZED" | "NOT_FOUND" | "INVALID_INPUT" | "VERSION_CONFLICT",
+    public code:
+      | "UNAUTHORIZED"
+      | "NOT_FOUND"
+      | "INVALID_INPUT"
+      | "VERSION_CONFLICT"
+      | "SLUG_CONFLICT"
+      | "SLUG_LOCKED",
     message: string,
+    public fieldErrors?: Record<string, string[]>,
   ) {
     super(message);
   }
@@ -29,6 +36,8 @@ const summaries = (db: Database | Transaction) =>
   db.orm.Post.select(
     "id",
     "title",
+    "slug",
+    "slugLockedAt",
     "categoryId",
     "status",
     "version",
@@ -50,6 +59,7 @@ function serialize(row: SummaryRow) {
     updatedAt: post.updatedAt.toISOString(),
     publishedAt: post.publishedAt?.toISOString() ?? null,
     scheduledFor: post.scheduledFor?.toISOString() ?? null,
+    slugLockedAt: post.slugLockedAt?.toISOString() ?? null,
     tags: tagLinks
       .map(({ tag }) => ({ id: tag.id, name: tag.name }))
       .toSorted((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)),
@@ -89,6 +99,8 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     .select(
       "id",
       "title",
+      "slug",
+      "slugLockedAt",
       "categoryId",
       "status",
       "version",
@@ -142,9 +154,21 @@ async function validateRelations(input: PostInput, tx: Transaction) {
     if (!(await tx.orm.Tag.where({ id }).first()))
       throw new PostError("INVALID_INPUT", "所选标签不存在，请重新选择。");
 }
+async function validateSlug(slug: string, tx: Transaction, id?: string) {
+  const existing = await tx.orm.Post.where({ slug }).select("id").first();
+  if (existing && existing.id !== id)
+    throw new PostError("SLUG_CONFLICT", "slug 已被其他文章使用。", {
+      slug: ["请使用唯一的 slug。"],
+    });
+}
 function publication(
   input: PostInput,
-  previous?: { status: string; scheduledFor: Date | null; publishedAt: Date | null },
+  previous?: {
+    status: string;
+    scheduledFor: Date | null;
+    publishedAt: Date | null;
+    slugLockedAt: Date | null;
+  },
 ) {
   const now = new Date();
   const scheduledFor = input.scheduledFor ? new Date(input.scheduledFor) : null;
@@ -160,12 +184,8 @@ function publication(
     throw new PostError("INVALID_INPUT", "请选择未来的发布时间（北京时间）。");
   return {
     scheduledFor,
-    publishedAt:
-      input.status === "published"
-        ? previous?.status === "published"
-          ? (previous.publishedAt ?? now)
-          : now
-        : null,
+    publishedAt: previous?.publishedAt ?? (input.status === "published" ? now : null),
+    slugLockedAt: previous?.slugLockedAt ?? (input.status === "published" ? now : null),
     updatedAt: now,
   };
 }
@@ -174,6 +194,7 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorize(actor);
     await validateRelations(input, tx);
+    await validateSlug(input.slug, tx);
     const { tagIds, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
@@ -193,7 +214,12 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
         "VERSION_CONFLICT",
         "文章已被其他页面修改。当前草稿已保留，请重新载入最新内容。",
       );
+    if (previous.slugLockedAt && previous.slug !== input.slug)
+      throw new PostError("SLUG_LOCKED", "文章首次发布后不能修改 slug。", {
+        slug: ["首次发布后 slug 已锁定。"],
+      });
     await validateRelations(input, tx);
+    await validateSlug(input.slug, tx, id);
     const { tagIds, version, ...data } = input;
     if (
       !(await tx.orm.Post.where({ id, version }).updateAndCount({

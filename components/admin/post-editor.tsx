@@ -69,6 +69,7 @@ function PostEditorForm({
     postPending,
     savePost,
   } = useAdminWorkspace();
+  const [slug, setSlug] = useState(initial?.slug ?? "");
   const [title, setTitle] = useState(initial?.title ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
   const [categoryId, setCategoryId] = useState(initial?.categoryId ?? "");
@@ -107,6 +108,7 @@ function PostEditorForm({
       initial?.status === "scheduled" && scheduledTime === postLocalTime(initial.scheduledFor);
     const parsed = postSchema.safeParse({
       title,
+      slug,
       content,
       categoryId,
       tagIds,
@@ -171,8 +173,28 @@ function PostEditorForm({
           />
         </label>
         {fieldError("title")}
+        <label htmlFor="admin-post-slug">
+          文章 slug
+          <Input
+            id="admin-post-slug"
+            value={slug}
+            maxLength={120}
+            readOnly={Boolean(initial?.slugLockedAt)}
+            disabled={postPending}
+            onChange={(event) => setSlug(event.target.value)}
+            aria-invalid={Boolean(fieldErrors.slug)}
+            aria-describedby="post-slug-help post-error-slug"
+          />
+        </label>
+        <p id="post-slug-help">
+          链接：/posts/{slug || "your-article-slug"}。
+          {initial?.slugLockedAt
+            ? "首次发布后已锁定。"
+            : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
+        </p>
+        {fieldError("slug")}
         <label htmlFor="admin-post-body">
-          正文内容
+          正文内容（Markdown）
           <Textarea
             id="admin-post-body"
             value={content}
@@ -183,6 +205,7 @@ function PostEditorForm({
             aria-describedby={fieldErrors.content ? "post-error-content" : undefined}
           />
         </label>
+        <p>支持 Markdown 标题、列表、链接、代码块和表格；原始 HTML 按文本显示。</p>
         {fieldError("content")}
         <label htmlFor="admin-post-category">分类</label>
         <Select
@@ -276,7 +299,7 @@ function PostEditorForm({
         </fieldset>
         {status === "scheduled" && (
           <label htmlFor="admin-post-publish-date">
-            计划发布时间（北京时间，暂未启用自动发布）
+            计划发布时间（北京时间，到期后需手动发布）
             <Input
               id="admin-post-publish-date"
               type="datetime-local"

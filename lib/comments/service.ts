@@ -38,14 +38,22 @@ const items = (db: Database | Transaction) =>
   );
 type Row = NonNullable<Awaited<ReturnType<ReturnType<typeof items>["first"]>>>;
 function serialize(row: Row) {
-  const { post, parent, adminId, ...comment } = row;
+  const {
+    post,
+    parent,
+    adminId: _adminId,
+    authorKind,
+    submissionId: _submissionId,
+    submissionHash: _submissionHash,
+    ...comment
+  } = row;
   if (!post) throw new Error("评论的文章关联缺失");
   return {
     ...comment,
     postTitle: post.title,
     parent: parent ? { ...parent, status: commentStatusSchema.parse(parent.status) } : null,
     // 回复身份来自服务端关系；管理员被移除后仍保留历史身份。
-    isAdmin: adminId !== null || comment.parentId !== null,
+    isAdmin: authorKind === "admin",
     status: commentStatusSchema.parse(comment.status),
     createdAt: comment.createdAt.toISOString(),
     updatedAt: comment.updatedAt.toISOString(),
@@ -162,6 +170,9 @@ export async function createComment(input: CommentInput, actor: TaxonomyActor) {
       id,
       parentId: null,
       adminId: null,
+      authorKind: "reader",
+      submissionId: null,
+      submissionHash: null,
       status: "pending",
       createdAt: now,
       updatedAt: now,
@@ -231,6 +242,9 @@ export async function replyComment(id: string, input: ReplyCommentInput, actor: 
       postId: parent.postId,
       parentId: id,
       adminId: admin.adminId,
+      authorKind: "admin",
+      submissionId: null,
+      submissionHash: null,
       author: admin.username,
       email: null,
       content: input.content,

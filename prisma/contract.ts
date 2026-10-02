@@ -64,6 +64,8 @@ export const contract = defineContract({}, ({ field, model }) => {
     fields: {
       id: field.column(textColumn).id(),
       title: field.column(textColumn),
+      slug: field.column(textColumn).unique(),
+      slugLockedAt: field.column(datetimeColumn).optional(),
       content: field.column(textColumn),
       categoryId: field.column(textColumn),
       status: field.column(textColumn),
@@ -85,6 +87,7 @@ export const contract = defineContract({}, ({ field, model }) => {
         constraints.index([cols.createdAt, cols.id]),
         constraints.index([cols.categoryId]),
         constraints.index([cols.status, cols.scheduledFor]),
+        constraints.index([cols.status, cols.publishedAt, cols.id]),
       ],
       foreignKeys: [
         constraints.foreignKey(cols.categoryId, Category.refs.id, { onDelete: "restrict" }),
@@ -159,6 +162,9 @@ export const contract = defineContract({}, ({ field, model }) => {
       parentId: field.column(textColumn).optional(),
       adminId: field.column(integerColumn).optional(),
       author: field.column(textColumn),
+      authorKind: field.column(textColumn),
+      submissionId: field.column(textColumn).optional().unique(),
+      submissionHash: field.column(textColumn).optional(),
       email: field.column(textColumn).optional(),
       content: field.column(textColumn),
       status: field.column(textColumn),
@@ -191,6 +197,18 @@ export const contract = defineContract({}, ({ field, model }) => {
       ),
       constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "setNull" }),
     ],
+  }));
+
+  const CommentRateLimit = model("CommentRateLimit", {
+    fields: {
+      id: field.column(textColumn).id(),
+      window: field.column(integerColumn),
+      count: field.column(integerColumn),
+      expiresAt: field.column(datetimeColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "comment_rate_limit",
+    indexes: [constraints.index([cols.expiresAt])],
   }));
 
   const SiteSetting = model("SiteSetting", {
@@ -283,6 +301,7 @@ export const contract = defineContract({}, ({ field, model }) => {
       Media,
       MediaUploadLimit,
       Comment,
+      CommentRateLimit,
       SiteSetting,
       SocialAccount,
       FriendLink,

@@ -118,10 +118,13 @@ postRoutes.onError((error, c) => {
         ? 401
         : error.code === "NOT_FOUND"
           ? 404
-          : error.code === "VERSION_CONFLICT"
+          : ["VERSION_CONFLICT", "SLUG_CONFLICT", "SLUG_LOCKED"].includes(error.code)
             ? 409
             : 400;
-    return c.json({ error: { code: error.code, message: error.message } }, status);
+    return c.json(
+      { error: { code: error.code, message: error.message, fieldErrors: error.fieldErrors } },
+      status,
+    );
   }
   if (error instanceof HTTPException && error.status === 400)
     return c.json({ error: { code: "INVALID_INPUT", message: "请求 JSON 格式无效。" } }, 400);

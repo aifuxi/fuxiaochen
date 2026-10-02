@@ -82,6 +82,8 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
   await connection();
   const settings = await writeTransaction(read);
   const {
+    postsPerPage,
+    enableComments,
     title,
     subtitle,
     authorName,
@@ -98,6 +100,8 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
     baiduId,
   } = settings;
   return {
+    postsPerPage,
+    enableComments,
     title,
     subtitle,
     authorName,

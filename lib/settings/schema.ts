@@ -94,6 +94,8 @@ export type SettingsInput = z.infer<typeof settingsSchema>;
 export type SiteSettings = SettingsInput & { updatedAt: string };
 export type PublicSettings = Pick<
   SiteSettings,
+  | "postsPerPage"
+  | "enableComments"
   | "title"
   | "subtitle"
   | "authorName"
