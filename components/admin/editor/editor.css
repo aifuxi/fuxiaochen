@@ -6,9 +6,12 @@
   border: 0;
   min-width: 0;
 }
-.admin-compose-modal {
-  max-width: 1120px;
-  max-height: 92dvh;
+.admin-post-editor-page {
+  display: grid;
+  gap: 24px;
+}
+.admin-post-editor-page .admin-form-actions > .ds-button {
+  min-height: 44px;
 }
 .post-editor-layout {
   display: grid;
@@ -430,6 +433,17 @@
   }
   .post-media-picker-tools {
     flex-direction: column;
+  }
+}
+@media (max-width: 600px) {
+  .admin-post-editor-page {
+    gap: 20px;
+  }
+  .admin-post-editor-page .admin-form-actions {
+    flex-wrap: wrap;
+  }
+  .admin-post-editor-page .admin-form-actions > [type="submit"] {
+    width: 100%;
   }
 }
 @media (prefers-reduced-motion: reduce) {

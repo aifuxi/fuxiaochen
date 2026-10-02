@@ -111,7 +111,9 @@ export function AdminShell({
         <nav className="admin-nav" aria-label="管理导航">
           {nav.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href;
+            const active =
+              pathname === item.href ||
+              (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
             const content = (
               <>
                 <Icon size={18} strokeWidth={1.8} aria-hidden="true" />

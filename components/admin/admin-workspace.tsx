@@ -18,7 +18,6 @@ import { AdminShell, type AdminPanel } from "./admin-shell";
 import { MediaUploadStatus } from "./media-upload-status";
 import { initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
-import { PostEditor } from "./post-editor";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { commentRequest, useComments } from "./use-comments";
 import { useMediaUploads } from "./use-media";
@@ -26,9 +25,10 @@ import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-const panelTitles: Record<AdminPanel, string> = {
+type DialogPanel = Exclude<AdminPanel, "compose">;
+
+const panelTitles: Record<DialogPanel, string> = {
   search: "全局内容检索",
-  compose: "文章编辑",
   profile: "管理账户",
   comments: "评论管理",
   upload: "上传媒体",
@@ -47,7 +47,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const taxonomy = useTaxonomy();
   const taxonomyDisabled =
     taxonomy.taxonomyLoading || Boolean(taxonomy.taxonomyError) || taxonomy.taxonomyPending;
-  const [panel, setPanel] = useState<AdminPanel | null>(null);
+  const [panel, setPanel] = useState<DialogPanel | null>(null);
   const [commentDeleteTarget, setCommentDeleteTarget] = useState<CommentItem | null>(null);
   const [commentDeleteError, setCommentDeleteError] = useState("");
   const [commentDeleteConflict, setCommentDeleteConflict] = useState(false);
@@ -59,7 +59,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState("");
   const commentState = useComments(postRevision, setMessage);
   const commentDeleteBusy = commentState.commentPending || commentDeleteReloading;
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [postDeleteTarget, setPostDeleteTarget] = useState<PostItem | null>(null);
   const [postDeleteError, setPostDeleteError] = useState("");
   const [postDeleteConflict, setPostDeleteConflict] = useState(false);
@@ -86,7 +85,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         return;
       }
       if (postMutation.current) return;
-      if (name === "compose") setEditingId(null);
+      if (name === "compose") {
+        setPanel(null);
+        router.push("/admin/posts/new");
+        return;
+      }
       setPanel(name);
     },
     [router],
@@ -94,8 +97,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
 
   const openEditor = (id: string) => {
     if (postMutation.current) return;
-    setEditingId(id);
-    setPanel("compose");
+    setPanel(null);
+    router.push(`/admin/posts/${encodeURIComponent(id)}/edit`);
   };
   const mutatePost = async <T,>(work: () => Promise<T>, success: string) => {
     if (postMutation.current) throw new Error("请等待当前文章操作完成。");
@@ -221,16 +224,14 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open && !postMutation.current) setPanel(null);
         }}
       >
-        <DialogContent
-          className={`admin-modal${panel === "compose" ? " admin-compose-modal" : ""}`}
-        >
+        <DialogContent className="admin-modal">
           {panel && (
             <>
               <div className="admin-modal-heading">
                 <div>
                   <DialogTitle>{panelTitles[panel]}</DialogTitle>
                   <DialogDescription>
-                    {["categories", "compose", "search", "schedule"].includes(panel)
+                    {["categories", "search", "schedule"].includes(panel)
                       ? "文章、分类与标签已持久化；暂未启用自动发布。"
                       : panel === "upload"
                         ? "文件上传并通过核验后保存到媒体库。"
@@ -250,13 +251,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                 </Button>
               </div>
               {panel === "search" && <PostBrowser mode="search" />}
-              {panel === "compose" && (
-                <PostEditor
-                  key={editingId ?? "new"}
-                  id={editingId}
-                  onClose={() => setPanel(null)}
-                />
-              )}
               {panel === "profile" && (
                 <div className="admin-modal-section">
                   <p>fuxiaochen · 管理账户</p>
