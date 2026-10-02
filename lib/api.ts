@@ -14,6 +14,7 @@ import {
   SESSION_COOKIE,
   SESSION_MAX_AGE,
 } from "./auth/service";
+import { mediaRoutes } from "./media/routes";
 import { postRoutes } from "./posts/routes";
 import { taxonomyRoutes } from "./taxonomy/routes";
 
@@ -64,6 +65,7 @@ api.use("*", (c, next) => {
   return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
 });
 api.route("/admin/posts", postRoutes);
+api.route("/admin/media", mediaRoutes);
 
 api.route("/admin", taxonomyRoutes);
 

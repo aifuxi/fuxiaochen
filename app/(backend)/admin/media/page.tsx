@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "媒体库 · fuxiaochen",
-  description: "使用演示数据管理图片素材、预览本地图片与复制素材链接。",
+  description: "管理持久化图片与附件、预览图片并复制永久媒体链接。",
 };
 
 export default async function MediaPage() {

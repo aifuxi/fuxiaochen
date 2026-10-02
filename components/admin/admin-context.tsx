@@ -7,8 +7,9 @@ import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/s
 import type { AdminPanel } from "./admin-shell";
 import type { ReleaseLog } from "./changelog-mock-data";
 import type { FriendLink } from "./friends-links-mock-data";
-import type { Comment, MediaItem } from "./mock-data";
+import type { Comment } from "./mock-data";
 import type { BlogSettings } from "./settings-mock-data";
+import type { UploadJob } from "./use-media";
 import type { TaxonomyState } from "./use-taxonomy";
 
 type AdminState = TaxonomyState & {
@@ -18,9 +19,12 @@ type AdminState = TaxonomyState & {
   setReleaseLogs: Dispatch<SetStateAction<ReleaseLog[]>>;
   friendsLinks: FriendLink[];
   setFriendsLinks: Dispatch<SetStateAction<FriendLink[]>>;
-  media: MediaItem[];
+  mediaRevision: number;
+  mediaUploads: UploadJob[];
+  retryMediaUpload: (id: string) => Promise<void>;
+  clearMediaUploads: () => void;
   onUploadMedia: (files: File[]) => Promise<void>;
-  onDeleteMedia: (id: string) => void;
+  onDeleteMedia: (id: string) => Promise<void>;
   onMessage: (message: string) => void;
   uploadingMedia: boolean;
   postRevision: number;

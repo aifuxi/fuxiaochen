@@ -25,6 +25,94 @@
   color: var(--color-focus);
   font-family: var(--font-mono);
 }
+.admin-media-kind {
+  width: 148px;
+}
+.admin-media-attachment,
+.admin-media-image-fallback {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--color-muted);
+  padding: 16px;
+  font-size: 13px;
+  text-align: center;
+}
+.admin-media-download {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  height: 36px;
+  border-radius: 999px;
+  background: var(--color-raised);
+  color: var(--color-foreground);
+  font-size: 13px;
+  text-decoration: none;
+}
+.admin-media-download:hover {
+  background: var(--color-input-hover);
+}
+.admin-media-download:active {
+  background: var(--color-input);
+}
+.admin-media-download:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.admin-media-error {
+  color: var(--color-danger);
+  overflow-wrap: anywhere;
+}
+.admin-media-upload-status {
+  border: 1px solid var(--color-outline);
+  border-radius: 14px;
+  padding: 16px;
+  background: var(--color-surface);
+}
+.admin-media-upload-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-media-upload-heading strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.admin-media-upload-status ul {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+.admin-media-upload-status li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 0;
+  font-size: 12px;
+  color: var(--color-muted);
+  border-top: 1px solid var(--color-outline);
+}
+.admin-media-upload-name {
+  flex: 1;
+  min-width: 120px;
+  overflow-wrap: anywhere;
+  color: var(--color-foreground);
+}
+.admin-media-upload-status progress {
+  width: 100%;
+  height: 8px;
+  accent-color: var(--color-primary);
+}
+.admin-media-upload-status .admin-media-error {
+  width: 100%;
+}
 .admin-media-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -171,6 +259,9 @@
   .admin-media-search {
     width: 100%;
   }
+  .admin-media-kind {
+    width: 100%;
+  }
   .admin-media-preview-meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -179,6 +270,9 @@
   }
 }
 @media (max-width: 600px), (pointer: coarse) {
+  .admin-media-download {
+    height: 44px;
+  }
   .admin-media-delete {
     width: 44px;
   }

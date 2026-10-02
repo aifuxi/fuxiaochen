@@ -109,5 +109,59 @@ export const contract = defineContract({}, ({ field, model }) => {
       ],
     }));
 
-  return { models: { Admin, Session, LoginRateLimit, Category, Tag, Post, PostTag } };
+  const Media = model("Media", {
+    fields: {
+      id: field.column(textColumn).id(),
+      adminId: field.column(integerColumn),
+      name: field.column(textColumn),
+      kind: field.column(textColumn),
+      expectedBytes: field.column(integerColumn),
+      sha256: field.column(textColumn),
+      stagingKey: field.column(textColumn).unique(),
+      stagingCleanedAt: field.column(datetimeColumn).optional(),
+      objectKey: field.column(textColumn).unique(),
+      bytes: field.column(integerColumn).optional(),
+      mime: field.column(textColumn).optional(),
+      width: field.column(integerColumn).optional(),
+      height: field.column(integerColumn).optional(),
+      status: field.column(textColumn),
+      leaseToken: field.column(textColumn).optional(),
+      leaseUntil: field.column(datetimeColumn).optional(),
+      createdAt: field.column(datetimeColumn),
+      uploadedAt: field.column(datetimeColumn).optional(),
+      expiresAt: field.column(datetimeColumn),
+      deletedAt: field.column(datetimeColumn).optional(),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "media",
+    indexes: [
+      constraints.index([cols.status, cols.expiresAt]),
+      constraints.index([cols.createdAt, cols.id]),
+    ],
+    foreignKeys: [constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "restrict" })],
+  }));
+  const MediaUploadLimit = model("MediaUploadLimit", {
+    fields: {
+      adminId: field.column(integerColumn).id(),
+      window: field.column(integerColumn),
+      count: field.column(integerColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "media_upload_limit",
+    foreignKeys: [constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "cascade" })],
+  }));
+
+  return {
+    models: {
+      Admin,
+      Session,
+      LoginRateLimit,
+      Category,
+      Tag,
+      Post,
+      PostTag,
+      Media,
+      MediaUploadLimit,
+    },
+  };
 });

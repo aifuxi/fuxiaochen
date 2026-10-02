@@ -15,18 +15,13 @@ import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { initialReleaseLogs } from "./changelog-mock-data";
 import { initialFriendsLinks } from "./friends-links-mock-data";
-import {
-  initialMedia,
-  type MediaItem,
-  initialComments,
-  initialNotices,
-  initialSources,
-  traffic30Days,
-} from "./mock-data";
+import { MediaUploadStatus } from "./media-upload-status";
+import { initialComments, initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
 import { PostEditor } from "./post-editor";
 import { initialSettings } from "./settings-mock-data";
 import { TaxonomyStatus } from "./taxonomy-status";
+import { useMediaUploads } from "./use-media";
 import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
@@ -37,15 +32,11 @@ const panelTitles: Record<AdminPanel, string> = {
   notifications: "系统通知",
   profile: "管理账户",
   comments: "评论管理",
-  upload: "模拟上传媒体",
+  upload: "上传媒体",
   categories: "分类与标签",
   analytics: "流量详细分析",
   schedule: "定时发布计划",
 };
-
-function mediaUploadTime() {
-  return new Date().toLocaleString("sv-SE", { timeZone: "Asia/Shanghai" }).slice(0, 16);
-}
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
@@ -72,84 +63,14 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postDeleteTarget, setPostDeleteTarget] = useState<PostItem | null>(null);
   const [postDeleteError, setPostDeleteError] = useState("");
   const [postDeleteConflict, setPostDeleteConflict] = useState(false);
-  const [media, setMedia] = useState(initialMedia);
-  const [uploadingMedia, setUploadingMedia] = useState(false);
-  const objectUrls = useRef(new Set<string>());
-  const uploadPending = useRef(false);
+  const mediaState = useMediaUploads(setMessage);
   const mounted = useRef(true);
-
   useEffect(() => {
     mounted.current = true;
-    const urls = objectUrls.current;
     return () => {
       mounted.current = false;
-      urls.forEach((url) => URL.revokeObjectURL(url));
-      urls.clear();
     };
   }, []);
-
-  const uploadMedia = async (files: File[]) => {
-    if (!files.length || uploadPending.current) return;
-    uploadPending.current = true;
-    setUploadingMedia(true);
-    const added: MediaItem[] = [];
-    const failed: string[] = [];
-    for (const file of files) {
-      if (!mounted.current) break;
-      if (!file.type.startsWith("image/")) {
-        failed.push(file.name);
-        continue;
-      }
-      const url = URL.createObjectURL(file);
-      objectUrls.current.add(url);
-      try {
-        const image = new window.Image();
-        image.src = url;
-        await image.decode();
-        if (!mounted.current) break;
-        added.push({
-          id: crypto.randomUUID(),
-          name: file.name,
-          url,
-          size:
-            file.size < 1024 * 1024
-              ? `${(file.size / 1024).toFixed(1)} KB`
-              : `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-          dimension: `${image.naturalWidth}×${image.naturalHeight}`,
-          time: mediaUploadTime(),
-          type: file.type,
-          temporary: true,
-        });
-      } catch {
-        URL.revokeObjectURL(url);
-        objectUrls.current.delete(url);
-        failed.push(file.name);
-      }
-    }
-    uploadPending.current = false;
-    if (!mounted.current) return;
-    setUploadingMedia(false);
-    if (added.length) setMedia((current) => [...added, ...current]);
-    setMessage(
-      [
-        added.length ? `已添加 ${added.length} 张本地图片（模拟，未上传服务器）` : "",
-        failed.length ? `无法读取图片：${failed.join("、")}` : "",
-      ]
-        .filter(Boolean)
-        .join("；"),
-    );
-  };
-
-  const deleteMedia = (id: string) => {
-    const item = media.find((candidate) => candidate.id === id);
-    if (!item) return;
-    if (item.temporary) {
-      URL.revokeObjectURL(item.url);
-      objectUrls.current.delete(item.url);
-    }
-    setMedia((current) => current.filter((candidate) => candidate.id !== id));
-    setMessage("素材已移除（模拟，刷新后恢复初始数据）");
-  };
   const [newCategory, setNewCategory] = useState("");
 
   useEffect(() => {
@@ -281,11 +202,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         setReleaseLogs,
         friendsLinks,
         setFriendsLinks,
-        media,
-        onUploadMedia: uploadMedia,
-        onDeleteMedia: deleteMedia,
+        ...mediaState,
         onMessage: setMessage,
-        uploadingMedia,
         postRevision,
         postPending,
         postSummary: summary.data,
@@ -414,26 +332,23 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               )}
               {panel === "upload" && (
                 <div className="admin-modal-section">
-                  <label htmlFor="admin-upload">选择本地图片</label>
+                  <label htmlFor="admin-upload">选择图片或附件</label>
                   <input
                     id="admin-upload"
                     className="admin-file-input"
                     type="file"
-                    accept="image/*"
                     multiple
-                    disabled={uploadingMedia}
+                    disabled={mediaState.uploadingMedia}
                     onChange={(event) => {
                       const selected = Array.from(event.target.files ?? []);
                       event.target.value = "";
-                      void uploadMedia(selected);
+                      void mediaState.onUploadMedia(selected);
                     }}
                   />
                   <p className="admin-muted">
-                    仅在当前会话预览，不会上传到服务器。刷新后恢复初始素材。
+                    图片最多 10 MiB，附件最多 50 MiB。文件上传并通过核验后可复制永久链接。
                   </p>
-                  <output>
-                    {uploadingMedia ? "正在读取图片…" : `当前媒体库共 ${media.length} 份素材`}
-                  </output>
+                  <MediaUploadStatus />
                   <Button
                     onClick={() => {
                       setPanel(null);

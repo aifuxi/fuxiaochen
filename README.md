@@ -17,7 +17,7 @@
 
 ## 管理员登录
 
-后台登录使用 Hono + Zod，管理员和会话保存在 Prisma 8 SQLite 数据库中。文章、分类与标签已接入数据库，评论、媒体及其他后台业务仍使用演示数据。
+后台登录使用 Hono + Zod，管理员和会话保存在 Prisma 8 SQLite 数据库中。文章、分类与标签已接入数据库，媒体库通过 OSS 持久化文件与数据库元数据；评论及其他后台业务仍使用演示数据。
 
 ### 本地初始化
 
@@ -138,3 +138,121 @@ npm run build
 - 两个浏览器页面编辑同一文章，旧版本保存保留草稿；旧版本删除要求重新确认，失败不修改关联。
 - 未登录、会话撤销、错误 Origin、无效 ID、空白正文、不存在的关联、非法 JSON、错误 Content-Type、请求体超限及服务失败，检查错误反馈与重试。
 - 保存成功后列表刷新失败，检查写入成功反馈与独立查询错误；检查加载、空数据、重复提交、键盘焦点和减少动态效果。
+
+## 媒体资产库 API（第三阶段）
+
+媒体库与全局上传入口改为浏览器预签名直传阿里云 OSS，SQLite 保存上传者、原始文件名、字节数、SHA-256、图片宽高、对象 key 和处理状态。不自动上传或导入 `public/media` 的演示素材，不改变文章正文与其他后台业务。
+
+依赖锁定 AWS S3 SDK / presigner `3.1145.0`、`@alicloud/credentials` `2.4.7` 和 `sharp` `0.35.5`。Prisma 继续使用 CLI `8.0.0-rc.19`、SQLite `8.0.0-rc.14`（RC / experimental），通过 contract 和增量迁移新增 `media`、`media_upload_limit`，保留原有数据。升级时执行 `npm run db:migrate`，重启已有开发进程，使数据库单例使用最新 contract。
+
+### OSS 连接与凭证
+
+将 `.env.example` 的 OSS 字段补充到已有 `.env`，不要覆盖数据库及应用配置。配置只在服务端读取，不使用 `NEXT_PUBLIC_`，不要将凭证提交到仓库。
+
+| 配置                                                              | 含义                                                                                               |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `OSS_BUCKET` / `OSS_REGION`                                       | 真实桶名与对应地域，如 `cn-hangzhou`                                                               |
+| `OSS_SERVER_ENDPOINT` / `OSS_SERVER_ENDPOINT_MODE`                | 服务端下载、复制、删除 endpoint；`service` 用标准 S3 服务域名，`bucket` 用绑定到该桶的 HTTPS CNAME |
+| `OSS_UPLOAD_ENDPOINT` / `OSS_UPLOAD_ENDPOINT_MODE`                | 浏览器能访问的签名 endpoint；两种 mode 与上项相同，不能填内网地址                                  |
+| `OSS_PUBLIC_ORIGIN`                                               | 公开文件的 HTTPS 媒体域名，不含路径；hostname 必须与应用不同                                       |
+| `OSS_CREDENTIAL_MODE`                                             | 本地 `environment`；ECS 部署推荐 `ecs_ram_role`                                                    |
+| `OSS_RAM_ROLE_NAME`                                               | ECS 实例绑定角色名称；空值由 provider 查询，禁用 IMDSv1                                            |
+| `ALIBABA_CLOUD_ACCESS_KEY_ID` / `ALIBABA_CLOUD_ACCESS_KEY_SECRET` | 本地最小权限 RAM 凭证，仅 environment 模式读取                                                     |
+| `ALIBABA_CLOUD_SECURITY_TOKEN`                                    | 可选的本地 STS token；不是自动刷新的 provider，过期后更新环境并重启                                |
+
+标准 S3 服务 endpoint 使用 `https://s3.oss-{region}.aliyuncs.com`，同 VPC 的服务端可使用 `https://s3.oss-{region}-internal.aliyuncs.com`。使用 virtual-hosted style，不启用 path-style。已绑定桶的 CNAME 必须选择 `bucket` 模式，适配层将完整 endpoint 作为 SDK v3 的 Bucket 寻址输入，CopySource 仍使用真实桶名；不改写签名后的 URL。服务端与浏览器 endpoint 可以不同，地域及 Bucket 必须一致。
+
+根据 [阿里云 AWS SDK 接入文档](https://www.alibabacloud.com/help/zh/oss/developer-reference/use-aws-sdks-to-access-oss)，自 2025-03-20 起新开通 OSS 服务的用户在中国内地地域需通过自定义域名访问数据 API。为上传与公开访问域名配置 OSS CNAME 和有效 HTTPS 证书；不能假设默认公网域名可上传下载。遇到 `0002-00000033` 时按 [S3 兼容鉴权错误说明](https://help.aliyun.com/en/oss/user-guide/0002-00000033) 联系支持确认兼容模式。尚未配置时上传返回 503 `STORAGE_NOT_CONFIGURED`，空库仍可查询。
+
+ECS provider 自行刷新 STS；适配层定期重新取凭证，避免 AWS SDK 缓存为永久凭证。S3 SDK 的 request / response checksum 模式为 `WHEN_REQUIRED`，避免不兼容的默认 CRC / aws-chunked 请求；应用仍逐字节计算 SHA-256，校验真实内容，兼容性回退 PUT 额外发送 Content-MD5。不能将 ETag 当作 SHA-256 或通用内容校验和。参见 [AWS checksum 配置](https://docs.aws.amazon.com/sdkref/latest/guide/feature-dataintegrity.html)。
+
+### 权限、跨域与生命周期模板
+
+Bucket ACL 保持 private；正式 key 为 `media/<随机 UUID>`，临时 key 为 `staging/<随机 UUID>`。以下模板的账号和桶名须替换为实际值，Bucket Policy 不使用 AWS 的 ARN 或 Action 名称。
+
+服务端 RAM 角色或用户仅需对象读写与删除，不需要建桶、修改 ACL、匿名写入或列举权限：
+
+```json
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["oss:GetObject", "oss:PutObject", "oss:DeleteObject"],
+      "Resource": ["acs:oss:*:<账号ID>:<Bucket>/staging/*", "acs:oss:*:<账号ID>:<Bucket>/media/*"]
+    }
+  ]
+}
+```
+
+Bucket Policy 仅允许匿名读取正式前缀（包含公开图片与所有正式附件）；其余对象按私有 ACL 与 RAM 权限控制：
+
+```json
+{
+  "Version": "1",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": ["*"],
+      "Action": ["oss:GetObject"],
+      "Resource": ["acs:oss:*:<账号ID>:<Bucket>/media/*"],
+      "Condition": { "Bool": { "acs:SecureTransport": "true" } }
+    }
+  ]
+}
+```
+
+核对桶及账号的阻止公共访问配置，使此限定前缀的策略能够生效；不要改为整桶 public-read。确认匿名请求不能读取 `staging/`、列举对象或上传文件。参见 [Bucket Policy](https://help.aliyun.com/zh/oss/user-guide/oss-bucket-policy/) 与 [S3 兼容范围](https://help.aliyun.com/zh/oss/developer-reference/compatibility-with-amazon-s3)。
+
+OSS 控制台 CORS 设置：AllowedOrigin 为应用实际 `APP_ORIGIN`（本地可另加 `http://localhost:3000`），AllowedMethod 为 PUT，AllowedHeader 为 `Content-Type`，ExposeHeader 可留空，MaxAgeSeconds 为 300；不要使用通配 Origin。浏览器不携带 Cookie 或直接接收访问凭证。对象读取若不需要跨域脚本访问，无需额外开放 GET CORS。
+
+上传 URL 绑定 `Content-Type: application/octet-stream` 和精确字节数。浏览器自动设置已签名的 Content-Length，不手动添加该禁止写入的请求头；对象元数据、尺寸及摘要仍需服务端复核。正式图片按真实格式返回 MIME / inline；其他附件统一返回 `application/octet-stream` / attachment，并使用 RFC 5987 编码下载文件名，SVG、HTML、脚本和可执行文件不内嵌打开、不解压或执行。本阶段没有病毒扫描。
+
+在 OSS 控制台为 `staging/` 配置 1 天过期删除规则；不要对 `media/` 配置过期删除。本阶段不实现分片上传，不需要应用侧分片清理。应用清理 CLI 作为部署任务每 15 分钟运行：
+
+```sh
+npm run media:cleanup -- --dry-run
+npm run media:cleanup
+```
+
+单实例部署的 cron 示例（替换项目路径与 PATH，Node.js >=24）：
+
+```cron
+*/15 * * * * cd /srv/fuxiaochen && /usr/bin/npm run media:cleanup >> /var/log/fuxiaochen-media-cleanup.log 2>&1
+```
+
+CLI 读取与应用相同的 `.env`、数据库路径及凭证，正常退出释放数据库和 SDK 资源，失败返回非零退出码。`--dry-run` 只统计待处理记录，不请求 OSS 或修改记录。清理过期 pending、租约到期 finalizing、未完成删除及墓碑；ready 记录只回收临时对象，不删除正式文件。墓碑保留至少一天并重复回收残留，兜底处理签名重放和中断操作；临时目录生命周期继续处理迟到的临时对象。
+
+### 接口与状态规则
+
+| 接口                                         | 输入与响应                                                                            |
+| -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `GET /api/admin/media`                       | `q/kind/page/pageSize`；返回 `{ data: { items, total, page, pageSize, pageCount } }`  |
+| `POST /api/admin/media/uploads`              | `{ name, kind, bytes, sha256 }`；201 返回 `{ data: { id, url, headers, expiresAt } }` |
+| `POST /api/admin/media/uploads/:id/complete` | 空 JSON 对象 `{}`；返回已保存记录，重复完成返回同一记录                               |
+| `DELETE /api/admin/media/:id`                | 返回 `{ data: { id } }`，墓碑保留期内重复删除成功                                     |
+
+kind 为 `image/attachment`。q 去除首尾空白、最多 200 字符，SQLite 字面包含搜索（ASCII 忽略大小写），`%`、`_` 没有通配含义。默认每页 12 条，最大 100；超范围页码回退最后一页；按创建时间、ID 降序。列表包含 ready 及已发布文件的 deleting 记录，返回真实字节数、MIME、宽高与 ISO 时间，deleting 记录 url 为 null，禁止复制和预览。
+
+仅 JPEG、PNG、WebP、AVIF、GIF 可按图片处理，最大 10 MiB，所有帧合计最大 4000 万像素；其他文件没有扩展名限制，最大 50 MiB，零字节与非法文件名拒绝。图片真实格式、解码、宽高来自 sharp，不信任客户端 MIME 或尺寸。上传者可将任意文件作为附件，但附件始终强制下载。
+
+签名有效期 5 分钟，允许已开始的 PUT 结束后完成核验，上传记录完成窗口为 30 分钟；每管理员固定窗口每分钟最多 20 次签发，未完成记录最多 20 个，超限返回 429 和 Retry-After。失败签发标记为待回收墓碑，不占未完成额度。
+
+流程为 pending → finalizing → ready → deleting → deleted。finalizing / deleting 使用随机处理租约，最长 10 分钟，核验与发布总时限 2 分钟；网络请求不放在 SQLite 写事务内。完成前及写事务内重新核对会话。校验失败或超时不返回永久 URL；按已验证 ETag 条件复制，条件复制明确不支持时仅从已核验临时文件 PUT，不退回无条件复制。正式目录不给浏览器写入 URL，因此临时签名重放不会覆盖正式文件。DB 失败补偿删除正式对象，补偿失败保留租约供清理恢复。删除失败保留 deleting 并可重试，OSS 文件与数据库状态均成功更新后才提示已删除。
+
+所有接口要求管理员会话，写请求校验 Origin，JSON 上限 16 KiB，不缓存业务响应。错误沿用 `{ error: { code, message } }`，包括 400 `INVALID_INPUT/UPLOAD_EXPIRED`、401 `UNAUTHORIZED`、403 `FORBIDDEN_ORIGIN`、404 `NOT_FOUND`、409 `PROCESSING`、413 `PAYLOAD_TOO_LARGE`、415 `UNSUPPORTED_MEDIA_TYPE`、429 `RATE_LIMITED`、503 `STORAGE_NOT_CONFIGURED/STORAGE_UNAVAILABLE/SERVICE_UNAVAILABLE`。日志不记录 URL 签名、凭证、Cookie 或原始 SDK 异常内容。
+
+前端最多并行处理 2 个文件，显示准备、上传进度、服务端核验、成功及逐项失败。已上传但完成失败时优先重试完成，不重复上传；过期或失效记录重新申请。批量部分失败不抹掉成功结果，站内切换保留上传状态。写成功后独立刷新查询，查询失败单独重试，不将已成功保存报成失败。删除是永久操作，引用该 URL 的文章或外部页面会出现失效链接；纯文本正文不提供可靠媒体引用追踪。
+
+### 人工验收场景（待执行）
+
+以下为验收清单，不代表已完成真实 OSS 联调；不新增或运行测试。
+
+- 配置真实 OSS 后上传常用位图及附件，刷新或重新登录后读取，检查永久 HTTPS 链接、字节数、宽高和北京时间。
+- SVG、HTML、脚本、EXE 与任意未知扩展名均按附件强制下载；损坏图片、摘要不匹配、零字节、大小及总像素超限被拒绝。
+- 标准服务 endpoint 和 Bucket CNAME 分别验证，检查签名 host、精确长度、Content-Type、CORS 与角色凭证刷新；确认账号的 S3 兼容鉴权能力。
+- 检查错误 Origin、会话撤销、错误 Content-Type、非法 JSON、请求体超限、限流与 20 个未完成上传限制。
+- 并发完成同一上传、响应丢失后重试、签名过期、重放临时上传；ready 记录不重复创建，正式对象不被浏览器覆写。
+- 超过 12 个文件后跨页搜索筛选，关键词含 `%`、`_`，删除末页最后一项后回退有效页；旧查询不覆盖新结果。
+- OSS / DB / 网络失败时检查补偿、deleting 重试、租约恢复与幂等清理；检查 dry-run 不写入，ready 清理不删除正式文件。
+- 检查批量部分成功、两个上传并行、站内切换、上传成功后查询刷新失败、复制权限失败、删除弹窗禁用与焦点返回、390px 布局和减少动态效果。

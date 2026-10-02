@@ -23,9 +23,13 @@
     "db:verify": "prisma db verify",
     "typecheck": "tsc --noEmit",
     "admin:init": "node --conditions=react-server --import tsx scripts/admin.ts init",
-    "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password"
+    "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
+    "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts"
   },
   "dependencies": {
+    "@alicloud/credentials": "2.4.7",
+    "@aws-sdk/client-s3": "3.1145.0",
+    "@aws-sdk/s3-request-presigner": "3.1145.0",
     "@base-ui/react": "^1.8.0",
     "@hono/vercel": "1.0.0",
     "@hono/zod-validator": "0.9.1",
@@ -40,6 +44,7 @@
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "0.0.1",
+    "sharp": "0.35.5",
     "tailwind-merge": "^3.7.0",
     "thinking-orbs": "^0.3.2",
     "zod": "4.6.5"
