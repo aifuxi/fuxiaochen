@@ -9,9 +9,14 @@ export function AdminOverview() {
     postSummaryLoading,
     postSummaryError,
     reloadPostSummary,
-    comments,
+    commentSummary,
+    commentSummaryLoading,
+    commentSummaryError,
+    reloadCommentSummary,
+    commentPending,
+    moderateComment,
+    onMessage,
     onOpen,
-    onApprove,
     onDeleteComment,
     onBackup,
   } = useAdminWorkspace();
@@ -21,9 +26,20 @@ export function AdminOverview() {
       postSummaryLoading={postSummaryLoading}
       postSummaryError={postSummaryError}
       reloadPostSummary={reloadPostSummary}
-      comments={comments}
+      commentSummary={commentSummary}
+      commentSummaryLoading={commentSummaryLoading}
+      commentSummaryError={commentSummaryError}
+      reloadCommentSummary={reloadCommentSummary}
+      commentPending={commentPending}
       onOpen={onOpen}
-      onApprove={onApprove}
+      onApprove={async (comment) => {
+        try {
+          await moderateComment(comment, "approved");
+        } catch (error) {
+          onMessage(error instanceof Error ? error.message : "审核失败，请重试。");
+          reloadCommentSummary();
+        }
+      }}
       onDelete={onDeleteComment}
       onBackup={onBackup}
     />

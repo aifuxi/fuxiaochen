@@ -18,53 +18,95 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-
-import type { CommentStatus } from "./mock-data";
+import {
+  COMMENT_MAX_LENGTH,
+  commentStatusLabels,
+  type CommentItem,
+  type CommentStatus,
+} from "@/lib/comments/schema";
+import { postTime } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { CommentQueryStatus } from "./comment-status";
+import { commentRequest, useCommentList } from "./use-comments";
+import { AdminRequestError, useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-comments.css";
 
 const filters: { value: "all" | CommentStatus; label: string }[] = [
-  { value: "待审核", label: "待审核" },
-  { value: "已通过", label: "已发布" },
-  { value: "已拒绝", label: "垃圾/拦截" },
+  { value: "pending", label: "待审核" },
+  { value: "approved", label: "已发布" },
+  { value: "rejected", label: "垃圾/拦截" },
   { value: "all", label: "全部" },
 ];
 const pageSize = 8;
 
 export function AdminComments() {
-  const { comments, onApprove, onReject, onReply, onDeleteComment } = useAdminWorkspace();
+  const {
+    commentRevision,
+    commentPending,
+    commentSummary,
+    moderateComment,
+    replyComment,
+    onDeleteComment,
+    reloadCommentSummary,
+  } = useAdminWorkspace();
   const searchRef = useRef<HTMLInputElement>(null);
-  const [status, setStatus] = useState<string>("待审核");
+  const replyFocus = useRef<HTMLElement | null>(null);
+  const [status, setStatus] = useState<string>("pending");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [replyId, setReplyId] = useState<string | null>(null);
+  const [targetComment, setTargetComment] = useState<CommentItem | null>(null);
   const [reply, setReply] = useState("");
-  const targetComment = comments.find((comment) => comment.id === replyId);
-  const term = query.trim().toLocaleLowerCase();
-  const filtered = comments.filter(
-    (comment) =>
-      (status === "all" || comment.status === status) &&
-      (!term ||
-        [comment.author, comment.email, comment.content, comment.postTitle].some((value) =>
-          value.toLocaleLowerCase().includes(term),
-        )),
-  );
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const currentPage = Math.min(page, pageCount);
+  const [replyError, setReplyError] = useState("");
+  const [replyConflict, setReplyConflict] = useState(false);
+  const [replyReloading, setReplyReloading] = useState(false);
+  const [actionError, setActionError] = useState("");
+  const term = useDebouncedPostQuery(query);
+  const list = useCommentList({ q: term, status, page, pageSize }, commentRevision);
+  const visibleComments = list.data?.items ?? [];
+  const total = list.data?.total ?? 0;
+  const currentPage = list.data?.page ?? 1;
+  const pageCount = list.data?.pageCount ?? 1;
+  const counts = list.data?.statusCounts ?? commentSummary?.statusCounts;
   const start = (currentPage - 1) * pageSize;
-  const visibleComments = filtered.slice(start, start + pageSize);
+  const busy = commentPending || replyReloading;
+  const actionsDisabled = busy || list.loading || Boolean(list.error) || query.trim() !== term;
   const resetFilters = () => {
     setStatus("all");
     setQuery("");
     setPage(1);
+    searchRef.current?.focus();
   };
-  const saveReply = (event: FormEvent<HTMLFormElement>) => {
+  const moderate = async (comment: CommentItem, nextStatus: "approved" | "rejected") => {
+    setActionError("");
+    try {
+      await moderateComment(comment, nextStatus);
+    } catch (error) {
+      setActionError(error instanceof Error ? error.message : "审核失败，请重试。");
+      if (
+        error instanceof AdminRequestError &&
+        ["VERSION_CONFLICT", "NOT_FOUND"].includes(error.code)
+      ) {
+        list.reload();
+        reloadCommentSummary();
+      }
+    }
+  };
+  const saveReply = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (replyId && onReply(replyId, reply)) {
-      setReplyId(null);
+    if (!targetComment || busy || replyConflict) return;
+    setReplyError("");
+    try {
+      await replyComment(targetComment, reply);
+      setTargetComment(null);
       setReply("");
+    } catch (error) {
+      setReplyError(error instanceof Error ? error.message : "回复保存失败，请重试。");
+      setReplyConflict(
+        error instanceof AdminRequestError &&
+          ["VERSION_CONFLICT", "NOT_FOUND"].includes(error.code),
+      );
     }
   };
 
@@ -89,11 +131,7 @@ export function AdminComments() {
               <TabsList size="compact" aria-label="按评论状态筛选">
                 {filters.map((filter) => (
                   <TabsTrigger key={filter.value} value={filter.value}>
-                    {filter.label} (
-                    {filter.value === "all"
-                      ? comments.length
-                      : comments.filter((comment) => comment.status === filter.value).length}
-                    )
+                    {filter.label} ({counts?.[filter.value] ?? "—"})
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -104,6 +142,7 @@ export function AdminComments() {
                   ref={searchRef}
                   aria-label="搜索评论内容、留言者、邮箱或文章"
                   value={query}
+                  maxLength={200}
                   onChange={(event) => {
                     setQuery(event.target.value);
                     setPage(1);
@@ -114,26 +153,44 @@ export function AdminComments() {
                   <Search size={16} aria-hidden="true" />
                 </InputGroupAddon>
               </InputGroup>
-              {term && (
+              {query && (
                 <Button
                   size="compact"
                   variant="ghost"
                   onClick={() => {
                     setQuery("");
                     setPage(1);
+                    searchRef.current?.focus();
                   }}
                 >
                   清除搜索
                 </Button>
               )}
+              <Button
+                size="compact"
+                variant="ghost"
+                disabled={busy || list.loading}
+                onClick={() => {
+                  list.reload();
+                  reloadCommentSummary();
+                }}
+              >
+                刷新
+              </Button>
             </div>
           </div>
           <TabsPanel value={status} className="admin-post-panel">
-            <div className="admin-post-list">
+            <div className="admin-post-list" aria-busy={list.loading}>
+              <CommentQueryStatus loading={list.loading} error={list.error} reload={list.reload} />
+              {actionError && (
+                <p className="admin-post-error admin-post-feedback" role="alert">
+                  {actionError}
+                </p>
+              )}
               <section className="admin-post-table-scroll" aria-label="评论列表，可横向滚动">
                 <table className="admin-post-table admin-comments-table">
                   <caption className="sr-only">
-                    评论列表，共 {filtered.length} 条，第 {currentPage} 页
+                    评论列表，共 {total} 条，第 {currentPage} 页
                   </caption>
                   <colgroup>
                     <col />
@@ -154,7 +211,7 @@ export function AdminComments() {
                       <tr key={comment.id}>
                         <td>
                           <div className="admin-comments-author">
-                            {comment.replyTo ? (
+                            {comment.isAdmin ? (
                               <Image src="/avatar.avif" width={32} height={32} alt="" />
                             ) : (
                               <span className="admin-comments-avatar" aria-hidden="true">
@@ -162,46 +219,57 @@ export function AdminComments() {
                               </span>
                             )}
                             <div>
-                              <strong>{comment.author}</strong>
-                              <span title={comment.email}>{comment.email}</span>
+                              <strong>
+                                {comment.author}
+                                {comment.isAdmin ? "（博主）" : ""}
+                              </strong>
+                              <span title={comment.email ?? undefined}>{comment.email ?? "—"}</span>
                             </div>
                           </div>
                         </td>
                         <td>
+                          {comment.parent && (
+                            <p className="admin-comments-meta">
+                              回复 @{comment.parent.author} · 上级评论
+                              {commentStatusLabels[comment.parent.status]}
+                            </p>
+                          )}
                           <p className="admin-comments-text">{comment.content}</p>
                           <div className="admin-comments-meta">
                             <FileText size={13} aria-hidden="true" />
                             <span>《{comment.postTitle}》</span>
-                            <time dateTime={comment.timestamp}>{comment.time}</time>
+                            <time dateTime={comment.createdAt}>{postTime(comment.createdAt)}</time>
                           </div>
                         </td>
                         <td>
                           <span
-                            className={`admin-post-status ${comment.status === "已通过" ? "is-published" : comment.status === "已拒绝" ? "is-rejected" : ""}`}
+                            className={`admin-post-status ${comment.status === "approved" ? "is-published" : comment.status === "rejected" ? "is-rejected" : ""}`}
                           >
-                            {comment.status}
+                            {commentStatusLabels[comment.status]}
                           </span>
                         </td>
                         <td>
                           <div className="admin-comments-actions">
-                            {comment.status === "待审核" && (
+                            {comment.status !== "approved" && (
                               <Button
                                 variant="secondary"
                                 size="compact"
                                 title="通过审核"
                                 aria-label={`通过 ${comment.author} 的评论`}
-                                onClick={() => onApprove(comment.id)}
+                                disabled={actionsDisabled}
+                                onClick={() => void moderate(comment, "approved")}
                               >
                                 <Check size={16} />
                               </Button>
                             )}
-                            {comment.status !== "已拒绝" && (
+                            {comment.status !== "rejected" && (
                               <Button
                                 variant="ghost"
                                 size="compact"
                                 title="标记为垃圾评论"
                                 aria-label={`标记 ${comment.author} 的评论为垃圾`}
-                                onClick={() => onReject(comment.id)}
+                                disabled={actionsDisabled}
+                                onClick={() => void moderate(comment, "rejected")}
                               >
                                 <X size={16} />
                               </Button>
@@ -209,11 +277,17 @@ export function AdminComments() {
                             <Button
                               variant="ghost"
                               size="compact"
-                              title="回复评论"
+                              title={
+                                comment.status === "approved" ? "回复评论" : "请先通过审核再回复"
+                              }
                               aria-label={`回复 ${comment.author} 的评论`}
-                              onClick={() => {
-                                setReplyId(comment.id);
+                              disabled={actionsDisabled || comment.status !== "approved"}
+                              onClick={(event) => {
+                                replyFocus.current = event.currentTarget;
+                                setTargetComment(comment);
                                 setReply("");
+                                setReplyError("");
+                                setReplyConflict(false);
                               }}
                             >
                               <MessageCircle size={16} />
@@ -223,7 +297,8 @@ export function AdminComments() {
                               size="compact"
                               title="删除评论"
                               aria-label={`删除 ${comment.author} 的评论`}
-                              onClick={() => onDeleteComment(comment.id, searchRef.current)}
+                              disabled={actionsDisabled}
+                              onClick={() => onDeleteComment(comment, searchRef.current)}
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -234,7 +309,7 @@ export function AdminComments() {
                   </tbody>
                 </table>
               </section>
-              {!filtered.length && (
+              {!list.loading && !list.error && !total && (
                 <div className="admin-post-empty">
                   <MessageCircle size={32} aria-hidden="true" />
                   <h2>{term ? "未匹配到相关评论" : "暂无对应状态的评论"}</h2>
@@ -246,15 +321,15 @@ export function AdminComments() {
               )}
               <div className="admin-post-pagination">
                 <span aria-live="polite">
-                  显示第 {filtered.length ? start + 1 : 0}–
-                  {Math.min(start + pageSize, filtered.length)} 条，共 {filtered.length} 条
+                  显示第 {total ? start + 1 : 0}–{Math.min(start + pageSize, total)} 条，共 {total}{" "}
+                  条
                 </span>
                 <nav aria-label="评论分页">
                   <Button
                     size="compact"
                     variant="ghost"
                     aria-label="上一页"
-                    disabled={currentPage === 1}
+                    disabled={list.loading || Boolean(list.error) || currentPage === 1}
                     onClick={() => setPage(currentPage - 1)}
                   >
                     <ChevronLeft size={17} />
@@ -266,7 +341,7 @@ export function AdminComments() {
                     size="compact"
                     variant="ghost"
                     aria-label="下一页"
-                    disabled={currentPage === pageCount}
+                    disabled={list.loading || Boolean(list.error) || currentPage === pageCount}
                     onClick={() => setPage(currentPage + 1)}
                   >
                     <ChevronRight size={17} />
@@ -278,25 +353,31 @@ export function AdminComments() {
         </Tabs>
       </div>
       <p className="admin-post-session-note">
-        演示数据 · 审核与回复仅保留在当前会话，刷新后恢复。不会发送邮件或通知。
+        评论与回复已保存到数据库；待审核评论须先通过审核才能回复。本阶段不发送邮件或通知。
       </p>
       <Dialog
-        open={replyId !== null}
+        open={targetComment !== null}
         onOpenChange={(open) => {
-          if (!open) setReplyId(null);
+          if (!open && !busy) setTargetComment(null);
         }}
       >
-        <DialogContent className="admin-modal admin-comments-reply">
+        <DialogContent
+          className="admin-modal admin-comments-reply"
+          finalFocus={() =>
+            replyFocus.current?.isConnected ? replyFocus.current : (searchRef.current ?? true)
+          }
+        >
           <div className="admin-modal-heading">
             <div>
               <DialogTitle>回复 @{targetComment?.author}</DialogTitle>
-              <DialogDescription>回复仅保存为本地博主评论，刷新后恢复。</DialogDescription>
+              <DialogDescription>回复会保存到该文章下，并关联原评论。</DialogDescription>
             </div>
             <Button
               variant="ghost"
               size="sm"
               aria-label="关闭回复"
-              onClick={() => setReplyId(null)}
+              disabled={busy}
+              onClick={() => setTargetComment(null)}
             >
               <X size={18} />
             </Button>
@@ -315,17 +396,65 @@ export function AdminComments() {
                 value={reply}
                 onChange={(event) => setReply(event.target.value)}
                 rows={5}
-                maxLength={2000}
+                maxLength={COMMENT_MAX_LENGTH}
+                disabled={busy}
+                aria-invalid={Boolean(replyError)}
+                aria-describedby={replyError ? "admin-comment-reply-error" : undefined}
                 required
                 placeholder="输入你的回复内容…"
               />
             </label>
+            {replyError && (
+              <p id="admin-comment-reply-error" className="admin-post-error" role="alert">
+                {replyError}
+              </p>
+            )}
+            {replyConflict && (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={busy}
+                onClick={async () => {
+                  if (!targetComment) return;
+                  setReplyReloading(true);
+                  try {
+                    const latest = await commentRequest<CommentItem>(`/${targetComment.id}`);
+                    setTargetComment(latest);
+                    setReplyConflict(latest.status !== "approved");
+                    setReplyError(
+                      latest.status === "approved"
+                        ? "已载入原评论的最新状态，回复草稿已保留。请确认后提交。"
+                        : "原评论尚未通过审核，请先处理审核状态，再重新载入。",
+                    );
+                    list.reload();
+                    reloadCommentSummary();
+                  } catch (error) {
+                    setReplyError(error instanceof Error ? error.message : "重新载入失败。");
+                  } finally {
+                    setReplyReloading(false);
+                  }
+                }}
+              >
+                重新载入原评论，保留草稿
+              </Button>
+            )}
             <div className="admin-form-actions">
-              <Button type="button" variant="ghost" onClick={() => setReplyId(null)}>
+              <Button
+                type="button"
+                variant="ghost"
+                disabled={busy}
+                onClick={() => setTargetComment(null)}
+              >
                 取消
               </Button>
-              <Button type="submit" variant="primary" disabled={!reply.trim() || !targetComment}>
-                保存模拟回复
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={
+                  busy || replyConflict || !reply.trim() || targetComment?.status !== "approved"
+                }
+              >
+                {commentPending ? "正在保存…" : "保存回复"}
               </Button>
             </div>
           </form>

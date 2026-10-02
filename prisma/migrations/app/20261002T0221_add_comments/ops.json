@@ -1,0 +1,247 @@
+[
+  {
+    "id": "table.comment",
+    "label": "Create table comment",
+    "summary": "Creates table comment with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"comment\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"comment\"",
+        "sql": "CREATE TABLE \"comment\" (\n  \"adminId\" INTEGER,\n  \"author\" TEXT NOT NULL,\n  \"content\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"email\" TEXT,\n  \"id\" TEXT NOT NULL,\n  \"parentId\" TEXT,\n  \"postId\" TEXT NOT NULL,\n  \"status\" TEXT NOT NULL,\n  \"updatedAt\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"id\", \"postId\"),\n  FOREIGN KEY (\"postId\") REFERENCES \"post\" (\"id\") ON DELETE CASCADE,\n  FOREIGN KEY (\"parentId\", \"postId\") REFERENCES \"comment\" (\"id\", \"postId\") ON DELETE CASCADE,\n  FOREIGN KEY (\"adminId\") REFERENCES \"admin\" (\"id\") ON DELETE SET NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"comment\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "comment"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_adminId_idx_530179db",
+    "label": "Create index comment_adminId_idx_530179db on comment",
+    "summary": "Creates index comment_adminId_idx_530179db on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_adminId_idx_530179db",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_adminId_idx_530179db\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_adminId_idx_530179db"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_adminId_idx_530179db\"",
+        "sql": "CREATE INDEX \"comment_adminId_idx_530179db\" ON \"comment\" (\"adminId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_adminId_idx_530179db\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_adminId_idx_530179db"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_createdAt_id_idx_3855cff1",
+    "label": "Create index comment_createdAt_id_idx_3855cff1 on comment",
+    "summary": "Creates index comment_createdAt_id_idx_3855cff1 on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_createdAt_id_idx_3855cff1",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"comment_createdAt_id_idx_3855cff1\" ON \"comment\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_parentId_idx_6a68f597",
+    "label": "Create index comment_parentId_idx_6a68f597 on comment",
+    "summary": "Creates index comment_parentId_idx_6a68f597 on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_parentId_idx_6a68f597",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_parentId_idx_6a68f597\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_parentId_idx_6a68f597"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_parentId_idx_6a68f597\"",
+        "sql": "CREATE INDEX \"comment_parentId_idx_6a68f597\" ON \"comment\" (\"parentId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_parentId_idx_6a68f597\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_parentId_idx_6a68f597"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_parentId_postId_idx_1317b68e",
+    "label": "Create index comment_parentId_postId_idx_1317b68e on comment",
+    "summary": "Creates index comment_parentId_postId_idx_1317b68e on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_parentId_postId_idx_1317b68e",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_parentId_postId_idx_1317b68e\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_parentId_postId_idx_1317b68e"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_parentId_postId_idx_1317b68e\"",
+        "sql": "CREATE INDEX \"comment_parentId_postId_idx_1317b68e\" ON \"comment\" (\"parentId\", \"postId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_parentId_postId_idx_1317b68e\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_parentId_postId_idx_1317b68e"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_postId_idx_a7a72715",
+    "label": "Create index comment_postId_idx_a7a72715 on comment",
+    "summary": "Creates index comment_postId_idx_a7a72715 on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_postId_idx_a7a72715",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_postId_idx_a7a72715\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_postId_idx_a7a72715"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_postId_idx_a7a72715\"",
+        "sql": "CREATE INDEX \"comment_postId_idx_a7a72715\" ON \"comment\" (\"postId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_postId_idx_a7a72715\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_postId_idx_a7a72715"]
+      }
+    ]
+  },
+  {
+    "id": "index.comment.comment_status_createdAt_id_idx_ffb42ad8",
+    "label": "Create index comment_status_createdAt_id_idx_ffb42ad8 on comment",
+    "summary": "Creates index comment_status_createdAt_id_idx_ffb42ad8 on comment",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "comment_status_createdAt_id_idx_ffb42ad8",
+        "table": "comment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"comment_status_createdAt_id_idx_ffb42ad8\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_status_createdAt_id_idx_ffb42ad8"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"comment_status_createdAt_id_idx_ffb42ad8\"",
+        "sql": "CREATE INDEX \"comment_status_createdAt_id_idx_ffb42ad8\" ON \"comment\" (\"status\", \"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"comment_status_createdAt_id_idx_ffb42ad8\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "comment_status_createdAt_id_idx_ffb42ad8"]
+      }
+    ]
+  }
+]

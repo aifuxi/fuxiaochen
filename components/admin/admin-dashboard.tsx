@@ -20,7 +20,9 @@ import {
   UploadCloud,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+
+import type { CommentItem, CommentSummary } from "@/lib/comments/schema";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,7 +30,8 @@ import { postTime, type PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 
-import { initialSources, traffic30Days, type Comment } from "./mock-data";
+import { CommentQueryStatus } from "./comment-status";
+import { initialSources, traffic30Days } from "./mock-data";
 import { PostQueryStatus } from "./post-status";
 import { usePostClock } from "./use-posts";
 
@@ -37,10 +40,14 @@ type Props = {
   postSummaryLoading: boolean;
   postSummaryError: string;
   reloadPostSummary: () => void;
-  comments: Comment[];
+  commentSummary: CommentSummary | null;
+  commentSummaryLoading: boolean;
+  commentSummaryError: string;
+  reloadCommentSummary: () => void;
+  commentPending: boolean;
   onOpen: (panel: AdminPanel) => void;
-  onApprove: (id: string) => void;
-  onDelete: (id: string) => void;
+  onApprove: (comment: CommentItem) => Promise<void>;
+  onDelete: (comment: CommentItem, fallbackFocus?: HTMLElement | null) => void;
   onBackup: () => void;
 };
 
@@ -208,14 +215,20 @@ export function AdminDashboard({
   postSummaryLoading,
   postSummaryError,
   reloadPostSummary,
-  comments,
+  commentSummary,
+  commentSummaryLoading,
+  commentSummaryError,
+  reloadCommentSummary,
+  commentPending,
   onOpen,
   onApprove,
   onDelete,
   onBackup,
 }: Props) {
   const now = usePostClock();
-  const pending = comments.filter((comment) => comment.status === "待审核");
+  const pending = commentSummary?.pending ?? [];
+  const pendingCount = commentSummary?.statusCounts.pending;
+  const commentsLink = useRef<HTMLButtonElement>(null);
   const stats = [
     { label: "总访问量", value: "128,942", trend: "+18.6%", note: "较上周", icon: BarChart3 },
     { label: "本周访客", value: "8,432", trend: "+12.3%", note: "较上周", icon: Users },
@@ -235,7 +248,7 @@ export function AdminDashboard({
     },
     {
       label: "待审核评论",
-      value: String(pending.length),
+      value: pendingCount === undefined ? "—" : String(pendingCount),
       trend: "待处理",
       note: "条评论",
       icon: MessageCircle,
@@ -249,7 +262,7 @@ export function AdminDashboard({
         <div>
           <p className="admin-eyebrow">OVERVIEW / 001</p>
           <h1>仪表盘概览</h1>
-          <p>文章数量与排期来自数据库；其他运营数据仍为演示。</p>
+          <p>文章、评论数量与排期来自数据库；其他运营数据仍为演示。</p>
         </div>
         <div className="admin-page-actions">
           <span className="admin-date">
@@ -306,51 +319,60 @@ export function AdminDashboard({
       </div>
       <div className="admin-lower-grid">
         <PanelCard
-          title={`待审核评论 · ${pending.length}`}
+          title={`待审核评论 · ${pendingCount ?? "—"}`}
           icon={MessageCircle}
           action={
-            <Button variant="ghost" size="sm" onClick={() => onOpen("comments")}>
+            <Button ref={commentsLink} variant="ghost" size="sm" onClick={() => onOpen("comments")}>
               查看全部 <ArrowUpRight size={14} />
             </Button>
           }
         >
-          <div className="admin-comment-list">
-            {pending.length ? (
-              pending.slice(0, 5).map((comment) => (
-                <div className="admin-comment" key={comment.id}>
-                  <div className="admin-comment-content">
-                    <div className="admin-comment-meta">
-                      <strong>{comment.author}</strong>
-                      <span>{comment.time}</span>
+          <CommentQueryStatus
+            loading={commentSummaryLoading}
+            error={commentSummaryError}
+            reload={reloadCommentSummary}
+          />
+          {!commentSummaryLoading && !commentSummaryError && (
+            <div className="admin-comment-list">
+              {pending.length ? (
+                pending.slice(0, 5).map((comment) => (
+                  <div className="admin-comment" key={comment.id}>
+                    <div className="admin-comment-content">
+                      <div className="admin-comment-meta">
+                        <strong>{comment.author}</strong>
+                        <span>{postTime(comment.createdAt)}</span>
+                      </div>
+                      <p>{comment.content}</p>
+                      <small>在文章《{comment.postTitle}》</small>
                     </div>
-                    <p>{comment.content}</p>
-                    <small>在文章《{comment.postTitle}》</small>
+                    <div className="admin-comment-actions">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={commentPending}
+                        onClick={() => void onApprove(comment)}
+                        aria-label={`通过 ${comment.author} 的评论`}
+                      >
+                        <Check size={14} />
+                        通过
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`删除 ${comment.author} 的评论`}
+                        disabled={commentPending}
+                        onClick={() => onDelete(comment, commentsLink.current)}
+                      >
+                        <Trash2 size={15} />
+                      </Button>
+                    </div>
                   </div>
-                  <div className="admin-comment-actions">
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={() => onApprove(comment.id)}
-                      aria-label={`通过 ${comment.author} 的评论`}
-                    >
-                      <Check size={14} />
-                      通过
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label={`删除 ${comment.author} 的评论`}
-                      onClick={() => onDelete(comment.id)}
-                    >
-                      <Trash2 size={15} />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="admin-empty">暂无待审核评论，所有留言均已处理。</p>
-            )}
-          </div>
+                ))
+              ) : (
+                <p className="admin-empty">暂无待审核评论，所有留言均已处理。</p>
+              )}
+            </div>
+          )}
         </PanelCard>
         <div className="admin-side-stack">
           <PanelCard

@@ -41,7 +41,7 @@ export type AdminPanel =
 
 type Props = {
   children: ReactNode;
-  pendingCount: number;
+  pendingCount: number | null;
   unreadCount: number;
   onOpen: (panel: AdminPanel) => void;
 };
@@ -113,7 +113,7 @@ export function AdminShell({ children, pendingCount, unreadCount, onOpen }: Prop
               <>
                 <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
                 {(!collapsed || mobile) && <span>{item.name}</span>}
-                {item.name === "评论管理" && pendingCount > 0 && (!collapsed || mobile) && (
+                {item.name === "评论管理" && (pendingCount ?? 0) > 0 && (!collapsed || mobile) && (
                   <span className="admin-nav-badge">{pendingCount}</span>
                 )}
               </>

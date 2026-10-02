@@ -44,6 +44,7 @@
 }
 
 .admin-comments-page .admin-comments-text {
+  white-space: pre-wrap;
   margin-bottom: 4px;
   color: var(--color-foreground);
   line-height: 20px;

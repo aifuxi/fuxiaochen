@@ -77,6 +77,7 @@ export const contract = defineContract({}, ({ field, model }) => {
     .relations({
       category: rel.belongsTo(Category, { from: "categoryId", to: "id" }),
       tagLinks: rel.hasMany("PostTag", { by: "postId" }),
+      comments: rel.hasMany("Comment", { by: "postId" }),
     })
     .sql(({ cols, constraints }) => ({
       table: "post",
@@ -151,6 +152,47 @@ export const contract = defineContract({}, ({ field, model }) => {
     foreignKeys: [constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "cascade" })],
   }));
 
+  const CommentBase = model("Comment", {
+    fields: {
+      id: field.column(textColumn).id(),
+      postId: field.column(textColumn),
+      parentId: field.column(textColumn).optional(),
+      adminId: field.column(integerColumn).optional(),
+      author: field.column(textColumn),
+      email: field.column(textColumn).optional(),
+      content: field.column(textColumn),
+      status: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+      updatedAt: field.column(datetimeColumn),
+      version: field.column(integerColumn),
+    },
+  }).attributes(({ fields, constraints }) => ({
+    uniques: [constraints.unique([fields.id, fields.postId])],
+  }));
+  const Comment = CommentBase.relations({
+    post: rel.belongsTo(Post, { from: "postId", to: "id" }),
+    parent: rel.belongsTo("Comment", { from: "parentId", to: "id" }),
+    replies: rel.hasMany("Comment", { by: "parentId" }),
+    admin: rel.belongsTo(Admin, { from: "adminId", to: "id" }),
+  }).sql(({ cols, constraints }) => ({
+    table: "comment",
+    indexes: [
+      constraints.index([cols.createdAt, cols.id]),
+      constraints.index([cols.status, cols.createdAt, cols.id]),
+      constraints.index([cols.postId]),
+      constraints.index([cols.parentId]),
+    ],
+    foreignKeys: [
+      constraints.foreignKey(cols.postId, Post.refs.id, { onDelete: "cascade" }),
+      constraints.foreignKey(
+        [cols.parentId, cols.postId],
+        [CommentBase.refs.id, CommentBase.refs.postId],
+        { onDelete: "cascade" },
+      ),
+      constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "setNull" }),
+    ],
+  }));
+
   return {
     models: {
       Admin,
@@ -162,6 +204,7 @@ export const contract = defineContract({}, ({ field, model }) => {
       PostTag,
       Media,
       MediaUploadLimit,
+      Comment,
     },
   };
 });
