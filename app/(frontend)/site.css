@@ -651,9 +651,12 @@
   max-width: 100%;
   overflow-x: auto;
   margin: 24px 0;
+  border: 1px solid var(--color-outline);
+  border-radius: 14px;
 }
 .site-markdown table {
   border-collapse: collapse;
+  border-style: hidden;
   font-size: 14px;
   min-width: 100%;
 }

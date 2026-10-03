@@ -263,6 +263,8 @@ components:
 
 编辑器沿用连续写作画布。代码块使用 input 中性底色、1px outline 边线、8px 圆角和 16px 内边距，与页面 background 清楚区分；长代码仅在块内横向滚动。格式菜单、链接与素材选择继续使用本地 Base UI Popover、Dialog，所有操作保留键盘焦点、触屏尺寸和减少动态效果支持。
 
+正文表格由滚动容器提供 1px outline 外框与圆角裁切：后台 8px，前台 14px。表格保留折叠的单元格边线，隐藏自身外边线，避免与容器外框叠加；表头底色与单元格内容随圆角裁切，长表格仍只在容器内横向滚动。此规则同时适用于前台旧 Markdown 和 Tiptap 正文。
+
 后台与前台代码块顶部常驻工具栏，语言位于左侧，“复制代码”位于右侧；工具栏不随代码横向滚动，使用 muted 文字与 outline 底边线。后台语言使用本地 Base UI Select，前台仅展示名称；桌面控件高 32px，窄屏或粗指针至少 44px。未知语言保留名称并按纯文本显示，未指定语言显示“纯文本”，不自动识别。复制保留原文缩进与换行，成功显示“已复制”两秒，失败显示“复制失败，请手动选择代码”；反馈通过可访问状态文字表达。保存期间后台工具栏禁用。
 
 语法高亮共享 syntax token：关键字与标签使用 syntax-keyword，字符串使用 syntax-string，数字与字面量使用 syntax-number，函数与类型使用 syntax-function，注释使用 syntax-comment；其他代码使用 foreground。颜色只用于代码区，不改变代码文本、编辑选择和撤销历史。前台沿用既有 surface 底色、14px 圆角与 20px 代码内边距，后台沿用上述代码容器。按钮与语言选择保留 hover、active、focus-visible、disabled；prefers-reduced-motion 下取消过渡。
