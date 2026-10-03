@@ -15,6 +15,12 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
+import {
+  BackupPanel,
+  GlobalSearch,
+  NotificationCenter,
+  useNotificationSummary,
+} from "./global-operations";
 import { MediaUploadStatus } from "./media-upload-status";
 import { PostBrowser } from "./post-browser";
 import { TaxonomyStatus } from "./taxonomy-status";
@@ -28,6 +34,8 @@ type DialogPanel = Exclude<AdminPanel, "compose" | "comments" | "analytics">;
 
 const panelTitles: Record<DialogPanel, string> = {
   search: "全局内容检索",
+  notifications: "通知",
+  backup: "数据库备份",
   profile: "管理账户",
   upload: "上传媒体",
   categories: "分类与标签",
@@ -35,16 +43,21 @@ const panelTitles: Record<DialogPanel, string> = {
 };
 
 const panelDescriptions: Record<DialogPanel, string> = {
-  search: "按标题、正文、分类或标签搜索文章。",
+  search: "检索文章、分类、标签、评论、媒体、友链与更新日志。",
+  notifications: "查看待办和执行结果，已读状态随账户保存。",
+  backup: "查看数据库备份记录与自动备份设置。",
   profile: "查看账户并退出登录。",
   upload: "选择图片或附件上传到媒体库。",
   categories: "创建或删除文章分类与标签。",
-  schedule: "查看发布计划，排期到期后需手动发布。",
+  schedule: "查看发布计划，管理到期发布与取消排期。",
 };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [postRevision, setPostRevision] = useState(0);
+  const [operationRevision, setOperationRevision] = useState(0);
+  const [operationPending, setOperationPending] = useState(false);
+  const operationMutation = useRef(false);
   const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
   const [postPending, setPostPending] = useState(false);
   const [writingFocused, setWritingFocused] = useState(false);
@@ -68,6 +81,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   });
   const [message, setMessage] = useState("");
   const commentState = useComments(postRevision, setMessage);
+  const notifications = useNotificationSummary(operationRevision + commentState.commentRevision);
   const commentDeleteBusy = commentState.commentPending || commentDeleteReloading;
   const postDeleteFocus = useRef<{
     deleted: boolean;
@@ -95,7 +109,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
 
   const openPanel = useCallback(
     (name: AdminPanel) => {
-      if (postMutation.current) return;
+      if (postMutation.current || operationMutation.current) return;
       if (name === "comments" || name === "analytics") {
         setPanel(null);
         router.push(`/admin/${name}`);
@@ -112,7 +126,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   );
 
   const openEditor = (id: string) => {
-    if (postMutation.current) return;
+    if (postMutation.current || operationMutation.current) return;
     setPanel(null);
     router.push(`/admin/posts/${encodeURIComponent(id)}/edit`);
   };
@@ -151,6 +165,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: latest.title,
+          slug: latest.slug,
           content: latest.content,
           categoryId: latest.categoryId,
           tagIds: latest.tags.map((tag) => tag.id),
@@ -173,6 +188,21 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   };
 
   const pendingCount = commentState.commentSummary?.statusCounts.pending ?? null;
+  const runOperation = async <T,>(work: () => Promise<T>, refreshPosts = false) => {
+    if (operationMutation.current || postMutation.current) throw new Error("请等待当前操作完成。");
+    operationMutation.current = true;
+    setOperationPending(true);
+    try {
+      return await work();
+    } finally {
+      operationMutation.current = false;
+      if (mounted.current) {
+        setOperationPending(false);
+        setOperationRevision((value) => value + 1);
+        if (refreshPosts) setPostRevision((value) => value + 1);
+      }
+    }
+  };
 
   return (
     <AdminContext.Provider
@@ -180,7 +210,15 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         ...mediaState,
         onMessage: setMessage,
         postRevision,
-        postPending,
+        postPending: postPending || operationPending,
+        operationRevision,
+        runOperation,
+        onNavigate: (href) => {
+          if (!postMutation.current && !operationMutation.current) {
+            setPanel(null);
+            router.push(href);
+          }
+        },
         writingFocused,
         setWritingFocused,
         postSummary: summary.data,
@@ -217,8 +255,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
     >
       <AdminShell
         writingFocused={writingFocused}
-        postPending={postPending}
+        postPending={postPending || operationPending}
         pendingCount={pendingCount}
+        unreadCount={notifications.data?.unreadCount ?? null}
+        notificationError={notifications.error}
         onOpen={openPanel}
       >
         {children}
@@ -240,10 +280,15 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       <Dialog
         open={panel !== null}
         onOpenChange={(open) => {
-          if (!open && !postMutation.current) setPanel(null);
+          if (!open && !postMutation.current && !operationMutation.current) setPanel(null);
         }}
       >
-        <DialogContent className="admin-modal">
+        <DialogContent
+          className="admin-modal"
+          initialFocus={
+            panel === "search" ? () => document.getElementById("admin-global-search") : undefined
+          }
+        >
           {panel && (
             <>
               <div className="admin-modal-heading">
@@ -255,13 +300,15 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   variant="ghost"
                   size="sm"
                   aria-label="关闭"
-                  disabled={postPending}
+                  disabled={postPending || operationPending}
                   onClick={() => setPanel(null)}
                 >
                   <X size={18} />
                 </Button>
               </div>
-              {panel === "search" && <PostBrowser mode="search" />}
+              {panel === "search" && <GlobalSearch />}
+              {panel === "notifications" && <NotificationCenter />}
+              {panel === "backup" && <BackupPanel />}
               {panel === "profile" && (
                 <div className="admin-modal-section">
                   <p>fuxiaochen · 管理账户</p>
@@ -350,7 +397,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   </div>
                 </div>
               )}
-              {panel === "schedule" && <PostBrowser mode="schedule" />}
+              {panel === "schedule" && <PostBrowser />}
             </>
           )}
         </DialogContent>

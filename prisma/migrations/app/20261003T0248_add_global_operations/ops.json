@@ -1,0 +1,282 @@
+[
+  {
+    "id": "table.backup_run",
+    "label": "Create table backup_run",
+    "summary": "Creates table backup_run with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "backup_run"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"backup_run\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "backup_run"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"backup_run\"",
+        "sql": "CREATE TABLE \"backup_run\" (\n  \"bytes\" INTEGER,\n  \"createdAt\" TEXT NOT NULL,\n  \"dailyKey\" TEXT,\n  \"finishedAt\" TEXT,\n  \"id\" TEXT NOT NULL,\n  \"sha256\" TEXT,\n  \"status\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  UNIQUE (\"dailyKey\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"backup_run\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "backup_run"]
+      }
+    ]
+  },
+  {
+    "id": "table.notification",
+    "label": "Create table notification",
+    "summary": "Creates table notification with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"notification\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "notification"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"notification\"",
+        "sql": "CREATE TABLE \"notification\" (\n  \"createdAt\" TEXT NOT NULL,\n  \"href\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"kind\" TEXT NOT NULL,\n  \"resolvedAt\" TEXT,\n  \"sourceId\" TEXT,\n  \"title\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"notification\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "notification"]
+      }
+    ]
+  },
+  {
+    "id": "table.notification_read",
+    "label": "Create table notification_read",
+    "summary": "Creates table notification_read with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "notification_read"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"notification_read\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "notification_read"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"notification_read\"",
+        "sql": "CREATE TABLE \"notification_read\" (\n  \"adminId\" INTEGER NOT NULL,\n  \"notificationId\" TEXT NOT NULL,\n  \"readAt\" TEXT NOT NULL,\n  PRIMARY KEY (\"notificationId\", \"adminId\"),\n  FOREIGN KEY (\"notificationId\") REFERENCES \"notification\" (\"id\") ON DELETE CASCADE,\n  FOREIGN KEY (\"adminId\") REFERENCES \"admin\" (\"id\") ON DELETE CASCADE\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"notification_read\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "notification_read"]
+      }
+    ]
+  },
+  {
+    "id": "table.operation_setting",
+    "label": "Create table operation_setting",
+    "summary": "Creates table operation_setting with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "operation_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"operation_setting\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "operation_setting"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"operation_setting\"",
+        "sql": "CREATE TABLE \"operation_setting\" (\n  \"autoBackup\" INTEGER NOT NULL,\n  \"id\" INTEGER NOT NULL,\n  \"schedulerLastRunAt\" TEXT,\n  \"updatedAt\" TEXT NOT NULL,\n  \"version\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"operation_setting\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "operation_setting"]
+      }
+    ]
+  },
+  {
+    "id": "index.backup_run.backup_run_createdAt_id_idx_3855cff1",
+    "label": "Create index backup_run_createdAt_id_idx_3855cff1 on backup_run",
+    "summary": "Creates index backup_run_createdAt_id_idx_3855cff1 on backup_run",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "backup_run_createdAt_id_idx_3855cff1",
+        "table": "backup_run"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"backup_run_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "backup_run_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"backup_run_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"backup_run_createdAt_id_idx_3855cff1\" ON \"backup_run\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"backup_run_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "backup_run_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.notification.notification_createdAt_id_idx_3855cff1",
+    "label": "Create index notification_createdAt_id_idx_3855cff1 on notification",
+    "summary": "Creates index notification_createdAt_id_idx_3855cff1 on notification",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "notification_createdAt_id_idx_3855cff1",
+        "table": "notification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notification_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notification_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"notification_createdAt_id_idx_3855cff1\" ON \"notification\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notification_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.notification_read.notification_read_adminId_idx_530179db",
+    "label": "Create index notification_read_adminId_idx_530179db on notification_read",
+    "summary": "Creates index notification_read_adminId_idx_530179db on notification_read",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "notification_read_adminId_idx_530179db",
+        "table": "notification_read"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notification_read_adminId_idx_530179db\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_read_adminId_idx_530179db"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notification_read_adminId_idx_530179db\"",
+        "sql": "CREATE INDEX \"notification_read_adminId_idx_530179db\" ON \"notification_read\" (\"adminId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notification_read_adminId_idx_530179db\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_read_adminId_idx_530179db"]
+      }
+    ]
+  },
+  {
+    "id": "index.notification_read.notification_read_notificationId_idx_adfe2654",
+    "label": "Create index notification_read_notificationId_idx_adfe2654 on notification_read",
+    "summary": "Creates index notification_read_notificationId_idx_adfe2654 on notification_read",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "notification_read_notificationId_idx_adfe2654",
+        "table": "notification_read"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"notification_read_notificationId_idx_adfe2654\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_read_notificationId_idx_adfe2654"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"notification_read_notificationId_idx_adfe2654\"",
+        "sql": "CREATE INDEX \"notification_read_notificationId_idx_adfe2654\" ON \"notification_read\" (\"notificationId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"notification_read_notificationId_idx_adfe2654\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "notification_read_notificationId_idx_adfe2654"]
+      }
+    ]
+  }
+]

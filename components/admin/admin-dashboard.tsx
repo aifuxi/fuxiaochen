@@ -378,7 +378,7 @@ export function AdminDashboard({
                 error={postSummaryError}
                 reload={reloadPostSummary}
               />
-              <p className="admin-muted">到期后需手动发布 · 最近 5 条排期</p>
+              <p className="admin-muted">最近 5 条排期 · 到期后由调度任务发布</p>
               {postSummary?.schedules.length ? (
                 postSummary.schedules.map((schedule) => (
                   <div className="admin-schedule" key={schedule.id}>
@@ -390,7 +390,7 @@ export function AdminDashboard({
                       {schedule.scheduledFor &&
                       now !== null &&
                       Date.parse(schedule.scheduledFor) <= now
-                        ? "已过期"
+                        ? "等待执行"
                         : "已排期"}
                     </span>
                   </div>
@@ -440,6 +440,9 @@ export function AdminDashboard({
           <Button size="compact" variant="secondary" onClick={() => onOpen("categories")}>
             <Tags size={15} />
             分类标签
+          </Button>
+          <Button size="compact" variant="secondary" onClick={() => onOpen("backup")}>
+            数据库备份
           </Button>
         </div>
       </section>

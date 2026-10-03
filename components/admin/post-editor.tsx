@@ -437,7 +437,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       </fieldset>
       {status === "scheduled" && (
         <label htmlFor="admin-post-publish-date">
-          计划发布时间（北京时间，到期后需手动发布）
+          计划发布时间（北京时间，到期后由调度任务发布）
           <Input
             form="article-writing-form"
             id="admin-post-publish-date"
@@ -455,7 +455,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
         savedPost?.scheduledFor &&
         now !== null &&
         Date.parse(savedPost.scheduledFor) <= now && (
-          <output>排期时间已过，请手动发布文章或调整排期。</output>
+          <output>已到发布时间，等待调度任务执行。也可手动发布或调整排期。</output>
         )}
     </div>
   );

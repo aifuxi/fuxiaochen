@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  Bell,
   ChevronLeft,
   ChevronRight,
   Clock3,
@@ -29,6 +30,8 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export type AdminPanel =
   | "search"
+  | "notifications"
+  | "backup"
   | "compose"
   | "profile"
   | "comments"
@@ -40,6 +43,8 @@ export type AdminPanel =
 type Props = {
   children: ReactNode;
   pendingCount: number | null;
+  unreadCount: number | null;
+  notificationError: string;
   onOpen: (panel: AdminPanel) => void;
   writingFocused: boolean;
   postPending: boolean;
@@ -58,7 +63,15 @@ const nav = [
   { name: "系统设置", icon: Settings, href: "/admin/settings" },
 ];
 
-export function AdminShell({ children, pendingCount, onOpen, writingFocused, postPending }: Props) {
+export function AdminShell({
+  children,
+  pendingCount,
+  unreadCount,
+  notificationError,
+  onOpen,
+  writingFocused,
+  postPending,
+}: Props) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -193,18 +206,34 @@ export function AdminShell({ children, pendingCount, onOpen, writingFocused, pos
               size="compact"
               className="admin-search-trigger"
               type="button"
-              aria-label="搜索文章或分类"
+              aria-label="搜索后台内容"
               disabled={postPending}
               aria-haspopup="dialog"
               aria-keyshortcuts="Meta+K Control+K"
               onClick={() => onOpen("search")}
             >
               <Search size={16} aria-hidden="true" />
-              <span>搜索文章 / 分类…</span>
+              <span>搜索后台内容…</span>
               <kbd aria-hidden="true">⌘K</kbd>
             </Button>
           </div>
           <div className="admin-topbar-actions">
+            <Button
+              size="compact"
+              variant="ghost"
+              disabled={postPending}
+              aria-haspopup="dialog"
+              title={notificationError || undefined}
+              aria-label={
+                notificationError
+                  ? "通知读取失败，打开后重试"
+                  : `通知，${unreadCount ?? "未知数量"} 条未读`
+              }
+              onClick={() => onOpen("notifications")}
+            >
+              <Bell size={17} aria-hidden="true" />
+              <span>{unreadCount === null ? "—" : unreadCount > 99 ? "99+" : unreadCount}</span>
+            </Button>
             <Button
               size="compact"
               variant="secondary"

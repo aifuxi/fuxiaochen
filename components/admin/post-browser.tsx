@@ -1,63 +1,88 @@
 "use client";
-import { Search } from "lucide-react";
 import { useState } from "react";
 
+import type { OperationSettings } from "@/lib/operations/schema";
+
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import { postStatusLabels, postTime } from "@/lib/posts/schema";
+import { postTime } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { operationRequest } from "./global-operations";
 import { PostQueryStatus } from "./post-status";
-import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
+import { usePostList, usePostClock, usePostQuery } from "./use-posts";
 
-export function PostBrowser({ mode }: { mode: "search" | "schedule" }) {
+export function PostBrowser() {
   const now = usePostClock();
-  const { postRevision, postPending, onEdit, onOpen, cancelPostSchedule, onMessage } =
-    useAdminWorkspace();
-  const [input, setInput] = useState("");
-  const q = useDebouncedPostQuery(input);
-  const [page, setPage] = useState(1);
-  const search = mode === "search";
-  const query = usePostList(
-    { q: search ? q : "", status: search ? undefined : "scheduled", page },
+  const {
     postRevision,
-    !search || Boolean(q),
+    operationRevision,
+    postPending,
+    onEdit,
+    onOpen,
+    cancelPostSchedule,
+    onMessage,
+    runOperation,
+  } = useAdminWorkspace();
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState("");
+  const query = usePostList({ status: "scheduled", page }, postRevision);
+  const settings = usePostQuery(
+    "/operations/settings",
+    operationRevision,
+    operationRequest<OperationSettings>,
   );
   const data = query.data;
+  const publish = async () => {
+    setError("");
+    try {
+      const result = await runOperation(
+        () =>
+          operationRequest<{ published: number; skipped: number }>("/operations/publish-due", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}",
+          }),
+        true,
+      );
+      onMessage(
+        `已发布 ${result.published} 篇文章${result.skipped ? `，${result.skipped} 篇需检查正文与版本` : ""}`,
+      );
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "发布失败，请重新查询核对。");
+      query.reload();
+    }
+  };
   return (
     <div className="admin-modal-section admin-post-browser">
-      {search ? (
-        <>
-          <label htmlFor="admin-search-input">搜索文章标题、正文、标签和分类</label>
-          <InputGroup>
-            <InputGroupInput
-              id="admin-search-input"
-              value={input}
-              maxLength={200}
-              onChange={(event) => {
-                setInput(event.target.value);
-                setPage(1);
-              }}
-              placeholder="输入关键词…"
-            />
-            <InputGroupAddon>
-              <Search size={16} aria-hidden="true" />
-            </InputGroupAddon>
-          </InputGroup>
-        </>
-      ) : (
-        <>
-          <p>排期到期后需手动发布。取消排期会将文章转为草稿。</p>
-          <Button variant="primary" disabled={postPending} onClick={() => onOpen("compose")}>
-            添加计划
-          </Button>
-        </>
+      <p>到期后由服务器调度发布。取消排期会将文章转为草稿。</p>
+      <p className="admin-muted">
+        最近调度：
+        {settings.error
+          ? "读取失败"
+          : settings.loading
+            ? "正在加载…"
+            : settings.data?.schedulerLastRunAt
+              ? postTime(settings.data.schedulerLastRunAt)
+              : "暂无执行记录，请配置服务器定时任务"}
+      </p>
+      {settings.error && (
+        <Button size="sm" variant="ghost" onClick={settings.reload}>
+          重新查询调度状态
+        </Button>
       )}
-      {search && !q ? (
-        <p className="admin-empty">输入关键词开始搜索。</p>
-      ) : (
-        <PostQueryStatus {...query} />
-      )}
+      <div className="admin-operation-filters">
+        <Button variant="primary" disabled={postPending} onClick={() => onOpen("compose")}>
+          添加计划
+        </Button>
+        <Button variant="secondary" disabled={postPending || !data} onClick={() => void publish()}>
+          {postPending ? "正在执行…" : "执行到期计划"}
+        </Button>
+        <Button variant="ghost" disabled={postPending} onClick={query.reload}>
+          刷新计划
+        </Button>
+      </div>
+      {error && <p role="alert">{error}</p>}
+      <PostQueryStatus {...query} />
       <div className="admin-result-list">
         {data?.items.map((post) => (
           <div className="admin-managed-row" key={post.id}>
@@ -69,40 +94,34 @@ export function PostBrowser({ mode }: { mode: "search" | "schedule" }) {
             >
               <strong>{post.title}</strong>
               <span>
-                {post.category.name} · {postStatusLabels[post.status]} ·{" "}
-                {postTime(search ? post.createdAt : post.scheduledFor)}
-                {!search &&
-                post.scheduledFor &&
-                now !== null &&
-                Date.parse(post.scheduledFor) <= now
-                  ? " · 已过期"
-                  : ""}
+                {post.category.name} · {postTime(post.scheduledFor)}
+                {post.scheduledFor && now !== null && Date.parse(post.scheduledFor) <= now
+                  ? " · 等待执行"
+                  : " · 已排期"}
               </span>
             </button>
-            {!search && (
-              <Button
-                variant="ghost"
-                size="sm"
-                disabled={postPending}
-                onClick={async () => {
-                  try {
-                    await cancelPostSchedule(post);
-                  } catch (error) {
-                    onMessage(error instanceof Error ? error.message : "取消排期失败。");
-                  }
-                }}
-              >
-                取消排期
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={postPending}
+              onClick={async () => {
+                setError("");
+                try {
+                  await cancelPostSchedule(post);
+                } catch (cause) {
+                  setError(cause instanceof Error ? cause.message : "取消排期失败。");
+                  query.reload();
+                }
+              }}
+            >
+              取消排期
+            </Button>
           </div>
         ))}
       </div>
-      {data && !data.items.length && (
-        <p className="admin-empty">{search ? "没有找到相关文章。" : "暂无排期。"}</p>
-      )}
+      {data && !data.items.length && <p className="admin-empty">暂无排期。</p>}
       {data && (
-        <nav className="admin-form-actions" aria-label={search ? "搜索结果分页" : "文章排期分页"}>
+        <nav className="admin-form-actions" aria-label="文章排期分页">
           <Button
             variant="ghost"
             size="sm"

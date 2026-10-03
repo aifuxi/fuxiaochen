@@ -113,7 +113,7 @@ const columns: ColumnDef<PostItem>[] = [
           {post.status === "scheduled" &&
             post.scheduledFor &&
             now !== null &&
-            Date.parse(post.scheduledFor) <= now && <span> · 已过期</span>}
+            Date.parse(post.scheduledFor) <= now && <span> · 等待执行</span>}
         </>
       );
     },
@@ -306,7 +306,9 @@ export function AdminPosts() {
           </TabsPanel>
         </Tabs>
       </div>
-      <p className="admin-post-session-note">排期到期后需手动发布。</p>
+      <p className="admin-post-session-note">
+        排期到期后由服务器调度发布，可在发布计划中查看执行状态。
+      </p>
     </div>
   );
 }

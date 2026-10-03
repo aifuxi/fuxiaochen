@@ -20,6 +20,7 @@ import { changelogRoutes } from "./changelog/routes";
 import { commentRoutes } from "./comments/routes";
 import { friendRoutes } from "./friends-links/routes";
 import { mediaRoutes } from "./media/routes";
+import { operationsRoutes } from "./operations/routes";
 import { postRoutes } from "./posts/routes";
 import { publicRoutes } from "./public/routes";
 import { settingsRoutes } from "./settings/routes";
@@ -88,6 +89,7 @@ api.route("/admin/friends-links", friendRoutes);
 api.route("/admin/changelog", changelogRoutes);
 
 api.route("/admin", analyticsRoutes);
+api.route("/admin", operationsRoutes);
 api.route("/admin", taxonomyRoutes);
 
 api.post(

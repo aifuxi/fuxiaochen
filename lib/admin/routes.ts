@@ -38,7 +38,9 @@ export function adminRoutes() {
             ? 404
             : error.code === "VERSION_CONFLICT"
               ? 409
-              : 400;
+              : error.code === "SERVICE_UNAVAILABLE"
+                ? 503
+                : 400;
       return c.json({ error: { code: error.code, message: error.message } }, status);
     }
     if (error instanceof HTTPException && error.status === 400)

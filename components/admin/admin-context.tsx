@@ -22,6 +22,9 @@ type AdminState = TaxonomyState &
     uploadingMedia: boolean;
     postRevision: number;
     postPending: boolean;
+    operationRevision: number;
+    runOperation: <T>(work: () => Promise<T>, refreshPosts?: boolean) => Promise<T>;
+    onNavigate: (href: string) => void;
     writingFocused: boolean;
     setWritingFocused: (focused: boolean) => void;
     postSummary: PostSummary | null;

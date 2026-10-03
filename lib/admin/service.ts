@@ -5,7 +5,12 @@ import { getSession } from "@/lib/auth/service";
 
 export class AdminBusinessError extends Error {
   constructor(
-    public code: "UNAUTHORIZED" | "NOT_FOUND" | "INVALID_INPUT" | "VERSION_CONFLICT",
+    public code:
+      | "UNAUTHORIZED"
+      | "NOT_FOUND"
+      | "INVALID_INPUT"
+      | "VERSION_CONFLICT"
+      | "SERVICE_UNAVAILABLE",
     message: string,
   ) {
     super(message);

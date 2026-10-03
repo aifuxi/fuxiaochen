@@ -746,6 +746,42 @@
   color: var(--color-subtle);
   font-size: 11px;
 }
+.admin-result strong,
+.admin-result span,
+.admin-backup-row {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.admin-operation-filters {
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-operation-filters [aria-pressed="true"] {
+  background: var(--color-raised);
+  color: var(--color-foreground);
+}
+.admin-operation-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-backup-row {
+  display: grid;
+  gap: 6px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--admin-divider);
+  font-size: 12px;
+}
+.admin-backup-row span,
+.admin-backup-row small {
+  color: var(--color-muted);
+}
 .admin-modal-toolbar {
   display: flex;
   justify-content: space-between;

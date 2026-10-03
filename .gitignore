@@ -9,6 +9,7 @@
 /coverage
 
 # database
+**/backups/
 /prisma/*.sqlite
 *.sqlite-shm
 *.sqlite-wal

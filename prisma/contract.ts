@@ -352,6 +352,61 @@ export const contract = defineContract({}, ({ field, model }) => {
     indexes: [constraints.index([cols.expiresAt])],
   }));
 
+  const Notification = model("Notification", {
+    fields: {
+      id: field.column(textColumn).id(),
+      kind: field.column(textColumn),
+      sourceId: field.column(textColumn).optional(),
+      title: field.column(textColumn),
+      href: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+      resolvedAt: field.column(datetimeColumn).optional(),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "notification",
+    indexes: [constraints.index([cols.createdAt, cols.id])],
+  }));
+  const NotificationRead = model("NotificationRead", {
+    fields: {
+      notificationId: field.column(textColumn),
+      adminId: field.column(integerColumn),
+      readAt: field.column(datetimeColumn),
+    },
+  })
+    .attributes(({ fields, constraints }) => ({
+      id: constraints.id([fields.notificationId, fields.adminId]),
+    }))
+    .sql(({ cols, constraints }) => ({
+      table: "notification_read",
+      foreignKeys: [
+        constraints.foreignKey(cols.notificationId, Notification.refs.id, { onDelete: "cascade" }),
+        constraints.foreignKey(cols.adminId, Admin.refs.id, { onDelete: "cascade" }),
+      ],
+    }));
+  const OperationSetting = model("OperationSetting", {
+    fields: {
+      id: field.column(integerColumn).id(),
+      autoBackup: field.column(integerColumn),
+      version: field.column(integerColumn),
+      schedulerLastRunAt: field.column(datetimeColumn).optional(),
+      updatedAt: field.column(datetimeColumn),
+    },
+  }).sql({ table: "operation_setting" });
+  const BackupRun = model("BackupRun", {
+    fields: {
+      id: field.column(textColumn).id(),
+      dailyKey: field.column(textColumn).optional().unique(),
+      status: field.column(textColumn),
+      bytes: field.column(integerColumn).optional(),
+      sha256: field.column(textColumn).optional(),
+      createdAt: field.column(datetimeColumn),
+      finishedAt: field.column(datetimeColumn).optional(),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "backup_run",
+    indexes: [constraints.index([cols.createdAt, cols.id])],
+  }));
+
   return {
     models: {
       Admin,
@@ -372,6 +427,10 @@ export const contract = defineContract({}, ({ field, model }) => {
       VisitSession,
       PageVisit,
       AnalyticsRateLimit,
+      Notification,
+      NotificationRead,
+      OperationSetting,
+      BackupRun,
     },
   };
 });
