@@ -93,8 +93,22 @@ export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
     const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
+    const direction = query.sortDirection ?? "asc";
     const rows = await filtered
-      .orderBy([(c) => c.createdAt.desc(), (c) => c.id.desc()])
+      .orderBy([
+        (c) => {
+          if (query.sortBy === "author") return c.author[direction]();
+          if (query.sortBy === "createdAt") return c.createdAt[direction]();
+          if (query.sortBy === "status")
+            return c.status[direction]().withExpr(
+              db.raw.sql`CASE ${c.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`
+                .returns("sqlite/integer@1")
+                .buildAst(),
+            );
+          return c.createdAt.desc();
+        },
+        (c) => c.id.desc(),
+      ])
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();

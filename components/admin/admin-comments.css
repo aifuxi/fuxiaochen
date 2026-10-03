@@ -21,7 +21,7 @@
 
 .admin-comments-page .admin-comments-table col:nth-child(2),
 .admin-comments-page .admin-comments-table th:nth-child(2) {
-  width: 44%;
+  width: 40%;
 }
 
 .admin-comments-page .admin-comments-table col:nth-child(3) {
@@ -29,7 +29,11 @@
 }
 
 .admin-comments-page .admin-comments-table col:nth-child(4) {
-  width: 24%;
+  width: 20%;
+}
+
+.admin-comments-page .admin-comments-table col:nth-child(5) {
+  width: 8%;
 }
 
 .admin-comments-page .admin-comments-author strong {

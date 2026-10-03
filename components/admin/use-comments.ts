@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
+import type { CommentQuery } from "@/lib/comments/schema";
 import type {
   CommentItem,
   CommentList,
@@ -36,7 +37,15 @@ export async function commentRequest<T>(path: string, init?: RequestInit): Promi
   return body.data;
 }
 export function useCommentList(
-  filters: { q?: string; status?: string; postId?: string; page?: number; pageSize?: number },
+  filters: {
+    q?: string;
+    status?: string;
+    postId?: string;
+    page?: number;
+    pageSize?: number;
+    sortBy?: CommentQuery["sortBy"];
+    sortDirection?: CommentQuery["sortDirection"];
+  },
   revision: number,
 ) {
   const params = new URLSearchParams();

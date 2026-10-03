@@ -1,17 +1,61 @@
 "use client";
 
+import type { ColumnDef } from "@tanstack/react-table";
+
 import { Plus, Trash2, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
+
+import type { Category } from "@/lib/taxonomy/schema";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ColorInput } from "@/components/ui/color-input";
+import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
 import { useAdminWorkspace } from "./admin-context";
+import { AdminRowActionsCell } from "./admin-table";
 import { TaxonomyStatus } from "./taxonomy-status";
 import "./admin-categories.css";
+
+const actionIcons = { Trash2: <Trash2 size={16} /> };
+
+const columns: ColumnDef<Category>[] = [
+  {
+    id: "name",
+    header: "分类名称",
+    accessorKey: "name",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const item = row.original;
+      return (
+        <>
+          <div className="admin-taxonomy-name">
+            <span
+              className="admin-taxonomy-swatch"
+              style={{ backgroundColor: item.color }}
+              aria-hidden="true"
+            />
+            <span>{item.name}</span>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "postCount",
+    header: "关联博文",
+    accessorKey: "postCount",
+    enableSorting: true,
+    meta: { className: "admin-taxonomy-count" },
+    cell: ({ row }) => {
+      const item = row.original;
+      return <> {item.postCount} </>;
+    },
+  },
+  { id: "actions", header: "操作", cell: AdminRowActionsCell },
+];
 
 export function AdminCategories() {
   const {
@@ -26,6 +70,8 @@ export function AdminCategories() {
     taxonomyError,
     taxonomyPending,
   } = useAdminWorkspace();
+  const tableState = useDataTableState();
+  const categoryDeleted = useRef(false);
   const disabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
   const [categoryName, setCategoryName] = useState("");
   const [color, setColor] = useState("#0066df");
@@ -139,56 +185,37 @@ export function AdminCategories() {
                 </p>
               )}
             </form>
-            <table className="admin-taxonomy-table">
-              <caption className="sr-only">博文分类及关联文章数量</caption>
-              <thead>
-                <tr>
-                  <th scope="col">分类名称</th>
-                  <th scope="col">关联博文</th>
-                  <th scope="col">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categories.map((item) => (
-                  <tr key={item.id}>
-                    <td aria-label={item.name}>
-                      <div className="admin-taxonomy-name">
-                        <span
-                          className="admin-taxonomy-swatch"
-                          style={{ backgroundColor: item.color }}
-                          aria-hidden="true"
-                        />
-                        <span>{item.name}</span>
-                      </div>
-                    </td>
-                    <td className="admin-taxonomy-count">{item.postCount}</td>
-                    <td>
-                      <Button
-                        variant="ghost"
-                        size="compact"
-                        className="admin-taxonomy-delete"
-                        disabled={disabled}
-                        aria-label={`删除分类 ${item.name}`}
-                        onClick={(event) => {
-                          deleteTrigger.current = event.currentTarget;
-                          setDeleteName(item.id);
-                          setDeleteError("");
-                        }}
-                      >
-                        <Trash2 size={16} aria-hidden="true" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-                {!taxonomyLoading && !taxonomyError && !categories.length && (
-                  <tr>
-                    <td colSpan={3} className="admin-taxonomy-empty">
-                      暂无分类，可在上方添加新分类。
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+            <DataTable
+              meta={{
+                getRowActions: (item) => ({
+                  label: `分类 ${item.name} 的操作`,
+                  disabled: disabled,
+                  actions: [
+                    {
+                      label: "删除分类",
+                      icon: actionIcons.Trash2,
+                      destructive: true,
+                      opensDialog: true,
+                      onSelect: (trigger) => {
+                        deleteTrigger.current = trigger;
+                        categoryDeleted.current = false;
+                        setDeleteName(item.id);
+                        setDeleteError("");
+                      },
+                    },
+                  ],
+                }),
+              }}
+              {...tableState}
+              data={categories}
+              columns={columns}
+              getRowId={(item) => item.id}
+              caption="博文分类及关联文章数量"
+              tableClassName="admin-taxonomy-table"
+              loading={taxonomyLoading}
+              disabled={Boolean(taxonomyError)}
+              emptyState={<p className="admin-taxonomy-empty">暂无分类，可在上方添加新分类。</p>}
+            />
           </div>
         </Card>
         <Card className="admin-taxonomy-card">
@@ -267,7 +294,9 @@ export function AdminCategories() {
           className="admin-confirm"
           initialFocus={cancelButton}
           finalFocus={() =>
-            deleteTrigger.current?.isConnected ? deleteTrigger.current : categoryInput.current
+            !categoryDeleted.current && deleteTrigger.current?.isConnected
+              ? deleteTrigger.current
+              : categoryInput.current
           }
         >
           <DialogTitle>
@@ -293,6 +322,7 @@ export function AdminCategories() {
                 setDeleteError("");
                 try {
                   await deleteCategory(deleteName);
+                  categoryDeleted.current = true;
                   setDeleteName(null);
                   onMessage("分类已删除");
                 } catch (error) {

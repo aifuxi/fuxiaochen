@@ -19,11 +19,11 @@
 }
 
 .admin-posts-page .admin-post-table col:nth-child(1) {
-  width: 38%;
+  width: 42%;
 }
 
 .admin-posts-page .admin-post-table col:nth-child(2) {
-  width: 13%;
+  width: 14%;
 }
 
 .admin-posts-page .admin-post-table col:nth-child(3),
@@ -32,16 +32,16 @@
 }
 
 .admin-posts-page .admin-post-table col:nth-child(5) {
-  width: 14%;
+  width: 16%;
 }
 
 .admin-posts-page .admin-post-table col:nth-child(6) {
-  width: 15%;
+  width: 8%;
 }
 
 .admin-posts-page .admin-post-table th:first-child,
 .admin-posts-page .admin-post-table td:first-child {
-  width: 38%;
+  width: 42%;
   min-width: 280px;
 }
 

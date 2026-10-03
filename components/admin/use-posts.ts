@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
+import type { PostQuery } from "@/lib/posts/schema";
 import type { PostList } from "@/lib/posts/schema";
 
 export class AdminRequestError extends Error {
@@ -84,7 +85,15 @@ export function useDebouncedPostQuery(value: string) {
   return debounced;
 }
 export function usePostList(
-  filters: { q?: string; status?: string; categoryId?: string; page?: number; pageSize?: number },
+  filters: {
+    q?: string;
+    status?: string;
+    categoryId?: string;
+    page?: number;
+    pageSize?: number;
+    sortBy?: PostQuery["sortBy"];
+    sortDirection?: PostQuery["sortDirection"];
+  },
   revision: number,
   enabled = true,
 ) {

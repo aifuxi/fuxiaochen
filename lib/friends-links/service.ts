@@ -49,8 +49,22 @@ export async function listFriends(query: FriendQuery, actor: TaxonomyActor) {
     const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
+    const direction = query.sortDirection ?? "asc";
     const rows = await filtered
-      .orderBy([(f) => f.createdAt.desc(), (f) => f.id.desc()])
+      .orderBy([
+        (f) => {
+          if (query.sortBy === "name") return f.name[direction]();
+          if (query.sortBy === "category") return f.category[direction]();
+          if (query.sortBy === "status")
+            return f.status[direction]().withExpr(
+              db.raw.sql`CASE ${f.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`
+                .returns("sqlite/integer@1")
+                .buildAst(),
+            );
+          return f.createdAt.desc();
+        },
+        (f) => f.id.desc(),
+      ])
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();

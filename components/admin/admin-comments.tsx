@@ -1,19 +1,13 @@
 "use client";
 
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  MessageCircle,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+
+import { Check, FileText, MessageCircle, Search, Trash2, X } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
+import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +21,7 @@ import {
 import { postTime } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { AdminRowActionsCell } from "./admin-table";
 import { CommentQueryStatus } from "./comment-status";
 import { commentRequest, useCommentList } from "./use-comments";
 import { AdminRequestError, useDebouncedPostQuery } from "./use-posts";
@@ -39,7 +34,103 @@ const filters: { value: "all" | CommentStatus; label: string }[] = [
   { value: "rejected", label: "垃圾/拦截" },
   { value: "all", label: "全部" },
 ];
-const pageSize = 8;
+
+const actionIcons = {
+  Check: <Check size={16} />,
+  X: <X size={16} />,
+  MessageCircle: <MessageCircle size={16} />,
+  Trash2: <Trash2 size={16} />,
+};
+
+const columns: ColumnDef<CommentItem>[] = [
+  {
+    id: "author",
+    header: "评论者",
+    accessorKey: "author",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const comment = row.original;
+      return (
+        <>
+          <div className="admin-comments-author">
+            {comment.isAdmin ? (
+              <Image src="/avatar.avif" width={32} height={32} alt="" />
+            ) : (
+              <span className="admin-comments-avatar" aria-hidden="true">
+                {comment.author.slice(0, 1)}
+              </span>
+            )}
+            <div>
+              <strong>
+                {comment.author}
+                {comment.isAdmin ? "（博主）" : ""}
+              </strong>
+              <span title={comment.email ?? undefined}>{comment.email ?? "—"}</span>
+            </div>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "content",
+    header: "评论内容",
+    enableSorting: false,
+    cell: ({ row }) => {
+      const comment = row.original;
+      return (
+        <>
+          {comment.parent && (
+            <p className="admin-comments-meta">
+              回复 @{comment.parent.author} · 上级评论
+              {commentStatusLabels[comment.parent.status]}
+            </p>
+          )}
+          <p className="admin-comments-text">{comment.content}</p>
+          <div className="admin-comments-meta">
+            <FileText size={13} aria-hidden="true" />
+            <span>《{comment.postTitle}》</span>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "status",
+    header: "状态",
+    accessorKey: "status",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const comment = row.original;
+      return (
+        <>
+          <span
+            className={`admin-post-status ${comment.status === "approved" ? "is-published" : comment.status === "rejected" ? "is-rejected" : ""}`}
+          >
+            {commentStatusLabels[comment.status]}
+          </span>
+        </>
+      );
+    },
+  },
+  {
+    id: "createdAt",
+    header: "创建时间",
+    accessorKey: "createdAt",
+    enableSorting: true,
+    meta: { className: "admin-post-metric" },
+    cell: ({ row }) => {
+      const comment = row.original;
+      return (
+        <>
+          {" "}
+          <time dateTime={comment.createdAt}>{postTime(comment.createdAt)}</time>{" "}
+        </>
+      );
+    },
+  },
+  { id: "actions", header: "操作", cell: AdminRowActionsCell },
+];
 
 export function AdminComments() {
   const {
@@ -55,7 +146,9 @@ export function AdminComments() {
   const replyFocus = useRef<HTMLElement | null>(null);
   const [status, setStatus] = useState<string>("pending");
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const tableState = useDataTableState();
+  const { page, setPage, sorting, pagination } = tableState;
+  const pageSize = pagination.pageSize;
   const [targetComment, setTargetComment] = useState<CommentItem | null>(null);
   const [reply, setReply] = useState("");
   const [replyError, setReplyError] = useState("");
@@ -63,13 +156,20 @@ export function AdminComments() {
   const [replyReloading, setReplyReloading] = useState(false);
   const [actionError, setActionError] = useState("");
   const term = useDebouncedPostQuery(query);
-  const list = useCommentList({ q: term, status, page, pageSize }, commentRevision);
+  const list = useCommentList(
+    {
+      q: term,
+      status,
+      page,
+      pageSize,
+      ...getDataTableSort(sorting, ["author", "status", "createdAt"] as const),
+    },
+    commentRevision,
+  );
   const visibleComments = list.data?.items ?? [];
   const total = list.data?.total ?? 0;
   const currentPage = list.data?.page ?? 1;
-  const pageCount = list.data?.pageCount ?? 1;
   const counts = list.data?.statusCounts ?? commentSummary?.statusCounts;
-  const start = (currentPage - 1) * pageSize;
   const busy = commentPending || replyReloading;
   const actionsDisabled = busy || list.loading || Boolean(list.error) || query.trim() !== term;
   const resetFilters = () => {
@@ -187,167 +287,76 @@ export function AdminComments() {
                   {actionError}
                 </p>
               )}
-              <section className="admin-post-table-scroll" aria-label="评论列表，可横向滚动">
-                <table className="admin-post-table admin-comments-table">
-                  <caption className="sr-only">
-                    评论列表，共 {total} 条，第 {currentPage} 页
-                  </caption>
-                  <colgroup>
-                    <col />
-                    <col />
-                    <col />
-                    <col />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th scope="col">评论者</th>
-                      <th scope="col">评论内容</th>
-                      <th scope="col">状态</th>
-                      <th scope="col">快捷审核与回复</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visibleComments.map((comment) => (
-                      <tr key={comment.id}>
-                        <td>
-                          <div className="admin-comments-author">
-                            {comment.isAdmin ? (
-                              <Image src="/avatar.avif" width={32} height={32} alt="" />
-                            ) : (
-                              <span className="admin-comments-avatar" aria-hidden="true">
-                                {comment.author.slice(0, 1)}
-                              </span>
-                            )}
-                            <div>
-                              <strong>
-                                {comment.author}
-                                {comment.isAdmin ? "（博主）" : ""}
-                              </strong>
-                              <span title={comment.email ?? undefined}>{comment.email ?? "—"}</span>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          {comment.parent && (
-                            <p className="admin-comments-meta">
-                              回复 @{comment.parent.author} · 上级评论
-                              {commentStatusLabels[comment.parent.status]}
-                            </p>
-                          )}
-                          <p className="admin-comments-text">{comment.content}</p>
-                          <div className="admin-comments-meta">
-                            <FileText size={13} aria-hidden="true" />
-                            <span>《{comment.postTitle}》</span>
-                            <time dateTime={comment.createdAt}>{postTime(comment.createdAt)}</time>
-                          </div>
-                        </td>
-                        <td>
-                          <span
-                            className={`admin-post-status ${comment.status === "approved" ? "is-published" : comment.status === "rejected" ? "is-rejected" : ""}`}
-                          >
-                            {commentStatusLabels[comment.status]}
-                          </span>
-                        </td>
-                        <td>
-                          <div className="admin-comments-actions">
-                            {comment.status !== "approved" && (
-                              <Button
-                                variant="secondary"
-                                size="compact"
-                                title="通过审核"
-                                aria-label={`通过 ${comment.author} 的评论`}
-                                disabled={actionsDisabled}
-                                onClick={() => void moderate(comment, "approved")}
-                              >
-                                <Check size={16} />
-                              </Button>
-                            )}
-                            {comment.status !== "rejected" && (
-                              <Button
-                                variant="ghost"
-                                size="compact"
-                                title="标记为垃圾评论"
-                                aria-label={`标记 ${comment.author} 的评论为垃圾`}
-                                disabled={actionsDisabled}
-                                onClick={() => void moderate(comment, "rejected")}
-                              >
-                                <X size={16} />
-                              </Button>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="compact"
-                              title={
-                                comment.status === "approved" ? "回复评论" : "请先通过审核再回复"
-                              }
-                              aria-label={`回复 ${comment.author} 的评论`}
-                              disabled={actionsDisabled || comment.status !== "approved"}
-                              onClick={(event) => {
-                                replyFocus.current = event.currentTarget;
-                                setTargetComment(comment);
-                                setReply("");
-                                setReplyError("");
-                                setReplyConflict(false);
-                              }}
-                            >
-                              <MessageCircle size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="compact"
-                              title="删除评论"
-                              aria-label={`删除 ${comment.author} 的评论`}
-                              disabled={actionsDisabled}
-                              onClick={() => onDeleteComment(comment, searchRef.current)}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </section>
-              {!list.loading && !list.error && !total && (
-                <div className="admin-post-empty">
-                  <MessageCircle size={32} aria-hidden="true" />
-                  <h2>{term ? "未匹配到相关评论" : "暂无对应状态的评论"}</h2>
-                  <p>{term ? "请调整状态或搜索关键词。" : "可以切换状态查看其他读者留言。"}</p>
-                  <Button variant="secondary" size="compact" onClick={resetFilters}>
-                    查看全部评论
-                  </Button>
-                </div>
-              )}
-              <div className="admin-post-pagination">
-                <span aria-live="polite">
-                  显示第 {total ? start + 1 : 0}–{Math.min(start + pageSize, total)} 条，共 {total}{" "}
-                  条
-                </span>
-                <nav aria-label="评论分页">
-                  <Button
-                    size="compact"
-                    variant="ghost"
-                    aria-label="上一页"
-                    disabled={list.loading || Boolean(list.error) || currentPage === 1}
-                    onClick={() => setPage(currentPage - 1)}
-                  >
-                    <ChevronLeft size={17} />
-                  </Button>
-                  <span aria-current="page">
-                    {currentPage} / {pageCount}
-                  </span>
-                  <Button
-                    size="compact"
-                    variant="ghost"
-                    aria-label="下一页"
-                    disabled={list.loading || Boolean(list.error) || currentPage === pageCount}
-                    onClick={() => setPage(currentPage + 1)}
-                  >
-                    <ChevronRight size={17} />
-                  </Button>
-                </nav>
-              </div>
+              <DataTable
+                meta={{
+                  getRowActions: (comment) => ({
+                    label: `${comment.author} 的评论操作`,
+                    disabled: actionsDisabled,
+                    actions: [
+                      ...(comment.status !== "approved"
+                        ? [
+                            {
+                              label: "通过审核",
+                              icon: actionIcons.Check,
+                              onSelect: () => void moderate(comment, "approved"),
+                            },
+                          ]
+                        : []),
+                      ...(comment.status !== "rejected"
+                        ? [
+                            {
+                              label: "标记为垃圾评论",
+                              icon: actionIcons.X,
+                              onSelect: () => void moderate(comment, "rejected"),
+                            },
+                          ]
+                        : []),
+                      {
+                        label: "回复评论",
+                        icon: actionIcons.MessageCircle,
+                        disabled: comment.status !== "approved",
+                        separator: true,
+                        opensDialog: true,
+                        onSelect: (trigger) => {
+                          replyFocus.current = trigger;
+                          setTargetComment(comment);
+                          setReply("");
+                          setReplyError("");
+                          setReplyConflict(false);
+                        },
+                      },
+                      {
+                        label: "删除评论",
+                        icon: actionIcons.Trash2,
+                        destructive: true,
+                        separator: true,
+                        opensDialog: true,
+                        onSelect: (trigger) => onDeleteComment(comment, searchRef.current, trigger),
+                      },
+                    ],
+                  }),
+                }}
+                {...tableState}
+                data={visibleComments}
+                columns={columns}
+                getRowId={(comment) => comment.id}
+                mode="server"
+                rowCount={total}
+                loading={list.loading}
+                disabled={Boolean(list.error)}
+                caption={`评论列表，共 ${total} 条，第 ${currentPage} 页`}
+                tableClassName="admin-post-table admin-comments-table"
+                emptyState={
+                  <div className="admin-post-empty">
+                    <MessageCircle size={32} aria-hidden="true" />
+                    <h2>{term ? "未匹配到相关评论" : "暂无对应状态的评论"}</h2>
+                    <p>{term ? "请调整状态或搜索关键词。" : "可以切换状态查看其他读者留言。"}</p>
+                    <Button variant="secondary" size="compact" onClick={resetFilters}>
+                      查看全部评论
+                    </Button>
+                  </div>
+                }
+              />
             </div>
           </TabsPanel>
         </Tabs>

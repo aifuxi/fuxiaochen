@@ -53,13 +53,23 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [commentDeleteError, setCommentDeleteError] = useState("");
   const [commentDeleteConflict, setCommentDeleteConflict] = useState(false);
   const [commentDeleteReloading, setCommentDeleteReloading] = useState(false);
-  const commentDeleteFocus = useRef<{ deleted: boolean; fallback: HTMLElement | null }>({
+  const commentDeleteFocus = useRef<{
+    deleted: boolean;
+    fallback: HTMLElement | null;
+    trigger: HTMLElement | null;
+  }>({
     deleted: false,
     fallback: null,
+    trigger: null,
   });
   const [message, setMessage] = useState("");
   const commentState = useComments(postRevision, setMessage);
   const commentDeleteBusy = commentState.commentPending || commentDeleteReloading;
+  const postDeleteFocus = useRef<{
+    deleted: boolean;
+    fallback: HTMLElement | null;
+    trigger: HTMLElement | null;
+  }>({ deleted: false, fallback: null, trigger: null });
   const [postDeleteTarget, setPostDeleteTarget] = useState<PostItem | null>(null);
   const [postDeleteError, setPostDeleteError] = useState("");
   const [postDeleteConflict, setPostDeleteConflict] = useState(false);
@@ -178,13 +188,22 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         ...taxonomy,
         onOpen: openPanel,
         onEdit: openEditor,
-        onDeletePost: (post) => {
+        onDeletePost: (post, fallbackFocus, triggerFocus) => {
+          postDeleteFocus.current = {
+            deleted: false,
+            fallback: fallbackFocus ?? null,
+            trigger: triggerFocus ?? null,
+          };
           setPostDeleteTarget(post);
           setPostDeleteError("");
           setPostDeleteConflict(false);
         },
-        onDeleteComment: (comment, fallbackFocus) => {
-          commentDeleteFocus.current = { deleted: false, fallback: fallbackFocus ?? null };
+        onDeleteComment: (comment, fallbackFocus, triggerFocus) => {
+          commentDeleteFocus.current = {
+            deleted: false,
+            fallback: fallbackFocus ?? null,
+            trigger: triggerFocus ?? null,
+          };
           setCommentDeleteTarget(comment);
           setCommentDeleteError("");
           setCommentDeleteConflict(false);
@@ -389,7 +408,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           finalFocus={() =>
             commentDeleteFocus.current.deleted && commentDeleteFocus.current.fallback?.isConnected
               ? commentDeleteFocus.current.fallback
-              : true
+              : commentDeleteFocus.current.trigger?.isConnected
+                ? commentDeleteFocus.current.trigger
+                : true
           }
         >
           <DialogTitle>删除评论？</DialogTitle>
@@ -463,7 +484,16 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open && !postMutation.current) setPostDeleteTarget(null);
         }}
       >
-        <DialogContent className="admin-confirm">
+        <DialogContent
+          className="admin-confirm"
+          finalFocus={() =>
+            postDeleteFocus.current.deleted
+              ? (postDeleteFocus.current.fallback ?? true)
+              : postDeleteFocus.current.trigger?.isConnected
+                ? postDeleteFocus.current.trigger
+                : (postDeleteFocus.current.fallback ?? true)
+          }
+        >
           <DialogTitle>删除文章？</DialogTitle>
           <DialogDescription>
             永久删除《{postDeleteTarget?.title}
@@ -509,6 +539,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                       ),
                     "文章已永久删除",
                   );
+                  postDeleteFocus.current.deleted = true;
                   setPostDeleteTarget(null);
                 } catch (error) {
                   setPostDeleteError(error instanceof Error ? error.message : "删除失败，请重试。");

@@ -1,10 +1,13 @@
 "use client";
 
+import type { ColumnDef } from "@tanstack/react-table";
+
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 
 import { analyticsRanges, analyticsSnapshots, type AnalyticsRange } from "./analytics-mock-data";
@@ -17,8 +20,81 @@ const deviceTypes = [
   { name: "平板设备", tone: "neutral" },
 ];
 
+type RankedArticle = (typeof analyticsSnapshots)["30d"]["articles"][number] & { rank: number };
+
+const columns: ColumnDef<RankedArticle>[] = [
+  {
+    id: "rank",
+    header: "排名",
+    accessorKey: "rank",
+    enableSorting: false,
+    cell: ({ row }) => {
+      const article = row.original;
+      return (
+        <>
+          {" "}
+          <span className={`analytics-rank ${article.rank <= 3 ? "is-leading" : ""}`}>
+            {article.rank}
+          </span>{" "}
+        </>
+      );
+    },
+  },
+  {
+    id: "title",
+    header: "热门文章标题",
+    accessorKey: "title",
+    enableSorting: true,
+    meta: { rowHeader: true },
+    cell: ({ row }) => {
+      const article = row.original;
+      return <> {article.title} </>;
+    },
+  },
+  {
+    id: "pv",
+    header: "PV",
+    accessorKey: "pv",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const article = row.original;
+      return <> {number(article.pv)} </>;
+    },
+  },
+  {
+    id: "uv",
+    header: "UV",
+    accessorKey: "uv",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const article = row.original;
+      return <> {number(article.uv)} </>;
+    },
+  },
+  {
+    id: "rate",
+    header: "完读率",
+    accessorKey: "rate",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const article = row.original;
+      return (
+        <>
+          {" "}
+          <span className="analytics-rate">{article.rate.toFixed(1)}%</span>{" "}
+        </>
+      );
+    },
+  },
+];
+
 function AnalyticsContent({ range }: { range: AnalyticsRange }) {
   const snapshot = analyticsSnapshots[range];
+  const tableState = useDataTableState();
+  const rankedArticles = snapshot.articles.map((article, index) => ({
+    ...article,
+    rank: index + 1,
+  }));
   const [active, setActive] = useState<number | null>(null);
   const totalPv = snapshot.trend.reduce((sum, item) => sum + item.pv, 0);
   const metrics = [
@@ -184,42 +260,15 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
         <div className="admin-panel-heading">
           <h2>热门文章</h2>
         </div>
-        <section
-          className="admin-post-table-scroll"
-          aria-label="热门文章排行榜，可横向滚动"
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 允许键盘用户滚动宽表格。
-          tabIndex={0}
-        >
-          <table className="analytics-table">
-            <caption className="sr-only">
-              {analyticsRanges.find((item) => item.value === range)?.label}热门文章，按 PV 降序排列
-            </caption>
-            <thead>
-              <tr>
-                <th scope="col">排名</th>
-                <th scope="col">热门文章标题</th>
-                <th scope="col">PV</th>
-                <th scope="col">UV</th>
-                <th scope="col">完读率</th>
-              </tr>
-            </thead>
-            <tbody>
-              {snapshot.articles.map((article, i) => (
-                <tr key={article.title}>
-                  <td>
-                    <span className={`analytics-rank ${i < 3 ? "is-leading" : ""}`}>{i + 1}</span>
-                  </td>
-                  <th scope="row">{article.title}</th>
-                  <td>{number(article.pv)}</td>
-                  <td>{number(article.uv)}</td>
-                  <td>
-                    <span className="analytics-rate">{article.rate.toFixed(1)}%</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
+        <DataTable
+          {...tableState}
+          data={rankedArticles}
+          columns={columns}
+          getRowId={(article) => article.title}
+          paginate={false}
+          caption={`${analyticsRanges.find((item) => item.value === range)?.label}热门文章排行榜`}
+          tableClassName="analytics-table"
+        />
       </Card>
     </div>
   );

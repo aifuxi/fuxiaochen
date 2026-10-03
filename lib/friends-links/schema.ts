@@ -27,6 +27,8 @@ export const friendSchema = z.strictObject({
 export const createFriendSchema = friendSchema.omit({ status: true });
 export const updateFriendSchema = friendSchema.extend({ version: versionSchema });
 export const friendQuerySchema = listQuerySchema.extend({
+  sortBy: z.enum(["name", "category", "status"]).optional(),
+  sortDirection: z.enum(["asc", "desc"]).optional(),
   category: z.enum(friendCategories).optional(),
   status: z.enum(friendStatuses).optional(),
   enabled: z.enum(["true", "false"]).optional(),

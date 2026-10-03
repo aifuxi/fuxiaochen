@@ -1,9 +1,14 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
-import { useState } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+
+import { FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { useRef, useState } from "react";
+
+import type { PostItem } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
+import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import {
   Select,
@@ -16,6 +21,7 @@ import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { AdminRowActionsCell } from "./admin-table";
 import { PostQueryStatus } from "./post-status";
 import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
 import "./admin-data-workspace.css";
@@ -27,7 +33,103 @@ const filters: { value: "all" | PostStatus; label: string }[] = [
   { value: "draft", label: "草稿箱" },
   { value: "scheduled", label: "发布计划" },
 ];
-const pageSize = 8;
+
+const actionIcons = { Pencil: <Pencil size={16} />, Trash2: <Trash2 size={16} /> };
+
+const columns: ColumnDef<PostItem>[] = [
+  {
+    id: "title",
+    header: "文章标题",
+    accessorKey: "title",
+    enableSorting: true,
+    cell: ({ row, table }) => {
+      const post = row.original;
+      return (
+        <>
+          <button
+            type="button"
+            className="admin-post-title"
+            disabled={table.options.meta?.disableActions}
+            onClick={() => table.options.meta?.editRow?.(post)}
+          >
+            {post.title}
+          </button>
+          <div className="admin-post-tags">
+            {post.tags.map((tag) => (
+              <span key={tag.id}>#{tag.name}</span>
+            ))}
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "category",
+    header: "分类",
+    accessorKey: "category",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const post = row.original;
+      return (
+        <>
+          <span className="admin-post-category">{post.category.name}</span>
+        </>
+      );
+    },
+  },
+  {
+    id: "status",
+    header: "状态",
+    accessorKey: "status",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const post = row.original;
+      return (
+        <>
+          <span
+            className={`admin-post-status ${post.status === "published" ? "is-published" : post.status === "scheduled" ? "is-scheduled" : ""}`}
+          >
+            {postStatusLabels[post.status]}
+          </span>
+        </>
+      );
+    },
+  },
+  {
+    id: "views",
+    header: "浏览量",
+    enableSorting: false,
+    meta: { className: "admin-post-metric" },
+    cell: ({ row }) => {
+      const post = row.original;
+      return <>{post.status === "published" ? "尚未接入" : "—"}</>;
+    },
+  },
+  {
+    id: "time",
+    header: "时间",
+    accessorKey: "time",
+    enableSorting: true,
+    meta: { className: "admin-post-metric" },
+    cell: ({ row, table }) => {
+      const post = row.original;
+      const now = table.options.meta?.postClock ?? null;
+      return (
+        <>
+          {postTime(
+            post.status === "scheduled" ? post.scheduledFor : (post.publishedAt ?? post.updatedAt),
+            post.status !== "scheduled",
+          )}
+          {post.status === "scheduled" &&
+            post.scheduledFor &&
+            now !== null &&
+            Date.parse(post.scheduledFor) <= now && <span> · 已过期</span>}
+        </>
+      );
+    },
+  },
+  { id: "actions", header: "操作", cell: AdminRowActionsCell },
+];
 
 export function AdminPosts() {
   const now = usePostClock();
@@ -36,17 +138,25 @@ export function AdminPosts() {
   const [status, setStatus] = useState<string>("all");
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const tableState = useDataTableState();
+  const { page, setPage, sorting, pagination } = tableState;
+  const pageSize = pagination.pageSize;
+  const searchRef = useRef<HTMLInputElement>(null);
   const term = useDebouncedPostQuery(query);
   const result = usePostList(
-    { status, categoryId: category, q: term, page, pageSize },
+    {
+      status,
+      categoryId: category,
+      q: term,
+      page,
+      pageSize,
+      ...getDataTableSort(sorting, ["title", "category", "status", "time"] as const),
+    },
     postRevision,
   );
   const data = result.data;
   const total = data?.total ?? 0;
-  const pageCount = data?.pageCount ?? 1;
   const currentPage = data?.page ?? page;
-  const start = (currentPage - 1) * pageSize;
   const visiblePosts = data?.items ?? [];
   const resetFilters = () => {
     setStatus("all");
@@ -122,6 +232,7 @@ export function AdminPosts() {
               </div>
               <InputGroup size="compact" className="admin-post-search">
                 <InputGroupInput
+                  ref={searchRef}
                   aria-label="搜索文章标题、标签、分类和内容"
                   maxLength={200}
                   value={query}
@@ -145,148 +256,62 @@ export function AdminPosts() {
           <TabsPanel value={status} className="admin-post-panel">
             <div className="admin-post-list" aria-busy={result.loading}>
               <PostQueryStatus {...result} />
-              <section className="admin-post-table-scroll" aria-label="文章列表，可横向滚动">
-                <table className="admin-post-table">
-                  <caption className="sr-only">
-                    文章列表，共 {total} 篇，第 {currentPage} 页
-                  </caption>
-                  <colgroup>
-                    <col />
-                    <col />
-                    <col />
-                    <col />
-                    <col />
-                    <col />
-                  </colgroup>
-                  <thead>
-                    <tr>
-                      <th scope="col">文章标题</th>
-                      <th scope="col">分类</th>
-                      <th scope="col">状态</th>
-                      <th scope="col">浏览量</th>
-                      <th scope="col">时间</th>
-                      <th scope="col">操作</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visiblePosts.map((post) => (
-                      <tr key={post.id}>
-                        <td>
-                          <button
-                            type="button"
-                            className="admin-post-title"
-                            disabled={postPending}
-                            onClick={() => onEdit(post.id)}
-                          >
-                            {post.title}
-                          </button>
-                          <div className="admin-post-tags">
-                            {post.tags.map((tag) => (
-                              <span key={tag.id}>#{tag.name}</span>
-                            ))}
-                          </div>
-                        </td>
-                        <td>
-                          <span className="admin-post-category">{post.category.name}</span>
-                        </td>
-                        <td>
-                          <span
-                            className={`admin-post-status ${post.status === "published" ? "is-published" : post.status === "scheduled" ? "is-scheduled" : ""}`}
-                          >
-                            {postStatusLabels[post.status]}
-                          </span>
-                        </td>
-                        <td className="admin-post-metric">
-                          {post.status === "published" ? "尚未接入" : "—"}
-                        </td>
-                        <td className="admin-post-metric">
-                          {postTime(
-                            post.status === "scheduled"
-                              ? post.scheduledFor
-                              : (post.publishedAt ?? post.updatedAt),
-                            post.status !== "scheduled",
-                          )}
-                          {post.status === "scheduled" &&
-                            post.scheduledFor &&
-                            now !== null &&
-                            Date.parse(post.scheduledFor) <= now && <span> · 已过期</span>}
-                        </td>
-                        <td>
-                          <div className="admin-post-row-actions">
-                            <Button
-                              variant="ghost"
-                              size="compact"
-                              aria-label={`编辑文章 ${post.title}`}
-                              title="编辑文章"
-                              disabled={postPending}
-                              onClick={() => onEdit(post.id)}
-                            >
-                              <Pencil size={16} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="compact"
-                              aria-label={`删除文章 ${post.title}`}
-                              title="删除文章"
-                              disabled={postPending}
-                              onClick={() => onDeletePost(post)}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </section>
-              {data && !total && (
-                <div className="admin-post-empty">
-                  <FileText size={32} aria-hidden="true" />
-                  <h2>{data.statusCounts.all ? "未匹配到相关博文" : "还没有文章"}</h2>
-                  <p>
-                    {data.statusCounts.all
-                      ? "请调整状态、分类或搜索关键词。"
-                      : "从第一篇文章开始记录。"}
-                  </p>
-                  <Button
-                    variant="secondary"
-                    size="compact"
-                    onClick={data.statusCounts.all ? resetFilters : () => onOpen("compose")}
-                  >
-                    {data.statusCounts.all ? "重置筛选" : "新建文章"}
-                  </Button>
-                </div>
-              )}
-              <div className="admin-post-pagination">
-                <span aria-live="polite">
-                  显示第 {total ? start + 1 : 0}–{Math.min(start + pageSize, total)} 条，共 {total}{" "}
-                  条
-                </span>
-                <nav aria-label="文章分页">
-                  <Button
-                    size="compact"
-                    variant="ghost"
-                    aria-label="上一页"
-                    disabled={result.loading || Boolean(result.error) || currentPage <= 1}
-                    onClick={() => setPage(currentPage - 1)}
-                  >
-                    <ChevronLeft size={17} />
-                  </Button>
-                  <span aria-current="page">
-                    {currentPage} / {pageCount}
-                  </span>
-                  <Button
-                    size="compact"
-                    variant="ghost"
-                    aria-label="下一页"
-                    disabled={result.loading || Boolean(result.error) || currentPage >= pageCount}
-                    onClick={() => setPage(currentPage + 1)}
-                  >
-                    <ChevronRight size={17} />
-                  </Button>
-                </nav>
-              </div>
+              <DataTable
+                meta={{
+                  getRowActions: (post) => ({
+                    label: `文章 ${post.title} 的操作`,
+                    disabled: postPending || result.loading || Boolean(result.error),
+                    actions: [
+                      {
+                        label: "编辑文章",
+                        icon: actionIcons.Pencil,
+                        onSelect: () => onEdit(post.id),
+                      },
+                      {
+                        label: "删除文章",
+                        icon: actionIcons.Trash2,
+                        destructive: true,
+                        separator: true,
+                        opensDialog: true,
+                        onSelect: (trigger) => onDeletePost(post, searchRef.current, trigger),
+                      },
+                    ],
+                  }),
+                  editRow: (post) => onEdit(post.id),
+                  disableActions: postPending,
+                  postClock: now,
+                }}
+                {...tableState}
+                data={visiblePosts}
+                columns={columns}
+                getRowId={(post) => post.id}
+                mode="server"
+                rowCount={total}
+                loading={result.loading}
+                disabled={Boolean(result.error)}
+                caption={`文章列表，共 ${total} 篇，第 ${currentPage} 页`}
+                tableClassName="admin-post-table"
+                emptyState={
+                  data && (
+                    <div className="admin-post-empty">
+                      <FileText size={32} aria-hidden="true" />
+                      <h2>{data.statusCounts.all ? "未匹配到相关博文" : "还没有文章"}</h2>
+                      <p>
+                        {data.statusCounts.all
+                          ? "请调整状态、分类或搜索关键词。"
+                          : "从第一篇文章开始记录。"}
+                      </p>
+                      <Button
+                        variant="secondary"
+                        size="compact"
+                        onClick={data.statusCounts.all ? resetFilters : () => onOpen("compose")}
+                      >
+                        {data.statusCounts.all ? "重置筛选" : "新建文章"}
+                      </Button>
+                    </div>
+                  )
+                }
+              />
             </div>
           </TabsPanel>
         </Tabs>

@@ -1,0 +1,106 @@
+.ds-data-table {
+  min-width: 0;
+}
+.ds-table-scroll {
+  position: relative;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.ds-table-scroll:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.ds-table-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    color 150ms,
+    background-color 150ms;
+}
+.ds-table-sort svg {
+  flex: none;
+}
+.ds-table-sort:hover {
+  color: var(--color-foreground);
+}
+.ds-table-sort:active {
+  background: var(--color-raised);
+}
+.ds-table-sort:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.ds-table-sort:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ds-table-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid var(--admin-divider, var(--color-outline));
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ds-table-page-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+.ds-table-page-controls > .ds-input {
+  width: 76px;
+}
+.ds-table-page-controls nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ds-table-page-controls nav .ds-button {
+  width: 36px;
+  padding: 0;
+}
+.ds-table-page-controls nav > span {
+  min-width: 48px;
+  text-align: center;
+}
+.ds-table-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--color-muted);
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .ds-table-sort {
+    min-height: 44px;
+  }
+  .ds-table-page-controls nav .ds-button {
+    width: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-table-sort {
+    transition: none;
+  }
+}

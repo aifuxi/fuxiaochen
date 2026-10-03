@@ -1,19 +1,12 @@
 "use client";
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Link2,
-  Pencil,
-  Plus,
-  Search,
-  Trash2,
-  X,
-} from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+
+import { Check, Link2, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
 import { ConfiguredImage } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
+import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -43,6 +36,7 @@ import {
 } from "@/lib/friends-links/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { AdminRowActionsCell } from "./admin-table";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
 import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
@@ -101,18 +95,108 @@ function FriendSelect({
 }
 const categories = friendCategories.map((value) => ({ value, label: value }));
 const statuses = friendStatuses.map((value) => ({ value, label: friendStatusLabels[value] }));
+const actionIcons = {
+  Check: <Check size={16} />,
+  Pencil: <Pencil size={16} />,
+  Trash2: <Trash2 size={16} />,
+};
+
+const columns: ColumnDef<FriendLink>[] = [
+  {
+    id: "name",
+    header: "博客名称 / 地址",
+    accessorKey: "name",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const link = row.original;
+      return (
+        <>
+          <div className="admin-friend-identity">
+            <span className="admin-friend-avatar">
+              <ConfiguredImage src={link.avatar} size={36} />
+            </span>
+            <div>
+              <strong>{link.name}</strong>
+              <a href={link.url} target="_blank" rel="noopener noreferrer">
+                {link.url}
+              </a>
+            </div>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "description",
+    header: "站点描述",
+    enableSorting: false,
+    cell: ({ row }) => {
+      const link = row.original;
+      return (
+        <>
+          <p className="admin-friend-description">{link.description || "未填写简介"}</p>
+        </>
+      );
+    },
+  },
+  {
+    id: "category",
+    header: "分类",
+    accessorKey: "category",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const link = row.original;
+      return (
+        <>
+          <span className="admin-post-category">{link.category}</span>
+        </>
+      );
+    },
+  },
+  {
+    id: "status",
+    header: "审核 / 展示",
+    accessorKey: "status",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const link = row.original;
+      return (
+        <>
+          <span
+            className={`admin-post-status ${link.status === "approved" ? "is-published" : link.status === "rejected" ? "is-rejected" : ""}`}
+          >
+            {friendStatusLabels[link.status]}
+          </span>
+          <p className="admin-muted">{link.enabled ? "展示启用" : "展示停用"}</p>
+        </>
+      );
+    },
+  },
+  { id: "actions", header: "操作", cell: AdminRowActionsCell },
+];
+
 export function AdminFriendsLinks() {
   const { onMessage } = useAdminWorkspace();
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
   const [enabled, setEnabled] = useState("all");
   const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
+  const tableState = useDataTableState();
+  const { page, setPage, sorting, pagination } = tableState;
   const [revision, setRevision] = useState(0);
   const keyword = useDebouncedPostQuery(q);
-  const params = new URLSearchParams({ q: keyword, page: String(page) });
-  for (const [key, value] of Object.entries({ category, status, enabled }))
-    if (value !== "all") params.set(key, value);
+  const params = new URLSearchParams({
+    q: keyword,
+    page: String(page),
+    pageSize: String(pagination.pageSize),
+  });
+  for (const [key, value] of Object.entries({
+    category,
+    status,
+    enabled,
+    ...getDataTableSort(sorting, ["name", "category", "status"] as const),
+  }))
+    if (value !== undefined && value !== "all") params.set(key, value);
   const query = usePostQuery(`?${params}`, revision, load);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<FriendLink | null>(null);
@@ -251,9 +335,9 @@ export function AdminFriendsLinks() {
       setPending(false);
     }
   }
+
   const data = query.data;
   const currentPage = data?.page ?? page;
-  const pageCount = data?.pageCount ?? 1;
   const errorBlock = error && (
     <div className="admin-business-feedback" role="alert">
       <p className="admin-business-error">{error}</p>
@@ -370,161 +454,91 @@ export function AdminFriendsLinks() {
         <BusinessStatus {...query} />
         {data && (
           <div className="admin-post-list">
-            <section className="admin-post-table-scroll" aria-label="友情链接列表，可横向滚动">
-              <table className="admin-post-table admin-friend-table">
-                <caption className="sr-only">友情链接审核与展示状态</caption>
-                <colgroup>
-                  <col />
-                  <col />
-                  <col />
-                  <col />
-                  <col />
-                </colgroup>
-                <thead>
-                  <tr>
-                    {["博客名称 / 地址", "站点描述", "分类", "审核 / 展示", "操作"].map((title) => (
-                      <th scope="col" key={title}>
-                        {title}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.items.map((link) => (
-                    <tr key={link.id}>
-                      <td aria-label={`${link.name}，${link.url}`}>
-                        <div className="admin-friend-identity">
-                          <span className="admin-friend-avatar">
-                            <ConfiguredImage src={link.avatar} size={36} />
-                          </span>
-                          <div>
-                            <strong>{link.name}</strong>
-                            <a href={link.url} target="_blank" rel="noopener noreferrer">
-                              {link.url}
-                            </a>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <p className="admin-friend-description">
-                          {link.description || "未填写简介"}
-                        </p>
-                      </td>
-                      <td>
-                        <span className="admin-post-category">{link.category}</span>
-                      </td>
-                      <td>
-                        <span
-                          className={`admin-post-status ${link.status === "approved" ? "is-published" : link.status === "rejected" ? "is-rejected" : ""}`}
-                        >
-                          {friendStatusLabels[link.status]}
-                        </span>
-                        <p className="admin-muted">{link.enabled ? "展示启用" : "展示停用"}</p>
-                      </td>
-                      <td>
-                        <div className="admin-post-row-actions">
-                          {link.status === "pending" && (
-                            <Button
-                              size="compact"
-                              variant="ghost"
-                              disabled={pending}
-                              aria-label={`通过 ${link.name} 的友链审核`}
-                              onClick={() => {
-                                const {
-                                  id: _id,
-                                  createdAt: _created,
-                                  updatedAt: _updated,
-                                  ...fields
-                                } = link;
-                                void mutate(
-                                  () =>
-                                    request(`/${link.id}`, {
-                                      method: "PUT",
-                                      headers: { "Content-Type": "application/json" },
-                                      body: JSON.stringify({ ...fields, status: "approved" }),
-                                    }),
-                                  () => onMessage("友链已通过审核。"),
-                                );
-                              }}
-                            >
-                              <Check size={16} />
-                            </Button>
-                          )}
-                          <Button
-                            size="compact"
-                            variant="ghost"
-                            disabled={pending}
-                            aria-label={`编辑友链 ${link.name}`}
-                            onClick={(e) => open(e.currentTarget, link)}
-                          >
-                            <Pencil size={16} />
-                          </Button>
-                          <Button
-                            size="compact"
-                            variant="ghost"
-                            disabled={pending}
-                            aria-label={`删除友链 ${link.name}`}
-                            onClick={(e) => {
-                              trigger.current = e.currentTarget;
-                              deleted.current = false;
-                              setDeleting(link);
-                              setError("");
-                              setConflict(false);
-                            }}
-                          >
-                            <Trash2 size={16} />
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </section>
-            {!data.total && (
-              <div className="admin-post-empty">
-                <Link2 size={28} />
-                <h2>暂无对应友链数据</h2>
-                <p>调整筛选条件，或添加第一条友情链接。</p>
-                <div className="admin-form-actions">
-                  <Button size="compact" variant="secondary" onClick={reset}>
-                    重置筛选
-                  </Button>
-                  <Button size="compact" disabled={pending} onClick={(e) => open(e.currentTarget)}>
-                    新增友链
-                  </Button>
+            <DataTable
+              meta={{
+                getRowActions: (link) => ({
+                  label: `友链 ${link.name} 的操作`,
+                  disabled: pending || query.loading || Boolean(query.error),
+                  actions: [
+                    ...(link.status === "pending"
+                      ? [
+                          {
+                            label: "通过审核",
+                            icon: actionIcons.Check,
+                            onSelect: () => {
+                              const {
+                                id: _id,
+                                createdAt: _created,
+                                updatedAt: _updated,
+                                ...fields
+                              } = link;
+                              void mutate(
+                                () =>
+                                  request(`/${link.id}`, {
+                                    method: "PUT",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ ...fields, status: "approved" }),
+                                  }),
+                                () => onMessage("友链已通过审核。"),
+                              );
+                            },
+                          },
+                        ]
+                      : []),
+                    {
+                      label: "编辑友链",
+                      icon: actionIcons.Pencil,
+                      separator: link.status === "pending",
+                      opensDialog: true,
+                      onSelect: (element) => element && open(element, link),
+                    },
+                    {
+                      label: "删除友链",
+                      icon: actionIcons.Trash2,
+                      destructive: true,
+                      separator: true,
+                      opensDialog: true,
+                      onSelect: (element) => {
+                        trigger.current = element;
+                        deleted.current = false;
+                        setDeleting(link);
+                        setError("");
+                        setConflict(false);
+                      },
+                    },
+                  ],
+                }),
+              }}
+              {...tableState}
+              data={data.items}
+              columns={columns}
+              getRowId={(link) => link.id}
+              mode="server"
+              rowCount={data.total}
+              loading={query.loading}
+              disabled={Boolean(query.error)}
+              caption={`友情链接列表，共 ${data.total} 条，第 ${currentPage} 页`}
+              tableClassName="admin-post-table admin-friend-table"
+              emptyState={
+                <div className="admin-post-empty">
+                  <Link2 size={28} />
+                  <h2>暂无对应友链数据</h2>
+                  <p>调整筛选条件，或添加第一条友情链接。</p>
+                  <div className="admin-form-actions">
+                    <Button size="compact" variant="secondary" onClick={reset}>
+                      重置筛选
+                    </Button>
+                    <Button
+                      size="compact"
+                      disabled={pending}
+                      onClick={(e) => open(e.currentTarget)}
+                    >
+                      新增友链
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-            <div className="admin-post-pagination">
-              <output>
-                显示第 {data.total ? (currentPage - 1) * data.pageSize + 1 : 0}–
-                {Math.min(currentPage * data.pageSize, data.total)} 条，共 {data.total} 条
-              </output>
-              <nav aria-label="友链分页">
-                <Button
-                  size="compact"
-                  variant="ghost"
-                  aria-label="上一页友链"
-                  disabled={currentPage === 1}
-                  onClick={() => setPage(currentPage - 1)}
-                >
-                  <ChevronLeft size={16} />
-                </Button>
-                <span aria-current="page">
-                  {currentPage} / {pageCount}
-                </span>
-                <Button
-                  size="compact"
-                  variant="ghost"
-                  aria-label="下一页友链"
-                  disabled={currentPage === pageCount}
-                  onClick={() => setPage(currentPage + 1)}
-                >
-                  <ChevronRight size={16} />
-                </Button>
-              </nav>
-            </div>
+              }
+            />
           </div>
         )}
       </div>

@@ -19,19 +19,21 @@
   min-width: 960px;
 }
 .admin-friends-links .admin-friend-table col:nth-child(1),
+.admin-friends-links .admin-friend-table th:first-child {
+  width: 32%;
+}
 .admin-friends-links .admin-friend-table col:nth-child(2),
-.admin-friends-links .admin-friend-table th:first-child,
 .admin-friends-links .admin-friend-table th:nth-child(2) {
-  width: 30%;
+  width: 34%;
 }
 .admin-friends-links .admin-friend-table col:nth-child(3) {
   width: 12%;
 }
 .admin-friends-links .admin-friend-table col:nth-child(4) {
-  width: 10%;
+  width: 14%;
 }
 .admin-friends-links .admin-friend-table col:nth-child(5) {
-  width: 18%;
+  width: 8%;
 }
 .admin-friends-links .admin-post-category {
   padding: 0;

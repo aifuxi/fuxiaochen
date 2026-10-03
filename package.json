@@ -36,6 +36,7 @@
     "@hono/zod-validator": "0.9.1",
     "@noble/hashes": "2.4.0",
     "@prisma/orm-sqlite": "8.0.0-rc.14",
+    "@tanstack/react-table": "8.21.3",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-code-block-lowlight": "3.31.4",
     "@tiptap/extension-drag-handle": "3.31.4",

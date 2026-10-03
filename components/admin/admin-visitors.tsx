@@ -1,10 +1,13 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Globe2, Pause, Play, Search, X } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+
+import { Globe2, Pause, Play, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import {
   InputGroup,
   InputGroupInput,
@@ -12,19 +15,111 @@ import {
   InputGroupButton,
 } from "@/components/ui/input-group";
 
+import type { VisitorLog } from "./visitors-mock-data";
+
 import { initialVisitorLogs, visitorStreamSamples, visitorSummary } from "./visitors-mock-data";
 import "./admin-data-workspace.css";
 import "./admin-visitors.css";
 
-const pageSize = 10;
 const onlineCounts = [14, 15, 13, 16, 14, 12, 15, 17];
+
+const columns: ColumnDef<VisitorLog>[] = [
+  {
+    id: "ip",
+    header: "访问者 IP",
+    accessorFn: (log) => log.ip.split(".").reduce((value, part) => value * 256 + Number(part), 0),
+    enableSorting: true,
+    meta: { className: "visitors-ip", rowHeader: true },
+    cell: ({ row }) => {
+      const log = row.original;
+      return <> {log.ip} </>;
+    },
+  },
+  {
+    id: "location",
+    header: "地理位置",
+    accessorKey: "location",
+    enableSorting: true,
+    cell: ({ row }) => {
+      const log = row.original;
+      return (
+        <>
+          <span className="visitors-location">
+            <Globe2 size={14} aria-hidden="true" />
+            {log.location}
+          </span>
+        </>
+      );
+    },
+  },
+  {
+    id: "entryPage",
+    header: "受访入口",
+    accessorKey: "entryPage",
+    enableSorting: true,
+    meta: { className: "visitors-path" },
+    cell: ({ row }) => {
+      const log = row.original;
+      return <> {log.entryPage} </>;
+    },
+  },
+  {
+    id: "platform",
+    header: "终端与系统",
+    accessorFn: (log) => `${log.browser}\0${log.os}`,
+    enableSorting: true,
+    cell: ({ row }) => {
+      const log = row.original;
+      return (
+        <>
+          <div className="visitors-platform">
+            <span>{log.browser}</span>
+            <small>{log.os}</small>
+          </div>
+        </>
+      );
+    },
+  },
+  {
+    id: "duration",
+    header: "停留时长",
+    accessorFn: (log) =>
+      log.duration.split(":").reduce((seconds, part) => seconds * 60 + Number(part), 0),
+    enableSorting: true,
+    cell: ({ row }) => {
+      const log = row.original;
+      return (
+        <>
+          <span className="visitors-duration">{log.duration}</span>
+        </>
+      );
+    },
+  },
+  {
+    id: "time",
+    header: "访问时间",
+    accessorFn: (log) =>
+      log.time.split(":").reduce((seconds, part) => seconds * 60 + Number(part), 0),
+    enableSorting: true,
+    meta: { className: "admin-post-metric" },
+    cell: ({ row }) => {
+      const log = row.original;
+      return (
+        <>
+          <time>{log.time}</time>
+        </>
+      );
+    },
+  },
+];
 
 export function AdminVisitors() {
   const [logs, setLogs] = useState(initialVisitorLogs);
   const [online, setOnline] = useState(visitorSummary.online);
   const [paused, setPaused] = useState(false);
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const tableState = useDataTableState(10);
+  const { setPage } = tableState;
   const heartbeat = useRef(0);
   const searchInput = useRef<HTMLInputElement>(null);
 
@@ -50,10 +145,6 @@ export function AdminVisitors() {
   const filtered = logs.filter((log) =>
     [log.ip, log.location, log.entryPage].some((value) => value.toLocaleLowerCase().includes(term)),
   );
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const currentPage = Math.min(page, pageCount);
-  const start = (currentPage - 1) * pageSize;
-  const visibleLogs = filtered.slice(start, start + pageSize);
   const updateQuery = (value: string) => {
     setQuery(value);
     setPage(1);
@@ -152,101 +243,24 @@ export function AdminVisitors() {
             </InputGroup>
           </div>
         </div>
-        <section
-          className="admin-post-table-scroll"
-          aria-label="访客日志表格，可横向滚动"
-          // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 允许键盘用户滚动宽表格。
-          tabIndex={0}
-        >
-          <table className="admin-post-table visitors-table">
-            <caption className="sr-only">
-              模拟访客日志，访问时间为北京时间，停留时长格式为分:秒
-            </caption>
-            <colgroup>
-              {Array.from({ length: 6 }, (_, index) => (
-                <col key={index} />
-              ))}
-            </colgroup>
-            <thead>
-              <tr>
-                {["访问者 IP", "地理位置", "受访入口", "终端与系统", "停留时长", "访问时间"].map(
-                  (label) => (
-                    <th scope="col" key={label}>
-                      {label}
-                    </th>
-                  ),
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {visibleLogs.map((log) => (
-                <tr key={log.id}>
-                  <th scope="row" className="visitors-ip">
-                    {log.ip}
-                  </th>
-                  <td>
-                    <span className="visitors-location">
-                      <Globe2 size={14} aria-hidden="true" />
-                      {log.location}
-                    </span>
-                  </td>
-                  <td className="visitors-path">{log.entryPage}</td>
-                  <td aria-label={`${log.browser}，${log.os}`}>
-                    <div className="visitors-platform">
-                      <span>{log.browser}</span>
-                      <small>{log.os}</small>
-                    </div>
-                  </td>
-                  <td>
-                    <span className="visitors-duration">{log.duration}</span>
-                  </td>
-                  <td className="admin-post-metric">
-                    <time>{log.time}</time>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
-        {!filtered.length && (
-          <div className="admin-post-empty">
-            <Search size={26} aria-hidden="true" />
-            <h2>没有匹配的访客日志</h2>
-            <p>试试其他 IP、城市或页面关键词。</p>
-            <Button size="compact" onClick={clearSearch}>
-              清空搜索
-            </Button>
-          </div>
-        )}
-        <div className="admin-post-pagination">
-          <span>
-            显示第 {filtered.length ? start + 1 : 0}–{Math.min(start + pageSize, filtered.length)}{" "}
-            条，共 {filtered.length} 条
-          </span>
-          <nav aria-label="访客日志分页">
-            <Button
-              variant="ghost"
-              size="compact"
-              aria-label="上一页"
-              disabled={currentPage === 1}
-              onClick={() => setPage(currentPage - 1)}
-            >
-              <ChevronLeft size={16} aria-hidden="true" />
-            </Button>
-            <span aria-current="page">
-              {currentPage} / {pageCount}
-            </span>
-            <Button
-              variant="ghost"
-              size="compact"
-              aria-label="下一页"
-              disabled={currentPage === pageCount}
-              onClick={() => setPage(currentPage + 1)}
-            >
-              <ChevronRight size={16} aria-hidden="true" />
-            </Button>
-          </nav>
-        </div>
+        <DataTable
+          {...tableState}
+          data={filtered}
+          columns={columns}
+          getRowId={(log) => log.id}
+          caption="模拟访客日志，访问时间为北京时间，停留时长格式为分:秒"
+          tableClassName="admin-post-table visitors-table"
+          emptyState={
+            <div className="admin-post-empty">
+              <Search size={26} aria-hidden="true" />
+              <h2>没有匹配的访客日志</h2>
+              <p>试试其他 IP、城市或页面关键词。</p>
+              <Button size="compact" onClick={clearSearch}>
+                清空搜索
+              </Button>
+            </div>
+          }
+        />
       </section>
       <p className="admin-post-session-note">离开页面后停止模拟更新，再次进入恢复初始数据。</p>
     </div>

@@ -32,8 +32,16 @@ type AdminState = TaxonomyState &
     cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
     onOpen: (panel: AdminPanel) => void;
     onEdit: (id: string) => void;
-    onDeletePost: (post: PostItem) => void;
-    onDeleteComment: (comment: CommentItem, fallbackFocus?: HTMLElement | null) => void;
+    onDeletePost: (
+      post: PostItem,
+      fallbackFocus?: HTMLElement | null,
+      triggerFocus?: HTMLElement | null,
+    ) => void;
+    onDeleteComment: (
+      comment: CommentItem,
+      fallbackFocus?: HTMLElement | null,
+      triggerFocus?: HTMLElement | null,
+    ) => void;
     onBackup: () => void;
   };
 

@@ -32,6 +32,8 @@ export const replyCommentSchema = z.strictObject({ content, version });
 export const commentIdSchema = z.object({ id: z.uuid() });
 export const deleteCommentSchema = z.object({ version: z.coerce.number().pipe(version) });
 export const commentQuerySchema = z.object({
+  sortBy: z.enum(["author", "status", "createdAt"]).optional(),
+  sortDirection: z.enum(["asc", "desc"]).optional(),
   q: z.string().trim().max(200, "关键词最多 200 个字符。").default(""),
   status: commentStatusSchema.optional(),
   postId: z.uuid().optional(),

@@ -97,6 +97,7 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
   const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const page = Math.min(query.page, pageCount);
+  const direction = query.sortDirection ?? "asc";
   const rows = await filtered
     .select(
       "id",
@@ -113,7 +114,28 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     )
     .include("category")
     .include("tagLinks", (links) => links.include("tag"))
-    .orderBy([(p) => p.createdAt.desc(), (p) => p.id.desc()])
+    .orderBy([
+      (p) => {
+        if (query.sortBy === "title") return p.title[direction]();
+        if (query.sortBy === "category") return p.category.name[direction]();
+        const order = p.createdAt[direction]();
+        if (query.sortBy === "status")
+          return order.withExpr(
+            db.raw.sql`CASE ${p.status} WHEN 'draft' THEN 0 WHEN 'published' THEN 1 ELSE 2 END`
+              .returns("sqlite/integer@1")
+              .buildAst(),
+          );
+        if (query.sortBy === "time")
+          return order.withExpr(
+            db.raw
+              .sql`CASE WHEN ${p.status} = 'scheduled' THEN ${p.scheduledFor} ELSE coalesce(${p.publishedAt}, ${p.updatedAt}) END`
+              .returns("sqlite/text@1")
+              .buildAst(),
+          );
+        return p.createdAt.desc();
+      },
+      (p) => p.id.desc(),
+    ])
     .offset((page - 1) * query.pageSize)
     .limit(query.pageSize)
     .all();

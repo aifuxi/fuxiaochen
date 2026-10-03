@@ -51,6 +51,7 @@
   font-size: 12px;
 }
 .admin-taxonomy-table {
+  min-width: 340px;
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
@@ -70,7 +71,7 @@
   border-bottom: 1px solid var(--admin-divider);
 }
 .admin-taxonomy-table th:nth-child(2) {
-  width: 88px;
+  width: 110px;
 }
 .admin-taxonomy-table th:last-child {
   width: 60px;

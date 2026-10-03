@@ -40,6 +40,8 @@ export const updatePostSchema = postSchema.safeExtend({ version });
 export const postIdSchema = z.object({ id: z.uuid() });
 export const deletePostSchema = z.object({ version: z.coerce.number().pipe(version) });
 export const postQuerySchema = z.object({
+  sortBy: z.enum(["title", "category", "status", "time"]).optional(),
+  sortDirection: z.enum(["asc", "desc"]).optional(),
   q: z.string().trim().max(200, "关键词最多 200 个字符").default(""),
   status: postStatusSchema.optional(),
   categoryId: z.uuid().optional(),
