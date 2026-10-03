@@ -373,7 +373,7 @@ components:
 
 参考 [VibeHub](https://vibe-hub.org/) 的桌面指针状态：普通区域显示品牌蓝色箭头；悬停可点击元素时，箭头在 120ms 内淡出并切换为 22px 圆环；进入文本输入区时切换为细竖线。圆环采用中性半透明材质：12% 白色填充、50% 白色细边、轻微内高光和 6px 背景模糊，呈现小滑块般的透明感，不使用蓝色。位置直接跟随真实指针，状态切换才使用短过渡，不添加拖尾或持续循环。效果层不截获事件，也不参与布局。
 
-仅在支持 hover 的精确鼠标设备上启用，并在第一次鼠标移动后替换系统指针；触屏、粗指针、`prefers-reduced-motion`、页面动效开关关闭时使用原生指针。离开窗口或窗口失焦时隐藏效果。禁用控件保留 `not-allowed` 指针；原生 disabled、aria-disabled="true" 和空值或真值 data-disabled 表示禁用，data-disabled="false" 不表示禁用。可编辑正文继续使用自定义细竖线指针。可编辑文本、链接及按钮的语义不能由装饰指针代替，键盘 `focus-visible` 仍需清晰可见。
+仅在支持 hover 的精确鼠标设备上启用，并在第一次鼠标移动后替换系统指针；触屏、粗指针、`prefers-reduced-motion`、页面动效开关关闭时使用原生指针。离开窗口或窗口失焦时隐藏效果。禁用控件保留 `not-allowed` 指针；原生 disabled、aria-disabled="true" 和空值或真值 data-disabled 表示禁用，data-disabled="false" 不表示禁用。后台文章编辑区及其菜单、设置与素材弹窗使用原生指针，通过 `data-cursor="native"` 标记作用域；鼠标移出后恢复全站自定义指针。其他可编辑文本继续使用自定义细竖线指针。可编辑文本、链接及按钮的语义不能由装饰指针代替，键盘 `focus-visible` 仍需清晰可见。
 
 ## Shapes
 

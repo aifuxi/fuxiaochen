@@ -49,7 +49,7 @@ function CodeBlockView({ editor, node, getPos }: ReactNodeViewProps) {
           <SelectTrigger className="code-block-language-select" aria-label="代码块语言">
             <SelectValue>{codeLanguageLabel(language)}</SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent data-cursor="native">
             {!knownLanguage && (
               <SelectItem value={selected}>{codeLanguageLabel(language)}</SelectItem>
             )}

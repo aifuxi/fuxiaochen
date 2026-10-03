@@ -8,6 +8,7 @@ const textSelector =
   'textarea, [contenteditable="true"], input:not([type]), input:is([type="text"], [type="search"], [type="email"], [type="url"], [type="tel"], [type="password"], [type="number"])';
 const interactiveSelector =
   'a[href], button, select, summary, label, [role="button"], [role="link"], [role="tab"], [role="switch"], [role="checkbox"], [data-cursor-interactive]';
+const nativeCursorSelector = '[data-motion="off"], [data-cursor="native"]';
 
 export function CursorEffect() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -46,7 +47,7 @@ export function CursorEffect() {
       const target = event.target;
       if (!(target instanceof Element)) return;
       lastTarget = target;
-      if (target.closest('[data-motion="off"]')) {
+      if (target.closest(nativeCursorSelector)) {
         useNativeCursor();
         return;
       }
@@ -70,12 +71,12 @@ export function CursorEffect() {
       if (document.hidden) hide();
     };
 
-    const motionObserver = new MutationObserver(() => {
-      if (lastTarget?.closest('[data-motion="off"]')) useNativeCursor();
+    const cursorObserver = new MutationObserver(() => {
+      if (lastTarget?.closest(nativeCursorSelector)) useNativeCursor();
     });
-    motionObserver.observe(document.body, {
+    cursorObserver.observe(document.body, {
       attributes: true,
-      attributeFilter: ["data-motion"],
+      attributeFilter: ["data-motion", "data-cursor"],
       subtree: true,
     });
 
@@ -91,7 +92,7 @@ export function CursorEffect() {
       window.removeEventListener("pointerout", onPointerOut);
       window.removeEventListener("blur", hide);
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      motionObserver.disconnect();
+      cursorObserver.disconnect();
       root.removeAttribute("data-cursor-fx");
       hide();
     };
