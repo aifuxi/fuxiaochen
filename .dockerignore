@@ -14,6 +14,7 @@ coverage
 
 # next.js
 .next/
+.next-build/
 
 # production
 build
@@ -32,7 +33,20 @@ yarn-error.log*
 
 # local env files
 .env
+.env*
+!.env.example
 .env*.local
+**/*.env
+*.sqlite
+*.sqlite-*
+**/backups
+logs
+public/uploads
+.github
+.agents
+.codex
+.husky
+docs
 
 # vercel
 .vercel

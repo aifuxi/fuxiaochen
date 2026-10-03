@@ -1,0 +1,43 @@
+services:
+  app:
+    image: ${APP_IMAGE:-ghcr.io/aifuxi/fuxiaochen:latest}
+    restart: unless-stopped
+    init: true
+    environment:
+      APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
+      DATABASE_PATH: /app/data/admin.sqlite
+      BACKUP_DIRECTORY: /app/data/backups
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_REGION: ${OSS_REGION:-cn-hangzhou}
+      OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+      OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
+      OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+      OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
+      OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}
+      OSS_CREDENTIAL_MODE: ${OSS_CREDENTIAL_MODE:-environment}
+      OSS_RAM_ROLE_NAME: ${OSS_RAM_ROLE_NAME:-}
+      ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
+      ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
+      ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
+      ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
+    networks:
+      caddy:
+        aliases:
+          - fuxiaochen
+    volumes:
+      - app-data:/app/data
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  app-data:
+    name: ${APP_DATA_VOLUME:-fuxiaochen-data}
+
+networks:
+  caddy:
+    external: true
+    name: ${CADDY_NETWORK:-infra_edge}

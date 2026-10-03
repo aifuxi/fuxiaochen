@@ -2,6 +2,8 @@
 
 历史验收清单与验证记录见 [历史验收记录](docs/engineering/verification-history.md)。
 
+GitHub Actions 镜像构建、Portainer Git Stack 与 Caddy 接入见 [容器部署指南](docs/deployment.md)。
+
 ## 路由与布局
 
 `app/layout.tsx` 是全站共用的根布局，负责 `html/body`、全局暗色样式、字体、默认 metadata 和唯一的指针动效层。业务布局通过路由分组拆分，括号目录不进入 URL：

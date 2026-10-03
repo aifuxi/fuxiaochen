@@ -1,0 +1,9 @@
+# 放入服务器 /srv/infra/caddy/sites/fuxiaochen.caddy；APP_ORIGIN 为 https://fuxiaochen.com。
+# alidns_tls 来自现有主 Caddyfile，沿用 gateway 的 DNS 验证配置。
+fuxiaochen.com {
+  encode zstd gzip
+  import alidns_tls
+  reverse_proxy fuxiaochen:3000 {
+    header_up X-Real-IP {remote_host}
+  }
+}

@@ -26,6 +26,7 @@ next-env.d.ts
 .env.production
 .env.development
 .env.staging
+/deploy/*.env
 .env
 
 # production
