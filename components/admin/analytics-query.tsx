@@ -143,7 +143,7 @@ export function CollectionStatus({ collection }: { collection: CollectionInfo })
     <>
       {!collection.enabled && (
         <p className="admin-business-feedback">
-          本地访问采集已关闭，可在系统设置 → 访问统计中启用。已保存的数据仍可查询。
+          访问统计已关闭。可在系统设置中启用，历史数据仍可查询。
         </p>
       )}
       {!collection.production && (

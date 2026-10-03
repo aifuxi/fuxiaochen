@@ -42,7 +42,6 @@ type AdminState = TaxonomyState &
       fallbackFocus?: HTMLElement | null,
       triggerFocus?: HTMLElement | null,
     ) => void;
-    onBackup: () => void;
   };
 
 export const AdminContext = createContext<AdminState | null>(null);

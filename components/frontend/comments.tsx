@@ -76,9 +76,7 @@ export function Comments({
     } catch (failure) {
       if (!controller.signal.aborted)
         setLoadError(
-          failure instanceof CommentRequestError
-            ? failure.message
-            : "评论加载失败，请确认网络与服务可用后重试。",
+          failure instanceof CommentRequestError ? failure.message : "评论加载失败，请稍后重试。",
         );
     } finally {
       if (!controller.signal.aborted) setLoading(false);
@@ -150,10 +148,10 @@ export function Comments({
       if (!controller.signal.aborted || controller.signal.reason === "timeout")
         setError(
           controller.signal.aborted
-            ? "响应超时，草稿已保留。再次提交会使用相同标识核对结果。"
+            ? "提交超时，草稿已保留，请重试。"
             : failure instanceof CommentRequestError
               ? failure.message
-              : "请求失败，草稿已保留。请确认网络与服务可用后重新提交核对结果。",
+              : "提交失败，草稿已保留。请检查网络后重试。",
         );
     } finally {
       window.clearTimeout(timeout);

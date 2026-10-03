@@ -162,7 +162,7 @@ export function AdminVisitors() {
       <div className="admin-page-heading">
         <div>
           <h1>访客日志</h1>
-          <p>浏览器采集的真实访问记录，IP 已脱敏；无法识别的地域显示未知。</p>
+          <p>查看访问记录，IP 已脱敏。</p>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export function AdminVisitors() {
               <strong>
                 {result.error ? "查询失败" : paused ? "访问记录更新已暂停" : "访问记录更新中"}
               </strong>
-              <p>每10秒查询，隐藏页面或离开时停止更新</p>
+              <p>每 10 秒自动更新</p>
             </div>
           </div>
           <div className="visitors-search-controls">
@@ -265,10 +265,10 @@ export function AdminVisitors() {
                 {result.error
                   ? "请使用上方重试按钮重新查询。"
                   : result.isPending
-                    ? "正在读取数据库中的访问记录。"
+                    ? "正在加载访问记录。"
                     : q
                       ? "试试其他脱敏 IP、地域或页面关键词。"
-                      : "启用本地统计后，生产环境的公开页面访问会出现在这里。"}
+                      : "可在系统设置中启用访问统计。"}
               </p>
               <Button size="compact" onClick={clearSearch}>
                 清空搜索

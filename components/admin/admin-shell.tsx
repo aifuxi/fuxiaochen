@@ -27,10 +27,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-import type { Notice } from "./mock-data";
-
-import { AdminNotifications } from "./admin-notifications";
-
 export type AdminPanel =
   | "search"
   | "compose"
@@ -44,9 +40,6 @@ export type AdminPanel =
 type Props = {
   children: ReactNode;
   pendingCount: number | null;
-  notices: Notice[];
-  onReadNotice: (id: string) => void;
-  onReadAllNotices: () => void;
   onOpen: (panel: AdminPanel) => void;
   writingFocused: boolean;
   postPending: boolean;
@@ -65,16 +58,7 @@ const nav = [
   { name: "系统设置", icon: Settings, href: "/admin/settings" },
 ];
 
-export function AdminShell({
-  children,
-  pendingCount,
-  notices,
-  onReadNotice,
-  onReadAllNotices,
-  onOpen,
-  writingFocused,
-  postPending,
-}: Props) {
+export function AdminShell({ children, pendingCount, onOpen, writingFocused, postPending }: Props) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -232,12 +216,6 @@ export function AdminShell({
               <Plus size={16} aria-hidden="true" />
               <span>新建文章</span>
             </Button>
-            <AdminNotifications
-              key={pathname}
-              notices={notices}
-              onRead={onReadNotice}
-              onReadAll={onReadAllNotices}
-            />
             <Button
               size="compact"
               variant="ghost"

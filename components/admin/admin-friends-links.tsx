@@ -542,9 +542,7 @@ export function AdminFriendsLinks() {
           </div>
         )}
       </div>
-      <p className="admin-post-session-note">
-        前台仅展示已通过且启用的友链；尚未接入外站健康检测。
-      </p>
+      <p className="admin-post-session-note">前台仅展示审核通过且已启用的友链。</p>
       <Dialog
         open={formOpen}
         onOpenChange={(v) => {

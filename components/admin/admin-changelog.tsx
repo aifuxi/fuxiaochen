@@ -148,7 +148,7 @@ export function AdminChangelog() {
       <div className="admin-page-heading">
         <div>
           <h1>更新日志</h1>
-          <p>记录版本变更；发布日志不会部署软件。</p>
+          <p>记录版本变更。</p>
         </div>
         <Button
           ref={publishButton}
@@ -208,7 +208,7 @@ export function AdminChangelog() {
             )}
           </InputGroup>
           <output>
-            已记录 <strong>{result.data?.total ?? "—"}</strong> 个迭代里程碑
+            共 <strong>{result.data?.total ?? "—"}</strong> 条更新日志
           </output>
         </div>
 
@@ -245,7 +245,7 @@ export function AdminChangelog() {
             <div className="admin-post-empty">
               <History size={28} aria-hidden="true" />
               <h2>{keyword ? "没有匹配的版本记录" : "尚无版本记录"}</h2>
-              <p>{keyword ? "试试其他版本号或更新关键词。" : "发布第一条日志以记录实际变更。"}</p>
+              <p>{keyword ? "试试其他版本号或更新关键词。" : "发布第一条更新日志。"}</p>
               {keyword && (
                 <Button
                   size="compact"
@@ -304,7 +304,7 @@ export function AdminChangelog() {
           <div className="admin-modal-heading">
             <div>
               <DialogTitle>发布版本更新日志</DialogTitle>
-              <DialogDescription>保存真实版本记录，不部署软件。</DialogDescription>
+              <DialogDescription>填写版本号、主题和更新内容。</DialogDescription>
             </div>
             <Button
               variant="ghost"
@@ -323,7 +323,7 @@ export function AdminChangelog() {
           )}
           {uncertain && (
             <section aria-label="核对发布结果">
-              <p>响应未确认，请先查询核对已有记录；不会自动重试发布。</p>
+              <p>发布结果未确认，请先查询记录，避免重复发布。</p>
               <Button
                 type="button"
                 variant="secondary"
@@ -355,7 +355,7 @@ export function AdminChangelog() {
                       setError("");
                     }}
                   >
-                    已核对未发布，允许重新提交
+                    确认尚未发布，重新提交
                   </Button>
                 </>
               )}

@@ -8,7 +8,7 @@ export function safeContentUrl(value: string, image = false) {
   )
     return false;
   try {
-    // 相对路径与旧 Markdown 一致；协议仍须在白名单内。
+    // 用固定基准解析相对路径和锚点，再统一检查协议白名单。
     const url = new URL(value, "https://article.invalid");
     return (image ? ["https:", "http:"] : ["https:", "http:", "mailto:", "tel:"]).includes(
       url.protocol,

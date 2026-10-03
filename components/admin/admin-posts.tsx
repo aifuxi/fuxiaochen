@@ -96,16 +96,6 @@ const columns: ColumnDef<PostItem>[] = [
     },
   },
   {
-    id: "views",
-    header: "浏览量",
-    enableSorting: false,
-    meta: { className: "admin-post-metric" },
-    cell: ({ row }) => {
-      const post = row.original;
-      return <>{post.status === "published" ? "尚未接入" : "—"}</>;
-    },
-  },
-  {
     id: "time",
     header: "时间",
     accessorKey: "time",
@@ -316,7 +306,7 @@ export function AdminPosts() {
           </TabsPanel>
         </Tabs>
       </div>
-      <p className="admin-post-session-note">排期暂未启用自动发布；浏览量尚未接入访问采集。</p>
+      <p className="admin-post-session-note">排期到期后需手动发布。</p>
     </div>
   );
 }

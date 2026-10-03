@@ -16,7 +16,6 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { MediaUploadStatus } from "./media-upload-status";
-import { initialNotices, initialSources, traffic30Days } from "./mock-data";
 import { PostBrowser } from "./post-browser";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { commentRequest, useComments } from "./use-comments";
@@ -25,16 +24,22 @@ import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-type DialogPanel = Exclude<AdminPanel, "compose">;
+type DialogPanel = Exclude<AdminPanel, "compose" | "comments" | "analytics">;
 
 const panelTitles: Record<DialogPanel, string> = {
   search: "全局内容检索",
   profile: "管理账户",
-  comments: "评论管理",
   upload: "上传媒体",
   categories: "分类与标签",
-  analytics: "流量详细分析",
   schedule: "定时发布计划",
+};
+
+const panelDescriptions: Record<DialogPanel, string> = {
+  search: "按标题、正文、分类或标签搜索文章。",
+  profile: "查看账户并退出登录。",
+  upload: "选择图片或附件上传到媒体库。",
+  categories: "创建或删除文章分类与标签。",
+  schedule: "查看发布计划，排期到期后需手动发布。",
 };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
@@ -44,7 +49,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postPending, setPostPending] = useState(false);
   const [writingFocused, setWritingFocused] = useState(false);
   const postMutation = useRef(false);
-  const [notices, setNotices] = useState(initialNotices);
   const taxonomy = useTaxonomy();
   const taxonomyDisabled =
     taxonomy.taxonomyLoading || Boolean(taxonomy.taxonomyError) || taxonomy.taxonomyPending;
@@ -92,8 +96,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const openPanel = useCallback(
     (name: AdminPanel) => {
       if (postMutation.current) return;
-      if (name === "comments") {
-        router.push("/admin/comments");
+      if (name === "comments" || name === "analytics") {
+        setPanel(null);
+        router.push(`/admin/${name}`);
         return;
       }
       if (name === "compose") {
@@ -208,22 +213,12 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           setCommentDeleteError("");
           setCommentDeleteConflict(false);
         },
-        onBackup: () => setMessage("模拟备份已完成；未连接真实服务器"),
       }}
     >
       <AdminShell
         writingFocused={writingFocused}
         postPending={postPending}
         pendingCount={pendingCount}
-        notices={notices}
-        onReadNotice={(id) =>
-          setNotices((current) =>
-            current.map((notice) => (notice.id === id ? { ...notice, read: true } : notice)),
-          )
-        }
-        onReadAllNotices={() =>
-          setNotices((current) => current.map((notice) => ({ ...notice, read: true })))
-        }
         onOpen={openPanel}
       >
         {children}
@@ -254,15 +249,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               <div className="admin-modal-heading">
                 <div>
                   <DialogTitle>{panelTitles[panel]}</DialogTitle>
-                  <DialogDescription>
-                    {["categories", "search", "schedule"].includes(panel)
-                      ? "文章、分类与标签已持久化；暂未启用自动发布。"
-                      : panel === "upload"
-                        ? "文件上传并通过核验后保存到媒体库。"
-                        : panel === "profile"
-                          ? "当前账户使用真实登录会话。"
-                          : "演示数据，不代表实际通知或监控结果。"}
-                  </DialogDescription>
+                  <DialogDescription>{panelDescriptions[panel]}</DialogDescription>
                 </div>
                 <Button
                   variant="ghost"
@@ -278,7 +265,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               {panel === "profile" && (
                 <div className="admin-modal-section">
                   <p>fuxiaochen · 管理账户</p>
-                  <p className="admin-muted">当前使用本项目的现有登录会话。</p>
                   <form action="/api/logout" method="post">
                     <Button type="submit" variant="secondary">
                       退出登录
@@ -362,34 +348,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                     )}
                     <Link href="/admin/categories">管理分类与标签</Link>
                   </div>
-                </div>
-              )}
-              {panel === "analytics" && (
-                <div className="admin-modal-section">
-                  <div className="admin-analytics-summary">
-                    <div>
-                      <span>30 天访问量</span>
-                      <strong>
-                        {traffic30Days
-                          .reduce((sum, point) => sum + point.visits, 0)
-                          .toLocaleString()}
-                      </strong>
-                    </div>
-                    <div>
-                      <span>主要来源</span>
-                      <strong>{initialSources[0].name}</strong>
-                    </div>
-                  </div>
-                  <h3>来源构成</h3>
-                  <div className="admin-category-list">
-                    {initialSources.map((source) => (
-                      <div key={source.name}>
-                        <span>{source.name}</span>
-                        <strong>{source.percentage}%</strong>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="admin-muted">图表范围可在仪表盘切换，以上为固定演示数据。</p>
                 </div>
               )}
               {panel === "schedule" && <PostBrowser mode="schedule" />}

@@ -40,7 +40,6 @@ const groups = {
   filing: "备案",
   social: "社交账号",
   analytics: "访问统计",
-  developer: "开发信息",
 };
 function fieldGroup(key: string) {
   if (key.startsWith("socials")) return "social";
@@ -108,7 +107,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
       });
       setDraft(saved);
       setQuantity(String(saved.postsPerPage));
-      onMessage("所有设置已保存，前台刷新后生效。");
+      onMessage("设置已保存。");
     } catch (e) {
       setError(e instanceof Error ? e.message : "设置保存失败。");
       if (e instanceof AdminRequestError) {
@@ -334,15 +333,6 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
                 )}
                 {toggle("enableComments", "允许读者发表评论", "关闭后停止接收新评论和回复。")}
               </section>
-              <section className="admin-settings-section">
-                <div className="admin-settings-toggle">
-                  <div>
-                    <h3>每日自动云端备份</h3>
-                    <p>尚未接入备份服务与执行任务。</p>
-                  </div>
-                  <Switch checked={false} disabled touchTarget aria-label="自动备份尚未接入" />
-                </div>
-              </section>
             </div>
           </TabsPanel>
           <TabsPanel value="filing" className="admin-settings-panel">
@@ -544,12 +534,12 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>本地访问统计</h2>
-                  <p>访客日志和数据分析使用本地 SQLite 数据，与第三方统计独立。</p>
+                  <p>查看站点的访问量、访客日志和文章表现。</p>
                 </div>
                 {toggle(
                   "localAnalyticsEnabled",
                   "启用本地统计",
-                  "仅生产环境采集公开页面。使用匿名标识、脱敏 IP，访问明细保留180天。",
+                  "使用匿名标识和脱敏 IP，访问明细保留 180 天。",
                 )}
                 {draft.localAnalyticsStartedAt && (
                   <p className="admin-settings-help">
@@ -563,7 +553,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>Google Analytics（GA4）</h2>
-                  <p>仅生产环境前台加载；需要在 GA4 中关闭自动历史变化 PV，详见 README。</p>
+                  <p>请在 GA4 数据流设置中关闭基于浏览器历史记录的网页浏览，避免重复计数。</p>
                 </div>
                 {toggle(
                   "googleEnabled",
@@ -578,18 +568,6 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
                 </div>
                 {toggle("baiduEnabled", "启用百度统计", "填写统计代码 hm.js 后的32位站点 ID。")}
                 {text("baiduId", "站点 ID", 32)}
-              </section>
-            </div>
-          </TabsPanel>
-          <TabsPanel value="developer" className="admin-settings-panel">
-            <div className="admin-settings-stack">
-              <section className="admin-settings-section">
-                <div className="admin-settings-section-heading">
-                  <h2>开发信息</h2>
-                  <p>Gemini AI：未接入。API 密钥仅由服务端环境配置，不在此处展示。</p>
-                </div>
-                <p>Design System: Fuxiaochen Afterglow / Base UI</p>
-                <p>字体：Space Grotesk / Inter / ui-monospace</p>
               </section>
             </div>
           </TabsPanel>

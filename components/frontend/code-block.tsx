@@ -25,7 +25,6 @@ export function ArticleCodeBlock({ code, language }: { code: string; language?: 
         <span className="code-block-language">{codeLanguageLabel(language)}</span>
         <CopyCodeButton code={code} />
       </div>
-      {/* 长代码区域需要键盘焦点，以便使用方向键滚动。 */}
       {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 保留长代码块的键盘滚动入口。 */}
       <pre tabIndex={0} aria-label={`${codeLanguageLabel(language)}代码块`}>
         <code>{highlightNodes(highlightCode(code, language).children)}</code>

@@ -26,17 +26,16 @@
   width: 14%;
 }
 
-.admin-posts-page .admin-post-table col:nth-child(3),
-.admin-posts-page .admin-post-table col:nth-child(4) {
+.admin-posts-page .admin-post-table col:nth-child(3) {
   width: 10%;
 }
 
-.admin-posts-page .admin-post-table col:nth-child(5) {
-  width: 16%;
+.admin-posts-page .admin-post-table col:nth-child(4) {
+  width: 22%;
 }
 
-.admin-posts-page .admin-post-table col:nth-child(6) {
-  width: 8%;
+.admin-posts-page .admin-post-table col:nth-child(5) {
+  width: 12%;
 }
 
 .admin-posts-page .admin-post-table th:first-child,
@@ -45,7 +44,7 @@
   min-width: 280px;
 }
 
-.admin-posts-page .admin-post-table td:nth-child(5) {
+.admin-posts-page .admin-post-table td:nth-child(4) {
   white-space: normal;
 }
 

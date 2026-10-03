@@ -131,12 +131,12 @@ export function closeStorage() {
   delete storageGlobal.mediaStorage;
 }
 function target(mode: "service" | "bucket", endpoint: string, bucket: string) {
-  // 本地 service 模式由 SDK 将桶名拼到 S3 服务域名；bucketEndpoint 兼容分支要求完整桶域名。
+  // service 模式由 SDK 拼接桶名；bucket 模式要求完整桶域名。
   // CopySource 始终使用真实桶名，与访问域名无关。
   return mode === "bucket" ? endpoint : bucket;
 }
 export function publicMediaUrl(key: string) {
-  // 本地示例使用默认 Bucket HTTPS 域名；S3 服务 endpoint 本身不包含桶名，不能直接生成公开链接。
+  // 公开链接使用配置的访问域名，不能使用不含桶名的 S3 服务 endpoint。
   return new URL(
     key.split("/").map(encodeURIComponent).join("/"),
     `${storageConfig().publicOrigin.replace(/\/$/, "")}/`,

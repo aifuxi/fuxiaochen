@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "管理仪表盘 · fuxiaochen",
-  description: "fuxiaochen 管理空间的模拟运营仪表盘。",
+  description: "查看文章、评论、发布计划与访问统计。",
 };
 
 export default async function AdminPage() {

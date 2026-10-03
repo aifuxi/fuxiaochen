@@ -95,8 +95,7 @@ export function EditorMediaPicker({
                   setAlt(image.name);
                 }}
               >
-                {/* 媒体库地址在部署时配置，保留原生图片展示，避免额外的远程图片域配置。 */}
-                {/* oxlint-disable-next-line nextjs/no-img-element -- 原生图片沿用媒体库展示方式。 */}
+                {/* oxlint-disable-next-line nextjs/no-img-element -- 媒体域名由运行时配置，不依赖 Next.js 的构建期远程域名白名单。 */}
                 <img src={image.url!} alt="" loading="lazy" />
                 <span>{image.name}</span>
               </Button>

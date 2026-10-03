@@ -455,7 +455,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
         savedPost?.scheduledFor &&
         now !== null &&
         Date.parse(savedPost.scheduledFor) <= now && (
-          <output>原排期已过期，文章仍未自动发布。可保留时间编辑其他字段，或调整排期。</output>
+          <output>排期时间已过，请手动发布文章或调整排期。</output>
         )}
     </div>
   );

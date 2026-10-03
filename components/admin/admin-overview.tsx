@@ -18,7 +18,6 @@ export function AdminOverview() {
     onMessage,
     onOpen,
     onDeleteComment,
-    onBackup,
   } = useAdminWorkspace();
   return (
     <AdminDashboard
@@ -41,7 +40,6 @@ export function AdminOverview() {
         }
       }}
       onDelete={onDeleteComment}
-      onBackup={onBackup}
     />
   );
 }

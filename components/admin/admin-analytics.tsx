@@ -340,7 +340,7 @@ export function AdminAnalytics() {
       <div className="admin-page-heading">
         <div>
           <h1>数据分析</h1>
-          <p>浏览器采集的真实访问趋势、来源、设备与文章表现。</p>
+          <p>查看访问趋势、来源、设备与文章表现。</p>
         </div>
       </div>
       <div className="analytics-toolbar">

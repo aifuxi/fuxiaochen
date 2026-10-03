@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "数据分析 · fuxiaochen",
-  description: "查看真实访问趋势、来源、设备分布与文章表现。",
+  description: "查看访问趋势、来源、设备分布与文章表现。",
 };
 
 export default async function AnalyticsPage() {

@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Check,
-  Plus,
-  ShieldCheck,
-  Tags,
-  Trash2,
-  UploadCloud,
-} from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check, Plus, Tags, Trash2, UploadCloud } from "lucide-react";
 import { useRef, useState } from "react";
 
 import type { CommentItem, CommentSummary } from "@/lib/comments/schema";
@@ -17,12 +8,13 @@ import type { CommentItem, CommentSummary } from "@/lib/comments/schema";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
+import { durationLabel } from "@/lib/analytics/schema";
 import { postTime, type PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 
+import { AnalyticsQueryStatus, CollectionStatus, useAnalytics } from "./analytics-query";
 import { CommentQueryStatus } from "./comment-status";
-import { initialSources, traffic30Days } from "./mock-data";
 import { PostQueryStatus } from "./post-status";
 import { usePostClock } from "./use-posts";
 
@@ -39,7 +31,6 @@ type Props = {
   onOpen: (panel: AdminPanel) => void;
   onApprove: (comment: CommentItem) => Promise<void>;
   onDelete: (comment: CommentItem, fallbackFocus?: HTMLElement | null) => void;
-  onBackup: () => void;
 };
 
 function PanelCard({
@@ -67,7 +58,10 @@ function PanelCard({
 function TrafficChart() {
   const [range, setRange] = useState<"7d" | "30d">("7d");
   const [active, setActive] = useState<number | null>(null);
-  const data = range === "7d" ? traffic30Days.slice(-7) : traffic30Days;
+  const result = useAnalytics(range);
+  const snapshot = result.data;
+  const data = snapshot?.trend ?? [];
+  const max = Math.max(4, Math.ceil(Math.max(0, ...data.map((point) => point.pv)) / 4) * 4);
   const width = 640;
   const height = 250;
   const left = 42;
@@ -77,13 +71,19 @@ function TrafficChart() {
   const plotHeight = height - top - bottom;
   const points = data.map((point, index) => ({
     ...point,
-    x: left + (index * (width - left - right)) / (data.length - 1),
-    y: top + plotHeight * (1 - point.visits / 10000),
+    x:
+      data.length === 1
+        ? (left + width - right) / 2
+        : left + (index * (width - left - right)) / Math.max(1, data.length - 1),
+    y: top + plotHeight * (1 - point.pv / max),
   }));
   const path = points
     .map((point, index) => `${index ? "L" : "M"}${point.x.toFixed(1)},${point.y.toFixed(1)}`)
     .join(" ");
-  const area = `${path} L${points.at(-1)?.x},${height - bottom} L${points[0].x},${height - bottom} Z`;
+  const area = points.length
+    ? `${path} L${points.at(-1)?.x},${height - bottom} L${points[0].x},${height - bottom} Z`
+    : "";
+  const selected = active === null ? null : points[active];
 
   return (
     <Tabs
@@ -96,7 +96,7 @@ function TrafficChart() {
       }}
     >
       <PanelCard
-        title="访问量趋势 · 演示"
+        title="访问量趋势"
         className="admin-chart-panel"
         action={
           <TabsList size="compact" aria-label="图表时间范围">
@@ -106,95 +106,106 @@ function TrafficChart() {
         }
       >
         <TabsPanel value={range} className="admin-chart-content">
-          <p className="admin-module-note">
-            演示快照 · 2025-{data[0].date} 至 2025-{data.at(-1)?.date}
-          </p>
-          <output className="admin-chart-detail" aria-live="polite">
-            {active === null
-              ? "悬停、点击或聚焦数据点查看访问量"
-              : `${points[active].date} · ${points[active].visits.toLocaleString()} 次访问`}
-          </output>
-          <section className="admin-chart-scroll" aria-label="访问量趋势，可横向滚动">
-            <div
-              className="admin-chart-wrap"
-              style={{
-                minWidth: `max(540px, ${points.length * 51}px * var(--admin-chart-touch, 0))`,
-              }}
-            >
-              <svg
-                viewBox={`0 0 ${width} ${height}`}
-                aria-label={`${range === "7d" ? "近 7 天" : "近 30 天"}访问量趋势图`}
-              >
-                <defs>
-                  <linearGradient id="admin-chart-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-primary)" stopOpacity=".35" />
-                    <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {[2500, 5000, 7500, 10000].map((value) => {
-                  const y = top + plotHeight * (1 - value / 10000);
-                  return (
-                    <g key={value}>
-                      <line
-                        x1={left}
-                        x2={width - right}
-                        y1={y}
-                        y2={y}
-                        stroke="var(--color-outline)"
-                        strokeDasharray="4 5"
-                      />
-                      <text x={left - 8} y={y + 4} textAnchor="end">
-                        {value.toLocaleString()}
-                      </text>
-                    </g>
-                  );
-                })}
-                <path d={area} fill="url(#admin-chart-fill)" />
-                <path
-                  d={path}
-                  fill="none"
-                  stroke="var(--color-primary)"
-                  strokeWidth="2.6"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                />
-                {points.map((point, index) => (
-                  <g key={point.date}>
-                    {(range === "7d" || index % 5 === 0 || index === points.length - 1) && (
-                      <text x={point.x} y={height - 12} textAnchor="middle">
-                        {point.date}
-                      </text>
-                    )}
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={active === index ? 7 : range === "7d" ? 4.5 : 3}
-                      fill="var(--color-stage)"
-                      stroke="var(--color-primary)"
-                      strokeWidth="2.4"
-                    />
-                  </g>
-                ))}
-              </svg>
-              {points.map((point, index) => (
-                <Button
-                  key={point.date}
-                  variant="ghost"
-                  className="admin-chart-point"
+          <AnalyticsQueryStatus
+            loading={result.isPending}
+            error={result.error}
+            hasData={!!snapshot}
+            reload={() => void result.refetch()}
+          />
+          {snapshot && (
+            <>
+              <p className="admin-module-note">
+                {postTime(snapshot.start, true)} 至 {postTime(snapshot.end, true)}（北京时间）
+              </p>
+              <output className="admin-chart-detail" aria-live="polite">
+                {selected
+                  ? `${selected.date} · ${selected.pv.toLocaleString("zh-CN")} 次访问`
+                  : "悬停、点击或聚焦数据点查看访问量"}
+              </output>
+              <section className="admin-chart-scroll" aria-label="访问量趋势，可横向滚动">
+                <div
+                  className="admin-chart-wrap"
                   style={{
-                    left: `${(point.x / width) * 100}%`,
-                    width: `${((width - left - right) / (points.length - 1) / width) * 100}%`,
+                    minWidth: `max(540px, ${points.length * 51}px * var(--admin-chart-touch, 0))`,
                   }}
-                  aria-label={`${point.date}，${point.visits.toLocaleString()} 次访问`}
-                  onMouseEnter={() => setActive(index)}
-                  onMouseLeave={() => setActive(null)}
-                  onFocus={() => setActive(index)}
-                  onBlur={() => setActive(null)}
-                  onClick={() => setActive(index)}
-                />
-              ))}
-            </div>
-          </section>
+                >
+                  <svg
+                    viewBox={`0 0 ${width} ${height}`}
+                    aria-label={`${range === "7d" ? "近 7 天" : "近 30 天"}访问量趋势图`}
+                  >
+                    <defs>
+                      <linearGradient id="admin-chart-fill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="var(--color-primary)" stopOpacity=".35" />
+                        <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                    {[0.25, 0.5, 0.75, 1].map((ratio) => {
+                      const value = max * ratio;
+                      const y = top + plotHeight * (1 - ratio);
+                      return (
+                        <g key={value}>
+                          <line
+                            x1={left}
+                            x2={width - right}
+                            y1={y}
+                            y2={y}
+                            stroke="var(--color-outline)"
+                            strokeDasharray="4 5"
+                          />
+                          <text x={left - 8} y={y + 4} textAnchor="end">
+                            {value.toLocaleString()}
+                          </text>
+                        </g>
+                      );
+                    })}
+                    <path d={area} fill="url(#admin-chart-fill)" />
+                    <path
+                      d={path}
+                      fill="none"
+                      stroke="var(--color-primary)"
+                      strokeWidth="2.6"
+                      strokeLinejoin="round"
+                      strokeLinecap="round"
+                    />
+                    {points.map((point, index) => (
+                      <g key={point.date}>
+                        {(range === "7d" || index % 5 === 0 || index === points.length - 1) && (
+                          <text x={point.x} y={height - 12} textAnchor="middle">
+                            {point.date.slice(5)}
+                          </text>
+                        )}
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={active === index ? 7 : range === "7d" ? 4.5 : 3}
+                          fill="var(--color-stage)"
+                          stroke="var(--color-primary)"
+                          strokeWidth="2.4"
+                        />
+                      </g>
+                    ))}
+                  </svg>
+                  {points.map((point, index) => (
+                    <Button
+                      key={point.date}
+                      variant="ghost"
+                      className="admin-chart-point"
+                      style={{
+                        left: `${(point.x / width) * 100}%`,
+                        width: `${((width - left - right) / Math.max(1, points.length - 1) / width) * 100}%`,
+                      }}
+                      aria-label={`${point.date}，${point.pv.toLocaleString("zh-CN")} 次访问`}
+                      onMouseEnter={() => setActive(index)}
+                      onMouseLeave={() => setActive(null)}
+                      onFocus={() => setActive(index)}
+                      onBlur={() => setActive(null)}
+                      onClick={() => setActive(index)}
+                    />
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
         </TabsPanel>
       </PanelCard>
     </Tabs>
@@ -214,9 +225,10 @@ export function AdminDashboard({
   onOpen,
   onApprove,
   onDelete,
-  onBackup,
 }: Props) {
   const now = usePostClock();
+  const analytics = useAnalytics("30d");
+  const snapshot = analytics.data;
   const pending = commentSummary?.pending ?? [];
   const pendingCount = commentSummary?.statusCounts.pending;
   const commentsLink = useRef<HTMLButtonElement>(null);
@@ -224,24 +236,33 @@ export function AdminDashboard({
     {
       label: "已发布文章",
       value: postSummary ? String(postSummary.statusCounts.published) : "—",
-      source: "数据库",
       note: "篇文章",
     },
     {
       label: "草稿箱",
       value: postSummary ? String(postSummary.statusCounts.draft) : "—",
-      source: "数据库",
       note: "篇草稿 · 待编辑",
     },
     {
       label: "待审核评论",
       value: pendingCount === undefined ? "—" : String(pendingCount),
-      source: "数据库",
       note: "条评论 · 待处理",
     },
-    { label: "总访问量", value: "128,942", source: "演示", note: "+18.6% · 较上周" },
-    { label: "本周访客", value: "8,432", source: "演示", note: "+12.3% · 较上周" },
-    { label: "邮件订阅", value: "2,156", source: "演示", note: "+8.7% · 较上周" },
+    {
+      label: "浏览量 (PV)",
+      value: snapshot?.metrics.pv.toLocaleString("zh-CN") ?? "—",
+      note: "近 30 天",
+    },
+    {
+      label: "独立访客 (UV)",
+      value: snapshot?.metrics.uv.toLocaleString("zh-CN") ?? "—",
+      note: "近 30 天",
+    },
+    {
+      label: "平均阅读时长",
+      value: durationLabel(snapshot?.metrics.durationMs ?? null),
+      note: "近 30 天 · 文章页面",
+    },
   ];
 
   return (
@@ -249,19 +270,30 @@ export function AdminDashboard({
       <div className="admin-page-heading">
         <div>
           <h1>仪表盘</h1>
-          <p>查看文章、评论与发布计划；运营指标为演示数据。</p>
+          <p>查看文章、评论、发布计划与访问统计。</p>
         </div>
         <Button size="compact" variant="primary" onClick={() => onOpen("compose")}>
           <Plus size={16} aria-hidden="true" />
           新建文章
         </Button>
       </div>
+      <AnalyticsQueryStatus
+        loading={analytics.isPending}
+        error={analytics.error}
+        hasData={!!snapshot}
+        reload={() => void analytics.refetch()}
+      />
+      {snapshot && <CollectionStatus collection={snapshot.collection} />}
+      {snapshot?.incomplete && (
+        <p className="admin-business-feedback">
+          统计数据自 {postTime(snapshot.collection.availableFrom)} 起可用。
+        </p>
+      )}
       <div className="admin-stats">
         {stats.map((stat) => (
           <Card className="admin-stat" key={stat.label}>
             <div className="admin-stat-top">
               <span>{stat.label}</span>
-              <small>{stat.source}</small>
             </div>
             <strong>{stat.value}</strong>
             <div className="admin-stat-bottom">
@@ -346,7 +378,7 @@ export function AdminDashboard({
                 error={postSummaryError}
                 reload={reloadPostSummary}
               />
-              <p className="admin-muted">暂未启用自动发布 · 显示最近 5 条排期</p>
+              <p className="admin-muted">到期后需手动发布 · 最近 5 条排期</p>
               {postSummary?.schedules.length ? (
                 postSummary.schedules.map((schedule) => (
                   <div className="admin-schedule" key={schedule.id}>
@@ -368,50 +400,30 @@ export function AdminDashboard({
               ) : null}
             </div>
           </PanelCard>
-          <PanelCard title="运行健康度 · 演示">
-            <p className="admin-module-note">监控与自动备份尚未接入，以下为演示指标。</p>
-            <div className="admin-health">
-              <div>
-                <span>磁盘使用</span>
-                <strong>3.2 / 10 GB</strong>
-              </div>
-              <div>
-                <span>备份健康度</span>
-                <strong>96 分</strong>
-              </div>
-              <div>
-                <span>备份状态</span>
-                <strong>正常</strong>
-              </div>
-              <div>
-                <span>安全防御</span>
-                <strong>未发现风险</strong>
-              </div>
-            </div>
-          </PanelCard>
         </div>
       </div>
       <div className="admin-analysis-grid">
         <TrafficChart />
-        <PanelCard title="访客来源 · 演示" className="admin-source-panel">
+        <PanelCard title="访客来源 · 近 30 天" className="admin-source-panel">
           <div className="admin-sources">
-            {initialSources.map((source) => (
+            {snapshot?.sources.map((source) => (
               <div className="admin-source" key={source.name}>
                 <div>
                   <span>{source.name}</span>
-                  <span>{source.percentage}%</span>
+                  <span>{source.percent.toFixed(1)}%</span>
                 </div>
                 <progress
                   className="admin-progress"
-                  value={source.percentage}
+                  value={source.percent}
                   max={100}
                   aria-label={source.name}
                 />
               </div>
             ))}
+            {snapshot && !snapshot.sources.length && <p className="admin-empty">暂无来源数据。</p>}
           </div>
           <div className="admin-sources-footer">
-            <span>主要来源：直接访问</span>
+            <span>主要来源：{snapshot?.sources[0]?.name ?? "—"}</span>
             <Button variant="ghost" size="compact" onClick={() => onOpen("analytics")}>
               详细分析 <ArrowRight size={14} />
             </Button>
@@ -428,10 +440,6 @@ export function AdminDashboard({
           <Button size="compact" variant="secondary" onClick={() => onOpen("categories")}>
             <Tags size={15} />
             分类标签
-          </Button>
-          <Button size="compact" variant="secondary" onClick={onBackup}>
-            <ShieldCheck size={15} />
-            模拟备份
           </Button>
         </div>
       </section>

@@ -47,7 +47,7 @@ export function PostBrowser({ mode }: { mode: "search" | "schedule" }) {
         </>
       ) : (
         <>
-          <p>排期已持久化，暂未启用自动发布。取消排期会将文章转为草稿。</p>
+          <p>排期到期后需手动发布。取消排期会将文章转为草稿。</p>
           <Button variant="primary" disabled={postPending} onClick={() => onOpen("compose")}>
             添加计划
           </Button>
