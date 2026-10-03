@@ -51,6 +51,7 @@ export const settingsSchema = z
     icpUrl: optionalHttps,
     policeText: z.string().trim().max(120),
     policeUrl: optionalHttps,
+    localAnalyticsEnabled: z.boolean(),
     googleEnabled: z.boolean(),
     googleId: z
       .string()
@@ -91,7 +92,10 @@ export const settingsSchema = z
   });
 export type SocialAccount = z.infer<typeof socialSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
-export type SiteSettings = SettingsInput & { updatedAt: string };
+export type SiteSettings = SettingsInput & {
+  updatedAt: string;
+  localAnalyticsStartedAt: string | null;
+};
 export type PublicSettings = Pick<
   SiteSettings,
   | "postsPerPage"
@@ -107,6 +111,7 @@ export type PublicSettings = Pick<
   | "policeText"
   | "policeUrl"
   | "socials"
+  | "localAnalyticsEnabled"
   | "googleEnabled"
   | "googleId"
   | "baiduEnabled"
@@ -125,6 +130,7 @@ export const defaultSettings: SettingsInput = {
   icpUrl: "",
   policeText: "",
   policeUrl: "",
+  localAnalyticsEnabled: false,
   googleEnabled: false,
   googleId: "",
   baiduEnabled: false,

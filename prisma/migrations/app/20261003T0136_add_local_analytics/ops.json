@@ -1,0 +1,527 @@
+[
+  {
+    "id": "table.analytics_rate_limit",
+    "label": "Create table analytics_rate_limit",
+    "summary": "Creates table analytics_rate_limit with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "analytics_rate_limit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"analytics_rate_limit\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "analytics_rate_limit"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"analytics_rate_limit\"",
+        "sql": "CREATE TABLE \"analytics_rate_limit\" (\n  \"count\" INTEGER NOT NULL,\n  \"expiresAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"window\" INTEGER NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"analytics_rate_limit\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "analytics_rate_limit"]
+      }
+    ]
+  },
+  {
+    "id": "table.page_visit",
+    "label": "Create table page_visit",
+    "summary": "Creates table page_visit with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"page_visit\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "page_visit"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"page_visit\"",
+        "sql": "CREATE TABLE \"page_visit\" (\n  \"article\" INTEGER NOT NULL,\n  \"browser\" TEXT NOT NULL,\n  \"createdAt\" TEXT NOT NULL,\n  \"device\" TEXT NOT NULL,\n  \"durationMs\" INTEGER NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"ip\" TEXT NOT NULL,\n  \"lastSeenAt\" TEXT NOT NULL,\n  \"location\" TEXT NOT NULL,\n  \"os\" TEXT NOT NULL,\n  \"path\" TEXT NOT NULL,\n  \"postId\" TEXT,\n  \"progress\" INTEGER NOT NULL,\n  \"referrerHost\" TEXT NOT NULL,\n  \"sessionId\" TEXT NOT NULL,\n  \"source\" TEXT NOT NULL,\n  \"visitorHash\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\"),\n  FOREIGN KEY (\"sessionId\") REFERENCES \"visit_session\" (\"id\") ON DELETE CASCADE,\n  FOREIGN KEY (\"postId\") REFERENCES \"post\" (\"id\") ON DELETE SET NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"page_visit\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "page_visit"]
+      }
+    ]
+  },
+  {
+    "id": "table.visit_session",
+    "label": "Create table visit_session",
+    "summary": "Creates table visit_session with required columns",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "table",
+        "name": "visit_session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"visit_session\" does not exist",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "visit_session"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"visit_session\"",
+        "sql": "CREATE TABLE \"visit_session\" (\n  \"createdAt\" TEXT NOT NULL,\n  \"id\" TEXT NOT NULL,\n  \"lastSeenAt\" TEXT NOT NULL,\n  \"visitorHash\" TEXT NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"visit_session\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["table", "visit_session"]
+      }
+    ]
+  },
+  {
+    "id": "column.site_setting.localAnalyticsEnabled",
+    "label": "Add column localAnalyticsEnabled on site_setting",
+    "summary": "Adds column localAnalyticsEnabled on site_setting",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "localAnalyticsEnabled",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"localAnalyticsEnabled\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["site_setting", "localAnalyticsEnabled"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"localAnalyticsEnabled\"",
+        "sql": "ALTER TABLE \"site_setting\" ADD COLUMN \"localAnalyticsEnabled\" INTEGER"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"localAnalyticsEnabled\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["site_setting", "localAnalyticsEnabled"]
+      }
+    ]
+  },
+  {
+    "id": "column.site_setting.localAnalyticsStartedAt",
+    "label": "Add column localAnalyticsStartedAt on site_setting",
+    "summary": "Adds column localAnalyticsStartedAt on site_setting",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "localAnalyticsStartedAt",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"localAnalyticsStartedAt\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["site_setting", "localAnalyticsStartedAt"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"localAnalyticsStartedAt\"",
+        "sql": "ALTER TABLE \"site_setting\" ADD COLUMN \"localAnalyticsStartedAt\" TEXT"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"localAnalyticsStartedAt\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["site_setting", "localAnalyticsStartedAt"]
+      }
+    ]
+  },
+  {
+    "id": "index.analytics_rate_limit.analytics_rate_limit_expiresAt_idx_6b6b8c10",
+    "label": "Create index analytics_rate_limit_expiresAt_idx_6b6b8c10 on analytics_rate_limit",
+    "summary": "Creates index analytics_rate_limit_expiresAt_idx_6b6b8c10 on analytics_rate_limit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "analytics_rate_limit_expiresAt_idx_6b6b8c10",
+        "table": "analytics_rate_limit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"analytics_rate_limit_expiresAt_idx_6b6b8c10\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "analytics_rate_limit_expiresAt_idx_6b6b8c10"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"analytics_rate_limit_expiresAt_idx_6b6b8c10\"",
+        "sql": "CREATE INDEX \"analytics_rate_limit_expiresAt_idx_6b6b8c10\" ON \"analytics_rate_limit\" (\"expiresAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"analytics_rate_limit_expiresAt_idx_6b6b8c10\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "analytics_rate_limit_expiresAt_idx_6b6b8c10"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_createdAt_id_idx_3855cff1",
+    "label": "Create index page_visit_createdAt_id_idx_3855cff1 on page_visit",
+    "summary": "Creates index page_visit_createdAt_id_idx_3855cff1 on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_createdAt_id_idx_3855cff1",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_createdAt_id_idx_3855cff1\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_createdAt_id_idx_3855cff1"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"page_visit_createdAt_id_idx_3855cff1\" ON \"page_visit\" (\"createdAt\", \"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_createdAt_id_idx_3855cff1"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_lastSeenAt_idx_b69845da",
+    "label": "Create index page_visit_lastSeenAt_idx_b69845da on page_visit",
+    "summary": "Creates index page_visit_lastSeenAt_idx_b69845da on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_lastSeenAt_idx_b69845da",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_lastSeenAt_idx_b69845da\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_lastSeenAt_idx_b69845da"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_lastSeenAt_idx_b69845da\"",
+        "sql": "CREATE INDEX \"page_visit_lastSeenAt_idx_b69845da\" ON \"page_visit\" (\"lastSeenAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_lastSeenAt_idx_b69845da\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_lastSeenAt_idx_b69845da"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_postId_createdAt_idx_b244c517",
+    "label": "Create index page_visit_postId_createdAt_idx_b244c517 on page_visit",
+    "summary": "Creates index page_visit_postId_createdAt_idx_b244c517 on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_postId_createdAt_idx_b244c517",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_postId_createdAt_idx_b244c517\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_postId_createdAt_idx_b244c517"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_postId_createdAt_idx_b244c517\"",
+        "sql": "CREATE INDEX \"page_visit_postId_createdAt_idx_b244c517\" ON \"page_visit\" (\"postId\", \"createdAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_postId_createdAt_idx_b244c517\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_postId_createdAt_idx_b244c517"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_postId_idx_a7a72715",
+    "label": "Create index page_visit_postId_idx_a7a72715 on page_visit",
+    "summary": "Creates index page_visit_postId_idx_a7a72715 on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_postId_idx_a7a72715",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_postId_idx_a7a72715\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_postId_idx_a7a72715"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_postId_idx_a7a72715\"",
+        "sql": "CREATE INDEX \"page_visit_postId_idx_a7a72715\" ON \"page_visit\" (\"postId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_postId_idx_a7a72715\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_postId_idx_a7a72715"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_sessionId_idx_29f415d4",
+    "label": "Create index page_visit_sessionId_idx_29f415d4 on page_visit",
+    "summary": "Creates index page_visit_sessionId_idx_29f415d4 on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_sessionId_idx_29f415d4",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_sessionId_idx_29f415d4\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_sessionId_idx_29f415d4"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_sessionId_idx_29f415d4\"",
+        "sql": "CREATE INDEX \"page_visit_sessionId_idx_29f415d4\" ON \"page_visit\" (\"sessionId\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_sessionId_idx_29f415d4\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_sessionId_idx_29f415d4"]
+      }
+    ]
+  },
+  {
+    "id": "index.page_visit.page_visit_visitorHash_lastSeenAt_idx_484f4b5e",
+    "label": "Create index page_visit_visitorHash_lastSeenAt_idx_484f4b5e on page_visit",
+    "summary": "Creates index page_visit_visitorHash_lastSeenAt_idx_484f4b5e on page_visit",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "page_visit_visitorHash_lastSeenAt_idx_484f4b5e",
+        "table": "page_visit"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"page_visit_visitorHash_lastSeenAt_idx_484f4b5e\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_visitorHash_lastSeenAt_idx_484f4b5e"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"page_visit_visitorHash_lastSeenAt_idx_484f4b5e\"",
+        "sql": "CREATE INDEX \"page_visit_visitorHash_lastSeenAt_idx_484f4b5e\" ON \"page_visit\" (\"visitorHash\", \"lastSeenAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"page_visit_visitorHash_lastSeenAt_idx_484f4b5e\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "page_visit_visitorHash_lastSeenAt_idx_484f4b5e"]
+      }
+    ]
+  },
+  {
+    "id": "index.visit_session.visit_session_createdAt_idx_9575dbd7",
+    "label": "Create index visit_session_createdAt_idx_9575dbd7 on visit_session",
+    "summary": "Creates index visit_session_createdAt_idx_9575dbd7 on visit_session",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "visit_session_createdAt_idx_9575dbd7",
+        "table": "visit_session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"visit_session_createdAt_idx_9575dbd7\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_createdAt_idx_9575dbd7"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"visit_session_createdAt_idx_9575dbd7\"",
+        "sql": "CREATE INDEX \"visit_session_createdAt_idx_9575dbd7\" ON \"visit_session\" (\"createdAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"visit_session_createdAt_idx_9575dbd7\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_createdAt_idx_9575dbd7"]
+      }
+    ]
+  },
+  {
+    "id": "index.visit_session.visit_session_lastSeenAt_idx_b69845da",
+    "label": "Create index visit_session_lastSeenAt_idx_b69845da on visit_session",
+    "summary": "Creates index visit_session_lastSeenAt_idx_b69845da on visit_session",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "visit_session_lastSeenAt_idx_b69845da",
+        "table": "visit_session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"visit_session_lastSeenAt_idx_b69845da\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_lastSeenAt_idx_b69845da"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"visit_session_lastSeenAt_idx_b69845da\"",
+        "sql": "CREATE INDEX \"visit_session_lastSeenAt_idx_b69845da\" ON \"visit_session\" (\"lastSeenAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"visit_session_lastSeenAt_idx_b69845da\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_lastSeenAt_idx_b69845da"]
+      }
+    ]
+  },
+  {
+    "id": "index.visit_session.visit_session_visitorHash_lastSeenAt_idx_484f4b5e",
+    "label": "Create index visit_session_visitorHash_lastSeenAt_idx_484f4b5e on visit_session",
+    "summary": "Creates index visit_session_visitorHash_lastSeenAt_idx_484f4b5e on visit_session",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "index",
+        "name": "visit_session_visitorHash_lastSeenAt_idx_484f4b5e",
+        "table": "visit_session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"visit_session_visitorHash_lastSeenAt_idx_484f4b5e\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_visitorHash_lastSeenAt_idx_484f4b5e"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"visit_session_visitorHash_lastSeenAt_idx_484f4b5e\"",
+        "sql": "CREATE INDEX \"visit_session_visitorHash_lastSeenAt_idx_484f4b5e\" ON \"visit_session\" (\"visitorHash\", \"lastSeenAt\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"visit_session_visitorHash_lastSeenAt_idx_484f4b5e\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM \"sqlite_master\" WHERE (\"type\" = ? AND \"name\" = ?)",
+        "params": ["index", "visit_session_visitorHash_lastSeenAt_idx_484f4b5e"]
+      }
+    ]
+  }
+]

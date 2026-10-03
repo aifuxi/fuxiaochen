@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SocialIcon } from "@/components/frontend/configured-image";
+import { LocalAnalytics } from "@/components/frontend/local-analytics";
 import { SiteAnalytics } from "@/components/frontend/site-analytics";
 import { SiteHeader } from "@/components/frontend/site-header";
 import { getPublicSettings } from "@/lib/settings/service";
@@ -51,6 +52,7 @@ export default async function FrontendLayout({
           )}
         </div>
       </footer>
+      <LocalAnalytics enabled={settings.localAnalyticsEnabled} />
       <SiteAnalytics googleId={settings.googleId} baiduId={settings.baiduId} />
     </div>
   );

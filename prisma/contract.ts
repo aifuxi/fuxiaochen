@@ -226,6 +226,8 @@ export const contract = defineContract({}, ({ field, model }) => {
       icpUrl: field.column(textColumn),
       policeText: field.column(textColumn),
       policeUrl: field.column(textColumn),
+      localAnalyticsEnabled: field.column(integerColumn).optional(),
+      localAnalyticsStartedAt: field.column(datetimeColumn).optional(),
       googleEnabled: field.column(integerColumn),
       googleId: field.column(textColumn),
       baiduEnabled: field.column(integerColumn),
@@ -289,6 +291,67 @@ export const contract = defineContract({}, ({ field, model }) => {
     indexes: [constraints.index([cols.createdAt, cols.id])],
   }));
 
+  const VisitSession = model("VisitSession", {
+    fields: {
+      id: field.column(textColumn).id(),
+      visitorHash: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+      lastSeenAt: field.column(datetimeColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "visit_session",
+    indexes: [
+      constraints.index([cols.visitorHash, cols.lastSeenAt]),
+      constraints.index([cols.createdAt]),
+      constraints.index([cols.lastSeenAt]),
+    ],
+  }));
+  const PageVisit = model("PageVisit", {
+    fields: {
+      id: field.column(textColumn).id(),
+      visitorHash: field.column(textColumn),
+      sessionId: field.column(textColumn),
+      path: field.column(textColumn),
+      postId: field.column(textColumn).optional(),
+      article: field.column(integerColumn),
+      source: field.column(textColumn),
+      referrerHost: field.column(textColumn),
+      device: field.column(textColumn),
+      browser: field.column(textColumn),
+      os: field.column(textColumn),
+      ip: field.column(textColumn),
+      location: field.column(textColumn),
+      createdAt: field.column(datetimeColumn),
+      lastSeenAt: field.column(datetimeColumn),
+      durationMs: field.column(integerColumn),
+      progress: field.column(integerColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "page_visit",
+    indexes: [
+      constraints.index([cols.createdAt, cols.id]),
+      constraints.index([cols.visitorHash, cols.lastSeenAt]),
+      constraints.index([cols.sessionId]),
+      constraints.index([cols.postId, cols.createdAt]),
+      constraints.index([cols.lastSeenAt]),
+    ],
+    foreignKeys: [
+      constraints.foreignKey(cols.sessionId, VisitSession.refs.id, { onDelete: "cascade" }),
+      constraints.foreignKey(cols.postId, Post.refs.id, { onDelete: "setNull" }),
+    ],
+  }));
+  const AnalyticsRateLimit = model("AnalyticsRateLimit", {
+    fields: {
+      id: field.column(textColumn).id(),
+      window: field.column(integerColumn),
+      count: field.column(integerColumn),
+      expiresAt: field.column(datetimeColumn),
+    },
+  }).sql(({ cols, constraints }) => ({
+    table: "analytics_rate_limit",
+    indexes: [constraints.index([cols.expiresAt])],
+  }));
+
   return {
     models: {
       Admin,
@@ -306,6 +369,9 @@ export const contract = defineContract({}, ({ field, model }) => {
       SocialAccount,
       FriendLink,
       ReleaseLog,
+      VisitSession,
+      PageVisit,
+      AnalyticsRateLimit,
     },
   };
 });

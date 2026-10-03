@@ -45,7 +45,7 @@ const groups = {
 function fieldGroup(key: string) {
   if (key.startsWith("socials")) return "social";
   if (/^(icp|police)/.test(key)) return "filing";
-  if (/^(google|baidu)/.test(key)) return "analytics";
+  if (/^(localAnalytics|google|baidu)/.test(key)) return "analytics";
   if (["postsPerPage", "enableComments"].includes(key)) return "system";
   return "profile";
 }
@@ -84,7 +84,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
   async function save(event: FormEvent) {
     event.preventDefault();
     if (busy.current || conflict) return;
-    const { updatedAt: _updatedAt, ...fields } = draft;
+    const { updatedAt: _updatedAt, localAnalyticsStartedAt: _startedAt, ...fields } = draft;
     const parsed = settingsSchema.safeParse({
       ...fields,
       postsPerPage: quantity.trim() ? Number(quantity) : NaN,
@@ -188,7 +188,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
       help,
     );
   const toggle = (
-    key: "enableComments" | "googleEnabled" | "baiduEnabled",
+    key: "enableComments" | "localAnalyticsEnabled" | "googleEnabled" | "baiduEnabled",
     label: string,
     help: string,
   ) => (
@@ -541,6 +541,25 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
           </TabsPanel>
           <TabsPanel value="analytics" className="admin-settings-panel">
             <div className="admin-settings-stack">
+              <section className="admin-settings-section">
+                <div className="admin-settings-section-heading">
+                  <h2>本地访问统计</h2>
+                  <p>访客日志和数据分析使用本地 SQLite 数据，与第三方统计独立。</p>
+                </div>
+                {toggle(
+                  "localAnalyticsEnabled",
+                  "启用本地统计",
+                  "仅生产环境采集公开页面。使用匿名标识、脱敏 IP，访问明细保留180天。",
+                )}
+                {draft.localAnalyticsStartedAt && (
+                  <p className="admin-settings-help">
+                    首次启用：
+                    {new Date(draft.localAnalyticsStartedAt).toLocaleString("zh-CN", {
+                      timeZone: "Asia/Shanghai",
+                    })}
+                  </p>
+                )}
+              </section>
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>Google Analytics（GA4）</h2>

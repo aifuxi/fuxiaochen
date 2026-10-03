@@ -25,7 +25,8 @@
     "admin:init": "node --conditions=react-server --import tsx scripts/admin.ts init",
     "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
     "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts",
-    "posts:migrate-content": "node --conditions=react-server --import tsx scripts/migrate-post-content.ts"
+    "posts:migrate-content": "node --conditions=react-server --import tsx scripts/migrate-post-content.ts",
+    "analytics:cleanup": "node --conditions=react-server --import tsx scripts/analytics-cleanup.ts"
   },
   "dependencies": {
     "@alicloud/credentials": "2.4.7",
@@ -36,6 +37,7 @@
     "@hono/zod-validator": "0.9.1",
     "@noble/hashes": "2.4.0",
     "@prisma/orm-sqlite": "8.0.0-rc.14",
+    "@tanstack/react-query": "5.104.1",
     "@tanstack/react-table": "8.21.3",
     "@tiptap/core": "3.31.4",
     "@tiptap/extension-code-block-lowlight": "3.31.4",
@@ -52,6 +54,7 @@
     "@tiptap/suggestion": "3.31.4",
     "argon2": "0.45.1",
     "border-beam": "^1.4.1",
+    "bowser": "2.14.1",
     "clsx": "^2.1.1",
     "dotenv": "18.0.5",
     "highlight.js": "11.11.1",

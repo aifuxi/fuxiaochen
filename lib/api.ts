@@ -6,6 +6,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
+import { collectionRoutes } from "./analytics/collect-routes";
 import { loginSchema } from "./auth/schema";
 import {
   consumeLoginAttempt,
@@ -76,6 +77,7 @@ api.use("*", (c, next) => {
     return settingsBodyLimit(c, next);
   return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
 });
+api.route("/public/analytics", collectionRoutes);
 api.route("/public", publicRoutes);
 api.route("/admin/posts", postRoutes);
 api.route("/admin/media", mediaRoutes);

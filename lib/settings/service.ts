@@ -18,6 +18,8 @@ async function read(tx: Transaction) {
       ...defaults,
       id: 1,
       enableComments: 1,
+      localAnalyticsEnabled: 0,
+      localAnalyticsStartedAt: null,
       googleEnabled: 0,
       baiduEnabled: 0,
       updatedAt: new Date(),
@@ -26,10 +28,11 @@ async function read(tx: Transaction) {
   const socials = await tx.orm.SocialAccount.where({ settingId: 1 })
     .orderBy([(s) => s.position.asc(), (s) => s.id.asc()])
     .all();
-  const { id: _id, updatedAt, ...fields } = row;
+  const { id: _id, updatedAt, localAnalyticsStartedAt, ...fields } = row;
   return {
     ...settingsSchema.parse({
       ...fields,
+      localAnalyticsEnabled: Boolean(row.localAnalyticsEnabled),
       enableComments: Boolean(row.enableComments),
       googleEnabled: Boolean(row.googleEnabled),
       baiduEnabled: Boolean(row.baiduEnabled),
@@ -39,6 +42,7 @@ async function read(tx: Transaction) {
       })),
     }),
     updatedAt: updatedAt.toISOString(),
+    localAnalyticsStartedAt: localAnalyticsStartedAt?.toISOString() ?? null,
   };
 }
 export async function getSettings(actor: TaxonomyActor) {
@@ -50,10 +54,16 @@ export async function getSettings(actor: TaxonomyActor) {
 export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorizeAdmin(actor);
-    await read(tx);
+    const previous = await read(tx);
     const { socials, version, ...fields } = input;
     const updated = await tx.orm.SiteSetting.where({ id: 1, version }).updateAndCount({
       ...fields,
+      localAnalyticsEnabled: Number(input.localAnalyticsEnabled),
+      localAnalyticsStartedAt: previous.localAnalyticsStartedAt
+        ? new Date(previous.localAnalyticsStartedAt)
+        : input.localAnalyticsEnabled
+          ? new Date()
+          : null,
       enableComments: Number(input.enableComments),
       googleEnabled: Number(input.googleEnabled),
       baiduEnabled: Number(input.baiduEnabled),
@@ -94,6 +104,7 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
     icpUrl,
     policeText,
     policeUrl,
+    localAnalyticsEnabled,
     googleEnabled,
     googleId,
     baiduEnabled,
@@ -112,6 +123,7 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
     icpUrl,
     policeText,
     policeUrl,
+    localAnalyticsEnabled,
     googleEnabled,
     googleId: googleEnabled ? googleId : "",
     baiduEnabled,
