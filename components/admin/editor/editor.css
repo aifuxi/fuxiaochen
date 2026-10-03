@@ -500,21 +500,40 @@
   white-space: nowrap;
 }
 .post-editor-link-dialog,
+.post-editor-import-dialog,
 .post-media-picker {
   max-height: 88dvh;
   overflow-y: auto;
 }
 .post-editor-link-dialog h2,
+.post-editor-import-dialog h2,
 .post-media-picker h2 {
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 8px;
 }
 .post-editor-link-dialog p,
+.post-editor-import-dialog p,
 .post-media-picker p {
   color: var(--color-muted);
   font-size: 13px;
   margin-bottom: 16px;
+}
+.post-editor-import-dialog {
+  max-width: 640px;
+}
+.post-editor-import-source {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+.post-editor-import-dialog .ds-button {
+  min-height: 44px;
+}
+.post-editor-import-dialog .admin-post-error {
+  color: var(--color-danger);
 }
 .post-media-picker {
   max-width: 720px;
@@ -636,7 +655,8 @@
 @media (prefers-reduced-motion: reduce) {
   .post-block-editor *,
   .post-editor-popover *,
-  .post-media-picker * {
+  .post-media-picker *,
+  .post-editor-import-dialog * {
     transition: none !important;
     animation: none !important;
   }

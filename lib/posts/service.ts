@@ -8,7 +8,6 @@ import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import type { PostCounts, PostInput, PostQuery, PostUpdateInput } from "./schema";
 
-import { CONTENT_FORMAT } from "./document";
 import { emptyPostCounts, postStatusSchema } from "./schema";
 
 export class PostError extends Error {
@@ -86,10 +85,7 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     filtered = filtered.where((p) =>
       db.raw.sql`(
       instr(lower(${p.title}), lower(${query.q})) > 0 OR instr(lower(
-        CASE WHEN json_valid(${p.content}) THEN
-          CASE WHEN json_extract(${p.content}, '$.format') = ${CONTENT_FORMAT}
-            THEN json_extract(${p.content}, '$.text') ELSE ${p.content} END
-          ELSE ${p.content} END
+        json_extract(${p.content}, '$.text')
       ), lower(${query.q})) > 0
       OR EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0)
       OR EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt.tagId WHERE pt.postId = ${p.id} AND instr(lower(t.name), lower(${query.q})) > 0)

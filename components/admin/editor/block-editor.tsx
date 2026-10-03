@@ -5,6 +5,7 @@ import type { EditorView } from "@tiptap/pm/view";
 import { type Editor } from "@tiptap/core";
 import DragHandle from "@tiptap/extension-drag-handle-react";
 import Placeholder from "@tiptap/extension-placeholder";
+import { closeHistory } from "@tiptap/pm/history";
 import { Selection } from "@tiptap/pm/state";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
@@ -38,11 +39,12 @@ import {
   documentText,
   readDocument,
   serializeDocument,
-  validateDocument,
+  postContentSchema,
 } from "@/lib/posts/document";
 import { markdownDocument } from "@/lib/posts/markdown-document";
 
 import { EditorCodeBlock } from "./code-block";
+import { MarkdownImportDialog } from "./markdown-import-dialog";
 import { EditorMediaPicker } from "./media-picker";
 import { createSlashExtension, insertActions, slashKey } from "./slash-menu";
 import "./editor.css";
@@ -206,14 +208,13 @@ export function BlockEditor({
   const [imageSelection, setImageSelection] = useState({ from: 1, to: 1 });
   const [imageOpen, setImageOpen] = useState(false);
   const [insertOpen, setInsertOpen] = useState(false);
+  const [importPosition, setImportPosition] = useState<number | null>(null);
   const [link, setLink] = useState<{ from: number; to: number; url: string } | null>(null);
   const [linkError, setLinkError] = useState("");
   const initial = useMemo(() => {
     try {
       return {
-        document: validateDocument(
-          readDocument(initialContent) ?? markdownDocument(initialContent),
-        ),
+        document: readDocument(initialContent),
         error: "",
       };
     } catch {
@@ -281,7 +282,7 @@ export function BlockEditor({
       ["post-editor-help", describedBy].filter(Boolean).join(" "),
     );
   }, [editor, disabled, initial.error, invalid, describedBy]);
-  // 旧文章只在用户主动保存时转成 JSON，不在初始化时发送写请求。
+  // 仅建立规范化的比较基线，初始化不发送写请求。
   useEffect(() => {
     if (editor && !initial.error) {
       const content = serializeDocument(editor.getJSON());
@@ -410,6 +411,15 @@ export function BlockEditor({
             ))}
           </PopoverContent>
         </Popover>
+        <Button
+          type="button"
+          variant="ghost"
+          className="post-editor-insert"
+          disabled={disabled}
+          onClick={() => setImportPosition(editor.state.selection.from)}
+        >
+          导入 Markdown
+        </Button>
         <span className="post-editor-toolbar-divider" aria-hidden="true" />
         {formatButtons}
         <span className="post-editor-toolbar-divider" aria-hidden="true" />
@@ -506,6 +516,39 @@ export function BlockEditor({
           {state.count.toLocaleString()} / {CONTENT_TEXT_LIMIT.toLocaleString()}
         </output>
       </div>
+      {importPosition !== null && (
+        <MarkdownImportDialog
+          disabled={disabled}
+          onClose={() => {
+            setImportPosition(null);
+            editor.commands.focus();
+          }}
+          onImport={(source) => {
+            if (disabled || !editor.isEditable) throw new Error("当前不能导入正文。");
+            const document = readDocument(
+              postContentSchema.parse(serializeDocument(markdownDocument(source))),
+            );
+            // 整条链在 run 前只修改临时事务；校验抛错时不会提交任何正文变化。
+            const inserted = editor
+              .chain()
+              .command(({ tr }) => {
+                closeHistory(tr);
+                return true;
+              })
+              .insertContentAt(importPosition, document.content ?? [], {
+                errorOnInvalidContent: true,
+              })
+              .command(({ tr }) => {
+                postContentSchema.parse(serializeDocument(tr.doc.toJSON()));
+                return true;
+              })
+              .run();
+            if (!inserted) throw new Error("内容无法插入当前位置，请选择正文中的其他位置。");
+            // 隔离前后输入，使导入始终可以一次撤销。
+            editor.view.dispatch(closeHistory(editor.state.tr));
+          }}
+        />
+      )}
       {imageOpen && (
         <EditorMediaPicker
           onClose={closeImage}

@@ -24,7 +24,8 @@
     "typecheck": "tsc --noEmit",
     "admin:init": "node --conditions=react-server --import tsx scripts/admin.ts init",
     "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
-    "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts"
+    "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts",
+    "posts:migrate-content": "node --conditions=react-server --import tsx scripts/migrate-post-content.ts"
   },
   "dependencies": {
     "@alicloud/credentials": "2.4.7",
@@ -59,7 +60,6 @@
     "next": "16.3.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "react-markdown": "10.1.0",
     "remark-gfm": "4.0.1",
     "remark-parse": "11.0.0",
     "server-only": "0.0.1",

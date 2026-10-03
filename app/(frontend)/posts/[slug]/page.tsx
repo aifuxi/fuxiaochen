@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArticleContent } from "@/components/frontend/article-content";
 import { Comments } from "@/components/frontend/comments";
-import { ArticleMarkdown } from "@/components/frontend/markdown";
 import { postTime } from "@/lib/posts/schema";
 import { listPublicComments } from "@/lib/public/comments";
 import { getPublicPost } from "@/lib/public/service";
@@ -57,7 +57,7 @@ export default async function PostPage({ params }: Props) {
             <p className="site-updated">更新于 {postTime(post.updatedAt)}</p>
           )}
         </header>
-        <ArticleMarkdown content={post.content} />
+        <ArticleContent content={post.content} />
       </article>
       <Comments
         key={post.id}

@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { EMPTY_POST_CONTENT } from "@/lib/posts/document";
 import {
   postLocalTime,
   postSchema,
@@ -60,7 +61,7 @@ function draftFrom(post: PostDetail | null): Draft {
   return {
     title: post?.title ?? "",
     slug: post?.slug ?? "",
-    content: post?.content ?? "",
+    content: post?.content ?? EMPTY_POST_CONTENT,
     categoryId: post?.categoryId ?? "",
     tagIds: post?.tags.map((tag) => tag.id) ?? [],
     status: post?.status ?? "draft",
@@ -113,7 +114,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
   const [draft, setDraft] = useState(() => draftFrom(initial));
   const [savedDraft, setSavedDraft] = useState(() => draftFrom(initial));
   const { title, slug, content, categoryId, tagIds, status, scheduledTime } = draft;
-  const initialBody = initial?.content ?? "";
+  const initialBody = initial?.content ?? EMPTY_POST_CONTENT;
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [conflict, setConflict] = useState(false);
@@ -179,7 +180,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
     setDraft((current) => ({ ...current, content: value }));
   }, []);
   const onContentReady = useCallback((value: string) => {
-    // 初始 Markdown 转换仅建立比较基线，不能标记为用户修改。
+    // 正文初始化规范化仅建立比较基线，不能标记为用户修改。
     setDraft((current) => ({ ...current, content: value }));
     setSavedDraft((current) => ({ ...current, content: value }));
   }, []);

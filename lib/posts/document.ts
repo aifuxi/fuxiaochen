@@ -161,20 +161,18 @@ export function serializeDocument(document: JSONContent) {
   });
 }
 
-export function readDocument(content: string): JSONContent | null {
+export const EMPTY_POST_CONTENT = serializeDocument({
+  type: "doc",
+  content: [{ type: "paragraph" }],
+});
+
+export function readDocument(content: string): JSONContent {
   let value: unknown;
   try {
     value = JSON.parse(content);
   } catch {
-    return null;
+    throw new Error("正文文档格式无效。");
   }
-  if (
-    !value ||
-    typeof value !== "object" ||
-    !("format" in value) ||
-    value.format !== CONTENT_FORMAT
-  )
-    return null;
   const envelope = z
     .object({
       format: z.literal(CONTENT_FORMAT),
@@ -192,11 +190,6 @@ export const postContentSchema = z
   .transform((value, ctx) => {
     try {
       const document = readDocument(value);
-      if (!document) {
-        if (!value.trim()) throw new Error("请输入正文内容。");
-        if (value.length > CONTENT_TEXT_LIMIT) throw new Error("正文最多 100,000 个字符。");
-        return value;
-      }
       const text = documentText(document);
       let hasImage = false;
       const visit = (node: JSONContent) => {
@@ -208,7 +201,10 @@ export const postContentSchema = z
       if (text.length > CONTENT_TEXT_LIMIT) throw new Error("正文最多 100,000 个字符。");
       // 搜索文本由校验后的文档重新生成，不信任客户端提交的 text。
       const normalized = serializeDocument(document);
-      if (new TextEncoder().encode(JSON.stringify(normalized)).length > 950_000)
+      if (
+        normalized.length > 500_000 ||
+        new TextEncoder().encode(JSON.stringify(normalized)).length > 950_000
+      )
         throw new Error("正文文档过大。");
       return normalized;
     } catch (error) {
