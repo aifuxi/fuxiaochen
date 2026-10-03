@@ -30,6 +30,7 @@
     "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
     "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts",
     "posts:migrate-content": "node --conditions=react-server --import tsx scripts/migrate-post-content.ts",
+    "posts:migrate-images": "node --conditions=react-server --import tsx scripts/migrate-post-images.ts",
     "analytics:cleanup": "node --conditions=react-server --import tsx scripts/analytics-cleanup.ts"
   },
   "dependencies": {

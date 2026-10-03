@@ -173,6 +173,39 @@ export async function removeObject(key: string, signal = AbortSignal.timeout(60_
     { abortSignal: signal },
   );
 }
+// 供受控的服务端数据迁移使用；调用方必须完成图片解码和摘要校验，不接入普通上传路由。
+export async function putImportedImage(key: string, body: Buffer, mime: string, sha256: string) {
+  const { server, config } = storage();
+  await server.send(
+    new PutObjectCommand({
+      Bucket: target(config.serverMode, config.serverEndpoint, config.bucket),
+      Key: key,
+      Body: body,
+      ContentLength: body.length,
+      ContentMD5: createHash("md5").update(body).digest("base64"),
+      ContentType: mime,
+      ContentDisposition: "inline",
+      CacheControl: "public, max-age=3600",
+      Metadata: { sha256 },
+    }),
+    { abortSignal: AbortSignal.timeout(60_000) },
+  );
+}
+export async function headImportedImage(key: string) {
+  const { server, config } = storage();
+  try {
+    return await server.send(
+      new HeadObjectCommand({
+        Bucket: target(config.serverMode, config.serverEndpoint, config.bucket),
+        Key: key,
+      }),
+      { abortSignal: AbortSignal.timeout(30_000) },
+    );
+  } catch (error) {
+    if (error instanceof Error && ["NotFound", "NoSuchKey"].includes(error.name)) return null;
+    throw error;
+  }
+}
 type StoredUpload = {
   stagingKey: string;
   objectKey: string;
