@@ -67,7 +67,7 @@ export function maskedIp(headers: Headers) {
   const header = process.env.ANALYTICS_CLIENT_IP_HEADER?.trim().toLowerCase();
   if (!header || !/^[a-z0-9-]+$/.test(header)) return "未知";
   const value = headers.get(header)?.trim() ?? "";
-  const version = isIP(value);
+  const version = value.includes("%") ? 0 : isIP(value);
   if (version === 4) return `${value.split(".").slice(0, 3).join(".")}.0/24`;
   if (version === 6) {
     // URL 将压缩、大小写和 IPv4 映射形式统一为 IPv6；再展开补齐网络前缀。
@@ -94,7 +94,7 @@ function sourceOf(referrer: string) {
     const source =
       host === new URL(process.env.APP_ORIGIN!).hostname
         ? "站内访问"
-        : /(^|\.)(google\.[a-z.]+|baidu\.com|bing\.com|sogou\.com|so\.com|duckduckgo\.com)$/.test(
+        : /(^|\.)(google\.(com(?:\.[a-z]{2})?|co\.[a-z]{2}|[a-z]{2})|baidu\.com|bing\.com|sogou\.com|so\.com|duckduckgo\.com)$/.test(
               host,
             )
           ? "搜索引擎"

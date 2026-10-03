@@ -12,10 +12,12 @@ type Visit = {
   progress: number;
   visibleSince: number | null;
   lastActivity: number;
+  ended: boolean;
 };
 // 文档内保留访问标识，React 重挂载不会多计 PV；刷新产生新文档。
 let current: Visit | null = null;
 let documentVisitor = "";
+let retryAfterAt = 0;
 function visitorId() {
   if (documentVisitor) return documentVisitor;
   try {
@@ -26,7 +28,7 @@ function visitorId() {
       "id" in value &&
       "expiresAt" in value &&
       typeof value.id === "string" &&
-      /^[0-9a-f-]{36}$/i.test(value.id) &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value.id) &&
       typeof value.expiresAt === "number" &&
       value.expiresAt > Date.now() &&
       value.expiresAt <= Date.now() + RETENTION_MS
@@ -51,7 +53,11 @@ function accumulate(visit: Visit) {
     visit.visibleSince = now;
   }
   const content = document.querySelector(".site-markdown");
-  if (content && document.visibilityState === "visible") {
+  if (
+    content &&
+    visit.path === window.location.pathname &&
+    document.visibilityState === "visible"
+  ) {
     const rect = content.getBoundingClientRect();
     if (rect.height > 0)
       visit.progress = Math.max(
@@ -82,6 +88,7 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
     const retries = new Set<number>();
     let stopped = false;
     async function send(input: AnalyticsEvent, attempt = 0): Promise<void> {
+      if (Date.now() < retryAfterAt) return;
       const body = JSON.stringify(input);
       let delay = 1000 * 2 ** attempt;
       try {
@@ -92,9 +99,10 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
           body,
           signal: AbortSignal.timeout(10_000),
         });
-        if (response.status === 429)
+        if (response.status === 429) {
           delay = Math.max(delay, (Number(response.headers.get("Retry-After")) || 60) * 1000);
-        else if (response.status < 500) return;
+          retryAfterAt = Date.now() + delay;
+        } else if (response.status < 500) return;
       } catch {
         /* 下次快照或有限重试继续使用同一访问 ID。 */
       }
@@ -108,6 +116,8 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
     function flush() {
       if (!current) return;
       const body = JSON.stringify(snapshot(current));
+      current.visibleSince = null;
+      if (Date.now() < retryAfterAt) return;
       if (
         !navigator.sendBeacon(
           "/api/public/analytics/events",
@@ -121,13 +131,13 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
           body,
           keepalive: true,
         }).catch(() => undefined);
-      current.visibleSince = null;
     }
     function start(force = false) {
       if (document.visibilityState !== "visible") return;
       if (
         !current ||
         current.path !== pathname ||
+        current.ended ||
         force ||
         Date.now() - current.lastActivity >= SESSION_IDLE_MS
       ) {
@@ -141,6 +151,7 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
           progress: 0,
           visibleSince: null,
           lastActivity: Date.now(),
+          ended: false,
         };
       }
       current.visibleSince ??= performance.now();
@@ -173,6 +184,8 @@ export function LocalAnalytics({ enabled }: { enabled: boolean }) {
     return () => {
       stopped = true;
       flush();
+      // 离开前台布局后重返原路径也计新访问；同路径的 React 重挂载保留 ID。
+      if (current && window.location.pathname !== current.path) current.ended = true;
       window.clearInterval(interval);
       for (const timer of retries) window.clearTimeout(timer);
       document.removeEventListener("visibilitychange", visibility);

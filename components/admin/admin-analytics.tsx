@@ -9,18 +9,19 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
+import {
+  analyticsRanges,
+  durationLabel,
+  type AnalyticsRange,
+  type AnalyticsSnapshot,
+} from "@/lib/analytics/schema";
+import { postTime } from "@/lib/posts/schema";
 
-import { analyticsRanges, analyticsSnapshots, type AnalyticsRange } from "./analytics-mock-data";
+import { AnalyticsQueryStatus, CollectionStatus, useAnalytics } from "./analytics-query";
 import "./admin-analytics.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
-const deviceTypes = [
-  { name: "桌面电脑", tone: "pv" },
-  { name: "移动手机", tone: "uv" },
-  { name: "平板设备", tone: "neutral" },
-];
-
-type RankedArticle = (typeof analyticsSnapshots)["30d"]["articles"][number] & { rank: number };
+type RankedArticle = AnalyticsSnapshot["articles"][number] & { rank: number };
 
 const columns: ColumnDef<RankedArticle>[] = [
   {
@@ -88,25 +89,32 @@ const columns: ColumnDef<RankedArticle>[] = [
   },
 ];
 
-function AnalyticsContent({ range }: { range: AnalyticsRange }) {
-  const snapshot = analyticsSnapshots[range];
+function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
+  const range = snapshot.range;
   const tableState = useDataTableState();
   const rankedArticles = snapshot.articles.map((article, index) => ({
     ...article,
     rank: index + 1,
   }));
   const [active, setActive] = useState<number | null>(null);
-  const totalPv = snapshot.trend.reduce((sum, item) => sum + item.pv, 0);
   const metrics = [
-    { label: "总浏览量 (PV)", value: number(totalPv) },
-    { label: "独立访客 (UV)", value: number(snapshot.uv) },
-    { label: "平均阅读时长", value: snapshot.duration },
-    { label: "整站跳出率", value: snapshot.bounce },
+    { key: "pv" as const, label: "总浏览量 (PV)", value: number(snapshot.metrics.pv) },
+    { key: "uv" as const, label: "独立访客 (UV)", value: number(snapshot.metrics.uv) },
+    {
+      key: "durationMs" as const,
+      label: "平均阅读时长",
+      value: durationLabel(snapshot.metrics.durationMs),
+    },
+    {
+      key: "bounce" as const,
+      label: "整站跳出率",
+      value: snapshot.metrics.bounce === null ? "—" : `${snapshot.metrics.bounce.toFixed(1)}%`,
+    },
   ];
-  const max = Math.ceil(Math.max(...snapshot.trend.map((item) => item.pv)) / 2000) * 2000;
+  const max = Math.max(4, Math.ceil(Math.max(0, ...snapshot.trend.map((item) => item.pv)) / 4) * 4);
   const points = snapshot.trend.map((item, i) => ({
     ...item,
-    x: 54 + (i * 546) / (snapshot.trend.length - 1),
+    x: snapshot.trend.length === 1 ? 327 : 54 + (i * 546) / (snapshot.trend.length - 1),
     pvY: 228 - (item.pv / max) * 196,
     uvY: 228 - (item.uv / max) * 196,
   }));
@@ -117,22 +125,35 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
   return (
     <div className="analytics-sections">
       <div className="analytics-stats">
-        {metrics.map(({ label, value }, i) => (
+        {metrics.map(({ key, label, value }) => (
           <Card className="analytics-stat" key={label}>
             <div className="analytics-stat-heading">
               <span>{label}</span>
             </div>
             <strong>{value}</strong>
-            <div className="analytics-change">
+            <div
+              className={`analytics-change ${snapshot.changes[key] === null || (key === "bounce" ? snapshot.changes[key] > 0 : snapshot.changes[key] < 0) ? "is-muted" : ""}`}
+            >
               <span>
-                {i === 3 ? (
-                  <ArrowDown size={13} aria-hidden="true" />
+                {snapshot.changes[key] === null ? (
+                  "暂无可比数据"
                 ) : (
-                  <ArrowUp size={13} aria-hidden="true" />
+                  <>
+                    {snapshot.changes[key] < 0 ? (
+                      <ArrowDown size={13} aria-hidden="true" />
+                    ) : (
+                      <ArrowUp size={13} aria-hidden="true" />
+                    )}
+                    {snapshot.changes[key] === 0
+                      ? "持平"
+                      : snapshot.changes[key] > 0
+                        ? "上升"
+                        : "下降"}{" "}
+                    {Math.abs(snapshot.changes[key]).toFixed(1)}%
+                  </>
                 )}
-                {i === 3 ? "下降" : "上升"} {snapshot.changes[i]}
               </span>
-              <small>环比前一周期</small>
+              <small>环比前一等长区间</small>
             </div>
           </Card>
         ))}
@@ -220,7 +241,7 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
                     className="analytics-data-point"
                     style={{
                       left: `${(point.x / 630) * 100}%`,
-                      width: `${(546 / (points.length - 1) / 630) * 100}%`,
+                      width: `${(546 / Math.max(1, points.length - 1) / 630) * 100}%`,
                     }}
                     onMouseEnter={() => setActive(i)}
                     onMouseLeave={() => setActive(null)}
@@ -231,7 +252,9 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
                 ))}
               </div>
             </section>
-            <p className="analytics-footnote">每日 UV 按日去重，周期 UV 按整个统计区间去重。</p>
+            <p className="analytics-footnote">
+              每日 UV 按日去重，周期 UV 按整个区间去重；仅包含成功上报的浏览器访问。
+            </p>
           </div>
         </Card>
         <Card className="admin-panel">
@@ -239,23 +262,50 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
             <h2>设备分布</h2>
           </div>
           <div className="admin-panel-body analytics-devices">
-            {deviceTypes.map(({ name, tone }, i) => (
+            {snapshot.devices.map(({ name, percent }, i) => (
               <div key={name} className="analytics-device">
                 <div>
                   <span>{name}</span>
-                  <strong>{snapshot.devices[i].toFixed(1)}%</strong>
+                  <strong>{snapshot.metrics.pv ? `${percent.toFixed(1)}%` : "—"}</strong>
                 </div>
                 <progress
                   max={100}
-                  value={snapshot.devices[i]}
+                  value={percent}
                   aria-label={`${name}访问占比`}
-                  className={`admin-progress analytics-progress-${tone}`}
+                  className={`admin-progress analytics-progress-${i === 0 ? "pv" : i === 1 ? "uv" : "neutral"}`}
                 />
               </div>
             ))}
           </div>
         </Card>
       </div>
+      <Card className="admin-panel">
+        <div className="admin-panel-heading">
+          <h2>访问来源</h2>
+        </div>
+        <div className="admin-panel-body analytics-devices">
+          {snapshot.sources.length ? (
+            snapshot.sources.map((source) => (
+              <div className="analytics-device" key={source.name}>
+                <div>
+                  <span>{source.name}</span>
+                  <strong>
+                    {source.percent.toFixed(1)}% · {number(source.count)} 次
+                  </strong>
+                </div>
+                <progress
+                  max={100}
+                  value={source.percent}
+                  aria-label={`${source.name}访问占比`}
+                  className="admin-progress analytics-progress-pv"
+                />
+              </div>
+            ))
+          ) : (
+            <p>暂无来源数据。</p>
+          )}
+        </div>
+      </Card>
       <Card className="admin-panel analytics-ranking">
         <div className="admin-panel-heading">
           <h2>热门文章</h2>
@@ -264,10 +314,11 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
           {...tableState}
           data={rankedArticles}
           columns={columns}
-          getRowId={(article) => article.title}
+          getRowId={(article) => article.id}
           paginate={false}
           caption={`${analyticsRanges.find((item) => item.value === range)?.label}热门文章排行榜`}
           tableClassName="analytics-table"
+          emptyState={<p className="admin-business-feedback">暂无文章访问记录。</p>}
         />
       </Card>
     </div>
@@ -276,7 +327,8 @@ function AnalyticsContent({ range }: { range: AnalyticsRange }) {
 
 export function AdminAnalytics() {
   const [range, setRange] = useState<AnalyticsRange>("30d");
-  const snapshot = analyticsSnapshots[range];
+  const result = useAnalytics(range);
+  const data = result.data;
   return (
     <Tabs
       value={range}
@@ -288,7 +340,7 @@ export function AdminAnalytics() {
       <div className="admin-page-heading">
         <div>
           <h1>数据分析</h1>
-          <p>演示快照，查看访问趋势、设备分布与文章表现。</p>
+          <p>浏览器采集的真实访问趋势、来源、设备与文章表现。</p>
         </div>
       </div>
       <div className="analytics-toolbar">
@@ -300,14 +352,34 @@ export function AdminAnalytics() {
           ))}
         </TabsList>
         <p className="analytics-period">
-          {snapshot.trend[0].date} 至 {snapshot.trend.at(-1)?.date}（北京时间）
+          {data
+            ? `${postTime(data.start, true)} 至 ${postTime(data.end)}（北京时间）`
+            : result.error
+              ? "统计查询失败"
+              : "正在查询统计区间…"}
         </p>
       </div>
-      {analyticsRanges.map((item) => (
-        <TabsPanel key={item.value} value={item.value}>
-          <AnalyticsContent range={item.value} />
+      <AnalyticsQueryStatus
+        loading={result.isPending}
+        error={result.error}
+        hasData={!!data}
+        reload={() => void result.refetch()}
+      />
+      {data && (
+        <TabsPanel value={range}>
+          <CollectionStatus collection={data.collection} />
+          {data.incomplete && (
+            <p className="admin-business-feedback">
+              当前区间仅包含自 {postTime(data.collection.availableFrom)}{" "}
+              起保留的采集数据；更早日期没有可用记录。
+            </p>
+          )}
+          <AnalyticsContent key={range} snapshot={data} />
+          <p className="analytics-footnote">
+            平均阅读时长只计算文章页面可见停留；跳出率只计算已结束且停留不足10秒、仅浏览一页的会话。完读要求正文进度达到90%且停留至少10秒。
+          </p>
         </TabsPanel>
-      ))}
+      )}
     </Tabs>
   );
 }

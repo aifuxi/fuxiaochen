@@ -9,6 +9,7 @@ export class AdminRequestError extends Error {
     message: string,
     public code: string,
     public fieldErrors: Record<string, string[]> = {},
+    public status = 0,
   ) {
     super(message);
   }

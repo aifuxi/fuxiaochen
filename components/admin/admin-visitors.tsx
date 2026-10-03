@@ -3,31 +3,30 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { Globe2, Pause, Play, Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { DataTable, useDataTableState } from "@/components/ui/data-table";
+import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
   InputGroupButton,
 } from "@/components/ui/input-group";
+import { durationLabel, visitorSortKeys, type VisitorLog } from "@/lib/analytics/schema";
+import { postTime } from "@/lib/posts/schema";
 
-import type { VisitorLog } from "./visitors-mock-data";
-
-import { initialVisitorLogs, visitorStreamSamples, visitorSummary } from "./visitors-mock-data";
+import { AnalyticsQueryStatus, CollectionStatus, useVisitors } from "./analytics-query";
+import { useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-visitors.css";
-
-const onlineCounts = [14, 15, 13, 16, 14, 12, 15, 17];
 
 const columns: ColumnDef<VisitorLog>[] = [
   {
     id: "ip",
     header: "访问者 IP",
-    accessorFn: (log) => log.ip.split(".").reduce((value, part) => value * 256 + Number(part), 0),
+    accessorKey: "ip",
     enableSorting: true,
     meta: { className: "visitors-ip", rowHeader: true },
     cell: ({ row }) => {
@@ -83,14 +82,13 @@ const columns: ColumnDef<VisitorLog>[] = [
   {
     id: "duration",
     header: "停留时长",
-    accessorFn: (log) =>
-      log.duration.split(":").reduce((seconds, part) => seconds * 60 + Number(part), 0),
+    accessorKey: "durationMs",
     enableSorting: true,
     cell: ({ row }) => {
       const log = row.original;
       return (
         <>
-          <span className="visitors-duration">{log.duration}</span>
+          <span className="visitors-duration">{durationLabel(log.durationMs)}</span>
         </>
       );
     },
@@ -98,15 +96,14 @@ const columns: ColumnDef<VisitorLog>[] = [
   {
     id: "time",
     header: "访问时间",
-    accessorFn: (log) =>
-      log.time.split(":").reduce((seconds, part) => seconds * 60 + Number(part), 0),
+    accessorKey: "createdAt",
     enableSorting: true,
     meta: { className: "admin-post-metric" },
     cell: ({ row }) => {
       const log = row.original;
       return (
         <>
-          <time>{log.time}</time>
+          <time dateTime={log.createdAt}>{postTime(log.createdAt)}</time>
         </>
       );
     },
@@ -114,37 +111,23 @@ const columns: ColumnDef<VisitorLog>[] = [
 ];
 
 export function AdminVisitors() {
-  const [logs, setLogs] = useState(initialVisitorLogs);
-  const [online, setOnline] = useState(visitorSummary.online);
   const [paused, setPaused] = useState(false);
   const [query, setQuery] = useState("");
   const tableState = useDataTableState(10);
   const { setPage } = tableState;
-  const heartbeat = useRef(0);
   const searchInput = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (paused) return undefined;
-    const interval = window.setInterval(() => {
-      const beat = ++heartbeat.current;
-      setOnline(onlineCounts[beat % onlineCounts.length]);
-      if (beat % 3 !== 0) return;
-      const sample = visitorStreamSamples[(beat / 3 - 1) % visitorStreamSamples.length];
-      const entry = {
-        ...sample,
-        id: `live-visitor-${beat}`,
-        duration: "00:01",
-        time: new Date().toLocaleTimeString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false }),
-      };
-      setLogs((current) => [entry, ...current].slice(0, 16));
-    }, 4500);
-    return () => window.clearInterval(interval);
-  }, [paused]);
-
-  const term = query.trim().toLocaleLowerCase();
-  const filtered = logs.filter((log) =>
-    [log.ip, log.location, log.entryPage].some((value) => value.toLocaleLowerCase().includes(term)),
+  const q = useDebouncedPostQuery(query);
+  const result = useVisitors(
+    {
+      q,
+      page: tableState.page,
+      pageSize: tableState.pagination.pageSize,
+      ...getDataTableSort(tableState.sorting, visitorSortKeys),
+    },
+    paused,
   );
+  const data = result.data;
   const updateQuery = (value: string) => {
     setQuery(value);
     setPage(1);
@@ -155,22 +138,22 @@ export function AdminVisitors() {
   };
   const metrics = [
     {
-      label: "当前实时在线",
-      value: online,
+      label: "当前在线人数",
+      value: data?.summary.online,
       tone: "online",
-      detail: paused ? "更新已暂停" : "实时活跃（模拟）",
+      detail: "最近五分钟活跃访客",
     },
     {
-      label: "今日独立 IP 覆盖",
-      value: visitorSummary.uniqueIps,
+      label: "今日独立访客 (UV)",
+      value: data?.summary.uv,
       tone: "coverage",
-      detail: `涵盖 ${visitorSummary.cities} 个城市`,
+      detail: "按匿名访客标识去重",
     },
     {
-      label: "合规搜索引擎蜘蛛",
-      value: visitorSummary.crawlers,
-      tone: "crawler",
-      detail: "Google / Baidu Bot",
+      label: "今日浏览量 (PV)",
+      value: data?.summary.pv,
+      tone: "views",
+      detail: "公开页面浏览次数",
     },
   ];
 
@@ -179,17 +162,24 @@ export function AdminVisitors() {
       <div className="admin-page-heading">
         <div>
           <h1>访客日志</h1>
-          <p>演示数据，模拟访问记录与在线人数；未接入真实访问采集。</p>
+          <p>浏览器采集的真实访问记录，IP 已脱敏；无法识别的地域显示未知。</p>
         </div>
       </div>
 
-      <section className="visitors-metrics" aria-label="模拟访客统计">
+      <AnalyticsQueryStatus
+        loading={result.isPending}
+        error={result.error}
+        hasData={!!data}
+        reload={() => void result.refetch()}
+      />
+      {data && <CollectionStatus collection={data.collection} />}
+      <section className="visitors-metrics" aria-label="访客统计">
         {metrics.map(({ label, value, tone, detail }) => (
           <Card className="visitors-metric" key={label}>
             <div>
               <h2>{label}</h2>
               <div className="visitors-value">
-                <strong>{value.toLocaleString("zh-CN")}</strong>
+                <strong>{value?.toLocaleString("zh-CN") ?? "—"}</strong>
                 <span className={tone === "online" ? "visitors-active" : undefined}>{detail}</span>
               </div>
             </div>
@@ -201,18 +191,23 @@ export function AdminVisitors() {
         <div className="admin-data-toolbar visitors-controls">
           <div className="visitors-stream-status">
             <span
-              className={`visitors-status-dot ${paused ? "is-paused" : ""}`}
+              className={`visitors-status-dot ${paused || result.error ? "is-paused" : ""}`}
               aria-hidden="true"
             />
             <div>
-              <strong>{paused ? "模拟访问流已暂停" : "模拟访问流更新中"}</strong>
-              <p>每 4.5 秒更新，最多保留 16 条日志</p>
+              <strong>
+                {result.error ? "查询失败" : paused ? "访问记录更新已暂停" : "访问记录更新中"}
+              </strong>
+              <p>每10秒查询，隐藏页面或离开时停止更新</p>
             </div>
           </div>
           <div className="visitors-search-controls">
             <Button
               size="compact"
-              onClick={() => setPaused((value) => !value)}
+              onClick={() => {
+                setPaused(!paused);
+                if (paused) void result.refetch();
+              }}
               aria-pressed={paused}
             >
               {paused ? (
@@ -245,16 +240,36 @@ export function AdminVisitors() {
         </div>
         <DataTable
           {...tableState}
-          data={filtered}
+          data={data?.items ?? []}
+          mode="server"
+          rowCount={data?.total ?? 0}
+          loading={result.isPending || result.isFetching}
+          disabled={!!result.error && !data}
           columns={columns}
           getRowId={(log) => log.id}
-          caption="模拟访客日志，访问时间为北京时间，停留时长格式为分:秒"
+          caption="访客日志，访问时间为北京时间，停留时长为可见页面停留"
           tableClassName="admin-post-table visitors-table"
           emptyState={
             <div className="admin-post-empty">
               <Search size={26} aria-hidden="true" />
-              <h2>没有匹配的访客日志</h2>
-              <p>试试其他 IP、城市或页面关键词。</p>
+              <h2>
+                {result.error
+                  ? "访客日志查询失败"
+                  : result.isPending
+                    ? "正在加载访客日志…"
+                    : q
+                      ? "没有匹配的访客日志"
+                      : "暂无访问记录"}
+              </h2>
+              <p>
+                {result.error
+                  ? "请使用上方重试按钮重新查询。"
+                  : result.isPending
+                    ? "正在读取数据库中的访问记录。"
+                    : q
+                      ? "试试其他脱敏 IP、地域或页面关键词。"
+                      : "启用本地统计后，生产环境的公开页面访问会出现在这里。"}
+              </p>
               <Button size="compact" onClick={clearSearch}>
                 清空搜索
               </Button>
@@ -262,7 +277,7 @@ export function AdminVisitors() {
           }
         />
       </section>
-      <p className="admin-post-session-note">离开页面后停止模拟更新，再次进入恢复初始数据。</p>
+      <p className="admin-post-session-note">访问明细保留180天；暂停更新不影响前台采集。</p>
     </div>
   );
 }

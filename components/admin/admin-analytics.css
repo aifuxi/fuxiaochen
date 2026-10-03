@@ -278,3 +278,7 @@
     margin-top: 20px;
   }
 }
+
+.analytics-change.is-muted span {
+  color: var(--color-foreground-muted);
+}

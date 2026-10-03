@@ -7,6 +7,7 @@ import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
 import { collectionRoutes } from "./analytics/collect-routes";
+import { analyticsRoutes } from "./analytics/routes";
 import { loginSchema } from "./auth/schema";
 import {
   consumeLoginAttempt,
@@ -86,6 +87,7 @@ api.route("/admin/settings", settingsRoutes);
 api.route("/admin/friends-links", friendRoutes);
 api.route("/admin/changelog", changelogRoutes);
 
+api.route("/admin", analyticsRoutes);
 api.route("/admin", taxonomyRoutes);
 
 api.post(
