@@ -1,3 +1,5 @@
+import type { AnyExtension } from "@tiptap/core";
+
 import Image from "@tiptap/extension-image";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
@@ -16,15 +18,17 @@ function imageDimension(attribute: "width" | "height") {
 }
 
 // 编辑、校验及服务端渲染共用节点定义，避免打开文档时丢失不认识的节点。
-export function contentExtensions() {
+export function contentExtensions({ codeBlock }: { codeBlock?: AnyExtension } = {}) {
   return [
     StarterKit.configure({
+      ...(codeBlock ? { codeBlock: false as const } : {}),
       link: {
         openOnClick: false,
         isAllowedUri: (url) => safeContentUrl(url),
         HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" },
       },
     }),
+    ...(codeBlock ? [codeBlock] : []),
     Image.extend({
       addAttributes() {
         return {

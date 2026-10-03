@@ -42,6 +42,7 @@ import {
 } from "@/lib/posts/document";
 import { markdownDocument } from "@/lib/posts/markdown-document";
 
+import { EditorCodeBlock } from "./code-block";
 import { EditorMediaPicker } from "./media-picker";
 import { createSlashExtension, insertActions, slashKey } from "./slash-menu";
 import "./editor.css";
@@ -232,8 +233,11 @@ export function BlockEditor({
   }, []);
   const extensions = useMemo(
     () => [
-      ...contentExtensions(),
-      Placeholder.configure({ placeholder: "开始写作，输入 / 插入内容…" }),
+      ...contentExtensions({ codeBlock: EditorCodeBlock }),
+      Placeholder.configure({
+        placeholder: ({ node }) =>
+          node.type.name === "codeBlock" ? "" : "开始写作，输入 / 插入内容…",
+      }),
       createSlashExtension(openImage),
     ],
     [openImage],

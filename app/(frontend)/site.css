@@ -624,6 +624,17 @@
   line-height: 1.7;
   margin: 24px 0;
 }
+.site-markdown .article-code-block {
+  margin: 24px 0;
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.site-markdown .article-code-block pre {
+  margin: 0;
+  border-radius: 0;
+  background: transparent;
+  white-space: pre;
+}
 .site-markdown pre:focus-visible,
 .site-table-scroll:focus-visible {
   outline: 2px solid var(--color-focus);

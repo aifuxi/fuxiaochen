@@ -319,13 +319,19 @@
   border-left: 3px solid var(--color-outline);
   color: var(--color-muted);
 }
-.post-editor-canvas .tiptap pre {
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 16px;
+.post-editor-canvas .tiptap .editor-code-block {
+  margin: 16px 0;
   background: var(--color-input);
   border: 1px solid var(--color-outline);
   border-radius: 8px;
+}
+.post-editor-canvas .tiptap .editor-code-block pre {
+  margin: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 16px;
+  background: transparent;
+  border: 0;
   font:
     13px/1.7 ui-monospace,
     monospace;

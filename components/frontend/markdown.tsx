@@ -4,6 +4,9 @@ import remarkGfm from "remark-gfm";
 
 import { contentExtensions } from "@/lib/posts/content-extensions";
 import { readDocument } from "@/lib/posts/document";
+import { remarkCodeSource } from "@/lib/posts/markdown-code";
+
+import { ArticleCodeBlock } from "./code-block";
 
 const components: Components = {
   a: ({ children, href }) =>
@@ -28,15 +31,18 @@ const components: Components = {
       <table>{children}</table>
     </div>
   ),
-  pre: ({ children }) => (
-    <pre
-      aria-label="代码块"
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 允许键盘用户滚动长代码块。
-      tabIndex={0}
-    >
-      {children}
-    </pre>
-  ),
+  pre: ({ node }) => {
+    const code = node?.children.find(
+      (child) => child.type === "element" && child.tagName === "code",
+    );
+    if (code?.type !== "element") return null;
+    return (
+      <ArticleCodeBlock
+        code={String(code.properties["data-code-source"] ?? "")}
+        language={String(code.properties["data-code-language"] ?? "")}
+      />
+    );
+  },
 };
 const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>[0]["options"]> = {
   nodeMapping: {
@@ -48,13 +54,8 @@ const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>
         </table>
       </div>
     ),
-    codeBlock: ({ node, children }) => (
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 保留长代码块的键盘滚动入口。
-      <pre tabIndex={0} aria-label="代码块">
-        <code className={node.attrs.language ? `language-${node.attrs.language}` : undefined}>
-          {children}
-        </code>
-      </pre>
+    codeBlock: ({ node }) => (
+      <ArticleCodeBlock code={node.textContent} language={node.attrs.language} />
     ),
     taskList: ({ children }) => <ul className="article-task-list">{children}</ul>,
     taskItem: ({ node, children }) => (
@@ -98,7 +99,7 @@ export function ArticleMarkdown({ content }: { content: string }) {
     );
   return (
     <div className="site-markdown">
-      <Markdown remarkPlugins={[remarkGfm]} components={components}>
+      <Markdown remarkPlugins={[remarkGfm, remarkCodeSource]} components={components}>
         {content}
       </Markdown>
     </div>

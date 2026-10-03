@@ -23,6 +23,11 @@ colors:
   focus: "#7DB4FF"
   success: "#73D6A1"
   danger: "#FF7B7B"
+  syntax-keyword: "#C4A7E7"
+  syntax-string: "#A3D9A5"
+  syntax-number: "#F2C078"
+  syntax-function: "#8FC7F4"
+  syntax-comment: "#B5B5B5"
 typography:
   display:
     fontFamily: Space Grotesk
@@ -257,6 +262,10 @@ components:
 #### 文章块编辑器
 
 编辑器沿用连续写作画布。代码块使用 input 中性底色、1px outline 边线、8px 圆角和 16px 内边距，与页面 background 清楚区分；长代码仅在块内横向滚动。格式菜单、链接与素材选择继续使用本地 Base UI Popover、Dialog，所有操作保留键盘焦点、触屏尺寸和减少动态效果支持。
+
+后台与前台代码块顶部常驻工具栏，语言位于左侧，“复制代码”位于右侧；工具栏不随代码横向滚动，使用 muted 文字与 outline 底边线。后台语言使用本地 Base UI Select，前台仅展示名称；桌面控件高 32px，窄屏或粗指针至少 44px。未知语言保留名称并按纯文本显示，未指定语言显示“纯文本”，不自动识别。复制保留原文缩进与换行，成功显示“已复制”两秒，失败显示“复制失败，请手动选择代码”；反馈通过可访问状态文字表达。保存期间后台工具栏禁用。
+
+语法高亮共享 syntax token：关键字与标签使用 syntax-keyword，字符串使用 syntax-string，数字与字面量使用 syntax-number，函数与类型使用 syntax-function，注释使用 syntax-comment；其他代码使用 foreground。颜色只用于代码区，不改变代码文本、编辑选择和撤销历史。前台沿用既有 surface 底色、14px 圆角与 20px 代码内边距，后台沿用上述代码容器。按钮与语言选择保留 hover、active、focus-visible、disabled；prefers-reduced-motion 下取消过渡。
 
 输入 `/` 搜索插入段落、标题、列表、任务列表、引用、代码块、分隔线、表格及图片，方向键切换、Enter 插入、Escape 关闭，中文输入法组合输入期间不触发选项。菜单不夺取正文输入焦点，以 listbox、aria-activedescendant 和文字提示表达选择。选中文字显示浮动格式栏；块手柄提供拖拽，另有复制、删除、上移和下移操作供键盘与触屏使用。触屏操作目标至少 44px，工具条仅局部横向滚动。图片从已有媒体库选择或先上传再选择，插入前可设置替代文字。
 
