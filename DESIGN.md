@@ -42,17 +42,17 @@ typography:
     lineHeight: 1.15
     letterSpacing: "-0.03em"
   title:
-    fontFamily: Inter
+    fontFamily: Space Grotesk
     fontSize: 1rem
     fontWeight: 500
     lineHeight: 1.4
   body:
-    fontFamily: Inter
+    fontFamily: Space Grotesk
     fontSize: 0.875rem
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: Inter
+    fontFamily: Space Grotesk
     fontSize: 0.8125rem
     fontWeight: 500
     lineHeight: 1.25
@@ -155,7 +155,7 @@ components:
 
 ## Typography
 
-以平实、紧凑的无衬线文字承担信息。大标题采用 Space Grotesk 500，字距略收紧；这是项目已有的可用字体，用于近似参考站 Saans 的温和几何感，而非复制其字体文件。正文使用 Inter 优先的系统无衬线栈；数字、参数和代码使用等宽字体。卡片标题 13–16px、500 字重，描述应比标题安静，避免所有内容争夺焦点。
+以平实、紧凑的无衬线文字承担信息。标题、正文和标签统一使用 Space Grotesk 优先的字体栈，`--font-display` 引用 `--font-sans`；大标题采用 500 字重，字距略收紧，用于近似参考站 Saans 的温和几何感，而非复制其字体文件。字体栈依次为 `"Space Grotesk", "Source Han Sans CN", "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`，不使用 Inter。Space Grotesk 当前加载 Latin 字体文件，中文优先使用本地安装的思源黑体；未安装时依次使用 Noto、macOS 苹方、Windows 微软雅黑与系统兜底。仅声明本地字体 family，不下载或分发思源黑体。数字、参数和代码使用等宽字体。卡片标题 13–16px、500 字重，描述应比标题安静，避免所有内容争夺焦点。
 
 标题要短，留出大块空白。中文页面保持自然断行，不强制英文式全大写。标注、token 名和代码可保留英文。
 
@@ -202,7 +202,7 @@ components:
 | 独立模块 | 图表、运营任务、服务摘要等具有独立业务意义的内容可用 24px Card；容器内的普通字段不再套 stage。 |
 | 浮层     | 需要浮层的业务编辑、确认与全局搜索复用本地 Base UI 控件；文章编辑使用独立页面。                |
 
-已迁移页面的页首主要操作使用 primary；顶栏全局新建入口使用 secondary，保持入口功能与快捷操作。顶栏搜索区在可用宽度不足时允许收缩，纵向滚动条占用宽度时仍不得造成页面横向溢出。采用现有字体，页标题用 display 字体，正文用 Inter 优先栈，数值用等宽字体。后台的紧凑尺寸只适用于工具栏及页面操作，表单仍用 44px 控件。
+已迁移页面的页首主要操作使用 primary；顶栏全局新建入口使用 secondary，保持入口功能与快捷操作。顶栏搜索区在可用宽度不足时允许收缩，纵向滚动条占用宽度时仍不得造成页面横向溢出。页标题与正文采用统一的 Space Grotesk 优先字体栈，数值用等宽字体。后台的紧凑尺寸只适用于工具栏及页面操作，表单仍用 44px 控件。
 
 顶栏全局搜索入口使用本地 Base UI Button，视觉沿用 InputGroup 的 input 填充表面、14px 圆角、16px 搜索图标和 14px 左侧间距，不绘制常驻描边。桌面高 36px、宽 260px，提示文字为 14px/20px 的 muted 色，空间不足时省略文字；快捷键为 stage 底色、中性细边线的等宽键帽。<=600px 收为 44×44px 图标按钮，粗指针入口至少高 44px。hover 使用 input-hover，active 使用 raised；焦点、禁用与减少动态效果沿用本地 Button。
 

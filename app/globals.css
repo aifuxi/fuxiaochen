@@ -35,8 +35,11 @@
   --color-syntax-number: #f2c078;
   --color-syntax-function: #8fc7f4;
   --color-syntax-comment: #b5b5b5;
-  --font-display: "Space Grotesk", Inter, Arial, sans-serif;
-  --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --font-sans:
+    "Space Grotesk", "Source Han Sans CN", "Source Han Sans SC", "Noto Sans CJK SC", "Noto Sans SC",
+    "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: var(--font-sans);
   --radius-form: 14px;
 }
 
