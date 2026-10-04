@@ -13,30 +13,39 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
   const values = singleParams(params);
   const isFiltered = Boolean(values.q || values.categoryId || values.tagId);
   return (
-    <main id="main-content" className="site-main">
+    <main id="main-content" className="site-main site-posts-main">
       <section aria-labelledby="posts-heading" className="site-posts">
         <header className="site-page-heading site-posts-heading">
           <h1 id="posts-heading">文章</h1>
+          {!result.error && <span className="site-post-count">{result.total} 篇</span>}
         </header>
         <ArticleFilters
-          key={JSON.stringify(values)}
           q={values.q ?? ""}
           categoryId={values.categoryId ?? ""}
           tagId={values.tagId ?? ""}
           categories={taxonomies.categories}
           tags={taxonomies.tags}
         />
-        <div className="site-post-results-heading">
-          <div>
-            <p>{isFiltered ? "筛选结果" : "全部文章"}</p>
-            {!result.error && <span>{result.total} 篇</span>}
-          </div>
-          {isFiltered && (
+        {isFiltered && (
+          <div className="site-post-results-heading">
+            <p>
+              {[
+                values.q && `搜索“${values.q}”`,
+                values.categoryId &&
+                  (taxonomies.categories.find((c) => c.id === values.categoryId)?.name ??
+                    "分类已不可用"),
+                values.tagId &&
+                  `#${taxonomies.tags.find((t) => t.id === values.tagId)?.name ?? "标签已不可用"}`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+              {!result.error && <span> · {result.total} 篇匹配</span>}
+            </p>
             <Link className="site-clear-filter" href="/posts">
               清除筛选
             </Link>
-          )}
-        </div>
+          </div>
+        )}
         {result.error ? (
           <p className="site-empty" role="alert">
             {result.error} <Link href="/posts">清除筛选</Link>

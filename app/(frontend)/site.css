@@ -372,11 +372,83 @@
   font-weight: 400;
   margin-left: 8px;
 }
+.site-posts-main {
+  max-width: 760px;
+}
 .site-filters {
   display: grid;
-  grid-template-columns: minmax(180px, 1fr) minmax(100px, 150px) minmax(100px, 150px) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 12px;
-  align-items: end;
+  align-items: center;
+}
+.site-filters form {
+  min-width: 0;
+}
+.site-filters > .ds-button {
+  height: 44px;
+}
+.site-filters .ds-input-group-button {
+  width: 44px;
+  height: 44px;
+}
+.site-filters .ds-input-group-addon[data-align="inline-end"] {
+  padding-inline-end: 0;
+}
+.site-page-heading.site-posts-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.site-post-count {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+.site-post-results-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 16px;
+  margin-top: 12px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.75;
+}
+.site-post-results-heading p {
+  flex: 1 1 220px;
+  min-width: 0;
+  margin: 0;
+}
+.site-clear-filter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+.site-filter-dialog {
+  max-width: 440px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+.site-filter-title {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+.site-filter-description {
+  margin: 8px 0 24px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.site-filter-fields {
+  display: grid;
+  gap: 20px;
 }
 .site-filter-field {
   display: grid;
@@ -388,55 +460,20 @@
   font-size: 13px;
   line-height: 20px;
 }
-.site-posts-heading {
-  margin-bottom: 32px;
-}
-.site-post-results-heading {
+.site-filter-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 44px;
-  margin-top: 32px;
-}
-.site-post-results-heading > div {
-  display: flex;
-  align-items: baseline;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 12px;
+  margin-top: 28px;
 }
-.site-post-results-heading p {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 500;
-}
-.site-post-results-heading span {
-  color: var(--color-muted);
-  font-size: 13px;
-}
-.site-filters .ds-button {
+.site-filter-actions .ds-button {
   min-height: 44px;
-}
-.site-search {
-  min-width: 0;
-}
-.site-search input {
-  width: 100%;
-}
-.site-search .ds-input-group > input {
-  width: 0;
-}
-.site-clear-filter {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 10px 0;
-  color: var(--color-muted);
-  font-size: 13px;
 }
 .site-post-list {
   display: grid;
-  gap: 32px;
-  margin-top: 24px;
+  gap: 28px;
+  margin-top: 32px;
 }
 .site-posts .site-pagination {
   justify-content: space-between;
@@ -447,7 +484,7 @@
   min-width: 0;
 }
 .site-post-row h2 {
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1.5;
   font-weight: 500;
   letter-spacing: -0.01em;
@@ -472,17 +509,19 @@
   gap: 0 16px;
   margin-top: 8px;
   color: var(--color-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .site-post-date,
 .site-post-details a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
   min-width: 0;
   max-width: 100%;
   overflow-wrap: anywhere;
+}
+.site-post-details a {
+  min-height: 44px;
 }
 .site-post-date {
   gap: 8px;
@@ -938,18 +977,10 @@
   line-height: 1.8;
   margin: 24px 0;
 }
-@media (max-width: 760px) {
-  .site-filters {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-  .site-search {
-    grid-column: 1 / -1;
-  }
-  .site-filters > .ds-button {
-    grid-column: 1 / -1;
-  }
-}
 @media (max-width: 600px) {
+  .site-post-row h2 {
+    font-size: 22px;
+  }
   .site-header {
     width: calc(100% - 40px);
     margin-top: 16px;
@@ -1010,8 +1041,8 @@
   overflow: hidden;
   overflow-wrap: anywhere;
   color: var(--color-muted);
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 15px;
+  line-height: 1.75;
   margin: 8px 0 0;
 }
 .site-post-featured {
