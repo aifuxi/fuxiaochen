@@ -48,29 +48,31 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                 {result.items.map((post) => (
                   <article className="site-post-row" key={post.id}>
                     <div className="site-post-meta">
-                      {post.isFeatured && <span className="site-post-featured">精选</span>}
                       <time dateTime={post.publishedAt ?? undefined}>
                         {postTime(post.publishedAt, true)}
                       </time>
-                      {post.category && (
-                        <Link href={`/posts?categoryId=${post.category.id}`}>
-                          {post.category.name}
-                        </Link>
+                      {post.isFeatured && <span className="site-post-featured">精选</span>}
+                    </div>
+                    <div className="site-post-body">
+                      <h2>
+                        <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+                      </h2>
+                      {post.summary && <p className="site-post-summary">{post.summary}</p>}
+                      {(post.category || post.tags.length > 0) && (
+                        <div className="site-post-taxonomies">
+                          {post.category && (
+                            <Link href={`/posts?categoryId=${post.category.id}`}>
+                              {post.category.name}
+                            </Link>
+                          )}
+                          {post.tags.map((tag) => (
+                            <Link key={tag.id} href={`/posts?tagId=${tag.id}`}>
+                              #{tag.name}
+                            </Link>
+                          ))}
+                        </div>
                       )}
                     </div>
-                    <h2>
-                      <Link href={`/posts/${post.slug}`}>{post.title}</Link>
-                    </h2>
-                    {post.summary && <p className="site-post-summary">{post.summary}</p>}
-                    {post.tags.length > 0 && (
-                      <div className="site-tags">
-                        {post.tags.map((tag) => (
-                          <Link key={tag.id} href={`/posts?tagId=${tag.id}`}>
-                            #{tag.name}
-                          </Link>
-                        ))}
-                      </div>
-                    )}
                   </article>
                 ))}
               </div>

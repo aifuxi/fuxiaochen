@@ -395,23 +395,64 @@
   margin-top: 8px;
 }
 .site-post-list {
-  margin-top: 28px;
+  display: grid;
+  gap: 48px;
+  margin-top: 48px;
 }
 .site-post-row {
-  padding: 28px 0;
-  border-bottom: 1px solid var(--color-outline);
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
 }
-.site-post-row:first-child {
-  padding-top: 16px;
+.site-post-body {
+  min-width: 0;
 }
 .site-post-row h2 {
-  font-size: 22px;
-  line-height: 1.5;
+  font-size: 24px;
+  line-height: 1.45;
   font-weight: 500;
-  margin: 12px 0;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.site-post-row h2 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 .site-post-row h2 a:hover {
   color: var(--color-focus);
+}
+.site-post-row h2 a:active {
+  color: var(--color-muted);
+}
+.site-post-row .site-post-meta {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 10px;
+  font-size: 13px;
+  line-height: 24px;
+}
+.site-post-row time {
+  font-family: var(--font-mono), monospace;
+}
+.site-post-taxonomies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin-top: 8px;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.site-post-taxonomies a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 .site-post-meta {
   display: flex;
@@ -875,7 +916,21 @@
     width: calc(100% - 40px);
     padding: 40px 0 56px;
   }
-  .site-post-row h3 {
+  .site-post-list {
+    gap: 32px;
+    margin-top: 32px;
+  }
+  .site-post-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .site-post-row .site-post-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding-top: 0;
+  }
+  .site-post-row h2 {
     font-size: 20px;
   }
   .site-friends,
@@ -931,7 +986,7 @@
   color: var(--color-muted);
   font-size: 14px;
   line-height: 1.8;
-  margin: 12px 0;
+  margin: 8px 0 0;
 }
 .site-post-featured {
   color: var(--color-foreground);
