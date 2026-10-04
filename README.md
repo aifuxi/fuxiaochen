@@ -163,7 +163,7 @@ npm run build
 
 ## 媒体资产库 API
 
-媒体库与全局上传入口改为浏览器预签名直传阿里云 OSS，SQLite 保存上传者、原始文件名、字节数、SHA-256、图片宽高、对象 key 和处理状态。不自动上传或导入 `public/media` 的参考图片。
+媒体库与全局上传入口改为浏览器预签名直传阿里云 OSS，SQLite 保存上传者、原始文件名、字节数、SHA-256、图片宽高、对象 key 和处理状态。
 
 依赖锁定 AWS S3 SDK / presigner `3.1145.0`、`@alicloud/credentials` `2.4.7` 和 `sharp` `0.35.5`。Prisma 继续使用 CLI `8.0.0-rc.19`、SQLite `8.0.0-rc.14`（RC / experimental），通过 contract 和增量迁移新增 `media`、`media_upload_limit`，保留原有数据。升级时执行 `npm run db:migrate`，重启已有开发进程，使数据库单例使用最新 contract。
 
