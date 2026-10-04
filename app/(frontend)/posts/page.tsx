@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 import { ArticleFilters } from "@/components/frontend/article-filters";
+import { ArticleListItem } from "@/components/frontend/article-list-item";
 import { Pagination } from "@/components/frontend/pagination";
-import { postTime } from "@/lib/posts/schema";
 import { singleParams, type SearchParams } from "@/lib/public/schema";
 import { getPublicTaxonomies, listPublicPosts } from "@/lib/public/service";
 export const metadata = { title: "文章" };
@@ -11,12 +11,12 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
   const params = await searchParams;
   const [taxonomies, result] = await Promise.all([getPublicTaxonomies(), listPublicPosts(params)]);
   const values = singleParams(params);
+  const isFiltered = Boolean(values.q || values.categoryId || values.tagId);
   return (
     <main id="main-content" className="site-main">
       <section aria-labelledby="posts-heading" className="site-posts">
-        <header className="site-page-heading site-section-heading">
+        <header className="site-page-heading site-posts-heading">
           <h1 id="posts-heading">文章</h1>
-          {!result.error && <span>{result.total} 篇</span>}
         </header>
         <ArticleFilters
           key={JSON.stringify(values)}
@@ -26,11 +26,17 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
           categories={taxonomies.categories}
           tags={taxonomies.tags}
         />
-        {(values.q || values.categoryId || values.tagId) && (
-          <Link className="site-clear-filter" href="/posts">
-            清除筛选
-          </Link>
-        )}
+        <div className="site-post-results-heading">
+          <div>
+            <p>{isFiltered ? "筛选结果" : "全部文章"}</p>
+            {!result.error && <span>{result.total} 篇</span>}
+          </div>
+          {isFiltered && (
+            <Link className="site-clear-filter" href="/posts">
+              清除筛选
+            </Link>
+          )}
+        </div>
         {result.error ? (
           <p className="site-empty" role="alert">
             {result.error} <Link href="/posts">清除筛选</Link>
@@ -39,41 +45,14 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
           <>
             {result.items.length === 0 ? (
               <p className="site-empty">
-                {values.q || values.categoryId || values.tagId
+                {isFiltered
                   ? "没有匹配的文章，试试其他关键词或清除筛选。"
                   : "还没有发布文章，之后再来看看。"}
               </p>
             ) : (
               <div className="site-post-list">
                 {result.items.map((post) => (
-                  <article className="site-post-row" key={post.id}>
-                    <Link
-                      className="site-post-link"
-                      href={`/posts/${post.slug}`}
-                      aria-labelledby={`post-title-${post.id}`}
-                    >
-                      <h2 id={`post-title-${post.id}`}>{post.title}</h2>
-                      {post.summary && <p className="site-post-summary">{post.summary}</p>}
-                    </Link>
-                    <div className="site-post-details">
-                      <span className="site-post-date">
-                        <time dateTime={post.publishedAt ?? undefined}>
-                          {postTime(post.publishedAt, true)}
-                        </time>
-                        {post.isFeatured && <span className="site-post-featured">精选</span>}
-                      </span>
-                      {post.category && (
-                        <Link href={`/posts?categoryId=${post.category.id}`}>
-                          {post.category.name}
-                        </Link>
-                      )}
-                      {post.tags.map((tag) => (
-                        <Link key={tag.id} href={`/posts?tagId=${tag.id}`}>
-                          #{tag.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </article>
+                  <ArticleListItem key={post.id} post={post} />
                 ))}
               </div>
             )}
