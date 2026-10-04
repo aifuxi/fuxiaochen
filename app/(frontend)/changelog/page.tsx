@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 import { Pagination } from "@/components/frontend/pagination";
+import { Button } from "@/components/ui/button";
 import { postTime } from "@/lib/posts/schema";
 import { pageSchema, singleParams, type SearchParams } from "@/lib/public/schema";
 import { listPublicChangelog } from "@/lib/public/service";
@@ -17,9 +20,20 @@ export default async function ChangelogPage({
   const parsed = pageSchema.safeParse(singleParams(await searchParams).page);
   if (!parsed.success)
     return (
-      <main id="main-content" className="site-main">
-        <h1>更新日志</h1>
-        <p role="alert">页码无效，请从导航重新进入。</p>
+      <main id="main-content" className="site-main site-reading">
+        <header className="site-page-heading">
+          <h1>更新日志</h1>
+          <p role="alert">页码无效，请返回更新日志。</p>
+        </header>
+        <Button
+          className="site-changelog-return"
+          nativeButton={false}
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实链接，覆盖 Base UI 默认的 button 角色。
+          role="link"
+          render={<Link href="/changelog" />}
+        >
+          返回更新日志
+        </Button>
       </main>
     );
   const result = await listPublicChangelog(parsed.data);
@@ -31,12 +45,15 @@ export default async function ChangelogPage({
       </header>
       {result.items.length ? (
         <ol className="site-changelog">
-          {result.items.map((r) => (
+          {result.items.map((r, index) => (
             <li key={r.id}>
               <div className="site-post-meta">
                 <time dateTime={r.createdAt}>{postTime(r.createdAt, true)}</time>
-                <span>{r.version}</span>
-                <span>{labels[r.type] ?? r.type}</span>
+                <span className="site-changelog-version">{r.version}</span>
+                <span className="site-changelog-type">{labels[r.type] ?? r.type}</span>
+                {result.page === 1 && index === 0 && (
+                  <span className="site-changelog-latest">最新</span>
+                )}
               </div>
               <h2>{r.title}</h2>
               {r.changes.length ? (

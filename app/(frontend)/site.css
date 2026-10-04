@@ -692,6 +692,24 @@
   padding: 0 0 32px 24px;
   border-left: 1px solid var(--color-outline);
 }
+.site-changelog-version {
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.site-changelog-type {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-raised);
+  color: var(--color-muted);
+}
+.site-changelog-latest {
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.site-changelog-return {
+  min-height: 44px;
+}
 .site-changelog h2 {
   margin: 12px 0;
   font-size: 20px;
@@ -968,6 +986,12 @@
   margin: 24px 0;
 }
 @media (max-width: 600px) {
+  .site-changelog > li {
+    padding-left: 12px;
+  }
+  .site-changelog ul {
+    padding-left: 16px;
+  }
   .site-post-row h2 {
     font-size: 22px;
   }
