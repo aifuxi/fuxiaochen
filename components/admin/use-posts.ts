@@ -87,6 +87,7 @@ export function useDebouncedPostQuery(value: string) {
 }
 export function usePostList(
   filters: {
+    featured?: PostQuery["featured"];
     q?: string;
     status?: string;
     categoryId?: string;

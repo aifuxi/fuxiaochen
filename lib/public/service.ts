@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { cache } from "react";
 import { z } from "zod";
 
+import { documentText, readDocument } from "@/lib/posts/document";
 import { slugSchema } from "@/lib/posts/schema";
 import { getPublicSettings } from "@/lib/settings/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
@@ -13,13 +14,23 @@ type Database = ReturnType<typeof getDatabase>;
 type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 const postItems = (db: Transaction) =>
   db.orm.Post.where({ status: "published" })
-    .select("id", "slug", "title", "publishedAt", "updatedAt", "categoryId")
+    .select(
+      "id",
+      "slug",
+      "title",
+      "summary",
+      "isFeatured",
+      "publishedAt",
+      "updatedAt",
+      "categoryId",
+    )
     .include("category", (category) => category.select("id", "name", "color"))
     .include("tagLinks", (links) => links.include("tag", (tag) => tag.select("id", "name")));
 type PostRow = NonNullable<Awaited<ReturnType<ReturnType<typeof postItems>["first"]>>>;
 function serializePost({ tagLinks, publishedAt, updatedAt, ...row }: PostRow) {
   return {
     ...row,
+    isFeatured: row.isFeatured === 1,
     publishedAt: publishedAt?.toISOString() ?? null,
     updatedAt: updatedAt.toISOString(),
     tags: tagLinks
@@ -84,6 +95,7 @@ export async function listPublicPosts(params: SearchParams) {
       filtered = filtered.where((p) =>
         db.raw.sql`(
       instr(lower(${p.title}), lower(${query.q})) > 0 OR
+      instr(lower(${p.summary}), lower(${query.q})) > 0 OR
       instr(lower((SELECT json_extract(body.content, '$.text') FROM post body WHERE body.id = ${p.id})), lower(${query.q})) > 0 OR
       EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0) OR
       EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt.tagId WHERE pt.postId = ${p.id} AND instr(lower(t.name), lower(${query.q})) > 0)
@@ -99,7 +111,25 @@ export async function listPublicPosts(params: SearchParams) {
       .offset((page - 1) * settings.postsPerPage)
       .limit(settings.postsPerPage)
       .all();
-    return { error: null, items: rows.map(serializePost), total, page, pageCount, query };
+    const emptyIds = rows.filter((row) => !row.summary.trim()).map((row) => row.id);
+    const bodies = emptyIds.length
+      ? await tx.orm.Post.where({ status: "published" })
+          .where((p) => p.id.in(emptyIds))
+          .select("id", "content")
+          .all()
+      : [];
+    const excerpts = new Map(
+      bodies.map((body) => {
+        const text = documentText(readDocument(body.content)).replace(/\s+/g, " ").trim();
+        const characters = Array.from(text);
+        return [body.id, characters.slice(0, 100).join("") + (characters.length > 100 ? "…" : "")];
+      }),
+    );
+    const items = rows.map((row) => ({
+      ...serializePost(row),
+      summary: row.summary.trim() || excerpts.get(row.id) || "",
+    }));
+    return { error: null, items, total, page, pageCount, query };
   });
 }
 export const getPublicPost = cache(async (slug: string) => {

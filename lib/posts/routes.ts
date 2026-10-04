@@ -10,6 +10,7 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { SESSION_COOKIE, getSession } from "@/lib/auth/service";
 
 import {
+  featuredPostSchema,
   postSchema,
   updatePostSchema,
   postQuerySchema,
@@ -24,6 +25,7 @@ import {
   listPosts,
   PostError,
   updatePost,
+  updatePostFeatured,
 } from "./service";
 
 export const postRoutes = new Hono<{ Variables: { admin: TaxonomyActor } }>();
@@ -34,7 +36,7 @@ postRoutes.use("*", async (c, next) => {
     return c.json({ error: { code: "UNAUTHORIZED", message: "登录已失效，请重新登录。" } }, 401);
   c.set("admin", { adminId: admin.adminId, sessionToken });
   if (
-    ["POST", "PUT"].includes(c.req.method) &&
+    ["POST", "PUT", "PATCH"].includes(c.req.method) &&
     c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"
   )
     return c.json(
@@ -97,6 +99,28 @@ postRoutes.post("/", createValidator, async (c) =>
 );
 postRoutes.put("/:id", idValidator, updateValidator, async (c) =>
   c.json({ data: await updatePost(c.req.valid("param").id, c.req.valid("json"), c.get("admin")) }),
+);
+postRoutes.patch(
+  "/:id/featured",
+  idValidator,
+  zValidator("json", featuredPostSchema, (result, c) => {
+    if (!result.success)
+      return c.json(
+        {
+          error: {
+            code: "INVALID_INPUT",
+            message: result.error.issues[0].message,
+            fieldErrors: z.flattenError(result.error).fieldErrors,
+          },
+        },
+        400,
+      );
+    return undefined;
+  }),
+  async (c) =>
+    c.json({
+      data: await updatePostFeatured(c.req.valid("param").id, c.req.valid("json"), c.get("admin")),
+    }),
 );
 postRoutes.delete(
   "/:id",

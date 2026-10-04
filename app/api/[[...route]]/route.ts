@@ -25,3 +25,5 @@ export const GET = route;
 export const DELETE = route;
 
 export const PUT = route;
+
+export const PATCH = route;

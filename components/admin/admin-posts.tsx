@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { ExternalLink, Star, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 
 import type { PostItem } from "@/lib/posts/schema";
@@ -34,7 +34,12 @@ const filters: { value: "all" | PostStatus; label: string }[] = [
   { value: "scheduled", label: "发布计划" },
 ];
 
-const actionIcons = { Pencil: <Pencil size={16} />, Trash2: <Trash2 size={16} /> };
+const actionIcons = {
+  Pencil: <Pencil size={16} />,
+  Trash2: <Trash2 size={16} />,
+  ExternalLink: <ExternalLink size={16} />,
+  Star: <Star size={16} />,
+};
 
 const columns: ColumnDef<PostItem>[] = [
   {
@@ -54,6 +59,7 @@ const columns: ColumnDef<PostItem>[] = [
           >
             {post.title}
           </button>
+          <p className="admin-post-summary">{post.summary || "未填写摘要"}</p>
           <div className="admin-post-tags">
             {post.tags.map((tag) => (
               <span key={tag.id}>#{tag.name}</span>
@@ -96,6 +102,12 @@ const columns: ColumnDef<PostItem>[] = [
     },
   },
   {
+    id: "featured",
+    header: "精选",
+    enableSorting: false,
+    cell: ({ row }) => (row.original.isFeatured ? `精选 · ${row.original.featuredOrder}` : "—"),
+  },
+  {
     id: "time",
     header: "时间",
     accessorKey: "time",
@@ -123,9 +135,18 @@ const columns: ColumnDef<PostItem>[] = [
 
 export function AdminPosts() {
   const now = usePostClock();
-  const { categoryItems, postRevision, postPending, onOpen, onEdit, onDeletePost } =
-    useAdminWorkspace();
+  const {
+    categoryItems,
+    postRevision,
+    postPending,
+    onOpen,
+    onEdit,
+    onDeletePost,
+    setPostFeatured,
+  } = useAdminWorkspace();
   const [status, setStatus] = useState<string>("all");
+  const [featured, setFeatured] = useState<"all" | "featured" | "unfeatured">("all");
+  const [actionError, setActionError] = useState("");
   const [category, setCategory] = useState("all");
   const [query, setQuery] = useState("");
   const tableState = useDataTableState();
@@ -137,6 +158,7 @@ export function AdminPosts() {
     {
       status,
       categoryId: category,
+      featured,
       q: term,
       page,
       pageSize,
@@ -151,6 +173,7 @@ export function AdminPosts() {
   const resetFilters = () => {
     setStatus("all");
     setCategory("all");
+    setFeatured("all");
     setQuery("");
     setPage(1);
   };
@@ -220,23 +243,47 @@ export function AdminPosts() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="admin-post-category-field">
+                <Select
+                  value={featured}
+                  onValueChange={(value) => {
+                    setFeatured(value ?? "all");
+                    setPage(1);
+                  }}
+                >
+                  <SelectTrigger size="compact" aria-label="按精选筛选">
+                    <SelectValue>
+                      {featured === "featured"
+                        ? "精选"
+                        : featured === "unfeatured"
+                          ? "非精选"
+                          : "全部精选状态"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">全部</SelectItem>
+                    <SelectItem value="featured">精选</SelectItem>
+                    <SelectItem value="unfeatured">非精选</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <InputGroup size="compact" className="admin-post-search">
                 <InputGroupInput
                   ref={searchRef}
-                  aria-label="搜索文章标题、标签、分类和内容"
+                  aria-label="搜索文章标题、摘要、标签、分类和内容"
                   maxLength={200}
                   value={query}
                   onChange={(event) => {
                     setQuery(event.target.value);
                     setPage(1);
                   }}
-                  placeholder="搜索文章标题 / 标签 / 内容…"
+                  placeholder="搜索标题 / 摘要 / 标签 / 内容…"
                 />
                 <InputGroupAddon>
                   <Search size={16} aria-hidden="true" />
                 </InputGroupAddon>
               </InputGroup>
-              {(term || category !== "all") && (
+              {(term || category !== "all" || featured !== "all") && (
                 <Button size="compact" variant="ghost" onClick={resetFilters}>
                   重置筛选
                 </Button>
@@ -246,6 +293,11 @@ export function AdminPosts() {
           <TabsPanel value={status} className="admin-post-panel">
             <div className="admin-post-list" aria-busy={result.loading}>
               <PostQueryStatus {...result} />
+              {actionError && (
+                <p className="admin-error" role="alert">
+                  {actionError}
+                </p>
+              )}
               <DataTable
                 meta={{
                   getRowActions: (post) => ({
@@ -256,6 +308,33 @@ export function AdminPosts() {
                         label: "编辑文章",
                         icon: actionIcons.Pencil,
                         onSelect: () => onEdit(post.id),
+                      },
+                      ...(post.status === "published"
+                        ? [
+                            {
+                              label: "查看前台",
+                              icon: actionIcons.ExternalLink,
+                              href: `/posts/${post.slug}`,
+                              target: "_blank" as const,
+                            },
+                          ]
+                        : []),
+                      {
+                        label: post.isFeatured ? "取消精选" : "设为精选",
+                        icon: actionIcons.Star,
+                        onSelect: () => {
+                          setActionError("");
+                          void setPostFeatured(post)
+                            .catch((cause: unknown) => {
+                              setActionError(
+                                cause instanceof Error
+                                  ? cause.message
+                                  : "操作失败，请核对列表后重试。",
+                              );
+                              result.reload();
+                            })
+                            .finally(() => requestAnimationFrame(() => searchRef.current?.focus()));
+                        },
                       },
                       {
                         label: "删除文章",
@@ -268,7 +347,7 @@ export function AdminPosts() {
                     ],
                   }),
                   editRow: (post) => onEdit(post.id),
-                  disableActions: postPending,
+                  disableActions: postPending || result.loading || Boolean(result.error),
                   postClock: now,
                 }}
                 {...tableState}
@@ -288,7 +367,7 @@ export function AdminPosts() {
                       <h2>{data.statusCounts.all ? "未匹配到相关博文" : "还没有文章"}</h2>
                       <p>
                         {data.statusCounts.all
-                          ? "请调整状态、分类或搜索关键词。"
+                          ? "请调整状态、分类、精选或搜索关键词。"
                           : "从第一篇文章开始记录。"}
                       </p>
                       <Button

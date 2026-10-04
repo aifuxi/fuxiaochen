@@ -6,7 +6,13 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { getSession } from "@/lib/auth/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
 
-import type { PostCounts, PostInput, PostQuery, PostUpdateInput } from "./schema";
+import type {
+  FeaturedPostInput,
+  PostCounts,
+  PostInput,
+  PostQuery,
+  PostUpdateInput,
+} from "./schema";
 
 import { emptyPostCounts, postStatusSchema } from "./schema";
 
@@ -84,11 +90,14 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
   let filtered = db.orm.Post.where({});
   if (query.status) filtered = filtered.where({ status: query.status });
   if (query.categoryId) filtered = filtered.where({ categoryId: query.categoryId });
+  if (query.featured !== "all")
+    filtered = filtered.where({ isFeatured: query.featured === "featured" ? 1 : 0 });
   if (query.q) {
     // instr 按字面查找，关键词中的 %、_ 不会被解释成 LIKE 通配符；所有值使用绑定参数。
     filtered = filtered.where((p) =>
       db.raw.sql`(
-      instr(lower(${p.title}), lower(${query.q})) > 0 OR instr(lower(
+      instr(lower(${p.title}), lower(${query.q})) > 0 OR
+      instr(lower(${p.summary}), lower(${query.q})) > 0 OR instr(lower(
         json_extract(${p.content}, '$.text')
       ), lower(${query.q})) > 0
       OR EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0)
@@ -273,6 +282,30 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
     await tx.orm.PostTag.where({ postId: id }).deleteAndCount();
     for (const tagId of tagIds) await tx.orm.PostTag.create({ postId: id, tagId });
     return detail(id, tx);
+  });
+}
+export async function updatePostFeatured(
+  id: string,
+  input: FeaturedPostInput,
+  actor: TaxonomyActor,
+) {
+  await authorize(actor);
+  return writeTransaction(async (tx) => {
+    await authorize(actor);
+    const previous = await tx.orm.Post.where({ id }).select("version").first();
+    if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
+    if (
+      previous.version !== input.version ||
+      !(await tx.orm.Post.where({ id, version: input.version }).updateAndCount({
+        isFeatured: input.isFeatured ? 1 : 0,
+        updatedAt: new Date(),
+        version: input.version + 1,
+      }))
+    )
+      throw new PostError("VERSION_CONFLICT", "文章已被其他页面修改，请核对刷新后的列表再操作。");
+    const post = await summaries(tx).where({ id }).first();
+    if (!post) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
+    return serialize(post);
   });
 }
 export async function deletePost(id: string, version: number, actor: TaxonomyActor) {

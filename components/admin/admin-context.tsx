@@ -32,6 +32,7 @@ type AdminState = TaxonomyState &
     postSummaryError: string;
     reloadPostSummary: () => void;
     savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
+    setPostFeatured: (post: PostItem) => Promise<PostItem>;
     cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
     onOpen: (panel: AdminPanel) => void;
     onEdit: (id: string) => void;

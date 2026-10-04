@@ -44,7 +44,9 @@ export type RowAction = {
   destructive?: boolean;
   separator?: boolean;
   opensDialog?: boolean;
-  onSelect: (trigger: HTMLElement | null) => void;
+  href?: string;
+  target?: "_blank";
+  onSelect?: (trigger: HTMLElement | null) => void;
 };
 
 export type RowActionsProps = { label: string; disabled?: boolean; actions: RowAction[] };
@@ -71,11 +73,21 @@ export function RowActions({ label, disabled, actions }: RowActionsProps) {
           <Fragment key={action.label}>
             {action.separator && <MenuSeparator className="ds-menu-separator" />}
             <MenuItem
+              render={
+                action.href ? (
+                  <a
+                    aria-label={action.label}
+                    href={action.href}
+                    target={action.target}
+                    rel={action.target === "_blank" ? "noopener noreferrer" : undefined}
+                  />
+                ) : undefined
+              }
               disabled={action.disabled}
               destructive={action.destructive}
               onClick={() => {
                 dialogOpened.current = Boolean(action.opensDialog);
-                action.onSelect(trigger.current);
+                action.onSelect?.(trigger.current);
               }}
             >
               <span aria-hidden="true">{action.icon}</span>

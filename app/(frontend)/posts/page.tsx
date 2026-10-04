@@ -48,6 +48,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                 {result.items.map((post) => (
                   <article className="site-post-row" key={post.id}>
                     <div className="site-post-meta">
+                      {post.isFeatured && <span className="site-post-featured">精选</span>}
                       <time dateTime={post.publishedAt ?? undefined}>
                         {postTime(post.publishedAt, true)}
                       </time>
@@ -60,6 +61,7 @@ export default async function PostsPage({ searchParams }: { searchParams: Promis
                     <h2>
                       <Link href={`/posts/${post.slug}`}>{post.title}</Link>
                     </h2>
+                    {post.summary && <p className="site-post-summary">{post.summary}</p>}
                     {post.tags.length > 0 && (
                       <div className="site-tags">
                         {post.tags.map((tag) => (

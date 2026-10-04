@@ -849,3 +849,23 @@
     transition: none;
   }
 }
+
+.site-post-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 12px 0;
+}
+.site-post-featured {
+  color: var(--color-foreground);
+}
+@media (max-width: 600px) {
+  .site-post-summary {
+    -webkit-line-clamp: 2;
+  }
+}

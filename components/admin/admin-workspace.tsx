@@ -157,6 +157,16 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         }),
       initial ? "文章已更新" : "文章已创建",
     );
+  const setPostFeatured = (post: PostItem) =>
+    mutatePost(
+      () =>
+        postRequest<PostItem>(`/${post.id}/featured`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ isFeatured: !post.isFeatured, version: post.version }),
+        }),
+      post.isFeatured ? "已取消精选" : "已设为精选",
+    );
   const cancelPostSchedule = (post: PostItem) =>
     mutatePost(async () => {
       const latest = await postRequest<PostDetail>(`/${post.id}`);
@@ -230,6 +240,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         reloadPostSummary: summary.reload,
         savePost,
         cancelPostSchedule,
+        setPostFeatured,
         ...commentState,
         ...taxonomy,
         onOpen: openPanel,
