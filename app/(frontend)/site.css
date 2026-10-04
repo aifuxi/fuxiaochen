@@ -476,8 +476,6 @@
   margin-top: 32px;
 }
 .site-posts .site-pagination {
-  justify-content: space-between;
-  gap: 12px;
   margin-top: 48px;
 }
 .site-post-row {
@@ -565,30 +563,22 @@
 }
 .site-pagination {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
   margin-top: 32px;
   font-size: 13px;
   color: var(--color-muted);
 }
-.site-pagination a,
-.site-pagination > span[aria-disabled] {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 999px;
+.site-pagination .ds-button {
+  height: 44px;
+  padding-inline: 16px;
 }
-.site-pagination a:hover {
-  background: var(--color-raised);
-}
-.site-pagination a:active {
-  background: var(--color-input);
-}
-.site-pagination > span[aria-disabled] {
-  opacity: 0.45;
-  cursor: not-allowed;
+.site-pagination-position {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .site-page-heading {
   margin-bottom: 40px;
