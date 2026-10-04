@@ -57,7 +57,7 @@ Compose 通过显式 `environment` 注入变量，不依赖仓库中不存在的
 
 容器使用 `node` 用户（UID/GID 1000）。默认启动命令先执行现有 `npm run db:migrate`，其中依次运行 Prisma 8 的 `db migrate` 与 `db verify`；任一步失败就退出，不启动 Web。正常启动后监听容器端口 3000，Docker 通过 `/login` 的 HTTP 200 判断 Web 服务可用。该健康检查不代表 OSS 配置或全部业务已验证，Docker 的 unhealthy 状态也不会单独触发 `unless-stopped` 重启。
 
-数据库固定为 `/app/data/admin.sqlite`，备份为 `/app/data/backups`，CLI 与 Web 使用同一绝对路径。命名卷保存整个 `/app/data`，包括 SQLite WAL/SHM 和备份。不要删除卷或为同一数据库运行多个 Web 副本；新 Stack 名称如复用旧卷，也必须先停旧实例。后续接管已有数据库时，先做在线备份，停止旧 Web 与调度，再将正确文件放入卷并确保 UID/GID 1000 可读写。已有文章的旧 schema 迁移仍须遵循 README 的 slug 回填限制。
+数据库固定为 `/app/data/admin.sqlite`，备份为 `/app/data/backups`，CLI 与 Web 使用同一绝对路径。命名卷保存整个 `/app/data`，包括 SQLite WAL/SHM 和备份。不要删除卷或为同一数据库运行多个 Web 副本；新 Stack 名称如复用旧卷，也必须先停旧实例。后续接管已有数据库时，先做在线备份，停止旧 Web 与调度，再将正确文件放入卷并确保 UID/GID 1000 可读写。已有文章的旧 schema 迁移须遵循 [旧数据迁移说明](maintenance.md) 中的 slug 回填限制；OSS 权限与 CORS 见 [媒体存储配置](media-storage.md)。
 
 ## 接入现有 Caddy
 
@@ -98,6 +98,40 @@ docker exec --user node <应用容器名> npm run db:backup
 
 排期发布和自动备份仍需外部调度。容器不会自动安装 cron；可以在宿主机每分钟执行一次 `docker exec --user node <应用容器名> npm run operations:run`。更新导致容器名称变化时同步调度配置。备份只包含数据库，不含 OSS 文件；备份仍位于同一宿主机，需另行复制到其他存储。
 
+`operations:run` 执行到期发布，再按后台备份面板中的开关执行当天自动备份。仅执行到期发布使用 `npm run posts:publish-due`。调度与 Web 必须共享数据库和备份磁盘；未配置调度时，排期保持等待状态，可在后台手动执行到期计划。
+
+## 单实例 Node.js 部署
+
+部署环境安装 Node.js 24+ 和完整项目依赖，使用可写的持久目录设置绝对 `DATABASE_PATH`；`APP_ORIGIN` 使用实际 HTTPS 域名，反向代理保留浏览器 Origin。
+
+```sh
+npm ci
+npm run build
+npm run db:migrate
+# 首次空库部署时执行；已有管理员则跳过
+npm run admin:init
+npm start
+```
+
+迁移、账号和维护命令依赖 devDependencies，不能在执行前裁剪这些依赖。使用进程管理器维持服务，并通过外部调度每分钟运行 `npm run operations:run`；调度环境使用同一项目目录、Node/npm、环境配置和数据库路径。
+
+## 数据库备份与恢复
+
+`npm run db:backup` 使用 SQLite 在线备份，包含 WAL 中的数据；不要通过直接复制打开的数据库文件代替。默认备份目录为数据库旁的 `backups/`，可通过 `BACKUP_DIRECTORY` 指定持久目录；容器默认目录为 `/app/data/backups`。
+
+每份备份位于独立 UUID 目录，包含 `database.sqlite` 和 `manifest.json`。只备份数据库及媒体元数据，不含 OSS 文件；产物包含鉴权数据，不得放入公开目录或提交 Git。当前没有自动删除备份的保留策略，应定期核对磁盘容量并保存异地副本。
+
+恢复命令验证备份摘要和数据库完整性，只写入不存在的新文件：
+
+```sh
+npm run db:restore -- /absolute/backups/<UUID> /absolute/restored.sqlite
+DATABASE_PATH=/absolute/restored.sqlite npm run db:verify
+```
+
+恢复后所有登录会话被清除，自动备份关闭，旧调度时间清空。核对结构和业务数据后，停止 Web 与调度进程、另行备份当前库，再将 `DATABASE_PATH` 切换到恢复文件并重启匹配版本的应用。不要覆盖打开的数据库或混用旧 WAL/SHM。OSS 对象需要单独保留，恢复数据库无法找回已删除的文件。
+
+容器 CLI 和 Web 默认使用固定路径 `/app/data/admin.sqlite`；恢复到新文件并校验后，停止应用容器及宿主机调度，保留当前库和其 WAL/SHM，将恢复文件放到卷内的固定路径，确保 UID/GID 1000 可读写且不带旧 WAL/SHM，再启动匹配版本。不要删除整个数据卷。
+
 ## 更新与回退
 
 1. 推送代码或版本 tag，等待 GitHub Actions 成功并确认镜像 tag/digest。
@@ -107,7 +141,7 @@ docker exec --user node <应用容器名> npm run db:backup
 
 不建议直接开启按 Git commit 轮询部署：Portainer 可能在镜像构建完成前发现新 commit，从而拉取上一版的可变标签。即使 `latest` 已更新，同一个 Git commit 的轮询检查也可能跳过重新部署。先等待 Actions 成功再手动拉取部署；需要自动部署时，应另行配置构建成功后调用的 Portainer webhook 及镜像重拉取设置。
 
-单机升级会短暂停机。没有数据库迁移时可以换回已记录的旧镜像；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按 README 的恢复流程先核对备份、停止 Web 与调度、恢复到新文件，再切换数据库和匹配的镜像。不要删除生产数据卷来解决启动失败。
+单机升级会短暂停机。没有数据库迁移时可以换回已记录的旧镜像；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按上方恢复流程先核对备份、停止 Web 与调度、恢复到新文件，再切换数据库和匹配的镜像。不要删除生产数据卷来解决启动失败。
 
 ## 本地构建与配置检查
 
