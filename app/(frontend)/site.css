@@ -8,7 +8,6 @@
   max-width: 1200px;
   margin: auto auto 0;
   padding: 0 32px;
-  border-top: 1px solid var(--color-outline);
   color: var(--color-muted);
   font-size: 12px;
 }
@@ -73,7 +72,6 @@
   justify-content: space-between;
   gap: 12px 24px;
   padding: 20px 0;
-  border-top: 1px solid var(--color-outline);
 }
 .site-filings {
   display: flex;
