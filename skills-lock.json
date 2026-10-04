@@ -1,6 +1,24 @@
 {
   "version": 1,
   "skills": {
+    "emilkowalski-motion": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/emilkowalski-motion/SKILL.md",
+      "computedHash": "ac9e827c591d2527dea51f937e0ba0fc88627c04b713eaaa76bf634c807d547f"
+    },
+    "gpt-taste": {
+      "source": "leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/gpt-tasteskill/SKILL.md",
+      "computedHash": "cc8f0c601d8240a124e1d11634351a2be7b8a72fd807c75e5b6bf7afcd5ddee0"
+    },
+    "impeccable-design-polish": {
+      "source": "nexu-io/open-design",
+      "sourceType": "github",
+      "skillPath": "skills/impeccable-design-polish/SKILL.md",
+      "computedHash": "4e503449a58d0609daba362aea73aebf920b532a9793446158cc8a907e821b78"
+    },
     "libraries-dev": {
       "source": "Jakubantalik/Libraries.dev",
       "sourceType": "github",
