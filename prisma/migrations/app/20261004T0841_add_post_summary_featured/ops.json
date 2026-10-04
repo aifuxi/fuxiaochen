@@ -1,0 +1,107 @@
+[
+  {
+    "id": "column.post.featuredOrder",
+    "label": "Add column featuredOrder on post",
+    "summary": "Adds column featuredOrder on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "featuredOrder",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"featuredOrder\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "featuredOrder"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"featuredOrder\"",
+        "sql": "ALTER TABLE \"post\" ADD COLUMN \"featuredOrder\" INTEGER DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"featuredOrder\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "featuredOrder"]
+      }
+    ]
+  },
+  {
+    "id": "column.post.isFeatured",
+    "label": "Add column isFeatured on post",
+    "summary": "Adds column isFeatured on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "isFeatured",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"isFeatured\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "isFeatured"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"isFeatured\"",
+        "sql": "ALTER TABLE \"post\" ADD COLUMN \"isFeatured\" INTEGER DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"isFeatured\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "isFeatured"]
+      }
+    ]
+  },
+  {
+    "id": "column.post.summary",
+    "label": "Add column summary on post",
+    "summary": "Adds column summary on post",
+    "operationClass": "additive",
+    "target": {
+      "id": "sqlite",
+      "details": {
+        "schema": "main",
+        "objectType": "column",
+        "name": "summary",
+        "table": "post"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"summary\" is missing",
+        "sql": "SELECT COUNT(*) = 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "summary"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"summary\"",
+        "sql": "ALTER TABLE \"post\" ADD COLUMN \"summary\" TEXT DEFAULT '' NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"summary\" exists",
+        "sql": "SELECT COUNT(*) > 0 AS \"result\" FROM pragma_table_info(?) WHERE \"name\" = ?",
+        "params": ["post", "summary"]
+      }
+    ]
+  }
+]

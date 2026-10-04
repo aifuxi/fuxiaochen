@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { EMPTY_POST_CONTENT } from "@/lib/posts/document";
 import {
@@ -51,6 +52,9 @@ type Draft = {
   title: string;
   slug: string;
   content: string;
+  summary: string;
+  isFeatured: boolean;
+  featuredOrder: string;
   categoryId: string;
   tagIds: string[];
   status: PostStatus;
@@ -62,6 +66,9 @@ function draftFrom(post: PostDetail | null): Draft {
     title: post?.title ?? "",
     slug: post?.slug ?? "",
     content: post?.content ?? EMPTY_POST_CONTENT,
+    summary: post?.summary ?? "",
+    isFeatured: post?.isFeatured ?? false,
+    featuredOrder: String(post?.featuredOrder ?? 0),
     categoryId: post?.categoryId ?? "",
     tagIds: post?.tags.map((tag) => tag.id) ?? [],
     status: post?.status ?? "draft",
@@ -73,11 +80,23 @@ const fieldIds: Record<string, string> = {
   title: "admin-post-title",
   content: "admin-post-body",
   slug: "admin-post-slug",
+  summary: "admin-post-summary",
+  isFeatured: "admin-post-featured",
+  featuredOrder: "admin-post-featured-order",
   categoryId: "admin-post-category",
   tagIds: "admin-post-tags",
   scheduledFor: "admin-post-publish-date",
 };
-const settingsKeys = ["slug", "categoryId", "tagIds", "status", "scheduledFor"];
+const settingsKeys = [
+  "summary",
+  "isFeatured",
+  "featuredOrder",
+  "slug",
+  "categoryId",
+  "tagIds",
+  "status",
+  "scheduledFor",
+];
 
 export function PostEditor({ id }: { id: string | null }) {
   const router = useRouter();
@@ -113,7 +132,18 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
   const [savedPost, setSavedPost] = useState(initial);
   const [draft, setDraft] = useState(() => draftFrom(initial));
   const [savedDraft, setSavedDraft] = useState(() => draftFrom(initial));
-  const { title, slug, content, categoryId, tagIds, status, scheduledTime } = draft;
+  const {
+    title,
+    slug,
+    content,
+    summary,
+    isFeatured,
+    featuredOrder,
+    categoryId,
+    tagIds,
+    status,
+    scheduledTime,
+  } = draft;
   const initialBody = initial?.content ?? EMPTY_POST_CONTENT;
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -162,12 +192,14 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
   }, [title, resizeTitle]);
   const focusRequestedField = useCallback(() => {
     if (!focusField || postPending) return;
-    const element = document.getElementById(fieldIds[focusField]);
+    const element = document.getElementById(
+      focusField === "featuredOrder" && !isFeatured ? fieldIds.isFeatured : fieldIds[focusField],
+    );
     if (element) {
       element.focus();
       setFocusField(null);
     }
-  }, [focusField, postPending]);
+  }, [focusField, postPending, isFeatured]);
   useEffect(() => {
     if (!focusField || postPending) return undefined;
     const frame = requestAnimationFrame(focusRequestedField);
@@ -240,6 +272,9 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       title,
       slug,
       content,
+      summary,
+      isFeatured,
+      featuredOrder: featuredOrder.trim() ? Number(featuredOrder) : NaN,
       categoryId,
       tagIds,
       status,
@@ -421,6 +456,53 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
           </Button>
         ))}
       </div>
+      <label htmlFor="admin-post-summary">
+        文章摘要
+        <Textarea
+          form="article-writing-form"
+          id="admin-post-summary"
+          value={summary}
+          maxLength={200}
+          disabled={postPending}
+          onChange={(event) => update("summary", event.target.value)}
+          aria-invalid={Boolean(fieldErrors.summary)}
+          aria-describedby={`post-summary-help${fieldErrors.summary ? " post-error-summary" : ""}`}
+        />
+      </label>
+      <p id="post-summary-help">建议 50～100 字，最多 200 字；可留空。{summary.length}/200</p>
+      {fieldError("summary")}
+      <div className="post-editor-featured-toggle">
+        <label htmlFor="admin-post-featured">设为精选</label>
+        <Switch
+          id="admin-post-featured"
+          aria-label="设为精选"
+          touchTarget
+          checked={isFeatured}
+          disabled={postPending}
+          onCheckedChange={(checked) => update("isFeatured", checked)}
+          aria-invalid={Boolean(fieldErrors.isFeatured)}
+          aria-describedby={fieldErrors.isFeatured ? "post-error-isFeatured" : undefined}
+        />
+      </div>
+      {fieldError("isFeatured")}
+      <label htmlFor="admin-post-featured-order">
+        精选排序
+        <Input
+          form="article-writing-form"
+          id="admin-post-featured-order"
+          type="number"
+          min={0}
+          max={9999}
+          step={1}
+          value={featuredOrder}
+          disabled={postPending || !isFeatured}
+          onChange={(event) => update("featuredOrder", event.target.value)}
+          aria-invalid={Boolean(fieldErrors.featuredOrder)}
+          aria-describedby={`post-featured-order-help${fieldErrors.featuredOrder ? " post-error-featuredOrder" : ""}`}
+        />
+      </label>
+      <p id="post-featured-order-help">数值越小越靠前，范围 0～9999；关闭精选保留排序值。</p>
+      {fieldError("featuredOrder")}
       <fieldset className="admin-status-options" disabled={postPending}>
         <legend>文章状态</legend>
         {(["draft", "published", "scheduled"] as const).map((value) => (
@@ -646,7 +728,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
         >
           {settingsHeader(true)}
           <DialogDescription className="sr-only">
-            设置文章链接、分类、标签和发布计划。
+            设置文章链接、分类、标签、摘要、精选和发布计划。
           </DialogDescription>
           {settingsFields}
           <div className="post-settings-drawer-actions">

@@ -122,6 +122,14 @@
   gap: 16px;
   min-width: 0;
 }
+.post-editor-featured-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-muted);
+  font-size: 13px;
+}
 .post-editor-settings-fields > label {
   display: grid;
   gap: 8px;

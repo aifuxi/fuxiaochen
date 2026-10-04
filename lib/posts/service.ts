@@ -36,6 +36,9 @@ const summaries = (db: Database | Transaction) =>
   db.orm.Post.select(
     "id",
     "title",
+    "summary",
+    "isFeatured",
+    "featuredOrder",
     "slug",
     "slugLockedAt",
     "categoryId",
@@ -53,6 +56,7 @@ function serialize(row: SummaryRow) {
   const { tagLinks, ...post } = row;
   return {
     ...post,
+    isFeatured: post.isFeatured === 1,
     category: { id: post.category.id, name: post.category.name, color: post.category.color },
     status: postStatusSchema.parse(post.status),
     createdAt: post.createdAt.toISOString(),
@@ -102,6 +106,9 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     .select(
       "id",
       "title",
+      "summary",
+      "isFeatured",
+      "featuredOrder",
       "slug",
       "slugLockedAt",
       "categoryId",
@@ -171,7 +178,7 @@ export async function getPost(id: string, actor: TaxonomyActor) {
   await authorize(actor);
   return detail(id, getDatabase());
 }
-async function validateRelations(input: PostInput, tx: Transaction) {
+async function validateRelations(input: PostInput | PostUpdateInput, tx: Transaction) {
   if (!(await tx.orm.Category.where({ id: input.categoryId }).first()))
     throw new PostError("INVALID_INPUT", "所选分类不存在，请重新选择。");
   for (const id of input.tagIds)
@@ -186,7 +193,7 @@ async function validateSlug(slug: string, tx: Transaction, id?: string) {
     });
 }
 function publication(
-  input: PostInput,
+  input: PostInput | PostUpdateInput,
   previous?: {
     status: string;
     scheduledFor: Date | null;
@@ -219,10 +226,17 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
     await authorize(actor);
     await validateRelations(input, tx);
     await validateSlug(input.slug, tx);
-    const { tagIds, ...data } = input;
+    const { tagIds, isFeatured, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
-    await tx.orm.Post.create({ ...data, ...dates, id, createdAt: dates.updatedAt, version: 1 });
+    await tx.orm.Post.create({
+      ...data,
+      isFeatured: isFeatured ? 1 : 0,
+      ...dates,
+      id,
+      createdAt: dates.updatedAt,
+      version: 1,
+    });
     for (const tagId of tagIds) await tx.orm.PostTag.create({ postId: id, tagId });
     return detail(id, tx);
   });
@@ -244,10 +258,13 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
       });
     await validateRelations(input, tx);
     await validateSlug(input.slug, tx, id);
-    const { tagIds, version, ...data } = input;
+    const { tagIds, version, summary, isFeatured, featuredOrder, ...data } = input;
     if (
       !(await tx.orm.Post.where({ id, version }).updateAndCount({
         ...data,
+        summary: summary ?? previous.summary,
+        isFeatured: isFeatured === undefined ? previous.isFeatured : isFeatured ? 1 : 0,
+        featuredOrder: featuredOrder ?? previous.featuredOrder,
         ...publication(input, previous),
         version: version + 1,
       }))

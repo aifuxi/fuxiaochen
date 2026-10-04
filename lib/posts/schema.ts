@@ -15,28 +15,47 @@ export const slugSchema = z
   .min(1, "请输入 slug")
   .max(120, "slug 最多 120 个字符")
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug 仅支持小写英文字母、数字和单个连字符");
-export const postSchema = z
-  .object({
-    slug: slugSchema,
-    title: z.string().trim().min(1, "请输入文章标题").max(120, "标题最多 120 个字符"),
-    content: postContentSchema,
-    categoryId: z.uuid("请选择已登记的分类"),
-    tagIds: z.array(z.uuid("标签 ID 无效")).transform((ids) => [...new Set(ids)]),
-    status: postStatusSchema,
-    scheduledFor: z.iso.datetime({ offset: true }).nullable(),
-  })
-  .superRefine((input, ctx) => {
-    if (input.status === "scheduled" && !input.scheduledFor)
-      ctx.addIssue({ code: "custom", path: ["scheduledFor"], message: "请选择计划发布时间" });
-    if (input.status !== "scheduled" && input.scheduledFor !== null)
-      ctx.addIssue({
-        code: "custom",
-        path: ["scheduledFor"],
-        message: "非排期文章不能设置排期时间",
-      });
-  });
+const summarySchema = z.string().trim().max(200, "摘要最多 200 个字符");
+const featuredOrderSchema = z
+  .number({ error: "请输入有效的精选排序数字" })
+  .int("精选排序必须是整数")
+  .min(0, "精选排序不能小于 0")
+  .max(9999, "精选排序不能大于 9999");
+const postFields = z.object({
+  slug: slugSchema,
+  title: z.string().trim().min(1, "请输入文章标题").max(120, "标题最多 120 个字符"),
+  content: postContentSchema,
+  summary: summarySchema.default(""),
+  isFeatured: z.boolean().default(false),
+  featuredOrder: featuredOrderSchema.default(0),
+  categoryId: z.uuid("请选择已登记的分类"),
+  tagIds: z.array(z.uuid("标签 ID 无效")).transform((ids) => [...new Set(ids)]),
+  status: postStatusSchema,
+  scheduledFor: z.iso.datetime({ offset: true }).nullable(),
+});
+const validateSchedule = (
+  input: { status: PostStatus; scheduledFor: string | null },
+  ctx: z.RefinementCtx,
+) => {
+  if (input.status === "scheduled" && !input.scheduledFor)
+    ctx.addIssue({ code: "custom", path: ["scheduledFor"], message: "请选择计划发布时间" });
+  if (input.status !== "scheduled" && input.scheduledFor !== null)
+    ctx.addIssue({
+      code: "custom",
+      path: ["scheduledFor"],
+      message: "非排期文章不能设置排期时间",
+    });
+};
+export const postSchema = postFields.superRefine(validateSchedule);
 const version = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
-export const updatePostSchema = postSchema.safeExtend({ version });
+export const updatePostSchema = postFields
+  .extend({
+    version,
+    summary: summarySchema.optional(),
+    isFeatured: z.boolean().optional(),
+    featuredOrder: featuredOrderSchema.optional(),
+  })
+  .superRefine(validateSchedule);
 export const postIdSchema = z.object({ id: z.uuid() });
 export const deletePostSchema = z.object({ version: z.coerce.number().pipe(version) });
 export const postQuerySchema = z.object({
@@ -54,6 +73,9 @@ export type PostQuery = z.infer<typeof postQuerySchema>;
 export type PostItem = {
   id: string;
   title: string;
+  summary: string;
+  isFeatured: boolean;
+  featuredOrder: number;
   slug: string;
   slugLockedAt: string | null;
   categoryId: string;
