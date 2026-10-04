@@ -1,6 +1,6 @@
 # fuxiaochen
 
-历史验收清单与验证记录见 [历史验收记录](docs/engineering/verification-history.md)。
+视觉与交互规范见 [DESIGN.md](DESIGN.md)；历史验收清单、摘要与未验证范围见 [历史验收记录](docs/engineering/verification-history.md)。
 
 GitHub Actions 镜像构建、Portainer Git Stack 与 Caddy 接入见 [容器部署指南](docs/deployment.md)。
 
