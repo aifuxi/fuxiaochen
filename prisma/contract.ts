@@ -1,5 +1,11 @@
-import { datetimeColumn, integerColumn, textColumn } from "@prisma/orm-sqlite/adapter/column-types";
-import { defineContract, rel } from "@prisma/orm-sqlite/contract-builder";
+import {
+  timestamptzJsDateColumn as datetimeColumn,
+  textColumn,
+} from "@prisma/orm-postgres/adapter/column-types";
+
+// 保留安全 JavaScript number 表示，避免 PostgreSQL int4 缩小原整数范围。
+const integerColumn = { codecId: "pg/int8number@1", nativeType: "int8" } as const;
+import { defineContract, rel } from "@prisma/orm-postgres/contract-builder";
 
 export const contract = defineContract({}, ({ field, model }) => {
   const Admin = model("Admin", {

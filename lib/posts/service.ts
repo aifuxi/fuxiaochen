@@ -39,7 +39,7 @@ async function authorize(actor: TaxonomyActor) {
 type Database = ReturnType<typeof getDatabase>;
 type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 const summaries = (db: Database | Transaction) =>
-  db.orm.Post.select(
+  db.orm.public.Post.select(
     "id",
     "title",
     "summary",
@@ -76,7 +76,9 @@ function serialize(row: SummaryRow) {
   };
 }
 async function counts(db: Database | Transaction): Promise<PostCounts> {
-  const groups = await db.orm.Post.groupBy("status").aggregate((agg) => ({ count: agg.count() }));
+  const groups = await db.orm.public.Post.groupBy("status").aggregate((agg) => ({
+    count: agg.count(),
+  }));
   const result = { ...emptyPostCounts };
   for (const group of groups) {
     result[postStatusSchema.parse(group.status)] = group.count;
@@ -87,23 +89,23 @@ async function counts(db: Database | Transaction): Promise<PostCounts> {
 export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
   await authorize(actor);
   const db = getDatabase();
-  let filtered = db.orm.Post.where({});
+  let filtered = db.orm.public.Post.where({});
   if (query.status) filtered = filtered.where({ status: query.status });
   if (query.categoryId) filtered = filtered.where({ categoryId: query.categoryId });
   if (query.featured !== "all")
     filtered = filtered.where({ isFeatured: query.featured === "featured" ? 1 : 0 });
   if (query.q) {
-    // instr 按字面查找，关键词中的 %、_ 不会被解释成 LIKE 通配符；所有值使用绑定参数。
+    // strpos 按字面查找，关键词中的 %、_ 不会被解释成 LIKE 通配符；所有值使用绑定参数。
     filtered = filtered.where((p) =>
       db.raw.sql`(
-      instr(lower(${p.title}), lower(${query.q})) > 0 OR
-      instr(lower(${p.summary}), lower(${query.q})) > 0 OR instr(lower(
-        json_extract(${p.content}, '$.text')
+      strpos(lower(${p.title}), lower(${query.q})) > 0 OR
+      strpos(lower(${p.summary}), lower(${query.q})) > 0 OR strpos(lower(
+        (${p.content}::jsonb ->> 'text')
       ), lower(${query.q})) > 0
-      OR EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0)
-      OR EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt.tagId WHERE pt.postId = ${p.id} AND instr(lower(t.name), lower(${query.q})) > 0)
+      OR EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND strpos(lower(c.name), lower(${query.q})) > 0)
+      OR EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt."tagId" WHERE pt."postId" = ${p.id} AND strpos(lower(t.name), lower(${query.q})) > 0)
     )`
-        .returns("sqlite/integer@1")
+        .returns("pg/bool@1")
         .buildAst(),
     );
   }
@@ -138,14 +140,14 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
         if (query.sortBy === "status")
           return order.withExpr(
             db.raw.sql`CASE ${p.status} WHEN 'draft' THEN 0 WHEN 'published' THEN 1 ELSE 2 END`
-              .returns("sqlite/integer@1")
+              .returns("pg/int8number@1")
               .buildAst(),
           );
         if (query.sortBy === "time")
           return order.withExpr(
             db.raw
               .sql`CASE WHEN ${p.status} = 'scheduled' THEN ${p.scheduledFor} ELSE coalesce(${p.publishedAt}, ${p.updatedAt}) END`
-              .returns("sqlite/text@1")
+              .returns("pg/timestamptz-date@1")
               .buildAst(),
           );
         return p.createdAt.desc();
@@ -175,7 +177,7 @@ export async function getPostSummary(actor: TaxonomyActor) {
   return { statusCounts: await counts(db), schedules: schedules.map(serialize) };
 }
 async function detail(id: string, db: Database | Transaction) {
-  const post = await db.orm.Post.where({ id })
+  const post = await db.orm.public.Post.where({ id })
     .include("category")
     .include("tagLinks", (links) => links.include("tag"))
     .first();
@@ -188,14 +190,14 @@ export async function getPost(id: string, actor: TaxonomyActor) {
   return detail(id, getDatabase());
 }
 async function validateRelations(input: PostInput | PostUpdateInput, tx: Transaction) {
-  if (!(await tx.orm.Category.where({ id: input.categoryId }).first()))
+  if (!(await tx.orm.public.Category.where({ id: input.categoryId }).first()))
     throw new PostError("INVALID_INPUT", "所选分类不存在，请重新选择。");
   for (const id of input.tagIds)
-    if (!(await tx.orm.Tag.where({ id }).first()))
+    if (!(await tx.orm.public.Tag.where({ id }).first()))
       throw new PostError("INVALID_INPUT", "所选标签不存在，请重新选择。");
 }
 async function validateSlug(slug: string, tx: Transaction, id?: string) {
-  const existing = await tx.orm.Post.where({ slug }).select("id").first();
+  const existing = await tx.orm.public.Post.where({ slug }).select("id").first();
   if (existing && existing.id !== id)
     throw new PostError("SLUG_CONFLICT", "slug 已被其他文章使用。", {
       slug: ["请使用唯一的 slug。"],
@@ -238,7 +240,7 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
     const { tagIds, isFeatured, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
-    await tx.orm.Post.create({
+    await tx.orm.public.Post.create({
       ...data,
       isFeatured: isFeatured ? 1 : 0,
       ...dates,
@@ -246,7 +248,7 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
       createdAt: dates.updatedAt,
       version: 1,
     });
-    for (const tagId of tagIds) await tx.orm.PostTag.create({ postId: id, tagId });
+    for (const tagId of tagIds) await tx.orm.public.PostTag.create({ postId: id, tagId });
     return detail(id, tx);
   });
 }
@@ -254,7 +256,7 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
   await authorize(actor);
   return writeTransaction(async (tx) => {
     await authorize(actor);
-    const previous = await tx.orm.Post.where({ id }).first();
+    const previous = await tx.orm.public.Post.where({ id }).first();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (previous.version !== input.version)
       throw new PostError(
@@ -269,7 +271,7 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
     await validateSlug(input.slug, tx, id);
     const { tagIds, version, summary, isFeatured, featuredOrder, ...data } = input;
     if (
-      !(await tx.orm.Post.where({ id, version }).updateAndCount({
+      !(await tx.orm.public.Post.where({ id, version }).updateAndCount({
         ...data,
         summary: summary ?? previous.summary,
         isFeatured: isFeatured === undefined ? previous.isFeatured : isFeatured ? 1 : 0,
@@ -279,8 +281,8 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
       }))
     )
       throw new PostError("VERSION_CONFLICT", "文章版本已变化，请重新载入最新内容。");
-    await tx.orm.PostTag.where({ postId: id }).deleteAndCount();
-    for (const tagId of tagIds) await tx.orm.PostTag.create({ postId: id, tagId });
+    await tx.orm.public.PostTag.where({ postId: id }).deleteAndCount();
+    for (const tagId of tagIds) await tx.orm.public.PostTag.create({ postId: id, tagId });
     return detail(id, tx);
   });
 }
@@ -292,11 +294,11 @@ export async function updatePostFeatured(
   await authorize(actor);
   return writeTransaction(async (tx) => {
     await authorize(actor);
-    const previous = await tx.orm.Post.where({ id }).select("version").first();
+    const previous = await tx.orm.public.Post.where({ id }).select("version").first();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (
       previous.version !== input.version ||
-      !(await tx.orm.Post.where({ id, version: input.version }).updateAndCount({
+      !(await tx.orm.public.Post.where({ id, version: input.version }).updateAndCount({
         isFeatured: input.isFeatured ? 1 : 0,
         updatedAt: new Date(),
         version: input.version + 1,
@@ -312,11 +314,11 @@ export async function deletePost(id: string, version: number, actor: TaxonomyAct
   await authorize(actor);
   return writeTransaction(async (tx) => {
     await authorize(actor);
-    const previous = await tx.orm.Post.where({ id }).first();
+    const previous = await tx.orm.public.Post.where({ id }).first();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (
       previous.version !== version ||
-      !(await tx.orm.Post.where({ id, version }).deleteAndCount())
+      !(await tx.orm.public.Post.where({ id, version }).deleteAndCount())
     )
       throw new PostError("VERSION_CONFLICT", "文章已被其他页面修改，请重新确认最新文章后删除。");
     return { id };

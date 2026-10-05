@@ -102,7 +102,7 @@ taxonomyRoutes.onError((error, c) => {
     const status = error.code === "UNAUTHORIZED" ? 401 : error.code === "NOT_FOUND" ? 404 : 409;
     return c.json({ error: { code: error.code, message: error.message } }, status);
   }
-  // Prisma SQLite 驱动将唯一约束错误规范化为 SQLSTATE 23505。
+  // PostgreSQL 唯一约束错误使用 SQLSTATE 23505。
   if (
     "kind" in error &&
     error.kind === "sql_query" &&

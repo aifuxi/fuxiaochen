@@ -28,13 +28,13 @@ export async function cleanupAnalytics(force = false) {
   const work = async () => {
     let removed = 0;
     const cutoff = new Date(Date.now() - RETENTION_MS).toISOString();
-    // 每批释放事务队列，避免清理长时间占用 SQLite 写锁。
+    // 每批释放写事务，避免清理长时间占用共享写锁。
     while (true) {
       const count = await writeTransaction(async (tx) => {
-        return tx.orm.PageVisit.where((v) =>
+        return tx.orm.public.PageVisit.where((v) =>
           getDatabase().raw
-            .sql`${v.id} IN (SELECT id FROM page_visit WHERE createdAt < ${cutoff} LIMIT 500)`
-            .returns("sqlite/integer@1")
+            .sql`${v.id} IN (SELECT id FROM page_visit WHERE "createdAt" < ${cutoff} LIMIT 500)`
+            .returns("pg/bool@1")
             .buildAst(),
         ).deleteAndCount();
       });
@@ -42,14 +42,14 @@ export async function cleanupAnalytics(force = false) {
       if (!count) break;
     }
     await writeTransaction(async (tx) => {
-      await tx.orm.VisitSession.where((s) =>
-        getDatabase().raw.sql`NOT EXISTS (SELECT 1 FROM page_visit v WHERE v.sessionId = ${s.id})`
-          .returns("sqlite/integer@1")
+      await tx.orm.public.VisitSession.where((s) =>
+        getDatabase().raw.sql`NOT EXISTS (SELECT 1 FROM page_visit v WHERE v."sessionId" = ${s.id})`
+          .returns("pg/bool@1")
           .buildAst(),
       ).deleteAndCount();
-      await tx.orm.AnalyticsRateLimit.where((r) =>
+      await tx.orm.public.AnalyticsRateLimit.where((r) =>
         getDatabase().raw.sql`${r.expiresAt} <= ${new Date().toISOString()}`
-          .returns("sqlite/integer@1")
+          .returns("pg/bool@1")
           .buildAst(),
       ).deleteAndCount();
     });
@@ -112,7 +112,7 @@ async function consumeLimit(tx: Transaction, visitorHash: string, now: number) {
   ];
   const entries = [];
   for (const limit of limits) {
-    const previous = await tx.orm.AnalyticsRateLimit.where({ id: limit.id }).first();
+    const previous = await tx.orm.public.AnalyticsRateLimit.where({ id: limit.id }).first();
     const count = previous?.window === window ? previous.count : 0;
     if (count >= limit.max) return Math.max(1, Math.ceil(((window + 1) * 60_000 - now) / 1000));
     entries.push({ id: limit.id, previous, count });
@@ -120,8 +120,8 @@ async function consumeLimit(tx: Transaction, visitorHash: string, now: number) {
   for (const entry of entries) {
     const data = { window, count: entry.count + 1, expiresAt: new Date((window + 1) * 60_000) };
     if (entry.previous)
-      await tx.orm.AnalyticsRateLimit.where({ id: entry.id }).updateAndCount(data);
-    else await tx.orm.AnalyticsRateLimit.create({ id: entry.id, ...data });
+      await tx.orm.public.AnalyticsRateLimit.where({ id: entry.id }).updateAndCount(data);
+    else await tx.orm.public.AnalyticsRateLimit.create({ id: entry.id, ...data });
   }
   return 0;
 }
@@ -131,14 +131,14 @@ export async function collectEvent(input: AnalyticsEvent, headers: Headers) {
   if (/bot\b|crawler|spider|headless|slurp/i.test(ua)) return;
   await cleanupAnalytics();
   const result = await writeTransaction(async (tx) => {
-    const setting = await tx.orm.SiteSetting.where({ id: 1 }).first();
+    const setting = await tx.orm.public.SiteSetting.where({ id: 1 }).first();
     if (!setting?.localAnalyticsEnabled) return 0;
     const url = new URL(input.path, process.env.APP_ORIGIN);
     const path = url.pathname;
     if (url.origin !== process.env.APP_ORIGIN)
       throw new AnalyticsError("INVALID_INPUT", "仅采集站内公开页面。");
     const visitorHash = createHash("sha256").update(input.visitorId).digest("hex");
-    const previous = await tx.orm.PageVisit.where({ id: input.pageViewId }).first();
+    const previous = await tx.orm.public.PageVisit.where({ id: input.pageViewId }).first();
     if (previous && (previous.visitorHash !== visitorHash || previous.path !== path))
       throw new AnalyticsError("EVENT_CONFLICT", "访问标识已用于其他访问。");
     const now = Date.now();
@@ -155,7 +155,9 @@ export async function collectEvent(input: AnalyticsEvent, headers: Headers) {
     let postId: string | null = null;
     const slug = /^\/posts\/([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(path)?.[1];
     if (slug) {
-      const post = await tx.orm.Post.where({ slug, status: "published" }).select("id").first();
+      const post = await tx.orm.public.Post.where({ slug, status: "published" })
+        .select("id")
+        .first();
       if (!post) {
         // 已创建访问允许删除/下架后的最后一次补报；不会新建文章访问。
         if (!previous) throw new AnalyticsError("INVALID_INPUT", "文章不存在或未发布。");
@@ -171,32 +173,34 @@ export async function collectEvent(input: AnalyticsEvent, headers: Headers) {
       );
       const active = input.visible || durationMs > previous.durationMs;
       const lastSeenAt = active ? new Date(now) : previous.lastSeenAt;
-      await tx.orm.PageVisit.where({ id: previous.id }).updateAndCount({
+      await tx.orm.public.PageVisit.where({ id: previous.id }).updateAndCount({
         durationMs,
         progress: Math.max(previous.progress, input.progress),
         lastSeenAt,
       });
       if (active)
-        await tx.orm.VisitSession.where({ id: previous.sessionId }).updateAndCount({ lastSeenAt });
+        await tx.orm.public.VisitSession.where({ id: previous.sessionId }).updateAndCount({
+          lastSeenAt,
+        });
       return 0;
     }
-    let session = await tx.orm.VisitSession.where({ visitorHash })
+    let session = await tx.orm.public.VisitSession.where({ visitorHash })
       .orderBy((s) => s.lastSeenAt.desc())
       .first();
     if (!session || session.lastSeenAt.getTime() <= now - SESSION_IDLE_MS)
-      session = await tx.orm.VisitSession.create({
+      session = await tx.orm.public.VisitSession.create({
         id: randomUUID(),
         visitorHash,
         createdAt: new Date(now),
         lastSeenAt: new Date(now),
       });
     else
-      await tx.orm.VisitSession.where({ id: session.id }).updateAndCount({
+      await tx.orm.public.VisitSession.where({ id: session.id }).updateAndCount({
         lastSeenAt: new Date(now),
       });
     const parsed = Bowser.parse(ua);
     const device = parsed.platform.type;
-    await tx.orm.PageVisit.create({
+    await tx.orm.public.PageVisit.create({
       id: input.pageViewId,
       visitorHash,
       sessionId: session.id,

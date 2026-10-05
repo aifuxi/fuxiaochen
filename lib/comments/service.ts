@@ -33,8 +33,9 @@ async function authorize(actor: TaxonomyActor) {
 type Database = ReturnType<typeof getDatabase>;
 type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 const items = (db: Database | Transaction) =>
-  db.orm.Comment.include("post", (post) => post.select("id", "title")).include("parent", (parent) =>
-    parent.select("id", "author", "status"),
+  db.orm.public.Comment.include("post", (post) => post.select("id", "title")).include(
+    "parent",
+    (parent) => parent.select("id", "author", "status"),
   );
 type Row = NonNullable<Awaited<ReturnType<ReturnType<typeof items>["first"]>>>;
 function serialize(row: Row) {
@@ -60,7 +61,7 @@ function serialize(row: Row) {
   };
 }
 async function counts(db: Database | Transaction): Promise<CommentCounts> {
-  const groups = await db.orm.Comment.groupBy("status").aggregate((agg) => ({
+  const groups = await db.orm.public.Comment.groupBy("status").aggregate((agg) => ({
     count: agg.count(),
   }));
   const result: CommentCounts = { all: 0, pending: 0, approved: 0, rejected: 0 };
@@ -82,12 +83,12 @@ export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
     if (query.q)
       filtered = filtered.where((c) =>
         db.raw.sql`(
-      instr(lower(${c.author}), lower(${query.q})) > 0 OR
-      instr(lower(coalesce(${c.email}, '')), lower(${query.q})) > 0 OR
-      instr(lower(${c.content}), lower(${query.q})) > 0 OR
-      EXISTS (SELECT 1 FROM post p WHERE p.id = ${c.postId} AND instr(lower(p.title), lower(${query.q})) > 0)
+      strpos(lower(${c.author}), lower(${query.q})) > 0 OR
+      strpos(lower(coalesce(${c.email}, '')), lower(${query.q})) > 0 OR
+      strpos(lower(${c.content}), lower(${query.q})) > 0 OR
+      EXISTS (SELECT 1 FROM post p WHERE p.id = ${c.postId} AND strpos(lower(p.title), lower(${query.q})) > 0)
     )`
-          .returns("sqlite/integer@1")
+          .returns("pg/bool@1")
           .buildAst(),
       );
     const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
@@ -102,7 +103,7 @@ export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
           if (query.sortBy === "status")
             return c.status[direction]().withExpr(
               db.raw.sql`CASE ${c.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`
-                .returns("sqlite/integer@1")
+                .returns("pg/int8number@1")
                 .buildAst(),
             );
           return c.createdAt.desc();
@@ -151,7 +152,7 @@ export async function getComment(id: string, actor: TaxonomyActor) {
   });
 }
 async function current(id: string, version: number, tx: Transaction) {
-  const row = await tx.orm.Comment.where({ id }).first();
+  const row = await tx.orm.public.Comment.where({ id }).first();
   if (!row) throw new CommentError("NOT_FOUND", "评论不存在，可能已随文章或父评论删除。");
   if (row.version !== version)
     throw new CommentError(
@@ -163,7 +164,7 @@ async function current(id: string, version: number, tx: Transaction) {
 async function approvedAncestors(parentId: string | null, tx: Transaction) {
   let depth = 0;
   while (parentId) {
-    const parent = await tx.orm.Comment.where({ id: parentId }).first();
+    const parent = await tx.orm.public.Comment.where({ id: parentId }).first();
     if (!parent || parent.status !== "approved")
       throw new CommentError("INVALID_INPUT", "请先通过所有上级评论的审核。");
     parentId = parent.parentId;
@@ -175,11 +176,11 @@ export async function createComment(input: CommentInput, actor: TaxonomyActor) {
   await authorize(actor);
   return writeTransaction(async (tx) => {
     await authorize(actor);
-    if (!(await tx.orm.Post.where({ id: input.postId }).first()))
+    if (!(await tx.orm.public.Post.where({ id: input.postId }).first()))
       throw new CommentError("INVALID_INPUT", "所选文章不存在。");
     const id = randomUUID();
     const now = new Date();
-    await tx.orm.Comment.create({
+    await tx.orm.public.Comment.create({
       ...input,
       id,
       parentId: null,
@@ -207,7 +208,7 @@ export async function moderateComment(
     if (input.status === "approved") await approvedAncestors(row.parentId, tx);
     const now = new Date();
     if (
-      !(await tx.orm.Comment.where({ id, version: input.version }).updateAndCount({
+      !(await tx.orm.public.Comment.where({ id, version: input.version }).updateAndCount({
         status: input.status,
         version: input.version + 1,
         updatedAt: now,
@@ -219,9 +220,11 @@ export async function moderateComment(
       const queue = [id];
       for (let index = 0; index < queue.length; index += 1) {
         const parentId = queue[index];
-        const children = await tx.orm.Comment.where({ parentId }).select("id", "version").all();
+        const children = await tx.orm.public.Comment.where({ parentId })
+          .select("id", "version")
+          .all();
         for (const child of children) {
-          await tx.orm.Comment.where({ id: child.id }).updateAndCount({
+          await tx.orm.public.Comment.where({ id: child.id }).updateAndCount({
             status: "rejected",
             version: child.version + 1,
             updatedAt: now,
@@ -244,14 +247,14 @@ export async function replyComment(id: string, input: ReplyCommentInput, actor: 
     // 同一版本只能提交一次回复，响应丢失后重试不会重复创建。
     const now = new Date();
     if (
-      !(await tx.orm.Comment.where({ id, version: input.version }).updateAndCount({
+      !(await tx.orm.public.Comment.where({ id, version: input.version }).updateAndCount({
         version: input.version + 1,
         updatedAt: now,
       }))
     )
       throw new CommentError("VERSION_CONFLICT", "评论版本已变化，请重新载入。");
     const replyId = randomUUID();
-    await tx.orm.Comment.create({
+    await tx.orm.public.Comment.create({
       id: replyId,
       postId: parent.postId,
       parentId: id,
@@ -275,7 +278,7 @@ export async function deleteComment(id: string, version: number, actor: Taxonomy
   return writeTransaction(async (tx) => {
     await authorize(actor);
     await current(id, version, tx);
-    if (!(await tx.orm.Comment.where({ id, version }).deleteAndCount()))
+    if (!(await tx.orm.public.Comment.where({ id, version }).deleteAndCount()))
       throw new CommentError("VERSION_CONFLICT", "评论版本已变化，请重新载入。");
     return { id };
   });

@@ -11,7 +11,7 @@ import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import { releaseSchema, type ReleaseInput } from "./schema";
 type Row = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof getDatabase>["orm"]["ReleaseLog"]["first"]>>
+  Awaited<ReturnType<ReturnType<typeof getDatabase>["orm"]["public"]["ReleaseLog"]["first"]>>
 >;
 function serialize(row: Row) {
   const { id, createdAt, changes, ...fields } = row;
@@ -25,12 +25,12 @@ export async function listReleases(query: z.infer<typeof listQuerySchema>, actor
   return writeTransaction(async (tx) => {
     await authorizeAdmin(actor);
     const db = getDatabase();
-    let filtered = tx.orm.ReleaseLog.where({});
+    let filtered = tx.orm.public.ReleaseLog.where({});
     if (query.q)
       filtered = filtered.where((r) =>
         db.raw
-          .sql`(instr(lower(${r.version}), lower(${query.q})) > 0 OR instr(lower(${r.title}), lower(${query.q})) > 0 OR EXISTS (SELECT 1 FROM json_each(${r.changes}) WHERE instr(lower(value), lower(${query.q})) > 0))`
-          .returns("sqlite/integer@1")
+          .sql`(strpos(lower(${r.version}), lower(${query.q})) > 0 OR strpos(lower(${r.title}), lower(${query.q})) > 0 OR EXISTS (SELECT 1 FROM jsonb_array_elements_text(${r.changes}::jsonb) AS changes_item(value) WHERE strpos(lower(value), lower(${query.q})) > 0))`
+          .returns("pg/bool@1")
           .buildAst(),
       );
     const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
@@ -48,7 +48,7 @@ export async function createRelease(input: ReleaseInput, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorizeAdmin(actor);
     return serialize(
-      await tx.orm.ReleaseLog.create({
+      await tx.orm.public.ReleaseLog.create({
         ...input,
         changes: JSON.stringify(input.changes),
         id: randomUUID(),

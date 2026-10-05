@@ -5,7 +5,8 @@ services:
     init: true
     environment:
       APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
-      DATABASE_PATH: /app/data/admin.sqlite
+      DATABASE_URL: ${DATABASE_URL:?请配置 postgres:5432 的生产连接 URL}
+      RESTORE_DATABASE_URL: ${RESTORE_DATABASE_URL:-}
       BACKUP_DIRECTORY: /app/data/backups
       OSS_BUCKET: ${OSS_BUCKET:-}
       OSS_REGION: ${OSS_REGION:-cn-hangzhou}
@@ -20,7 +21,11 @@ services:
       ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
       ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
       ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
     networks:
+      database:
       caddy:
         aliases:
           - fuxiaochen
@@ -33,11 +38,36 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  postgres:
+    image: postgres:18.6-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?请配置生产数据库管理密码}
+      POSTGRES_APP_USER: fuxiaochen
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?请配置生产应用数据库密码}
+      POSTGRES_APP_DB: fuxiaochen
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./deploy/postgres-init.sh:/docker-entrypoint-initdb.d/10-app.sh:ro
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
 volumes:
+  postgres-data:
+    name: ${POSTGRES_DATA_VOLUME:-fuxiaochen-postgres}
   app-data:
     name: ${APP_DATA_VOLUME:-fuxiaochen-data}
 
 networks:
+  database:
+    internal: true
   caddy:
     external: true
     name: ${CADDY_NETWORK:-infra_edge}

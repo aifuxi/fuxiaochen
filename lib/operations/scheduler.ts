@@ -12,7 +12,7 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     if (actor) await authorizeAdmin(actor);
     const now = new Date();
-    const due = await tx.orm.Post.where({ status: "scheduled" })
+    const due = await tx.orm.public.Post.where({ status: "scheduled" })
       .where((p) => p.scheduledFor.lte(now))
       .orderBy([(p) => p.scheduledFor.asc(), (p) => p.id.asc()])
       .limit(100)
@@ -26,8 +26,8 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
       ) {
         skipped++;
         const id = `schedule-error:${post.id}:${post.version}`;
-        if (!(await tx.orm.Notification.where({ id }).first()))
-          await tx.orm.Notification.create({
+        if (!(await tx.orm.public.Notification.where({ id }).first()))
+          await tx.orm.public.Notification.create({
             id,
             kind: "schedule-error",
             sourceId: post.id,
@@ -39,7 +39,7 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
         continue;
       }
       if (
-        !(await tx.orm.Post.where({
+        !(await tx.orm.public.Post.where({
           id: post.id,
           status: "scheduled",
           version: post.version,
@@ -54,7 +54,7 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
       )
         continue;
       published++;
-      await tx.orm.Notification.create({
+      await tx.orm.public.Notification.create({
         id: `published:${post.id}:${post.version}`,
         kind: "published",
         sourceId: post.id,
@@ -71,7 +71,7 @@ export async function runScheduledOperations() {
   const publication = await publishDuePosts();
   const setting = await writeTransaction(async (tx) => {
     await operationSetting(tx);
-    await tx.orm.OperationSetting.where({ id: 1 }).updateAndCount({
+    await tx.orm.public.OperationSetting.where({ id: 1 }).updateAndCount({
       schedulerLastRunAt: new Date(),
     });
     return operationSetting(tx);

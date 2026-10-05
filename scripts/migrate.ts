@@ -1,11 +1,9 @@
 import "dotenv/config";
 import { spawnSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
-import { dirname } from "node:path";
 
-import { databasePath } from "../lib/database-path";
+import { requiredDatabaseUrl } from "../lib/database-url";
 
-mkdirSync(dirname(databasePath()), { recursive: true });
+requiredDatabaseUrl();
 for (const command of ["migrate", "verify"]) {
   const result = spawnSync(
     process.execPath,

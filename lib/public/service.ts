@@ -13,7 +13,7 @@ import { publicPostQuerySchema, type SearchParams, singleParams } from "./schema
 type Database = ReturnType<typeof getDatabase>;
 type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
 const postItems = (db: Transaction) =>
-  db.orm.Post.where({ status: "published" })
+  db.orm.public.Post.where({ status: "published" })
     .select(
       "id",
       "slug",
@@ -42,19 +42,19 @@ function serializePost({ tagLinks, publishedAt, updatedAt, ...row }: PostRow) {
 export async function getPublicTaxonomies() {
   await connection();
   return writeTransaction(async (tx) => {
-    const categories = await tx.orm.Category.select("id", "name", "color")
+    const categories = await tx.orm.public.Category.select("id", "name", "color")
       .orderBy((c) => c.name.asc())
       .all();
-    const categoryCounts = await tx.orm.Post.where({ status: "published" })
+    const categoryCounts = await tx.orm.public.Post.where({ status: "published" })
       .groupBy("categoryId")
       .aggregate((agg) => ({ count: agg.count() }));
-    const tags = await tx.orm.Tag.select("id", "name")
+    const tags = await tx.orm.public.Tag.select("id", "name")
       .orderBy((t) => t.name.asc())
       .all();
-    const tagCounts = await tx.orm.PostTag.where((pt) =>
+    const tagCounts = await tx.orm.public.PostTag.where((pt) =>
       getDatabase().raw
         .sql`EXISTS (SELECT 1 FROM post p WHERE p.id = ${pt.postId} AND p.status = 'published')`
-        .returns("sqlite/integer@1")
+        .returns("pg/bool@1")
         .buildAst(),
     )
       .groupBy("tagId")
@@ -87,20 +87,20 @@ export async function listPublicPosts(params: SearchParams) {
     if (tagId)
       filtered = filtered.where((p) =>
         db.raw
-          .sql`EXISTS (SELECT 1 FROM post_tag pt WHERE pt.postId = ${p.id} AND pt.tagId = ${tagId})`
-          .returns("sqlite/integer@1")
+          .sql`EXISTS (SELECT 1 FROM post_tag pt WHERE pt."postId" = ${p.id} AND pt."tagId" = ${tagId})`
+          .returns("pg/bool@1")
           .buildAst(),
       );
     if (query.q)
       filtered = filtered.where((p) =>
         db.raw.sql`(
-      instr(lower(${p.title}), lower(${query.q})) > 0 OR
-      instr(lower(${p.summary}), lower(${query.q})) > 0 OR
-      instr(lower((SELECT json_extract(body.content, '$.text') FROM post body WHERE body.id = ${p.id})), lower(${query.q})) > 0 OR
-      EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0) OR
-      EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt.tagId WHERE pt.postId = ${p.id} AND instr(lower(t.name), lower(${query.q})) > 0)
+      strpos(lower(${p.title}), lower(${query.q})) > 0 OR
+      strpos(lower(${p.summary}), lower(${query.q})) > 0 OR
+      strpos(lower((SELECT (body.content::jsonb ->> 'text') FROM post body WHERE body.id = ${p.id})), lower(${query.q})) > 0 OR
+      EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND strpos(lower(c.name), lower(${query.q})) > 0) OR
+      EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt."tagId" WHERE pt."postId" = ${p.id} AND strpos(lower(t.name), lower(${query.q})) > 0)
     )`
-          .returns("sqlite/integer@1")
+          .returns("pg/bool@1")
           .buildAst(),
       );
     const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
@@ -113,7 +113,7 @@ export async function listPublicPosts(params: SearchParams) {
       .all();
     const emptyIds = rows.filter((row) => !row.summary.trim()).map((row) => row.id);
     const bodies = emptyIds.length
-      ? await tx.orm.Post.where({ status: "published" })
+      ? await tx.orm.public.Post.where({ status: "published" })
           .where((p) => p.id.in(emptyIds))
           .select("id", "content")
           .all()
@@ -138,7 +138,7 @@ export const getPublicPost = cache(async (slug: string) => {
   return writeTransaction(async (tx) => {
     const row = await postItems(tx).where({ slug }).first();
     if (!row) return null;
-    const content = await tx.orm.Post.where({ id: row.id, status: "published" })
+    const content = await tx.orm.public.Post.where({ id: row.id, status: "published" })
       .select("content")
       .first();
     return content ? { ...serializePost(row), content: content.content } : null;
@@ -147,7 +147,7 @@ export const getPublicPost = cache(async (slug: string) => {
 export async function listPublicFriends(category: string | undefined) {
   await connection();
   return writeTransaction(async (tx) => {
-    const rows = await tx.orm.FriendLink.where({ status: "approved", enabled: 1 })
+    const rows = await tx.orm.public.FriendLink.where({ status: "approved", enabled: 1 })
       .select("id", "name", "url", "avatar", "description", "category")
       .orderBy([(f) => f.createdAt.desc(), (f) => f.id.desc()])
       .all();
@@ -160,10 +160,10 @@ export async function listPublicFriends(category: string | undefined) {
 export async function listPublicChangelog(page: number) {
   await connection();
   return writeTransaction(async (tx) => {
-    const { total } = await tx.orm.ReleaseLog.aggregate((agg) => ({ total: agg.count() }));
+    const { total } = await tx.orm.public.ReleaseLog.aggregate((agg) => ({ total: agg.count() }));
     const pageCount = Math.max(1, Math.ceil(total / 8));
     page = Math.min(page, pageCount);
-    const rows = await tx.orm.ReleaseLog.select(
+    const rows = await tx.orm.public.ReleaseLog.select(
       "id",
       "version",
       "title",

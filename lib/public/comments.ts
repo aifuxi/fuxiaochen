@@ -21,20 +21,20 @@ export class PublicCommentError extends Error {
   }
 }
 async function requirePost(id: string, tx: Transaction) {
-  if (!(await tx.orm.Post.where({ id, status: "published" }).select("id").first()))
+  if (!(await tx.orm.public.Post.where({ id, status: "published" }).select("id").first()))
     throw new PublicCommentError("NOT_FOUND", "文章不存在或尚未发布。");
 }
 // 递归起点使用别名，避免内层 comment 表遮蔽外层 parentId 引用。
 const visibleComments = (postId: string, tx: Transaction) =>
-  tx.orm.Comment.where({ postId, status: "approved" }).where((c) =>
+  tx.orm.public.Comment.where({ postId, status: "approved" }).where((c) =>
     getDatabase().raw.sql`NOT EXISTS (
-    WITH RECURSIVE ancestors(id, parentId, status) AS (
-      SELECT seed.id, seed.parentId, seed.status FROM comment seed WHERE seed.id = ${c.parentId}
+    WITH RECURSIVE ancestors(id, "parentId", status) AS (
+      SELECT seed.id, seed."parentId", seed.status FROM comment seed WHERE seed.id = ${c.parentId}
       UNION ALL
-      SELECT p.id, p.parentId, p.status FROM comment p JOIN ancestors a ON p.id = a.parentId
+      SELECT p.id, p."parentId", p.status FROM comment p JOIN ancestors a ON p.id = a."parentId"
     ) SELECT 1 FROM ancestors WHERE status <> 'approved'
   )`
-      .returns("sqlite/integer@1")
+      .returns("pg/bool@1")
       .buildAst(),
   );
 export async function listPublicComments(
@@ -73,7 +73,7 @@ export async function submitPublicComment(postId: string, input: PublicCommentIn
     .update(JSON.stringify([postId, input.author, input.email, input.content, input.parentId]))
     .digest("hex");
   const result = await writeTransaction(async (tx) => {
-    const previous = await tx.orm.Comment.where({ submissionId: input.submissionId })
+    const previous = await tx.orm.public.Comment.where({ submissionId: input.submissionId })
       .select("submissionHash")
       .first();
     if (previous) {
@@ -82,13 +82,15 @@ export async function submitPublicComment(postId: string, input: PublicCommentIn
       return { retryAfter: 0 };
     }
     await requirePost(postId, tx);
-    const settings = await tx.orm.SiteSetting.where({ id: 1 }).select("enableComments").first();
+    const settings = await tx.orm.public.SiteSetting.where({ id: 1 })
+      .select("enableComments")
+      .first();
     if (settings && !settings.enableComments)
       throw new PublicCommentError("COMMENTS_CLOSED", "评论已关闭，暂时不能提交新评论或回复。");
     let parentId = input.parentId;
     let depth = 0;
     while (parentId) {
-      const parent = await tx.orm.Comment.where({ id: parentId, postId, status: "approved" })
+      const parent = await tx.orm.public.Comment.where({ id: parentId, postId, status: "approved" })
         .select("parentId")
         .first();
       if (!parent || ++depth >= 16)
@@ -99,9 +101,9 @@ export async function submitPublicComment(postId: string, input: PublicCommentIn
       parentId = parent.parentId;
     }
     const now = Date.now();
-    await tx.orm.CommentRateLimit.where((r) =>
+    await tx.orm.public.CommentRateLimit.where((r) =>
       getDatabase().raw.sql`${r.expiresAt} <= ${new Date(now).toISOString()}`
-        .returns("sqlite/integer@1")
+        .returns("pg/bool@1")
         .buildAst(),
     ).deleteAndCount();
     const limits = [
@@ -115,7 +117,7 @@ export async function submitPublicComment(postId: string, input: PublicCommentIn
     const entries = [];
     for (const limit of limits) {
       const window = Math.floor(now / limit.duration);
-      const existing = await tx.orm.CommentRateLimit.where({ id: limit.id }).first();
+      const existing = await tx.orm.public.CommentRateLimit.where({ id: limit.id }).first();
       const count = existing?.window === window ? existing.count : 0;
       if (count >= limit.max)
         return { retryAfter: Math.max(1, Math.ceil(((window + 1) * limit.duration - now) / 1000)) };
@@ -130,11 +132,11 @@ export async function submitPublicComment(postId: string, input: PublicCommentIn
     for (const entry of entries) {
       const data = { window: entry.window, count: entry.count + 1, expiresAt: entry.expiresAt };
       if (entry.existing)
-        await tx.orm.CommentRateLimit.where({ id: entry.id }).updateAndCount(data);
-      else await tx.orm.CommentRateLimit.create({ id: entry.id, ...data });
+        await tx.orm.public.CommentRateLimit.where({ id: entry.id }).updateAndCount(data);
+      else await tx.orm.public.CommentRateLimit.create({ id: entry.id, ...data });
     }
     const { submissionId, ...data } = input;
-    await tx.orm.Comment.create({
+    await tx.orm.public.Comment.create({
       ...data,
       id: randomUUID(),
       postId,

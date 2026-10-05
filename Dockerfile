@@ -18,8 +18,16 @@ RUN npm run build && rm -rf .next/cache
 
 FROM base AS runtime
 ENV NODE_ENV=production \
-    DATABASE_PATH=/app/data/admin.sqlite \
     BACKUP_DIRECTORY=/app/data/backups
+
+# 使用 PostgreSQL 官方仓库的 18 系列客户端，支持应用内备份及 CLI 恢复。
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl \
+    && curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /usr/share/keyrings/postgresql.asc \
+    && echo "deb [signed-by=/usr/share/keyrings/postgresql.asc] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/postgresql.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends postgresql-client-18 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Prisma CLI、tsx 和交互式管理员命令仍需 devDependencies，不能只复制 Web 的依赖。
 COPY --from=build --chown=node:node /app/node_modules ./node_modules

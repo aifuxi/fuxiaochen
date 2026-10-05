@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:18.6-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?请配置本地数据库管理密码}
+      POSTGRES_APP_USER: fuxiaochen
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?请配置本地应用数据库密码}
+      POSTGRES_APP_DB: fuxiaochen_dev
+    ports:
+      - "127.0.0.1:15433:5432"
+    volumes:
+      - postgres-dev-data:/var/lib/postgresql
+      - ./deploy/postgres-init.sh:/docker-entrypoint-initdb.d/10-app.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  postgres-dev-data:
+    name: fuxiaochen-postgres-dev

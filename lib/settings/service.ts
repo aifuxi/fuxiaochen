@@ -11,10 +11,10 @@ import { defaultSettings, settingsSchema, type SettingsInput, type PublicSetting
 
 type Transaction = Parameters<Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]>[0];
 async function read(tx: Transaction) {
-  let row = await tx.orm.SiteSetting.where({ id: 1 }).first();
+  let row = await tx.orm.public.SiteSetting.where({ id: 1 }).first();
   if (!row) {
     const { socials: _socials, ...defaults } = defaultSettings;
-    row = await tx.orm.SiteSetting.create({
+    row = await tx.orm.public.SiteSetting.create({
       ...defaults,
       id: 1,
       enableComments: 1,
@@ -25,7 +25,7 @@ async function read(tx: Transaction) {
       updatedAt: new Date(),
     });
   }
-  const socials = await tx.orm.SocialAccount.where({ settingId: 1 })
+  const socials = await tx.orm.public.SocialAccount.where({ settingId: 1 })
     .orderBy([(s) => s.position.asc(), (s) => s.id.asc()])
     .all();
   const { id: _id, updatedAt, localAnalyticsStartedAt, ...fields } = row;
@@ -56,7 +56,7 @@ export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
     await authorizeAdmin(actor);
     const previous = await read(tx);
     const { socials, version, ...fields } = input;
-    const updated = await tx.orm.SiteSetting.where({ id: 1, version }).updateAndCount({
+    const updated = await tx.orm.public.SiteSetting.where({ id: 1, version }).updateAndCount({
       ...fields,
       localAnalyticsEnabled: Number(input.localAnalyticsEnabled),
       localAnalyticsStartedAt: previous.localAnalyticsStartedAt
@@ -75,9 +75,9 @@ export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
         "VERSION_CONFLICT",
         "设置已被其他页面修改。草稿已保留，请重新载入后确认变更。",
       );
-    await tx.orm.SocialAccount.where({ settingId: 1 }).deleteAndCount();
+    await tx.orm.public.SocialAccount.where({ settingId: 1 }).deleteAndCount();
     for (const [position, social] of socials.entries())
-      await tx.orm.SocialAccount.create({
+      await tx.orm.public.SocialAccount.create({
         ...social,
         imageUrl: social.icon === "image" ? social.imageUrl : "",
         enabled: Number(social.enabled),

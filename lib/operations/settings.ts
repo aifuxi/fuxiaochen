@@ -11,8 +11,8 @@ import type { operationSettingsSchema, OperationSettings } from "./schema";
 
 export async function operationSetting(tx: OperationTransaction) {
   return (
-    (await tx.orm.OperationSetting.where({ id: 1 }).first()) ??
-    tx.orm.OperationSetting.create({
+    (await tx.orm.public.OperationSetting.where({ id: 1 }).first()) ??
+    tx.orm.public.OperationSetting.create({
       id: 1,
       autoBackup: 0,
       version: 1,
@@ -42,7 +42,10 @@ export async function saveOperationSettings(
     await authorizeAdmin(actor);
     await operationSetting(tx);
     if (
-      !(await tx.orm.OperationSetting.where({ id: 1, version: input.version }).updateAndCount({
+      !(await tx.orm.public.OperationSetting.where({
+        id: 1,
+        version: input.version,
+      }).updateAndCount({
         autoBackup: Number(input.autoBackup),
         version: input.version + 1,
         updatedAt: new Date(),

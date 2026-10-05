@@ -1,18 +1,19 @@
 import "server-only";
-import sqlite from "@prisma/orm-sqlite/runtime";
+import postgres from "@prisma/orm-postgres/runtime";
+import { AsyncLocalStorage } from "node:async_hooks";
 
 import type { Contract } from "../generated/prisma/contract";
 
 import contractJson from "../generated/prisma/contract.json";
-import { databasePath } from "../lib/database-path";
+import { databaseUrl } from "../lib/database-url";
 
 function createDatabase() {
-  return sqlite<Contract>({ contractJson, path: databasePath() });
+  // 无连接配置时仍可加载模块和生成构建；首次数据库操作才要求连接。
+  return postgres<Contract>({ contractJson, url: databaseUrl() });
 }
 
 const databaseGlobal = globalThis as typeof globalThis & {
   adminDatabase?: ReturnType<typeof createDatabase>;
-  authWriteQueue?: Promise<void>;
 };
 
 export function getDatabase() {
@@ -20,19 +21,27 @@ export function getDatabase() {
   return databaseGlobal.adminDatabase;
 }
 
-type Transaction = Parameters<Parameters<ReturnType<typeof createDatabase>["transaction"]>[0]>[0];
+export type DatabaseTransaction = Parameters<
+  Parameters<ReturnType<typeof createDatabase>["transaction"]>[0]
+>[0];
 
-export function writeTransaction<T>(work: (tx: Transaction) => PromiseLike<T>) {
-  // node:sqlite 使用同步锁等待；同一进程的写事务排队，避免等待阻塞持锁请求继续执行。
-  const result = (databaseGlobal.authWriteQueue ?? Promise.resolve()).then(() =>
-    getDatabase().transaction(work),
-  );
-  databaseGlobal.authWriteQueue = result.then(
-    () => undefined,
-    () => undefined,
-  );
-  return result;
+const transactionContext = new AsyncLocalStorage<DatabaseTransaction>();
+
+// 鉴权读取复用当前事务，避免并发等待写锁时耗尽池后再申请额外连接。
+export function getActiveTransaction() {
+  return transactionContext.getStore();
 }
 
-// 鉴权和业务写入必须使用同一队列。
+export function writeTransaction<T>(work: (tx: DatabaseTransaction) => PromiseLike<T>) {
+  return getDatabase().transaction(async (tx) => {
+    // 跨 Web、CLI 进程共享写锁；事务结束自动释放，所有业务写入先锁后读。
+    await tx.query(
+      getDatabase().raw.sql`SELECT 1 AS locked FROM pg_advisory_xact_lock(734825101)`
+        .returnsRow({ locked: "pg/int4@1" })
+        .build(),
+    );
+    return transactionContext.run(tx, () => work(tx));
+  });
+}
+
 export const authTransaction = writeTransaction;

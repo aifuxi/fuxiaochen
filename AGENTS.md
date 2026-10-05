@@ -23,11 +23,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 后台技术栈与开发约定
 
-- 后台 API 使用 Hono，输入校验使用 Zod，数据库访问使用 Prisma 8 + SQLite。
+- 后台 API 使用 Hono，输入校验使用 Zod，数据库访问使用 Prisma 8 + PostgreSQL。
 - 实现前阅读对应版本的官方文档及已安装包的类型定义；不能套用 Prisma 7 的配置、查询和迁移方式。
-- Prisma 8 使用 `@prisma/orm-sqlite`、contract、`prisma contract emit` 和 Prisma 8 迁移流程；CLI 配置与服务端运行时必须显式使用同一数据库路径。
+- Prisma 8 使用 `@prisma/orm-postgres`、contract、`prisma contract emit` 和 Prisma 8 迁移流程；CLI 配置与服务端运行时必须显式使用同一 `DATABASE_URL`。
 - 依赖锁定经核对兼容的具体版本并提交 lockfile；不假设 Prisma CLI 与数据库包的最新版本号相同。记录所用版本的 RC、experimental 状态，不擅自降级到 Prisma 7。
-- SQLite 使用 Node.js runtime；数据库连接在开发热更新中复用，CLI 完成后释放连接。数据库代码和秘密不得进入客户端。
+- PostgreSQL 使用 Node.js runtime；数据库连接在开发热更新中复用，CLI 完成后释放连接。数据库代码和秘密不得进入客户端。
 - Hono 路由、输入校验和业务逻辑职责分离；从 Zod schema 推导类型，业务处理只使用校验后的输入。统一处理错误，不向客户端暴露内部异常。
 
 ## 后台鉴权与登录范围
@@ -36,3 +36,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 页面、API 和数据访问入口按需执行服务端鉴权，不能只依赖 layout 校验。
 - Cookie 安全属性、同源校验、请求体限制及登录限流属于登录实现要求。
 - 登录持久化任务不自动包含其他后台 Mock 数据迁移；具体字段、错误码和限流参数放在实现与相关文档中，本文件保留长期项目约定。
+
+## PostgreSQL 开发与运维
+
+- 默认使用中文沟通、编写文档和代码注释；Git 提交使用 `type(scope): 中文描述`。
+- 本地 PostgreSQL 使用 `compose.dev.yaml`，通过 `npm run db:up` 启动或复用，端口固定为 `127.0.0.1:15433:5432`；Next.js 在电脑上运行。
+- 线上应用连接 `postgres:5432`，数据库不发布宿主机端口；应用与数据库凭据不得进入构建或 Git。
+- 所有业务写入经 `writeTransaction`／`authTransaction`，使用同一事务级 advisory lock，覆盖 Web 与 CLI。
+- 备份使用 PostgreSQL 18 客户端工具，恢复只接受独立空库；不自动删除旧 SQLite 文件、卷或 OSS 对象。

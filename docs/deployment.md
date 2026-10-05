@@ -27,7 +27,7 @@
 
 镜像同时支持 `linux/amd64` 与 `linux/arm64`。Action 使用固定 commit SHA，Node.js 基础镜像固定为 `24.21.0-bookworm-slim` 及多架构 digest；升级时一并核对版本与 digest。构建使用 `npm ci` 和现有 `npm run build`，Next.js 构建包含 TypeScript 检查。工作流不运行测试。
 
-镜像保留现有 Prisma CLI、`tsx`、`@inquirer/prompts` 及其依赖，支持迁移、账号管理、备份和排期命令，因此没有裁剪成仅运行 Web 的 standalone 镜像，也没有执行 `npm prune --omit=dev`。Prisma 仍使用 CLI `8.0.0-rc.19` 和 SQLite runtime `8.0.0-rc.14`（RC／experimental），没有更换迁移流程。
+镜像保留现有 Prisma CLI、`tsx`、`@inquirer/prompts` 及其依赖，支持迁移、账号管理、备份和排期命令，因此没有裁剪成仅运行 Web 的 standalone 镜像，也没有执行 `npm prune --omit=dev`。Prisma 使用 CLI `8.0.0-rc.19` 和 PostgreSQL runtime `8.0.0-rc.14`（RC），沿用 Prisma 8 contract 迁移流程；运行镜像安装 PostgreSQL 18 的 `pg_dump`、`pg_restore` 和 `psql`。
 
 发布使用仓库提供的 `GITHUB_TOKEN` 和 `packages: write` 权限，不需要把个人 token 放进 Actions。首次运行成功后，在 GitHub 账号的 Packages 中确认 `fuxiaochen` 已生成。镜像包的可见性独立于源码仓库：
 
@@ -49,6 +49,10 @@
 | `APP_IMAGE`                  | 默认 `ghcr.io/aifuxi/fuxiaochen:latest`；可改成分支、版本、`sha-<完整 SHA>` 或 `@sha256:<digest>` |
 | `APP_ORIGIN`                 | 必填，例如 `https://fuxiaochen.com`；不带路径、尾斜杠，必须与浏览器访问地址完全一致               |
 | `APP_DATA_VOLUME`            | 默认 `fuxiaochen-data`，升级时保留同一个卷                                                        |
+| `DATABASE_URL`               | 必填，`postgresql://fuxiaochen:<URL编码的应用密码>@postgres:5432/fuxiaochen`                      |
+| `POSTGRES_ADMIN_PASSWORD`    | PostgreSQL 管理账号密码，不能与应用密码混用                                                       |
+| `POSTGRES_APP_PASSWORD`      | 普通应用账号的初始化密码，与 DATABASE_URL 中的密码对应                                            |
+| `POSTGRES_DATA_VOLUME`       | 默认 `fuxiaochen-postgres`，升级时保留同一卷                                                      |
 | `CADDY_NETWORK`              | 复用服务器已存在的外部网络，默认 `infra_edge`                                                     |
 | `OSS_*`、`ALIBABA_CLOUD_*`   | 沿用 `.env.example` 的配置；在 Portainer 填写真实值                                               |
 | `ANALYTICS_CLIENT_IP_HEADER` | 默认空；按后面的代理配置确认后可填 `x-real-ip`                                                    |
@@ -57,7 +61,11 @@ Compose 通过显式 `environment` 注入变量，不依赖仓库中不存在的
 
 容器使用 `node` 用户（UID/GID 1000）。默认启动命令先执行现有 `npm run db:migrate`，其中依次运行 Prisma 8 的 `db migrate` 与 `db verify`；任一步失败就退出，不启动 Web。正常启动后监听容器端口 3000，Docker 通过 `/login` 的 HTTP 200 判断 Web 服务可用。该健康检查不代表 OSS 配置或全部业务已验证，Docker 的 unhealthy 状态也不会单独触发 `unless-stopped` 重启。
 
-数据库固定为 `/app/data/admin.sqlite`，备份为 `/app/data/backups`，CLI 与 Web 使用同一绝对路径。命名卷保存整个 `/app/data`，包括 SQLite WAL/SHM 和备份。不要删除卷或为同一数据库运行多个 Web 副本；新 Stack 名称如复用旧卷，也必须先停旧实例。后续接管已有数据库时，先做在线备份，停止旧 Web 与调度，再将正确文件放入卷并确保 UID/GID 1000 可读写。已有文章的旧 schema 迁移须遵循 [旧数据迁移说明](maintenance.md) 中的 slug 回填限制；OSS 权限与 CORS 见 [媒体存储配置](media-storage.md)。
+数据库服务使用 `postgres:18.6-bookworm`，生产不映射数据库端口。应用通过独立的内部网络连接 `postgres:5432`，同时连接 Caddy 的 `infra_edge` 网络；PostgreSQL 不接入代理网络。`depends_on` 等待数据库健康检查通过，再执行迁移、验证和 Web 启动。
+
+PostgreSQL 数据卷挂载 `/var/lib/postgresql`，应用卷只保存 `/app/data/backups` 等运维产物。`deploy/postgres-init.sh` 在新卷初始化时创建非超级用户 `fuxiaochen` 和同名数据库，应用拥有该库，但没有创建角色或数据库权限。初始化脚本仅在空卷运行；已有卷修改密码环境变量不会自动修改数据库密码，需管理账号显式执行角色密码变更并同步 URL。不要删除数据卷来修复启动问题。
+
+本次启用全新数据库，不导入旧 SQLite；旧 SQLite 卷保留，不执行旧正文/图片迁移。配置密码时对连接 URL 中的密码进行 URL 编码，`POSTGRES_APP_PASSWORD` 填原始密码。若更换 Compose 项目名但复用数据库卷，先停止旧应用和调度，避免两套应用并行执行迁移。OSS 权限与 CORS 见 [媒体存储配置](media-storage.md)。
 
 ## 接入现有 Caddy
 
@@ -102,46 +110,49 @@ docker exec --user node <应用容器名> npm run db:backup
 
 ## 单实例 Node.js 部署
 
-部署环境安装 Node.js 24+ 和完整项目依赖，使用可写的持久目录设置绝对 `DATABASE_PATH`；`APP_ORIGIN` 使用实际 HTTPS 域名，反向代理保留浏览器 Origin。
+也可在服务器运行 Node.js 24+，连接已启动的 PostgreSQL。配置正确的 `DATABASE_URL`、HTTPS `APP_ORIGIN` 与持久 `BACKUP_DIRECTORY`，安装 PostgreSQL 18 客户端工具和完整 npm 依赖。
 
 ```sh
 npm ci
-npm run build
+npm run db:generate
 npm run db:migrate
-# 首次空库部署时执行；已有管理员则跳过
 npm run admin:init
+npm run build
 npm start
 ```
 
-迁移、账号和维护命令依赖 devDependencies，不能在执行前裁剪这些依赖。使用进程管理器维持服务，并通过外部调度每分钟运行 `npm run operations:run`；调度环境使用同一项目目录、Node/npm、环境配置和数据库路径。
+外部调度每分钟运行 `operations:run`，使用与 Web 相同的环境配置、数据库和备份目录。CLI 执行完毕释放连接。
 
 ## 数据库备份与恢复
 
-`npm run db:backup` 使用 SQLite 在线备份，包含 WAL 中的数据；不要通过直接复制打开的数据库文件代替。默认备份目录为数据库旁的 `backups/`，可通过 `BACKUP_DIRECTORY` 指定持久目录；容器默认目录为 `/app/data/backups`。
+`npm run db:backup` 使用 `pg_dump` custom 格式的一致性快照。默认备份目录为 `./data/backups`，容器为 `/app/data/backups`；可通过 `BACKUP_DIRECTORY` 指定。每份备份在独立 UUID 目录中包含 `database.dump` 和 `manifest.json`，记录大小、SHA-256、contract 摘要和 PostgreSQL 主版本。备份包括数据库、鉴权和媒体元数据，不包含 OSS 文件。目录由服务账号独占，不放入 public/ 或提交 Git；无自动保留策略，需定期检查容量并保存异地副本。
 
-每份备份位于独立 UUID 目录，包含 `database.sqlite` 和 `manifest.json`。只备份数据库及媒体元数据，不含 OSS 文件；产物包含鉴权数据，不得放入公开目录或提交 Git。当前没有自动删除备份的保留策略，应定期核对磁盘容量并保存异地副本。
+本地需要 PostgreSQL 18 客户端工具。macOS 可安装 `libpq` 并将其 bin 目录加入 PATH；确认 `pg_dump --version`、`pg_restore --version`、`psql --version` 为 18 系列。镜像内已经安装。凭据通过子进程环境传递，不放入命令参数或错误日志。
 
-恢复命令验证备份摘要和数据库完整性，只写入不存在的新文件：
+恢复前由数据库管理账号创建一个名称不同、归应用账号拥有的空数据库，例如 `fuxiaochen_restored`。容器部署可在 PostgreSQL 容器中执行：
 
 ```sh
-npm run db:restore -- /absolute/backups/<UUID> /absolute/restored.sqlite
-DATABASE_PATH=/absolute/restored.sqlite npm run db:verify
+docker compose exec postgres psql -U postgres -d postgres -c 'CREATE DATABASE fuxiaochen_restored OWNER fuxiaochen;'
 ```
 
-恢复后所有登录会话被清除，自动备份关闭，旧调度时间清空。核对结构和业务数据后，停止 Web 与调度进程、另行备份当前库，再将 `DATABASE_PATH` 切换到恢复文件并重启匹配版本的应用。不要覆盖打开的数据库或混用旧 WAL/SHM。OSS 对象需要单独保留，恢复数据库无法找回已删除的文件。
+通过本地未提交的环境配置或容器环境设置 `RESTORE_DATABASE_URL`，本地指向 `127.0.0.1:15433/fuxiaochen_restored`，线上指向 `postgres:5432/fuxiaochen_restored`。不要将密码写进 shell 命令或版本控制。
 
-容器 CLI 和 Web 默认使用固定路径 `/app/data/admin.sqlite`；恢复到新文件并校验后，停止应用容器及宿主机调度，保留当前库和其 WAL/SHM，将恢复文件放到卷内的固定路径，确保 UID/GID 1000 可读写且不带旧 WAL/SHM，再启动匹配版本。不要删除整个数据卷。
+```sh
+npm run db:restore -- /absolute/backups/<UUID>
+```
+
+恢复拒绝同名的当前数据库、非空目标、旧 SQLite 格式、摘要错误或不同 contract 的备份。临时 SQL 文件仅服务账号可读；`psql --single-transaction` 将恢复、会话撤销、自动备份关闭及旧备份运行状态处理放在同一事务中，失败整体回滚。恢复后先在环境中将 `DATABASE_URL` 指向目标并执行 `db:verify`，核对业务数据；再停止旧应用和调度，正式切换连接 URL 并启动匹配版本。恢复不能找回已删除 OSS 文件。
 
 ## 更新与回退
 
 1. 推送代码或版本 tag，等待 GitHub Actions 成功并确认镜像 tag/digest。
-2. 更新前执行一次数据库在线备份，记录当前镜像 tag/digest。新迁移必须先审查。
+2. 更新前执行一次 PostgreSQL 备份，记录当前镜像 tag/digest。新迁移必须先审查。
 3. 在 Portainer 中更新 `APP_IMAGE`（建议使用完整 commit 标签或 digest），执行 **Pull and redeploy**，启用重新拉取镜像。
 4. 确认容器日志中的迁移、校验与服务启动成功，健康检查通过，再通过 HTTPS 域名验证业务。
 
 不建议直接开启按 Git commit 轮询部署：Portainer 可能在镜像构建完成前发现新 commit，从而拉取上一版的可变标签。即使 `latest` 已更新，同一个 Git commit 的轮询检查也可能跳过重新部署。先等待 Actions 成功再手动拉取部署；需要自动部署时，应另行配置构建成功后调用的 Portainer webhook 及镜像重拉取设置。
 
-单机升级会短暂停机。没有数据库迁移时可以换回已记录的旧镜像；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按上方恢复流程先核对备份、停止 Web 与调度、恢复到新文件，再切换数据库和匹配的镜像。不要删除生产数据卷来解决启动失败。
+单机升级会短暂停机。没有数据库迁移时可以换回已记录的旧镜像；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按上方恢复流程先核对备份、停止 Web 与调度、恢复到独立空库，再切换数据库和匹配的镜像。不要删除生产数据卷来解决启动失败。
 
 ## 本地构建与配置检查
 
@@ -151,6 +162,6 @@ APP_ORIGIN=https://fuxiaochen.com docker compose config --quiet
 sh -n deploy/docker-entrypoint.sh
 ```
 
-构建不需要 OSS 凭据或生产数据库，`.dockerignore` 排除环境文件、数据库、备份、上传目录与本地构建产物。验证真实部署时使用专门的空卷，避免连接开发或生产数据库。
+构建不需要 OSS 凭据或生产数据库，`.dockerignore` 排除环境文件、数据库、备份、上传目录与本地构建产物。验证真实部署时使用专门的数据库与空卷，避免连接开发或生产数据库。
 
-参考：[Docker Actions 标签与发布](https://docs.docker.com/build/ci/github-actions/manage-tags-labels/)、[GHCR 鉴权与可见性](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)、[Portainer Git Stack](https://docs.portainer.io/user/docker/stacks/add)、[Portainer GitOps 更新行为](https://docs.portainer.io/faqs/troubleshooting/stacks-deployments-and-updates/how-do-automatic-updates-for-stacks-applications-work)、[Caddy reverse_proxy](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy)、[Prisma SQLite experimental](https://www.prisma.io/extensions/sqlite)。
+参考：[Docker Actions 标签与发布](https://docs.docker.com/build/ci/github-actions/manage-tags-labels/)、[GHCR 鉴权与可见性](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)、[Portainer Git Stack](https://docs.portainer.io/user/docker/stacks/add)、[Portainer GitOps 更新行为](https://docs.portainer.io/faqs/troubleshooting/stacks-deployments-and-updates/how-do-automatic-updates-for-stacks-applications-work)、[Caddy reverse_proxy](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy)、[Prisma PostgreSQL RC](https://www.prisma.io/extensions/postgresql)。

@@ -1,15 +1,13 @@
 import "server-only";
 import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
-import { dirname, join, resolve } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { resolve } from "node:path";
 
-import { databasePath } from "@/lib/database-path";
+import { runPostgresTool } from "./postgres-tools";
 
 export function backupDirectory() {
   return resolve(
-    /* turbopackIgnore: true */ process.env.BACKUP_DIRECTORY?.trim() ||
-      join(dirname(databasePath()), "backups"),
+    /* turbopackIgnore: true */ process.env.BACKUP_DIRECTORY?.trim() || "./data/backups",
   );
 }
 export async function fileDigest(path: string) {
@@ -17,17 +15,6 @@ export async function fileDigest(path: string) {
   for await (const chunk of createReadStream(path)) hash.update(chunk);
   return hash.digest("hex");
 }
-export function verifySqlite(path: string) {
-  const db = new DatabaseSync(path, { readOnly: true });
-  try {
-    const rows = db.prepare("PRAGMA quick_check").all();
-    if (
-      rows.length !== 1 ||
-      Object.values(rows[0])[0] !== "ok" ||
-      db.prepare("PRAGMA foreign_key_check").all().length
-    )
-      throw new Error("SQLite integrity verification failed");
-  } finally {
-    db.close();
-  }
+export async function verifyPostgresArchive(path: string) {
+  await runPostgresTool("pg_restore", ["--list", path]);
 }

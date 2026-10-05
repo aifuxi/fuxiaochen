@@ -28,7 +28,7 @@ async function authorize(actor: TaxonomyActor) {
   if (!admin || admin.adminId !== actor.adminId)
     throw new MediaError("UNAUTHORIZED", "登录已失效，请重新登录。");
 }
-function serialize(row: Models.Media): MediaItem {
+function serialize(row: Models.public_Media): MediaItem {
   if (!row.bytes || !row.mime || !row.uploadedAt || !["ready", "deleting"].includes(row.status))
     throw new Error("Incomplete media record");
   return {
@@ -48,15 +48,13 @@ function serialize(row: Models.Media): MediaItem {
 export async function listMedia(query: MediaQuery, actor: TaxonomyActor) {
   await authorize(actor);
   const db = getDatabase();
-  let filtered = db.orm.Media.where((m) => m.status.in(["ready", "deleting"])).where((m) =>
+  let filtered = db.orm.public.Media.where((m) => m.status.in(["ready", "deleting"])).where((m) =>
     m.uploadedAt.isNotNull(),
   );
   if (query.kind) filtered = filtered.where({ kind: query.kind });
   if (query.q)
     filtered = filtered.where((m) =>
-      db.raw.sql`instr(lower(${m.name}), lower(${query.q})) > 0`
-        .returns("sqlite/integer@1")
-        .buildAst(),
+      db.raw.sql`strpos(lower(${m.name}), lower(${query.q})) > 0`.returns("pg/bool@1").buildAst(),
     );
   const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
@@ -75,30 +73,30 @@ export async function createUpload(input: UploadInput, actor: TaxonomyActor) {
   const window = Math.floor(now.getTime() / 60_000);
   const row = await writeTransaction(async (tx) => {
     await authorize(actor);
-    const limit = await tx.orm.MediaUploadLimit.where({ adminId: actor.adminId }).first();
+    const limit = await tx.orm.public.MediaUploadLimit.where({ adminId: actor.adminId }).first();
     if (limit?.window === window && limit.count >= 20)
       throw new MediaError(
         "RATE_LIMITED",
         "上传请求过于频繁，请稍后重试。",
         Math.ceil(((window + 1) * 60_000 - Date.now()) / 1000),
       );
-    const { total } = await tx.orm.Media.where({ adminId: actor.adminId })
+    const { total } = await tx.orm.public.Media.where({ adminId: actor.adminId })
       .where((m) => m.status.in(["pending", "finalizing"]))
       .aggregate((agg) => ({ total: agg.count() }));
     if (total >= 20)
       throw new MediaError("RATE_LIMITED", "最多保留 20 个未完成上传，请完成上传或等待清理。", 60);
     if (limit)
-      await tx.orm.MediaUploadLimit.where({ adminId: actor.adminId }).update({
+      await tx.orm.public.MediaUploadLimit.where({ adminId: actor.adminId }).update({
         window,
         count: limit.window === window ? limit.count + 1 : 1,
       });
-    else await tx.orm.MediaUploadLimit.create({ adminId: actor.adminId, window, count: 1 });
+    else await tx.orm.public.MediaUploadLimit.create({ adminId: actor.adminId, window, count: 1 });
     const id = randomUUID();
     const stagingKey = `staging/${id}`;
     const objectKey = `media/${id}`;
     // URL 仅能签发一次，保留额外完成时间，允许已开始的 PUT 在签名期限后结束。
     const expiresAt = new Date(now.getTime() + 30 * 60_000);
-    await tx.orm.Media.create({
+    await tx.orm.public.Media.create({
       id,
       adminId: actor.adminId,
       name: input.name,
@@ -123,7 +121,7 @@ export async function createUpload(input: UploadInput, actor: TaxonomyActor) {
     };
   } catch (error) {
     await writeTransaction((tx) =>
-      tx.orm.Media.where({ id: row.id, status: "pending" }).update({
+      tx.orm.public.Media.where({ id: row.id, status: "pending" }).update({
         status: "deleted",
         deletedAt: new Date(),
       }),
@@ -139,7 +137,7 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
   const token = randomUUID();
   const row = await writeTransaction(async (tx) => {
     await authorize(actor);
-    const current = await tx.orm.Media.where({ id, adminId: actor.adminId }).first();
+    const current = await tx.orm.public.Media.where({ id, adminId: actor.adminId }).first();
     if (!current) throw new MediaError("NOT_FOUND", "上传记录不存在。");
     if (current.status === "ready") return current;
     if (current.status === "finalizing") throw processing();
@@ -147,7 +145,7 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
       throw new MediaError("UPLOAD_EXPIRED", "上传已过期或被清理，请重新上传。");
     const leaseUntil = new Date(Date.now() + LEASE_MS);
     if (
-      !(await tx.orm.Media.where({ id, status: "pending" }).updateAndCount({
+      !(await tx.orm.public.Media.where({ id, status: "pending" }).updateAndCount({
         status: "finalizing",
         leaseToken: token,
         leaseUntil,
@@ -167,7 +165,7 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
         await writeTransaction(async (tx) => {
           await authorize(actor);
           if (
-            !(await tx.orm.Media.where({ id, status: "finalizing", leaseToken: token })
+            !(await tx.orm.public.Media.where({ id, status: "finalizing", leaseToken: token })
               .where((m) => m.leaseUntil.gt(new Date()))
               .updateAndCount({ leaseUntil: new Date(Date.now() + LEASE_MS) }))
           )
@@ -179,7 +177,7 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
     const ready = await writeTransaction(async (tx) => {
       await authorize(actor);
       if (
-        !(await tx.orm.Media.where({ id, status: "finalizing", leaseToken: token })
+        !(await tx.orm.public.Media.where({ id, status: "finalizing", leaseToken: token })
           .where((m) => m.leaseUntil.gt(new Date()))
           .updateAndCount({
             ...data,
@@ -205,7 +203,7 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
       try {
         await removeObject(row.objectKey);
         await writeTransaction((tx) =>
-          tx.orm.Media.where({ id, status: "finalizing", leaseToken: token }).update({
+          tx.orm.public.Media.where({ id, status: "finalizing", leaseToken: token }).update({
             status:
               error instanceof MediaError && error.code === "INVALID_INPUT"
                 ? "deleting"
@@ -222,13 +220,13 @@ export async function completeUpload(id: string, actor: TaxonomyActor) {
     throw storageFailure(error);
   }
 }
-async function erase(row: Models.Media, token: string) {
+async function erase(row: Models.public_Media, token: string) {
   try {
     await removeObject(row.objectKey);
     await removeObject(row.stagingKey);
     await writeTransaction(async (tx) => {
       if (
-        !(await tx.orm.Media.where({
+        !(await tx.orm.public.Media.where({
           id: row.id,
           status: "deleting",
           leaseToken: token,
@@ -243,7 +241,7 @@ async function erase(row: Models.Media, token: string) {
     });
   } catch (error) {
     await writeTransaction((tx) =>
-      tx.orm.Media.where({ id: row.id, status: "deleting", leaseToken: token }).update({
+      tx.orm.public.Media.where({ id: row.id, status: "deleting", leaseToken: token }).update({
         leaseToken: null,
         leaseUntil: null,
       }),
@@ -256,7 +254,7 @@ export async function deleteMedia(id: string, actor: TaxonomyActor) {
   const token = randomUUID();
   const row = await writeTransaction(async (tx) => {
     await authorize(actor);
-    const current = await tx.orm.Media.where({ id, adminId: actor.adminId }).first();
+    const current = await tx.orm.public.Media.where({ id, adminId: actor.adminId }).first();
     if (!current) throw new MediaError("NOT_FOUND", "媒体记录不存在。");
     if (current.status === "deleted") return current;
     if (
@@ -265,7 +263,7 @@ export async function deleteMedia(id: string, actor: TaxonomyActor) {
     )
       throw processing();
     if (
-      !(await tx.orm.Media.where({
+      !(await tx.orm.public.Media.where({
         id,
         status: current.status,
         leaseToken: current.leaseToken,
@@ -290,7 +288,7 @@ export async function cleanupMedia(dryRun: boolean) {
   let cursor = "";
   const result = { scanned: 0, cleaned: 0, failed: 0, dryRun };
   while (true) {
-    const rows = await db.orm.Media.where((m) => m.id.gt(cursor))
+    const rows = await db.orm.public.Media.where((m) => m.id.gt(cursor))
       .where((m) => m.status.in(["pending", "finalizing", "ready", "deleting", "deleted"]))
       .orderBy((m) => m.id.asc())
       .limit(100)
@@ -312,7 +310,7 @@ export async function cleanupMedia(dryRun: boolean) {
         if (row.status === "ready") {
           await removeObject(row.stagingKey);
           await writeTransaction((tx) =>
-            tx.orm.Media.where({ id: row.id, status: "ready" }).update({
+            tx.orm.public.Media.where({ id: row.id, status: "ready" }).update({
               stagingCleanedAt: new Date(),
             }),
           );
@@ -321,7 +319,7 @@ export async function cleanupMedia(dryRun: boolean) {
         }
         const token = randomUUID();
         const claimed = await writeTransaction(async (tx) => {
-          const current = await tx.orm.Media.where({
+          const current = await tx.orm.public.Media.where({
             id: row.id,
             status: row.status,
             leaseToken: row.leaseToken,
@@ -329,7 +327,7 @@ export async function cleanupMedia(dryRun: boolean) {
           if (!current || (current.leaseUntil && current.leaseUntil.getTime() > Date.now()))
             return false;
           return Boolean(
-            await tx.orm.Media.where({
+            await tx.orm.public.Media.where({
               id: row.id,
               status: row.status,
               leaseToken: row.leaseToken,
@@ -345,7 +343,7 @@ export async function cleanupMedia(dryRun: boolean) {
         // 墓碑至少保留一天，继续回收签名重放或中断操作可能留下的对象。
         if (row.deletedAt && row.deletedAt.getTime() + TOMBSTONE_MS < Date.now())
           await writeTransaction((tx) =>
-            tx.orm.Media.where({
+            tx.orm.public.Media.where({
               id: row.id,
               status: "deleted",
               leaseToken: null,
