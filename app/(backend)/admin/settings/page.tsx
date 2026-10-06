@@ -8,7 +8,12 @@ export const metadata: Metadata = {
   description: "管理站点资料、备案、社交账号与访问统计配置。",
 };
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ group?: string | string[] }>;
+}) {
   await requireAdmin();
-  return <AdminSettings />;
+  const { group } = await searchParams;
+  return <AdminSettings initialGroup={group === "analytics" ? "analytics" : "profile"} />;
 }

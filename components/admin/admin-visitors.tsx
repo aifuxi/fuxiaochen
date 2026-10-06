@@ -17,7 +17,8 @@ import {
 import { durationLabel, visitorSortKeys, type VisitorLog } from "@/lib/analytics/schema";
 import { postTime } from "@/lib/posts/schema";
 
-import { AnalyticsQueryStatus, CollectionStatus, useVisitors } from "./analytics-query";
+import { AnalyticsQueryStatus, useVisitors } from "./analytics-query";
+import { CollectionStatus } from "./collection-status";
 import { useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-visitors.css";

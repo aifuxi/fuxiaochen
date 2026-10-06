@@ -17,7 +17,8 @@ import {
 } from "@/lib/analytics/schema";
 import { postTime } from "@/lib/posts/schema";
 
-import { AnalyticsQueryStatus, CollectionStatus, useAnalytics } from "./analytics-query";
+import { AnalyticsQueryStatus, useAnalytics } from "./analytics-query";
+import { CollectionStatus } from "./collection-status";
 import "./admin-analytics.css";
 
 const number = (value: number) => value.toLocaleString("zh-CN");
@@ -367,13 +368,7 @@ export function AdminAnalytics() {
       />
       {data && (
         <TabsPanel value={range}>
-          <CollectionStatus collection={data.collection} />
-          {data.incomplete && (
-            <p className="admin-business-feedback">
-              当前区间仅包含自 {postTime(data.collection.availableFrom)}{" "}
-              起保留的采集数据；更早日期没有可用记录。
-            </p>
-          )}
+          <CollectionStatus collection={data.collection} incomplete={data.incomplete} />
           <AnalyticsContent key={range} snapshot={data} />
           <p className="analytics-footnote">
             平均阅读时长只计算文章页面可见停留；跳出率只计算已结束且停留不足10秒、仅浏览一页的会话。完读要求正文进度达到90%且停留至少10秒。

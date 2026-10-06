@@ -19,7 +19,6 @@ import {
 import type {
   AnalyticsRange,
   AnalyticsSnapshot,
-  CollectionInfo,
   VisitorList,
   VisitorQuery,
 } from "@/lib/analytics/schema";
@@ -135,20 +134,6 @@ export function AnalyticsQueryStatus({
         <p className="admin-business-feedback">刷新失败，以下为上次查询的旧数据。</p>
       )}
       <BusinessStatus loading={loading && !hasData} error={error?.message ?? ""} reload={reload} />
-    </>
-  );
-}
-export function CollectionStatus({ collection }: { collection: CollectionInfo }) {
-  return (
-    <>
-      {!collection.enabled && (
-        <p className="admin-business-feedback">
-          访问统计已关闭。可在系统设置中启用，历史数据仍可查询。
-        </p>
-      )}
-      {!collection.production && (
-        <p className="admin-business-feedback">当前为开发环境，不采集访问。</p>
-      )}
     </>
   );
 }

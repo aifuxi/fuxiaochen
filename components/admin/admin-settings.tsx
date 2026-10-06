@@ -59,23 +59,39 @@ function fieldGroup(key: string) {
   if (["postsPerPage", "enableComments"].includes(key)) return "system";
   return "profile";
 }
-export function AdminSettings() {
+export function AdminSettings({
+  initialGroup = "profile",
+}: {
+  initialGroup?: "profile" | "analytics";
+}) {
   const query = usePostQuery("", 0, load);
   return (
     <>
       {query.loading || query.error ? (
         <BusinessStatus {...query} />
       ) : (
-        query.data && <SettingsForm key={query.data.updatedAt} initial={query.data} />
+        query.data && (
+          <SettingsForm
+            key={`${query.data.updatedAt}:${initialGroup}`}
+            initial={query.data}
+            initialGroup={initialGroup}
+          />
+        )
       )}
     </>
   );
 }
-function SettingsForm({ initial }: { initial: SiteSettings }) {
+function SettingsForm({
+  initial,
+  initialGroup,
+}: {
+  initial: SiteSettings;
+  initialGroup: "profile" | "analytics";
+}) {
   const { onMessage } = useAdminWorkspace();
   const [draft, setDraft] = useState(initial);
   const [quantity, setQuantity] = useState(String(initial.postsPerPage));
-  const [tab, setTab] = useState("profile");
+  const [tab, setTab] = useState<string>(initialGroup);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [error, setError] = useState("");
   const [conflict, setConflict] = useState(false);

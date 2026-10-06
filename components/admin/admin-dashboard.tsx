@@ -13,7 +13,8 @@ import { postTime, type PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 
-import { AnalyticsQueryStatus, CollectionStatus, useAnalytics } from "./analytics-query";
+import { AnalyticsQueryStatus, useAnalytics } from "./analytics-query";
+import { CollectionStatus } from "./collection-status";
 import { CommentQueryStatus } from "./comment-status";
 import { PostQueryStatus } from "./post-status";
 import { usePostClock } from "./use-posts";
@@ -283,11 +284,8 @@ export function AdminDashboard({
         hasData={!!snapshot}
         reload={() => void analytics.refetch()}
       />
-      {snapshot && <CollectionStatus collection={snapshot.collection} />}
-      {snapshot?.incomplete && (
-        <p className="admin-business-feedback">
-          统计数据自 {postTime(snapshot.collection.availableFrom)} 起可用。
-        </p>
+      {snapshot && (
+        <CollectionStatus collection={snapshot.collection} incomplete={snapshot.incomplete} />
       )}
       <div className="admin-stats">
         {stats.map((stat) => (
