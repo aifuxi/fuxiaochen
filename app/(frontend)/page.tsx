@@ -1,13 +1,23 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 
 import { ConfiguredImage } from "@/components/frontend/configured-image";
+import { JsonLd } from "@/components/frontend/json-ld";
 import { Button } from "@/components/ui/button";
+import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSettings();
+  return { ...pageMetadata(settings, { path: "/" }), title: { absolute: settings.title } };
+}
 
 export default async function HomePage() {
   const settings = await getPublicSettings();
   return (
     <main id="main-content" className="site-main site-home">
+      <JsonLd data={siteJsonLd(settings)} />
       <h1>{settings.title}</h1>
       {settings.subtitle && <p className="site-home-description">{settings.subtitle}</p>}
       <Button render={<Link href="/posts" />} nativeButton={false} variant="primary" size="sm">

@@ -1,10 +1,22 @@
+import type { Metadata } from "next";
+
 import { ConfiguredImage, SocialIcon } from "@/components/frontend/configured-image";
+import { JsonLd } from "@/components/frontend/json-ld";
+import { pageMetadata, personJsonLd } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
-export const metadata = { title: "关于" };
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSettings();
+  return pageMetadata(settings, {
+    title: "关于",
+    description: settings.aboutMe || `了解 ${settings.authorName} 和 ${settings.title}。`,
+    path: "/about",
+  });
+}
 export default async function AboutPage() {
   const settings = await getPublicSettings();
   return (
     <main id="main-content" className="site-main site-reading">
+      <JsonLd data={personJsonLd(settings)} />
       <header className="site-page-heading">
         <h1>关于</h1>
       </header>

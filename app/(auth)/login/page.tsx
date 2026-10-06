@@ -7,13 +7,18 @@ import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { currentSession } from "@/lib/auth";
+import { getPublicSettings } from "@/lib/settings/service";
 
 import "./login.css";
 
-export const metadata: Metadata = {
-  title: "登录 · fuxiaochen",
-  description: "进入 fuxiaochen 的私人空间。",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSettings();
+  return {
+    title: `登录 · ${settings.title}`,
+    description: `进入 ${settings.title} 的管理空间。`,
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function LoginPage({
   searchParams,

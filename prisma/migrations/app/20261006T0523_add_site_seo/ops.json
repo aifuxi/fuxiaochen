@@ -1,0 +1,172 @@
+[
+  {
+    "id": "column.public.site_setting.baiduVerification",
+    "label": "Add column \"baiduVerification\" to \"site_setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "baiduVerification",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"baiduVerification\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "baiduVerification"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"baiduVerification\"",
+        "sql": "ALTER TABLE \"public\".\"site_setting\" ADD COLUMN \"baiduVerification\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"baiduVerification\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "baiduVerification"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.site_setting.bingVerification",
+    "label": "Add column \"bingVerification\" to \"site_setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "bingVerification",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"bingVerification\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "bingVerification"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"bingVerification\"",
+        "sql": "ALTER TABLE \"public\".\"site_setting\" ADD COLUMN \"bingVerification\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"bingVerification\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "bingVerification"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.site_setting.googleVerification",
+    "label": "Add column \"googleVerification\" to \"site_setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "googleVerification",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"googleVerification\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "googleVerification"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"googleVerification\"",
+        "sql": "ALTER TABLE \"public\".\"site_setting\" ADD COLUMN \"googleVerification\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"googleVerification\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "googleVerification"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.site_setting.ogImageUrl",
+    "label": "Add column \"ogImageUrl\" to \"site_setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "ogImageUrl",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"ogImageUrl\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "ogImageUrl"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"ogImageUrl\"",
+        "sql": "ALTER TABLE \"public\".\"site_setting\" ADD COLUMN \"ogImageUrl\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"ogImageUrl\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "ogImageUrl"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.site_setting.seoDescription",
+    "label": "Add column \"seoDescription\" to \"site_setting\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "seoDescription",
+        "table": "site_setting"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"seoDescription\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "seoDescription"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"seoDescription\"",
+        "sql": "ALTER TABLE \"public\".\"site_setting\" ADD COLUMN \"seoDescription\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"seoDescription\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "site_setting", "seoDescription"]
+      }
+    ]
+  }
+]

@@ -22,6 +22,8 @@ npm run db:migrate
 
 ## 连接与事务
 
+2026-10-06 增量迁移 `20261006T0523_add_site_seo` 为 `site_setting` 新增搜索描述、分享图与三项站长验证字段。数据库列允许 NULL，服务层映射为空字符串；既有资料和设置保持原值。生成新 contract 后执行 `npm run db:migrate`，再重启应用加载新 contract。
+
 应用连接使用惰性初始化并在开发热更新中复用；CLI 使用 `finally` 关闭连接。所有业务写入必须经 `writeTransaction`／`authTransaction`，先取得固定事务级 advisory lock `734825101` 再读取和写入。Web、管理员命令与外部调度共用该锁，提交或回滚时自动释放。
 
 数据位于 `public` schema。时间使用带时区时间戳与 JavaScript `Date`，原整数使用 `pg/int8number@1`，超出 JavaScript 安全整数范围时拒绝转换。JSON 文档仍保存为经过业务校验的文本，查询时转换为 jsonb。搜索使用 `strpos(lower(...), lower(...))`，关键词中的 `%`、`_` 不作为通配符；统计按 `Asia/Shanghai` 分日。

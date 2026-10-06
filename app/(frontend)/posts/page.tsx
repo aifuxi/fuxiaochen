@@ -1,17 +1,60 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
+import { permanentRedirect } from "next/navigation";
 
 import { ArticleFilters } from "@/components/frontend/article-filters";
 import { ArticleListItem } from "@/components/frontend/article-list-item";
 import { Pagination } from "@/components/frontend/pagination";
-import { singleParams, type SearchParams } from "@/lib/public/schema";
+import {
+  normalizedQueryPath,
+  publicPostParams,
+  queryNeedsRedirect,
+  queryPath,
+  singleParams,
+  type SearchParams,
+} from "@/lib/public/schema";
 import { getPublicTaxonomies, listPublicPosts } from "@/lib/public/service";
-export const metadata = { title: "文章" };
+import { pageMetadata } from "@/lib/seo";
+import { getPublicSettings } from "@/lib/settings/service";
 
-export default async function PostsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const params = await searchParams;
+type Props = { searchParams: Promise<SearchParams> };
+
+async function postsContext(params: SearchParams) {
   const [taxonomies, result] = await Promise.all([getPublicTaxonomies(), listPublicPosts(params)]);
-  const values = singleParams(params);
+  const rawValues = singleParams(params);
+  const normalized = result.error
+    ? {
+        q: rawValues.q?.trim() || undefined,
+        categoryId: rawValues.categoryId || undefined,
+        tagId: rawValues.tagId || undefined,
+        page: rawValues.page && rawValues.page !== "1" ? rawValues.page : undefined,
+      }
+    : publicPostParams(result.query, result.page);
+  if (queryNeedsRedirect(params, normalized))
+    permanentRedirect(normalizedQueryPath("/posts", params, normalized));
+  const values = singleParams(normalized);
   const isFiltered = Boolean(values.q || values.categoryId || values.tagId);
+  return { taxonomies, result, values, isFiltered, path: queryPath("/posts", normalized) };
+}
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const [settings, context] = await Promise.all([
+    getPublicSettings(),
+    postsContext(await searchParams),
+  ]);
+  const page = context.result.error ? 1 : context.result.page;
+  return pageMetadata(settings, {
+    title: `${context.isFiltered ? "文章筛选结果" : "文章"}${page > 1 ? ` · 第 ${page} 页` : ""}`,
+    description: `阅读 ${settings.title} 的文章，按关键词、分类和标签探索内容。`,
+    path: context.path,
+    robots: context.isFiltered || context.result.error ? { index: false, follow: true } : undefined,
+  });
+}
+
+export default async function PostsPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const { taxonomies, result, values, isFiltered } = await postsContext(params);
   return (
     <main id="main-content" className="site-main site-posts-main">
       <section aria-labelledby="posts-heading" className="site-posts">

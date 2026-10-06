@@ -1,15 +1,40 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
+import { permanentRedirect } from "next/navigation";
 
 import { ConfiguredImage } from "@/components/frontend/configured-image";
-import { singleParams, type SearchParams } from "@/lib/public/schema";
+import {
+  normalizedQueryPath,
+  queryNeedsRedirect,
+  queryPath,
+  singleParams,
+  type SearchParams,
+} from "@/lib/public/schema";
 import { listPublicFriends } from "@/lib/public/service";
-export const metadata = { title: "友情链接" };
-export default async function FriendsPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
-  const { category } = singleParams(await searchParams);
+import { pageMetadata } from "@/lib/seo";
+import { getPublicSettings } from "@/lib/settings/service";
+
+type Props = { searchParams: Promise<SearchParams> };
+function friendsContext(params: SearchParams) {
+  const category = singleParams(params).category || undefined;
+  const normalized = { category };
+  if (queryNeedsRedirect(params, normalized))
+    permanentRedirect(normalizedQueryPath("/friends-links", params, normalized));
+  return { category, path: queryPath("/friends-links", normalized) };
+}
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { category, path } = friendsContext(await searchParams);
+  const settings = await getPublicSettings();
+  return pageMetadata(settings, {
+    title: category ? `友情链接 · ${category}` : "友情链接",
+    description: `发现 ${settings.title} 收录的友情链接，访问值得阅读的网站。`,
+    path,
+    robots: category ? { index: false, follow: true } : undefined,
+  });
+}
+export default async function FriendsPage({ searchParams }: Props) {
+  const { category } = friendsContext(await searchParams);
   const result = await listPublicFriends(category);
   return (
     <main id="main-content" className="site-main">

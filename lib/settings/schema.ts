@@ -37,10 +37,21 @@ export const socialSchema = z
       ctx.addIssue({ code: "custom", path: ["imageUrl"], message: "请填写图标图片链接。" });
   });
 const optionalHttps = z.union([z.literal(""), httpsUrlSchema]);
+const verificationTokenSchema = z
+  .string()
+  .trim()
+  .max(200, "站长验证码最多 200 个字符。")
+  .regex(/^[A-Za-z0-9_-]*$/, "只填写验证码，支持字母、数字、下划线和连字符。")
+  .default("");
 export const settingsSchema = z
   .strictObject({
     title: z.string().trim().min(1, "请输入站点名称。").max(120),
     subtitle: z.string().trim().max(120),
+    seoDescription: z.string().trim().max(300, "搜索描述最多 300 个字符。").default(""),
+    ogImageUrl: imageUrlSchema.default(""),
+    googleVerification: verificationTokenSchema,
+    bingVerification: verificationTokenSchema,
+    baiduVerification: verificationTokenSchema,
     authorName: z.string().trim().min(1, "请输入博主昵称。").max(120),
     authorRole: z.string().trim().max(120),
     avatarUrl: imageUrlSchema,
@@ -102,6 +113,11 @@ export type PublicSettings = Pick<
   | "enableComments"
   | "title"
   | "subtitle"
+  | "seoDescription"
+  | "ogImageUrl"
+  | "googleVerification"
+  | "bingVerification"
+  | "baiduVerification"
   | "authorName"
   | "authorRole"
   | "avatarUrl"
@@ -120,6 +136,11 @@ export type PublicSettings = Pick<
 export const defaultSettings: SettingsInput = {
   title: "fuxiaochen",
   subtitle: "记录生活，分享想法",
+  seoDescription: "",
+  ogImageUrl: "",
+  googleVerification: "",
+  bingVerification: "",
+  baiduVerification: "",
   authorName: "fuxiaochen",
   authorRole: "开发者 / 设计爱好者",
   avatarUrl: "/avatar.avif",

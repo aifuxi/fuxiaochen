@@ -48,10 +48,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 
-# next-sitemap在build生成的文件
-/public/robots.txt
-/public/*.xml
-
 # 本地上传的文件
 /public/uploads/*
 

@@ -132,6 +132,76 @@ void test("普通账号、迁移可重复执行、时间与大整数 round-trip"
   assert.equal(stored?.updatedAt.toISOString(), date.toISOString());
 });
 
+void test("SEO 设置兼容旧空值、校验验证码、持久化与版本冲突", async () => {
+  const settings = await import("../lib/settings/service");
+  const { defaultSettings, settingsSchema } = await import("../lib/settings/schema");
+  const seoKeys = [
+    "seoDescription",
+    "ogImageUrl",
+    "googleVerification",
+    "bingVerification",
+    "baiduVerification",
+  ] as const;
+  const legacy = Object.fromEntries(
+    Object.entries(defaultSettings).filter(([key]) => !seoKeys.some((seoKey) => seoKey === key)),
+  );
+  const defaults = settingsSchema.parse(legacy);
+  for (const key of seoKeys) assert.equal(defaults[key], "");
+  assert.equal(
+    settingsSchema.safeParse({ ...defaultSettings, seoDescription: "描".repeat(301) }).success,
+    false,
+  );
+  assert.equal(
+    settingsSchema.safeParse({ ...defaultSettings, ogImageUrl: "javascript:alert(1)" }).success,
+    false,
+  );
+  for (const key of seoKeys.filter((fieldName) => fieldName.endsWith("Verification"))) {
+    assert.equal(
+      settingsSchema.safeParse({ ...defaultSettings, [key]: '<meta content="token">' }).success,
+      false,
+    );
+    assert.equal(
+      settingsSchema.safeParse({ ...defaultSettings, [key]: "a".repeat(201) }).success,
+      false,
+    );
+  }
+  await settings.getSettings(actor);
+  await database.writeTransaction((tx) =>
+    tx.orm.public.SiteSetting.where({ id: 1 }).update({
+      seoDescription: null,
+      ogImageUrl: null,
+      googleVerification: null,
+      bingVerification: null,
+      baiduVerification: null,
+    }),
+  );
+  const previous = await settings.getSettings(actor);
+  for (const key of seoKeys) assert.equal(previous[key], "");
+  const input = settingsSchema.parse({
+    ...defaultSettings,
+    version: previous.version,
+    seoDescription: "  独立站点搜索描述  ",
+    ogImageUrl: "/seo-share.png",
+    googleVerification: "  google_test-123  ",
+    bingVerification: "BING123",
+    baiduVerification: "baidu_456",
+  });
+  const saved = await settings.saveSettings(input, actor);
+  assert.equal(saved.version, previous.version + 1);
+  const reloaded = await settings.getSettings(actor);
+  for (const key of seoKeys) assert.equal(reloaded[key], input[key]);
+  await assert.rejects(
+    settings.saveSettings(input, actor),
+    (error: unknown) =>
+      error instanceof Error && "code" in error && error.code === "VERSION_CONFLICT",
+  );
+  const cleared = await settings.saveSettings(
+    settingsSchema.parse({ ...defaultSettings, version: saved.version }),
+    actor,
+  );
+  for (const key of seoKeys) assert.equal(cleared[key], "");
+});
+
 void test("JSON 正文与字面关键词搜索、分类关系和乐观锁", async () => {
   const posts = await import("../lib/posts/service");
   const { postQuerySchema, featuredPostSchema } = await import("../lib/posts/schema");

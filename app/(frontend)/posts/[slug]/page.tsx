@@ -5,23 +5,18 @@ import { notFound } from "next/navigation";
 
 import { ArticleContent } from "@/components/frontend/article-content";
 import { Comments } from "@/components/frontend/comments";
+import { JsonLd } from "@/components/frontend/json-ld";
 import { postTime } from "@/lib/posts/schema";
 import { listPublicComments } from "@/lib/public/comments";
 import { getPublicPost } from "@/lib/public/service";
+import { articleJsonLd, articleMetadata } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getPublicPost((await params).slug);
   if (!post) notFound();
-  return {
-    title: post.title,
-    openGraph: {
-      title: post.title,
-      type: "article",
-      publishedTime: post.publishedAt ?? undefined,
-      modifiedTime: post.updatedAt,
-    },
-  };
+  const settings = await getPublicSettings();
+  return articleMetadata(settings, post);
 }
 export default async function PostPage({ params }: Props) {
   const post = await getPublicPost((await params).slug);
@@ -32,6 +27,7 @@ export default async function PostPage({ params }: Props) {
   ]);
   return (
     <main id="main-content" className="site-main site-reading">
+      <JsonLd data={articleJsonLd(settings, post)} />
       <article>
         <Link className="site-back" href="/posts">
           返回文章列表

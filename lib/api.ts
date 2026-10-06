@@ -4,7 +4,6 @@ import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
-import { z } from "zod";
 
 import { collectionRoutes } from "./analytics/collect-routes";
 import { analyticsRoutes } from "./analytics/routes";
@@ -24,20 +23,8 @@ import { operationsRoutes } from "./operations/routes";
 import { postRoutes } from "./posts/routes";
 import { publicRoutes } from "./public/routes";
 import { settingsRoutes } from "./settings/routes";
+import { siteOrigin } from "./site-origin";
 import { taxonomyRoutes } from "./taxonomy/routes";
-
-function appOrigin() {
-  const configured = z.url().parse(process.env.APP_ORIGIN);
-  const url = new URL(configured);
-  if (
-    !["http:", "https:"].includes(url.protocol) ||
-    url.origin !== configured ||
-    (process.env.NODE_ENV === "production" && url.protocol !== "https:")
-  ) {
-    throw new Error("APP_ORIGIN 必须为站点 origin，生产环境必须使用 HTTPS");
-  }
-  return configured;
-}
 
 export const api = new Hono().basePath("/api");
 
@@ -45,7 +32,7 @@ api.use("*", async (c, next) => {
   c.header("Cache-Control", "no-store");
   if (
     ["POST", "PUT", "PATCH", "DELETE"].includes(c.req.method) &&
-    c.req.header("origin") !== appOrigin()
+    c.req.header("origin") !== siteOrigin()
   ) {
     if (c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/"))
       return c.json({ error: { code: "FORBIDDEN_ORIGIN", message: "请求来源不被允许。" } }, 403);

@@ -87,6 +87,8 @@ fuxiaochen.com {
 
 Caddy 负责 HTTPS，应用通过内部 HTTP 处理代理请求。`APP_ORIGIN=https://fuxiaochen.com` 与浏览器地址完全一致；生产鉴权使用 Secure Cookie，必须通过 HTTPS 域名登录。
 
+SEO 的 canonical、OG URL、结构化数据和 `/sitemap.xml`、`/robots.txt` 共用经过校验的 `APP_ORIGIN`，在请求时生成，不从请求 Host 推断、不在构建时固化。修改生产域名后重启应用，并检查抓取文件只引用正式 HTTPS 地址。旧 `public/robots.txt`、`public/sitemap*.xml` 不再使用，也不进入 Docker 构建；不要放回 public 与动态路由冲突。
+
 本配置由 Caddy 覆盖客户端传来的 `X-Real-IP`。确认 Caddy 直接接收访客连接后，才将 `ANALYTICS_CLIENT_IP_HEADER` 设为 `x-real-ip`。如果 Caddy 前还有 CDN 或另一层代理，先配置可信代理及真实客户端 IP 解析；上述 `{remote_host}` 此时是上一跳地址，不能当作访客 IP。`infra_edge` 只接入可信容器，同一网络中不能有另一个应用使用相同别名。
 
 ## 管理员与运维命令

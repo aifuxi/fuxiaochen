@@ -3,7 +3,7 @@ import { connection } from "next/server";
 import { cache } from "react";
 import { z } from "zod";
 
-import { documentText, readDocument } from "@/lib/posts/document";
+import { postExcerpt } from "@/lib/posts/excerpt";
 import { slugSchema } from "@/lib/posts/schema";
 import { getPublicSettings } from "@/lib/settings/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
@@ -39,7 +39,7 @@ function serializePost({ tagLinks, publishedAt, updatedAt, ...row }: PostRow) {
       .toSorted((a, b) => a.name.localeCompare(b.name)),
   };
 }
-export async function getPublicTaxonomies() {
+export const getPublicTaxonomies = cache(async () => {
   await connection();
   return writeTransaction(async (tx) => {
     const categories = await tx.orm.public.Category.select("id", "name", "color")
@@ -71,13 +71,16 @@ export async function getPublicTaxonomies() {
         .filter((t) => t.count > 0),
     };
   });
-}
+});
 export async function listPublicPosts(params: SearchParams) {
   const parsed = publicPostQuerySchema.safeParse(
     Object.fromEntries(Object.entries(singleParams(params)).filter(([, value]) => value !== "")),
   );
   if (!parsed.success) return { error: "筛选参数无效，请清除筛选后重试。" } as const;
-  const query = parsed.data;
+  return listPosts(JSON.stringify(parsed.data));
+}
+const listPosts = cache(async (queryKey: string) => {
+  const query = publicPostQuerySchema.parse(JSON.parse(queryKey));
   const settings = await getPublicSettings();
   return writeTransaction(async (tx) => {
     const db = getDatabase();
@@ -118,20 +121,14 @@ export async function listPublicPosts(params: SearchParams) {
           .select("id", "content")
           .all()
       : [];
-    const excerpts = new Map(
-      bodies.map((body) => {
-        const text = documentText(readDocument(body.content)).replace(/\s+/g, " ").trim();
-        const characters = Array.from(text);
-        return [body.id, characters.slice(0, 100).join("") + (characters.length > 100 ? "…" : "")];
-      }),
-    );
+    const excerpts = new Map(bodies.map((body) => [body.id, postExcerpt("", body.content, 100)]));
     const items = rows.map((row) => ({
       ...serializePost(row),
       summary: row.summary.trim() || excerpts.get(row.id) || "",
     }));
     return { error: null, items, total, page, pageCount, query };
   });
-}
+});
 export const getPublicPost = cache(async (slug: string) => {
   await connection();
   if (!slugSchema.safeParse(slug).success) return null;
@@ -144,7 +141,7 @@ export const getPublicPost = cache(async (slug: string) => {
     return content ? { ...serializePost(row), content: content.content } : null;
   });
 });
-export async function listPublicFriends(category: string | undefined) {
+export const listPublicFriends = cache(async (category: string | undefined) => {
   await connection();
   return writeTransaction(async (tx) => {
     const rows = await tx.orm.public.FriendLink.where({ status: "approved", enabled: 1 })
@@ -156,13 +153,13 @@ export async function listPublicFriends(category: string | undefined) {
       items: category ? rows.filter((f) => f.category === category) : rows,
     };
   });
-}
-export async function listPublicChangelog(page: number) {
+});
+export const listPublicChangelog = cache(async (requestedPage: number) => {
   await connection();
   return writeTransaction(async (tx) => {
     const { total } = await tx.orm.public.ReleaseLog.aggregate((agg) => ({ total: agg.count() }));
     const pageCount = Math.max(1, Math.ceil(total / 8));
-    page = Math.min(page, pageCount);
+    const page = Math.min(requestedPage, pageCount);
     const rows = await tx.orm.public.ReleaseLog.select(
       "id",
       "version",
@@ -186,4 +183,4 @@ export async function listPublicChangelog(page: number) {
       total,
     };
   });
-}
+});

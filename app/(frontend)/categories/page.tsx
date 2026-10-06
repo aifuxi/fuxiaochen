@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 
 import { getPublicTaxonomies } from "@/lib/public/service";
-export const metadata = { title: "分类" };
+import { pageMetadata } from "@/lib/seo";
+import { getPublicSettings } from "@/lib/settings/service";
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSettings();
+  return pageMetadata(settings, {
+    title: "分类",
+    description: `浏览 ${settings.title} 的文章分类，按主题探索已发布的内容。`,
+    path: "/categories",
+  });
+}
 export default async function CategoriesPage() {
   const { categories } = await getPublicTaxonomies();
   return (

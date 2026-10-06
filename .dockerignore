@@ -42,6 +42,9 @@ yarn-error.log*
 **/backups
 logs
 public/uploads
+# 旧 next-sitemap 本地产物；抓取文件由 app 路由动态生成。
+public/robots.txt
+public/sitemap*.xml
 .github
 .agents
 .codex

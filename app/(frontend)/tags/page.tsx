@@ -1,7 +1,18 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 
 import { getPublicTaxonomies } from "@/lib/public/service";
-export const metadata = { title: "标签" };
+import { pageMetadata } from "@/lib/seo";
+import { getPublicSettings } from "@/lib/settings/service";
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicSettings();
+  return pageMetadata(settings, {
+    title: "标签",
+    description: `浏览 ${settings.title} 的文章标签，从关键词发现相关内容。`,
+    path: "/tags",
+  });
+}
 export default async function TagsPage() {
   const { tags } = await getPublicTaxonomies();
   return (

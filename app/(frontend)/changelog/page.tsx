@@ -1,24 +1,57 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
+import { permanentRedirect } from "next/navigation";
 
 import { Pagination } from "@/components/frontend/pagination";
 import { Button } from "@/components/ui/button";
 import { postTime } from "@/lib/posts/schema";
-import { pageSchema, singleParams, type SearchParams } from "@/lib/public/schema";
+import {
+  normalizedQueryPath,
+  pageSchema,
+  queryNeedsRedirect,
+  queryPath,
+  singleParams,
+  type SearchParams,
+} from "@/lib/public/schema";
 import { listPublicChangelog } from "@/lib/public/service";
-export const metadata = { title: "更新日志" };
+import { pageMetadata } from "@/lib/seo";
+import { getPublicSettings } from "@/lib/settings/service";
+
+type Props = { searchParams: Promise<SearchParams> };
+async function changelogContext(params: SearchParams) {
+  const rawPage = singleParams(params).page;
+  const parsed = pageSchema.safeParse(rawPage);
+  const result = parsed.success ? await listPublicChangelog(parsed.data) : null;
+  const normalized = {
+    page: result ? (result.page > 1 ? String(result.page) : undefined) : rawPage,
+  };
+  if (queryNeedsRedirect(params, normalized))
+    permanentRedirect(normalizedQueryPath("/changelog", params, normalized));
+  return { result, path: queryPath("/changelog", normalized) };
+}
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const [settings, context] = await Promise.all([
+    getPublicSettings(),
+    changelogContext(await searchParams),
+  ]);
+  const page = context.result?.page ?? 1;
+  return pageMetadata(settings, {
+    title: `更新日志${page > 1 ? ` · 第 ${page} 页` : ""}`,
+    description: `查看 ${settings.title} 的更新记录，了解功能、修复与每一次改进。`,
+    path: context.path,
+    robots: context.result ? undefined : { index: false, follow: true },
+  });
+}
 const labels: Record<string, string> = {
   feature: "新功能",
   fix: "修复",
   performance: "性能",
   security: "安全",
 };
-export default async function ChangelogPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
-  const parsed = pageSchema.safeParse(singleParams(await searchParams).page);
-  if (!parsed.success)
+export default async function ChangelogPage({ searchParams }: Props) {
+  const { result } = await changelogContext(await searchParams);
+  if (!result)
     return (
       <main id="main-content" className="site-main site-reading">
         <header className="site-page-heading">
@@ -36,7 +69,6 @@ export default async function ChangelogPage({
         </Button>
       </main>
     );
-  const result = await listPublicChangelog(parsed.data);
   return (
     <main id="main-content" className="site-main site-reading">
       <header className="site-page-heading">

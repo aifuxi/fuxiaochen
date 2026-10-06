@@ -6,6 +6,7 @@ import { SocialIcon } from "@/components/frontend/configured-image";
 import { LocalAnalytics } from "@/components/frontend/local-analytics";
 import { SiteAnalytics } from "@/components/frontend/site-analytics";
 import { SiteHeader } from "@/components/frontend/site-header";
+import { siteDescription } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
 
 import "./site.css";
@@ -13,8 +14,17 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSettings();
   return {
     title: { default: settings.title, template: `%s · ${settings.title}` },
-    description: settings.subtitle || settings.aboutMe,
+    description: siteDescription(settings),
     authors: [{ name: settings.authorName }],
+    verification: {
+      google: settings.googleVerification || undefined,
+      other: {
+        ...(settings.bingVerification ? { "msvalidate.01": settings.bingVerification } : {}),
+        ...(settings.baiduVerification
+          ? { "baidu-site-verification": settings.baiduVerification }
+          : {}),
+      },
+    },
   };
 }
 export default async function FrontendLayout({

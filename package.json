@@ -31,7 +31,9 @@
     "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts",
     "analytics:cleanup": "node --conditions=react-server --import tsx scripts/analytics-cleanup.ts",
     "db:up": "docker compose -p fuxiaochen-dev -f compose.dev.yaml up -d --wait postgres",
-    "test:postgres": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres.test.ts"
+    "test:postgres": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres.test.ts",
+    "test:seo": "node --conditions=react-server --import tsx --test tests/seo.test.ts",
+    "test:seo:integration": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/seo.integration.test.ts"
   },
   "dependencies": {
     "@alicloud/credentials": "2.4.7",

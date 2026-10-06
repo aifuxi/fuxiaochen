@@ -36,12 +36,23 @@ const request = resourceRequest("/api/admin/settings");
 const load = request<SiteSettings>;
 const groups = {
   profile: "资料与站点",
+  seo: "SEO",
   system: "系统偏好",
   filing: "备案",
   social: "社交账号",
   analytics: "访问统计",
 };
 function fieldGroup(key: string) {
+  if (
+    [
+      "seoDescription",
+      "ogImageUrl",
+      "googleVerification",
+      "bingVerification",
+      "baiduVerification",
+    ].includes(key)
+  )
+    return "seo";
   if (key.startsWith("socials")) return "social";
   if (/^(icp|police)/.test(key)) return "filing";
   if (/^(localAnalytics|google|baidu)/.test(key)) return "analytics";
@@ -159,6 +170,10 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
       SiteSettings,
       | "title"
       | "subtitle"
+      | "ogImageUrl"
+      | "googleVerification"
+      | "bingVerification"
+      | "baiduVerification"
       | "authorName"
       | "authorRole"
       | "avatarUrl"
@@ -226,7 +241,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
       <div className="admin-page-heading">
         <div>
           <h1>系统设置</h1>
-          <p>管理站点资料、备案、社交账号与访问统计。</p>
+          <p>管理站点资料、SEO、备案、社交账号与访问统计。</p>
         </div>
         <Button variant="primary" size="compact" type="submit" disabled={pending || conflict}>
           <Save size={16} aria-hidden="true" />
@@ -266,7 +281,7 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>站点信息</h2>
-                  <p>首页与搜索摘要使用这些资料。</p>
+                  <p>首页、导航与页脚使用这些资料。</p>
                 </div>
                 <div className="admin-settings-fields">
                   {text("title", "站点名称")}
@@ -303,6 +318,54 @@ function SettingsForm({ initial }: { initial: SiteSettings }) {
                       aria-describedby={errors.aboutMe ? "settings-aboutMe-error" : undefined}
                     />,
                   )}
+                </div>
+              </section>
+            </div>
+          </TabsPanel>
+          <TabsPanel value="seo" className="admin-settings-panel">
+            <div className="admin-settings-stack">
+              <section className="admin-settings-section">
+                <div className="admin-settings-section-heading">
+                  <h2>搜索与分享</h2>
+                  <p>设置站点的默认搜索描述与分享图片。</p>
+                </div>
+                <div className="admin-settings-fields">
+                  {field(
+                    "seoDescription",
+                    "搜索描述",
+                    <Textarea
+                      id="settings-seoDescription"
+                      rows={4}
+                      maxLength={300}
+                      value={draft.seoDescription}
+                      onChange={(e) => set("seoDescription", e.target.value)}
+                      aria-invalid={!!errors.seoDescription}
+                      aria-describedby={
+                        errors.seoDescription ? "settings-seoDescription-error" : undefined
+                      }
+                    />,
+                    "最多 300 个字符；留空时使用站点副标题或个人简介。文章页优先使用文章摘要。",
+                  )}
+                  {text(
+                    "ogImageUrl",
+                    "默认分享图片",
+                    2048,
+                    "HTTPS 图片链接或站内绝对路径；留空时使用站点默认分享图。",
+                  )}
+                </div>
+              </section>
+              <section className="admin-settings-section">
+                <div className="admin-settings-section-heading">
+                  <h2>站长平台验证</h2>
+                  <p>
+                    填写验证标签 content
+                    中的验证码，支持字母、数字、下划线和连字符；留空时不输出验证标签。
+                  </p>
+                </div>
+                <div className="admin-settings-fields">
+                  {text("googleVerification", "Google Search Console", 200)}
+                  {text("bingVerification", "Bing Webmaster Tools", 200)}
+                  {text("baiduVerification", "百度搜索资源平台", 200)}
                 </div>
               </section>
             </div>
