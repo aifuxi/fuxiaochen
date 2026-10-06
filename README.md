@@ -79,9 +79,14 @@ npm run dev
 
 ## 项目文档
 
-- [视觉与交互规范](DESIGN.md)
+- [共享设计规范、参考基线与待同步清单](DESIGN.md)
+- [前台、登录与展示页场景](docs/design/frontend.md)
+- [后台工作区与页面场景](docs/design/admin.md)
+- [产品行为、字段与统计口径](docs/product/behavior.md)
 - [历史验收摘要与未验证范围](docs/engineering/verification-history.md)
 - [开发协作约定](AGENTS.md)
+
+2026-10-05 规范重构将共享设计、页面布局、产品行为与工程机制分开维护。Inter、前台导航、原生指针及首页与展示页构图是已批准但待实施的目标，当前页面差异见共享设计规范；文档更新不代表视觉实现或运行验收已完成。
 
 ## 许可证
 

@@ -39,3 +39,11 @@ npm run posts:publish-due
 账号管理交互输入密码；重置密码撤销该账号全部会话。媒体清理操作 OSS 对象，先核对 dry-run。排期和统计清理均使用与 Web 相同的 PostgreSQL。
 
 备份、恢复和部署步骤见 [部署指南](deployment.md)。参考 [Prisma PostgreSQL 扩展](https://www.prisma.io/extensions/postgresql)、[Prisma 8 contract](https://www.prisma.io/docs/orm/contract-authoring/typescript-schema-builder)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/18/explicit-locking.html)。
+
+## 正文格式与查询机制
+
+正文保存为带格式与版本的 Tiptap JSON 文本；`lib/posts/document.ts` 序列化 `{ format: "fuxiaochen-tiptap", version: 1, document, text }`，读取时校验格式、版本及完整节点结构。编辑器、服务端校验和前台静态渲染共用内容节点定义；正文搜索使用归一化的纯文本，不查询标记结构。当前编辑、前台渲染和搜索不读取旧 Markdown，Markdown 仅作为导入格式，不在本轮恢复旧数据迁移。
+
+Markdown 导入由 `lib/posts/markdown-document.ts` 解析为同一种文档，支持 GFM；原始 HTML 和不支持的语法保留为文字，不执行。导入合并后再次校验完整文档，链接与图片使用共享 URL 校验。导入上限、插入语义、保存状态与失败保留见 [产品行为](product/behavior.md)，编辑器和正文布局分别见 [后台场景](design/admin.md) 与 [前台场景](design/frontend.md)。
+
+后台筛选和搜索使用业务查询入口，查询条件变化时取消旧请求，避免旧结果覆盖新条件。访客记录每 10 秒查询，页面隐藏、卸载或暂停时停止轮询，恢复时立即刷新；暂停只冻结后台查询，不关闭前台采集。产品状态、分页和统计口径由产品文档维护，轮询不作为视觉动效。

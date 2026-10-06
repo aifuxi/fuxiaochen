@@ -62,6 +62,14 @@ Bucket Policy 仅开放正式对象的 HTTPS 匿名读取：
 
 OSS CORS：AllowedOrigin 使用实际 `APP_ORIGIN`，AllowedMethod 为 PUT，AllowedHeader 为 `Content-Type`，ExposeHeader 可留空，MaxAgeSeconds 为300。部署域名需加入允许来源，不使用通配 Origin。浏览器不接收 RAM 凭证，也不手动设置 Content-Length。
 
+## 上传协议与队列
+
+浏览器先取得预签名 URL，再用原始 `File` 直传 OSS 临时对象，最后请求服务端核验与发布。准备阶段由 `lib/media/file-hash.ts` 按 4 MiB 分块读取，计算整个文件的 SHA-256；分块读取不等于分片上传，取消后停止继续读取。浏览器上传最长等待 15 分钟，服务端核验与发布最多 5 分钟，等待期间保留对应状态，字节传输完成不代表文件已经保存。
+
+服务端核对实际长度与 SHA-256，识别图片格式及像素数后再发布正式对象；文件大小、所有帧像素上限、可预览格式与附件强制下载条件见 [产品行为](product/behavior.md)。大小限制、页面说明及错误提示引用 `lib/media/schema.ts` 的同一份共享常量。复制入口只使用已保存的永久 HTTPS URL，不复制上传票据或预签名地址。
+
+`AdminWorkspace` 持有上传队列的文件与进度，后台站内切换不重建队列；逐文件阶段包括准备、上传、服务端核验、成功与失败，最多两个文件并行。失败项显式重试，上传及核验取消使用同一任务的取消信号；票据失效或输入不合法时重新准备票据。列表刷新失败与文件上传失败分别反馈。任务显示、失败恢复及删除约束见产品行为，队列布局见 [后台场景](design/admin.md)。
+
 ## 临时上传清理
 
 在 OSS 为 `staging/` 设置1天过期删除规则，不对 `media/` 设置过期规则。应用不使用分片上传。

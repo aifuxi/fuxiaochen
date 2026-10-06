@@ -8,6 +8,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## 语言与 Git
+
+- 默认使用中文沟通、编写文档和代码注释；项目已有明确语言约定时遵循该约定，技术名词、命令、路径、配置键名和代码标识符保留常用写法。
+- Git 提交使用 `type(scope): 中文描述`，遵循 Conventional Commits；优先使用项目既有 scope，没有合适 scope 时可省略。
+
 ## 开发服务器启动与复用
 
 - 每次启动开发服务器前，必须先检查当前项目是否已有运行中的开发服务器，结合 IDE 运行状态、进程、监听端口或服务响应确认其所属项目和可用性。
@@ -17,9 +22,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 项目设计系统
 
-- 所有新增或修改的界面以仓库根目录的 `DESIGN.md` 为视觉与交互规范来源；先阅读其 token 与各章节说明，再实现 UI。
-- Tailwind CSS v4 变量须与 `DESIGN.md` 同步。交互基础组件使用 Base UI，按 `components/ui/` 中可编辑、可组合的本地组件方式组织。
-- 组件必须覆盖 hover、active、focus-visible、disabled 和 `prefers-reduced-motion`；新设计规则先更新 `DESIGN.md`，再更新实现。
+- UI 任务先阅读 [共享设计规范](DESIGN.md)，再按任务阅读 [前台、登录与展示页场景](docs/design/frontend.md) 或 [后台场景](docs/design/admin.md)，无需读取无关业务章节。
+- 行为变化阅读 [产品行为](docs/product/behavior.md)；技术变化按需阅读 [数据库维护](docs/maintenance.md)、[媒体存储](docs/media-storage.md) 和 [部署指南](docs/deployment.md)。各文档按职责负责，场景规格只声明布局与显式变体，不另设共享 token。
+- Tailwind CSS v4 主题变量在授权的 UI 实现范围内与 `DESIGN.md` 的目标 token 同步。交互基础组件使用 Base UI，按 `components/ui/` 中可编辑、可组合的本地组件方式组织。
+- 可交互组件按语义覆盖 hover、active、focus-visible、disabled 和 `prefers-reduced-motion`；静态内容不添加虚假交互状态。
+- 共享设计规则更新 `DESIGN.md`，页面布局更新对应场景，业务规则更新产品文档。UI 实现任务在授权范围内同步规范与代码；纯规范任务可记录已批准但待实施的目标，必须注明实现差异与验证状态，不顺带扩大改动范围。
 
 ## 后台技术栈与开发约定
 
@@ -39,7 +46,6 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## PostgreSQL 开发与运维
 
-- 默认使用中文沟通、编写文档和代码注释；Git 提交使用 `type(scope): 中文描述`。
 - 本地 PostgreSQL 使用 `compose.dev.yaml`，通过 `npm run db:up` 启动或复用，端口固定为 `127.0.0.1:15433:5432`；Next.js 在电脑上运行。
 - 线上应用连接 `postgres:5432`，数据库不发布宿主机端口；应用与数据库凭据不得进入构建或 Git。
 - 所有业务写入经 `writeTransaction`／`authTransaction`，使用同一事务级 advisory lock，覆盖 Web 与 CLI。

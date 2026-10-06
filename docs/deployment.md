@@ -17,6 +17,8 @@
 
 ## 镜像构建
 
+`/design-spec` 仅在开发环境开放，生产环境返回 404，由该路由布局检查运行环境。它是本地组件演示入口，不是生产公开页面；布局规格见 [前台、登录与展示页场景](design/frontend.md)。
+
 工作流为 `.github/workflows/container.yml`，触发条件：
 
 - 推送任意分支：发布该分支标签和 `sha-<完整 commit SHA>`。
