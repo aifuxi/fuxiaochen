@@ -27,6 +27,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Tailwind CSS v4 主题变量在授权的 UI 实现范围内与 `DESIGN.md` 的目标 token 同步。交互基础组件使用 Base UI，按 `components/ui/` 中可编辑、可组合的本地组件方式组织。
 - 可交互组件按语义覆盖 hover、active、focus-visible、disabled 和 `prefers-reduced-motion`；静态内容不添加虚假交互状态。
 - 共享设计规则更新 `DESIGN.md`，页面布局更新对应场景，业务规则更新产品文档。UI 实现任务在授权范围内同步规范与代码；纯规范任务可记录已批准但待实施的目标，必须注明实现差异与验证状态，不顺带扩大改动范围。
+- 参考站对齐任务必须按 [UI 参考采集与回归](docs/engineering/ui-reference-verification.md) 执行：先实际操作参考，再记录布局和交互目标。文档只写布局或简写 hover 时，不能据此省略参考中的交互；规范差异须明确说明采用、适配或不在范围内的依据。
+- 使用已有组件或效果前先核对本地组件、已安装依赖和相关 skill。Libraries.dev 已有的效果使用 `libraries-dev` skill、对应参考和安装版本的公开 API，不另写等价效果或绑定库内部 keyframes；普通语义状态仍由本地基础组件负责。
+- 交付前按本次改动清单回归受影响页面和共享组件消费者，验证触发、状态变化、结束或复位及真实操作结果。修复后重测该项及关联流程，不能只检查新增代码。
+- 验证记录区分已实现、运行通过、仅源码核对、未验证和不适用。截图、类型检查或构建通过不能证明交互通过；完成结论须对应明确证据及剩余范围。
 
 ## 后台技术栈与开发约定
 
