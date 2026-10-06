@@ -83,7 +83,7 @@ export function MarkdownImportDialog({
         if (!open && !disabled) onClose();
       }}
     >
-      <DialogContent className="post-editor-import-dialog" data-cursor="native" finalFocus={false}>
+      <DialogContent className="post-editor-import-dialog" finalFocus={false}>
         <DialogTitle>导入 Markdown</DialogTitle>
         <DialogDescription>
           选择 UTF-8 的 Markdown 文件或粘贴源码，插入到光标位置。导入后可撤销，保存后才会写入文章。

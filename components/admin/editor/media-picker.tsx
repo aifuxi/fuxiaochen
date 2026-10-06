@@ -36,7 +36,7 @@ export function EditorMediaPicker({
         if (!open) onClose();
       }}
     >
-      <DialogContent className="post-media-picker" data-cursor="native" finalFocus={false}>
+      <DialogContent className="post-media-picker" finalFocus={false}>
         <DialogTitle>插入图片</DialogTitle>
         <DialogDescription>
           选择媒体库中的图片，或上传后选择。图片最多 {IMAGE_MAX_BYTES / (1024 * 1024)} MiB。

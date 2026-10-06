@@ -290,9 +290,6 @@
 }
 .login-field .ds-input {
   width: 100%;
-  height: 48px;
-  padding: 0 15px;
-  font-size: 13px;
 }
 .login-error {
   margin: -5px 0 -3px;
@@ -302,7 +299,7 @@
 }
 .login-submit {
   width: 100%;
-  height: 48px;
+  height: var(--control-form);
   justify-content: space-between;
   margin-top: 7px;
   padding: 0 18px;

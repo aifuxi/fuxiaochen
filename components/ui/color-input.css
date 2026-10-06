@@ -1,18 +1,18 @@
 .ds-color-input {
   flex: none;
-  width: 44px;
-  height: 44px;
+  width: var(--control-form);
+  height: var(--control-form);
   padding: 10px;
   border: 0;
-  border-radius: 14px;
+  border-radius: var(--radius-form);
   background: var(--color-input);
   cursor: pointer;
-  transition: background 150ms;
+  transition: background-color var(--motion-quick) var(--motion-ease);
 }
-.ds-color-input:hover {
+.ds-color-input:hover:not(:disabled) {
   background: var(--color-input-hover);
 }
-.ds-color-input:active {
+.ds-color-input:active:not(:disabled) {
   background: var(--color-raised);
 }
 .ds-color-input:focus-visible {

@@ -148,7 +148,7 @@ function BlockMenu({
       >
         {children}
       </PopoverTrigger>
-      <PopoverContent className="post-editor-popover" data-cursor="native" finalFocus={false}>
+      <PopoverContent className="post-editor-popover" finalFocus={false}>
         <PopoverTitle>内容块操作</PopoverTitle>
         <Button
           type="button"
@@ -391,7 +391,7 @@ export function BlockEditor({
             <Plus size={17} aria-hidden="true" />
             插入
           </PopoverTrigger>
-          <PopoverContent className="post-editor-popover" data-cursor="native" finalFocus={false}>
+          <PopoverContent className="post-editor-popover" finalFocus={false}>
             <PopoverTitle>插入内容</PopoverTitle>
             {insertActions(openImage).map((item) => (
               <Button
@@ -573,7 +573,7 @@ export function BlockEditor({
           }
         }}
       >
-        <DialogContent className="post-editor-link-dialog" data-cursor="native" finalFocus={false}>
+        <DialogContent className="post-editor-link-dialog" finalFocus={false}>
           <DialogTitle>编辑链接</DialogTitle>
           <DialogDescription>填写链接地址；清空地址可移除链接。</DialogDescription>
           <label className="post-editor-field" htmlFor="post-link-url">

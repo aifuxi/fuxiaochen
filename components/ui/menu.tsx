@@ -31,7 +31,6 @@ export function MenuItem({
   return (
     <BaseMenu.Item
       className={cn("ds-menu-item", destructive && "is-destructive", className)}
-      data-cursor-interactive
       {...props}
     />
   );

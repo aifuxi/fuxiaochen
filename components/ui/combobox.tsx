@@ -16,7 +16,10 @@ export function ComboboxInputGroup({
 }: ComponentProps<typeof BaseCombobox.InputGroup>) {
   return (
     <BaseCombobox.InputGroup
-      className={cn("ds-input ds-combobox-group flex h-11 w-full items-center", className)}
+      className={cn(
+        "ds-input ds-combobox-group flex h-[var(--control-form)] w-full items-center",
+        className,
+      )}
       {...props}
     />
   );
@@ -26,7 +29,7 @@ export function ComboboxInput({ className, ...props }: ComponentProps<typeof Bas
   return (
     <BaseCombobox.Input
       className={cn(
-        "ds-combobox-input h-full min-w-0 flex-1 bg-transparent px-3.5 text-sm text-[var(--color-foreground)] outline-none placeholder:text-[var(--color-subtle)]",
+        "ds-combobox-input h-full min-w-0 flex-1 bg-transparent px-3 text-sm leading-5 text-[var(--color-foreground)] outline-none placeholder:text-[var(--color-subtle)]",
         className,
       )}
       {...props}
@@ -94,11 +97,7 @@ export function ComboboxItem({
   ...props
 }: ComponentProps<typeof BaseCombobox.Item>) {
   return (
-    <BaseCombobox.Item
-      className={cn("ds-picker-item", className)}
-      data-cursor-interactive
-      {...props}
-    >
+    <BaseCombobox.Item className={cn("ds-picker-item", className)} {...props}>
       <span className="min-w-0 flex-1 truncate">{children}</span>
       <BaseCombobox.ItemIndicator className="shrink-0 text-[var(--color-focus)]">
         <Check size={15} aria-hidden="true" />

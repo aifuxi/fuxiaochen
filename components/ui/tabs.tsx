@@ -17,7 +17,7 @@ export function TabsList({
   return (
     <BaseTabs.List
       className={cn(
-        "ds-tabs-list inline-flex h-10 gap-1 rounded-full bg-white/[0.05] p-1",
+        "ds-tabs-list inline-flex h-[var(--control-default)] gap-1 rounded-full bg-white/[0.05] p-1",
         size === "compact" && "ds-control-compact",
         className,
       )}
@@ -30,15 +30,7 @@ export function TabsList({
 }
 
 export function TabsTrigger({ className, ...props }: ComponentProps<typeof BaseTabs.Tab>) {
-  return (
-    <BaseTabs.Tab
-      className={cn(
-        "ds-tabs-trigger rounded-full px-4 text-[13px] text-[var(--color-subtle)] transition-colors duration-200 enabled:hover:text-white enabled:active:text-[var(--color-muted)] data-active:text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] data-disabled:cursor-not-allowed data-disabled:opacity-40",
-        className,
-      )}
-      {...props}
-    />
-  );
+  return <BaseTabs.Tab className={cn("ds-tabs-trigger rounded-full px-4", className)} {...props} />;
 }
 
 export function TabsPanel({ className, ...props }: ComponentProps<typeof BaseTabs.Panel>) {

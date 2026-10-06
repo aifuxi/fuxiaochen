@@ -12,9 +12,6 @@
   width: 300px;
   max-width: 100%;
 }
-.admin-friends-links .admin-friend-search .ds-input-group-button {
-  width: 36px;
-}
 .admin-friends-links .admin-friend-table {
   min-width: 960px;
 }
@@ -148,8 +145,7 @@
   }
 }
 @media (max-width: 600px), (pointer: coarse) {
-  .admin-friends-links .admin-post-row-actions .ds-button,
-  .admin-friends-links .admin-friend-search .ds-input-group-button {
+  .admin-friends-links .admin-post-row-actions .ds-button {
     width: 44px;
   }
 }

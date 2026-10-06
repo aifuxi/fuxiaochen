@@ -71,7 +71,7 @@ typography:
 rounded:
   sm: 8px
   md: 14px
-  form: 14px
+  form: 12px
   lg: 24px
   pill: 999px
 spacing:
@@ -87,7 +87,7 @@ control-sizes:
   small: 32px
   default: 40px
   compact: 36px
-  form: 44px
+  form: 40px
   touch: 44px
 motion:
   micro: 80ms
@@ -138,7 +138,7 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.form}"
     height: "{control-sizes.form}"
-    padding: 14px
+    padding: 12px
   caption:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.foreground-muted}"
@@ -160,7 +160,7 @@ components:
 
 ## 状态与职责
 
-本文件规定已批准的**目标设计**。YAML 是目标 token 的唯一数值来源，不是运行时代码或生成输入；文档更新不会自动修改页面。2026-10-05 本轮仅重构规范，Inter、前台导航、原生指针、首页与展示页构图均**待实施、未完成页面运行验收**，差异集中记录在文末。
+本文件规定已批准的**目标设计**。YAML 是目标 token 的唯一数值来源，不是运行时代码或生成输入；文档更新不会自动修改页面。2026-10-05 完成规范解耦；2026-10-06 已实施 Inter、前台导航、原生指针、首页与展示页构图，并同步共享 token。实施证据与实际验证范围集中记录在文末。
 
 以 [Libraries.dev](https://libraries.dev/) 为主要视觉参考：近黑连续底色、低对比层级、精密胶囊材质、平实排版与克制的交互反馈。前台构图紧贴参考，后台与阅读页保留任务密度和阅读宽度。品牌资产、专有字体、产品插图、营销文案与付费功能不复制。
 
@@ -177,7 +177,7 @@ components:
 
 ## Token 与运行时映射
 
-YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 后续应引用 token，避免在页面重复实现基础状态。本轮不新增 token 生成器或依赖。
+YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
 
 | 目标 token        | 运行时对应                       | 同步要求                                                                                             |
 | ----------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -185,11 +185,13 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 | `typography.*`    | 字体变量与语义排版 class         | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family      |
 | `rounded.*`       | `--radius-*`                     | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                    |
 | `spacing.*`       | 本地间距变量或等值 Tailwind 间距 | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                   |
-| `control-sizes.*` | 本地组件 size / 触屏目标         | small、default、compact、form 与 touch 明确选择，不互相覆盖默认值                                    |
+| `control-sizes.*` | 本地组件 size / 触屏目标         | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch          |
 | `motion.*`        | 本地过渡时长、曲线与位移变量     | 按反馈职责选择，不在业务页面新增临时时长                                                             |
 | `scrollbar.*`     | 滚动条轨道、滑块宽度             | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                               |
 
-映射表是实现目标，并不代表变量已全部存在。当前 `app/globals.css` 只覆盖部分 token，完整同步留在后续 UI 实现任务。
+映射已在 `app/globals.css` 接入：排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
+
+`--control-form` 的桌面基值为 40px，`--control-compact` 为 36px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
 
 ## 色彩与材质
 
@@ -203,7 +205,7 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 ## 排版与间距
 
-标题、正文和标签使用 `"Inter", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`；display 与 sans 共用字体栈。中文使用系统兜底，不分发参考站 Saans。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+标题、正文和标签使用 `"Inter", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`；display 与 sans 共用字体栈。中文使用系统兜底，不分发参考站 Saans。 Inter 通过 [根布局](app/layout.tsx) 的 `next/font/local` 加载，使用 [Inter 官方](https://rsms.me/inter/)提供的 4.1 可变字体文件 [InterVariable.woff2](app/fonts/InterVariable.woff2)，许可随 [OFL.txt](app/fonts/OFL.txt) 保留；浏览器字体请求由本项目提供。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
 
 首页与展示页使用 display；小于 640px 使用 display-mobile。章节标题使用 heading。其余 title、body、label 与 mono 保留既有值；后台页标题、阅读正文与编辑标题属于场景变体，不回写共享 display。卡片标题可选 title 或场景明确的紧凑字号，描述低一级，不让所有内容争夺焦点。
 
@@ -229,19 +231,20 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 交互行为使用 Base UI，本地组件位于 `components/ui/`，导出可编辑、可组合的 variant；页面只组合组件并定义周边布局。
 
-| 组件                                | 共享规则                                                                                                                                                                                                                                                           |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Button                              | primary / secondary / ghost；small 用于紧凑 CTA，default 用于组件面板，compact 用于后台工具栏与页面操作，form 用于表单提交；粗指针或场景指定的窄屏目标至少 touch 高度；loading 与 disabled 保留说明                                                                |
-| 展示 Card                           | 外壳、舞台、标题、描述、可选操作；可点击卡片为真实链接或按钮，含独立操作时不嵌套点击；悬停不改变内容布局                                                                                                                                                           |
-| 业务 Card                           | 中性 surface 与淡边线，无舞台及顶部高光；是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                                |
-| Tabs                                | raised 选中胶囊独立于文字，使用 standard / ease 滑动到选中项；文字只过渡颜色，面板短淡入且不阻塞内容；键盘可切换，reduced-motion 取消滑动                                                                                                                          |
-| Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；surface / raised 与 md / lg 按用途选择，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                              |
-| Input / Textarea                    | 单行 Input 使用 form 高度；Textarea 高度由场景与内容决定，可纵向调整；两者使用 form 圆角、input 填充，hover 提亮、active 压暗，聚焦可用 primary 内边线，focus-visible 用单层清晰焦点环；字段有可见标签，danger 标记与文字通过 aria-invalid / aria-describedby 关联 |
-| Select / Combobox                   | form 触发器沿用 input；菜单使用 raised，高亮使用中性提亮，选中有文字与勾选；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件                                                                                                           |
-| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧间距 14px，附加图标按钮 small / ghost；输入区不重复背景或焦点环，输入聚焦显示完整焦点轮廓，附加按钮保留自身焦点；点击非按钮附加区可聚焦输入                                         |
-| Switch                              | 状态与名称由本地组件提供；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                            |
+| 组件                                | 共享规则                                                                                                                                                                                                                                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Button                              | primary / secondary / ghost；small 用于紧凑 CTA，default 用于组件面板，compact 用于后台工具栏与页面操作，form 用于表单提交；粗指针或场景指定的窄屏目标至少 touch 高度；loading 与 disabled 保留说明                                                                                                  |
+| 展示 Card                           | 外壳、舞台、标题、描述、可选操作；可点击卡片为真实链接或按钮，含独立操作时不嵌套点击；悬停不改变内容布局                                                                                                                                                                                             |
+| 业务 Card                           | 中性 surface 与淡边线，无舞台及顶部高光；是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                                                                  |
+| Tabs                                | raised 选中胶囊独立于文字，使用 standard / ease 滑动到选中项；文字只过渡颜色，面板短淡入且不阻塞内容；键盘可切换，reduced-motion 取消滑动                                                                                                                                                            |
+| Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；surface / raised 与 md / lg 按用途选择，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                                                                |
+| Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 四侧内边距 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角、input 填充，hover 提亮、active 压暗，聚焦可用 primary 内边线，focus-visible 用单层清晰焦点环；字段有可见标签，danger 标记与文字通过 aria-invalid / aria-describedby 关联 |
+| Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 40px、窄屏或粗指针至少高 44px；高亮使用中性提亮，选中有文字与勾选；附加图标操作桌面 32×32px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件                              |
+| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 32×32px、窄屏或粗指针 44×44px；输入区不重复背景或焦点环，输入聚焦显示完整焦点轮廓，附加按钮保留自身焦点；点击非按钮附加区可聚焦输入                                       |
+| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，禁用时反馈与相邻输入一致                                                                                                                                                                       |
+| Switch                              | 状态与名称由本地组件提供；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                                                              |
 
-Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的后台尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。表单使用 form，不能为压缩工具栏而修改所有控件默认值。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
+Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
 
 语法高亮只作用于代码区：关键字与标签对应 syntax-keyword，字符串对应 syntax-string，数字与字面量对应 syntax-number，函数与类型对应 syntax-function，注释对应 syntax-comment，其他文本用 foreground；不改变代码内容、选区或撤销历史。
 
@@ -263,23 +266,29 @@ Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的后�
 
 原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。其他参考不扩展本次视觉目标。
 
+2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
+
 ## 核对方法
 
 同一场景比较时记录路由、数据快照、筛选条件、侧栏状态、滚动位置、视口和截图范围。桌面使用 1440×1000，窄屏使用 390×844，缩放 100%；等待字体、图片、布局与动效稳定，拒绝加载中间态。字号、行高、内边距和宽度通过 computed style 核对，未知密度的图片像素不直接视为 CSS 尺寸。
 
 检查长文本、空集合、无匹配、加载、错误与真实可操作状态；业务流程见产品行为，前台与后台的断点和场景见各自验收清单。截图只证明已观察的视觉状态；键盘焦点、disabled、粗指针、reduced-motion、保存和回焦分别区分源码检查与运行验证，未执行不记为通过。使用已有数据或隔离临时数据，不为截图向常用数据库写入演示记录。
 
+参考对齐同时核对布局与完整交互。先实际采集默认、触发、响应、结束与适配，再声明采用方式或有意差异；文档中的状态简述不能代替完整行为规格。采集、复用组件、状态矩阵、失败项重测及交付证据按 [UI 参考采集与回归](docs/engineering/ui-reference-verification.md) 执行。
+
 ## 实现同步清单
 
-本轮完成的是规范迁移，以下为**已批准目标与当前实现的差异**，不是第二套有效设计规则；后续任务在授权范围内逐项消化。本表的路径定位仅为源码证据，不代表运行验证。
+2026-10-06 完成以下实施，并针对交互遗漏回归修正。此表记录源码证据和验证边界，不形成第二套有效规则；运行记录见[视觉实施验收](docs/engineering/verification-history.md#视觉基线实施2026-10-06)及[逐项交互回归](docs/engineering/verification-history.md#参考采集与交互回归2026-10-06)。
 
-| 项目                 | 已批准目标                                    | 当前源码证据                                                                                                                                                             | 待同步范围                                       | 验证状态               |
-| -------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ | ---------------------- |
-| 字体与排版           | Inter、中文系统字体及 display / heading token | [globals.css](app/globals.css) 仍加载 Space Grotesk；[前台样式](<app/(frontend)/site.css>) 的首页字号 / 字距与目标不同                                                   | 字体加载、主题变量、语义排版和各场景换行         | 待实施；未运行验收     |
-| 前台导航             | 普通链接、当前项局部胶囊                      | [前台样式](<app/(frontend)/site.css>) 的 site-navigation 仍是整组胶囊并带蓝短线                                                                                          | 导航样式、栏目测量与响应式菜单                   | 待实施；未运行验收     |
-| 指针                 | 全站原生语义指针                              | [根布局](app/layout.tsx) 仍挂载 CursorEffect                                                                                                                             | 装饰层与专用样式、展示页旧指针预览               | 待实施；未运行验收     |
-| 首页                 | 参考构图、五个既有栏目入口                    | [首页](<app/(frontend)/page.tsx>) 仍为站名、副标题、阅读 CTA 与作者资料                                                                                                  | 呈现与局部样式，沿用现有设置读取                 | 待实施；未运行验收     |
-| 展示页               | 居中首屏、1008px 网格与共享目标字体           | [展示页](<app/(showcase)/design-spec/page.tsx>) 仍为左文右图、较大渐变字与原演示样式                                                                                     | 首屏、网格、预览与展示专用样式作用域             | 待实施；未运行验收     |
-| Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion           | [globals.css](app/globals.css) 只映射部分 token，Button 有 200ms 过渡，lift-object 在 reduced-motion 下仍保留 hover transform；[Card](components/ui/card.tsx) 写具体圆角 | 在后续 UI 任务内核对变量、局部常量及内层对象状态 | 待核对同步；仅源码检查 |
+| 项目                 | 已批准目标                                    | 实现证据                                                                                               | 实施范围                                                                             | 验证状态                                                                                     |
+| -------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| 字体与排版           | Inter、中文系统字体及 display / heading token | [根布局](app/layout.tsx)、[共享样式](app/globals.css)                                                  | 本地字体、主题变量、完整语义排版；保留后台与阅读场景字号                             | 已实施；首页与展示页字号、字体加载及后台字体运行核对通过                                     |
+| 前台导航             | 普通链接、当前项局部胶囊                      | [SiteHeader](components/frontend/site-header.tsx)、[前台样式](<app/(frontend)/site.css>)               | 移除整组材质与蓝线，保留宽度测量与折叠菜单；长品牌换行、跨断点关闭与焦点兜底         | 已实施；当前项、移动排版、Escape 回焦、跨断点关闭及再次缩窗不重开运行通过                    |
+| 指针                 | 全站原生语义指针                              | [根布局](app/layout.tsx)、[展示页](<app/(showcase)/design-spec/page.tsx>)                              | 删除 CursorEffect、专用样式、token 与遗留属性；展示系统指针示例                      | 已实施；普通区域、按钮、文本与禁用输入指针已运行核对；本次补验禁用 Tab 指针                  |
+| 首页                 | 参考构图、五个既有栏目入口                    | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 居中文案、散布微卡、窄屏 2–1–2；沿用公开设置，微卡不预取；上浮与标签展开反馈         | 已实施；布局边界、五卡 hover/focus-visible、完整命中区与栏目跳转核对通过                     |
+| 展示页               | 居中首屏、1008px 网格与共享目标字体           | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 首屏、分段网格、官方效果启停与单舞台播放、离屏停止；样式作用域隔离                   | 已实施；网格、列明控件操作、播放/切换/暂停/重播/离屏停止通过；其他状态见回归矩阵             |
+| Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion           | [共享样式](app/globals.css)、[Button](components/ui/button.tsx)、[Card](components/ui/card.tsx)        | 圆角/控件/过渡引用变量，form Button；Accordion 状态与 Tab 禁用；减少动态效果取消变换 | 已实施；Tab/Switch 44px 及列明控件流程通过；按压视觉、粗指针及系统 reduced-motion 仅源码核对 |
+
+长资料与空资料的布局边界经源码核对；当前数据库为空，非空文章正文与列表、后台编辑字号、登录表单、最大字段长度、200% 文本缩放和全面辅助技术未在本轮重新运行验收。实施完成不代表这些场景均已运行通过。
 
 迁移说明：逐页视觉规格进入前台 / 后台场景；业务规则进入产品行为；正文格式与查询机制进入数据库维护；上传协议进入媒体存储；调度与备份执行条件引用部署指南。文章列宽和业务卡材质在后台场景只维护一次，历史验收事实保留。

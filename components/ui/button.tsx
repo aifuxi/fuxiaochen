@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 type ButtonProps = ComponentProps<typeof BaseButton> & {
   variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "default" | "compact";
+  size?: "sm" | "default" | "compact" | "form";
 };
 
 export function Button({
@@ -20,9 +20,10 @@ export function Button({
   return (
     <BaseButton
       className={cn(
-        "ds-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full",
-        size === "sm" ? "h-8 px-3" : "h-10 px-4",
+        "ds-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-pill)]",
+        size === "sm" ? "h-[var(--control-small)] px-3" : "h-[var(--control-default)] px-4",
         size === "compact" && "ds-control-compact",
+        size === "form" && "h-[var(--control-form)]",
         `ds-button-${variant}`,
         className,
       )}

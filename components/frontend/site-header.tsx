@@ -18,7 +18,9 @@ const links = [
 ] as const;
 export function SiteHeader({ title }: { title: string }) {
   const pathname = usePathname();
-  const active = pathname.startsWith("/posts/") ? "/posts" : pathname;
+  const active = links.find(
+    ([href]) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`)),
+  )?.[0];
   const header = useRef<HTMLElement>(null);
   const nav = useRef<HTMLElement>(null);
   const brand = useRef<HTMLAnchorElement>(null);
@@ -26,11 +28,13 @@ export function SiteHeader({ title }: { title: string }) {
   const [open, setOpen] = useState(false);
   useLayoutEffect(() => {
     const measure = () => {
-      if (header.current && nav.current && brand.current)
-        setCollapsed(
+      if (header.current && nav.current && brand.current) {
+        const nextCollapsed =
           nav.current.offsetWidth + 2 * Math.max(brand.current.offsetWidth, 44) + 64 >
-            header.current.clientWidth,
-        );
+          header.current.clientWidth;
+        setCollapsed(nextCollapsed);
+        if (!nextCollapsed) setOpen(false);
+      }
     };
     const observer = new ResizeObserver(measure);
     for (const element of [header.current, nav.current, brand.current])
@@ -44,7 +48,7 @@ export function SiteHeader({ title }: { title: string }) {
         key={href}
         href={href}
         className={active === href ? "is-current" : undefined}
-        aria-current={active === href ? (pathname === href ? "page" : "location") : undefined}
+        aria-current={active === href ? "page" : undefined}
         onClick={mobile ? () => setOpen(false) : undefined}
       >
         {label}
@@ -65,8 +69,8 @@ export function SiteHeader({ title }: { title: string }) {
       >
         {items()}
       </nav>
-      {collapsed && (
-        <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open && collapsed} onOpenChange={setOpen}>
+        {collapsed && (
           <DialogTrigger
             render={
               <Button variant="ghost" aria-label="打开导航菜单" className="site-menu-button" />
@@ -74,17 +78,25 @@ export function SiteHeader({ title }: { title: string }) {
           >
             <Menu size={20} />
           </DialogTrigger>
-          <DialogContent className="site-mobile-menu">
-            <div className="site-menu-heading">
-              <DialogTitle>导航</DialogTitle>
-              <Button variant="ghost" aria-label="关闭导航菜单" onClick={() => setOpen(false)}>
-                <X size={20} />
-              </Button>
-            </div>
-            <nav aria-label="主导航">{items(true)}</nav>
-          </DialogContent>
-        </Dialog>
-      )}
+        )}
+        <DialogContent
+          className="site-mobile-menu"
+          finalFocus={() =>
+            collapsed
+              ? true
+              : (nav.current?.querySelector<HTMLAnchorElement>('[aria-current="page"]') ??
+                brand.current)
+          }
+        >
+          <div className="site-menu-heading">
+            <DialogTitle>导航</DialogTitle>
+            <Button variant="ghost" aria-label="关闭导航菜单" onClick={() => setOpen(false)}>
+              <X size={20} />
+            </Button>
+          </div>
+          <nav aria-label="主导航">{items(true)}</nav>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

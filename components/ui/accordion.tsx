@@ -17,7 +17,7 @@ export function AccordionTrigger({
   return (
     <BaseAccordion.Trigger
       className={cn(
-        "group flex w-full items-center justify-between gap-4 py-4 text-left text-sm font-medium text-white focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]",
+        "ds-accordion-trigger group flex w-full items-center justify-between gap-4 py-4 text-left text-sm font-medium",
         className,
       )}
       {...props}

@@ -21,7 +21,7 @@ export function SelectTrigger({
     <BaseSelect.Trigger
       type="button"
       className={cn(
-        "ds-input flex h-11 w-full items-center justify-between gap-3 px-3.5 text-left text-sm data-placeholder:text-[var(--color-subtle)]",
+        "ds-input flex h-[var(--control-form)] w-full cursor-pointer items-center justify-between gap-3 px-3 text-left text-sm leading-5 data-placeholder:text-[var(--color-subtle)]",
         size === "compact" && "ds-control-compact",
         className,
       )}
@@ -61,7 +61,7 @@ export function SelectItem({
   ...props
 }: ComponentProps<typeof BaseSelect.Item>) {
   return (
-    <BaseSelect.Item className={cn("ds-picker-item", className)} data-cursor-interactive {...props}>
+    <BaseSelect.Item className={cn("ds-picker-item", className)} {...props}>
       <BaseSelect.ItemText className="min-w-0 flex-1 truncate">{children}</BaseSelect.ItemText>
       <BaseSelect.ItemIndicator className="shrink-0 text-[var(--color-focus)]">
         <Check size={15} aria-hidden="true" />

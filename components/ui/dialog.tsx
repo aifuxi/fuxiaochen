@@ -29,7 +29,7 @@ export function DialogContent({
       >
         <BaseDialog.Popup
           className={cn(
-            "ds-dialog-popup w-full max-w-md rounded-[24px] bg-[var(--color-surface)] p-6 shadow-2xl outline-none",
+            "ds-dialog-popup w-full max-w-md rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-6 shadow-2xl outline-none",
             className,
           )}
           {...props}

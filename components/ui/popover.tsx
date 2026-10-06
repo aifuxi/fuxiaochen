@@ -21,7 +21,7 @@ export function PopoverContent({
       <BasePopover.Positioner align="end" sideOffset={12} collisionPadding={12} className="z-50">
         <BasePopover.Popup
           className={cn(
-            "ds-popover-popup rounded-[24px] bg-[var(--color-surface)] outline-none",
+            "ds-popover-popup rounded-[var(--radius-lg)] bg-[var(--color-surface)] outline-none",
             className,
           )}
           {...props}

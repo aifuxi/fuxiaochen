@@ -75,7 +75,7 @@ export function ArticleFilters({
             <label className="sr-only" htmlFor="post-search">
               搜索文章
             </label>
-            <InputGroup>
+            <InputGroup size="compact">
               <InputGroupInput
                 type="search"
                 id="post-search"
@@ -103,7 +103,7 @@ export function ArticleFilters({
             setOpen(nextOpen);
           }}
         >
-          <DialogTrigger render={<Button variant="ghost" disabled={pending} />}>
+          <DialogTrigger render={<Button variant="ghost" size="compact" disabled={pending} />}>
             <SlidersHorizontal size={16} aria-hidden="true" />
             筛选{filterCount > 0 ? ` (${filterCount})` : ""}
           </DialogTrigger>

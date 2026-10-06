@@ -2,13 +2,13 @@
   display: flex;
   align-items: center;
   min-width: 0;
-  height: 44px;
+  height: var(--control-form);
   border-radius: var(--radius-form);
   background: var(--color-input);
   color: var(--color-foreground);
   transition:
-    background-color 150ms ease,
-    box-shadow 150ms ease;
+    background-color var(--motion-quick) var(--motion-ease),
+    box-shadow var(--motion-quick) var(--motion-ease);
 }
 .ds-input-group:hover:not(
     :has(> input:disabled, > input[data-disabled], > input[aria-invalid="true"])
@@ -78,7 +78,7 @@
 }
 .ds-input-group-addon[data-align="inline-start"] {
   order: -1;
-  padding-inline-start: 14px;
+  padding-inline-start: 12px;
 }
 .ds-input-group-addon[data-align="inline-end"] {
   padding-inline-end: 6px;
@@ -88,9 +88,18 @@
   width: 16px;
   height: 16px;
 }
-.ds-input-group-button {
-  width: 32px;
+.ds-input-group .ds-input-group-button.ds-button {
+  min-height: var(--control-small);
+  height: var(--control-small);
+  width: var(--control-small);
   padding: 0;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .ds-input-group .ds-input-group-button.ds-button {
+    min-height: var(--control-touch);
+    height: var(--control-touch);
+    width: var(--control-touch);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .ds-input-group {

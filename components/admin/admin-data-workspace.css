@@ -25,10 +25,6 @@
   border-bottom: 1px solid var(--admin-divider);
 }
 
-.admin-data-page .admin-data-toolbar .ds-input-group-button {
-  width: 36px;
-}
-
 .admin-data-page .admin-post-tabs-scroll {
   min-width: 0;
   max-width: 100%;
@@ -135,7 +131,6 @@
 }
 
 @media (max-width: 600px), (pointer: coarse) {
-  .admin-data-page .admin-data-toolbar .ds-input-group-button,
   .admin-data-page .admin-post-pagination nav .ds-button {
     width: 44px;
   }

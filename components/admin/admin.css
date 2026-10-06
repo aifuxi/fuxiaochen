@@ -161,7 +161,7 @@
   min-width: 0;
   justify-content: flex-start;
   gap: 10px;
-  padding: 0 10px 0 14px;
+  padding: 0 10px 0 12px;
   border-radius: var(--radius-form);
   background: var(--color-input);
   color: var(--color-muted);
@@ -291,12 +291,11 @@
 .admin-chart-point.ds-button:focus-visible {
   outline-offset: -2px;
 }
-.admin-modal .ds-button,
-.admin-confirm .ds-button,
-.admin-taxonomy-form .ds-button,
-.admin-social-actions .ds-button,
+.admin-form-actions > .ds-button:not(.ds-control-compact),
+.admin-taxonomy-form > .ds-button,
+.admin-social-actions > .ds-button,
 .admin-settings-panel > .admin-settings-section > .ds-button {
-  min-height: 44px;
+  min-height: var(--control-form);
 }
 .admin-toast button:active {
   background: var(--color-input);

@@ -115,7 +115,7 @@ export default async function LoginPage({
                   用户名或密码不正确，请重试。
                 </p>
               )}
-              <Button type="submit" variant="primary" className="login-submit">
+              <Button type="submit" variant="primary" size="form" className="login-submit">
                 <span>进入空间</span>
                 <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
               </Button>

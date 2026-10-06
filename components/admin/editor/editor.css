@@ -35,10 +35,6 @@
 .post-writing-bar-actions {
   flex-wrap: wrap;
 }
-.post-writing-bar [type="submit"],
-.post-settings-drawer-actions .ds-button {
-  min-height: 44px;
-}
 .post-writing-save-status,
 .post-writing-settings-hint {
   color: var(--color-muted);
@@ -538,7 +534,7 @@
   color: var(--color-muted);
 }
 .post-editor-import-dialog .ds-button {
-  min-height: 44px;
+  min-height: var(--control-form);
 }
 .post-editor-import-dialog .admin-post-error {
   color: var(--color-danger);

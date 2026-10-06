@@ -380,7 +380,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
             {categoryItems.find((item) => item.id === categoryId)?.name ?? "请选择分类"}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent data-cursor="native">
+        <SelectContent>
           {categoryItems.map((item) => (
             <SelectItem value={item.id} key={item.id}>
               {item.name}
@@ -424,7 +424,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
           />
           <ComboboxTrigger />
         </ComboboxInputGroup>
-        <ComboboxContent data-cursor="native" emptyText="暂无匹配标签，请在分类与标签页创建">
+        <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
           <ComboboxList>
             {(tagId: string) => (
               <ComboboxItem key={tagId} value={tagId}>
@@ -557,7 +557,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
     </div>
   );
   return (
-    <div className="admin-post-editor-page" ref={host} data-cursor="native">
+    <div className="admin-post-editor-page" ref={host}>
       <form
         id="article-writing-form"
         className="post-editor-form"
@@ -625,7 +625,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
                 {writingFocused ? "退出专注" : "专注"}
               </span>
             </Button>
-            <Button type="submit" variant="primary" disabled={disabled}>
+            <Button type="submit" variant="primary" size="compact" disabled={disabled}>
               {saveLabel}
             </Button>
           </div>
@@ -718,7 +718,6 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       >
         <DialogContent
           placement="right"
-          data-cursor="native"
           id="post-settings-panel"
           className="post-settings-drawer"
           finalFocus={settingsTrigger}
@@ -732,17 +731,29 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
           </DialogDescription>
           {settingsFields}
           <div className="post-settings-drawer-actions">
-            <Button type="button" variant="ghost" disabled={postPending} onClick={closeSettings}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="form"
+              disabled={postPending}
+              onClick={closeSettings}
+            >
               完成设置
             </Button>
-            <Button type="submit" form="article-writing-form" variant="primary" disabled={disabled}>
+            <Button
+              type="submit"
+              form="article-writing-form"
+              variant="primary"
+              size="form"
+              disabled={disabled}
+            >
               {saveLabel}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
       <Dialog open={confirmReload} onOpenChange={setConfirmReload}>
-        <DialogContent className="admin-confirm" data-cursor="native">
+        <DialogContent className="admin-confirm">
           <DialogTitle>重新载入最新内容？</DialogTitle>
           <DialogDescription>这会替换当前未保存的草稿，请先复制需要保留的内容。</DialogDescription>
           <div className="admin-form-actions">
