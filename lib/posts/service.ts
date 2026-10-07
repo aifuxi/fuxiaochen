@@ -66,7 +66,9 @@ function serialize(row: SummaryRow) {
   return {
     ...post,
     isFeatured: post.isFeatured === 1,
-    category: { id: post.category.id, name: post.category.name, color: post.category.color },
+    category: post.category
+      ? { id: post.category.id, name: post.category.name, color: post.category.color }
+      : null,
     status: postStatusSchema.parse(post.status),
     createdAt: post.createdAt.toISOString(),
     updatedAt: post.updatedAt.toISOString(),
@@ -215,13 +217,14 @@ async function validateMedia(content: string, tx: Transaction, previous?: string
   }
 }
 async function validateRelations(input: PostInput | PostUpdateInput, tx: Transaction) {
-  if (!(await tx.orm.public.Category.where({ id: input.categoryId }).first()))
+  if (input.categoryId && !(await tx.orm.public.Category.where({ id: input.categoryId }).first()))
     throw new PostError("INVALID_INPUT", "所选分类不存在，请重新选择。");
   for (const id of input.tagIds)
     if (!(await tx.orm.public.Tag.where({ id }).first()))
       throw new PostError("INVALID_INPUT", "所选标签不存在，请重新选择。");
 }
-async function validateSlug(slug: string, tx: Transaction, id?: string) {
+async function validateSlug(slug: string | null, tx: Transaction, id?: string) {
+  if (!slug) return;
   const existing = await tx.orm.public.Post.where({ slug }).select("id").first();
   if (existing && existing.id !== id)
     throw new PostError("SLUG_CONFLICT", "slug 已被其他文章使用。", {

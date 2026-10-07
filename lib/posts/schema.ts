@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { postContentSchema } from "./document";
+import { draftContentSchema, postContentSchema } from "./document";
 
 export const postStatusSchema = z.enum(["draft", "published", "scheduled"]);
 export type PostStatus = z.infer<typeof postStatusSchema>;
@@ -22,21 +22,44 @@ const featuredOrderSchema = z
   .min(0, "精选排序不能小于 0")
   .max(9999, "精选排序不能大于 9999");
 const postFields = z.object({
-  slug: slugSchema,
-  title: z.string().trim().min(1, "请输入文章标题").max(120, "标题最多 120 个字符"),
-  content: postContentSchema,
+  slug: z.preprocess(
+    (value) => (typeof value === "string" && !value.trim() ? null : value),
+    slugSchema.nullable(),
+  ),
+  title: z.string().trim().max(120, "标题最多 120 个字符"),
+  content: draftContentSchema,
   summary: summarySchema.default(""),
   isFeatured: z.boolean().default(false),
   featuredOrder: featuredOrderSchema.default(0),
-  categoryId: z.uuid("请选择已登记的分类"),
+  categoryId: z.preprocess(
+    (value) => (value === "" ? null : value),
+    z.uuid("请选择已登记的分类").nullable(),
+  ),
   tagIds: z.array(z.uuid("标签 ID 无效")).transform((ids) => [...new Set(ids)]),
   status: postStatusSchema,
   scheduledFor: z.iso.datetime({ offset: true }).nullable(),
 });
 const validateSchedule = (
-  input: { status: PostStatus; scheduledFor: string | null },
+  input: {
+    status: PostStatus;
+    scheduledFor: string | null;
+    title: string;
+    slug: string | null;
+    categoryId: string | null;
+    content: string;
+  },
   ctx: z.RefinementCtx,
 ) => {
+  if (input.status !== "draft") {
+    if (!input.title)
+      ctx.addIssue({ code: "custom", path: ["title"], message: "发布前请输入文章标题" });
+    if (!input.slug) ctx.addIssue({ code: "custom", path: ["slug"], message: "发布前请输入 slug" });
+    if (!input.categoryId)
+      ctx.addIssue({ code: "custom", path: ["categoryId"], message: "发布前请选择分类" });
+    const content = postContentSchema.safeParse(input.content);
+    if (!content.success)
+      ctx.addIssue({ code: "custom", path: ["content"], message: content.error.issues[0].message });
+  }
   if (input.status === "scheduled" && !input.scheduledFor)
     ctx.addIssue({ code: "custom", path: ["scheduledFor"], message: "请选择计划发布时间" });
   if (input.status !== "scheduled" && input.scheduledFor !== null)
@@ -79,10 +102,10 @@ export type PostItem = {
   summary: string;
   isFeatured: boolean;
   featuredOrder: number;
-  slug: string;
+  slug: string | null;
   slugLockedAt: string | null;
-  categoryId: string;
-  category: { id: string; name: string; color: string };
+  categoryId: string | null;
+  category: { id: string; name: string; color: string } | null;
   tags: { id: string; name: string }[];
   status: PostStatus;
   version: number;
@@ -107,6 +130,7 @@ export type PostSummary = {
   recentDrafts: PostItem[];
 };
 export const emptyPostCounts: PostCounts = { all: 0, draft: 0, published: 0, scheduled: 0 };
+export const postDisplayTitle = (title: string) => title.trim() || "未命名草稿";
 export function postTime(value: string | null, dateOnly = false) {
   if (!value) return "—";
   return new Date(value)

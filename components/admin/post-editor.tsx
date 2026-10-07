@@ -103,8 +103,9 @@ const settingsKeys = [
 export function PostEditor({ id }: { id: string | null }) {
   const router = useRouter();
   // 列表刷新不能卸载写作中的编辑器；只有显式重新载入才更新此查询。
-  const query = usePostQuery(id ? `/${id}` : null, 0, postRequest<PostDetail>);
-  if (id && !query.data)
+  const [queryId, setQueryId] = useState(id);
+  const query = usePostQuery(queryId ? `/${queryId}` : null, 0, postRequest<PostDetail>);
+  if (queryId && !query.data)
     return (
       <div className="admin-post-editor-page">
         <Button variant="ghost" onClick={() => router.push("/admin/posts")}>
@@ -114,10 +115,24 @@ export function PostEditor({ id }: { id: string | null }) {
         <PostQueryStatus {...query} />
       </div>
     );
-  return <PostEditorForm initial={query.data} reload={query.reload} />;
+  return (
+    <PostEditorForm
+      initial={query.data}
+      reload={(savedId) => {
+        setQueryId(savedId);
+        query.reload();
+      }}
+    />
+  );
 }
 
-function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reload: () => void }) {
+function PostEditorForm({
+  initial,
+  reload,
+}: {
+  initial: PostDetail | null;
+  reload: (savedId: string) => void;
+}) {
   const router = useRouter();
   const returnTo = adminPostReturnTo(useSearchParams().get("returnTo"));
   const now = usePostClock();
@@ -133,6 +148,9 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
     setWritingFocused,
   } = useAdminWorkspace();
   const [savedPost, setSavedPost] = useState(initial);
+  useEffect(() => {
+    if (savedPost) document.title = "编辑文章 · fuxiaochen";
+  }, [savedPost]);
   const [draft, setDraft] = useState(() => draftFrom(initial));
   const [savedDraft, setSavedDraft] = useState(() => draftFrom(initial));
   const {
@@ -225,8 +243,9 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
   const guardNavigation = useNavigationGuard(dirty, postPending);
   const settingsError = settingsKeys.some((key) => Boolean(fieldErrors[key]));
   const settingsIncomplete =
-    !slug.trim() || !categoryId || (status === "scheduled" && !scheduledTime);
-  const saveLabel = postPending ? "保存中…" : "保存";
+    status !== "draft" &&
+    (!slug.trim() || !categoryId || (status === "scheduled" && !scheduledTime));
+  const saveLabel = postPending ? "保存中…" : status === "draft" ? "保存草稿" : "保存";
   const closeSettings = useCallback(() => {
     if (postPending) return;
     setSettingsOpen(false);
@@ -316,11 +335,14 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       setSavedPost(result);
       setDraft(saved);
       setSavedDraft(saved);
-      if (!savedPost)
-        router.replace(
+      if (!savedPost) {
+        // Next 的公开 History API 保留当前页面实例，并由导航保护器维持同一历史索引。
+        window.history.replaceState(
+          null,
+          "",
           `/admin/posts/${encodeURIComponent(result.id)}/edit?returnTo=${encodeURIComponent(returnTo)}`,
-          { scroll: false },
         );
+      }
     } catch (failure) {
       if (!mounted.current) return;
       setError(failure instanceof Error ? failure.message : "保存失败，请重试。");
@@ -366,7 +388,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
         />
       </label>
       <p id="post-slug-help">
-        链接：/posts/{slug || "your-article-slug"}。
+        {slug ? `链接：/posts/${slug}。` : "草稿可暂不填写，发布前需设置唯一链接。"}
         {savedPost?.slugLockedAt
           ? "首次发布后已锁定。"
           : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
@@ -384,10 +406,12 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
           aria-describedby={fieldErrors.categoryId ? "post-error-categoryId" : undefined}
         >
           <SelectValue placeholder="请选择分类">
-            {categoryItems.find((item) => item.id === categoryId)?.name ?? "请选择分类"}
+            {categoryItems.find((item) => item.id === categoryId)?.name ??
+              (status === "draft" ? "暂不分类" : "请选择分类")}
           </SelectValue>
         </SelectTrigger>
         <SelectContent>
+          {status === "draft" && <SelectItem value="">暂不分类</SelectItem>}
           {categoryItems.map((item) => (
             <SelectItem value={item.id} key={item.id}>
               {item.name}
@@ -398,7 +422,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       {fieldError("categoryId")}
       {!taxonomyLoading && !taxonomyError && !categoryItems.length && (
         <p>
-          请先在{" "}
+          草稿可先保存；发布前请在{" "}
           <Link
             href="/admin/categories"
             aria-disabled={postPending || undefined}
@@ -665,7 +689,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
                 ? "分类与标签加载失败，打开文章设置重试"
                 : taxonomyLoading
                   ? "正在载入分类与标签…"
-                  : "尚无分类，请打开文章设置创建"}
+                  : "草稿可先保存，发布前需创建分类"}
             </Button>
           </div>
         )}
@@ -771,7 +795,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
               variant="primary"
               onClick={() => {
                 setConfirmReload(false);
-                reload();
+                if (savedPost) reload(savedPost.id);
               }}
             >
               确认重新载入

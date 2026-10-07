@@ -909,5 +909,215 @@ void test("分类编辑保留文章关联并拒绝重名与过期编辑", async 
     ),
     { code: "VERSION_CONFLICT" },
   );
-  assert.equal((await posts.getPost(post.id, actor)).category.name, "新分类");
+  assert.equal((await posts.getPost(post.id, actor)).category?.name, "新分类");
+});
+
+void test("空白草稿可重复保存，分类排序、检索和后续发布保持正确", async () => {
+  const posts = await import("../lib/posts/service");
+  const { postSchema, updatePostSchema, postQuerySchema, postDisplayTitle } =
+    await import("../lib/posts/schema");
+  const { EMPTY_POST_CONTENT } = await import("../lib/posts/document");
+  const blank = postSchema.parse({
+    title: "",
+    slug: "",
+    categoryId: "",
+    content: EMPTY_POST_CONTENT,
+    tagIds: [],
+    status: "draft",
+    scheduledFor: null,
+  });
+  const first = await posts.createPost(blank, actor);
+  const second = await posts.createPost(blank, actor);
+  assert.notEqual(first.id, second.id);
+  assert.equal(first.slug, null);
+  assert.equal(first.category, null);
+  assert.equal(first.categoryId, null);
+  assert.equal(first.title, "");
+  assert.equal(postDisplayTitle(first.title), "未命名草稿");
+  const sorted = await posts.listPosts(
+    postQuerySchema.parse({ status: "draft", sortBy: "category", pageSize: 100 }),
+    actor,
+  );
+  assert.ok(sorted.items.some((row) => row.id === first.id));
+  for (const status of ["published", "scheduled"]) {
+    const invalid = postSchema.safeParse({
+      ...blank,
+      status,
+      scheduledFor: status === "scheduled" ? new Date(Date.now() + 3600_000).toISOString() : null,
+    });
+    assert.equal(invalid.success, false);
+    if (!invalid.success)
+      assert.deepEqual(
+        new Set(invalid.error.issues.map((issue) => issue.path[0])),
+        new Set(["title", "slug", "categoryId", "content"]),
+      );
+  }
+  assert.equal(postSchema.safeParse({ ...blank, slug: "INVALID SLUG" }).success, false);
+  assert.equal(postSchema.safeParse({ ...blank, content: "<script>bad</script>" }).success, false);
+  const renamed = await posts.updatePost(
+    first.id,
+    updatePostSchema.parse({ ...blank, version: first.version, title: "仅填写标题的草稿" }),
+    actor,
+  );
+  assert.equal(renamed.slug, null);
+  assert.equal(
+    (await posts.listPosts(postQuerySchema.parse({ q: "仅填写标题" }), actor)).items[0].id,
+    first.id,
+  );
+  const published = await posts.updatePost(
+    first.id,
+    updatePostSchema.parse({
+      ...blank,
+      title: renamed.title,
+      slug: "completed-blank-draft",
+      categoryId,
+      content,
+      status: "published",
+      version: renamed.version,
+    }),
+    actor,
+  );
+  assert.ok(published.publishedAt);
+  assert.ok(published.slugLockedAt);
+  assert.equal(published.category?.id, categoryId);
+  const scheduler = await import("../lib/operations/scheduler");
+  await database.writeTransaction((tx) =>
+    tx.orm.public.Post.where({ id: second.id }).update({
+      status: "scheduled",
+      scheduledFor: new Date(Date.now() - 1000),
+    }),
+  );
+  const outcome = await scheduler.publishDuePosts(actor);
+  assert.ok(outcome.skipped >= 1);
+  assert.equal((await posts.getPost(second.id, actor)).status, "scheduled");
+});
+
+void test("更新日志编辑、撤回和重新发布保留时间，拒绝并发覆盖", async () => {
+  const logs = await import("../lib/changelog/service");
+  const schema = await import("../lib/changelog/schema");
+  const initial = await logs.createRelease(
+    schema.releaseSchema.parse({
+      version: "v-test",
+      title: "可编辑日志",
+      type: "feature",
+      changes: ["原条目"],
+    }),
+    actor,
+  );
+  assert.equal(initial.status, "published");
+  assert.equal(initial.revision, 1);
+  const edited = await logs.updateRelease(
+    initial.id,
+    schema.releaseUpdateSchema.parse({
+      version: "v-test-2",
+      title: "已修改日志",
+      type: "fix",
+      changes: ["新条目"],
+      revision: initial.revision,
+    }),
+    actor,
+  );
+  assert.equal(edited.title, "已修改日志");
+  assert.equal(edited.createdAt, initial.createdAt);
+  assert.equal(edited.revision, 2);
+  await assert.rejects(
+    logs.updateRelease(
+      initial.id,
+      schema.releaseVisibilitySchema.parse({ status: "withdrawn", revision: initial.revision }),
+      actor,
+    ),
+    { code: "VERSION_CONFLICT" },
+  );
+  const withdrawn = await logs.updateRelease(
+    initial.id,
+    schema.releaseVisibilitySchema.parse({ status: "withdrawn", revision: edited.revision }),
+    actor,
+  );
+  assert.equal(withdrawn.status, "withdrawn");
+  assert.deepEqual(withdrawn.changes, ["新条目"]);
+  assert.equal(withdrawn.createdAt, initial.createdAt);
+  assert.ok(
+    (
+      await logs.listReleases(schema.releaseQuerySchema.parse({ status: "withdrawn" }), actor)
+    ).items.some((row) => row.id === initial.id),
+  );
+  const located = await logs.listReleases(
+    schema.releaseQuerySchema.parse({
+      record: initial.id,
+      status: "published",
+      q: "不匹配",
+      page: 999,
+    }),
+    actor,
+  );
+  assert.deepEqual(
+    located.items.map((row) => row.id),
+    [initial.id],
+  );
+  assert.equal(located.page, 1);
+  const restored = await logs.updateRelease(
+    initial.id,
+    schema.releaseVisibilitySchema.parse({ status: "published", revision: withdrawn.revision }),
+    actor,
+  );
+  assert.equal(restored.revision, 4);
+  assert.equal(restored.createdAt, initial.createdAt);
+  assert.equal((await logs.getRelease(initial.id, actor)).status, "published");
+});
+
+void test("旧合同迁移保留文章与日志内容，并补齐日志默认状态", async () => {
+  const upgradeName = `${prefix}_upgrade`;
+  const owner = decodeURIComponent(base.username).replaceAll('"', '""');
+  const url = urlFor(upgradeName);
+  let client: Client | undefined;
+  try {
+    await admin.query(`CREATE DATABASE "${upgradeName}" OWNER "${owner}"`);
+    const old = spawnSync(
+      process.execPath,
+      [
+        "node_modules/prisma/dist/prisma.js",
+        "db",
+        "migrate",
+        "--to",
+        "eaa0e043a6985448dcc638cef2f4279c89a5c6ede8cf63570cd33de7d09a7bb8",
+      ],
+      { env: { ...process.env, DATABASE_URL: url }, encoding: "utf8", timeout: 30_000 },
+    );
+    assert.equal(old.status, 0, old.stdout + old.stderr);
+    client = new Client({ connectionString: url });
+    await client.connect();
+    const id = randomUUID(),
+      category = randomUUID(),
+      created = new Date("2026-01-01T00:00:00Z");
+    await client.query(
+      'INSERT INTO category (id, name, "nameKey", color, "createdAt") VALUES ($1,$2,$3,$4,$5)',
+      [category, "迁移分类", "迁移分类", "#123456", created],
+    );
+    await client.query(
+      'INSERT INTO post (id,title,slug,content,"categoryId",status,"createdAt","updatedAt",version) VALUES ($1,$2,$3,$4,$5,$6,$7,$7,1)',
+      [id, "迁移文章", "migration-post", content, category, "draft", created],
+    );
+    await client.query(
+      'INSERT INTO release_log (id,version,title,type,changes,"createdAt") VALUES ($1,$2,$3,$4,$5,$6)',
+      [id, "v-old", "迁移日志", "fix", '["保留条目"]', created],
+    );
+    const upgraded = spawnSync(process.execPath, ["--import", "tsx", "scripts/migrate.ts"], {
+      env: { ...process.env, DATABASE_URL: url },
+      encoding: "utf8",
+      timeout: 30_000,
+    });
+    assert.equal(upgraded.status, 0, upgraded.stdout + upgraded.stderr);
+    const row = (await client.query("SELECT * FROM release_log WHERE id=$1", [id])).rows[0];
+    assert.equal(row.status, "published");
+    assert.equal(Number(row.revision), 1);
+    assert.equal(row.updatedAt, null);
+    assert.equal(row.changes, '["保留条目"]');
+    assert.equal(row.createdAt.toISOString(), created.toISOString());
+    const post = (await client.query('SELECT title,slug,"categoryId" FROM post WHERE id=$1', [id]))
+      .rows[0];
+    assert.deepEqual(post, { title: "迁移文章", slug: "migration-post", categoryId: category });
+  } finally {
+    await client?.end();
+    await admin.query(`DROP DATABASE IF EXISTS "${upgradeName}" WITH (FORCE)`);
+  }
 });

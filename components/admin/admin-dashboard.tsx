@@ -9,7 +9,7 @@ import type { CommentItem, CommentSummary } from "@/lib/comments/schema";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { durationLabel } from "@/lib/analytics/schema";
-import { postTime, type PostSummary } from "@/lib/posts/schema";
+import { postDisplayTitle, postTime, type PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 
@@ -154,7 +154,7 @@ export function AdminDashboard({
                   className="admin-result"
                   onClick={() => onEdit(draft.id)}
                 >
-                  <strong>{draft.title}</strong>
+                  <strong>{postDisplayTitle(draft.title)}</strong>
                   <span>最近编辑 {postTime(draft.updatedAt)}</span>
                 </button>
               ))}

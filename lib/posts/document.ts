@@ -184,39 +184,42 @@ export function readDocument(content: string): JSONContent {
   return validateDocument(envelope.document);
 }
 
-export const postContentSchema = z
-  .string()
-  .max(500_000, "正文文档过大。")
-  .transform((value, ctx) => {
-    try {
-      const document = readDocument(value);
-      const text = documentText(document);
-      let hasImage = false;
-      const visit = (node: JSONContent) => {
-        if (node.type === "image") hasImage = true;
-        node.content?.forEach(visit);
-      };
-      visit(document);
-      if (!text.trim() && !hasImage) throw new Error("请输入正文内容。");
-      if (text.length > CONTENT_TEXT_LIMIT) throw new Error("正文最多 100,000 个字符。");
-      // 搜索文本由校验后的文档重新生成，不信任客户端提交的 text。
-      const normalized = serializeDocument(document);
-      if (
-        normalized.length > 500_000 ||
-        new TextEncoder().encode(JSON.stringify(normalized)).length > 950_000
-      )
-        throw new Error("正文文档过大。");
-      return normalized;
-    } catch (error) {
-      ctx.addIssue({
-        code: "custom",
-        message:
-          error instanceof z.ZodError
-            ? "正文文档格式无效。"
-            : error instanceof Error
-              ? error.message
-              : "正文文档格式无效。",
-      });
-      return z.NEVER;
-    }
-  });
+const contentSchema = (allowEmpty: boolean) =>
+  z
+    .string()
+    .max(500_000, "正文文档过大。")
+    .transform((value, ctx) => {
+      try {
+        const document = readDocument(value);
+        const text = documentText(document);
+        let hasImage = false;
+        const visit = (node: JSONContent) => {
+          if (node.type === "image") hasImage = true;
+          node.content?.forEach(visit);
+        };
+        visit(document);
+        if (!allowEmpty && !text.trim() && !hasImage) throw new Error("请输入正文内容。");
+        if (text.length > CONTENT_TEXT_LIMIT) throw new Error("正文最多 100,000 个字符。");
+        // 搜索文本由校验后的文档重新生成，不信任客户端提交的 text。
+        const normalized = serializeDocument(document);
+        if (
+          normalized.length > 500_000 ||
+          new TextEncoder().encode(JSON.stringify(normalized)).length > 950_000
+        )
+          throw new Error("正文文档过大。");
+        return normalized;
+      } catch (error) {
+        ctx.addIssue({
+          code: "custom",
+          message:
+            error instanceof z.ZodError
+              ? "正文文档格式无效。"
+              : error instanceof Error
+                ? error.message
+                : "正文文档格式无效。",
+        });
+        return z.NEVER;
+      }
+    });
+export const postContentSchema = contentSchema(false);
+export const draftContentSchema = contentSchema(true);

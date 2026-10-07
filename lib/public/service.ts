@@ -28,8 +28,12 @@ const postItems = (db: Transaction) =>
     .include("tagLinks", (links) => links.include("tag", (tag) => tag.select("id", "name")));
 type PostRow = NonNullable<Awaited<ReturnType<ReturnType<typeof postItems>["first"]>>>;
 function serializePost({ tagLinks, publishedAt, updatedAt, ...row }: PostRow) {
+  if (!row.slug || !row.category || !row.categoryId) throw new Error("已发布文章缺少必要字段");
   return {
     ...row,
+    slug: row.slug,
+    categoryId: row.categoryId,
+    category: row.category,
     isFeatured: row.isFeatured === 1,
     publishedAt: publishedAt?.toISOString() ?? null,
     updatedAt: updatedAt.toISOString(),
@@ -157,17 +161,13 @@ export const listPublicFriends = cache(async (category: string | undefined) => {
 export const listPublicChangelog = cache(async (requestedPage: number) => {
   await connection();
   return writeTransaction(async (tx) => {
-    const { total } = await tx.orm.public.ReleaseLog.aggregate((agg) => ({ total: agg.count() }));
+    const { total } = await tx.orm.public.ReleaseLog.where({ status: "published" }).aggregate(
+      (agg) => ({ total: agg.count() }),
+    );
     const pageCount = Math.max(1, Math.ceil(total / 8));
     const page = Math.min(requestedPage, pageCount);
-    const rows = await tx.orm.public.ReleaseLog.select(
-      "id",
-      "version",
-      "title",
-      "type",
-      "changes",
-      "createdAt",
-    )
+    const rows = await tx.orm.public.ReleaseLog.where({ status: "published" })
+      .select("id", "version", "title", "type", "changes", "createdAt")
       .orderBy([(r) => r.createdAt.desc(), (r) => r.id.desc()])
       .offset((page - 1) * 8)
       .limit(8)

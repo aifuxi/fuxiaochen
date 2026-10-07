@@ -14,8 +14,8 @@ export async function searchContent(query: SearchQuery, actor: TaxonomyActor): P
     const raw = getDatabase().raw;
     // UNION 的每个关键词都是绑定参数；正文只检索经过校验的可见 text，不匹配 JSON 属性。
     const rows = raw.sql`
-      SELECT id, 'post' AS kind, title, slug AS description, '/admin/posts/' || id || '/edit' AS href, "updatedAt" AS time FROM post
-      WHERE strpos(lower(title || ' ' || (content::jsonb ->> 'text') || ' ' || slug), lower(${query.q})) > 0
+      SELECT id, 'post' AS kind, coalesce(nullif(title, ''), '未命名草稿') AS title, coalesce(slug, '未设置链接') AS description, '/admin/posts/' || id || '/edit' AS href, "updatedAt" AS time FROM post
+      WHERE strpos(lower(title || ' ' || (content::jsonb ->> 'text') || ' ' || coalesce(slug, '')), lower(${query.q})) > 0
         OR "categoryId" IN (SELECT id FROM category WHERE strpos(lower(name), lower(${query.q})) > 0)
         OR id IN (SELECT "postId" FROM post_tag JOIN tag ON tag.id = post_tag."tagId" WHERE strpos(lower(tag.name), lower(${query.q})) > 0)
       UNION ALL SELECT id, 'category', name, '分类', '/admin/categories?kind=category&record=' || id, "createdAt" FROM category WHERE strpos(lower(name), lower(${query.q})) > 0

@@ -12,10 +12,11 @@ import { setTimeout as delay } from "node:timers/promises";
 import { Client } from "pg";
 import { z } from "zod";
 
+import type { ReleaseLog } from "../lib/changelog/schema";
 import type { PostDetail } from "../lib/posts/schema";
 import type { SiteSettings } from "../lib/settings/schema";
 
-import { serializeDocument } from "../lib/posts/document";
+import { serializeDocument, EMPTY_POST_CONTENT } from "../lib/posts/document";
 
 const project = resolve(import.meta.dirname, "..");
 const siteOrigin = "https://seo-integration.example";
@@ -304,6 +305,46 @@ void test(
       await makePost("seo-second", "published");
       let draft = await makePost("seo-draft", "draft");
       await makePost("seo-scheduled", "scheduled");
+      const blankDraft = await api<PostDetail>("/posts", "POST", {
+        title: "",
+        slug: "",
+        categoryId: "",
+        tagIds: [],
+        content: EMPTY_POST_CONTENT,
+        status: "draft",
+        scheduledFor: null,
+      });
+      assert.equal(blankDraft.slug, null);
+      assert.equal(blankDraft.category, null);
+      assert.ok(!(await html("/posts")).includes("未命名草稿"));
+      let release = await api<ReleaseLog>("/changelog", "POST", {
+        version: "v-http-test",
+        title: "HTTP日志公开验证",
+        type: "feature",
+        changes: ["原条目"],
+      });
+      assert.ok((await html("/changelog")).includes("HTTP日志公开验证"));
+      const createdAt = release.createdAt;
+      release = await api<ReleaseLog>(`/changelog/${release.id}`, "PUT", {
+        version: release.version,
+        title: "HTTP日志修改验证",
+        type: "fix",
+        changes: ["新条目"],
+        revision: release.revision,
+      });
+      assert.equal(release.createdAt, createdAt);
+      assert.ok((await html("/changelog")).includes("HTTP日志修改验证"));
+      release = await api<ReleaseLog>(`/changelog/${release.id}/status`, "PUT", {
+        status: "withdrawn",
+        revision: release.revision,
+      });
+      assert.ok(!(await html("/changelog")).includes("HTTP日志修改验证"));
+      release = await api<ReleaseLog>(`/changelog/${release.id}/status`, "PUT", {
+        status: "published",
+        revision: release.revision,
+      });
+      assert.equal(release.createdAt, createdAt);
+      assert.ok((await html("/changelog")).includes("HTTP日志修改验证"));
       let map = await sitemap();
       for (const path of [
         "/",

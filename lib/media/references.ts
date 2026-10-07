@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 
 import type { DatabaseTransaction } from "@/prisma/db";
 
+import { postDisplayTitle } from "@/lib/posts/schema";
+
 import type { MediaReferences } from "./schema";
 
 import { MediaError } from "./error";
@@ -36,7 +38,7 @@ export async function findMediaReferences(
     add(
       "post",
       post.id,
-      post.title,
+      postDisplayTitle(post.title),
       `/admin/posts/${post.id}/edit`,
       documentReferenceUrls(post.content),
     );

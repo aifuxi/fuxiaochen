@@ -26,11 +26,13 @@ import {
   type ReleaseType,
   type ReleaseList,
   type ReleaseLog,
+  type ReleaseStatus,
 } from "@/lib/changelog/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
+import { useNavigationGuard } from "./navigation-guard";
 import { RecordLocator, useRecordTarget } from "./record-locator";
 import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
 import "./admin-business.css";
@@ -45,6 +47,13 @@ export function AdminChangelog() {
   const record = useRecordTarget();
   const { onMessage } = useAdminWorkspace();
   const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<ReleaseStatus | "all">("all");
+  const [editing, setEditing] = useState<ReleaseLog | null>(null);
+  const [statusTarget, setStatusTarget] = useState<ReleaseLog | null>(null);
+  const [statusError, setStatusError] = useState("");
+  const [statusUncertain, setStatusUncertain] = useState(false);
+  const [conflict, setConflict] = useState(false);
+  const editTrigger = useRef<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [version, setVersion] = useState("");
   const [title, setTitle] = useState("");
@@ -59,20 +68,91 @@ export function AdminChangelog() {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const result = usePostQuery(
-    `?${new URLSearchParams(record ? { record } : { q: keyword, page: String(page) })}`,
+    `?${new URLSearchParams(record ? { record } : { q: keyword, page: String(page), ...(status === "all" ? {} : { status }) })}`,
     revision,
     load,
   );
   const filtered = result.data?.items ?? [];
   const [pending, setPending] = useState(false);
   const busy = useRef(false);
+  useNavigationGuard(false, pending);
   const [error, setError] = useState("");
   const [uncertain, setUncertain] = useState(false);
   const [checked, setChecked] = useState<ReleaseList | null>(null);
   const submittedVersion = useRef("");
+  const fill = (log: ReleaseLog) => {
+    setEditing(log);
+    setVersion(log.version);
+    setTitle(log.title);
+    setType(log.type);
+    setChanges(log.changes.join("\n"));
+    setErrors({});
+    setError("");
+    setConflict(false);
+    setUncertain(false);
+    setChecked(null);
+  };
+  const reloadEditing = async () => {
+    if (!editing || busy.current) return;
+    busy.current = true;
+    setPending(true);
+    try {
+      fill(await request<ReleaseLog>(`/${editing.id}`));
+      setRevision((v) => v + 1);
+      requestAnimationFrame(() => versionInput.current?.focus());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "无法载入记录，请稍后重试。");
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  };
+  const changeVisibility = async () => {
+    if (!statusTarget || busy.current || statusUncertain) return;
+    busy.current = true;
+    setPending(true);
+    setStatusError("");
+    try {
+      await request<ReleaseLog>(`/${statusTarget.id}/status`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          revision: statusTarget.revision,
+          status: statusTarget.status === "published" ? "withdrawn" : "published",
+        }),
+      });
+      setRevision((v) => v + 1);
+      setStatusTarget(null);
+      onMessage(
+        statusTarget.status === "published" ? "日志已撤回，前台不再展示。" : "日志已重新发布。",
+      );
+    } catch (e) {
+      setStatusError(e instanceof Error ? e.message : "无法确认操作结果。");
+      setStatusUncertain(true);
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  };
+  const reloadStatus = async () => {
+    if (!statusTarget || busy.current) return;
+    busy.current = true;
+    setPending(true);
+    try {
+      setStatusTarget(await request<ReleaseLog>(`/${statusTarget.id}`));
+      setStatusError("已载入当前状态，请核对后重新确认操作。");
+      setStatusUncertain(false);
+      setRevision((v) => v + 1);
+    } catch (e) {
+      setStatusError(e instanceof Error ? e.message : "无法核对记录状态。");
+    } finally {
+      busy.current = false;
+      setPending(false);
+    }
+  };
   const publish = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (busy.current || uncertain) return;
+    if (busy.current || uncertain || conflict) return;
     const parsed = releaseSchema.safeParse({
       version,
       title,
@@ -98,16 +178,21 @@ export function AdminChangelog() {
     setErrors({});
     submittedVersion.current = parsed.data.version;
     try {
-      await request<ReleaseLog>("", {
-        method: "POST",
+      await request<ReleaseLog>(editing ? `/${editing.id}` : "", {
+        method: editing ? "PUT" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsed.data),
+        body: JSON.stringify(
+          editing ? { ...parsed.data, revision: editing.revision } : parsed.data,
+        ),
       });
-      setQuery("");
-      setPage(1);
+      if (!editing) {
+        setQuery("");
+        setPage(1);
+        setStatus("all");
+      }
       setRevision((v) => v + 1);
       setOpen(false);
-      onMessage("版本记录已保存；此操作不会部署软件。");
+      onMessage(editing ? "更新日志已保存。" : "版本记录已保存；此操作不会部署软件。");
     } catch (e) {
       setError(e instanceof Error ? e.message : "无法确认发布结果。");
       if (e instanceof AdminRequestError && e.code === "INVALID_INPUT") {
@@ -118,6 +203,8 @@ export function AdminChangelog() {
         requestAnimationFrame(() =>
           document.getElementById(`release-${Object.keys(fields)[0]}`)?.focus(),
         );
+      } else if (e instanceof AdminRequestError && e.code === "VERSION_CONFLICT") {
+        setConflict(true);
       } else if (
         !(e instanceof AdminRequestError) ||
         ["INVALID_RESPONSE", "SERVICE_UNAVAILABLE", "REQUEST_FAILED"].includes(e.code)
@@ -135,7 +222,13 @@ export function AdminChangelog() {
     busy.current = true;
     setPending(true);
     try {
-      setChecked(await load(`?${new URLSearchParams({ q: submittedVersion.current })}`));
+      if (editing) {
+        const current = await request<ReleaseLog>(`/${editing.id}`);
+        setChecked({ items: [current], total: 1, page: 1, pageSize: 8, pageCount: 1 });
+        setConflict(current.revision !== editing.revision);
+      } else {
+        setChecked(await load(`?${new URLSearchParams({ q: submittedVersion.current })}`));
+      }
       setRevision((v) => v + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : "查询失败，请稍后再核对。");
@@ -168,6 +261,9 @@ export function AdminChangelog() {
               setOpen(true);
               return;
             }
+            setEditing(null);
+            editTrigger.current = publishButton.current;
+            setConflict(false);
             setError("");
             setVersion("");
             setTitle("");
@@ -215,6 +311,30 @@ export function AdminChangelog() {
               </InputGroupAddon>
             )}
           </InputGroup>
+          <Select
+            value={status}
+            disabled={Boolean(record)}
+            items={[
+              { value: "all", label: "全部状态" },
+              { value: "published", label: "已发布" },
+              { value: "withdrawn", label: "已撤回" },
+            ]}
+            onValueChange={(value) => {
+              if (value) {
+                setStatus(value);
+                setPage(1);
+              }
+            }}
+          >
+            <SelectTrigger className="admin-release-status" aria-label="筛选日志状态">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">全部状态</SelectItem>
+              <SelectItem value="published">已发布</SelectItem>
+              <SelectItem value="withdrawn">已撤回</SelectItem>
+            </SelectContent>
+          </Select>
           <output>
             共 <strong>{result.data?.total ?? "—"}</strong> 条更新日志
           </output>
@@ -237,6 +357,9 @@ export function AdminChangelog() {
                       <span className={`admin-release-tag is-${log.type}`}>
                         {releaseTypes[log.type]}
                       </span>
+                      <span className="admin-release-tag">
+                        {log.status === "published" ? "已发布" : "已撤回"}
+                      </span>
                       <h2>{log.title}</h2>
                     </div>
                     {!log.changes.length && <p className="admin-muted">未填写更新详情</p>}
@@ -245,11 +368,42 @@ export function AdminChangelog() {
                         <li key={index}>{change}</li>
                       ))}
                     </ul>
-                    <time dateTime={log.createdAt}>
-                      {new Date(log.createdAt).toLocaleDateString("sv-SE", {
-                        timeZone: "Asia/Shanghai",
-                      })}
-                    </time>
+                    <div className="admin-release-footer">
+                      <time dateTime={log.createdAt}>
+                        {new Date(log.createdAt).toLocaleDateString("sv-SE", {
+                          timeZone: "Asia/Shanghai",
+                        })}
+                      </time>
+                      <div className="admin-release-actions">
+                        <Button
+                          size="compact"
+                          variant="ghost"
+                          disabled={pending || uncertain || conflict}
+                          aria-label={`编辑日志 ${log.title}`}
+                          onClick={(event) => {
+                            editTrigger.current = event.currentTarget;
+                            fill(log);
+                            setOpen(true);
+                          }}
+                        >
+                          编辑
+                        </Button>
+                        <Button
+                          size="compact"
+                          variant="ghost"
+                          disabled={pending || uncertain || conflict}
+                          className={log.status === "published" ? "admin-danger" : undefined}
+                          aria-label={`${log.status === "published" ? "撤回" : "重新发布"}日志 ${log.title}`}
+                          onClick={() => {
+                            setStatusTarget(log);
+                            setStatusError("");
+                            setStatusUncertain(false);
+                          }}
+                        >
+                          {log.status === "published" ? "撤回" : "重新发布"}
+                        </Button>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ol>
@@ -257,18 +411,23 @@ export function AdminChangelog() {
           ) : (
             <div className="admin-post-empty">
               <History size={28} aria-hidden="true" />
-              <h2>{keyword ? "没有匹配的版本记录" : "尚无版本记录"}</h2>
-              <p>{keyword ? "试试其他版本号或更新关键词。" : "发布第一条更新日志。"}</p>
-              {keyword && (
+              <h2>{keyword || status !== "all" ? "没有匹配的版本记录" : "尚无版本记录"}</h2>
+              <p>
+                {keyword || status !== "all"
+                  ? "切换状态或清空搜索后重试。"
+                  : "发布第一条更新日志。"}
+              </p>
+              {(keyword || status !== "all") && (
                 <Button
                   size="compact"
                   onClick={() => {
                     setQuery("");
+                    setStatus("all");
                     setPage(1);
                     searchInput.current?.focus();
                   }}
                 >
-                  清空搜索
+                  重置筛选
                 </Button>
               )}
             </div>
@@ -319,18 +478,22 @@ export function AdminChangelog() {
         <DialogContent
           className="admin-release-modal"
           initialFocus={versionInput}
-          finalFocus={publishButton}
+          finalFocus={() => {
+            const target = editTrigger.current;
+            (target?.isConnected ? target : searchInput.current)?.focus();
+            return false;
+          }}
         >
           <div className="admin-modal-heading">
             <div>
-              <DialogTitle>发布版本更新日志</DialogTitle>
+              <DialogTitle>{editing ? "编辑版本更新日志" : "发布版本更新日志"}</DialogTitle>
               <DialogDescription>填写版本号、主题和更新内容。</DialogDescription>
             </div>
             <Button
               variant="ghost"
               size="sm"
               disabled={pending}
-              aria-label="关闭发布弹窗"
+              aria-label="关闭日志弹窗"
               onClick={() => setOpen(false)}
             >
               <X size={18} aria-hidden="true" />
@@ -341,9 +504,18 @@ export function AdminChangelog() {
               <p className="admin-business-error">{error}</p>
             </div>
           )}
+          {conflict && (
+            <Button type="button" disabled={pending} onClick={() => void reloadEditing()}>
+              放弃修改并重新载入
+            </Button>
+          )}
           {uncertain && (
             <section aria-label="核对发布结果">
-              <p>发布结果未确认，请先查询记录，避免重复发布。</p>
+              <p>
+                {editing
+                  ? "保存结果未确认，请先核对当前记录。"
+                  : "发布结果未确认，请先查询记录，避免重复发布。"}
+              </p>
               <Button
                 type="button"
                 variant="secondary"
@@ -368,14 +540,14 @@ export function AdminChangelog() {
                   <Button
                     type="button"
                     variant="secondary"
-                    disabled={pending}
+                    disabled={pending || conflict}
                     onClick={() => {
                       setUncertain(false);
                       setChecked(null);
                       setError("");
                     }}
                   >
-                    确认尚未发布，重新提交
+                    {editing ? "确认尚未保存，重新提交" : "确认尚未发布，重新提交"}
                   </Button>
                 </>
               )}
@@ -482,12 +654,56 @@ export function AdminChangelog() {
                 <Button type="button" onClick={() => setOpen(false)}>
                   取消
                 </Button>
-                <Button type="submit" variant="primary" disabled={pending || uncertain}>
-                  {pending ? "正在发布…" : "确认发布"}
+                <Button type="submit" variant="primary" disabled={pending || uncertain || conflict}>
+                  {pending ? "正在保存…" : editing ? "保存修改" : "确认发布"}
                 </Button>
               </div>
             </fieldset>
           </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={Boolean(statusTarget)}
+        onOpenChange={(value) => {
+          if (!value && !pending) setStatusTarget(null);
+        }}
+      >
+        <DialogContent finalFocus={searchInput}>
+          <DialogTitle>
+            {statusTarget?.status === "published" ? "撤回更新日志" : "重新发布更新日志"}
+          </DialogTitle>
+          <DialogDescription>
+            {statusTarget?.title}：
+            {statusTarget?.status === "published"
+              ? "撤回后前台不再展示，记录和内容保留，可随时重新发布。"
+              : "确认后前台将再次展示，保留原发布时间。"}
+          </DialogDescription>
+          {statusError && (
+            <p role="alert" className="admin-business-error">
+              {statusError}
+            </p>
+          )}
+          {statusUncertain && (
+            <Button disabled={pending} onClick={() => void reloadStatus()}>
+              核对当前记录
+            </Button>
+          )}
+          <div className="admin-modal-actions">
+            <Button disabled={pending} onClick={() => setStatusTarget(null)}>
+              取消
+            </Button>
+            <Button
+              disabled={pending || statusUncertain}
+              className={statusTarget?.status === "published" ? "admin-danger" : undefined}
+              onClick={() => void changeVisibility()}
+            >
+              {pending
+                ? "正在保存…"
+                : statusTarget?.status === "published"
+                  ? "确认撤回"
+                  : "确认重新发布"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

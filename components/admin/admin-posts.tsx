@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
-import { postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema";
+import { postDisplayTitle, postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
@@ -61,7 +61,7 @@ const columns: ColumnDef<PostItem>[] = [
             disabled={table.options.meta?.disableActions}
             onClick={() => table.options.meta?.editRow?.(post)}
           >
-            {post.title}
+            {postDisplayTitle(post.title)}
           </button>
           <p className="admin-post-summary">{post.summary || "未填写摘要"}</p>
           <div className="admin-post-tags">
@@ -82,7 +82,7 @@ const columns: ColumnDef<PostItem>[] = [
       const post = row.original;
       return (
         <>
-          <span className="admin-post-category">{post.category.name}</span>
+          <span className="admin-post-category">{post.category?.name ?? "未分类"}</span>
         </>
       );
     },
@@ -302,7 +302,7 @@ export function AdminPosts() {
               <DataTable
                 meta={{
                   getRowActions: (post) => ({
-                    label: `文章 ${post.title} 的操作`,
+                    label: `文章 ${postDisplayTitle(post.title)} 的操作`,
                     disabled: postPending || result.loading || Boolean(result.error),
                     actions: [
                       {

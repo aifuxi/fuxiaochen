@@ -3,6 +3,7 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { authorizeAdmin } from "@/lib/admin/service";
 import { postContentSchema } from "@/lib/posts/document";
+import { slugSchema, postDisplayTitle } from "@/lib/posts/schema";
 import { writeTransaction } from "@/prisma/db";
 
 import { createBackup, newBackupId } from "./backups";
@@ -21,6 +22,9 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
     let skipped = 0;
     for (const post of due) {
       if (
+        !post.title.trim() ||
+        !post.categoryId ||
+        !slugSchema.safeParse(post.slug).success ||
         !postContentSchema.safeParse(post.content).success ||
         post.version >= Number.MAX_SAFE_INTEGER - 1
       ) {
@@ -31,7 +35,7 @@ export async function publishDuePosts(actor?: TaxonomyActor) {
             id,
             kind: "schedule-error",
             sourceId: post.id,
-            title: `排期未发布：${post.title}，请检查正文与版本`,
+            title: `排期未发布：${postDisplayTitle(post.title)}，请检查标题、链接、分类、正文与版本`,
             href: `/admin/posts/${post.id}/edit`,
             createdAt: now,
             resolvedAt: null,

@@ -1,5 +1,12 @@
+.admin-changelog .admin-changelog-filters {
+  justify-content: flex-start;
+}
+.admin-release-status {
+  flex: 0 0 150px;
+  width: 150px;
+}
 .admin-changelog-filters output {
-  margin: 0;
+  margin: 0 0 0 auto;
   color: var(--color-muted);
   font-size: 12px;
   line-height: 18px;
@@ -124,6 +131,13 @@
   color: var(--color-danger);
 }
 @media (max-width: 600px) {
+  .admin-release-status {
+    flex: none;
+    width: 100%;
+  }
+  .admin-changelog-filters output {
+    margin-left: 0;
+  }
   .admin-release-search {
     flex: none;
     width: 100%;
@@ -140,4 +154,15 @@
   .admin-release-fields {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+.admin-release-footer,
+.admin-release-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-release-footer {
+  justify-content: space-between;
 }

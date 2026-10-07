@@ -18,9 +18,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...["/", "/posts", "/categories", "/tags", "/changelog", "/friends-links", "/about"].map(
       (path) => ({ url: siteUrl(path) }),
     ),
-    ...posts.map((post) => ({
-      url: siteUrl(`/posts/${encodeURIComponent(post.slug)}`),
-      lastModified: post.updatedAt,
-    })),
+    ...posts.flatMap((post) =>
+      post.slug
+        ? [
+            {
+              url: siteUrl(`/posts/${encodeURIComponent(post.slug)}`),
+              lastModified: post.updatedAt,
+            },
+          ]
+        : [],
+    ),
   ];
 }

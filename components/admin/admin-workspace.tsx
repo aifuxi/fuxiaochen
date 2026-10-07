@@ -10,6 +10,7 @@ import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/s
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
+import { postDisplayTitle } from "@/lib/posts/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
@@ -459,7 +460,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         >
           <DialogTitle>删除文章？</DialogTitle>
           <DialogDescription>
-            永久删除《{postDeleteTarget?.title}
+            永久删除《{postDeleteTarget ? postDisplayTitle(postDeleteTarget.title) : ""}
             》及其标签关联、文章排期和全部评论回复，删除后无法恢复。
           </DialogDescription>
           {postDeleteError && (
