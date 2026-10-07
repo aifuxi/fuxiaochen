@@ -16,7 +16,7 @@ html:has(.site-layout) {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px 24px;
+  gap: var(--space-md) var(--space-xl);
   padding: 20px var(--site-gutter);
   color: var(--color-muted);
   font-size: 12px;
@@ -27,10 +27,10 @@ html:has(.site-layout) {
 }
 .site-filings {
   display: flex;
-  flex: 1 1 0;
+  flex: 1 1 auto;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 20px;
+  gap: var(--space-md) var(--space-xl);
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -40,31 +40,16 @@ html:has(.site-layout) {
 .site-layout .site-footer a {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--control-touch);
   max-width: 100%;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   overflow-wrap: anywhere;
-  transition:
-    color 150ms,
-    background-color 150ms;
 }
 .site-layout .site-footer a:hover {
-  color: var(--color-foreground);
   background: var(--color-surface-hover);
 }
 .site-layout .site-footer a:active {
-  color: var(--color-muted);
   background: var(--color-background);
-}
-.site-layout .site-footer a:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 4px;
-  border-radius: 8px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .site-layout .site-footer a {
-    transition: none;
-  }
 }
 .site-profile {
   display: flex;
@@ -107,6 +92,9 @@ html:has(.site-layout) {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
   border-radius: 4px;
+}
+.site-layout .site-footer a:focus-visible {
+  border-radius: var(--radius-sm);
 }
 .site-header {
   position: relative;
