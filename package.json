@@ -8,6 +8,7 @@
     "posts:publish-due": "node --conditions=react-server --import tsx scripts/operations.ts publish",
     "db:backup": "node --conditions=react-server --import tsx scripts/operations.ts backup",
     "db:restore": "node --conditions=react-server --import tsx scripts/restore-backup.ts",
+    "db:import-sqlite": "node --conditions=react-server --import tsx scripts/import-sqlite.ts",
     "dev": "next dev",
     "start": "next start",
     "build": "next build",
@@ -33,6 +34,7 @@
     "db:up": "docker compose -p fuxiaochen-dev -f compose.dev.yaml up -d --wait postgres",
     "test:login": "node --conditions=react-server --import tsx --test tests/login.test.ts",
     "test:postgres": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres.test.ts",
+    "test:sqlite-import": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/sqlite-import.test.ts",
     "test:seo": "node --conditions=react-server --import tsx --test tests/seo.test.ts",
     "test:seo:integration": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/seo.integration.test.ts"
   },
