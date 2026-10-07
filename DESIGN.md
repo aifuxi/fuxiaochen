@@ -193,12 +193,6 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 `--control-form` 的桌面基值为 40px，`--control-compact` 为 36px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
 
-## 品牌标识
-
-品牌图标保留圆角字母 F，使用 background 底色与 foreground 字形。字形采用连续弧线、等粗笔画和圆润端点，保持两条横笔的长度差与清楚的负空间；背景仅保留外侧圆角，不增加内框、渐变或立体效果。
-
-`app/icon.svg` 与 `public/logo.svg` 使用相同矢量内容；`app/apple-icon.png` 由该矢量导出为 180×180。更新标识时同步三份资源，并核对 16px、32px、48px 的辨识度；后台继续通过既有 32px 图片容器使用标识。
-
 ## 色彩与材质
 
 `background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级靠细线、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
