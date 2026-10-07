@@ -129,6 +129,13 @@ export function AdminVisitors() {
     paused,
   );
   const data = result.data;
+  const emptyDescription = data?.collection
+    ? !data.collection.enabled
+      ? "可在系统设置中启用访问统计；新访问仅在生产环境记录。"
+      : !data.collection.production
+        ? "采集开关已开启；当前环境不记录新访问，历史记录仍可查询。"
+        : "尚未采集到访问记录，新访问会在收到记录后显示。"
+    : "等待访问记录查询结果。";
   const updateQuery = (value: string) => {
     setQuery(value);
     setPage(1);
@@ -269,11 +276,13 @@ export function AdminVisitors() {
                     ? "正在加载访问记录。"
                     : q
                       ? "试试其他脱敏 IP、地域或页面关键词。"
-                      : "可在系统设置中启用访问统计。"}
+                      : emptyDescription}
               </p>
-              <Button size="compact" onClick={clearSearch}>
-                清空搜索
-              </Button>
+              {q && (
+                <Button size="compact" onClick={clearSearch}>
+                  清空搜索
+                </Button>
+              )}
             </div>
           }
         />

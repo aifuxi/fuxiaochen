@@ -1,7 +1,7 @@
 "use client";
 
 import { History, Plus, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -68,7 +68,7 @@ export function AdminChangelog() {
   const [uncertain, setUncertain] = useState(false);
   const [checked, setChecked] = useState<ReleaseList | null>(null);
   const submittedVersion = useRef("");
-  const publish = async (event: FormEvent<HTMLFormElement>) => {
+  const publish = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (busy.current || uncertain) return;
     const parsed = releaseSchema.safeParse({
@@ -262,7 +262,11 @@ export function AdminChangelog() {
           ))}
         {result.data && (
           <div className="admin-post-pagination">
-            <output>共 {result.data.total} 条</output>
+            <output aria-live="polite">
+              显示第 {result.data.total ? (result.data.page - 1) * result.data.pageSize + 1 : 0}–
+              {Math.min(result.data.page * result.data.pageSize, result.data.total)} 条，共{" "}
+              {result.data.total} 条
+            </output>
             <nav aria-label="更新日志分页">
               <Button
                 size="compact"
@@ -273,7 +277,10 @@ export function AdminChangelog() {
               >
                 <ChevronLeft size={16} />
               </Button>
-              <span aria-current="page">
+              <span
+                aria-current="page"
+                aria-label={`第 ${result.data.page} 页，共 ${result.data.pageCount} 页`}
+              >
                 {result.data.page} / {result.data.pageCount}
               </span>
               <Button

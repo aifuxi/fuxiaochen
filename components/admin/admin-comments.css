@@ -15,7 +15,7 @@
   width: 22%;
 }
 
-.admin-comments-page .admin-comments-table td:first-child {
+.admin-comments-page .admin-comments-table tbody :is(th, td):first-child {
   min-width: 0;
 }
 

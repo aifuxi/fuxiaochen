@@ -120,7 +120,12 @@
   line-height: 18px;
 }
 .admin-settings-help {
-  color: var(--color-subtle);
+  color: var(--color-muted);
+}
+.admin-settings-group-target:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
 }
 .admin-settings-error {
   color: var(--color-danger);

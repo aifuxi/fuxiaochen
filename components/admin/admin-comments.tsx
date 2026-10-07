@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { Check, FileText, MessageCircle, Search, Trash2, X } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
@@ -48,6 +48,7 @@ const columns: ColumnDef<CommentItem>[] = [
     header: "评论者",
     accessorKey: "author",
     enableSorting: true,
+    meta: { rowHeader: true },
     cell: ({ row }) => {
       const comment = row.original;
       return (
@@ -193,7 +194,7 @@ export function AdminComments() {
       }
     }
   };
-  const saveReply = async (event: FormEvent<HTMLFormElement>) => {
+  const saveReply = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!targetComment || busy || replyConflict) return;
     setReplyError("");

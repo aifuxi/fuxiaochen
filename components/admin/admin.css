@@ -103,8 +103,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--color-danger) 18%, var(--color-surface));
-  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-primary) 18%, var(--color-surface));
+  color: var(--color-focus);
   font: 11px var(--font-sans);
 }
 .admin-sidebar-bottom {
@@ -530,14 +530,16 @@
   gap: 9px;
 }
 .admin-comment-meta strong {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
 }
 .admin-comment-meta span,
 .admin-comment small,
 .admin-schedule small {
   color: var(--color-subtle);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-comment p {
   margin: 6px 0;
@@ -584,11 +586,16 @@
 }
 .admin-schedule > span {
   flex: none;
-  padding: 4px 6px;
-  border-radius: 5px;
-  background: color-mix(in srgb, var(--color-success) 12%, var(--color-surface));
-  color: var(--color-success);
-  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-raised);
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+.admin-schedule > .is-scheduled {
+  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
+  color: var(--color-focus);
 }
 .admin-quick {
   display: flex;
@@ -1074,24 +1081,31 @@
   text-align: left;
   font-size: 12px;
 }
-.admin-post-table th {
+.admin-post-table thead th {
   padding: 17px 18px;
   background: var(--color-stage);
   color: var(--color-muted);
   font-weight: 500;
   white-space: nowrap;
 }
-.admin-post-table td {
+.admin-post-table tbody :is(th, td) {
   padding: 20px 18px;
   border-top: 1px solid var(--admin-divider);
 }
-.admin-post-table th:first-child {
+.admin-post-table thead th:first-child {
   width: 38%;
 }
-.admin-post-table td:first-child {
+.admin-post-table tbody td:first-child {
   min-width: 280px;
 }
-.admin-post-table tr:hover td {
+.admin-post-table tbody th {
+  background: transparent;
+  color: inherit;
+  font-weight: 400;
+  text-align: left;
+  white-space: normal;
+}
+.admin-post-table tbody tr:hover > :is(th, td) {
   background: var(--color-surface-hover);
 }
 .admin-post-title {

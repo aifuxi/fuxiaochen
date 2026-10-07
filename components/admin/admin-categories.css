@@ -59,7 +59,7 @@
   text-align: left;
   font-size: 13px;
 }
-.admin-taxonomy-table th {
+.admin-taxonomy-table thead th {
   background: var(--color-stage);
   color: var(--color-muted);
   font-size: 12px;
@@ -70,16 +70,23 @@
   padding: 12px 8px;
   border-bottom: 1px solid var(--admin-divider);
 }
-.admin-taxonomy-table th:nth-child(2) {
+.admin-taxonomy-table thead th:nth-child(2) {
   width: 110px;
 }
-.admin-taxonomy-table th:last-child {
+.admin-taxonomy-table thead th:last-child {
   width: 60px;
 }
-.admin-taxonomy-table tbody tr:hover {
+.admin-taxonomy-table tbody th {
+  background: transparent;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 400;
+  text-align: left;
+}
+.admin-taxonomy-table tbody tr:hover > :is(th, td) {
   background: var(--color-surface-hover);
 }
-.admin-taxonomy-table tbody tr:last-child td {
+.admin-taxonomy-table tbody tr:last-child > :is(th, td) {
   border-bottom: 0;
 }
 .admin-taxonomy-name {
@@ -99,7 +106,7 @@
   font: 12px/1.5 var(--font-mono);
   white-space: nowrap;
 }
-.admin-taxonomy-delete {
+.admin-taxonomy-delete-confirm {
   color: var(--color-danger);
 }
 .admin-taxonomy-cloud {
@@ -158,10 +165,10 @@
   .admin-taxonomy-form .ds-button {
     padding-inline: 12px;
   }
-  .admin-taxonomy-table th:nth-child(2) {
+  .admin-taxonomy-table thead th:nth-child(2) {
     width: 76px;
   }
-  .admin-taxonomy-table th:last-child {
+  .admin-taxonomy-table thead th:last-child {
     width: 48px;
   }
   .admin-taxonomy-table th,
@@ -180,13 +187,8 @@
   line-height: 20px;
   color: var(--color-muted);
 }
-.admin-taxonomy-delete {
-  width: 36px;
-  padding: 0;
-}
 @media (max-width: 600px), (pointer: coarse) {
-  .admin-taxonomy-tag-remove,
-  .admin-taxonomy-delete {
+  .admin-taxonomy-tag-remove {
     width: 44px;
     height: 44px;
   }

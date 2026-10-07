@@ -378,21 +378,23 @@ export function AdminDashboard({
               />
               <p className="admin-muted">最近 5 条排期 · 到期后由调度任务发布</p>
               {postSummary?.schedules.length ? (
-                postSummary.schedules.map((schedule) => (
-                  <div className="admin-schedule" key={schedule.id}>
-                    <div>
-                      <strong>{schedule.title}</strong>
-                      <small>{postTime(schedule.scheduledFor)}</small>
+                postSummary.schedules.map((schedule) => {
+                  const waiting =
+                    schedule.scheduledFor &&
+                    now !== null &&
+                    Date.parse(schedule.scheduledFor) <= now;
+                  return (
+                    <div className="admin-schedule" key={schedule.id}>
+                      <div>
+                        <strong>{schedule.title}</strong>
+                        <small>{postTime(schedule.scheduledFor)}</small>
+                      </div>
+                      <span className={waiting ? "is-waiting" : "is-scheduled"}>
+                        {waiting ? "等待执行" : "已排期"}
+                      </span>
                     </div>
-                    <span>
-                      {schedule.scheduledFor &&
-                      now !== null &&
-                      Date.parse(schedule.scheduledFor) <= now
-                        ? "等待执行"
-                        : "已排期"}
-                    </span>
-                  </div>
-                ))
+                  );
+                })
               ) : postSummary ? (
                 <p className="admin-empty">暂无排期。</p>
               ) : null}

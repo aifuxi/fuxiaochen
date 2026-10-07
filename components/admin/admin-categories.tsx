@@ -3,7 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { Plus, Trash2, X } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type SubmitEvent } from "react";
 
 import type { Category } from "@/lib/taxonomy/schema";
 
@@ -27,6 +27,7 @@ const columns: ColumnDef<Category>[] = [
     header: "分类名称",
     accessorKey: "name",
     enableSorting: true,
+    meta: { rowHeader: true },
     cell: ({ row }) => {
       const item = row.original;
       return (
@@ -86,7 +87,7 @@ export function AdminCategories() {
   const cancelButton = useRef<HTMLButtonElement>(null);
 
   const [deleteError, setDeleteError] = useState("");
-  const addCategory = async (event: FormEvent) => {
+  const addCategory = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setCategoryError("");
     try {
@@ -99,7 +100,7 @@ export function AdminCategories() {
       requestAnimationFrame(() => categoryInput.current?.focus());
     }
   };
-  const addTag = async (event: FormEvent) => {
+  const addTag = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setTagError("");
     try {
@@ -309,13 +310,15 @@ export function AdminCategories() {
           <div className="admin-form-actions">
             <Button
               ref={cancelButton}
+              size="form"
               disabled={taxonomyPending}
               onClick={() => setDeleteName(null)}
             >
               取消
             </Button>
             <Button
-              className="admin-taxonomy-delete"
+              size="form"
+              className="admin-taxonomy-delete-confirm"
               disabled={deleteName === null || disabled}
               onClick={async () => {
                 if (!deleteName) return;

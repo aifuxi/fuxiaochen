@@ -133,18 +133,19 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
             </div>
             <strong>{value}</strong>
             <div
-              className={`analytics-change ${snapshot.changes[key] === null || (key === "bounce" ? snapshot.changes[key] > 0 : snapshot.changes[key] < 0) ? "is-muted" : ""}`}
+              className={`analytics-change ${snapshot.changes[key] === null || snapshot.changes[key] === 0 || (key === "bounce" ? snapshot.changes[key] > 0 : snapshot.changes[key] < 0) ? "is-muted" : ""}`}
             >
               <span>
                 {snapshot.changes[key] === null ? (
                   "暂无可比数据"
                 ) : (
                   <>
-                    {snapshot.changes[key] < 0 ? (
-                      <ArrowDown size={13} aria-hidden="true" />
-                    ) : (
-                      <ArrowUp size={13} aria-hidden="true" />
-                    )}
+                    {snapshot.changes[key] !== 0 &&
+                      (snapshot.changes[key] < 0 ? (
+                        <ArrowDown size={13} aria-hidden="true" />
+                      ) : (
+                        <ArrowUp size={13} aria-hidden="true" />
+                      ))}
                     {snapshot.changes[key] === 0
                       ? "持平"
                       : snapshot.changes[key] > 0
@@ -167,12 +168,12 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
           <div className="admin-panel-body">
             <div className="analytics-legend">
               <span>
-                <i className="analytics-pv" />
-                浏览量 (PV)
+                <i className="analytics-pv" aria-hidden="true" />
+                浏览量 (PV) · 实线
               </span>
               <span>
-                <i className="analytics-uv" />
-                访客数 (UV)
+                <i className="analytics-uv" aria-hidden="true" />
+                访客数 (UV) · 虚线
               </span>
             </div>
             <div className="analytics-chart-detail" aria-live="polite">
@@ -219,6 +220,7 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
                     fill="none"
                     stroke="var(--color-success)"
                     strokeWidth="2.5"
+                    strokeDasharray="6 4"
                   />
                   {points.map((point, i) => (
                     <g key={point.date}>

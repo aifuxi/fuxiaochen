@@ -2,7 +2,7 @@
 
 import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type SubmitEvent, type ReactNode } from "react";
 
 import { ConfiguredImage, SocialIcon } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
@@ -100,14 +100,22 @@ function SettingsForm({
   const busy = useRef(false);
   const form = useRef<HTMLFormElement>(null);
   const addButton = useRef<HTMLButtonElement>(null);
+  const errorFocus = useRef<string | null>(null);
+  useEffect(() => {
+    const key = errorFocus.current;
+    if (!key || pending || fieldGroup(key) !== tab || !errors[key]) return;
+    const target = document.getElementById(`settings-${key}`);
+    target?.focus();
+    errorFocus.current = null;
+  }, [errors, tab, pending]);
   function focusError(next: Record<string, string[]>) {
     setErrors(next);
     const key = Object.keys(next)[0];
     if (!key) return;
+    errorFocus.current = key;
     setTab(fieldGroup(key));
-    requestAnimationFrame(() => document.getElementById(`settings-${key}`)?.focus());
   }
-  async function save(event: FormEvent) {
+  async function save(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current || conflict) return;
     const { updatedAt: _updatedAt, localAnalyticsStartedAt: _startedAt, ...fields } = draft;
@@ -431,11 +439,18 @@ function SettingsForm({
           <TabsPanel value="social" className="admin-settings-panel">
             <section className="admin-settings-section">
               <div className="admin-settings-section-heading">
-                <h2>社交账号</h2>
+                <h2
+                  id="settings-socials"
+                  tabIndex={-1}
+                  className="admin-settings-group-target"
+                  aria-describedby={errors.socials ? "settings-socials-error" : undefined}
+                >
+                  社交账号
+                </h2>
                 <p>最多20条，支持同一平台多个账号。按列表顺序展示启用账号。</p>
               </div>
               {errors.socials && (
-                <p className="admin-settings-error" role="alert">
+                <p id="settings-socials-error" className="admin-settings-error" role="alert">
                   {errors.socials[0]}
                 </p>
               )}

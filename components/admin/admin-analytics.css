@@ -12,9 +12,9 @@
 .analytics-period,
 .analytics-footnote {
   margin: 0;
-  color: var(--color-subtle);
-  font-size: 11px;
-  line-height: 1.6;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 18px;
 }
 .analytics-stats {
   display: grid;
@@ -54,12 +54,13 @@
   padding: 0;
   color: var(--color-success);
   font:
-    11px ui-monospace,
+    12px/18px ui-monospace,
     monospace;
 }
 .analytics-change small {
-  font-size: 10px;
-  color: var(--color-subtle);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-muted);
 }
 .analytics-grid {
   display: grid;
@@ -75,7 +76,8 @@
   flex-wrap: wrap;
   gap: 16px;
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: 12px;
+  line-height: 18px;
 }
 .analytics-legend span {
   display: flex;
@@ -83,22 +85,23 @@
   gap: 7px;
 }
 .analytics-legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 20px;
+  height: 0;
+  border-top: 2.5px solid currentColor;
 }
-.analytics-pv {
-  background: var(--color-primary);
+.analytics-legend .analytics-pv {
+  color: var(--color-primary);
 }
-.analytics-uv {
-  background: var(--color-success);
+.analytics-legend .analytics-uv {
+  color: var(--color-success);
+  border-top-style: dashed;
 }
 .analytics-chart-detail {
   min-height: 36px;
   padding-top: 12px;
   color: var(--color-muted);
   font:
-    11px/1.6 ui-monospace,
+    12px/18px ui-monospace,
     monospace;
 }
 .analytics-chart-scroll {
@@ -197,8 +200,8 @@
   background: var(--color-stage);
 }
 .analytics-rank.is-leading {
-  background: var(--color-raised);
-  color: var(--color-foreground);
+  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
+  color: var(--color-focus);
 }
 @media (max-width: 1000px) {
   .analytics-stats {
@@ -280,5 +283,5 @@
 }
 
 .analytics-change.is-muted span {
-  color: var(--color-foreground-muted);
+  color: var(--color-muted);
 }

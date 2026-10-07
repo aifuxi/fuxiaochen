@@ -2,7 +2,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { Check, Link2, Pencil, Plus, Search, Trash2, X } from "lucide-react";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, type SubmitEvent } from "react";
 
 import { ConfiguredImage } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
@@ -107,13 +107,14 @@ const columns: ColumnDef<FriendLink>[] = [
     header: "博客名称 / 地址",
     accessorKey: "name",
     enableSorting: true,
+    meta: { rowHeader: true },
     cell: ({ row }) => {
       const link = row.original;
       return (
         <>
           <div className="admin-friend-identity">
             <span className="admin-friend-avatar">
-              <ConfiguredImage src={link.avatar} size={36} />
+              <ConfiguredImage src={link.avatar} size={36} fallback="link" />
             </span>
             <div>
               <strong>{link.name}</strong>
@@ -273,7 +274,7 @@ export function AdminFriendsLinks() {
       setPending(false);
     }
   }
-  function save(event: FormEvent) {
+  function save(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current || conflict) return;
     const { status: _status, ...newFields } = draft;

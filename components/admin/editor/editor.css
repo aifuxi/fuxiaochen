@@ -590,6 +590,10 @@
 }
 
 @media (max-width: 600px), (pointer: coarse) {
+  .post-editor-settings-fields .admin-status-options label {
+    min-width: 44px;
+    min-height: 44px;
+  }
   .post-editor-icon.ds-button,
   .post-editor-insert.ds-button {
     min-width: 44px;
@@ -651,9 +655,6 @@
   }
   .post-settings-drawer.ds-dialog-popup {
     padding: 20px;
-  }
-  .post-editor-settings-fields .admin-status-options label {
-    min-height: 44px;
   }
 }
 @media (prefers-reduced-motion: reduce) {

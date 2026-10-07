@@ -311,31 +311,6 @@ export function AdminMedia() {
                   </Card>
                 ))}
               </div>
-              <div className="admin-post-pagination">
-                <span>
-                  第 {list.data.page} / {list.data.pageCount} 页
-                </span>
-                <nav aria-label="媒体分页">
-                  <Button
-                    variant="ghost"
-                    size="compact"
-                    aria-label="上一页"
-                    disabled={list.data.page <= 1}
-                    onClick={() => setPage(Math.max(1, (list.data?.page ?? 1) - 1))}
-                  >
-                    <ChevronLeft size={17} aria-hidden="true" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="compact"
-                    aria-label="下一页"
-                    disabled={list.data.page >= list.data.pageCount}
-                    onClick={() => setPage((list.data?.page ?? 1) + 1)}
-                  >
-                    <ChevronRight size={17} aria-hidden="true" />
-                  </Button>
-                </nav>
-              </div>
             </>
           ) : (
             <div className="admin-media-empty">
@@ -359,6 +334,41 @@ export function AdminMedia() {
               </div>
             </div>
           ))}
+        {list.data && (
+          <div className="admin-post-pagination">
+            <output aria-live="polite">
+              显示第 {list.data.total ? (list.data.page - 1) * list.data.pageSize + 1 : 0}–
+              {Math.min(list.data.page * list.data.pageSize, list.data.total)} 条，共{" "}
+              {list.data.total} 条
+            </output>
+            <nav aria-label="媒体分页">
+              <Button
+                variant="ghost"
+                size="compact"
+                aria-label="上一页"
+                disabled={list.data.page <= 1}
+                onClick={() => setPage(Math.max(1, (list.data?.page ?? 1) - 1))}
+              >
+                <ChevronLeft size={17} aria-hidden="true" />
+              </Button>
+              <span
+                aria-current="page"
+                aria-label={`第 ${list.data.page} 页，共 ${list.data.pageCount} 页`}
+              >
+                {list.data.page} / {list.data.pageCount}
+              </span>
+              <Button
+                variant="ghost"
+                size="compact"
+                aria-label="下一页"
+                disabled={list.data.page >= list.data.pageCount}
+                onClick={() => setPage((list.data?.page ?? 1) + 1)}
+              >
+                <ChevronRight size={17} aria-hidden="true" />
+              </Button>
+            </nav>
+          </div>
+        )}
       </div>
       <p className="admin-media-note">{MEDIA_SIZE_HINT}文件上传并通过核验后保存；附件强制下载。</p>
       <Dialog

@@ -47,6 +47,7 @@ const columns: ColumnDef<PostItem>[] = [
     header: "文章标题",
     accessorKey: "title",
     enableSorting: true,
+    meta: { rowHeader: true },
     cell: ({ row, table }) => {
       const post = row.original;
       return (
