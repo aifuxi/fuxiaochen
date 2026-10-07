@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CategoriesPage() {
   const { categories } = await getPublicTaxonomies();
   return (
-    <main id="main-content" className="site-main">
+    <main data-page-motion id="main-content" className="site-main">
       <header className="site-page-heading">
         <h1>分类</h1>
         <p>按主题探索文章。</p>

@@ -27,7 +27,7 @@ export default async function PostPage({ params }: Props) {
     getPublicSettings(),
   ]);
   return (
-    <main id="main-content" className="site-main">
+    <main data-page-motion id="main-content" className="site-main">
       <JsonLd data={articleJsonLd(settings, post)} />
       <article>
         <Link className="site-back" href="/posts">

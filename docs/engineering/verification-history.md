@@ -558,3 +558,34 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 业务数据记录：回归中曾误保存一次空新草稿，ID 为 `ff62ddbe-4120-4f0d-959c-ccacbc844635`。随后通过 `writeTransaction` 与同一事务级 advisory lock 核对 ID、version=1、创建时间 `2026-10-07T10:16:28.456Z`、空内容及零关系，仅精确删除该记录，并回读确认不存在。最终无残留测试记录；已发布文章的失败校验未写入。临时生产预览服务已停止，原有开发服务保留。
 
 截图和操作／状态汇总保存于本机 [input-error-fix 证据目录](/Users/chen/.codex/visualizations/2026/10/07/01a115ca-3d51-7891-a4cb-ff7d20636211/input-error-fix/)：`01-before.jpg`、`02-after.jpg`、`03-input-held.jpg`、`04-six-controls-desktop.jpg`、`05-login-recovery.jpg`、`06-article-title-error.jpg`、`07-six-controls-mobile.jpg`、`08-reduced-motion.jpg`、`09-production-login-error.jpg`、`10-production-categories-1440.jpg`、`10-production-categories-390.jpg` 及 `checks.json`。本记录仅追加当前事实，历史验收结论保留。
+
+## Motion 全站 SSR 动效接入（2026-10-07）
+
+采用已批准的 Motion 14.0.0 方案，精确锁定依赖与 lockfile。页面使用 motion/mini；浮层使用同步 LazyMotion / domAnimation 和 motion/react-m。共享时长、曲线、位移读取现有 CSS token；兼容 CSS 优化器输出的 .15s / .25s。实现参考 [Motion animate](https://motion.dev/docs/animate)、[LazyMotion](https://motion.dev/docs/react-lazy-motion)、[无障碍说明](https://motion.dev/docs/react-accessibility) 与 [Base UI 生命周期](https://base-ui.com/react/handbook/animation)，并遵循本地 emilkowalski-motion 的克制与清理要求。
+
+范围为前台、登录、展示页和后台页面整体切换，以及 Menu、Popover、Select、Combobox 显隐。保留原 DOM、Server Components、Next Link/router、草稿保护和既有 hover/Dialog/Tabs/Accordion；无路径 key、keepMounted、新增滚动显示或错峰。登录的全屏 main 位移实测会增加 6px 滚动溢出，因此适配为动画现有 login-panel；参数与其他页面相同。自定义 render 继续优先；与 Motion 同名的原生动画／拖拽事件使用静态 div 保持原语义。
+
+复用所属项目的 localhost:3000 开发服务。首次包体基线构建的临时输出目录被 Tailwind 自动扫描，造成开发 CSS 编译错误；移走临时产物并清理生成的 Turbopack 缓存后，通过 WebStorm 原运行配置恢复同一地址。最终构建使用已忽略的 .next-build，无此问题。临时生命周期验收页、媒体偏好/WAAPI 模拟与逐帧观察组件已删除，生产路由及 SSR 均不含它们；未写入验收业务记录，未保存文章、退出现有会话或修改采集配置。
+
+| 项目                   | 实现状态    | 验证状态          | 实际证据与边界                                                                                                                                                                        |
+| ---------------------- | ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 首次 SSR 与 hydration  | 已实现      | 运行通过          | 匿名 HTTP 首页、文章列表与真实详情、关于、友链、登录均 200，正文存在，动效根无隐藏样式；浏览器首次 main opacity=1、transform=none、无动画，无 hydration/未捕获错误                    |
+| 页面整体切换           | 已实现      | 运行通过          | 展示验收页→关于→文章、列表→详情、前台→已登录后台、后台→首页、后台列表→现有编辑页；逐帧记录 opacity 0→1 与 translateY(6px)→none，均 250ms，结束复位                                    |
+| 筛选、分页、hash、刷新 | 已实现      | 运行通过          | 前台下一页、后台分类 Select→开发工具、正文锚点与刷新评论；pathname 相同，不新增 main 动画，选择结果和回焦正常。轮询未单独运行，只核对路径依赖                                         |
+| 历史与快速导航         | 已实现      | 运行通过          | 详情后退恢复 posts?page=2；预热页面后 60ms 连续 about→tags，前页仅约 5 个动画帧便取消，最终 main opacity=1、transform=none，无残留                                                    |
+| 草稿保护               | 沿用        | 运行通过          | 新文章只输入临时标题，不保存；点击文章管理弹出确认，继续编辑保留标题与路径且不重播；放弃后到列表并播放页面动画。带未保存修改的浏览器历史保护未单独重测                                |
+| 编辑器 sticky          | 沿用        | 运行通过          | 现有长正文编辑页滚动一屏后，post-writing-bar position=sticky、top=70px，main transform=none；未保存或修改原文章                                                                       |
+| 登录布局               | 已实现/适配 | 运行通过/部分范围 | 使用真实 LoginForm 与相同 login.css 的临时布局复现溢出并修复：panel 入场后最大新增溢出为 0。真实匿名登录 SSR 通过；未退出用户会话验证实际登录导航与提交                               |
+| 四类浮层生命周期       | 已实现      | 运行通过          | 默认打开 Popover 直接 opacity=1、无动画；四组件交互打开均记录 150ms 原生 opacity 动画，Popover/Select/Combobox 退出后卸载或按原 Select 行为隐藏；instant 关闭即时完成                 |
+| 浮层操作与回焦         | 沿用        | 运行通过          | Menu 方向键/禁用项/Escape、Popover 关闭和复开、Select 选择 Next 后回触发器、Combobox 输入 Mo→方向键/Enter 选中 Motion，复开/Escape 回输入框。后台真实分类筛选及移动导航另作消费者验证 |
+| 减少动态效果           | 已实现      | 模拟运行通过      | 首次 reduce=true 无新增动画；播放中 50ms 开启偏好，页面与 Popover 动画取消并复位，reduce=true 后逐帧无动画；未改变真实系统偏好                                                        |
+| 静态与异常降级         | 已实现      | 模拟运行通过      | 首次禁用 Element.animate，浮层开关/回焦和页面导航正常且无动画；仅 transform 创建抛错时，已创建 opacity 实例被取消，正文静态可见                                                       |
+| 内联样式清理           | 已实现      | 运行通过          | 验收根原有 opacity:.9、transform:scale(1)、color:inherit，页面入场结束后原值完整恢复，无运行实例；源码同时保留 property priority                                                      |
+| 慢速与流式内容         | 已实现      | 模拟运行通过      | 临时 Server Component 延迟 1500ms，loading main 仅一次入场，最终正文到达直接显示、无第二轮动画。未做真实网络限速                                                                      |
+| 窄屏                   | 已实现      | 运行通过          | 390×844 首页/友链/后台及分类浮层，导航能关闭并跳转，筛选真实更新；前台 scrollWidth=380≤390；登录溢出修复另测。视口覆盖已恢复                                                          |
+| 共享旧动效             | 保留        | 源码核对/部分运行 | CSS hover、Dialog、Tabs、Accordion 未修改；前后台移动导航与草稿确认 Dialog 开关通过，未重新全面操作展示页所有旧效果                                                                   |
+| 静态检查与生产包       | 已实现      | 运行通过          | typecheck、全仓 lint、改动文件格式、差异检查与 .next-build 生产构建通过；无临时路由或生成配置改动                                                                                     |
+
+生产 JS 采用相同构建、manifest 与逐文件 gzip level 9 口径：rootMainFiles 加路由 entryJSFiles 去重，不包含条件错误及延迟 chunk。共享入口新增 91,889B raw / 31,244B gzip（约 30.5KiB）；首页 gzip +31,348B、posts +34,563B、admin +31,580B、design-spec +34,743B；全部 JS +102,588B raw / +35,817B gzip，增加 1 个 chunk。该测量是产物增量，不是浏览器真实下载量或首屏 LCP/INP 基准；首次正文无需等待动效，未做真实设备性能 profiling。
+
+证据保存于本机可视化目录 `motion/`：页面/浮层逐帧 JSON、390px 菜单和 Select 截图，以及 bundle-baseline/final/delta、ssr-final 与 audit-comparison 报告。安装前后 audit 同为既有 7 high，无新增或 Motion 相关项；本轮没有执行依赖修复。未验证真实触屏、真实系统减少动态效果、跨浏览器/屏幕阅读器、BFCache 冻结恢复和生产线上网络；SPA 历史恢复不作为 BFCache 通过证据。

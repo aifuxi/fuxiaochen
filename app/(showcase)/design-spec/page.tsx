@@ -516,7 +516,7 @@ export default function Page() {
           </a>
         </div>
       </header>
-      <main className="showcase-main">
+      <main data-page-motion className="showcase-main">
         <nav aria-label="设计规范目录" className="showcase-directory">
           {nav.map(([number, label, id]) => (
             <a key={id} href={`#${id}`}>

@@ -29,7 +29,7 @@ export default async function LoginPage({
 
   return (
     <main className="login-page">
-      <section className="login-panel" aria-labelledby="login-title">
+      <section data-page-motion className="login-panel" aria-labelledby="login-title">
         <Link href="/" className="login-brand" aria-label="返回 fuxiaochen 首页">
           fuxiaochen
         </Link>

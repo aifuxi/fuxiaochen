@@ -56,7 +56,7 @@ export default async function PostsPage({ searchParams }: Props) {
   const params = await searchParams;
   const { taxonomies, result, values, isFiltered } = await postsContext(params);
   return (
-    <main id="main-content" className="site-main">
+    <main data-page-motion id="main-content" className="site-main">
       <section aria-labelledby="posts-heading" className="site-posts">
         <header className="site-page-heading site-posts-heading">
           <h1 id="posts-heading">文章</h1>

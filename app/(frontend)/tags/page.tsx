@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TagsPage() {
   const { tags } = await getPublicTaxonomies();
   return (
-    <main id="main-content" className="site-main">
+    <main data-page-motion id="main-content" className="site-main">
       <header className="site-page-heading">
         <h1>标签</h1>
         <p>从一个关键词开始阅读。</p>

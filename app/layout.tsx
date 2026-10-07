@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import { NavigationGuardProvider } from "@/components/admin/navigation-guard";
+import { MotionProvider } from "@/components/motion/motion-provider";
+import { PageMotionController } from "@/components/motion/page-motion-controller";
 
 const inter = localFont({
   src: "./fonts/InterVariable.woff2",
@@ -26,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className={`${inter.variable} font-sans`}>
       <body className="font-sans antialiased">
-        <NavigationGuardProvider>{children}</NavigationGuardProvider>
+        <MotionProvider>
+          <PageMotionController />
+          <NavigationGuardProvider>{children}</NavigationGuardProvider>
+        </MotionProvider>
       </body>
     </html>
   );

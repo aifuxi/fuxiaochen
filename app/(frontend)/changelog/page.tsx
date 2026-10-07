@@ -53,7 +53,7 @@ export default async function ChangelogPage({ searchParams }: Props) {
   const { result } = await changelogContext(await searchParams);
   if (!result)
     return (
-      <main id="main-content" className="site-main site-changelog-page">
+      <main data-page-motion id="main-content" className="site-main site-changelog-page">
         <header className="site-page-heading">
           <h1>更新日志</h1>
           <p role="alert">页码无效，请返回更新日志。</p>
@@ -70,7 +70,7 @@ export default async function ChangelogPage({ searchParams }: Props) {
       </main>
     );
   return (
-    <main id="main-content" className="site-main site-changelog-page">
+    <main data-page-motion id="main-content" className="site-main site-changelog-page">
       <header className="site-page-heading">
         <h1>更新日志</h1>
         <p>记录每一次改进。</p>

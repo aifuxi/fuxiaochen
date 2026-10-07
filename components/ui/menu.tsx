@@ -4,6 +4,7 @@ import { Menu as BaseMenu } from "@base-ui/react/menu";
 import { MoreHorizontal } from "lucide-react";
 import { useRef, Fragment, type ComponentProps, type ReactNode } from "react";
 
+import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
 import { Button } from "./button";
@@ -13,11 +14,19 @@ export const Menu = BaseMenu.Root;
 export const MenuTrigger = BaseMenu.Trigger;
 export const MenuSeparator = BaseMenu.Separator;
 
-export function MenuContent({ className, ...props }: ComponentProps<typeof BaseMenu.Popup>) {
+export function MenuContent({
+  className,
+  render,
+  ...props
+}: ComponentProps<typeof BaseMenu.Popup>) {
   return (
     <BaseMenu.Portal>
       <BaseMenu.Positioner align="end" sideOffset={6} collisionPadding={12} className="z-50">
-        <BaseMenu.Popup className={cn("ds-menu", className)} {...props} />
+        <BaseMenu.Popup
+          className={cn("ds-menu", className)}
+          render={render ?? renderPopupMotion}
+          {...props}
+        />
       </BaseMenu.Positioner>
     </BaseMenu.Portal>
   );

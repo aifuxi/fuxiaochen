@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { Select as BaseSelect } from "@base-ui/react/select";
 import { Check, ChevronDown } from "lucide-react";
 
+import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
 export const Select = BaseSelect.Root;
@@ -38,6 +39,7 @@ export function SelectTrigger({
 export function SelectContent({
   className,
   children,
+  render,
   ...props
 }: ComponentProps<typeof BaseSelect.Popup>) {
   return (
@@ -47,7 +49,11 @@ export function SelectContent({
         sideOffset={6}
         className="z-50 w-[var(--anchor-width)]"
       >
-        <BaseSelect.Popup className={cn("ds-picker-popup", className)} {...props}>
+        <BaseSelect.Popup
+          className={cn("ds-picker-popup", className)}
+          render={render ?? renderPopupMotion}
+          {...props}
+        >
           <BaseSelect.List className="max-h-60 overflow-y-auto p-1">{children}</BaseSelect.List>
         </BaseSelect.Popup>
       </BaseSelect.Positioner>

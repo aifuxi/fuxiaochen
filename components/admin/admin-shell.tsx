@@ -291,7 +291,9 @@ export function AdminShell({
             </Button>
           </div>
         </header>
-        <main className="admin-content">{children}</main>
+        <main data-page-motion className="admin-content">
+          {children}
+        </main>
         <footer className="admin-footer">
           <span>© fuxiaochen</span>
         </footer>

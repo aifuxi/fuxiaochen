@@ -26,7 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const settings = await getPublicSettings();
   return (
-    <main id="main-content" className="site-main site-home">
+    <main data-page-motion id="main-content" className="site-main site-home">
       <JsonLd data={siteJsonLd(settings)} />
       <nav className="site-home-portals" aria-label="探索栏目">
         {portals.map(({ href, label, position, icon: Icon }) => (

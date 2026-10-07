@@ -5,6 +5,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { Combobox as BaseCombobox } from "@base-ui/react/combobox";
 import { Check, ChevronDown, X } from "lucide-react";
 
+import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
 export const Combobox = BaseCombobox.Root;
@@ -74,13 +75,18 @@ export function ComboboxTrigger({
 export function ComboboxContent({
   className,
   children,
+  render,
   emptyText = "没有匹配的选项",
   ...props
 }: ComponentProps<typeof BaseCombobox.Popup> & { emptyText?: ReactNode }) {
   return (
     <BaseCombobox.Portal>
       <BaseCombobox.Positioner sideOffset={6} className="z-50 w-[var(--anchor-width)]">
-        <BaseCombobox.Popup className={cn("ds-picker-popup", className)} {...props}>
+        <BaseCombobox.Popup
+          className={cn("ds-picker-popup", className)}
+          render={render ?? renderPopupMotion}
+          {...props}
+        >
           <BaseCombobox.Empty className="px-3 py-4 text-center text-xs text-[var(--color-muted)]">
             {emptyText}
           </BaseCombobox.Empty>

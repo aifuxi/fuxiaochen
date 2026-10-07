@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 export default function FrontendError({ retry }: { retry: () => void }) {
   return (
-    <main id="main-content" className="site-main">
+    <main data-page-motion id="main-content" className="site-main">
       <h1 className="ds-heading">暂时无法加载</h1>
       <p className="site-notice" role="alert">
         加载失败，请稍后重试。
