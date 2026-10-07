@@ -37,7 +37,7 @@ export default async function FriendsPage({ searchParams }: Props) {
   const { category } = friendsContext(await searchParams);
   const result = await listPublicFriends(category);
   return (
-    <main id="main-content" className="site-main">
+    <main id="main-content" className="site-main site-friends-main">
       <header className="site-page-heading">
         <h1>友情链接</h1>
         <p>值得走走看看的地方。</p>

@@ -1,4 +1,9 @@
+html:has(.site-layout) {
+  scrollbar-gutter: stable;
+}
+
 .site-layout {
+  --site-gutter: clamp(20px, calc(4vw - 4px), 32px);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -7,7 +12,7 @@
   width: 100%;
   max-width: 1200px;
   margin: auto auto 0;
-  padding: 0 32px;
+  padding: 0 var(--site-gutter);
   color: var(--color-muted);
   font-size: 12px;
 }
@@ -119,9 +124,6 @@
   }
 }
 @media (max-width: 600px) {
-  .site-footer {
-    padding: 0 20px;
-  }
   .site-footer-main,
   .site-footer-main[data-has-socials="false"] {
     grid-template-columns: minmax(0, 1fr);
@@ -181,7 +183,7 @@
 }
 .site-header {
   position: relative;
-  width: calc(100% - 64px);
+  width: calc(100% - var(--site-gutter) - var(--site-gutter));
   max-width: 1136px;
   margin: 24px auto 0;
   display: flex;
@@ -315,14 +317,17 @@
   transform: none;
 }
 .site-main {
-  width: calc(100% - 64px);
-  max-width: 880px;
+  width: calc(100% - var(--site-gutter) - var(--site-gutter));
+  max-width: 760px;
   margin: 0 auto;
   padding: 64px 0 80px;
   overflow-wrap: anywhere;
 }
 .site-reading {
   max-width: 720px;
+}
+.site-friends-main {
+  max-width: 880px;
 }
 .site-home {
   --home-portal-size: 130px;
@@ -621,9 +626,6 @@
   font-size: 13px;
   font-weight: 400;
   margin-left: 8px;
-}
-.site-posts-main {
-  max-width: 760px;
 }
 .site-filters {
   display: grid;
@@ -1393,11 +1395,9 @@
     font-size: 22px;
   }
   .site-header {
-    width: calc(100% - 40px);
     margin-top: 16px;
   }
   .site-main {
-    width: calc(100% - 40px);
     padding: 40px 0 56px;
   }
   .site-friends,
