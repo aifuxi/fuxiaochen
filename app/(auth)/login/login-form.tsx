@@ -2,7 +2,6 @@
 
 import type { ComponentProps } from "react";
 
-import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { LoginFailure } from "@/lib/auth/login-client";
@@ -107,7 +106,6 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
           name="username"
           type="text"
           autoComplete="username"
-          placeholder="你的用户名"
           required
           maxLength={128}
           readOnly={pending}
@@ -129,7 +127,6 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
           name="password"
           type="password"
           autoComplete="current-password"
-          placeholder="输入密码"
           required
           maxLength={128}
           readOnly={pending}
@@ -157,8 +154,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
         className="login-submit"
         disabled={pending}
       >
-        <span>{pending ? "正在进入…" : "进入空间"}</span>
-        <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
+        {pending ? "登录中…" : "登录"}
       </Button>
     </form>
   );
