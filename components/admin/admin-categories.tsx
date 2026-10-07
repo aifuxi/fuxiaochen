@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
+import { RecordLocator, useRecordTarget } from "./record-locator";
 import { TaxonomyStatus } from "./taxonomy-status";
 import "./admin-categories.css";
 
@@ -59,6 +60,7 @@ const columns: ColumnDef<Category>[] = [
 ];
 
 export function AdminCategories() {
+  const record = useRecordTarget();
   const {
     onMessage,
     categoryItems: categories,
@@ -129,6 +131,12 @@ export function AdminCategories() {
 
   return (
     <div className="admin-categories">
+      <RecordLocator
+        record={record}
+        loading={taxonomyLoading}
+        error={taxonomyError}
+        found={[...categories, ...tags].some((item) => item.id === record)}
+      />
       <div className="admin-page-heading">
         <div>
           <h1>分类与标签</h1>
@@ -208,7 +216,8 @@ export function AdminCategories() {
                 }),
               }}
               {...tableState}
-              data={categories}
+              highlightRowId={record}
+              data={record ? categories.filter((c) => c.id === record) : categories}
               columns={columns}
               getRowId={(item) => item.id}
               caption="博文分类及关联文章数量"
@@ -258,8 +267,13 @@ export function AdminCategories() {
               )}
             </form>
             <ul className="admin-taxonomy-cloud" aria-label="标签列表">
-              {tags.map((item) => (
-                <li key={item.id} className="admin-taxonomy-tag">
+              {(record ? tags.filter((item) => item.id === record) : tags).map((item) => (
+                <li
+                  key={item.id}
+                  data-record-id={item.id}
+                  tabIndex={record === item.id ? -1 : undefined}
+                  className={`admin-taxonomy-tag ${record === item.id ? "admin-record-highlight" : ""}`}
+                >
                   <span className="admin-taxonomy-tag-name">#{item.name}</span>
                   <span className="admin-taxonomy-count">{item.postCount}</span>
                   <Button

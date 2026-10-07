@@ -38,6 +38,7 @@ export async function commentRequest<T>(path: string, init?: RequestInit): Promi
 }
 export function useCommentList(
   filters: {
+    record?: string;
     q?: string;
     status?: string;
     postId?: string;

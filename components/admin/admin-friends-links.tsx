@@ -39,6 +39,7 @@ import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
+import { RecordLocator, useRecordTarget } from "./record-locator";
 import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-friends-links.css";
@@ -177,6 +178,7 @@ const columns: ColumnDef<FriendLink>[] = [
 ];
 
 export function AdminFriendsLinks() {
+  const record = useRecordTarget();
   const { onMessage } = useAdminWorkspace();
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
@@ -198,6 +200,7 @@ export function AdminFriendsLinks() {
     ...getDataTableSort(sorting, ["name", "category", "status"] as const),
   }))
     if (value !== undefined && value !== "all") params.set(key, value);
+  if (record) params.set("record", record);
   const query = usePostQuery(`?${params}`, revision, load);
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<FriendLink | null>(null);
@@ -362,6 +365,12 @@ export function AdminFriendsLinks() {
   );
   return (
     <div className="admin-posts admin-data-page admin-friends-links">
+      <RecordLocator
+        record={record}
+        loading={query.loading}
+        error={query.error}
+        found={Boolean(query.data?.items.length)}
+      />
       <div className="admin-page-heading">
         <div>
           <h1>友情链接管理</h1>
@@ -456,6 +465,7 @@ export function AdminFriendsLinks() {
         {data && (
           <div className="admin-post-list">
             <DataTable
+              highlightRowId={record}
               meta={{
                 getRowActions: (link) => ({
                   label: `友链 ${link.name} 的操作`,

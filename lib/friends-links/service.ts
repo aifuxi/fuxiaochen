@@ -36,10 +36,12 @@ export async function listFriends(query: FriendQuery, actor: TaxonomyActor) {
     await authorizeAdmin(actor);
     const db = getDatabase();
     let filtered = tx.orm.public.FriendLink.where({});
-    if (query.category) filtered = filtered.where({ category: query.category });
-    if (query.status) filtered = filtered.where({ status: query.status });
-    if (query.enabled) filtered = filtered.where({ enabled: query.enabled === "true" ? 1 : 0 });
-    if (query.q)
+    if (query.record) filtered = filtered.where({ id: query.record });
+    if (!query.record && query.category) filtered = filtered.where({ category: query.category });
+    if (!query.record && query.status) filtered = filtered.where({ status: query.status });
+    if (!query.record && query.enabled)
+      filtered = filtered.where({ enabled: query.enabled === "true" ? 1 : 0 });
+    if (!query.record && query.q)
       filtered = filtered.where((f) =>
         db.raw
           .sql`(strpos(lower(${f.name}), lower(${query.q})) > 0 OR strpos(lower(${f.url}), lower(${query.q})) > 0 OR strpos(lower(${f.description}), lower(${query.q})) > 0)`

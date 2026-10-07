@@ -545,3 +545,31 @@ void test("真实备份/恢复、会话撤销、非空目标拒绝和事务失�
     await failed.end();
   }
 });
+
+await test("全局检索精确定位，并绕过列表原筛选条件", async () => {
+  const { searchContent } = await import("../lib/operations/search");
+  const { searchSchema } = await import("../lib/operations/schema");
+  const matches = await searchContent(searchSchema.parse({ q: "100%_SQL" }), actor);
+  for (const item of matches.items.filter((match) => match.kind !== "post")) {
+    assert.ok(item.href.includes(`record=${item.id}`));
+  }
+  const friend = matches.items.find((item) => item.kind === "friend");
+  assert.ok(friend);
+  const { listFriends } = await import("../lib/friends-links/service");
+  const { friendQuerySchema } = await import("../lib/friends-links/schema");
+  const exact = await listFriends(
+    friendQuerySchema.parse({
+      record: friend.id,
+      q: "不存在",
+      status: "rejected",
+      enabled: "false",
+    }),
+    actor,
+  );
+  assert.equal(exact.total, 1);
+  assert.equal(exact.items[0].id, friend.id);
+  assert.equal(
+    (await listFriends(friendQuerySchema.parse({ record: randomUUID() }), actor)).total,
+    0,
+  );
+});

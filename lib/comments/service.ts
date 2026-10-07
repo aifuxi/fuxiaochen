@@ -78,9 +78,10 @@ export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorize(actor);
     let filtered = items(tx).where({});
-    if (query.status) filtered = filtered.where({ status: query.status });
-    if (query.postId) filtered = filtered.where({ postId: query.postId });
-    if (query.q)
+    if (query.record) filtered = filtered.where({ id: query.record });
+    if (!query.record && query.status) filtered = filtered.where({ status: query.status });
+    if (!query.record && query.postId) filtered = filtered.where({ postId: query.postId });
+    if (!query.record && query.q)
       filtered = filtered.where((c) =>
         db.raw.sql`(
       strpos(lower(${c.author}), lower(${query.q})) > 0 OR

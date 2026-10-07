@@ -37,6 +37,7 @@ export const uploadSchema = z
     `图片最多 ${IMAGE_MAX_BYTES / (1024 * 1024)} MiB。`,
   );
 export const mediaQuerySchema = z.object({
+  record: z.uuid().optional(),
   q: z.string().trim().max(200).default(""),
   kind: mediaKindSchema.optional(),
   page: z.coerce.number().int().min(1).max(1_000_000).default(1),

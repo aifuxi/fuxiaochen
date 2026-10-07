@@ -26,7 +26,8 @@ export async function listReleases(query: z.infer<typeof listQuerySchema>, actor
     await authorizeAdmin(actor);
     const db = getDatabase();
     let filtered = tx.orm.public.ReleaseLog.where({});
-    if (query.q)
+    if (query.record) filtered = filtered.where({ id: query.record });
+    if (!query.record && query.q)
       filtered = filtered.where((r) =>
         db.raw
           .sql`(strpos(lower(${r.version}), lower(${query.q})) > 0 OR strpos(lower(${r.title}), lower(${query.q})) > 0 OR EXISTS (SELECT 1 FROM jsonb_array_elements_text(${r.changes}::jsonb) AS changes_item(value) WHERE strpos(lower(value), lower(${query.q})) > 0))`

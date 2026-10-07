@@ -93,6 +93,7 @@ export function DataTable<TData>({
   scrollClassName,
   emptyState,
   meta,
+  highlightRowId,
 }: {
   data: TData[];
   columns: ColumnDef<TData>[];
@@ -111,6 +112,7 @@ export function DataTable<TData>({
   scrollClassName?: string;
   emptyState?: ReactNode;
   meta?: TableMeta<TData>;
+  highlightRowId?: string;
 }) {
   "use no memo";
 
@@ -189,7 +191,12 @@ export function DataTable<TData>({
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <TableRow
+                key={row.id}
+                data-record-id={row.id}
+                tabIndex={row.id === highlightRowId ? -1 : undefined}
+                className={row.id === highlightRowId ? "admin-record-highlight" : undefined}
+              >
                 {row.getVisibleCells().map((cell) => {
                   const Cell = cell.column.columnDef.meta?.rowHeader ? TableHead : TableCell;
                   return (

@@ -66,7 +66,7 @@ export async function getNotifications(
     const pageCount = Math.max(1, Math.ceil(count.total / query.pageSize));
     const page = Math.min(query.page, pageCount);
     const rows = await tx.query(
-      raw.sql`SELECT n.id, n.title, n.href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`
+      raw.sql`SELECT n.id, n.title, CASE WHEN n.kind = 'comment' THEN '/admin/comments?record=' || n."sourceId" WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`
         .returnsRow({
           id: "pg/text@1",
           title: "pg/text@1",

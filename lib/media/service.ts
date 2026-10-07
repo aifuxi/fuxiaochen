@@ -51,8 +51,9 @@ export async function listMedia(query: MediaQuery, actor: TaxonomyActor) {
   let filtered = db.orm.public.Media.where((m) => m.status.in(["ready", "deleting"])).where((m) =>
     m.uploadedAt.isNotNull(),
   );
-  if (query.kind) filtered = filtered.where({ kind: query.kind });
-  if (query.q)
+  if (query.record) filtered = filtered.where({ id: query.record });
+  if (!query.record && query.kind) filtered = filtered.where({ kind: query.kind });
+  if (!query.record && query.q)
     filtered = filtered.where((m) =>
       db.raw.sql`strpos(lower(${m.name}), lower(${query.q})) > 0`.returns("pg/bool@1").buildAst(),
     );

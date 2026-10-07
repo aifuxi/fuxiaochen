@@ -22,6 +22,7 @@ import {
   useNotificationSummary,
 } from "./global-operations";
 import { MediaUploadStatus } from "./media-upload-status";
+import { useNavigationGuard } from "./navigation-guard";
 import { PostBrowser } from "./post-browser";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { commentRequest, useComments } from "./use-comments";
@@ -54,6 +55,7 @@ const panelDescriptions: Record<DialogPanel, string> = {
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const guardNavigation = useNavigationGuard();
   const [postRevision, setPostRevision] = useState(0);
   const [operationRevision, setOperationRevision] = useState(0);
   const [operationPending, setOperationPending] = useState(false);
@@ -112,23 +114,29 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       if (postMutation.current || operationMutation.current) return;
       if (name === "comments" || name === "analytics") {
         setPanel(null);
-        router.push(`/admin/${name}`);
+        guardNavigation(() => router.push(`/admin/${name}`));
         return;
       }
       if (name === "compose") {
         setPanel(null);
-        router.push("/admin/posts/new");
+        guardNavigation(() => router.push("/admin/posts/new"));
         return;
       }
       setPanel(name);
     },
-    [router],
+    [router, guardNavigation],
   );
 
   const openEditor = (id: string) => {
     if (postMutation.current || operationMutation.current) return;
     setPanel(null);
-    router.push(`/admin/posts/${encodeURIComponent(id)}/edit`);
+    const returnTo =
+      location.pathname === "/admin/posts" ? location.pathname + location.search : "/admin/posts";
+    guardNavigation(() =>
+      router.push(
+        `/admin/posts/${encodeURIComponent(id)}/edit?returnTo=${encodeURIComponent(returnTo)}`,
+      ),
+    );
   };
   const mutatePost = async <T,>(work: () => Promise<T>, success: string) => {
     if (postMutation.current) throw new Error("请等待当前文章操作完成。");
@@ -229,7 +237,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         onNavigate: (href) => {
           if (!postMutation.current && !operationMutation.current) {
             setPanel(null);
-            router.push(href);
+            guardNavigation(() => router.push(href));
           }
         },
         writingFocused,

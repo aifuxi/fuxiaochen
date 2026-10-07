@@ -8,7 +8,7 @@ import { useRef, useState } from "react";
 import type { PostItem } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
-import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
+import { DataTable, getDataTableSort } from "@/components/ui/data-table";
 import { InputGroup, InputGroupInput, InputGroupAddon } from "@/components/ui/input-group";
 import {
   Select,
@@ -22,6 +22,7 @@ import { postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema"
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
+import { usePostListState } from "./post-list-state";
 import { PostQueryStatus } from "./post-status";
 import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
 import "./admin-data-workspace.css";
@@ -145,13 +146,17 @@ export function AdminPosts() {
     onDeletePost,
     setPostFeatured,
   } = useAdminWorkspace();
-  const [status, setStatus] = useState<string>("all");
-  const [featured, setFeatured] = useState<"all" | "featured" | "unfeatured">("all");
+  const { state, patch, tableState } = usePostListState();
+  const status = state.status ?? "all";
+  const featured = state.featured;
+  const category = state.categoryId ?? "all";
+  const query = state.q;
+  const setStatus = (value: string) => patch({ status: value, page: 1 });
+  const setCategory = (value: string) => patch({ categoryId: value, page: 1 });
+  const setFeatured = (value: string) => patch({ featured: value, page: 1 });
+  const setQuery = (value: string) => patch({ q: value, page: 1 });
   const [actionError, setActionError] = useState("");
-  const [category, setCategory] = useState("all");
-  const [query, setQuery] = useState("");
-  const tableState = useDataTableState();
-  const { page, setPage, sorting, pagination } = tableState;
+  const { page, sorting, pagination } = tableState;
   const pageSize = pagination.pageSize;
   const searchRef = useRef<HTMLInputElement>(null);
   const term = useDebouncedPostQuery(query);
@@ -171,19 +176,14 @@ export function AdminPosts() {
   const total = data?.total ?? 0;
   const currentPage = data?.page ?? page;
   const visiblePosts = data?.items ?? [];
-  const resetFilters = () => {
-    setStatus("all");
-    setCategory("all");
-    setFeatured("all");
-    setQuery("");
-    setPage(1);
-  };
+  const resetFilters = () =>
+    patch({ status: "all", categoryId: "all", featured: "all", q: "", page: 1 });
 
   return (
     <div className="admin-posts admin-data-page admin-posts-page">
       <div className="admin-page-heading">
         <div>
-          <h1>内容管理</h1>
+          <h1>文章管理</h1>
           <p>管理文章、草稿与发布计划。</p>
         </div>
         <Button
@@ -201,7 +201,6 @@ export function AdminPosts() {
           value={status}
           onValueChange={(value) => {
             setStatus(String(value));
-            setPage(1);
           }}
         >
           <div className="admin-post-filters">
@@ -223,7 +222,6 @@ export function AdminPosts() {
                   value={category}
                   onValueChange={(value) => {
                     setCategory(value ?? "all");
-                    setPage(1);
                   }}
                 >
                   <SelectTrigger size="compact" id="admin-post-category-filter">
@@ -249,7 +247,6 @@ export function AdminPosts() {
                   value={featured}
                   onValueChange={(value) => {
                     setFeatured(value ?? "all");
-                    setPage(1);
                   }}
                 >
                   <SelectTrigger size="compact" aria-label="按精选筛选">
@@ -276,7 +273,6 @@ export function AdminPosts() {
                   value={query}
                   onChange={(event) => {
                     setQuery(event.target.value);
-                    setPage(1);
                   }}
                   placeholder="搜索标题 / 摘要 / 标签 / 内容…"
                 />

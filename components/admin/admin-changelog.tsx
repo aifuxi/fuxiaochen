@@ -31,6 +31,7 @@ import {
 import { useAdminWorkspace } from "./admin-context";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
+import { RecordLocator, useRecordTarget } from "./record-locator";
 import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
 import "./admin-business.css";
 import "./admin-data-workspace.css";
@@ -41,6 +42,7 @@ const load = request<ReleaseList>;
 const typeOptions: ReleaseType[] = ["feature", "fix", "performance", "security"];
 
 export function AdminChangelog() {
+  const record = useRecordTarget();
   const { onMessage } = useAdminWorkspace();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -57,7 +59,7 @@ export function AdminChangelog() {
   const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
   const result = usePostQuery(
-    `?${new URLSearchParams({ q: keyword, page: String(page) })}`,
+    `?${new URLSearchParams(record ? { record } : { q: keyword, page: String(page) })}`,
     revision,
     load,
   );
@@ -145,6 +147,12 @@ export function AdminChangelog() {
 
   return (
     <div className="admin-changelog admin-data-page">
+      <RecordLocator
+        record={record}
+        loading={result.loading}
+        error={result.error}
+        found={Boolean(filtered.length)}
+      />
       <div className="admin-page-heading">
         <div>
           <h1>更新日志</h1>
@@ -218,7 +226,12 @@ export function AdminChangelog() {
             <div className="admin-release-content">
               <ol className="admin-release-timeline" aria-label="版本迭代时间线">
                 {filtered.map((log) => (
-                  <li key={log.id} className={`admin-release-item is-${log.type}`}>
+                  <li
+                    key={log.id}
+                    data-record-id={log.id}
+                    tabIndex={record === log.id ? -1 : undefined}
+                    className={`admin-release-item is-${log.type} ${record === log.id ? "admin-record-highlight" : ""}`}
+                  >
                     <div className="admin-release-heading">
                       <span className="admin-release-version">{log.version}</span>
                       <span className={`admin-release-tag is-${log.type}`}>

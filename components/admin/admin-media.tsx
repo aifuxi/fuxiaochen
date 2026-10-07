@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { MediaItem } from "@/lib/media/schema";
 
@@ -38,6 +38,7 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { MediaUploadStatus } from "./media-upload-status";
+import { RecordLocator, useRecordTarget } from "./record-locator";
 import { useMediaList } from "./use-media";
 import "./admin-data-workspace.css";
 import "./admin-media.css";
@@ -69,6 +70,7 @@ function Picture({ item, preview = false }: { item: MediaItem; preview?: boolean
 }
 
 export function AdminMedia() {
+  const record = useRecordTarget();
   const { onUploadMedia, onDeleteMedia, onMessage, uploadingMedia, mediaRevision } =
     useAdminWorkspace();
   const fileInput = useRef<HTMLInputElement>(null);
@@ -80,12 +82,21 @@ export function AdminMedia() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("all");
   const [page, setPage] = useState(1);
-  const list = useMediaList({ q: query, kind, page }, mediaRevision);
+  const list = useMediaList({ q: query, kind, page, record }, mediaRevision);
   const [preview, setPreview] = useState<MediaItem | null>(null);
   const [target, setTarget] = useState<MediaItem | null>(null);
   const [copying, setCopying] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const located = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    const item = list.data?.items[0];
+    if (item && record !== located.current && item.id === record) {
+      located.current = record;
+      setPreview(item);
+    }
+    if (!record) located.current = undefined;
+  }, [record, list.data]);
   const clearSearch = () => {
     setQuery("");
     setKind("all");
@@ -134,6 +145,12 @@ export function AdminMedia() {
           event.target.value = "";
           void onUploadMedia(files);
         }}
+      />
+      <RecordLocator
+        record={record}
+        loading={list.loading}
+        error={list.error}
+        found={Boolean(list.data?.items.length)}
       />
       <div className="admin-page-heading">
         <div>

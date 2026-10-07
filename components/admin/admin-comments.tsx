@@ -23,6 +23,7 @@ import { postTime } from "@/lib/posts/schema";
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
 import { CommentQueryStatus } from "./comment-status";
+import { RecordLocator, useRecordTarget } from "./record-locator";
 import { commentRequest, useCommentList } from "./use-comments";
 import { AdminRequestError, useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
@@ -134,6 +135,7 @@ const columns: ColumnDef<CommentItem>[] = [
 ];
 
 export function AdminComments() {
+  const record = useRecordTarget();
   const {
     commentRevision,
     commentPending,
@@ -159,6 +161,7 @@ export function AdminComments() {
   const term = useDebouncedPostQuery(query);
   const list = useCommentList(
     {
+      record,
       q: term,
       status,
       page,
@@ -213,6 +216,12 @@ export function AdminComments() {
 
   return (
     <div className="admin-posts admin-data-page admin-comments admin-comments-page">
+      <RecordLocator
+        record={record}
+        loading={list.loading}
+        error={list.error}
+        found={Boolean(list.data?.items.length)}
+      />
       <div className="admin-page-heading">
         <div>
           <h1>评论管理</h1>
@@ -289,6 +298,7 @@ export function AdminComments() {
                 </p>
               )}
               <DataTable
+                highlightRowId={record}
                 meta={{
                   getRowActions: (comment) => ({
                     label: `${comment.author} 的评论操作`,

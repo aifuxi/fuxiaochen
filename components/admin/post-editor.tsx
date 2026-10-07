@@ -2,7 +2,7 @@
 import { ArrowLeft, Maximize2, Minimize2, Settings2, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { adminPostReturnTo } from "@/lib/admin/navigation";
 import { EMPTY_POST_CONTENT } from "@/lib/posts/document";
 import {
   postLocalTime,
@@ -36,6 +37,7 @@ import {
 } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
+import { useNavigationGuard } from "./navigation-guard";
 import { PostQueryStatus } from "./post-status";
 import { TaxonomyStatus } from "./taxonomy-status";
 import { AdminRequestError, postRequest, usePostQuery, usePostClock } from "./use-posts";
@@ -117,6 +119,7 @@ export function PostEditor({ id }: { id: string | null }) {
 
 function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reload: () => void }) {
   const router = useRouter();
+  const returnTo = adminPostReturnTo(useSearchParams().get("returnTo"));
   const now = usePostClock();
   const {
     categoryItems,
@@ -218,7 +221,8 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
   }, []);
   const taxonomyDisabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
   const disabled = postPending || taxonomyDisabled;
-  const dirty = !savedPost || JSON.stringify(draft) !== JSON.stringify(savedDraft);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
+  const guardNavigation = useNavigationGuard(dirty, postPending);
   const settingsError = settingsKeys.some((key) => Boolean(fieldErrors[key]));
   const settingsIncomplete =
     !slug.trim() || !categoryId || (status === "scheduled" && !scheduledTime);
@@ -313,7 +317,10 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
       setDraft(saved);
       setSavedDraft(saved);
       if (!savedPost)
-        router.replace(`/admin/posts/${encodeURIComponent(result.id)}/edit`, { scroll: false });
+        router.replace(
+          `/admin/posts/${encodeURIComponent(result.id)}/edit?returnTo=${encodeURIComponent(returnTo)}`,
+          { scroll: false },
+        );
     } catch (failure) {
       if (!mounted.current) return;
       setError(failure instanceof Error ? failure.message : "保存失败，请重试。");
@@ -572,7 +579,7 @@ function PostEditorForm({ initial, reload }: { initial: PostDetail | null; reloa
               variant="ghost"
               size="compact"
               disabled={postPending}
-              onClick={() => router.push("/admin/posts")}
+              onClick={() => guardNavigation(() => router.push(returnTo))}
               aria-label="返回文章列表"
               title="返回文章列表"
             >

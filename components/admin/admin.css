@@ -1425,3 +1425,19 @@
 .admin-layout-writing .admin-footer {
   display: none;
 }
+
+.admin-record-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+}
+.admin-record-highlight {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+  background: var(--color-surface-hover);
+}

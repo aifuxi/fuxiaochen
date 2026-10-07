@@ -31,8 +31,12 @@ export async function mediaRequest<T>(path: string, init?: RequestInit): Promise
     throw new AdminRequestError("媒体服务响应缺少数据，请重试。", "INVALID_RESPONSE");
   return body.data;
 }
-export function useMediaList(filters: { q: string; kind: string; page: number }, revision: number) {
+export function useMediaList(
+  filters: { q: string; kind: string; page: number; record?: string },
+  revision: number,
+) {
   const params = new URLSearchParams({ page: String(filters.page), pageSize: "12" });
+  if (filters.record) params.set("record", filters.record);
   if (filters.q.trim()) params.set("q", filters.q.trim());
   if (filters.kind !== "all") params.set("kind", filters.kind);
   return usePostQuery(`?${params}`, revision, mediaRequest<MediaList>);

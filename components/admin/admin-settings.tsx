@@ -28,6 +28,7 @@ import {
 import { useAdminWorkspace } from "./admin-context";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
+import { useNavigationGuard } from "./navigation-guard";
 import { AdminRequestError, usePostQuery } from "./use-posts";
 import "./admin-settings.css";
 import "./admin-business.css";
@@ -90,6 +91,7 @@ function SettingsForm({
 }) {
   const { onMessage } = useAdminWorkspace();
   const [draft, setDraft] = useState(initial);
+  const [baseline, setBaseline] = useState(initial);
   const [quantity, setQuantity] = useState(String(initial.postsPerPage));
   const [tab, setTab] = useState<string>(initialGroup);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -97,6 +99,11 @@ function SettingsForm({
   const [conflict, setConflict] = useState(false);
   const [pending, setPending] = useState(false);
   const [reloadOpen, setReloadOpen] = useState(false);
+  useNavigationGuard(
+    JSON.stringify(draft) !== JSON.stringify(baseline) ||
+      quantity !== String(baseline.postsPerPage),
+    pending,
+  );
   const busy = useRef(false);
   const form = useRef<HTMLFormElement>(null);
   const addButton = useRef<HTMLButtonElement>(null);
@@ -141,6 +148,7 @@ function SettingsForm({
         body: JSON.stringify(parsed.data),
       });
       setDraft(saved);
+      setBaseline(saved);
       setQuantity(String(saved.postsPerPage));
       onMessage("设置已保存。");
     } catch (e) {
@@ -161,6 +169,7 @@ function SettingsForm({
     try {
       const saved = await load("");
       setDraft(saved);
+      setBaseline(saved);
       setQuantity(String(saved.postsPerPage));
       setErrors({});
       setError("");
