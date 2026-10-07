@@ -859,7 +859,8 @@ html:has(.site-layout) {
   gap: var(--space-md);
   padding: var(--space-lg);
 }
-.site-friends .ds-card-link > div {
+.site-friend-content {
+  flex: 1;
   min-width: 0;
 }
 .site-friend-icon {
@@ -883,10 +884,39 @@ html:has(.site-layout) {
 }
 .site-friends p {
   color: var(--color-muted);
-  margin: var(--space-sm) 0;
+  margin: var(--space-sm) 0 0;
+}
+.site-friend-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+.site-friend-url {
+  display: flex;
+  flex: 1 1 160px;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  min-width: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-muted);
+}
+.site-friend-url svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.site-friend-url > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .site-friend-category {
+  max-width: 100%;
+  margin-left: auto;
   font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
   color: var(--color-subtle);
 }
 .site-about h2 {
