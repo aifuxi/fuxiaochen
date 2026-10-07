@@ -54,4 +54,4 @@ Markdown 导入由 `lib/posts/markdown-document.ts` 解析为同一种文档，�
 
 2026-10-07 的 `20261007T0840_admin_drafts_release_states` 包含五项操作：文章 `slug`、`categoryId` 放宽为可空，日志新增 `status`（默认 `published`）、`revision`（默认 `1`）、可空 `updatedAt`。既有文章字段、分类关联、日志内容和创建时间不改写；旧日志的修改时间在应用读取时回退为创建时间。不删除表、记录或约束中的外键与唯一索引。
 
-目标 contract 为 `2908a7712d8c234e7671488cc7e62c5552ae2f7b838a6e8788aef33ca9e2416e`，起点为 `eaa0e043a6985448dcc638cef2f4279c89a5c6ede8cf63570cd33de7d09a7bb8`。代码须与迁移一起启用；迁移后重新生成 contract 并重启应用连接。已在独立空库及含旧文章、日志的独立库运行验证；当前业务数据库尚未执行，须获准后应用。
+目标 contract 为 `2908a7712d8c234e7671488cc7e62c5552ae2f7b838a6e8788aef33ca9e2416e`，起点为 `eaa0e043a6985448dcc638cef2f4279c89a5c6ede8cf63570cd33de7d09a7bb8`。代码须与迁移一起启用，重新生成 contract 并在迁移后重启应用连接。已在独立空库及含旧文章、日志的独立库运行验证。2026-10-07 经用户批准在本地 `fuxiaochen_dev` 完成备份、迁移、结构与原有数据核对，并通过原有 WebStorm 配置重启应用；未执行线上迁移。验收与备份标识见[第二轮验收记录](engineering/admin-second-pass-verification.md)。
