@@ -256,6 +256,186 @@ function DemoCard({
   );
 }
 
+function ErrorStatePreview() {
+  const [showError, setShowError] = useState(true);
+  const [disabled, setDisabled] = useState(false);
+  const [search, setSearch] = useState("示例搜索");
+  const invalid = showError || undefined;
+
+  function errorMessage(field: string) {
+    return showError ? (
+      <p id={`error-preview-${field}-message`} className="text-[11px] text-[var(--color-danger)]">
+        错误态示例：请检查此字段。
+      </p>
+    ) : null;
+  }
+
+  function describedBy(field: string) {
+    return showError ? `error-preview-${field}-message` : undefined;
+  }
+
+  return (
+    <Card className="showcase-form-preview mt-6 p-6" aria-labelledby="error-preview-title">
+      <h3 id="error-preview-title" className="text-[15px] font-medium">
+        错误态与恢复
+      </h3>
+      <p className="mt-1 text-xs leading-6 text-[var(--color-muted)]">
+        切换开关，对照六类控件的正常、错误和禁用状态。开关只控制本地演示，编辑字段不会触发业务校验。
+      </p>
+      <div className="my-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="flex items-center gap-3">
+          <Switch
+            id="error-preview-invalid"
+            checked={showError}
+            onCheckedChange={setShowError}
+            aria-label="显示错误"
+            touchTarget
+          />
+          <label htmlFor="error-preview-invalid" className="cursor-pointer text-[13px]">
+            显示错误
+          </label>
+        </div>
+        <div className="flex items-center gap-3">
+          <Switch
+            id="error-preview-disabled"
+            checked={disabled}
+            onCheckedChange={setDisabled}
+            aria-label="禁用控件"
+            touchTarget
+          />
+          <label htmlFor="error-preview-disabled" className="cursor-pointer text-[13px]">
+            禁用控件
+          </label>
+        </div>
+      </div>
+      <div className="showcase-form-fields">
+        <div className="space-y-2">
+          <label htmlFor="error-preview-input" className="block text-[13px] font-medium">
+            Input · 文本
+          </label>
+          <Input
+            id="error-preview-input"
+            defaultValue="示例文本"
+            disabled={disabled}
+            aria-invalid={invalid}
+            aria-describedby={describedBy("input")}
+            className="w-full"
+          />
+          {errorMessage("input")}
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="error-preview-textarea" className="block text-[13px] font-medium">
+            Textarea · 多行文本
+          </label>
+          <Textarea
+            id="error-preview-textarea"
+            defaultValue="可以编辑这段多行文本。"
+            disabled={disabled}
+            aria-invalid={invalid}
+            aria-describedby={describedBy("textarea")}
+          />
+          {errorMessage("textarea")}
+        </div>
+        <div className="space-y-2">
+          <Select items={contactTopics} defaultValue={contactTopics[0].value} disabled={disabled}>
+            <SelectLabel className="block text-[13px] font-medium">Select · 选择类型</SelectLabel>
+            <SelectTrigger
+              id="error-preview-select"
+              aria-invalid={invalid}
+              aria-describedby={describedBy("select")}
+            >
+              <SelectValue placeholder="选择咨询类型" />
+            </SelectTrigger>
+            <SelectContent>
+              {contactTopics.map(({ label, value }) => (
+                <SelectItem key={value} value={value}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errorMessage("select")}
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="error-preview-group" className="block text-[13px] font-medium">
+            InputGroup · 搜索与清空
+          </label>
+          <InputGroup>
+            <InputGroupInput
+              id="error-preview-group"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="输入关键词…"
+              disabled={disabled}
+              aria-invalid={invalid}
+              aria-describedby={describedBy("group")}
+            />
+            <InputGroupAddon>
+              <Search size={16} aria-hidden="true" />
+            </InputGroupAddon>
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton
+                aria-label="清空状态演示搜索"
+                disabled={disabled}
+                onClick={() => {
+                  setSearch("");
+                  document.getElementById("error-preview-group")?.focus();
+                }}
+              >
+                <X size={16} aria-hidden="true" />
+              </InputGroupButton>
+            </InputGroupAddon>
+          </InputGroup>
+          {errorMessage("group")}
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="error-preview-combobox" className="block text-[13px] font-medium">
+            Combobox · 搜索技术
+          </label>
+          <Combobox items={technologies} defaultValue={technologies[0]} disabled={disabled}>
+            <ComboboxInputGroup>
+              <ComboboxInput
+                id="error-preview-combobox"
+                placeholder="搜索或选择技术"
+                aria-invalid={invalid}
+                aria-describedby={describedBy("combobox")}
+              />
+              <ComboboxClear aria-label="清空状态演示技术" />
+              <ComboboxTrigger aria-label="展开状态演示技术" />
+            </ComboboxInputGroup>
+            <ComboboxContent>
+              <ComboboxList className="max-h-60 overflow-y-auto p-1">
+                {(item: string) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+          {errorMessage("combobox")}
+        </div>
+        <div className="space-y-2">
+          <label htmlFor="error-preview-color" className="block text-[13px] font-medium">
+            ColorInput · 颜色
+          </label>
+          <ColorInput
+            id="error-preview-color"
+            defaultValue="#0066df"
+            disabled={disabled}
+            aria-invalid={invalid}
+            aria-describedby={describedBy("color")}
+          />
+          {errorMessage("color")}
+        </div>
+      </div>
+      <p className="mt-6 border-t border-white/[.07] pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
+        错误保留灰底与均匀细内框，键盘焦点使用独立蓝色轮廓；关闭错误后恢复正常交互状态。
+      </p>
+    </Card>
+  );
+}
+
 export default function Page() {
   const [motion, setMotion] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(true);
@@ -956,7 +1136,7 @@ export default function Page() {
                 </div>
               </div>
               <p className="mt-6 border-t border-white/[.07] pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
-                字段保留可见标签；错误同时使用文字与底部标记，键盘焦点使用独立的蓝色轮廓。
+                字段保留可见标签；错误同时使用文字与均匀细内框，键盘焦点使用独立的蓝色轮廓。
               </p>
             </Card>
           </div>
@@ -1101,6 +1281,7 @@ export default function Page() {
               </div>
             </div>
           </Card>
+          <ErrorStatePreview />
         </section>
 
         <section id="motion" className="showcase-section">

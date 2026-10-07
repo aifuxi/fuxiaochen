@@ -3,25 +3,6 @@
   width: var(--control-form);
   height: var(--control-form);
   padding: 10px;
-  border: 0;
-  border-radius: var(--radius-form);
-  background: var(--color-input);
-  cursor: pointer;
-  transition: background-color var(--motion-quick) var(--motion-ease);
-}
-.ds-color-input:hover:not(:disabled) {
-  background: var(--color-input-hover);
-}
-.ds-color-input:active:not(:disabled) {
-  background: var(--color-raised);
-}
-.ds-color-input:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-.ds-color-input:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 .ds-color-input::-webkit-color-swatch-wrapper {
   padding: 0;
@@ -33,9 +14,4 @@
 .ds-color-input::-moz-color-swatch {
   border: 0;
   border-radius: 4px;
-}
-@media (prefers-reduced-motion: reduce) {
-  .ds-color-input {
-    transition: none;
-  }
 }

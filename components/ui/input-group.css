@@ -3,45 +3,6 @@
   align-items: center;
   min-width: 0;
   height: var(--control-form);
-  border-radius: var(--radius-form);
-  background: var(--color-input);
-  color: var(--color-foreground);
-  transition:
-    background-color var(--motion-quick) var(--motion-ease),
-    box-shadow var(--motion-quick) var(--motion-ease);
-}
-.ds-input-group:hover:not(
-    :has(> input:disabled, > input[data-disabled], > input[aria-invalid="true"])
-  ) {
-  background: var(--color-input-hover);
-}
-.ds-input-group:active:not(:has(> input:disabled, > input[data-disabled])) {
-  background: var(--color-raised);
-}
-.ds-input-group:has(> input:focus) {
-  background: var(--color-input-hover);
-  box-shadow: inset 0 0 0 1px var(--color-primary);
-}
-.ds-input-group:has(> input:focus-visible) {
-  box-shadow: none;
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-}
-.ds-input-group:has(> input:disabled, > input[data-disabled]) {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-.ds-input-group:has(> input[aria-invalid="true"]) {
-  background: color-mix(in srgb, var(--color-danger) 8%, var(--color-input));
-  box-shadow: inset 0 -2px 0 var(--color-danger);
-}
-.ds-input-group:has(> input[aria-invalid="true"]:focus) {
-  box-shadow:
-    inset 0 0 0 1px var(--color-danger),
-    inset 0 -2px 0 var(--color-danger);
-}
-.ds-input-group:has(> input[aria-invalid="true"]:focus-visible) {
-  box-shadow: inset 0 -2px 0 var(--color-danger);
 }
 .ds-input-group > .ds-input-group-control {
   flex: 1;
@@ -49,17 +10,7 @@
   width: 0;
   height: 100%;
   opacity: 1;
-}
-/* 与 Input 的状态选择器对应，确保表面和焦点只由组合外框绘制。 */
-.ds-input-group > .ds-input-group-control,
-.ds-input-group
-  > .ds-input-group-control:hover:not(:disabled):not([data-disabled]):not([aria-invalid="true"]),
-.ds-input-group > .ds-input-group-control:active:not(:disabled):not([data-disabled]),
-.ds-input-group > .ds-input-group-control:focus,
-.ds-input-group > .ds-input-group-control:focus-visible,
-.ds-input-group > .ds-input-group-control[aria-invalid="true"],
-.ds-input-group > .ds-input-group-control[aria-invalid="true"]:focus,
-.ds-input-group > .ds-input-group-control[aria-invalid="true"]:focus-visible {
+  /* 输入始终透明，由组合外框统一绘制背景、错误边线和焦点轮廓。 */
   background: transparent;
   box-shadow: none;
   outline: none;
@@ -99,10 +50,5 @@
     min-height: var(--control-touch);
     height: var(--control-touch);
     width: var(--control-touch);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ds-input-group {
-    transition: none;
   }
 }

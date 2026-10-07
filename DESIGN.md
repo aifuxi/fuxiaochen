@@ -199,7 +199,7 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 正文使用 `foreground`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
 
-输入占位文字使用 muted，保持在 input、input-hover 与错误混色表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
+输入占位文字使用 muted，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
 
 用色按信息职责组织，场景明确默认映射与需要强调的内容：
 
@@ -254,13 +254,24 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 | 业务 Card                           | 默认 surface 与淡边线，内部信息和局部标识可按职责用色；无舞台及顶部高光，是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                                                 |
 | Tabs                                | raised 选中胶囊独立于文字，使用 standard / ease 滑动到选中项；文字只过渡颜色，面板短淡入且不阻塞内容；键盘可切换，reduced-motion 取消滑动                                                                                                                                                                           |
 | Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；surface / raised 与 md / lg 按用途选择，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                                                                               |
-| Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 四侧内边距 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角、input 填充，hover 提亮、active 压暗，聚焦可用 primary 内边线，focus-visible 用单层清晰焦点环；字段有可见标签，danger 标记与文字通过 aria-invalid / aria-describedby 关联                |
+| Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 四侧内边距 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角与 input 填充，正常、错误、焦点和禁用状态遵循下方表单表面规则；字段有可见标签，错误文字通过 aria-describedby 关联                                                                         |
 | Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 40px、窄屏或粗指针至少高 44px；高亮默认灰阶提亮，也可用共享强调色区分当前高亮或选中，保留文字、勾选和独立焦点；附加图标操作桌面 32×32px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件 |
-| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 32×32px、窄屏或粗指针 44×44px；输入区不重复背景或焦点环，输入聚焦显示完整焦点轮廓，附加按钮保留自身焦点；点击非按钮附加区可聚焦输入                                                      |
-| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，禁用时反馈与相邻输入一致                                                                                                                                                                                      |
+| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 32×32px、窄屏或粗指针 44×44px；内部输入保持透明，不重复边框或焦点环，错误标记与输入焦点由完整外框承载，附加按钮只显示自身焦点；点击非按钮附加区可聚焦输入                                |
+| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
 | Switch                              | 状态与名称由本地组件提供；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                                                                             |
 
 Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
+
+### 表单表面状态
+
+Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸、圆角及组件 props 保持各自既有定义；状态样式集中在共享样式，页面不重复绘制。
+
+- 正常状态使用 input 表面，hover 提亮、active 压暗，鼠标聚焦可使用 primary 内边线。focus-visible 移除正常字段的 primary 内边线，保留独立的 2px focus 外轮廓与 2px 外距。
+- `aria-invalid="true"` 或 Base UI 的 `[data-invalid]` 表达错误。错误态保持 input 灰底，以均匀的 1px danger 内边框标记，不混入红色背景、不绘制底部阴影线；hover、active、focus 和 focus-visible 都不能覆盖灰底或红色内框。错误标记与 focus-visible 外轮廓同时存在，错误文字通过 `aria-describedby` 关联真实控件。
+- disabled 沿用控件的透明度和 not-allowed 指针反馈，已有错误内框继续保留，hover 和 active 不改变表面。删除错误属性后立即恢复当前正常交互状态，不复制业务错误到组件内部。
+- InputGroup 与 Combobox 将内部输入的错误属性和输入焦点提升到完整外框；内部输入保持透明，不重复绘制边框或焦点环。附加按钮聚焦时只显示按钮自身的焦点，不触发组合外框的输入焦点。ColorInput 沿用同一表面状态，并保持既有 form 方形宽高。
+
+文章标题的透明、无圆角画布输入属于显式场景例外，详见[后台写作工作区](docs/design/admin.md#文章列表与写作工作区)；其他表单字段沿用上述规则。
 
 语法高亮只作用于代码区：关键字与标签对应 syntax-keyword，字符串对应 syntax-string，数字与字面量对应 syntax-number，函数与类型对应 syntax-function，注释对应 syntax-comment，其他文本用 foreground；不改变代码内容、选区或撤销历史。
 

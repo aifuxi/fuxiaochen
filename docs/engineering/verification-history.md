@@ -536,3 +536,25 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：复用localhost:3000，在780px及390px逐条实测ICP、公安和后台入口的hover，均为foreground文字、透明背景；移出恢复muted。真实Tab／Shift+Tab确认三条链接的2px focus轮廓与8px圆角、透明背景。390px按住后台入口时active为true、背景透明且文字回落，松开经/login进入已登录/admin；修正前后及窄屏交互截图实际查看。
 - 运行通过：1440/390/320px回归首页、文章列表、Vim正文、分类、标签、日志、友链与关于页，共24项检查；均无横向溢出，三条链接背景透明、高度44px，间距保持12px／24px。类型检查、全仓lint、改动文件格式及差异空白检查通过；没有新增测试或运行生产构建。
 - 仅源码核对／未验证／不适用：减少动态效果沿用未修改的共享规则，本轮未重复切换系统偏好；备案href、外链属性未改，本轮未重复访问门户。跨浏览器、真实触屏、未登录跳转及屏幕阅读器未验证；没有禁用或提交状态。证据保存于本机可视化目录的 `footer-hover-fix/`，包含修正前后及各链接hover截图、焦点／按压截图、`checks.json`和`layouts.json`；本轮未写入数据库。
+
+## 统一表单错误态（2026-10-07）
+
+- 已实现：Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 的表面状态集中到共享样式，错误采用 input 灰底与均匀 1px danger 内边框，移除红色混色和底部阴影线。兼容 `aria-invalid="true"` 与 `[data-invalid]`，错误覆盖 hover／active／focus；focus-visible 使用独立轮廓，disabled 保留错误标记。组合外框承载内部输入状态，ColorInput 保持方形；文章标题保留透明、无圆角及直线错误底标记例外。展示页增加六类控件的本地错误／禁用开关，默认显示错误、未禁用；共享和场景规范同步，未更改组件 props、校验与业务行为。
+
+复用现有 localhost:3000 开发服务；独立 `.next-build` 生产构建后在 localhost:3002 运行。`/design-spec` 原有 layout 仅允许 development，生产返回404符合既有约定，因此生产共享状态改由登录和后台分类页验证。
+
+| 项目                 | 验证状态           | 实际证据与范围                                                                                                                                                                                                                                                                                                     |
+| -------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 六类错误态与焦点     | 运行通过           | 六类默认背景均为 rgb(38,38,38)，内框为 1px danger（rgb(255,123,123)）。逐项真实 Tab 后 focus-visible 为 true、轮廓 2px focus（rgb(125,180,255)）、外距 2px；逐项捕获原生按住时 active=true，灰底与红框保持，松开解除 active；Select 最后补验通过                                                                   |
+| 组合输入与真实操作   | 运行通过           | InputGroup／Combobox 内部输入透明、无 shadow、opacity=1，附加按钮只显示自身焦点。组图标点击聚焦输入、清空后回焦；Select 选择“前端开发”后关闭回焦；Combobox 鼠标选择 TypeScript、清空回焦，原生 Down／Return 筛选并选择 Next.js 后关闭回焦；ColorInput 原生弹窗按键改为 #0065e0 后关闭                              |
+| 状态清除与禁用       | 运行通过           | 本地开关清除错误属性与文字后恢复正常状态，再次开启重现红框。disabled 与错误叠加时 opacity=0.5，六类实际悬停和按住均灰红保持、not-allowed，原生 disabled 阻止 active；disabled 与正常叠加移除红框并保留灰底和透明度，真实 Tab 跳过禁用控件                                                                          |
+| 视口与尺寸           | 运行通过           | 1440×1000、390×844、600×844、601×844 无页面横向溢出；390px 为单列、600／601px 为双列。600px 及以下单行控件高44px，601px 高40px，ColorInput 宽高相等，Textarea 高128px。前期视口应用到错误标签页的数据已剔除，最终按 innerWidth 实测记录                                                                            |
+| 减少动态效果与恢复   | 运行通过           | 系统偏好 off→on 时浏览器 matchMedia 为 true，六类控件 transition 均为0s；恢复 off 后 matchMedia=false，过渡恢复150ms。截图与状态数据记录真实系统切换，不再沿用历史“仅源码核对”作为本轮结论                                                                                                                         |
+| 登录与生产 CSS 顺序  | 运行通过           | 开发 login.localhost:3000 与生产 login.localhost:3002/login?error=invalid 的两个错误字段均灰底红框、Tab 轮廓2px／外距2px；开发填入用户名、生产填入密码后清错，shadow=none 且焦点保留，未提交登录。生产 CSSOM 规则序号依次为 hover412、focus413、active414、focus-visible415、disabled416、invalid417，覆盖顺序正确 |
+| 后台分类与文章消费者 | 运行通过           | 生产 /admin/categories 在1440／390px下 ColorInput 为40／44px方形、flex:0 0 auto、无 ds-input 类，页面无横溢；已有6分类、37标签未修改。文章设置 slug 与分类触发真实客户端 Zod 失败时灰底红框；标题透明、圆角0、2px错误底线与2px focus／外距4px并存，实际 active 保留底线；1440／390px标题宽802／340px，页面无横溢   |
+| 静态检查与构建       | 运行通过           | typecheck、全仓 lint、8个实现／规范修改文件的格式检查与差异检查、独立 .next-build 生产构建通过；本记录另行格式检查。保留既有 Prisma contract typed fallback 和 skills sync 提示，未削弱检查或更改依赖                                                                                                              |
+| 其他状态与环境       | 仅源码核对／未验证 | [data-invalid] 兼容仅源码核对，六类运行测试使用 aria-invalid。真实粗指针设备、其他浏览器、屏幕阅读器和其他业务提交错误分支未验证；截图、静态检查及构建不作为这些场景通过的证据                                                                                                                                     |
+
+业务数据记录：回归中曾误保存一次空新草稿，ID 为 `ff62ddbe-4120-4f0d-959c-ccacbc844635`。随后通过 `writeTransaction` 与同一事务级 advisory lock 核对 ID、version=1、创建时间 `2026-10-07T10:16:28.456Z`、空内容及零关系，仅精确删除该记录，并回读确认不存在。最终无残留测试记录；已发布文章的失败校验未写入。临时生产预览服务已停止，原有开发服务保留。
+
+截图和操作／状态汇总保存于本机 [input-error-fix 证据目录](/Users/chen/.codex/visualizations/2026/10/07/01a115ca-3d51-7891-a4cb-ff7d20636211/input-error-fix/)：`01-before.jpg`、`02-after.jpg`、`03-input-held.jpg`、`04-six-controls-desktop.jpg`、`05-login-recovery.jpg`、`06-article-title-error.jpg`、`07-six-controls-mobile.jpg`、`08-reduced-motion.jpg`、`09-production-login-error.jpg`、`10-production-categories-1440.jpg`、`10-production-categories-390.jpg` 及 `checks.json`。本记录仅追加当前事实，历史验收结论保留。

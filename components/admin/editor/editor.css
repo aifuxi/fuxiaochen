@@ -74,19 +74,18 @@
   font: 500 32px/44px var(--font-display);
   letter-spacing: -0.03em;
 }
-.post-writing-title.ds-input:hover:not(:disabled),
-.post-writing-title.ds-input:focus {
+.post-writing-title.ds-input:where(:hover, :active, :focus) {
   background: transparent;
   box-shadow: none;
 }
-.post-writing-title.ds-input:focus-visible {
+.post-writing-title.ds-input:where(:focus-visible) {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
-.post-writing-title.ds-input:disabled {
+.post-writing-title.ds-input:where(:disabled, [data-disabled]) {
   opacity: 0.65;
 }
-.post-writing-title.ds-input[aria-invalid="true"] {
+.post-writing-title.ds-input:where([aria-invalid="true"], [data-invalid]) {
   box-shadow: inset 0 -2px 0 var(--color-danger);
 }
 .post-writing-title::placeholder {
