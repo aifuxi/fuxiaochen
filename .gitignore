@@ -10,6 +10,7 @@
 
 # database
 **/backups/
+!/app/(backend)/admin/backups/
 /prisma/*.sqlite
 *.sqlite-shm
 *.sqlite-wal

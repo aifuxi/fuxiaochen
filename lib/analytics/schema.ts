@@ -76,7 +76,7 @@ export type AnalyticsSnapshot = {
   incomplete: boolean;
   metrics: AnalyticsMetrics;
   changes: Record<keyof AnalyticsMetrics, number | null>;
-  trend: { date: string; pv: number; uv: number }[];
+  trend: { date: string; pv: number | null; uv: number | null }[];
   devices: { name: string; count: number; percent: number }[];
   sources: { name: string; count: number; percent: number }[];
   articles: { id: string; title: string; path: string; pv: number; uv: number; rate: number }[];

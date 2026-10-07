@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { ExternalLink, Star, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { Clock3, ExternalLink, Star, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 
 import type { PostItem } from "@/lib/posts/schema";
@@ -22,6 +22,7 @@ import { postStatusLabels, postTime, type PostStatus } from "@/lib/posts/schema"
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
+import { ScheduleToolbar } from "./post-browser";
 import { usePostListState } from "./post-list-state";
 import { PostQueryStatus } from "./post-status";
 import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
@@ -36,6 +37,7 @@ const filters: { value: "all" | PostStatus; label: string }[] = [
 ];
 
 const actionIcons = {
+  Clock3: <Clock3 size={16} aria-hidden="true" />,
   Pencil: <Pencil size={16} />,
   Trash2: <Trash2 size={16} />,
   ExternalLink: <ExternalLink size={16} />,
@@ -145,6 +147,7 @@ export function AdminPosts() {
     onEdit,
     onDeletePost,
     setPostFeatured,
+    cancelPostSchedule,
   } = useAdminWorkspace();
   const { state, patch, tableState } = usePostListState();
   const status = state.status ?? "all";
@@ -288,6 +291,7 @@ export function AdminPosts() {
             </div>
           </div>
           <TabsPanel value={status} className="admin-post-panel">
+            {status === "scheduled" && <ScheduleToolbar />}
             <div className="admin-post-list" aria-busy={result.loading}>
               <PostQueryStatus {...result} />
               {actionError && (
@@ -333,6 +337,27 @@ export function AdminPosts() {
                             .finally(() => requestAnimationFrame(() => searchRef.current?.focus()));
                         },
                       },
+                      ...(post.status === "scheduled"
+                        ? [
+                            {
+                              label: "取消排期",
+                              icon: actionIcons.Clock3,
+                              onSelect: () => {
+                                setActionError("");
+                                void cancelPostSchedule(post)
+                                  .catch((cause: unknown) => {
+                                    setActionError(
+                                      cause instanceof Error ? cause.message : "取消排期失败。",
+                                    );
+                                    result.reload();
+                                  })
+                                  .finally(() =>
+                                    requestAnimationFrame(() => searchRef.current?.focus()),
+                                  );
+                              },
+                            },
+                          ]
+                        : []),
                       {
                         label: "删除文章",
                         icon: actionIcons.Trash2,

@@ -15,13 +15,15 @@ import {
   type AnalyticsRange,
   type AnalyticsSnapshot,
 } from "@/lib/analytics/schema";
+import { trendGeometry } from "@/lib/analytics/trend";
 import { postTime } from "@/lib/posts/schema";
 
 import { AnalyticsQueryStatus, useAnalytics } from "./analytics-query";
 import { CollectionStatus } from "./collection-status";
 import "./admin-analytics.css";
 
-const number = (value: number) => value.toLocaleString("zh-CN");
+const number = (value: number | null) =>
+  value === null ? "暂无可用数据" : value.toLocaleString("zh-CN");
 type RankedArticle = AnalyticsSnapshot["articles"][number] & { rank: number };
 
 const columns: ColumnDef<RankedArticle>[] = [
@@ -112,15 +114,7 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
       value: snapshot.metrics.bounce === null ? "—" : `${snapshot.metrics.bounce.toFixed(1)}%`,
     },
   ];
-  const max = Math.max(4, Math.ceil(Math.max(0, ...snapshot.trend.map((item) => item.pv)) / 4) * 4);
-  const points = snapshot.trend.map((item, i) => ({
-    ...item,
-    x: snapshot.trend.length === 1 ? 327 : 54 + (i * 546) / (snapshot.trend.length - 1),
-    pvY: 228 - (item.pv / max) * 196,
-    uvY: 228 - (item.uv / max) * 196,
-  }));
-  const path = (key: "pvY" | "uvY") =>
-    points.map((point, i) => `${i ? "L" : "M"}${point.x},${point[key]}`).join(" ");
+  const { max, points, path } = trendGeometry(snapshot.trend);
   const selected = active === null ? null : points[active];
 
   return (
@@ -231,8 +225,12 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
                           {point.date.slice(5)}
                         </text>
                       )}
-                      <circle cx={point.x} cy={point.pvY} r="3" fill="var(--color-primary)" />
-                      <circle cx={point.x} cy={point.uvY} r="3" fill="var(--color-success)" />
+                      {point.pvY !== null && (
+                        <circle cx={point.x} cy={point.pvY} r="3" fill="var(--color-primary)" />
+                      )}
+                      {point.uvY !== null && (
+                        <circle cx={point.x} cy={point.uvY} r="3" fill="var(--color-success)" />
+                      )}
                     </g>
                   ))}
                 </svg>
@@ -240,7 +238,7 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
                   <Button
                     key={point.date}
                     variant="ghost"
-                    aria-label={`${point.date}，浏览量 ${point.pv}，访客数 ${point.uv}`}
+                    aria-label={`${point.date}，浏览量 ${number(point.pv)}，访客数 ${number(point.uv)}`}
                     className="analytics-data-point"
                     style={{
                       left: `${(point.x / 630) * 100}%`,
@@ -256,7 +254,8 @@ function AnalyticsContent({ snapshot }: { snapshot: AnalyticsSnapshot }) {
               </div>
             </section>
             <p className="analytics-footnote">
-              每日 UV 按日去重，周期 UV 按整个区间去重；仅包含成功上报的浏览器访问。
+              采集开始前的日期留空，不表示零访问；首次采集当天可能只有部分数据。每日 UV
+              按日去重，周期 UV 按整个区间去重；仅包含成功上报的浏览器访问。
             </p>
           </div>
         </Card>

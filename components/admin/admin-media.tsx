@@ -105,7 +105,7 @@ export function AdminMedia() {
   const located = useRef<string | undefined>(undefined);
   useEffect(() => {
     const item = list.data?.items[0];
-    if (item && record !== located.current && item.id === record) {
+    if (item && item.status === "ready" && record !== located.current && item.id === record) {
       located.current = record;
       setPreview(item);
     }

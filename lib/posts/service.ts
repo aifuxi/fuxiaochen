@@ -177,7 +177,16 @@ export async function getPostSummary(actor: TaxonomyActor) {
     .orderBy([(p) => p.scheduledFor.asc(), (p) => p.id.asc()])
     .limit(5)
     .all();
-  return { statusCounts: await counts(db), schedules: schedules.map(serialize) };
+  const recentDrafts = await summaries(db)
+    .where({ status: "draft" })
+    .orderBy([(p) => p.updatedAt.desc(), (p) => p.id.desc()])
+    .limit(3)
+    .all();
+  return {
+    statusCounts: await counts(db),
+    schedules: schedules.map(serialize),
+    recentDrafts: recentDrafts.map(serialize),
+  };
 }
 async function detail(id: string, db: Database | Transaction) {
   const post = await db.orm.public.Post.where({ id })

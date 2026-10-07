@@ -66,7 +66,8 @@ export function NavigationGuardProvider({ children }: { children: ReactNode }) {
     let restoring = false;
     let approved: Entry | null = null;
     const wrappedPush: History["pushState"] = (data, unused, url) => {
-      push({ ...data, [HISTORY_KEY]: ++sequence }, unused, url);
+      sequence = (Number(history.state?.[HISTORY_KEY]) || 0) + 1;
+      push({ ...data, [HISTORY_KEY]: sequence }, unused, url);
       origin = read();
       allowUnload.current = false;
     };

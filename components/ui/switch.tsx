@@ -14,7 +14,7 @@ export function Switch({
   return (
     <BaseSwitch.Root
       nativeButton
-      render={<button type="button" aria-label={props["aria-label"] ?? "开关"} />}
+      render={<button type="button" aria-label={props["aria-label"]} />}
       className={cn(
         "ds-switch relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full bg-[#393939] p-[3px] transition-colors duration-[var(--motion-quick)] ease-[var(--motion-ease)] data-checked:bg-[var(--color-primary)] enabled:hover:brightness-110 enabled:active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--color-focus)] data-disabled:cursor-not-allowed data-disabled:opacity-40",
         touchTarget && "ds-switch-touch",

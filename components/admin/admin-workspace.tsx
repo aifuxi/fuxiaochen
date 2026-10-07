@@ -1,72 +1,58 @@
 "use client";
 
-import { Trash2, X } from "lucide-react";
-import Link from "next/link";
+import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type ReactNode, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { CommentItem } from "@/lib/comments/schema";
 import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminShell, type AdminPanel } from "./admin-shell";
-import {
-  BackupPanel,
-  GlobalSearch,
-  NotificationCenter,
-  useNotificationSummary,
-} from "./global-operations";
+import { GlobalSearch, NotificationCenter, useNotificationSummary } from "./global-operations";
 import { MediaUploadStatus } from "./media-upload-status";
 import { useNavigationGuard } from "./navigation-guard";
-import { PostBrowser } from "./post-browser";
-import { TaxonomyStatus } from "./taxonomy-status";
 import { commentRequest, useComments } from "./use-comments";
 import { useMediaUploads } from "./use-media";
 import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-type DialogPanel = Exclude<AdminPanel, "compose" | "comments" | "analytics">;
+type DialogPanel = Exclude<
+  AdminPanel,
+  "compose" | "comments" | "analytics" | "backup" | "categories" | "schedule"
+>;
 
 const panelTitles: Record<DialogPanel, string> = {
   search: "全局内容检索",
   notifications: "通知",
-  backup: "数据库备份",
   profile: "管理账户",
   upload: "上传媒体",
-  categories: "分类与标签",
-  schedule: "定时发布计划",
 };
 
 const panelDescriptions: Record<DialogPanel, string> = {
   search: "检索文章、分类、标签、评论、媒体、友链与更新日志。",
   notifications: "查看待办和执行结果，已读状态随账户保存。",
-  backup: "查看数据库备份记录与自动备份设置。",
   profile: "查看账户并退出登录。",
   upload: "选择图片或附件上传到媒体库。",
-  categories: "创建或删除文章分类与标签。",
-  schedule: "查看发布计划，管理到期发布与取消排期。",
 };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
   const router = useRouter();
-  const guardNavigation = useNavigationGuard();
   const [postRevision, setPostRevision] = useState(0);
   const [operationRevision, setOperationRevision] = useState(0);
   const [operationPending, setOperationPending] = useState(false);
   const operationMutation = useRef(false);
   const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
   const [postPending, setPostPending] = useState(false);
+  const guardNavigation = useNavigationGuard(false, postPending || operationPending);
   const [writingFocused, setWritingFocused] = useState(false);
   const postMutation = useRef(false);
   const taxonomy = useTaxonomy();
-  const taxonomyDisabled =
-    taxonomy.taxonomyLoading || Boolean(taxonomy.taxonomyError) || taxonomy.taxonomyPending;
   const [panel, setPanel] = useState<DialogPanel | null>(null);
   const [commentDeleteTarget, setCommentDeleteTarget] = useState<CommentItem | null>(null);
   const [commentDeleteError, setCommentDeleteError] = useState("");
@@ -101,7 +87,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       mounted.current = false;
     };
   }, []);
-  const [newCategory, setNewCategory] = useState("");
 
   useEffect(() => {
     if (!message) return undefined;
@@ -115,6 +100,19 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       if (name === "comments" || name === "analytics") {
         setPanel(null);
         guardNavigation(() => router.push(`/admin/${name}`));
+        return;
+      }
+      if (name === "backup" || name === "categories" || name === "schedule") {
+        guardNavigation(() => {
+          setPanel(null);
+          router.push(
+            name === "schedule"
+              ? "/admin/posts?status=scheduled"
+              : name === "backup"
+                ? "/admin/backups"
+                : "/admin/categories",
+          );
+        });
         return;
       }
       if (name === "compose") {
@@ -196,17 +194,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         }),
       });
     }, "排期已取消，文章已转为草稿");
-
-  const addCategory = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    try {
-      await taxonomy.createCategory({ name: newCategory.trim(), color: "#0066df" });
-      setNewCategory("");
-      setMessage("分类已添加");
-    } catch (error) {
-      setMessage(error instanceof Error ? error.message : "分类创建失败。");
-    }
-  };
 
   const pendingCount = commentState.commentSummary?.statusCounts.pending ?? null;
   const runOperation = async <T,>(work: () => Promise<T>, refreshPosts = false) => {
@@ -330,7 +317,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               </div>
               {panel === "search" && <GlobalSearch />}
               {panel === "notifications" && <NotificationCenter />}
-              {panel === "backup" && <BackupPanel />}
               {panel === "profile" && (
                 <div className="admin-modal-section">
                   <p>fuxiaochen · 管理账户</p>
@@ -363,63 +349,13 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   <Button
                     onClick={() => {
                       setPanel(null);
-                      router.push("/admin/media");
+                      guardNavigation(() => router.push("/admin/media"));
                     }}
                   >
                     查看媒体库
                   </Button>
                 </div>
               )}
-              {panel === "categories" && (
-                <div className="admin-modal-section">
-                  <TaxonomyStatus />
-                  <form className="admin-inline-form" onSubmit={addCategory}>
-                    <label htmlFor="admin-new-category">新增分类</label>
-                    <div>
-                      <Input
-                        id="admin-new-category"
-                        disabled={taxonomy.taxonomyPending}
-                        maxLength={40}
-                        value={newCategory}
-                        onChange={(event) => setNewCategory(event.target.value)}
-                        placeholder="分类名称"
-                      />
-                      <Button type="submit" variant="primary" disabled={taxonomyDisabled}>
-                        {taxonomy.taxonomyPending ? "正在保存…" : "添加"}
-                      </Button>
-                    </div>
-                  </form>
-                  <div className="admin-category-list">
-                    {taxonomy.categoryItems.map((item) => (
-                      <div key={item.id}>
-                        <span>{item.name}</span>
-                        <small>关联 {item.postCount} 篇文章</small>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={taxonomyDisabled}
-                          onClick={async () => {
-                            try {
-                              await taxonomy.deleteCategory(item.id);
-                              setMessage("分类已删除");
-                            } catch (error) {
-                              setMessage(error instanceof Error ? error.message : "删除失败。");
-                            }
-                          }}
-                          aria-label={`删除分类 ${item.name}`}
-                        >
-                          <Trash2 size={15} />
-                        </Button>
-                      </div>
-                    ))}
-                    {!taxonomyDisabled && !taxonomy.categoryItems.length && (
-                      <p>暂无分类，请先添加分类。</p>
-                    )}
-                    <Link href="/admin/categories">管理分类与标签</Link>
-                  </div>
-                </div>
-              )}
-              {panel === "schedule" && <PostBrowser />}
             </>
           )}
         </DialogContent>

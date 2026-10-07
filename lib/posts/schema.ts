@@ -101,7 +101,11 @@ export type PostList = {
   pageCount: number;
   statusCounts: PostCounts;
 };
-export type PostSummary = { statusCounts: PostCounts; schedules: PostItem[] };
+export type PostSummary = {
+  statusCounts: PostCounts;
+  schedules: PostItem[];
+  recentDrafts: PostItem[];
+};
 export const emptyPostCounts: PostCounts = { all: 0, draft: 0, published: 0, scheduled: 0 };
 export function postTime(value: string | null, dateOnly = false) {
   if (!value) return "—";

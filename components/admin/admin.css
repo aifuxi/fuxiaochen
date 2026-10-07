@@ -1441,3 +1441,81 @@
   outline-offset: -2px;
   background: var(--color-surface-hover);
 }
+
+.admin-nav-group + .admin-nav-group {
+  margin-top: var(--space-sm);
+}
+.admin-nav-group-label {
+  font-size: 11px;
+  color: var(--color-muted);
+  padding: var(--space-sm) var(--space-md) var(--space-xs);
+}
+.admin-dashboard .admin-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.admin-dashboard .admin-stat {
+  min-height: 120px;
+  border-radius: var(--radius-lg);
+}
+.admin-workbench-empty {
+  margin: 0;
+  padding: var(--space-sm) 0;
+  color: var(--color-muted);
+}
+.admin-inline-link {
+  display: inline-flex;
+  gap: var(--space-xs);
+  align-items: center;
+  color: var(--color-muted);
+}
+.admin-inline-link:hover {
+  color: var(--color-foreground);
+}
+.admin-inline-link:active {
+  color: var(--color-primary);
+}
+.admin-inline-link:focus-visible,
+.admin-draft-list button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.admin-draft-list,
+.admin-traffic-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-lg);
+}
+.admin-traffic-summary dt {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+.admin-traffic-summary dd {
+  margin: var(--space-sm) 0 0;
+  font-size: 22px;
+  font-weight: 500;
+}
+.admin-schedule-toolbar {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-outline);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+.admin-schedule-toolbar p {
+  flex: 1 1 300px;
+}
+.admin-backups .admin-modal-section {
+  padding: var(--space-lg);
+}
+@media (max-width: 900px) {
+  .admin-dashboard .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .admin-draft-list,
+  .admin-traffic-summary {
+    grid-template-columns: 1fr;
+  }
+}

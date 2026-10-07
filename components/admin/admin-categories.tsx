@@ -3,6 +3,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { Plus, Trash2, X } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useRef, useState, type SubmitEvent } from "react";
 
 import type { Category } from "@/lib/taxonomy/schema";
@@ -61,6 +62,7 @@ const columns: ColumnDef<Category>[] = [
 
 export function AdminCategories() {
   const record = useRecordTarget();
+  const recordKind = useSearchParams().get("kind");
   const {
     onMessage,
     categoryItems: categories,
@@ -73,6 +75,12 @@ export function AdminCategories() {
     taxonomyError,
     taxonomyPending,
   } = useAdminWorkspace();
+  const visibleCategories = record
+    ? categories.filter((item) => recordKind !== "tag" && item.id === record)
+    : categories;
+  const visibleTags = record
+    ? tags.filter((item) => recordKind !== "category" && item.id === record)
+    : tags;
   const tableState = useDataTableState();
   const categoryDeleted = useRef(false);
   const disabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
@@ -135,7 +143,7 @@ export function AdminCategories() {
         record={record}
         loading={taxonomyLoading}
         error={taxonomyError}
-        found={[...categories, ...tags].some((item) => item.id === record)}
+        found={[...visibleCategories, ...visibleTags].some((item) => item.id === record)}
       />
       <div className="admin-page-heading">
         <div>
@@ -217,7 +225,7 @@ export function AdminCategories() {
               }}
               {...tableState}
               highlightRowId={record}
-              data={record ? categories.filter((c) => c.id === record) : categories}
+              data={visibleCategories}
               columns={columns}
               getRowId={(item) => item.id}
               caption="博文分类及关联文章数量"
@@ -267,7 +275,7 @@ export function AdminCategories() {
               )}
             </form>
             <ul className="admin-taxonomy-cloud" aria-label="标签列表">
-              {(record ? tags.filter((item) => item.id === record) : tags).map((item) => (
+              {visibleTags.map((item) => (
                 <li
                   key={item.id}
                   data-record-id={item.id}

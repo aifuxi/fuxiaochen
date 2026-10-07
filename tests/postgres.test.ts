@@ -345,6 +345,9 @@ void test("统计聚合、访客清理和上海跨日分组", async () => {
   const midnight = shanghaiMidnight(now);
   const at = [midnight - 1, midnight + 1];
   await database.writeTransaction(async (tx) => {
+    await tx.orm.public.SiteSetting.where({ id: 1 }).update({
+      localAnalyticsStartedAt: new Date(midnight - 2 * 86_400_000),
+    });
     for (const time of at) {
       const id = randomUUID();
       const date = new Date(time);
@@ -377,6 +380,12 @@ void test("统计聚合、访客清理和上海跨日分组", async () => {
     }
   });
   const result = await getAnalytics("7d", actor);
+  assert.equal(result.trend[0].pv, null, "采集之前不能用零表示无数据");
+  assert.equal(
+    result.trend.find((point) => point.date === shanghaiDay(midnight - 2 * 86_400_000))?.pv,
+    0,
+    "已覆盖日期的无访问显示零",
+  );
   assert.equal(result.metrics.pv, 2);
   assert.equal(result.metrics.durationMs, 20_000);
   assert.equal(result.trend.find((r) => r.date === shanghaiDay(midnight - 1))?.pv, 1);
@@ -677,8 +686,24 @@ void test("媒体引用、强删复核和删除期间的新增引用拦截", asy
     { code: "REFERENCES_CHANGED" },
   );
   const latest = await media.getMediaReferences(id, actor);
+  for (const status of ["scheduled", "published"] as const)
+    await posts.createPost(
+      {
+        ...input,
+        slug: `${status}-${id}`,
+        status,
+        scheduledFor:
+          status === "scheduled" ? new Date(Date.now() + 86_400_000).toISOString() : null,
+      },
+      actor,
+    );
+  const withAllStatuses = await media.getMediaReferences(id, actor);
   assert.equal(latest.count, 6);
-  await media.deleteMedia(id, actor, { force: true, referenceFingerprint: latest.fingerprint });
+  assert.equal(withAllStatuses.count, 10, "引用查询覆盖草稿、定时与已发布文章");
+  await media.deleteMedia(id, actor, {
+    force: true,
+    referenceFingerprint: withAllStatuses.fingerprint,
+  });
   assert.equal(
     (await database.getDatabase().orm.public.Media.where({ id }).first())?.status,
     "deleted",
@@ -763,10 +788,74 @@ void test("媒体删除失败保留可重试状态，写锁阻止处理中新增
     ),
     { code: "INVALID_INPUT" },
   );
-  send.mock.mockImplementation(async () => ({}));
-  await media.deleteMedia(id, actor);
+  let started!: () => void;
+  let release!: () => void;
+  const deletionStarted = new Promise<void>((resolve) => {
+    started = resolve;
+  });
+  const deletionReleased = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  send.mock.mockImplementation(async () => {
+    started();
+    await deletionReleased;
+    return {};
+  });
+  const retry = media.deleteMedia(id, actor);
+  await deletionStarted;
+  try {
+    await assert.rejects(
+      friends.createFriend(
+        createFriendSchema.parse({
+          name: "OSS 正在删除时的新引用",
+          url: "https://example.test",
+          avatar: publicMediaUrl(`media/${id}`),
+          description: "",
+          category: "技术博客",
+          enabled: true,
+        }),
+        actor,
+      ),
+      { code: "INVALID_INPUT" },
+    );
+  } finally {
+    release();
+  }
+  await retry;
   assert.equal(
     (await database.getDatabase().orm.public.Media.where({ id }).first())?.status,
     "deleted",
   );
+});
+
+void test("工作台仅返回最近三篇草稿，统计保留完整数量", async () => {
+  const { createPost, getPostSummary } = await import("../lib/posts/service");
+  const { postSchema } = await import("../lib/posts/schema");
+  const ids: string[] = [];
+  for (let i = 0; i < 4; i++) {
+    const post = await createPost(
+      postSchema.parse({
+        title: `工作台草稿 ${i}`,
+        slug: `workbench-draft-${i}`,
+        categoryId,
+        tagIds: [],
+        content,
+        status: "draft",
+        scheduledFor: null,
+      }),
+      actor,
+    );
+    ids.push(post.id);
+    await database.writeTransaction((tx) =>
+      tx.orm.public.Post.where({ id: post.id }).update({
+        updatedAt: new Date(Date.now() + i * 1000),
+      }),
+    );
+  }
+  const summary = await getPostSummary(actor);
+  assert.deepEqual(
+    summary.recentDrafts.map((post) => post.id),
+    ids.slice(1).toReversed(),
+  );
+  assert.ok(summary.statusCounts.draft >= 4);
 });

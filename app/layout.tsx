@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 
 import localFont from "next/font/local";
 
+import { NavigationGuardProvider } from "@/components/admin/navigation-guard";
+
 const inter = localFont({
   src: "./fonts/InterVariable.woff2",
   weight: "100 900",
@@ -23,7 +25,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className={`${inter.variable} font-sans`}>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="font-sans antialiased">
+        <NavigationGuardProvider>{children}</NavigationGuardProvider>
+      </body>
     </html>
   );
 }

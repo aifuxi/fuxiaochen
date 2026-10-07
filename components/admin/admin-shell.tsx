@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Database,
   BarChart3,
   Bell,
   ChevronLeft,
@@ -50,17 +51,38 @@ type Props = {
   postPending: boolean;
 };
 
-const nav = [
-  { name: "仪表盘", icon: Home, href: "/admin" },
-  { name: "内容管理", icon: FileText, href: "/admin/posts" },
-  { name: "评论管理", icon: MessageCircle, href: "/admin/comments" },
-  { name: "媒体库", icon: ImageIcon, href: "/admin/media" },
-  { name: "分类与标签", icon: Tags, href: "/admin/categories" },
-  { name: "数据分析", icon: BarChart3, href: "/admin/analytics" },
-  { name: "访客日志", icon: Users, href: "/admin/visitors" },
-  { name: "友情链接", icon: Link2, href: "/admin/friends-links" },
-  { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
-  { name: "系统设置", icon: Settings, href: "/admin/settings" },
+const navGroups = [
+  { name: "", items: [{ name: "工作台", icon: Home, href: "/admin" }] },
+  {
+    name: "内容",
+    items: [
+      { name: "文章管理", icon: FileText, href: "/admin/posts" },
+      { name: "分类与标签", icon: Tags, href: "/admin/categories" },
+      { name: "媒体库", icon: ImageIcon, href: "/admin/media" },
+      { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
+    ],
+  },
+  {
+    name: "互动",
+    items: [
+      { name: "评论管理", icon: MessageCircle, href: "/admin/comments" },
+      { name: "友情链接", icon: Link2, href: "/admin/friends-links" },
+    ],
+  },
+  {
+    name: "数据",
+    items: [
+      { name: "数据分析", icon: BarChart3, href: "/admin/analytics" },
+      { name: "访客日志", icon: Users, href: "/admin/visitors" },
+    ],
+  },
+  {
+    name: "系统",
+    items: [
+      { name: "系统设置", icon: Settings, href: "/admin/settings" },
+      { name: "备份管理", icon: Database, href: "/admin/backups" },
+    ],
+  },
 ];
 
 export function AdminShell({
@@ -110,41 +132,52 @@ export function AdminShell({
           )}
         </div>
         <nav className="admin-nav" aria-label="管理导航">
-          {nav.map((item) => {
-            const Icon = item.icon;
-            const active =
-              pathname === item.href ||
-              (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
-            const content = (
-              <>
-                <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                {(!collapsed || mobile) && <span>{item.name}</span>}
-                {item.name === "评论管理" && (pendingCount ?? 0) > 0 && (!collapsed || mobile) && (
-                  <span className="admin-nav-badge">{pendingCount}</span>
-                )}
-              </>
-            );
-            const sharedProps = {
-              className: `admin-nav-item ${active ? "is-active" : ""}`,
-              "aria-label": item.name,
-              title: collapsed && !mobile ? item.name : undefined,
-              "aria-disabled": postPending || undefined,
-            };
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                {...sharedProps}
-                aria-current={active ? "page" : undefined}
-                onClick={(event) => {
-                  if (postPending) event.preventDefault();
-                  else setMobileOpen(false);
-                }}
-              >
-                {content}
-              </Link>
-            );
-          })}
+          {navGroups.map((group) => (
+            <div key={group.name} className="admin-nav-group">
+              {group.name && (
+                <p className={collapsed && !mobile ? "sr-only" : "admin-nav-group-label"}>
+                  {group.name}
+                </p>
+              )}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active =
+                  pathname === item.href ||
+                  (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
+                const content = (
+                  <>
+                    <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                    {(!collapsed || mobile) && <span>{item.name}</span>}
+                    {item.name === "评论管理" &&
+                      (pendingCount ?? 0) > 0 &&
+                      (!collapsed || mobile) && (
+                        <span className="admin-nav-badge">{pendingCount}</span>
+                      )}
+                  </>
+                );
+                const sharedProps = {
+                  className: `admin-nav-item ${active ? "is-active" : ""}`,
+                  "aria-label": item.name,
+                  title: collapsed && !mobile ? item.name : undefined,
+                  "aria-disabled": postPending || undefined,
+                };
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    {...sharedProps}
+                    aria-current={active ? "page" : undefined}
+                    onClick={(event) => {
+                      if (postPending) event.preventDefault();
+                      else setMobileOpen(false);
+                    }}
+                  >
+                    {content}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </nav>
       </div>
       <div className="admin-sidebar-bottom">

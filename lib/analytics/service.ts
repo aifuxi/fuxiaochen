@@ -186,6 +186,8 @@ export async function getAnalytics(
     const byDay = new Map(daily.map((row) => [row.date, row]));
     const trend = Array.from({ length: Math.floor((day - start) / 86_400_000) + 1 }, (_, i) => {
       const date = shanghaiDay(start + i * 86_400_000);
+      if (!collection.startedAt || date < shanghaiDay(new Date(collection.availableFrom).getTime()))
+        return { date, pv: null, uv: null };
       return byDay.get(date) ?? { date, pv: 0, uv: 0 };
     });
     const devices = await tx.query(
