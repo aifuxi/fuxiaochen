@@ -250,12 +250,6 @@ html:has(.site-layout) {
   padding: 64px 0 80px;
   overflow-wrap: anywhere;
 }
-.site-reading {
-  max-width: 720px;
-}
-.site-friends-main {
-  max-width: 880px;
-}
 .site-home {
   --home-portal-size: 130px;
   --home-portal-gap: clamp(24px, 5vw, 72px);

@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function AboutPage() {
   const settings = await getPublicSettings();
   return (
-    <main id="main-content" className="site-main site-reading">
+    <main id="main-content" className="site-main">
       <JsonLd data={personJsonLd(settings)} />
       <header className="site-page-heading">
         <h1>关于</h1>
