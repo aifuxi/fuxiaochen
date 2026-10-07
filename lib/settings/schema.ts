@@ -134,14 +134,14 @@ export type PublicSettings = Pick<
   | "baiduId"
 >;
 export const defaultSettings: SettingsInput = {
-  title: "fuxiaochen",
+  title: "付小晨",
   subtitle: "记录生活，分享想法",
   seoDescription: "",
   ogImageUrl: "",
   googleVerification: "",
   bingVerification: "",
   baiduVerification: "",
-  authorName: "fuxiaochen",
+  authorName: "付小晨",
   authorRole: "开发者 / 设计爱好者",
   avatarUrl: "/avatar.avif",
   aboutMe: "记录生活，分享关于效率工具、创意设计、读书感悟与科技探索的见闻。",

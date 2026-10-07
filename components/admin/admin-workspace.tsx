@@ -320,7 +320,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               {panel === "notifications" && <NotificationCenter />}
               {panel === "profile" && (
                 <div className="admin-modal-section">
-                  <p>fuxiaochen · 管理账户</p>
+                  <p>付小晨 · 管理账户</p>
                   <form action="/api/logout" method="post">
                     <Button type="submit" variant="secondary">
                       退出登录

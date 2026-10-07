@@ -1,7 +1,7 @@
 ---
 version: alpha
 status: target
-name: Fuxiaochen Afterglow
+name: 付小晨 Afterglow
 description: 受 Libraries.dev 启发的暗色、精密、克制的交互设计系统。
 colors:
   primary: "#0066DF"

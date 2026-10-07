@@ -4,7 +4,7 @@ import { AdminPostEditor } from "@/components/admin/admin-post-editor";
 import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "编辑文章 · fuxiaochen",
+  title: "编辑文章 · 付小晨",
 };
 
 export default async function EditPostPage({ params }: { params: Promise<{ id: string }> }) {

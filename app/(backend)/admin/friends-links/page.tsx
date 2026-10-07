@@ -4,7 +4,7 @@ import { AdminFriendsLinks } from "@/components/admin/admin-friends-links";
 import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
-  title: "友情链接 · fuxiaochen",
+  title: "友情链接 · 付小晨",
   description: "管理友情链接、分类与审核状态。",
 };
 

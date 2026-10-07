@@ -504,7 +504,7 @@ export default function Page() {
       <header className="showcase-header">
         <div className="showcase-header-inner">
           <Link href="/" className="showcase-home-link">
-            fuxiaochen<span className="text-[var(--color-muted)]">.design</span>
+            付小晨<span className="text-[var(--color-muted)]">.design</span>
           </Link>
           <a
             href="https://github.com/Jakubantalik/Libraries.dev"
@@ -526,7 +526,7 @@ export default function Page() {
           ))}
         </nav>
         <section id="overview" className="showcase-overview">
-          <p className="mb-6 font-mono text-xs text-[var(--color-muted)]">FUXIAOCHEN AFTERGLOW</p>
+          <p className="mb-6 font-mono text-xs text-[var(--color-muted)]">付小晨 AFTERGLOW</p>
           <h1 className="ds-display">安静的界面，有生命的细节。</h1>
           <p className="showcase-introduction">
             深色材质、克制的蓝色信号与清晰的交互反馈。
@@ -1429,7 +1429,7 @@ export default function Page() {
           </div>
         </section>
         <footer className="mt-20 flex flex-wrap justify-between gap-3 border-t border-white/[.07] pt-6 text-[11px] text-[var(--color-subtle)]">
-          <span>Fuxiaochen Afterglow · Design system v1.0</span>
+          <span>付小晨 Afterglow · Design system v1.0</span>
           <span>
             参考{" "}
             <a

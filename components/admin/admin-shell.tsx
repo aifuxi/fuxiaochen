@@ -116,7 +116,7 @@ export function AdminShell({
           <Image src="/logo.svg" width={32} height={32} alt="" className="admin-brand-logo" />
           {(!collapsed || mobile) && (
             <span className="admin-brand-name">
-              fuxiaochen <small>管理空间</small>
+              付小晨 <small>管理空间</small>
             </span>
           )}
           {mobile && (
@@ -295,7 +295,7 @@ export function AdminShell({
           {children}
         </main>
         <footer className="admin-footer">
-          <span>© fuxiaochen</span>
+          <span>© 付小晨</span>
         </footer>
       </div>
       <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>

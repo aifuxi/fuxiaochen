@@ -16,8 +16,8 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "fuxiaochen",
-  description: "fuxiaochen 个人站点。",
+  title: "付小晨",
+  description: "付小晨 个人站点。",
 };
 
 export default function RootLayout({

@@ -30,8 +30,8 @@ export default async function LoginPage({
   return (
     <main className="login-page">
       <section data-page-motion className="login-panel" aria-labelledby="login-title">
-        <Link href="/" className="login-brand" aria-label="返回 fuxiaochen 首页">
-          fuxiaochen
+        <Link href="/" className="login-brand" aria-label="返回付小晨首页">
+          付小晨
         </Link>
         <h1 id="login-title">后台登录</h1>
         <LoginForm invalidCredentials={error === "invalid"} />

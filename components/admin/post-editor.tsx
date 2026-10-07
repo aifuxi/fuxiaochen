@@ -149,7 +149,7 @@ function PostEditorForm({
   } = useAdminWorkspace();
   const [savedPost, setSavedPost] = useState(initial);
   useEffect(() => {
-    if (savedPost) document.title = "编辑文章 · fuxiaochen";
+    if (savedPost) document.title = "编辑文章 · 付小晨";
   }, [savedPost]);
   const [draft, setDraft] = useState(() => draftFrom(initial));
   const [savedDraft, setSavedDraft] = useState(() => draftFrom(initial));
