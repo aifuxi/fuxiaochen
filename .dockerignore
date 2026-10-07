@@ -40,6 +40,8 @@ yarn-error.log*
 *.sqlite
 *.sqlite-*
 **/backups
+# 备份管理页面是应用源码，保留路由目录。
+!app/(backend)/admin/backups/
 logs
 public/uploads
 # 旧 next-sitemap 本地产物；抓取文件由 app 路由动态生成。
