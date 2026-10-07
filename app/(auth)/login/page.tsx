@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 
-import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
+import { ArrowUpRight, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { currentSession } from "@/lib/auth";
 import { getPublicSettings } from "@/lib/settings/service";
 
+import { LoginForm } from "./login-form";
 import "./login.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -85,41 +84,7 @@ export default async function LoginPage({
               </h2>
               <p>输入你的凭据，继续未完成的事。</p>
             </div>
-            <form action="/api/login" method="post" className="login-form">
-              <div className="login-field">
-                <label htmlFor="username">用户名</label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  autoComplete="username"
-                  placeholder="你的用户名"
-                  required
-                  maxLength={128}
-                />
-              </div>
-              <div className="login-field">
-                <label htmlFor="password">密码</label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="输入密码"
-                  required
-                  maxLength={128}
-                />
-              </div>
-              {error === "invalid" && (
-                <p className="login-error" role="alert">
-                  用户名或密码不正确，请重试。
-                </p>
-              )}
-              <Button type="submit" variant="primary" size="form" className="login-submit">
-                <span>进入空间</span>
-                <ArrowRight size={17} strokeWidth={1.8} aria-hidden="true" />
-              </Button>
-            </form>
+            <LoginForm invalidCredentials={error === "invalid"} />
             <div className="login-panel-bottom">
               <span>仅限私人访问</span>
               <span className="login-panel-bottom-icon">

@@ -1,13 +1,13 @@
 import "server-only";
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { bodyLimit } from "hono/body-limit";
-import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { deleteCookie, getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 
 import { collectionRoutes } from "./analytics/collect-routes";
 import { analyticsRoutes } from "./analytics/routes";
-import { loginSchema } from "./auth/schema";
+import { registerApiRequestGuards } from "./api-request-guards";
+import { handleLoginError } from "./auth/login-response";
+import { createLoginRoutes } from "./auth/login-routes";
 import {
   consumeLoginAttempt,
   login,
@@ -28,44 +28,7 @@ import { taxonomyRoutes } from "./taxonomy/routes";
 
 export const api = new Hono().basePath("/api");
 
-api.use("*", async (c, next) => {
-  c.header("Cache-Control", "no-store");
-  if (
-    ["POST", "PUT", "PATCH", "DELETE"].includes(c.req.method) &&
-    c.req.header("origin") !== siteOrigin()
-  ) {
-    if (c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/"))
-      return c.json({ error: { code: "FORBIDDEN_ORIGIN", message: "请求来源不被允许。" } }, 403);
-    return c.text("请求来源不被允许。", 403);
-  }
-  return next();
-});
-
-const smallBodyLimit = bodyLimit({
-  maxSize: 16 * 1024,
-  onError: (c) =>
-    c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/")
-      ? c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "请求内容过大。" } }, 413)
-      : c.text("请求内容过大。", 413),
-});
-const articleBodyLimit = bodyLimit({
-  maxSize: 1024 * 1024,
-  onError: (c) =>
-    c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "文章请求最多 1 MiB。" } }, 413),
-});
-const settingsBodyLimit = bodyLimit({
-  maxSize: 256 * 1024,
-  onError: (c) =>
-    c.json({ error: { code: "PAYLOAD_TOO_LARGE", message: "设置请求最多256 KiB。" } }, 413),
-});
-api.use("*", (c, next) => {
-  const articleWrite =
-    (c.req.method === "POST" && c.req.path === "/api/admin/posts") ||
-    (c.req.method === "PUT" && /^\/api\/admin\/posts\/[^/]+$/.test(c.req.path));
-  if (c.req.method === "PUT" && /^\/api\/admin\/settings\/?$/.test(c.req.path))
-    return settingsBodyLimit(c, next);
-  return (articleWrite ? articleBodyLimit : smallBodyLimit)(c, next);
-});
+registerApiRequestGuards(api, siteOrigin);
 api.route("/public/analytics", collectionRoutes);
 api.route("/public", publicRoutes);
 api.route("/admin/posts", postRoutes);
@@ -79,39 +42,15 @@ api.route("/admin", analyticsRoutes);
 api.route("/admin", operationsRoutes);
 api.route("/admin", taxonomyRoutes);
 
-api.post(
-  "/login",
-  async (c, next) => {
-    const limit = await consumeLoginAttempt();
-    if (!limit.allowed) {
-      c.header("Retry-After", String(limit.retryAfter));
-      return c.text("登录请求过于频繁，请稍后重试。", 429);
-    }
-    const contentType = c.req.header("content-type")?.split(";")[0].trim();
-    if (
-      contentType !== "application/x-www-form-urlencoded" &&
-      contentType !== "multipart/form-data"
-    ) {
-      return c.text("请使用表单提交登录凭据。", 415);
-    }
-    return next();
-  },
-  zValidator("form", loginSchema, (result, c) => {
-    if (!result.success) return c.redirect("/login?error=invalid", 303);
-    return undefined;
+api.route(
+  "/",
+  createLoginRoutes({
+    consumeLoginAttempt,
+    login,
+    sessionCookie: SESSION_COOKIE,
+    sessionMaxAge: SESSION_MAX_AGE,
+    secureCookie: process.env.NODE_ENV === "production",
   }),
-  async (c) => {
-    const token = await login(c.req.valid("form"), getCookie(c, SESSION_COOKIE));
-    if (!token) return c.redirect("/login?error=invalid", 303);
-    setCookie(c, SESSION_COOKIE, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-      path: "/",
-      maxAge: SESSION_MAX_AGE,
-    });
-    return c.redirect("/admin", 303);
-  },
 );
 
 api.post("/logout", async (c) => {
@@ -121,6 +60,7 @@ api.post("/logout", async (c) => {
 });
 
 api.onError((error, c) => {
+  if (c.req.path === "/api/login") return handleLoginError(error, c);
   if (c.req.path.startsWith("/api/admin/") || c.req.path.startsWith("/api/public/")) {
     console.error("后台业务接口失败", { name: error.name });
     return c.json(

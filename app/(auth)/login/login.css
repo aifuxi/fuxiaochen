@@ -47,7 +47,10 @@
   transition: color 150ms ease;
 }
 .login-brand:hover {
-  color: #fff;
+  color: var(--color-focus);
+}
+.login-brand:active {
+  color: var(--color-muted);
 }
 .login-brand:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -108,7 +111,6 @@
   height: 6px;
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow: 0 0 15px rgba(0, 102, 223, 0.55);
 }
 .login-story-title {
   position: relative;
@@ -200,10 +202,7 @@
   border: 1px solid rgba(125, 180, 255, 0.35);
   border-radius: 50%;
   background: var(--color-primary);
-  box-shadow:
-    0 0 0 12px rgba(0, 102, 223, 0.07),
-    0 0 55px rgba(0, 102, 223, 0.27);
-  color: #fff;
+  color: var(--color-foreground);
   font-size: clamp(25px, 3vw, 42px);
 }
 .login-art-coordinate {
@@ -225,13 +224,11 @@
   width: 100%;
   max-width: 480px;
   justify-self: end;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   padding: clamp(28px, 3.5vw, 48px);
-  box-shadow:
-    0 24px 80px rgba(0, 0, 0, 0.22),
-    inset 0 1px rgba(255, 255, 255, 0.035);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 .login-panel-top {
   display: flex;
@@ -256,7 +253,7 @@
 }
 .login-eyebrow {
   margin: 0 0 12px;
-  color: var(--color-primary);
+  color: var(--color-muted);
 }
 .login-panel-heading h2 {
   margin: 0;
@@ -291,11 +288,17 @@
 .login-field .ds-input {
   width: 100%;
 }
-.login-error {
-  margin: -5px 0 -3px;
+.login-error,
+.login-field-error {
+  margin: 0;
   color: var(--color-danger);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.5;
+}
+.login-error:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 5px;
+  border-radius: var(--radius-sm);
 }
 .login-submit {
   width: 100%;
@@ -399,11 +402,18 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .login-brand,
   .login-submit svg {
     transition: none;
   }
   .login-submit:hover:not(:disabled) svg,
   .login-submit:active:not(:disabled) svg {
     transform: none;
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .login-brand {
+    min-height: var(--control-touch);
   }
 }

@@ -10,7 +10,7 @@ export const newPasswordSchema = z
   .max(128, "密码不能超过 128 个字符");
 export const loginSchema = z.object({
   username: usernameSchema,
-  password: z.string().min(1).max(128),
+  password: z.string().min(1, "请输入密码").max(128, "密码不能超过 128 个字符"),
 });
 
 export type LoginCredentials = z.infer<typeof loginSchema>;
