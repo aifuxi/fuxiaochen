@@ -451,3 +451,10 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 | 静态检查与生产构建        | 已实现      | 运行通过   | 修正CardLink显式children及展示分类类型后，typecheck、全仓lint、修改文件format检查与差异检查通过；独立.next-build生产构建通过，保留既有Prisma contract fallback与skills sync提示                                                                  |
 
 本轮截图及尺寸、状态数据保存于本机可视化目录的 `friends-polish/`：`friends-1440.png`、`friends-390.png`、`card-focus-1440.png`、按压截图、`layouts.json`、`states.json`、`boundary-checks.json`、`consumers.json`。布局截图已检查；交互通过来自真实输入和状态结果，不以截图或构建代替。未验证真实粗指针设备、系统减少动态效果偏好、跨浏览器及外站目的地；没有修改友链数据、数据库结构或依赖。
+
+## 友链图片视觉衔接（2026-10-07）
+
+- 已实现：将直接显示的 40px 直角图片收为 32px、sm 圆角，放入固定 40px、md 圆角、stage 底色、白色 4% 内边线的辅助标识容器。保留原图颜色，空值与加载失败使用同一容器中的 20px muted Link2；分类文字样式限定到分类 class，避免影响新图片容器。仅修改 FriendLinkCard 及其场景样式，未改共享 ConfiguredImage、CardLink 或数据库中的10条随机友链。
+- 运行通过：复用 localhost:3000，1440/390/320px 下10张图片全部加载，容器40px、图片32px、圆角14/8px及stage底色与规范一致，无横向溢出；桌面与手机截图实际检查。用真实 FriendLinkCard 的临时路由检查透明 logo、人物头像、空图片与实际404，1440/390px 下均为固定40px容器，两个回退图标实际为20px muted。临时路由已删除，生产路由清单无该项。
+- 运行通过：实际点击技术博客显示4条、返回全部恢复10条；从最后分类按Tab进入首卡，focus-visible为true、轮廓2px、卡片圆角24px。类型检查、全仓lint、修改文件格式检查、差异检查与独立.next-build生产构建通过；保留既有Prisma提示。
+- 仅源码核对：装饰图片从辅助技术隐藏，真实链接及hover/active/reduced-motion规则沿用上一轮；本次未重复实测所有交互状态、外站跳转、真实触屏或跨浏览器。随机风景图仍是示例素材，尺寸与材质改善不代表它们已经具备真实站点的品牌识别。证据保存于本机可视化目录的 `friends-images/`，包含三个视口页面截图、回退截图、焦点截图与 `checks.json`。
