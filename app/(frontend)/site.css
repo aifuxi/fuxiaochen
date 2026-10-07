@@ -883,6 +883,10 @@ html:has(.site-layout) {
   height: 20px;
 }
 .site-friends p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   color: var(--color-muted);
   margin: var(--space-sm) 0 0;
 }
@@ -908,8 +912,11 @@ html:has(.site-layout) {
   margin-top: 2px;
 }
 .site-friend-url > span {
+  flex: 1;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .site-friend-category {
   max-width: 100%;
