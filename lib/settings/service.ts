@@ -5,6 +5,9 @@ import { cache } from "react";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { authorizeAdmin, AdminBusinessError } from "@/lib/admin/service";
+import { MediaError } from "@/lib/media/error";
+import { settingsReferenceUrls } from "@/lib/media/reference-urls";
+import { ensureNewMediaReferences } from "@/lib/media/references";
 import { writeTransaction, getDatabase } from "@/prisma/db";
 
 import { defaultSettings, settingsSchema, type SettingsInput, type PublicSettings } from "./schema";
@@ -61,6 +64,16 @@ export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
     await authorizeAdmin(actor);
     const previous = await read(tx);
     const { socials, version, ...fields } = input;
+    try {
+      await ensureNewMediaReferences(
+        tx,
+        settingsReferenceUrls(input),
+        settingsReferenceUrls(previous),
+      );
+    } catch (error) {
+      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
+      throw error;
+    }
     const updated = await tx.orm.public.SiteSetting.where({ id: 1, version }).updateAndCount({
       ...fields,
       localAnalyticsEnabled: Number(input.localAnalyticsEnabled),

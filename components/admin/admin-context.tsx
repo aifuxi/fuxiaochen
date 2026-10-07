@@ -3,6 +3,7 @@
 import { createContext, useContext } from "react";
 
 import type { CommentItem } from "@/lib/comments/schema";
+import type { DeleteMediaInput } from "@/lib/media/schema";
 import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
@@ -17,7 +18,7 @@ type AdminState = TaxonomyState &
     retryMediaUpload: (id: string) => Promise<void>;
     clearMediaUploads: () => void;
     onUploadMedia: (files: File[]) => Promise<void>;
-    onDeleteMedia: (id: string) => Promise<void>;
+    onDeleteMedia: (id: string, input?: DeleteMediaInput) => Promise<void>;
     onMessage: (message: string) => void;
     uploadingMedia: boolean;
     postRevision: number;

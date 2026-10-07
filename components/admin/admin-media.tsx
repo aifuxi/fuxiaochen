@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@base-ui/react/checkbox";
 import {
   ChevronLeft,
   ChevronRight,
@@ -14,9 +15,10 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import type { MediaItem } from "@/lib/media/schema";
+import type { MediaItem, MediaReferences } from "@/lib/media/schema";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardStage } from "@/components/ui/card";
@@ -39,7 +41,8 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 import { useAdminWorkspace } from "./admin-context";
 import { MediaUploadStatus } from "./media-upload-status";
 import { RecordLocator, useRecordTarget } from "./record-locator";
-import { useMediaList } from "./use-media";
+import { mediaRequest, useMediaList } from "./use-media";
+import { AdminRequestError, usePostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-media.css";
 
@@ -88,6 +91,17 @@ export function AdminMedia() {
   const [copying, setCopying] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [forceKey, setForceKey] = useState("");
+  const [referenceRevision, setReferenceRevision] = useState(0);
+  const references = usePostQuery(
+    target ? `/${target.id}/references` : null,
+    referenceRevision,
+    mediaRequest<MediaReferences>,
+  );
+  const referenceKey =
+    target && references.data ? `${target.id}:${references.data.fingerprint}` : "";
+  const force = Boolean(referenceKey) && forceKey === referenceKey;
+  const setForce = (value: boolean) => setForceKey(value ? referenceKey : "");
   const located = useRef<string | undefined>(undefined);
   useEffect(() => {
     const item = list.data?.items[0];
@@ -116,15 +130,30 @@ export function AdminMedia() {
     }
   };
   const confirmDelete = async () => {
-    if (!target || deletingRef.current) return;
+    if (
+      !target ||
+      deletingRef.current ||
+      !references.data ||
+      references.loading ||
+      references.error ||
+      (references.data.count > 0 && !force)
+    )
+      return;
     deletingRef.current = true;
     setDeleting(true);
     setDeleteError("");
     try {
-      await onDeleteMedia(target.id);
+      await onDeleteMedia(target.id, { force, referenceFingerprint: references.data.fingerprint });
       setTarget(null);
     } catch (error) {
       setDeleteError(error instanceof Error ? error.message : "删除失败，请重试。");
+      if (
+        error instanceof AdminRequestError &&
+        ["REFERENCES_CHANGED", "RESOURCE_IN_USE"].includes(error.code)
+      ) {
+        setForce(false);
+        setReferenceRevision((value) => value + 1);
+      }
       list.reload();
     } finally {
       deletingRef.current = false;
@@ -319,6 +348,7 @@ export function AdminMedia() {
                             deleteTrigger.current = event.currentTarget;
                             setDeleteError("");
                             setTarget(item);
+                            setForce(false);
                           }}
                         >
                           <Trash2 size={16} aria-hidden="true" />
@@ -462,6 +492,50 @@ export function AdminMedia() {
             将永久删除「{target?.name}」及 OSS
             文件。已在文章或其他位置引用的链接会失效，此操作无法恢复。
           </DialogDescription>
+          {references.loading && <output>正在核对内部引用…</output>}
+          {references.error && (
+            <div>
+              <p role="alert">{references.error}</p>
+              <Button onClick={references.reload}>重新查询引用</Button>
+            </div>
+          )}
+          {references.data && (
+            <div className="admin-modal-section">
+              <p>
+                {references.data.count
+                  ? `仍有 ${references.data.count} 处内部引用：`
+                  : "未发现内部引用。外部网站或手动保存的链接仍可能失效。"}
+              </p>
+              <ul className="admin-media-references">
+                {references.data.items.map((item) => (
+                  <li key={`${item.kind}:${item.id}:${item.field}`}>
+                    <Link href={item.href} target="_blank" rel="noopener noreferrer">
+                      {item.label}
+                    </Link>
+                    <span>
+                      {" "}
+                      · {item.field}
+                      {item.occurrences > 1 ? ` × ${item.occurrences}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {references.data.count > 0 && (
+                <label htmlFor="admin-force-media-delete" className="admin-media-force">
+                  <Checkbox.Root
+                    id="admin-force-media-delete"
+                    checked={force}
+                    onCheckedChange={setForce}
+                    disabled={deleting}
+                    className="admin-force-checkbox"
+                  >
+                    <Checkbox.Indicator aria-hidden="true">✓</Checkbox.Indicator>
+                  </Checkbox.Root>
+                  <span>我理解引用链接将失效，仍要永久删除</span>
+                </label>
+              )}
+            </div>
+          )}
           {deleteError && (
             <p className="admin-media-error" role="alert">
               {deleteError}
@@ -471,8 +545,18 @@ export function AdminMedia() {
             <Button variant="ghost" disabled={deleting} onClick={() => setTarget(null)}>
               取消
             </Button>
-            <Button variant="primary" disabled={deleting} onClick={() => void confirmDelete()}>
-              {deleting ? "正在删除…" : deleteError ? "重试删除" : "确认删除"}
+            <Button
+              className="admin-danger"
+              disabled={
+                deleting ||
+                references.loading ||
+                Boolean(references.error) ||
+                !references.data ||
+                (references.data.count > 0 && !force)
+              }
+              onClick={() => void confirmDelete()}
+            >
+              {deleting ? "正在删除…" : deleteError ? "重试删除" : force ? "强制删除" : "确认删除"}
             </Button>
           </div>
         </DialogContent>

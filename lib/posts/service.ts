@@ -4,6 +4,9 @@ import { randomUUID } from "node:crypto";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { getSession } from "@/lib/auth/service";
+import { MediaError } from "@/lib/media/error";
+import { documentReferenceUrls } from "@/lib/media/reference-urls";
+import { ensureNewMediaReferences } from "@/lib/media/references";
 import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import type {
@@ -189,6 +192,19 @@ export async function getPost(id: string, actor: TaxonomyActor) {
   await authorize(actor);
   return detail(id, getDatabase());
 }
+async function validateMedia(content: string, tx: Transaction, previous?: string) {
+  try {
+    await ensureNewMediaReferences(
+      tx,
+      documentReferenceUrls(content),
+      previous ? documentReferenceUrls(previous) : [],
+    );
+  } catch (error) {
+    if (error instanceof MediaError)
+      throw new PostError("INVALID_INPUT", error.message, { content: [error.message] });
+    throw error;
+  }
+}
 async function validateRelations(input: PostInput | PostUpdateInput, tx: Transaction) {
   if (!(await tx.orm.public.Category.where({ id: input.categoryId }).first()))
     throw new PostError("INVALID_INPUT", "所选分类不存在，请重新选择。");
@@ -237,6 +253,7 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
     await authorize(actor);
     await validateRelations(input, tx);
     await validateSlug(input.slug, tx);
+    await validateMedia(input.content, tx);
     const { tagIds, isFeatured, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
@@ -269,6 +286,7 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
       });
     await validateRelations(input, tx);
     await validateSlug(input.slug, tx, id);
+    await validateMedia(input.content, tx, previous.content);
     const { tagIds, version, summary, isFeatured, featuredOrder, ...data } = input;
     if (
       !(await tx.orm.public.Post.where({ id, version }).updateAndCount({

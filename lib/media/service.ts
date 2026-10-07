@@ -7,9 +7,10 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { getSession } from "@/lib/auth/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
 
-import type { MediaItem, MediaQuery, UploadInput } from "./schema";
+import type { DeleteMediaInput, MediaItem, MediaQuery, UploadInput } from "./schema";
 
 import { MediaError } from "./error";
+import { findMediaReferences } from "./references";
 import { mediaKindSchema } from "./schema";
 import {
   publicMediaUrl,
@@ -250,7 +251,21 @@ async function erase(row: Models.public_Media, token: string) {
     throw storageFailure(error);
   }
 }
-export async function deleteMedia(id: string, actor: TaxonomyActor) {
+export async function getMediaReferences(id: string, actor: TaxonomyActor) {
+  await authorize(actor);
+  return writeTransaction(async (tx) => {
+    await authorize(actor);
+    const row = await tx.orm.public.Media.where({ id, adminId: actor.adminId }).first();
+    if (!row || !["ready", "deleting"].includes(row.status))
+      throw new MediaError("NOT_FOUND", "媒体记录不存在。");
+    return findMediaReferences(tx, row.objectKey);
+  });
+}
+export async function deleteMedia(
+  id: string,
+  actor: TaxonomyActor,
+  input: DeleteMediaInput = { force: false },
+) {
   await authorize(actor);
   const token = randomUUID();
   const row = await writeTransaction(async (tx) => {
@@ -258,6 +273,15 @@ export async function deleteMedia(id: string, actor: TaxonomyActor) {
     const current = await tx.orm.public.Media.where({ id, adminId: actor.adminId }).first();
     if (!current) throw new MediaError("NOT_FOUND", "媒体记录不存在。");
     if (current.status === "deleted") return current;
+    if (current.status === "ready") {
+      const references = await findMediaReferences(tx, current.objectKey);
+      if (input.referenceFingerprint && input.referenceFingerprint !== references.fingerprint)
+        throw new MediaError("REFERENCES_CHANGED", "媒体引用已变化，请重新查看并确认删除。");
+      if (references.count && !input.force)
+        throw new MediaError("RESOURCE_IN_USE", "文件仍被引用，请查看引用并明确确认强制删除。");
+      if (references.count && !input.referenceFingerprint)
+        throw new MediaError("REFERENCES_CHANGED", "强制删除前必须查看当前引用。");
+    }
     if (
       current.status === "finalizing" ||
       (current.leaseUntil && current.leaseUntil.getTime() > Date.now())

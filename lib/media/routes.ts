@@ -10,8 +10,14 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { getSession, SESSION_COOKIE } from "@/lib/auth/service";
 
 import { MediaError } from "./error";
-import { mediaIdSchema, mediaQuerySchema, uploadSchema } from "./schema";
-import { completeUpload, createUpload, deleteMedia, listMedia } from "./service";
+import { deleteMediaSchema, mediaIdSchema, mediaQuerySchema, uploadSchema } from "./schema";
+import {
+  completeUpload,
+  createUpload,
+  deleteMedia,
+  getMediaReferences,
+  listMedia,
+} from "./service";
 
 export const mediaRoutes = new Hono<{ Variables: { admin: TaxonomyActor } }>();
 mediaRoutes.use("*", async (c, next) => {
@@ -66,9 +72,29 @@ mediaRoutes.post(
   ),
   async (c) => c.json({ data: await completeUpload(c.req.valid("param").id, c.get("admin")) }),
 );
-mediaRoutes.delete("/:id", idValidator, async (c) =>
-  c.json({ data: await deleteMedia(c.req.valid("param").id, c.get("admin")) }),
+mediaRoutes.get("/:id/references", idValidator, async (c) =>
+  c.json({ data: await getMediaReferences(c.req.valid("param").id, c.get("admin")) }),
 );
+mediaRoutes.delete("/:id", idValidator, async (c) => {
+  const text = await c.req.text();
+  if (
+    text &&
+    c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"
+  )
+    return c.json(
+      { error: { code: "UNSUPPORTED_MEDIA_TYPE", message: "请使用 JSON 提交。" } },
+      415,
+    );
+  let body: unknown;
+  try {
+    body = text ? JSON.parse(text) : {};
+  } catch {
+    throw new MediaError("INVALID_INPUT", "请求 JSON 格式无效。");
+  }
+  const parsed = deleteMediaSchema.safeParse(body);
+  if (!parsed.success) throw new MediaError("INVALID_INPUT", "删除请求参数无效。");
+  return c.json({ data: await deleteMedia(c.req.valid("param").id, c.get("admin"), parsed.data) });
+});
 mediaRoutes.onError((error, c) => {
   if (error instanceof MediaError) {
     if (error.retryAfter) c.header("Retry-After", String(Math.max(1, error.retryAfter)));
@@ -79,7 +105,7 @@ mediaRoutes.onError((error, c) => {
           ? 404
           : error.code === "RATE_LIMITED"
             ? 429
-            : error.code === "PROCESSING"
+            : ["PROCESSING", "RESOURCE_IN_USE", "REFERENCES_CHANGED"].includes(error.code)
               ? 409
               : error.code === "STORAGE_UNAVAILABLE" || error.code === "STORAGE_NOT_CONFIGURED"
                 ? 503

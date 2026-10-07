@@ -295,3 +295,45 @@
     transform: none;
   }
 }
+
+.admin-media-references {
+  max-height: 240px;
+  overflow: auto;
+  display: grid;
+  gap: var(--space-sm);
+}
+.admin-media-references a {
+  color: var(--color-focus);
+  text-decoration: underline;
+}
+.admin-media-force {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+}
+.admin-force-checkbox {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border: 1px solid var(--color-outline);
+  border-radius: 4px;
+  background: var(--color-input);
+}
+.admin-force-checkbox[data-checked] {
+  background: var(--color-primary);
+}
+.admin-force-checkbox:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.admin-force-checkbox:hover {
+  border-color: var(--color-focus);
+}
+.admin-force-checkbox:active {
+  background: var(--color-input-hover);
+}
+.admin-force-checkbox[data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -546,7 +546,7 @@ void test("真实备份/恢复、会话撤销、非空目标拒绝和事务失�
   }
 });
 
-await test("全局检索精确定位，并绕过列表原筛选条件", async () => {
+void test("全局检索精确定位，并绕过列表原筛选条件", async () => {
   const { searchContent } = await import("../lib/operations/search");
   const { searchSchema } = await import("../lib/operations/schema");
   const matches = await searchContent(searchSchema.parse({ q: "100%_SQL" }), actor);
@@ -571,5 +571,202 @@ await test("全局检索精确定位，并绕过列表原筛选条件", async ()
   assert.equal(
     (await listFriends(friendQuerySchema.parse({ record: randomUUID() }), actor)).total,
     0,
+  );
+});
+
+void test("媒体引用、强删复核和删除期间的新增引用拦截", async (t) => {
+  const { S3Client } = await import("@aws-sdk/client-s3");
+  // 只测试独立库中的媒体；SDK 请求替换为可控响应，不触及真实 OSS 对象。
+  const storage = t.mock.method(S3Client.prototype, "send", async () => ({}));
+  const media = await import("../lib/media/service");
+  const { publicMediaUrl } = await import("../lib/media/storage");
+  const { serializeDocument } = await import("../lib/posts/document");
+  const { postSchema, updatePostSchema } = await import("../lib/posts/schema");
+  const posts = await import("../lib/posts/service");
+  const friends = await import("../lib/friends-links/service");
+  const { createFriendSchema } = await import("../lib/friends-links/schema");
+  const settings = await import("../lib/settings/service");
+  const { settingsSchema } = await import("../lib/settings/schema");
+  const id = randomUUID();
+  const now = new Date();
+  await database.writeTransaction((tx) =>
+    tx.orm.public.Media.create({
+      id,
+      adminId: 1,
+      name: "引用测试.png",
+      kind: "image",
+      expectedBytes: 100,
+      sha256: "0".repeat(64),
+      stagingKey: `staging/${id}`,
+      objectKey: `media/${id}`,
+      status: "ready",
+      createdAt: now,
+      expiresAt: now,
+      bytes: 100,
+      mime: "image/png",
+      width: 1,
+      height: 1,
+      uploadedAt: now,
+    }),
+  );
+  const url = publicMediaUrl(`media/${id}`);
+  const body = serializeDocument({
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        content: [{ type: "image", attrs: { src: url + "?size=2#preview", alt: "媒体" } }],
+      },
+      {
+        type: "paragraph",
+        content: [
+          { type: "text", text: "附件", marks: [{ type: "link", attrs: { href: url } }] },
+          { type: "text", text: `仅文本 ${url}` },
+        ],
+      },
+    ],
+  });
+  const input = postSchema.parse({
+    title: "媒体引用",
+    slug: `media-${id}`,
+    categoryId,
+    tagIds: [],
+    content: body,
+    status: "draft",
+    scheduledFor: null,
+  });
+  const post = await posts.createPost(input, actor);
+  const {
+    updatedAt: _updatedAt,
+    localAnalyticsStartedAt: _startedAt,
+    ...previous
+  } = await settings.getSettings(actor);
+  await settings.saveSettings(
+    settingsSchema.parse({
+      ...previous,
+      avatarUrl: url,
+      socials: [
+        {
+          id: randomUUID(),
+          label: "媒体社交",
+          url,
+          icon: "image",
+          imageUrl: url,
+          enabled: false,
+        },
+      ],
+    }),
+    actor,
+  );
+  const snapshot = await media.getMediaReferences(id, actor);
+  assert.equal(snapshot.count, 5, "图片、链接、头像和停用社交账号均计入；正文 URL 文字不计入");
+  await assert.rejects(media.deleteMedia(id, actor), { code: "RESOURCE_IN_USE" });
+  await friends.createFriend(
+    createFriendSchema.parse({
+      name: "媒体友链",
+      url: "https://example.test",
+      avatar: url,
+      description: "",
+      category: "技术博客",
+      enabled: false,
+    }),
+    actor,
+  );
+  await assert.rejects(
+    media.deleteMedia(id, actor, { force: true, referenceFingerprint: snapshot.fingerprint }),
+    { code: "REFERENCES_CHANGED" },
+  );
+  const latest = await media.getMediaReferences(id, actor);
+  assert.equal(latest.count, 6);
+  await media.deleteMedia(id, actor, { force: true, referenceFingerprint: latest.fingerprint });
+  assert.equal(
+    (await database.getDatabase().orm.public.Media.where({ id }).first())?.status,
+    "deleted",
+  );
+  assert.equal(storage.mock.callCount(), 2);
+  await assert.rejects(posts.createPost({ ...input, slug: `new-${id}` }, actor), {
+    code: "INVALID_INPUT",
+  });
+  const retained = await posts.updatePost(
+    post.id,
+    updatePostSchema.parse({ ...input, title: "强删后修改标题", version: post.version }),
+    actor,
+  );
+  assert.equal(retained.title, "强删后修改标题", "旧失效引用不阻碍无关编辑");
+  await assert.rejects(
+    posts.updatePost(
+      post.id,
+      updatePostSchema.parse({
+        ...input,
+        version: retained.version,
+        content: serializeDocument({
+          type: "doc",
+          content: [
+            { type: "paragraph", content: [{ type: "image", attrs: { src: url, alt: "媒体" } }] },
+            {
+              type: "paragraph",
+              content: [{ type: "image", attrs: { src: url, alt: "重复新增" } }],
+            },
+          ],
+        }),
+      }),
+      actor,
+    ),
+    { code: "INVALID_INPUT" },
+  );
+});
+
+void test("媒体删除失败保留可重试状态，写锁阻止处理中新增引用", async (t) => {
+  const { S3Client } = await import("@aws-sdk/client-s3");
+  const media = await import("../lib/media/service");
+  const { publicMediaUrl } = await import("../lib/media/storage");
+  const friends = await import("../lib/friends-links/service");
+  const { createFriendSchema } = await import("../lib/friends-links/schema");
+  const id = randomUUID();
+  const now = new Date();
+  await database.writeTransaction((tx) =>
+    tx.orm.public.Media.create({
+      id,
+      adminId: 1,
+      name: "重试.png",
+      kind: "image",
+      expectedBytes: 100,
+      sha256: "0".repeat(64),
+      stagingKey: `staging/${id}`,
+      objectKey: `media/${id}`,
+      status: "ready",
+      createdAt: now,
+      expiresAt: now,
+      bytes: 100,
+      mime: "image/png",
+      uploadedAt: now,
+    }),
+  );
+  const send = t.mock.method(S3Client.prototype, "send", async () => {
+    throw new Error("模拟 OSS 中断");
+  });
+  await assert.rejects(media.deleteMedia(id, actor), { code: "STORAGE_UNAVAILABLE" });
+  const row = await database.getDatabase().orm.public.Media.where({ id }).first();
+  assert.equal(row?.status, "deleting");
+  assert.equal(row?.leaseToken, null);
+  await assert.rejects(
+    friends.createFriend(
+      createFriendSchema.parse({
+        name: "处理中的媒体",
+        url: "https://example.test",
+        avatar: publicMediaUrl(`media/${id}`),
+        description: "",
+        category: "技术博客",
+        enabled: true,
+      }),
+      actor,
+    ),
+    { code: "INVALID_INPUT" },
+  );
+  send.mock.mockImplementation(async () => ({}));
+  await media.deleteMedia(id, actor);
+  assert.equal(
+    (await database.getDatabase().orm.public.Media.where({ id }).first())?.status,
+    "deleted",
   );
 });

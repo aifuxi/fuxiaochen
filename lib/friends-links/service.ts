@@ -4,6 +4,9 @@ import { randomUUID } from "node:crypto";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { AdminBusinessError, authorizeAdmin } from "@/lib/admin/service";
+import { MediaError } from "@/lib/media/error";
+import { friendReferenceUrls } from "@/lib/media/reference-urls";
+import { ensureNewMediaReferences } from "@/lib/media/references";
 import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import {
@@ -82,6 +85,12 @@ export async function getFriend(id: string, actor: TaxonomyActor) {
 export async function createFriend(input: CreateFriendInput, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorizeAdmin(actor);
+    try {
+      await ensureNewMediaReferences(tx, friendReferenceUrls(input));
+    } catch (error) {
+      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
+      throw error;
+    }
     const now = new Date();
     return serialize(
       await tx.orm.public.FriendLink.create({
@@ -99,7 +108,13 @@ export async function createFriend(input: CreateFriendInput, actor: TaxonomyActo
 export async function updateFriend(id: string, input: UpdateFriendInput, actor: TaxonomyActor) {
   return writeTransaction(async (tx) => {
     await authorizeAdmin(actor);
-    await detail(id, tx);
+    const previous = await detail(id, tx);
+    try {
+      await ensureNewMediaReferences(tx, friendReferenceUrls(input), friendReferenceUrls(previous));
+    } catch (error) {
+      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
+      throw error;
+    }
     const { version, ...fields } = input;
     if (
       !(await tx.orm.public.FriendLink.where({ id, version }).updateAndCount({

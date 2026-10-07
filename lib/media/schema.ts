@@ -77,3 +77,24 @@ export function fileKind(file: Pick<File, "name" | "type">): "image" | "attachme
     ? "image"
     : "attachment";
 }
+
+export const deleteMediaSchema = z.strictObject({
+  force: z.boolean().default(false),
+  referenceFingerprint: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
+});
+export type DeleteMediaInput = z.infer<typeof deleteMediaSchema>;
+export type MediaReferences = {
+  items: {
+    kind: string;
+    id: string;
+    label: string;
+    href: string;
+    field: string;
+    occurrences: number;
+  }[];
+  count: number;
+  fingerprint: string;
+};

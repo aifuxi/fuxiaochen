@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { MediaItem, MediaList, UploadTicket } from "@/lib/media/schema";
+import type { DeleteMediaInput, MediaItem, MediaList, UploadTicket } from "@/lib/media/schema";
 
 import { fileSha256 } from "@/lib/media/file-hash";
 import { ATTACHMENT_MAX_BYTES, fileKind, IMAGE_MAX_BYTES, uploadSchema } from "@/lib/media/schema";
@@ -269,8 +269,12 @@ export function useMediaUploads(onMessage: (message: string) => void) {
     publish();
   }, [publish]);
   const remove = useCallback(
-    async (id: string) => {
-      await mediaRequest<{ id: string }>(`/${id}`, { method: "DELETE" });
+    async (id: string, input?: DeleteMediaInput) => {
+      await mediaRequest<{ id: string }>(`/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input ?? {}),
+      });
       if (mounted.current) setRevision((value) => value + 1);
       onMessage("文件已永久删除。");
     },
