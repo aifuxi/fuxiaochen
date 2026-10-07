@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArticleContent } from "@/components/frontend/article-content";
+import { CategoryDot } from "@/components/frontend/category-dot";
 import { Comments } from "@/components/frontend/comments";
 import { JsonLd } from "@/components/frontend/json-ld";
 import { postTime } from "@/lib/posts/schema";
@@ -36,7 +37,10 @@ export default async function PostPage({ params }: Props) {
           <div className="site-post-meta">
             <time dateTime={post.publishedAt ?? undefined}>{postTime(post.publishedAt, true)}</time>
             {post.category && (
-              <Link href={`/posts?categoryId=${post.category.id}`}>{post.category.name}</Link>
+              <Link className="site-category-link" href={`/posts?categoryId=${post.category.id}`}>
+                <CategoryDot color={post.category.color} />
+                <span className="min-w-0">{post.category.name}</span>
+              </Link>
             )}
           </div>
           <h1>{post.title}</h1>
@@ -60,6 +64,7 @@ export default async function PostPage({ params }: Props) {
         postId={post.id}
         initial={comments}
         enabled={settings.enableComments}
+        adminAvatarUrl={settings.avatarUrl}
       />
     </main>
   );

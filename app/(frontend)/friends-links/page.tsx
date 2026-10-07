@@ -62,7 +62,7 @@ export default async function FriendsPage({ searchParams }: Props) {
         <div className="site-friends">
           {result.items.map((f) => (
             <a key={f.id} href={f.url} target="_blank" rel="noopener noreferrer">
-              <ConfiguredImage src={f.avatar} size={40} />
+              <ConfiguredImage src={f.avatar} size={40} fallback="link" />
               <div>
                 <h2>{f.name}</h2>
                 <p>{f.description || f.url}</p>

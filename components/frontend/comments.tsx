@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 
+import { ConfiguredImage } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,10 +18,12 @@ export function Comments({
   postId,
   initial,
   enabled,
+  adminAvatarUrl,
 }: {
   postId: string;
   initial: PublicCommentList;
   enabled: boolean;
+  adminAvatarUrl: string;
 }) {
   const [list, setList] = useState(initial);
   const [closed, setClosed] = useState(!enabled);
@@ -86,7 +89,7 @@ export function Comments({
     const key = ["author", "email", "content"].find((field) => fields[field]);
     if (key) form.current?.querySelector<HTMLElement>(`[name="${key}"]`)?.focus();
   };
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current || closed || seconds) return;
     const parsed = publicCommentSchema.safeParse({
@@ -195,6 +198,11 @@ export function Comments({
             {list.items.map((comment) => (
               <li key={comment.id} id={`comment-${comment.id}`}>
                 <div className="site-comment-meta">
+                  {comment.isAdmin && (
+                    <span className="site-comment-avatar" aria-hidden="true">
+                      <ConfiguredImage src={adminAvatarUrl} size={32} profile />
+                    </span>
+                  )}
                   <strong>{comment.author}</strong>
                   {comment.isAdmin && <span className="site-author-badge">博主</span>}
                   <time dateTime={comment.createdAt}>{postTime(comment.createdAt)}</time>

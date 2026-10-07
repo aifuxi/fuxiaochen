@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Rss,
   UserRound,
+  Link2,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -20,10 +21,12 @@ export function ConfiguredImage({
   src,
   size = 20,
   profile = false,
+  fallback = "globe",
 }: {
   src: string;
   size?: number;
   profile?: boolean;
+  fallback?: "globe" | "link";
 }) {
   const [failed, setFailed] = useState<string | null>(null);
   return src && failed !== src && imageUrlSchema.safeParse(src).success ? (
@@ -45,6 +48,8 @@ export function ConfiguredImage({
     />
   ) : profile ? (
     <UserRound size={size} aria-hidden="true" />
+  ) : fallback === "link" ? (
+    <Link2 size={size} aria-hidden="true" />
   ) : (
     <Globe size={size} aria-hidden="true" />
   );

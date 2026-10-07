@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import Link from "next/link";
 
+import { CategoryDot } from "@/components/frontend/category-dot";
 import { getPublicTaxonomies } from "@/lib/public/service";
 import { pageMetadata } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
@@ -25,7 +26,10 @@ export default async function CategoriesPage() {
         <div className="site-taxonomy-list">
           {categories.map((c) => (
             <Link key={c.id} href={`/posts?categoryId=${c.id}`}>
-              <span>{c.name}</span>
+              <span className="site-category-label">
+                <CategoryDot color={c.color} />
+                <span className="min-w-0">{c.name}</span>
+              </span>
               <span>{c.count} 篇</span>
             </Link>
           ))}

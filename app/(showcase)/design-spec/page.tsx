@@ -3,6 +3,7 @@
 import { BorderBeam } from "border-beam";
 import {
   ArrowRight,
+  BookOpen,
   Check,
   ChevronDown,
   Code2,
@@ -19,6 +20,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ThinkingOrb } from "thinking-orbs";
 
+import { CategoryDot } from "@/components/frontend/category-dot";
 import {
   Accordion,
   AccordionHeader,
@@ -357,6 +359,8 @@ export default function Page() {
               size="sm"
               render={<a href="#components" aria-label="探索组件" />}
               nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实锚点链接，保留导航语义。
+              role="link"
             >
               探索组件 <ArrowRight size={14} aria-hidden="true" />
             </Button>
@@ -365,6 +369,8 @@ export default function Page() {
               size="sm"
               render={<a href="#foundations" aria-label="查看设计原则" />}
               nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实锚点链接，保留导航语义。
+              role="link"
             >
               查看设计原则
             </Button>
@@ -382,7 +388,9 @@ export default function Page() {
               <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h3 className="text-[15px] font-medium text-white">色彩体系</h3>
-                  <p className="mt-1 text-xs text-[var(--color-muted)]">近黑层级与单一强调色</p>
+                  <p className="mt-1 text-xs text-[var(--color-muted)]">
+                    灰阶材质、品牌重点与语义用色
+                  </p>
                 </div>
                 <span className="font-mono text-[10px] text-[var(--color-subtle)]">06 TOKENS</span>
               </div>
@@ -465,6 +473,61 @@ export default function Page() {
               </Card>
             ))}
           </div>
+          <Card className="showcase-color-usage mt-6 p-5 md:p-6">
+            <h3 className="text-[15px] font-medium">颜色表达信息职责</h3>
+            <p className="mt-2 text-[13px] leading-6 text-[var(--color-muted)]">
+              灰阶建立默认层级；重点、分类与数据、真实状态分别使用局部颜色，保留文字与独立焦点。
+            </p>
+            <div className="showcase-color-role-grid">
+              <section aria-labelledby="color-role-brand">
+                <h4 id="color-role-brand">品牌与重点</h4>
+                <div className="showcase-color-examples">
+                  <span className="showcase-emphasis-badge">精选</span>
+                  <span className="showcase-emphasis-badge">最新</span>
+                </div>
+                <p>重要静态标识使用 primary，无按钮阴影或悬停状态。</p>
+              </section>
+              <section aria-labelledby="color-role-category">
+                <h4 id="color-role-category">分类与数据</h4>
+                <div className="showcase-color-examples">
+                  <span className="showcase-color-label">
+                    <BookOpen size={16} className="text-[var(--color-focus)]" aria-hidden="true" />
+                    阅读入口
+                  </span>
+                  <span className="showcase-color-label">
+                    <CategoryDot color="#0066DF" />
+                    分类色点
+                  </span>
+                </div>
+                <div className="showcase-color-examples" aria-label="数据系列图例示例">
+                  <span className="showcase-color-label">
+                    <span className="showcase-series-mark" data-series="pv" aria-hidden="true" />
+                    PV
+                  </span>
+                  <span className="showcase-color-label">
+                    <span className="showcase-series-mark" data-series="uv" aria-hidden="true" />
+                    UV
+                  </span>
+                </div>
+                <p>映射保持稳定；分类色点与文字共同识别，数据系列保留图例。</p>
+              </section>
+              <section aria-labelledby="color-role-state">
+                <h4 id="color-role-state">状态与焦点</h4>
+                <div className="showcase-color-examples" aria-label="成功与错误状态示例">
+                  <span className="text-[var(--color-success)]">成功状态</span>
+                  <span className="text-[var(--color-danger)]">错误状态</span>
+                </div>
+                <label htmlFor="color-focus-example">独立键盘焦点</label>
+                <Input
+                  id="color-focus-example"
+                  defaultValue="按 Tab 查看焦点轮廓"
+                  aria-describedby="color-focus-description"
+                  className="w-full"
+                />
+                <p id="color-focus-description">focus 轮廓独立于分类色、选中色与状态色。</p>
+              </section>
+            </div>
+          </Card>
         </section>
 
         <section id="components" className="showcase-section">
@@ -1053,8 +1116,12 @@ export default function Page() {
           )}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <span className="flex items-center gap-2 text-[12px] text-[var(--color-muted)]">
-              <span className="h-2 w-2 rounded-full bg-[var(--color-success)]" />
-              效果舞台 · 点击播放
+              <span
+                className="h-2 w-2 rounded-full"
+                style={{ backgroundColor: motion ? "var(--color-focus)" : "var(--color-muted)" }}
+                aria-hidden="true"
+              />
+              效果舞台 · {reducedMotion ? "静态预览" : motion ? "播放中" : "已暂停，点击播放"}
             </span>
             <Button
               size="sm"

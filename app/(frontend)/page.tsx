@@ -60,6 +60,8 @@ export default async function HomePage() {
         <Button
           render={<Link href="/posts" />}
           nativeButton={false}
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实链接，覆盖 Base UI 默认的 button 角色。
+          role="link"
           variant="primary"
           size="sm"
           className="site-home-cta"

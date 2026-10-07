@@ -131,6 +131,64 @@
   justify-content: center;
   padding: var(--space-md);
 }
+.design-showcase .showcase-color-role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+.design-showcase .showcase-color-role-grid > section {
+  min-width: 0;
+}
+.design-showcase .showcase-color-role-grid h4 {
+  margin-bottom: var(--space-md);
+  font-size: 13px;
+  font-weight: 500;
+}
+.design-showcase .showcase-color-role-grid p {
+  margin-top: var(--space-md);
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.design-showcase .showcase-color-role-grid label {
+  display: block;
+  margin-block: var(--space-md) var(--space-sm);
+  color: var(--color-muted);
+  font-size: 13px;
+}
+.design-showcase .showcase-color-examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-lg);
+  margin-top: var(--space-sm);
+  font-size: 13px;
+}
+.design-showcase .showcase-color-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+.design-showcase .showcase-emphasis-badge {
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  color: var(--color-foreground);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+}
+.design-showcase .showcase-series-mark {
+  width: 16px;
+  height: 0;
+  border-top: 2px solid var(--color-primary);
+}
+.design-showcase .showcase-series-mark[data-series="uv"] {
+  border-top-color: var(--color-success);
+  border-top-style: dashed;
+}
 
 .design-showcase .showcase-effect-stage {
   display: flex;
@@ -212,6 +270,9 @@
   }
 
   .design-showcase .showcase-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .design-showcase .showcase-color-role-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 

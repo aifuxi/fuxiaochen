@@ -21,13 +21,13 @@ export default async function AboutPage() {
         <h1>关于</h1>
       </header>
       <section className="site-about">
-        <ConfiguredImage src={settings.avatarUrl} size={80} profile />
+        <ConfiguredImage src={settings.avatarUrl} size={56} profile />
         <h2>{settings.authorName}</h2>
         <p className="site-eyebrow">{settings.authorRole}</p>
         <p className="site-about-content">{settings.aboutMe}</p>
       </section>
       {settings.socials.length > 0 && (
-        <nav className="site-socials" aria-label="联系博主">
+        <nav className="site-socials site-about-socials" aria-label="联系博主">
           {settings.socials.map((s) => (
             <a key={s.id} href={s.url} target="_blank" rel="noopener noreferrer">
               <SocialIcon account={s} />
