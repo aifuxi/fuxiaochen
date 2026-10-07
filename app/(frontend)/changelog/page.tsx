@@ -53,7 +53,7 @@ export default async function ChangelogPage({ searchParams }: Props) {
   const { result } = await changelogContext(await searchParams);
   if (!result)
     return (
-      <main id="main-content" className="site-main site-reading">
+      <main id="main-content" className="site-main site-reading site-changelog-page">
         <header className="site-page-heading">
           <h1>更新日志</h1>
           <p role="alert">页码无效，请返回更新日志。</p>
@@ -70,22 +70,25 @@ export default async function ChangelogPage({ searchParams }: Props) {
       </main>
     );
   return (
-    <main id="main-content" className="site-main site-reading">
+    <main id="main-content" className="site-main site-reading site-changelog-page">
       <header className="site-page-heading">
         <h1>更新日志</h1>
         <p>记录每一次改进。</p>
       </header>
       {result.items.length ? (
-        <ol className="site-changelog">
+        // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- Safari 在 list-style: none 时会移除列表语义，显式角色保留时间线结构。
+        <ol className="site-changelog" role="list" aria-label="版本迭代时间线">
           {result.items.map((r, index) => (
             <li key={r.id}>
-              <div className="site-post-meta">
+              <div className="site-changelog-meta">
+                <div className="site-changelog-release">
+                  <span className="site-changelog-version">{r.version}</span>
+                  <span className="site-changelog-type">{labels[r.type] ?? r.type}</span>
+                  {result.page === 1 && index === 0 && (
+                    <span className="site-changelog-latest">最新</span>
+                  )}
+                </div>
                 <time dateTime={r.createdAt}>{postTime(r.createdAt, true)}</time>
-                <span className="site-changelog-version">{r.version}</span>
-                <span className="site-changelog-type">{labels[r.type] ?? r.type}</span>
-                {result.page === 1 && index === 0 && (
-                  <span className="site-changelog-latest">最新</span>
-                )}
               </div>
               <h2>{r.title}</h2>
               {r.changes.length ? (
