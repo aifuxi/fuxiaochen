@@ -536,11 +536,30 @@
 .post-editor-import-dialog .ds-button {
   min-height: var(--control-form);
 }
+.post-editor-link-dialog .admin-post-error,
 .post-editor-import-dialog .admin-post-error {
   color: var(--color-danger);
 }
+.post-editor-field {
+  display: grid;
+  gap: var(--space-sm);
+  margin: var(--space-lg) 0;
+  color: var(--color-muted);
+  font-size: var(--text-label);
+  line-height: 20px;
+}
+.post-editor-field .ds-input {
+  width: 100%;
+  min-width: 0;
+}
 .post-media-picker {
   max-width: 720px;
+}
+.post-media-picker > output {
+  display: block;
+  color: var(--color-muted);
+  font-size: var(--text-label);
+  line-height: 20px;
 }
 .post-media-picker-tools {
   display: flex;
@@ -588,6 +607,13 @@
   gap: 16px;
   margin: 16px 0;
 }
+.post-media-picker-pagination > span {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 20px;
+  text-align: center;
+}
 
 @media (max-width: 600px), (pointer: coarse) {
   .post-editor-settings-fields .admin-status-options label {
@@ -620,6 +646,9 @@
   }
   .post-media-picker-tools {
     flex-direction: column;
+  }
+  .post-media-picker-tools .ds-input {
+    flex: none;
   }
 }
 @media (max-width: 600px) {

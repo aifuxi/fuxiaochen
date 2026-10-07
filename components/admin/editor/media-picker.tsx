@@ -105,9 +105,10 @@ export function EditorMediaPicker({
           <output>{term ? "没有匹配的图片。" : "媒体库中还没有图片。"}</output>
         )}
         {data && data.pageCount > 1 && (
-          <div className="post-media-picker-pagination">
+          <nav className="post-media-picker-pagination" aria-label="图片选择分页">
             <Button
               type="button"
+              size="compact"
               disabled={data.page <= 1}
               onClick={() => {
                 setPage(data.page - 1);
@@ -116,11 +117,16 @@ export function EditorMediaPicker({
             >
               上一页
             </Button>
-            <span>
+            <span
+              aria-current="page"
+              aria-live="polite"
+              aria-label={`第 ${data.page} 页，共 ${data.pageCount} 页`}
+            >
               {data.page} / {data.pageCount}
             </span>
             <Button
               type="button"
+              size="compact"
               disabled={data.page >= data.pageCount}
               onClick={() => {
                 setPage(data.page + 1);
@@ -129,7 +135,7 @@ export function EditorMediaPicker({
             >
               下一页
             </Button>
-          </div>
+          </nav>
         )}
         <label className="post-editor-field" htmlFor="post-image-alt">
           图片替代文字
