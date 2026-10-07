@@ -990,20 +990,32 @@
   font: var(--text-mono--font-weight) var(--text-mono) / var(--text-mono--line-height)
     var(--font-mono);
 }
-.site-changelog-type {
+.site-changelog-type,
+.site-changelog-latest {
   padding: 2px var(--space-sm);
   border-radius: var(--radius-pill);
-  background: var(--color-raised);
-  color: var(--color-muted);
   font-size: var(--text-mono);
+  font-weight: var(--text-label--font-weight);
   line-height: var(--text-mono--line-height);
   white-space: nowrap;
 }
+.site-changelog-type {
+  --changelog-type-color: var(--color-muted);
+  background: color-mix(in srgb, var(--changelog-type-color) 12%, var(--color-surface));
+  color: var(--changelog-type-color);
+}
+.site-changelog-type[data-type="feature"] {
+  --changelog-type-color: var(--color-focus);
+}
+.site-changelog-type[data-type="performance"] {
+  --changelog-type-color: var(--color-success);
+}
+.site-changelog-type[data-type="security"] {
+  --changelog-type-color: var(--color-danger);
+}
 .site-changelog-latest {
-  color: var(--color-muted);
-  font-size: var(--text-mono);
-  font-weight: var(--text-label--font-weight);
-  white-space: nowrap;
+  background: var(--color-primary);
+  color: var(--color-foreground);
 }
 .site-changelog-return {
   min-height: 44px;

@@ -83,7 +83,9 @@ export default async function ChangelogPage({ searchParams }: Props) {
               <div className="site-changelog-meta">
                 <div className="site-changelog-release">
                   <span className="site-changelog-version">{r.version}</span>
-                  <span className="site-changelog-type">{labels[r.type] ?? r.type}</span>
+                  <span className="site-changelog-type" data-type={r.type}>
+                    {Object.hasOwn(labels, r.type) ? labels[r.type] : r.type}
+                  </span>
                   {result.page === 1 && index === 0 && (
                     <span className="site-changelog-latest">最新</span>
                   )}

@@ -197,11 +197,13 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 `background` 为连续页面底色，`surface` 为展示卡或业务模块的中性表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级靠细线、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。
 
-正文使用 `foreground`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。primary 仅用于主要 CTA、选中状态与少量交互指示。保留比参考站 `#0071FC` 略压暗的项目 primary，以满足浅色小字对比度；不把蓝色铺满页面。success、danger 与 focus 保持语义用途，状态同时有文字或符号。
+正文使用 `foreground`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。primary 用于主要 CTA、选中状态与少量交互指示，另允许日志的“最新”静态徽标采用 primary 实心底色与 foreground 文字；该许可只表达日志的新旧关系，不扩展为其他静态内容的装饰强调。保留比参考站 `#0071FC` 略压暗的项目 primary，以满足浅色小字对比度；不把蓝色铺满页面。success、danger 与 focus 保持语义用途，状态同时有文字或符号。
+
+日志分类沿用既有语义色：功能用 focus、修复用 foreground-muted、性能用 success、安全用 danger，并保留类型文字。分类色表达更新类别，不替代实际焦点、成功或错误状态；前台胶囊底色可将对应分类色按 12% 与 surface 混合，不新增颜色 token。日志“最新”徽标保持静态，不继承按钮的材质阴影、hover、active 或焦点状态，也不添加动画。
 
 展示 Card 由 surface 外壳、低对比内边线、轻微顶部高光和更暗的内舞台组成。舞台与外缘采用 card padding，说明区位于下方。后台业务 Card 只保留中性表面与淡边线，无顶部高光、不套舞台；连续工作区与字段分组的边界见后台场景。
 
-次级胶囊在 raised 上保留 `0 1px 3px rgba(0,0,0,.04)` 外阴影、`inset 0 1px rgba(255,255,255,.04)` 顶部高光、`inset 0 -1px rgba(0,0,0,.06)` 底部暗线及 `inset 0 0 0 1px rgba(196,196,196,.1)` 边缘环。primary 胶囊保留外阴影与顶部高光，使用两层极浅白色内边线定义轮廓。hover 与 active 只改变必要底色，避免缩放导致细线抖动；ghost 无材质阴影。全站不使用大面积模糊阴影、重复光晕或装饰渐变，发光限于明确的效果演示。
+次级胶囊在 raised 上保留 `0 1px 3px rgba(0,0,0,.04)` 外阴影、`inset 0 1px rgba(255,255,255,.04)` 顶部高光、`inset 0 -1px rgba(0,0,0,.06)` 底部暗线及 `inset 0 0 0 1px rgba(196,196,196,.1)` 边缘环。primary 操作胶囊保留外阴影与顶部高光，使用两层极浅白色内边线定义轮廓。hover 与 active 只改变必要底色，避免缩放导致细线抖动；ghost 无材质阴影。全站不使用大面积模糊阴影、重复光晕或装饰渐变，发光限于明确的效果演示。
 
 ## 排版与间距
 
