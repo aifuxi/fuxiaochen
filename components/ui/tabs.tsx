@@ -35,6 +35,6 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof BaseT
 
 export function TabsPanel({ className, ...props }: ComponentProps<typeof BaseTabs.Panel>) {
   return (
-    <BaseTabs.Panel className={cn("animate-panel-in pt-6 outline-none", className)} {...props} />
+    <BaseTabs.Panel className={cn("ds-tabs-panel animate-panel-in pt-6", className)} {...props} />
   );
 }

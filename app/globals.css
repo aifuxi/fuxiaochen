@@ -409,7 +409,7 @@ a {
     box-shadow var(--motion-quick) var(--motion-ease);
 }
 .ds-input::placeholder {
-  color: var(--color-subtle);
+  color: var(--color-muted);
 }
 .ds-input:hover:not(:disabled):not([data-disabled]):not([aria-invalid="true"]) {
   background: var(--color-input-hover);
@@ -460,8 +460,9 @@ a {
   border-radius: var(--radius-form);
   background: var(--color-raised);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.38),
-    inset 0 1px rgba(255, 255, 255, 0.05);
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    inset 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   overflow: hidden;
 }
 .ds-picker-item {
@@ -573,7 +574,7 @@ a {
 }
 .ds-dialog-popup {
   box-shadow:
-    0 24px 90px rgba(0, 0, 0, 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.04),
     inset 0 1px rgba(255, 255, 255, 0.05),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   transition:
@@ -590,6 +591,10 @@ a {
 }
 .ds-tabs-list {
   position: relative;
+}
+.ds-tabs-panel:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 .ds-tabs-trigger {
   position: relative;
