@@ -92,18 +92,18 @@ html:has(.site-layout) {
 .site-layout {
   color: var(--color-foreground);
 }
-.site-layout a:not(.ds-button) {
+.site-layout a:not(.ds-button, .ds-card-link) {
   transition:
     color var(--motion-quick) var(--motion-ease),
     background-color var(--motion-quick) var(--motion-ease);
 }
-.site-layout a:not(.ds-button):hover {
+.site-layout a:not(.ds-button, .ds-card-link):hover {
   color: var(--color-foreground);
 }
-.site-layout a:not(.ds-button):active {
+.site-layout a:not(.ds-button, .ds-card-link):active {
   color: var(--color-muted);
 }
-.site-layout a:not(.ds-button):focus-visible {
+.site-layout a:not(.ds-button, .ds-card-link):focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
   border-radius: 4px;
@@ -798,13 +798,11 @@ html:has(.site-layout) {
   white-space: nowrap;
 }
 .site-taxonomy-list a:hover,
-.site-tag-cloud a:hover,
-.site-friends a:hover {
+.site-tag-cloud a:hover {
   background: var(--color-surface-hover);
 }
 .site-taxonomy-list a:active,
-.site-tag-cloud a:active,
-.site-friends a:active {
+.site-tag-cloud a:active {
   background: color-mix(in srgb, var(--color-surface) 50%, var(--color-background));
 }
 .site-tag-cloud {
@@ -838,31 +836,35 @@ html:has(.site-layout) {
 .site-tag-cloud a[aria-current]:active {
   background: var(--color-input);
 }
+.site-friends-page .site-page-heading {
+  margin-bottom: var(--space-2xl);
+}
+.site-friends-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+.site-friends-filters .ds-button {
+  padding-inline: var(--space-md);
+}
 .site-friends {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: var(--space-lg);
 }
-.site-friends a {
+.site-friends .ds-card-link {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 24px;
-  background: var(--color-surface);
-  border-radius: 24px;
+  gap: var(--space-md);
+  padding: var(--space-lg);
 }
-.site-friends a > div {
+.site-friends .ds-card-link > div {
   min-width: 0;
-}
-.site-friends h2 {
-  font-size: 16px;
-  font-weight: 500;
 }
 .site-friends p {
   color: var(--color-muted);
-  font-size: 14px;
-  line-height: 1.7;
-  margin: 8px 0;
+  margin: var(--space-sm) 0;
 }
 .site-friends span {
   font-size: 12px;
@@ -1321,6 +1323,12 @@ html:has(.site-layout) {
   .site-main {
     padding: 40px 0 56px;
   }
+  .site-friends-page .site-page-heading {
+    margin-bottom: var(--space-xl);
+  }
+  .site-friends .ds-card-link {
+    padding: var(--space-md);
+  }
   .site-friends,
   .site-comment-fields {
     grid-template-columns: minmax(0, 1fr);
@@ -1353,6 +1361,10 @@ html:has(.site-layout) {
   }
 }
 @media (max-width: 600px), (pointer: coarse) {
+  .site-friends-filters .ds-button {
+    min-height: var(--control-touch);
+    height: var(--control-touch);
+  }
   .site-home-cta {
     min-height: var(--control-touch);
     padding-inline: 16px;

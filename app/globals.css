@@ -281,6 +281,20 @@ a {
     inset 0 1px rgba(255, 255, 255, 0.04),
     inset 0 0 0 1px rgba(196, 196, 196, 0.07);
 }
+.ds-card-link {
+  color: var(--color-foreground);
+  transition: background-color var(--motion-quick) var(--motion-ease);
+}
+.ds-card-link:hover {
+  background: var(--color-surface-hover);
+}
+.ds-card-link:active {
+  background: color-mix(in srgb, var(--color-surface) 50%, var(--color-background));
+}
+.ds-card-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
 .ds-stage {
   box-shadow: inset 0 0 0 1px rgba(191, 192, 203, 0.1);
 }

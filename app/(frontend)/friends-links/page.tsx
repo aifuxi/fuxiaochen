@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { permanentRedirect } from "next/navigation";
 
-import { ConfiguredImage } from "@/components/frontend/configured-image";
+import { FriendLinkCard } from "@/components/frontend/friend-link-card";
+import { Button } from "@/components/ui/button";
 import {
   normalizedQueryPath,
   queryNeedsRedirect,
@@ -37,38 +38,44 @@ export default async function FriendsPage({ searchParams }: Props) {
   const { category } = friendsContext(await searchParams);
   const result = await listPublicFriends(category);
   return (
-    <main id="main-content" className="site-main">
+    <main id="main-content" className="site-main site-friends-page">
       <header className="site-page-heading">
         <h1>友情链接</h1>
         <p>值得走走看看的地方。</p>
       </header>
       {result.categories.length > 0 && (
-        <nav className="site-tag-cloud" aria-label="友链分类">
-          <Link href="/friends-links" aria-current={!category ? "page" : undefined}>
+        <nav className="site-friends-filters" aria-label="友链分类">
+          <Button
+            render={<Link href="/friends-links" />}
+            nativeButton={false}
+            // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实链接，保留分类导航语义。
+            role="link"
+            variant={!category ? "secondary" : "ghost"}
+            size="compact"
+            aria-current={!category ? "page" : undefined}
+          >
             全部
-          </Link>
+          </Button>
           {result.categories.map((c) => (
-            <Link
+            <Button
               key={c}
-              href={`/friends-links?${new URLSearchParams({ category: c })}`}
+              render={<Link href={`/friends-links?${new URLSearchParams({ category: c })}`} />}
+              nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实链接，保留分类导航语义。
+              role="link"
+              variant={category === c ? "secondary" : "ghost"}
+              size="compact"
               aria-current={category === c ? "page" : undefined}
             >
               {c || "未分类"}
-            </Link>
+            </Button>
           ))}
         </nav>
       )}
       {result.items.length ? (
         <div className="site-friends">
           {result.items.map((f) => (
-            <a key={f.id} href={f.url} target="_blank" rel="noopener noreferrer">
-              <ConfiguredImage src={f.avatar} size={40} fallback="link" />
-              <div>
-                <h2>{f.name}</h2>
-                <p>{f.description || f.url}</p>
-                <span>{f.category}</span>
-              </div>
-            </a>
+            <FriendLinkCard key={f.id} friend={f} />
           ))}
         </div>
       ) : (
