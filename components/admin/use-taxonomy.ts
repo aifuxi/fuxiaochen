@@ -1,7 +1,13 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { Category, CategoryInput, Tag, TagInput } from "@/lib/taxonomy/schema";
+import type {
+  Category,
+  CategoryInput,
+  CategoryUpdateInput,
+  Tag,
+  TagInput,
+} from "@/lib/taxonomy/schema";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`/api/admin/${path}`, {
@@ -101,10 +107,29 @@ export function useTaxonomy() {
       if (mounted.current) setTags((items) => sortItems([...items, item]));
       return item;
     });
+  const updateCategory = (id: string, input: CategoryUpdateInput) =>
+    mutate(async () => {
+      const item = await request<Category>(`categories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      if (mounted.current)
+        setCategories((items) => items.map((previous) => (previous.id === id ? item : previous)));
+      return item;
+    });
   const deleteCategory = (id: string) =>
     mutate(async () => {
       await request<{ id: string }>(`categories/${id}`, { method: "DELETE" });
       if (mounted.current) setCategories((items) => items.filter((item) => item.id !== id));
+    });
+  const reloadCategory = (id: string) =>
+    mutate(async () => {
+      const items = await request<Category[]>("categories");
+      if (mounted.current) setCategories(items);
+      const item = items.find((category) => category.id === id);
+      if (!item) throw new Error("分类不存在，可能已被删除。");
+      return item;
     });
   const deleteTag = (id: string) =>
     mutate(async () => {
@@ -128,6 +153,8 @@ export function useTaxonomy() {
     taxonomyPending,
     reloadTaxonomy: retry,
     createCategory,
+    updateCategory,
+    reloadCategory,
     createTag,
     deleteCategory,
     deleteTag,

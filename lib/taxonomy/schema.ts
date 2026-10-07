@@ -9,6 +9,8 @@ export const categorySchema = z.object({
     .default("#0066df"),
 });
 export const tagSchema = z.object({ name: nameSchema });
+export const updateCategorySchema = categorySchema.extend({ expected: categorySchema });
+export type CategoryUpdateInput = z.infer<typeof updateCategorySchema>;
 export const taxonomyIdSchema = z.object({ id: z.uuid() });
 export type CategoryInput = z.infer<typeof categorySchema>;
 export type TagInput = z.infer<typeof tagSchema>;

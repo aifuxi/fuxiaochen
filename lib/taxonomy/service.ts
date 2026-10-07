@@ -4,13 +4,18 @@ import { randomUUID } from "node:crypto";
 import { getSession } from "@/lib/auth/service";
 import { getDatabase, writeTransaction } from "@/prisma/db";
 
-import type { CategoryInput, TagInput } from "./schema";
+import type { CategoryInput, CategoryUpdateInput, TagInput } from "./schema";
 
 import { taxonomyNameKey } from "./schema";
 
 export class TaxonomyError extends Error {
   constructor(
-    public code: "UNAUTHORIZED" | "DUPLICATE_NAME" | "NOT_FOUND" | "RESOURCE_IN_USE",
+    public code:
+      | "UNAUTHORIZED"
+      | "DUPLICATE_NAME"
+      | "NOT_FOUND"
+      | "RESOURCE_IN_USE"
+      | "VERSION_CONFLICT",
     message: string,
   ) {
     super(message);
@@ -65,6 +70,28 @@ export async function createTag(input: TagInput, actor: TaxonomyActor) {
       throw new TaxonomyError("DUPLICATE_NAME", "该标签已存在。");
     }
     return tx.orm.public.Tag.create({ ...input, id: randomUUID(), nameKey, createdAt: new Date() });
+  });
+}
+export async function updateCategory(id: string, input: CategoryUpdateInput, actor: TaxonomyActor) {
+  return writeTransaction(async (tx) => {
+    await authorize(actor);
+    const previous = await tx.orm.public.Category.where({ id }).first();
+    if (!previous) throw new TaxonomyError("NOT_FOUND", "分类不存在，可能已被删除。");
+    if (previous.name !== input.expected.name || previous.color !== input.expected.color)
+      throw new TaxonomyError("VERSION_CONFLICT", "分类已被其他页面修改，请重新载入后核对。");
+    const nameKey = taxonomyNameKey(input.name);
+    const duplicate = await tx.orm.public.Category.where({ nameKey }).first();
+    if (duplicate && duplicate.id !== id)
+      throw new TaxonomyError("DUPLICATE_NAME", "该分类已存在。");
+    await tx.orm.public.Category.where({ id }).update({
+      name: input.name,
+      color: input.color,
+      nameKey,
+    });
+    const updated = await tx.orm.public.Category.where({ id })
+      .include("posts", (posts) => posts.count())
+      .first();
+    return updated!;
   });
 }
 export async function deleteCategory(id: string, actor: TaxonomyActor) {

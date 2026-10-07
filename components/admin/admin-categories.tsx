@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Plus, Trash2, X } from "lucide-react";
+import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState, type SubmitEvent } from "react";
 
@@ -14,6 +14,7 @@ import { ColorInput } from "@/components/ui/color-input";
 import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { categorySchema } from "@/lib/taxonomy/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
@@ -21,7 +22,10 @@ import { RecordLocator, useRecordTarget } from "./record-locator";
 import { TaxonomyStatus } from "./taxonomy-status";
 import "./admin-categories.css";
 
-const actionIcons = { Trash2: <Trash2 size={16} /> };
+const actionIcons = {
+  Trash2: <Trash2 size={16} />,
+  Pencil: <Pencil size={16} aria-hidden="true" />,
+};
 
 const columns: ColumnDef<Category>[] = [
   {
@@ -68,6 +72,8 @@ export function AdminCategories() {
     categoryItems: categories,
     tagItems: tags,
     createCategory,
+    updateCategory,
+    reloadCategory,
     createTag,
     deleteCategory,
     deleteTag,
@@ -82,6 +88,13 @@ export function AdminCategories() {
     ? tags.filter((item) => recordKind !== "category" && item.id === record)
     : tags;
   const tableState = useDataTableState();
+  const [editTarget, setEditTarget] = useState<Category | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editColor, setEditColor] = useState("#0066df");
+  const [editError, setEditError] = useState("");
+  const [editFieldErrors, setEditFieldErrors] = useState<Record<string, string>>({});
+  const editInput = useRef<HTMLInputElement>(null);
+  const editTrigger = useRef<HTMLElement | null>(null);
   const categoryDeleted = useRef(false);
   const disabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
   const [categoryName, setCategoryName] = useState("");
@@ -209,6 +222,20 @@ export function AdminCategories() {
                   disabled: disabled,
                   actions: [
                     {
+                      label: "编辑分类",
+                      icon: actionIcons.Pencil,
+                      opensDialog: true,
+                      onSelect: (trigger) => {
+                        editTrigger.current = trigger;
+                        setEditTarget(item);
+                        setEditName(item.name);
+                        setEditColor(item.color);
+                        setEditError("");
+                        setEditFieldErrors({});
+                        requestAnimationFrame(() => editInput.current?.focus());
+                      },
+                    },
+                    {
                       label: "删除分类",
                       icon: actionIcons.Trash2,
                       destructive: true,
@@ -307,6 +334,118 @@ export function AdminCategories() {
           </div>
         </Card>
       </div>
+      <Dialog
+        open={Boolean(editTarget)}
+        onOpenChange={(open) => {
+          if (!open && !taxonomyPending) setEditTarget(null);
+        }}
+      >
+        <DialogContent
+          initialFocus={editInput}
+          finalFocus={() =>
+            editTrigger.current?.isConnected ? editTrigger.current : categoryInput.current
+          }
+        >
+          <DialogTitle>编辑分类</DialogTitle>
+          <DialogDescription>修改名称与颜色，文章关联保持不变。</DialogDescription>
+          {editError && (
+            <p role="alert" className="admin-business-error">
+              {editError}
+            </p>
+          )}
+          <form
+            className="admin-form"
+            noValidate
+            onSubmit={async (event) => {
+              event.preventDefault();
+              if (!editTarget || taxonomyPending) return;
+              const parsed = categorySchema.safeParse({ name: editName, color: editColor });
+              if (!parsed.success) {
+                setEditFieldErrors(
+                  Object.fromEntries(
+                    parsed.error.issues.map((issue) => [String(issue.path[0]), issue.message]),
+                  ),
+                );
+                editInput.current?.focus();
+                return;
+              }
+              setEditError("");
+              setEditFieldErrors({});
+              try {
+                await updateCategory(editTarget.id, {
+                  ...parsed.data,
+                  expected: { name: editTarget.name, color: editTarget.color },
+                });
+                setEditTarget(null);
+                onMessage("分类已更新");
+              } catch (error) {
+                setEditError(error instanceof Error ? error.message : "分类保存失败。");
+                requestAnimationFrame(() => editInput.current?.focus());
+              }
+            }}
+          >
+            <label htmlFor="admin-edit-category-name">分类名称</label>
+            <Input
+              id="admin-edit-category-name"
+              ref={editInput}
+              value={editName}
+              maxLength={40}
+              disabled={taxonomyPending}
+              onChange={(event) => setEditName(event.target.value)}
+              aria-invalid={Boolean(editFieldErrors.name)}
+              aria-describedby={editFieldErrors.name ? "category-edit-name-error" : undefined}
+            />
+            {editFieldErrors.name && (
+              <p id="category-edit-name-error" className="admin-business-error">
+                {editFieldErrors.name}
+              </p>
+            )}
+            <label htmlFor="admin-edit-category-color">分类颜色</label>
+            <ColorInput
+              id="admin-edit-category-color"
+              value={editColor}
+              disabled={taxonomyPending}
+              onChange={(event) => setEditColor(event.target.value)}
+              aria-invalid={Boolean(editFieldErrors.color)}
+              aria-describedby={editFieldErrors.color ? "category-edit-color-error" : undefined}
+            />
+            {editFieldErrors.color && (
+              <p id="category-edit-color-error" className="admin-business-error">
+                {editFieldErrors.color}
+              </p>
+            )}
+            {editError && (
+              <Button
+                type="button"
+                disabled={taxonomyPending}
+                onClick={async () => {
+                  if (!editTarget) return;
+                  try {
+                    const latest = await reloadCategory(editTarget.id);
+                    setEditTarget(latest);
+                    setEditName(latest.name);
+                    setEditColor(latest.color);
+                    setEditError("");
+                    setEditFieldErrors({});
+                  } catch (error) {
+                    setEditError(error instanceof Error ? error.message : "重新载入失败。");
+                  }
+                }}
+              >
+                放弃修改并重新载入
+              </Button>
+            )}
+            <div className="admin-form-actions">
+              <Button type="button" disabled={taxonomyPending} onClick={() => setEditTarget(null)}>
+                取消
+              </Button>
+              <Button type="submit" variant="primary" disabled={taxonomyPending}>
+                {taxonomyPending ? "正在保存…" : "保存分类"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={deleteName !== null}
         onOpenChange={(open) => {

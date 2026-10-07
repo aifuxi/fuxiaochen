@@ -859,3 +859,55 @@ void test("工作台仅返回最近三篇草稿，统计保留完整数量", asy
   );
   assert.ok(summary.statusCounts.draft >= 4);
 });
+
+void test("分类编辑保留文章关联并拒绝重名与过期编辑", async () => {
+  const taxonomy = await import("../lib/taxonomy/service");
+  const { categorySchema, updateCategorySchema } = await import("../lib/taxonomy/schema");
+  const posts = await import("../lib/posts/service");
+  const { postSchema } = await import("../lib/posts/schema");
+  const category = await taxonomy.createCategory(
+    categorySchema.parse({ name: "可编辑分类", color: "#123456" }),
+    actor,
+  );
+  await taxonomy.createCategory(categorySchema.parse({ name: "已有分类" }), actor);
+  const post = await posts.createPost(
+    postSchema.parse({
+      title: "分类关联回归",
+      slug: "category-edit-test",
+      categoryId: category.id,
+      tagIds: [],
+      content,
+      status: "published",
+      scheduledFor: null,
+    }),
+    actor,
+  );
+  const changed = await taxonomy.updateCategory(
+    category.id,
+    updateCategorySchema.parse({ name: "新分类", color: "#654321", expected: category }),
+    actor,
+  );
+  assert.equal(changed.posts, 1);
+  assert.deepEqual((await posts.getPost(post.id, actor)).category, {
+    id: category.id,
+    name: "新分类",
+    color: "#654321",
+  });
+  await assert.rejects(
+    taxonomy.updateCategory(
+      category.id,
+      updateCategorySchema.parse({ name: "已有分类", color: changed.color, expected: changed }),
+      actor,
+    ),
+    { code: "DUPLICATE_NAME" },
+  );
+  await assert.rejects(
+    taxonomy.updateCategory(
+      category.id,
+      updateCategorySchema.parse({ name: "过期覆盖", color: changed.color, expected: category }),
+      actor,
+    ),
+    { code: "VERSION_CONFLICT" },
+  );
+  assert.equal((await posts.getPost(post.id, actor)).category.name, "新分类");
+});

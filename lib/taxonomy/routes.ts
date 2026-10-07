@@ -6,11 +6,12 @@ import { Hono } from "hono";
 import { getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 
+import { validate } from "@/lib/admin/routes";
 import { SESSION_COOKIE, getSession } from "@/lib/auth/service";
 
 import type { TaxonomyActor } from "./service";
 
-import { categorySchema, tagSchema, taxonomyIdSchema } from "./schema";
+import { categorySchema, tagSchema, taxonomyIdSchema, updateCategorySchema } from "./schema";
 import {
   createCategory,
   createTag,
@@ -19,6 +20,7 @@ import {
   listCategories,
   listTags,
   TaxonomyError,
+  updateCategory,
 } from "./service";
 
 type TaxonomyEnv = { Variables: { admin: TaxonomyActor } };
@@ -31,7 +33,7 @@ taxonomyRoutes.use("*", async (c, next) => {
   }
   c.set("admin", { adminId: admin.adminId, sessionToken });
   if (
-    c.req.method === "POST" &&
+    ["POST", "PUT"].includes(c.req.method) &&
     c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"
   ) {
     return c.json(
@@ -88,6 +90,19 @@ taxonomyRoutes.post("/tags", tagValidator, async (c) => {
   const { nameKey: _nameKey, ...item } = await createTag(c.req.valid("json"), actor(c));
   return c.json({ data: { ...item, postCount: 0 } }, 201);
 });
+taxonomyRoutes.put(
+  "/categories/:id",
+  idValidator,
+  validate("json", updateCategorySchema),
+  async (c) => {
+    const {
+      nameKey: _nameKey,
+      posts,
+      ...item
+    } = await updateCategory(c.req.valid("param").id, c.req.valid("json"), actor(c));
+    return c.json({ data: { ...item, postCount: posts } });
+  },
+);
 taxonomyRoutes.delete("/categories/:id", idValidator, async (c) =>
   c.json({ data: await deleteCategory(c.req.valid("param").id, actor(c)) }),
 );
