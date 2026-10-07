@@ -45,12 +45,6 @@ html:has(.site-layout) {
   border-radius: var(--radius-sm);
   overflow-wrap: anywhere;
 }
-.site-layout .site-footer a:hover {
-  background: var(--color-surface-hover);
-}
-.site-layout .site-footer a:active {
-  background: var(--color-background);
-}
 .site-profile {
   display: flex;
   align-items: center;
