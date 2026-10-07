@@ -720,6 +720,32 @@
   gap: 8px;
   margin-top: 7px;
 }
+.admin-operation-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: 7px;
+}
+.admin-operation-page-status {
+  color: var(--color-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  line-height: 20px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .admin-operation-page-status {
+    order: -1;
+    flex-basis: 100%;
+  }
+  .admin-operation-pagination > .ds-button {
+    flex: 1;
+  }
+}
 .admin-result-list {
   display: grid;
   max-height: 360px;

@@ -55,21 +55,21 @@ function Pagination({
 }) {
   return (
     data && (
-      <nav className="admin-form-actions" aria-label="分页">
+      <nav className="admin-operation-pagination" aria-label="分页">
         <Button
           variant="ghost"
-          size="sm"
+          size="compact"
           disabled={disabled || data.page <= 1}
           onClick={() => onPage(data.page - 1)}
         >
           上一页
         </Button>
-        <span aria-live="polite">
+        <span className="admin-operation-page-status" aria-live="polite">
           {data.page} / {data.pageCount} · 共 {data.total} 条
         </span>
         <Button
           variant="ghost"
-          size="sm"
+          size="compact"
           disabled={disabled || data.page >= data.pageCount}
           onClick={() => onPage(data.page + 1)}
         >
