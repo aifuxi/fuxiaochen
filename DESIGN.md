@@ -221,7 +221,9 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 ## 排版与间距
 
-标题、正文和标签使用 `"Inter", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`；display 与 sans 共用字体栈。中文使用系统兜底，不分发参考站 Saans。 Inter 通过 [根布局](app/layout.tsx) 的 `next/font/local` 加载，使用 [Inter 官方](https://rsms.me/inter/)提供的 4.1 可变字体文件 [InterVariable.woff2](app/fonts/InterVariable.woff2)，许可随 [OFL.txt](app/fonts/OFL.txt) 保留；浏览器字体请求由本项目提供。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+标题、正文和标签使用 `"Inter", "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif`；display 与 sans 共用字体栈。中文使用系统兜底，不分发参考站 Saans。Inter 在 [共享样式](app/globals.css) 中通过 `@font-face` 直接加载 jsDelivr 上固定版本的 `@fontsource-variable/inter@5.3.0`，使用 standard normal 子集保留 `wght`（100–900）与 `opsz`（14–32）轴，按 Fontsource 的 `unicode-range` 按需加载 Latin、Latin Extended、Greek、Greek Extended、Cyrillic、Cyrillic Extended 与 Vietnamese；采用 `font-display: swap`，CDN 不可用时继续使用系统兜底。[根布局](app/layout.tsx) 预连接 CDN，不再使用 `next/font` 或随项目分发字体文件。字体许可为 [OFL-1.1](https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.3.0/LICENSE)。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+
+2026-10-09 已将字体加载从本地文件切换为上述 CDN 方式；本轮字体请求、页面回归及检查限制见 [Inter CDN 替换记录](docs/engineering/verification-history.md#inter-cdn-替换2026-10-09)，下方 2026-10-06 同步表保留当时的实施事实。
 
 首页与展示页使用 display；小于 640px 使用 display-mobile。章节标题使用 heading。其余 title、body、label 与 mono 保留既有值；后台页标题、阅读正文与编辑标题属于场景变体，不回写共享 display。卡片标题可选 title 或场景明确的紧凑字号，描述低一级，不让所有内容争夺焦点。
 

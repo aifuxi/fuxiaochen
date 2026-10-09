@@ -589,3 +589,11 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 生产 JS 采用相同构建、manifest 与逐文件 gzip level 9 口径：rootMainFiles 加路由 entryJSFiles 去重，不包含条件错误及延迟 chunk。共享入口新增 91,889B raw / 31,244B gzip（约 30.5KiB）；首页 gzip +31,348B、posts +34,563B、admin +31,580B、design-spec +34,743B；全部 JS +102,588B raw / +35,817B gzip，增加 1 个 chunk。该测量是产物增量，不是浏览器真实下载量或首屏 LCP/INP 基准；首次正文无需等待动效，未做真实设备性能 profiling。
 
 证据保存于本机可视化目录 `motion/`：页面/浮层逐帧 JSON、390px 菜单和 Select 截图，以及 bundle-baseline/final/delta、ssr-final 与 audit-comparison 报告。安装前后 audit 同为既有 7 high，无新增或 Motion 相关项；本轮没有执行依赖修复。未验证真实触屏、真实系统减少动态效果、跨浏览器/屏幕阅读器、BFCache 冻结恢复和生产线上网络；SPA 历史恢复不作为 BFCache 通过证据。
+
+## Inter CDN 替换（2026-10-09）
+
+- 已实现：沿用项目此前 jsDelivr + Fontsource 的 `@font-face` 接入方式，固定 `@fontsource-variable/inter@5.3.0`，采用 standard normal 的七个语言子集和官方 `unicode-range`，保留可变字重及光学尺寸轴；`font-display: swap` 与中文系统兜底继续有效。根布局移除 `next/font/local` 及生成变量，增加 CDN 预连接；删除不再使用的本地 Inter 文件与随附许可，根规范改为链接当前 CDN 包的 OFL-1.1 许可。字号、行高、字距和等宽字体不变。
+- 运行通过：复用 WebStorm 启动的 `http://localhost:3000`。七个 CDN URL 均返回 200、WOFF2 文件签名及允许跨域的响应头；浏览器页面资源清单记录 `inter-latin-standard-normal.woff2` 从 jsDelivr 请求，未观察到字体加载错误。其余语言子集的实际浏览器渲染未逐一验证。
+- 运行通过：1440×1000 与 390×844 下检查首页、文章列表、Vim 正文、组件展示页与后台工作台，正文和标题的 computed font-family 均为 Inter 优先，无横向溢出；文章列表、桌面正文及窄屏后台截图实际查看。正文代码仍为共享等宽字体。浏览器当前已有会话，访问 `/login` 跳转后台；另以无 Cookie 的 HTTP 请求确认匿名登录 SSR 含用户名、密码表单及 CDN 预连接，没有旧字体变量。未退出现有会话，登录表单的浏览器渲染与提交未验证。
+- 运行通过：全仓 lint、改动文件格式与差异空白检查。原 `npm run typecheck` 被 Git 忽略的 `data/release-20261007-OXUmzv/docker-context/context/` 中缺失的 Prisma contract 文件阻断；仅在仓库外临时配置中排除 `data/`、显式沿用项目 `node_modules/@types`，其余编译选项不变并关闭增量缓存后，项目源码类型检查通过。未修改项目类型检查配置或发布临时目录。
+- 仅源码核对／未验证：CDN 失败时的系统字体回退仅源码核对；未模拟断网、逐一测试语言子集、覆盖所有后台业务页、执行生产构建或验证线上网络及跨浏览器。字体加载替换未增加交互状态与业务写入，无需新增业务测试。
