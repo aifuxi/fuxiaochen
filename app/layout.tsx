@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${inter.variable} font-sans`}>
+    <html lang="zh-CN" data-scroll-behavior="smooth" className={`${inter.variable} font-sans`}>
       <body className="font-sans antialiased">
         <MotionProvider>
           <PageMotionController />
