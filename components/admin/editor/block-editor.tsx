@@ -1,12 +1,11 @@
 "use client";
 
-import type { EditorView } from "@tiptap/pm/view";
-
 import { type Editor } from "@tiptap/core";
 import DragHandle from "@tiptap/extension-drag-handle-react";
 import Placeholder from "@tiptap/extension-placeholder";
 import { closeHistory } from "@tiptap/pm/history";
-import { Selection } from "@tiptap/pm/state";
+import { Selection, type EditorState } from "@tiptap/pm/state";
+import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import {
@@ -42,6 +41,7 @@ import {
   postContentSchema,
 } from "@/lib/posts/document";
 import { markdownDocument } from "@/lib/posts/markdown-document";
+import { isImageParagraph } from "@/lib/posts/prose";
 
 import { EditorCodeBlock } from "./code-block";
 import { MarkdownImportDialog } from "./markdown-import-dialog";
@@ -64,12 +64,25 @@ const bubblePosition = { placement: "top", offset: 8 } as const;
 
 const articleEditorProps = {
   attributes: {
+    class: "article-prose",
     id: "admin-post-body",
     role: "textbox",
     "aria-multiline": "true",
     "aria-labelledby": "admin-post-body-label",
     "aria-describedby": "post-editor-help",
     spellcheck: "true",
+  },
+  decorations: (state: EditorState) => {
+    const decorations: Decoration[] = [];
+    state.doc.descendants((node, position) => {
+      if (isImageParagraph(node)) {
+        decorations.push(
+          Decoration.node(position, position + node.nodeSize, { class: "article-image-block" }),
+        );
+      }
+      return !node.isTextblock;
+    });
+    return DecorationSet.create(state.doc, decorations);
   },
   handleDOMEvents: {
     keydown: (view: EditorView, event: KeyboardEvent) => {

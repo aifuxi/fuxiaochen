@@ -1,0 +1,178 @@
+.article-prose {
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.article-prose :where(p, ul, ol) {
+  margin-block: 1.25em;
+}
+.article-prose :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+.article-prose :where(h1) {
+  font-size: 1.5rem;
+  line-height: 1.3333;
+  margin-block: 2em 1.7rem;
+}
+.article-prose :where(h2) {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  margin-block: 2em 1.45rem;
+}
+.article-prose :where(h3) {
+  font-size: 1.125rem;
+  line-height: 1.5556;
+  margin-block: 1.6em 1.3rem;
+}
+.article-prose :where(h4, h5, h6) {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin-block: 1.5em 1.2rem;
+}
+.article-prose :where(strong) {
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+.article-prose :where(ul, ol) {
+  padding-inline-start: 1.625em;
+}
+.article-prose :where(ul) {
+  list-style: disc;
+}
+.article-prose :where(ol) {
+  list-style: decimal;
+}
+.article-prose :where(li) {
+  margin-block: 0.5em;
+}
+.article-prose :where(li > p, ul ul, ul ol, ol ul, ol ol) {
+  margin-block: 0.75em;
+}
+.article-prose
+  :where(li, blockquote, .article-task-item > div, ul[data-type="taskList"] > li > div)
+  > :first-child {
+  margin-top: 0;
+}
+.article-prose
+  :where(li, blockquote, .article-task-item > div, ul[data-type="taskList"] > li > div)
+  > :last-child {
+  margin-bottom: 0;
+}
+.article-prose :where(blockquote) {
+  margin-block: 1.6em;
+  padding-inline-start: 1em;
+  border-inline-start: 3px solid var(--color-outline);
+  color: var(--color-muted);
+}
+.article-prose :where(a) {
+  color: var(--color-focus);
+  text-decoration: underline;
+  text-underline-offset: 0.1875em;
+  transition: color var(--motion-quick) var(--motion-ease);
+}
+.article-prose :where(a:hover) {
+  color: var(--color-foreground);
+  text-decoration-thickness: 2px;
+}
+.article-prose :where(a:active) {
+  color: var(--color-primary);
+}
+.article-prose :where(a:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.article-prose :where(img) {
+  display: inline;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+/* 仅标记文档中只含一张图片的段落，避免把文字中的图片变成独立块。 */
+.article-prose :where(.article-image-block) {
+  margin-block: 2em;
+}
+.article-prose :where(.article-image-block img) {
+  display: block;
+}
+.article-prose :where(hr) {
+  margin-block: 3em;
+  border-color: var(--color-outline);
+}
+.article-prose :where(code, pre) {
+  font-family: var(--font-mono);
+}
+.article-prose :where(:not(pre) > code) {
+  font-size: 0.875em;
+  overflow-wrap: anywhere;
+}
+.article-prose :where(pre) {
+  font-size: 0.875rem;
+  line-height: 1.7143;
+  margin-block: 1.5rem;
+}
+.article-prose :where(pre > code) {
+  font-size: inherit;
+  line-height: inherit;
+  overflow-wrap: normal;
+}
+.article-prose
+  :where(
+    .article-code-block,
+    .editor-code-block,
+    .node-codeBlock,
+    .site-table-scroll,
+    .tableWrapper
+  ) {
+  margin-block: 1.5rem;
+}
+.article-prose :where(.node-codeBlock > .editor-code-block) {
+  margin: 0;
+}
+.article-prose :where(table) {
+  font-size: 0.875rem;
+  line-height: 1.75;
+}
+.article-prose :where(th, td) > p {
+  margin: 0;
+}
+.article-prose :where(th, td) > p + p {
+  margin-top: 0.5em;
+}
+.article-prose :where(ul.article-task-list, ul[data-type="taskList"]) {
+  list-style: none;
+  padding-inline-start: 0;
+}
+.article-prose :where(.article-task-item, ul[data-type="taskList"] > li) {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+.article-prose :where(.article-task-item > div, ul[data-type="taskList"] > li > div) {
+  min-width: 0;
+  flex: 1;
+}
+.article-prose :where(input[type="checkbox"]) {
+  accent-color: var(--color-primary);
+}
+.article-prose :where(ul[data-type="taskList"] > li > label) {
+  flex: none;
+}
+.article-prose :where(h1, h2, h3, h4, h5, h6, hr) + * {
+  margin-top: 0;
+}
+.article-prose > :first-child {
+  margin-top: 0;
+}
+.article-prose > :last-child {
+  margin-bottom: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .article-prose :where(a) {
+    transition: none;
+  }
+}

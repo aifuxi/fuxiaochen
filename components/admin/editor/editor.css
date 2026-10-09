@@ -260,70 +260,11 @@
   min-height: 360px;
   padding: 22px 22px 32px 52px;
   outline: none;
-  color: var(--color-foreground);
-  font-size: 16px;
-  line-height: 1.8;
-  overflow-wrap: anywhere;
 }
 .post-block-editor[data-invalid="true"] > .post-editor-toolbar {
   box-shadow: inset 0 -2px 0 var(--color-danger);
 }
-.post-editor-canvas .tiptap > :first-child {
-  margin-top: 0;
-}
-.post-editor-canvas .tiptap p {
-  margin: 12px 0;
-}
-.post-editor-canvas .tiptap h1,
-.post-editor-canvas .tiptap h2,
-.post-editor-canvas .tiptap h3,
-.post-editor-canvas .tiptap h4,
-.post-editor-canvas .tiptap h5,
-.post-editor-canvas .tiptap h6 {
-  margin: 28px 0 12px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-.post-editor-canvas .tiptap h1 {
-  font-size: 28px;
-}
-.post-editor-canvas .tiptap h2 {
-  font-size: 24px;
-}
-.post-editor-canvas .tiptap h3 {
-  font-size: 20px;
-}
-.post-editor-canvas .tiptap h4,
-.post-editor-canvas .tiptap h5,
-.post-editor-canvas .tiptap h6 {
-  font-size: 18px;
-}
-.post-editor-canvas .tiptap ul,
-.post-editor-canvas .tiptap ol {
-  margin: 12px 0;
-  padding-left: 24px;
-}
-.post-editor-canvas .tiptap ul {
-  list-style: disc;
-}
-.post-editor-canvas .tiptap ol {
-  list-style: decimal;
-}
-.post-editor-canvas .tiptap li > p {
-  margin: 4px 0;
-}
-.post-editor-canvas .tiptap a {
-  color: var(--color-focus);
-  text-decoration: underline;
-}
-.post-editor-canvas .tiptap blockquote {
-  margin: 16px 0;
-  padding-left: 16px;
-  border-left: 3px solid var(--color-outline);
-  color: var(--color-muted);
-}
 .post-editor-canvas .tiptap .editor-code-block {
-  margin: 16px 0;
   background: var(--color-input);
   border: 1px solid var(--color-outline);
   border-radius: 8px;
@@ -335,24 +276,14 @@
   padding: 16px;
   background: transparent;
   border: 0;
-  font:
-    13px/1.7 ui-monospace,
-    monospace;
   white-space: pre;
 }
 .post-editor-canvas .tiptap :not(pre) > code {
   padding: 2px 4px;
   background: var(--color-raised);
   border-radius: 4px;
-  font-size: 0.875em;
-}
-.post-editor-canvas .tiptap hr {
-  margin: 24px 0;
-  border-color: var(--color-outline);
 }
 .post-editor-canvas .tiptap img {
-  max-width: 100%;
-  height: auto;
   border-radius: 8px;
 }
 .post-editor-canvas .tiptap .ProseMirror-selectednode {
@@ -365,26 +296,9 @@
   content: attr(data-placeholder);
   pointer-events: none;
 }
-.post-editor-canvas .tiptap ul[data-type="taskList"] {
-  list-style: none;
-  padding-left: 0;
-}
-.post-editor-canvas .tiptap ul[data-type="taskList"] > li {
-  display: flex;
-  gap: 10px;
-  align-items: baseline;
-}
-.post-editor-canvas .tiptap ul[data-type="taskList"] > li > div {
-  min-width: 0;
-  flex: 1;
-}
-.post-editor-canvas .tiptap input[type="checkbox"] {
-  accent-color: var(--color-primary);
-}
 .post-editor-canvas .tableWrapper {
   max-width: 100%;
   overflow-x: auto;
-  margin: 16px 0;
   border: 1px solid var(--color-outline);
   border-radius: 8px;
 }

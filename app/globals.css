@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./article-prose.css";
 
 @font-face {
   font-family: "Inter";

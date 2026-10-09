@@ -2,11 +2,15 @@ import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 
 import { contentExtensions } from "@/lib/posts/content-extensions";
 import { readDocument } from "@/lib/posts/document";
+import { isImageParagraph } from "@/lib/posts/prose";
 
 import { ArticleCodeBlock } from "./code-block";
 
 const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>[0]["options"]> = {
   nodeMapping: {
+    paragraph: ({ node, children }) => (
+      <p className={isImageParagraph(node) ? "article-image-block" : undefined}>{children}</p>
+    ),
     table: ({ children }) => (
       // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 保留宽表格的键盘滚动入口。
       <div className="site-table-scroll" tabIndex={0} aria-label="文章表格">
@@ -49,7 +53,7 @@ const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>
 export function ArticleContent({ content }: { content: string }) {
   const document = readDocument(content);
   return (
-    <div className="site-markdown">
+    <div className="site-markdown article-prose">
       {renderToReactElement({
         content: document,
         extensions: contentExtensions(),
