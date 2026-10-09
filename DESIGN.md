@@ -15,6 +15,7 @@ colors:
   input: "#262626"
   input-hover: "#303030"
   foreground: "#F5F5F5"
+  foreground-reading: "#C4C4C4"
   foreground-muted: "#B5B5B5"
   foreground-subtle: "#8F8F8F"
   outline: "#303030"
@@ -197,7 +198,7 @@ YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。
 
 `background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级靠细线、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
 
-正文使用 `foreground`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
+界面正文使用 `foreground`，连续阅读的文章正文使用 `foreground-reading`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
 
 输入占位文字使用 muted，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
 
@@ -235,7 +236,7 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 ## 共用文章正文排版
 
-前台文章正文与后台 Tiptap 正文共用 `app/article-prose.css` 的 `article-prose`，独立于界面 body、文章主标题与工具栏。字体使用共享 sans，正文与强调文字使用 foreground，引用使用 muted；沿用项目主题与场景材质，不复制参考站字体或颜色。正文在桌面和手机使用同一比例：`1.05rem`、无单位行高 `1.75`，强调字重 600。不修改根字号；字号使用 rem，随内容变化的留白使用 em。
+前台文章正文与后台 Tiptap 正文共用 `app/article-prose.css` 的 `article-prose`，独立于界面 body、文章主标题与工具栏。字体使用共享 sans，普通段落、列表内容与表格数据使用 foreground-reading；标题、粗体、表头与代码文字使用 foreground，引用使用 muted，普通列表序号和圆点使用 subtle。语法高亮继续使用共享 syntax 颜色；任务 checkbox 保持原有状态配色。采用 Hugging Face 的正文与强调层级，配色适配项目中性灰背景，不复制参考站冷灰色。正文在桌面和手机使用同一比例：`1.05rem`、无单位行高 `1.75`，强调字重 600。不修改根字号；字号使用 rem，随内容变化的留白使用 em。
 
 | 正文元素         | 字号     | 无单位行高 | 上／下外距     |
 | ---------------- | -------- | ---------- | -------------- |

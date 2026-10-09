@@ -1,5 +1,5 @@
 .article-prose {
-  color: var(--color-foreground);
+  color: var(--color-foreground-reading);
   font-family: var(--font-sans);
   font-size: 1.05rem;
   line-height: 1.75;
@@ -48,6 +48,9 @@
 }
 .article-prose :where(li) {
   margin-block: 0.5em;
+}
+.article-prose :where(li)::marker {
+  color: var(--color-subtle);
 }
 .article-prose :where(li > p, ul ul, ul ol, ol ul, ol ol) {
   margin-block: 0.75em;
@@ -104,6 +107,7 @@
   border-color: var(--color-outline);
 }
 .article-prose :where(code, pre) {
+  color: var(--color-foreground);
   font-family: var(--font-mono);
 }
 .article-prose :where(:not(pre) > code) {
@@ -136,6 +140,9 @@
 .article-prose :where(table) {
   font-size: 0.875rem;
   line-height: 1.75;
+}
+.article-prose :where(th) {
+  color: var(--color-foreground);
 }
 .article-prose :where(th, td) > p {
   margin: 0;

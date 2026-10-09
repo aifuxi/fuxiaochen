@@ -670,3 +670,11 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 已实现：全仓引用核对后，`.site-back` 的代码消费者只剩 `ArticleBackLink`，规则仅有24px底部外距。删除该CSS选择器及组件旧类名，组件改用 `mb-[var(--space-xl)]` 引用共享24px spacing；文章详情与文章不存在页继续复用同一返回组件。历史记录中的旧类名保留用于追溯，当前实现与设计规格没有该类引用。
 - 运行通过：复用localhost:3000，两个页面返回入口computed margin-bottom均24px、桌面高度36px，DOM中旧类数量0；文章不存在页点击进入 `/posts`。清理后的文章截图实际查看，页面布局保持一致，没有写入数据库。
 - 静态检查通过：全仓lint无错误，保留既有sqlite-import.ts警告；改动文件格式与差异检查通过。本轮仅删除冗余CSS、替换为等值spacing token，未新增测试或重复类型、生产构建与窄屏／完整交互检查。按钮状态、链接行为及24px场景规格未变。截图为本机可视化目录 `article-back/cleanup-final.jpg`。
+
+## 文章阅读颜色层级（2026-10-09）
+
+- 参考采集：通过内置浏览器实际查看、滚动 [Hugging Face 中文文章](https://huggingface.co/learn/agents-course/zh-CN/unit1/agent-steps-and-structure) 的深色正文。参考正文为 `#B3BCC9`、背景为 `#0B0F19`，标题和粗体更亮，普通列表标记更暗；以实际 computed style 和截图确认层级。
+- 已实现／项目适配：新增共享 `foreground-reading: #C4C4C4`，前台 ArticleContent 与后台 Tiptap 共用的普通正文、列表内容及表格数据采用此色。标题、粗体、表头及代码文字保持 `#F5F5F5`；引用沿用 `#B5B5B5`，普通列表序号和圆点改用 `#8F8F8F`，语法高亮保持共享 syntax 颜色。采用参考的阅读与强调层级，适配项目 `#121212` 中性灰背景；先前已完成的字体栈、字号、间距及阅读列宽沿用。同步共享和前后台规范，没有依赖、API 或数据库变更。
+- 运行通过：复用当前项目 localhost:3000 服务。前台现有 Shell 部署文章和后台未保存的临时 Markdown 样例分别在 1440×1000、390×844 下测量，普通正文 computed color 均为 rgb(196,196,196)，列表标记为 rgb(143,143,143)，没有页面横向溢出；桌面与手机截图实际查看。前台标题、代码，以及后台样例的标题、粗体、引用、链接、表头、表格数据和语法高亮均核对实际颜色。
+- 运行通过：前后台代码复制显示“已复制”并恢复“复制代码”；后台任务勾选实际切换为已完成，撤销恢复未完成；撤销导入后正文清空，重做恢复样例。最终撤销清空临时内容并关闭验收页，没有点击保存或写入演示记录。临时视口覆盖与验收标签页已清理。
+- 静态检查与边界：改动文件格式、差异空白检查通过。本轮仅修改 CSS 颜色与规范，未新增测试或重复类型检查、生产构建。链接 hover、active、focus-visible 与减少动态效果沿用原规则，仅源码核对；前台引用和表格专用样例、后台专注模式及链接编辑、跨浏览器、真实触屏未在本轮运行。截图不作为未操作交互的通过证据。证据保存在本机可视化目录 `prose-dark-audit/` 的 `06-prose-colors-desktop.jpg`、`07-prose-colors-editor-mobile.jpg`、`08-prose-colors-editor-desktop.jpg`、`09-prose-colors-mobile.jpg` 与 `prose-colors-verification.json`。
