@@ -1066,9 +1066,6 @@ html:has(.site-layout) {
   font-size: var(--text-body);
   line-height: 1.8;
 }
-.site-back {
-  margin-bottom: 24px;
-}
 .site-main.site-article {
   max-width: 56rem;
 }

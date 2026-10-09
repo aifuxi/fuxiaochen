@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function ArticleBackLink() {
   return (
     <Button
-      className="site-back"
+      className="mb-[var(--space-xl)]"
       variant="ghost"
       size="compact"
       nativeButton={false}

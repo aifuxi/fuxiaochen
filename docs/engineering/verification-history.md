@@ -656,3 +656,9 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：复用localhost:3000。1440×1000下返回控件高36px，透明背景、13px共享label、999px共享胶囊圆角、16px装饰箭头；控件left=main left=267px。Tab／Shift+Tab回到链接后focus-visible=true，轮廓为2px focus。390×844下控件高44px，left=main left=20px，页面scrollWidth380；Enter真实进入 `/posts`。文章不存在页显示相同44px链接，点击真实进入文章列表。两页布局与桌面焦点截图实际查看，最终回到文章详情。
 - 静态检查通过：项目类型检查沿用仓库外临时配置排除既有data发布目录与并行开发缓存，正式配置未改；全仓lint无错误、保留既有sqlite-import.ts的unsafe type assertion警告；改动文件格式、差异空白检查通过。本轮仅复用已有组件与调整页面布局，未新增依赖或测试、未重复生产构建。
 - 仅源码核对／未验证／不适用：hover、active及减少动态效果沿用共享ghost按钮规则，本轮未单独运行这些状态；真实触屏、跨浏览器与屏幕阅读器未验证。该入口没有loading、disabled或提交状态，不补虚假状态。未写入数据库，视口覆盖已恢复。证据保存于本机可视化目录 `article-back/`：desktop-final、desktop-focus、mobile及not-found-mobile截图。
+
+## 清理旧返回样式类（2026-10-09）
+
+- 已实现：全仓引用核对后，`.site-back` 的代码消费者只剩 `ArticleBackLink`，规则仅有24px底部外距。删除该CSS选择器及组件旧类名，组件改用 `mb-[var(--space-xl)]` 引用共享24px spacing；文章详情与文章不存在页继续复用同一返回组件。历史记录中的旧类名保留用于追溯，当前实现与设计规格没有该类引用。
+- 运行通过：复用localhost:3000，两个页面返回入口computed margin-bottom均24px、桌面高度36px，DOM中旧类数量0；文章不存在页点击进入 `/posts`。清理后的文章截图实际查看，页面布局保持一致，没有写入数据库。
+- 静态检查通过：全仓lint无错误，保留既有sqlite-import.ts警告；改动文件格式与差异检查通过。本轮仅删除冗余CSS、替换为等值spacing token，未新增测试或重复类型、生产构建与窄屏／完整交互检查。按钮状态、链接行为及24px场景规格未变。截图为本机可视化目录 `article-back/cleanup-final.jpg`。
