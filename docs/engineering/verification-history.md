@@ -649,3 +649,10 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：窄屏代码复制显示“已复制”，随后复位“复制代码”；返回文章列表后实测栏目宽760px，浏览器返回恢复文章。只查看评论布局，未提交评论或写入数据库。
 - 静态检查：全仓lint、改动文件格式与差异空白检查通过；lint保留既有sqlite-import.ts的unsafe type assertion警告。沿用此前仓库外验收配置隔离既有data发布临时目录及并行开发缓存，项目类型检查通过；正式配置未修改。本轮是局部宽度及class变更，未重复生产构建，前次构建不作为本轮生产浏览器通过证据。
 - 未验证：真实200%缩放、放大根字号、宽表格专用样例、全部评论交互、跨浏览器及真实触屏本轮未重复运行；相对宽度与局部滚动规则已源码核对。视口覆盖已恢复。证据保存于本机可视化目录 `article-width/`：参考1920px截图、文章1440/390px截图与measurements.json。
+
+## 文章返回入口规范对齐（2026-10-09）
+
+- 问题与已实现：文章详情及文章不存在页的 `.site-back` 仍使用自定义裸链接，未引用共享页面操作尺寸与ghost状态。新增两页共用的 `ArticleBackLink`，复用本地 Base UI Button 与 Next Link，ghost／compact、16px左箭头、原有“返回文章列表”文案；保留 `/posts` 的真实链接与link角色。`.site-back` 仅维护24px场景外距，移除自设字号、高度等规则。前台规范同步；共享按钮实现、阅读列宽及导航行为没有修改。
+- 运行通过：复用localhost:3000。1440×1000下返回控件高36px，透明背景、13px共享label、999px共享胶囊圆角、16px装饰箭头；控件left=main left=267px。Tab／Shift+Tab回到链接后focus-visible=true，轮廓为2px focus。390×844下控件高44px，left=main left=20px，页面scrollWidth380；Enter真实进入 `/posts`。文章不存在页显示相同44px链接，点击真实进入文章列表。两页布局与桌面焦点截图实际查看，最终回到文章详情。
+- 静态检查通过：项目类型检查沿用仓库外临时配置排除既有data发布目录与并行开发缓存，正式配置未改；全仓lint无错误、保留既有sqlite-import.ts的unsafe type assertion警告；改动文件格式、差异空白检查通过。本轮仅复用已有组件与调整页面布局，未新增依赖或测试、未重复生产构建。
+- 仅源码核对／未验证／不适用：hover、active及减少动态效果沿用共享ghost按钮规则，本轮未单独运行这些状态；真实触屏、跨浏览器与屏幕阅读器未验证。该入口没有loading、disabled或提交状态，不补虚假状态。未写入数据库，视口覆盖已恢复。证据保存于本机可视化目录 `article-back/`：desktop-final、desktop-focus、mobile及not-found-mobile截图。

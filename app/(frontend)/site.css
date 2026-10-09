@@ -1067,11 +1067,6 @@ html:has(.site-layout) {
   line-height: 1.8;
 }
 .site-back {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  font-size: 13px;
-  color: var(--color-muted);
   margin-bottom: 24px;
 }
 .site-main.site-article {

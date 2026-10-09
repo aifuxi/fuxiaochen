@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArticleBackLink } from "@/components/frontend/article-back-link";
 import { ArticleContent } from "@/components/frontend/article-content";
 import { CategoryDot } from "@/components/frontend/category-dot";
 import { Comments } from "@/components/frontend/comments";
@@ -30,9 +31,7 @@ export default async function PostPage({ params }: Props) {
     <main data-page-motion id="main-content" className="site-main site-article">
       <JsonLd data={articleJsonLd(settings, post)} />
       <article>
-        <Link className="site-back" href="/posts">
-          返回文章列表
-        </Link>
+        <ArticleBackLink />
         <header className="site-article-heading">
           <div className="site-post-meta">
             <time dateTime={post.publishedAt ?? undefined}>{postTime(post.publishedAt, true)}</time>
