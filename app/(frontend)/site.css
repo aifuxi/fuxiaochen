@@ -1074,6 +1074,9 @@ html:has(.site-layout) {
   color: var(--color-muted);
   margin-bottom: 24px;
 }
+.site-main.site-article {
+  max-width: 56rem;
+}
 .site-article-heading {
   margin-bottom: 40px;
 }
