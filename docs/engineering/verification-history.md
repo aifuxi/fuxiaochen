@@ -657,6 +657,14 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 静态检查通过：项目类型检查沿用仓库外临时配置排除既有data发布目录与并行开发缓存，正式配置未改；全仓lint无错误、保留既有sqlite-import.ts的unsafe type assertion警告；改动文件格式、差异空白检查通过。本轮仅复用已有组件与调整页面布局，未新增依赖或测试、未重复生产构建。
 - 仅源码核对／未验证／不适用：hover、active及减少动态效果沿用共享ghost按钮规则，本轮未单独运行这些状态；真实触屏、跨浏览器与屏幕阅读器未验证。该入口没有loading、disabled或提交状态，不补虚假状态。未写入数据库，视口覆盖已恢复。证据保存于本机可视化目录 `article-back/`：desktop-final、desktop-focus、mobile及not-found-mobile截图。
 
+## 字体回退顺序对齐 Hugging Face（2026-10-09）
+
+- 参考采集：在内置浏览器实际查看 [Hugging Face 中文文章](https://huggingface.co/learn/agents-course/zh-CN/unit1/agent-steps-and-structure) 的深色正文，核对 computed font-family 与页面所加载的 `front/build/kube-9820ea6/style.css`。声明顺序为 Source Sans Pro、-apple-system、BlinkMacSystemFont、Segoe UI、Roboto、Helvetica Neue、Noto Sans、Arial、sans-serif、Apple Color Emoji、Segoe UI Emoji、Segoe UI Symbol、Noto Color Emoji；本机浏览器将 BlinkMacSystemFont 规范化显示为 system-ui。
+- 已实现／项目适配：按用户要求只将参考栈首项换成 Inter，其余顺序完整采用；更新共享 `--font-sans` 与 DESIGN.md，`--font-display` 及文章正文继续继承共享栈。Inter 的固定版本 CDN、Latin 子集、等宽代码字体、字号、颜色和间距均沿用。此次不实施先前讨论的正文颜色建议，没有新增字体文件或依赖。
+- 运行通过：复用已有 localhost:3000 服务。在 1440×1000 与 390×844 下核对文章标题、正文和控件的字体继承，页面没有横向溢出，标题自然换行；手机返回文章列表实际成功。共享组件展示页标题、按钮及输入框，以及已有登录会话下的后台工作台标题与按钮，computed font-family 均采用新栈。将两站 computed 字体拆为列表后，首项 Inter 以外的所有项逐项相等。截图实际查看，视口覆盖已恢复。
+- 验证边界：访问 `/login` 因已有会话跳转后台，登录表单未运行验证；后台仅检查壳与文字，业务数据加载结果及编辑器交互未验收。Windows、Android、其他浏览器、实际字形来源及 Inter CDN 失败回退未验证；字体声明不等于逐字形渲染证明。此变更不新增交互状态，hover、active 与减少动态效果不适用。本轮仅调整 CSS 字体栈与文档，未新增测试或重复类型检查及生产构建。
+- 静态检查与证据：改动文件格式及差异空白检查通过；证据保存于本机可视化目录 `prose-dark-audit/` 的 `04-font-stack-article.jpg`、`05-font-stack-article-mobile.jpg` 与 `font-stack-verification.json`。
+
 ## 清理旧返回样式类（2026-10-09）
 
 - 已实现：全仓引用核对后，`.site-back` 的代码消费者只剩 `ArticleBackLink`，规则仅有24px底部外距。删除该CSS选择器及组件旧类名，组件改用 `mb-[var(--space-xl)]` 引用共享24px spacing；文章详情与文章不存在页继续复用同一返回组件。历史记录中的旧类名保留用于追溯，当前实现与设计规格没有该类引用。
