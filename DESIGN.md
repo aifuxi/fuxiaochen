@@ -98,6 +98,14 @@ motion:
   ease: "cubic-bezier(0.22, 1, 0.36, 1)"
   lift-ease: "cubic-bezier(0.34, 1.36, 0.64, 1)"
   lift-max: 6px
+cursor:
+  size: 28px
+  hotspotX: 5
+  hotspotY: 4
+  strokeWidth: 1.75px
+  shadowOffsetY: 1px
+  shadowBlur: 1.5px
+  shadowOpacity: 0.35
 scrollbar:
   trackWidth: 10px
   thumbWidth: 6px
@@ -180,15 +188,16 @@ components:
 
 YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
 
-| 目标 token        | 运行时对应                       | 同步要求                                                                                             |
-| ----------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `colors.*`        | Tailwind v4 `--color-*`          | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其他颜色同名映射 |
-| `typography.*`    | 字体变量与语义排版 class         | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family      |
-| `rounded.*`       | `--radius-*`                     | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                    |
-| `spacing.*`       | 本地间距变量或等值 Tailwind 间距 | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                   |
-| `control-sizes.*` | 本地组件 size / 触屏目标         | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch          |
-| `motion.*`        | 本地过渡时长、曲线与位移变量     | 按反馈职责选择，不在业务页面新增临时时长                                                             |
-| `scrollbar.*`     | 滚动条轨道、滑块宽度             | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                               |
+| 目标 token        | 运行时对应                        | 同步要求                                                                                             |
+| ----------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `colors.*`        | Tailwind v4 `--color-*`           | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其他颜色同名映射 |
+| `typography.*`    | 字体变量与语义排版 class          | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family      |
+| `rounded.*`       | `--radius-*`                      | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                    |
+| `spacing.*`       | 本地间距变量或等值 Tailwind 间距  | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                   |
+| `control-sizes.*` | 本地组件 size / 触屏目标          | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch          |
+| `motion.*`        | 本地过渡时长、曲线与位移变量      | 按反馈职责选择，不在业务页面新增临时时长                                                             |
+| `cursor.*`        | `public/cursors/` SVG 与 CSS 热点 | 造型资产沿用共享颜色；尺寸、描边、阴影和热点同步，CSS 变量按语义选择资产                             |
+| `scrollbar.*`     | 滚动条轨道、滑块宽度              | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                               |
 
 映射已在 `app/globals.css` 接入：排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
 
@@ -262,7 +271,9 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 可交互组件按语义覆盖 hover、active、focus-visible、disabled 与 `prefers-reduced-motion`；静态容器无需虚假状态。hover 轻微提亮，active 压暗，键盘焦点保留清晰的 2px focus 轮廓。选中状态不能代替焦点；禁用和加载同时有可读文字或状态说明。交互图标具有可读名称，装饰图形从辅助技术中隐藏。
 
-使用原生指针及控件对应的 text、pointer、not-allowed 等语义，不隐藏系统指针、不挂载装饰光标。焦点、标签与真实点击区域由控件提供，指针不承担状态反馈。
+精细指针且支持 hover、未启用 forced-colors 时，全站使用 Afterglow CSS SVG 指针：28×28px 画布、热点 (5, 4)、圆角斜箭头和柔和阴影。默认 foreground 填充、background 描边；可点击区域 primary 填充、foreground 描边，按下使用 primary-pressed，松开恢复操作色、移出恢复所在区域指针。资产颜色对应 YAML 的共享 token；调整主题颜色时同步 `public/cursors/` 资产，不新增独立色值规范。
+
+采用 [Recent](https://recent.design/) 的圆润箭头、描边和 CSS 光标方式，按本项目暗色主题与操作语义适配；没有鼠标跟随层、尾迹或循环动画。输入框、Textarea 和 contenteditable 使用 text；禁用控件覆盖原生 disabled、aria-disabled 与 Base UI data-disabled，使用 not-allowed；拖拽、缩放及浏览器文本选择继续使用其语义。粗指针、无 hover、forced-colors 和资产加载失败时使用系统光标，减少动态效果下静态光标不变。焦点、标签与真实点击区域仍由控件提供，颜色不是唯一操作提示。参考多人在线指针、头像与聊天不在本次范围。
 
 时长与曲线选择 motion token：micro 用于微小反馈，quick 用于短状态切换，standard 用于面板或选中状态，expressive 用于展示性微卡位移。展示卡或首页微卡最大上浮 lift-max；后台业务卡、表格行与字段分组不单独入场、上浮或循环。
 
@@ -354,3 +365,5 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 迁移说明：逐页视觉规格进入前台 / 后台场景；业务规则进入产品行为；正文格式与查询机制进入数据库维护；上传协议进入媒体存储；调度与备份执行条件引用部署指南。文章列宽和业务卡材质在后台场景只维护一次，历史验收事实保留。
 
 2026-10-07 已优化用色规范，区分默认灰阶材质、品牌强调、分类识别和状态反馈。本次仅扩展规范许可，现有页面和 token 数值保持原状；新增可选强调未实施、未运行验收，具体范围见[用色规范优化记录](docs/engineering/verification-history.md#用色规范优化2026-10-07)。
+
+2026-10-09 按用户要求将指针更新为 Recent 风格的 Afterglow CSS SVG 造型，并适配全站操作与编辑语义。当前实现、运行回归及剩余边界见 [Recent 指针适配](docs/engineering/verification-history.md#recent-指针适配2026-10-09)；上表保留 2026-10-06 的历史事实。

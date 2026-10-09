@@ -28,7 +28,7 @@
   color: inherit;
   font: inherit;
   text-align: left;
-  cursor: pointer;
+  cursor: var(--cursor-action);
   transition:
     color 150ms,
     background-color 150ms;

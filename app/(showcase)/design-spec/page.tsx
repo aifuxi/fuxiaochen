@@ -291,7 +291,10 @@ function ErrorStatePreview() {
             aria-label="显示错误"
             touchTarget
           />
-          <label htmlFor="error-preview-invalid" className="cursor-pointer text-[13px]">
+          <label
+            htmlFor="error-preview-invalid"
+            className="cursor-[var(--cursor-action)] text-[13px]"
+          >
             显示错误
           </label>
         </div>
@@ -303,7 +306,10 @@ function ErrorStatePreview() {
             aria-label="禁用控件"
             touchTarget
           />
-          <label htmlFor="error-preview-disabled" className="cursor-pointer text-[13px]">
+          <label
+            htmlFor="error-preview-disabled"
+            className="cursor-[var(--cursor-action)] text-[13px]"
+          >
             禁用控件
           </label>
         </div>
@@ -848,7 +854,7 @@ export default function Page() {
                     <span>
                       <label
                         htmlFor="notification-preview-switch"
-                        className="block cursor-pointer text-[13px] font-medium"
+                        className="block cursor-[var(--cursor-action)] text-[13px] font-medium"
                       >
                         通知预览
                       </label>
@@ -1082,7 +1088,10 @@ export default function Page() {
                       touchTarget
                       defaultChecked
                     />
-                    <label htmlFor="form-updates" className="cursor-pointer text-[13px]">
+                    <label
+                      htmlFor="form-updates"
+                      className="cursor-[var(--cursor-action)] text-[13px]"
+                    >
                       接收后续更新
                     </label>
                   </div>
@@ -1344,23 +1353,40 @@ export default function Page() {
           </div>
           <Card className="mt-6 flex flex-col gap-4 p-5">
             <div>
-              <h3 className="text-[13px] font-medium text-white">原生指针</h3>
+              <h3 className="text-[13px] font-medium text-white">Afterglow 指针</h3>
               <p className="mt-1 text-[11px] text-[var(--color-muted)]">
-                移过普通区域、按钮与输入框，核对系统指针、操作指针与文本光标。
+                浅色箭头浏览，蓝色箭头操作，按下时压暗；文字输入保留文本光标。
               </p>
+            </div>
+            <div className="flex gap-6 text-xs text-[var(--color-muted)]">
+              {[
+                ["default", "浏览"],
+                ["action", "操作"],
+                ["pressed", "按下"],
+              ].map(([state, label]) => (
+                <span key={state} className="flex items-center gap-2">
+                  {/* 光标资产同时作为静态样例，便于触屏查看造型。 */}
+                  {/* oxlint-disable-next-line nextjs/no-img-element -- 原尺寸 SVG 指针样例，无需图片优化。 */}
+                  <img src={`/cursors/afterglow-${state}.svg`} width={28} height={28} alt="" />
+                  {label}
+                </span>
+              ))}
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <span className="text-xs text-[var(--color-muted)]">普通区域</span>
               <Button size="sm" onClick={() => showNotice("指针按钮 · 已触发")}>
                 悬停或点击
               </Button>
+              <Button size="sm" disabled>
+                暂不可用
+              </Button>
               <div className="space-y-2">
-                <label htmlFor="native-cursor-input" className="block text-xs">
+                <label htmlFor="afterglow-cursor-input" className="block text-xs">
                   文本输入
                 </label>
                 <Input
                   type="text"
-                  id="native-cursor-input"
+                  id="afterglow-cursor-input"
                   placeholder="在这里输入文字"
                   className="w-full sm:w-52"
                 />

@@ -678,3 +678,25 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：复用当前项目 localhost:3000 服务。前台现有 Shell 部署文章和后台未保存的临时 Markdown 样例分别在 1440×1000、390×844 下测量，普通正文 computed color 均为 rgb(196,196,196)，列表标记为 rgb(143,143,143)，没有页面横向溢出；桌面与手机截图实际查看。前台标题、代码，以及后台样例的标题、粗体、引用、链接、表头、表格数据和语法高亮均核对实际颜色。
 - 运行通过：前后台代码复制显示“已复制”并恢复“复制代码”；后台任务勾选实际切换为已完成，撤销恢复未完成；撤销导入后正文清空，重做恢复样例。最终撤销清空临时内容并关闭验收页，没有点击保存或写入演示记录。临时视口覆盖与验收标签页已清理。
 - 静态检查与边界：改动文件格式、差异空白检查通过。本轮仅修改 CSS 颜色与规范，未新增测试或重复类型检查、生产构建。链接 hover、active、focus-visible 与减少动态效果沿用原规则，仅源码核对；前台引用和表格专用样例、后台专注模式及链接编辑、跨浏览器、真实触屏未在本轮运行。截图不作为未操作交互的通过证据。证据保存在本机可视化目录 `prose-dark-audit/` 的 `06-prose-colors-desktop.jpg`、`07-prose-colors-editor-mobile.jpg`、`08-prose-colors-editor-desktop.jpg`、`09-prose-colors-mobile.jpg` 与 `prose-colors-verification.json`。
+
+## Recent 指针适配（2026-10-09）
+
+- 范围：全站普通区域与操作指针、共享 Button／Select／Switch／Tabs／Accordion／Picker、菜单和表格排序、前台微卡、后台及媒体操作；新增三份静态 SVG 资产和 `/design-spec#motion` 可操作样例。共享与前后台规范同步，旧验收事实保留。业务动作、数据请求和数据库没有变更。
+- 参考采集：通过内置浏览器实际访问 [Recent](https://recent.design/)，初始读取视口 1080×953，页面顶部；实际打开排序菜单、Escape 关闭及点击普通区域，并核对 DOM／computed cursor。参考本地光标是 CSS data-URL SVG，28×28、热点 (5,4)，黑色填充、白色描边约2.06px、圆润斜箭头与阴影；普通区域和按钮沿用该造型。其他访客的彩色箭头来自 presence 层，实际观察到进出可见区域；其远端同步机制没有完整验收。参考浏览器缩放未单独确认。
+- 采用：圆润斜箭头、描边与柔和阴影、浏览器原生渲染 CSS 光标和准确热点。项目适配：重绘箭头，默认 foreground／background，操作 primary／foreground，按下 primary-pressed／foreground；1.75px 描边与轻阴影，复用共享颜色并在 YAML 定义造型参数。保留 text、not-allowed、grab／grabbing 和 resize 语义；没有跟随 DOM 层、帧循环、指针移动监听或依赖新增。不在本次范围：参考多人在线、头像、聊天和远端指针，依据本次只授权当前项目鼠标指针视觉适配。
+
+| 项目                                      | 已实现 | 运行结果           | 证据或边界                                                                                                                                                          |
+| ----------------------------------------- | ------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 普通区域、操作及 hover                    | 是     | 通过               | 1280×720、缩放1；普通区域 computed cursor 为 default SVG，实际悬停按钮 `:hover=true`、action SVG；移出后 hover=false，所在普通区域恢复 default                      |
+| 按下、松开、真实激活                      | 是     | 通过               | 将焦点返回样例按钮，以 Space 持续按下期间读取 `:active=true`、pressed SVG，松开恢复 action；鼠标与键盘实际显示“指针按钮 · 已触发”；鼠标持续按下未单独采样           |
+| 文本输入与焦点                            | 是     | 通过               | 输入“指针验收”后清空；computed cursor=text；Tab 跳过禁用按钮，Shift+Tab 回到样例按钮，focus-visible=true、2px focus 轮廓                                            |
+| 禁用与恢复                                | 是     | 通过               | 新样例 disabled 按钮 not-allowed；展示页开启“禁用控件”，Base UI Select data-disabled 生效、指针 not-allowed；关闭后恢复操作指针；aria-disabled 专用实例只核对选择器 |
+| 共享 Select                               | 是     | 通过               | 触发器和 Portal 选项为 action SVG，实际选择“前端开发”并显示新值；禁用与恢复不改变选择结果                                                                           |
+| 前台与后台消费者                          | 是     | 通过（抽查）       | 首页阅读 CTA action SVG，点击真实进入 `/posts`；后台导航与账户弹窗关闭按钮 action SVG，Escape 关闭账户弹窗并回焦账户菜单；未操作退出登录                            |
+| 窄屏样例                                  | 是     | 通过（布局）       | 390×844、页面 scrollWidth380；三份28px资产加载完成，按钮与输入纵向排列，点击仍显示反馈；缩窄视口不等同于粗指针模拟                                                  |
+| 粗指针、无 hover、forced-colors、资产失败 | 是     | 仅源码核对／未运行 | CSS 精细指针且 hover、forced-colors:none 才启用 SVG；其他条件与各 url 尾部使用系统 fallback。没有可用媒体偏好模拟能力，本次未真实运行这些条件                       |
+| 减少动态效果与生命周期                    | 是     | 仅源码核对／不适用 | 指针为静态 CSS 资产，无动画、计时器或监听需要取消；减少动态效果下造型不变。系统 reduce 偏好未实际切换                                                               |
+| 编辑器拖拽、选择与缩放                    | 是     | 仅源码核对         | contenteditable 保留 text、原有 grab／grabbing 未改；真实拖拽、Textarea resize 及操作系统文本选择未重新运行                                                         |
+
+- 静态检查：全仓 lint 无错误，保留既有 sqlite-import.ts unsafe type assertion 警告；改动文件格式、差异空白检查通过。原始 `npm run typecheck` 失败于既有 `data/release-20261007-OXUmzv/` 发布临时目录缺失 Prisma contract；仓库外临时配置排除 data 并取消增量后，仍有未改动的 media/storage.ts、seo.integration.test.ts、sqlite-import.test.ts 的 Buffer／EventTarget 类型错误，因此本轮不声称类型检查通过。正式 tsconfig 未修改，未为通过检查修改无关文件。未重复生产构建。
+- 边界：登录页因已有会话未单独验收；表格排序、菜单项、媒体和后台全量页面只核对消费者样式接入，真实触屏、其他浏览器、操作系统放大指针及屏幕阅读器未运行。SVG 加载与 computed cursor 不等同于所有平台的系统光标渲染证明。没有写入演示业务数据，临时视口恢复，最终保留指针展示页。桌面、窄屏及局部预览截图实际查看；证据目录为本机可视化 `recent-cursor/`（desktop.png、mobile.png、preview.png）。

@@ -296,7 +296,7 @@ html:has(.site-layout) {
   min-width: 0;
   border-radius: var(--radius-lg);
   pointer-events: auto;
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .site-home-portal[data-position="categories"] {
   --portal-icon-angle: -4deg;

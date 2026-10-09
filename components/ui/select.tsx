@@ -22,7 +22,7 @@ export function SelectTrigger({
     <BaseSelect.Trigger
       type="button"
       className={cn(
-        "ds-input flex h-[var(--control-form)] w-full cursor-pointer items-center justify-between gap-3 px-3 text-left text-sm leading-5 data-placeholder:text-[var(--color-subtle)]",
+        "ds-input flex h-[var(--control-form)] w-full cursor-[var(--cursor-action)] items-center justify-between gap-3 px-3 text-left text-sm leading-5 data-placeholder:text-[var(--color-subtle)]",
         size === "compact" && "ds-control-compact",
         className,
       )}

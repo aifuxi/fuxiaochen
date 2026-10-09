@@ -98,11 +98,83 @@
   --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --motion-lift-ease: cubic-bezier(0.34, 1.36, 0.64, 1);
   --motion-lift-max: 6px;
+  --cursor-default: auto;
+  --cursor-action-rest: pointer;
+  --cursor-pressed: pointer;
+  --cursor-action: var(--cursor-action-rest);
   --scrollbar-track-width: 10px;
   --scrollbar-thumb-width: 6px;
 }
 html {
   scroll-behavior: smooth;
+  cursor: var(--cursor-default);
+}
+
+/* 使用浏览器光标渲染，热点与箭头尖端对齐；无跟随层或持续动画。 */
+@media (hover: hover) and (pointer: fine) and (forced-colors: none) {
+  :root {
+    --cursor-default: url("/cursors/afterglow-default.svg") 5 4, auto;
+    --cursor-action-rest: url("/cursors/afterglow-action.svg") 5 4, pointer;
+    --cursor-pressed: url("/cursors/afterglow-pressed.svg") 5 4, pointer;
+  }
+}
+
+@layer base {
+  :where(a[href], button, summary, [role="button"], [role="link"]) {
+    cursor: var(--cursor-action);
+  }
+}
+
+:where(
+  a[href],
+  button,
+  summary,
+  label[for],
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="checkbox"],
+  [role="radio"],
+  [role="switch"],
+  [role="option"],
+  [role^="menuitem"]
+):active {
+  --cursor-action: var(--cursor-pressed);
+}
+
+/* 编辑、选择、拖拽与禁用继续提供系统语义。 */
+:where(
+  input:not(
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="color"],
+    [type="file"],
+    [type="button"],
+    [type="submit"],
+    [type="reset"]
+  ),
+  textarea,
+  [contenteditable]:not([contenteditable="false"])
+) {
+  cursor: text;
+}
+:where(
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="color"],
+  input[type="file"]
+) {
+  cursor: var(--cursor-action);
+}
+:is(a, button, input, textarea, select, [role], label):is(
+  :disabled,
+  [aria-disabled="true"],
+  [data-disabled]
+) {
+  cursor: not-allowed;
 }
 
 .ds-display {
@@ -318,7 +390,7 @@ a {
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
   text-decoration: none;
-  cursor: pointer;
+  cursor: var(--cursor-action);
   -webkit-tap-highlight-color: transparent;
   transition:
     background-color var(--motion-quick) var(--motion-ease),
@@ -439,7 +511,7 @@ a {
     box-shadow var(--motion-quick) var(--motion-ease);
 }
 .ds-color-input {
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .ds-input::placeholder {
   color: var(--color-muted);
@@ -527,7 +599,7 @@ a {
   padding: 0 12px;
   color: var(--color-foreground);
   font-size: 13px;
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .ds-picker-item:not([data-disabled]):where(:hover, [data-highlighted]) {
   background: rgba(255, 255, 255, 0.08);
@@ -550,7 +622,7 @@ a {
   border-radius: 9px;
   background: transparent;
   color: var(--color-muted);
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .ds-picker-action:hover:not(:disabled):not([data-disabled]) {
   background: rgba(255, 255, 255, 0.07);
@@ -580,7 +652,7 @@ a {
 .ds-accordion-trigger {
   border-radius: var(--radius-sm);
   color: var(--color-foreground);
-  cursor: pointer;
+  cursor: var(--cursor-action);
   transition:
     color var(--motion-quick) var(--motion-ease),
     background-color var(--motion-quick) var(--motion-ease);
@@ -656,7 +728,7 @@ a {
   font-size: var(--text-label);
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
-  cursor: pointer;
+  cursor: var(--cursor-action);
   transition: color var(--motion-quick) var(--motion-ease);
 }
 .ds-tabs-trigger[data-active],

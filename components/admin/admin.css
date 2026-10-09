@@ -67,7 +67,7 @@
   text-align: left;
   text-decoration: none;
   font: 500 12px/1.3 var(--font-sans);
-  cursor: pointer;
+  cursor: var(--cursor-action);
   transition:
     background-color 150ms,
     color 150ms;
@@ -644,7 +644,7 @@
   border-radius: 6px;
   background: transparent;
   color: var(--color-muted);
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .admin-toast button:hover {
   background: #ffffff16;
@@ -762,7 +762,7 @@
   background: transparent;
   color: var(--color-foreground);
   text-align: left;
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .admin-result:hover:not(:disabled) {
   background: var(--color-surface-hover);
@@ -861,7 +861,7 @@
   border-radius: 8px;
   background: var(--color-raised);
   color: var(--color-foreground);
-  cursor: pointer;
+  cursor: var(--cursor-action);
 }
 .admin-file-input:hover::file-selector-button {
   background: var(--color-input-hover);
@@ -1141,7 +1141,7 @@
   color: var(--color-foreground);
   text-align: left;
   font: 500 13px/1.6 var(--font-sans);
-  cursor: pointer;
+  cursor: var(--cursor-action);
   overflow-wrap: anywhere;
 }
 .admin-post-title:hover {
