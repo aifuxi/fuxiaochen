@@ -271,7 +271,7 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 可交互组件按语义覆盖 hover、active、focus-visible、disabled 与 `prefers-reduced-motion`；静态容器无需虚假状态。hover 轻微提亮，active 压暗，键盘焦点保留清晰的 2px focus 轮廓。选中状态不能代替焦点；禁用和加载同时有可读文字或状态说明。交互图标具有可读名称，装饰图形从辅助技术中隐藏。
 
-精细指针且支持 hover、未启用 forced-colors 时，全站使用 Afterglow CSS SVG 指针：28×28px 画布、热点 (5, 4)、圆角斜箭头和柔和阴影。默认 foreground 填充、background 描边；可点击区域 primary 填充、foreground 描边，按下使用 primary-pressed，松开恢复操作色、移出恢复所在区域指针。资产颜色对应 YAML 的共享 token；调整主题颜色时同步 `public/cursors/` 资产，不新增独立色值规范。
+精细指针且支持 hover、未启用 forced-colors 时，全站使用 Afterglow CSS SVG 指针：28×28px 画布、热点 (5, 4)、圆角斜箭头和柔和阴影。三态使用相同路径、尺寸、foreground 描边和热点，以保持可见外轮廓一致；默认 foreground 填充，可点击区域 primary 填充，按下使用 primary-pressed，松开恢复操作色、移出恢复所在区域指针。资产颜色对应 YAML 的共享 token；调整主题颜色时同步 `public/cursors/` 资产，不新增独立色值规范。
 
 采用 [Recent](https://recent.design/) 的圆润箭头、描边和 CSS 光标方式，按本项目暗色主题与操作语义适配；没有鼠标跟随层、尾迹或循环动画。输入框、Textarea 和 contenteditable 使用 text；禁用控件覆盖原生 disabled、aria-disabled 与 Base UI data-disabled，使用 not-allowed；拖拽、缩放及浏览器文本选择继续使用其语义。粗指针、无 hover、forced-colors 和资产加载失败时使用系统光标，减少动态效果下静态光标不变。焦点、标签与真实点击区域仍由控件提供，颜色不是唯一操作提示。参考多人在线指针、头像与聊天不在本次范围。
 

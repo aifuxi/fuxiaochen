@@ -700,3 +700,10 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 
 - 静态检查：全仓 lint 无错误，保留既有 sqlite-import.ts unsafe type assertion 警告；改动文件格式、差异空白检查通过。原始 `npm run typecheck` 失败于既有 `data/release-20261007-OXUmzv/` 发布临时目录缺失 Prisma contract；仓库外临时配置排除 data 并取消增量后，仍有未改动的 media/storage.ts、seo.integration.test.ts、sqlite-import.test.ts 的 Buffer／EventTarget 类型错误，因此本轮不声称类型检查通过。正式 tsconfig 未修改，未为通过检查修改无关文件。未重复生产构建。
 - 边界：登录页因已有会话未单独验收；表格排序、菜单项、媒体和后台全量页面只核对消费者样式接入，真实触屏、其他浏览器、操作系统放大指针及屏幕阅读器未运行。SVG 加载与 computed cursor 不等同于所有平台的系统光标渲染证明。没有写入演示业务数据，临时视口恢复，最终保留指针展示页。桌面、窄屏及局部预览截图实际查看；证据目录为本机可视化 `recent-cursor/`（desktop.png、mobile.png、preview.png）。
+
+## 指针三态视觉大小统一（2026-10-09）
+
+- 问题：三份 SVG 的画布、路径和描边宽度一致，但默认箭头的 background 描边融入近黑底色，可见浅色轮廓比操作态小；这是上次适配遗漏，非刻意的尺寸差异。
+- 已实现：默认箭头描边改为 foreground，与操作／按下态共用浅色外轮廓；三态仍使用同一路径、28×28画布、1.75px描边、相同阴影及热点。仅调整默认 SVG 和共享规范，不调整系统 text、not-allowed、grab／grabbing 的造型或平台尺寸。
+- 运行通过：复用 localhost:3000，在独立验收标签页的1280×720展示页检查三份样例，natural与rendered尺寸均为28×28；实际点击仍显示“指针按钮 · 已触发”，修正后截图实际查看。关闭临时验收页，未刷新用户当前表单或更改其输入。证据为本机 `recent-cursor/consistent-size.png`。
+- 静态检查：确认三态路径、viewBox、热点和描边宽度仍一致；改动文档格式与差异空白检查通过。此次仅修改 SVG 描边色，不重复类型检查、构建或系统语义、窄屏及其他浏览器回归；此前类型检查限制继续有效。
