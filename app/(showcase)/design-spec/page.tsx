@@ -1355,7 +1355,7 @@ export default function Page() {
             <div>
               <h3 className="text-[13px] font-medium text-white">Afterglow 指针</h3>
               <p className="mt-1 text-[11px] text-[var(--color-muted)]">
-                浅色箭头浏览，蓝色箭头操作，按下时压暗；文字输入保留文本光标。
+                深灰箭头浏览，蓝色箭头操作，共用浅色轮廓；按下时压暗，输入保留文本光标。
               </p>
             </div>
             <div className="flex gap-6 text-xs text-[var(--color-muted)]">
