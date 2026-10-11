@@ -1,45 +1,85 @@
+x-runtime: &runtime
+  user: "1000:1000"
+  init: true
+  volumes:
+    - app-data:/app/data
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+x-database-environment: &database-environment
+  DATABASE_URL: ${DATABASE_URL:?请配置 postgres:5432 的生产连接 URL}
+  BACKUP_DIRECTORY: /app/data/backups
+
+x-app-runtime: &app-runtime
+  <<: *runtime
+  dns:
+    - 223.5.5.5
+    - 223.6.6.6
+  environment:
+    <<: *database-environment
+    APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
+    RESTORE_DATABASE_URL: ${RESTORE_DATABASE_URL:-}
+    OSS_BUCKET: ${OSS_BUCKET:-}
+    OSS_REGION: ${OSS_REGION:-cn-hangzhou}
+    OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+    OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
+    OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+    OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
+    OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}
+    OSS_CREDENTIAL_MODE: ${OSS_CREDENTIAL_MODE:-environment}
+    OSS_RAM_ROLE_NAME: ${OSS_RAM_ROLE_NAME:-}
+    ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
+    ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
+    ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
+    ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
+
 services:
   app:
+    <<: *app-runtime
     image: ${APP_IMAGE:-ghcr.io/aifuxi/fuxiaochen:latest}
     restart: unless-stopped
-    init: true
-    dns:
-      - 223.5.5.5
-      - 223.6.6.6
-    environment:
-      APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
-      DATABASE_URL: ${DATABASE_URL:?请配置 postgres:5432 的生产连接 URL}
-      RESTORE_DATABASE_URL: ${RESTORE_DATABASE_URL:-}
-      BACKUP_DIRECTORY: /app/data/backups
-      OSS_BUCKET: ${OSS_BUCKET:-}
-      OSS_REGION: ${OSS_REGION:-cn-hangzhou}
-      OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
-      OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
-      OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
-      OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
-      OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}
-      OSS_CREDENTIAL_MODE: ${OSS_CREDENTIAL_MODE:-environment}
-      OSS_RAM_ROLE_NAME: ${OSS_RAM_ROLE_NAME:-}
-      ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
-      ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
-      ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
-      ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     networks:
       database:
       caddy:
         aliases:
           - fuxiaochen
-    volumes:
-      - app-data:/app/data
-    stop_grace_period: 30s
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
+
+  # 与 app 固定到同一发布 commit；每次部署须重新执行，详见部署文档。
+  migrate:
+    <<: *runtime
+    image: ${TOOLS_IMAGE:-ghcr.io/aifuxi/fuxiaochen-tools:latest}
+    restart: "no"
+    command: ["npm", "run", "db:migrate"]
+    environment: *database-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+
+  # 运维通过 docker compose run --rm tools <命令> 执行，不启动常驻容器。
+  tools:
+    <<: *app-runtime
+    image: ${TOOLS_IMAGE:-ghcr.io/aifuxi/fuxiaochen-tools:latest}
+    profiles:
+      - tools
+    restart: "no"
+    command: ["npm", "run"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+      - caddy
 
   postgres:
     image: postgres:18.6-bookworm

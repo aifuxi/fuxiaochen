@@ -1,6 +1,6 @@
 # GitHub Actions、Portainer 与 Caddy 部署
 
-适用于单机 Docker Standalone。Portainer 从 `https://github.com/aifuxi/fuxiaochen` 拉取 Compose 配置，应用镜像由 GitHub Actions 构建并发布到 `ghcr.io/aifuxi/fuxiaochen`。服务器无需安装 Node.js 或在拉取仓库后重新打包。通过 `ssh aliyun_vps` 准备数据库和维护快照，再在已打开的 Portainer 中重新部署。
+适用于单机 Docker Standalone。Portainer 从 `https://github.com/aifuxi/fuxiaochen` 拉取 Compose 配置，GitHub Actions 将 Web 和运维镜像分别发布到 `ghcr.io/aifuxi/fuxiaochen`、`ghcr.io/aifuxi/fuxiaochen-tools`。服务器无需安装 Node.js 或在拉取仓库后重新打包。通过 `ssh aliyun_vps` 准备数据库和维护快照，再在 Portainer 中重新部署。
 
 ## 当前服务器环境
 
@@ -29,32 +29,36 @@
 
 工作流只构建当前 x86 `ubuntu-latest` runner 的默认平台 `linux/amd64`，不再安装 QEMU 或指定多架构 `platforms`；它与当前云服务器架构一致。本地 `docker build` 同样使用构建器的默认平台，Apple Silicon 上通常得到 `linux/arm64`；在本地准备服务器镜像时需显式使用 `--platform linux/amd64`。更换 CI runner 架构时同步核对发布平台，镜像不会自动适配远程部署服务器。
 
-Action 使用固定 commit SHA，Node.js 基础镜像固定为 `24.21.0-bookworm-slim` 及多架构 digest；升级时一并核对版本与 digest。构建使用包含开发依赖的 `npm ci` 和现有 `npm run build`，保留原生模块安装脚本和 Next.js 的 TypeScript 检查。工作流不运行测试。
+Action 使用固定 commit SHA，Node.js 基础镜像固定为 `24.21.0-bookworm-slim` 及多架构 digest；升级时一并核对版本与 digest。构建使用包含开发依赖的 `npm ci` 和现有 `npm run build`，保留原生模块安装脚本和 Next.js 的 TypeScript 检查。最终 Web 阶段实际执行 Argon2 hash/verify 与 Sharp PNG 编码，缺少当前平台原生文件时构建失败；工作流不运行现有业务回归测试。
 
-镜像仍为单镜像，保留迁移、账号管理、备份恢复、SQLite 导入和排期命令。生产实际需要的 Prisma CLI、`tsx`、`@inquirer/prompts` 放在 `dependencies`；独立 `production-dependencies` 阶段从完整安装结果执行 `npm prune --omit=dev --ignore-scripts --no-audit --no-fund`，只将裁剪后的 `node_modules` 复制到运行镜像。裁剪阶段不重复执行依赖生命周期脚本，已安装的原生模块保留；构建阶段仍使用全部开发工具。没有启用 standalone 或拆分 tools 镜像。
+Dockerfile 提供两个 target：默认 `runtime` 为 Web，`tools` 为运维命令。Next.js 使用 `output: "standalone"`，Web 只复制追踪后的服务端与依赖、`public` 和 `.next/static`，通过 `node server.js` 启动；不携带 Prisma CLI、`tsx`、Composer 或运维源码。迁移、账号管理、备份恢复、SQLite 导入和排期命令均在 tools 中执行。两者来自同一次源码构建，使用相同的 generated contract。
 
-Prisma 使用 CLI `8.0.0-rc.19` 和 PostgreSQL runtime `8.0.0-rc.14`（RC），沿用 Prisma 8 contract 迁移流程；运行镜像安装 PostgreSQL 18 的 `pg_dump`、`pg_restore` 和 `psql`。CLI 的 Composer 及其传递依赖仍保留，运行依赖可能间接保留 TypeScript 等工具，不能把裁剪理解为移除所有开发相关包。
+Argon2 使用 `node-gyp-build` 动态选择原生文件；`outputFileTracingIncludes` 显式保留当前构建进程平台/架构的 prebuilds 与源码编译的 `build/Release` 产物。初次本地交叉架构验证发现 amd64 standalone 只追踪到了 arm64 文件；补齐显式追踪并隔离 Next 缓存后，两个平台都取得对应原生文件，且最终 Web 构建中的原生调用通过。
 
-发布使用仓库提供的 `GITHUB_TOKEN` 和 `packages: write` 权限，不需要把个人 token 放进 Actions。首次运行成功后，在 GitHub 账号的 Packages 中确认 `fuxiaochen` 已生成。镜像包的可见性独立于源码仓库：
+tools 沿用现有生产依赖和源码，以保留 Prisma 8 RC CLI 与全部运维功能。Prisma CLI、`tsx`、`@inquirer/prompts` 保持在 `dependencies`；`production-dependencies` 从完整安装结果执行 `npm prune --omit=dev --ignore-scripts --no-audit --no-fund`。裁剪阶段不重复执行依赖生命周期脚本，已安装的原生模块保留。tools 仍包含 Composer 及其传递依赖，体积较大；Web 的缩小不等于服务器存放两镜像后的总磁盘占用同比缩小。
+
+Prisma 使用 CLI `8.0.0-rc.19` 和 PostgreSQL runtime `8.0.0-rc.14`（RC），沿用 Prisma 8 contract 迁移流程。两镜像共用安装 PostgreSQL 18 客户端的基础阶段：Web 后台在线备份需要 `pg_dump` 和 `pg_restore`，tools 恢复还使用 `psql`。
+
+发布使用仓库提供的 `GITHUB_TOKEN` 和 `packages: write` 权限，不需要把个人 token 放进 Actions。首次运行成功后，在 GitHub 账号的 Packages 中确认 `fuxiaochen` 和 `fuxiaochen-tools` 均已生成，并分别配置可见性。镜像包的可见性独立于源码仓库：
 
 - 公开镜像：在 Package settings 中设置 Public，Portainer 可以匿名拉取。
 - 私有镜像：在 Portainer Registries 添加 `ghcr.io`，填写 GitHub 用户名和具有 `read:packages` 的 PAT classic，并在 Stack 部署时选择该 Registry。不要把 token 写入 Compose 或提交 Git。
 
-正式发布使用 `master` 的已提交代码。先推送并等待该提交的 Actions 成功，再使用 `docker buildx imagetools inspect ghcr.io/aifuxi/fuxiaochen:sha-<完整 SHA>` 核对镜像包含服务器所需的 `linux/amd64`，记录 index digest，并将 `APP_IMAGE` 固定为 `ghcr.io/aifuxi/fuxiaochen@sha256:<digest>`。不要在构建完成前开始停机，也不要靠 `latest` 判断实际部署版本。
+正式发布使用 `master` 的已提交代码。先推送并等待整个 Actions workflow 成功，再对两镜像的 `sha-<完整 SHA>` 分别执行 `docker buildx imagetools inspect`，确认包含服务器所需的 `linux/amd64`，记录各自 index digest，并固定 `APP_IMAGE` 与 `TOOLS_IMAGE`。两者 digest 不同，OCI `org.opencontainers.image.revision` 必须是同一个完整 commit SHA；Compose 配置也使用该提交。两个仓库顺序发布，后一个失败时前一个可能已经发布，不能仅看到 Web 标签出现就部署。不要在构建完成前开始停机，也不要靠 `latest` 判断实际部署版本。
 
 ### 构建缓存
 
-Dockerfile 为 npm 的 `/root/.npm` 和 Next.js 的 `/app/.next/cache` 使用 `sharing=locked` 的 BuildKit cache mount。缓存位于独立挂载中，不进入镜像层；不要在构建末尾删除挂载中的 `.next/cache`，否则下一次无法复用。运行镜像单独创建可写缓存目录，继续由 `node` 用户使用。
+Dockerfile 为 npm 的 `/root/.npm` 和 Next.js 的 `/app/.next/cache` 使用 `sharing=locked` 的 BuildKit cache mount。Next.js 的 mount ID 使用自动目标参数 `TARGETOS`/`TARGETARCH`，按构建平台隔离文件追踪缓存；不会改变目标平台。CI 读取默认 Docker daemon 的 OS/Arch，把同一个 ID 交给 cache-dance。缓存位于独立挂载中，不进入镜像层；不要在构建末尾删除挂载中的 `.next/cache`，否则下一次无法复用。运行镜像单独创建可写缓存目录，继续由 `node` 用户使用。
 
-GitHub Actions 的 `type=gha,mode=max` 复用构建层，不能自动持久化 cache mount 的内容。工作流通过固定版本的 `actions/cache` 与 `buildkit-cache-dance` 恢复、注入、提取并保存 npm 与 Next.js 两份缓存。缓存按 runner 系统、架构和 Dockerfile 隔离；npm 缓存使用 lockfile 对应的保存 key，lockfile 变化时可复用旧下载内容；Next.js 缓存绑定 lockfile 与构建配置，源码变化时恢复上一份兼容缓存，并在每次运行使用新的保存 key，让新编译结果能够持久化。缓存被淘汰或首次构建时正常重新下载、编译，不影响产物正确性。
+GitHub Actions 的 `type=gha,mode=max` 复用构建层，两个 target 共用 builder，分别导出 Web/tools scope，并同时导入两份缓存以复用共同阶段，避免后一份覆盖前一份。层缓存不能自动持久化 cache mount 的内容。工作流通过固定版本的 `actions/cache` 与 `buildkit-cache-dance` 恢复、注入、提取并保存 npm 与 Next.js 两份缓存。缓存按 runner 系统、架构和 Dockerfile 隔离；npm 缓存使用 lockfile 对应的保存 key，lockfile 变化时可复用旧下载内容；Next.js 缓存绑定 lockfile 与构建配置，源码变化时恢复上一份兼容缓存，并在每次运行使用新的保存 key，让新编译结果能够持久化。缓存被淘汰或首次构建时正常重新下载、编译，不影响产物正确性。
 
-本地同一个 builder 跨项目或架构构建时，可以显式使用项目与架构对应的缓存 namespace，例如 `docker build --platform linux/amd64 --build-arg BUILDKIT_CACHE_MOUNT_NS=fuxiaochen-linux-amd64 -t fuxiaochen:local .`。namespace 隔离缓存内容，`sharing=locked` 只避免并发写入。CI 保持默认 namespace，使 cache-dance 的注入和提取与 Dockerfile 的挂载一致。
+本地同一个 builder 在 arm64 与 amd64 间切换时，Next.js 缓存自动隔离；无需设置 `platforms` 或手动缓存 namespace。npm 下载缓存可以复用不同平台各自的包归档。跨项目需要额外隔离时，可使用 `BUILDKIT_CACHE_MOUNT_NS`；CI 保持默认 namespace，使 cache-dance 的注入和提取与 Dockerfile 的挂载一致。`sharing=locked` 只避免并发写入，不提供架构隔离。
 
 `.dockerignore` 排除测试、设计规范、skill 清单及已有的本地依赖、环境文件和构建产物，保留生产源码、迁移和运维脚本。仅修改被排除的文件不会重新触发应用构建。
 
 ### 第一批优化验证
 
-2026-10-11，以 `5783c72f` 的应用源码分别构建原始镜像与优化后的单镜像。本地 Docker 29.4.0 / BuildKit 0.29.0，体积对比使用同一 `linux/arm64` 平台；所有 npm 包的版本、下载地址和 integrity 保持不变，仅调整三项运行依赖的分类。
+以下为第一批单镜像阶段的历史结果（提交 `b6b96e5a`），第二批结果另列。2026-10-11，以 `5783c72f` 的应用源码分别构建原始镜像与优化后的单镜像。本地 Docker 29.4.0 / BuildKit 0.29.0，体积对比使用同一 `linux/arm64` 平台；所有 npm 包的版本、下载地址和 integrity 保持不变，仅调整三项运行依赖的分类。
 
 | 测量项                                                | 原始镜像  | 优化镜像  | 变化                   |
 | ----------------------------------------------------- | --------- | --------- | ---------------------- |
@@ -78,6 +82,33 @@ GitHub Actions 的 `type=gha,mode=max` 复用构建层，不能自动持久化 c
 | 宿主机独立 typecheck | 未通过：现有 data/ 历史发布源码副本缺少 generated，临时排除 data 后仍有 Buffer/Node 类型冲突；本批未修改这些源码、历史数据或 TypeScript 配置                     |
 | 外部服务             | OSS 使用 dummy 配置和媒体 SDK mock，未访问真实 OSS；未推送、发布或部署生产环境                                                                                   |
 
+### 第二批 standalone 与 tools 验证
+
+2026-10-11，在第一批基础上拆分两个 target，使用相同 Node.js 基础镜像与依赖版本。本地 Docker 29.4.0 / BuildKit 0.29.0，以下大小统一测量 `linux/arm64`，MB 为十进制：
+
+| 测量项                                              | 第一批单镜像 | standalone Web       | tools     |
+| --------------------------------------------------- | ------------ | -------------------- | --------- |
+| 压缩内容（containerd image inspect Size，含元数据） | 482.5 MB     | 116.2 MB，减少 75.9% | 470.6 MB  |
+| 解压层总大小（Docker API history Size 总和）        | 2692.3 MB    | 400.3 MB，减少 85.1% | 2641.7 MB |
+
+两镜像共享 9 个基础层。按层 digest 去重后，解压层合计 2696.4 MB，比第一批增加约 4.2 MB（0.16%）；OCI gzip 层去重合计 486.3 MB，比第一批同口径 482.5 MB 增加约 0.78%。它们分别描述解压层与压缩层内容，不是 Docker 总磁盘占用，不包含旧版本镜像、构建缓存、容器写入或数据卷。Web 单独运行显著缩小，服务器同时保存 tools 时总占用基本持平。
+
+同一 builder 顺序重复构建，两 target 均复用 npm 安装、Next.js 构建和 PostgreSQL 客户端安装层，tools 还复用生产依赖裁剪层；含本地导出，Web 约 1.28 秒，tools 约 0.93 秒。独立冷构建 tools 仍会执行共享的 Next.js 构建以取得同一次生成的 contract；CI 先构建 Web，再构建 tools，后一步复用该阶段。真实 GitHub 缓存上传与恢复耗时仍未验证。
+
+| 验证范围                 | 状态与证据                                                                                                                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 两平台两 target 构建     | arm64 与 amd64 均运行通过，Next.js 编译及构建内 TypeScript 检查通过                                                                                                                            |
+| tools 现有测试           | 登录 18/18、PostgreSQL 17/17、SQLite 导入 17/17、SEO 9/9，共 61/61；使用隔离 PostgreSQL 与媒体 mock                                                                                            |
+| standalone Web HTTP 回归 | 8 个前台页、11 个后台页、真实登录与安全 Cookie、API 创建文章/分类/标签、全文检索、代码高亮、排期发布后可读、canonical/JSON-LD/robots/sitemap 运行通过                                          |
+| 资源与原生依赖           | 16 个 Next 静态资源、5 个 public 文件、实际图片优化、Argon2 hash/verify 与 Sharp PNG 处理运行通过；Web 确认不含 Prisma CLI、tsx、Composer 与运维源码                                           |
+| 备份与 tools CLI         | Web 在线备份、幂等重试与归档验证，共享卷读写、tools CLI 备份及独立空库恢复运行通过；恢复保留业务与管理员，撤销会话并关闭自动备份；管理员初始化/重置、排期、媒体 dry-run 和统计清理命令运行通过 |
+| Compose 冷启动与更新     | 本地 Compose 5.1.2：数据库 healthy → 迁移及校验退出 0 → Web 随后启动且 healthy；tools profile 无常驻服务；删除旧 migrate 后同版本重新部署确实重跑迁移                                          |
+| Compose 失败阻断         | 缺少目标数据库时 migrate 退出 2；字段类型漂移时 verify 退出 4；两种情况下 Web 均未启动，修复后重新部署成功                                                                                     |
+| amd64 冒烟验证           | 本地 Docker 仿真：迁移/verify、交互管理员初始化、Argon2/Sharp、HTTP 登录与鉴权、图片优化、在线备份与共享卷 PG18 archive/摘要/0600 权限验证、healthy 均通过；不代表云服务器原生实测             |
+| 容器停止                 | arm64 原生 Web 约 0.07 秒停止；amd64 仿真 Web/tools 约 0.10/0.07 秒停止，SIGTERM 退出码 143，无强杀或 OOM；所有运维临时容器、网络、卷及含凭据文件已清理                                        |
+| CI 与部署                | actionlint、格式与 Compose 配置检查通过；Portainer 2.45.1 的强制重建仅源码核对，未实际部署；未发布 GHCR、未推送或部署生产                                                                      |
+| 验证边界                 | HTTP 回归不代表浏览器全部交互通过；未访问真实 OSS；宿主机独立 typecheck 的现有问题见第一批记录，本批未改变其范围                                                                               |
+
 ## Portainer 从 GitHub 创建 Stack
 
 1. 先将配置推送到 GitHub，等 Actions 构建发布成功，再创建或更新 Stack。
@@ -86,25 +117,28 @@ GitHub Actions 的 `type=gha,mode=max` 复用构建层，不能自动持久化 c
 4. Compose path 填 `compose.yaml`。
 5. 从 `deploy/portainer.env.example` 导入变量，替换真实域名、OSS 地址和凭据；先预置下方的宿主机初始化脚本。全新空库可以部署；已有 SQLite 的站点先执行下方切换流程。
 
-| 变量                         | 配置                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------------------- |
-| `APP_IMAGE`                  | 默认 `ghcr.io/aifuxi/fuxiaochen:latest`；可改成分支、版本、`sha-<完整 SHA>` 或 `@sha256:<digest>` |
-| `APP_ORIGIN`                 | 必填，例如 `https://fuxiaochen.com`；不带路径、尾斜杠，必须与浏览器访问地址完全一致               |
-| `APP_DATA_VOLUME`            | 默认 `fuxiaochen-data`，升级时保留同一个卷                                                        |
-| `DATABASE_URL`               | 必填，`postgresql://fuxiaochen:<URL编码的应用密码>@postgres:5432/fuxiaochen`                      |
-| `POSTGRES_ADMIN_PASSWORD`    | PostgreSQL 管理账号密码，不能与应用密码混用                                                       |
-| `POSTGRES_APP_PASSWORD`      | 普通应用账号的初始化密码，与 DATABASE_URL 中的密码对应                                            |
-| `POSTGRES_DATA_VOLUME`       | 默认 `fuxiaochen-postgres`，升级时保留同一卷                                                      |
-| `POSTGRES_INIT_SCRIPT_PATH`  | 必填宿主机绝对路径，示例 `/srv/fuxiaochen/postgres-init.sh`；脚本须与发布 commit 一致             |
-| `CADDY_NETWORK`              | 复用服务器已存在的外部网络，默认 `infra_edge`                                                     |
-| `OSS_*`、`ALIBABA_CLOUD_*`   | 沿用 `.env.example` 的配置；在 Portainer 填写真实值                                               |
-| `ANALYTICS_CLIENT_IP_HEADER` | 默认空；按后面的代理配置确认后可填 `x-real-ip`                                                    |
+| 变量                         | 配置                                                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `APP_IMAGE`                  | 默认 `ghcr.io/aifuxi/fuxiaochen:latest`；可改成分支、版本、`sha-<完整 SHA>` 或 `@sha256:<digest>`     |
+| `TOOLS_IMAGE`                | 默认 `ghcr.io/aifuxi/fuxiaochen-tools:latest`；正式部署固定与 `APP_IMAGE` 同一 commit 的标签或 digest |
+| `APP_ORIGIN`                 | 必填，例如 `https://fuxiaochen.com`；不带路径、尾斜杠，必须与浏览器访问地址完全一致                   |
+| `APP_DATA_VOLUME`            | 默认 `fuxiaochen-data`，升级时保留同一个卷                                                            |
+| `DATABASE_URL`               | 必填，`postgresql://fuxiaochen:<URL编码的应用密码>@postgres:5432/fuxiaochen`                          |
+| `POSTGRES_ADMIN_PASSWORD`    | PostgreSQL 管理账号密码，不能与应用密码混用                                                           |
+| `POSTGRES_APP_PASSWORD`      | 普通应用账号的初始化密码，与 DATABASE_URL 中的密码对应                                                |
+| `POSTGRES_DATA_VOLUME`       | 默认 `fuxiaochen-postgres`，升级时保留同一卷                                                          |
+| `POSTGRES_INIT_SCRIPT_PATH`  | 必填宿主机绝对路径，示例 `/srv/fuxiaochen/postgres-init.sh`；脚本须与发布 commit 一致                 |
+| `CADDY_NETWORK`              | 复用服务器已存在的外部网络，默认 `infra_edge`                                                         |
+| `OSS_*`、`ALIBABA_CLOUD_*`   | 沿用 `.env.example` 的配置；在 Portainer 填写真实值                                                   |
+| `ANALYTICS_CLIENT_IP_HEADER` | 默认空；按后面的代理配置确认后可填 `x-real-ip`                                                        |
 
 Compose 通过显式 `environment` 注入变量，不依赖仓库中不存在的 `.env` 或 `stack.env`。宿主机文件和开发环境变量不会进入镜像。OSS 上传仍由浏览器访问 `OSS_UPLOAD_ENDPOINT`，容器服务端使用 `OSS_SERVER_ENDPOINT`，两者应按服务器和客户端实际网络配置；部署域名也需加入 Bucket CORS 的允许来源。
 
 2026-10-07 实测，原应用容器的 Docker DNS 将当前 OSS 公开域名解析为 `198.18.0.10`，请求超时；宿主机及阿里 DNS 得到真实地址。同一 `infra_edge` 网络的一次性容器在默认 DNS 下也失败，指定 `223.5.5.5`、`223.6.6.6` 后解析与 OSS HEAD 请求成功。因此生产 `app` 显式配置这两个 DNS，不修改宿主机或 gateway 的 DNS。Docker 内部的 `postgres` 服务名仍由容器网络解析；正式切换时同时验证数据库连接和 OSS 访问。
 
-容器使用 `node` 用户（UID/GID 1000）。默认启动命令先执行现有 `npm run db:migrate`，其中依次运行 Prisma 8 的 `db migrate` 与 `db verify`；任一步失败就退出，不启动 Web。正常启动后监听容器端口 3000，Docker 通过 `/login` 的 HTTP 200 判断 Web 服务可用。该健康检查不代表 OSS 配置或全部业务已验证，Docker 的 unhealthy 状态也不会单独触发 `unless-stopped` 重启。
+三个应用服务均使用 `node` 用户（UID/GID 1000）并共享应用卷。`migrate` 使用 tools 镜像，一次性执行现有 `npm run db:migrate`，其中依次运行 Prisma 8 的 `db migrate` 与 `db verify`；不注入 OSS 凭据，不接代理网络，失败后保持非零退出状态。`app` 等待 `migrate` 成功退出才启动 standalone Web；`tools` 使用可选 profile，仅在显式 `docker compose run --rm tools <命令>` 时运行，不常驻。直接单独运行 Web 镜像前，必须先使用匹配的 tools 完成迁移与校验。
+
+Web 监听容器端口 3000，Docker 通过 `/login` 的 HTTP 200 判断服务可用。该健康检查不代表 OSS 配置或全部业务已验证，Docker 的 unhealthy 状态也不会单独触发 `unless-stopped` 重启。依赖条件由 Compose 的部署操作执行，Docker 自动重启 Web 或 `docker restart` 不会重新执行迁移。
 
 数据库服务使用 `postgres:18.6-bookworm`，生产不映射数据库端口。应用通过独立的内部网络连接 `postgres:5432`，同时连接 Caddy 的 `infra_edge` 网络；PostgreSQL 不接入代理网络。`depends_on` 等待数据库健康检查通过，再执行迁移、验证和 Web 启动。
 
@@ -134,10 +168,10 @@ Portainer 2.45.1 的 UI 环境文件导入会保留值的外层引号。为 UI �
 5. 将最终快照放在复用应用卷的 `/app/data/releases/release-id/source.sqlite`，把下面的 `release-id` 替换为实际发布标识。报告目录预先创建并由 `node`（UID/GID 1000）独占；以下每次报告必须使用新路径。将 `DATABASE_URL` 指向最终空目标库，以同一固定镜像执行：
 
    ```sh
-   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps app npm run db:migrate
-   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps app npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --dry-run --report /app/data/releases/release-id/preflight.json
-   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps app npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --apply --report /app/data/releases/release-id/import.json
-   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps app npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --verify --report /app/data/releases/release-id/verify.json
+   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run db:migrate
+   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --dry-run --report /app/data/releases/release-id/preflight.json
+   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --apply --report /app/data/releases/release-id/import.json
+   docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run db:import-sqlite -- --source /app/data/releases/release-id/source.sqlite --verify --report /app/data/releases/release-id/verify.json
    ```
 
    `--dry-run` 只校验源；`--apply` 要求 22 张业务表为空并在一个事务中逐表核对数量和摘要；已导入目标用 `--verify`，不要重复 `--apply`。失败时保留快照和报告，查明原因后重试，不删除数据卷。
@@ -171,29 +205,25 @@ SEO 的 canonical、OG URL、结构化数据和 `/sitemap.xml`、`/robots.txt` �
 
 ## 管理员与运维命令
 
-全新部署且未导入旧管理员的空库，在 Portainer 的应用容器 Console 中运行，以 `node` 用户打开交互终端；SQLite 迁移已有账号时跳过此步骤：
+Web 容器不包含运维命令。服务器保留与 Portainer 发布版本一致的 `/srv/fuxiaochen/compose.yaml` 和 `0600` 的 `production.env`，在服务器终端通过 tools 执行。显式指定 project、配置和环境文件，复用当前 Stack 的网络与数据卷；`--no-deps` 避免运维命令重新创建依赖服务，执行前确认 PostgreSQL 已健康、当前 schema 已迁移并校验。
 
 ```sh
-# 仅全新空库需要；导入旧管理员后跳过。
-npm run admin:init
+# 仅全新空库需要 admin:init；SQLite 导入已有账号后跳过。
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run admin:init
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps tools npm run admin:reset-password
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps -T tools npm run operations:run
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps -T tools npm run db:backup
 ```
 
-命令交互输入账号与密码，不使用环境变量自动创建管理员。也可以在服务器执行以下命令，将 `<应用容器名>` 换成 Portainer 中实际的应用容器名称：
+管理员命令交互输入账号与密码，不使用环境变量自动创建管理员。交互命令保留终端，自动调度与备份使用 `-T` 禁用 TTY。
 
-```sh
-docker exec -it --user node <应用容器名> npm run admin:init
-docker exec -it --user node <应用容器名> npm run admin:reset-password
-docker exec --user node <应用容器名> npm run operations:run
-docker exec --user node <应用容器名> npm run db:backup
-```
-
-排期发布和自动备份仍需外部调度。容器不会自动安装 cron；可以在宿主机每分钟执行一次 `docker exec --user node <应用容器名> npm run operations:run`。更新导致容器名称变化时同步调度配置。备份只包含数据库，不含 OSS 文件；备份仍位于同一宿主机，需另行复制到其他存储。
+排期发布和自动备份仍需外部调度。宿主机每分钟运行上述 tools `operations:run` 命令；更新时暂停调度，迁移与业务验证通过后再恢复。调度不依赖 Web 容器名，但配置文件、`TOOLS_IMAGE`、环境变量必须跟随发布版本同步。备份只包含数据库，不含 OSS 文件；备份仍位于同一宿主机，需另行复制到其他存储。
 
 `operations:run` 执行到期发布，再按后台备份面板中的开关执行当天自动备份。仅执行到期发布使用 `npm run posts:publish-due`。调度与 Web 必须共享数据库和备份磁盘；未配置调度时，排期保持等待状态，可在后台手动执行到期计划。
 
 ## 单实例 Node.js 部署
 
-也可在服务器运行 Node.js 24+，连接已启动的 PostgreSQL。配置正确的 `DATABASE_URL`、HTTPS `APP_ORIGIN` 与持久 `BACKUP_DIRECTORY`，安装 PostgreSQL 18 客户端工具和完整 npm 依赖。
+也可在服务器运行 Node.js 24+，连接已启动的 PostgreSQL。将正确的 `DATABASE_URL`、HTTPS `APP_ORIGIN` 与持久 `BACKUP_DIRECTORY` 保存在项目根目录未提交的 `.env`（权限 `0600`），安装 PostgreSQL 18 客户端工具和完整 npm 依赖。`BACKUP_DIRECTORY` 必须使用绝对路径，供 Web 与 CLI 共用；standalone 服务会切换工作目录，相对路径可能指向不同位置。以下命令从项目根目录执行，启动时显式读取当前 `.env`，避免使用构建时复制到 standalone 中的旧环境配置。
 
 ```sh
 npm ci
@@ -201,7 +231,9 @@ npm run db:generate
 npm run db:migrate
 npm run admin:init
 npm run build
-npm start
+cp -r public .next/standalone/
+cp -r .next/static .next/standalone/.next/
+HOSTNAME=0.0.0.0 PORT=3000 node --env-file=.env .next/standalone/server.js
 ```
 
 外部调度每分钟运行 `operations:run`，使用与 Web 相同的环境配置、数据库和备份目录。CLI 执行完毕释放连接。
@@ -215,7 +247,7 @@ npm start
 恢复前由数据库管理账号创建一个名称不同、归应用账号拥有的空数据库，例如 `fuxiaochen_restored`。容器部署可在 PostgreSQL 容器中执行：
 
 ```sh
-docker compose exec postgres psql -U postgres -d postgres -c 'CREATE DATABASE fuxiaochen_restored OWNER fuxiaochen;'
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml exec postgres psql -U postgres -d postgres -c 'CREATE DATABASE fuxiaochen_restored OWNER fuxiaochen;'
 ```
 
 通过本地未提交的环境配置或容器环境设置 `RESTORE_DATABASE_URL`，本地指向 `127.0.0.1:15433/fuxiaochen_restored`，线上指向 `postgres:5432/fuxiaochen_restored`。不要将密码写进 shell 命令或版本控制。
@@ -224,25 +256,44 @@ docker compose exec postgres psql -U postgres -d postgres -c 'CREATE DATABASE fu
 npm run db:restore -- /absolute/backups/<UUID>
 ```
 
-恢复拒绝同名的当前数据库、非空目标、旧 SQLite 格式、摘要错误或不同 contract 的备份。临时 SQL 文件仅服务账号可读；`psql --single-transaction` 将恢复、会话撤销、自动备份关闭及旧备份运行状态处理放在同一事务中，失败整体回滚。恢复后先在环境中将 `DATABASE_URL` 指向目标并执行 `db:verify`，核对业务数据；再停止旧应用和调度，正式切换连接 URL 并启动匹配版本。恢复不能找回已删除 OSS 文件。
+容器部署使用相同备份卷中的路径，通过 tools 恢复。先确认备份所属发布版本，将 `TOOLS_IMAGE` 临时固定到该版本的 tools 并拉取；恢复和随后 `db:verify` 均使用该版本，当前新版 tools 会拒绝旧 contract 的备份。历史单镜像版本可使用当时的单镜像执行 CLI。此时保持 Web 与调度停止，不启动与临时 tools 不匹配的 Web：
+
+```sh
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps -T tools npm run db:restore -- /app/data/backups/<UUID>
+```
+
+恢复拒绝同名的当前数据库、非空目标、旧 SQLite 格式、摘要错误或不同 contract 的备份。临时 SQL 文件仅服务账号可读；`psql --single-transaction` 将恢复、会话撤销、自动备份关闭及旧备份运行状态处理放在同一事务中，失败整体回滚。恢复后先在环境中将 `DATABASE_URL` 指向目标，通过匹配 tools 执行 `db:verify`，核对业务数据；再停止旧应用和调度，正式切换连接 URL 并按更新流程重建 migrate 与 Web。恢复不能找回已删除 OSS 文件。
 
 ## 更新与回退
 
-1. 推送代码或版本 tag，等待对应提交的 GitHub Actions 成功，确认 `linux/amd64` 镜像并记录 tag/digest。
-2. 更新前执行一次 PostgreSQL 备份，记录当前镜像 tag/digest。新迁移必须先审查。
-3. 在原 Portainer Stack 中更新 `APP_IMAGE`（固定完整 commit 标签或 digest）与匹配的 Git ref，执行 **Pull and redeploy**，启用重新拉取镜像。
-4. 确认容器日志中的迁移、校验与服务启动成功，健康检查通过，再通过 HTTPS 域名验证业务。
+1. 推送代码或版本 tag，等待对应提交的整个 GitHub Actions workflow 成功，确认两个 `linux/amd64` 镜像并记录 tag/digest 与相同 OCI revision。
+2. 更新前暂停外部调度并执行一次 PostgreSQL 备份，记录当前两镜像 tag/digest。新迁移必须先审查。
+3. 在原 Portainer Stack 中同时更新 `APP_IMAGE`、`TOOLS_IMAGE`（固定同一完整 commit 的标签或各自 digest）与匹配的 Git ref。停止旧 app，再执行 **Pull and redeploy**，启用重新拉取镜像，防止旧 Web 在迁移期间接受写入。
+4. 检查 `migrate` 日志与退出码 0，再确认 Web 启动和健康检查通过，通过 HTTPS 域名验证业务后恢复调度。迁移失败时保持 Web 停止，保留失败容器日志、数据库和卷；修复后重新执行完整部署。
+
+Portainer CE 2.45.1 的 Git **Pull and redeploy** 在源码中以 `forceCreate=true` 调用 Compose，最终传入 `api.RecreateForce`，会重新运行 migrate。此结论为 [Git redeploy 入口](https://github.com/portainer/portainer/blob/2.45.1/api/http/handler/stacks/stack_update_git_redeploy.go#L331)、[部署参数传递](https://github.com/portainer/portainer/blob/2.45.1/api/stacks/deployments/deployer.go#L76) 和 [Compose 实现](https://github.com/portainer/portainer/blob/2.45.1/pkg/libstack/compose/composeplugin.go#L87) 的源码核对，第二批没有在真实 Portainer 部署验证；更换版本或入口后需重新核对重建行为。
+
+普通 `docker compose up` 的 `service_completed_successfully` 可能接受以前已退出 0 的 migrate，不能把它当成每次重跑迁移的保证。命令行更新先拉取两镜像，再停止旧 Web、删除旧 migrate 容器并启动 app；不要删除数据库服务或卷：
+
+```sh
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml pull app migrate
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml stop app
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml rm -f migrate
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml up -d app
+docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml logs migrate app
+```
 
 不建议直接开启按 Git commit 轮询部署：Portainer 可能在镜像构建完成前发现新 commit，从而拉取上一版的可变标签。即使 `latest` 已更新，同一个 Git commit 的轮询检查也可能跳过重新部署。先等待 Actions 成功再手动拉取部署；需要自动部署时，应另行配置构建成功后调用的 Portainer webhook 及镜像重拉取设置。
 
-单机升级会短暂停机。没有数据库迁移时可以换回已记录的旧镜像；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按上方恢复流程先核对备份、停止 Web 与调度、恢复到独立空库，再切换数据库和匹配的镜像。不要删除生产数据卷来解决启动失败。
+单机升级会短暂停机。没有数据库迁移时可以同时换回已记录的旧 Web/tools 两镜像与 Compose 配置，再执行上述完整更新流程；数据库已经迁移后，旧应用不一定兼容，不能只回退镜像。按上方恢复流程先核对备份、停止 Web 与调度，将 tools 固定为备份所属版本，恢复到独立空库并验证，再同步切换数据库、Web/tools 两镜像和匹配的 Compose 配置。不要删除生产数据卷来解决启动失败。回退到第一批或更早的单镜像版本时还原该版本 Compose 与调度命令。
 
 SQLite 首次切换的回滚使用上面的维护快照与旧 Git tag；以后 PostgreSQL 升级按 PostgreSQL 备份恢复流程执行。Git Stack 的历史版本不能靠 Web Editor 下拉框恢复，也不要为回滚执行不可逆的 Detach from Git。
 
 ## 本地构建与配置检查
 
 ```sh
-docker build -t fuxiaochen:local .
+docker build --target runtime -t fuxiaochen:local .
+docker build --target tools -t fuxiaochen-tools:local .
 docker compose --env-file /absolute/private/deployment-check.env config --quiet
 sh -n deploy/docker-entrypoint.sh
 sh -n deploy/postgres-init.sh

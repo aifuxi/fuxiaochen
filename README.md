@@ -53,19 +53,19 @@ npm run dev
 
 ## 常用命令
 
-| 命令                           | 用途                             |
-| ------------------------------ | -------------------------------- |
-| `npm run db:up`                | 启动或复用本地 PostgreSQL        |
-| `npm run dev`                  | 启动开发服务器                   |
-| `npm run build`                | 生成生产构建                     |
-| `npm start`                    | 启动已构建的生产服务             |
-| `npm run typecheck`            | 类型检查                         |
-| `npm run lint`                 | 代码检查                         |
-| `npm run format:check`         | 格式检查                         |
-| `npm run db:migrate`           | 应用迁移并校验数据库结构         |
-| `npm run admin:reset-password` | 重置管理员密码并撤销全部登录会话 |
+| 命令                              | 用途                                               |
+| --------------------------------- | -------------------------------------------------- |
+| `npm run db:up`                   | 启动或复用本地 PostgreSQL                          |
+| `npm run dev`                     | 启动开发服务器                                     |
+| `npm run build`                   | 生成生产构建                                       |
+| `node .next/standalone/server.js` | 启动 standalone 生产服务，资源与环境准备见部署指南 |
+| `npm run typecheck`               | 类型检查                                           |
+| `npm run lint`                    | 代码检查                                           |
+| `npm run format:check`            | 格式检查                                           |
+| `npm run db:migrate`              | 应用迁移并校验数据库结构                           |
+| `npm run admin:reset-password`    | 重置管理员密码并撤销全部登录会话                   |
 
-开发启动和构建前会自动生成数据库 contract，构建无需在线数据库。生产启动前需完成构建。
+开发启动和构建前会自动生成数据库 contract，构建无需在线数据库。生产使用 standalone；启动前按 [部署指南](docs/deployment.md#单实例-nodejs-部署) 复制静态资源并显式加载运行环境。Docker 分为 Web 和 tools 两镜像，迁移与运维命令通过 tools 执行。
 
 `npm run test:postgres` 使用本地 Docker 数据库的管理账号创建独立临时数据库，验证查询、并发、备份与恢复，并在结束时删除测试库。不会使用开发库做业务测试；需要先运行 `db:up`，配置管理密码及安装 PostgreSQL 18 客户端工具。
 

@@ -28,12 +28,27 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 生成镜像标签
-        id: meta
+      - name: 生成 Web 镜像标签
+        id: meta-web
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
         with:
           images: ghcr.io/${{ github.repository }}
           flavor: latest=false
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha,format=long
+            type=raw,value=latest,enable=${{ github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+
+      - name: 生成 tools 镜像标签
+        id: meta-tools
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6
+        with:
+          images: ghcr.io/${{ github.repository }}-tools
+          flavor: latest=false
+          labels: org.opencontainers.image.revision=${{ github.sha }}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -44,6 +59,12 @@ jobs:
       - name: 配置 Buildx
         id: buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: 读取默认构建平台
+        id: platform
+        run: |
+          build_platform="$(docker version --format '{{.Server.Os}}-{{.Server.Arch}}')"
+          printf 'next-cache-id=fuxiaochen-next-%s\n' "$build_platform" >> "$GITHUB_OUTPUT"
 
       - name: 恢复 npm 下载缓存
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
@@ -76,6 +97,7 @@ jobs:
               },
               "${{ runner.temp }}/buildkit-cache/next": {
                 "target": "/app/.next/cache",
+                "id": "${{ steps.platform.outputs.next-cache-id }}",
                 "sharing": "locked"
               }
             }
@@ -88,12 +110,31 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 构建镜像，非 PR 事件发布到 GHCR
+      # 两个 target 共用 builder 和 cache mount；层缓存分开保存，防止后一个构建覆盖前一个。
+      - name: 构建 Web 镜像，非 PR 事件发布到 GHCR
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          target: runtime
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=fuxiaochen-${{ runner.os }}-${{ runner.arch }}
-          cache-to: type=gha,scope=fuxiaochen-${{ runner.os }}-${{ runner.arch }},mode=max
+          tags: ${{ steps.meta-web.outputs.tags }}
+          labels: ${{ steps.meta-web.outputs.labels }}
+          cache-from: |
+            type=gha,scope=fuxiaochen-web-${{ runner.os }}-${{ runner.arch }}
+            type=gha,scope=fuxiaochen-tools-${{ runner.os }}-${{ runner.arch }}
+          cache-to: type=gha,scope=fuxiaochen-web-${{ runner.os }}-${{ runner.arch }},mode=max
+
+      - name: 构建 tools 镜像，非 PR 事件发布到 GHCR
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          builder: ${{ steps.buildx.outputs.name }}
+          target: tools
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-tools.outputs.tags }}
+          labels: ${{ steps.meta-tools.outputs.labels }}
+          cache-from: |
+            type=gha,scope=fuxiaochen-tools-${{ runner.os }}-${{ runner.arch }}
+            type=gha,scope=fuxiaochen-web-${{ runner.os }}-${{ runner.arch }}
+          cache-to: type=gha,scope=fuxiaochen-tools-${{ runner.os }}-${{ runner.arch }},mode=max
