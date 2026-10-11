@@ -27,9 +27,13 @@
 - 向 `master` 提交 PR：构建镜像但不发布。
 - `workflow_dispatch`：手动构建所选分支或 tag。
 
-镜像同时支持 `linux/amd64` 与 `linux/arm64`。Action 使用固定 commit SHA，Node.js 基础镜像固定为 `24.21.0-bookworm-slim` 及多架构 digest；升级时一并核对版本与 digest。构建使用 `npm ci` 和现有 `npm run build`，Next.js 构建包含 TypeScript 检查。工作流不运行测试。
+工作流只构建当前 x86 `ubuntu-latest` runner 的默认平台 `linux/amd64`，不再安装 QEMU 或指定多架构 `platforms`；它与当前云服务器架构一致。本地 `docker build` 同样使用构建器的默认平台，Apple Silicon 上通常得到 `linux/arm64`；在本地准备服务器镜像时需显式使用 `--platform linux/amd64`。更换 CI runner 架构时同步核对发布平台，镜像不会自动适配远程部署服务器。
 
-镜像保留现有 Prisma CLI、`tsx`、`@inquirer/prompts` 及其依赖，支持迁移、账号管理、备份和排期命令，因此没有裁剪成仅运行 Web 的 standalone 镜像，也没有执行 `npm prune --omit=dev`。Prisma 使用 CLI `8.0.0-rc.19` 和 PostgreSQL runtime `8.0.0-rc.14`（RC），沿用 Prisma 8 contract 迁移流程；运行镜像安装 PostgreSQL 18 的 `pg_dump`、`pg_restore` 和 `psql`。
+Action 使用固定 commit SHA，Node.js 基础镜像固定为 `24.21.0-bookworm-slim` 及多架构 digest；升级时一并核对版本与 digest。构建使用包含开发依赖的 `npm ci` 和现有 `npm run build`，保留原生模块安装脚本和 Next.js 的 TypeScript 检查。工作流不运行测试。
+
+镜像仍为单镜像，保留迁移、账号管理、备份恢复、SQLite 导入和排期命令。生产实际需要的 Prisma CLI、`tsx`、`@inquirer/prompts` 放在 `dependencies`；独立 `production-dependencies` 阶段从完整安装结果执行 `npm prune --omit=dev --ignore-scripts --no-audit --no-fund`，只将裁剪后的 `node_modules` 复制到运行镜像。裁剪阶段不重复执行依赖生命周期脚本，已安装的原生模块保留；构建阶段仍使用全部开发工具。没有启用 standalone 或拆分 tools 镜像。
+
+Prisma 使用 CLI `8.0.0-rc.19` 和 PostgreSQL runtime `8.0.0-rc.14`（RC），沿用 Prisma 8 contract 迁移流程；运行镜像安装 PostgreSQL 18 的 `pg_dump`、`pg_restore` 和 `psql`。CLI 的 Composer 及其传递依赖仍保留，运行依赖可能间接保留 TypeScript 等工具，不能把裁剪理解为移除所有开发相关包。
 
 发布使用仓库提供的 `GITHUB_TOKEN` 和 `packages: write` 权限，不需要把个人 token 放进 Actions。首次运行成功后，在 GitHub 账号的 Packages 中确认 `fuxiaochen` 已生成。镜像包的可见性独立于源码仓库：
 
@@ -37,6 +41,42 @@
 - 私有镜像：在 Portainer Registries 添加 `ghcr.io`，填写 GitHub 用户名和具有 `read:packages` 的 PAT classic，并在 Stack 部署时选择该 Registry。不要把 token 写入 Compose 或提交 Git。
 
 正式发布使用 `master` 的已提交代码。先推送并等待该提交的 Actions 成功，再使用 `docker buildx imagetools inspect ghcr.io/aifuxi/fuxiaochen:sha-<完整 SHA>` 核对镜像包含服务器所需的 `linux/amd64`，记录 index digest，并将 `APP_IMAGE` 固定为 `ghcr.io/aifuxi/fuxiaochen@sha256:<digest>`。不要在构建完成前开始停机，也不要靠 `latest` 判断实际部署版本。
+
+### 构建缓存
+
+Dockerfile 为 npm 的 `/root/.npm` 和 Next.js 的 `/app/.next/cache` 使用 `sharing=locked` 的 BuildKit cache mount。缓存位于独立挂载中，不进入镜像层；不要在构建末尾删除挂载中的 `.next/cache`，否则下一次无法复用。运行镜像单独创建可写缓存目录，继续由 `node` 用户使用。
+
+GitHub Actions 的 `type=gha,mode=max` 复用构建层，不能自动持久化 cache mount 的内容。工作流通过固定版本的 `actions/cache` 与 `buildkit-cache-dance` 恢复、注入、提取并保存 npm 与 Next.js 两份缓存。缓存按 runner 系统、架构和 Dockerfile 隔离；npm 缓存使用 lockfile 对应的保存 key，lockfile 变化时可复用旧下载内容；Next.js 缓存绑定 lockfile 与构建配置，源码变化时恢复上一份兼容缓存，并在每次运行使用新的保存 key，让新编译结果能够持久化。缓存被淘汰或首次构建时正常重新下载、编译，不影响产物正确性。
+
+本地同一个 builder 跨项目或架构构建时，可以显式使用项目与架构对应的缓存 namespace，例如 `docker build --platform linux/amd64 --build-arg BUILDKIT_CACHE_MOUNT_NS=fuxiaochen-linux-amd64 -t fuxiaochen:local .`。namespace 隔离缓存内容，`sharing=locked` 只避免并发写入。CI 保持默认 namespace，使 cache-dance 的注入和提取与 Dockerfile 的挂载一致。
+
+`.dockerignore` 排除测试、设计规范、skill 清单及已有的本地依赖、环境文件和构建产物，保留生产源码、迁移和运维脚本。仅修改被排除的文件不会重新触发应用构建。
+
+### 第一批优化验证
+
+2026-10-11，以 `5783c72f` 的应用源码分别构建原始镜像与优化后的单镜像。本地 Docker 29.4.0 / BuildKit 0.29.0，体积对比使用同一 `linux/arm64` 平台；所有 npm 包的版本、下载地址和 integrity 保持不变，仅调整三项运行依赖的分类。
+
+| 测量项                                                | 原始镜像  | 优化镜像  | 变化                   |
+| ----------------------------------------------------- | --------- | --------- | ---------------------- |
+| 压缩内容大小（本地 containerd 的 image inspect Size） | 510.6 MB  | 482.5 MB  | 减少 28.1 MB，约 5.5%  |
+| 解压后的镜像层总大小（history Size 总和）             | 2805.5 MB | 2692.3 MB | 减少 113.3 MB，约 4.0% |
+| node_modules 层                                       | 2407.0 MB | 2293.7 MB | 裁剪 189 个包          |
+| .next 层                                              | 50.5 MB   | 50.5 MB   | 构建缓存未进入运行镜像 |
+
+以上为十进制 MB，不使用 Docker image ls 的磁盘总占用代替压缩内容或解压层大小。Composer 的运行依赖仍占较大空间，因此本批没有 GB 级瘦身收益。
+
+本地运行通过：相同源码重复构建，全部构建层命中，端到端约 1.55 秒；在独立临时源码副本中只修改一个服务端字符串后，依赖安装与裁剪层仍命中，Next.js 编译从首次约 5.8 秒降至约 1.0 秒，整个构建约 14.52 秒。在另一临时副本中修改应用版本及 lockfile 根元数据、保持依赖版本不变，断网执行 `npm ci --offline` 成功重装 820 个包，并完成裁剪，确认 npm 下载缓存可复用。首次构建已有基础层缓存，且基线与优化构建并发执行，未将其耗时作为完整冷构建对比。
+
+| 验证范围             | 状态与证据                                                                                                                                                       |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 构建与类型检查       | 原始与优化的 arm64 构建，以及优化的 amd64 构建均通过 Next.js TypeScript 检查                                                                                     |
+| arm64 现有回归       | 登录 18/18、PostgreSQL 17/17、SQLite 导入 17/17，测试运行在最终裁剪镜像内的独立数据库                                                                            |
+| arm64 实际业务操作   | 管理员创建与重置、HTTP 登录/退出与会话撤销、排期发布、备份、独立空库恢复及恢复后验证运行通过                                                                     |
+| arm64 容器行为       | node 用户、healthy、Argon2/Sharp 原生调用、PostgreSQL 18.6 客户端、SIGTERM 退出运行通过；迁移失败退出 2、contract 校验失败退出 4，均未启动 Web                   |
+| amd64 冒烟验证       | 在本地 Docker 仿真运行，Argon2/Sharp、默认启动迁移与校验、/login 200 与 healthy、管理员初始化与 HTTP 登录、排期发布和 CLI 备份运行通过；不代表生产服务器原生实测 |
+| CI 工作流            | actionlint、YAML 结构和固定 Action 接口核对通过；GitHub 托管 runner 的实际缓存上传、恢复与耗时尚未验证                                                           |
+| 宿主机独立 typecheck | 未通过：现有 data/ 历史发布源码副本缺少 generated，临时排除 data 后仍有 Buffer/Node 类型冲突；本批未修改这些源码、历史数据或 TypeScript 配置                     |
+| 外部服务             | OSS 使用 dummy 配置和媒体 SDK mock，未访问真实 OSS；未推送、发布或部署生产环境                                                                                   |
 
 ## Portainer 从 GitHub 创建 Stack
 

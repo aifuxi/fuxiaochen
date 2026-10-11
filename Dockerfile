@@ -9,12 +9,16 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends python3 make g++ \
     && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci --include=dev
+RUN --mount=type=cache,target=/root/.npm,sharing=locked npm ci --include=dev
 
 FROM dependencies AS build
 COPY . .
 # 构建不接入生产数据库；contract 由现有 prebuild 生成。
-RUN npm run build && rm -rf .next/cache
+RUN --mount=type=cache,target=/app/.next/cache,sharing=locked npm run build
+
+FROM dependencies AS production-dependencies
+# 保留已安装的原生模块与运维依赖；开发工具在复制进运行镜像之前裁剪。
+RUN --mount=type=cache,target=/root/.npm,sharing=locked npm prune --omit=dev --ignore-scripts --no-audit --no-fund
 
 FROM base AS runtime
 ENV NODE_ENV=production \
@@ -29,8 +33,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends postgresql-client-18 \
     && rm -rf /var/lib/apt/lists/*
 
-# Prisma CLI、tsx 和交互式管理员命令仍需 devDependencies，不能只复制 Web 的依赖。
-COPY --from=build --chown=node:node /app/node_modules ./node_modules
+# 运行依赖包含 Prisma CLI、tsx 和交互式管理员命令，不携带纯开发工具。
+COPY --from=production-dependencies --chown=node:node /app/node_modules ./node_modules
 COPY --from=build --chown=node:node /app/.next ./.next
 COPY --from=build --chown=node:node /app/public ./public
 COPY --from=build --chown=node:node /app/generated ./generated

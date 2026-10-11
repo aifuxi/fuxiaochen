@@ -41,13 +41,44 @@ jobs:
             type=sha,format=long
             type=raw,value=latest,enable=${{ github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
-      - name: 配置多架构构建
-        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
-        with:
-          platforms: arm64
-
       - name: 配置 Buildx
+        id: buildx
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: 恢复 npm 下载缓存
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/buildkit-cache/npm
+          key: container-npm-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Dockerfile') }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            container-npm-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Dockerfile') }}-
+
+      - name: 恢复 Next.js 编译缓存
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ${{ runner.temp }}/buildkit-cache/next
+          key: container-next-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Dockerfile', 'package-lock.json', 'next.config.*', 'tsconfig.json', 'postcss.config.*') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            container-next-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('Dockerfile', 'package-lock.json', 'next.config.*', 'tsconfig.json', 'postcss.config.*') }}-
+
+      # post 步骤按注册顺序逆序运行：先提取更新后的 mount，再保存两个 Actions 缓存。
+      # npm 按 lockfile 保存；Next 每次使用新 key，持续保存更新后的编译结果。
+      - name: 注入并在构建后提取 BuildKit 缓存
+        uses: reproducible-containers/buildkit-cache-dance@5422eac04292c961a382e0f584ea0f03ad9da723 # v3.4.0
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          scratch-dir: ${{ runner.temp }}/buildkit-cache-dance
+          cache-map: |
+            {
+              "${{ runner.temp }}/buildkit-cache/npm": {
+                "target": "/root/.npm",
+                "sharing": "locked"
+              },
+              "${{ runner.temp }}/buildkit-cache/next": {
+                "target": "/app/.next/cache",
+                "sharing": "locked"
+              }
+            }
 
       - name: 登录 GitHub Container Registry
         if: github.event_name != 'pull_request'
@@ -61,9 +92,8 @@ jobs:
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=fuxiaochen-${{ runner.os }}-${{ runner.arch }}
+          cache-to: type=gha,scope=fuxiaochen-${{ runner.os }}-${{ runner.arch }},mode=max

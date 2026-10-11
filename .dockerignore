@@ -11,6 +11,11 @@ node_modules
 
 # testing
 coverage
+tests
+
+# 本地设计规范与 skill 清单不参与生产构建。
+DESIGN.md
+skills-lock.json
 
 # next.js
 .next/
