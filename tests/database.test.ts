@@ -137,15 +137,15 @@ void test("迁移重复执行保留数据，校验拒绝结构漂移和未知版
     db.select().from(category).where(eq(category.id, "foundation-category")).get()?.name,
     "分类",
   );
-  assert.equal(migrationManifest().migrations.length, 1);
+  assert.equal(migrationManifest().migrations.length, 2);
   db.$client.exec("DROP INDEX post_createdAt_id_idx");
   assert.throws(() => verifyDatabase(db.$client), /结构/);
   db.$client.exec("CREATE INDEX `post_createdAt_id_idx` ON `post` (`createdAt`,`id`)");
   verifyDatabase(db.$client);
-  db.$client.prepare("UPDATE __drizzle_migrations SET hash=?").run("0".repeat(64));
+  db.$client.prepare("UPDATE __drizzle_migrations SET hash=? WHERE id=1").run("0".repeat(64));
   assert.throws(() => migrateDatabase(db.$client), /记录/);
   db.$client
-    .prepare("UPDATE __drizzle_migrations SET hash=?")
+    .prepare("UPDATE __drizzle_migrations SET hash=? WHERE id=1")
     .run(migrationManifest().migrations[0].hash);
 });
 

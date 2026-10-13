@@ -1,13 +1,12 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
-import { getSession, SESSION_COOKIE } from "./auth/service";
+import { readAdminSession } from "./auth/service";
 
 export const currentSession = cache(async () => {
-  const token = (await cookies()).get(SESSION_COOKIE)?.value;
-  return getSession(token);
+  return readAdminSession(await headers());
 });
 
 export async function requireAdmin() {

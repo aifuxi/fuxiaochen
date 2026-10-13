@@ -355,7 +355,10 @@ void test(
         const previousPath = process.env.DATABASE_PATH;
         process.env.DATABASE_PATH = target;
         try {
-          const { getSession, login, logout } = await import("../lib/auth/service");
+          const { getSession, logout } = await import("../lib/auth/service");
+          const { loginToken: login } = await import("./helpers/sqlite");
+          process.env.BETTER_AUTH_SECRET = "sqlite-test-only-better-auth-secret-32-chars";
+          process.env.APP_ORIGIN = "https://postgres-transfer-test.example";
           assert.equal(getSession(fixture.originalSessionToken), null);
           const token = await login(
             { username: "import_admin", password: fixture.password },

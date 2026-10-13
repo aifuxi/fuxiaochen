@@ -16,6 +16,7 @@ import type { ReleaseLog } from "../lib/changelog/schema";
 import type { PostDetail } from "../lib/posts/schema";
 import type { SiteSettings } from "../lib/settings/schema";
 
+import { syncAdminAccount } from "../lib/auth/accounts";
 import { migrateDatabase } from "../lib/database/migrations";
 import { admin as adminTable } from "../lib/database/schema";
 import { serializeDocument, EMPTY_POST_CONTENT } from "../lib/posts/document";
@@ -116,6 +117,8 @@ void test(
           .run(),
       );
 
+      database.writeTransaction(syncAdminAccount);
+
       // 在副本运行 Next，防止自定义 distDir 自动修改项目 tsconfig 与生成文件。
       for (const path of [
         "app",
@@ -151,6 +154,7 @@ void test(
           stdio: ["ignore", "pipe", "pipe"],
           env: {
             ...process.env,
+            BETTER_AUTH_SECRET: "seo-test-only-better-auth-secret-32-chars",
             NODE_ENV: "development",
             APP_ORIGIN: siteOrigin,
             NEXT_BUILD_DIR: `.next-seo-test-${name}`,

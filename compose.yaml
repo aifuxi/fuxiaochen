@@ -19,6 +19,8 @@ services:
       SQLITE_INITIALIZE: ${SQLITE_INITIALIZE:-0}
       RESTORE_DATABASE_PATH: ${RESTORE_DATABASE_PATH:-}
       APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
+      # 独立随机密钥用于会话 Cookie 签名；替换后原 Cookie 失效。
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?请配置至少 32 个字符的随机认证密钥}
       OSS_BUCKET: ${OSS_BUCKET:-}
       OSS_REGION: ${OSS_REGION:-cn-hangzhou}
       OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}

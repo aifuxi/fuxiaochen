@@ -42,6 +42,22 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 首次初始化必须显式传 `--initialize-if-missing`，独占发布完成的新文件，不创建管理员。普通本地 `npm run dev` 不自动运行该生产流程。完整范围与运行结果见 [单镜像验收](engineering/sqlite-deployment-verification.md)。
 
+## Better Auth 认证维护
+
+认证使用固定版本 Better Auth 1.7.7 与 `@better-auth/drizzle-adapter` 1.7.7，通过 `better-auth/minimal` 接入；密码继续使用 Argon2id。`lib/auth/better-auth.ts` 负责配置，`lib/auth/adapter.ts` 只负责项目存储约束，网页表单仅适配现有响应契约。未引入 Prisma 或其运行引擎。
+
+`BETTER_AUTH_SECRET` 必须是至少 32 个字符的独立随机私有值。用 `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` 生成并保存到本地私有 `.env` 或部署配置；不要提交密钥。缺失或过短时认证拒绝初始化；轮换后旧签名 Cookie 失效，需重新登录。`APP_ORIGIN` 继续是唯一可信站点来源。
+
+迁移 `0001_better_auth.sql` 新增 `auth_user`、`auth_account`、`auth_session` 与 `auth_verification`，迁移 id=1 的管理员、原密码哈希及时间，并清空旧 `session`。原 `admin`/`session` 保留用于旧库导入和业务 ID 兼容；网页不读取旧密码或旧会话。CLI 初始化/重置同步认证账号与旧库基线，重置在同一同步事务撤销全部新旧会话。PostgreSQL 离线导入在独立新目标内派生相同认证账号；旧来源 22 张表的逐字段核对继续保留。
+
+官方 Drizzle 适配器的异步转换在 SQLite 事务外执行，每条写 SQL 的同步驱动执行点经项目 `writeTransaction` 取得 IMMEDIATE 锁，不启用官方异步事务回调。用户名密码登录在插入会话的同一写事务内复核最初密码哈希并撤销当前旧会话，密码重置竞态失败时不创建新会话。未来新增跨多条 SQL 的账户操作需单独验证原子性，不能据此宣称任意插件支持同步多语句事务。
+
+会话令牌由 Better Auth 生成、Cookie 由框架签名；Drizzle 自定义列只保存 SHA-256 哈希。明文令牌的读回映射仅存在于单次官方适配器调用的 AsyncLocalStorage 中，不跨请求缓存。外部 Cookie 先由 Better Auth 校验，业务数据入口在同步事务内用已验证的令牌复核会话过期/撤销。未开放会话列表及按明文令牌批量撤销接口；未来开放时必须适配哈希存储，不能直接把数据库哈希当作可用令牌。
+
+固定 7 天会话不续期，关闭 Cookie cache，使退出和重置立即作用于其他请求。现有精确 Origin 检查、16 KiB 表单限制、持久化全局每分钟 20 次限流继续在 `/api/login` 执行；不挂载通用 auth.handler，避免绕过表单防护或返回会话令牌。账号注册关闭，Passkey 和 MFA 尚未接入。恢复备份撤销 `session`、`auth_session` 并清空认证验证记录。
+
+升级已有开发库或生产库前停 Web 和调度，通过启动准备流程先备份再迁移并完整校验。原密码保持有效，旧 Cookie 全部失效；升级前备份必须用旧版本恢复到独立文件，再决定重新升级。生产部署仍须单独授权。验证证据见 [认证迁移记录](engineering/better-auth-verification.md)。
+
 ## PostgreSQL → SQLite 离线迁移
 
 Prisma 依赖、源码、旧 SQLite → PostgreSQL 导入脚本及旧回归已移除；历史实现如需查阅，使用 Git 历史中的匹配版本。当前工具保留旧源库 `prisma_contract.marker` 的只读核验，以拒绝不匹配的源结构。

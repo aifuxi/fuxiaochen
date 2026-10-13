@@ -300,6 +300,7 @@ console.log(complete.length);`);
         { name: "APP_DATA_VOLUME", value: appVolume },
         { name: "CADDY_NETWORK", value: network },
         { name: "APP_ORIGIN", value: origin },
+        { name: "BETTER_AUTH_SECRET", value: "portainer-test-only-better-auth-secret-32-chars" },
         { name: "SQLITE_INITIALIZE", value: "0" },
       ];
 

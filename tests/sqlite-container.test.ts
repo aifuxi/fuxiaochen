@@ -76,6 +76,8 @@ function baseArguments(volume: string, extra: string[] = []) {
     "BACKUP_DIRECTORY=/app/data/backups",
     "--env",
     `APP_ORIGIN=${origin}`,
+    "--env",
+    "BETTER_AUTH_SECRET=container-test-only-better-auth-secret-32-chars",
     ...extra,
   ];
 }
@@ -195,6 +197,8 @@ void test(
 import argon2 from 'argon2';
 import { closeSync, mkdirSync, openSync } from 'node:fs';
 import { migrateDatabase } from './lib/database/migrations.ts';
+import { syncAdminAccount } from './lib/auth/accounts.ts';
+import { drizzle } from 'drizzle-orm/better-sqlite3';
 mkdirSync('/app/data/backups', { recursive: true, mode: 0o700 });
 closeSync(openSync(process.env.DATABASE_PATH, 'wx', 0o600));
 const db = new Sqlite(process.env.DATABASE_PATH, { fileMustExist: true });
@@ -203,6 +207,7 @@ migrateDatabase(db);
 const now = Date.now();
 const hash = await argon2.hash(${JSON.stringify(password)}, { type: argon2.argon2id });
 db.prepare('INSERT INTO admin VALUES (1, ?, ?, ?, ?)').run('container_admin', hash, now, now);
+syncAdminAccount(drizzle(db));
 db.prepare('INSERT INTO category VALUES (?, ?, ?, ?, ?)').run(${JSON.stringify(categoryId)}, '容器分类', '容器分类', '#123456', now);
 const insert = db.prepare('INSERT INTO post (id, title, slug, content, categoryId, status, createdAt, updatedAt, publishedAt, scheduledFor, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)');
 insert.run(${JSON.stringify(postId)}, '容器独立文章', 'container-test', ${JSON.stringify(content)}, ${JSON.stringify(categoryId)}, 'published', now, now, now, null);
@@ -352,7 +357,7 @@ if ((statSync(path).mode & 0o777) !== 0o600) throw new Error('快照权限不私
 const db = new Sqlite(path, { readonly: true, fileMustExist: true });
 if (db.pragma('integrity_check', { simple: true }) !== 'ok' || db.pragma('foreign_key_check').length) throw new Error('快照完整性失败');
 if (db.prepare('SELECT COUNT(*) AS count FROM post').get().count !== 2) throw new Error('快照文章遗漏');
-if (db.prepare('SELECT COUNT(*) AS count FROM session').get().count !== 0) throw new Error('启动快照应在 HTTP 登录之前');
+if (db.prepare('SELECT COUNT(*) AS count FROM auth_session').get().count !== 0) throw new Error('启动快照应在 HTTP 登录之前');
 db.close();`,
           ),
           "核对启动快照摘要、权限、完整性和实际业务记录",
@@ -483,7 +488,7 @@ db.close();`,
           mainVolume,
           `import Sqlite from 'better-sqlite3';
 const db = new Sqlite('/app/data/restored.sqlite', { readonly: true, fileMustExist: true });
-console.log(JSON.stringify({ session: db.prepare('SELECT COUNT(*) AS count FROM session').get().count, posts: db.prepare('SELECT COUNT(*) AS count FROM post').get().count }));
+console.log(JSON.stringify({ session: db.prepare('SELECT COUNT(*) AS count FROM auth_session').get().count, posts: db.prepare('SELECT COUNT(*) AS count FROM post').get().count }));
 db.close();`,
         );
         assert.deepEqual(JSON.parse(successful(restored, "核对恢复副本会话撤销与文章保留")), {

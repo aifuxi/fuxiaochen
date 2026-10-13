@@ -67,6 +67,8 @@ async function main() {
     database
       .transaction(() => {
         database!.prepare("DELETE FROM session").run();
+        database!.prepare("DELETE FROM auth_session").run();
+        database!.prepare("DELETE FROM auth_verification").run();
         database!
           .prepare(
             'UPDATE operation_setting SET "autoBackup" = 0, "schedulerLastRunAt" = NULL, version = version + 1',

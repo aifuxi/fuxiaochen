@@ -1,83 +1,65 @@
 import "server-only";
-import { and, eq, gt, lte } from "drizzle-orm";
-import { createHash, randomBytes } from "node:crypto";
+import { APIError } from "better-auth/api";
+import { and, eq } from "drizzle-orm";
 
-import {
-  authTransaction,
-  getActiveTransaction,
-  getDatabase,
-  type Database,
-  type DatabaseTransaction,
-} from "@/lib/database";
-import { admin, session, loginRateLimit } from "@/lib/database/schema";
+import { authTransaction, getDatabase } from "@/lib/database";
+import { authSession, authAccount, loginRateLimit } from "@/lib/database/schema";
 
 import type { LoginCredentials } from "./schema";
 
-import { DUMMY_PASSWORD_HASH, verifyPassword } from "./password";
+import { getAuth } from "./better-auth";
+import { getSession } from "./session-access";
+import { loginWriteContext } from "./storage-context";
+export { SESSION_COOKIE, SESSION_MAX_AGE } from "./better-auth";
 
-export const SESSION_COOKIE = "fx_admin_session";
-export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+export { getSession } from "./session-access";
 
-function tokenHash(token: string | undefined) {
-  if (!token || !/^[a-f0-9]{64}$/.test(token)) return null;
-  return createHash("sha256").update(token).digest("hex");
+export async function readAdminSession(headers: Headers) {
+  const result = await getAuth().api.getSession({ headers, query: { disableCookieCache: true } });
+  if (!result || result.user.id !== "1") return null;
+  return { adminId: 1, username: result.user.username, sessionToken: result.session.token };
 }
 
-export function getSession(token: string | undefined, db?: Database | DatabaseTransaction) {
-  const id = tokenHash(token);
-  if (!id) return null;
-  return (
-    (db ?? getActiveTransaction() ?? getDatabase())
-      .select({ adminId: session.adminId, username: admin.username })
-      .from(session)
-      .innerJoin(admin, eq(session.adminId, admin.id))
-      .where(and(eq(session.id, id), gt(session.expiresAt, new Date())))
-      .get() ?? null
-  );
-}
-
-export async function login(credentials: LoginCredentials, previousToken: string | undefined) {
-  const db = getDatabase();
-  const account = db
-    .select()
-    .from(admin)
-    .where(and(eq(admin.id, 1), eq(admin.username, credentials.username)))
+export async function login(
+  credentials: LoginCredentials,
+  previousToken: string | undefined,
+  headers?: Headers,
+) {
+  const account = getDatabase()
+    .select({ passwordHash: authAccount.password })
+    .from(authAccount)
+    .where(and(eq(authAccount.userId, 1), eq(authAccount.providerId, "credential")))
     .get();
-  const matches = await verifyPassword(
-    account?.passwordHash ?? DUMMY_PASSWORD_HASH,
-    credentials.password,
-  );
-  if (!account || !matches) return null;
-
-  const token = randomBytes(32).toString("hex");
-  const now = new Date();
-  const expiresAt = new Date(now.getTime() + SESSION_MAX_AGE * 1000);
-  return authTransaction((tx) => {
-    // 重置密码和撤销会话共用事务；拒绝已被重置的密码校验结果。
-    const current = tx
-      .select({ id: admin.id })
-      .from(admin)
-      .where(and(eq(admin.id, account.id), eq(admin.passwordHash, account.passwordHash)))
-      .get();
-    if (!current) return null;
-    tx.delete(session).where(lte(session.expiresAt, now)).run();
-    const previousId = tokenHash(previousToken);
-    if (previousId) tx.delete(session).where(eq(session.id, previousId)).run();
-    tx.insert(session)
-      .values({
-        id: createHash("sha256").update(token).digest("hex"),
-        adminId: account.id,
-        createdAt: now,
-        expiresAt,
-      })
-      .run();
-    return token;
-  });
+  try {
+    return await loginWriteContext.run(
+      { passwordHash: account?.passwordHash ?? null, previousToken },
+      async () => {
+        const result = await getAuth().api.signInUsername({
+          body: credentials,
+          headers,
+          returnHeaders: true,
+        });
+        return { token: result.response.token, headers: result.headers };
+      },
+    );
+  } catch (error) {
+    if (error instanceof APIError && error.status === "UNAUTHORIZED") return null;
+    throw error;
+  }
 }
 
 export async function logout(token: string | undefined) {
-  const id = tokenHash(token);
-  if (id) authTransaction((tx) => tx.delete(session).where(eq(session.id, id)).run());
+  if (token)
+    authTransaction((tx) => tx.delete(authSession).where(eq(authSession.token, token)).run());
+}
+
+export async function signOut(headers: Headers) {
+  const previous = await readAdminSession(headers);
+  const response = await getAuth().api.signOut({ headers, asResponse: true });
+  // 框架退出会清 Cookie；数据库撤销失败时不把失败包装成成功。
+  if (!response.ok || (previous && getSession(previous.sessionToken)))
+    throw new Error("退出未完成。");
+  return response.headers;
 }
 
 export async function consumeLoginAttempt() {

@@ -32,6 +32,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 | APP_DATA_VOLUME            | 必填；已准备的独立新 SQLite 卷，例如 fuxiaochen-sqlite         |
 | SQLITE_INITIALIZE          | 默认 0；仅全新站点首次临时设 1，完成后改回 0                   |
 | APP_ORIGIN                 | 必填 HTTPS origin，如 https://fuxiaochen.com，不带路径或尾斜杠 |
+| BETTER_AUTH_SECRET         | 必填独立随机私有值，至少 32 个字符；轮换后需重新登录           |
 | CADDY_NETWORK              | 默认 infra_edge，必须是已有外部网络                            |
 | RESTORE_DATABASE_PATH      | 仅恢复时填写 /app/data/ 下独立且不存在的文件，普通运行留空     |
 | OSS_* / ALIBABA_CLOUD_*    | 沿用已有 Bucket、对象键、公开域名与最小权限凭据                |
@@ -44,7 +45,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 后续获得部署授权后：
 
 1. 等待发布完成，记录新/旧镜像 digest 与对应 Git reference，暂停外部调度，确认新 SQLite 卷已准备好。
-2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量，已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。
+2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量（认证升级须配置 BETTER_AUTH_SECRET），已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。
 3. 更新前停止旧 app 与所有数据库写入；新配置会移除历史 PostgreSQL 服务，应在预先准备的旧版本配置下确认该服务停止。旧 PostgreSQL/SQLite 数据卷保留，禁止清理 orphan 时连带删除卷。
 4. 在 Portainer 重新拉取并部署。此后每次重新部署 app 自行备份、迁移和校验，无需创建或强制重跑 migrate 服务；若重建阶段旧 Web 尚未退出，实例锁让新容器失败重试，不能认为第一条启动请求就是成功。
 5. 查看 app 日志、健康状态，核对本次启动备份 manifest 和业务数据，再通过 HTTPS 验证原密码登录、文章、统计及媒体，最后恢复调度。
@@ -96,8 +97,8 @@ RESTORE_DATABASE_PATH=/app/data/restored.sqlite docker compose -p fuxiaochen --e
 docker build --target runtime -t fuxiaochen:sqlite-local .
 # 生产amd64构建可在本地仿真验证，不代表服务器原生实测。
 docker build --platform linux/amd64 --target runtime -t fuxiaochen:sqlite-local-amd64 .
-# 三项配置均为dummy值，只展开配置，不创建生产卷或访问网络。
-APP_IMAGE=fuxiaochen:sqlite-local APP_ORIGIN=https://example.test APP_DATA_VOLUME=unused-check-volume docker compose config --quiet
+# 四项配置均为dummy值，只展开配置，不创建生产卷或访问网络。
+APP_IMAGE=fuxiaochen:sqlite-local APP_ORIGIN=https://example.test BETTER_AUTH_SECRET=compose-test-only-random-secret-32-chars APP_DATA_VOLUME=unused-check-volume docker compose config --quiet
 npm run test:sqlite-startup
 # 容器测试只创建/删除随机的专用卷与容器，不拉取或发布镜像。
 TEST_SQLITE_IMAGE=fuxiaochen:sqlite-local npm run test:sqlite-container

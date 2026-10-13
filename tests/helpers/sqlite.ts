@@ -3,16 +3,22 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
+import { syncAdminAccount } from "../../lib/auth/accounts";
 import { hashPassword } from "../../lib/auth/password";
-import { login } from "../../lib/auth/service";
+import { login as signIn } from "../../lib/auth/service";
 import { closeDatabase, getDatabase, writeTransaction } from "../../lib/database";
 import { migrateDatabase } from "../../lib/database/migrations";
 import { admin } from "../../lib/database/schema";
+
+export async function loginToken(...args: Parameters<typeof signIn>) {
+  return (await signIn(...args))?.token ?? null;
+}
 
 export async function createTestDatabase() {
   const directory = await mkdtemp(join(tmpdir(), "fx-sqlite-business-"));
   const path = join(directory, "independent.sqlite");
   closeDatabase();
+  process.env.BETTER_AUTH_SECRET = "sqlite-test-only-better-auth-secret-32-chars";
   process.env.DATABASE_PATH = path;
   process.env.BACKUP_DIRECTORY = join(directory, "backups");
   process.env.APP_ORIGIN = "https://sqlite-test.example";
@@ -36,7 +42,8 @@ export async function createTestDatabase() {
       .values({ id: 1, username: "test_admin", passwordHash, createdAt: now, updatedAt: now })
       .run(),
   );
-  const sessionToken = await login({ username: "test_admin", password }, undefined);
+  writeTransaction(syncAdminAccount);
+  const sessionToken = await loginToken({ username: "test_admin", password }, undefined);
   if (!sessionToken) throw new Error("独立测试库登录失败。");
   return {
     directory,

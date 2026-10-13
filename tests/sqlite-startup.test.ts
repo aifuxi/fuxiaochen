@@ -91,7 +91,7 @@ void test("缺失文件默认拒绝，只有显式首次初始化才独占发布
       initialized: true,
       backupId: null,
       appliedBefore: 0,
-      appliedAfter: 1,
+      appliedAfter: migrationManifest().migrations.length,
     });
     assert.equal((await lstat(fixture.databasePath)).mode & 0o777, 0o600);
     assert.equal((await lstat(fixture.databasePath)).nlink, 1);
@@ -329,12 +329,12 @@ void test("备份失败、迁移历史篡改、结构漂移与外键损坏都阻
     await assert.rejects(prepareDatabase({ ...fixture, backupDirectory: blockedDirectory }));
     assert.deepEqual(await readFile(fixture.databasePath), before);
     const client = new Sqlite(fixture.databasePath);
-    client.prepare("UPDATE __drizzle_migrations SET hash=?").run("f".repeat(64));
+    client.prepare("UPDATE __drizzle_migrations SET hash=? WHERE id=1").run("f".repeat(64));
     client.close();
     await assert.rejects(prepareDatabase(fixture), /迁移历史/);
     const repairs = new Sqlite(fixture.databasePath);
     repairs
-      .prepare("UPDATE __drizzle_migrations SET hash=?")
+      .prepare("UPDATE __drizzle_migrations SET hash=? WHERE id=1")
       .run(migrationManifest().migrations[0].hash);
     repairs.exec("DROP INDEX post_createdAt_id_idx");
     repairs.close();

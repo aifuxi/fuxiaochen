@@ -37,16 +37,20 @@ function fixture(
         if (options.fail === "limit") throw new Error("private-database-credentials");
         return { allowed: options.allowed ?? true, retryAfter: 23 };
       },
-      login: async (input, oldToken) => {
+      login: async (input, headers) => {
         calls.push("login");
         received.credentials = input;
-        received.previousToken = oldToken;
+        received.previousToken = headers.get("cookie")?.split("=")[1];
         if (options.fail === "login") throw new Error("private-login-credentials");
-        return options.token === undefined ? token : options.token;
+        const result = options.token === undefined ? token : options.token;
+        if (!result) return null;
+        // 这里只验证表单适配层透传认证库响应；真实 Cookie 属性由集成测试验证。
+        return {
+          headers: new Headers({
+            "set-cookie": `${cookieName}=${result}; Max-Age=604800; Path=/; HttpOnly; SameSite=Strict${options.secure === false ? "" : "; Secure"}`,
+          }),
+        };
       },
-      sessionCookie: cookieName,
-      sessionMaxAge: 7 * 24 * 60 * 60,
-      secureCookie: options.secure ?? true,
     }),
   );
   return { app, calls, received };

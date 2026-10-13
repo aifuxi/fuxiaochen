@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import { getSession } from "@/lib/auth/service";
+import { getSession } from "@/lib/auth/session-access";
 import { writeTransaction, type Database, type DatabaseTransaction } from "@/lib/database";
 import { comment, post } from "@/lib/database/schema";
 

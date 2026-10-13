@@ -2,7 +2,7 @@ import "server-only";
 import type { DatabaseTransaction } from "@/lib/database";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import { getSession } from "@/lib/auth/service";
+import { getSession } from "@/lib/auth/session-access";
 
 export class AdminBusinessError extends Error {
   constructor(

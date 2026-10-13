@@ -1,6 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
 
 import type { LoginFieldErrors } from "./login-response";
 import type { LoginCredentials } from "./schema";
@@ -10,13 +9,7 @@ import { loginSchema } from "./schema";
 
 type LoginDependencies = {
   consumeLoginAttempt: () => Promise<{ allowed: boolean; retryAfter: number }>;
-  login: (
-    credentials: LoginCredentials,
-    previousToken: string | undefined,
-  ) => Promise<string | null>;
-  sessionCookie: string;
-  sessionMaxAge: number;
-  secureCookie: boolean;
+  login: (credentials: LoginCredentials, headers: Headers) => Promise<{ headers: Headers } | null>;
 };
 
 export function createLoginRoutes(dependencies: LoginDependencies) {
@@ -55,19 +48,12 @@ export function createLoginRoutes(dependencies: LoginDependencies) {
       return loginErrorResponse(c, 400, "INVALID_INPUT", "请检查用户名和密码。", fieldErrors);
     }),
     async (c) => {
-      const token = await dependencies.login(
-        c.req.valid("form"),
-        getCookie(c, dependencies.sessionCookie),
-      );
-      if (!token)
+      const result = await dependencies.login(c.req.valid("form"), c.req.raw.headers);
+      if (!result)
         return loginErrorResponse(c, 401, "INVALID_CREDENTIALS", "用户名或密码不正确，请重试。");
-      setCookie(c, dependencies.sessionCookie, token, {
-        httpOnly: true,
-        secure: dependencies.secureCookie,
-        sameSite: "Strict",
-        path: "/",
-        maxAge: dependencies.sessionMaxAge,
-      });
+      // 签名与 Cookie 属性由 Better Auth 生成，不在表单适配层重新实现。
+      for (const cookie of result.headers.getSetCookie())
+        c.header("Set-Cookie", cookie, { append: true });
       return acceptsLoginJson(c) ? c.json({ success: true }) : c.redirect("/admin", 303);
     },
   );

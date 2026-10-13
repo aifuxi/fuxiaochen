@@ -13,8 +13,9 @@ import { join } from "node:path";
 import { afterEach, beforeEach, test } from "node:test";
 
 import sitemap from "../app/sitemap";
+import { syncAdminAccount } from "../lib/auth/accounts";
 import { hashPassword } from "../lib/auth/password";
-import { login, logout } from "../lib/auth/service";
+import { logout } from "../lib/auth/service";
 import { releaseQuerySchema } from "../lib/changelog/schema";
 import { createRelease, getRelease, listReleases, updateRelease } from "../lib/changelog/service";
 import { closeDatabase, getDatabase, writeTransaction } from "../lib/database";
@@ -54,6 +55,7 @@ import {
   updateCategory,
   type TaxonomyActor,
 } from "../lib/taxonomy/service";
+import { loginToken as login } from "./helpers/sqlite";
 
 let directory: string;
 let actor: TaxonomyActor;
@@ -105,6 +107,7 @@ function request<T>(work: () => T): T {
 beforeEach(async () => {
   previousPath = process.env.DATABASE_PATH;
   previousOrigin = process.env.APP_ORIGIN;
+  process.env.BETTER_AUTH_SECRET = "sqlite-test-only-better-auth-secret-32-chars";
   process.env.APP_ORIGIN = "https://sqlite-content.example";
   directory = await mkdtemp(join(tmpdir(), "fx-sqlite-content-"));
   process.env.DATABASE_PATH = join(directory, "test.sqlite");
@@ -129,6 +132,7 @@ beforeEach(async () => {
       })
       .run(),
   );
+  writeTransaction(syncAdminAccount);
   const sessionToken = await login({ username: "content_test_admin", password }, undefined);
   assert.ok(sessionToken);
   actor = { adminId: 1, sessionToken };

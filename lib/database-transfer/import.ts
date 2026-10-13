@@ -1,5 +1,6 @@
 import "server-only";
 import Sqlite from "better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
 import { createHash } from "node:crypto";
 import {
   closeSync,
@@ -14,6 +15,7 @@ import {
 import { link, lstat, mkdtemp, realpath, rm } from "node:fs/promises";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
+import { syncAdminAccount } from "../auth/accounts";
 import { migrateDatabase, verifyDatabase } from "../database/migrations";
 import {
   assertArchiveUnchanged,
@@ -167,6 +169,34 @@ const policies = [
   "仅创建独立的新 SQLite 文件，不覆盖任何已有数据库或归档。",
 ];
 
+function verifyAuthMapping(client: Sqlite.Database) {
+  // 新认证表是旧管理员的确定映射；独立核对，防止旧表正确但实际登录凭据漂移。
+  const matched = client
+    .prepare(`
+    SELECT 1 FROM admin a
+    JOIN auth_user u ON u.id=a.id
+    JOIN auth_account c ON c.userId=u.id
+    WHERE a.id=1 AND u.name=a.username AND u.username=a.username
+      AND u.email='admin@localhost.invalid' AND u.emailVerified=0
+      AND u.createdAt=a.createdAt AND u.updatedAt=a.updatedAt
+      AND c.id=1 AND c.accountId='1' AND c.providerId='credential'
+      AND c.password=a.passwordHash AND c.createdAt=a.createdAt AND c.updatedAt=a.updatedAt
+  `)
+    .get();
+  ensure(matched, "Better Auth 管理员映射与迁移归档不一致。");
+  for (const [table, expected] of [
+    ["auth_user", 1],
+    ["auth_account", 1],
+    ["auth_session", 0],
+    ["auth_verification", 0],
+  ] as const) {
+    const count = client
+      .prepare<[], { total: number }>(`SELECT COUNT(*) AS total FROM ${table}`)
+      .get()!.total;
+    ensure(count === expected, "Better Auth 认证记录数量与离线导入目标不一致。");
+  }
+}
+
 export async function importArchive(options: {
   directory: string;
   targetPath: string;
@@ -219,6 +249,7 @@ export async function importArchive(options: {
       verifyDatabase(client, { migrationsFolder: transferMigrationsFolder });
       for (const [index, spec] of tableSpecs.entries())
         report.tables[index].target = verifyTable(client, spec, archive.plannedRows(spec.name));
+      verifyAuthMapping(client);
       await assertArchiveUnchanged(archive);
       snapshot.unchanged();
       output.write(report);
@@ -246,6 +277,7 @@ export async function importArchive(options: {
           for (const row of archive.plannedRows(spec.name))
             statement.run(...spec.columns.map((column) => row[column.name]));
         }
+        syncAdminAccount(drizzle(database));
         verifyDatabase(database, { migrationsFolder: transferMigrationsFolder });
         for (const [index, spec] of tableSpecs.entries()) {
           const checked = verifyTable(database, spec, archive.plannedRows(spec.name));
@@ -258,6 +290,7 @@ export async function importArchive(options: {
           );
           report.tables[index].target = checked;
         }
+        verifyAuthMapping(database);
       })
       .immediate();
     database.close();

@@ -8,6 +8,8 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 
+import { sessionTokens, sessionTokenHash } from "@/lib/auth/storage-context";
+
 // SQL 整数在读写两端校验，保持原服务的安全 JavaScript number 范围。
 function checkedInteger(value: number): number {
   if (!Number.isSafeInteger(value)) throw new Error("数据库整数超出安全范围。");
@@ -56,6 +58,89 @@ export const loginRateLimit = sqliteTable("login_rate_limit", {
   window: safeInteger("window").notNull(),
   count: safeInteger("count").notNull(),
 });
+
+// 原 admin/session 保留为旧库导入基线；实际认证只使用下列 Better Auth 表。
+export const authUser = sqliteTable("auth_user", {
+  id: safeInteger("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: customType<{ data: boolean; driverData: number }>({
+    dataType: () => "integer",
+    toDriver: (value) => (value ? 1 : 0),
+    fromDriver: (value) => value === 1,
+  })("emailVerified").notNull(),
+  image: text("image"),
+  username: text("username").notNull().unique(),
+  createdAt: datetime("createdAt").notNull(),
+  updatedAt: datetime("updatedAt").notNull(),
+});
+
+const sessionToken = customType<{ data: string; driverData: string }>({
+  dataType: () => "text",
+  toDriver: (token) => {
+    const hash = sessionTokenHash(token);
+    sessionTokens.getStore()?.set(hash, token);
+    return hash;
+  },
+  fromDriver: (hash) => sessionTokens.getStore()?.get(hash) ?? hash,
+});
+export const authSession = sqliteTable(
+  "auth_session",
+  {
+    id: safeInteger("id").primaryKey(),
+    userId: safeInteger("userId")
+      .notNull()
+      .references(() => authUser.id, { onDelete: "cascade" }),
+    token: sessionToken("token").notNull().unique(),
+    expiresAt: datetime("expiresAt").notNull(),
+    ipAddress: text("ipAddress"),
+    userAgent: text("userAgent"),
+    createdAt: datetime("createdAt").notNull(),
+    updatedAt: datetime("updatedAt").notNull(),
+  },
+  (t) => [
+    index("auth_session_userId_idx").on(t.userId),
+    index("auth_session_expiresAt_idx").on(t.expiresAt),
+  ],
+);
+
+export const authAccount = sqliteTable(
+  "auth_account",
+  {
+    id: safeInteger("id").primaryKey(),
+    userId: safeInteger("userId")
+      .notNull()
+      .references(() => authUser.id, { onDelete: "cascade" }),
+    accountId: text("accountId").notNull(),
+    providerId: text("providerId").notNull(),
+    password: text("password"),
+    accessToken: text("accessToken"),
+    refreshToken: text("refreshToken"),
+    idToken: text("idToken"),
+    accessTokenExpiresAt: datetime("accessTokenExpiresAt"),
+    refreshTokenExpiresAt: datetime("refreshTokenExpiresAt"),
+    scope: text("scope"),
+    createdAt: datetime("createdAt").notNull(),
+    updatedAt: datetime("updatedAt").notNull(),
+  },
+  (t) => [
+    index("auth_account_userId_idx").on(t.userId),
+    unique("auth_account_provider_account_unique").on(t.providerId, t.accountId),
+  ],
+);
+
+export const authVerification = sqliteTable(
+  "auth_verification",
+  {
+    id: safeInteger("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: datetime("expiresAt").notNull(),
+    createdAt: datetime("createdAt").notNull(),
+    updatedAt: datetime("updatedAt").notNull(),
+  },
+  (t) => [index("auth_verification_identifier_idx").on(t.identifier)],
+);
 
 export const category = sqliteTable("category", {
   id: text("id").primaryKey(),

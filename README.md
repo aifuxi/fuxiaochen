@@ -19,7 +19,7 @@
 
 ```sh
 npm ci
-# 仅首次且 .env 不存在时复制，已有文件手工补充 DATABASE_PATH。
+# 仅首次且 .env 不存在时复制，已有文件手工补充 DATABASE_PATH 和 BETTER_AUTH_SECRET。
 test -f .env || cp .env.example .env
 # 显式创建独立的新 SQLite 文件；不要使用历史数据库文件。
 mkdir -p data
@@ -34,9 +34,18 @@ npm run dev
 # 文件必须先通过 db:init 初始化；普通启动不会自动生成空站点。
 DATABASE_PATH=./data/site.sqlite
 APP_ORIGIN=http://localhost:3000
+# 独立随机会话签名密钥，至少 32 个字符；生成后填入私有配置，不提交 Git。
+BETTER_AUTH_SECRET=
 ```
 
 `APP_ORIGIN` 与浏览器访问地址一致，不带路径或尾斜杠。命令行和应用共用根目录 `.env`；当前运行代码忽略历史 PostgreSQL `DATABASE_URL`，但已有凭据和旧数据不自动删除。`admin:init` 交互式创建管理员；已有账号时跳过。OSS 配置见 [媒体存储配置](docs/media-storage.md)。
+
+启动前生成独立随机密钥，将输出填入私有 `.env` 的 `BETTER_AUTH_SECRET`；缺失时登录不可用。认证使用 Better Auth，公开注册关闭，Passkey 暂未启用。
+
+```sh
+# 只生成新密钥，不改配置；保存到私有环境，轮换后需要重新登录。
+node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"
+```
 
 日常运行 `npm run dev`；拉取已提交的新迁移后，先停止应用和调度，备份后执行 `npm run db:migrate`。容器的 `serve` 自动备份、迁移并校验，本地 dev 不自动运行此流程。编辑 schema 后运行 `db:generate`，审查 SQL 再提交；构建不会自动生成或执行迁移，也不连接数据库。
 

@@ -8,6 +8,13 @@
       "when": 1791888066551,
       "tag": "0000_initial_sqlite",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1791896238480,
+      "tag": "0001_better_auth",
+      "breakpoints": true
     }
   ]
 }

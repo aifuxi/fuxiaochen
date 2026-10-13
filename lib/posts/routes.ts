@@ -1,13 +1,12 @@
 import "server-only";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import { SESSION_COOKIE, getSession } from "@/lib/auth/service";
+import { readAdminSession } from "@/lib/auth/service";
 
 import {
   featuredPostSchema,
@@ -30,11 +29,10 @@ import {
 
 export const postRoutes = new Hono<{ Variables: { admin: TaxonomyActor } }>();
 postRoutes.use("*", async (c, next) => {
-  const sessionToken = getCookie(c, SESSION_COOKIE);
-  const admin = getSession(sessionToken);
+  const admin = await readAdminSession(c.req.raw.headers);
   if (!admin)
     return c.json({ error: { code: "UNAUTHORIZED", message: "登录已失效，请重新登录。" } }, 401);
-  c.set("admin", { adminId: admin.adminId, sessionToken });
+  c.set("admin", { adminId: admin.adminId, sessionToken: admin.sessionToken });
   if (
     ["POST", "PUT", "PATCH"].includes(c.req.method) &&
     c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"

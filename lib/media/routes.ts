@@ -1,13 +1,12 @@
 import "server-only";
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import { getSession, SESSION_COOKIE } from "@/lib/auth/service";
+import { readAdminSession } from "@/lib/auth/service";
 
 import { MediaError } from "./error";
 import { deleteMediaSchema, mediaIdSchema, mediaQuerySchema, uploadSchema } from "./schema";
@@ -21,11 +20,10 @@ import {
 
 export const mediaRoutes = new Hono<{ Variables: { admin: TaxonomyActor } }>();
 mediaRoutes.use("*", async (c, next) => {
-  const sessionToken = getCookie(c, SESSION_COOKIE);
-  const admin = getSession(sessionToken);
+  const admin = await readAdminSession(c.req.raw.headers);
   if (!admin)
     return c.json({ error: { code: "UNAUTHORIZED", message: "登录已失效，请重新登录。" } }, 401);
-  c.set("admin", { adminId: admin.adminId, sessionToken });
+  c.set("admin", { adminId: admin.adminId, sessionToken: admin.sessionToken });
   if (
     c.req.method === "POST" &&
     c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"

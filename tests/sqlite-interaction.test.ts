@@ -10,8 +10,9 @@ import { createHash, randomUUID } from "node:crypto";
 import { Readable } from "node:stream";
 import { after, before, beforeEach, test } from "node:test";
 
+import { resetAdminPassword } from "../lib/auth/accounts";
 import { hashPassword } from "../lib/auth/password";
-import { consumeLoginAttempt, getSession, login, logout } from "../lib/auth/service";
+import { consumeLoginAttempt, getSession, logout } from "../lib/auth/service";
 import { commentQuerySchema } from "../lib/comments/schema";
 import * as comments from "../lib/comments/service";
 import { getDatabase, writeTransaction } from "../lib/database";
@@ -24,7 +25,7 @@ import {
   media,
   mediaUploadLimit,
   post,
-  session,
+  authSession as session,
 } from "../lib/database/schema";
 import { friendQuerySchema } from "../lib/friends-links/schema";
 import * as friends from "../lib/friends-links/service";
@@ -34,7 +35,7 @@ import * as mediaService from "../lib/media/service";
 import { closeStorage, publicMediaUrl } from "../lib/media/storage";
 import { serializeDocument } from "../lib/posts/document";
 import * as publicComments from "../lib/public/comments";
-import { createTestDatabase } from "./helpers/sqlite";
+import { createTestDatabase, loginToken as login } from "./helpers/sqlite";
 
 let fixture: Awaited<ReturnType<typeof createTestDatabase>>;
 let username: string;
@@ -133,13 +134,13 @@ void test("真实密码认证、令牌哈希、旧会话撤销与退出", async 
   const token = await login({ username, password: fixture.password }, undefined);
   assert.ok(token);
   assert.deepEqual(getSession(token), { adminId: 1, username });
-  const stored = getDatabase()
-    .select()
-    .from(session)
-    .where(eq(session.id, createHash("sha256").update(token).digest("hex")))
-    .get();
+  const stored = getDatabase().select().from(session).where(eq(session.token, token)).get();
   assert.ok(stored);
-  assert.notEqual(stored.id, token);
+  assert.notEqual(stored.token, token);
+  const raw = getDatabase()
+    .$client.prepare<[number], { token: string }>("SELECT token FROM auth_session WHERE id=?")
+    .get(stored.id)!;
+  assert.equal(raw.token, createHash("sha256").update(token).digest("hex"));
   assert.equal(stored.expiresAt.getTime() - stored.createdAt.getTime(), 7 * 86_400_000);
   const replacement = await login({ username, password: fixture.password }, token);
   assert.ok(replacement);
@@ -155,25 +156,13 @@ void test("密码校验期间重置密码会拒绝旧结果，并撤销所有会
   const changedHash = await hashPassword(changedPassword);
   // login 已读取旧哈希，但 Argon2 校验尚未完成；同步重置先提交。
   const pending = login({ username, password: fixture.password }, undefined);
-  writeTransaction((tx) => {
-    tx.update(admin)
-      .set({ passwordHash: changedHash, updatedAt: new Date() })
-      .where(eq(admin.id, 1))
-      .run();
-    tx.delete(session).where(eq(session.adminId, 1)).run();
-  });
+  resetAdminPassword(changedHash);
   assert.equal(await pending, null);
   assert.equal(getSession(fixture.actor.sessionToken), null);
   assert.equal(await login({ username, password: fixture.password }, undefined), null);
   assert.ok(await login({ username, password: changedPassword }, undefined));
   // 恢复测试账号，后续用例仍使用独立测试库的会话。
-  writeTransaction((tx) => {
-    tx.update(admin)
-      .set({ passwordHash: previous.passwordHash, updatedAt: new Date() })
-      .where(eq(admin.id, 1))
-      .run();
-    tx.delete(session).where(eq(session.adminId, 1)).run();
-  });
+  resetAdminPassword(previous.passwordHash);
   const restored = await login({ username, password: fixture.password }, undefined);
   assert.ok(restored);
   fixture.actor.sessionToken = restored;

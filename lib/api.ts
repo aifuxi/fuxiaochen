@@ -1,6 +1,5 @@
 import "server-only";
 import { Hono } from "hono";
-import { deleteCookie, getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 
 import { collectionRoutes } from "./analytics/collect-routes";
@@ -8,13 +7,7 @@ import { analyticsRoutes } from "./analytics/routes";
 import { registerApiRequestGuards } from "./api-request-guards";
 import { handleLoginError } from "./auth/login-response";
 import { createLoginRoutes } from "./auth/login-routes";
-import {
-  consumeLoginAttempt,
-  login,
-  logout,
-  SESSION_COOKIE,
-  SESSION_MAX_AGE,
-} from "./auth/service";
+import { consumeLoginAttempt, login, readAdminSession, signOut } from "./auth/service";
 import { changelogRoutes } from "./changelog/routes";
 import { commentRoutes } from "./comments/routes";
 import { friendRoutes } from "./friends-links/routes";
@@ -46,16 +39,16 @@ api.route(
   "/",
   createLoginRoutes({
     consumeLoginAttempt,
-    login,
-    sessionCookie: SESSION_COOKIE,
-    sessionMaxAge: SESSION_MAX_AGE,
-    secureCookie: process.env.NODE_ENV === "production",
+    login: async (credentials, headers) => {
+      const previous = await readAdminSession(headers);
+      return login(credentials, previous?.sessionToken, headers);
+    },
   }),
 );
 
 api.post("/logout", async (c) => {
-  await logout(getCookie(c, SESSION_COOKIE));
-  deleteCookie(c, SESSION_COOKIE, { path: "/" });
+  const headers = await signOut(c.req.raw.headers);
+  for (const cookie of headers.getSetCookie()) c.header("Set-Cookie", cookie, { append: true });
   return c.redirect("/login", 303);
 });
 

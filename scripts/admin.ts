@@ -2,10 +2,11 @@ import "dotenv/config";
 import { input, password } from "@inquirer/prompts";
 import { eq } from "drizzle-orm";
 
+import { resetAdminPassword, syncAdminAccount } from "../lib/auth/accounts";
 import { hashPassword } from "../lib/auth/password";
 import { newPasswordSchema, usernameSchema } from "../lib/auth/schema";
 import { closeDatabase, getDatabase, writeTransaction } from "../lib/database";
-import { admin, session } from "../lib/database/schema";
+import { admin } from "../lib/database/schema";
 
 class AdminCommandError extends Error {}
 
@@ -52,17 +53,9 @@ async function main() {
             updatedAt: now,
           })
           .run();
+        syncAdminAccount(tx);
       } else {
-        const updated = tx
-          .update(admin)
-          .set({
-            passwordHash,
-            updatedAt: now,
-          })
-          .where(eq(admin.id, 1))
-          .run();
-        if (!updated.changes) throw new AdminCommandError("管理员不存在");
-        tx.delete(session).where(eq(session.adminId, 1)).run();
+        resetAdminPassword(passwordHash);
       }
     });
     console.log(command === "init" ? "管理员已创建。" : "密码已重置，全部会话已撤销。");

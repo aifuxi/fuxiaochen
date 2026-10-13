@@ -2,7 +2,7 @@ import "server-only";
 import { asc, count, eq, getTableColumns } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
-import { getSession } from "@/lib/auth/service";
+import { getSession } from "@/lib/auth/session-access";
 import { getDatabase, writeTransaction, type DatabaseTransaction } from "@/lib/database";
 import { category, post, postTag, tag } from "@/lib/database/schema";
 

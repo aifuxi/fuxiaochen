@@ -367,7 +367,8 @@ void test("在线备份包含 WAL 写入，manifest 区分 SQLite，恢复只接
   try {
     verifyDatabase(database);
     assert.equal(
-      database.prepare<[], { total: number }>("SELECT count(*) AS total FROM session").get()?.total,
+      database.prepare<[], { total: number }>("SELECT count(*) AS total FROM auth_session").get()
+        ?.total,
       0,
     );
     assert.equal(

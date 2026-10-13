@@ -16,7 +16,7 @@ import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import { getSession } from "@/lib/auth/service";
+import { getSession } from "@/lib/auth/session-access";
 import { getDatabase, writeTransaction } from "@/lib/database";
 import { media, mediaUploadLimit } from "@/lib/database/schema";
 

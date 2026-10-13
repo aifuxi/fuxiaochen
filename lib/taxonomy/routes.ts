@@ -3,11 +3,10 @@ import type { Context } from "hono";
 
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { getCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 
 import { validate } from "@/lib/admin/routes";
-import { SESSION_COOKIE, getSession } from "@/lib/auth/service";
+import { readAdminSession } from "@/lib/auth/service";
 
 import type { TaxonomyActor } from "./service";
 
@@ -26,12 +25,11 @@ import {
 type TaxonomyEnv = { Variables: { admin: TaxonomyActor } };
 export const taxonomyRoutes = new Hono<TaxonomyEnv>();
 taxonomyRoutes.use("*", async (c, next) => {
-  const sessionToken = getCookie(c, SESSION_COOKIE);
-  const admin = getSession(sessionToken);
+  const admin = await readAdminSession(c.req.raw.headers);
   if (!admin) {
     return c.json({ error: { code: "UNAUTHORIZED", message: "登录已失效，请重新登录。" } }, 401);
   }
-  c.set("admin", { adminId: admin.adminId, sessionToken });
+  c.set("admin", { adminId: admin.adminId, sessionToken: admin.sessionToken });
   if (
     ["POST", "PUT"].includes(c.req.method) &&
     c.req.header("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json"
