@@ -1,0 +1,15 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": ["components/admin/admin.css"],
+        "createdAt": "2026-10-13T14:36:50.354Z",
+        "reason": "Agent: components/admin/admin-comments.tsx 使用真实 blockquote 引用原评论；该 2px 中性 outline 边线来自 2026-09-30 的提交 0f9ad1098，是引用语义标识，不是装饰卡片侧边强调。"
+      }
+    ]
+  }
+}
