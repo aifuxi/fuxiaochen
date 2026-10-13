@@ -22,7 +22,7 @@ import {
 export const mediaRoutes = new Hono<{ Variables: { admin: TaxonomyActor } }>();
 mediaRoutes.use("*", async (c, next) => {
   const sessionToken = getCookie(c, SESSION_COOKIE);
-  const admin = await getSession(sessionToken);
+  const admin = getSession(sessionToken);
   if (!admin)
     return c.json({ error: { code: "UNAUTHORIZED", message: "登录已失效，请重新登录。" } }, 401);
   c.set("admin", { adminId: admin.adminId, sessionToken });

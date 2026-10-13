@@ -1,27 +1,31 @@
 import "server-only";
 import type { z } from "zod";
 
+import { and, eq } from "drizzle-orm";
+
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { authorizeAdmin, AdminBusinessError } from "@/lib/admin/service";
-import { writeTransaction } from "@/prisma/db";
+import { writeTransaction } from "@/lib/database";
+import { operationSetting as operationSettingTable } from "@/lib/database/schema";
 
 import type { OperationTransaction } from "./notifications";
 import type { operationSettingsSchema, OperationSettings } from "./schema";
 
-export async function operationSetting(tx: OperationTransaction) {
-  return (
-    (await tx.orm.public.OperationSetting.where({ id: 1 }).first()) ??
-    tx.orm.public.OperationSetting.create({
-      id: 1,
-      autoBackup: 0,
-      version: 1,
-      schedulerLastRunAt: null,
-      updatedAt: new Date(),
-    })
-  );
+export function operationSetting(tx: OperationTransaction) {
+  const existing = tx
+    .select()
+    .from(operationSettingTable)
+    .where(eq(operationSettingTable.id, 1))
+    .get();
+  if (existing) return existing;
+  return tx
+    .insert(operationSettingTable)
+    .values({ id: 1, autoBackup: 0, version: 1, schedulerLastRunAt: null, updatedAt: new Date() })
+    .returning()
+    .get();
 }
-function serialize(row: Awaited<ReturnType<typeof operationSetting>>): OperationSettings {
+function serialize(row: ReturnType<typeof operationSetting>): OperationSettings {
   return {
     autoBackup: Boolean(row.autoBackup),
     version: row.version,
@@ -29,29 +33,32 @@ function serialize(row: Awaited<ReturnType<typeof operationSetting>>): Operation
   };
 }
 export async function getOperationSettings(actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    return serialize(await operationSetting(tx));
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    return serialize(operationSetting(tx));
   });
 }
 export async function saveOperationSettings(
   input: z.infer<typeof operationSettingsSchema>,
   actor: TaxonomyActor,
 ) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    await operationSetting(tx);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    operationSetting(tx);
     if (
-      !(await tx.orm.public.OperationSetting.where({
-        id: 1,
-        version: input.version,
-      }).updateAndCount({
-        autoBackup: Number(input.autoBackup),
-        version: input.version + 1,
-        updatedAt: new Date(),
-      }))
+      !tx
+        .update(operationSettingTable)
+        .set({
+          autoBackup: Number(input.autoBackup),
+          version: input.version + 1,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(eq(operationSettingTable.id, 1), eq(operationSettingTable.version, input.version)),
+        )
+        .run().changes
     )
       throw new AdminBusinessError("VERSION_CONFLICT", "备份设置已变化，请重新载入后再操作。");
-    return serialize(await operationSetting(tx));
+    return serialize(operationSetting(tx));
   });
 }

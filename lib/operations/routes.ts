@@ -2,7 +2,7 @@ import "server-only";
 import { adminRoutes, validate } from "@/lib/admin/routes";
 import { listQuerySchema } from "@/lib/admin/schema";
 import { authorizeAdmin } from "@/lib/admin/service";
-import { writeTransaction } from "@/prisma/db";
+import { writeTransaction } from "@/lib/database";
 
 import { createBackup, listBackups } from "./backups";
 import {
@@ -31,11 +31,11 @@ operationsRoutes.get("/notifications", validate("query", notificationQuerySchema
 );
 operationsRoutes.get("/notifications/summary", async (c) =>
   c.json({
-    data: await writeTransaction(async (tx) => {
+    data: writeTransaction((tx) => {
       const actor = c.get("admin");
-      await authorizeAdmin(actor);
-      await syncNotifications(tx);
-      return { unreadCount: await notificationCount(tx, actor.adminId) };
+      authorizeAdmin(actor, tx);
+      syncNotifications(tx);
+      return { unreadCount: notificationCount(tx, actor.adminId) };
     }),
   }),
 );

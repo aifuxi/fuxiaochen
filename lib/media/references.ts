@@ -1,8 +1,10 @@
 import "server-only";
+import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
-import type { DatabaseTransaction } from "@/prisma/db";
+import type { DatabaseTransaction } from "@/lib/database";
 
+import { post, siteSetting, socialAccount, friendLink, media } from "@/lib/database/schema";
 import { postDisplayTitle } from "@/lib/posts/schema";
 
 import type { MediaReferences } from "./schema";
@@ -17,10 +19,7 @@ import {
 } from "./reference-urls";
 import { publicMediaUrl } from "./storage";
 
-export async function findMediaReferences(
-  tx: DatabaseTransaction,
-  objectKey: string,
-): Promise<MediaReferences> {
+export function findMediaReferences(tx: DatabaseTransaction, objectKey: string): MediaReferences {
   const target = canonicalMediaUrl(publicMediaUrl(objectKey), process.env.OSS_PUBLIC_ORIGIN);
   const items: MediaReferences["items"] = [];
   const add = (kind: string, id: string, label: string, href: string, urls: ReferenceUrl[]) => {
@@ -33,18 +32,21 @@ export async function findMediaReferences(
       else items.push({ kind, id, label, href, field: ref.field, occurrences: 1 });
     }
   };
-  const posts = await tx.orm.public.Post.select("id", "title", "content").all();
-  for (const post of posts)
+  const posts = tx
+    .select({ id: post.id, title: post.title, content: post.content })
+    .from(post)
+    .all();
+  for (const row of posts)
     add(
       "post",
-      post.id,
-      postDisplayTitle(post.title),
-      `/admin/posts/${post.id}/edit`,
-      documentReferenceUrls(post.content),
+      row.id,
+      postDisplayTitle(row.title),
+      `/admin/posts/${row.id}/edit`,
+      documentReferenceUrls(row.content),
     );
-  const setting = await tx.orm.public.SiteSetting.where({ id: 1 }).first();
+  const setting = tx.select().from(siteSetting).where(eq(siteSetting.id, 1)).get();
   if (setting) {
-    const socials = await tx.orm.public.SocialAccount.where({ settingId: 1 }).all();
+    const socials = tx.select().from(socialAccount).where(eq(socialAccount.settingId, 1)).all();
     add(
       "settings",
       "1",
@@ -53,7 +55,7 @@ export async function findMediaReferences(
       settingsReferenceUrls({ ...setting, socials }),
     );
   }
-  for (const friend of await tx.orm.public.FriendLink.all())
+  for (const friend of tx.select().from(friendLink).all())
     add(
       "friend",
       friend.id,
@@ -71,8 +73,8 @@ export async function findMediaReferences(
   };
 }
 
-// 调用方必须位于共享写锁事务内；只校验新增引用，允许强删后保留旧的失效链接。
-export async function ensureNewMediaReferences(
+// 调用方必须位于 IMMEDIATE 事务内；只校验新增引用，允许强删后保留旧的失效链接。
+export function ensureNewMediaReferences(
   tx: DatabaseTransaction,
   next: ReferenceUrl[],
   previous: ReferenceUrl[] = [],
@@ -97,8 +99,12 @@ export async function ensureNewMediaReferences(
     }
     const objectKey = decodeURIComponent(new URL(url).pathname.slice(1));
     if (!objectKey.startsWith("media/")) continue;
-    const media = await tx.orm.public.Media.where({ objectKey }).select("status").first();
-    if (!media || media.status !== "ready")
+    const record = tx
+      .select({ status: media.status })
+      .from(media)
+      .where(eq(media.objectKey, objectKey))
+      .get();
+    if (!record || record.status !== "ready")
       throw new MediaError("RESOURCE_IN_USE", "引用的媒体正在删除或已不可用，请重新选择媒体。");
   }
 }

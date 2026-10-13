@@ -1,8 +1,8 @@
 import "dotenv/config";
+import { closeDatabase } from "../lib/database";
 import { MediaError } from "../lib/media/error";
 import { cleanupMedia } from "../lib/media/service";
 import { closeStorage } from "../lib/media/storage";
-import { getDatabase } from "../prisma/db";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -13,7 +13,7 @@ async function main() {
     if (result.failed) process.exitCode = 1;
   } finally {
     closeStorage();
-    await getDatabase().close();
+    closeDatabase();
   }
 }
 main().catch((error: unknown) => {

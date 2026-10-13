@@ -1,7 +1,7 @@
 import "dotenv/config";
+import { closeDatabase } from "../lib/database";
 import { createBackup, newBackupId } from "../lib/operations/backups";
 import { publishDuePosts, runScheduledOperations } from "../lib/operations/scheduler";
-import { getDatabase } from "../prisma/db";
 
 async function main() {
   const [command, ...extra] = process.argv.slice(2);
@@ -19,7 +19,7 @@ async function main() {
       "publication" in result ? result.publication : "skipped" in result ? result : null;
     if (publication?.skipped) process.exitCode = 1;
   } finally {
-    await getDatabase().close();
+    closeDatabase();
   }
 }
 main().catch((error: unknown) => {

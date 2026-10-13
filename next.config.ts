@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
     "/*": [
       `./node_modules/argon2/prebuilds/${process.platform}-${process.arch}/*.node`,
       "./node_modules/argon2/build/Release/*.node",
+      `./node_modules/better-sqlite3/prebuilds/${process.platform}-${process.arch}.node`,
+      "./node_modules/better-sqlite3/build/Release/*.node",
+      // 显式保留 schema 校验读取的 SQL 与 journal；drizzle-kit 仅在开发依赖。
+      "./drizzle/*.sql",
+      "./drizzle/meta/_journal.json",
     ],
   },
   // highlight.js 会读取正则源码拼接规则，Unicode 属性展开会破坏其分组计数。

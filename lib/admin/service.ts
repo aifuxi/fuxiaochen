@@ -1,4 +1,5 @@
 import "server-only";
+import type { DatabaseTransaction } from "@/lib/database";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { getSession } from "@/lib/auth/service";
@@ -16,8 +17,8 @@ export class AdminBusinessError extends Error {
     super(message);
   }
 }
-export async function authorizeAdmin(actor: TaxonomyActor) {
-  const admin = await getSession(actor.sessionToken);
+export function authorizeAdmin(actor: TaxonomyActor, tx?: DatabaseTransaction) {
+  const admin = getSession(actor.sessionToken, tx);
   if (!admin || admin.adminId !== actor.adminId)
     throw new AdminBusinessError("UNAUTHORIZED", "登录已失效，请重新登录。");
   return admin;

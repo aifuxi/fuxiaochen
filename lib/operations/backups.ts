@@ -1,5 +1,6 @@
 import "server-only";
-import { randomUUID, createHash } from "node:crypto";
+import { and, count, desc, eq, gte, lt } from "drizzle-orm";
+import { randomUUID } from "node:crypto";
 import { chmod, mkdir, rm, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
@@ -7,20 +8,17 @@ import { z } from "zod";
 import type { listQuerySchema } from "@/lib/admin/schema";
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
-import contractJson from "@/generated/prisma/contract.json";
 import { authorizeAdmin, AdminBusinessError } from "@/lib/admin/service";
-import { requiredDatabaseUrl } from "@/lib/database-url";
-import { getDatabase, writeTransaction } from "@/prisma/db";
+import { getDatabase, writeTransaction } from "@/lib/database";
+import { migrationManifest } from "@/lib/database/migrations";
+import { backupRun, notification } from "@/lib/database/schema";
 
 import type { OperationTransaction } from "./notifications";
 import type { BackupItem, BackupPage } from "./schema";
 
-import { backupDirectory, fileDigest, verifyPostgresArchive } from "./backup-files";
-import { runPostgresTool } from "./postgres-tools";
+import { backupDirectory, fileDigest, verifySqliteArchive } from "./backup-files";
 
-type Row = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof getDatabase>["orm"]["public"]["BackupRun"]["first"]>>
->;
+type Row = typeof backupRun.$inferSelect;
 function serialize(row: Row): BackupItem {
   return {
     id: row.id,
@@ -31,43 +29,51 @@ function serialize(row: Row): BackupItem {
     finishedAt: row.finishedAt?.toISOString() ?? null,
   };
 }
-async function expireBackupRuns(tx: OperationTransaction) {
+function expireBackupRuns(tx: OperationTransaction) {
   const now = new Date();
-  const expired = await tx.orm.public.BackupRun.where({ status: "running" })
-    .where((b) => b.createdAt.lt(new Date(now.getTime() - 15 * 60_000)))
+  const expired = tx
+    .select()
+    .from(backupRun)
+    .where(
+      and(
+        eq(backupRun.status, "running"),
+        lt(backupRun.createdAt, new Date(now.getTime() - 15 * 60_000)),
+      ),
+    )
     .all();
   for (const row of expired) {
-    await tx.orm.public.BackupRun.where({ id: row.id, status: "running" }).updateAndCount({
-      status: "failed",
-      finishedAt: now,
-    });
-    const id = `backup:${row.id}`;
-    if (!(await tx.orm.public.Notification.where({ id }).first()))
-      await tx.orm.public.Notification.create({
-        id,
+    tx.update(backupRun)
+      .set({ status: "failed", finishedAt: now })
+      .where(and(eq(backupRun.id, row.id), eq(backupRun.status, "running")))
+      .run();
+    tx.insert(notification)
+      .values({
+        id: `backup:${row.id}`,
         kind: "backup",
         sourceId: row.id,
         title: "数据库备份执行中断，请核对备份记录",
         href: "/admin",
         createdAt: now,
         resolvedAt: null,
-      });
+      })
+      .onConflictDoNothing()
+      .run();
   }
 }
 export async function listBackups(
   query: z.infer<typeof listQuerySchema>,
   actor: TaxonomyActor,
 ): Promise<BackupPage> {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    await expireBackupRuns(tx);
-    const { total } = await tx.orm.public.BackupRun.aggregate((a) => ({ total: a.count() }));
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    expireBackupRuns(tx);
+    const { total } = tx.select({ total: count() }).from(backupRun).get()!;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const rows = await tx.orm.public.BackupRun.orderBy([
-      (b) => b.createdAt.desc(),
-      (b) => b.id.desc(),
-    ])
+    const rows = tx
+      .select()
+      .from(backupRun)
+      .orderBy(desc(backupRun.createdAt), desc(backupRun.id))
       .limit(query.pageSize)
       .offset((page - 1) * query.pageSize)
       .all();
@@ -80,38 +86,47 @@ export async function createBackup(
   actor?: TaxonomyActor,
   dailyKey: string | null = null,
 ) {
-  const started = await writeTransaction(async (tx) => {
-    if (actor) await authorizeAdmin(actor);
+  const started = writeTransaction((tx) => {
+    if (actor) authorizeAdmin(actor, tx);
     const now = new Date();
-    await expireBackupRuns(tx);
-    const previous = dailyKey
-      ? await tx.orm.public.BackupRun.where({ dailyKey }).first()
-      : await tx.orm.public.BackupRun.where({ id }).first();
-    if (previous && previous.status !== "failed") return { existing: previous };
-    if (previous && !dailyKey) return { existing: previous };
-    if (await tx.orm.public.BackupRun.where({ status: "running" }).first())
+    expireBackupRuns(tx);
+    const previous = tx
+      .select()
+      .from(backupRun)
+      .where(dailyKey ? eq(backupRun.dailyKey, dailyKey) : eq(backupRun.id, id))
+      .get();
+    if (previous && (previous.status !== "failed" || !dailyKey)) return { existing: previous };
+    if (
+      tx.select({ id: backupRun.id }).from(backupRun).where(eq(backupRun.status, "running")).get()
+    )
       throw new AdminBusinessError("VERSION_CONFLICT", "已有备份正在执行，请稍后查询记录。");
     if (
       actor &&
-      (await tx.orm.public.BackupRun.where((b) =>
-        b.createdAt.gte(new Date(now.getTime() - 60_000)),
-      ).first())
+      tx
+        .select({ id: backupRun.id })
+        .from(backupRun)
+        .where(gte(backupRun.createdAt, new Date(now.getTime() - 60_000)))
+        .get()
     )
       throw new AdminBusinessError(
         "INVALID_INPUT",
         "两次手动备份需间隔至少一分钟，请先核对已有记录。",
       );
     if (previous)
-      await tx.orm.public.BackupRun.where({ id: previous.id }).updateAndCount({ dailyKey: null });
-    const row = await tx.orm.public.BackupRun.create({
-      id,
-      dailyKey,
-      status: "running",
-      bytes: null,
-      sha256: null,
-      createdAt: now,
-      finishedAt: null,
-    });
+      tx.update(backupRun).set({ dailyKey: null }).where(eq(backupRun.id, previous.id)).run();
+    const row = tx
+      .insert(backupRun)
+      .values({
+        id,
+        dailyKey,
+        status: "running",
+        bytes: null,
+        sha256: null,
+        createdAt: now,
+        finishedAt: null,
+      })
+      .returning()
+      .get();
     return { row };
   });
   if (started.existing) return serialize(started.existing);
@@ -121,28 +136,24 @@ export async function createBackup(
     await mkdir(backupDirectory(), { recursive: true, mode: 0o700 });
     await mkdir(directory, { mode: 0o700 });
     created = true;
-    const path = join(directory, "database.dump");
-    await runPostgresTool(
-      "pg_dump",
-      ["--format=custom", "--no-owner", "--no-privileges", "--no-password", "--file", path],
-      requiredDatabaseUrl(),
-    );
+    const path = join(directory, "database.sqlite");
+    // 在线备份 API 创建一致性快照，不能在 WAL 模式中直接复制主文件。
+    await getDatabase().$client.backup(path);
     await chmod(path, 0o600);
-    await verifyPostgresArchive(path);
+    verifySqliteArchive(path);
     const sha256 = await fileDigest(path);
     const { size: bytes } = await stat(path);
     await writeFile(
       join(directory, "manifest.json"),
       JSON.stringify(
         {
-          format: "fuxiaochen-postgresql-backup",
+          format: "fuxiaochen-sqlite-backup",
           version: 1,
-          postgresMajor: 18,
           id,
           createdAt: started.row.createdAt.toISOString(),
           bytes,
           sha256,
-          contractSha256: createHash("sha256").update(JSON.stringify(contractJson)).digest("hex"),
+          ...migrationManifest(),
           mediaScope: "metadata-only",
         },
         null,
@@ -150,27 +161,28 @@ export async function createBackup(
       ),
       { mode: 0o600, flag: "wx" },
     );
-    return await writeTransaction(async (tx) => {
+    return writeTransaction((tx) => {
       if (
-        !(await tx.orm.public.BackupRun.where({ id, status: "running" }).updateAndCount({
-          status: "complete",
-          bytes,
-          sha256,
-          finishedAt: new Date(),
-        }))
+        !tx
+          .update(backupRun)
+          .set({ status: "complete", bytes, sha256, finishedAt: new Date() })
+          .where(and(eq(backupRun.id, id), eq(backupRun.status, "running")))
+          .run().changes
       )
         throw new Error("Backup lease expired");
-      const row = await tx.orm.public.BackupRun.where({ id }).first();
+      const row = tx.select().from(backupRun).where(eq(backupRun.id, id)).get();
       if (!row) throw new Error("Missing backup record");
-      await tx.orm.public.Notification.create({
-        id: `backup:${id}`,
-        kind: "backup",
-        sourceId: id,
-        title: "数据库备份已完成",
-        href: "/admin",
-        createdAt: new Date(),
-        resolvedAt: null,
-      });
+      tx.insert(notification)
+        .values({
+          id: `backup:${id}`,
+          kind: "backup",
+          sourceId: id,
+          title: "数据库备份已完成",
+          href: "/admin",
+          createdAt: new Date(),
+          resolvedAt: null,
+        })
+        .run();
       return serialize(row);
     });
   } catch (error) {
@@ -180,13 +192,13 @@ export async function createBackup(
       () => false,
     );
     if (created && !complete) await rm(directory, { recursive: true, force: true });
-    await writeTransaction(async (tx) => {
-      await tx.orm.public.BackupRun.where({ id }).updateAndCount({
-        status: "failed",
-        finishedAt: new Date(),
-      });
-      if (!(await tx.orm.public.Notification.where({ id: `backup:${id}` }).first()))
-        await tx.orm.public.Notification.create({
+    writeTransaction((tx) => {
+      tx.update(backupRun)
+        .set({ status: "failed", finishedAt: new Date() })
+        .where(eq(backupRun.id, id))
+        .run();
+      tx.insert(notification)
+        .values({
           id: `backup:${id}`,
           kind: "backup",
           sourceId: id,
@@ -194,7 +206,9 @@ export async function createBackup(
           href: "/admin",
           createdAt: new Date(),
           resolvedAt: null,
-        });
+        })
+        .onConflictDoNothing()
+        .run();
     });
     console.error("数据库备份失败", { name: error instanceof Error ? error.name : "UnknownError" });
     throw new AdminBusinessError(

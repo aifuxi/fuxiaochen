@@ -1,8 +1,11 @@
 import "server-only";
+import { and, asc, count as sqlCount, desc, eq, gte, or, sql } from "drizzle-orm";
+
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { authorizeAdmin } from "@/lib/admin/service";
-import { getDatabase, writeTransaction } from "@/prisma/db";
+import { writeTransaction } from "@/lib/database";
+import { pageVisit, siteSetting } from "@/lib/database/schema";
 
 import { cleanupAnalytics } from "./collection";
 import {
@@ -17,9 +20,7 @@ import {
   type AnalyticsMetrics,
 } from "./schema";
 
-type Transaction = Parameters<Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]>[0];
-const integer = "pg/int8number@1" as const;
-const text = "pg/text@1" as const;
+type Transaction = Parameters<Parameters<typeof writeTransaction>[0]>[0];
 function metricChange(current: number | null, previous: number | null | undefined) {
   return current !== null && previous !== null && previous !== undefined && previous !== 0
     ? ((current - previous) / previous) * 100
@@ -29,10 +30,15 @@ export const shanghaiDay = (value: number) =>
   new Date(value + 8 * 3_600_000).toISOString().slice(0, 10);
 export const shanghaiMidnight = (value: number) =>
   new Date(`${shanghaiDay(value)}T00:00:00+08:00`).getTime();
-async function collectionInfo(tx: Transaction, now: number): Promise<CollectionInfo> {
-  const row = await tx.orm.public.SiteSetting.where({ id: 1 })
-    .select("localAnalyticsEnabled", "localAnalyticsStartedAt")
-    .first();
+function collectionInfo(tx: Transaction, now: number): CollectionInfo {
+  const row = tx
+    .select({
+      localAnalyticsEnabled: siteSetting.localAnalyticsEnabled,
+      localAnalyticsStartedAt: siteSetting.localAnalyticsStartedAt,
+    })
+    .from(siteSetting)
+    .where(eq(siteSetting.id, 1))
+    .get();
   return {
     enabled: Boolean(row?.localAnalyticsEnabled),
     production: process.env.NODE_ENV === "production",
@@ -47,58 +53,53 @@ export async function listVisitors(
   query: VisitorQuery,
   actor: TaxonomyActor,
 ): Promise<VisitorList> {
-  await authorizeAdmin(actor);
+  authorizeAdmin(actor);
   await cleanupAnalytics();
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const db = getDatabase();
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
     const now = Date.now();
-    const cutoff = new Date(now - RETENTION_MS).toISOString();
-    let filtered = tx.orm.public.PageVisit.where((v) =>
-      db.raw.sql`${v.createdAt} >= ${cutoff}`.returns("pg/bool@1").buildAst(),
+    const cutoff = now - RETENTION_MS;
+    const filter = and(
+      gte(pageVisit.createdAt, new Date(cutoff)),
+      query.q
+        ? or(
+            sql`instr(lower(${pageVisit.ip}), lower(${query.q})) > 0`,
+            sql`instr(lower(${pageVisit.location}), lower(${query.q})) > 0`,
+            sql`instr(lower(${pageVisit.path}), lower(${query.q})) > 0`,
+          )
+        : undefined,
     );
-    if (query.q)
-      filtered = filtered.where((v) =>
-        db.raw
-          .sql`(strpos(lower(${v.ip}), lower(${query.q})) > 0 OR strpos(lower(${v.location}), lower(${query.q})) > 0 OR strpos(lower(${v.path}), lower(${query.q})) > 0)`
-          .returns("pg/bool@1")
-          .buildAst(),
-      );
-    const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
+    const { total } = tx.select({ total: sqlCount() }).from(pageVisit).where(filter).get()!;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const direction = query.sortDirection ?? "asc";
-    const rows = await filtered
-      .orderBy([
-        (v) => {
-          switch (query.sortBy) {
-            case "ip":
-              return v.ip[direction]();
-            case "location":
-              return v.location[direction]();
-            case "entryPage":
-              return v.path[direction]();
-            case "platform":
-              return v.browser[direction]();
-            case "duration":
-              return v.durationMs[direction]();
-            case "time":
-              return v.createdAt[direction]();
-            default:
-              return v.createdAt.desc();
-          }
-        },
-        (v) => (query.sortBy === "platform" ? v.os[direction]() : v.id.desc()),
-        (v) => v.id.desc(),
-      ])
+    const order = query.sortDirection === "desc" ? desc : asc;
+    const column =
+      query.sortBy === "ip"
+        ? pageVisit.ip
+        : query.sortBy === "location"
+          ? pageVisit.location
+          : query.sortBy === "entryPage"
+            ? pageVisit.path
+            : query.sortBy === "platform"
+              ? pageVisit.browser
+              : query.sortBy === "duration"
+                ? pageVisit.durationMs
+                : pageVisit.createdAt;
+    const primaryOrder = query.sortBy ? order(column) : desc(pageVisit.createdAt);
+    const rows = tx
+      .select()
+      .from(pageVisit)
+      .where(filter)
+      .orderBy(
+        primaryOrder,
+        query.sortBy === "platform" ? order(pageVisit.os) : desc(pageVisit.id),
+        desc(pageVisit.id),
+      )
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();
-    const [summary] = await tx.query(
-      db.raw
-        .sql`SELECT COUNT(DISTINCT CASE WHEN "lastSeenAt" >= ${new Date(now - ONLINE_MS).toISOString()} THEN "visitorHash" END) AS online, COUNT(DISTINCT CASE WHEN "createdAt" >= ${new Date(shanghaiMidnight(now)).toISOString()} THEN "visitorHash" END) AS uv, COALESCE(SUM(CASE WHEN "createdAt" >= ${new Date(shanghaiMidnight(now)).toISOString()} THEN 1 ELSE 0 END), 0) AS pv FROM page_visit WHERE "createdAt" >= ${cutoff}`
-        .returnsRow({ online: integer, uv: integer, pv: integer })
-        .build(),
+    const summary = tx.get<{ online: number; uv: number; pv: number }>(
+      sql`SELECT COUNT(DISTINCT CASE WHEN "lastSeenAt" >= ${now - ONLINE_MS} THEN "visitorHash" END) AS online, COUNT(DISTINCT CASE WHEN "createdAt" >= ${shanghaiMidnight(now)} THEN "visitorHash" END) AS uv, COALESCE(SUM(CASE WHEN "createdAt" >= ${shanghaiMidnight(now)} THEN 1 ELSE 0 END), 0) AS pv FROM page_visit WHERE "createdAt" >= ${cutoff}`,
     );
     return {
       items: rows.map((row) => ({
@@ -116,28 +117,17 @@ export async function listVisitors(
       pageSize: query.pageSize,
       pageCount,
       summary,
-      collection: await collectionInfo(tx, now),
+      collection: collectionInfo(tx, now),
     };
   });
 }
-async function metrics(
-  tx: Transaction,
-  start: number,
-  end: number,
-  now: number,
-): Promise<AnalyticsMetrics> {
-  const raw = getDatabase().raw;
-  const from = new Date(Math.max(start, now - RETENTION_MS)).toISOString();
-  const to = new Date(end).toISOString();
-  const [visits] = await tx.query(
-    raw.sql`SELECT COUNT(*) AS pv, COUNT(DISTINCT "visitorHash") AS uv, COALESCE(SUM(CASE WHEN article = 1 THEN "durationMs" ELSE 0 END), 0) AS duration, COALESCE(SUM(article), 0) AS "articlePv" FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to}`
-      .returnsRow({ pv: integer, uv: integer, duration: integer, articlePv: integer })
-      .build(),
+function metrics(tx: Transaction, start: number, end: number, now: number): AnalyticsMetrics {
+  const from = Math.max(start, now - RETENTION_MS);
+  const visits = tx.get<{ pv: number; uv: number; duration: number; articlePv: number }>(
+    sql`SELECT COUNT(*) AS pv, COUNT(DISTINCT "visitorHash") AS uv, COALESCE(SUM(CASE WHEN article = 1 THEN "durationMs" ELSE 0 END), 0) AS duration, COALESCE(SUM(article), 0) AS "articlePv" FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${end}`,
   );
-  const [sessions] = await tx.query(
-    raw.sql`SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN pages = 1 AND duration < 10000 THEN 1 ELSE 0 END), 0) AS bounced FROM (SELECT s.id, COUNT(v.id) AS pages, SUM(v."durationMs") AS duration FROM visit_session s JOIN page_visit v ON v."sessionId" = s.id WHERE s."createdAt" >= ${from} AND s."createdAt" < ${to} AND s."lastSeenAt" <= ${new Date(now - SESSION_IDLE_MS).toISOString()} GROUP BY s.id) AS session_metrics`
-      .returnsRow({ total: integer, bounced: integer })
-      .build(),
+  const sessions = tx.get<{ total: number; bounced: number }>(
+    sql`SELECT COUNT(*) AS total, COALESCE(SUM(CASE WHEN pages = 1 AND duration < 10000 THEN 1 ELSE 0 END), 0) AS bounced FROM (SELECT s.id, COUNT(v.id) AS pages, SUM(v."durationMs") AS duration FROM visit_session s JOIN page_visit v ON v."sessionId" = s.id WHERE s."createdAt" >= ${from} AND s."createdAt" < ${end} AND s."lastSeenAt" <= ${now - SESSION_IDLE_MS} GROUP BY s.id) AS session_metrics`,
   );
   return {
     pv: visits.pv,
@@ -150,10 +140,10 @@ export async function getAnalytics(
   range: AnalyticsRange,
   actor: TaxonomyActor,
 ): Promise<AnalyticsSnapshot> {
-  await authorizeAdmin(actor);
+  authorizeAdmin(actor);
   await cleanupAnalytics();
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
     const now = Date.now();
     const day = shanghaiMidnight(now);
     const start =
@@ -163,11 +153,11 @@ export async function getAnalytics(
           ).getTime()
         : day - (range === "7d" ? 6 : 29) * 86_400_000;
     const previousStart = start - (now - start);
-    const collection = await collectionInfo(tx, now);
-    const current = await metrics(tx, start, now, now);
+    const collection = collectionInfo(tx, now);
+    const current = metrics(tx, start, now, now);
     const previous =
       previousStart >= new Date(collection.availableFrom).getTime()
-        ? await metrics(tx, previousStart, start, now)
+        ? metrics(tx, previousStart, start, now)
         : null;
     const changes = {
       pv: metricChange(current.pv, previous?.pv),
@@ -175,13 +165,11 @@ export async function getAnalytics(
       durationMs: metricChange(current.durationMs, previous?.durationMs),
       bounce: metricChange(current.bounce, previous?.bounce),
     };
-    const raw = getDatabase().raw;
-    const from = new Date(Math.max(start, now - RETENTION_MS)).toISOString();
-    const to = new Date(now).toISOString();
-    const daily = await tx.query(
-      raw.sql`SELECT to_char("createdAt" AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD') AS date, COUNT(*) AS pv, COUNT(DISTINCT "visitorHash") AS uv FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY to_char("createdAt" AT TIME ZONE 'Asia/Shanghai', 'YYYY-MM-DD') ORDER BY date`
-        .returnsRow({ date: text, pv: integer, uv: integer })
-        .build(),
+    const from = Math.max(start, now - RETENTION_MS);
+    const to = now;
+    // UTC 毫秒按固定北京时间分组，避免依赖服务器本地时区。
+    const daily = tx.all<{ date: string; pv: number; uv: number }>(
+      sql`SELECT date("createdAt" / 1000, 'unixepoch', '+8 hours') AS date, COUNT(*) AS pv, COUNT(DISTINCT "visitorHash") AS uv FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY date("createdAt" / 1000, 'unixepoch', '+8 hours') ORDER BY date`,
     );
     const byDay = new Map(daily.map((row) => [row.date, row]));
     const trend = Array.from({ length: Math.floor((day - start) / 86_400_000) + 1 }, (_, i) => {
@@ -190,10 +178,8 @@ export async function getAnalytics(
         return { date, pv: null, uv: null };
       return byDay.get(date) ?? { date, pv: 0, uv: 0 };
     });
-    const devices = await tx.query(
-      raw.sql`SELECT device AS name, COUNT(*) AS count FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY device`
-        .returnsRow({ name: text, count: integer })
-        .build(),
+    const devices = tx.all<{ name: string; count: number }>(
+      sql`SELECT device AS name, COUNT(*) AS count FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY device`,
     );
     const deviceLabels = {
       desktop: "桌面电脑",
@@ -201,27 +187,23 @@ export async function getAnalytics(
       tablet: "平板设备",
       unknown: "未知设备",
     };
-    const sources = await tx.query(
-      raw.sql`SELECT source AS name, COUNT(*) AS count FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY source ORDER BY count DESC, source`
-        .returnsRow({ name: text, count: integer })
-        .build(),
+    const sources = tx.all<{ name: string; count: number }>(
+      sql`SELECT source AS name, COUNT(*) AS count FROM page_visit WHERE "createdAt" >= ${from} AND "createdAt" < ${to} GROUP BY source ORDER BY count DESC, source`,
     );
-    const articles = await tx.query(
-      raw.sql`SELECT COALESCE(v."postId", v.path) AS id, COALESCE(p.title, v.path) AS title, MIN(v.path) AS path, COUNT(*) AS pv, COUNT(DISTINCT v."visitorHash") AS uv, SUM(CASE WHEN v.progress >= 90 AND v."durationMs" >= 10000 THEN 1 ELSE 0 END) AS completed FROM page_visit v LEFT JOIN post p ON p.id = v."postId" WHERE v.article = 1 AND v."createdAt" >= ${from} AND v."createdAt" < ${to} GROUP BY COALESCE(v."postId", v.path), COALESCE(p.title, v.path) ORDER BY pv DESC, id LIMIT 20`
-        .returnsRow({
-          id: text,
-          title: text,
-          path: text,
-          pv: integer,
-          uv: integer,
-          completed: integer,
-        })
-        .build(),
+    const articles = tx.all<{
+      id: string;
+      title: string;
+      path: string;
+      pv: number;
+      uv: number;
+      completed: number;
+    }>(
+      sql`SELECT COALESCE(v."postId", v.path) AS id, COALESCE(p.title, v.path) AS title, MIN(v.path) AS path, COUNT(*) AS pv, COUNT(DISTINCT v."visitorHash") AS uv, SUM(CASE WHEN v.progress >= 90 AND v."durationMs" >= 10000 THEN 1 ELSE 0 END) AS completed FROM page_visit v LEFT JOIN post p ON p.id = v."postId" WHERE v.article = 1 AND v."createdAt" >= ${from} AND v."createdAt" < ${to} GROUP BY COALESCE(v."postId", v.path), COALESCE(p.title, v.path) ORDER BY pv DESC, id LIMIT 20`,
     );
     return {
       range,
       start: new Date(start).toISOString(),
-      end: to,
+      end: new Date(to).toISOString(),
       collection,
       incomplete: start < new Date(collection.availableFrom).getTime(),
       metrics: current,

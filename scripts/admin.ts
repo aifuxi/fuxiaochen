@@ -1,9 +1,11 @@
 import "dotenv/config";
 import { input, password } from "@inquirer/prompts";
+import { eq } from "drizzle-orm";
 
 import { hashPassword } from "../lib/auth/password";
 import { newPasswordSchema, usernameSchema } from "../lib/auth/schema";
-import { getDatabase, writeTransaction } from "../prisma/db";
+import { closeDatabase, getDatabase, writeTransaction } from "../lib/database";
+import { admin, session } from "../lib/database/schema";
 
 class AdminCommandError extends Error {}
 
@@ -14,7 +16,7 @@ async function main() {
   }
   const db = getDatabase();
   try {
-    const existing = await db.orm.public.Admin.where({ id: 1 }).first();
+    const existing = db.select().from(admin).where(eq(admin.id, 1)).get();
     if (command === "init" && existing)
       throw new AdminCommandError("管理员已存在，请使用 admin:reset-password");
     if (command === "reset-password" && !existing)
@@ -39,27 +41,33 @@ async function main() {
     if (secret !== confirmation) throw new AdminCommandError("两次输入的密码不一致");
     const passwordHash = await hashPassword(newPasswordSchema.parse(secret));
     const now = new Date();
-    await writeTransaction(async (tx) => {
+    writeTransaction((tx) => {
       if (command === "init") {
-        await tx.orm.public.Admin.create({
-          id: 1,
-          username: usernameSchema.parse(username),
-          passwordHash,
-          createdAt: now,
-          updatedAt: now,
-        });
+        tx.insert(admin)
+          .values({
+            id: 1,
+            username: usernameSchema.parse(username),
+            passwordHash,
+            createdAt: now,
+            updatedAt: now,
+          })
+          .run();
       } else {
-        const updated = await tx.orm.public.Admin.where({ id: 1 }).update({
-          passwordHash,
-          updatedAt: now,
-        });
-        if (!updated) throw new AdminCommandError("管理员不存在");
-        await tx.orm.public.Session.where({ adminId: 1 }).deleteAndCount();
+        const updated = tx
+          .update(admin)
+          .set({
+            passwordHash,
+            updatedAt: now,
+          })
+          .where(eq(admin.id, 1))
+          .run();
+        if (!updated.changes) throw new AdminCommandError("管理员不存在");
+        tx.delete(session).where(eq(session.adminId, 1)).run();
       }
     });
     console.log(command === "init" ? "管理员已创建。" : "密码已重置，全部会话已撤销。");
   } finally {
-    await db.close();
+    closeDatabase();
   }
 }
 

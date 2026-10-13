@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { cleanupAnalytics } from "../lib/analytics/collection";
-import { getDatabase } from "../prisma/db";
+import { closeDatabase } from "../lib/database";
 
 try {
   if (process.argv.length > 2) throw new Error("不接受命令参数");
@@ -9,5 +9,5 @@ try {
   console.error("访问记录清理失败，请检查数据库及命令参数。");
   process.exitCode = 1;
 } finally {
-  await getDatabase().close();
+  closeDatabase();
 }

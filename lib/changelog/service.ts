@@ -1,12 +1,14 @@
 import "server-only";
 import type { z } from "zod";
 
+import { and, count, desc, eq, sql, type SQL } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { AdminBusinessError, authorizeAdmin } from "@/lib/admin/service";
-import { getDatabase, writeTransaction } from "@/prisma/db";
+import { writeTransaction } from "@/lib/database";
+import { releaseLog } from "@/lib/database/schema";
 
 import {
   releaseSchema,
@@ -16,9 +18,7 @@ import {
   type ReleaseUpdateInput,
   type ReleaseVisibilityInput,
 } from "./schema";
-type Row = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof getDatabase>["orm"]["public"]["ReleaseLog"]["first"]>>
->;
+type Row = typeof releaseLog.$inferSelect;
 function serialize(row: Row) {
   const { id, createdAt, changes, status, revision, updatedAt, ...fields } = row;
   return {
@@ -34,24 +34,27 @@ export async function listReleases(
   query: z.infer<typeof releaseQuerySchema>,
   actor: TaxonomyActor,
 ) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const db = getDatabase();
-    let filtered = tx.orm.public.ReleaseLog.where({});
-    if (query.record) filtered = filtered.where({ id: query.record });
-    if (!query.record && query.status) filtered = filtered.where({ status: query.status });
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
+    const filters: SQL[] = [];
+    if (query.record) filters.push(eq(releaseLog.id, query.record));
+    if (!query.record && query.status) filters.push(eq(releaseLog.status, query.status));
     if (!query.record && query.q)
-      filtered = filtered.where((r) =>
-        db.raw
-          .sql`(strpos(lower(${r.version}), lower(${query.q})) > 0 OR strpos(lower(${r.title}), lower(${query.q})) > 0 OR EXISTS (SELECT 1 FROM jsonb_array_elements_text(${r.changes}::jsonb) AS changes_item(value) WHERE strpos(lower(value), lower(${query.q})) > 0))`
-          .returns("pg/bool@1")
-          .buildAst(),
-      );
-    const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
+      // json_each 逐项检索实际更新内容，保留 %、_ 的字面含义。
+      filters.push(sql`(
+        instr(lower(${releaseLog.version}), lower(${query.q})) > 0 OR
+        instr(lower(${releaseLog.title}), lower(${query.q})) > 0 OR
+        EXISTS (SELECT 1 FROM json_each(${releaseLog.changes}) AS changes_item WHERE instr(lower(changes_item.value), lower(${query.q})) > 0)
+      )`);
+    const where = and(...filters);
+    const total = tx.select({ total: count() }).from(releaseLog).where(where).get()!.total;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const rows = await filtered
-      .orderBy([(r) => r.createdAt.desc(), (r) => r.id.desc()])
+    const rows = tx
+      .select()
+      .from(releaseLog)
+      .where(where)
+      .orderBy(desc(releaseLog.createdAt), desc(releaseLog.id))
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();
@@ -59,23 +62,28 @@ export async function listReleases(
   });
 }
 export async function createRelease(input: ReleaseInput, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
+    const now = new Date();
     return serialize(
-      await tx.orm.public.ReleaseLog.create({
-        ...input,
-        changes: JSON.stringify(input.changes),
-        id: randomUUID(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
+      tx
+        .insert(releaseLog)
+        .values({
+          ...input,
+          changes: JSON.stringify(input.changes),
+          id: randomUUID(),
+          createdAt: now,
+          updatedAt: now,
+        })
+        .returning()
+        .get(),
     );
   });
 }
 export async function getRelease(id: string, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const row = await tx.orm.public.ReleaseLog.where({ id }).first();
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
+    const row = tx.select().from(releaseLog).where(eq(releaseLog.id, id)).get();
     if (!row) throw new AdminBusinessError("NOT_FOUND", "更新日志不存在，可能已被删除。");
     return serialize(row);
   });
@@ -85,9 +93,9 @@ export async function updateRelease(
   input: ReleaseUpdateInput | ReleaseVisibilityInput,
   actor: TaxonomyActor,
 ) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const previous = await tx.orm.public.ReleaseLog.where({ id }).first();
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
+    const previous = tx.select().from(releaseLog).where(eq(releaseLog.id, id)).get();
     if (!previous) throw new AdminBusinessError("NOT_FOUND", "更新日志不存在，可能已被删除。");
     if (previous.revision !== input.revision)
       throw new AdminBusinessError(
@@ -104,13 +112,17 @@ export async function updateRelease(
             changes: JSON.stringify(input.changes),
           };
     if (
-      !(await tx.orm.public.ReleaseLog.where({ id, revision: input.revision }).updateAndCount({
-        ...fields,
-        revision: input.revision + 1,
-        updatedAt: new Date(),
-      }))
+      !tx
+        .update(releaseLog)
+        .set({
+          ...fields,
+          revision: input.revision + 1,
+          updatedAt: new Date(),
+        })
+        .where(and(eq(releaseLog.id, id), eq(releaseLog.revision, input.revision)))
+        .run().changes
     )
       throw new AdminBusinessError("VERSION_CONFLICT", "更新日志版本已变化，请重新载入后核对。");
-    return serialize((await tx.orm.public.ReleaseLog.where({ id }).first())!);
+    return serialize(tx.select().from(releaseLog).where(eq(releaseLog.id, id)).get()!);
   });
 }

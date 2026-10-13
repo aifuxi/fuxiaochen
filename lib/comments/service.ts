@@ -1,10 +1,13 @@
 import "server-only";
+import { and, asc, count, desc, eq, getTableColumns, sql, type SQL } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { getSession } from "@/lib/auth/service";
-import { getDatabase, writeTransaction } from "@/prisma/db";
+import { writeTransaction, type Database, type DatabaseTransaction } from "@/lib/database";
+import { comment, post } from "@/lib/database/schema";
 
 import type {
   CommentCounts,
@@ -24,46 +27,51 @@ export class CommentError extends Error {
     super(message);
   }
 }
-async function authorize(actor: TaxonomyActor) {
-  const admin = await getSession(actor.sessionToken);
+function authorize(actor: TaxonomyActor) {
+  const admin = getSession(actor.sessionToken);
   if (!admin || admin.adminId !== actor.adminId)
     throw new CommentError("UNAUTHORIZED", "登录已失效，请重新登录。");
   return admin;
 }
-type Database = ReturnType<typeof getDatabase>;
-type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
-const items = (db: Database | Transaction) =>
-  db.orm.public.Comment.include("post", (post) => post.select("id", "title")).include(
-    "parent",
-    (parent) => parent.select("id", "author", "status"),
-  );
-type Row = NonNullable<Awaited<ReturnType<ReturnType<typeof items>["first"]>>>;
+const parentComment = alias(comment, "parent_comment");
+const items = (db: Database | DatabaseTransaction) =>
+  db
+    .select({
+      comment: getTableColumns(comment),
+      post: { id: post.id, title: post.title },
+      parent: { id: parentComment.id, author: parentComment.author, status: parentComment.status },
+    })
+    .from(comment)
+    .innerJoin(post, eq(comment.postId, post.id))
+    .leftJoin(parentComment, eq(comment.parentId, parentComment.id));
+type Row = NonNullable<ReturnType<ReturnType<typeof items>["get"]>>;
 function serialize(row: Row) {
   const {
-    post,
-    parent,
     adminId: _adminId,
     authorKind,
     submissionId: _submissionId,
     submissionHash: _submissionHash,
-    ...comment
-  } = row;
-  if (!post) throw new Error("评论的文章关联缺失");
+    ...fields
+  } = row.comment;
   return {
-    ...comment,
-    postTitle: post.title,
-    parent: parent ? { ...parent, status: commentStatusSchema.parse(parent.status) } : null,
+    ...fields,
+    postTitle: row.post.title,
+    parent: row.parent
+      ? { ...row.parent, status: commentStatusSchema.parse(row.parent.status) }
+      : null,
     // 回复身份来自服务端关系；管理员被移除后仍保留历史身份。
     isAdmin: authorKind === "admin",
-    status: commentStatusSchema.parse(comment.status),
-    createdAt: comment.createdAt.toISOString(),
-    updatedAt: comment.updatedAt.toISOString(),
+    status: commentStatusSchema.parse(fields.status),
+    createdAt: fields.createdAt.toISOString(),
+    updatedAt: fields.updatedAt.toISOString(),
   };
 }
-async function counts(db: Database | Transaction): Promise<CommentCounts> {
-  const groups = await db.orm.public.Comment.groupBy("status").aggregate((agg) => ({
-    count: agg.count(),
-  }));
+function counts(db: Database | DatabaseTransaction): CommentCounts {
+  const groups = db
+    .select({ status: comment.status, count: count() })
+    .from(comment)
+    .groupBy(comment.status)
+    .all();
   const result: CommentCounts = { all: 0, pending: 0, approved: 0, rejected: 0 };
   for (const group of groups) {
     result[commentStatusSchema.parse(group.status)] = group.count;
@@ -72,45 +80,35 @@ async function counts(db: Database | Transaction): Promise<CommentCounts> {
   return result;
 }
 export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
-  await authorize(actor);
-  const db = getDatabase();
-  // 读取快照共用事务队列，避免 SQLite 同步等待锁阻塞持锁请求。
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    let filtered = items(tx).where({});
-    if (query.record) filtered = filtered.where({ id: query.record });
-    if (!query.record && query.status) filtered = filtered.where({ status: query.status });
-    if (!query.record && query.postId) filtered = filtered.where({ postId: query.postId });
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    const filters: SQL[] = [];
+    if (query.record) filters.push(eq(comment.id, query.record));
+    if (!query.record && query.status) filters.push(eq(comment.status, query.status));
+    if (!query.record && query.postId) filters.push(eq(comment.postId, query.postId));
     if (!query.record && query.q)
-      filtered = filtered.where((c) =>
-        db.raw.sql`(
-      strpos(lower(${c.author}), lower(${query.q})) > 0 OR
-      strpos(lower(coalesce(${c.email}, '')), lower(${query.q})) > 0 OR
-      strpos(lower(${c.content}), lower(${query.q})) > 0 OR
-      EXISTS (SELECT 1 FROM post p WHERE p.id = ${c.postId} AND strpos(lower(p.title), lower(${query.q})) > 0)
-    )`
-          .returns("pg/bool@1")
-          .buildAst(),
-      );
-    const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
+      filters.push(sql`(
+        instr(lower(${comment.author}), lower(${query.q})) > 0 OR
+        instr(lower(coalesce(${comment.email}, '')), lower(${query.q})) > 0 OR
+        instr(lower(${comment.content}), lower(${query.q})) > 0 OR
+        EXISTS (SELECT 1 FROM post p WHERE p.id = ${comment.postId} AND instr(lower(p.title), lower(${query.q})) > 0)
+      )`);
+    const where = and(...filters);
+    const total = tx.select({ total: count() }).from(comment).where(where).get()!.total;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const direction = query.sortDirection ?? "asc";
-    const rows = await filtered
-      .orderBy([
-        (c) => {
-          if (query.sortBy === "author") return c.author[direction]();
-          if (query.sortBy === "createdAt") return c.createdAt[direction]();
-          if (query.sortBy === "status")
-            return c.status[direction]().withExpr(
-              db.raw.sql`CASE ${c.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`
-                .returns("pg/int8number@1")
-                .buildAst(),
-            );
-          return c.createdAt.desc();
-        },
-        (c) => c.id.desc(),
-      ])
+    const direction = query.sortDirection === "desc" ? desc : asc;
+    let order = desc(comment.createdAt);
+    if (query.sortBy === "author") order = direction(comment.author);
+    if (query.sortBy === "createdAt") order = direction(comment.createdAt);
+    if (query.sortBy === "status")
+      order = direction(
+        sql`CASE ${comment.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`,
+      );
+    const rows = items(tx)
+      .where(where)
+      .orderBy(order, desc(comment.id))
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();
@@ -120,40 +118,39 @@ export async function listComments(query: CommentQuery, actor: TaxonomyActor) {
       page,
       pageSize: query.pageSize,
       pageCount,
-      statusCounts: await counts(tx),
+      statusCounts: counts(tx),
     };
   });
 }
 export async function getCommentSummary(actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
     return {
-      statusCounts: await counts(tx),
-      pending: (
-        await items(tx)
-          .where({ status: "pending" })
-          .orderBy([(c) => c.createdAt.desc(), (c) => c.id.desc()])
-          .limit(5)
-          .all()
-      ).map(serialize),
+      statusCounts: counts(tx),
+      pending: items(tx)
+        .where(eq(comment.status, "pending"))
+        .orderBy(desc(comment.createdAt), desc(comment.id))
+        .limit(5)
+        .all()
+        .map(serialize),
     };
   });
 }
-async function detail(id: string, db: Database | Transaction) {
-  const row = await items(db).where({ id }).first();
+function detail(id: string, db: Database | DatabaseTransaction) {
+  const row = items(db).where(eq(comment.id, id)).get();
   if (!row) throw new CommentError("NOT_FOUND", "评论不存在，可能已随文章或父评论删除。");
   return serialize(row);
 }
 export async function getComment(id: string, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
     return detail(id, tx);
   });
 }
-async function current(id: string, version: number, tx: Transaction) {
-  const row = await tx.orm.public.Comment.where({ id }).first();
+function current(id: string, version: number, tx: DatabaseTransaction) {
+  const row = tx.select().from(comment).where(eq(comment.id, id)).get();
   if (!row) throw new CommentError("NOT_FOUND", "评论不存在，可能已随文章或父评论删除。");
   if (row.version !== version)
     throw new CommentError(
@@ -162,10 +159,10 @@ async function current(id: string, version: number, tx: Transaction) {
     );
   return row;
 }
-async function approvedAncestors(parentId: string | null, tx: Transaction) {
+function approvedAncestors(parentId: string | null, tx: DatabaseTransaction) {
   let depth = 0;
   while (parentId) {
-    const parent = await tx.orm.public.Comment.where({ id: parentId }).first();
+    const parent = tx.select().from(comment).where(eq(comment.id, parentId)).get();
     if (!parent || parent.status !== "approved")
       throw new CommentError("INVALID_INPUT", "请先通过所有上级评论的审核。");
     parentId = parent.parentId;
@@ -174,26 +171,28 @@ async function approvedAncestors(parentId: string | null, tx: Transaction) {
   return depth;
 }
 export async function createComment(input: CommentInput, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    if (!(await tx.orm.public.Post.where({ id: input.postId }).first()))
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    if (!tx.select({ id: post.id }).from(post).where(eq(post.id, input.postId)).get())
       throw new CommentError("INVALID_INPUT", "所选文章不存在。");
     const id = randomUUID();
     const now = new Date();
-    await tx.orm.public.Comment.create({
-      ...input,
-      id,
-      parentId: null,
-      adminId: null,
-      authorKind: "reader",
-      submissionId: null,
-      submissionHash: null,
-      status: "pending",
-      createdAt: now,
-      updatedAt: now,
-      version: 1,
-    });
+    tx.insert(comment)
+      .values({
+        ...input,
+        id,
+        parentId: null,
+        adminId: null,
+        authorKind: "reader",
+        submissionId: null,
+        submissionHash: null,
+        status: "pending",
+        createdAt: now,
+        updatedAt: now,
+        version: 1,
+      })
+      .run();
     return detail(id, tx);
   });
 }
@@ -202,34 +201,42 @@ export async function moderateComment(
   input: ModerateCommentInput,
   actor: TaxonomyActor,
 ) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    const row = await current(id, input.version, tx);
-    if (input.status === "approved") await approvedAncestors(row.parentId, tx);
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    const row = current(id, input.version, tx);
+    if (input.status === "approved") approvedAncestors(row.parentId, tx);
     const now = new Date();
     if (
-      !(await tx.orm.public.Comment.where({ id, version: input.version }).updateAndCount({
-        status: input.status,
-        version: input.version + 1,
-        updatedAt: now,
-      }))
+      !tx
+        .update(comment)
+        .set({
+          status: input.status,
+          version: input.version + 1,
+          updatedAt: now,
+        })
+        .where(and(eq(comment.id, id), eq(comment.version, input.version)))
+        .run().changes
     )
       throw new CommentError("VERSION_CONFLICT", "评论版本已变化，请重新载入。");
     if (input.status === "rejected") {
       // 回复只能指向已存在的评论，关系不允许修改，无法通过 API 建立环。
       const queue = [id];
       for (let index = 0; index < queue.length; index += 1) {
-        const parentId = queue[index];
-        const children = await tx.orm.public.Comment.where({ parentId })
-          .select("id", "version")
+        const children = tx
+          .select({ id: comment.id, version: comment.version })
+          .from(comment)
+          .where(eq(comment.parentId, queue[index]))
           .all();
         for (const child of children) {
-          await tx.orm.public.Comment.where({ id: child.id }).updateAndCount({
-            status: "rejected",
-            version: child.version + 1,
-            updatedAt: now,
-          });
+          tx.update(comment)
+            .set({
+              status: "rejected",
+              version: child.version + 1,
+              updatedAt: now,
+            })
+            .where(eq(comment.id, child.id))
+            .run();
           queue.push(child.id);
         }
       }
@@ -238,48 +245,59 @@ export async function moderateComment(
   });
 }
 export async function replyComment(id: string, input: ReplyCommentInput, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    const admin = await authorize(actor);
-    const parent = await current(id, input.version, tx);
-    const depth = await approvedAncestors(id, tx);
+  authorize(actor);
+  return writeTransaction((tx) => {
+    const admin = authorize(actor);
+    const parent = current(id, input.version, tx);
+    const depth = approvedAncestors(id, tx);
     if (depth >= 16)
       throw new CommentError("INVALID_INPUT", "回复最多支持 16 层，请回复更上级的评论。");
     // 同一版本只能提交一次回复，响应丢失后重试不会重复创建。
     const now = new Date();
     if (
-      !(await tx.orm.public.Comment.where({ id, version: input.version }).updateAndCount({
-        version: input.version + 1,
-        updatedAt: now,
-      }))
+      !tx
+        .update(comment)
+        .set({
+          version: input.version + 1,
+          updatedAt: now,
+        })
+        .where(and(eq(comment.id, id), eq(comment.version, input.version)))
+        .run().changes
     )
       throw new CommentError("VERSION_CONFLICT", "评论版本已变化，请重新载入。");
     const replyId = randomUUID();
-    await tx.orm.public.Comment.create({
-      id: replyId,
-      postId: parent.postId,
-      parentId: id,
-      adminId: admin.adminId,
-      authorKind: "admin",
-      submissionId: null,
-      submissionHash: null,
-      author: admin.username,
-      email: null,
-      content: input.content,
-      status: "approved",
-      createdAt: now,
-      updatedAt: now,
-      version: 1,
-    });
+    tx.insert(comment)
+      .values({
+        id: replyId,
+        postId: parent.postId,
+        parentId: id,
+        adminId: admin.adminId,
+        authorKind: "admin",
+        submissionId: null,
+        submissionHash: null,
+        author: admin.username,
+        email: null,
+        content: input.content,
+        status: "approved",
+        createdAt: now,
+        updatedAt: now,
+        version: 1,
+      })
+      .run();
     return detail(replyId, tx);
   });
 }
 export async function deleteComment(id: string, version: number, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    await current(id, version, tx);
-    if (!(await tx.orm.public.Comment.where({ id, version }).deleteAndCount()))
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    current(id, version, tx);
+    if (
+      !tx
+        .delete(comment)
+        .where(and(eq(comment.id, id), eq(comment.version, version)))
+        .run().changes
+    )
       throw new CommentError("VERSION_CONFLICT", "评论版本已变化，请重新载入。");
     return { id };
   });

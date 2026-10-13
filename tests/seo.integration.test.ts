@@ -1,21 +1,23 @@
 import "dotenv/config";
+import Sqlite from "better-sqlite3";
 import assert from "node:assert/strict";
-import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+import { spawn, type ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
-import { cp, mkdtemp, rm, symlink } from "node:fs/promises";
+import { cp, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { test } from "node:test";
 import { setTimeout as delay } from "node:timers/promises";
-import { Client } from "pg";
 import { z } from "zod";
 
 import type { ReleaseLog } from "../lib/changelog/schema";
 import type { PostDetail } from "../lib/posts/schema";
 import type { SiteSettings } from "../lib/settings/schema";
 
+import { migrateDatabase } from "../lib/database/migrations";
+import { admin as adminTable } from "../lib/database/schema";
 import { serializeDocument, EMPTY_POST_CONTENT } from "../lib/posts/document";
 
 const project = resolve(import.meta.dirname, "..");
@@ -75,68 +77,51 @@ async function stopServer(server: ChildProcess) {
 }
 
 void test(
-  "独立 PostgreSQL 与 HTTP：后台保存、文章生命周期和索引策略联动",
+  "独立 SQLite 与 HTTP：后台保存、文章生命周期和索引策略联动",
   { timeout: 180_000 },
   async () => {
-    const base = new URL(process.env.DATABASE_URL!);
-    assert.ok(
-      ["127.0.0.1", "localhost", "[::1]"].includes(base.hostname),
-      "集成测试只允许本地 PostgreSQL；不能在远程数据库创建测试库。",
-    );
     const name = `fx_seo_test_${Date.now()}_${randomUUID().slice(0, 8)}`;
-    const testingUrl = new URL(base);
-    testingUrl.pathname = `/${name}`;
-    const admin = new Client({
-      host: base.hostname,
-      port: Number(base.port || 5432),
-      user: "postgres",
-      password: process.env.POSTGRES_ADMIN_PASSWORD,
-      database: "postgres",
-    });
-    const previousDatabaseUrl = process.env.DATABASE_URL;
-    let connected = false;
-    let created = false;
+    const previousDatabasePath = process.env.DATABASE_PATH;
     let workspace: string | undefined;
     let server: ChildProcess | undefined;
-    let database: typeof import("../prisma/db") | undefined;
+    let database: typeof import("../lib/database") | undefined;
     let logs = "";
     try {
-      await admin.connect();
-      connected = true;
-      const owner = decodeURIComponent(base.username).replaceAll('"', '""');
-      await admin.query(`CREATE DATABASE "${name}" OWNER "${owner}"`);
-      created = true;
-      process.env.DATABASE_URL = testingUrl.toString();
-      const migrated = spawnSync(process.execPath, ["--import", "tsx", "scripts/migrate.ts"], {
-        cwd: project,
-        env: process.env,
-        encoding: "utf8",
-        timeout: 30_000,
-      });
-      assert.equal(migrated.status, 0, `独立测试库迁移失败：${migrated.stdout}${migrated.stderr}`);
-      database = await import("../prisma/db");
+      // 文件和 Next 工作区都位于临时目录，不连接 PostgreSQL 或已有 SQLite。
+      workspace = await mkdtemp(join(tmpdir(), "fx-seo-http-"));
+      process.env.DATABASE_PATH = join(workspace, "independent.sqlite");
+      await writeFile(process.env.DATABASE_PATH, "", { flag: "wx", mode: 0o600 });
+      const client = new Sqlite(process.env.DATABASE_PATH);
+      try {
+        client.pragma("foreign_keys = ON");
+        migrateDatabase(client);
+      } finally {
+        client.close();
+      }
+      database = await import("../lib/database");
       const { hashPassword } = await import("../lib/auth/password");
       const password = "seo-integration-test-password";
       const passwordHash = await hashPassword(password);
       const now = new Date();
-      await database.writeTransaction((tx) =>
-        tx.orm.public.Admin.create({
-          id: 1,
-          username: "seo_test_admin",
-          passwordHash,
-          createdAt: now,
-          updatedAt: now,
-        }),
+      database.writeTransaction((tx) =>
+        tx
+          .insert(adminTable)
+          .values({
+            id: 1,
+            username: "seo_test_admin",
+            passwordHash,
+            createdAt: now,
+            updatedAt: now,
+          })
+          .run(),
       );
 
       // 在副本运行 Next，防止自定义 distDir 自动修改项目 tsconfig 与生成文件。
-      workspace = await mkdtemp(join(tmpdir(), "fx-seo-http-"));
       for (const path of [
         "app",
         "components",
         "lib",
-        "prisma",
-        "generated",
+        "drizzle",
         "public",
         "package.json",
         "package-lock.json",
@@ -434,12 +419,10 @@ void test(
       assert.match(meta(await html("/login"), "robots") ?? "", /\bnoindex\b/);
     } finally {
       if (server) await stopServer(server);
-      if (database) await database.getDatabase().close();
-      if (created) await admin.query(`DROP DATABASE "${name}" WITH (FORCE)`);
-      if (connected) await admin.end();
+      database?.closeDatabase();
       if (workspace) await rm(workspace, { recursive: true, force: true });
-      if (previousDatabaseUrl === undefined) delete process.env.DATABASE_URL;
-      else process.env.DATABASE_URL = previousDatabaseUrl;
+      if (previousDatabasePath === undefined) delete process.env.DATABASE_PATH;
+      else process.env.DATABASE_PATH = previousDatabasePath;
     }
   },
 );

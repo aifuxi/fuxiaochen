@@ -1,35 +1,43 @@
 import "server-only";
+import { and, asc, eq } from "drizzle-orm";
 import { connection } from "next/server";
 import { cache } from "react";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { authorizeAdmin, AdminBusinessError } from "@/lib/admin/service";
+import { writeTransaction, type DatabaseTransaction } from "@/lib/database";
+import { siteSetting, socialAccount } from "@/lib/database/schema";
 import { MediaError } from "@/lib/media/error";
 import { settingsReferenceUrls } from "@/lib/media/reference-urls";
 import { ensureNewMediaReferences } from "@/lib/media/references";
-import { writeTransaction, getDatabase } from "@/prisma/db";
 
 import { defaultSettings, settingsSchema, type SettingsInput, type PublicSettings } from "./schema";
 
-type Transaction = Parameters<Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]>[0];
-async function read(tx: Transaction) {
-  let row = await tx.orm.public.SiteSetting.where({ id: 1 }).first();
+function read(tx: DatabaseTransaction) {
+  let row = tx.select().from(siteSetting).where(eq(siteSetting.id, 1)).get();
   if (!row) {
     const { socials: _socials, ...defaults } = defaultSettings;
-    row = await tx.orm.public.SiteSetting.create({
-      ...defaults,
-      id: 1,
-      enableComments: 1,
-      localAnalyticsEnabled: 0,
-      localAnalyticsStartedAt: null,
-      googleEnabled: 0,
-      baiduEnabled: 0,
-      updatedAt: new Date(),
-    });
+    row = tx
+      .insert(siteSetting)
+      .values({
+        ...defaults,
+        id: 1,
+        enableComments: 1,
+        localAnalyticsEnabled: 0,
+        localAnalyticsStartedAt: null,
+        googleEnabled: 0,
+        baiduEnabled: 0,
+        updatedAt: new Date(),
+      })
+      .returning()
+      .get();
   }
-  const socials = await tx.orm.public.SocialAccount.where({ settingId: 1 })
-    .orderBy([(s) => s.position.asc(), (s) => s.id.asc()])
+  const socials = tx
+    .select()
+    .from(socialAccount)
+    .where(eq(socialAccount.settingId, 1))
+    .orderBy(asc(socialAccount.position), asc(socialAccount.id))
     .all();
   const { id: _id, updatedAt, localAnalyticsStartedAt, ...fields } = row;
   return {
@@ -54,61 +62,63 @@ async function read(tx: Transaction) {
   };
 }
 export async function getSettings(actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
     return read(tx);
   });
 }
 export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const previous = await read(tx);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor);
+    const previous = read(tx);
     const { socials, version, ...fields } = input;
     try {
-      await ensureNewMediaReferences(
-        tx,
-        settingsReferenceUrls(input),
-        settingsReferenceUrls(previous),
-      );
+      ensureNewMediaReferences(tx, settingsReferenceUrls(input), settingsReferenceUrls(previous));
     } catch (error) {
       if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
       throw error;
     }
-    const updated = await tx.orm.public.SiteSetting.where({ id: 1, version }).updateAndCount({
-      ...fields,
-      localAnalyticsEnabled: Number(input.localAnalyticsEnabled),
-      localAnalyticsStartedAt: previous.localAnalyticsStartedAt
-        ? new Date(previous.localAnalyticsStartedAt)
-        : input.localAnalyticsEnabled
-          ? new Date()
-          : null,
-      enableComments: Number(input.enableComments),
-      googleEnabled: Number(input.googleEnabled),
-      baiduEnabled: Number(input.baiduEnabled),
-      updatedAt: new Date(),
-      version: version + 1,
-    });
-    if (!updated)
+    const updated = tx
+      .update(siteSetting)
+      .set({
+        ...fields,
+        localAnalyticsEnabled: Number(input.localAnalyticsEnabled),
+        localAnalyticsStartedAt: previous.localAnalyticsStartedAt
+          ? new Date(previous.localAnalyticsStartedAt)
+          : input.localAnalyticsEnabled
+            ? new Date()
+            : null,
+        enableComments: Number(input.enableComments),
+        googleEnabled: Number(input.googleEnabled),
+        baiduEnabled: Number(input.baiduEnabled),
+        updatedAt: new Date(),
+        version: version + 1,
+      })
+      .where(and(eq(siteSetting.id, 1), eq(siteSetting.version, version)))
+      .run();
+    if (!updated.changes)
       throw new AdminBusinessError(
         "VERSION_CONFLICT",
         "设置已被其他页面修改。草稿已保留，请重新载入后确认变更。",
       );
-    await tx.orm.public.SocialAccount.where({ settingId: 1 }).deleteAndCount();
+    tx.delete(socialAccount).where(eq(socialAccount.settingId, 1)).run();
     for (const [position, social] of socials.entries())
-      await tx.orm.public.SocialAccount.create({
-        ...social,
-        imageUrl: social.icon === "image" ? social.imageUrl : "",
-        enabled: Number(social.enabled),
-        position,
-        settingId: 1,
-      });
+      tx.insert(socialAccount)
+        .values({
+          ...social,
+          imageUrl: social.icon === "image" ? social.imageUrl : "",
+          enabled: Number(social.enabled),
+          position,
+          settingId: 1,
+        })
+        .run();
     return read(tx);
   });
 }
 // 仅请求内去重；不跨请求缓存数据库配置，也不在构建时固化。
 export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
   await connection();
-  const settings = await writeTransaction(read);
+  const settings = writeTransaction(read);
   const {
     postsPerPage,
     enableComments,

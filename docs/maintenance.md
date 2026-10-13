@@ -1,6 +1,36 @@
 # 数据库维护
 
-## Prisma 8 与迁移
+当前应用已使用 SQLite + Drizzle + better-sqlite3。以下新机制用于本地适配；历史 PostgreSQL 机制保留作迁移对照，不表示线上已切换。
+
+## SQLite 基础层与迁移
+
+schema 为 `lib/database/schema.ts`，连接与写事务为 `lib/database/index.ts`，SQL 迁移和开发快照位于 `drizzle/`。Drizzle ORM 0.45.4、drizzle-kit 0.31.11、better-sqlite3 13.0.3 使用固定版本。Kit 只离线生成 SQL，生产运行不需要 CLI 或生成 Prisma contract。
+
+`DATABASE_PATH` 必须显式指向 SQLite 文件；当前阶段不自动创建或接管数据库。`db:init` 使用独占文件创建，拒绝覆盖已有文件；普通连接、`db:migrate`、`db:verify` 拒绝缺失文件和历史无迁移 ledger 的文件。现有 `.env` 和旧 SQLite/PostgreSQL 数据保留，本阶段不自动导入。
+
+```sh
+# 首次显式初始化独立文件，所在目录需已创建。
+npm run db:init
+# schema 变化后离线生成 SQL，审查 SQL、journal 和 snapshot，再提交。
+npm run db:generate -- --name describe-change
+# 停止应用和调度，先备份，再迁移已有 SQLite 文件。
+npm run db:migrate
+npm run db:verify
+```
+
+迁移使用 Drizzle 公开 migration reader 读取已提交 SQL 和 SHA-256，以 SQLite IMMEDIATE 事务执行并保存 ledger。拒绝历史 hash 变化、未知版本与已有事务内调用。表重建时先在事务外暂时关闭外键，避免 DROP 父表级联删子记录；提交前核对完整性、全部外键与预期结构，失败全部回滚，最终恢复外键开关。版本已升级的数据库不能靠换回旧应用直接回退。
+
+连接启用 WAL、foreign_keys、synchronous=FULL 和 5 秒 busy timeout，开发热更新复用连接。所有业务写入经同步 `writeTransaction` / `authTransaction`，支持嵌套 savepoint；类型和运行时均拒绝 async 回调或 Promise。密码校验和 OSS 操作位于事务外，事务内复核状态。时间为 UTC 毫秒并映射 Date，整数读写检查安全范围；北京时间统计不变。连接注册 Unicode lower 保留搜索大小写语义，`instr` 保留 `%`/`_` 字面匹配，JSON 文本通过 `json_extract`/`json_each` 检索。
+
+SQLite 备份使用 better-sqlite3 在线 backup API，生成 `database.sqlite` 与 `manifest.json`；manifest 记录格式、迁移版本、大小与摘要。显式校验、备份和恢复使用 `integrity_check`，普通连接使用快速完整性校验加版本/结构/外键检查。恢复指定绝对 `RESTORE_DATABASE_PATH`，目标必须独立且不存在，拒绝已有文件、主库、源库和遗留 WAL；成功后撤销会话、关闭自动备份并标记中断任务。PostgreSQL 备份格式不兼容，旧备份必须使用匹配旧版本恢复。
+
+当前尚未实现 PostgreSQL → SQLite 数据导入、单镜像运维打包和启动自动备份/迁移。生产部署说明仍为历史方案，不能直接用于当前源码。
+
+## 历史 PostgreSQL 与 Prisma 8（只作对照）
+
+以下属于提交 `4d72e636` 及之前的 PostgreSQL 实现。`prisma/`、旧导入/迁移脚本和相关测试保留作历史参考，并从当前应用 TypeScript 编译中排除；Prisma 与 pg 依赖暂留 devDependencies。旧回归调用当前 SQLite 业务模块不再构成有效验收，应使用匹配旧提交运行。
+
+### 原迁移机制
 
 模型源为 `prisma/contract.ts`，配置为 `prisma.config.ts`，生成目录为 `generated/prisma/`。CLI 与应用共用 `DATABASE_URL`，配置从项目根目录 `.env` 或部署环境读取，不使用 `DATABASE_PATH`。生成 contract 和构建无需在线数据库；数据库命令必须配置连接 URL。
 
@@ -20,7 +50,7 @@ npm run db:migrate
 
 提交 contract 源、迁移和快照，不提交 `generated/`、环境文件、数据库或备份。迁移后重启应用，使连接加载新 contract。
 
-## SQLite 数据导入 PostgreSQL
+### 原 SQLite 数据导入 PostgreSQL
 
 `db:import-sqlite` 仅用于把旧 Prisma SQLite schema 的一致性快照导入当前 PostgreSQL contract。适配的旧源包含 22 张业务表，支持文章摘要与精选字段、SEO 字段及日志状态字段尚未新增的版本；未知表、未知列、缺失旧字段、无效正文、悬空关系、不安全整数及非 UTC ISO 时间均拒绝。源必须由 SQLite backup API 导出，包含 WAL 中已提交的数据；不能用单独复制主文件代替。导入只读打开源，并拒绝带非空 WAL/journal 的输入。
 
@@ -41,7 +71,7 @@ npm run db:import-sqlite -- --source /absolute/release/source.sqlite --verify --
 
 OSS 对象保留原位置，沿用原 Bucket、公开域名及对象键；此命令不上传、删除或重写媒体。切换前保留旧镜像、配置、SQLite 卷与最终快照，切换后生成 PostgreSQL 备份并保存异地副本。外部写入重新开放前可以恢复旧 SQLite 应用；新 PostgreSQL 已接收业务写入后不能直接切回旧 SQLite，须先冻结写入、备份并核对增量。恢复 PostgreSQL 仍使用匹配 contract 的应用版本和独立空库，不能删除生产卷解决失败。
 
-## 连接与事务
+### 原 PostgreSQL 连接与事务
 
 2026-10-06 增量迁移 `20261006T0523_add_site_seo` 为 `site_setting` 新增搜索描述、分享图与三项站长验证字段。数据库列允许 NULL，服务层映射为空字符串；既有资料和设置保持原值。生成新 contract 后执行 `npm run db:migrate`，再重启应用加载新 contract。
 
@@ -49,7 +79,7 @@ OSS 对象保留原位置，沿用原 Bucket、公开域名及对象键；此命
 
 数据位于 `public` schema。时间使用带时区时间戳与 JavaScript `Date`，原整数使用 `pg/int8number@1`，超出 JavaScript 安全整数范围时拒绝转换。JSON 文档仍保存为经过业务校验的文本，查询时转换为 jsonb。搜索使用 `strpos(lower(...), lower(...))`，关键词中的 `%`、`_` 不作为通配符；统计按 `Asia/Shanghai` 分日。
 
-## 账号与工具
+### 原账号与工具命令
 
 ```sh
 npm run admin:init
@@ -71,7 +101,7 @@ Markdown 导入由 `lib/posts/markdown-document.ts` 解析为同一种文档，�
 
 后台筛选和搜索使用业务查询入口，查询条件变化时取消旧请求，避免旧结果覆盖新条件。访客记录每 10 秒查询，页面隐藏、卸载或暂停时停止轮询，恢复时立即刷新；暂停只冻结后台查询，不关闭前台采集。产品状态、分页和统计口径由产品文档维护，轮询不作为视觉动效。
 
-## 草稿与更新日志增量迁移
+## 历史 PostgreSQL 草稿与更新日志增量迁移
 
 2026-10-07 的 `20261007T0840_admin_drafts_release_states` 包含五项操作：文章 `slug`、`categoryId` 放宽为可空，日志新增 `status`（默认 `published`）、`revision`（默认 `1`）、可空 `updatedAt`。既有文章字段、分类关联、日志内容和创建时间不改写；旧日志的修改时间在应用读取时回退为创建时间。不删除表、记录或约束中的外键与唯一索引。
 

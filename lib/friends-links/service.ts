@@ -1,13 +1,15 @@
 import "server-only";
+import { and, asc, count, desc, eq, sql, type SQL } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { AdminBusinessError, authorizeAdmin } from "@/lib/admin/service";
+import { writeTransaction, type DatabaseTransaction } from "@/lib/database";
+import { friendLink } from "@/lib/database/schema";
 import { MediaError } from "@/lib/media/error";
 import { friendReferenceUrls } from "@/lib/media/reference-urls";
 import { ensureNewMediaReferences } from "@/lib/media/references";
-import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import {
   friendSchema,
@@ -15,10 +17,7 @@ import {
   type CreateFriendInput,
   type UpdateFriendInput,
 } from "./schema";
-type Transaction = Parameters<Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]>[0];
-type Row = NonNullable<
-  Awaited<ReturnType<ReturnType<typeof getDatabase>["orm"]["public"]["FriendLink"]["first"]>>
->;
+type Row = typeof friendLink.$inferSelect;
 function serialize(row: Row) {
   const { id, version, createdAt, updatedAt, ...fields } = row;
   return {
@@ -29,47 +28,41 @@ function serialize(row: Row) {
     updatedAt: updatedAt.toISOString(),
   };
 }
-async function detail(id: string, tx: Transaction) {
-  const row = await tx.orm.public.FriendLink.where({ id }).first();
+function detail(id: string, tx: DatabaseTransaction) {
+  const row = tx.select().from(friendLink).where(eq(friendLink.id, id)).get();
   if (!row) throw new AdminBusinessError("NOT_FOUND", "友链不存在，可能已被删除。");
   return serialize(row);
 }
 export async function listFriends(query: FriendQuery, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const db = getDatabase();
-    let filtered = tx.orm.public.FriendLink.where({});
-    if (query.record) filtered = filtered.where({ id: query.record });
-    if (!query.record && query.category) filtered = filtered.where({ category: query.category });
-    if (!query.record && query.status) filtered = filtered.where({ status: query.status });
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    const filters: SQL[] = [];
+    if (query.record) filters.push(eq(friendLink.id, query.record));
+    if (!query.record && query.category) filters.push(eq(friendLink.category, query.category));
+    if (!query.record && query.status) filters.push(eq(friendLink.status, query.status));
     if (!query.record && query.enabled)
-      filtered = filtered.where({ enabled: query.enabled === "true" ? 1 : 0 });
+      filters.push(eq(friendLink.enabled, query.enabled === "true" ? 1 : 0));
     if (!query.record && query.q)
-      filtered = filtered.where((f) =>
-        db.raw
-          .sql`(strpos(lower(${f.name}), lower(${query.q})) > 0 OR strpos(lower(${f.url}), lower(${query.q})) > 0 OR strpos(lower(${f.description}), lower(${query.q})) > 0)`
-          .returns("pg/bool@1")
-          .buildAst(),
+      filters.push(
+        sql`(instr(lower(${friendLink.name}), lower(${query.q})) > 0 OR instr(lower(${friendLink.url}), lower(${query.q})) > 0 OR instr(lower(${friendLink.description}), lower(${query.q})) > 0)`,
       );
-    const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
+    const where = and(...filters);
+    const total = tx.select({ total: count() }).from(friendLink).where(where).get()!.total;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const direction = query.sortDirection ?? "asc";
-    const rows = await filtered
-      .orderBy([
-        (f) => {
-          if (query.sortBy === "name") return f.name[direction]();
-          if (query.sortBy === "category") return f.category[direction]();
-          if (query.sortBy === "status")
-            return f.status[direction]().withExpr(
-              db.raw.sql`CASE ${f.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`
-                .returns("pg/int8number@1")
-                .buildAst(),
-            );
-          return f.createdAt.desc();
-        },
-        (f) => f.id.desc(),
-      ])
+    const direction = query.sortDirection === "desc" ? desc : asc;
+    let order = desc(friendLink.createdAt);
+    if (query.sortBy === "name") order = direction(friendLink.name);
+    if (query.sortBy === "category") order = direction(friendLink.category);
+    if (query.sortBy === "status")
+      order = direction(
+        sql`CASE ${friendLink.status} WHEN 'pending' THEN 0 WHEN 'approved' THEN 1 ELSE 2 END`,
+      );
+    const rows = tx
+      .select()
+      .from(friendLink)
+      .where(where)
+      .orderBy(order, desc(friendLink.id))
       .offset((page - 1) * query.pageSize)
       .limit(query.pageSize)
       .all();
@@ -77,52 +70,58 @@ export async function listFriends(query: FriendQuery, actor: TaxonomyActor) {
   });
 }
 export async function getFriend(id: string, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
     return detail(id, tx);
   });
 }
 export async function createFriend(input: CreateFriendInput, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
     try {
-      await ensureNewMediaReferences(tx, friendReferenceUrls(input));
+      ensureNewMediaReferences(tx, friendReferenceUrls(input));
     } catch (error) {
       if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
       throw error;
     }
     const now = new Date();
-    return serialize(
-      await tx.orm.public.FriendLink.create({
+    const id = randomUUID();
+    tx.insert(friendLink)
+      .values({
         ...input,
-        id: randomUUID(),
+        id,
         status: "pending",
         enabled: Number(input.enabled),
         version: 1,
         createdAt: now,
         updatedAt: now,
-      }),
-    );
+      })
+      .run();
+    return detail(id, tx);
   });
 }
 export async function updateFriend(id: string, input: UpdateFriendInput, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    const previous = await detail(id, tx);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    const previous = detail(id, tx);
     try {
-      await ensureNewMediaReferences(tx, friendReferenceUrls(input), friendReferenceUrls(previous));
+      ensureNewMediaReferences(tx, friendReferenceUrls(input), friendReferenceUrls(previous));
     } catch (error) {
       if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
       throw error;
     }
     const { version, ...fields } = input;
     if (
-      !(await tx.orm.public.FriendLink.where({ id, version }).updateAndCount({
-        ...fields,
-        enabled: Number(input.enabled),
-        version: version + 1,
-        updatedAt: new Date(),
-      }))
+      !tx
+        .update(friendLink)
+        .set({
+          ...fields,
+          enabled: Number(input.enabled),
+          version: version + 1,
+          updatedAt: new Date(),
+        })
+        .where(and(eq(friendLink.id, id), eq(friendLink.version, version)))
+        .run().changes
     )
       throw new AdminBusinessError(
         "VERSION_CONFLICT",
@@ -132,10 +131,15 @@ export async function updateFriend(id: string, input: UpdateFriendInput, actor: 
   });
 }
 export async function deleteFriend(id: string, version: number, actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    await detail(id, tx);
-    if (!(await tx.orm.public.FriendLink.where({ id, version }).deleteAndCount()))
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    detail(id, tx);
+    if (
+      !tx
+        .delete(friendLink)
+        .where(and(eq(friendLink.id, id), eq(friendLink.version, version)))
+        .run().changes
+    )
       throw new AdminBusinessError(
         "VERSION_CONFLICT",
         "友链已被其他页面修改，请重新载入后再次确认删除。",

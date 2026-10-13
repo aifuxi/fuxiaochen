@@ -1,90 +1,65 @@
 import "server-only";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { AdminBusinessError, authorizeAdmin } from "@/lib/admin/service";
-import { getDatabase, writeTransaction } from "@/prisma/db";
+import { writeTransaction } from "@/lib/database";
+import { notification, notificationRead } from "@/lib/database/schema";
 
 import { notificationQuerySchema, type NotificationPage } from "./schema";
 
-export type OperationTransaction = Parameters<
-  Parameters<ReturnType<typeof getDatabase>["transaction"]>[0]
->[0];
-export async function syncNotifications(tx: OperationTransaction) {
-  const raw = getDatabase().raw;
-  const now = new Date().toISOString();
-  await tx.query(
-    raw.sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
+export type OperationTransaction = Parameters<Parameters<typeof writeTransaction>[0]>[0];
+export function syncNotifications(tx: OperationTransaction) {
+  const now = Date.now();
+  tx.run(sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
     SELECT 'comment:' || c.id || ':' || c.version, 'comment', c.id, c.author || ' 的评论待审核', '/admin/comments', c."updatedAt", NULL FROM comment c WHERE c.status = 'pending'
-    ON CONFLICT (id) DO NOTHING RETURNING id`
-      .returnsRow({ id: "pg/text@1" })
-      .build(),
-  );
-  await tx.query(
-    raw.sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
+    ON CONFLICT (id) DO NOTHING`);
+  tx.run(sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
     SELECT 'friend:' || f.id || ':' || f.version, 'friend', f.id, f.name || ' 的友链待审核', '/admin/friends-links', f."updatedAt", NULL FROM friend_link f WHERE f.status = 'pending'
-    ON CONFLICT (id) DO NOTHING RETURNING id`
-      .returnsRow({ id: "pg/text@1" })
-      .build(),
-  );
-  await tx.query(
-    raw.sql`UPDATE notification SET "resolvedAt" = ${now} WHERE "resolvedAt" IS NULL AND
+    ON CONFLICT (id) DO NOTHING`);
+  tx.run(sql`UPDATE notification SET "resolvedAt" = ${now} WHERE "resolvedAt" IS NULL AND
     ((kind = 'comment' AND NOT EXISTS (SELECT 1 FROM comment c WHERE c.status = 'pending' AND notification.id = 'comment:' || c.id || ':' || c.version)) OR
      (kind = 'friend' AND NOT EXISTS (SELECT 1 FROM friend_link f WHERE f.status = 'pending' AND notification.id = 'friend:' || f.id || ':' || f.version)) OR
-     (kind = 'schedule-error' AND NOT EXISTS (SELECT 1 FROM post p WHERE p.status = 'scheduled' AND notification.id = 'schedule-error:' || p.id || ':' || p.version))) RETURNING id`
-      .returnsRow({ id: "pg/text@1" })
-      .build(),
-  );
+     (kind = 'schedule-error' AND NOT EXISTS (SELECT 1 FROM post p WHERE p.status = 'scheduled' AND notification.id = 'schedule-error:' || p.id || ':' || p.version)))`);
 }
-export async function notificationCount(tx: OperationTransaction, adminId: number) {
-  const [row] = await tx.query(
-    getDatabase().raw
-      .sql`SELECT count(*) AS count FROM notification n WHERE n."resolvedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM notification_read r WHERE r."notificationId" = n.id AND r."adminId" = ${adminId})`
-      .returnsRow({ count: "pg/int8number@1" })
-      .build(),
-  );
-  return row.count;
+export function notificationCount(tx: OperationTransaction, adminId: number) {
+  return tx.get<{ count: number }>(
+    sql`SELECT count(*) AS count FROM notification n WHERE n."resolvedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM notification_read r WHERE r."notificationId" = n.id AND r."adminId" = ${adminId})`,
+  ).count;
 }
 export async function getNotifications(
   query: z.infer<typeof notificationQuerySchema>,
   actor: TaxonomyActor,
 ): Promise<NotificationPage> {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
-    await syncNotifications(tx);
-    const raw = getDatabase().raw;
-    const unreadCount = await notificationCount(tx, actor.adminId);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
+    syncNotifications(tx);
+    const unreadCount = notificationCount(tx, actor.adminId);
     const unread = query.unread === "true";
-    const filter =
-      raw.sql`FROM notification n LEFT JOIN notification_read r ON r."notificationId" = n.id AND r."adminId" = ${actor.adminId} WHERE (${unread ? 1 : 0} = 0 OR (r."readAt" IS NULL AND n."resolvedAt" IS NULL))`.returnsRow(
-        { id: "pg/text@1" },
-      );
-    const [count] = await tx.query(
-      raw.sql`SELECT count(*) AS total ${filter}`.returnsRow({ total: "pg/int8number@1" }).build(),
-    );
-    const pageCount = Math.max(1, Math.ceil(count.total / query.pageSize));
+    const filter = sql`FROM notification n LEFT JOIN notification_read r ON r."notificationId" = n.id AND r."adminId" = ${actor.adminId} WHERE (${Number(unread)} = 0 OR (r."readAt" IS NULL AND n."resolvedAt" IS NULL))`;
+    const { total } = tx.get<{ total: number }>(sql`SELECT count(*) AS total ${filter}`);
+    const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
-    const rows = await tx.query(
-      raw.sql`SELECT n.id, n.title, CASE WHEN n.kind = 'comment' THEN '/admin/comments?record=' || n."sourceId" WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`
-        .returnsRow({
-          id: "pg/text@1",
-          title: "pg/text@1",
-          href: "pg/text@1",
-          createdAt: "pg/timestamptz-date@1",
-          isRead: "pg/bool@1",
-          resolved: "pg/bool@1",
-        })
-        .build(),
+    const rows = tx.all<{
+      id: string;
+      title: string;
+      href: string;
+      createdAt: number;
+      isRead: number;
+      resolved: number;
+    }>(
+      sql`SELECT n.id, n.title, CASE WHEN n.kind = 'comment' THEN '/admin/comments?record=' || n."sourceId" WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`,
     );
     return {
       items: rows.map(({ isRead, resolved, ...row }) => ({
         ...row,
-        createdAt: row.createdAt.toISOString(),
-        read: isRead,
-        resolved,
+        createdAt: new Date(row.createdAt).toISOString(),
+        read: Boolean(isRead),
+        resolved: Boolean(resolved),
       })),
-      total: count.total,
+      total,
       page,
       pageSize: query.pageSize,
       pageCount,
@@ -93,23 +68,18 @@ export async function getNotifications(
   });
 }
 export async function readNotifications(ids: string[], actor: TaxonomyActor) {
-  return writeTransaction(async (tx) => {
-    await authorizeAdmin(actor);
+  return writeTransaction((tx) => {
+    authorizeAdmin(actor, tx);
     for (const id of new Set(ids)) {
-      if (!(await tx.orm.public.Notification.where({ id }).first()))
-        throw new AdminBusinessError("NOT_FOUND", "通知不存在，请重新载入。");
       if (
-        !(await tx.orm.public.NotificationRead.where({
-          notificationId: id,
-          adminId: actor.adminId,
-        }).first())
+        !tx.select({ id: notification.id }).from(notification).where(eq(notification.id, id)).get()
       )
-        await tx.orm.public.NotificationRead.create({
-          notificationId: id,
-          adminId: actor.adminId,
-          readAt: new Date(),
-        });
+        throw new AdminBusinessError("NOT_FOUND", "通知不存在，请重新载入。");
+      tx.insert(notificationRead)
+        .values({ notificationId: id, adminId: actor.adminId, readAt: new Date() })
+        .onConflictDoNothing()
+        .run();
     }
-    return { unreadCount: await notificationCount(tx, actor.adminId) };
+    return { unreadCount: notificationCount(tx, actor.adminId) };
   });
 }

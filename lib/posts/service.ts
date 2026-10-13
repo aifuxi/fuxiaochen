@@ -1,13 +1,20 @@
 import "server-only";
+import { and, asc, count, desc, eq, inArray, sql, type SQL } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import type { TaxonomyActor } from "@/lib/taxonomy/service";
 
 import { getSession } from "@/lib/auth/service";
+import {
+  getDatabase,
+  writeTransaction,
+  type Database,
+  type DatabaseTransaction,
+} from "@/lib/database";
+import { category, post, postTag, tag } from "@/lib/database/schema";
 import { MediaError } from "@/lib/media/error";
 import { documentReferenceUrls } from "@/lib/media/reference-urls";
 import { ensureNewMediaReferences } from "@/lib/media/references";
-import { getDatabase, writeTransaction } from "@/prisma/db";
 
 import type {
   FeaturedPostInput,
@@ -34,56 +41,74 @@ export class PostError extends Error {
     super(message);
   }
 }
-async function authorize(actor: TaxonomyActor) {
-  const admin = await getSession(actor.sessionToken);
+function authorize(actor: TaxonomyActor) {
+  const admin = getSession(actor.sessionToken);
   if (!admin || admin.adminId !== actor.adminId)
     throw new PostError("UNAUTHORIZED", "登录已失效，请重新登录。");
 }
-type Database = ReturnType<typeof getDatabase>;
-type Transaction = Parameters<Parameters<Database["transaction"]>[0]>[0];
-const summaries = (db: Database | Transaction) =>
-  db.orm.public.Post.select(
-    "id",
-    "title",
-    "summary",
-    "isFeatured",
-    "featuredOrder",
-    "slug",
-    "slugLockedAt",
-    "categoryId",
-    "status",
-    "version",
-    "createdAt",
-    "updatedAt",
-    "publishedAt",
-    "scheduledFor",
-  )
-    .include("category")
-    .include("tagLinks", (links) => links.include("tag"));
-type SummaryRow = NonNullable<Awaited<ReturnType<ReturnType<typeof summaries>["first"]>>>;
-function serialize(row: SummaryRow) {
-  const { tagLinks, ...post } = row;
+const summaryColumns = {
+  id: post.id,
+  title: post.title,
+  summary: post.summary,
+  isFeatured: post.isFeatured,
+  featuredOrder: post.featuredOrder,
+  slug: post.slug,
+  slugLockedAt: post.slugLockedAt,
+  categoryId: post.categoryId,
+  status: post.status,
+  version: post.version,
+  createdAt: post.createdAt,
+  updatedAt: post.updatedAt,
+  publishedAt: post.publishedAt,
+  scheduledFor: post.scheduledFor,
+  category: { id: category.id, name: category.name, color: category.color },
+};
+const summaries = (db: Database | DatabaseTransaction) =>
+  db.select(summaryColumns).from(post).leftJoin(category, eq(post.categoryId, category.id));
+type SummaryRow = ReturnType<ReturnType<typeof summaries>["all"]>[number];
+type TagSummary = { id: string; name: string };
+function tagsForPosts(db: Database | DatabaseTransaction, ids: string[]) {
+  const byPost = new Map<string, TagSummary[]>();
+  if (!ids.length) return byPost;
+  const links = db
+    .select({ postId: postTag.postId, id: tag.id, name: tag.name })
+    .from(postTag)
+    .innerJoin(tag, eq(postTag.tagId, tag.id))
+    .where(inArray(postTag.postId, ids))
+    .all();
+  for (const { postId, ...item } of links) {
+    const items = byPost.get(postId) ?? [];
+    items.push(item);
+    byPost.set(postId, items);
+  }
+  return byPost;
+}
+function serialize(row: SummaryRow, tags: TagSummary[]) {
   return {
-    ...post,
-    isFeatured: post.isFeatured === 1,
-    category: post.category
-      ? { id: post.category.id, name: post.category.name, color: post.category.color }
-      : null,
-    status: postStatusSchema.parse(post.status),
-    createdAt: post.createdAt.toISOString(),
-    updatedAt: post.updatedAt.toISOString(),
-    publishedAt: post.publishedAt?.toISOString() ?? null,
-    scheduledFor: post.scheduledFor?.toISOString() ?? null,
-    slugLockedAt: post.slugLockedAt?.toISOString() ?? null,
-    tags: tagLinks
-      .map(({ tag }) => ({ id: tag.id, name: tag.name }))
-      .toSorted((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)),
+    ...row,
+    isFeatured: row.isFeatured === 1,
+    status: postStatusSchema.parse(row.status),
+    createdAt: row.createdAt.toISOString(),
+    updatedAt: row.updatedAt.toISOString(),
+    publishedAt: row.publishedAt?.toISOString() ?? null,
+    scheduledFor: row.scheduledFor?.toISOString() ?? null,
+    slugLockedAt: row.slugLockedAt?.toISOString() ?? null,
+    tags: tags.toSorted((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)),
   };
 }
-async function counts(db: Database | Transaction): Promise<PostCounts> {
-  const groups = await db.orm.public.Post.groupBy("status").aggregate((agg) => ({
-    count: agg.count(),
-  }));
+function serializeRows(db: Database | DatabaseTransaction, rows: SummaryRow[]) {
+  const tags = tagsForPosts(
+    db,
+    rows.map((row) => row.id),
+  );
+  return rows.map((row) => serialize(row, tags.get(row.id) ?? []));
+}
+function counts(db: Database | DatabaseTransaction): PostCounts {
+  const groups = db
+    .select({ status: post.status, count: count() })
+    .from(post)
+    .groupBy(post.status)
+    .all();
   const result = { ...emptyPostCounts };
   for (const group of groups) {
     result[postStatusSchema.parse(group.status)] = group.count;
@@ -92,120 +117,94 @@ async function counts(db: Database | Transaction): Promise<PostCounts> {
   return result;
 }
 export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
-  await authorize(actor);
+  authorize(actor);
   const db = getDatabase();
-  let filtered = db.orm.public.Post.where({});
-  if (query.status) filtered = filtered.where({ status: query.status });
-  if (query.categoryId) filtered = filtered.where({ categoryId: query.categoryId });
+  const filters: SQL[] = [];
+  if (query.status) filters.push(eq(post.status, query.status));
+  if (query.categoryId) filters.push(eq(post.categoryId, query.categoryId));
   if (query.featured !== "all")
-    filtered = filtered.where({ isFeatured: query.featured === "featured" ? 1 : 0 });
+    filters.push(eq(post.isFeatured, query.featured === "featured" ? 1 : 0));
   if (query.q) {
-    // strpos 按字面查找，关键词中的 %、_ 不会被解释成 LIKE 通配符；所有值使用绑定参数。
-    filtered = filtered.where((p) =>
-      db.raw.sql`(
-      strpos(lower(${p.title}), lower(${query.q})) > 0 OR
-      strpos(lower(${p.summary}), lower(${query.q})) > 0 OR strpos(lower(
-        (${p.content}::jsonb ->> 'text')
-      ), lower(${query.q})) > 0
-      OR EXISTS (SELECT 1 FROM category c WHERE c.id = ${p.categoryId} AND strpos(lower(c.name), lower(${query.q})) > 0)
-      OR EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt."tagId" WHERE pt."postId" = ${p.id} AND strpos(lower(t.name), lower(${query.q})) > 0)
-    )`
-        .returns("pg/bool@1")
-        .buildAst(),
-    );
+    // instr 按字面查找，% 和 _ 不作为通配符；正文只检索持久化的纯文本字段。
+    filters.push(sql`(
+      instr(lower(${post.title}), lower(${query.q})) > 0 OR
+      instr(lower(${post.summary}), lower(${query.q})) > 0 OR
+      instr(lower(json_extract(${post.content}, '$.text')), lower(${query.q})) > 0 OR
+      EXISTS (SELECT 1 FROM category c WHERE c.id = ${post.categoryId} AND instr(lower(c.name), lower(${query.q})) > 0) OR
+      EXISTS (SELECT 1 FROM post_tag pt JOIN tag t ON t.id = pt."tagId" WHERE pt."postId" = ${post.id} AND instr(lower(t.name), lower(${query.q})) > 0)
+    )`);
   }
-  const { total } = await filtered.aggregate((agg) => ({ total: agg.count() }));
+  const where = and(...filters);
+  const total = db.select({ total: count() }).from(post).where(where).get()!.total;
   const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
   const page = Math.min(query.page, pageCount);
-  const direction = query.sortDirection ?? "asc";
-  const rows = await filtered
-    .select(
-      "id",
-      "title",
-      "summary",
-      "isFeatured",
-      "featuredOrder",
-      "slug",
-      "slugLockedAt",
-      "categoryId",
-      "status",
-      "version",
-      "createdAt",
-      "updatedAt",
-      "publishedAt",
-      "scheduledFor",
-    )
-    .include("category")
-    .include("tagLinks", (links) => links.include("tag"))
-    .orderBy([
-      (p) => {
-        if (query.sortBy === "title") return p.title[direction]();
-        if (query.sortBy === "category") return p.category.name[direction]();
-        const order = p.createdAt[direction]();
-        if (query.sortBy === "status")
-          return order.withExpr(
-            db.raw.sql`CASE ${p.status} WHEN 'draft' THEN 0 WHEN 'published' THEN 1 ELSE 2 END`
-              .returns("pg/int8number@1")
-              .buildAst(),
-          );
-        if (query.sortBy === "time")
-          return order.withExpr(
-            db.raw
-              .sql`CASE WHEN ${p.status} = 'scheduled' THEN ${p.scheduledFor} ELSE coalesce(${p.publishedAt}, ${p.updatedAt}) END`
-              .returns("pg/timestamptz-date@1")
-              .buildAst(),
-          );
-        return p.createdAt.desc();
-      },
-      (p) => p.id.desc(),
-    ])
+  const order = query.sortDirection === "desc" ? desc : asc;
+  const ordering: SQL[] = [];
+  if (query.sortBy === "title") ordering.push(order(post.title));
+  else if (query.sortBy === "category") {
+    // 保持原 PostgreSQL 排序的 NULL 位置：升序末尾、降序开头。
+    ordering.push(order(sql`${category.name} IS NULL`), order(category.name));
+  } else if (query.sortBy === "status")
+    ordering.push(
+      order(sql`CASE ${post.status} WHEN 'draft' THEN 0 WHEN 'published' THEN 1 ELSE 2 END`),
+    );
+  else if (query.sortBy === "time") {
+    const time = sql`CASE WHEN ${post.status} = 'scheduled' THEN ${post.scheduledFor} ELSE coalesce(${post.publishedAt}, ${post.updatedAt}) END`;
+    ordering.push(order(sql`${time} IS NULL`), order(time));
+  } else ordering.push(desc(post.createdAt));
+  ordering.push(desc(post.id));
+  const rows = summaries(db)
+    .where(where)
+    .orderBy(...ordering)
     .offset((page - 1) * query.pageSize)
     .limit(query.pageSize)
     .all();
   return {
-    items: rows.map(serialize),
+    items: serializeRows(db, rows),
     total,
     page,
     pageSize: query.pageSize,
     pageCount,
-    statusCounts: await counts(db),
+    statusCounts: counts(db),
   };
 }
 export async function getPostSummary(actor: TaxonomyActor) {
-  await authorize(actor);
+  authorize(actor);
   const db = getDatabase();
-  const schedules = await summaries(db)
-    .where({ status: "scheduled" })
-    .orderBy([(p) => p.scheduledFor.asc(), (p) => p.id.asc()])
+  const schedules = summaries(db)
+    .where(eq(post.status, "scheduled"))
+    .orderBy(asc(sql`${post.scheduledFor} IS NULL`), asc(post.scheduledFor), asc(post.id))
     .limit(5)
     .all();
-  const recentDrafts = await summaries(db)
-    .where({ status: "draft" })
-    .orderBy([(p) => p.updatedAt.desc(), (p) => p.id.desc()])
+  const recentDrafts = summaries(db)
+    .where(eq(post.status, "draft"))
+    .orderBy(desc(post.updatedAt), desc(post.id))
     .limit(3)
     .all();
   return {
-    statusCounts: await counts(db),
-    schedules: schedules.map(serialize),
-    recentDrafts: recentDrafts.map(serialize),
+    statusCounts: counts(db),
+    schedules: serializeRows(db, schedules),
+    recentDrafts: serializeRows(db, recentDrafts),
   };
 }
-async function detail(id: string, db: Database | Transaction) {
-  const post = await db.orm.public.Post.where({ id })
-    .include("category")
-    .include("tagLinks", (links) => links.include("tag"))
-    .first();
-  if (!post) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
-  const { content, ...summary } = post;
-  return { ...serialize(summary), content };
+function detail(id: string, db: Database | DatabaseTransaction) {
+  const row = db
+    .select({ ...summaryColumns, content: post.content })
+    .from(post)
+    .leftJoin(category, eq(post.categoryId, category.id))
+    .where(eq(post.id, id))
+    .get();
+  if (!row) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
+  const { content, ...summary } = row;
+  return { ...serialize(summary, tagsForPosts(db, [id]).get(id) ?? []), content };
 }
 export async function getPost(id: string, actor: TaxonomyActor) {
-  await authorize(actor);
+  authorize(actor);
   return detail(id, getDatabase());
 }
-async function validateMedia(content: string, tx: Transaction, previous?: string) {
+function validateMedia(content: string, tx: DatabaseTransaction, previous?: string) {
   try {
-    await ensureNewMediaReferences(
+    ensureNewMediaReferences(
       tx,
       documentReferenceUrls(content),
       previous ? documentReferenceUrls(previous) : [],
@@ -216,16 +215,19 @@ async function validateMedia(content: string, tx: Transaction, previous?: string
     throw error;
   }
 }
-async function validateRelations(input: PostInput | PostUpdateInput, tx: Transaction) {
-  if (input.categoryId && !(await tx.orm.public.Category.where({ id: input.categoryId }).first()))
+function validateRelations(input: PostInput | PostUpdateInput, tx: DatabaseTransaction) {
+  if (
+    input.categoryId &&
+    !tx.select({ id: category.id }).from(category).where(eq(category.id, input.categoryId)).get()
+  )
     throw new PostError("INVALID_INPUT", "所选分类不存在，请重新选择。");
   for (const id of input.tagIds)
-    if (!(await tx.orm.public.Tag.where({ id }).first()))
+    if (!tx.select({ id: tag.id }).from(tag).where(eq(tag.id, id)).get())
       throw new PostError("INVALID_INPUT", "所选标签不存在，请重新选择。");
 }
-async function validateSlug(slug: string | null, tx: Transaction, id?: string) {
+function validateSlug(slug: string | null, tx: DatabaseTransaction, id?: string) {
   if (!slug) return;
-  const existing = await tx.orm.public.Post.where({ slug }).select("id").first();
+  const existing = tx.select({ id: post.id }).from(post).where(eq(post.slug, slug)).get();
   if (existing && existing.id !== id)
     throw new PostError("SLUG_CONFLICT", "slug 已被其他文章使用。", {
       slug: ["请使用唯一的 slug。"],
@@ -260,32 +262,34 @@ function publication(
   };
 }
 export async function createPost(input: PostInput, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    await validateRelations(input, tx);
-    await validateSlug(input.slug, tx);
-    await validateMedia(input.content, tx);
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    validateRelations(input, tx);
+    validateSlug(input.slug, tx);
+    validateMedia(input.content, tx);
     const { tagIds, isFeatured, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
-    await tx.orm.public.Post.create({
-      ...data,
-      isFeatured: isFeatured ? 1 : 0,
-      ...dates,
-      id,
-      createdAt: dates.updatedAt,
-      version: 1,
-    });
-    for (const tagId of tagIds) await tx.orm.public.PostTag.create({ postId: id, tagId });
+    tx.insert(post)
+      .values({
+        ...data,
+        isFeatured: isFeatured ? 1 : 0,
+        ...dates,
+        id,
+        createdAt: dates.updatedAt,
+        version: 1,
+      })
+      .run();
+    for (const tagId of tagIds) tx.insert(postTag).values({ postId: id, tagId }).run();
     return detail(id, tx);
   });
 }
 export async function updatePost(id: string, input: PostUpdateInput, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    const previous = await tx.orm.public.Post.where({ id }).first();
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    const previous = tx.select().from(post).where(eq(post.id, id)).get();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (previous.version !== input.version)
       throw new PostError(
@@ -296,23 +300,26 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
       throw new PostError("SLUG_LOCKED", "文章首次发布后不能修改 slug。", {
         slug: ["首次发布后 slug 已锁定。"],
       });
-    await validateRelations(input, tx);
-    await validateSlug(input.slug, tx, id);
-    await validateMedia(input.content, tx, previous.content);
+    validateRelations(input, tx);
+    validateSlug(input.slug, tx, id);
+    validateMedia(input.content, tx, previous.content);
     const { tagIds, version, summary, isFeatured, featuredOrder, ...data } = input;
-    if (
-      !(await tx.orm.public.Post.where({ id, version }).updateAndCount({
+    const updated = tx
+      .update(post)
+      .set({
         ...data,
         summary: summary ?? previous.summary,
         isFeatured: isFeatured === undefined ? previous.isFeatured : isFeatured ? 1 : 0,
         featuredOrder: featuredOrder ?? previous.featuredOrder,
         ...publication(input, previous),
         version: version + 1,
-      }))
-    )
+      })
+      .where(and(eq(post.id, id), eq(post.version, version)))
+      .run();
+    if (!updated.changes)
       throw new PostError("VERSION_CONFLICT", "文章版本已变化，请重新载入最新内容。");
-    await tx.orm.public.PostTag.where({ postId: id }).deleteAndCount();
-    for (const tagId of tagIds) await tx.orm.public.PostTag.create({ postId: id, tagId });
+    tx.delete(postTag).where(eq(postTag.postId, id)).run();
+    for (const tagId of tagIds) tx.insert(postTag).values({ postId: id, tagId }).run();
     return detail(id, tx);
   });
 }
@@ -321,34 +328,41 @@ export async function updatePostFeatured(
   input: FeaturedPostInput,
   actor: TaxonomyActor,
 ) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    const previous = await tx.orm.public.Post.where({ id }).select("version").first();
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    const previous = tx.select({ version: post.version }).from(post).where(eq(post.id, id)).get();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (
       previous.version !== input.version ||
-      !(await tx.orm.public.Post.where({ id, version: input.version }).updateAndCount({
-        isFeatured: input.isFeatured ? 1 : 0,
-        updatedAt: new Date(),
-        version: input.version + 1,
-      }))
+      !tx
+        .update(post)
+        .set({
+          isFeatured: input.isFeatured ? 1 : 0,
+          updatedAt: new Date(),
+          version: input.version + 1,
+        })
+        .where(and(eq(post.id, id), eq(post.version, input.version)))
+        .run().changes
     )
       throw new PostError("VERSION_CONFLICT", "文章已被其他页面修改，请核对刷新后的列表再操作。");
-    const post = await summaries(tx).where({ id }).first();
-    if (!post) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
-    return serialize(post);
+    const row = summaries(tx).where(eq(post.id, id)).get();
+    if (!row) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
+    return serialize(row, tagsForPosts(tx, [id]).get(id) ?? []);
   });
 }
 export async function deletePost(id: string, version: number, actor: TaxonomyActor) {
-  await authorize(actor);
-  return writeTransaction(async (tx) => {
-    await authorize(actor);
-    const previous = await tx.orm.public.Post.where({ id }).first();
+  authorize(actor);
+  return writeTransaction((tx) => {
+    authorize(actor);
+    const previous = tx.select().from(post).where(eq(post.id, id)).get();
     if (!previous) throw new PostError("NOT_FOUND", "文章不存在，可能已被删除。");
     if (
       previous.version !== version ||
-      !(await tx.orm.public.Post.where({ id, version }).deleteAndCount())
+      !tx
+        .delete(post)
+        .where(and(eq(post.id, id), eq(post.version, version)))
+        .run().changes
     )
       throw new PostError("VERSION_CONFLICT", "文章已被其他页面修改，请重新确认最新文章后删除。");
     return { id };

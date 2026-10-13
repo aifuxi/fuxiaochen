@@ -34,12 +34,11 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 ## 后台技术栈与开发约定
 
-- 后台 API 使用 Hono，输入校验使用 Zod，数据库访问使用 Prisma 8 + PostgreSQL。
-- 实现前阅读对应版本的官方文档及已安装包的类型定义；不能套用 Prisma 7 的配置、查询和迁移方式。
-- Prisma 8 使用 `@prisma/orm-postgres`、contract、`prisma contract emit` 和 Prisma 8 迁移流程；CLI 配置与服务端运行时必须显式使用同一 `DATABASE_URL`。
-- 依赖锁定经核对兼容的具体版本并提交 lockfile；不假设 Prisma CLI 与数据库包的最新版本号相同。记录所用版本的 RC、experimental 状态，不擅自降级到 Prisma 7。
-- PostgreSQL 使用 Node.js runtime；数据库连接在开发热更新中复用，CLI 完成后释放连接。数据库代码和秘密不得进入客户端。
-- Hono 路由、输入校验和业务逻辑职责分离；从 Zod schema 推导类型，业务处理只使用校验后的输入。统一处理错误，不向客户端暴露内部异常。
+- 后台 API 使用 Hono，输入校验使用 Zod，数据库访问使用 SQLite + Drizzle ORM + better-sqlite3。
+- 实现前阅读对应版本官方文档与已安装类型；依赖锁定具体兼容版本并提交 lockfile。schema 在 `lib/database/schema.ts`，生成且审查 SQL 迁移后提交 `drizzle/`。
+- 数据库使用 Node.js runtime，开发热更新复用连接，CLI 完成后关闭连接；数据库代码不得进入客户端。
+- SQLite 驱动使用同步事务；事务回调不能 async、返回 Promise 或执行网络操作。异步密码校验、OSS 等操作先在事务外完成，再在写事务内复核状态。
+- Hono 路由、输入校验和业务逻辑职责分离；从 Zod schema 推导类型，统一处理错误，不向客户端暴露内部异常。
 
 ## 后台鉴权与登录范围
 
@@ -48,9 +47,12 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Cookie 安全属性、同源校验、请求体限制及登录限流属于登录实现要求。
 - 登录持久化任务不自动包含其他后台 Mock 数据迁移；具体字段、错误码和限流参数放在实现与相关文档中，本文件保留长期项目约定。
 
-## PostgreSQL 开发与运维
+## SQLite 开发与运维
 
-- 本地 PostgreSQL 使用 `compose.dev.yaml`，通过 `npm run db:up` 启动或复用，端口固定为 `127.0.0.1:15433:5432`；Next.js 在电脑上运行。
-- 线上应用连接 `postgres:5432`，数据库不发布宿主机端口；应用与数据库凭据不得进入构建或 Git。
-- 所有业务写入经 `writeTransaction`／`authTransaction`，使用同一事务级 advisory lock，覆盖 Web 与 CLI。
-- 备份使用 PostgreSQL 18 客户端工具，恢复只接受独立空库；不自动删除旧 SQLite 文件、卷或 OSS 对象。
+- `DATABASE_PATH` 必须显式指向 SQLite 文件；普通连接、迁移和验证不创建缺失文件，首次初始化由 `db:init` 独占创建。测试只使用临时目录中的独立文件。
+- 数据库启用 WAL、外键、FULL 同步和明确的锁等待时间。所有业务写入经 `writeTransaction`／`authTransaction` 的同步 IMMEDIATE 事务，跨 Web 和 CLI 由 SQLite 文件锁串行化。
+- 时间保存为 UTC 毫秒，业务读取为 Date；整数读写校验 JavaScript 安全范围。统计继续按 Asia/Shanghai 分日。
+- 迁移历史 hash 必须匹配；SQLite 表重建迁移在事务外暂时关闭外键，提交前检查完整性与全部外键，最终恢复开关。不能在已有事务内运行迁移。
+- 在线备份使用一致性快照，备份/恢复使用完整 integrity_check；恢复只接受独立新文件并撤销登录会话。不覆盖或自动删除旧 SQLite、PostgreSQL 卷、备份或 OSS 对象。
+- 当前阶段仅完成基础层与查询适配；生产 Compose、镜像合并、PostgreSQL 数据切换尚未实施，不沿用旧 Compose 部署新源码。
+- `prisma/`、旧 PostgreSQL 导入脚本与回归源码保留作历史参考，不属于当前应用编译范围。相关依赖暂留 devDependencies；旧环境操作须使用匹配旧版本，不能把历史回归作为当前 SQLite 验收。
