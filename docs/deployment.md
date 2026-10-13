@@ -1,6 +1,6 @@
 # GitHub Actions、Portainer 与 Caddy 部署
 
-> 2026-10-13：当前源码已完成 SQLite 基础层和业务查询适配，本文的 Compose、双镜像和 PostgreSQL 流程属于线上历史基线。本阶段未改动生产 Compose、Dockerfile 或 Actions，也未执行数据迁移、推送或部署。不要用本文旧流程部署当前源码；单镜像部署将在后续阶段另行实施。
+> 2026-10-13：当前源码已完成 SQLite 基础层、业务查询适配和独立测试库的数据迁移演练，本文的 Compose、双镜像和 PostgreSQL 流程属于线上历史基线。本阶段未改动生产 Compose、Dockerfile 或 Actions，也未执行线上数据迁移、推送或部署。不要用本文旧流程部署当前源码；单镜像部署将在后续阶段另行实施。新迁移工具操作见 [数据库维护](maintenance.md)。
 
 适用于单机 Docker Standalone。Portainer 从 `https://github.com/aifuxi/fuxiaochen` 拉取 Compose 配置，GitHub Actions 将 Web 和运维镜像分别发布到 `ghcr.io/aifuxi/fuxiaochen`、`ghcr.io/aifuxi/fuxiaochen-tools`。服务器无需安装 Node.js 或在拉取仓库后重新打包。通过 `ssh aliyun_vps` 准备数据库和维护快照，再在 Portainer 中重新部署。
 

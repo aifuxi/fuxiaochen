@@ -4,7 +4,7 @@
 
 ## 当前实施状态
 
-2026-10-13 已将应用数据库基础层与业务查询改为 SQLite + Drizzle + better-sqlite3，并使用独立临时库验证。线上数据库、数据迁移、生产 Compose 和单镜像部署尚未切换；不要使用现有 PostgreSQL Compose 部署当前源码。阶段验证见 [SQLite 适配记录](docs/engineering/sqlite-adaptation-verification.md)。
+2026-10-13 已将应用数据库基础层与业务查询改为 SQLite + Drizzle + better-sqlite3，并完成 PostgreSQL → SQLite 迁移工具和独立测试库演练。线上数据、生产 Compose 和单镜像部署尚未切换；不要使用现有 PostgreSQL Compose 部署当前源码。阶段验证见 [SQLite 适配记录](docs/engineering/sqlite-adaptation-verification.md) 和 [数据迁移演练](docs/engineering/postgres-sqlite-transfer-verification.md)。
 
 ## 运行要求
 
@@ -44,21 +44,24 @@ APP_ORIGIN=http://localhost:3000
 
 ## 常用命令
 
-| 命令                                                          | 用途                                           |
-| ------------------------------------------------------------- | ---------------------------------------------- |
-| `npm run dev`                                                 | 启动开发服务器                                 |
-| `npm run build`                                               | 生成 standalone 生产构建，不连接数据库         |
-| `npm run db:init`                                             | 独占创建新 SQLite 文件并迁移；已有文件拒绝覆盖 |
-| `npm run db:generate -- --name describe-change`               | 根据 schema 离线生成 SQL 迁移                  |
-| `npm run db:migrate`                                          | 对显式存在的数据库应用迁移并校验               |
-| `npm run db:verify`                                           | 校验迁移 hash、结构、完整性和外键              |
-| `npm run db:backup` / `npm run db:restore -- <目录>`          | SQLite 在线备份／恢复到独立新文件              |
-| `npm run admin:reset-password`                                | 重置密码并撤销该账号会话                       |
-| `npm run test:sqlite`                                         | 临时 SQLite 文件中的基础层与业务回归           |
-| `npm run test:seo:integration`                                | 临时源码副本与 SQLite 的真实 HTTP 回归         |
-| `npm run typecheck` / `npm run lint` / `npm run format:check` | 类型、源码、格式检查                           |
+| 命令                                                                                                                | 用途                                           |
+| ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `npm run dev`                                                                                                       | 启动开发服务器                                 |
+| `npm run build`                                                                                                     | 生成 standalone 生产构建，不连接数据库         |
+| `npm run db:init`                                                                                                   | 独占创建新 SQLite 文件并迁移；已有文件拒绝覆盖 |
+| `npm run db:generate -- --name describe-change`                                                                     | 根据 schema 离线生成 SQL 迁移                  |
+| `npm run db:migrate`                                                                                                | 对显式存在的数据库应用迁移并校验               |
+| `npm run db:verify`                                                                                                 | 校验迁移 hash、结构、完整性和外键              |
+| `npm run db:backup` / `npm run db:restore -- <目录>`                                                                | SQLite 在线备份／恢复到独立新文件              |
+| `npm run admin:reset-password`                                                                                      | 重置密码并撤销该账号会话                       |
+| `npm run test:sqlite`                                                                                               | 临时 SQLite 文件中的基础层与业务回归           |
+| `npm run db:export-postgres -- --directory <新目录> --report <新报告>`                                              | 显式只读源连接，导出 PostgreSQL 22 表归档      |
+| `npm run db:import-postgres -- --directory <归档> --target <新文件> --dry-run\|--apply\|--verify --report <新报告>` | 离线预检、导入或核对；拒绝覆盖已有库           |
+| `npm run test:postgres-transfer`                                                                                    | 显式专用测试实例中的迁移演练；不使用业务数据库 |
+| `npm run test:seo:integration`                                                                                      | 临时源码副本与 SQLite 的真实 HTTP 回归         |
+| `npm run typecheck` / `npm run lint` / `npm run format:check`                                                       | 类型、源码、格式检查                           |
 
-`test:sqlite` 不使用开发库，OSS 访问使用 mock；测试结束删除自己的临时文件。历史 PostgreSQL 源码与回归不参与当前编译和验收，恢复旧环境应使用匹配旧提交。生产备份目录与数据文件不得提交 Git。
+`test:sqlite` 不使用开发库，OSS 访问使用 mock；测试结束删除自己的临时文件。新迁移工具不加载 `.env`，只接受 `MIGRATION_SOURCE_DATABASE_URL`；`test:postgres-transfer` 只接受专用新实例的 `TEST_POSTGRES_ADMIN_URL`，详细操作见 [数据库维护](docs/maintenance.md)。历史 PostgreSQL 源码与回归不参与当前编译和验收，恢复旧环境应使用匹配旧提交。生产备份目录与数据文件不得提交 Git。
 
 ## 部署与维护
 

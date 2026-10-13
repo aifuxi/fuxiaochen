@@ -24,7 +24,78 @@ npm run db:verify
 
 SQLite 备份使用 better-sqlite3 在线 backup API，生成 `database.sqlite` 与 `manifest.json`；manifest 记录格式、迁移版本、大小与摘要。显式校验、备份和恢复使用 `integrity_check`，普通连接使用快速完整性校验加版本/结构/外键检查。恢复指定绝对 `RESTORE_DATABASE_PATH`，目标必须独立且不存在，拒绝已有文件、主库、源库和遗留 WAL；成功后撤销会话、关闭自动备份并标记中断任务。PostgreSQL 备份格式不兼容，旧备份必须使用匹配旧版本恢复。
 
-当前尚未实现 PostgreSQL → SQLite 数据导入、单镜像运维打包和启动自动备份/迁移。生产部署说明仍为历史方案，不能直接用于当前源码。
+PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。单镜像运维打包和启动自动备份/迁移尚未实施，生产部署说明仍为历史方案，不能直接用于当前源码。
+
+## PostgreSQL → SQLite 离线迁移
+
+入口为 `scripts/postgres-transfer.ts`，实现位于 `lib/database-transfer/`。工具依赖 Node.js 24、已安装的 `pg`、better-sqlite3 与 tsx，不调用 Prisma CLI，不修改 `prisma/` 或连接应用数据库。当前已完成专用 PostgreSQL 18.6 与临时 SQLite 的演练，未连接线上数据库；验收见 [迁移工具验证记录](engineering/postgres-sqlite-transfer-verification.md)。
+
+### 源库与归档
+
+导出只接受显式 `MIGRATION_SOURCE_DATABASE_URL`，不加载项目 `.env`，也不回退到 `DATABASE_URL`。建议使用只具 SELECT 和 schema USAGE 权限的独立读取账号，须能读取 22 张 `public` 业务表及存在的 `prisma_contract.marker`。连接设置默认只读，在 `REPEATABLE READ READ ONLY` 事务中取得统一快照；ACCESS SHARE 锁防止导出过程中修改表结构，正常业务写入仍可继续。演练导出不能替代正式冻结写入后的最终导出。
+
+工具核对源字段、原生类型、NULL、主键、唯一约束、外键及引用动作，与已提交的 PostgreSQL contract `2908a771…e2416e` 一致；存在 Prisma marker 时也必须匹配。未知业务表、行级安全、分区、继承、空管理员库、整数溢出和无法保留的亚毫秒时间会拒绝导出。时间通过 PostgreSQL 数值投影转换为 UTC 毫秒，不经 JavaScript Date 解析器静默丢弃精度。
+
+导出目录必须不存在，父目录预先创建。22 份 JSONL 按原主键排序并使用固定字段顺序的规范 JSON 编码，最后生成 `manifest.json`，记录快照、源 contract、目标 SQLite migration hash、每表数量、字节数和 SHA-256。导入拒绝非规范编码，防止小数被 JSON 解析舍入、重复字段被覆盖。只有完整且匹配的 manifest 才能导入；失败目录保留供检查，重试使用新目录。目录为 0700，归档文件和报告为 0600。归档含密码哈希、正文及访客信息，应保存到服务账号私有目录，不提交 Git。
+
+以下示例需在项目根目录运行；先创建私有目录和权限为 0600 的 `/absolute/private/transfer.env`，其中仅配置明确的独立源连接 `MIGRATION_SOURCE_DATABASE_URL`。不要在命令行、日志或 Git 中放入 URL 凭据。
+
+```sh
+# 导出显式指定的源库，不读取项目 .env；目录和报告均使用新的路径。
+node --env-file=/absolute/private/transfer.env --conditions=react-server --import tsx \
+  scripts/postgres-transfer.ts --export \
+  --directory /absolute/private/snapshot \
+  --report /absolute/private/export.json
+
+# 只预检归档、全部关系、唯一值与映射；不打开或创建目标库。
+npm run db:import-postgres -- \
+  --directory /absolute/private/snapshot --target /absolute/private/site.sqlite \
+  --dry-run --report /absolute/private/preflight.json
+
+# 仅发布不存在的新文件；不要提前 db:init、admin:init 或启动应用。
+npm run db:import-postgres -- \
+  --directory /absolute/private/snapshot --target /absolute/private/site.sqlite \
+  --apply --report /absolute/private/import.json
+
+# 应用和调度尚未使用目标时再核对；不改写目标或创建日志文件。
+npm run db:import-postgres -- \
+  --directory /absolute/private/snapshot --target /absolute/private/site.sqlite \
+  --verify --report /absolute/private/verify.json
+```
+
+`--directory`、`--report` 与唯一操作必填；导入还必须指定 `--target` 和唯一模式。相对路径按当前 cwd 解析，迁移资源固定从工具自身目录定位。报告必须在归档之外，不得与目标或 WAL/shm/journal 重叠，已有报告拒绝覆盖。`db:export-postgres` 用于已经显式设置源环境变量的场景。
+
+### 数据保留与转换
+
+| 数据                                                             | 迁移策略                                                                                  |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 管理员、文章、标签、分类、日志、设置、友链、评论、媒体和访问统计 | 保留原 ID、全部字段、NULL、版本和 UTC 毫秒；正文与日志 JSON 保留原文本                    |
+| 管理员密码                                                       | 原 Argon2id 哈希直接保留，使用原密码重新登录                                              |
+| 登录 `session`                                                   | 清空，撤销所有旧登录状态                                                                  |
+| 四类限流表                                                       | 清空临时计数                                                                              |
+| `backup_run`、`kind=backup` 通知及对应已读关联                   | 完整保存在 PostgreSQL 导出归档，不导入 SQLite；旧 PostgreSQL 备份不能作为 SQLite 备份恢复 |
+| 其他通知与已读关联                                               | 保留原 ID、内容和关联                                                                     |
+| `operation_setting`                                              | `autoBackup=0`、`schedulerLastRunAt=NULL`；版本、时间和其他字段保留                       |
+| OSS                                                              | 保留对象键和元数据，不上传、删除、重写或访问远程对象                                      |
+
+逐字段报告区分源 `source`、策略转换后的 `planned` 和实际 `target`，每项包含数量、整行摘要与所有字段摘要。`--dry-run` 的 `targetChecked=false`、`verified=false`、`target=null`；它证明归档和映射预检通过。apply/verify 逐行比较所有字段，并校验 ledger、schema、integrity_check 和 foreign_key_check，不能仅凭记录数认定迁移成功。报告及终端不输出数据行、哈希原值、账号信息或连接凭据。
+
+apply 在目标父目录的私有临时文件中建立 SQLite 结构，使用单个同步 IMMEDIATE 事务写入并核对。延迟外键支持子评论先于父评论；提交前检查全部关系。再次核对源归档，关闭数据库、写入并同步报告后，以独占硬链接发布新文件；任何已有目标（包括空文件）或遗留日志均拒绝。失败只清理本次临时库和未完成报告，不覆盖旧库。进程被强制终止时可能停在报告已写入、目标尚未发布的窗口，完成判断必须同时确认 CLI 成功退出、目标存在及后续 verify 通过，不能只读取报告的 verified 字段。
+
+verify 只接受停止使用、无 WAL/shm/journal 的普通 SQLite 文件。为避免只读打开 WAL 库产生日志，它将文件读取为只读内存数据库；仅调整内存副本的 WAL header，再比对原文件 inode、时间、大小和摘要确认未变化。核对时需要足够内存容纳目标文件与 SQLite 副本；归档按行读取，离线关系检查另保存键索引，内存占用随记录数增长。
+
+### 演练与正式切换边界
+
+演练使用专用新 PostgreSQL 实例、临时数据库和 SELECT-only 读取账号，不使用现有开发库。将新实例的管理员 URL 放入权限为 0600 的独立 env 文件的 `TEST_POSTGRES_ADMIN_URL` 后运行：
+
+```sh
+# 仅对专用本机 PostgreSQL 18 测试实例运行：测试会创建并删除自己的随机数据库/角色。
+# helper 拒绝常用 5432/15433 端口，不加载业务 .env。
+node --env-file=/absolute/private/test.env --conditions=react-server --import tsx \
+  --test --test-concurrency=1 tests/postgres-transfer.test.ts
+```
+
+正式切换尚未执行。后续部署阶段先准备兼容 SQLite 的镜像、持久卷及启动流程，再冻结旧 Web、调度和全部写入，取得最终归档并重复预检、导入、核对。保留旧镜像、配置、PostgreSQL 卷和旧备份；核对前不要启动新应用。新库开始接收写入后，旧 PostgreSQL 将落后，不能直接切回而丢失增量。生产 Compose、Portainer 和调度切换需单独实施与验证。
 
 ## 历史 PostgreSQL 与 Prisma 8（只作对照）
 

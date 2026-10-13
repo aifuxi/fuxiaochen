@@ -34,6 +34,9 @@
     "db:init": "tsx scripts/sqlite-database.ts init",
     "legacy:db:migrate": "tsx scripts/migrate.ts",
     "test:sqlite": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/database.test.ts tests/sqlite-content.test.ts tests/sqlite-interaction.test.ts tests/sqlite-operations.test.ts",
+    "db:export-postgres": "node --conditions=react-server --import tsx scripts/postgres-transfer.ts --export",
+    "db:import-postgres": "node --conditions=react-server --import tsx scripts/postgres-transfer.ts --import",
+    "test:postgres-transfer": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres-transfer.test.ts",
     "legacy:db:import-sqlite": "node --conditions=react-server --import tsx scripts/import-sqlite.ts",
     "legacy:db:up": "docker compose -p fuxiaochen-dev -f compose.dev.yaml up -d --wait postgres"
   },
