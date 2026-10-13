@@ -1,5 +1,6 @@
 "use client";
-import { BookOpen, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
@@ -57,7 +58,7 @@ export function SiteHeader({ title }: { title: string }) {
   return (
     <header className="site-header" ref={header} data-collapsed={collapsed}>
       <Link className="site-brand" ref={brand} href="/" title={title}>
-        <BookOpen size={20} aria-hidden="true" />
+        <Image src="/logo.svg" width={32} height={32} alt="" className="site-brand-logo" />
         <span>{title}</span>
       </Link>
       <nav

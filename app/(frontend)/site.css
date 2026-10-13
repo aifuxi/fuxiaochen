@@ -109,9 +109,8 @@ html:has(.site-layout) {
   font-size: 14px;
   font-weight: 500;
 }
-.site-brand svg {
+.site-brand-logo {
   flex-shrink: 0;
-  color: var(--color-muted);
 }
 .site-brand span {
   min-width: 0;
