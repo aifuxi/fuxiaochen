@@ -335,6 +335,31 @@ function restore(directory: string, target: string) {
 }
 
 void test("在线备份包含 WAL 写入，manifest 区分 SQLite，恢复只接受新文件并撤销会话", async () => {
+  writeTransaction((tx) => {
+    tx.insert(tables.authPasskey)
+      .values({
+        id: 1,
+        userId: 1,
+        name: "备份设备",
+        publicKey: "backup-test-public-key",
+        credentialID: "backup-test-id",
+        counter: 2,
+        deviceType: "singleDevice",
+        backedUp: false,
+        createdAt: now,
+      })
+      .run();
+    tx.insert(tables.authVerification)
+      .values({
+        id: 1,
+        identifier: "backup-test-challenge",
+        value: "test-only",
+        expiresAt: new Date(Date.now() + 60000),
+        createdAt: now,
+        updatedAt: now,
+      })
+      .run();
+  });
   writeTransaction((tx) =>
     tx
       .insert(tables.tag)
@@ -370,6 +395,22 @@ void test("在线备份包含 WAL 写入，manifest 区分 SQLite，恢复只接
       database.prepare<[], { total: number }>("SELECT count(*) AS total FROM auth_session").get()
         ?.total,
       0,
+    );
+    assert.equal(
+      database
+        .prepare<[], { total: number }>("SELECT count(*) AS total FROM auth_verification")
+        .get()?.total,
+      0,
+    );
+    assert.equal(
+      database
+        .prepare<[], { name: string; counter: number }>("SELECT name,counter FROM auth_passkey")
+        .get()?.name,
+      "备份设备",
+    );
+    assert.equal(
+      database.prepare<[], { counter: number }>("SELECT counter FROM auth_passkey").get()?.counter,
+      2,
     );
     assert.equal(
       database.prepare<[], { autoBackup: number }>("SELECT autoBackup FROM operation_setting").get()

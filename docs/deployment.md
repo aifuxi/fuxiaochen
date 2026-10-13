@@ -45,7 +45,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 后续获得部署授权后：
 
 1. 等待发布完成，记录新/旧镜像 digest 与对应 Git reference，暂停外部调度，确认新 SQLite 卷已准备好。
-2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量（认证升级须配置 BETTER_AUTH_SECRET），已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。
+2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量（认证升级须配置 BETTER_AUTH_SECRET），已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。Passkey 无额外密钥变量，RP ID 固定取 APP_ORIGIN 的主机名；确认其为最终 HTTPS 来源，并由反向代理正确转发 Origin 与 Cookie。
 3. 更新前停止旧 app 与所有数据库写入；新配置会移除历史 PostgreSQL 服务，应在预先准备的旧版本配置下确认该服务停止。旧 PostgreSQL/SQLite 数据卷保留，禁止清理 orphan 时连带删除卷。
 4. 在 Portainer 重新拉取并部署。此后每次重新部署 app 自行备份、迁移和校验，无需创建或强制重跑 migrate 服务；若重建阶段旧 Web 尚未退出，实例锁让新容器失败重试，不能认为第一条启动请求就是成功。
 5. 查看 app 日志、健康状态，核对本次启动备份 manifest 和业务数据，再通过 HTTPS 验证原密码登录、文章、统计及媒体，最后恢复调度。

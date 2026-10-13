@@ -9,9 +9,11 @@ import type { LoginFailure } from "@/lib/auth/login-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { submitLogin } from "@/lib/auth/login-client";
+import { authClient, passkeyError, usePasskeySupport } from "@/lib/auth/passkey-client";
 
 export function LoginForm({ invalidCredentials = false }: { invalidCredentials?: boolean }) {
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState<"password" | "passkey" | null>(null);
+  const passkeySupported = usePasskeySupport();
   const [error, setError] = useState<LoginFailure | null>(
     invalidCredentials
       ? { code: "INVALID_CREDENTIALS", message: "用户名或密码不正确，请重试。" }
@@ -59,7 +61,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
     const controller = new AbortController();
     lifecycle.controller = controller;
     pendingRef.current = true;
-    setPending(true);
+    setPending("password");
     setError(null);
     void submitLogin(
       {
@@ -77,10 +79,42 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
         return;
       }
       pendingRef.current = false;
-      setPending(false);
+      setPending(null);
       setError(result.error);
       setFocusVersion((version) => version + 1);
     });
+  };
+
+  const signInWithPasskey = async () => {
+    if (pendingRef.current || !passkeySupported) return;
+    pendingRef.current = true;
+    setPending("passkey");
+    setError(null);
+    const lifecycle = lifecycleRef.current;
+    const version = ++lifecycle.version;
+    try {
+      const result = await authClient.signIn.passkey();
+      if (!lifecycle.mounted || version !== lifecycle.version) return;
+      // 接口只确认成功，登录令牌通过 HttpOnly Cookie 写入，不能暴露给客户端。
+      if (
+        !result.error &&
+        result.data &&
+        "success" in result.data &&
+        result.data.success === true
+      ) {
+        window.location.replace("/admin");
+        return;
+      }
+      setError({ code: "UNCONFIRMED_RESULT", message: passkeyError(result.error) });
+    } catch (failure) {
+      if (lifecycle.mounted && version === lifecycle.version)
+        setError({ code: "NETWORK_ERROR", message: passkeyError(failure) });
+    }
+    if (lifecycle.mounted && version === lifecycle.version) {
+      pendingRef.current = false;
+      setPending(null);
+      setFocusVersion((value) => value + 1);
+    }
   };
 
   const usernameError = error?.fieldErrors?.username?.join(" ");
@@ -93,7 +127,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
       action="/api/login"
       method="post"
       className="login-form"
-      aria-busy={pending}
+      aria-busy={Boolean(pending)}
       onSubmit={onSubmit}
       onInput={() => {
         if (error) setError(null);
@@ -108,7 +142,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
           autoComplete="username"
           required
           maxLength={128}
-          readOnly={pending}
+          readOnly={Boolean(pending)}
           aria-invalid={Boolean(usernameError) || credentialsInvalid}
           aria-describedby={
             usernameError ? "username-error" : credentialsInvalid ? "login-error" : undefined
@@ -129,7 +163,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
           autoComplete="current-password"
           required
           maxLength={128}
-          readOnly={pending}
+          readOnly={Boolean(pending)}
           aria-invalid={Boolean(passwordError) || credentialsInvalid}
           aria-describedby={
             passwordError ? "password-error" : credentialsInvalid ? "login-error" : undefined
@@ -152,10 +186,30 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
         variant="primary"
         size="form"
         className="login-submit"
-        disabled={pending}
+        disabled={Boolean(pending)}
       >
-        {pending ? "登录中…" : "登录"}
+        {pending === "password" ? "登录中…" : "密码登录"}
       </Button>
+      <div className="login-passkey">
+        <Button
+          type="button"
+          variant="secondary"
+          size="form"
+          className="login-submit"
+          disabled={Boolean(pending) || !passkeySupported}
+          onClick={() => void signInWithPasskey()}
+        >
+          {pending === "passkey" ? "等待设备验证…" : "使用通行密钥"}
+        </Button>
+        <p className="login-hint">
+          {!passkeySupported
+            ? "当前浏览器或连接不支持通行密钥，请使用密码登录。"
+            : "首次使用请先用密码登录，再在管理账户中添加通行密钥。"}
+        </p>
+        <noscript>
+          <p className="login-hint">通行密钥需要启用 JavaScript，密码登录仍可使用。</p>
+        </noscript>
+      </div>
     </form>
   );
 }

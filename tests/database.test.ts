@@ -137,7 +137,7 @@ void test("迁移重复执行保留数据，校验拒绝结构漂移和未知版
     db.select().from(category).where(eq(category.id, "foundation-category")).get()?.name,
     "分类",
   );
-  assert.equal(migrationManifest().migrations.length, 2);
+  assert.equal(migrationManifest().migrations.length, 3);
   db.$client.exec("DROP INDEX post_createdAt_id_idx");
   assert.throws(() => verifyDatabase(db.$client), /结构/);
   db.$client.exec("CREATE INDEX `post_createdAt_id_idx` ON `post` (`createdAt`,`id`)");

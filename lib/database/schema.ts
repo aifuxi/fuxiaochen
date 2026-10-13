@@ -2,6 +2,7 @@ import {
   customType,
   foreignKey,
   index,
+  integer,
   primaryKey,
   sqliteTable,
   text,
@@ -140,6 +141,27 @@ export const authVerification = sqliteTable(
     updatedAt: datetime("updatedAt").notNull(),
   },
   (t) => [index("auth_verification_identifier_idx").on(t.identifier)],
+);
+
+// 私钥留在认证器或系统密码管理器，服务端只保存公钥及签名计数。
+export const authPasskey = sqliteTable(
+  "auth_passkey",
+  {
+    id: safeInteger("id").primaryKey(),
+    userId: safeInteger("userId")
+      .notNull()
+      .references(() => authUser.id, { onDelete: "cascade" }),
+    name: text("name"),
+    publicKey: text("publicKey").notNull(),
+    credentialID: text("credentialID").notNull().unique(),
+    counter: safeInteger("counter").notNull(),
+    deviceType: text("deviceType").notNull(),
+    backedUp: integer("backedUp", { mode: "boolean" }).notNull(),
+    transports: text("transports"),
+    createdAt: datetime("createdAt"),
+    aaguid: text("aaguid"),
+  },
+  (t) => [index("auth_passkey_userId_idx").on(t.userId)],
 );
 
 export const category = sqliteTable("category", {

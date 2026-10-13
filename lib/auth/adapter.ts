@@ -4,9 +4,21 @@ import { APIError } from "better-auth/api";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 
 import { getDatabase, writeTransaction } from "@/lib/database";
-import { authUser, authSession, authAccount, authVerification } from "@/lib/database/schema";
+import {
+  authUser,
+  authSession,
+  authAccount,
+  authVerification,
+  authPasskey,
+} from "@/lib/database/schema";
 
-import { loginWriteContext, sessionTokens, sessionTokenHash } from "./storage-context";
+import { getSession } from "./session-access";
+import {
+  loginWriteContext,
+  passkeyWriteContext,
+  sessionTokens,
+  sessionTokenHash,
+} from "./storage-context";
 
 export function authAdapter() {
   const client = getDatabase().$client;
@@ -33,6 +45,49 @@ export function authAdapter() {
             return (...args: unknown[]) =>
               writeTransaction(() => {
                 const login = loginWriteContext.getStore();
+                const passkey = passkeyWriteContext.getStore();
+                if (
+                  passkey?.actorToken &&
+                  passkey.kind !== "authentication" &&
+                  !getSession(passkey.actorToken)
+                )
+                  throw new APIError("UNAUTHORIZED", { code: "UNAUTHORIZED" });
+                const insertingSession = /^insert into "auth_session"/i.test(sql);
+                // 插件验证签名后会分开更新计数和创建会话；在各同步写点复核，
+                // 防止验证期间密钥被删除、计数改变或密码被重置后仍创建会话。
+                if (
+                  passkey?.kind === "authentication" &&
+                  (/^update "auth_passkey"/i.test(sql) || insertingSession)
+                ) {
+                  const expected = passkey.credential;
+                  const current =
+                    expected &&
+                    client
+                      .prepare<
+                        [number],
+                        { counter: number; publicKey: string; userId: number; credentialID: string }
+                      >(
+                        "SELECT counter, publicKey, userId, credentialID FROM auth_passkey WHERE id=?",
+                      )
+                      .get(expected.id);
+                  const password = client
+                    .prepare<[], { password: string | null }>(
+                      "SELECT password FROM auth_account WHERE userId=1 AND providerId='credential'",
+                    )
+                    .get();
+                  const counter = insertingSession ? passkey.verifiedCounter : expected?.counter;
+                  if (
+                    !expected ||
+                    !current ||
+                    current.userId !== 1 ||
+                    current.publicKey !== expected.publicKey ||
+                    current.credentialID !== expected.credentialID ||
+                    counter === undefined ||
+                    current.counter !== counter ||
+                    password?.password !== passkey.passwordHash
+                  )
+                    throw new APIError("UNAUTHORIZED", { code: "AUTHENTICATION_FAILED" });
+                }
                 if (/^insert into "auth_session"/i.test(sql) && login) {
                   const account = client
                     .prepare<[], { password: string | null }>(
@@ -41,11 +96,14 @@ export function authAdapter() {
                     .get();
                   if (!login.passwordHash || account?.password !== login.passwordHash)
                     throw new APIError("UNAUTHORIZED", { code: "INVALID_USERNAME_OR_PASSWORD" });
+                }
+                if (insertingSession && (login || passkey?.kind === "authentication")) {
                   client.prepare("DELETE FROM auth_session WHERE expiresAt <= ?").run(Date.now());
-                  if (login.previousToken)
+                  const previousToken = login?.previousToken ?? passkey?.previousToken;
+                  if (previousToken)
                     client
                       .prepare("DELETE FROM auth_session WHERE token = ?")
-                      .run(sessionTokenHash(login.previousToken));
+                      .run(sessionTokenHash(previousToken));
                 }
                 return Reflect.apply(value, prepared, args);
               });
@@ -62,6 +120,7 @@ export function authAdapter() {
       session: authSession,
       account: authAccount,
       verification: authVerification,
+      passkey: authPasskey,
     },
     // better-sqlite3 不支持异步事务回调，写 SQL 由上面的同步边界负责。
     transaction: false,

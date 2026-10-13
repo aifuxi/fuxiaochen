@@ -40,7 +40,7 @@ BETTER_AUTH_SECRET=
 
 `APP_ORIGIN` 与浏览器访问地址一致，不带路径或尾斜杠。命令行和应用共用根目录 `.env`；当前运行代码忽略历史 PostgreSQL `DATABASE_URL`，但已有凭据和旧数据不自动删除。`admin:init` 交互式创建管理员；已有账号时跳过。OSS 配置见 [媒体存储配置](docs/media-storage.md)。
 
-启动前生成独立随机密钥，将输出填入私有 `.env` 的 `BETTER_AUTH_SECRET`；缺失时登录不可用。认证使用 Better Auth，公开注册关闭，Passkey 暂未启用。
+启动前生成独立随机密钥，将输出填入私有 `.env` 的 `BETTER_AUTH_SECRET`；缺失时登录不可用。认证使用 Better Auth 及官方 Passkey 插件，公开注册关闭。先用密码登录，在后台「管理账户」添加通行密钥；密码始终作为备用。生产使用 HTTPS，Passkey 绑定 `APP_ORIGIN` 的主机名，本地使用 `http://localhost:3000`。
 
 ```sh
 # 只生成新密钥，不改配置；保存到私有环境，轮换后需要重新登录。

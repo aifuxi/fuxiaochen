@@ -13,6 +13,7 @@ import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 import { postDisplayTitle } from "@/lib/posts/schema";
 
 import { AdminContext } from "./admin-context";
+import { AdminPasskeys } from "./admin-passkeys";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { GlobalSearch, NotificationCenter, useNotificationSummary } from "./global-operations";
 import { MediaUploadStatus } from "./media-upload-status";
@@ -38,7 +39,7 @@ const panelTitles: Record<DialogPanel, string> = {
 const panelDescriptions: Record<DialogPanel, string> = {
   search: "检索文章、分类、标签、评论、媒体、友链与更新日志。",
   notifications: "查看待办和执行结果，已读状态随账户保存。",
-  profile: "查看账户并退出登录。",
+  profile: "管理通行密钥并退出登录。",
   upload: "选择图片或附件上传到媒体库。",
 };
 
@@ -321,8 +322,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
               {panel === "profile" && (
                 <div className="admin-modal-section">
                   <p>付小晨 · 管理账户</p>
+                  <AdminPasskeys busy={operationPending} runOperation={runOperation} />
                   <form action="/api/logout" method="post">
-                    <Button type="submit" variant="secondary">
+                    <Button type="submit" variant="secondary" disabled={operationPending}>
                       退出登录
                     </Button>
                   </form>

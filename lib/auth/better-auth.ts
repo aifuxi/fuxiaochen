@@ -1,4 +1,5 @@
 import "server-only";
+import { passkey } from "@better-auth/passkey";
 import { APIError } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { username } from "better-auth/plugins/username";
@@ -8,6 +9,7 @@ import { siteOrigin } from "@/lib/site-origin";
 
 import { authAdapter } from "./adapter";
 import { hashPassword, verifyPassword } from "./password";
+import { passkeyWriteContext } from "./storage-context";
 
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 export const SESSION_COOKIE = "fx_admin_session";
@@ -30,6 +32,27 @@ function createAuth(origin: string, secret: string, secure: boolean) {
       },
     },
     plugins: [
+      passkey({
+        rpID: new URL(origin).hostname,
+        rpName: "付小晨",
+        origin,
+        authenticatorSelection: { residentKey: "required", userVerification: "required" },
+        registration: {
+          requireSession: true,
+          afterVerification: ({ verification }) => {
+            if (!verification.registrationInfo?.userVerified)
+              throw new APIError("UNAUTHORIZED", { code: "USER_VERIFICATION_REQUIRED" });
+          },
+        },
+        authentication: {
+          afterVerification: ({ verification }) => {
+            if (!verification.authenticationInfo.userVerified)
+              throw new APIError("UNAUTHORIZED", { code: "USER_VERIFICATION_REQUIRED" });
+            const context = passkeyWriteContext.getStore();
+            if (context) context.verifiedCounter = verification.authenticationInfo.newCounter;
+          },
+        },
+      }),
       username({
         minUsernameLength: 1,
         maxUsernameLength: 128,
@@ -62,8 +85,8 @@ function createAuth(origin: string, secret: string, secure: boolean) {
       defaultCookieAttributes: { httpOnly: true, sameSite: "strict", path: "/" },
       ipAddress: { disableIpTracking: true },
     },
-    // 所有外部登录只经过项目表单入口，持久化限流在该入口执行。
-    // 暂不挂载通用 auth.handler，避免增加注册、账户变更或返回令牌的外部接口。
+    // 密码入口和 Passkey 白名单入口各自执行持久化限流。
+    // 不开放其他通用接口；Passkey 成功响应也只返回明确成功，令牌仅由 Cookie 传递。
     rateLimit: { enabled: false },
     logger: { disabled: true },
     telemetry: { enabled: false },

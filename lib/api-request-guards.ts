@@ -8,6 +8,7 @@ function expectsJsonError(c: Context) {
   return (
     c.req.path.startsWith("/api/admin/") ||
     c.req.path.startsWith("/api/public/") ||
+    c.req.path.startsWith("/api/auth/passkey/") ||
     acceptsLoginJson(c)
   );
 }

@@ -2,6 +2,8 @@
 
 验证日期：2026-10-13。范围为单管理员用户名密码登录、服务端会话、后台鉴权及 SQLite 运维适配；Passkey、MFA 和公开用户体系不在本次实现范围。
 
+本文件记录首次认证迁移阶段；后续官方 Passkey 插件接入与验证见 [Passkey 验证记录](passkey-verification.md)，下文的未实现范围以首次迁移时点为准。
+
 ## 实现范围
 
 - Better Auth 与官方 Drizzle 适配器固定为 1.7.7，Argon2id 保留；会话生成、密码验证、Cookie 签名和请求 Cookie 解析由库负责。

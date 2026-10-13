@@ -9,11 +9,16 @@ import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 
 import { serializeDocument } from "../lib/posts/document";
+import { testAuthenticator } from "./helpers/webauthn";
 
 const image = process.env.TEST_SQLITE_IMAGE;
 const project = resolve(import.meta.dirname, "..");
 const origin = "https://sqlite-container-test.example";
 const password = "sqlite-container-independent-password";
+const challengeCookie = (response: Response, previous = "") =>
+  [previous, ...response.headers.getSetCookie().map((value) => value.split(";")[0])]
+    .filter(Boolean)
+    .join("; ");
 const categoryId = "c548b67d-2e86-4d7c-a1f5-74b51b4249aa";
 const postId = "4b612872-7410-4de5-a01c-136d9053c6dd";
 const scheduledId = "462e8d1e-b994-4c23-82bc-6a2728b36c22";
@@ -428,6 +433,46 @@ db.close();`,
         const article = await fetch(`${serverOrigin}/posts/container-test`);
         assert.equal(article.status, 200);
         assert.ok((await article.text()).includes("容器独立测试正文"));
+      });
+
+      await t.test("运行镜像中的官方 Passkey 注册、签名登录与删除可实际执行", async () => {
+        const authenticator = testAuthenticator(origin);
+        const passkeyRequest = (operation: string, session: string, body?: unknown) =>
+          fetch(`${serverOrigin}/api/auth/passkey/${operation}`, {
+            method: body === undefined ? "GET" : "POST",
+            headers: {
+              Origin: origin,
+              Cookie: session,
+              ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+            },
+            body: body === undefined ? undefined : JSON.stringify(body),
+          });
+        const registration = await passkeyRequest("generate-register-options", cookie);
+        assert.equal(registration.status, 200);
+        const registerOptions = await registration.json();
+        const registered = await passkeyRequest(
+          "verify-registration",
+          challengeCookie(registration, cookie),
+          { response: authenticator.registration(registerOptions.challenge), name: "容器测试设备" },
+        );
+        assert.equal(registered.status, 200, await registered.clone().text());
+        const key = await registered.json();
+        const authentication = await passkeyRequest("generate-authenticate-options", "");
+        assert.equal(authentication.status, 200);
+        const signed = await passkeyRequest(
+          "verify-authentication",
+          challengeCookie(authentication),
+          { response: authenticator.authentication((await authentication.json()).challenge, 1) },
+        );
+        assert.equal(signed.status, 200, await signed.clone().text());
+        assert.deepEqual(await signed.json(), { success: true });
+        cookie = challengeCookie(signed);
+        assert.match(cookie, /__Secure-fx_admin_session=/);
+        assert.equal(
+          (await fetch(`${serverOrigin}/api/admin/posts`, { headers: { Cookie: cookie } })).status,
+          200,
+        );
+        assert.equal((await passkeyRequest("delete-passkey", cookie, { id: key.id })).status, 200);
       });
 
       await t.test("同卷第二个 Web 与在线直接迁移均被拒绝", async () => {

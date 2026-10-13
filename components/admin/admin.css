@@ -903,6 +903,86 @@
   font-size: 13px;
   font-weight: 500;
 }
+.admin-passkeys {
+  display: grid;
+  gap: 16px;
+  padding-block: 16px;
+  border-block: 1px solid var(--admin-divider);
+  font-size: 13px;
+}
+.admin-passkeys h3 {
+  margin: 0 0 6px;
+}
+.admin-passkeys-hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+.admin-passkeys-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-passkeys-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-passkeys-row > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-passkeys-row strong {
+  font-weight: 500;
+}
+.admin-passkeys-add {
+  display: grid;
+  gap: 8px;
+}
+.admin-passkeys-add .ds-input {
+  width: 100%;
+}
+.admin-passkeys-add > button {
+  justify-self: start;
+}
+.admin-passkeys-confirm {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 12px;
+  border: 1px solid var(--admin-divider);
+  border-radius: var(--radius-sm);
+}
+.admin-passkeys-confirm p {
+  margin: 0;
+  line-height: 1.6;
+}
+.admin-passkeys-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.admin-passkeys-error {
+  margin: 0;
+  color: var(--color-danger);
+  line-height: 1.6;
+}
+.admin-passkeys-result {
+  margin: 0;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.admin-passkeys-result:empty {
+  display: none;
+}
+.admin-passkeys-result:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
 .admin-confirm {
   max-width: 420px;
 }

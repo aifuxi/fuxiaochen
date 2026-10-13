@@ -44,7 +44,7 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 ## Better Auth 认证维护
 
-认证使用固定版本 Better Auth 1.7.7 与 `@better-auth/drizzle-adapter` 1.7.7，通过 `better-auth/minimal` 接入；密码继续使用 Argon2id。`lib/auth/better-auth.ts` 负责配置，`lib/auth/adapter.ts` 只负责项目存储约束，网页表单仅适配现有响应契约。未引入 Prisma 或其运行引擎。
+认证使用固定版本 Better Auth 1.7.7、`@better-auth/drizzle-adapter` 1.7.7 和官方 `@better-auth/passkey` 1.7.7，通过 `better-auth/minimal` 接入；密码继续使用 Argon2id。`lib/auth/better-auth.ts` 负责配置，`lib/auth/adapter.ts` 只负责项目存储约束，客户端调用官方 Passkey client。未引入 Prisma 或其运行引擎。
 
 `BETTER_AUTH_SECRET` 必须是至少 32 个字符的独立随机私有值。用 `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` 生成并保存到本地私有 `.env` 或部署配置；不要提交密钥。缺失或过短时认证拒绝初始化；轮换后旧签名 Cookie 失效，需重新登录。`APP_ORIGIN` 继续是唯一可信站点来源。
 
@@ -54,9 +54,13 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 会话令牌由 Better Auth 生成、Cookie 由框架签名；Drizzle 自定义列只保存 SHA-256 哈希。明文令牌的读回映射仅存在于单次官方适配器调用的 AsyncLocalStorage 中，不跨请求缓存。外部 Cookie 先由 Better Auth 校验，业务数据入口在同步事务内用已验证的令牌复核会话过期/撤销。未开放会话列表及按明文令牌批量撤销接口；未来开放时必须适配哈希存储，不能直接把数据库哈希当作可用令牌。
 
-固定 7 天会话不续期，关闭 Cookie cache，使退出和重置立即作用于其他请求。现有精确 Origin 检查、16 KiB 表单限制、持久化全局每分钟 20 次限流继续在 `/api/login` 执行；不挂载通用 auth.handler，避免绕过表单防护或返回会话令牌。账号注册关闭，Passkey 和 MFA 尚未接入。恢复备份撤销 `session`、`auth_session` 并清空认证验证记录。
+固定 7 天会话不续期，关闭 Cookie cache，使退出和重置立即作用于其他请求。精确 Origin 检查、16 KiB 正文限制、持久化全局每分钟 20 次限流继续有效。密码入口和 Passkey 生成选项/验证登录共享限流，完整 Passkey 登录消耗两次尝试；只转发六个必要插件接口，不挂载通用 auth.handler。账号注册关闭，MFA 尚未接入。恢复备份撤销 `session`、`auth_session` 并清空认证挑战，保留备份时的通行密钥。
 
-升级已有开发库或生产库前停 Web 和调度，通过启动准备流程先备份再迁移并完整校验。原密码保持有效，旧 Cookie 全部失效；升级前备份必须用旧版本恢复到独立文件，再决定重新升级。生产部署仍须单独授权。验证证据见 [认证迁移记录](engineering/better-auth-verification.md)。
+迁移 `0002_passkey.sql` 仅新增 `auth_passkey`，不修改既有认证账号、密码、会话或业务表。服务端只保存公钥、凭据 ID、签名计数及设备元数据，私钥留在认证器。RP ID 来自 `APP_ORIGIN` 主机名，验证 origin 固定为完整 `APP_ORIGIN`，生产必须 HTTPS，本地使用 localhost；变更主机名需要在新站点重新注册密钥，变更端口或协议也要同步 origin。密码始终保留，先登录后在「管理账户」添加；注册要求一天内创建的会话。密码重置保留公钥并撤销全部会话，遗失设备可用密码登录后删除相应密钥。
+
+插件使用 SQLite `DELETE … RETURNING` 原子消费挑战。当前官方验证默认不强制设备用户验证，项目通过注册/登录 afterVerification 校验 `userVerified`，并在选项中要求 `userVerification: required`。插件更新计数和创建会话是分开的异步步骤；同步写入边界复核公钥存在、计数和密码哈希，拒绝验证期间删除密钥、计数变化及密码重置的旧结果。注册与删除写入同样复核原登录会话仍有效，不开启异步 SQLite 事务。验证范围见 [Passkey 验证记录](engineering/passkey-verification.md)。
+
+升级已有开发库或生产库前停 Web 和调度，通过启动准备流程先备份再迁移并完整校验。首次 Better Auth 迁移会撤销旧会话，Passkey 增量迁移保留已有效的会话；密码均保持有效。升级前备份必须用旧版本恢复到独立文件，再决定重新升级。生产部署仍须单独授权。认证首次迁移证据见 [认证迁移记录](engineering/better-auth-verification.md)。
 
 ## PostgreSQL → SQLite 离线迁移
 

@@ -226,7 +226,7 @@ void test("缺少签名密钥拒绝初始化；迁移保留原密码和业务数
         ?.name,
       "原有分类",
     );
-    assert.equal(migrationManifest().migrations.length, 2);
+    assert.equal(migrationManifest().migrations.length, 3);
     client.close();
     client = undefined;
     const result = await login({ username: "A", password }, undefined);

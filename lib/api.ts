@@ -7,6 +7,7 @@ import { analyticsRoutes } from "./analytics/routes";
 import { registerApiRequestGuards } from "./api-request-guards";
 import { handleLoginError } from "./auth/login-response";
 import { createLoginRoutes } from "./auth/login-routes";
+import { passkeyRoutes } from "./auth/passkey-routes";
 import { consumeLoginAttempt, login, readAdminSession, signOut } from "./auth/service";
 import { changelogRoutes } from "./changelog/routes";
 import { commentRoutes } from "./comments/routes";
@@ -22,6 +23,7 @@ import { taxonomyRoutes } from "./taxonomy/routes";
 export const api = new Hono().basePath("/api");
 
 registerApiRequestGuards(api, siteOrigin);
+api.route("/auth/passkey", passkeyRoutes);
 api.route("/public/analytics", collectionRoutes);
 api.route("/public", publicRoutes);
 api.route("/admin/posts", postRoutes);

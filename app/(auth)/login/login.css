@@ -91,6 +91,22 @@
   font-size: 14px;
 }
 
+.login-passkey {
+  display: grid;
+  gap: 10px;
+}
+
+.login-passkey .login-submit {
+  margin-top: 0;
+}
+
+.login-hint {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 @media (max-width: 600px) {
   .login-page {
     padding-inline: 20px;

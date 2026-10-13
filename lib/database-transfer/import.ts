@@ -189,6 +189,7 @@ function verifyAuthMapping(client: Sqlite.Database) {
     ["auth_account", 1],
     ["auth_session", 0],
     ["auth_verification", 0],
+    ["auth_passkey", 0],
   ] as const) {
     const count = client
       .prepare<[], { total: number }>(`SELECT COUNT(*) AS total FROM ${table}`)

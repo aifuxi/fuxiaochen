@@ -9,6 +9,21 @@ export const loginWriteContext = new AsyncLocalStorage<{
   previousToken: string | undefined;
 }>();
 
+export const passkeyWriteContext = new AsyncLocalStorage<{
+  kind: "registration" | "authentication" | "management";
+  actorToken?: string;
+  previousToken?: string;
+  passwordHash?: string | null;
+  credential?: {
+    id: number;
+    userId: number;
+    counter: number;
+    publicKey: string;
+    credentialID: string;
+  };
+  verifiedCounter?: number;
+}>();
+
 export function sessionTokenHash(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
