@@ -92,7 +92,7 @@ export function verifyDatabase(
 
 export function migrateDatabase(
   client: Sqlite.Database,
-  options: { migrationsFolder?: string } = {},
+  options: { migrationsFolder?: string; beforeMigration?: () => void } = {},
 ): void {
   if (client.inTransaction) throw new Error("数据库迁移不能在已有事务内执行。");
   const foreignKeys = client.pragma("foreign_keys", { simple: true });
@@ -103,6 +103,15 @@ export function migrateDatabase(
   try {
     client
       .transaction(() => {
+        // 启动备份的并发写入复核必须在取得 IMMEDIATE 写锁后执行，关闭检查到迁移的竞态窗口。
+        const beforeMigration = options.beforeMigration;
+        if (beforeMigration) {
+          if (beforeMigration.constructor.name === "AsyncFunction")
+            throw new Error("迁移前复核必须使用同步回调。");
+          const result: unknown = beforeMigration();
+          if (result && typeof (result as { then?: unknown }).then === "function")
+            throw new Error("迁移前复核不能返回 Promise。");
+        }
         const applied = checkHistory(client, false, options.migrationsFolder);
         if (
           !applied &&

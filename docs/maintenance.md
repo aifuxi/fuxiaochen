@@ -6,7 +6,7 @@
 
 schema 为 `lib/database/schema.ts`，连接与写事务为 `lib/database/index.ts`，SQL 迁移和开发快照位于 `drizzle/`。Drizzle ORM 0.45.4、drizzle-kit 0.31.11、better-sqlite3 13.0.3 使用固定版本。Kit 只离线生成 SQL，生产运行不需要 CLI 或生成 Prisma contract。
 
-`DATABASE_PATH` 必须显式指向 SQLite 文件；当前阶段不自动创建或接管数据库。`db:init` 使用独占文件创建，拒绝覆盖已有文件；普通连接、`db:migrate`、`db:verify` 拒绝缺失文件和历史无迁移 ledger 的文件。现有 `.env` 和旧 SQLite/PostgreSQL 数据保留，本阶段不自动导入。
+`DATABASE_PATH` 必须显式指向 SQLite 文件。`db:init` 使用独占文件创建，拒绝覆盖已有文件；普通连接、`db:migrate`、`db:verify` 拒绝缺失文件和历史无迁移 ledger 的文件。容器默认也拒绝缺失文件，仅明确的 `SQLITE_INITIALIZE=1` 允许全新站点首次初始化；已有站点先离线导入，不能接管历史文件。现有 `.env` 和旧 SQLite/PostgreSQL 数据保留，不自动导入。
 
 ```sh
 # 首次显式初始化独立文件，所在目录需已创建。
@@ -24,7 +24,23 @@ npm run db:verify
 
 SQLite 备份使用 better-sqlite3 在线 backup API，生成 `database.sqlite` 与 `manifest.json`；manifest 记录格式、迁移版本、大小与摘要。显式校验、备份和恢复使用 `integrity_check`，普通连接使用快速完整性校验加版本/结构/外键检查。恢复指定绝对 `RESTORE_DATABASE_PATH`，目标必须独立且不存在，拒绝已有文件、主库、源库和遗留 WAL；成功后撤销会话、关闭自动备份并标记中断任务。PostgreSQL 备份格式不兼容，旧备份必须使用匹配旧版本恢复。
 
-PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。单镜像运维打包和启动自动备份/迁移尚未实施，生产部署说明仍为历史方案，不能直接用于当前源码。
+PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。SQLite 单镜像、启动前自动备份/迁移/校验和 Portainer 单服务配置已完成本地验证；线上尚未切换。当前操作见 [部署指南](deployment.md)，历史 PostgreSQL 配置只作对照。
+
+### 启动前备份与升级
+
+`scripts/startup-database.ts` 不加载 `.env`，仅使用显式 `DATABASE_PATH` 和 `BACKUP_DIRECTORY`；迁移资源按模块位置定位。已有库接受已提交迁移的合法前缀，先检查该旧版本结构/完整性/外键，再通过 backup API 保存 WAL 一致性快照，最后执行迁移并完整校验。未知或被改写的 ledger、无历史记录、结构漂移、损坏、备份失败都阻止启动。
+
+启动备份保存在 `BACKUP_DIRECTORY/startup/<UTC时间-UUID>/`，使用与业务备份兼容的 manifest，加 `purpose=before-startup-migration`；源 schema hash/迁移前缀和目标 hash 分开记录。旧前缀快照必须使用匹配旧结构的镜像恢复到独立新文件；当前快照可用当前 `db:restore`，同样撤销会话和关闭自动备份。启动快照不登记业务备份表，后台历史列表不展示；没有自动删除或保留策略，需检查容量并保存异地副本。
+
+容器 entrypoint 用实例锁限制单 Web、维护锁串行化启动/结构升级并允许日常 CLI 与 Web 共用数据库。启动模块在 IMMEDIATE 写锁内再次检查 `data_version`，备份期间其他客户端提交时拒绝迁移且保留备份；首次恢复的 DELETE journal 库会先规范为 WAL，再取得并发复核基准，不误报自己的配置变化。迁移 `beforeMigration` hook 只接受同步回调，拒绝 async/Promise。
+
+```sh
+# 非容器环境必须显式加载私有配置，BACKUP_DIRECTORY 需非空并指向持久私有目录。
+# 先停止 Web 与调度；该命令完成启动准备，不自行开启 Web。
+node --env-file=/absolute/private/runtime.env --conditions=react-server --import tsx scripts/startup-database.ts
+```
+
+首次初始化必须显式传 `--initialize-if-missing`，独占发布完成的新文件，不创建管理员。普通本地 `npm run dev` 不自动运行该生产流程。完整范围与运行结果见 [单镜像验收](engineering/sqlite-deployment-verification.md)。
 
 ## PostgreSQL → SQLite 离线迁移
 
@@ -162,7 +178,7 @@ npm run posts:publish-due
 
 账号管理交互输入密码；重置密码撤销该账号全部会话。媒体清理操作 OSS 对象，先核对 dry-run。排期和统计清理均使用与 Web 相同的 PostgreSQL。
 
-备份、恢复和部署步骤见 [部署指南](deployment.md)。参考 [Prisma PostgreSQL 扩展](https://www.prisma.io/extensions/postgresql)、[Prisma 8 contract](https://www.prisma.io/docs/orm/contract-authoring/typescript-schema-builder)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/18/explicit-locking.html)。
+历史 PostgreSQL 的备份、恢复和部署步骤见 [历史部署记录](engineering/postgresql-deployment-history.md)。参考 [Prisma PostgreSQL 扩展](https://www.prisma.io/extensions/postgresql)、[Prisma 8 contract](https://www.prisma.io/docs/orm/contract-authoring/typescript-schema-builder)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/18/explicit-locking.html)。
 
 ## 正文格式与查询机制
 

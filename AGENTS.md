@@ -55,5 +55,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 迁移历史 hash 必须匹配；SQLite 表重建迁移在事务外暂时关闭外键，提交前检查完整性与全部外键，最终恢复开关。不能在已有事务内运行迁移。
 - 在线备份使用一致性快照，备份/恢复使用完整 integrity_check；恢复只接受独立新文件并撤销登录会话。不覆盖或自动删除旧 SQLite、PostgreSQL 卷、备份或 OSS 对象。
 - PostgreSQL 导出仅使用显式 `MIGRATION_SOURCE_DATABASE_URL` 和只读一致性快照，不加载业务 `.env`；SQLite 导入只发布独立的新文件，导入后逐字段核对。演练只使用专用新测试实例，禁止复用现有开发库或线上库。
-- 当前已完成基础层、查询适配和独立库数据迁移演练；生产 Compose、镜像合并、线上数据切换尚未实施，不沿用旧 Compose 部署新源码。
+- 生产 `runtime` 为单镜像，包含 standalone Web 和追踪后的维护 CLI；Compose 仅一个 app，使用明确的外部新 SQLite 卷，不接管旧 PostgreSQL/SQLite 卷。
+- 容器 serve 每次已有库启动先备份、迁移并完整校验；默认拒绝缺失文件，仅全新站点显式 `SQLITE_INITIALIZE=1` 可初始化。迁移前在 IMMEDIATE 锁内复核备份期间没有其他提交；启动/迁移失败不启动 Web 且保留完整备份。
+- entrypoint 使用实例/维护 flock，禁止同库多 Web、滚动升级及在线结构迁移；日常 CLI 可共享维护锁。不要绕过入口或删除锁文件；SQLite 使用本机持久磁盘，不支持多机/NFS。
+- 当前已完成基础层、查询适配、迁移工具与单镜像/Portainer 本地验证；线上数据切换、生产部署和真实服务器验证尚未执行。
 - `prisma/`、旧 PostgreSQL 导入脚本与回归源码保留作历史参考，不属于当前应用编译范围。相关依赖暂留 devDependencies；旧环境操作须使用匹配旧版本，不能把历史回归作为当前 SQLite 验收。

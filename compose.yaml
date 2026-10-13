@@ -1,121 +1,54 @@
-x-runtime: &runtime
-  user: "1000:1000"
-  init: true
-  volumes:
-    - app-data:/app/data
-  stop_grace_period: 30s
-  logging:
-    driver: json-file
-    options:
-      max-size: "10m"
-      max-file: "3"
-
-x-database-environment: &database-environment
-  DATABASE_URL: ${DATABASE_URL:?请配置 postgres:5432 的生产连接 URL}
-  BACKUP_DIRECTORY: /app/data/backups
-
-x-app-runtime: &app-runtime
-  <<: *runtime
-  dns:
-    - 223.5.5.5
-    - 223.6.6.6
-  environment:
-    <<: *database-environment
-    APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
-    RESTORE_DATABASE_URL: ${RESTORE_DATABASE_URL:-}
-    OSS_BUCKET: ${OSS_BUCKET:-}
-    OSS_REGION: ${OSS_REGION:-cn-hangzhou}
-    OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
-    OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
-    OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
-    OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
-    OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}
-    OSS_CREDENTIAL_MODE: ${OSS_CREDENTIAL_MODE:-environment}
-    OSS_RAM_ROLE_NAME: ${OSS_RAM_ROLE_NAME:-}
-    ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
-    ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
-    ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
-    ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
-
 services:
   app:
-    <<: *app-runtime
-    image: ${APP_IMAGE:-ghcr.io/aifuxi/fuxiaochen:latest}
+    # 仅一个镜像和一个服务；正式发布固定 SHA 标签或 digest，不沿用历史 tools 镜像。
+    image: ${APP_IMAGE:?请配置待部署的 SQLite 单镜像 SHA 标签或 digest}
+    user: "1000:1000"
+    init: true
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
+    stop_grace_period: 30s
+    volumes:
+      - app-data:/app/data
+    dns:
+      - 223.5.5.5
+      - 223.6.6.6
+    environment:
+      # 固定到持久卷中的新路径，避免误接管历史 SQLite 文件。
+      DATABASE_PATH: /app/data/database.sqlite
+      BACKUP_DIRECTORY: /app/data/backups
+      # 既有站点导入后保持 0；只有新站点首次明确允许初始化时才临时设为 1。
+      SQLITE_INITIALIZE: ${SQLITE_INITIALIZE:-0}
+      RESTORE_DATABASE_PATH: ${RESTORE_DATABASE_PATH:-}
+      APP_ORIGIN: ${APP_ORIGIN:?请填写最终 HTTPS 站点 origin}
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_REGION: ${OSS_REGION:-cn-hangzhou}
+      OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+      OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
+      OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
+      OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
+      OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}
+      OSS_CREDENTIAL_MODE: ${OSS_CREDENTIAL_MODE:-environment}
+      OSS_RAM_ROLE_NAME: ${OSS_RAM_ROLE_NAME:-}
+      ALIBABA_CLOUD_ACCESS_KEY_ID: ${ALIBABA_CLOUD_ACCESS_KEY_ID:-}
+      ALIBABA_CLOUD_ACCESS_KEY_SECRET: ${ALIBABA_CLOUD_ACCESS_KEY_SECRET:-}
+      ALIBABA_CLOUD_SECURITY_TOKEN: ${ALIBABA_CLOUD_SECURITY_TOKEN:-}
+      ANALYTICS_CLIENT_IP_HEADER: ${ANALYTICS_CLIENT_IP_HEADER:-}
     networks:
-      database:
       caddy:
         aliases:
           - fuxiaochen
-
-  # 与 app 固定到同一发布 commit；每次部署须重新执行，详见部署文档。
-  migrate:
-    <<: *runtime
-    image: ${TOOLS_IMAGE:-ghcr.io/aifuxi/fuxiaochen-tools:latest}
-    restart: "no"
-    command: ["npm", "run", "db:migrate"]
-    environment: *database-environment
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - database
-
-  # 运维通过 docker compose run --rm tools <命令> 执行，不启动常驻容器。
-  tools:
-    <<: *app-runtime
-    image: ${TOOLS_IMAGE:-ghcr.io/aifuxi/fuxiaochen-tools:latest}
-    profiles:
-      - tools
-    restart: "no"
-    command: ["npm", "run"]
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - database
-      - caddy
-
-  postgres:
-    image: postgres:18.6-bookworm
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?请配置生产数据库管理密码}
-      POSTGRES_APP_USER: fuxiaochen
-      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:?请配置生产应用数据库密码}
-      POSTGRES_APP_DB: fuxiaochen
-    volumes:
-      - postgres-data:/var/lib/postgresql
-      - type: bind
-        source: ${POSTGRES_INIT_SCRIPT_PATH:?请配置宿主机初始化脚本绝对路径}
-        target: /docker-entrypoint-initdb.d/10-app.sh
-        read_only: true
-        bind:
-          create_host_path: false
-    networks:
-      - database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d postgres"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
-  postgres-data:
-    name: ${POSTGRES_DATA_VOLUME:-fuxiaochen-postgres}
   app-data:
-    name: ${APP_DATA_VOLUME:-fuxiaochen-data}
+    # 使用独立新卷，保留旧 PostgreSQL/SQLite 卷；首次切换须先离线导入，不默认建空站点。
+    name: ${APP_DATA_VOLUME:?请配置已准备的独立 SQLite 数据卷名称}
+    external: true
 
 networks:
-  database:
-    internal: true
   caddy:
     external: true
     name: ${CADDY_NETWORK:-infra_edge}

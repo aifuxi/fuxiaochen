@@ -4,7 +4,7 @@
 
 ## 当前实施状态
 
-2026-10-13 已将应用数据库基础层与业务查询改为 SQLite + Drizzle + better-sqlite3，并完成 PostgreSQL → SQLite 迁移工具和独立测试库演练。线上数据、生产 Compose 和单镜像部署尚未切换；不要使用现有 PostgreSQL Compose 部署当前源码。阶段验证见 [SQLite 适配记录](docs/engineering/sqlite-adaptation-verification.md) 和 [数据迁移演练](docs/engineering/postgres-sqlite-transfer-verification.md)。
+2026-10-13 已完成 SQLite + Drizzle + better-sqlite3 适配、PostgreSQL → SQLite 离线迁移工具，以及单镜像/Portainer 配置和启动前备份、迁移、校验。全部只在本地独立数据库与容器验证，线上尚未切换，未推送或部署。阶段记录见 [SQLite 适配](docs/engineering/sqlite-adaptation-verification.md)、[数据迁移](docs/engineering/postgres-sqlite-transfer-verification.md) 和 [单镜像验收](docs/engineering/sqlite-deployment-verification.md)。
 
 ## 运行要求
 
@@ -38,7 +38,7 @@ APP_ORIGIN=http://localhost:3000
 
 `APP_ORIGIN` 与浏览器访问地址一致，不带路径或尾斜杠。命令行和应用共用根目录 `.env`；当前运行代码忽略历史 PostgreSQL `DATABASE_URL`，但已有凭据和旧数据不自动删除。`admin:init` 交互式创建管理员；已有账号时跳过。OSS 配置见 [媒体存储配置](docs/media-storage.md)。
 
-日常运行 `npm run dev`；拉取已提交的新迁移后，先停止应用和调度，执行 `npm run db:migrate`。当前阶段未实现启动前自动备份和迁移。编辑 schema 后运行 `db:generate`，审查 SQL 再提交；构建不会自动生成或执行迁移，也不连接数据库。
+日常运行 `npm run dev`；拉取已提交的新迁移后，先停止应用和调度，备份后执行 `npm run db:migrate`。容器的 `serve` 自动备份、迁移并校验，本地 dev 不自动运行此流程。编辑 schema 后运行 `db:generate`，审查 SQL 再提交；构建不会自动生成或执行迁移，也不连接数据库。
 
 默认访问：博客 [localhost:3000](http://localhost:3000)、后台 [admin](http://localhost:3000/admin)、[登录](http://localhost:3000/login)；`/design-spec` 仅开发环境开放。
 
@@ -55,6 +55,8 @@ APP_ORIGIN=http://localhost:3000
 | `npm run db:backup` / `npm run db:restore -- <目录>`                                                                | SQLite 在线备份／恢复到独立新文件              |
 | `npm run admin:reset-password`                                                                                      | 重置密码并撤销该账号会话                       |
 | `npm run test:sqlite`                                                                                               | 临时 SQLite 文件中的基础层与业务回归           |
+| `npm run test:sqlite-startup`                                                                                       | 临时独立库的启动备份、升级与回滚验证           |
+| `TEST_SQLITE_IMAGE=<本地tag> npm run test:sqlite-container`                                                         | 单镜像独立卷、Web、CLI、锁与失败保护验证       |
 | `npm run db:export-postgres -- --directory <新目录> --report <新报告>`                                              | 显式只读源连接，导出 PostgreSQL 22 表归档      |
 | `npm run db:import-postgres -- --directory <归档> --target <新文件> --dry-run\|--apply\|--verify --report <新报告>` | 离线预检、导入或核对；拒绝覆盖已有库           |
 | `npm run test:postgres-transfer`                                                                                    | 显式专用测试实例中的迁移演练；不使用业务数据库 |
@@ -65,7 +67,7 @@ APP_ORIGIN=http://localhost:3000
 
 ## 部署与维护
 
-目标是单实例 Node.js 或单应用 Docker 镜像部署，SQLite 数据目录与备份必须持久化，生产使用 HTTPS。当前生产配置仍为历史 PostgreSQL 方案，待数据迁移与部署阶段另行实施。排期发布和自动备份暂保留外部调度；数据库备份不包含 OSS 文件。
+Dockerfile 的 `runtime` 为唯一应用与运维镜像，Compose 只有 `app`，使用已准备的独立外部 SQLite 数据卷；不需要 PostgreSQL 初始化脚本、migrate 或 tools 服务。每次容器启动已有库先备份再迁移和校验，默认拒绝缺失数据库；全新站点仅明确允许 `SQLITE_INITIALIZE=1` 时建库。正式切换仍需准备最终迁移数据、备份和线上授权，不能直接部署到旧卷。排期与每日自动备份继续使用外部调度，CLI 改用相同 app 镜像；备份不包含 OSS 文件。
 
 - [部署、调度与备份恢复](docs/deployment.md)
 - [OSS 配置与临时上传清理](docs/media-storage.md)
