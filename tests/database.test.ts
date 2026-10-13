@@ -15,6 +15,7 @@ import {
   getDatabase,
   writeTransaction,
 } from "../lib/database";
+import sourceContract from "../lib/database-transfer/source-contract.json";
 import { migrateDatabase, migrationManifest, verifyDatabase } from "../lib/database/migrations";
 import { requiredDatabasePath } from "../lib/database/path";
 import {
@@ -64,65 +65,55 @@ void test("只有显式 SQLite 文件路径可用；缺失文件不会被自动�
   process.env.DATABASE_PATH = original;
 });
 
-void test("22 张表的字段、主键、非空、唯一约束与旧 contract 对应", async () => {
-  const source = await readFile("prisma/contract.ts", "utf8");
+void test("22 张业务表的字段、主键、非空、唯一约束与源库基线对应", async () => {
+  const tables = sourceContract.storage.namespaces.public.entries.table;
   const db = getDatabase().$client;
-  const models = [...source.matchAll(/model\("(\w+)",\s*\{\s*fields:\s*\{/g)];
-  assert.equal(models.length, 22);
-  for (const match of models) {
-    const table = match[1].replace(/(?<!^)(?=[A-Z])/g, "_").toLowerCase();
-    let position = match.index + match[0].length;
-    const start = position;
-    let depth = 1;
-    while (depth) {
-      if (source[position] === "{") depth++;
-      if (source[position] === "}") depth--;
-      position++;
-    }
-    const columns = [
-      ...source
-        .slice(start, position - 1)
-        .matchAll(/(\w+):\s*field\.column\((\w+)\)((?:\.[A-Za-z]+\([^)]*\))*)/g),
-    ];
+  assert.equal(Object.keys(tables).length, 22);
+  for (const [table, definition] of Object.entries(tables)) {
     const actual = db
       .prepare<[], { name: string; type: string; notnull: number; pk: number }>(
         `PRAGMA table_info("${table}")`,
       )
       .all();
     assert.deepEqual(
-      actual.map((column) => column.name),
-      columns.map((column) => column[1]),
+      actual.map((column) => column.name).toSorted(),
+      Object.keys(definition.columns).toSorted(),
       table,
     );
-    for (const [, name, kind, modifiers] of columns) {
+    for (const [name, expected] of Object.entries(definition.columns)) {
       const column = actual.find((item) => item.name === name)!;
       assert.equal(
         column.type.toLowerCase(),
-        kind === "textColumn" ? "text" : "integer",
+        expected.nativeType === "text" ? "text" : "integer",
         `${table}.${name}`,
       );
-      assert.equal(
-        column.notnull,
-        modifiers.includes(".optional()") ? 0 : 1,
-        `${table}.${name} 非空`,
-      );
-      if (modifiers.includes(".id()")) assert.ok(column.pk, `${table}.${name} 主键`);
-      if (modifiers.includes(".unique()")) {
-        const indexes = db
-          .prepare<[], { name: string; unique: number }>(`PRAGMA index_list("${table}")`)
-          .all();
-        assert.ok(
-          indexes.some(
-            (index) =>
-              index.unique &&
+      assert.equal(column.notnull, expected.nullable ? 0 : 1, `${table}.${name} 非空`);
+    }
+    assert.deepEqual(
+      actual
+        .filter((column) => column.pk)
+        .toSorted((a, b) => a.pk - b.pk)
+        .map((column) => column.name),
+      definition.primaryKey.columns,
+      `${table} 主键`,
+    );
+    const indexes = db
+      .prepare<[], { name: string; unique: number }>(`PRAGMA index_list("${table}")`)
+      .all();
+    for (const constraint of definition.uniques) {
+      assert.ok(
+        indexes.some(
+          (index) =>
+            index.unique &&
+            JSON.stringify(
               db
                 .prepare<[], { name: string }>(`PRAGMA index_info("${index.name}")`)
                 .all()
-                .some((item) => item.name === name),
-          ),
-          `${table}.${name} 唯一`,
-        );
-      }
+                .map((column) => column.name),
+            ) === JSON.stringify(constraint.columns),
+        ),
+        `${table} 唯一约束`,
+      );
     }
   }
 });

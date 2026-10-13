@@ -106,6 +106,6 @@ TEST_SQLITE_IMAGE=fuxiaochen:sqlite-local TEST_PORTAINER_IMAGE=portainer/portain
   node --conditions=react-server --import tsx --test tests/sqlite-portainer.test.ts
 ```
 
-完整结果见 [单镜像与启动验收](engineering/sqlite-deployment-verification.md)。历史双镜像 PostgreSQL 的大小、缓存和部署证据保留在 [历史记录](engineering/postgresql-deployment-history.md)。尚未验证 GitHub 托管 runner、真实生产数据/服务器与生产 Portainer 的 Git 更新；本地 API 演练与服务通过不代表线上切换完成。
+完整结果见 [单镜像与启动验收](engineering/sqlite-deployment-verification.md)。历史双镜像 PostgreSQL 的部署实现与记录已移除，需要时查阅 Git 历史中的匹配版本。尚未验证 GitHub 托管 runner、真实生产数据/服务器与生产 Portainer 的 Git 更新；本地 API 演练与服务通过不代表线上切换完成。
 
 依据：[Docker Compose 服务](https://docs.docker.com/reference/compose-file/services/)、[外部数据卷](https://docs.docker.com/reference/compose-file/volumes/)、[Portainer Stack 创建](https://docs.portainer.io/user/docker/stacks/add)、[Git Stack 更新](https://docs.portainer.io/user/docker/stacks/edit)、[Portainer 相对路径支持](https://docs.portainer.io/advanced/relative-paths)。Next.js 16.3.7 行为已按已安装 output/deploying 文档核对。

@@ -60,7 +60,7 @@ yarn-error.log*
 *storybook.log
 storybook-static
 
-# prisma 生成的文件
+# 历史生成物（保留忽略规则，避免本地产物意外入库）
 /generated
 
 # pm2 日志文件

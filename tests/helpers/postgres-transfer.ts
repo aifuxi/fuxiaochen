@@ -8,7 +8,7 @@ import { z } from "zod";
 import { hashPassword } from "../../lib/auth/password";
 import { serializeDocument } from "../../lib/posts/document";
 
-// 固定使用已提交的最后一版 PostgreSQL contract，不生成或改写历史 Prisma 文件。
+// 固定使用迁移工具保存的 PostgreSQL 源库结构基线，不依赖旧 ORM。
 export const postgresContractHash =
   "2908a7712d8c234e7671488cc7e62c5552ae2f7b838a6e8788aef33ca9e2416e";
 export const postgresTransferProject = resolve(import.meta.dirname, "../..");
@@ -440,10 +440,7 @@ export async function createPostgresTransferFixture(options: { empty?: boolean }
   const fixture = await postgresTransferRows();
   const snapshotContent: unknown = JSON.parse(
     await readFile(
-      resolve(
-        postgresTransferProject,
-        `prisma/migrations/snapshots/${postgresContractHash}/contract.json`,
-      ),
+      resolve(postgresTransferProject, "lib/database-transfer/source-contract.json"),
       "utf8",
     ),
   );
@@ -509,7 +506,7 @@ export async function createPostgresTransferFixture(options: { empty?: boolean }
         );
       }
     }
-    // 与已安装 Prisma 8 rc14 的 per-space control 表一致，但不调用旧 CLI。
+    // 模拟旧源库的 per-space control 表，验证只读迁移兼容性。
     await source.query(`CREATE SCHEMA prisma_contract;
       CREATE TABLE prisma_contract.marker (
         space text PRIMARY KEY DEFAULT 'app', core_hash text NOT NULL, profile_hash text NOT NULL,

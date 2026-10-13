@@ -32,15 +32,5 @@
     ".next-build/types/**/*.ts",
     ".next-build/dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "data",
-    "prisma",
-    "prisma.config.ts",
-    "lib/operations/sqlite-import.ts",
-    "scripts/import-sqlite.ts",
-    "scripts/migrate.ts",
-    "tests/postgres.test.ts",
-    "tests/sqlite-import.test.ts"
-  ]
+  "exclude": ["node_modules", "data"]
 }

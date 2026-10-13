@@ -59,4 +59,4 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 容器 serve 每次已有库启动先备份、迁移并完整校验；默认拒绝缺失文件，仅全新站点显式 `SQLITE_INITIALIZE=1` 可初始化。迁移前在 IMMEDIATE 锁内复核备份期间没有其他提交；启动/迁移失败不启动 Web 且保留完整备份。
 - entrypoint 使用实例/维护 flock，禁止同库多 Web、滚动升级及在线结构迁移；日常 CLI 可共享维护锁。不要绕过入口或删除锁文件；SQLite 使用本机持久磁盘，不支持多机/NFS。
 - 当前已完成基础层、查询适配、迁移工具与单镜像/Portainer 本地验证；线上数据切换、生产部署和真实服务器验证尚未执行。
-- `prisma/`、旧 PostgreSQL 导入脚本与回归源码保留作历史参考，不属于当前应用编译范围。相关依赖暂留 devDependencies；旧环境操作须使用匹配旧版本，不能把历史回归作为当前 SQLite 验收。
+- Prisma 依赖、源码及旧 PostgreSQL 实现已移除。PostgreSQL → SQLite 工具仅使用 `pg` 和 `lib/database-transfer/source-contract.json` 中的固定源库基线；旧源库 control marker 的只读核验属于迁移兼容性，不引入旧 ORM。

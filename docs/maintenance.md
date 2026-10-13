@@ -4,7 +4,7 @@
 
 ## SQLite 基础层与迁移
 
-schema 为 `lib/database/schema.ts`，连接与写事务为 `lib/database/index.ts`，SQL 迁移和开发快照位于 `drizzle/`。Drizzle ORM 0.45.4、drizzle-kit 0.31.11、better-sqlite3 13.0.3 使用固定版本。Kit 只离线生成 SQL，生产运行不需要 CLI 或生成 Prisma contract。
+schema 为 `lib/database/schema.ts`，连接与写事务为 `lib/database/index.ts`，SQL 迁移和开发快照位于 `drizzle/`。Drizzle ORM 0.45.4、drizzle-kit 0.31.11、better-sqlite3 13.0.3 使用固定版本。Kit 只离线生成 SQL，生产运行不需要 Kit CLI 或旧 ORM 生成物。
 
 `DATABASE_PATH` 必须显式指向 SQLite 文件。`db:init` 使用独占文件创建，拒绝覆盖已有文件；普通连接、`db:migrate`、`db:verify` 拒绝缺失文件和历史无迁移 ledger 的文件。容器默认也拒绝缺失文件，仅明确的 `SQLITE_INITIALIZE=1` 允许全新站点首次初始化；已有站点先离线导入，不能接管历史文件。现有 `.env` 和旧 SQLite/PostgreSQL 数据保留，不自动导入。
 
@@ -44,7 +44,9 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 ## PostgreSQL → SQLite 离线迁移
 
-入口为 `scripts/postgres-transfer.ts`，实现位于 `lib/database-transfer/`。工具依赖 Node.js 24、已安装的 `pg`、better-sqlite3 与 tsx，不调用 Prisma CLI，不修改 `prisma/` 或连接应用数据库。当前已完成专用 PostgreSQL 18.6 与临时 SQLite 的演练，未连接线上数据库；验收见 [迁移工具验证记录](engineering/postgres-sqlite-transfer-verification.md)。
+Prisma 依赖、源码、旧 SQLite → PostgreSQL 导入脚本及旧回归已移除；历史实现如需查阅，使用 Git 历史中的匹配版本。当前工具保留旧源库 `prisma_contract.marker` 的只读核验，以拒绝不匹配的源结构。
+
+入口为 `scripts/postgres-transfer.ts`，实现位于 `lib/database-transfer/`。工具依赖 Node.js 24、已安装的 `pg`、better-sqlite3 与 tsx，源库结构基线保存在 `lib/database-transfer/source-contract.json`，不依赖旧 ORM 或连接应用数据库。当前已完成专用 PostgreSQL 18.6 与临时 SQLite 的演练，未连接线上数据库；验收见 [迁移工具验证记录](engineering/postgres-sqlite-transfer-verification.md)。
 
 ### 源库与归档
 
@@ -112,73 +114,6 @@ node --env-file=/absolute/private/test.env --conditions=react-server --import ts
 ```
 
 正式切换尚未执行。后续部署阶段先准备兼容 SQLite 的镜像、持久卷及启动流程，再冻结旧 Web、调度和全部写入，取得最终归档并重复预检、导入、核对。保留旧镜像、配置、PostgreSQL 卷和旧备份；核对前不要启动新应用。新库开始接收写入后，旧 PostgreSQL 将落后，不能直接切回而丢失增量。生产 Compose、Portainer 和调度切换需单独实施与验证。
-
-## 历史 PostgreSQL 与 Prisma 8（只作对照）
-
-以下属于提交 `4d72e636` 及之前的 PostgreSQL 实现。`prisma/`、旧导入/迁移脚本和相关测试保留作历史参考，并从当前应用 TypeScript 编译中排除；Prisma 与 pg 依赖暂留 devDependencies。旧回归调用当前 SQLite 业务模块不再构成有效验收，应使用匹配旧提交运行。
-
-### 原迁移机制
-
-模型源为 `prisma/contract.ts`，配置为 `prisma.config.ts`，生成目录为 `generated/prisma/`。CLI 与应用共用 `DATABASE_URL`，配置从项目根目录 `.env` 或部署环境读取，不使用 `DATABASE_PATH`。生成 contract 和构建无需在线数据库；数据库命令必须配置连接 URL。
-
-使用 Prisma CLI `8.0.0-rc.19`、PostgreSQL runtime `@prisma/orm-postgres@8.0.0-rc.14`，仍处于 RC 阶段。`package.json` 的 overrides 对齐 toolchain `8.0.0-rc.14` 和 CLI engine `0.6.2`，升级前核对官方文档与安装类型，不降级至 Prisma 7。
-
-PostgreSQL 使用独立的初始迁移，不复用 SQLite 的迁移 ledger/marker。旧数据库和旧备份保留；`db:restore` 仅接受 PostgreSQL 备份。SQLite 数据切换使用下面的独立导入命令，不使用旧正文或历史 OSS 图片迁移命令。
-
-```sh
-npm run db:generate
-# 显式指定当前已应用迁移的目标 hash，或先设置 db ref。
-npm run db:plan -- --name describe-change --from <当前目标hash>
-# 审查新增 migration.ts、ops.json、migration.json 与 contract 快照。
-npm run db:migrate
-```
-
-初始迁移已经提交，空库直接运行 `db:migrate`。`migration plan` 是离线命令，没有 ref 时可能按空库规划；不得对已有迁移历史无起点地生成第二份初始迁移。`db migrate` 默认不推进 ref，可使用 `prisma migration ref set db <hash>` 设置下次规划起点。迁移入口使用顶层 `await MigrationCLI.run(...)`。
-
-提交 contract 源、迁移和快照，不提交 `generated/`、环境文件、数据库或备份。迁移后重启应用，使连接加载新 contract。
-
-### 原 SQLite 数据导入 PostgreSQL
-
-`db:import-sqlite` 仅用于把旧 Prisma SQLite schema 的一致性快照导入当前 PostgreSQL contract。适配的旧源包含 22 张业务表，支持文章摘要与精选字段、SEO 字段及日志状态字段尚未新增的版本；未知表、未知列、缺失旧字段、无效正文、悬空关系、不安全整数及非 UTC ISO 时间均拒绝。源必须由 SQLite backup API 导出，包含 WAL 中已提交的数据；不能用单独复制主文件代替。导入只读打开源，并拒绝带非空 WAL/journal 的输入。
-
-```sh
-# 只预检源和映射，不连接 PostgreSQL；可在未配置 DATABASE_URL 时运行。
-npm run db:import-sqlite -- --source /absolute/release/source.sqlite --dry-run --report /absolute/release/preflight.json
-# 将 DATABASE_URL 配置为独立目标库，以当前应用账号创建结构。
-npm run db:migrate
-npm run db:import-sqlite -- --source /absolute/release/source.sqlite --apply --report /absolute/release/import.json
-npm run db:import-sqlite -- --source /absolute/release/source.sqlite --verify --report /absolute/release/verify.json
-```
-
-`--source`、唯一的模式参数及 `--report` 必填。报告目录预先创建并由服务账号独占；报告以 0600 独占创建，拒绝覆盖已有文件或源快照，失败后重试使用新报告路径。报告包含源 SHA-256、目标主机与库名、contract hash、每表数量和数据摘要，不包含账号密码哈希、正文、访客信息或数据库凭据。`--dry-run` 的 `targetChecked=false`、`targetCount=null`，只证明源校验通过；`--apply` 和 `--verify` 先运行官方 `db verify`，校验当前 contract 与结构。
-
-正式导入前停止旧应用、外部调度及所有 SQLite 写入，再取得最终快照；演练快照不能代替最终快照。目标先通过当前正式迁移建立结构，但 22 张业务表必须全部为空；不要提前启动新 Web、初始化管理员或运行调度。全部写入共用 `writeTransaction` 的 advisory lock，锁后再次拒绝非空目标，提交前逐表核对数量及所有字段摘要；任一步失败整笔回滚。重复 `--apply` 拒绝覆盖，已导入库使用 `--verify`。源摘要在预检、写入前和提交前再次核对。CLI 退出关闭 SQLite、ORM 和报告文件。
-
-保留管理员 id、用户名、Argon2id 密码哈希、全部业务 ID/关系/时间/版本、媒体元数据、通知不透明 ID 与已读记录，以及 `visit_session`/`page_visit` 访问统计。未存在的新字段补齐：文章 `summary=""`、`isFeatured=0`、`featuredOrder=0`；SEO 五列 NULL；日志 `status="published"`、`revision=1`、`updatedAt=NULL`。原有字段不从本地开发库补写。鉴权 `session`、四张限流表、`backup_run` 和 SQLite 内部表不导入；管理员使用原密码重新登录。运维设置保留版本和时间，但 `autoBackup=0`、`schedulerLastRunAt=NULL`，验收后再恢复调度。
-
-OSS 对象保留原位置，沿用原 Bucket、公开域名及对象键；此命令不上传、删除或重写媒体。切换前保留旧镜像、配置、SQLite 卷与最终快照，切换后生成 PostgreSQL 备份并保存异地副本。外部写入重新开放前可以恢复旧 SQLite 应用；新 PostgreSQL 已接收业务写入后不能直接切回旧 SQLite，须先冻结写入、备份并核对增量。恢复 PostgreSQL 仍使用匹配 contract 的应用版本和独立空库，不能删除生产卷解决失败。
-
-### 原 PostgreSQL 连接与事务
-
-2026-10-06 增量迁移 `20261006T0523_add_site_seo` 为 `site_setting` 新增搜索描述、分享图与三项站长验证字段。数据库列允许 NULL，服务层映射为空字符串；既有资料和设置保持原值。生成新 contract 后执行 `npm run db:migrate`，再重启应用加载新 contract。
-
-应用连接使用惰性初始化并在开发热更新中复用；CLI 使用 `finally` 关闭连接。所有业务写入必须经 `writeTransaction`／`authTransaction`，先取得固定事务级 advisory lock `734825101` 再读取和写入。Web、管理员命令与外部调度共用该锁，提交或回滚时自动释放。
-
-数据位于 `public` schema。时间使用带时区时间戳与 JavaScript `Date`，原整数使用 `pg/int8number@1`，超出 JavaScript 安全整数范围时拒绝转换。JSON 文档仍保存为经过业务校验的文本，查询时转换为 jsonb。搜索使用 `strpos(lower(...), lower(...))`，关键词中的 `%`、`_` 不作为通配符；统计按 `Asia/Shanghai` 分日。
-
-### 原账号与工具命令
-
-```sh
-npm run admin:init
-npm run admin:reset-password
-npm run media:cleanup -- --dry-run
-npm run analytics:cleanup
-npm run posts:publish-due
-```
-
-账号管理交互输入密码；重置密码撤销该账号全部会话。媒体清理操作 OSS 对象，先核对 dry-run。排期和统计清理均使用与 Web 相同的 PostgreSQL。
-
-历史 PostgreSQL 的备份、恢复和部署步骤见 [历史部署记录](engineering/postgresql-deployment-history.md)。参考 [Prisma PostgreSQL 扩展](https://www.prisma.io/extensions/postgresql)、[Prisma 8 contract](https://www.prisma.io/docs/orm/contract-authoring/typescript-schema-builder)、[PostgreSQL advisory locks](https://www.postgresql.org/docs/18/explicit-locking.html)。
 
 ## 正文格式与查询机制
 

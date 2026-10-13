@@ -10,7 +10,7 @@
 - 每次 `serve` 取得实例与维护 flock → 已有库旧版本验证 → WAL 一致性备份 → IMMEDIATE 迁移/并发提交复核 → 完整校验 → 共享锁下再次校验 → exec Web。日常 CLI 共享维护锁；初始化/迁移独占，失败不启动 Web。
 - 缺库默认拒绝；只在显式 `SQLITE_INITIALIZE=1` 时初始化新文件，不自动创建管理员。不接管空文件、未知历史、软链接或硬链接别名。
 - 启动快照共用 `fuxiaochen-sqlite-backup` 格式，增加 purpose 和目标 hash；记录源合法迁移前缀。使用匹配版本 `db:restore` 恢复独立新文件；升级失败保留完整快照，不改写原业务数据。
-- 当前部署与恢复说明见 [部署指南](../deployment.md)，旧双镜像证据移入 [历史记录](postgresql-deployment-history.md)。线上最终迁移与切换另行授权执行。
+- 当前部署与恢复说明见 [部署指南](../deployment.md)，旧双镜像 PostgreSQL 实现和记录已移除，需要时查阅 Git 历史中的匹配版本。线上最终迁移与切换另行授权执行。
 
 ## 运行通过
 

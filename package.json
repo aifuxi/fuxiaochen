@@ -33,15 +33,12 @@
     "test:seo": "node --conditions=react-server --import tsx --test tests/seo.test.ts",
     "test:seo:integration": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/seo.integration.test.ts",
     "db:init": "tsx scripts/sqlite-database.ts init",
-    "legacy:db:migrate": "tsx scripts/migrate.ts",
     "test:sqlite": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/database.test.ts tests/sqlite-content.test.ts tests/sqlite-interaction.test.ts tests/sqlite-operations.test.ts",
     "test:sqlite-startup": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/sqlite-startup.test.ts",
     "test:sqlite-container": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/sqlite-container.test.ts",
     "db:export-postgres": "node --conditions=react-server --import tsx scripts/postgres-transfer.ts --export",
     "db:import-postgres": "node --conditions=react-server --import tsx scripts/postgres-transfer.ts --import",
-    "test:postgres-transfer": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres-transfer.test.ts",
-    "legacy:db:import-sqlite": "node --conditions=react-server --import tsx scripts/import-sqlite.ts",
-    "legacy:db:up": "docker compose -p fuxiaochen-dev -f compose.dev.yaml up -d --wait postgres"
+    "test:postgres-transfer": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/postgres-transfer.test.ts"
   },
   "dependencies": {
     "@alicloud/credentials": "2.4.7",
@@ -95,7 +92,6 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
-    "@prisma/orm-postgres": "8.0.0-rc.14",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/better-sqlite3": "9.6.0",
     "@types/node": "24.19.0",
@@ -113,23 +109,13 @@
     "oxlint-tsgolint": "^7.0.2003",
     "pg": "8.22.0",
     "postcss": "^8.5.6",
-    "prisma": "8.0.0-rc.19",
     "tailwindcss": "^4.1.11",
     "typescript": "7.0.2"
   },
   "overrides": {
-    "@prisma/cli-engine": "0.6.2",
-    "@prisma/dev": {
-      "hono": "4.13.12",
-      "@hono/node-server": "1.19.17",
-      "valibot": "1.4.2"
-    },
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "lodash": "4.18.1",
-    "prisma": {
-      "@prisma/orm-toolchain": "8.0.0-rc.14"
-    }
+    "lodash": "4.18.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [

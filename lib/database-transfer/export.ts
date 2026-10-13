@@ -5,7 +5,6 @@ import { chmod, lstat, mkdir, open } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { Client } from "pg";
 
-import contractJson from "../../prisma/migrations/snapshots/2908a7712d8c234e7671488cc7e62c5552ae2f7b838a6e8788aef33ca9e2416e/contract.json";
 import {
   canonicalRow,
   sourceContractSha256,
@@ -14,6 +13,7 @@ import {
   TransferError,
   type TransferManifest,
 } from "./format";
+import contractJson from "./source-contract.json";
 
 type SourceColumn = { nativeType: string; nullable: boolean };
 type SourceForeignKey = {

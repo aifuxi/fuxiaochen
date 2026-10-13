@@ -68,10 +68,9 @@ function allowedFile(path) {
   // 追踪结果不得携带本地库、密钥、离线 PostgreSQL 工具或历史生成物。
   if (
     path.split(sep).some((part) => part.startsWith(".env")) ||
-    /^(?:data|prisma|generated)(?:\/|$)/.test(path) ||
-    /^node_modules\/(?:@prisma\/|prisma\/|pg\/|pg-[^/]+\/)/.test(path) ||
+    /^(?:data|generated)(?:\/|$)/.test(path) ||
+    /^node_modules\/(?:pg\/|pg-[^/]+\/)/.test(path) ||
     path.startsWith("lib/database-transfer/") ||
-    ["lib/operations/postgres-tools.ts", "lib/operations/sqlite-import.ts"].includes(path) ||
     (path.startsWith("scripts/") && !entries.includes(path))
   )
     throw new Error(`运行镜像包含禁止打包的文件：${path}`);

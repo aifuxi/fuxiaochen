@@ -15,10 +15,10 @@ import { resolve, join } from "node:path";
 import { TextDecoder } from "node:util";
 import { z } from "zod";
 
-import sourceContract from "../../prisma/migrations/snapshots/2908a7712d8c234e7671488cc7e62c5552ae2f7b838a6e8788aef33ca9e2416e/contract.json";
 import { releaseChangesSchema, releaseStatusSchema, releaseTypeSchema } from "../changelog/schema";
 import { migrationManifest } from "../database/migrations";
 import { postContentSchema } from "../posts/document";
+import sourceContract from "./source-contract.json";
 
 export class TransferError extends Error {}
 export type Row = Record<string, string | number | null>;
