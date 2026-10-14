@@ -60,7 +60,7 @@
   flex: none;
   border-radius: 50%;
   background: var(--color-raised);
-  color: var(--color-muted);
+  color: var(--color-caption);
   overflow: hidden;
 }
 .admin-friend-avatar img {
@@ -99,7 +99,7 @@
 }
 .admin-friend-description {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   line-height: 20px;
   overflow-wrap: anywhere;
 }
@@ -111,7 +111,7 @@
 .admin-friend-form-selects > div {
   display: grid;
   gap: 7px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
 }
 .admin-friend-textarea {
@@ -119,7 +119,7 @@
 }
 .admin-friend-error,
 .admin-friend-delete {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .admin-friend-modal {
   overflow-wrap: anywhere;

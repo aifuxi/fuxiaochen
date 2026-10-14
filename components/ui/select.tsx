@@ -22,14 +22,14 @@ export function SelectTrigger({
     <BaseSelect.Trigger
       type="button"
       className={cn(
-        "ds-input flex h-[var(--control-form)] w-full cursor-[var(--cursor-action)] items-center justify-between gap-3 px-3 text-left text-sm leading-5 data-placeholder:text-[var(--color-subtle)]",
+        "ds-input flex h-[var(--control-form)] w-full cursor-[var(--cursor-action)] items-center justify-between gap-3 px-3 text-left text-sm leading-5 data-placeholder:text-[var(--color-caption)]",
         size === "compact" && "ds-control-compact",
         className,
       )}
       {...props}
     >
       <span className="min-w-0 truncate">{children}</span>
-      <BaseSelect.Icon className="shrink-0 text-[var(--color-muted)]">
+      <BaseSelect.Icon className="shrink-0 text-[var(--color-caption)]">
         <ChevronDown size={16} aria-hidden="true" />
       </BaseSelect.Icon>
     </BaseSelect.Trigger>

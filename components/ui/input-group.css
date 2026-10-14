@@ -25,7 +25,7 @@
   display: flex;
   flex: none;
   align-items: center;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .ds-input-group-addon[data-align="inline-start"] {
   order: -1;

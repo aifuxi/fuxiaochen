@@ -70,6 +70,15 @@
   background: currentColor;
 }
 
+/* 状态点保留业务颜色，小字使用在对应主题上可读的文本角色。 */
+.admin-data-page .admin-post-status.is-published::before {
+  background: var(--color-success);
+}
+
+.admin-data-page .admin-post-status.is-rejected::before {
+  background: var(--color-danger);
+}
+
 .admin-data-page .admin-post-pagination {
   flex-wrap: wrap;
   gap: 12px;

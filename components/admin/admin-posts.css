@@ -67,7 +67,7 @@
   padding: 0;
   border: 0;
   border-radius: 0;
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font-size: 12px;
   line-height: 18px;
 }
@@ -112,12 +112,12 @@
   overflow: hidden;
   overflow-wrap: anywhere;
   margin: 4px 0 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
 
 .admin-posts-page .admin-error {
   margin: 16px 18px;
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }

@@ -58,7 +58,7 @@
   gap: 12px;
   padding: 16px;
   border-top: 1px solid var(--admin-divider, var(--color-outline));
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -89,7 +89,7 @@
 .ds-table-empty {
   padding: 24px 16px;
   text-align: center;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 @media (max-width: 600px), (pointer: coarse) {
   .ds-table-sort {

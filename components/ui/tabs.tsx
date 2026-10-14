@@ -17,7 +17,7 @@ export function TabsList({
   return (
     <BaseTabs.List
       className={cn(
-        "ds-tabs-list inline-flex h-[var(--control-default)] gap-1 rounded-full bg-white/[0.05] p-1",
+        "ds-tabs-list inline-flex h-[var(--control-default)] gap-1 rounded-full bg-[var(--color-tabs-track)] p-1",
         size === "compact" && "ds-control-compact",
         className,
       )}

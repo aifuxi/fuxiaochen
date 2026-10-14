@@ -25,7 +25,7 @@ export function DialogContent({
 }) {
   return (
     <BaseDialog.Portal className={portalClassName}>
-      <BaseDialog.Backdrop className="ds-dialog-backdrop fixed inset-0 z-50 bg-black/70 backdrop-blur-[3px]" />
+      <BaseDialog.Backdrop className="ds-dialog-backdrop fixed inset-0 z-50 bg-[var(--color-backdrop)] backdrop-blur-[3px]" />
       <BaseDialog.Viewport
         className={cn(
           "fixed inset-0 z-50 flex",

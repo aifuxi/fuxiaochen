@@ -9,7 +9,7 @@
   background: var(--color-surface);
   color: var(--color-foreground);
   outline: none;
-  box-shadow: 0 8px 24px rgb(0 0 0 / 20%);
+  box-shadow: var(--shadow-popup);
 }
 .ds-menu-item {
   display: flex;
@@ -39,7 +39,7 @@
   outline-offset: -2px;
 }
 .ds-menu-item.is-destructive {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .ds-menu-item[data-disabled] {
   opacity: 0.45;

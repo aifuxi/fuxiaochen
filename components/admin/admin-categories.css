@@ -28,7 +28,7 @@
 .admin-taxonomy-badge {
   border-radius: 999px;
   padding: 2px 8px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   background: var(--color-raised);
   font: 12px/1.5 var(--font-mono);
 }
@@ -46,7 +46,7 @@
   width: 0;
 }
 .admin-taxonomy-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   margin: 8px 0 0;
   font-size: 12px;
 }
@@ -61,7 +61,7 @@
 }
 .admin-taxonomy-table thead th {
   background: var(--color-stage);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   font-weight: 500;
 }
@@ -102,12 +102,12 @@
   flex: none;
 }
 .admin-taxonomy-count {
-  color: var(--color-muted);
+  color: var(--color-caption);
   font: 12px/1.5 var(--font-mono);
   white-space: nowrap;
 }
 .admin-taxonomy-delete-confirm {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .admin-taxonomy-cloud {
   list-style: none;
@@ -138,10 +138,10 @@
   height: 36px;
   padding: 0;
   flex: none;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .admin-taxonomy-empty {
-  color: var(--color-muted);
+  color: var(--color-caption);
   padding: 24px 8px;
   font-size: 13px;
   text-align: center;
@@ -185,7 +185,7 @@
   margin-bottom: 8px;
   font-size: 14px;
   line-height: 20px;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 @media (max-width: 600px), (pointer: coarse) {
   .admin-taxonomy-tag-remove {

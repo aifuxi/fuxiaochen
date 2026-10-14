@@ -14,32 +14,46 @@
 }
 
 @theme {
-  --color-primary: #0066df;
-  --color-primary-hover: #006be9;
-  --color-primary-pressed: #005fd5;
-  --color-background: #121212;
-  --color-surface: #181818;
-  --color-surface-hover: #1c1c1c;
-  --color-stage: #131313;
-  --color-raised: #2a2a2a;
-  --color-input: #262626;
-  --color-input-hover: #303030;
-  --color-foreground: #f5f5f5;
-  --color-foreground-reading: #c4c4c4;
-  --color-muted: #b5b5b5;
-  --color-subtle: #8f8f8f;
-  --color-outline: #303030;
-  --color-scrollbar: #737373;
-  --color-scrollbar-hover: #929292;
-  --color-scrollbar-pressed: #b5b5b5;
-  --color-focus: #7db4ff;
-  --color-success: #73d6a1;
-  --color-danger: #ff7b7b;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
+  --color-primary-pressed: #1d4ed8;
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover-foreground: var(--color-background);
+  --color-background: #090a0f;
+  --color-surface: #12141c;
+  --color-surface-hover: #181b26;
+  --color-stage: #0d0f17;
+  --color-raised: #1e2230;
+  --color-raised-hover: #262b3d;
+  --color-raised-pressed: #171a24;
+  --color-input: #171a24;
+  --color-input-hover: #1f2432;
+  --color-input-active: #252b3b;
+  --color-foreground: #f8fafc;
+  --color-foreground-reading: #cbd5e1;
+  --color-muted: #94a3b8;
+  --color-subtle: #64748b;
+  --color-caption: var(--color-muted);
+  --color-metadata: var(--color-muted);
+  --color-outline: #1e2433;
+  --color-scrollbar: var(--color-subtle);
+  --color-scrollbar-hover: var(--color-muted);
+  --color-scrollbar-pressed: var(--color-foreground-reading);
+  --color-focus: #60a5fa;
+  --color-success: #34d399;
+  --color-success-text: var(--color-success);
+  --color-danger: #f87171;
+  --color-danger-text: var(--color-danger);
+  --color-switch-track: #262b3d;
+  --color-tabs-track: rgb(255 255 255 / 5%);
+  --color-highlight-hover: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+  --color-highlight-pressed: color-mix(in srgb, var(--color-foreground) 3%, transparent);
+  --color-backdrop: rgb(0 0 0 / 70%);
   --color-syntax-keyword: #c4a7e7;
   --color-syntax-string: #a3d9a5;
   --color-syntax-number: #f2c078;
   --color-syntax-function: #8fc7f4;
-  --color-syntax-comment: #b5b5b5;
+  --color-syntax-comment: var(--color-muted);
   --font-sans:
     "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans",
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -78,6 +92,9 @@
 
 :root {
   color-scheme: dark;
+  --shadow-popup: 0 8px 24px rgb(0 0 0 / 24%);
+  --shadow-notice: 0 12px 32px #0004;
+  --shadow-toast: 0 15px 40px #0008;
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 12px;
@@ -105,9 +122,75 @@
   --scrollbar-track-width: 10px;
   --scrollbar-thumb-width: 6px;
 }
+/* 两种主题共用尺寸与交互；这里只重映射颜色和原有浮层阴影。 */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-background: #f4f7fb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --color-stage: #eef2f6;
+  --color-raised: #e2e8f0;
+  --color-raised-hover: #cbd5e1;
+  --color-raised-pressed: #94a3b8;
+  --color-input: #f1f5f9;
+  --color-input-hover: #e2e8f0;
+  --color-input-active: #cbd5e1;
+  --color-foreground: #0f172a;
+  --color-foreground-reading: #334155;
+  --color-muted: #64748b;
+  --color-subtle: #94a3b8;
+  --color-caption: var(--color-foreground-reading);
+  --color-metadata: var(--color-foreground-reading);
+  --color-primary-hover: #1d4ed8;
+  --color-primary-pressed: #1e40af;
+  --color-primary-hover-foreground: var(--color-primary-foreground);
+  --color-focus: #2563eb;
+  --color-success: #059669;
+  --color-success-text: var(--color-foreground-reading);
+  --color-danger: #dc2626;
+  --color-danger-text: color-mix(in srgb, var(--color-danger) 70%, var(--color-foreground));
+  --color-outline: #e2e8f0;
+  --color-switch-track: #cbd5e1;
+  --color-tabs-track: #f1f5f9;
+  --color-scrollbar: var(--color-muted);
+  --color-scrollbar-hover: var(--color-foreground-reading);
+  --color-scrollbar-pressed: var(--color-foreground);
+  --color-highlight-hover: var(--color-input-hover);
+  --color-highlight-pressed: var(--color-input-active);
+  --color-backdrop: rgb(15 23 42 / 20%);
+  --color-syntax-keyword: #6d28d9;
+  --color-syntax-string: #065f46;
+  --color-syntax-number: #92400e;
+  --color-syntax-function: #075985;
+  --color-syntax-comment: #475569;
+  --shadow-popup: 0 8px 24px rgb(15 23 42 / 12%);
+  --shadow-notice: 0 12px 32px rgb(15 23 42 / 12%);
+  --shadow-toast: 0 15px 40px rgb(15 23 42 / 12%);
+}
+
 html {
   scroll-behavior: smooth;
   cursor: var(--cursor-default);
+}
+
+::selection {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+
+.theme-toggle {
+  gap: 6px;
+  flex: none;
+  white-space: nowrap;
+}
+.theme-toggle-icon {
+  width: var(--control-compact);
+  padding: 0;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .theme-toggle-icon {
+    width: var(--control-touch);
+  }
 }
 
 /* 使用浏览器光标渲染，热点与箭头尖端对齐；无跟随层或持续动画。 */
@@ -116,6 +199,11 @@ html {
     --cursor-default: url("/cursors/afterglow-default.svg") 5 4, auto;
     --cursor-action-rest: url("/cursors/afterglow-action.svg") 5 4, pointer;
     --cursor-pressed: url("/cursors/afterglow-pressed.svg") 5 4, pointer;
+  }
+  :root[data-theme="light"] {
+    --cursor-default: url("/cursors/afterglow-light-default.svg") 5 4, auto;
+    --cursor-action-rest: url("/cursors/afterglow-light-action.svg") 5 4, pointer;
+    --cursor-pressed: url("/cursors/afterglow-light-pressed.svg") 5 4, pointer;
   }
 }
 
@@ -224,7 +312,7 @@ html {
   gap: 8px;
   padding: 8px;
   border-bottom: 1px solid var(--color-outline);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font: 400 12px/1.5 var(--font-sans);
   white-space: normal;
 }
@@ -260,11 +348,11 @@ html {
   height: var(--control-small);
   padding: 0 8px;
   border-radius: var(--radius-sm);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
 }
 .code-block-copy-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   text-align: right;
   overflow-wrap: anywhere;
 }
@@ -298,7 +386,7 @@ html {
   color: var(--color-syntax-comment);
 }
 .code-block .hljs-deletion {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 @media (max-width: 600px), (pointer: coarse) {
   .code-block-copy-button.ds-button,
@@ -320,7 +408,19 @@ html {
 body {
   margin: 0;
   background: var(--color-background);
+  color: var(--color-foreground);
+  accent-color: var(--color-primary);
+  caret-color: var(--color-focus);
   font-family: var(--font-sans);
+}
+
+/* Next 默认错误页内联了系统配色；保留其布局，只让颜色服从站点偏好。 */
+html[data-theme] body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+html[data-theme] .next-error-h1 {
+  border-right-color: var(--color-outline);
 }
 
 @media (forced-colors: none) {
@@ -364,8 +464,8 @@ a {
 .ds-card {
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px rgba(255, 255, 255, 0.04),
-    inset 0 0 0 1px rgba(196, 196, 196, 0.07);
+    inset 0 1px color-mix(in srgb, var(--color-foreground) 4%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 7%, transparent);
 }
 .ds-card-link {
   color: var(--color-foreground);
@@ -382,7 +482,7 @@ a {
   outline-offset: 4px;
 }
 .ds-stage {
-  box-shadow: inset 0 0 0 1px rgba(191, 192, 203, 0.1);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent);
 }
 .ds-button {
   border: 0;
@@ -421,7 +521,7 @@ a {
   position: absolute;
   inset: 10px 0;
   border-radius: var(--radius-pill);
-  background: #393939;
+  background: var(--color-switch-track);
 }
 .ds-switch-touch[data-checked]::before {
   background: var(--color-primary);
@@ -459,45 +559,47 @@ a {
 }
 .ds-button-primary {
   background: var(--color-primary);
-  color: var(--color-foreground);
+  color: var(--color-primary-foreground);
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 0 color-mix(in srgb, var(--color-foreground) 4%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 6%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent);
 }
 .ds-button-primary:hover:not(:disabled):not([data-disabled]) {
   background: var(--color-primary-hover);
+  color: var(--color-primary-hover-foreground);
 }
 .ds-button-primary:active:not(:disabled):not([data-disabled]) {
   background: var(--color-primary-pressed);
+  color: var(--color-primary-foreground);
 }
 .ds-button-secondary {
   background: var(--color-raised);
   color: var(--color-foreground);
   box-shadow:
     0 1px 3px 0 rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 0 color-mix(in srgb, var(--color-foreground) 4%, transparent),
     inset 0 0 0 1px rgba(0, 0, 0, 0.06),
     inset 0 -1px 0 0 rgba(0, 0, 0, 0.06),
-    inset 0 0 0 1px rgba(196, 196, 196, 0.1);
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 10%, transparent);
 }
 .ds-button-secondary:hover:not(:disabled):not([data-disabled]) {
-  background: #323232;
+  background: var(--color-raised-hover);
 }
 .ds-button-secondary:active:not(:disabled):not([data-disabled]) {
-  background: #262626;
+  background: var(--color-raised-pressed);
 }
 .ds-button-ghost {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .ds-button-ghost:hover:not(:disabled):not([data-disabled]) {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-highlight-hover);
   color: var(--color-foreground);
 }
 .ds-button-ghost:active:not(:disabled):not([data-disabled]) {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--color-muted);
+  background: var(--color-highlight-pressed);
+  color: var(--color-caption);
 }
 .ds-input,
 .ds-input-group,
@@ -514,7 +616,7 @@ a {
   cursor: var(--cursor-action);
 }
 .ds-input::placeholder {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 /* 状态条件保持低权重，组合控件由外框承接输入状态；错误边线最后统一覆盖。 */
 :is(.ds-input, .ds-input-group, .ds-color-input):where(:hover):not(
@@ -546,7 +648,7 @@ a {
       :has(> :is(.ds-input-group-control, .ds-combobox-input):is(:disabled, [data-disabled]))
     )
   ) {
-  background: var(--color-raised);
+  background: var(--color-input-active);
 }
 :is(.ds-input, .ds-input-group, .ds-color-input):where(
     :focus-visible,
@@ -586,8 +688,8 @@ a {
   background: var(--color-raised);
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    inset 0 1px color-mix(in srgb, var(--color-foreground) 5%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 8%, transparent);
   overflow: hidden;
 }
 .ds-picker-item {
@@ -602,10 +704,10 @@ a {
   cursor: var(--cursor-action);
 }
 .ds-picker-item:not([data-disabled]):where(:hover, [data-highlighted]) {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-highlight-hover);
 }
 .ds-picker-item:active:not([data-disabled]) {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--color-highlight-pressed);
 }
 .ds-picker-item[data-disabled] {
   cursor: not-allowed;
@@ -621,15 +723,15 @@ a {
   border: 0;
   border-radius: 9px;
   background: transparent;
-  color: var(--color-muted);
+  color: var(--color-caption);
   cursor: var(--cursor-action);
 }
 .ds-picker-action:hover:not(:disabled):not([data-disabled]) {
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--color-highlight-hover);
   color: var(--color-foreground);
 }
 .ds-picker-action:active:not(:disabled):not([data-disabled]) {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--color-highlight-pressed);
 }
 .ds-picker-action:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -662,7 +764,7 @@ a {
 }
 .ds-accordion-trigger:active:not(:disabled):not([data-disabled]) {
   background: var(--color-stage);
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .ds-accordion-trigger:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -700,8 +802,8 @@ a {
 .ds-dialog-popup {
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    inset 0 1px color-mix(in srgb, var(--color-foreground) 5%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 8%, transparent);
   transition:
     opacity var(--motion-standard) var(--motion-ease),
     transform var(--motion-standard) var(--motion-ease);
@@ -724,7 +826,7 @@ a {
 .ds-tabs-trigger {
   position: relative;
   z-index: 1;
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font-size: var(--text-label);
   font-weight: var(--text-label--font-weight);
   line-height: var(--text-label--line-height);
@@ -736,7 +838,7 @@ a {
   color: var(--color-foreground);
 }
 .ds-tabs-trigger:active:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .ds-tabs-trigger:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -755,8 +857,8 @@ a {
   border-radius: var(--radius-pill);
   background: var(--color-raised);
   box-shadow:
-    inset 0 1px rgba(255, 255, 255, 0.06),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    inset 0 1px color-mix(in srgb, var(--color-foreground) 6%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground) 4%, transparent);
   transform: translateX(var(--active-tab-left));
   transition:
     transform var(--motion-standard) var(--motion-ease),
@@ -790,4 +892,36 @@ a {
   .animate-panel-in {
     transform: none;
   }
+}
+
+/* 浅色关闭态的滑块使用阅读色，位置与标签仍表达原有开关语义。 */
+:root[data-theme="light"] .ds-switch {
+  filter: none;
+}
+:root[data-theme="light"] .ds-switch:not([data-checked]) .ds-switch-thumb {
+  background: var(--color-foreground-reading);
+}
+:root[data-theme="light"]
+  .ds-switch:not(.ds-switch-touch):not([data-checked]):hover:not(:disabled):not([data-disabled]),
+:root[data-theme="light"]
+  .ds-switch-touch:not([data-checked]):hover:not(:disabled):not([data-disabled])::before {
+  background: var(--color-raised-pressed);
+}
+:root[data-theme="light"]
+  .ds-switch:not(.ds-switch-touch):not([data-checked]):active:not(:disabled):not([data-disabled]),
+:root[data-theme="light"]
+  .ds-switch-touch:not([data-checked]):active:not(:disabled):not([data-disabled])::before {
+  background: var(--color-muted);
+}
+:root[data-theme="light"]
+  .ds-switch:not(.ds-switch-touch)[data-checked]:hover:not(:disabled):not([data-disabled]),
+:root[data-theme="light"]
+  .ds-switch-touch[data-checked]:hover:not(:disabled):not([data-disabled])::before {
+  background: var(--color-primary-hover);
+}
+:root[data-theme="light"]
+  .ds-switch:not(.ds-switch-touch)[data-checked]:active:not(:disabled):not([data-disabled]),
+:root[data-theme="light"]
+  .ds-switch-touch[data-checked]:active:not(:disabled):not([data-disabled])::before {
+  background: var(--color-primary-pressed);
 }

@@ -9,7 +9,7 @@
   margin: 0;
 }
 .admin-business-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   overflow-wrap: anywhere;
 }
 .admin-business-actions {

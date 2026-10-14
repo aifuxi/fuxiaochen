@@ -2,34 +2,100 @@
 version: alpha
 status: target
 name: 付小晨 Afterglow
-description: 受 Libraries.dev 启发的暗色、精密、克制的交互设计系统。
+description: 受 Libraries.dev 启发，采用冷灰蓝深浅色色盘的精密、克制交互设计系统。
+# colors 为默认深色值；color-modes.light 为相同角色的浅色覆盖。
 colors:
-  primary: "#0066DF"
-  primary-hover: "#006BE9"
-  primary-pressed: "#005FD5"
-  background: "#121212"
-  surface: "#181818"
-  surface-hover: "#1C1C1C"
-  stage: "#131313"
-  raised: "#2A2A2A"
-  input: "#262626"
-  input-hover: "#303030"
-  foreground: "#F5F5F5"
-  foreground-reading: "#C4C4C4"
-  foreground-muted: "#B5B5B5"
-  foreground-subtle: "#8F8F8F"
-  outline: "#303030"
-  scrollbar: "#737373"
-  scrollbar-hover: "#929292"
-  scrollbar-pressed: "#B5B5B5"
-  focus: "#7DB4FF"
-  success: "#73D6A1"
-  danger: "#FF7B7B"
+  primary: "#2563EB"
+  primary-hover: "#3B82F6"
+  primary-pressed: "#1D4ED8"
+  primary-foreground: "#FFFFFF"
+  primary-hover-foreground: "#090A0F"
+  background: "#090A0F"
+  surface: "#12141C"
+  surface-hover: "#181B26"
+  stage: "#0D0F17"
+  raised: "#1E2230"
+  raised-hover: "#262B3D"
+  raised-pressed: "#171A24"
+  input: "#171A24"
+  input-hover: "#1F2432"
+  input-active: "#252B3B"
+  foreground: "#F8FAFC"
+  foreground-reading: "#CBD5E1"
+  foreground-muted: "#94A3B8"
+  foreground-subtle: "#64748B"
+  caption: "#94A3B8"
+  metadata: "#94A3B8"
+  outline: "#1E2433"
+  scrollbar: "#64748B"
+  scrollbar-hover: "#94A3B8"
+  scrollbar-pressed: "#CBD5E1"
+  focus: "#60A5FA"
+  success: "#34D399"
+  success-text: "#34D399"
+  danger: "#F87171"
+  danger-text: "#F87171"
+  switch-track: "#262B3D"
+  tabs-track: "rgb(255 255 255 / 5%)"
+  highlight-hover: "color-mix(in srgb, #F8FAFC 5%, transparent)"
+  highlight-pressed: "color-mix(in srgb, #F8FAFC 3%, transparent)"
+  backdrop: "rgb(0 0 0 / 70%)"
   syntax-keyword: "#C4A7E7"
   syntax-string: "#A3D9A5"
   syntax-number: "#F2C078"
   syntax-function: "#8FC7F4"
-  syntax-comment: "#B5B5B5"
+  syntax-comment: "#94A3B8"
+color-modes:
+  light:
+    primary: "#2563EB"
+    primary-hover: "#1D4ED8"
+    primary-pressed: "#1E40AF"
+    primary-foreground: "#FFFFFF"
+    primary-hover-foreground: "#FFFFFF"
+    background: "#F4F7FB"
+    surface: "#FFFFFF"
+    surface-hover: "#F8FAFC"
+    stage: "#EEF2F6"
+    raised: "#E2E8F0"
+    raised-hover: "#CBD5E1"
+    raised-pressed: "#94A3B8"
+    input: "#F1F5F9"
+    input-hover: "#E2E8F0"
+    input-active: "#CBD5E1"
+    foreground: "#0F172A"
+    foreground-reading: "#334155"
+    foreground-muted: "#64748B"
+    foreground-subtle: "#94A3B8"
+    caption: "#334155"
+    metadata: "#334155"
+    outline: "#E2E8F0"
+    scrollbar: "#64748B"
+    scrollbar-hover: "#334155"
+    scrollbar-pressed: "#0F172A"
+    focus: "#2563EB"
+    success: "#059669"
+    success-text: "#334155"
+    danger: "#DC2626"
+    danger-text: "color-mix(in srgb, #DC2626 70%, #0F172A)"
+    switch-track: "#CBD5E1"
+    tabs-track: "#F1F5F9"
+    highlight-hover: "#E2E8F0"
+    highlight-pressed: "#CBD5E1"
+    backdrop: "rgb(15 23 42 / 20%)"
+    syntax-keyword: "#6D28D9"
+    syntax-string: "#065F46"
+    syntax-number: "#92400E"
+    syntax-function: "#075985"
+    syntax-comment: "#475569"
+shadows:
+  dark:
+    popup: "0 8px 24px rgb(0 0 0 / 24%)"
+    notice: "0 12px 32px #0004"
+    toast: "0 15px 40px #0008"
+  light:
+    popup: "0 8px 24px rgb(15 23 42 / 12%)"
+    notice: "0 12px 32px rgb(15 23 42 / 12%)"
+    toast: "0 15px 40px rgb(15 23 42 / 12%)"
 typography:
   display:
     fontFamily: Inter
@@ -112,17 +178,17 @@ scrollbar:
 components:
   button-primary:
     backgroundColor: "{colors.primary}"
-    textColor: "{colors.foreground}"
+    textColor: "{colors.primary-foreground}"
     rounded: "{rounded.pill}"
     height: "{control-sizes.small}"
     padding: 12px
     typography: "{typography.label}"
   button-primary-hover:
     backgroundColor: "{colors.primary-hover}"
-    textColor: "{colors.foreground}"
+    textColor: "{colors.primary-hover-foreground}"
   button-primary-pressed:
     backgroundColor: "{colors.primary-pressed}"
-    textColor: "{colors.foreground}"
+    textColor: "{colors.primary-foreground}"
   button-secondary:
     backgroundColor: "{colors.raised}"
     textColor: "{colors.foreground}"
@@ -150,19 +216,19 @@ components:
     padding: 12px
   caption:
     backgroundColor: "{colors.surface}"
-    textColor: "{colors.foreground-muted}"
+    textColor: "{colors.caption}"
   metadata:
     backgroundColor: "{colors.surface}"
-    textColor: "{colors.foreground-subtle}"
+    textColor: "{colors.metadata}"
   focus-indicator:
     backgroundColor: "{colors.focus}"
     textColor: "{colors.background}"
   status-success:
     backgroundColor: "{colors.surface}"
-    textColor: "{colors.success}"
+    textColor: "{colors.success-text}"
   status-danger:
     backgroundColor: "{colors.surface}"
-    textColor: "{colors.danger}"
+    textColor: "{colors.danger-text}"
 ---
 
 # 共享设计规范
@@ -184,9 +250,9 @@ components:
 
 各文档按职责负责。场景文档可定义用途明确的布局、组件尺寸变体及共享颜色的用途组合，不另设基础颜色、字体或重复定义控件状态；共享设计变化先更新本文件，再在授权范围内同步实现。行为调整进入产品文档，技术调整进入对应工程文档。外部参考与[历史验收记录](docs/engineering/verification-history.md)是证据，不直接覆盖现行规范。
 
-2026-10-14 起，用户授权先在 `/design-spec` 中试验新设计。该页允许使用局部草稿 token 与组件样式，作为上述共享规则的开发预览例外；草稿不代表全站已批准目标，不修改本文件的 YAML 或共享默认样式。当前已在隔离入口实施获批的设计工作台布局与局部视觉变体；获得推广授权后，再单独同步共享规范与实际页面。使用方式和边界见[展示页设计试验区](docs/design/frontend.md#展示页设计试验区)。
+2026-10-14 用户先授权在 `/design-spec` 中试验新设计，随后明确将参考页面的深浅色色盘与模式切换推广至前台、登录页及后台。本次共享目标只更新颜色与模式选择；保持既有字体、字号、圆角、间距、页面布局、组件尺寸和业务交互。工作台的局部密度、圆角与无描边变体继续限于该页，不随色盘推广。使用方式和边界见[展示页设计试验区](docs/design/frontend.md#展示页设计试验区)。
 
-2026-10-14 用户明确的视觉禁则：后续设计禁止常驻浅色描边和装饰分割线，包含表单、卡片以及区域之间的分隔；不得用 inset 阴影、伪元素或环形高光变相恢复。使用底色、间距和字重建立层级，保留按操作需要出现的键盘焦点提示。此轮已在 `/design-spec` 落地，覆盖此前工作台的边框方案；既有业务页面和共享默认实现继续保持，须另获推广授权后调整。
+2026-10-14 用户明确的视觉禁则：后续设计禁止常驻浅色描边和装饰分割线，包含表单、卡片以及区域之间的分隔；不得用 inset 阴影、伪元素或环形高光变相恢复。使用底色、间距和字重建立层级，保留按操作需要出现的键盘焦点提示。该禁则已在 `/design-spec` 落地，覆盖此前工作台的边框方案；这是当时的实施范围。本次授权只推广色盘与模式，既有业务页面的材料结构、边线和分隔保持，不新增描边或装饰分割线，也不把工作台去描边改造顺带推广。
 
 ## 品牌资产
 
@@ -196,48 +262,59 @@ components:
 
 ## Token 与运行时映射
 
-YAML 保留基础值与语义组件引用，不同时保存新旧两套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
+YAML 的 `colors` 保留默认深色基础值，`color-modes.light` 维护相同角色的浅色覆盖；语义组件引用同一角色，不保留旧色盘作为第二套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
 
-| 目标 token        | 运行时对应                        | 同步要求                                                                                             |
-| ----------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `colors.*`        | Tailwind v4 `--color-*`           | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其他颜色同名映射 |
-| `typography.*`    | 字体变量与语义排版 class          | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family      |
-| `rounded.*`       | `--radius-*`                      | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                    |
-| `spacing.*`       | 本地间距变量或等值 Tailwind 间距  | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                   |
-| `control-sizes.*` | 本地组件 size / 触屏目标          | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch          |
-| `motion.*`        | 本地过渡时长、曲线与位移变量      | 按反馈职责选择，不在业务页面新增临时时长                                                             |
-| `cursor.*`        | `public/cursors/` SVG 与 CSS 热点 | 造型资产沿用共享颜色；尺寸、描边、阴影和热点同步，CSS 变量按语义选择资产                             |
-| `scrollbar.*`     | 滚动条轨道、滑块宽度              | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                               |
+| 目标 token                           | 运行时对应                           | 同步要求                                                                                                                             |
+| ------------------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `colors.*` / `color-modes.light.*`   | Tailwind v4 `--color-*`              | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其余角色同名映射，由 `html[data-theme]` 覆盖模式 |
+| `shadows.dark.*` / `shadows.light.*` | `--shadow-popup` / `--shadow-notice` | 保留现有浮层几何尺寸，仅随模式同步颜色与透明度                                                                                       |
+| `typography.*`                       | 字体变量与语义排版 class             | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family                                      |
+| `rounded.*`                          | `--radius-*`                         | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                                                    |
+| `spacing.*`                          | 本地间距变量或等值 Tailwind 间距     | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                                                   |
+| `control-sizes.*`                    | 本地组件 size / 触屏目标             | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch                                          |
+| `motion.*`                           | 本地过渡时长、曲线与位移变量         | 按反馈职责选择，不在业务页面新增临时时长                                                                                             |
+| `cursor.*`                           | `public/cursors/` SVG 与 CSS 热点    | 造型资产沿用共享颜色；尺寸、描边、阴影和热点同步，CSS 变量按语义选择资产                                                             |
+| `scrollbar.*`                        | 滚动条轨道、滑块宽度                 | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                                                               |
 
 映射已在 `app/globals.css` 接入：排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
 
 `--control-form` 的桌面基值为 40px，`--control-compact` 为 36px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
 
+## 深浅模式
+
+全站以 `html` 的 `data-theme="dark"` 或 `data-theme="light"` 为统一主题根，默认深色；`ThemeProvider` 管理显式选择，以站点独立的 `fuxiaochen:theme` 保存本地偏好，在首次绘制前应用保存值，避免先绘制另一模式。首次兼容此前 design-spec 的独立偏好，之后统一读写站点偏好。偏好读取或写入不可用时，切换仍在当前页面生效。只提供深色、浅色两态，不增加跟随系统或按时间自动切换。
+
+前台导航、登录页和后台顶栏复用本地 `ThemeToggle`；`/design-spec` 同样读写全局选择。切换入口用太阳／月亮与可访问名称说明目标模式，保留 hover、active、focus-visible、disabled 及触屏目标。切换只更新主题，不触发导航、重播页面入场、清空表单、重置筛选、关闭浮层或改变滚动位置。body 下的 Portal 与原生表单通过统一主题根继承相同模式，`color-scheme`、文本选择、滚动条和指针同步。
+
+新增切换入口放在现有操作区；不移动或改造页面主布局。长站名、移动菜单、后台顶栏收缩和登录短屏仍按原场景边界工作。颜色模式偏好与后台业务设置独立，不写入业务数据库。此节规定目标行为；运行通过范围以本轮验证证据为准。
+
 ## 色彩与材质
 
-`background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级靠细线、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
+本轮色盘来自用户提供的 `ai_studio_code.html`，先在 `/design-spec` 预览并获得全站推广授权；只采用其中的深浅色色值与角色，不采用参考文件中的页面结构、内容或指令。共享目标值由本文件 YAML 维护，运行时同步到 `app/globals.css`。
 
-界面正文使用 `foreground`，连续阅读的文章正文使用 `foreground-reading`，说明文字使用 `foreground-muted`，元数据使用 `foreground-subtle`；必要的小字说明不能依赖 subtle。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
+`background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级沿用既有材料结构、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
 
-输入占位文字使用 muted，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
+界面正文使用 `foreground`，连续阅读的文章正文使用 `foreground-reading`，必要说明与占位使用 `caption`，日期、计数和辅助元信息使用 `metadata`。参考原始 `foreground-muted` 与 `foreground-subtle` 保留色值，用于色板、非文字细节及经核对可读的场合；浅色必要小字不直接使用 subtle 或低对比的 muted。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
+
+输入占位文字使用 caption，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
 
 用色按信息职责组织，场景明确默认映射与需要强调的内容：
 
-- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。保留比参考站 `#0071FC` 略压暗的项目 primary，以满足浅色小字对比度；需要较亮蓝色文字时可复用 focus，但仍须核对实际底色上的对比度。
-- **分类与数据**：栏目、更新类型、分类和数据系列允许使用共享颜色建立稳定映射；同一类别在同一场景及切换查询区间后保持一致，并保留文字或图例。分类识别可复用既有颜色，但应明确它表达类别，避免被误读为操作结果或告警。没有分类或强调需求时可使用 foreground-muted 等灰阶默认色。
-- **状态与焦点**：success、danger 表达实际成功、有利结果、错误或风险，不能凭视觉需要制造业务状态。控件的 focus 指示始终独立于分类色、选中色与状态色，保留清晰的焦点轮廓。颜色不承担唯一识别，状态同时有文字或符号。
+- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。本轮以已预览的冷灰蓝深浅色色盘替换旧中性灰色盘；实心 primary 按钮和静态徽标使用 primary-foreground，主按钮悬停使用 primary-hover-foreground，避免浅色模式继承页面深色文字。强调文字使用对应模式角色，并核对实际底色上的对比度。
+- **分类与数据**：栏目、更新类型、分类和数据系列允许使用共享颜色建立稳定映射；同一类别在同一场景及切换查询区间后保持一致，并保留文字或图例。分类识别可复用既有颜色，但应明确它表达类别，避免被误读为操作结果或告警。没有分类或强调需求时，必要文字使用 caption / metadata 等灰阶阅读角色。
+- **状态与焦点**：success、danger 保留参考原色用于图标、状态点及已有视觉标记；必要的成功、危险小字分别使用 success-text、danger-text。它们表达实际成功、有利结果、错误或风险，不能凭视觉需要制造业务状态。控件的 focus 指示始终独立于分类色、选中色与状态色，保留清晰的焦点轮廓。颜色不承担唯一识别，状态同时有文字或符号。
 
-场景可以引用共享 token 组合文字、图标、边线、实心或淡彩底色；混合色以共享颜色和表面色为来源，并在场景规范中记录用途与混合方式。用户分类色属于数据标识，可用于局部色点、文字或淡底，不覆盖全局主题变量和控件状态色。确需新增基础颜色或语义角色时，统一在本文件定义并同步运行时，不在页面另建色板。当前局部强调复用既有 token，不新增基础颜色或修改 token 数值。
+场景可以引用共享 token 组合文字、图标、边线、实心或淡彩底色；混合色以共享颜色和表面色为来源，并在场景规范中记录用途与混合方式。用户分类色属于数据标识，可用于局部色点、文字或淡底，不覆盖全局主题变量和控件状态色。确需新增基础颜色或语义角色时，统一在本文件定义并同步运行时，不在页面另建色板。局部强调统一引用当前共享角色，不自行维护深浅两套页面色板。
 
 静态徽标通过文字和颜色表达信息，不自动继承按钮的材质阴影、hover、active、焦点状态或动画。已有日志类型映射与“最新”配色由前台、后台场景维护，适用上述通用规则。
 
-Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴影沿用 `0 1px 3px rgba(0,0,0,.04)` 的轻微尺度，不使用大模糊投影。
+Picker、Dialog、Popover 与 Menu 浮层沿用既有结构，表面、遮罩与投影颜色按主题同步。共享 Picker、Dialog 与 Popover 保留既有轻微外阴影和边缘材质；Menu 与工作台覆盖浮层引用 `--shadow-popup`，反馈浮层引用 `--shadow-notice`，数值按 YAML 的 `shadows` 模式角色同步。遮罩使用 backdrop，切换模式不重建浮层或改变关闭与焦点行为；保留各组件原有投影几何尺度与材料结构。
 
 展示 Card 由 surface 外壳、低对比内边线、轻微顶部高光和更暗的内舞台组成。舞台与外缘采用 card padding，说明区位于下方。后台业务 Card 默认使用 surface 与淡边线，无顶部高光、不套舞台；内部信息和局部标识可按上述职责使用颜色。连续工作区与字段分组的边界见后台场景。
 
 信息链接使用本地 `CardLink`，与 Card 共用 surface 外壳、lg 圆角、低对比内边线和轻微顶部高光；图文直接组合，不强制套展示舞台。整卡保留真实链接语义，不嵌套其他操作。hover 使用 surface-hover，active 由 surface 与 background 各半混合压暗，文字保持 foreground；focus-visible 只增加独立轮廓，不覆盖既定圆角。减少动态效果时取消过渡，尺寸与内边距由场景定义。
 
-次级操作胶囊在 raised 上保留 `0 1px 3px rgba(0,0,0,.04)` 外阴影、`inset 0 1px rgba(255,255,255,.04)` 顶部高光、`inset 0 -1px rgba(0,0,0,.06)` 底部暗线及 `inset 0 0 0 1px rgba(196,196,196,.1)` 边缘环。primary 操作胶囊保留外阴影与顶部高光，使用两层极浅白色内边线定义轮廓。hover 与 active 只改变必要底色，避免缩放导致细线抖动；ghost 无材质阴影。全站不使用大面积模糊阴影、重复光晕或装饰渐变，发光限于明确的效果演示。
+次级操作胶囊在 raised 上保留 `0 1px 3px rgba(0,0,0,.04)` 外阴影、foreground 4% 的顶部内层、`inset 0 -1px rgba(0,0,0,.06)` 底部暗线及 foreground 10% 的边缘环。primary 操作胶囊保留相同几何尺度，顶部内层采用 foreground 4%，两层内边线分别采用 foreground 6% 与 10%；这些颜色都在 sRGB 中与透明色混合，随当前模式变化，不增加边线或改变材料结构。hover 与 active 只改变必要底色，避免缩放导致细线抖动；ghost 无材质阴影。全站不使用大面积模糊阴影、重复光晕或装饰渐变，发光限于明确的效果演示。
 
 ## 排版与间距
 
@@ -255,7 +332,7 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 ## 共用文章正文排版
 
-前台文章正文与后台 Tiptap 正文共用 `app/article-prose.css` 的 `article-prose`，独立于界面 body、文章主标题与工具栏。字体使用共享 sans，普通段落、列表内容与表格数据使用 foreground-reading；标题、粗体、表头与代码文字使用 foreground，引用使用 muted，普通列表序号和圆点使用 subtle。语法高亮继续使用共享 syntax 颜色；任务 checkbox 保持原有状态配色。采用 Hugging Face 的正文与强调层级，配色适配项目中性灰背景，不复制参考站冷灰色。正文在桌面和手机使用同一比例：`1.05rem`、无单位行高 `1.75`，强调字重 600。不修改根字号；字号使用 rem，随内容变化的留白使用 em。
+前台文章正文与后台 Tiptap 正文共用 `app/article-prose.css` 的 `article-prose`，独立于界面 body、文章主标题与工具栏。字体使用共享 sans，普通段落、列表内容与表格数据使用 foreground-reading；标题、粗体、表头与代码文字使用 foreground，引用使用 caption，普通列表序号和圆点使用 metadata。语法高亮继续使用共享 syntax 颜色；任务 checkbox 保持原有状态配色。采用 Hugging Face 的正文与强调层级，配色适配本次共享冷灰蓝深浅色背景。正文在桌面和手机使用同一比例：`1.05rem`、无单位行高 `1.75`，强调字重 600。不修改根字号；字号使用 rem，随内容变化的留白使用 em。
 
 | 正文元素         | 字号     | 无单位行高 | 上／下外距     |
 | ---------------- | -------- | ---------- | -------------- |
@@ -281,9 +358,9 @@ Picker 与 Dialog 浮层依靠表面、边缘环及遮罩建立层次；外阴�
 
 可交互组件按语义覆盖 hover、active、focus-visible、disabled 与 `prefers-reduced-motion`；静态容器无需虚假状态。hover 轻微提亮，active 压暗，键盘焦点保留清晰的 2px focus 轮廓。选中状态不能代替焦点；禁用和加载同时有可读文字或状态说明。交互图标具有可读名称，装饰图形从辅助技术中隐藏。
 
-精细指针且支持 hover、未启用 forced-colors 时，全站使用 Afterglow CSS SVG 指针：28×28px 画布、热点 (5, 4)、圆角斜箭头和柔和阴影。三态使用相同路径、尺寸、foreground 描边和热点，以保持可见外轮廓一致，避免浏览态整块浅色造成视觉偏大；默认 raised 深灰填充，可点击区域 primary 填充，按下使用 primary-pressed，松开恢复操作色、移出恢复所在区域指针。资产颜色对应 YAML 的共享 token；调整主题颜色时同步 `public/cursors/` 资产，不新增独立色值规范。
+精细指针且支持 hover、未启用 forced-colors 时，全站使用 Afterglow CSS SVG 指针：28×28px 画布、热点 (5, 4)、圆角斜箭头和柔和阴影。三态使用相同路径、尺寸、foreground 描边和热点，以保持可见外轮廓一致，避免浏览态整块浅色造成视觉偏大；默认使用当前模式的 raised 填充，可点击区域 primary 填充，按下使用 primary-pressed，松开恢复操作色、移出恢复所在区域指针。深浅模式各有默认、操作、按下三态资产，颜色对应 YAML 的共享 token；切换主题时同步选择 `public/cursors/` 对应资产，不改变箭头路径、尺寸、热点与鼠标语义。
 
-采用 [Recent](https://recent.design/) 的圆润箭头、描边和 CSS 光标方式，按本项目暗色主题与操作语义适配；没有鼠标跟随层、尾迹或循环动画。输入框、Textarea 和 contenteditable 使用 text；禁用控件覆盖原生 disabled、aria-disabled 与 Base UI data-disabled，使用 not-allowed；拖拽、缩放及浏览器文本选择继续使用其语义。粗指针、无 hover、forced-colors 和资产加载失败时使用系统光标，减少动态效果下静态光标不变。焦点、标签与真实点击区域仍由控件提供，颜色不是唯一操作提示。参考多人在线指针、头像与聊天不在本次范围。
+采用 [Recent](https://recent.design/) 的圆润箭头、描边和 CSS 光标方式，按本项目深浅主题与操作语义适配；没有鼠标跟随层、尾迹或循环动画。输入框、Textarea 和 contenteditable 使用 text；禁用控件覆盖原生 disabled、aria-disabled 与 Base UI data-disabled，使用 not-allowed；拖拽、缩放及浏览器文本选择继续使用其语义。粗指针、无 hover、forced-colors 和资产加载失败时使用系统光标，减少动态效果下静态光标不变。焦点、标签与真实点击区域仍由控件提供，颜色不是唯一操作提示。参考多人在线指针、头像与聊天不在本次范围。
 
 时长与曲线选择 motion token：micro 用于微小反馈，quick 用于短状态切换，standard 用于面板或选中状态，expressive 用于展示性微卡位移。展示卡或首页微卡最大上浮 lift-max；后台业务卡、表格行与字段分组不单独入场、上浮或循环。
 
@@ -312,7 +389,7 @@ Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，�
 | Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 40px、窄屏或粗指针至少高 44px；高亮默认灰阶提亮，也可用共享强调色区分当前高亮或选中，保留文字、勾选和独立焦点；附加图标操作桌面 32×32px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件 |
 | InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 32×32px、窄屏或粗指针 44×44px；内部输入保持透明，不重复边框或焦点环，错误标记与输入焦点由完整外框承载，附加按钮只显示自身焦点；点击非按钮附加区可聚焦输入                                |
 | ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
-| Switch                              | 状态与名称由本地组件提供；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                                                                             |
+| Switch                              | 状态与名称由本地组件提供；浅色关闭态滑块用 foreground-reading、开启态保持白色，轨道引用 switch-track / primary；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                       |
 
 Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
 
@@ -327,7 +404,7 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 文章标题的透明、无圆角画布输入属于显式场景例外，详见[后台写作工作区](docs/design/admin.md#文章列表与写作工作区)；其他表单字段沿用上述规则。
 
-语法高亮只作用于代码区：关键字与标签对应 syntax-keyword，字符串对应 syntax-string，数字与字面量对应 syntax-number，函数与类型对应 syntax-function，注释对应 syntax-comment，其他文本用 foreground；不改变代码内容、选区或撤销历史。
+语法高亮按模式选择共享 syntax token；浅色改用能在 surface / input 上阅读的紫、绿、棕与蓝色系，保持原有语法分类与高亮行为。语法高亮只作用于代码区：关键字与标签对应 syntax-keyword，字符串对应 syntax-string，数字与字面量对应 syntax-number，函数与类型对应 syntax-function，注释对应 syntax-comment，其他文本用 foreground；不改变代码内容、选区或撤销历史。
 
 ## 参考基线与项目适配
 
@@ -335,15 +412,15 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 来源：[首页](https://libraries.dev/)、[组件页](https://libraries.dev/beam)、[共享样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/public/assets/site.css)、[首页结构及专属样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/index.html)。记录日期与实际页面数值构成本次基线；上游更新后重新采集，不自动改变本规范。
 
-| 观察                                                           | 项目目标或显式适配                                                        |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件 Inter    | 使用 Inter 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异 |
-| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px | 保留 token 与低对比材质；业务 Card 明确采用独立变体                       |
-| 首页 CTA 32px 胶囊与精密材质层                                 | 保留 small 与材质；primary 略压暗，触屏目标扩大                           |
-| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                    | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                    |
-| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                 | 展示页采用该比例；后台与博客阅读使用各自任务宽度                          |
-| 普通导航链接，当前项局部胶囊                                   | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                              |
-| hover 提亮、微卡约上浮 6px；源码提供多档时长                   | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移    |
+| 观察                                                           | 项目目标或显式适配                                                               |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件 Inter    | 使用 Inter 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异        |
+| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px | 原色值保留为历史参考；当前颜色改用已批准深浅色色盘，现有圆角和业务 Card 变体保留 |
+| 首页 CTA 32px 胶囊与精密材质层                                 | 保留 small 与材质；primary 按当前深浅模式角色，触屏目标保持扩大                  |
+| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                    | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                           |
+| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                 | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                 |
+| 普通导航链接，当前项局部胶囊                                   | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                     |
+| hover 提亮、微卡约上浮 6px；源码提供多档时长                   | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移           |
 
 原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。其他参考不扩展本次视觉目标。
 
@@ -377,3 +454,5 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 2026-10-07 已优化用色规范，区分默认灰阶材质、品牌强调、分类识别和状态反馈。本次仅扩展规范许可，现有页面和 token 数值保持原状；新增可选强调未实施、未运行验收，具体范围见[用色规范优化记录](docs/engineering/verification-history.md#用色规范优化2026-10-07)。
 
 2026-10-09 按用户要求将指针更新为 Recent 风格的 Afterglow CSS SVG 造型，并适配全站操作与编辑语义。当前实现、运行回归及剩余边界见 [Recent 指针适配](docs/engineering/verification-history.md#recent-指针适配2026-10-09)；上表保留 2026-10-06 的历史事实。
+
+2026-10-14 本轮将 `/design-spec` 的深浅色色盘提升为共享目标，并要求前台、登录页、后台与展示页采用同一模式选择。字体、圆角、间距、布局、控件尺寸、既有材料结构与业务交互保持；本轮不重做局部工作台视觉。源码接入与运行验证见[全站深浅色色盘与模式切换](docs/engineering/verification-history.md#全站深浅色色盘与模式切换2026-10-14)，尚未核对的路由与流程不记为通过。

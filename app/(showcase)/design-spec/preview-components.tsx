@@ -9,11 +9,11 @@ import { Select as BaseSelect } from "@base-ui/react/select";
 import type { SelectContent as SharedSelectContent } from "@/components/ui/select";
 
 import { renderPopupMotion } from "@/components/motion/popup-motion";
+import { useTheme } from "@/components/theme/theme-provider";
 import { ComboboxContent as SharedComboboxContent } from "@/components/ui/combobox";
 import { DialogContent as SharedDialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-import { usePreviewTheme } from "./preview-theme";
 import styles from "./preview.module.css";
 
 // 页面侧栏与所有局部浮层共用覆盖式轨道，不影响共享组件的滚动样式。
@@ -32,7 +32,7 @@ export function DialogContent({
   children,
   ...props
 }: ComponentProps<typeof SharedDialogContent>) {
-  const { theme } = usePreviewTheme();
+  const { theme } = useTheme();
   return (
     <SharedDialogContent
       {...props}
@@ -63,7 +63,7 @@ export function SelectContent({
   render,
   ...props
 }: ComponentProps<typeof SharedSelectContent>) {
-  const { theme } = usePreviewTheme();
+  const { theme } = useTheme();
   return (
     <BaseSelect.Portal
       className={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
@@ -129,7 +129,7 @@ export function ComboboxContent({
   className,
   ...props
 }: ComponentProps<typeof SharedComboboxContent>) {
-  const { theme } = usePreviewTheme();
+  const { theme } = useTheme();
   return (
     <SharedComboboxContent
       {...props}

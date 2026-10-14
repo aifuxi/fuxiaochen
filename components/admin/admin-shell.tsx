@@ -22,6 +22,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
@@ -200,6 +201,7 @@ export function AdminShell({
             </Button>
           </div>
           <div className="admin-topbar-actions">
+            <ThemeToggle className="admin-icon-button" />
             <Button
               size="compact"
               variant="ghost"

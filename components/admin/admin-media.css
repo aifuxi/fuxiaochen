@@ -1,6 +1,6 @@
 .admin-media-note {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -16,7 +16,7 @@
   min-width: 0;
 }
 .admin-media-count {
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
   flex-shrink: 0;
@@ -36,7 +36,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   padding: 16px;
   font-size: 13px;
   text-align: center;
@@ -65,7 +65,7 @@
   outline-offset: 2px;
 }
 .admin-media-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   overflow-wrap: anywhere;
 }
 .admin-media-upload-status {
@@ -96,7 +96,7 @@
   gap: 8px 12px;
   padding: 10px 0;
   font-size: 12px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   border-top: 1px solid var(--admin-divider);
 }
 .admin-media-upload-name {
@@ -166,7 +166,7 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font: 12px/1.5 var(--font-mono);
 }
 .admin-media-footer {
@@ -176,20 +176,20 @@
   gap: 4px;
   margin-top: 8px;
   padding-top: 6px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font: 11px/1.5 var(--font-mono);
 }
 .admin-media-delete {
   width: 36px;
   padding: 0;
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .admin-media-empty {
   display: grid;
   justify-items: center;
   text-align: center;
   padding: 48px 20px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   gap: 12px;
 }
 .admin-media-empty h2 {
@@ -235,7 +235,7 @@
   font-size: 12px;
 }
 .admin-media-preview-meta dt {
-  color: var(--color-muted);
+  color: var(--color-caption);
   margin-bottom: 6px;
 }
 .admin-media-preview-meta dd {

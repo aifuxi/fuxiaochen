@@ -7,7 +7,7 @@
 }
 .admin-changelog-filters output {
   margin: 0 0 0 auto;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -76,7 +76,7 @@
   padding: 4px 9px;
   border-radius: 999px;
   background: var(--color-stage);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
   white-space: nowrap;
@@ -85,15 +85,15 @@
   color: var(--color-focus);
 }
 .admin-release-tag.is-security {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .admin-release-tag.is-performance {
-  color: var(--color-success);
+  color: var(--color-success-text);
 }
 .admin-release-changes {
   margin: 12px 0 24px;
   padding: 0 0 0 20px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 14px;
   line-height: 20px;
   list-style: disc;
@@ -102,10 +102,10 @@
   margin-top: 8px;
 }
 .admin-release-changes li::marker {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .admin-release-item time {
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font: 12px/1.5 var(--font-mono, ui-monospace);
 }
 .admin-release-modal {
@@ -123,12 +123,12 @@
   display: grid;
   align-content: start;
   gap: 7px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
 }
 .admin-release-required,
 .admin-release-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 @media (max-width: 600px) {
   .admin-release-status {

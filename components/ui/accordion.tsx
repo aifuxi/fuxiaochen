@@ -32,7 +32,7 @@ export function AccordionPanel({
   return (
     <BaseAccordion.Panel
       className={cn(
-        "ds-accordion-panel overflow-hidden text-sm leading-6 text-[var(--color-muted)]",
+        "ds-accordion-panel overflow-hidden text-sm leading-6 text-[var(--color-caption)]",
         className,
       )}
       {...props}

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { currentSession } from "@/lib/auth";
 import { getPublicSettings } from "@/lib/settings/service";
 
@@ -30,9 +31,12 @@ export default async function LoginPage({
   return (
     <main className="login-page">
       <section data-page-motion className="login-panel" aria-labelledby="login-title">
-        <Link href="/" className="login-brand" aria-label="返回付小晨首页">
-          付小晨
-        </Link>
+        <div className="login-heading-actions">
+          <Link href="/" className="login-brand" aria-label="返回付小晨首页">
+            付小晨
+          </Link>
+          <ThemeToggle />
+        </div>
         <h1 id="login-title">后台登录</h1>
         <LoginForm invalidCredentials={error === "invalid"} />
       </section>

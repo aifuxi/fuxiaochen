@@ -24,6 +24,7 @@
     "db:verify": "tsx scripts/sqlite-database.ts verify",
     "db:startup": "node --conditions=react-server --import tsx scripts/startup-database.ts",
     "typecheck": "tsc --noEmit",
+    "test:theme": "node --import tsx --test tests/theme.test.ts",
     "admin:init": "node --conditions=react-server --import tsx scripts/admin.ts init",
     "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
     "media:cleanup": "node --conditions=react-server --import tsx scripts/media-cleanup.ts",

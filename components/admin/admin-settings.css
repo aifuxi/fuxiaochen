@@ -40,7 +40,7 @@
 }
 .admin-settings-section-heading p {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -58,7 +58,7 @@
 .admin-settings-field label,
 .admin-settings-field-label {
   padding-top: 12px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 14px;
   line-height: 20px;
 }
@@ -93,7 +93,7 @@
 }
 .admin-settings-identity p {
   margin: 4px 0 0;
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font-size: 12px;
   line-height: 18px;
 }
@@ -106,7 +106,7 @@
   overflow: hidden;
   border-radius: 50%;
   background: var(--color-raised);
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .admin-settings-avatar img {
   width: 100%;
@@ -120,7 +120,7 @@
   line-height: 18px;
 }
 .admin-settings-help {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .admin-settings-group-target:focus {
   outline: 2px solid var(--color-focus);
@@ -128,7 +128,7 @@
   border-radius: var(--radius-sm);
 }
 .admin-settings-error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .admin-settings-toggle-list {
   max-width: 864px;
@@ -155,7 +155,7 @@
 .admin-settings-toggle p {
   max-width: 680px;
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -168,7 +168,7 @@
   border: 1px solid var(--color-outline);
   border-radius: var(--radius-form);
   background: var(--color-surface);
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .admin-settings-notice > svg {
   color: var(--color-focus);
@@ -201,22 +201,22 @@
   padding-top: 16px;
   margin-top: 16px;
   border-top: 1px solid var(--admin-divider);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font: 12px/18px var(--font-mono, ui-monospace);
 }
 .admin-settings-status small {
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font: 12px/18px var(--font-sans);
 }
 .admin-settings-ready {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: var(--color-success);
+  color: var(--color-success-text);
 }
 .admin-settings-footnote {
   margin: 16px 0 0;
-  color: var(--color-subtle);
+  color: var(--color-metadata);
   font-size: 12px;
   line-height: 18px;
   overflow-wrap: anywhere;

@@ -5,27 +5,19 @@ import { ArrowUpRight, ChevronRight, Menu, Moon, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 
+import { useTheme } from "@/components/theme/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 import { DialogContent, PreviewScrollbar } from "./preview-components";
-import { PreviewThemeProvider, usePreviewTheme } from "./preview-theme";
 import styles from "./preview.module.css";
 import { WorkbenchDemo } from "./workbench-demos";
 import { WorkbenchFoundations } from "./workbench-foundations";
 import { findSection, resolveSection, sectionGroups, type SectionId } from "./workbench-model";
 
 export default function DesignWorkbench() {
-  return (
-    <PreviewThemeProvider>
-      <DesignWorkbenchContent />
-    </PreviewThemeProvider>
-  );
-}
-
-function DesignWorkbenchContent() {
-  const { theme, setTheme } = usePreviewTheme();
+  const { theme, setTheme } = useTheme();
   const [activeId, setActiveId] = useState<SectionId>("colors");
   const [directoryOpen, setDirectoryOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -116,7 +108,7 @@ function DesignWorkbenchContent() {
           <span className="workbench-brand-description">设计试验区</span>
         </div>
         <div className="workbench-header-actions">
-          <span className="workbench-scope-label">仅本页预览</span>
+          <span className="workbench-scope-label">全站主题</span>
           <Button
             type="button"
             variant="secondary"

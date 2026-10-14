@@ -7,6 +7,7 @@ import { ArrowRight, Check, ChevronDown, Layers3, RotateCcw, Search, X } from "l
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ThinkingOrb } from "thinking-orbs";
 
+import { useTheme } from "@/components/theme/theme-provider";
 import {
   Accordion,
   AccordionHeader,
@@ -51,7 +52,6 @@ import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ComboboxContent, ComboboxList, DialogContent, SelectContent } from "./preview-components";
-import { usePreviewTheme } from "./preview-theme";
 
 const contactTopics = [
   { label: "产品设计", value: "design" },
@@ -439,8 +439,8 @@ function AccordionDemo() {
     ["base-ui", "为什么使用 Base UI？", "它提供可访问的交互行为与键盘支持，视觉由本地组件控制。"],
     [
       "tokens",
-      "本页的 token 会影响其他页面吗？",
-      "试验值只应用于 design-spec 页面和它的浮层。全站共享设计仍以 DESIGN.md 为准。",
+      "工作台的局部变体会影响其他页面吗？",
+      "深浅色色盘与全站共用；工作台的尺寸、布局与无描边变体只作用于本页和它的浮层。",
     ],
     [
       "motion",
@@ -773,7 +773,7 @@ function EffectStage({
   onPause: () => void;
   replay: number;
 }) {
-  const { theme } = usePreviewTheme();
+  const { theme } = useTheme();
   const stageRef = useRef<HTMLDivElement>(null);
   const title = kind === "beam" ? "Border beam" : "Thinking orb";
   useEffect(() => {
@@ -928,6 +928,7 @@ function EffectsDemo({ onNotice }: NoticeProps) {
 }
 
 function CursorDemo({ onNotice }: NoticeProps) {
+  const { theme } = useTheme();
   return (
     <div className="workbench-stack">
       <section className="workbench-sample">
@@ -941,7 +942,12 @@ function CursorDemo({ onNotice }: NoticeProps) {
             <span key={state} className="mr-5 flex items-center gap-3 text-sm">
               {/* 原尺寸 SVG 指针样例也让触屏用户看见造型。 */}
               {/* oxlint-disable-next-line nextjs/no-img-element -- 原尺寸 SVG 指针样例，无需图片优化。 */}
-              <img src={`/cursors/afterglow-${state}.svg`} width={28} height={28} alt="" />
+              <img
+                src={`/cursors/afterglow-${theme === "light" ? "light-" : ""}${state}.svg`}
+                width={28}
+                height={28}
+                alt=""
+              />
               {label}
             </span>
           ))}

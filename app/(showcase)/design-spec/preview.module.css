@@ -1,44 +1,9 @@
 /*
  * 设计试验唯一的样式入口：页面与 Portal 根共用此作用域。
- * 已批准的工作台方案只在这里覆盖变量，不修改 :root、body 或 @theme。
+ * 色盘与模式由全站共享主题提供；本页只覆盖已批准的尺寸和组件变体。
  * 组件试验使用 .scope :global(.ds-组件类)，不要单独声明全局选择器。
  */
 .scope {
-  /* 采用 ai_studio_code.html 的深浅色盘，仅供本页与局部 Portal 预览。 */
-  --color-primary: #2563eb;
-  --color-primary-hover: #3b82f6;
-  --color-primary-pressed: #1d4ed8;
-  --color-primary-foreground: #ffffff;
-  --color-primary-hover-foreground: var(--color-background);
-  --color-background: #090a0f;
-  --color-surface: #12141c;
-  --color-surface-hover: #181b26;
-  --color-stage: #0d0f17;
-  --color-raised: #1e2230;
-  --color-raised-hover: #262b3d;
-  --color-raised-pressed: #171a24;
-  --color-input: #171a24;
-  --color-input-hover: #1f2432;
-  --color-input-active: #252b3b;
-  --color-foreground: #f8fafc;
-  --color-foreground-reading: #cbd5e1;
-  --color-muted: #94a3b8;
-  --color-caption: var(--color-muted);
-  --color-subtle: #64748b;
-  --color-focus: #60a5fa;
-  --color-success: #34d399;
-  --color-success-text: var(--color-success);
-  --color-danger: #f87171;
-  --color-outline: #1e2433;
-  --color-switch-track: #262b3d;
-  --color-tabs-track: rgb(255 255 255 / 5%);
-  --color-backdrop: rgb(0 0 0 / 70%);
-  --shadow-popup: 0 8px 24px rgb(0 0 0 / 24%);
-  --shadow-notice: 0 12px 32px #0004;
-  /* 滚动条沿用现有三态，颜色取自同一套冷灰层次。 */
-  --color-scrollbar: var(--color-subtle);
-  --color-scrollbar-hover: var(--color-muted);
-  --color-scrollbar-pressed: var(--color-foreground-reading);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-form: 12px;
@@ -67,45 +32,9 @@
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
   color: var(--color-foreground);
-  color-scheme: dark;
+  color-scheme: inherit;
   accent-color: var(--color-primary);
   caret-color: var(--color-focus);
-}
-
-.scope.light {
-  color-scheme: light;
-  --color-background: #f4f7fb;
-  --color-surface: #ffffff;
-  --color-surface-hover: #f8fafc;
-  --color-stage: #eef2f6;
-  --color-raised: #e2e8f0;
-  --color-raised-hover: #cbd5e1;
-  --color-raised-pressed: #94a3b8;
-  --color-input: #f1f5f9;
-  --color-input-hover: #e2e8f0;
-  --color-input-active: #cbd5e1;
-  --color-foreground: #0f172a;
-  --color-foreground-reading: #334155;
-  --color-muted: #64748b;
-  --color-subtle: #94a3b8;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-pressed: #1e40af;
-  --color-primary-hover-foreground: var(--color-primary-foreground);
-  --color-focus: #2563eb;
-  --color-success: #059669;
-  --color-danger: #dc2626;
-  --color-outline: #e2e8f0;
-  --color-switch-track: #cbd5e1;
-  --color-tabs-track: #f1f5f9;
-  /* 保留参考原色值；必要小字用阅读色，成功仍保留绿色图标。 */
-  --color-caption: var(--color-foreground-reading);
-  --color-success-text: var(--color-foreground-reading);
-  --color-scrollbar: var(--color-muted);
-  --color-scrollbar-hover: var(--color-foreground-reading);
-  --color-scrollbar-pressed: var(--color-foreground);
-  --color-backdrop: rgb(15 23 42 / 20%);
-  --shadow-popup: 0 8px 24px rgb(15 23 42 / 12%);
-  --shadow-notice: 0 12px 32px rgb(15 23 42 / 12%);
 }
 
 .scope ::selection {

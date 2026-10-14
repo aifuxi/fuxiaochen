@@ -30,7 +30,7 @@ export function ComboboxInput({ className, ...props }: ComponentProps<typeof Bas
   return (
     <BaseCombobox.Input
       className={cn(
-        "ds-combobox-input h-full min-w-0 flex-1 bg-transparent px-3 text-sm leading-5 text-[var(--color-foreground)] outline-none placeholder:text-[var(--color-subtle)]",
+        "ds-combobox-input h-full min-w-0 flex-1 bg-transparent px-3 text-sm leading-5 text-[var(--color-foreground)] outline-none placeholder:text-[var(--color-caption)]",
         className,
       )}
       {...props}
@@ -92,7 +92,7 @@ export function ComboboxContent({
           render={render ?? renderPopupMotion}
           {...props}
         >
-          <BaseCombobox.Empty className="px-3 py-4 text-center text-xs text-[var(--color-muted)]">
+          <BaseCombobox.Empty className="px-3 py-4 text-center text-xs text-[var(--color-caption)]">
             {emptyText}
           </BaseCombobox.Empty>
           {children}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -25,20 +26,24 @@ export function SiteHeader({ title }: { title: string }) {
   const header = useRef<HTMLElement>(null);
   const nav = useRef<HTMLElement>(null);
   const brand = useRef<HTMLAnchorElement>(null);
+  const actions = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState(true);
   const [open, setOpen] = useState(false);
   useLayoutEffect(() => {
     const measure = () => {
-      if (header.current && nav.current && brand.current) {
+      if (header.current && nav.current && brand.current && actions.current) {
+        // 始终预留主题按钮和菜单按钮的宽度，避免折叠后测量阈值变化。
+        const themeWidth = actions.current.firstElementChild?.getBoundingClientRect().width ?? 44;
+        const actionsWidth = themeWidth + 44 + 8;
         const nextCollapsed =
-          nav.current.offsetWidth + 2 * Math.max(brand.current.offsetWidth, 44) + 64 >
+          nav.current.offsetWidth + 2 * Math.max(brand.current.offsetWidth, actionsWidth) + 64 >
           header.current.clientWidth;
         setCollapsed(nextCollapsed);
         if (!nextCollapsed) setOpen(false);
       }
     };
     const observer = new ResizeObserver(measure);
-    for (const element of [header.current, nav.current, brand.current])
+    for (const element of [header.current, nav.current, brand.current, actions.current])
       if (element) observer.observe(element);
     measure();
     return () => observer.disconnect();
@@ -70,34 +75,37 @@ export function SiteHeader({ title }: { title: string }) {
       >
         {items()}
       </nav>
-      <Dialog open={open && collapsed} onOpenChange={setOpen}>
-        {collapsed && (
-          <DialogTrigger
-            render={
-              <Button variant="ghost" aria-label="打开导航菜单" className="site-menu-button" />
+      <div className="site-header-actions" ref={actions}>
+        <ThemeToggle />
+        <Dialog open={open && collapsed} onOpenChange={setOpen}>
+          {collapsed && (
+            <DialogTrigger
+              render={
+                <Button variant="ghost" aria-label="打开导航菜单" className="site-menu-button" />
+              }
+            >
+              <Menu size={20} />
+            </DialogTrigger>
+          )}
+          <DialogContent
+            className="site-mobile-menu"
+            finalFocus={() =>
+              collapsed
+                ? true
+                : (nav.current?.querySelector<HTMLAnchorElement>('[aria-current="page"]') ??
+                  brand.current)
             }
           >
-            <Menu size={20} />
-          </DialogTrigger>
-        )}
-        <DialogContent
-          className="site-mobile-menu"
-          finalFocus={() =>
-            collapsed
-              ? true
-              : (nav.current?.querySelector<HTMLAnchorElement>('[aria-current="page"]') ??
-                brand.current)
-          }
-        >
-          <div className="site-menu-heading">
-            <DialogTitle>导航</DialogTitle>
-            <Button variant="ghost" aria-label="关闭导航菜单" onClick={() => setOpen(false)}>
-              <X size={20} />
-            </Button>
-          </div>
-          <nav aria-label="主导航">{items(true)}</nav>
-        </DialogContent>
-      </Dialog>
+            <div className="site-menu-heading">
+              <DialogTitle>导航</DialogTitle>
+              <Button variant="ghost" aria-label="关闭导航菜单" onClick={() => setOpen(false)}>
+                <X size={20} />
+              </Button>
+            </div>
+            <nav aria-label="主导航">{items(true)}</nav>
+          </DialogContent>
+        </Dialog>
+      </div>
     </header>
   );
 }

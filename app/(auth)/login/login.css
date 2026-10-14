@@ -13,12 +13,19 @@
   min-width: 0;
 }
 
+.login-heading-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: 24px;
+}
+
 .login-brand {
   display: inline-flex;
   min-height: var(--control-default);
   align-items: center;
-  margin-bottom: 24px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 14px;
   font-weight: 500;
   line-height: 1.5;
@@ -72,7 +79,7 @@
 .login-error,
 .login-field-error {
   margin: 0;
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   font-size: 13px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -102,7 +109,7 @@
 
 .login-hint {
   margin: 0;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 13px;
   line-height: 1.6;
 }

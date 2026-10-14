@@ -3,10 +3,9 @@
 import { BookOpen, Check, Copy, ExternalLink, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { useTheme } from "@/components/theme/theme-provider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-import { usePreviewTheme } from "./preview-theme";
 
 type FoundationsProps = {
   sectionId: string;
@@ -59,7 +58,7 @@ function readColor(element: HTMLElement, token: string) {
 }
 
 function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
-  const { theme } = usePreviewTheme();
+  const { theme } = useTheme();
   const paletteRef = useRef<HTMLDivElement>(null);
   const [values, setValues] = useState<Record<string, string>>({});
 
@@ -396,14 +395,13 @@ function Guidelines() {
           设计试验区
         </h2>
         <p className="workbench-note">
-          这里用来查看和试用设计规则。当前视觉只作用于 design-spec
-          页面及其弹窗、选择菜单，其他页面继续使用共享设计系统。
+          这里用来查看和试用设计规则。深浅色色盘和模式选择已与全站共用；工作台的尺寸、布局与无描边变体继续只作用于本页及其浮层。
         </p>
         <p className="workbench-note">
-          从目录选择一个条目，先操作样本，再检查状态与使用规则。切换条目后，组件回到初始状态；切换深浅模式保留当前条目与输入，并记住本页的模式选择。
+          从目录选择一个条目，先操作样本，再检查状态与使用规则。切换条目后，组件回到初始状态；切换深浅模式保留当前条目与输入，并记住全站的模式选择。
         </p>
         <p className="workbench-rule">
-          本页为开发环境预览。方案确认后，再按授权范围推广到实际页面。
+          本页为开发环境预览。布局与组件变体按授权范围单独推广，色值与全站共享主题同步。
         </p>
       </section>
       <section className="workbench-sample space-y-5" aria-labelledby="principles-title">
@@ -446,7 +444,8 @@ function Guidelines() {
             ["docs/design/frontend.md", "前台场景与试验区边界"],
             ["app/globals.css", "全站主题与共享默认样式"],
             ["components/ui/*", "本地组件与 Base UI 交互语义"],
-            ["design-spec/preview.module.css", "当前试验区的局部视觉"],
+            ["design-spec/preview.module.css", "当前试验区的局部尺寸与组件变体"],
+            ["components/theme/*", "全站主题偏好与切换入口"],
             ["ai_studio_code.html", "本页深浅色色盘的参考"],
           ].map(([path, role]) => (
             <div
