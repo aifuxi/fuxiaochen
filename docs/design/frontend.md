@@ -209,7 +209,9 @@
 
 基础色板按用途分组，色块、文案与复制读取实际局部 CSS token；复制失败给出文字反馈。排版、圆角、间距与密度均有对应样本。静态状态与可操作样本明确标注。字段标签、控件与错误说明之间统一留 8px，使用布局 gap，隐藏表单字段不参与间距计算。
 
-Button、Card、Tabs、Accordion、Dialog、Switch、Select、Combobox、InputGroup、ColorInput 等继续使用本地共享组件，外观由本页覆盖。Tabs 保留禁用项和键盘切换；弹窗保留 Escape、关闭与回焦；选择器可选择，Combobox 可搜索、清空与展示无匹配状态。通知开关只控制本地文字反馈。
+Button、Card、Tabs、Accordion、Dialog、Switch、Select、Combobox、InputGroup、ColorInput 等继续复用本地共享组件或其 Base UI 基础部件，外观由本页覆盖。Tabs 保留禁用项和键盘切换；弹窗保留 Escape、关闭与回焦；选择器可选择，Combobox 可搜索、清空与展示无匹配状态。通知开关只控制本地文字反馈。
+
+Select／Combobox 下拉列表、普通弹窗和移动目录弹窗统一使用本页 Base UI ScrollArea 包装，与桌面目录共用覆盖式滚动条。下拉列表最高为 240px 与浮层可用高度的较小值，内容内边距 4px；列表和 Viewport 组合成同一个 DOM 节点，保留键盘导航时选项自动滚入视口。筛选缩短后同步调整高度并隐藏不必要的滑块；无匹配提示的 live region 始终保留。弹窗内边距 24px，视口最高为 `100dvh - 40px`，内容较少时自然收缩，超出时内部滚动；标题、关闭按钮和操作区随内容一起滚动。主页面与多行文本仍使用自身原生滚动，不扩展到其他页面。
 
 联系表单明确标出必填／选填，沿用原生必填校验；提交只显示本地成功反馈，不写入业务数据。搜索演示支持 Enter、搜索和清空，清空后回焦输入。错误恢复演示继续提供「显示错误」「禁用控件」两个独立开关，覆盖 Input、Textarea、Select、InputGroup、Combobox 和 ColorInput，错误文字与 ARIA 属性同步。
 

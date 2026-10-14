@@ -60,6 +60,85 @@
   color: var(--color-primary-foreground);
 }
 
+/* 本页与 Portal 共用覆盖式滚动条，轨道不占宽、不绘制装饰边线。 */
+.scope .scrollArea {
+  overflow: hidden;
+}
+
+.scope .scrollViewport {
+  overscroll-behavior: contain;
+}
+
+.scope .scrollViewport:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+
+.scope .scrollbar {
+  display: flex;
+  justify-content: center;
+  width: var(--scrollbar-track-width);
+  margin-block: 4px;
+  padding-inline: calc((var(--scrollbar-track-width) - var(--scrollbar-thumb-width)) / 2);
+  opacity: 0;
+  transition: opacity var(--motion-quick) var(--motion-ease);
+}
+
+.scope .scrollbar:is([data-hovering], [data-scrolling]),
+.scope .scrollArea:focus-within .scrollbar {
+  opacity: 1;
+}
+
+.scope .scrollThumb {
+  width: 100%;
+  /* 高度与位移都由 Base UI 计算，矮浮层不额外扩大滑块。 */
+  border-radius: var(--radius-pill);
+  background: var(--color-scrollbar);
+  transition: background-color var(--motion-quick) var(--motion-ease);
+}
+
+.scope .scrollThumb:hover {
+  background: var(--color-scrollbar-hover);
+}
+
+.scope .scrollThumb:active {
+  background: var(--color-scrollbar-pressed);
+}
+
+.scope .pickerViewport {
+  max-height: min(240px, var(--available-height));
+}
+
+.scope .pickerContent {
+  padding: 4px;
+}
+
+/* 保留空结果播报节点；有选项时只清除空节点的留白，不隐藏 live region。 */
+.scope .comboboxPopup > [role="status"]:empty,
+.scope .pickerViewport[data-empty] .pickerContent {
+  padding: 0;
+}
+
+.scope .scrollDialog {
+  overflow: hidden;
+  padding: 0;
+}
+
+.scope .dialogViewport {
+  max-height: calc(100dvh - 40px);
+}
+
+.scope .dialogContent {
+  padding: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scope .scrollbar,
+  .scope .scrollThumb {
+    transition: none;
+  }
+}
+
 /* 用户明确禁止常驻描边；表面与留白建立层级，不能用内阴影变相画线。 */
 .scope :global(.ds-card) {
   border: 0;

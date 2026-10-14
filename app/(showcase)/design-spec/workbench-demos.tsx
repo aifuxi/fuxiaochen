@@ -23,7 +23,6 @@ import {
   ComboboxInput,
   ComboboxInputGroup,
   ComboboxItem,
-  ComboboxList,
   ComboboxTrigger,
 } from "@/components/ui/combobox";
 import {
@@ -51,7 +50,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-import { ComboboxContent, DialogContent, SelectContent } from "./preview-components";
+import { ComboboxContent, ComboboxList, DialogContent, SelectContent } from "./preview-components";
 
 const contactTopics = [
   { label: "产品设计", value: "design" },
@@ -142,7 +141,7 @@ function TechnologyCombobox({
           <ComboboxTrigger aria-label={`展开${label}`} />
         </ComboboxInputGroup>
         <ComboboxContent>
-          <ComboboxList className="max-h-60 overflow-y-auto p-1">
+          <ComboboxList>
             {(item: string) => (
               <ComboboxItem key={item} value={item}>
                 {item}
@@ -1149,7 +1148,7 @@ function ErrorStatePreview() {
               <ComboboxTrigger aria-label="展开状态演示技术" />
             </ComboboxInputGroup>
             <ComboboxContent>
-              <ComboboxList className="max-h-60 overflow-y-auto p-1">
+              <ComboboxList>
                 {(item: string) => (
                   <ComboboxItem key={item} value={item}>
                     {item}

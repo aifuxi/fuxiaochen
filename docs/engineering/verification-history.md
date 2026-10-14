@@ -803,3 +803,13 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：高1100px视口中内容不溢出，Scrollbar 自动卸载且视口 tabIndex=-1；恢复普通高度后重新出现。视口使用带名称的 section，键盘聚焦按需显示2px轮廓。390×844下固定侧栏隐藏，目录 Dialog 打开、选择输入后关闭、Escape取消并回焦目录按钮正常；无横向溢出。临时视口已恢复，最终保留颜色页。
 - 检查与边界：TypeScript无增量、页面oxlint、改动文件oxfmt、git diff --check通过，控制台未记录到error。只修改本路由与对应场景／验证文档；隔离与减少动态效果为源码核对。未执行轨道空白点击、真实触屏、跨浏览器、屏幕阅读器、生产构建或其他业务页面运行回归。
 - 证据：本机可视化 design-spec-audit/ 的 sidebar-scroll-area-desktop.png 与 sidebar-scroll-area-verification.json，桌面截图已实际查看；接口按[官方 Scroll Area 文档](https://base-ui.com/react/components/scroll-area)及已安装类型核对。
+
+## 工作台下拉列表与弹窗 ScrollArea（2026-10-14）
+
+- 已实现：Select、Combobox 列表与普通／移动目录弹窗采用本页 ScrollArea 包装，和侧栏共用 CSS Module 滚动样式及 PreviewScrollbar。列表与 Viewport 合并 DOM，Content 观察筛选高度；下拉最高为 240px 与可用空间的较小值，弹窗最高为 `100dvh - 40px`。保留 4px 列表留白、24px 弹窗留白、无描边表面及原有关闭／选择语义；未新增依赖或改动共享组件。
+- 已修正并复验：Combobox 的常驻空结果播报节点有选项时不再留下32px空白，节点仍保留；空结果仍显示文字。滑块高度交由 Base UI 计算，取消原侧栏的32px最小值，避免极矮弹窗中滑块位移与高度不匹配。
+- 运行通过：复用 localhost:3000，1225×953 下 Combobox 的8项列表高240px、内容328px，轨道10px覆盖且无横向溢出。方向键滚到末项并 Enter 选中 Python；筛选 React 后高48px且滑块消失，无匹配状态提示高48px、列表高0，清空关键词后恢复240px和滑块。滚轮滚至88px，拖动滑块回到0；点击 React 选中后清空，输入值为空并回焦。普通 Select 三项自然高128px，无滑块；End／Home 和 Enter 选择正常。在1225×220下重开时最高79px、已选末项自动滚入视口，浮层保持在可用空间内。
+- 运行通过：普通弹窗在1225×953下自然高304px，不出现滑块，Escape关闭后回焦打开按钮。在1225×220下视口180px、内容304px，初始焦点为关闭按钮；Tab能滚到备注输入及底部操作，填写后完成显示本地成功反馈并回焦。390×844移动目录视口804px、内容1134px，End滚至330px末端，选择原则与来源后关闭并切换内容；重新打开后Escape关闭并回焦目录按钮。390×200下视口160px、内容1134px，滚到974px末端时约21.45px滑块仍在152px轨道内。上述浮层均无横向溢出。
+- 运行通过：合并样式后桌面侧栏仍宽200px、导航168px。控制台未记录到error，临时视口已恢复，演示值随切换条目清除，最终保留选择页。截图已实际查看。
+- 检查与边界：TypeScript无增量、路由oxlint、改动文件oxfmt和git diff --check通过。仅本路由实现及对应场景／验证文档变化；跨页隔离、减少动态效果和其余共享样本消费者为源码／差异核对。未重复表单提交、生产构建、真实触屏、跨浏览器或屏幕阅读器运行验证；不将live region源码保留视为实际读屏验证。
+- 证据：本机可视化 design-spec-audit/ 的 scroll-area-picker-desktop.png、scroll-area-directory-mobile.png 与 overlay-scroll-area-verification.json。接口按 Base UI 官方 Scroll Area、Select、Combobox、Dialog 文档及已安装1.9.0类型／实现核对。

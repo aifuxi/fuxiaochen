@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-import { DialogContent } from "./preview-components";
+import { DialogContent, PreviewScrollbar } from "./preview-components";
 import styles from "./preview.module.css";
 import { WorkbenchDemo } from "./workbench-demos";
 import { WorkbenchFoundations } from "./workbench-foundations";
@@ -110,19 +110,17 @@ export default function DesignWorkbench() {
       </header>
 
       <aside className="workbench-sidebar">
-        <ScrollArea.Root className="workbench-sidebar-scroll">
+        <ScrollArea.Root className={`${styles.scrollArea} workbench-sidebar-scroll`}>
           <ScrollArea.Viewport
             render={<section />}
-            className="workbench-sidebar-viewport"
+            className={`${styles.scrollViewport} workbench-sidebar-viewport`}
             aria-label="可滚动的设计规范目录"
           >
             <ScrollArea.Content className="workbench-sidebar-content">
               {directory}
             </ScrollArea.Content>
           </ScrollArea.Viewport>
-          <ScrollArea.Scrollbar className="workbench-sidebar-scrollbar" orientation="vertical">
-            <ScrollArea.Thumb className="workbench-sidebar-thumb" />
-          </ScrollArea.Scrollbar>
+          <PreviewScrollbar />
         </ScrollArea.Root>
       </aside>
 
@@ -146,7 +144,6 @@ export default function DesignWorkbench() {
             {section.label}
           </span>
           <DialogContent
-            className="max-h-[calc(100dvh-40px)] overflow-y-auto"
             finalFocus={() =>
               navigationPending.current ? mainRef.current : directoryButtonRef.current
             }
