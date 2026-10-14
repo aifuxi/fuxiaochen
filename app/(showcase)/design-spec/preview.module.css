@@ -19,8 +19,6 @@
   --color-foreground-reading: #c4c4c4;
   --color-muted: #b5b5b5;
   --color-subtle: #8f8f8f;
-  --color-outline: #303030;
-  --color-field-outline: #7a7a7a;
   --color-focus: #7db4ff;
   --color-success: #73d6a1;
   --color-danger: #ff7b7b;
@@ -61,9 +59,9 @@
   color: var(--color-primary-foreground);
 }
 
-/* 平面材质由单一边界区分层级，移除共享展示组件的多层内高光。 */
+/* 用户明确禁止常驻描边；表面与留白建立层级，不能用内阴影变相画线。 */
 .scope :global(.ds-card) {
-  border: 1px solid var(--color-outline);
+  border: 0;
   box-shadow: none;
 }
 
@@ -95,14 +93,12 @@
   outline-offset: 2px;
 }
 
-/* 组合输入的边框只属于外框；内部输入继续透明，避免出现双层描边。 */
+/* 输入和组合输入只保留填充表面，覆盖共享 focus / error 的内描边。 */
 .scope :global(:is(.ds-input, .ds-input-group, .ds-color-input):not(.ds-input-group-control)) {
-  border: 1px solid var(--color-field-outline);
+  border: 0;
   background: var(--color-input);
   box-shadow: none;
-  transition:
-    background-color var(--motion-quick) var(--motion-ease),
-    border-color var(--motion-quick) var(--motion-ease);
+  transition: background-color var(--motion-quick) var(--motion-ease);
 }
 
 .scope
@@ -180,8 +176,8 @@
         )
       )
   ) {
-  border-color: var(--color-danger);
   background: var(--color-input);
+  box-shadow: none;
 }
 
 .scope :global(.ds-input-group > .ds-input-group-control),
@@ -255,12 +251,5 @@
   .scope :global(.ds-picker-action) {
     min-width: var(--control-touch);
     min-height: var(--control-touch);
-  }
-}
-
-@media (forced-colors: active) {
-  .scope :global(:is(.ds-input, .ds-input-group, .ds-color-input):not(.ds-input-group-control)),
-  .scope :global(.ds-card) {
-    border-color: CanvasText;
   }
 }

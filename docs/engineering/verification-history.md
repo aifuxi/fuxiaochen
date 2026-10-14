@@ -762,3 +762,12 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 静态检查：全仓 TypeScript（无增量）、本路由 oxlint、改动文件 oxfmt、`git diff --check` 通过；CSS 编译产物核对伪元素及作用域，未生成裸全局覆盖。完成运行检查后控制台没有记录到 error。
 - 证据：本机可视化目录 `design-spec-audit/` 保存 `workbench-desktop.png`、`workbench-mobile.png`、`workbench-home-before.png` / `workbench-home-after.png`、`workbench-login-before.png` / `workbench-login-after.png`。截图只作为视觉观察，隔离结论来自同状态 computed style 对照，不宣称全部截图逐像素相等。
 - 未验证／不适用：没有重新运行生产构建、后台业务流程、真实触屏、粗指针、跨浏览器或屏幕阅读器；系统减少动态效果、forced-colors、隐藏标签页生命周期为源码核对。本轮没有推广共享主题、改动业务行为、增加依赖或写入业务数据。
+
+## 工作台去除描边与分割线（2026-10-14）
+
+- 已实现：按用户反馈，移除 `/design-spec` 表单、卡片、色板、标签与通知的常驻描边，以及顶栏、侧栏、内容分组、说明和页脚的装饰分割线。共享内阴影在局部作用域内覆盖为 none，不用伪元素或高光替代。删除局部边框 token 和对应两个色板样本；结构、字体、圆角与填充底色沿用工作台方案。错误通过文字和 ARIA 表达，键盘焦点轮廓保留。
+- 运行通过：复用已有 localhost:3000，通过内置浏览器检查 1225×953 桌面和 390×844 窄屏。输入页九个控件／组合外框 computed border 均为 0px、box-shadow 为 none；顶栏、侧栏、说明与页脚均无边框和阴影。桌面普通输入 40px、紧凑控件 36px，窄屏普通输入 44px；两种尺寸均无横向溢出，截图已实际查看。
+- 运行通过：文本输入后清空；Shift+Tab 聚焦错误输入时，仍有 2px 蓝色 focus-visible 轮廓，边框为 0px。错误演示六类控件均保留 aria-invalid 和描述引用、无边框和阴影；禁用开关作用于全部六类，恢复并关闭错误后 disabled／invalid 均清除。Select 实际选择「前端开发」后显示新值；Dialog 输入无边框和阴影，Escape 关闭后回到打开按钮，弹窗本身只有柔和外投影。完成检查后控制台没有记录到 error。
+- 隔离与规范：源码及差异核对确认仅本路由样式与样本发生变化，未修改共享 token、app/globals.css、components/ui 或业务页面。DESIGN.md 记录用户长期视觉禁则，frontend.md 同步本页变体；既有业务页面等待单独推广授权。普通组件以外的独立 Border beam 效果演示保持原有按需播放行为。
+- 静态检查：TypeScript 无增量检查、本路由 oxlint、改动文件 oxfmt 与 git diff --check 通过。未新增依赖、交互逻辑或业务写入。
+- 证据与边界：本机可视化目录 design-spec-audit/ 保存 borderless-inputs-desktop.png、borderless-inputs-mobile.png 与 borderless-verification.json。其他基础样本、Accordion 分隔、全部浮层样式覆盖和跨页隔离本轮仅源码核对；未重复首页／登录运行对照、全量交互、生产构建、真实触屏、跨浏览器、系统减少动态效果、forced-colors 或屏幕阅读器验证。浏览器临时视口已恢复，页面保留在输入样本。

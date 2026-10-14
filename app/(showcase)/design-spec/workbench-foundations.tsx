@@ -47,14 +47,6 @@ const paletteGroups = [
       { token: "danger", label: "错误状态", usage: "错误信息与无效字段" },
     ],
   },
-  {
-    title: "边界",
-    description: "装饰分隔与可操作控件的边缘使用不同强度。",
-    colors: [
-      { token: "outline", label: "内容分隔", usage: "分组与内容区域的细分隔线" },
-      { token: "field-outline", label: "表单边界", usage: "输入框与组合控件的完整轮廓" },
-    ],
-  },
 ] as const;
 
 function readColor(element: HTMLElement, token: string) {
@@ -250,7 +242,7 @@ function TypographyFoundations() {
         英文使用 Inter，中文使用系统字体。工作台以 14px 正文为基础，用字号、字重与间距建立层级。
       </p>
       <section className="workbench-sample" aria-label="工作台排版阶梯">
-        <div className="divide-y divide-[var(--color-outline)]">
+        <div className="space-y-2">
           {typeSamples.map(({ name, spec, text, className }) => (
             <div
               key={name}
@@ -304,7 +296,7 @@ function SpacingFoundations() {
           ].map(([value, label, token]) => (
             <div key={token} className="space-y-3">
               <div
-                className="flex h-24 items-center justify-center border border-[var(--color-field-outline)] bg-[var(--color-raised)] font-mono text-sm"
+                className="flex h-24 items-center justify-center bg-[var(--color-raised)] font-mono text-sm"
                 style={{ borderRadius: `var(${token})` }}
               >
                 {value}
@@ -354,7 +346,7 @@ function SpacingFoundations() {
             <div key={value} className="space-y-3">
               <div className="flex h-11 items-center">
                 <div
-                  className="flex w-full items-center rounded-[var(--radius-form)] border border-[var(--color-field-outline)] bg-[var(--color-input)] px-3 font-mono text-xs"
+                  className="flex w-full items-center rounded-[var(--radius-form)] bg-[var(--color-input)] px-3 font-mono text-xs"
                   style={{ height: value }}
                 >
                   {value}px
@@ -398,7 +390,7 @@ function Guidelines() {
           {[
             [
               "表面保持安静",
-              "以灰阶表面、细分隔和留白建立层级。重点放在内容与当前操作，普通组件使用平实的不透明材质。",
+              "以灰阶表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
             ],
             [
               "每次操作都有回应",
@@ -424,7 +416,7 @@ function Guidelines() {
         <h2 id="sources-title" className="text-[18px] leading-[26px] font-semibold">
           规范与组件来源
         </h2>
-        <dl className="divide-y divide-[var(--color-outline)]">
+        <dl className="space-y-2">
           {[
             ["DESIGN.md", "共享设计目标与 token"],
             ["docs/design/frontend.md", "前台场景与试验区边界"],

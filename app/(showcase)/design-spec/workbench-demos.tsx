@@ -275,7 +275,7 @@ function InputsDemo({ onNotice }: NoticeProps) {
       <DensityDemo onNotice={onNotice} />
       <Rule>
         字段保留可见标签与 12px 圆角；输入高度桌面 40px，紧凑工具栏 36px，触屏
-        44px。错误文字和边框不替代键盘焦点。
+        44px。用填充底色区分输入区域，错误通过文字说明，键盘焦点按需显示。
       </Rule>
     </div>
   );
@@ -437,7 +437,7 @@ function AccordionDemo() {
   return (
     <div className="workbench-stack">
       <section className="workbench-sample">
-        <Accordion defaultValue={["base-ui"]} className="divide-y divide-[var(--color-outline)]">
+        <Accordion defaultValue={["base-ui"]}>
           {items.map(([value, title, content]) => (
             <AccordionItem key={value} value={value}>
               <AccordionHeader>
@@ -576,7 +576,7 @@ function ContactDemo({ onNotice }: NoticeProps) {
           <Field id="contact-message" label="留言（必填）">
             <Textarea id="contact-message" name="message" placeholder="写下你的想法" required />
           </Field>
-          <div className="flex flex-wrap items-center justify-between gap-5 border-t border-[var(--color-outline)] pt-5">
+          <div className="flex flex-wrap items-center justify-between gap-5 pt-5">
             <div className="flex items-center gap-3">
               <Switch id="contact-updates" name="updates" touchTarget defaultChecked />
               <label htmlFor="contact-updates" className="cursor-[var(--cursor-action)] text-sm">
@@ -693,9 +693,7 @@ function InputGroupDemo({ onNotice }: NoticeProps) {
           </Field>
         </div>
       </section>
-      <Rule>
-        图标、输入与操作共享一个完整外框。清空后焦点回到输入框；附加按钮有独立焦点，内部输入不重复描边。
-      </Rule>
+      <Rule>图标、输入与操作共享一块填充表面。清空后焦点回到输入框；附加按钮有独立焦点。</Rule>
     </div>
   );
 }
@@ -1162,8 +1160,8 @@ function ErrorStatePreview() {
           {errorMessage("color")}
         </div>
       </div>
-      <p className="mt-6 border-t border-[var(--color-outline)] pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
-        错误保留灰底与均匀细边框，键盘焦点使用独立蓝色轮廓；关闭错误后恢复正常交互状态。
+      <p className="mt-6 pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
+        错误通过字段下方的文字说明，输入保持灰色填充；键盘焦点按需显示，关闭错误后恢复正常状态。
       </p>
     </Card>
   );

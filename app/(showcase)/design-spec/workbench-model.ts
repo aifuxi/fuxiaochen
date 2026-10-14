@@ -41,7 +41,7 @@ export const sectionGroups = [
         id: "inputs",
         label: "输入",
         english: "Input",
-        description: "为输入保留清晰边界、可见标签和独立的键盘焦点。",
+        description: "用填充底色、可见标签和独立的键盘焦点识别输入区域。",
       },
       {
         id: "selection",
@@ -88,7 +88,7 @@ export const sectionGroups = [
         id: "input-group",
         label: "搜索与组合输入",
         english: "Input group",
-        description: "将输入与附加操作放在一个边界内，兼顾密度与清晰的焦点反馈。",
+        description: "让输入与附加操作共用填充表面，兼顾密度与清晰的焦点反馈。",
       },
       {
         id: "errors",
