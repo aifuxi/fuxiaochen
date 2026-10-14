@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "工作台 · 付小晨",
-  description: "查看文章、评论、发布计划与访问统计。",
+  description: "查看文章、草稿与发布计划。",
 };
 
 export default async function AdminPage() {

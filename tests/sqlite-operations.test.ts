@@ -2,25 +2,17 @@ import Sqlite from "better-sqlite3";
 import { eq } from "drizzle-orm";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { after, before, test } from "node:test";
 
-import { collectEvent } from "../lib/analytics/collection";
-import {
-  getAnalytics,
-  listVisitors,
-  shanghaiDay,
-  shanghaiMidnight,
-} from "../lib/analytics/service";
 import { writeTransaction } from "../lib/database";
 import { verifyDatabase } from "../lib/database/migrations";
 import * as tables from "../lib/database/schema";
 import { createBackup, listBackups } from "../lib/operations/backups";
 import { getNotifications, readNotifications } from "../lib/operations/notifications";
 import { publishDuePosts } from "../lib/operations/scheduler";
-import { searchContent } from "../lib/operations/search";
 import { getOperationSettings, saveOperationSettings } from "../lib/operations/settings";
 import { serializeDocument } from "../lib/posts/document";
 import { createTestDatabase } from "./helpers/sqlite";
@@ -79,19 +71,6 @@ before(async () => {
         createdAt: now,
       })
       .run();
-    tx.insert(tables.comment)
-      .values({
-        id: "comment",
-        postId: "post",
-        author: "访客",
-        authorKind: "visitor",
-        content: "测试评论",
-        status: "pending",
-        createdAt: now,
-        updatedAt: now,
-        version: 1,
-      })
-      .run();
     tx.insert(tables.friendLink)
       .values({
         id: "friend",
@@ -117,13 +96,10 @@ before(async () => {
         avatarUrl: "",
         aboutMe: "",
         postsPerPage: 10,
-        enableComments: 1,
         icpText: "",
         icpUrl: "",
         policeText: "",
         policeUrl: "",
-        localAnalyticsEnabled: 1,
-        localAnalyticsStartedAt: new Date(now.getTime() - 2 * 86_400_000),
         googleEnabled: 0,
         googleId: "",
         baiduEnabled: 0,
@@ -136,39 +112,21 @@ before(async () => {
 });
 after(async () => context?.cleanup());
 
-const search = (q: string, kind: "post" | "release" = "post") =>
-  searchContent({ q, kind, page: 1, pageSize: 10 }, context.actor);
-
-void test("全站搜索保留字面 %_、Unicode 大小写与可见正文/日志数组搜索", async () => {
-  assert.equal((await search("%_")).total, 1);
-  assert.equal((await search("äPFEL")).items[0]?.id, "post");
-  assert.equal((await search("SQLite")).items[0]?.id, "post");
-  assert.equal((await search("document")).total, 0, "JSON 属性不属于可见正文");
-  assert.equal((await search("Drizzle", "release")).items[0]?.id, "release");
-  assert.equal((await search("未匹配")).total, 0);
-});
-
 void test("通知同步幂等、已读与来源版本变化自动解决旧通知", async () => {
   const query = { page: 1, pageSize: 100 };
   const initial = await getNotifications(query, context.actor);
   const repeated = await getNotifications(query, context.actor);
   assert.equal(repeated.total, initial.total);
-  assert.ok(initial.items.find((item) => item.id === "comment:comment:1"));
   assert.ok(initial.items.find((item) => item.id === "friend:friend:1"));
-  const read = await readNotifications(["comment:comment:1", "comment:comment:1"], context.actor);
+  const read = await readNotifications(["friend:friend:1", "friend:friend:1"], context.actor);
   assert.equal(read.unreadCount, initial.unreadCount - 1);
   writeTransaction((tx) => {
-    tx.update(tables.comment)
-      .set({ status: "approved", version: 2 })
-      .where(eq(tables.comment.id, "comment"))
-      .run();
     tx.update(tables.friendLink)
       .set({ version: 2 })
       .where(eq(tables.friendLink.id, "friend"))
       .run();
   });
   const changed = await getNotifications(query, context.actor);
-  assert.equal(changed.items.find((item) => item.id === "comment:comment:1")?.resolved, true);
   assert.equal(changed.items.find((item) => item.id === "friend:friend:1")?.resolved, true);
   assert.equal(changed.items.find((item) => item.id === "friend:friend:2")?.resolved, false);
   await assert.rejects(
@@ -214,112 +172,6 @@ void test("运维设置初始化及版本冲突保持原有行为", async () => 
     (error: unknown) =>
       error instanceof Error && "code" in error && error.code === "VERSION_CONFLICT",
   );
-});
-
-void test("统计按北京时间跨日分组，聚合 PV/UV、阅读完成率和访客字面搜索", async () => {
-  const midnight = shanghaiMidnight(Date.now());
-  writeTransaction((tx) => {
-    tx.insert(tables.visitSession)
-      .values({
-        id: "stats-session",
-        visitorHash: "stats-visitor",
-        createdAt: new Date(midnight - 1),
-        lastSeenAt: new Date(Date.now() - 31 * 60_000),
-      })
-      .run();
-    const visit = {
-      visitorHash: "stats-visitor",
-      sessionId: "stats-session",
-      postId: "post",
-      article: 1,
-      source: "直接访问",
-      referrerHost: "",
-      device: "desktop",
-      browser: "测试浏览器",
-      os: "测试系统",
-      ip: "127.0.0.0/24",
-      location: "未知",
-      lastSeenAt: new Date(Date.now() - 31 * 60_000),
-      durationMs: 10_000,
-      progress: 95,
-    };
-    tx.insert(tables.pageVisit)
-      .values([
-        {
-          ...visit,
-          id: "stats-before",
-          path: "/posts/test-post",
-          createdAt: new Date(midnight - 1),
-        },
-        { ...visit, id: "stats-after", path: "/%_", createdAt: new Date(midnight + 1) },
-      ])
-      .run();
-  });
-  const result = await getAnalytics("7d", context.actor);
-  assert.equal(result.metrics.pv, 2);
-  assert.equal(result.metrics.uv, 1);
-  assert.equal(result.metrics.durationMs, 10_000);
-  assert.equal(result.articles[0]?.rate, 100);
-  assert.equal(result.trend.find((item) => item.date === shanghaiDay(midnight - 1))?.pv, 1);
-  assert.equal(result.trend.find((item) => item.date === shanghaiDay(midnight + 1))?.pv, 1);
-  const visitors = await listVisitors(
-    { q: "%_", page: 1, pageSize: 10, sortBy: "time", sortDirection: "desc" },
-    context.actor,
-  );
-  assert.equal(visitors.total, 1);
-  assert.equal(visitors.items[0]?.id, "stats-after");
-  assert.equal(visitors.summary.pv, 1);
-  assert.equal(visitors.summary.uv, 1);
-});
-
-void test("访问采集幂等更新、会话和每访客限流在真实 SQLite 事务中生效", async (t) => {
-  const oldMode = process.env.NODE_ENV;
-  Object.assign(process.env, { NODE_ENV: "production" });
-  t.mock.timers.enable({ apis: ["Date"], now: Date.now() });
-  try {
-    const visitorId = randomUUID();
-    const event = {
-      pageViewId: randomUUID(),
-      visitorId,
-      path: "/posts/test-post",
-      referrer: "",
-      durationMs: 0,
-      progress: 25,
-      visible: true,
-    };
-    const headers = new Headers({ "user-agent": "Mozilla/5.0" });
-    for (let index = 0; index < 30; index++) await collectEvent(event, headers);
-    const visits = context.db
-      .select()
-      .from(tables.pageVisit)
-      .where(eq(tables.pageVisit.id, event.pageViewId))
-      .all();
-    assert.equal(visits.length, 1);
-    assert.ok(visits[0]?.createdAt instanceof Date);
-    const hash = createHash("sha256").update(visitorId).digest("hex");
-    assert.equal(
-      context.db
-        .select()
-        .from(tables.visitSession)
-        .where(eq(tables.visitSession.visitorHash, hash))
-        .all().length,
-      1,
-    );
-    await assert.rejects(
-      collectEvent(event, headers),
-      (error: unknown) =>
-        error instanceof Error && "code" in error && error.code === "RATE_LIMITED",
-    );
-    await assert.rejects(
-      collectEvent({ ...event, visitorId: randomUUID() }, headers),
-      (error: unknown) =>
-        error instanceof Error && "code" in error && error.code === "EVENT_CONFLICT",
-    );
-  } finally {
-    t.mock.timers.reset();
-    if (oldMode === undefined) Reflect.deleteProperty(process.env, "NODE_ENV");
-    else Object.assign(process.env, { NODE_ENV: oldMode });
-  }
 });
 
 function restore(directory: string, target: string) {

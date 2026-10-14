@@ -1,5 +1,7 @@
 # PostgreSQL → SQLite 迁移工具验收
 
+> 2026-10-14：评论、本地访问统计、访客日志与全局搜索已移除。本文保留历史验收事实；现行范围和验证见[功能移除验收](feature-removal-verification.md)。
+
 日期：2026-10-13。范围为只读 PostgreSQL 导出、离线 SQLite 预检/导入/核对，以及专用测试库演练。未连接线上数据库或现有开发数据库，未修改生产 Dockerfile、Compose、Actions 或 Portainer，未推送或部署。
 
 ## 已实现

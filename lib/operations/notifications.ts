@@ -14,14 +14,10 @@ export type OperationTransaction = Parameters<Parameters<typeof writeTransaction
 export function syncNotifications(tx: OperationTransaction) {
   const now = Date.now();
   tx.run(sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
-    SELECT 'comment:' || c.id || ':' || c.version, 'comment', c.id, c.author || ' 的评论待审核', '/admin/comments', c."updatedAt", NULL FROM comment c WHERE c.status = 'pending'
-    ON CONFLICT (id) DO NOTHING`);
-  tx.run(sql`INSERT INTO notification (id, kind, "sourceId", title, href, "createdAt", "resolvedAt")
     SELECT 'friend:' || f.id || ':' || f.version, 'friend', f.id, f.name || ' 的友链待审核', '/admin/friends-links', f."updatedAt", NULL FROM friend_link f WHERE f.status = 'pending'
     ON CONFLICT (id) DO NOTHING`);
   tx.run(sql`UPDATE notification SET "resolvedAt" = ${now} WHERE "resolvedAt" IS NULL AND
-    ((kind = 'comment' AND NOT EXISTS (SELECT 1 FROM comment c WHERE c.status = 'pending' AND notification.id = 'comment:' || c.id || ':' || c.version)) OR
-     (kind = 'friend' AND NOT EXISTS (SELECT 1 FROM friend_link f WHERE f.status = 'pending' AND notification.id = 'friend:' || f.id || ':' || f.version)) OR
+    ((kind = 'friend' AND NOT EXISTS (SELECT 1 FROM friend_link f WHERE f.status = 'pending' AND notification.id = 'friend:' || f.id || ':' || f.version)) OR
      (kind = 'schedule-error' AND NOT EXISTS (SELECT 1 FROM post p WHERE p.status = 'scheduled' AND notification.id = 'schedule-error:' || p.id || ':' || p.version)))`);
 }
 export function notificationCount(tx: OperationTransaction, adminId: number) {
@@ -50,7 +46,7 @@ export async function getNotifications(
       isRead: number;
       resolved: number;
     }>(
-      sql`SELECT n.id, n.title, CASE WHEN n.kind = 'comment' THEN '/admin/comments?record=' || n."sourceId" WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`,
+      sql`SELECT n.id, n.title, CASE WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`,
     );
     return {
       items: rows.map(({ isRead, resolved, ...row }) => ({

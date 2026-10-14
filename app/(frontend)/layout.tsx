@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import Link from "next/link";
 
-import { LocalAnalytics } from "@/components/frontend/local-analytics";
 import { SiteAnalytics } from "@/components/frontend/site-analytics";
 import { SiteHeader } from "@/components/frontend/site-header";
 import { siteDescription } from "@/lib/seo";
@@ -55,7 +54,6 @@ export default async function FrontendLayout({
           后台登录
         </Link>
       </footer>
-      <LocalAnalytics enabled={settings.localAnalyticsEnabled} />
       <SiteAnalytics googleId={settings.googleId} baiduId={settings.baiduId} />
     </div>
   );

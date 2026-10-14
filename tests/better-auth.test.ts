@@ -23,14 +23,10 @@ const protectedPaths = [
   "/api/admin/categories",
   "/api/admin/tags",
   "/api/admin/posts",
-  "/api/admin/comments",
   "/api/admin/media",
   "/api/admin/settings",
   "/api/admin/friends-links",
   "/api/admin/changelog",
-  "/api/admin/analytics",
-  "/api/admin/visitors",
-  "/api/admin/search",
   "/api/admin/backups",
   "/api/admin/notifications",
   "/api/admin/operations/settings",
@@ -93,6 +89,25 @@ void test("真实 Better Auth：签名 Cookie、哈希存储、业务访问和�
     (await api.request(`${origin}/api/admin/categories`, { headers: { Cookie: header } })).status,
     200,
   );
+  // 删除的业务接口对有效登录也保持不可用，公开接口不再提供评论和采集。
+  for (const path of [
+    "/api/admin/comments",
+    "/api/admin/comments/summary",
+    "/api/admin/analytics",
+    "/api/admin/visitors",
+    "/api/admin/search",
+    "/api/public/posts/10000000-0000-4000-8000-000000000001/comments",
+    "/api/public/analytics/events",
+  ]) {
+    for (const method of ["GET", "POST", "PUT", "DELETE"]) {
+      const removed = await api.request(`${origin}${path}`, {
+        method,
+        headers: { Cookie: header, Origin: origin, "Content-Type": "application/json" },
+        ...(method === "POST" || method === "PUT" ? { body: "{}" } : {}),
+      });
+      assert.equal(removed.status, 404, `${method} ${path}`);
+    }
+  }
   await assertProtected(`fx_admin_session=${actor.sessionToken}`);
   await assertProtected(`fx_admin_session=${actor.sessionToken}.invalid-signature`);
   await assertProtected(`fx_admin_session=${stored.token}`);
@@ -226,7 +241,7 @@ void test("缺少签名密钥拒绝初始化；迁移保留原密码和业务数
         ?.name,
       "原有分类",
     );
-    assert.equal(migrationManifest().migrations.length, 3);
+    assert.equal(migrationManifest().migrations.length, 4);
     client.close();
     client = undefined;
     const result = await login({ username: "A", password }, undefined);

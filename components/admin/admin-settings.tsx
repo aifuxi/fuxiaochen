@@ -56,8 +56,8 @@ function fieldGroup(key: string) {
     return "seo";
   if (key.startsWith("socials")) return "social";
   if (/^(icp|police)/.test(key)) return "filing";
-  if (/^(localAnalytics|google|baidu)/.test(key)) return "analytics";
-  if (["postsPerPage", "enableComments"].includes(key)) return "system";
+  if (/^(google|baidu)/.test(key)) return "analytics";
+  if (key === "postsPerPage") return "system";
   return "profile";
 }
 export function AdminSettings({
@@ -125,7 +125,7 @@ function SettingsForm({
   async function save(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current || conflict) return;
-    const { updatedAt: _updatedAt, localAnalyticsStartedAt: _startedAt, ...fields } = draft;
+    const { updatedAt: _updatedAt, ...fields } = draft;
     const parsed = settingsSchema.safeParse({
       ...fields,
       postsPerPage: quantity.trim() ? Number(quantity) : NaN,
@@ -234,11 +234,7 @@ function SettingsForm({
       />,
       help,
     );
-  const toggle = (
-    key: "enableComments" | "localAnalyticsEnabled" | "googleEnabled" | "baiduEnabled",
-    label: string,
-    help: string,
-  ) => (
+  const toggle = (key: "googleEnabled" | "baiduEnabled", label: string, help: string) => (
     <div className="admin-settings-toggle">
       <div>
         <h3 id={`settings-${key}-label`}>{label}</h3>
@@ -407,8 +403,8 @@ function SettingsForm({
             <div className="admin-settings-stack">
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
-                  <h2>阅读与评论偏好</h2>
-                  <p>控制前台文章分页与新评论；关闭评论后保留已通过的历史留言。</p>
+                  <h2>阅读偏好</h2>
+                  <p>设置前台文章列表每页显示的条数。</p>
                 </div>
                 {field(
                   "postsPerPage",
@@ -427,7 +423,6 @@ function SettingsForm({
                   />,
                   "1–100之间的整数。",
                 )}
-                {toggle("enableComments", "允许读者发表评论", "关闭后停止接收新评论和回复。")}
               </section>
             </div>
           </TabsPanel>
@@ -634,25 +629,6 @@ function SettingsForm({
           </TabsPanel>
           <TabsPanel value="analytics" className="admin-settings-panel">
             <div className="admin-settings-stack">
-              <section className="admin-settings-section">
-                <div className="admin-settings-section-heading">
-                  <h2>本地访问统计</h2>
-                  <p>查看站点的访问量、访客日志和文章表现。</p>
-                </div>
-                {toggle(
-                  "localAnalyticsEnabled",
-                  "启用本地统计",
-                  "使用匿名标识和脱敏 IP，访问明细保留 180 天。",
-                )}
-                {draft.localAnalyticsStartedAt && (
-                  <p className="admin-settings-help">
-                    首次启用：
-                    {new Date(draft.localAnalyticsStartedAt).toLocaleString("zh-CN", {
-                      timeZone: "Asia/Shanghai",
-                    })}
-                  </p>
-                )}
-              </section>
               <section className="admin-settings-section">
                 <div className="admin-settings-section-heading">
                   <h2>Google Analytics（GA4）</h2>

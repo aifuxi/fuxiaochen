@@ -13,13 +13,9 @@ import { after, before, beforeEach, test } from "node:test";
 import { resetAdminPassword } from "../lib/auth/accounts";
 import { hashPassword } from "../lib/auth/password";
 import { consumeLoginAttempt, getSession, logout } from "../lib/auth/service";
-import { commentQuerySchema } from "../lib/comments/schema";
-import * as comments from "../lib/comments/service";
 import { getDatabase, writeTransaction } from "../lib/database";
 import {
   admin,
-  comment,
-  commentRateLimit,
   friendLink,
   loginRateLimit,
   media,
@@ -34,7 +30,6 @@ import { mediaQuerySchema } from "../lib/media/schema";
 import * as mediaService from "../lib/media/service";
 import { closeStorage, publicMediaUrl } from "../lib/media/storage";
 import { serializeDocument } from "../lib/posts/document";
-import * as publicComments from "../lib/public/comments";
 import { createTestDatabase, loginToken as login } from "./helpers/sqlite";
 
 let fixture: Awaited<ReturnType<typeof createTestDatabase>>;
@@ -68,11 +63,9 @@ after(async () => {
 
 beforeEach(() => {
   writeTransaction((tx) => {
-    tx.delete(comment).run();
     tx.delete(post).run();
     tx.delete(friendLink).run();
     tx.delete(media).run();
-    tx.delete(commentRateLimit).run();
     tx.delete(mediaUploadLimit).run();
     tx.delete(loginRateLimit).run();
   });
@@ -183,146 +176,6 @@ void test("全局登录限流在同一分钟只允许 20 次，并在新窗口�
   assert.equal(
     getDatabase().select().from(loginRateLimit).where(eq(loginRateLimit.id, 1)).get()!.count,
     1,
-  );
-});
-
-void test("公开评论幂等、内容冲突及邮箱限流", async () => {
-  const postId = seedPost();
-  const input = {
-    author: "读者",
-    email: "reader@example.test",
-    content: "SQLite 评论",
-    parentId: null,
-    submissionId: randomUUID(),
-  };
-  await publicComments.submitPublicComment(postId, input);
-  await publicComments.submitPublicComment(postId, input);
-  assert.equal(getDatabase().select({ total: count() }).from(comment).get()!.total, 1);
-  await assert.rejects(
-    publicComments.submitPublicComment(postId, { ...input, content: "不同内容" }),
-    { code: "SUBMISSION_CONFLICT" },
-  );
-  for (let index = 0; index < 2; index += 1)
-    await publicComments.submitPublicComment(postId, { ...input, submissionId: randomUUID() });
-  await assert.rejects(
-    publicComments.submitPublicComment(postId, { ...input, submissionId: randomUUID() }),
-    { code: "RATE_LIMITED" },
-  );
-  await publicComments.submitPublicComment(postId, input);
-  assert.equal(
-    getDatabase().select({ total: count() }).from(comment).get()!.total,
-    3,
-    "响应丢失后的同一提交不消耗限额或重复写入",
-  );
-  assert.equal((await publicComments.listPublicComments(postId, 1)).total, 0);
-});
-
-void test("评论审批、博主回复、父级可见性、版本冲突与级联删除", async () => {
-  const postId = seedPost();
-  const created = await comments.createComment(
-    { postId, author: "Äpfel", email: "author@example.test", content: "100%_正文" },
-    fixture.actor,
-  );
-  const approved = await comments.moderateComment(
-    created.id,
-    { status: "approved", version: created.version },
-    fixture.actor,
-  );
-  const reply = await comments.replyComment(
-    created.id,
-    { content: "博主回复", version: approved.version },
-    fixture.actor,
-  );
-  assert.equal(reply.isAdmin, true);
-  assert.equal(reply.email, null);
-  assert.equal(reply.parent?.id, created.id);
-  const visible = await publicComments.listPublicComments(postId, 1);
-  assert.equal(visible.total, 2);
-  assert.equal(visible.items.find((item) => item.id === reply.id)?.parent?.author, "Äpfel");
-  await assert.rejects(
-    comments.replyComment(
-      created.id,
-      { content: "重复版本", version: approved.version },
-      fixture.actor,
-    ),
-    { code: "VERSION_CONFLICT" },
-  );
-  const latest = await comments.getComment(created.id, fixture.actor);
-  const rejected = await comments.moderateComment(
-    created.id,
-    { status: "rejected", version: latest.version },
-    fixture.actor,
-  );
-  assert.equal((await comments.getComment(reply.id, fixture.actor)).status, "rejected");
-  assert.equal((await publicComments.listPublicComments(postId, 1)).total, 0);
-  await assert.rejects(
-    comments.moderateComment(reply.id, { status: "approved", version: 2 }, fixture.actor),
-    { code: "INVALID_INPUT" },
-  );
-  const restored = await comments.moderateComment(
-    created.id,
-    { status: "approved", version: rejected.version },
-    fixture.actor,
-  );
-  assert.equal(
-    (await publicComments.listPublicComments(postId, 1)).total,
-    1,
-    "恢复父评论不恢复被拒绝的回复",
-  );
-  const literal = await comments.listComments(
-    commentQuerySchema.parse({ q: "100%_" }),
-    fixture.actor,
-  );
-  assert.equal(literal.total, 2, "标题按字面匹配也覆盖同一文章的回复");
-  assert.equal(
-    (await comments.listComments(commentQuerySchema.parse({ q: "äPFEL" }), fixture.actor)).total,
-    2,
-  );
-  await comments.deleteComment(created.id, restored.version, fixture.actor);
-  assert.equal(getDatabase().select({ total: count() }).from(comment).get()!.total, 0);
-});
-
-void test("SQLite 外键拒绝跨文章父评论，公开查询隐藏上级未审批的回复", async () => {
-  const postId = seedPost();
-  const otherPostId = seedPost();
-  const parent = await comments.createComment(
-    { postId, author: "父评论", email: "parent@example.test", content: "等待审批" },
-    fixture.actor,
-  );
-  const now = new Date();
-  const input = {
-    id: randomUUID(),
-    postId: otherPostId,
-    parentId: parent.id,
-    author: "子评论",
-    authorKind: "reader",
-    email: "child@example.test",
-    content: "回复",
-    status: "approved",
-    version: 1,
-    createdAt: now,
-    updatedAt: now,
-  };
-  assert.throws(
-    () => writeTransaction((tx) => tx.insert(comment).values(input).run()),
-    /FOREIGN KEY/,
-  );
-  writeTransaction((tx) =>
-    tx
-      .insert(comment)
-      .values({ ...input, postId })
-      .run(),
-  );
-  assert.equal((await publicComments.listPublicComments(postId, 1)).total, 0);
-  await assert.rejects(
-    publicComments.submitPublicComment(postId, {
-      author: "读者",
-      email: "reader@example.test",
-      content: "新回复",
-      parentId: parent.id,
-      submissionId: randomUUID(),
-    }),
-    { code: "INVALID_PARENT" },
   );
 });
 

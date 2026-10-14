@@ -6,10 +6,8 @@ import { notFound } from "next/navigation";
 import { ArticleBackLink } from "@/components/frontend/article-back-link";
 import { ArticleContent } from "@/components/frontend/article-content";
 import { CategoryDot } from "@/components/frontend/category-dot";
-import { Comments } from "@/components/frontend/comments";
 import { JsonLd } from "@/components/frontend/json-ld";
 import { postTime } from "@/lib/posts/schema";
-import { listPublicComments } from "@/lib/public/comments";
 import { getPublicPost } from "@/lib/public/service";
 import { articleJsonLd, articleMetadata } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
@@ -23,10 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PostPage({ params }: Props) {
   const post = await getPublicPost((await params).slug);
   if (!post) notFound();
-  const [comments, settings] = await Promise.all([
-    listPublicComments(post.id, 1),
-    getPublicSettings(),
-  ]);
+  const settings = await getPublicSettings();
   return (
     <main data-page-motion id="main-content" className="site-main site-article">
       <JsonLd data={articleJsonLd(settings, post)} />
@@ -58,13 +53,6 @@ export default async function PostPage({ params }: Props) {
         </header>
         <ArticleContent content={post.content} />
       </article>
-      <Comments
-        key={post.id}
-        postId={post.id}
-        initial={comments}
-        enabled={settings.enableComments}
-        adminAvatarUrl={settings.avatarUrl}
-      />
     </main>
   );
 }

@@ -219,11 +219,7 @@ void test(
       }
 
       const initial = await api<SiteSettings>("/settings");
-      const {
-        updatedAt: _updatedAt,
-        localAnalyticsStartedAt: _analytics,
-        ...settingsInput
-      } = initial;
+      const { updatedAt: _updatedAt, ...settingsInput } = initial;
       let settings = await api<SiteSettings>("/settings", "PUT", {
         ...settingsInput,
         title: "SEO 独立测试站",
@@ -251,11 +247,7 @@ void test(
         ),
       );
 
-      const {
-        updatedAt: _savedAt,
-        localAnalyticsStartedAt: _savedAnalytics,
-        ...savedInput
-      } = settings;
+      const { updatedAt: _savedAt, ...savedInput } = settings;
       settings = await api<SiteSettings>("/settings", "PUT", {
         ...savedInput,
         title: "SEO 更新后的站名",

@@ -2,34 +2,6 @@ import { z } from "zod";
 
 import { listQuerySchema, versionSchema, type Page } from "@/lib/admin/schema";
 
-export const searchKinds = [
-  "post",
-  "category",
-  "tag",
-  "comment",
-  "media",
-  "friend",
-  "release",
-] as const;
-export const searchLabels: Record<(typeof searchKinds)[number], string> = {
-  post: "文章",
-  category: "分类",
-  tag: "标签",
-  comment: "评论",
-  media: "媒体",
-  friend: "友链",
-  release: "更新日志",
-};
-export const searchSchema = listQuerySchema.extend({ kind: z.enum(searchKinds).optional() });
-export type SearchQuery = z.infer<typeof searchSchema>;
-export type SearchItem = {
-  id: string;
-  kind: (typeof searchKinds)[number];
-  title: string;
-  description: string;
-  href: string;
-};
-export type SearchPage = Page<SearchItem>;
 export const notificationQuerySchema = listQuerySchema
   .omit({ q: true })
   .extend({ unread: z.enum(["true", "false"]).optional() });

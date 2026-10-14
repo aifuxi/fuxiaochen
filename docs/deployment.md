@@ -26,17 +26,16 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 
 面向 Docker Standalone，保持 app 单实例，不使用 Swarm 滚动升级。compose.yaml 只使用镜像、外部 named volume 和已有 Caddy 网络，全部变量显式 environment 注入，不依赖 Git checkout 中的 .env、stack.env 或宿主机初始化脚本。
 
-| 变量                       | 配置                                                           |
-| -------------------------- | -------------------------------------------------------------- |
-| APP_IMAGE                  | 必填；发布完成的 SQLite 镜像 SHA 标签或 digest                 |
-| APP_DATA_VOLUME            | 必填；已准备的独立新 SQLite 卷，例如 fuxiaochen-sqlite         |
-| SQLITE_INITIALIZE          | 默认 0；仅全新站点首次临时设 1，完成后改回 0                   |
-| APP_ORIGIN                 | 必填 HTTPS origin，如 https://fuxiaochen.com，不带路径或尾斜杠 |
-| BETTER_AUTH_SECRET         | 必填独立随机私有值，至少 32 个字符；轮换后需重新登录           |
-| CADDY_NETWORK              | 默认 infra_edge，必须是已有外部网络                            |
-| RESTORE_DATABASE_PATH      | 仅恢复时填写 /app/data/ 下独立且不存在的文件，普通运行留空     |
-| OSS_* / ALIBABA_CLOUD_*    | 沿用已有 Bucket、对象键、公开域名与最小权限凭据                |
-| ANALYTICS_CLIENT_IP_HEADER | 默认空；代理覆盖且应用禁止公网直连后可设 x-real-ip             |
+| 变量                    | 配置                                                           |
+| ----------------------- | -------------------------------------------------------------- |
+| APP_IMAGE               | 必填；发布完成的 SQLite 镜像 SHA 标签或 digest                 |
+| APP_DATA_VOLUME         | 必填；已准备的独立新 SQLite 卷，例如 fuxiaochen-sqlite         |
+| SQLITE_INITIALIZE       | 默认 0；仅全新站点首次临时设 1，完成后改回 0                   |
+| APP_ORIGIN              | 必填 HTTPS origin，如 https://fuxiaochen.com，不带路径或尾斜杠 |
+| BETTER_AUTH_SECRET      | 必填独立随机私有值，至少 32 个字符；轮换后需重新登录           |
+| CADDY_NETWORK           | 默认 infra_edge，必须是已有外部网络                            |
+| RESTORE_DATABASE_PATH   | 仅恢复时填写 /app/data/ 下独立且不存在的文件，普通运行留空     |
+| OSS_* / ALIBABA_CLOUD_* | 沿用已有 Bucket、对象键、公开域名与最小权限凭据                |
 
 数据库固定为 /app/data/database.sqlite，备份为 /app/data/backups，均在唯一 app-data 卷中。该卷 external=true：Stack 不自动创建，移除 Stack 不删除它；禁止复用旧 PostgreSQL 卷或直接指向历史 SQLite 文件。部署前一次性创建新卷、放入已核对的独立导入文件，并确认 UID/GID 1000 权限。新 named volume 首次挂载会从镜像的数据目录复制目录权限；若曾用 root 写入该卷，应仅检查并修正此新卷的相关文件，不递归处理旧数据卷。
 
@@ -48,7 +47,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量（认证升级须配置 BETTER_AUTH_SECRET），已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。Passkey 无额外密钥变量，RP ID 固定取 APP_ORIGIN 的主机名；确认其为最终 HTTPS 来源，并由反向代理正确转发 Origin 与 Cookie。
 3. 更新前停止旧 app 与所有数据库写入；新配置会移除历史 PostgreSQL 服务，应在预先准备的旧版本配置下确认该服务停止。旧 PostgreSQL/SQLite 数据卷保留，禁止清理 orphan 时连带删除卷。
 4. 在 Portainer 重新拉取并部署。此后每次重新部署 app 自行备份、迁移和校验，无需创建或强制重跑 migrate 服务；若重建阶段旧 Web 尚未退出，实例锁让新容器失败重试，不能认为第一条启动请求就是成功。
-5. 查看 app 日志、健康状态，核对本次启动备份 manifest 和业务数据，再通过 HTTPS 验证原密码登录、文章、统计及媒体，最后恢复调度。
+5. 查看 app 日志、健康状态，核对本次启动备份 manifest 和业务数据，再通过 HTTPS 验证原密码登录、文章、第三方统计及媒体，最后恢复调度。
 
 Portainer UI 导入变量时使用无外层引号的独立文件，填写后权限 0600，不提交 Git。此前服务器 Portainer 2.45.1 的导入会保留外层引号并追加已有项；当前未重新操作该服务器，更新时按实际 UI 核对，避免重复变量和引号成为内容。Compose 命令行使用的 production.env 可按 dotenv 规则引用，其实际值须与 Portainer 一致。
 
@@ -67,7 +66,7 @@ docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/f
 docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps -T app npm run db:verify
 ```
 
-支持管理员初始化/重置、到期发布、数据库备份/恢复、媒体 dry-run/清理及统计清理。交互命令保留 TTY；自动任务使用 -T。不共享宿主机 .env 到镜像，Compose 显式注入运行环境。停止 Web 和调度后才手工 db:migrate；日常更新交给 serve 启动流程。
+支持管理员初始化/重置、到期发布、数据库备份/恢复、媒体 dry-run/清理。交互命令保留 TTY；自动任务使用 -T。不共享宿主机 .env 到镜像，Compose 显式注入运行环境。停止 Web 和调度后才手工 db:migrate；日常更新交给 serve 启动流程。
 
 每分钟 operations:run 的外部调度继续保留：先执行到期发布，再按后台开关执行当天自动备份。首次切换时将旧 tools 命令更新为上述 app 命令，版本随唯一 APP_IMAGE 更新；未配置调度时排期仍等待手工处理。启动前备份独立于后台每日开关，无需启用自动备份即可执行。调度配置本阶段未改动任何服务器。
 
@@ -88,7 +87,7 @@ RESTORE_DATABASE_PATH=/app/data/restored.sqlite docker compose -p fuxiaochen --e
 
 ## Caddy 与 HTTPS
 
-沿用 deploy/caddy/fuxiaochen.caddy 和现有 gateway 的 alidns_tls 片段，通过 fuxiaochen:3000 反代；APP_ORIGIN=https://fuxiaochen.com。部署时只修改本应用站点文件，现有 Caddy、Portainer、凭据和证书卷保留。Secure Cookie 登录通过正式 HTTPS；Caddy 覆盖 X-Real-IP，若前面还有 CDN，先配置可信代理再启用客户端 IP 统计。
+沿用 deploy/caddy/fuxiaochen.caddy 和现有 gateway 的 alidns_tls 片段，通过 fuxiaochen:3000 反代；APP_ORIGIN=https://fuxiaochen.com。部署时只修改本应用站点文件，现有 Caddy、Portainer、凭据和证书卷保留。Secure Cookie 登录通过正式 HTTPS。
 
 ## 本地验证
 

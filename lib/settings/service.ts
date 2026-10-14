@@ -23,9 +23,6 @@ function read(tx: DatabaseTransaction) {
       .values({
         ...defaults,
         id: 1,
-        enableComments: 1,
-        localAnalyticsEnabled: 0,
-        localAnalyticsStartedAt: null,
         googleEnabled: 0,
         baiduEnabled: 0,
         updatedAt: new Date(),
@@ -39,7 +36,7 @@ function read(tx: DatabaseTransaction) {
     .where(eq(socialAccount.settingId, 1))
     .orderBy(asc(socialAccount.position), asc(socialAccount.id))
     .all();
-  const { id: _id, updatedAt, localAnalyticsStartedAt, ...fields } = row;
+  const { id: _id, updatedAt, ...fields } = row;
   return {
     ...settingsSchema.parse({
       ...fields,
@@ -48,8 +45,6 @@ function read(tx: DatabaseTransaction) {
       googleVerification: row.googleVerification ?? "",
       bingVerification: row.bingVerification ?? "",
       baiduVerification: row.baiduVerification ?? "",
-      localAnalyticsEnabled: Boolean(row.localAnalyticsEnabled),
-      enableComments: Boolean(row.enableComments),
       googleEnabled: Boolean(row.googleEnabled),
       baiduEnabled: Boolean(row.baiduEnabled),
       socials: socials.map(({ settingId: _setting, position: _position, ...social }) => ({
@@ -58,7 +53,6 @@ function read(tx: DatabaseTransaction) {
       })),
     }),
     updatedAt: updatedAt.toISOString(),
-    localAnalyticsStartedAt: localAnalyticsStartedAt?.toISOString() ?? null,
   };
 }
 export async function getSettings(actor: TaxonomyActor) {
@@ -82,13 +76,6 @@ export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
       .update(siteSetting)
       .set({
         ...fields,
-        localAnalyticsEnabled: Number(input.localAnalyticsEnabled),
-        localAnalyticsStartedAt: previous.localAnalyticsStartedAt
-          ? new Date(previous.localAnalyticsStartedAt)
-          : input.localAnalyticsEnabled
-            ? new Date()
-            : null,
-        enableComments: Number(input.enableComments),
         googleEnabled: Number(input.googleEnabled),
         baiduEnabled: Number(input.baiduEnabled),
         updatedAt: new Date(),
@@ -121,7 +108,6 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
   const settings = writeTransaction(read);
   const {
     postsPerPage,
-    enableComments,
     title,
     subtitle,
     seoDescription,
@@ -137,7 +123,6 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
     icpUrl,
     policeText,
     policeUrl,
-    localAnalyticsEnabled,
     googleEnabled,
     googleId,
     baiduEnabled,
@@ -145,7 +130,6 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
   } = settings;
   return {
     postsPerPage,
-    enableComments,
     title,
     subtitle,
     seoDescription,
@@ -161,7 +145,6 @@ export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
     icpUrl,
     policeText,
     policeUrl,
-    localAnalyticsEnabled,
     googleEnabled,
     googleId: googleEnabled ? googleId : "",
     baiduEnabled,

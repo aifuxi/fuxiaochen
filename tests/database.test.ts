@@ -15,20 +15,11 @@ import {
   getDatabase,
   writeTransaction,
 } from "../lib/database";
+import { removedTables, removedSettingFields } from "../lib/database-transfer/format";
 import sourceContract from "../lib/database-transfer/source-contract.json";
 import { migrateDatabase, migrationManifest, verifyDatabase } from "../lib/database/migrations";
 import { requiredDatabasePath } from "../lib/database/path";
-import {
-  admin,
-  category,
-  comment,
-  loginRateLimit,
-  pageVisit,
-  post,
-  postTag,
-  tag,
-  visitSession,
-} from "../lib/database/schema";
+import { admin, category, loginRateLimit, post, postTag, tag } from "../lib/database/schema";
 
 let directory: string;
 const date = new Date("2026-10-13T01:02:03.456Z");
@@ -65,11 +56,23 @@ void test("只有显式 SQLite 文件路径可用；缺失文件不会被自动�
   process.env.DATABASE_PATH = original;
 });
 
-void test("22 张业务表的字段、主键、非空、唯一约束与源库基线对应", async () => {
+void test("现行业务表的字段、主键、非空和唯一约束与源库映射对应", async () => {
   const tables = sourceContract.storage.namespaces.public.entries.table;
   const db = getDatabase().$client;
   assert.equal(Object.keys(tables).length, 22);
-  for (const [table, definition] of Object.entries(tables)) {
+  for (const [table, source] of Object.entries(tables)) {
+    if (removedTables.has(table)) {
+      assert.deepEqual(db.prepare(`PRAGMA table_info("${table}")`).all(), []);
+      continue;
+    }
+    const definition = {
+      ...source,
+      columns: Object.fromEntries(
+        Object.entries(source.columns).filter(
+          ([name]) => table !== "site_setting" || !removedSettingFields.has(name),
+        ),
+      ),
+    };
     const actual = db
       .prepare<[], { name: string; type: string; notnull: number; pk: number }>(
         `PRAGMA table_info("${table}")`,
@@ -137,7 +140,7 @@ void test("迁移重复执行保留数据，校验拒绝结构漂移和未知版
     db.select().from(category).where(eq(category.id, "foundation-category")).get()?.name,
     "分类",
   );
-  assert.equal(migrationManifest().migrations.length, 3);
+  assert.equal(migrationManifest().migrations.length, 4);
   db.$client.exec("DROP INDEX post_createdAt_id_idx");
   assert.throws(() => verifyDatabase(db.$client), /结构/);
   db.$client.exec("CREATE INDEX `post_createdAt_id_idx` ON `post` (`createdAt`,`id`)");
@@ -239,52 +242,6 @@ void test("UTC 日期毫秒、安全整数、Unicode lower 和约束运行通过
         .run(),
     ),
   );
-});
-
-void test("外键禁止跨文章回复，删除文章级联删除评论", () => {
-  const db = getDatabase();
-  const values = {
-    title: "测试",
-    content: "{}",
-    summary: "",
-    status: "draft",
-    createdAt: date,
-    updatedAt: date,
-    version: 1,
-  };
-  writeTransaction((tx) => {
-    tx.insert(post)
-      .values([
-        { ...values, id: "p1" },
-        { ...values, id: "p2" },
-      ])
-      .run();
-  });
-  const reply = {
-    author: "读者",
-    authorKind: "visitor",
-    content: "评论",
-    status: "approved",
-    createdAt: date,
-    updatedAt: date,
-    version: 1,
-  };
-  writeTransaction((tx) =>
-    tx
-      .insert(comment)
-      .values({ ...reply, id: "parent", postId: "p1" })
-      .run(),
-  );
-  assert.throws(() =>
-    writeTransaction((tx) =>
-      tx
-        .insert(comment)
-        .values({ ...reply, id: "invalid-reply", parentId: "parent", postId: "p2" })
-        .run(),
-    ),
-  );
-  writeTransaction((tx) => tx.delete(post).where(eq(post.id, "p1")).run());
-  assert.equal(db.select().from(comment).where(eq(comment.id, "parent")).get(), undefined);
 });
 
 void test("两个独立进程共享 IMMEDIATE 写锁，不丢失并发更新", async () => {
@@ -400,44 +357,7 @@ void test("Drizzle 重建父表保留全部关联，迁移失败回滚并恢复�
         version: 1,
       })
       .run();
-    db.insert(comment)
-      .values({
-        id: "reply",
-        postId: "p",
-        author: "读者",
-        authorKind: "visitor",
-        content: "评论",
-        status: "approved",
-        createdAt: date,
-        updatedAt: date,
-        version: 1,
-      })
-      .run();
     db.insert(postTag).values({ postId: "p", tagId: "t" }).run();
-    db.insert(visitSession)
-      .values({ id: "v", visitorHash: "hash", createdAt: date, lastSeenAt: date })
-      .run();
-    db.insert(pageVisit)
-      .values({
-        id: "pv",
-        visitorHash: "hash",
-        sessionId: "v",
-        postId: "p",
-        path: "/posts/p",
-        article: 1,
-        source: "直接访问",
-        referrerHost: "",
-        device: "desktop",
-        browser: "test",
-        os: "test",
-        ip: "未知",
-        location: "未知",
-        createdAt: date,
-        lastSeenAt: date,
-        durationMs: 0,
-        progress: 0,
-      })
-      .run();
     const definition = initial.match(/CREATE TABLE `post` \([\s\S]+?\n\);/)![0];
     const replacement = definition
       .replace("CREATE TABLE `post`", "CREATE TABLE `__new_post`")
@@ -469,9 +389,7 @@ void test("Drizzle 重建父表保留全部关联，迁移失败回滚并恢复�
     entries.push({ idx: 1, version: "6", when: 2, tag: "0001_rebuild", breakpoints: true });
     await writeJournal();
     migrateDatabase(client, { migrationsFolder: folder });
-    assert.equal(db.select().from(comment).get()?.postId, "p");
     assert.equal(db.select().from(postTag).get()?.postId, "p");
-    assert.equal(db.select().from(pageVisit).get()?.postId, "p");
     assert.equal(client.pragma("foreign_keys", { simple: true }), 1);
     client
       .transaction(() => {

@@ -4,7 +4,6 @@ import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
-import type { CommentItem } from "@/lib/comments/schema";
 import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
@@ -15,29 +14,23 @@ import { postDisplayTitle } from "@/lib/posts/schema";
 import { AdminContext } from "./admin-context";
 import { AdminPasskeys } from "./admin-passkeys";
 import { AdminShell, type AdminPanel } from "./admin-shell";
-import { GlobalSearch, NotificationCenter, useNotificationSummary } from "./global-operations";
+import { NotificationCenter, useNotificationSummary } from "./global-operations";
 import { MediaUploadStatus } from "./media-upload-status";
 import { useNavigationGuard } from "./navigation-guard";
-import { commentRequest, useComments } from "./use-comments";
 import { useMediaUploads } from "./use-media";
 import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-type DialogPanel = Exclude<
-  AdminPanel,
-  "compose" | "comments" | "analytics" | "backup" | "categories" | "schedule"
->;
+type DialogPanel = Exclude<AdminPanel, "compose" | "backup" | "categories" | "schedule">;
 
 const panelTitles: Record<DialogPanel, string> = {
-  search: "全局内容检索",
   notifications: "通知",
   profile: "管理账户",
   upload: "上传媒体",
 };
 
 const panelDescriptions: Record<DialogPanel, string> = {
-  search: "检索文章、分类、标签、评论、媒体、友链与更新日志。",
   notifications: "查看待办和执行结果，已读状态随账户保存。",
   profile: "管理通行密钥并退出登录。",
   upload: "选择图片或附件上传到媒体库。",
@@ -56,23 +49,8 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const postMutation = useRef(false);
   const taxonomy = useTaxonomy();
   const [panel, setPanel] = useState<DialogPanel | null>(null);
-  const [commentDeleteTarget, setCommentDeleteTarget] = useState<CommentItem | null>(null);
-  const [commentDeleteError, setCommentDeleteError] = useState("");
-  const [commentDeleteConflict, setCommentDeleteConflict] = useState(false);
-  const [commentDeleteReloading, setCommentDeleteReloading] = useState(false);
-  const commentDeleteFocus = useRef<{
-    deleted: boolean;
-    fallback: HTMLElement | null;
-    trigger: HTMLElement | null;
-  }>({
-    deleted: false,
-    fallback: null,
-    trigger: null,
-  });
   const [message, setMessage] = useState("");
-  const commentState = useComments(postRevision, setMessage);
-  const notifications = useNotificationSummary(operationRevision + commentState.commentRevision);
-  const commentDeleteBusy = commentState.commentPending || commentDeleteReloading;
+  const notifications = useNotificationSummary(operationRevision);
   const postDeleteFocus = useRef<{
     deleted: boolean;
     fallback: HTMLElement | null;
@@ -99,11 +77,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const openPanel = useCallback(
     (name: AdminPanel) => {
       if (postMutation.current || operationMutation.current) return;
-      if (name === "comments" || name === "analytics") {
-        setPanel(null);
-        guardNavigation(() => router.push(`/admin/${name}`));
-        return;
-      }
       if (name === "backup" || name === "categories" || name === "schedule") {
         guardNavigation(() => {
           setPanel(null);
@@ -197,7 +170,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       });
     }, "排期已取消，文章已转为草稿");
 
-  const pendingCount = commentState.commentSummary?.statusCounts.pending ?? null;
   const runOperation = async <T,>(work: () => Promise<T>, refreshPosts = false) => {
     if (operationMutation.current || postMutation.current) throw new Error("请等待当前操作完成。");
     operationMutation.current = true;
@@ -238,7 +210,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         savePost,
         cancelPostSchedule,
         setPostFeatured,
-        ...commentState,
         ...taxonomy,
         onOpen: openPanel,
         onEdit: openEditor,
@@ -252,22 +223,11 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           setPostDeleteError("");
           setPostDeleteConflict(false);
         },
-        onDeleteComment: (comment, fallbackFocus, triggerFocus) => {
-          commentDeleteFocus.current = {
-            deleted: false,
-            fallback: fallbackFocus ?? null,
-            trigger: triggerFocus ?? null,
-          };
-          setCommentDeleteTarget(comment);
-          setCommentDeleteError("");
-          setCommentDeleteConflict(false);
-        },
       }}
     >
       <AdminShell
         writingFocused={writingFocused}
         postPending={postPending || operationPending}
-        pendingCount={pendingCount}
         unreadCount={notifications.data?.unreadCount ?? null}
         notificationError={notifications.error}
         onOpen={openPanel}
@@ -294,12 +254,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open && !postMutation.current && !operationMutation.current) setPanel(null);
         }}
       >
-        <DialogContent
-          className="admin-modal"
-          initialFocus={
-            panel === "search" ? () => document.getElementById("admin-global-search") : undefined
-          }
-        >
+        <DialogContent className="admin-modal">
           {panel && (
             <>
               <div className="admin-modal-heading">
@@ -317,7 +272,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                   <X size={18} />
                 </Button>
               </div>
-              {panel === "search" && <GlobalSearch />}
               {panel === "notifications" && <NotificationCenter />}
               {panel === "profile" && (
                 <div className="admin-modal-section">
@@ -364,87 +318,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         </DialogContent>
       </Dialog>
       <Dialog
-        open={commentDeleteTarget !== null}
-        onOpenChange={(open) => {
-          if (!open && !commentDeleteBusy) setCommentDeleteTarget(null);
-        }}
-      >
-        <DialogContent
-          className="admin-confirm"
-          finalFocus={() =>
-            commentDeleteFocus.current.deleted && commentDeleteFocus.current.fallback?.isConnected
-              ? commentDeleteFocus.current.fallback
-              : commentDeleteFocus.current.trigger?.isConnected
-                ? commentDeleteFocus.current.trigger
-                : true
-          }
-        >
-          <DialogTitle>删除评论？</DialogTitle>
-          <DialogDescription>
-            永久删除 {commentDeleteTarget?.author} 的评论及其全部回复，删除后无法恢复。
-          </DialogDescription>
-          {commentDeleteError && (
-            <p className="admin-post-error" role="alert">
-              {commentDeleteError}
-            </p>
-          )}
-          {commentDeleteConflict && (
-            <Button
-              variant="secondary"
-              disabled={commentDeleteBusy}
-              onClick={async () => {
-                if (!commentDeleteTarget) return;
-                setCommentDeleteReloading(true);
-                try {
-                  const latest = await commentRequest<CommentItem>(`/${commentDeleteTarget.id}`);
-                  setCommentDeleteTarget(latest);
-                  setCommentDeleteConflict(false);
-                  setCommentDeleteError("已载入最新评论，请重新确认删除。");
-                } catch (error) {
-                  setCommentDeleteError(error instanceof Error ? error.message : "重新载入失败。");
-                } finally {
-                  setCommentDeleteReloading(false);
-                }
-              }}
-            >
-              重新载入最新评论
-            </Button>
-          )}
-          <div className="admin-form-actions">
-            <Button
-              variant="ghost"
-              disabled={commentDeleteBusy}
-              onClick={() => setCommentDeleteTarget(null)}
-            >
-              取消
-            </Button>
-            <Button
-              variant="primary"
-              disabled={commentDeleteBusy || commentDeleteConflict}
-              onClick={async () => {
-                if (!commentDeleteTarget) return;
-                setCommentDeleteError("");
-                try {
-                  await commentState.deleteComment(commentDeleteTarget);
-                  commentDeleteFocus.current.deleted = true;
-                  setCommentDeleteTarget(null);
-                } catch (error) {
-                  setCommentDeleteError(
-                    error instanceof Error ? error.message : "删除失败，请重试。",
-                  );
-                  setCommentDeleteConflict(
-                    error instanceof AdminRequestError &&
-                      ["VERSION_CONFLICT", "NOT_FOUND"].includes(error.code),
-                  );
-                }
-              }}
-            >
-              {commentState.commentPending ? "正在删除…" : "确认删除"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <Dialog
         open={postDeleteTarget !== null}
         onOpenChange={(open) => {
           if (!open && !postMutation.current) setPostDeleteTarget(null);
@@ -463,7 +336,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           <DialogTitle>删除文章？</DialogTitle>
           <DialogDescription>
             永久删除《{postDeleteTarget ? postDisplayTitle(postDeleteTarget.title) : ""}
-            》及其标签关联、文章排期和全部评论回复，删除后无法恢复。
+            》及其标签关联和文章排期，删除后无法恢复。
           </DialogDescription>
           {postDeleteError && (
             <p className="admin-post-error" role="alert">

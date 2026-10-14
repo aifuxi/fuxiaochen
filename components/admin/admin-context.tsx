@@ -2,52 +2,44 @@
 
 import { createContext, useContext } from "react";
 
-import type { CommentItem } from "@/lib/comments/schema";
 import type { DeleteMediaInput } from "@/lib/media/schema";
 import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
-import type { useComments } from "./use-comments";
 import type { UploadJob } from "./use-media";
 import type { TaxonomyState } from "./use-taxonomy";
 
-type AdminState = TaxonomyState &
-  Omit<ReturnType<typeof useComments>, "deleteComment"> & {
-    mediaRevision: number;
-    mediaUploads: UploadJob[];
-    retryMediaUpload: (id: string) => Promise<void>;
-    clearMediaUploads: () => void;
-    onUploadMedia: (files: File[]) => Promise<void>;
-    onDeleteMedia: (id: string, input?: DeleteMediaInput) => Promise<void>;
-    onMessage: (message: string) => void;
-    uploadingMedia: boolean;
-    postRevision: number;
-    postPending: boolean;
-    operationRevision: number;
-    runOperation: <T>(work: () => Promise<T>, refreshPosts?: boolean) => Promise<T>;
-    onNavigate: (href: string) => void;
-    writingFocused: boolean;
-    setWritingFocused: (focused: boolean) => void;
-    postSummary: PostSummary | null;
-    postSummaryLoading: boolean;
-    postSummaryError: string;
-    reloadPostSummary: () => void;
-    savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
-    setPostFeatured: (post: PostItem) => Promise<PostItem>;
-    cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
-    onOpen: (panel: AdminPanel) => void;
-    onEdit: (id: string) => void;
-    onDeletePost: (
-      post: PostItem,
-      fallbackFocus?: HTMLElement | null,
-      triggerFocus?: HTMLElement | null,
-    ) => void;
-    onDeleteComment: (
-      comment: CommentItem,
-      fallbackFocus?: HTMLElement | null,
-      triggerFocus?: HTMLElement | null,
-    ) => void;
-  };
+type AdminState = TaxonomyState & {
+  mediaRevision: number;
+  mediaUploads: UploadJob[];
+  retryMediaUpload: (id: string) => Promise<void>;
+  clearMediaUploads: () => void;
+  onUploadMedia: (files: File[]) => Promise<void>;
+  onDeleteMedia: (id: string, input?: DeleteMediaInput) => Promise<void>;
+  onMessage: (message: string) => void;
+  uploadingMedia: boolean;
+  postRevision: number;
+  postPending: boolean;
+  operationRevision: number;
+  runOperation: <T>(work: () => Promise<T>, refreshPosts?: boolean) => Promise<T>;
+  onNavigate: (href: string) => void;
+  writingFocused: boolean;
+  setWritingFocused: (focused: boolean) => void;
+  postSummary: PostSummary | null;
+  postSummaryLoading: boolean;
+  postSummaryError: string;
+  reloadPostSummary: () => void;
+  savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
+  setPostFeatured: (post: PostItem) => Promise<PostItem>;
+  cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
+  onOpen: (panel: AdminPanel) => void;
+  onEdit: (id: string) => void;
+  onDeletePost: (
+    post: PostItem,
+    fallbackFocus?: HTMLElement | null,
+    triggerFocus?: HTMLElement | null,
+  ) => void;
+};
 
 export const AdminContext = createContext<AdminState | null>(null);
 

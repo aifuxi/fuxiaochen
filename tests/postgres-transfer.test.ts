@@ -39,6 +39,18 @@ const manifestSchema = z.object({
     z.object({ name: z.string(), rowCount: z.number(), bytes: z.number(), sha256: z.string() }),
   ),
 });
+const removedTables = new Set([
+  "comment",
+  "comment_rate_limit",
+  "page_visit",
+  "visit_session",
+  "analytics_rate_limit",
+]);
+const removedFields = new Set([
+  "enableComments",
+  "localAnalyticsEnabled",
+  "localAnalyticsStartedAt",
+]);
 const resetTables = new Set([
   "session",
   "login_rate_limit",
@@ -271,34 +283,48 @@ void test(
       });
 
       await t.test(
-        "导入保留 UUID、父子关系、正文、密码、统计、OSS 元数据和普通通知已读",
+        "导入保留现行业务、密码、GA4／百度、OSS 和普通通知，排除评论与本地统计",
         async () => {
           const client = new Sqlite(target, { readonly: true, fileMustExist: true });
           try {
             const archivedIds = new Set(
-              fixture.rows.notification.filter((row) => row.kind === "backup").map((row) => row.id),
+              fixture.rows.notification
+                .filter((row) => ["backup", "comment"].includes(String(row.kind)))
+                .map((row) => row.id),
             );
             for (const [table, rows] of Object.entries(fixture.rows)) {
+              if (removedTables.has(table)) {
+                assert.equal(
+                  client
+                    .prepare("SELECT 1 FROM sqlite_schema WHERE type='table' AND name=?")
+                    .get(table),
+                  undefined,
+                );
+                continue;
+              }
               const actual = client
                 .prepare<[], Record<string, unknown>>(`SELECT * FROM ${quoted(table)}`)
                 .all();
               let retained = resetTables.has(table) ? [] : rows;
-              if (table === "notification") retained = rows.filter((row) => row.kind !== "backup");
+              if (table === "notification")
+                retained = rows.filter((row) => !["backup", "comment"].includes(String(row.kind)));
               if (table === "notification_read")
                 retained = rows.filter((row) => !archivedIds.has(row.notificationId));
               const expected = retained.map((row) =>
                 Object.fromEntries(
-                  Object.entries(row).map(([column, value]) => [
-                    column,
-                    table === "operation_setting" && column === "autoBackup"
-                      ? 0
-                      : table === "operation_setting" && column === "schedulerLastRunAt"
-                        ? null
-                        : value !== null &&
-                            fixture.tables[table].columns[column].nativeType === "timestamptz"
-                          ? new Date(String(value)).getTime()
-                          : value,
-                  ]),
+                  Object.entries(row)
+                    .filter(([column]) => table !== "site_setting" || !removedFields.has(column))
+                    .map(([column, value]) => [
+                      column,
+                      table === "operation_setting" && column === "autoBackup"
+                        ? 0
+                        : table === "operation_setting" && column === "schedulerLastRunAt"
+                          ? null
+                          : value !== null &&
+                              fixture.tables[table].columns[column].nativeType === "timestamptz"
+                            ? new Date(String(value)).getTime()
+                            : value,
+                    ]),
                 ),
               );
               assert.deepEqual(
@@ -309,15 +335,6 @@ void test(
             }
             assert.equal(client.pragma("integrity_check", { simple: true }), "ok");
             assert.deepEqual(client.pragma("foreign_key_check"), []);
-            assert.deepEqual(
-              client
-                .prepare("SELECT id, parentId, postId FROM comment ORDER BY parentId NULLS FIRST")
-                .all(),
-              [
-                { id: fixture.ids.parent, parentId: null, postId: fixture.ids.post },
-                { id: fixture.ids.child, parentId: fixture.ids.parent, postId: fixture.ids.post },
-              ],
-            );
             assert.equal(
               client
                 .prepare<[string], { expectedBytes: number }>(
@@ -325,14 +342,6 @@ void test(
                 )
                 .get(fixture.ids.media)?.expectedBytes,
               5_000_000_000,
-            );
-            assert.equal(
-              client
-                .prepare<[], { day: string }>(
-                  "SELECT date(createdAt/1000, 'unixepoch', '+8 hours') AS day FROM page_visit",
-                )
-                .get()?.day,
-              "2026-10-04",
             );
           } finally {
             client.close();

@@ -17,15 +17,10 @@ import {
   notificationQuerySchema,
   operationSettingsSchema,
   readNotificationsSchema,
-  searchSchema,
 } from "./schema";
-import { searchContent } from "./search";
 import { getOperationSettings, saveOperationSettings } from "./settings";
 
 export const operationsRoutes = adminRoutes();
-operationsRoutes.get("/search", validate("query", searchSchema), async (c) =>
-  c.json({ data: await searchContent(c.req.valid("query"), c.get("admin")) }),
-);
 operationsRoutes.get("/notifications", validate("query", notificationQuerySchema), async (c) =>
   c.json({ data: await getNotifications(c.req.valid("query"), c.get("admin")) }),
 );

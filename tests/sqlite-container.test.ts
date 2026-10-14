@@ -297,8 +297,8 @@ await sharp({ create: { width: 1, height: 1, channels: 3, background: 'white' } 
 for (const path of ['scripts/sqlite-database.ts', 'scripts/admin.ts', 'scripts/operations.ts', 'scripts/restore-backup.ts', 'drizzle/meta/_journal.json']) {
   if (!existsSync(path)) throw new Error('缺少同镜像运维文件');
 }
-for (const path of ['node_modules/prisma', 'node_modules/@prisma/orm-postgres', '/usr/bin/pg_dump']) {
-  if (existsSync(path)) throw new Error('运行镜像残留 PostgreSQL/Prisma 工具');
+for (const path of ['node_modules/prisma', 'node_modules/@prisma/orm-postgres', '/usr/bin/pg_dump', 'lib/comments', 'lib/analytics', 'scripts/analytics-cleanup.ts']) {
+  if (existsSync(path)) throw new Error('运行镜像残留旧工具或已移除模块');
 }
 console.log('native-runtime-ok');`,
         );

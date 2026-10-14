@@ -23,6 +23,7 @@ import {
   digestRows,
   loadArchive,
   tableSpecs,
+  targetTableSpec,
   transferMigrationsFolder,
   TransferError,
   type Row,
@@ -43,6 +44,7 @@ export type TransferReport = {
   policies: string[];
   tables: {
     name: string;
+    disposition: "omitted" | "mapped";
     source: Digest;
     planned: Digest;
     target: Digest | null;
@@ -162,8 +164,11 @@ function verifyTable(client: Sqlite.Database, spec: Spec, expected: Iterable<Row
 }
 
 const policies = [
-  "保留业务记录、原始 ID、关联、密码哈希和 UTC 毫秒时间。",
-  "登录会话和四类临时限流计数清空。",
+  "保留现行业务记录、原始 ID、关联、密码哈希和 UTC 毫秒时间。",
+  "评论、本地访问统计及对应限流表仅保留源归档，不导入目标库。",
+  "site_setting 跳过评论开关与本地统计字段，GA4／百度配置保留。",
+  "评论通知及其已读关联仅保留源归档，不导入目标库。",
+  "登录会话及登录、媒体临时限流计数清空。",
   "PostgreSQL backup_run、backup 通知及其已读关联仅保留在迁移归档。",
   "operation_setting.autoBackup 设为 0，schedulerLastRunAt 设为 NULL；其余字段保留。",
   "仅创建独立的新 SQLite 文件，不覆盖任何已有数据库或归档。",
@@ -227,8 +232,9 @@ export async function importArchive(options: {
     policies,
     tables: tableSpecs.map((spec) => ({
       name: spec.name,
+      disposition: targetTableSpec(spec.name) ? "mapped" : "omitted",
       source: digestRows(spec, archive.rows(spec.name)),
-      planned: digestRows(spec, archive.plannedRows(spec.name)),
+      planned: digestRows(targetTableSpec(spec.name) ?? spec, archive.plannedRows(spec.name)),
       target: null,
     })),
   };
@@ -248,8 +254,11 @@ export async function importArchive(options: {
       snapshot = readOnlySnapshot(target);
       client = snapshot.client;
       verifyDatabase(client, { migrationsFolder: transferMigrationsFolder });
-      for (const [index, spec] of tableSpecs.entries())
-        report.tables[index].target = verifyTable(client, spec, archive.plannedRows(spec.name));
+      for (const [index, source] of tableSpecs.entries()) {
+        const spec = targetTableSpec(source.name);
+        if (spec)
+          report.tables[index].target = verifyTable(client, spec, archive.plannedRows(spec.name));
+      }
       verifyAuthMapping(client);
       await assertArchiveUnchanged(archive);
       snapshot.unchanged();
@@ -269,9 +278,11 @@ export async function importArchive(options: {
     const database = client;
     database
       .transaction(() => {
-        // 评论可能先于父评论；延迟全部外键到提交，提交前仍显式校验完整关联。
+        // 源记录顺序未按依赖排列，延迟外键到提交并显式核对全部关联。
         database.pragma("defer_foreign_keys = ON");
-        for (const spec of tableSpecs) {
+        for (const source of tableSpecs) {
+          const spec = targetTableSpec(source.name);
+          if (!spec) continue;
           const statement = database.prepare(
             `INSERT INTO ${identifier(spec.name)} (${spec.columns.map((column) => identifier(column.name)).join(", ")}) VALUES (${spec.columns.map(() => "?").join(", ")})`,
           );
@@ -280,7 +291,9 @@ export async function importArchive(options: {
         }
         syncAdminAccount(drizzle(database));
         verifyDatabase(database, { migrationsFolder: transferMigrationsFolder });
-        for (const [index, spec] of tableSpecs.entries()) {
+        for (const [index, source] of tableSpecs.entries()) {
+          const spec = targetTableSpec(source.name);
+          if (!spec) continue;
           const checked = verifyTable(database, spec, archive.plannedRows(spec.name));
           ensure(
             checked.rowCount === report.tables[index].planned.rowCount &&

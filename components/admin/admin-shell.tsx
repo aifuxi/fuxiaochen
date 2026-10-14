@@ -2,7 +2,6 @@
 
 import {
   Database,
-  BarChart3,
   Bell,
   ChevronLeft,
   ChevronRight,
@@ -12,38 +11,31 @@ import {
   ImageIcon,
   Link2,
   Menu,
-  MessageCircle,
   Plus,
-  Search,
   Settings,
   Tags,
-  Users,
   X,
   Globe2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export type AdminPanel =
-  | "search"
   | "notifications"
   | "backup"
   | "compose"
   | "profile"
-  | "comments"
   | "upload"
   | "categories"
-  | "analytics"
   | "schedule";
 
 type Props = {
   children: ReactNode;
-  pendingCount: number | null;
   unreadCount: number | null;
   notificationError: string;
   onOpen: (panel: AdminPanel) => void;
@@ -64,17 +56,7 @@ const navGroups = [
   },
   {
     name: "互动",
-    items: [
-      { name: "评论管理", icon: MessageCircle, href: "/admin/comments" },
-      { name: "友情链接", icon: Link2, href: "/admin/friends-links" },
-    ],
-  },
-  {
-    name: "数据",
-    items: [
-      { name: "数据分析", icon: BarChart3, href: "/admin/analytics" },
-      { name: "访客日志", icon: Users, href: "/admin/visitors" },
-    ],
+    items: [{ name: "友情链接", icon: Link2, href: "/admin/friends-links" }],
   },
   {
     name: "系统",
@@ -87,7 +69,6 @@ const navGroups = [
 
 export function AdminShell({
   children,
-  pendingCount,
   unreadCount,
   notificationError,
   onOpen,
@@ -97,17 +78,6 @@ export function AdminShell({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const shortcut = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
-        event.preventDefault();
-        onOpen("search");
-      }
-    };
-    window.addEventListener("keydown", shortcut);
-    return () => window.removeEventListener("keydown", shortcut);
-  }, [onOpen]);
 
   const sidebar = (mobile: boolean) => (
     <div className="admin-sidebar-inner">
@@ -148,11 +118,6 @@ export function AdminShell({
                   <>
                     <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
                     {(!collapsed || mobile) && <span>{item.name}</span>}
-                    {item.name === "评论管理" &&
-                      (pendingCount ?? 0) > 0 &&
-                      (!collapsed || mobile) && (
-                        <span className="admin-nav-badge">{pendingCount}</span>
-                      )}
                   </>
                 );
                 const sharedProps = {
@@ -233,21 +198,6 @@ export function AdminShell({
               onClick={() => setMobileOpen(true)}
             >
               <Menu size={20} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="compact"
-              className="admin-search-trigger"
-              type="button"
-              aria-label="搜索后台内容"
-              disabled={postPending}
-              aria-haspopup="dialog"
-              aria-keyshortcuts="Meta+K Control+K"
-              onClick={() => onOpen("search")}
-            >
-              <Search size={16} aria-hidden="true" />
-              <span>搜索后台内容…</span>
-              <kbd aria-hidden="true">⌘K</kbd>
             </Button>
           </div>
           <div className="admin-topbar-actions">

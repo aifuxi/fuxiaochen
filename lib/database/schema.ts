@@ -262,49 +262,6 @@ export const mediaUploadLimit = sqliteTable(
   (t) => [foreignKey({ columns: [t.adminId], foreignColumns: [admin.id] }).onDelete("cascade")],
 );
 
-export const comment = sqliteTable(
-  "comment",
-  {
-    id: text("id").primaryKey(),
-    postId: text("postId").notNull(),
-    parentId: text("parentId"),
-    adminId: safeInteger("adminId"),
-    author: text("author").notNull(),
-    authorKind: text("authorKind").notNull(),
-    submissionId: text("submissionId").unique(),
-    submissionHash: text("submissionHash"),
-    email: text("email"),
-    content: text("content").notNull(),
-    status: text("status").notNull(),
-    createdAt: datetime("createdAt").notNull(),
-    updatedAt: datetime("updatedAt").notNull(),
-    version: safeInteger("version").notNull(),
-  },
-  (t) => [
-    unique("comment_id_postId_unique").on(t.id, t.postId),
-    index("comment_createdAt_id_idx").on(t.createdAt, t.id),
-    index("comment_status_createdAt_id_idx").on(t.status, t.createdAt, t.id),
-    index("comment_postId_idx").on(t.postId),
-    index("comment_parentId_idx").on(t.parentId),
-    foreignKey({ columns: [t.postId], foreignColumns: [post.id] }).onDelete("cascade"),
-    foreignKey({ columns: [t.parentId, t.postId], foreignColumns: [t.id, t.postId] }).onDelete(
-      "cascade",
-    ),
-    foreignKey({ columns: [t.adminId], foreignColumns: [admin.id] }).onDelete("set null"),
-  ],
-);
-
-export const commentRateLimit = sqliteTable(
-  "comment_rate_limit",
-  {
-    id: text("id").primaryKey(),
-    window: safeInteger("window").notNull(),
-    count: safeInteger("count").notNull(),
-    expiresAt: datetime("expiresAt").notNull(),
-  },
-  (t) => [index("comment_rate_limit_expiresAt_idx").on(t.expiresAt)],
-);
-
 export const siteSetting = sqliteTable("site_setting", {
   id: safeInteger("id").primaryKey(),
   title: text("title").notNull(),
@@ -319,13 +276,10 @@ export const siteSetting = sqliteTable("site_setting", {
   avatarUrl: text("avatarUrl").notNull(),
   aboutMe: text("aboutMe").notNull(),
   postsPerPage: safeInteger("postsPerPage").notNull(),
-  enableComments: safeInteger("enableComments").notNull(),
   icpText: text("icpText").notNull(),
   icpUrl: text("icpUrl").notNull(),
   policeText: text("policeText").notNull(),
   policeUrl: text("policeUrl").notNull(),
-  localAnalyticsEnabled: safeInteger("localAnalyticsEnabled"),
-  localAnalyticsStartedAt: datetime("localAnalyticsStartedAt"),
   googleEnabled: safeInteger("googleEnabled").notNull(),
   googleId: text("googleId").notNull(),
   baiduEnabled: safeInteger("baiduEnabled").notNull(),
@@ -387,64 +341,6 @@ export const releaseLog = sqliteTable(
     createdAt: datetime("createdAt").notNull(),
   },
   (t) => [index("release_log_createdAt_id_idx").on(t.createdAt, t.id)],
-);
-
-export const visitSession = sqliteTable(
-  "visit_session",
-  {
-    id: text("id").primaryKey(),
-    visitorHash: text("visitorHash").notNull(),
-    createdAt: datetime("createdAt").notNull(),
-    lastSeenAt: datetime("lastSeenAt").notNull(),
-  },
-  (t) => [
-    index("visit_session_visitorHash_lastSeenAt_idx").on(t.visitorHash, t.lastSeenAt),
-    index("visit_session_createdAt_idx").on(t.createdAt),
-    index("visit_session_lastSeenAt_idx").on(t.lastSeenAt),
-  ],
-);
-
-export const pageVisit = sqliteTable(
-  "page_visit",
-  {
-    id: text("id").primaryKey(),
-    visitorHash: text("visitorHash").notNull(),
-    sessionId: text("sessionId").notNull(),
-    path: text("path").notNull(),
-    postId: text("postId"),
-    article: safeInteger("article").notNull(),
-    source: text("source").notNull(),
-    referrerHost: text("referrerHost").notNull(),
-    device: text("device").notNull(),
-    browser: text("browser").notNull(),
-    os: text("os").notNull(),
-    ip: text("ip").notNull(),
-    location: text("location").notNull(),
-    createdAt: datetime("createdAt").notNull(),
-    lastSeenAt: datetime("lastSeenAt").notNull(),
-    durationMs: safeInteger("durationMs").notNull(),
-    progress: safeInteger("progress").notNull(),
-  },
-  (t) => [
-    index("page_visit_createdAt_id_idx").on(t.createdAt, t.id),
-    index("page_visit_visitorHash_lastSeenAt_idx").on(t.visitorHash, t.lastSeenAt),
-    index("page_visit_sessionId_idx").on(t.sessionId),
-    index("page_visit_postId_createdAt_idx").on(t.postId, t.createdAt),
-    index("page_visit_lastSeenAt_idx").on(t.lastSeenAt),
-    foreignKey({ columns: [t.sessionId], foreignColumns: [visitSession.id] }).onDelete("cascade"),
-    foreignKey({ columns: [t.postId], foreignColumns: [post.id] }).onDelete("set null"),
-  ],
-);
-
-export const analyticsRateLimit = sqliteTable(
-  "analytics_rate_limit",
-  {
-    id: text("id").primaryKey(),
-    window: safeInteger("window").notNull(),
-    count: safeInteger("count").notNull(),
-    expiresAt: datetime("expiresAt").notNull(),
-  },
-  (t) => [index("analytics_rate_limit_expiresAt_idx").on(t.expiresAt)],
 );
 
 export const notification = sqliteTable(

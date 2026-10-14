@@ -2,20 +2,16 @@ import "server-only";
 import { Hono } from "hono";
 import { HTTPException } from "hono/http-exception";
 
-import { collectionRoutes } from "./analytics/collect-routes";
-import { analyticsRoutes } from "./analytics/routes";
 import { registerApiRequestGuards } from "./api-request-guards";
 import { handleLoginError } from "./auth/login-response";
 import { createLoginRoutes } from "./auth/login-routes";
 import { passkeyRoutes } from "./auth/passkey-routes";
 import { consumeLoginAttempt, login, readAdminSession, signOut } from "./auth/service";
 import { changelogRoutes } from "./changelog/routes";
-import { commentRoutes } from "./comments/routes";
 import { friendRoutes } from "./friends-links/routes";
 import { mediaRoutes } from "./media/routes";
 import { operationsRoutes } from "./operations/routes";
 import { postRoutes } from "./posts/routes";
-import { publicRoutes } from "./public/routes";
 import { settingsRoutes } from "./settings/routes";
 import { siteOrigin } from "./site-origin";
 import { taxonomyRoutes } from "./taxonomy/routes";
@@ -24,16 +20,12 @@ export const api = new Hono().basePath("/api");
 
 registerApiRequestGuards(api, siteOrigin);
 api.route("/auth/passkey", passkeyRoutes);
-api.route("/public/analytics", collectionRoutes);
-api.route("/public", publicRoutes);
 api.route("/admin/posts", postRoutes);
 api.route("/admin/media", mediaRoutes);
-api.route("/admin/comments", commentRoutes);
 api.route("/admin/settings", settingsRoutes);
 api.route("/admin/friends-links", friendRoutes);
 api.route("/admin/changelog", changelogRoutes);
 
-api.route("/admin", analyticsRoutes);
 api.route("/admin", operationsRoutes);
 api.route("/admin", taxonomyRoutes);
 

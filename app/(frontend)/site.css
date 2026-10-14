@@ -1134,98 +1134,6 @@ html:has(.site-layout) {
   color: var(--color-foreground);
   white-space: nowrap;
 }
-.site-comments {
-  margin-top: 64px;
-  padding-top: 40px;
-  border-top: 1px solid var(--color-outline);
-}
-.site-comment-list > li {
-  padding: 24px 0;
-  border-bottom: 1px solid var(--color-outline);
-}
-.site-comment-meta {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  font-size: 14px;
-}
-.site-comment-avatar {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-}
-.site-comment-meta time {
-  font-size: 12px;
-  color: var(--color-subtle);
-}
-.site-author-badge {
-  padding: 2px 8px;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 18px;
-  color: var(--color-focus);
-}
-.site-reply-label {
-  margin-top: 12px;
-  color: var(--color-subtle);
-  font-size: 12px;
-}
-.site-comment-content {
-  white-space: pre-wrap;
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 12px 0;
-}
-.site-comment-form {
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.site-comment-form h3 {
-  font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 8px;
-}
-.site-comment-form label {
-  display: block;
-  font-size: 13px;
-  color: var(--color-muted);
-  margin-bottom: 8px;
-}
-.site-comment-fields input {
-  width: 100%;
-}
-.site-comment-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.site-comment-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-.site-comment-actions p {
-  color: var(--color-muted);
-  font-size: 12px;
-  line-height: 1.6;
-}
-.site-field-error {
-  color: var(--color-danger);
-  font-size: 13px;
-  line-height: 1.6;
-  margin-top: 8px;
-}
-.site-success {
-  color: var(--color-success);
-  font-size: 14px;
-}
 .site-notice {
   color: var(--color-muted);
   font-size: 14px;
@@ -1260,18 +1168,9 @@ html:has(.site-layout) {
   .site-friends .ds-card-link {
     padding: var(--space-md);
   }
-  .site-friends,
-  .site-comment-fields {
+  .site-friends {
     grid-template-columns: minmax(0, 1fr);
   }
-  .site-comment-actions {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .site-comment-actions .ds-button {
-    width: 100%;
-  }
-  .site-comments .ds-button,
   .site-mobile-menu .ds-button {
     min-height: 44px;
   }
@@ -1286,7 +1185,6 @@ html:has(.site-layout) {
   .site-header {
     min-height: var(--control-touch);
   }
-  .site-comments .ds-button,
   .site-mobile-menu .ds-button {
     min-height: 44px;
   }

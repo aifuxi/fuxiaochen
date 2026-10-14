@@ -42,13 +42,19 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 首次初始化必须显式传 `--initialize-if-missing`，独占发布完成的新文件，不创建管理员。普通本地 `npm run dev` 不自动运行该生产流程。完整范围与运行结果见 [单镜像验收](engineering/sqlite-deployment-verification.md)。
 
+## 功能移除迁移
+
+`0003_remove_comments_local_analytics.sql` 删除评论、评论限流、本地访问记录、访客会话与统计限流五张表，并删除设置的评论开关、本地统计开关与采集起点。显式清理评论通知与已读关联，其他业务及 GA4／百度配置保持原值。旧迁移 SQL/hash 不变。
+
+升级必须先停服及调度，再通过现有启动流程备份、迁移并完整校验；不会自动删除旧备份、PostgreSQL 源库或归档。旧版本备份需使用匹配旧结构的镜像恢复到独立新文件。当前源码、隔离验证与实际数据库升级状态见[功能移除验收](engineering/feature-removal-verification.md)。
+
 ## Better Auth 认证维护
 
 认证使用固定版本 Better Auth 1.7.7、`@better-auth/drizzle-adapter` 1.7.7 和官方 `@better-auth/passkey` 1.7.7，通过 `better-auth/minimal` 接入；密码继续使用 Argon2id。`lib/auth/better-auth.ts` 负责配置，`lib/auth/adapter.ts` 只负责项目存储约束，客户端调用官方 Passkey client。未引入 Prisma 或其运行引擎。
 
 `BETTER_AUTH_SECRET` 必须是至少 32 个字符的独立随机私有值。用 `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` 生成并保存到本地私有 `.env` 或部署配置；不要提交密钥。缺失或过短时认证拒绝初始化；轮换后旧签名 Cookie 失效，需重新登录。`APP_ORIGIN` 继续是唯一可信站点来源。
 
-迁移 `0001_better_auth.sql` 新增 `auth_user`、`auth_account`、`auth_session` 与 `auth_verification`，迁移 id=1 的管理员、原密码哈希及时间，并清空旧 `session`。原 `admin`/`session` 保留用于旧库导入和业务 ID 兼容；网页不读取旧密码或旧会话。CLI 初始化/重置同步认证账号与旧库基线，重置在同一同步事务撤销全部新旧会话。PostgreSQL 离线导入在独立新目标内派生相同认证账号；旧来源 22 张表的逐字段核对继续保留。
+迁移 `0001_better_auth.sql` 新增 `auth_user`、`auth_account`、`auth_session` 与 `auth_verification`，迁移 id=1 的管理员、原密码哈希及时间，并清空旧 `session`。原 `admin`/`session` 保留用于旧库导入和业务 ID 兼容；网页不读取旧密码或旧会话。CLI 初始化/重置同步认证账号与旧库基线，重置在同一同步事务撤销全部新旧会话。PostgreSQL 离线导入在独立新目标内派生相同认证账号；旧来源 22 张表仍完整导出；现行目标按下述移除策略映射并逐字段核对。
 
 官方 Drizzle 适配器的异步转换在 SQLite 事务外执行，每条写 SQL 的同步驱动执行点经项目 `writeTransaction` 取得 IMMEDIATE 锁，不启用官方异步事务回调。用户名密码登录在插入会话的同一写事务内复核最初密码哈希并撤销当前旧会话，密码重置竞态失败时不创建新会话。未来新增跨多条 SQL 的账户操作需单独验证原子性，不能据此宣称任意插件支持同步多语句事务。
 
@@ -105,20 +111,23 @@ npm run db:import-postgres -- \
 
 ### 数据保留与转换
 
-| 数据                                                             | 迁移策略                                                                                  |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| 管理员、文章、标签、分类、日志、设置、友链、评论、媒体和访问统计 | 保留原 ID、全部字段、NULL、版本和 UTC 毫秒；正文与日志 JSON 保留原文本                    |
-| 管理员密码                                                       | 原 Argon2id 哈希直接保留，使用原密码重新登录                                              |
-| 登录 `session`                                                   | 清空，撤销所有旧登录状态                                                                  |
-| 四类限流表                                                       | 清空临时计数                                                                              |
-| `backup_run`、`kind=backup` 通知及对应已读关联                   | 完整保存在 PostgreSQL 导出归档，不导入 SQLite；旧 PostgreSQL 备份不能作为 SQLite 备份恢复 |
-| 其他通知与已读关联                                               | 保留原 ID、内容和关联                                                                     |
-| `operation_setting`                                              | `autoBackup=0`、`schedulerLastRunAt=NULL`；版本、时间和其他字段保留                       |
-| OSS                                                              | 保留对象键和元数据，不上传、删除、重写或访问远程对象                                      |
+| 数据                                           | 迁移策略                                                                                                |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| 管理员、文章、标签、分类、日志、友链和媒体     | 保留原 ID、全部字段、NULL、版本和 UTC 毫秒；正文与日志 JSON 保留原文本                                  |
+| 管理员密码                                     | 原 Argon2id 哈希直接保留，使用原密码重新登录                                                            |
+| 登录 `session`                                 | 清空，撤销所有旧登录状态                                                                                |
+| 登录和媒体限流表                               | 清空临时计数                                                                                            |
+| `backup_run`、`kind=backup` 通知及对应已读关联 | 完整保存在 PostgreSQL 导出归档，不导入 SQLite；旧 PostgreSQL 备份不能作为 SQLite 备份恢复               |
+| 评论、本地访问记录、访客会话及对应限流表       | 仅保留源归档，不导入 SQLite                                                                             |
+| 设置                                           | 跳过 `enableComments`、`localAnalyticsEnabled`、`localAnalyticsStartedAt`；其他字段及 GA4／百度配置保留 |
+| `kind=comment` 通知及对应已读关联              | 仅保留源归档，不导入 SQLite                                                                             |
+| 其他通知与已读关联                             | 保留原 ID、内容和关联                                                                                   |
+| `operation_setting`                            | `autoBackup=0`、`schedulerLastRunAt=NULL`；版本、时间和其他字段保留                                     |
+| OSS                                            | 保留对象键和元数据，不上传、删除、重写或访问远程对象                                                    |
 
-逐字段报告区分源 `source`、策略转换后的 `planned` 和实际 `target`，每项包含数量、整行摘要与所有字段摘要。`--dry-run` 的 `targetChecked=false`、`verified=false`、`target=null`；它证明归档和映射预检通过。apply/verify 逐行比较所有字段，并校验 ledger、schema、integrity_check 和 foreign_key_check，不能仅凭记录数认定迁移成功。报告及终端不输出数据行、哈希原值、账号信息或连接凭据。
+逐字段报告区分源 `source`、策略转换后的 `planned` 和实际 `target`，每项包含数量、整行摘要与所有字段摘要；`disposition=omitted` 表示退役表，`planned` 为零行、`target=null`，`mapped` 表示现行表映射。源摘要保留完整字段，设置的 planned/target 摘要只含保留字段。`--dry-run` 的 `targetChecked=false`、`verified=false`、`target=null`；它证明归档和映射预检通过。apply/verify 逐行比较所有字段，并校验 ledger、schema、integrity_check 和 foreign_key_check，不能仅凭记录数认定迁移成功。报告及终端不输出数据行、哈希原值、账号信息或连接凭据。
 
-apply 在目标父目录的私有临时文件中建立 SQLite 结构，使用单个同步 IMMEDIATE 事务写入并核对。延迟外键支持子评论先于父评论；提交前检查全部关系。再次核对源归档，关闭数据库、写入并同步报告后，以独占硬链接发布新文件；任何已有目标（包括空文件）或遗留日志均拒绝。失败只清理本次临时库和未完成报告，不覆盖旧库。进程被强制终止时可能停在报告已写入、目标尚未发布的窗口，完成判断必须同时确认 CLI 成功退出、目标存在及后续 verify 通过，不能只读取报告的 verified 字段。
+apply 在目标父目录的私有临时文件中建立 SQLite 结构，使用单个同步 IMMEDIATE 事务写入并核对。延迟外键支持源记录按原表顺序写入；提交前检查全部关系。再次核对源归档，关闭数据库、写入并同步报告后，以独占硬链接发布新文件；任何已有目标（包括空文件）或遗留日志均拒绝。失败只清理本次临时库和未完成报告，不覆盖旧库。进程被强制终止时可能停在报告已写入、目标尚未发布的窗口，完成判断必须同时确认 CLI 成功退出、目标存在及后续 verify 通过，不能只读取报告的 verified 字段。
 
 verify 只接受停止使用、无 WAL/shm/journal 的普通 SQLite 文件。为避免只读打开 WAL 库产生日志，它将文件读取为只读内存数据库；仅调整内存副本的 WAL header，再比对原文件 inode、时间、大小和摘要确认未变化。核对时需要足够内存容纳目标文件与 SQLite 副本；归档按行读取，离线关系检查另保存键索引，内存占用随记录数增长。
 
@@ -141,7 +150,7 @@ node --env-file=/absolute/private/test.env --conditions=react-server --import ts
 
 Markdown 导入由 `lib/posts/markdown-document.ts` 解析为同一种文档，支持 GFM；原始 HTML 和不支持的语法保留为文字，不执行。导入合并后再次校验完整文档，链接与图片使用共享 URL 校验。导入上限、插入语义、保存状态与失败保留见 [产品行为](product/behavior.md)，编辑器和正文布局分别见 [后台场景](design/admin.md) 与 [前台场景](design/frontend.md)。
 
-后台筛选和搜索使用业务查询入口，查询条件变化时取消旧请求，避免旧结果覆盖新条件。访客记录每 10 秒查询，页面隐藏、卸载或暂停时停止轮询，恢复时立即刷新；暂停只冻结后台查询，不关闭前台采集。产品状态、分页和统计口径由产品文档维护，轮询不作为视觉动效。
+后台筛选和搜索使用业务查询入口，查询条件变化时取消旧请求，避免旧结果覆盖新条件。产品状态与分页由产品文档维护。
 
 ## 历史 PostgreSQL 草稿与更新日志增量迁移
 

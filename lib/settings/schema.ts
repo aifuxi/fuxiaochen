@@ -57,12 +57,10 @@ export const settingsSchema = z
     avatarUrl: imageUrlSchema,
     aboutMe: z.string().trim().max(2000),
     postsPerPage: z.number().int().min(1).max(100),
-    enableComments: z.boolean(),
     icpText: z.string().trim().max(120),
     icpUrl: optionalHttps,
     policeText: z.string().trim().max(120),
     policeUrl: optionalHttps,
-    localAnalyticsEnabled: z.boolean(),
     googleEnabled: z.boolean(),
     googleId: z
       .string()
@@ -105,12 +103,10 @@ export type SocialAccount = z.infer<typeof socialSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
 export type SiteSettings = SettingsInput & {
   updatedAt: string;
-  localAnalyticsStartedAt: string | null;
 };
 export type PublicSettings = Pick<
   SiteSettings,
   | "postsPerPage"
-  | "enableComments"
   | "title"
   | "subtitle"
   | "seoDescription"
@@ -127,7 +123,6 @@ export type PublicSettings = Pick<
   | "policeText"
   | "policeUrl"
   | "socials"
-  | "localAnalyticsEnabled"
   | "googleEnabled"
   | "googleId"
   | "baiduEnabled"
@@ -146,12 +141,10 @@ export const defaultSettings: SettingsInput = {
   avatarUrl: "/avatar.avif",
   aboutMe: "记录生活，分享关于效率工具、创意设计、读书感悟与科技探索的见闻。",
   postsPerPage: 10,
-  enableComments: true,
   icpText: "",
   icpUrl: "",
   policeText: "",
   policeUrl: "",
-  localAnalyticsEnabled: false,
   googleEnabled: false,
   googleId: "",
   baiduEnabled: false,

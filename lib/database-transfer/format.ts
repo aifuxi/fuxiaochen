@@ -39,6 +39,31 @@ export const tableSpecs: TableSpec[] = Object.entries(
   })),
   primaryKey: table.primaryKey.columns,
 }));
+// 源 contract 保留旧库基线；目标映射仅包含现行功能，禁止恢复已移除数据。
+export const removedTables = new Set([
+  "comment",
+  "comment_rate_limit",
+  "page_visit",
+  "visit_session",
+  "analytics_rate_limit",
+]);
+export const removedSettingFields = new Set([
+  "enableComments",
+  "localAnalyticsEnabled",
+  "localAnalyticsStartedAt",
+]);
+export function targetTableSpec(name: string): TableSpec | undefined {
+  const source = tableSpecs.find((spec) => spec.name === name);
+  if (!source || removedTables.has(name)) return undefined;
+  return name === "site_setting"
+    ? {
+        ...source,
+        columns: source.columns.filter(
+          ({ name: columnName }) => !removedSettingFields.has(columnName),
+        ),
+      }
+    : source;
+}
 export const tableNames = tableSpecs.map(({ name }) => name);
 export const resetTables = new Set([
   "session",
@@ -399,13 +424,14 @@ export async function loadArchive(inputDirectory: string): Promise<Archive> {
         tableSpec(name),
         manifest.tables.find((table) => table.name === name)!,
       );
-    const backupIds = new Set<string>();
+    const omittedNotificationIds = new Set<string>();
     const parents = new Map<string, { parent: string | null; post: string }>();
     const relationIndexes = createRelationIndexes();
     for (const spec of tableSpecs) {
       for (const row of rows(spec.name)) {
         collectRelationKeys(relationIndexes, spec, row);
-        if (spec.name === "notification" && row.kind === "backup") backupIds.add(String(row.id));
+        if (spec.name === "notification" && ["backup", "comment"].includes(String(row.kind)))
+          omittedNotificationIds.add(String(row.id));
         if (spec.name === "comment")
           parents.set(String(row.id), {
             parent: row.parentId === null ? null : String(row.parentId),
@@ -441,13 +467,18 @@ export async function loadArchive(inputDirectory: string): Promise<Archive> {
       for (const row of rows(name)) {
         if (
           resetTables.has(name) ||
-          (name === "notification" && row.kind === "backup") ||
-          (name === "notification_read" && backupIds.has(String(row.notificationId)))
+          removedTables.has(name) ||
+          (name === "notification" && ["backup", "comment"].includes(String(row.kind))) ||
+          (name === "notification_read" && omittedNotificationIds.has(String(row.notificationId)))
         )
           continue;
         yield name === "operation_setting"
           ? { ...row, autoBackup: 0, schedulerLastRunAt: null }
-          : row;
+          : name === "site_setting"
+            ? Object.fromEntries(
+                Object.entries(row).filter(([key]) => !removedSettingFields.has(key)),
+              )
+            : row;
       }
     };
     return {

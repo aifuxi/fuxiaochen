@@ -1,5 +1,4 @@
 "use client";
-import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type {
@@ -7,19 +6,16 @@ import type {
   BackupPage,
   NotificationPage,
   OperationSettings,
-  SearchPage,
 } from "@/lib/operations/schema";
 
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
-import { searchKinds, searchLabels } from "@/lib/operations/schema";
 import { postTime } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
-import { useDebouncedPostQuery, usePostQuery } from "./use-posts";
+import { usePostQuery } from "./use-posts";
 import "./admin-business.css";
 
 export const operationRequest = resourceRequest("/api/admin");
@@ -77,91 +73,6 @@ function Pagination({
         </Button>
       </nav>
     )
-  );
-}
-export function GlobalSearch() {
-  const { postRevision, operationRevision, postPending, onNavigate } = useAdminWorkspace();
-  const [input, setInput] = useState("");
-  const [kind, setKind] = useState("");
-  const [page, setPage] = useState(1);
-  const q = useDebouncedPostQuery(input);
-  const query = usePostQuery(
-    q
-      ? `/search?${new URLSearchParams({ q, ...(kind ? { kind } : {}), page: String(page) })}`
-      : null,
-    postRevision + operationRevision,
-    operationRequest<SearchPage>,
-  );
-  const data = input.trim() === q ? query.data : null;
-  return (
-    <div className="admin-modal-section">
-      <label htmlFor="admin-global-search">搜索后台内容</label>
-      <InputGroup>
-        <InputGroupInput
-          id="admin-global-search"
-          value={input}
-          maxLength={200}
-          placeholder="输入关键词…"
-          onChange={(event) => {
-            setInput(event.target.value);
-            setPage(1);
-          }}
-        />
-        <InputGroupAddon>
-          <Search size={16} aria-hidden="true" />
-        </InputGroupAddon>
-      </InputGroup>
-      <fieldset className="admin-operation-filters" aria-label="内容范围">
-        <Button
-          size="sm"
-          variant="ghost"
-          aria-pressed={!kind}
-          onClick={() => {
-            setKind("");
-            setPage(1);
-          }}
-        >
-          全部
-        </Button>
-        {searchKinds.map((value) => (
-          <Button
-            key={value}
-            size="sm"
-            variant="ghost"
-            aria-pressed={kind === value}
-            onClick={() => {
-              setKind(value);
-              setPage(1);
-            }}
-          >
-            {searchLabels[value]}
-          </Button>
-        ))}
-      </fieldset>
-      {!input.trim() ? (
-        <p className="admin-empty">输入关键词开始搜索。</p>
-      ) : (
-        <BusinessStatus {...query} loading={query.loading || input.trim() !== q} />
-      )}
-      <div className="admin-result-list">
-        {data?.items.map((item) => (
-          <button
-            className="admin-result"
-            type="button"
-            disabled={postPending}
-            key={`${item.kind}:${item.id}`}
-            onClick={() => onNavigate(item.href)}
-          >
-            <strong>{item.title}</strong>
-            <span>
-              {searchLabels[item.kind]} · {item.description}
-            </span>
-          </button>
-        ))}
-      </div>
-      {data && !data.items.length && <p className="admin-empty">没有找到匹配内容。</p>}
-      <Pagination data={data} disabled={postPending} onPage={setPage} />
-    </div>
   );
 }
 export function NotificationCenter() {
@@ -324,7 +235,7 @@ export function BackupPanel() {
   };
   return (
     <div className="admin-modal-section">
-      <p>保存文章、评论、设置、会话及媒体元数据。OSS 文件不在数据库备份中。</p>
+      <p>保存文章、设置、会话及媒体元数据。OSS 文件不在数据库备份中。</p>
       <Button variant="primary" disabled={postPending} onClick={() => void makeBackup()}>
         {postPending ? "正在执行…" : uncertain ? "核对本次备份" : "立即备份数据库"}
       </Button>

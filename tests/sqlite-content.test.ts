@@ -462,10 +462,9 @@ void test("前台：仅已发布、真实关系数量、摘要回退、分页回
   );
 });
 
-void test("设置：空库默认值、SEO字段、社交顺序、版本冲突和首次采集时间", async () => {
+void test("设置：空库默认值、SEO字段、社交顺序、版本冲突和第三方统计配置", async () => {
   const initial = await getSettings(actor);
   assert.equal(initial.version, 1);
-  assert.equal(initial.localAnalyticsStartedAt, null);
   const saved = await saveSettings(
     {
       ...initial,
@@ -474,7 +473,6 @@ void test("设置：空库默认值、SEO字段、社交顺序、版本冲突和
       googleVerification: "google_test_token",
       bingVerification: "bing_test_token",
       baiduVerification: "baidu_test_token",
-      localAnalyticsEnabled: true,
       socials: [
         {
           id: "10000000-0000-4000-8000-000000000001",
@@ -497,7 +495,6 @@ void test("设置：空库默认值、SEO字段、社交顺序、版本冲突和
     actor,
   );
   assert.equal(saved.version, 2);
-  assert.ok(saved.localAnalyticsStartedAt);
   const publicSettings = await request(getPublicSettings);
   assert.equal(publicSettings.seoDescription, saved.seoDescription);
   assert.equal(publicSettings.ogImageUrl, saved.ogImageUrl);
@@ -508,8 +505,6 @@ void test("设置：空库默认值、SEO字段、社交顺序、版本冲突和
   await assert.rejects(saveSettings({ ...initial, title: "过期设置" }, actor), {
     code: "VERSION_CONFLICT",
   });
-  const disabled = await saveSettings({ ...saved, localAnalyticsEnabled: false }, actor);
-  assert.equal(disabled.localAnalyticsStartedAt, saved.localAnalyticsStartedAt);
 });
 
 void test("更新日志：逐项字面搜索、编辑冲突、撤回和重新发布保留创建时间", async () => {

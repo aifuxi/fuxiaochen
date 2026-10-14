@@ -14,7 +14,6 @@ const entries = [
   "scripts/operations.ts",
   "scripts/restore-backup.ts",
   "scripts/media-cleanup.ts",
-  "scripts/analytics-cleanup.ts",
 ];
 
 // 保持 CLI 原入口和 TypeScript 路径别名，仅把其实际依赖合并到 standalone。
@@ -134,7 +133,6 @@ const supportedScripts = [
   "admin:init",
   "admin:reset-password",
   "media:cleanup",
-  "analytics:cleanup",
 ];
 await writeFile(
   join(output, "package.json"),
