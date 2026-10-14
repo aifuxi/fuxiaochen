@@ -9,6 +9,18 @@
         "files": ["components/admin/admin.css"],
         "createdAt": "2026-10-13T14:36:50.354Z",
         "reason": "Agent: components/admin/admin-comments.tsx 使用真实 blockquote 引用原评论；该 2px 中性 outline 边线来自 2026-09-30 的提交 0f9ad1098，是引用语义标识，不是装饰卡片侧边强调。"
+      },
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-10-14T14:51:31.106Z",
+        "reason": "Agent: DESIGN.md 与 docs/design/frontend.md 明确规定已批准的 Inter 共享字体；本次全站主题任务要求保留现有布局和交互，字体在任务前已存在且未改动。"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.34, 1.36, 0.64, 1)",
+        "createdAt": "2026-10-14T14:51:45.929Z",
+        "reason": "Agent: DESIGN.md motion.lift-ease 为既有首页展示微卡的 expressive 上浮曲线，当前用于 site-home-portal-card/icon；全站色盘任务明确保留现有交互，该曲线在任务前已存在且未改动。"
       }
     ]
   }
