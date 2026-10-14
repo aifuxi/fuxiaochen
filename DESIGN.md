@@ -256,9 +256,13 @@ components:
 
 ## 品牌资产
 
-站点使用用户提供的 `FC-logo-smooth.svg`：黑色圆角方形底与白色 FC 连续曲线字标，保留原始比例、轮廓与配色。品牌资产颜色不映射为界面主题 token。前台导航与后台侧栏共用 `public/logo.svg`；浏览器 favicon 使用同内容的 `app/icon.svg`，Apple 主屏幕图标使用由该 SVG 导出的 180×180px `app/apple-icon.png`。更新品牌时同步三份资产。
+站点沿用用户提供的 `FC-logo-smooth.svg` 中的 FC 连续曲线字标，保留原始比例、轮廓、镂空与留白。前台导航与后台侧栏共用 [BrandLogo](components/brand-logo.tsx) 内联 SVG：背景透明，只展示原字标路径，通过 `fill="currentColor"` 继承所在位置的文字颜色，随深浅主题及链接状态同步。页面显示尺寸与间距由前后台场景规定。
+
+`public/logo.svg` 保留原始黑色圆角方形底与白色字标，作为品牌源资产；浏览器 favicon 继续使用同内容的 `app/icon.svg`，Apple 主屏幕图标使用由该 SVG 导出的 180×180px `app/apple-icon.png`。这两类系统图标保持固定配色，不继承页面主题。字标造型更新时同步页面组件、源资产与系统图标；仅调整页面展示时，按授权范围保留系统图标。
 
 2026-10-13 已替换上述资产及前台通用书本标识。验证范围见[FC 品牌资产替换记录](docs/engineering/verification-history.md#fc-品牌资产替换2026-10-13)。
+
+2026-10-14 已按用户授权将页面 logo 改为透明背景、文字同色；系统图标保留原样。实际回归范围见[页面 logo 透明化与文字同色](docs/engineering/verification-history.md#页面-logo-透明化与文字同色2026-10-14)。
 
 ## Token 与运行时映射
 

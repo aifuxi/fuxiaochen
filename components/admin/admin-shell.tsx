@@ -22,6 +22,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -83,7 +84,7 @@ export function AdminShell({
     <div className="admin-sidebar-inner">
       <div>
         <div className="admin-brand">
-          <Image src="/logo.svg" width={32} height={32} alt="" className="admin-brand-logo" />
+          <BrandLogo className="admin-brand-logo" />
           {(!collapsed || mobile) && (
             <span className="admin-brand-name">
               付小晨 <small>管理空间</small>

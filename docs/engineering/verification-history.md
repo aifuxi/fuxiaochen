@@ -863,3 +863,13 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 静态检查：TypeScript、全仓oxlint、5项主题测试、9项SEO测试、改动文件oxfmt与git diff --check通过。隔离副本的生产 `next build --webpack` 冷缓存重试退出0，编译、TypeScript、22项静态生成和产物追踪完成；首轮在 Next 内部 WasmHash 报错，同源码冷产物重试成功，不推断根因。该构建未包含随后追加的404颜色覆盖与toast阴影角色；404通过运行复验，最终CSS已由开发编译和格式检查核对。不以构建替代交互验收。
 - 证据：本机可视化目录保存 `site-theme-light.jpg`、`site-theme-dark.jpg`、`login-theme-light-mobile-final.jpg`、`admin-theme-light.jpg`、`admin-theme-dark-final.jpg`，均已实际查看。截图只证明所列视觉状态；过渡中间帧和未等待编译完成的路由观察不计入通过结果。
 - 未验证／不适用：未执行上传、发布、删除、备份恢复、Passkey注册撤销或账号配置写入，也未进行全量业务回归、真实触屏、跨浏览器、屏幕阅读器和全部断点边界测量；这些行为契约未改动。没有新增依赖、推送或部署。
+
+## 页面 logo 透明化与文字同色（2026-10-14）
+
+- 已实现：前台导航与后台侧栏复用 `BrandLogo` 内联 SVG，只保留原 FC 字标路径，以 `fill="currentColor"` 继承所在位置的文字颜色。原曲线、镂空、比例、留白、32×32px 尺寸和现有间距保持；SVG 使用 `aria-hidden="true"` 与 `focusable="false"`。共享规范及前后台场景同步页面 logo 与系统图标的职责。
+- 环境：前台复用 WebStorm 已启动的 `http://localhost:3000`，使用独立 Chromium context；后台使用当前源码的 `/tmp/fc-logo-currentcolor-hyqo92wh` 隔离副本、新建 SQLite 和测试账号，在 `http://localhost:3001` 运行，不复制业务 `.env` 或写入原项目数据库。测试结束后注销两次会话，核对隔离库会话计数为 0，并停止 3001；原服务继续运行。
+- 前台运行通过：1440×1000 和 390×844、深浅两态，实际操作 ThemeToggle，核对默认、hover、按压 active 的路径填充色与品牌文字 computed color 一致，SVG 背景透明、无 rect、最终尺寸 32×32px、无横向溢出。品牌链接键盘焦点可见，Enter 从文章列表返回首页；手机导航打开、关闭及文章跳转后关闭均通过。
+- 后台运行通过：隔离账号实际登录，1440×1000 深浅两态检查展开、键盘收起与再次展开，收起 logo 的侧栏中心偏差为 0px；390×844 深浅两态实际打开 Portal 抽屉，主品牌文字与路径同色、透明且尺寸正确。关闭按钮及 Escape 关闭回到触发按钮；本次后台检查未出现 pageerror 或横向溢出。
+- 静态检查通过：`npm run typecheck`、`npm run lint`、改动文件 oxfmt、`git diff --check`；Impeccable detector 对三个改动组件未报告确定性问题。原 SVG 与组件路径规范化后完全一致，viewBox、transform 与 evenodd 保留；`public/logo.svg`、`app/icon.svg`、`app/apple-icon.png` 与提交前字节一致，两个系统图标 HTTP 请求为 200。
+- 证据：本机 `.codex/logo-currentcolor-verification/` 保存 `frontend-result.json`、`backend-result.json`、前台深浅桌面／手机及后台展开／收起／移动抽屉截图，关键截图已实际查看。临时脚本、截图、测试凭据与数据库不提交；截图只证明所列视觉状态，交互结论来自实际操作记录。
+- 未验证／不适用：未运行跨浏览器、真实触屏、屏幕阅读器、真实 iOS 主屏幕安装、全部断点或后台业务操作回归；没有新增业务逻辑或动效，不重复生产构建。登录页和展示页没有新增 logo，仅源码核对保留范围。

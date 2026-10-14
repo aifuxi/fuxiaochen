@@ -1,10 +1,10 @@
 "use client";
 import { Menu, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -63,7 +63,7 @@ export function SiteHeader({ title }: { title: string }) {
   return (
     <header className="site-header" ref={header} data-collapsed={collapsed}>
       <Link className="site-brand" ref={brand} href="/" title={title}>
-        <Image src="/logo.svg" width={32} height={32} alt="" className="site-brand-logo" />
+        <BrandLogo className="site-brand-logo" />
         <span>{title}</span>
       </Link>
       <nav
