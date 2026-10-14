@@ -70,7 +70,8 @@
 }
 
 .scope :global(.ds-button) {
-  border-radius: var(--radius-sm);
+  /* 按钮与输入共用圆角，组合在同一表单中时保持一致的轮廓。 */
+  border-radius: var(--radius-form);
   box-shadow: none;
 }
 
@@ -214,6 +215,8 @@
   line-height: 20px;
 }
 
+/* 内嵌图标操作比外层控件小一档，InputGroup 与 Combobox 保持一致。 */
+.scope :global(.ds-input-group-button),
 .scope :global(.ds-picker-action) {
   border-radius: var(--radius-sm);
 }

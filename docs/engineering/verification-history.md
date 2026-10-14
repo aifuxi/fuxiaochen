@@ -771,3 +771,10 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 隔离与规范：源码及差异核对确认仅本路由样式与样本发生变化，未修改共享 token、app/globals.css、components/ui 或业务页面。DESIGN.md 记录用户长期视觉禁则，frontend.md 同步本页变体；既有业务页面等待单独推广授权。普通组件以外的独立 Border beam 效果演示保持原有按需播放行为。
 - 静态检查：TypeScript 无增量检查、本路由 oxlint、改动文件 oxfmt 与 git diff --check 通过。未新增依赖、交互逻辑或业务写入。
 - 证据与边界：本机可视化目录 design-spec-audit/ 保存 borderless-inputs-desktop.png、borderless-inputs-mobile.png 与 borderless-verification.json。其他基础样本、Accordion 分隔、全部浮层样式覆盖和跨页隔离本轮仅源码核对；未重复首页／登录运行对照、全量交互、生产构建、真实触屏、跨浏览器、系统减少动态效果、forced-colors 或屏幕阅读器验证。浏览器临时视口已恢复，页面保留在输入样本。
+
+## 工作台按钮与输入圆角统一（2026-10-14）
+
+- 已实现：按用户对联系表单的反馈，本页独立 Button 圆角从 8px 改为复用 radius-form 的 12px，与输入和选择一致。InputGroup 内嵌图标按钮显式保留 8px，与 Combobox 附加操作一致；导航和标签页仍为 8px。同步按钮规则、圆角样本与本页场景规范，未修改共享 token、组件默认实现或业务页面。
+- 运行通过：复用 localhost:3000，桌面 1225×953 下，联系表单输入与提交按钮均 12px／40px；按钮页全部七个样本（含禁用与不同尺寸）圆角均 12px，Dialog 内三个按钮与输入均 12px，InputGroup 附加按钮与 Combobox 附加操作均 8px。390×844 下输入与提交按钮均 12px／44px，无横向溢出，桌面与窄屏截图已查看。
+- 运行通过：联系表单空提交聚焦必填姓名；填写虚构预览值后按 Enter 提交显示本地成功，按钮保留独立 2px 键盘焦点，未发送业务数据。Dialog 取消关闭后回到打开按钮；切换条目清空预览值，最终回到联系表单。控制台没有记录到 error，浏览器临时视口已恢复。
+- 静态检查与边界：改动文件 oxfmt、路由 oxlint 与 git diff --check 通过。只调整局部圆角与说明，未新增测试或重复类型检查和生产构建；其他组件消费者、hover／active 反馈、减少动态效果与跨页隔离仅源码核对，未重复全量交互、真实触屏与跨浏览器验证。证据保存在本机可视化 design-spec-audit/ 的 radius-contact-desktop.png、radius-contact-mobile.png 与 radius-verification.json。

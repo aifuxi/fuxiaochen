@@ -192,8 +192,8 @@ function ButtonsDemo({ onNotice }: NoticeProps) {
         </p>
       </section>
       <Rule>
-        按钮圆角
-        8px。蓝色用于当前主要操作，灰色用于次要操作；每次点击都有明确反馈。键盘焦点使用独立的 2px
+        独立按钮与输入统一使用 12px
+        圆角。蓝色用于当前主要操作，灰色用于次要操作；每次点击都有明确反馈。键盘焦点使用独立的 2px
         蓝色轮廓。
       </Rule>
     </div>

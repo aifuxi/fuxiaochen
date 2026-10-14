@@ -290,8 +290,8 @@ function SpacingFoundations() {
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            ["8px", "按钮与导航", "--radius-sm"],
-            ["12px", "输入与选择", "--radius-form"],
+            ["8px", "导航与内嵌操作", "--radius-sm"],
+            ["12px", "按钮、输入与选择", "--radius-form"],
             ["16px", "卡片与弹窗", "--radius-lg"],
           ].map(([value, label, token]) => (
             <div key={token} className="space-y-3">
