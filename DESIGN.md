@@ -184,7 +184,7 @@ components:
 
 各文档按职责负责。场景文档可定义用途明确的布局、组件尺寸变体及共享颜色的用途组合，不另设基础颜色、字体或重复定义控件状态；共享设计变化先更新本文件，再在授权范围内同步实现。行为调整进入产品文档，技术调整进入对应工程文档。外部参考与[历史验收记录](docs/engineering/verification-history.md)是证据，不直接覆盖现行规范。
 
-2026-10-14 起，用户授权先在 `/design-spec` 中试验新设计。该页允许使用局部草稿 token 与组件样式，作为上述共享规则的开发预览例外；草稿不代表全站已批准目标，不修改本文件的 YAML 或共享默认样式。当前仅建立隔离入口，外观仍沿用现行设计；设计确认并获得推广授权后，再单独同步共享规范与实际页面。使用方式和边界见[展示页设计试验区](docs/design/frontend.md#展示页设计试验区)。
+2026-10-14 起，用户授权先在 `/design-spec` 中试验新设计。该页允许使用局部草稿 token 与组件样式，作为上述共享规则的开发预览例外；草稿不代表全站已批准目标，不修改本文件的 YAML 或共享默认样式。当前已在隔离入口实施获批的设计工作台布局与局部视觉变体；获得推广授权后，再单独同步共享规范与实际页面。使用方式和边界见[展示页设计试验区](docs/design/frontend.md#展示页设计试验区)。
 
 ## 品牌资产
 
@@ -365,7 +365,7 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 | 前台导航             | 普通链接、当前项局部胶囊                      | [SiteHeader](components/frontend/site-header.tsx)、[前台样式](<app/(frontend)/site.css>)               | 移除整组材质与蓝线，保留宽度测量与折叠菜单；长品牌换行、跨断点关闭与焦点兜底         | 已实施；当前项、移动排版、Escape 回焦、跨断点关闭及再次缩窗不重开运行通过                    |
 | 指针                 | 全站原生语义指针                              | [根布局](app/layout.tsx)、[展示页](<app/(showcase)/design-spec/page.tsx>)                              | 删除 CursorEffect、专用样式、token 与遗留属性；展示系统指针示例                      | 已实施；普通区域、按钮、文本与禁用输入指针已运行核对；本次补验禁用 Tab 指针                  |
 | 首页                 | 参考构图、五个既有栏目入口                    | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 居中文案、散布微卡、窄屏 2–1–2；沿用公开设置，微卡不预取；上浮与标签展开反馈         | 已实施；布局边界、五卡 hover/focus-visible、完整命中区与栏目跳转核对通过                     |
-| 展示页               | 居中首屏、1008px 网格与共享目标字体           | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 首屏、分段网格、官方效果启停与单舞台播放、离屏停止；样式作用域隔离                   | 已实施；网格、列明控件操作、播放/切换/暂停/重播/离屏停止通过；其他状态见回归矩阵             |
+| 展示页               | 独立两栏工作台与局部视觉变体                  | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 固定目录、单项预览、移动目录与局部浮层；官方效果启停、互斥与离屏暂停                 | 已实施；目录、列明组件交互及首页/登录页隔离对照通过；边界见设计工作台验收                    |
 | Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion           | [共享样式](app/globals.css)、[Button](components/ui/button.tsx)、[Card](components/ui/card.tsx)        | 圆角/控件/过渡引用变量，form Button；Accordion 状态与 Tab 禁用；减少动态效果取消变换 | 已实施；Tab/Switch 44px 及列明控件流程通过；按压视觉、粗指针及系统 reduced-motion 仅源码核对 |
 
 长资料与空资料的布局边界经源码核对；当前数据库为空，非空文章正文与列表、后台编辑字号、登录表单、最大字段长度、200% 文本缩放和全面辅助技术未在本轮重新运行验收。实施完成不代表这些场景均已运行通过。

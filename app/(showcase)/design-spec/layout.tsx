@@ -6,7 +6,7 @@ import "./showcase.css";
 
 export const metadata: Metadata = {
   title: "付小晨 Afterglow · Design spec",
-  description: "暗色材质、组件状态与流畅微交互的设计系统规范。",
+  description: "设计工作台：在独立试验区查看视觉基础、组件状态与组合场景。",
 };
 
 export default function DesignSpecLayout({ children }: Readonly<{ children: React.ReactNode }>) {
