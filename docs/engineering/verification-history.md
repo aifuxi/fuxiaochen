@@ -786,3 +786,12 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：复用 localhost:3000，桌面 1225×953 下读取 Tabs、两个选择浮层的真实内外圆角及 4px 留白；标签方向键加 Enter 切换到用法，Select 选择前端开发，Combobox 展开并筛选后选择 React，Accordion Enter 收起再展开均正常。17 张色板卡均 16px 并裁切顶部；复制操作显示成功反馈且反馈容器为 16px，但本轮剪贴板读取返回空串，不将反馈当作系统剪贴板内容验证。页头返回／跳过入口为 12px，侧栏列表项为 8px。
 - 运行通过：BorderBeam 内外轮廓均 16px，播放／暂停状态实际切换。圆角说明在 1225×953、390×844 下分别三列和单列，没有横向溢出；移动目录对话框／关闭按钮／列表项分别 16／12／8px，Escape 关闭回到目录按钮。桌面、窄屏截图已实际查看，控制台没有记录到 error，临时视口已恢复。
 - 范围与检查：本页 oxlint、改动文件 oxfmt、git diff --check 通过；仅本路由代码和本页文档变更，未改共享组件、全局主题、业务页面或依赖。其他组件样本与跨页隔离为源码复核，未重复表单提交、全量状态、真实触屏、跨浏览器、减少动态效果、类型检查或生产构建。证据保存在本机可视化 design-spec-audit/ 的 radii-tabs-desktop.png、radii-colors-desktop.png、radii-spacing-desktop.png、radii-spacing-mobile.png 与 component-radii-verification.json。
+
+## 工作台控件尺寸与对齐统一（2026-10-14）
+
+- 已实现：InputGroup 首图标与文字间隔从 10px 调整为 8px，尾部文字和操作留白从 6px 调整为 4px。Select 的末端图标槽与 Combobox／InputGroup 同宽：桌面 32px，窄屏／粗指针 44px，右侧均留 4px。普通控件 40px、紧凑控件 36px、窄屏控件 44px 及单行 14px／20px 的既有规格保留；文字按钮水平 16px、小型按钮 12px，多行输入行高 24px 保留。
+- 已实现并复验：本页 Field、TopicSelect 和错误样本字段改用 flex + gap 8px，消除 Base UI 隐藏表单字段触发 space-y-2 给可见选择器追加的 8px 底部空隙。密度样本拆成普通表单和紧凑工具栏两行，每行输入、选择、按钮并排等高；窄屏单列，说明明确区分桌面尺寸与触屏尺寸。
+- 运行通过：复用 localhost:3000，1225×953 下普通行三个控件均 40px、紧凑行均 36px，每行 y 坐标一致，单行文字均 14px／20px。601px 保持两组同排，600px 和390px 切换单列且全部外层控件与内嵌操作高 44px；上述视口无横向溢出。桌面末端图标中心距右边 20px，窄屏为26px，Select／Combobox／InputGroup 一致且垂直居中。390px 有值时 Combobox、搜索框的两个44px操作按钮均在外壳内。
+- 运行通过：紧凑 Select 选择前端开发、搜索按钮与应用筛选显示本地反馈；窄屏 Combobox 搜索并选择 TypeScript，清空后回焦；组合搜索 Enter 显示关键词反馈，清空后回焦。联系表单四个单行字段整体均68px，标签与控件间8px；六类错误控件至说明文字均8px，禁用／恢复／关闭错误后语义和说明同步变化。紧凑内嵌按钮 Tab 焦点仍为2px轮廓／2px外距，外壳 overflow 为 visible。控制台未记录到 error，临时视口已恢复。
+- 范围与检查：全仓 TypeScript 无增量检查、本路由 oxlint、改动文件 oxfmt、git diff --check 通过。仅本路由样式、演示和本页规范／验证记录变化，共享组件、全局主题和业务页面未修改；跨页隔离为源码及差异复核。没有重复表单提交、全部浮层、生产构建、真实触屏、粗指针、跨浏览器或屏幕阅读器验证。
+- 证据：本机可视化 design-spec-audit/ 的 controls-density-desktop.png、controls-density-mobile.png、controls-contact-desktop.png 与 controls-alignment-verification.json；截图已实际查看，原始测量同时保留修正前数据。最终页面停留在输入页的密度样本，临时演示值已随条目切换清除。

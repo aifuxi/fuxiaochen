@@ -41,6 +41,7 @@
   --text-mono--line-height: 18px;
   --control-form: 40px;
   --control-compact: 36px;
+  --control-action: var(--control-small);
 
   /* 字体别名在页面和 Portal 的局部作用域中解析；展示大字仍保留自身比例。 */
   --font-display: var(--font-sans);
@@ -193,6 +194,31 @@
   opacity: 1;
 }
 
+/* 组合输入按 4px 节奏留白；首图标与文字相隔 8px，末端操作距外壳 4px。 */
+.scope :global(.ds-input-group:has(> [data-align="inline-start"]) > input) {
+  padding-inline-start: 8px;
+}
+
+.scope :global(.ds-input-group:has(> [data-align="inline-end"]) > input) {
+  padding-inline-end: 4px;
+}
+
+.scope :global(.ds-input-group-addon[data-align="inline-end"]) {
+  padding-inline-end: 4px;
+}
+
+/* Select 图标与 Combobox / InputGroup 操作区同宽，触屏放大时仍共用一条中线。 */
+.scope :global(button.ds-input[role="combobox"]) {
+  padding-inline-end: 4px;
+}
+
+.scope :global(button.ds-input[role="combobox"] > [aria-hidden="true"]) {
+  display: inline-flex;
+  width: var(--control-action);
+  align-items: center;
+  justify-content: center;
+}
+
 /* 占位提示在 hover 后的输入底色上也保持可读，不能使用仅适合深底的 subtle。 */
 .scope :global(.ds-input)::placeholder,
 .scope :global(.ds-combobox-input)::placeholder {
@@ -254,6 +280,7 @@
   .scope {
     --control-form: var(--control-touch);
     --control-compact: var(--control-touch);
+    --control-action: var(--control-touch);
   }
 
   .scope :global(.ds-button),

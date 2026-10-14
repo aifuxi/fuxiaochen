@@ -72,7 +72,7 @@ type NoticeProps = { onNotice: (message: string) => void };
 
 function Field({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
-    <div className="space-y-2">
+    <div className="workbench-field">
       <label htmlFor={id} className="block text-sm font-medium">
         {label}
       </label>
@@ -99,7 +99,7 @@ function TopicSelect({
   name?: string;
 }) {
   return (
-    <div className="space-y-2">
+    <div className="workbench-field">
       <Select
         items={contactTopics}
         defaultValue={contactTopics[0].value}
@@ -188,7 +188,7 @@ function ButtonsDemo({ onNotice }: NoticeProps) {
           <Button disabled>暂不可用</Button>
         </div>
         <p className="workbench-caption mt-4">
-          禁用样本不可操作；触屏下所有按钮保留至少 44px 的触达高度。
+          桌面从左到右为小型 32px、工具栏 36px、表单 40px；禁用样本不可操作。窄屏与触屏统一为 44px。
         </p>
       </section>
       <Rule>
@@ -284,34 +284,47 @@ function InputsDemo({ onNotice }: NoticeProps) {
 function DensityDemo({ onNotice }: NoticeProps) {
   return (
     <section className="workbench-sample">
-      <h2 className="mb-5 text-lg font-semibold">尺寸与密度</h2>
-      <div className="workbench-fieldgrid">
-        <div className="space-y-3">
-          <Field id="density-default" label="普通表单 · 40px">
-            <Input id="density-default" placeholder="默认输入框" className="w-full" />
-          </Field>
-          <Button size="form" onClick={() => onNotice("普通表单操作已触发")}>
-            表单操作
-          </Button>
+      <h2 className="mb-2 text-lg font-semibold">尺寸与密度</h2>
+      <p className="workbench-caption mb-6">
+        同一行的输入、选择与按钮共用高度；窄屏与触屏统一为 44px。
+      </p>
+      <div className="workbench-stack">
+        <div>
+          <h3 className="mb-4 text-base font-medium">普通表单 · 桌面 40px</h3>
+          <div className="workbench-fieldgrid workbench-density-row">
+            <Field id="density-default" label="文本输入">
+              <Input id="density-default" placeholder="默认输入框" className="w-full" />
+            </Field>
+            <TopicSelect id="density-default-select" label="普通选择" />
+            <Button size="form" onClick={() => onNotice("普通表单操作已触发")}>
+              表单操作
+            </Button>
+          </div>
         </div>
-        <div className="space-y-3">
-          <Field id="density-compact" label="筛选工具栏 · 36px">
-            <InputGroup size="compact">
-              <InputGroupInput id="density-compact" placeholder="紧凑搜索框" />
-              <InputGroupAddon>
-                <Search size={16} aria-hidden="true" />
-              </InputGroupAddon>
-              <InputGroupAddon align="inline-end">
-                <InputGroupButton
-                  aria-label="执行紧凑搜索"
-                  onClick={() => onNotice("紧凑搜索已触发")}
-                >
-                  <ArrowRight size={16} aria-hidden="true" />
-                </InputGroupButton>
-              </InputGroupAddon>
-            </InputGroup>
-          </Field>
-          <TopicSelect id="density-select" label="紧凑选择" compact />
+        <div>
+          <h3 className="mb-4 text-base font-medium">筛选工具栏 · 桌面 36px</h3>
+          <div className="workbench-fieldgrid workbench-density-row">
+            <Field id="density-compact" label="搜索关键词">
+              <InputGroup size="compact">
+                <InputGroupInput id="density-compact" placeholder="紧凑搜索框" />
+                <InputGroupAddon>
+                  <Search size={16} aria-hidden="true" />
+                </InputGroupAddon>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    aria-label="执行紧凑搜索"
+                    onClick={() => onNotice("紧凑搜索已触发")}
+                  >
+                    <ArrowRight size={16} aria-hidden="true" />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            </Field>
+            <TopicSelect id="density-select" label="紧凑选择" compact />
+            <Button size="compact" onClick={() => onNotice("筛选操作已触发")}>
+              应用筛选
+            </Button>
+          </div>
         </div>
       </div>
     </section>
@@ -1041,7 +1054,7 @@ function ErrorStatePreview() {
         </div>
       </div>
       <div className="workbench-fieldgrid">
-        <div className="space-y-2">
+        <div className="workbench-field">
           <label htmlFor="error-preview-input" className="block text-sm font-medium">
             Input · 文本
           </label>
@@ -1055,7 +1068,7 @@ function ErrorStatePreview() {
           />
           {errorMessage("input")}
         </div>
-        <div className="space-y-2">
+        <div className="workbench-field">
           <label htmlFor="error-preview-textarea" className="block text-sm font-medium">
             Textarea · 多行文本
           </label>
@@ -1068,7 +1081,7 @@ function ErrorStatePreview() {
           />
           {errorMessage("textarea")}
         </div>
-        <div className="space-y-2">
+        <div className="workbench-field">
           <Select items={contactTopics} defaultValue={contactTopics[0].value} disabled={disabled}>
             <SelectLabel className="block text-sm font-medium">Select · 选择类型</SelectLabel>
             <SelectTrigger
@@ -1088,7 +1101,7 @@ function ErrorStatePreview() {
           </Select>
           {errorMessage("select")}
         </div>
-        <div className="space-y-2">
+        <div className="workbench-field">
           <label htmlFor="error-preview-group" className="block text-sm font-medium">
             InputGroup · 搜索与清空
           </label>
@@ -1120,7 +1133,7 @@ function ErrorStatePreview() {
           </InputGroup>
           {errorMessage("group")}
         </div>
-        <div className="space-y-2">
+        <div className="workbench-field">
           <label htmlFor="error-preview-combobox" className="block text-sm font-medium">
             Combobox · 搜索技术
           </label>
@@ -1147,7 +1160,7 @@ function ErrorStatePreview() {
           </Combobox>
           {errorMessage("combobox")}
         </div>
-        <div className="space-y-2">
+        <div className="workbench-field">
           <label htmlFor="error-preview-color" className="block text-sm font-medium">
             ColorInput · 颜色
           </label>
