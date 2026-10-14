@@ -19,7 +19,7 @@ const paletteGroups = [
       { token: "background", label: "页面底色", usage: "工作台的连续背景" },
       { token: "surface", label: "内容表面", usage: "预览面板与内容分组" },
       { token: "stage", label: "效果舞台", usage: "需要独立背景的效果样本" },
-      { token: "raised", label: "浮起表面", usage: "次级操作与浮层" },
+      { token: "raised", label: "浮起表面", usage: "次级操作、色板卡片与浮层" },
       { token: "input", label: "输入底色", usage: "表单控件的默认表面" },
       { token: "input-hover", label: "输入悬停", usage: "输入控件的悬停表面" },
     ],
@@ -87,49 +87,7 @@ function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
   }
 
   return (
-    <div ref={paletteRef} className="workbench-stack">
-      <p className="workbench-note">色值来自当前试验区。点击复制按钮可获取正在使用的值。</p>
-      {paletteGroups.map(({ title, description, colors }) => (
-        <section key={title} className="space-y-4" aria-label={title}>
-          <div>
-            <h2 className="text-[18px] leading-[26px] font-semibold">{title}</h2>
-            <p className="workbench-note mt-1">{description}</p>
-          </div>
-          <div className="workbench-palette">
-            {colors.map(({ token, label, usage }) => (
-              <div key={token} className="workbench-swatch">
-                <div
-                  className="workbench-swatch-color"
-                  style={{ backgroundColor: `var(--color-${token})` }}
-                  aria-hidden="true"
-                />
-                <div className="workbench-swatch-details">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <h3 className="text-sm leading-5 font-medium">{label}</h3>
-                      <p className="workbench-caption mt-1 font-mono break-all">{token}</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="workbench-copy shrink-0"
-                      aria-label={`复制 ${token} 色值`}
-                      disabled={!values[token]}
-                      onClick={() => void copyColor(token, label)}
-                    >
-                      <Copy size={16} aria-hidden="true" />
-                    </Button>
-                  </div>
-                  <p className="mt-3 font-mono text-xs leading-[18px] select-text">
-                    {values[token] || "读取中…"}
-                  </p>
-                  <p className="workbench-caption mt-1">{usage}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+    <div ref={paletteRef} className="workbench-stack workbench-color-foundations">
       <section className="workbench-sample space-y-5" aria-labelledby="color-usage-title">
         <div>
           <h2 id="color-usage-title" className="text-[18px] leading-[26px] font-semibold">
@@ -186,6 +144,50 @@ function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
           </div>
         </div>
       </section>
+      <div className="workbench-stack">
+        <p className="workbench-note">色值来自当前试验区。点击复制按钮可获取正在使用的值。</p>
+        {paletteGroups.map(({ title, description, colors }) => (
+          <section key={title} className="space-y-4" aria-label={title}>
+            <div>
+              <h2 className="text-[18px] leading-[26px] font-semibold">{title}</h2>
+              <p className="workbench-note mt-1">{description}</p>
+            </div>
+            <div className="workbench-palette">
+              {colors.map(({ token, label, usage }) => (
+                <div key={token} className="workbench-swatch">
+                  <div
+                    className="workbench-swatch-color"
+                    style={{ backgroundColor: `var(--color-${token})` }}
+                    aria-hidden="true"
+                  />
+                  <div className="workbench-swatch-details">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="text-sm leading-5 font-medium">{label}</h3>
+                        <p className="workbench-caption mt-1 font-mono break-all">{token}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="workbench-copy shrink-0"
+                        aria-label={`复制 ${token} 色值`}
+                        disabled={!values[token]}
+                        onClick={() => void copyColor(token, label)}
+                      >
+                        <Copy size={16} aria-hidden="true" />
+                      </Button>
+                    </div>
+                    <p className="mt-3 font-mono text-xs leading-[18px] select-text">
+                      {values[token] || "读取中…"}
+                    </p>
+                    <p className="workbench-caption mt-1">{usage}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
     </div>
   );
 }
