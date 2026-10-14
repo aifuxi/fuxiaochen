@@ -14,7 +14,7 @@ type FoundationsProps = {
 const paletteGroups = [
   {
     title: "表面",
-    description: "用近黑灰阶区分页面、预览和操作区域。",
+    description: "用午夜黑蓝区分页面、预览和操作区域。",
     colors: [
       { token: "background", label: "页面底色", usage: "工作台的连续背景" },
       { token: "surface", label: "内容表面", usage: "预览面板与内容分组" },
@@ -22,6 +22,7 @@ const paletteGroups = [
       { token: "raised", label: "浮起表面", usage: "次级操作、色板卡片与浮层" },
       { token: "input", label: "输入底色", usage: "表单控件的默认表面" },
       { token: "input-hover", label: "输入悬停", usage: "输入控件的悬停表面" },
+      { token: "input-active", label: "输入按下", usage: "输入控件的按下表面" },
     ],
   },
   {
@@ -31,7 +32,7 @@ const paletteGroups = [
       { token: "foreground", label: "主要文字", usage: "标题、字段值与重要内容" },
       { token: "foreground-reading", label: "阅读文字", usage: "正文与连续说明" },
       { token: "muted", label: "辅助文字", usage: "说明与输入占位文字" },
-      { token: "subtle", label: "弱化文字", usage: "仅用于近黑底色上的次要元数据" },
+      { token: "subtle", label: "弱化颜色", usage: "用于滚动条等非文字辅助元素" },
       { token: "primary-foreground", label: "主要操作文字", usage: "蓝色按钮内的白色文字" },
     ],
   },
@@ -405,7 +406,7 @@ function Guidelines() {
           {[
             [
               "表面保持安静",
-              "以灰阶表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
+              "以午夜黑蓝表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
             ],
             [
               "每次操作都有回应",
@@ -438,6 +439,7 @@ function Guidelines() {
             ["app/globals.css", "全站主题与共享默认样式"],
             ["components/ui/*", "本地组件与 Base UI 交互语义"],
             ["design-spec/preview.module.css", "当前试验区的局部视觉"],
+            ["ai_studio_code.html", "本页默认深色色盘的参考"],
           ].map(([path, role]) => (
             <div
               key={path}

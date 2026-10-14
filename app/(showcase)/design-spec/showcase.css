@@ -90,7 +90,7 @@
 }
 .design-showcase .workbench-nav-label {
   padding: 0 12px 8px;
-  color: var(--color-subtle);
+  color: var(--color-muted);
   font-size: 12px;
   line-height: 18px;
 }
@@ -269,7 +269,7 @@
   padding-top: 20px;
   font-size: 12px;
   line-height: 18px;
-  color: var(--color-subtle);
+  color: var(--color-muted);
 }
 .design-showcase .workbench-notice {
   position: fixed;

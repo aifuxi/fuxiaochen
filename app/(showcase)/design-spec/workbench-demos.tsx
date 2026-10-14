@@ -238,7 +238,7 @@ function InputsDemo({ onNotice }: NoticeProps) {
             <Input id="input-default" placeholder="点击或按 Tab 聚焦" className="w-full" />
           </Field>
           <Field id="input-color" label="颜色选择">
-            <ColorInput id="input-color" defaultValue="#0066df" />
+            <ColorInput id="input-color" defaultValue="#2563eb" />
           </Field>
           <div className="sm:col-span-2">
             <Field id="input-textarea" label="多行文本">
@@ -1165,7 +1165,7 @@ function ErrorStatePreview() {
           </label>
           <ColorInput
             id="error-preview-color"
-            defaultValue="#0066df"
+            defaultValue="#2563eb"
             disabled={disabled}
             aria-invalid={invalid}
             aria-describedby={describedBy("color")}
