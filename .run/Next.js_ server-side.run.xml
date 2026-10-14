@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Next.js: server-side" type="js.build_tools.npm">
+    <package-json value="$PROJECT_DIR$/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="dev" />
+    </scripts>
+    <arguments value="-- --hostname 127.0.0.1 --port 3000" />
+    <node-interpreter value="project" />
+    <envs>
+      <env name="DATABASE_PATH" value="./data/site.sqlite" />
+      <env name="BACKUP_DIRECTORY" value="./data/backups" />
+      <env name="APP_ORIGIN" value="http://localhost:3000" />
+    </envs>
+    <EXTENSION ID="com.github.l34130.mise.core.run.MiseRunConfigurationSettingsEditor" myConfigEnvironmentStrategy="use_project_settings" myMiseDirEnvCb="false" myMiseConfigEnvironmentTf="" />
+    <method v="2" />
+  </configuration>
+</component>

@@ -63,8 +63,20 @@ GA4／百度使用虚构测试 ID，浏览器拦截并替换第三方脚本响�
 - 备份 ID：`2026-10-14T03-46-19-212Z-4e3bdb79-3762-4005-b222-2f54a966485c`，位于原目录 `data/backups/startup/`，含 `database.sqlite` 与 `manifest.json`；旧快照及其迁移 ledger、SHA-256、完整性、外键和全部源表摘要核对通过。
 - 五张退役表及评论通知原本均为零条；迁移后五张表和三个设置字段均不存在。其余 22 张表按主键排序，对预期保留字段逐值生成摘要并核对，文章、设置、社交账号、媒体、认证与其他通知保持一致。
 - 私有验收报告位于原目录 `data/backups/verification/2026-10-14T03-46-19-212Z-4e3bdb79-3762-4005-b222-2f54a966485c-feature-removal.json`，不写入仓库或输出真实数据行。
-- 原 IDE 配置指向旧检出目录，尚未切换；旧代码不能直接读取已升级结构。当前服务由 `/Users/chen/.codex/worktrees/4501/fuxiaochen` 启动，私有配置只在子进程环境中读取，SQLite 与备份目录使用原目录的绝对路径。未修改原检出目录代码或私有配置。
+- 该次数据库升级阶段，原 IDE 配置仍指向旧检出目录；旧代码不能直接读取已升级结构。该阶段服务由 `/Users/chen/.codex/worktrees/4501/fuxiaochen` 启动，私有配置只在子进程环境中读取，SQLite 与备份目录使用原目录的绝对路径。未修改原检出目录代码或私有配置。
 - 实际 HTTP 验证：首页与登录页 200、匿名后台 307 到登录页、三个退役后台页面 404；本地地址保持 `http://localhost:3000`。
+
+## 原项目同步与 IDE 启动验收
+
+用户随后授权将新版本同步到原项目及调整 IDE 配置。本次只在本机执行，未推送、发布或部署，线上数据库未操作。
+
+- 原目录 `/Users/chen/fc-studio/fuxiaochen` 的 `master` 工作区干净且为当前提交祖先，已通过 `--ff-only` 同步到 `cc82e7c6`，包含功能移除与本地数据库升级验收；未改写历史或覆盖用户修改。
+- 按新 lockfile 在原目录执行 `npm ci`。清理 `.next/types`、`.next-build/types` 和 `.next-build/dev/types` 中仍引用旧页面的生成类型缓存，保留正在运行的 `.next/dev/types`；原目录类型检查通过。
+- 在 WebStorm 的原有 `Next.js: server-side` 配置中保存项目共享文件 `.run/Next.js_ server-side.run.xml`，保持项目 Node runtime 与 npm manager；配置执行当前项目的 `dev` 脚本，增加 `-- --hostname 127.0.0.1 --port 3000`。
+- 显式环境为 `DATABASE_PATH=./data/site.sqlite`、`BACKUP_DIRECTORY=./data/backups`、`APP_ORIGIN=http://localhost:3000`。私有 `.env` 不修改，凭据不复制到共享配置；相对路径按 npm 的项目工作目录解析，保留系统环境和现有私有配置加载。
+- 先停止先前工作树的服务并确认 3000 端口释放，再点击 WebStorm Run。进程链为 WebStorm → npm → 原目录 Next dev；监听地址为 `127.0.0.1:3000`，打开的 SQLite／WAL／SHM 均属于原目录 `data/site.sqlite`。
+- 实际 HTTP 验证：首页与登录页 200，三个退役后台页面 404。原项目对本地库执行只读完整校验通过，未重新初始化或再次执行结构迁移。
+- 共享运行配置的 XML、名称、项目路径、脚本、环境及参数均核对通过，可继续从同一 IDE 配置启动新版本。
 
 ## 验证边界
 

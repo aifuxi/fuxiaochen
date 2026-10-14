@@ -30,6 +30,8 @@ npm run admin:init
 npm run dev
 ```
 
+WebStorm 可直接选择项目共享配置 **Next.js: server-side** 并点击运行。配置保存在 `.run/Next.js_ server-side.run.xml`，从当前项目目录执行 `npm run dev`，固定监听 `127.0.0.1:3000`，并显式使用 `./data/site.sqlite` 与 `./data/backups`。这三个本地环境设置覆盖 `.env` 中的数据库路径、备份目录和 `APP_ORIGIN`；认证和 OSS 等私有配置仍从原有 `.env` 读取，不写入共享运行配置。已经迁移的本地库无需再次初始化。
+
 基础配置：
 
 ```dotenv
