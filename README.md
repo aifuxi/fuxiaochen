@@ -6,7 +6,7 @@
 
 2026-10-13 已完成 SQLite + Drizzle + better-sqlite3 适配、PostgreSQL → SQLite 离线迁移工具，以及单镜像/Portainer 配置和启动前备份、迁移、校验。全部只在本地独立数据库与容器验证，线上尚未切换，未推送或部署。阶段记录见 [SQLite 适配](docs/engineering/sqlite-adaptation-verification.md)、[数据迁移](docs/engineering/postgres-sqlite-transfer-verification.md) 和 [单镜像验收](docs/engineering/sqlite-deployment-verification.md)。
 
-2026-10-14 已移除评论、本地访问统计、访客日志与全局搜索，保留 GA4／百度配置。数据清理通过新增迁移实施，常用库与线上库尚未执行升级；验证见[功能移除验收](docs/engineering/feature-removal-verification.md)。
+2026-10-14 已移除评论、本地访问统计、访客日志与全局搜索，保留 GA4／百度配置。数据清理通过新增迁移实施，本地常用 SQLite 已完成备份与升级，线上库尚未执行升级；验证见[功能移除验收](docs/engineering/feature-removal-verification.md)。
 
 ## 运行要求
 
