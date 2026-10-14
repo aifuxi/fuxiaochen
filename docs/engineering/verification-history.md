@@ -795,3 +795,11 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：紧凑 Select 选择前端开发、搜索按钮与应用筛选显示本地反馈；窄屏 Combobox 搜索并选择 TypeScript，清空后回焦；组合搜索 Enter 显示关键词反馈，清空后回焦。联系表单四个单行字段整体均68px，标签与控件间8px；六类错误控件至说明文字均8px，禁用／恢复／关闭错误后语义和说明同步变化。紧凑内嵌按钮 Tab 焦点仍为2px轮廓／2px外距，外壳 overflow 为 visible。控制台未记录到 error，临时视口已恢复。
 - 范围与检查：全仓 TypeScript 无增量检查、本路由 oxlint、改动文件 oxfmt、git diff --check 通过。仅本路由样式、演示和本页规范／验证记录变化，共享组件、全局主题和业务页面未修改；跨页隔离为源码及差异复核。没有重复表单提交、全部浮层、生产构建、真实触屏、粗指针、跨浏览器或屏幕阅读器验证。
 - 证据：本机可视化 design-spec-audit/ 的 controls-density-desktop.png、controls-density-mobile.png、controls-contact-desktop.png 与 controls-alignment-verification.json；截图已实际查看，原始测量同时保留修正前数据。最终页面停留在输入页的密度样本，临时演示值已随条目切换清除。
+
+## 工作台侧栏 ScrollArea（2026-10-14）
+
+- 已实现：仅桌面固定目录改用已安装的 Base UI 1.9.0 ScrollArea，由 Root、Viewport、Content、Scrollbar、Thumb 组合。aside 保持200px，原内边距移至 Content；竖向滚动条绝对定位覆盖右侧，不占内容宽度。10px透明轨道、6px灰色滑块复用共享 token，悬停、滚动或目录内焦点时显示，保留按下反馈和减少动态效果规则。没有增加依赖、修改共享组件、全局样式或移动目录实现。
+- 运行通过：复用 localhost:3000，在1225×953下，侧栏宽200px；替换前 clientWidth 为189px、导航内容宽157px，替换后视口 clientWidth 为200px、导航宽168px。滚动后导航仍168px。原生滚动条为 none，自定义轨道 absolute／10px、滑块6px。键盘 End 从0滚至41px、Home复位，滚轮滚到底部、拖动滑块回到0均正常，正文 scrollY 始终0；末尾「原则与来源」链接能切换内容与 hash。
+- 运行通过：高1100px视口中内容不溢出，Scrollbar 自动卸载且视口 tabIndex=-1；恢复普通高度后重新出现。视口使用带名称的 section，键盘聚焦按需显示2px轮廓。390×844下固定侧栏隐藏，目录 Dialog 打开、选择输入后关闭、Escape取消并回焦目录按钮正常；无横向溢出。临时视口已恢复，最终保留颜色页。
+- 检查与边界：TypeScript无增量、页面oxlint、改动文件oxfmt、git diff --check通过，控制台未记录到error。只修改本路由与对应场景／验证文档；隔离与减少动态效果为源码核对。未执行轨道空白点击、真实触屏、跨浏览器、屏幕阅读器、生产构建或其他业务页面运行回归。
+- 证据：本机可视化 design-spec-audit/ 的 sidebar-scroll-area-desktop.png 与 sidebar-scroll-area-verification.json，桌面截图已实际查看；接口按[官方 Scroll Area 文档](https://base-ui.com/react/components/scroll-area)及已安装类型核对。

@@ -1,5 +1,6 @@
 "use client";
 
+import { ScrollArea } from "@base-ui/react/scroll-area";
 import { ArrowUpRight, ChevronRight, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
@@ -108,7 +109,22 @@ export default function DesignWorkbench() {
         </div>
       </header>
 
-      <aside className="workbench-sidebar">{directory}</aside>
+      <aside className="workbench-sidebar">
+        <ScrollArea.Root className="workbench-sidebar-scroll">
+          <ScrollArea.Viewport
+            render={<section />}
+            className="workbench-sidebar-viewport"
+            aria-label="可滚动的设计规范目录"
+          >
+            <ScrollArea.Content className="workbench-sidebar-content">
+              {directory}
+            </ScrollArea.Content>
+          </ScrollArea.Viewport>
+          <ScrollArea.Scrollbar className="workbench-sidebar-scrollbar" orientation="vertical">
+            <ScrollArea.Thumb className="workbench-sidebar-thumb" />
+          </ScrollArea.Scrollbar>
+        </ScrollArea.Root>
+      </aside>
 
       <div className="workbench-mobile-bar">
         <Dialog
