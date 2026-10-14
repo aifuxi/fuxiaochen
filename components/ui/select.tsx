@@ -40,10 +40,14 @@ export function SelectContent({
   className,
   children,
   render,
+  portalClassName,
   ...props
-}: ComponentProps<typeof BaseSelect.Popup>) {
+}: ComponentProps<typeof BaseSelect.Popup> & {
+  /** 为浮层整体提供局部样式作用域，不改变默认挂载位置。 */
+  portalClassName?: string;
+}) {
   return (
-    <BaseSelect.Portal>
+    <BaseSelect.Portal className={portalClassName}>
       <BaseSelect.Positioner
         alignItemWithTrigger={false}
         sideOffset={6}

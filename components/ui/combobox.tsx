@@ -77,10 +77,15 @@ export function ComboboxContent({
   children,
   render,
   emptyText = "没有匹配的选项",
+  portalClassName,
   ...props
-}: ComponentProps<typeof BaseCombobox.Popup> & { emptyText?: ReactNode }) {
+}: ComponentProps<typeof BaseCombobox.Popup> & {
+  emptyText?: ReactNode;
+  /** 为浮层整体提供局部样式作用域，不改变默认挂载位置。 */
+  portalClassName?: string;
+}) {
   return (
-    <BaseCombobox.Portal>
+    <BaseCombobox.Portal className={portalClassName}>
       <BaseCombobox.Positioner sideOffset={6} className="z-50 w-[var(--anchor-width)]">
         <BaseCombobox.Popup
           className={cn("ds-picker-popup", className)}

@@ -1,0 +1,11 @@
+/*
+ * 设计试验唯一的样式入口：页面与 Portal 根共用此作用域。
+ * 默认继承现行 token；新方案只在这里覆盖变量，不修改 :root、body 或 @theme。
+ * 组件试验使用 .scope :global(.ds-组件类)，不要单独声明全局选择器。
+ */
+.scope {
+  /* 在当前作用域解析字体别名，让局部字体试验同时覆盖标题和浮层。 */
+  --font-display: var(--font-sans);
+
+  font-family: var(--font-sans);
+}

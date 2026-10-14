@@ -34,7 +34,6 @@ import { ColorInput } from "@/components/ui/color-input";
 import {
   Combobox,
   ComboboxClear,
-  ComboboxContent,
   ComboboxInput,
   ComboboxInputGroup,
   ComboboxItem,
@@ -44,7 +43,6 @@ import {
 import {
   Dialog,
   DialogClose,
-  DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
@@ -58,7 +56,6 @@ import {
 } from "@/components/ui/input-group";
 import {
   Select,
-  SelectContent,
   SelectItem,
   SelectLabel,
   SelectTrigger,
@@ -67,6 +64,9 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+
+import { ComboboxContent, DialogContent, SelectContent } from "./preview-components";
+import styles from "./preview.module.css";
 
 const nav = [
   ["01", "概览", "overview"],
@@ -503,7 +503,7 @@ export default function Page() {
 
   return (
     <div
-      className="design-showcase min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]"
+      className={`${styles.scope} design-showcase min-h-screen bg-[var(--color-background)] text-[var(--color-foreground)]`}
       data-motion={motion ? "on" : "off"}
       id="top"
     >

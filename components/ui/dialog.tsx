@@ -16,10 +16,15 @@ export function DialogContent({
   className,
   children,
   placement = "center",
+  portalClassName,
   ...props
-}: ComponentProps<typeof BaseDialog.Popup> & { placement?: "center" | "right" }) {
+}: ComponentProps<typeof BaseDialog.Popup> & {
+  placement?: "center" | "right";
+  /** 为浮层整体提供局部样式作用域，不改变默认挂载位置。 */
+  portalClassName?: string;
+}) {
   return (
-    <BaseDialog.Portal>
+    <BaseDialog.Portal className={portalClassName}>
       <BaseDialog.Backdrop className="ds-dialog-backdrop fixed inset-0 z-50 bg-black/70 backdrop-blur-[3px]" />
       <BaseDialog.Viewport
         className={cn(
