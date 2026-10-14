@@ -2,6 +2,8 @@
 
 > 2026-10-14：评论、本地访问统计、访客日志与全局搜索已移除。本文保留历史验收事实；现行范围和验证见[功能移除验收](feature-removal-verification.md)。
 
+> 2026-10-14：已按用户要求导入本机旧 PostgreSQL 开发数据并切换本地开发服务，见文末[实际导入记录](#本地旧-postgresql-数据实际导入)。此前演练范围与限制保留作为历史记录。
+
 日期：2026-10-13。范围为只读 PostgreSQL 导出、离线 SQLite 预检/导入/核对，以及专用测试库演练。未连接线上数据库或现有开发数据库，未修改生产 Dockerfile、Compose、Actions 或 Portainer，未推送或部署。
 
 ## 已实现
@@ -55,3 +57,37 @@
 - 正式冻结写入、最终导出、线上切换、回退和调度恢复属于后续阶段。旧 PostgreSQL 卷、旧镜像/配置与备份必须保留；新库产生写入后不能直接回退旧库。
 
 依据：[PostgreSQL 18 Repeatable Read](https://www.postgresql.org/docs/18/transaction-iso.html)、[PostgreSQL DECLARE](https://www.postgresql.org/docs/18/sql-declare.html)、[node-postgres Client](https://node-postgres.com/apis/client)、[SQLite transactions](https://sqlite.org/lang_transaction.html)、[SQLite foreign keys](https://sqlite.org/foreignkeys.html)、[SQLite deserialize](https://sqlite.org/c3ref/deserialize.html)。
+
+## 本地旧 PostgreSQL 数据实际导入
+
+2026-10-14 13:46（Asia/Shanghai），按用户要求将 `127.0.0.1:15433/fuxiaochen_dev` 的旧数据导入当前 SQLite 开发库。仅操作本地数据与开发服务，未连接线上数据库、推送或部署。
+
+### 导入与保留
+
+- 通过源地址、容器与只读查询确认旧库；当时无其他源库客户端。显式选定该源连接，写入私有独立迁移配置后运行导出；迁移 CLI 未加载业务 `.env`。使用既有账号的只读会话及 `REPEATABLE READ READ ONLY` 快照，未新建账号或修改源库。
+- 使用当前迁移工具依次完成 export、dry-run、apply、verify。完整归档包含 22 张源表、188 行；现行映射保留 180 行，并派生 Better Auth 管理员记录。旧会话、临时限流、旧备份及对应通知按既定策略跳过，完整源数据仍在归档中；自动备份关闭。
+- 导入目标为独立新文件 `data/postgres-import-20261014/site.sqlite`，未预先初始化或覆盖已有库。源结构、归档摘要、现行迁移 ledger、结构、逐行全部字段、完整性和外键检查运行通过。
+- 切换前停止原 Next dev，确认 3000 端口释放、旧库及日志无打开句柄；通过 SQLite backup API 保存一致性快照，并完整检查其完整性与外键。
+- 原 `data/site.sqlite` 及其 WAL／SHM 一并保留为 `data/postgres-import-20261014/previous-site.sqlite` 及对应日志；一致性备份另存 `previous-consistent-backup.sqlite`。原路径腾空后，使用独占复制发布已核对的新库，复制摘要一致；对运行路径再次执行离线 verify，通过后才启动服务。
+- `.env`、IDE 配置和 `DATABASE_PATH=./data/site.sqlite` 保持原值。旧 PostgreSQL 容器、卷、历史备份、旧 SQLite 文件和 OSS 对象均保留。
+
+### 实际核对结果
+
+| 数据         | PostgreSQL 源 | 运行 SQLite |
+| ------------ | ------------- | ----------- |
+| 已发布文章   | 27            | 27          |
+| 分类         | 6             | 6           |
+| 标签         | 37            | 37          |
+| 文章标签关联 | 47            | 47          |
+| 更新日志     | 10            | 10          |
+| 媒体元数据   | 40            | 40          |
+| 友链         | 10            | 10          |
+| 管理员       | 1             | 1           |
+
+上述数量仅为摘要；迁移与运行路径的 verify 均逐字段核对，报告 `targetChecked=true`、`verified=true`。运行库 `integrity_check=ok`，`foreign_key_check` 为零条。
+
+通过 WebStorm 原有 `Next.js: server-side` 配置重启，进程工作目录和打开的数据库句柄均指向当前项目及 `data/site.sqlite`，服务地址为 `http://localhost:3000`。实际 HTTP 检查运行通过：首页、文章、分类、标签、友链、关于、更新日志、登录、robots、sitemap 和一篇真实导入文章详情均为 200；文章详情包含导入的标题；匿名访问工作台、文章管理和备份管理均为 307 到登录页，无数据库或缺失字段异常。
+
+管理员原密码哈希已保留，并通过 Argon2 核对与当前本地私有配置密码匹配；未使用真实账号执行登录或写入业务内容，原会话不迁移，使用时需重新登录。OSS 仅保留引用与元数据，本轮未验证远程对象可访问性；浏览器交互和媒体加载未在本轮重新验收。
+
+私有归档、源连接配置、导入库、旧库、一致性备份及报告全部位于 Git 忽略目录 `data/postgres-import-20261014/`，目录权限为 0700，数据库、配置与报告为 0600。`export.json`、`preflight.json`、`import.json`、`verify.json`、`runtime-verify.json`、`cutover.json` 和 `runtime-checks.json` 分别保存源导出、预检、导入、独立目标核对、运行路径核对、切换摘要与 HTTP／运行库检查；未提交私有数据和凭据。离线核对报告描述服务启动前的文件状态，后续业务写入后不可直接将其作为当前文件的一致性证明。

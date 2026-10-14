@@ -24,7 +24,7 @@ npm run db:verify
 
 SQLite 备份使用 better-sqlite3 在线 backup API，生成 `database.sqlite` 与 `manifest.json`；manifest 记录格式、迁移版本、大小与摘要。显式校验、备份和恢复使用 `integrity_check`，普通连接使用快速完整性校验加版本/结构/外键检查。恢复指定绝对 `RESTORE_DATABASE_PATH`，目标必须独立且不存在，拒绝已有文件、主库、源库和遗留 WAL；成功后撤销会话、关闭自动备份并标记中断任务。PostgreSQL 备份格式不兼容，旧备份必须使用匹配旧版本恢复。
 
-PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。SQLite 单镜像、启动前自动备份/迁移/校验和 Portainer 单服务配置已完成本地验证；线上尚未切换。当前操作见 [部署指南](deployment.md)，历史 PostgreSQL 配置只作对照。
+PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。2026-10-14 已按用户要求将本机旧 PostgreSQL 开发数据导入 SQLite，并切换本地开发服务，见[实际导入记录](engineering/postgres-sqlite-transfer-verification.md#本地旧-postgresql-数据实际导入)。SQLite 单镜像、启动前自动备份/迁移/校验和 Portainer 单服务配置已完成本地验证；线上尚未切换。当前操作见 [部署指南](deployment.md)，历史 PostgreSQL 配置只作对照。
 
 ### 启动前备份与升级
 
