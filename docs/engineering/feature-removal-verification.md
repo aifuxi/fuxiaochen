@@ -72,9 +72,9 @@ GA4／百度使用虚构测试 ID，浏览器拦截并替换第三方脚本响�
 
 - 原目录 `/Users/chen/fc-studio/fuxiaochen` 的 `master` 工作区干净且为当前提交祖先，已通过 `--ff-only` 同步到 `cc82e7c6`，包含功能移除与本地数据库升级验收；未改写历史或覆盖用户修改。
 - 按新 lockfile 在原目录执行 `npm ci`。清理 `.next/types`、`.next-build/types` 和 `.next-build/dev/types` 中仍引用旧页面的生成类型缓存，保留正在运行的 `.next/dev/types`；原目录类型检查通过。
-- 在 WebStorm 的原有 `Next.js: server-side` 配置中保存项目共享文件 `.run/Next.js_ server-side.run.xml`，保持项目 Node runtime 与 npm manager；配置执行当前项目的 `dev` 脚本，增加 `-- --hostname 127.0.0.1 --port 3000`。
+- 在 WebStorm 的原有 `Next.js: server-side` 配置中保存项目共享文件 `.run/Next.js_ server-side.run.xml`，保持项目 Node runtime 与 npm manager；配置执行当前项目的 `dev` 脚本，参数为 `-- --port 3000`，不额外指定 hostname。
 - 显式环境为 `DATABASE_PATH=./data/site.sqlite`、`BACKUP_DIRECTORY=./data/backups`、`APP_ORIGIN=http://localhost:3000`。私有 `.env` 不修改，凭据不复制到共享配置；相对路径按 npm 的项目工作目录解析，保留系统环境和现有私有配置加载。
-- 先停止先前工作树的服务并确认 3000 端口释放，再点击 WebStorm Run。进程链为 WebStorm → npm → 原目录 Next dev；监听地址为 `127.0.0.1:3000`，打开的 SQLite／WAL／SHM 均属于原目录 `data/site.sqlite`。
+- 先停止先前工作树的服务并确认 3000 端口释放，再点击 WebStorm Run。进程链为 WebStorm → npm → 原目录 Next dev；监听地址已恢复 Next.js 默认行为，端口为 `3000`；打开的 SQLite／WAL／SHM 均属于原目录 `data/site.sqlite`。
 - 实际 HTTP 验证：首页与登录页 200，三个退役后台页面 404。原项目对本地库执行只读完整校验通过，未重新初始化或再次执行结构迁移。
 - 共享运行配置的 XML、名称、项目路径、脚本、环境及参数均核对通过，可继续从同一 IDE 配置启动新版本。
 
