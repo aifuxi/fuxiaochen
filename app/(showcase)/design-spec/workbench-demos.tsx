@@ -340,7 +340,7 @@ function SelectionDemo() {
       </section>
       <Rule>
         固定选项使用 Select，可搜索列表使用 Combobox。使用方向键选择、Enter 确认、Escape
-        关闭；浮层沿用本页字体、颜色与圆角。
+        关闭。输入与浮层外壳均为 12px，内部选项为 8px。
       </Rule>
     </div>
   );
@@ -414,7 +414,8 @@ function TabsDemo() {
         </Tabs>
       </section>
       <Rule>
-        选中项通过灰色底面和明亮文字区分，指示器随选中项移动。减少动态效果时直接更新状态。
+        标签组外壳 12px，标签项与指示器 8px，中间保留 4px。
+        选中项通过灰色底面和明亮文字区分，指示器随选中项移动；减少动态效果时直接更新状态。
       </Rule>
     </div>
   );
@@ -466,7 +467,7 @@ function AccordionDemo() {
         </Accordion>
       </section>
       <Rule>
-        标题同时承担开关，不额外增加按钮。Enter 或 Space
+        标题作为内嵌列表操作，圆角保持 8px，不额外增加按钮。Enter 或 Space
         展开与收起；内容随高度自然展开，不固定裁切。
       </Rule>
     </div>
@@ -785,7 +786,7 @@ function EffectStage({
             active={playing}
             style={{ width: 185 }}
           >
-            <div className="flex h-[100px] w-[185px] items-center justify-center rounded-2xl bg-[var(--color-background)] text-sm">
+            <div className="flex h-[100px] w-[185px] items-center justify-center rounded-[var(--radius-lg)] bg-[var(--color-background)] text-sm">
               Border beam
             </div>
           </BorderBeam>

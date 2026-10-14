@@ -778,3 +778,11 @@ HTTP隔离实例的人工浏览器验收覆盖桌面1440px和390px页面、范�
 - 运行通过：复用 localhost:3000，桌面 1225×953 下，联系表单输入与提交按钮均 12px／40px；按钮页全部七个样本（含禁用与不同尺寸）圆角均 12px，Dialog 内三个按钮与输入均 12px，InputGroup 附加按钮与 Combobox 附加操作均 8px。390×844 下输入与提交按钮均 12px／44px，无横向溢出，桌面与窄屏截图已查看。
 - 运行通过：联系表单空提交聚焦必填姓名；填写虚构预览值后按 Enter 提交显示本地成功，按钮保留独立 2px 键盘焦点，未发送业务数据。Dialog 取消关闭后回到打开按钮；切换条目清空预览值，最终回到联系表单。控制台没有记录到 error，浏览器临时视口已恢复。
 - 静态检查与边界：改动文件 oxfmt、路由 oxlint 与 git diff --check 通过。只调整局部圆角与说明，未新增测试或重复类型检查和生产构建；其他组件消费者、hover／active 反馈、减少动态效果与跨页隔离仅源码核对，未重复全量交互、真实触屏与跨浏览器验证。证据保存在本机可视化 design-spec-audit/ 的 radius-contact-desktop.png、radius-contact-mobile.png 与 radius-verification.json。
+
+## 工作台组件圆角搭配复核（2026-10-14）
+
+- 已实现：Tabs 外壳从 8px 改为 12px，内部标签与指示器保留 8px，沿用 4px 内边距；色板卡片与反馈浮层从 12px 改为 16px，色板顶部交由父层裁切；页头返回与跳过入口从 8px 改为独立操作的 12px。showcase.css 中圆角统一引用局部变量，BorderBeam 子元素的等值 16px 也引用 radius-lg，不改效果参数或库内部实现。
+- 已核对并明确保留：Select／Combobox 使用 12px 外壳、8px 选项及 4px 留白；Accordion 标题作为列表行使用 8px，导航与内嵌操作同档；按钮与输入 12px，卡片和对话框 16px。开关、徽标、状态圆点及运动示意保留语义形状，ColorInput 内部微型色样保留原有 4px。圆角页新增各档实际用途，组件说明和本页规范同步。
+- 运行通过：复用 localhost:3000，桌面 1225×953 下读取 Tabs、两个选择浮层的真实内外圆角及 4px 留白；标签方向键加 Enter 切换到用法，Select 选择前端开发，Combobox 展开并筛选后选择 React，Accordion Enter 收起再展开均正常。17 张色板卡均 16px 并裁切顶部；复制操作显示成功反馈且反馈容器为 16px，但本轮剪贴板读取返回空串，不将反馈当作系统剪贴板内容验证。页头返回／跳过入口为 12px，侧栏列表项为 8px。
+- 运行通过：BorderBeam 内外轮廓均 16px，播放／暂停状态实际切换。圆角说明在 1225×953、390×844 下分别三列和单列，没有横向溢出；移动目录对话框／关闭按钮／列表项分别 16／12／8px，Escape 关闭回到目录按钮。桌面、窄屏截图已实际查看，控制台没有记录到 error，临时视口已恢复。
+- 范围与检查：本页 oxlint、改动文件 oxfmt、git diff --check 通过；仅本路由代码和本页文档变更，未改共享组件、全局主题、业务页面或依赖。其他组件样本与跨页隔离为源码复核，未重复表单提交、全量状态、真实触屏、跨浏览器、减少动态效果、类型检查或生产构建。证据保存在本机可视化 design-spec-audit/ 的 radii-tabs-desktop.png、radii-colors-desktop.png、radii-spacing-desktop.png、radii-spacing-mobile.png 与 component-radii-verification.json。

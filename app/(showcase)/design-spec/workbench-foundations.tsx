@@ -286,14 +286,26 @@ function SpacingFoundations() {
           <h2 id="radius-title" className="text-[18px] leading-[26px] font-semibold">
             圆角分工
           </h2>
-          <p className="workbench-note mt-1">三档圆角对应三个层级，胶囊只保留给徽标与开关。</p>
+          <p className="workbench-note mt-1">
+            同级控件保持一致，内嵌操作比外层小一档；开关、徽标与状态圆点保留自身形状。
+          </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            ["8px", "导航与内嵌操作", "--radius-sm"],
-            ["12px", "按钮、输入与选择", "--radius-form"],
-            ["16px", "卡片与弹窗", "--radius-lg"],
-          ].map(([value, label, token]) => (
+            [
+              "8px",
+              "内嵌操作与列表项",
+              "--radius-sm",
+              "输入框内的图标操作、选项、标签项、目录与折叠面板标题。",
+            ],
+            [
+              "12px",
+              "独立控件与组合外壳",
+              "--radius-form",
+              "按钮、输入、选择浮层与标签组外壳；外壳与 8px 选项之间保留 4px。",
+            ],
+            ["16px", "卡片与对话框", "--radius-lg", "样本、色板卡片、对话框与反馈浮层。"],
+          ].map(([value, label, token, description]) => (
             <div key={token} className="space-y-3">
               <div
                 className="flex h-24 items-center justify-center bg-[var(--color-raised)] font-mono text-sm"
@@ -303,6 +315,7 @@ function SpacingFoundations() {
               </div>
               <p className="text-sm leading-5 font-medium">{label}</p>
               <p className="workbench-caption font-mono">{token}</p>
+              <p className="workbench-caption">{description}</p>
             </div>
           ))}
         </div>

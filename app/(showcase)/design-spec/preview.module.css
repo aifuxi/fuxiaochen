@@ -209,6 +209,12 @@
   box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
 }
 
+/* 选择浮层与 Tabs 都使用 12px 外壳、4px 留白和 8px 内部选项。 */
+.scope :global(.ds-picker-popup),
+.scope :global(.ds-tabs-list) {
+  border-radius: var(--radius-form);
+}
+
 .scope :global(.ds-picker-item) {
   border-radius: var(--radius-sm);
   font-size: var(--text-body);
@@ -225,7 +231,7 @@
   backdrop-filter: none;
 }
 
-.scope :global(.ds-tabs-list),
+.scope :global(.ds-accordion-trigger),
 .scope :global(.ds-tabs-trigger),
 .scope :global(.ds-tabs-indicator) {
   border-radius: var(--radius-sm);

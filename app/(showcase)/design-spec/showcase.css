@@ -46,7 +46,7 @@
   font-weight: 400;
 }
 .design-showcase .workbench-scope-label {
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 3px 10px;
   color: var(--color-muted);
   font-size: 12px;
@@ -56,7 +56,7 @@
 .design-showcase .workbench-back {
   min-height: 36px;
   padding: 0 8px;
-  border-radius: 8px;
+  border-radius: var(--radius-form);
   gap: 6px;
   color: var(--color-muted);
 }
@@ -97,7 +97,7 @@
   justify-content: space-between;
   gap: 8px;
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--color-muted);
   font-size: 14px;
   line-height: 20px;
@@ -168,7 +168,7 @@
 }
 .design-showcase .workbench-sample {
   padding: 24px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   min-width: 0;
 }
@@ -223,12 +223,12 @@
 .design-showcase .workbench-swatch {
   min-width: 0;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
 }
 .design-showcase .workbench-swatch-color {
   height: 80px;
-  border-radius: 12px 12px 0 0;
+  /* 顶部色块由父卡片裁切，避免内外圆角各自维护。 */
 }
 .design-showcase .workbench-swatch-details {
   padding: 12px 16px 16px;
@@ -263,7 +263,7 @@
   align-items: center;
   gap: 10px;
   max-width: 560px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   background: var(--color-raised);
   padding: 12px 16px;
   font-size: 14px;
@@ -287,7 +287,7 @@
   left: 16px;
   z-index: 70;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--radius-form);
   color: var(--color-foreground);
   background: var(--color-raised);
   transform: translateY(-200%);
