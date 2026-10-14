@@ -4,11 +4,12 @@
  * 组件试验使用 .scope :global(.ds-组件类)，不要单独声明全局选择器。
  */
 .scope {
-  /* 采用 ai_studio_code.html 的默认深色色盘，仅供本页与局部 Portal 预览。 */
+  /* 采用 ai_studio_code.html 的深浅色盘，仅供本页与局部 Portal 预览。 */
   --color-primary: #2563eb;
   --color-primary-hover: #3b82f6;
   --color-primary-pressed: #1d4ed8;
   --color-primary-foreground: #ffffff;
+  --color-primary-hover-foreground: var(--color-background);
   --color-background: #090a0f;
   --color-surface: #12141c;
   --color-surface-hover: #181b26;
@@ -22,13 +23,18 @@
   --color-foreground: #f8fafc;
   --color-foreground-reading: #cbd5e1;
   --color-muted: #94a3b8;
+  --color-caption: var(--color-muted);
   --color-subtle: #64748b;
   --color-focus: #60a5fa;
   --color-success: #34d399;
+  --color-success-text: var(--color-success);
   --color-danger: #f87171;
   --color-outline: #1e2433;
   --color-switch-track: #262b3d;
   --color-tabs-track: rgb(255 255 255 / 5%);
+  --color-backdrop: rgb(0 0 0 / 70%);
+  --shadow-popup: 0 8px 24px rgb(0 0 0 / 24%);
+  --shadow-notice: 0 12px 32px #0004;
   /* 滚动条沿用现有三态，颜色取自同一套冷灰层次。 */
   --color-scrollbar: var(--color-subtle);
   --color-scrollbar-hover: var(--color-muted);
@@ -64,6 +70,42 @@
   color-scheme: dark;
   accent-color: var(--color-primary);
   caret-color: var(--color-focus);
+}
+
+.scope.light {
+  color-scheme: light;
+  --color-background: #f4f7fb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8fafc;
+  --color-stage: #eef2f6;
+  --color-raised: #e2e8f0;
+  --color-raised-hover: #cbd5e1;
+  --color-raised-pressed: #94a3b8;
+  --color-input: #f1f5f9;
+  --color-input-hover: #e2e8f0;
+  --color-input-active: #cbd5e1;
+  --color-foreground: #0f172a;
+  --color-foreground-reading: #334155;
+  --color-muted: #64748b;
+  --color-subtle: #94a3b8;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-pressed: #1e40af;
+  --color-primary-hover-foreground: var(--color-primary-foreground);
+  --color-focus: #2563eb;
+  --color-success: #059669;
+  --color-danger: #dc2626;
+  --color-outline: #e2e8f0;
+  --color-switch-track: #cbd5e1;
+  --color-tabs-track: #f1f5f9;
+  /* 保留参考原色值；必要小字用阅读色，成功仍保留绿色图标。 */
+  --color-caption: var(--color-foreground-reading);
+  --color-success-text: var(--color-foreground-reading);
+  --color-scrollbar: var(--color-muted);
+  --color-scrollbar-hover: var(--color-foreground-reading);
+  --color-scrollbar-pressed: var(--color-foreground);
+  --color-backdrop: rgb(15 23 42 / 20%);
+  --shadow-popup: 0 8px 24px rgb(15 23 42 / 12%);
+  --shadow-notice: 0 12px 32px rgb(15 23 42 / 12%);
 }
 
 .scope ::selection {
@@ -170,9 +212,9 @@
   color: var(--color-primary-foreground);
 }
 
-/* 参考的悬停蓝较亮，使用同色盘深色文字保证小字对比度；按下后恢复白字。 */
+/* 深色模式的悬停蓝较亮，改用深色文字；浅色模式的较深蓝色继续配白字。 */
 .scope :global(.ds-button-primary:hover:not(:disabled):not([data-disabled])) {
-  color: var(--color-background);
+  color: var(--color-primary-hover-foreground);
 }
 
 .scope :global(.ds-button-primary:active:not(:disabled):not([data-disabled])) {
@@ -321,17 +363,17 @@
 /* 占位提示在 hover 后的输入底色上也保持可读，不能使用仅适合深底的 subtle。 */
 .scope :global(.ds-input)::placeholder,
 .scope :global(.ds-combobox-input)::placeholder {
-  color: var(--color-muted);
+  color: var(--color-caption);
   opacity: 1;
 }
 
 .scope :global(.ds-input[data-placeholder]) {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 
 .scope :global(.ds-picker-popup),
 .scope :global(.ds-dialog-popup) {
-  box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+  box-shadow: var(--shadow-popup);
 }
 
 /* 选择浮层与 Tabs 都使用 12px 外壳、4px 留白和 8px 内部选项。 */
@@ -363,7 +405,83 @@
 }
 
 .scope :global(.ds-dialog-backdrop) {
+  background: var(--color-backdrop);
   backdrop-filter: none;
+}
+
+/* 浅色模式的轻量操作不能继续用白色叠加，否则悬停与按下不可辨。 */
+.scope.light :global(.ds-button-ghost),
+.scope.light :global(.ds-accordion-panel),
+.scope.light :global(.ds-picker-popup > [role="status"]) {
+  color: var(--color-caption);
+}
+
+.scope.light :global(.ds-button-ghost:hover:not(:disabled):not([data-disabled])),
+.scope.light :global(.ds-picker-action:hover:not(:disabled):not([data-disabled])) {
+  background: var(--color-input-hover);
+  color: var(--color-foreground);
+}
+
+.scope.light :global(.ds-button-ghost:active:not(:disabled):not([data-disabled])),
+.scope.light :global(.ds-picker-action:active:not(:disabled):not([data-disabled])) {
+  background: var(--color-input-active);
+  color: var(--color-foreground);
+}
+
+.scope.light :global(.ds-picker-item:not([data-disabled]):where(:hover, [data-highlighted])) {
+  background: var(--color-raised-hover);
+}
+
+.scope.light :global(.ds-picker-item:active:not([data-disabled])) {
+  background: var(--color-input-active);
+}
+
+.scope.light
+  :global(
+    :is(.ds-accordion-trigger, .ds-tabs-trigger):active:not(:disabled):not([data-disabled]):not(
+        [aria-disabled="true"]
+      )
+  ) {
+  color: var(--color-foreground);
+}
+
+/* 浅色开关使用色盘三态，避免亮度滤镜把关闭轨道变成近白色。 */
+.scope.light :global(.ds-switch) {
+  filter: none;
+}
+
+.scope.light
+  :global(
+    .ds-switch:not(.ds-switch-touch):not([data-checked]):hover:not(:disabled):not([data-disabled])
+  ),
+.scope.light
+  :global(.ds-switch-touch:not([data-checked]):hover:not(:disabled):not([data-disabled]))::before {
+  background: var(--color-raised-pressed);
+}
+
+.scope.light
+  :global(
+    .ds-switch:not(.ds-switch-touch):not([data-checked]):active:not(:disabled):not([data-disabled])
+  ),
+.scope.light
+  :global(.ds-switch-touch:not([data-checked]):active:not(:disabled):not([data-disabled]))::before {
+  background: var(--color-muted);
+}
+
+.scope.light
+  :global(.ds-switch:not(.ds-switch-touch)[data-checked]:hover:not(:disabled):not([data-disabled])),
+.scope.light
+  :global(.ds-switch-touch[data-checked]:hover:not(:disabled):not([data-disabled]))::before {
+  background: var(--color-primary-hover);
+}
+
+.scope.light
+  :global(
+    .ds-switch:not(.ds-switch-touch)[data-checked]:active:not(:disabled):not([data-disabled])
+  ),
+.scope.light
+  :global(.ds-switch-touch[data-checked]:active:not(:disabled):not([data-disabled]))::before {
+  background: var(--color-primary-pressed);
 }
 
 .scope :global(.ds-accordion-trigger),
@@ -378,7 +496,7 @@
 }
 
 .scope :global(.ds-tabs-trigger) {
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 
 .scope :global(.ds-tabs-trigger[data-active]) {

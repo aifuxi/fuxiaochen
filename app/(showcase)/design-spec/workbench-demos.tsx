@@ -51,6 +51,7 @@ import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
 import { ComboboxContent, ComboboxList, DialogContent, SelectContent } from "./preview-components";
+import { usePreviewTheme } from "./preview-theme";
 
 const contactTopics = [
   { label: "产品设计", value: "design" },
@@ -205,7 +206,7 @@ function CardsDemo({ onNotice }: NoticeProps) {
       <div className="workbench-grid">
         <Card className="p-6">
           <p className="workbench-state-label mb-5">静态内容样本</p>
-          <Layers3 size={24} className="mb-5 text-[var(--color-muted)]" aria-hidden="true" />
+          <Layers3 size={24} className="mb-5 text-[var(--color-caption)]" aria-hidden="true" />
           <h2 className="text-lg font-semibold">设计规范</h2>
           <p className="workbench-note mt-2">用一层平实表面承载标题与说明，内容决定卡片高度。</p>
         </Card>
@@ -387,7 +388,7 @@ function SwitchDemo() {
         <h2 className="mb-5 text-lg font-semibold">禁用样本</h2>
         <div className="workbench-row">
           <Switch id="switch-disabled" touchTarget disabled />
-          <label htmlFor="switch-disabled" className="text-sm text-[var(--color-muted)]">
+          <label htmlFor="switch-disabled" className="text-sm text-[var(--color-caption)]">
             暂不可更改
           </label>
         </div>
@@ -458,7 +459,7 @@ function AccordionDemo() {
                   {title}
                   <ChevronDown
                     size={16}
-                    className="ds-accordion-chevron shrink-0 text-[var(--color-muted)]"
+                    className="ds-accordion-chevron shrink-0 text-[var(--color-caption)]"
                     aria-hidden="true"
                   />
                 </AccordionTrigger>
@@ -601,8 +602,8 @@ function ContactDemo({ onNotice }: NoticeProps) {
             </Button>
           </div>
           {submitted && (
-            <output className="flex items-center gap-2 text-sm text-[var(--color-success)]">
-              <Check size={16} aria-hidden="true" />
+            <output className="flex items-center gap-2 text-sm text-[var(--color-success-text)]">
+              <Check size={16} className="text-[var(--color-success)]" aria-hidden="true" />
               预览提交成功，表单内容保留在当前页面。
             </output>
           )}
@@ -772,6 +773,7 @@ function EffectStage({
   onPause: () => void;
   replay: number;
 }) {
+  const { theme } = usePreviewTheme();
   const stageRef = useRef<HTMLDivElement>(null);
   const title = kind === "beam" ? "Border beam" : "Thinking orb";
   useEffect(() => {
@@ -794,7 +796,7 @@ function EffectStage({
             key={`${replay}-${reducedMotion}`}
             size="md"
             colorVariant="ocean"
-            theme="dark"
+            theme={theme}
             active={playing}
             style={{ width: 185 }}
           >
@@ -808,7 +810,7 @@ function EffectStage({
               key={replay}
               state="breathing"
               size={64}
-              theme="dark"
+              theme={theme}
               paused={!playing}
               className="pointer-events-none"
               aria-hidden="true"
@@ -1023,7 +1025,7 @@ function ErrorStatePreview() {
       <h2 id="error-preview-title" className="text-lg font-medium">
         切换状态
       </h2>
-      <p className="mt-1 text-xs leading-6 text-[var(--color-muted)]">
+      <p className="mt-1 text-xs leading-6 text-[var(--color-caption)]">
         切换开关，对照六类控件的正常、错误和禁用状态。开关只控制本地演示，编辑字段不会触发业务校验。
       </p>
       <div className="my-5 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -1173,7 +1175,7 @@ function ErrorStatePreview() {
           {errorMessage("color")}
         </div>
       </div>
-      <p className="mt-6 pt-5 text-[12px] leading-6 text-[var(--color-muted)]">
+      <p className="mt-6 pt-5 text-[12px] leading-6 text-[var(--color-caption)]">
         错误通过字段下方的文字说明，输入保持灰色填充；键盘焦点按需显示，关闭错误后恢复正常状态。
       </p>
     </Card>

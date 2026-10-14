@@ -1,20 +1,31 @@
 "use client";
 
 import { ScrollArea } from "@base-ui/react/scroll-area";
-import { ArrowUpRight, ChevronRight, Menu, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Menu, Moon, Sun, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 import { DialogContent, PreviewScrollbar } from "./preview-components";
+import { PreviewThemeProvider, usePreviewTheme } from "./preview-theme";
 import styles from "./preview.module.css";
 import { WorkbenchDemo } from "./workbench-demos";
 import { WorkbenchFoundations } from "./workbench-foundations";
 import { findSection, resolveSection, sectionGroups, type SectionId } from "./workbench-model";
 
 export default function DesignWorkbench() {
+  return (
+    <PreviewThemeProvider>
+      <DesignWorkbenchContent />
+    </PreviewThemeProvider>
+  );
+}
+
+function DesignWorkbenchContent() {
+  const { theme, setTheme } = usePreviewTheme();
   const [activeId, setActiveId] = useState<SectionId>("colors");
   const [directoryOpen, setDirectoryOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -80,7 +91,10 @@ export default function DesignWorkbench() {
   );
 
   return (
-    <div className={`${styles.scope} design-showcase workbench`}>
+    <div
+      className={cn(styles.scope, theme === "light" && styles.light, "design-showcase workbench")}
+      data-preview-theme={theme}
+    >
       <a
         href="#workbench-content"
         className="workbench-skip"
@@ -103,6 +117,24 @@ export default function DesignWorkbench() {
         </div>
         <div className="workbench-header-actions">
           <span className="workbench-scope-label">仅本页预览</span>
+          <Button
+            type="button"
+            variant="secondary"
+            size="compact"
+            className="workbench-theme-toggle"
+            aria-label={theme === "dark" ? "切换到浅色模式" : "切换到深色模式"}
+            onClick={() => {
+              setTheme(theme === "dark" ? "light" : "dark");
+              setNotice("");
+            }}
+          >
+            {theme === "dark" ? (
+              <Sun size={16} aria-hidden="true" />
+            ) : (
+              <Moon size={16} aria-hidden="true" />
+            )}
+            {theme === "dark" ? "浅色" : "深色"}
+          </Button>
           <Link href="/" className="workbench-back">
             返回网站 <ArrowUpRight size={14} aria-hidden="true" />
           </Link>

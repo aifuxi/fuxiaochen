@@ -42,13 +42,13 @@
 .design-showcase .workbench-brand-description {
   margin-left: 16px;
   padding-left: 24px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-weight: 400;
 }
 .design-showcase .workbench-scope-label {
   border-radius: var(--radius-pill);
   padding: 3px 10px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
   white-space: nowrap;
@@ -58,7 +58,7 @@
   padding: 0 8px;
   border-radius: var(--radius-form);
   gap: 6px;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .design-showcase .workbench-back:hover {
   background: var(--color-raised);
@@ -66,6 +66,11 @@
 }
 .design-showcase .workbench-back:active {
   background: var(--color-raised-pressed);
+}
+
+.design-showcase .workbench-theme-toggle {
+  gap: 6px;
+  white-space: nowrap;
 }
 
 .design-showcase .workbench-sidebar {
@@ -90,7 +95,7 @@
 }
 .design-showcase .workbench-nav-label {
   padding: 0 12px 8px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -102,7 +107,7 @@
   gap: 8px;
   padding: 6px 12px;
   border-radius: var(--radius-sm);
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 14px;
   line-height: 20px;
 }
@@ -215,7 +220,7 @@
 }
 .design-showcase .workbench-caption,
 .design-showcase .workbench-state-label {
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
@@ -225,7 +230,7 @@
 }
 .design-showcase .workbench-rule {
   padding-top: 20px;
-  color: var(--color-muted);
+  color: var(--color-caption);
   font-size: 14px;
   line-height: 22px;
 }
@@ -269,7 +274,7 @@
   padding-top: 20px;
   font-size: 12px;
   line-height: 18px;
-  color: var(--color-muted);
+  color: var(--color-caption);
 }
 .design-showcase .workbench-notice {
   position: fixed;
@@ -291,7 +296,7 @@
   padding: 12px 16px;
   font-size: 14px;
   line-height: 22px;
-  box-shadow: 0 12px 32px #0004;
+  box-shadow: var(--shadow-notice);
 }
 
 .design-showcase .workbench-mobile-bar {
@@ -353,7 +358,7 @@
   .design-showcase .workbench-breadcrumb {
     gap: 6px;
     min-width: 0;
-    color: var(--color-muted);
+    color: var(--color-caption);
     font-size: 12px;
     line-height: 18px;
   }
@@ -385,8 +390,7 @@
     gap: 8px;
   }
   .design-showcase .workbench-scope-label {
-    font-size: 12px;
-    padding: 3px 8px;
+    display: none;
   }
   .design-showcase .workbench-back {
     min-height: 44px;

@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { usePreviewTheme } from "./preview-theme";
+
 type FoundationsProps = {
   sectionId: string;
   onNotice: (message: string) => void;
@@ -14,7 +16,7 @@ type FoundationsProps = {
 const paletteGroups = [
   {
     title: "表面",
-    description: "用午夜黑蓝区分页面、预览和操作区域。",
+    description: "用午夜黑蓝或冷瓷白区分页面、预览和操作区域。",
     colors: [
       { token: "background", label: "页面底色", usage: "工作台的连续背景" },
       { token: "surface", label: "内容表面", usage: "预览面板与内容分组" },
@@ -31,7 +33,8 @@ const paletteGroups = [
     colors: [
       { token: "foreground", label: "主要文字", usage: "标题、字段值与重要内容" },
       { token: "foreground-reading", label: "阅读文字", usage: "正文与连续说明" },
-      { token: "muted", label: "辅助文字", usage: "说明与输入占位文字" },
+      { token: "muted", label: "辅助颜色", usage: "暗色说明文字与浅色辅助图标" },
+      { token: "caption", label: "说明文字", usage: "当前模式的说明与输入占位文字" },
       { token: "subtle", label: "弱化颜色", usage: "用于滚动条等非文字辅助元素" },
       { token: "primary-foreground", label: "主要操作文字", usage: "蓝色按钮内的白色文字" },
     ],
@@ -41,7 +44,7 @@ const paletteGroups = [
     description: "主要操作、键盘焦点与结果反馈各自承担明确职责。",
     colors: [
       { token: "primary", label: "主要操作", usage: "主按钮与重点标识" },
-      { token: "primary-hover", label: "主要操作悬停", usage: "主按钮悬停时提亮" },
+      { token: "primary-hover", label: "主要操作悬停", usage: "主按钮悬停时的反馈色" },
       { token: "primary-pressed", label: "主要操作按下", usage: "主按钮按下时压暗" },
       { token: "focus", label: "键盘焦点", usage: "独立的 2px 焦点轮廓" },
       { token: "success", label: "成功状态", usage: "完成操作与成功反馈" },
@@ -56,12 +59,16 @@ function readColor(element: HTMLElement, token: string) {
 }
 
 function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
+  const { theme } = usePreviewTheme();
   const paletteRef = useRef<HTMLDivElement>(null);
   const [values, setValues] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!paletteRef.current) return;
     const element = paletteRef.current;
+    // 只读取已应用当前模式的 DOM，保证文字与色块对应同一次主题更新。
+    if (element.closest("[data-preview-theme]")?.getAttribute("data-preview-theme") !== theme)
+      return;
     // 从试验区的实际作用域读取，避免色块、文案和复制值分别维护。
     setValues(
       Object.fromEntries(
@@ -70,7 +77,7 @@ function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
         ),
       ),
     );
-  }, []);
+  }, [theme]);
 
   async function copyColor(token: string, label: string) {
     if (!paletteRef.current) return;
@@ -123,8 +130,9 @@ function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
           <div className="space-y-3">
             <h3 className="text-base leading-6 font-medium">状态与焦点</h3>
             <div className="workbench-row text-sm" aria-label="状态文字样本">
-              <span className="flex items-center gap-2 text-[var(--color-success)]">
-                <Check size={16} aria-hidden="true" /> 成功状态
+              <span className="flex items-center gap-2 text-[var(--color-success-text)]">
+                <Check size={16} className="text-[var(--color-success)]" aria-hidden="true" />{" "}
+                成功状态
               </span>
               <span className="flex items-center gap-2 text-[var(--color-danger)]">
                 <X size={16} aria-hidden="true" /> 错误状态
@@ -228,13 +236,13 @@ const typeSamples = [
     name: "辅助说明",
     spec: "12 / 18 · 400",
     text: "用于说明字段、状态与参数。Optional information.",
-    className: "text-xs leading-[18px] text-[var(--color-muted)]",
+    className: "text-xs leading-[18px] text-[var(--color-caption)]",
   },
   {
     name: "参数与代码",
     spec: "12 / 18 · 400",
     text: "--radius-form: 12px; 0123456789",
-    className: "font-mono text-xs leading-[18px] text-[var(--color-muted)]",
+    className: "font-mono text-xs leading-[18px] text-[var(--color-caption)]",
   },
 ] as const;
 
@@ -392,7 +400,7 @@ function Guidelines() {
           页面及其弹窗、选择菜单，其他页面继续使用共享设计系统。
         </p>
         <p className="workbench-note">
-          从左侧目录选择一个主题，先操作样本，再检查状态与使用规则。预览操作只提供本页反馈；切换主题后，组件回到初始状态。
+          从目录选择一个条目，先操作样本，再检查状态与使用规则。切换条目后，组件回到初始状态；切换深浅模式保留当前条目与输入，并记住本页的模式选择。
         </p>
         <p className="workbench-rule">
           本页为开发环境预览。方案确认后，再按授权范围推广到实际页面。
@@ -406,7 +414,7 @@ function Guidelines() {
           {[
             [
               "表面保持安静",
-              "以午夜黑蓝表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
+              "以午夜黑蓝或冷瓷白表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
             ],
             [
               "每次操作都有回应",
@@ -439,7 +447,7 @@ function Guidelines() {
             ["app/globals.css", "全站主题与共享默认样式"],
             ["components/ui/*", "本地组件与 Base UI 交互语义"],
             ["design-spec/preview.module.css", "当前试验区的局部视觉"],
-            ["ai_studio_code.html", "本页默认深色色盘的参考"],
+            ["ai_studio_code.html", "本页深浅色色盘的参考"],
           ].map(([path, role]) => (
             <div
               key={path}

@@ -13,6 +13,7 @@ import { ComboboxContent as SharedComboboxContent } from "@/components/ui/combob
 import { DialogContent as SharedDialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+import { usePreviewTheme } from "./preview-theme";
 import styles from "./preview.module.css";
 
 // 页面侧栏与所有局部浮层共用覆盖式轨道，不影响共享组件的滚动样式。
@@ -31,11 +32,12 @@ export function DialogContent({
   children,
   ...props
 }: ComponentProps<typeof SharedDialogContent>) {
+  const { theme } = usePreviewTheme();
   return (
     <SharedDialogContent
       {...props}
       className={cn(styles.scrollDialog, className)}
-      portalClassName={cn(styles.scope, portalClassName)}
+      portalClassName={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
     >
       <ScrollArea.Root className={styles.scrollArea}>
         <ScrollArea.Viewport
@@ -61,8 +63,11 @@ export function SelectContent({
   render,
   ...props
 }: ComponentProps<typeof SharedSelectContent>) {
+  const { theme } = usePreviewTheme();
   return (
-    <BaseSelect.Portal className={cn(styles.scope, portalClassName)}>
+    <BaseSelect.Portal
+      className={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
+    >
       <BaseSelect.Positioner
         alignItemWithTrigger={false}
         sideOffset={6}
@@ -124,11 +129,12 @@ export function ComboboxContent({
   className,
   ...props
 }: ComponentProps<typeof SharedComboboxContent>) {
+  const { theme } = usePreviewTheme();
   return (
     <SharedComboboxContent
       {...props}
       className={cn(styles.comboboxPopup, className)}
-      portalClassName={cn(styles.scope, portalClassName)}
+      portalClassName={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
     />
   );
 }
