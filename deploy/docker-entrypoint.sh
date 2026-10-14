@@ -36,7 +36,7 @@ if [ "$1" = "serve" ]; then
   node --conditions=react-server --import tsx scripts/sqlite-database.ts verify || exit 4
   set -- node server.js
 else
-  # 标准初始化/迁移入口独占；在线备份、账号、排期等日常命令可与 Web 共享维护锁。
+  # 标准初始化/迁移入口独占；在线备份、账号等日常命令可与 Web 共享维护锁。
   case " $* " in
     *" db:init "*|*" db:migrate "*|*" db:startup "*|*"scripts/sqlite-database.ts init "*|*"scripts/sqlite-database.ts migrate "*|*"scripts/startup-database.ts "*)
       flock --nonblock --exclusive 9 || fail "请停止 Web 和调度后再初始化或迁移数据库。" 5 ;;

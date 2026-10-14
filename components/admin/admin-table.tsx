@@ -7,7 +7,6 @@ declare module "@tanstack/react-table" {
     getRowActions?: (item: TData) => RowActionsProps;
     editRow?: (item: TData) => void;
     disableActions?: boolean;
-    postClock?: number | null;
   }
 }
 

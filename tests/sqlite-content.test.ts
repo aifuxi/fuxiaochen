@@ -157,7 +157,6 @@ async function published(title: string, slug: string, content = body(title)) {
       categoryId: category.id,
       tagIds: [tag.id],
       status: "published",
-      scheduledFor: null,
     }),
     actor,
   );
@@ -214,7 +213,6 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
       tagIds: [],
       content: EMPTY_POST_CONTENT,
       status: "draft",
-      scheduledFor: null,
     }),
     actor,
   );
@@ -223,7 +221,7 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
   assert.deepEqual(draft.tags, []);
   const summary = await getPostSummary(actor);
   assert.equal(summary.recentDrafts[0].id, draft.id);
-  assert.deepEqual(summary.statusCounts, { all: 1, draft: 1, published: 0, scheduled: 0 });
+  assert.deepEqual(summary.statusCounts, { all: 1, draft: 1, published: 0 });
   const category = await createCategory({ name: "发布分类", color: "#123456" }, actor);
   const tags = await Promise.all([
     createTag({ name: "Z 标签" }, actor),
@@ -238,7 +236,6 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
       tagIds: tags.map((tag) => tag.id),
       content: body("正文"),
       status: "published",
-      scheduledFor: null,
       version: draft.version,
     }),
     actor,
@@ -270,7 +267,6 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
         tagIds: [],
         content: body("正文"),
         status: "published",
-        scheduledFor: null,
         version: featured.version,
       }),
       actor,
@@ -338,7 +334,6 @@ void test("文章搜索：正文纯文本、摘要、分类标签、字面 %_ �
       content: row.content,
       summary: "独立人工摘要",
       status: "published",
-      scheduledFor: null,
       version: row.version,
     }),
     actor,
@@ -349,7 +344,7 @@ void test("文章搜索：正文纯文本、摘要、分类标签、字面 %_ �
   );
 });
 
-void test("文章排期和写入边界：时间 round-trip、无效关系拒绝且旧关联保留", async () => {
+void test("文章写入边界：旧排期状态拒绝、无效关系拒绝且旧关联保留", async () => {
   const { row, category, tag } = await published("原有文章", "write-boundary");
   const invalidTagId = "90000000-0000-4000-8000-000000000001";
   await assert.rejects(
@@ -362,7 +357,6 @@ void test("文章排期和写入边界：时间 round-trip、无效关系拒绝�
         tagIds: [invalidTagId],
         content: body("不应保存的正文"),
         status: "published",
-        scheduledFor: null,
         version: row.version,
       }),
       actor,
@@ -376,24 +370,17 @@ void test("文章排期和写入边界：时间 round-trip、无效关系拒绝�
     unchanged.tags.map((item) => item.id),
     [tag.id],
   );
-  const future = new Date(Date.now() + 3_600_000).toISOString();
-  const scheduled = await createPost(
-    postSchema.parse({
-      title: "排期文章",
-      slug: "scheduled-boundary",
+  assert.equal(
+    postSchema.safeParse({
+      title: "旧排期请求",
+      slug: "old-status",
       categoryId: category.id,
       tagIds: [],
-      content: body("定时正文"),
+      content: body("正文"),
       status: "scheduled",
-      scheduledFor: future,
-    }),
-    actor,
+    }).success,
+    false,
   );
-  assert.equal(scheduled.scheduledFor, future);
-  assert.equal(scheduled.publishedAt, null);
-  assert.equal(scheduled.slugLockedAt, null);
-  assert.equal((await getPostSummary(actor)).schedules[0].id, scheduled.id);
-  assert.equal(await request(() => getPublicPost("scheduled-boundary")), null);
   await assert.rejects(
     createPost(
       postSchema.parse({
@@ -403,7 +390,6 @@ void test("文章排期和写入边界：时间 round-trip、无效关系拒绝�
         tagIds: [],
         content: body("正文"),
         status: "published",
-        scheduledFor: null,
       }),
       actor,
     ),
@@ -423,7 +409,6 @@ void test("前台：仅已发布、真实关系数量、摘要回退、分页回
       tagIds: [draftTag.id],
       content: body("隐藏正文"),
       status: "draft",
-      scheduledFor: null,
     }),
     actor,
   );

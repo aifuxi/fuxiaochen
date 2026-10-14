@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "operations:run": "node --conditions=react-server --import tsx scripts/operations.ts run",
-    "posts:publish-due": "node --conditions=react-server --import tsx scripts/operations.ts publish",
     "db:backup": "node --conditions=react-server --import tsx scripts/operations.ts backup",
     "db:restore": "node --conditions=react-server --import tsx scripts/restore-backup.ts",
     "dev": "next dev",

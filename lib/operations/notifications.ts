@@ -17,8 +17,7 @@ export function syncNotifications(tx: OperationTransaction) {
     SELECT 'friend:' || f.id || ':' || f.version, 'friend', f.id, f.name || ' 的友链待审核', '/admin/friends-links', f."updatedAt", NULL FROM friend_link f WHERE f.status = 'pending'
     ON CONFLICT (id) DO NOTHING`);
   tx.run(sql`UPDATE notification SET "resolvedAt" = ${now} WHERE "resolvedAt" IS NULL AND
-    ((kind = 'friend' AND NOT EXISTS (SELECT 1 FROM friend_link f WHERE f.status = 'pending' AND notification.id = 'friend:' || f.id || ':' || f.version)) OR
-     (kind = 'schedule-error' AND NOT EXISTS (SELECT 1 FROM post p WHERE p.status = 'scheduled' AND notification.id = 'schedule-error:' || p.id || ':' || p.version)))`);
+    (kind = 'friend' AND NOT EXISTS (SELECT 1 FROM friend_link f WHERE f.status = 'pending' AND notification.id = 'friend:' || f.id || ':' || f.version))`);
 }
 export function notificationCount(tx: OperationTransaction, adminId: number) {
   return tx.get<{ count: number }>(
@@ -46,7 +45,7 @@ export async function getNotifications(
       isRead: number;
       resolved: number;
     }>(
-      sql`SELECT n.id, n.title, CASE WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" WHEN n.kind = 'schedule-error' THEN '/admin/posts/' || n."sourceId" || '/edit' ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`,
+      sql`SELECT n.id, n.title, CASE WHEN n.kind = 'friend' THEN '/admin/friends-links?record=' || n."sourceId" ELSE n.href END AS href, n."createdAt", (r."readAt" IS NOT NULL) AS "isRead", (n."resolvedAt" IS NOT NULL) AS resolved ${filter} ORDER BY n."createdAt" DESC, n.id DESC LIMIT ${query.pageSize} OFFSET ${(page - 1) * query.pageSize}`,
     );
     return {
       items: rows.map(({ isRead, resolved, ...row }) => ({

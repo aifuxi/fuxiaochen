@@ -11,7 +11,6 @@ import type { AdminPanel } from "./admin-shell";
 
 import { useAdminWorkspace } from "./admin-context";
 import { PostQueryStatus } from "./post-status";
-import { usePostClock } from "./use-posts";
 
 type Props = {
   postSummary: PostSummary | null;
@@ -51,7 +50,6 @@ export function AdminDashboard({
   onOpen,
 }: Props) {
   const { onEdit } = useAdminWorkspace();
-  const now = usePostClock();
   const stats = [
     {
       href: "/admin/posts?status=published",
@@ -65,12 +63,6 @@ export function AdminDashboard({
       value: postSummary ? String(postSummary.statusCounts.draft) : "—",
       note: "篇草稿 · 待编辑",
     },
-    {
-      href: "/admin/posts?status=scheduled",
-      label: "定时发布",
-      value: postSummary ? String(postSummary.statusCounts.scheduled) : "—",
-      note: "篇文章 · 已排期",
-    },
   ];
 
   return (
@@ -78,7 +70,7 @@ export function AdminDashboard({
       <div className="admin-page-heading">
         <div>
           <h1>工作台</h1>
-          <p>继续写作，管理文章与发布计划。</p>
+          <p>继续写作，管理文章。</p>
         </div>
         <Button size="compact" variant="primary" onClick={() => onOpen("compose")}>
           <Plus size={16} aria-hidden="true" />
@@ -130,50 +122,6 @@ export function AdminDashboard({
           ) : (
             <p className="admin-workbench-empty">暂无草稿，可以开始写一篇新文章。</p>
           ))}
-      </PanelCard>
-      <PanelCard
-        title="定时发布计划"
-        action={
-          <Button variant="ghost" size="compact" onClick={() => onOpen("schedule")}>
-            管理 <ArrowUpRight size={14} />
-          </Button>
-        }
-      >
-        <div className="admin-schedule-list">
-          <PostQueryStatus
-            loading={postSummaryLoading}
-            error={postSummaryError}
-            reload={reloadPostSummary}
-          />
-          {Boolean(postSummary?.schedules.length) && (
-            <p className="admin-muted">最近 5 条排期 · 到期后由调度任务发布</p>
-          )}
-          {postSummary?.schedules.length ? (
-            postSummary.schedules.map((schedule) => {
-              const waiting =
-                schedule.scheduledFor && now !== null && Date.parse(schedule.scheduledFor) <= now;
-              return (
-                <div className="admin-schedule" key={schedule.id}>
-                  <div>
-                    <button
-                      type="button"
-                      className="admin-post-title"
-                      onClick={() => onEdit(schedule.id)}
-                    >
-                      {schedule.title}
-                    </button>
-                    <small>{postTime(schedule.scheduledFor)}</small>
-                  </div>
-                  <span className={waiting ? "is-waiting" : "is-scheduled"}>
-                    {waiting ? "等待执行" : "已排期"}
-                  </span>
-                </div>
-              );
-            })
-          ) : postSummary ? (
-            <p className="admin-workbench-empty">暂无排期。</p>
-          ) : null}
-        </div>
       </PanelCard>
       <section className="admin-quick" aria-label="常用操作">
         <h2>常用操作</h2>

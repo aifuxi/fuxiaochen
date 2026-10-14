@@ -2,12 +2,11 @@ import { z } from "zod";
 
 import { draftContentSchema, postContentSchema } from "./document";
 
-export const postStatusSchema = z.enum(["draft", "published", "scheduled"]);
+export const postStatusSchema = z.enum(["draft", "published"]);
 export type PostStatus = z.infer<typeof postStatusSchema>;
 export const postStatusLabels: Record<PostStatus, string> = {
   draft: "草稿",
   published: "已发布",
-  scheduled: "已排期",
 };
 export const slugSchema = z
   .string()
@@ -37,12 +36,10 @@ const postFields = z.object({
   ),
   tagIds: z.array(z.uuid("标签 ID 无效")).transform((ids) => [...new Set(ids)]),
   status: postStatusSchema,
-  scheduledFor: z.iso.datetime({ offset: true }).nullable(),
 });
-const validateSchedule = (
+const validatePublication = (
   input: {
     status: PostStatus;
-    scheduledFor: string | null;
     title: string;
     slug: string | null;
     categoryId: string | null;
@@ -60,16 +57,8 @@ const validateSchedule = (
     if (!content.success)
       ctx.addIssue({ code: "custom", path: ["content"], message: content.error.issues[0].message });
   }
-  if (input.status === "scheduled" && !input.scheduledFor)
-    ctx.addIssue({ code: "custom", path: ["scheduledFor"], message: "请选择计划发布时间" });
-  if (input.status !== "scheduled" && input.scheduledFor !== null)
-    ctx.addIssue({
-      code: "custom",
-      path: ["scheduledFor"],
-      message: "非排期文章不能设置排期时间",
-    });
 };
-export const postSchema = postFields.superRefine(validateSchedule);
+export const postSchema = postFields.superRefine(validatePublication);
 const version = z.number().int().min(1).max(Number.MAX_SAFE_INTEGER);
 export const updatePostSchema = postFields
   .extend({
@@ -78,7 +67,7 @@ export const updatePostSchema = postFields
     isFeatured: z.boolean().optional(),
     featuredOrder: featuredOrderSchema.optional(),
   })
-  .superRefine(validateSchedule);
+  .superRefine(validatePublication);
 export const featuredPostSchema = z.strictObject({ isFeatured: z.boolean(), version });
 export type FeaturedPostInput = z.infer<typeof featuredPostSchema>;
 export const postIdSchema = z.object({ id: z.uuid() });
@@ -112,7 +101,6 @@ export type PostItem = {
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;
-  scheduledFor: string | null;
 };
 export type PostDetail = PostItem & { content: string };
 export type PostCounts = Record<PostStatus | "all", number>;
@@ -126,17 +114,13 @@ export type PostList = {
 };
 export type PostSummary = {
   statusCounts: PostCounts;
-  schedules: PostItem[];
   recentDrafts: PostItem[];
 };
-export const emptyPostCounts: PostCounts = { all: 0, draft: 0, published: 0, scheduled: 0 };
+export const emptyPostCounts: PostCounts = { all: 0, draft: 0, published: 0 };
 export const postDisplayTitle = (title: string) => title.trim() || "未命名草稿";
 export function postTime(value: string | null, dateOnly = false) {
   if (!value) return "—";
   return new Date(value)
     .toLocaleString("sv-SE", { timeZone: "Asia/Shanghai" })
     .slice(0, dateOnly ? 10 : 16);
-}
-export function postLocalTime(value: string | null) {
-  return value ? postTime(value).replace(" ", "T") : "";
 }

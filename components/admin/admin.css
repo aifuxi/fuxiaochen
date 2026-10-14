@@ -341,51 +341,6 @@
 .admin-panel-body {
   padding: 0 16px 16px;
 }
-.admin-schedule + .admin-schedule {
-  border-top: 1px solid var(--admin-divider);
-}
-.admin-schedule small {
-  color: var(--color-subtle);
-  font-size: 12px;
-  line-height: 18px;
-}
-.admin-schedule {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 11px 0;
-}
-.admin-schedule:first-child {
-  padding-top: 0;
-}
-.admin-schedule:last-child {
-  padding-bottom: 0;
-}
-.admin-schedule div {
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-.admin-schedule strong {
-  overflow-wrap: anywhere;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 500;
-}
-.admin-schedule > span {
-  flex: none;
-  padding: 4px 8px;
-  border-radius: var(--radius-pill);
-  background: var(--color-raised);
-  color: var(--color-muted);
-  font-size: 12px;
-  line-height: 18px;
-}
-.admin-schedule > .is-scheduled {
-  background: color-mix(in srgb, var(--color-focus) 12%, var(--color-surface));
-  color: var(--color-focus);
-}
 .admin-quick {
   display: flex;
   align-items: center;
@@ -1030,10 +985,6 @@
   color: var(--color-success);
   background: color-mix(in srgb, var(--color-success) 10%, var(--color-surface));
 }
-.admin-post-status.is-scheduled {
-  color: var(--color-focus);
-  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface));
-}
 .admin-post-metric {
   color: var(--color-muted);
   font-family: ui-monospace, monospace;
@@ -1200,7 +1151,7 @@
   padding: var(--space-sm) var(--space-md) var(--space-xs);
 }
 .admin-dashboard .admin-stats {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .admin-dashboard .admin-stat {
   min-height: 120px;
@@ -1232,17 +1183,6 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-lg);
-}
-.admin-schedule-toolbar {
-  padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--color-outline);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-}
-.admin-schedule-toolbar p {
-  flex: 1 1 300px;
 }
 .admin-backups .admin-modal-section {
   padding: var(--space-lg);

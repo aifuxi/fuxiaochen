@@ -289,7 +289,9 @@ void test(
           try {
             const archivedIds = new Set(
               fixture.rows.notification
-                .filter((row) => ["backup", "comment"].includes(String(row.kind)))
+                .filter((row) =>
+                  ["backup", "comment", "schedule-error", "published"].includes(String(row.kind)),
+                )
                 .map((row) => row.id),
             );
             for (const [table, rows] of Object.entries(fixture.rows)) {
@@ -307,23 +309,34 @@ void test(
                 .all();
               let retained = resetTables.has(table) ? [] : rows;
               if (table === "notification")
-                retained = rows.filter((row) => !["backup", "comment"].includes(String(row.kind)));
+                retained = rows.filter(
+                  (row) =>
+                    !["backup", "comment", "schedule-error", "published"].includes(
+                      String(row.kind),
+                    ),
+                );
               if (table === "notification_read")
                 retained = rows.filter((row) => !archivedIds.has(row.notificationId));
               const expected = retained.map((row) =>
                 Object.fromEntries(
                   Object.entries(row)
-                    .filter(([column]) => table !== "site_setting" || !removedFields.has(column))
+                    .filter(
+                      ([column]) =>
+                        (table !== "site_setting" || !removedFields.has(column)) &&
+                        (table !== "post" || column !== "scheduledFor"),
+                    )
                     .map(([column, value]) => [
                       column,
-                      table === "operation_setting" && column === "autoBackup"
-                        ? 0
-                        : table === "operation_setting" && column === "schedulerLastRunAt"
-                          ? null
-                          : value !== null &&
-                              fixture.tables[table].columns[column].nativeType === "timestamptz"
-                            ? new Date(String(value)).getTime()
-                            : value,
+                      table === "post" && column === "status" && value === "scheduled"
+                        ? "draft"
+                        : table === "operation_setting" && column === "autoBackup"
+                          ? 0
+                          : table === "operation_setting" && column === "schedulerLastRunAt"
+                            ? null
+                            : value !== null &&
+                                fixture.tables[table].columns[column].nativeType === "timestamptz"
+                              ? new Date(String(value)).getTime()
+                              : value,
                     ]),
                 ),
               );

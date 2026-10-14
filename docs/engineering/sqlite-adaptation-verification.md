@@ -1,5 +1,7 @@
 # SQLite 基础层与业务查询适配验收
 
+> 历史记录：2026-10-14 定时发布功能已退役，下文的排期实现与验收仅代表当时状态。当前行为见产品规范和 [定时发布移除验证](scheduled-publishing-removal-verification.md)。
+
 > 2026-10-14：评论、本地访问统计、访客日志与全局搜索已移除。本文保留历史验收事实；现行范围和验证见[功能移除验收](feature-removal-verification.md)。
 
 日期：2026-10-13。范围为 SQLite + Drizzle + better-sqlite3 基础层、当前业务查询和相应测试；不包括 PostgreSQL 数据导出/导入、生产 Compose 改造、镜像合并、推送或部署。

@@ -2,7 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
-import { Clock3, ExternalLink, Star, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { ExternalLink, Star, FileText, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { useRef, useState } from "react";
 
 import type { PostItem } from "@/lib/posts/schema";
@@ -22,10 +22,9 @@ import { postDisplayTitle, postStatusLabels, postTime, type PostStatus } from "@
 
 import { useAdminWorkspace } from "./admin-context";
 import { AdminRowActionsCell } from "./admin-table";
-import { ScheduleToolbar } from "./post-browser";
 import { usePostListState } from "./post-list-state";
 import { PostQueryStatus } from "./post-status";
-import { useDebouncedPostQuery, usePostList, usePostClock } from "./use-posts";
+import { useDebouncedPostQuery, usePostList } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-posts.css";
 
@@ -33,11 +32,9 @@ const filters: { value: "all" | PostStatus; label: string }[] = [
   { value: "all", label: "全部文章" },
   { value: "published", label: "已发布" },
   { value: "draft", label: "草稿箱" },
-  { value: "scheduled", label: "发布计划" },
 ];
 
 const actionIcons = {
-  Clock3: <Clock3 size={16} aria-hidden="true" />,
   Pencil: <Pencil size={16} />,
   Trash2: <Trash2 size={16} />,
   ExternalLink: <ExternalLink size={16} />,
@@ -97,7 +94,7 @@ const columns: ColumnDef<PostItem>[] = [
       return (
         <>
           <span
-            className={`admin-post-status ${post.status === "published" ? "is-published" : post.status === "scheduled" ? "is-scheduled" : ""}`}
+            className={`admin-post-status ${post.status === "published" ? "is-published" : ""}`}
           >
             {postStatusLabels[post.status]}
           </span>
@@ -117,28 +114,12 @@ const columns: ColumnDef<PostItem>[] = [
     accessorKey: "time",
     enableSorting: true,
     meta: { className: "admin-post-metric" },
-    cell: ({ row, table }) => {
-      const post = row.original;
-      const now = table.options.meta?.postClock ?? null;
-      return (
-        <>
-          {postTime(
-            post.status === "scheduled" ? post.scheduledFor : (post.publishedAt ?? post.updatedAt),
-            post.status !== "scheduled",
-          )}
-          {post.status === "scheduled" &&
-            post.scheduledFor &&
-            now !== null &&
-            Date.parse(post.scheduledFor) <= now && <span> · 等待执行</span>}
-        </>
-      );
-    },
+    cell: ({ row }) => postTime(row.original.publishedAt ?? row.original.updatedAt, true),
   },
   { id: "actions", header: "操作", cell: AdminRowActionsCell },
 ];
 
 export function AdminPosts() {
-  const now = usePostClock();
   const {
     categoryItems,
     postRevision,
@@ -147,7 +128,6 @@ export function AdminPosts() {
     onEdit,
     onDeletePost,
     setPostFeatured,
-    cancelPostSchedule,
   } = useAdminWorkspace();
   const { state, patch, tableState } = usePostListState();
   const status = state.status ?? "all";
@@ -187,7 +167,7 @@ export function AdminPosts() {
       <div className="admin-page-heading">
         <div>
           <h1>文章管理</h1>
-          <p>管理文章、草稿与发布计划。</p>
+          <p>管理文章与草稿。</p>
         </div>
         <Button
           variant="primary"
@@ -291,7 +271,6 @@ export function AdminPosts() {
             </div>
           </div>
           <TabsPanel value={status} className="admin-post-panel">
-            {status === "scheduled" && <ScheduleToolbar />}
             <div className="admin-post-list" aria-busy={result.loading}>
               <PostQueryStatus {...result} />
               {actionError && (
@@ -337,27 +316,6 @@ export function AdminPosts() {
                             .finally(() => requestAnimationFrame(() => searchRef.current?.focus()));
                         },
                       },
-                      ...(post.status === "scheduled"
-                        ? [
-                            {
-                              label: "取消排期",
-                              icon: actionIcons.Clock3,
-                              onSelect: () => {
-                                setActionError("");
-                                void cancelPostSchedule(post)
-                                  .catch((cause: unknown) => {
-                                    setActionError(
-                                      cause instanceof Error ? cause.message : "取消排期失败。",
-                                    );
-                                    result.reload();
-                                  })
-                                  .finally(() =>
-                                    requestAnimationFrame(() => searchRef.current?.focus()),
-                                  );
-                              },
-                            },
-                          ]
-                        : []),
                       {
                         label: "删除文章",
                         icon: actionIcons.Trash2,
@@ -370,7 +328,6 @@ export function AdminPosts() {
                   }),
                   editRow: (post) => onEdit(post.id),
                   disableActions: postPending || result.loading || Boolean(result.error),
-                  postClock: now,
                 }}
                 {...tableState}
                 data={visiblePosts}
@@ -407,9 +364,6 @@ export function AdminPosts() {
           </TabsPanel>
         </Tabs>
       </div>
-      <p className="admin-post-session-note">
-        排期到期后由服务器调度发布，可在发布计划中查看执行状态。
-      </p>
     </div>
   );
 }

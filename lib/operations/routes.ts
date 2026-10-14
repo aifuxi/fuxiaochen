@@ -11,7 +11,6 @@ import {
   readNotifications,
   syncNotifications,
 } from "./notifications";
-import { publishDuePosts } from "./scheduler";
 import {
   backupRequestSchema,
   notificationQuerySchema,
@@ -48,9 +47,4 @@ operationsRoutes.get("/backups", validate("query", listQuerySchema.omit({ q: tru
 );
 operationsRoutes.post("/backups", validate("json", backupRequestSchema), async (c) =>
   c.json({ data: await createBackup(c.req.valid("json").id, c.get("admin")) }),
-);
-operationsRoutes.post(
-  "/operations/publish-due",
-  validate("json", backupRequestSchema.omit({ id: true })),
-  async (c) => c.json({ data: await publishDuePosts(c.get("admin")) }),
 );

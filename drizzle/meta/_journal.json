@@ -29,6 +29,13 @@
       "when": 1791948121578,
       "tag": "0003_remove_comments_local_analytics",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791954845788,
+      "tag": "0004_remove_post_scheduling",
+      "breakpoints": true
     }
   ]
 }

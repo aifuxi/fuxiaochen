@@ -121,6 +121,7 @@ npm run db:import-postgres -- \
 | 评论、本地访问记录、访客会话及对应限流表       | 仅保留源归档，不导入 SQLite                                                                             |
 | 设置                                           | 跳过 `enableComments`、`localAnalyticsEnabled`、`localAnalyticsStartedAt`；其他字段及 GA4／百度配置保留 |
 | `kind=comment` 通知及对应已读关联              | 仅保留源归档，不导入 SQLite                                                                             |
+| 排期文章与通知                                 | 文章转为草稿，跳过 `scheduledFor`；`kind=schedule-error/published` 通知及已读关联仅保留源归档           |
 | 其他通知与已读关联                             | 保留原 ID、内容和关联                                                                                   |
 | `operation_setting`                            | `autoBackup=0`、`schedulerLastRunAt=NULL`；版本、时间和其他字段保留                                     |
 | OSS                                            | 保留对象键和元数据，不上传、删除、重写或访问远程对象                                                    |
@@ -143,6 +144,12 @@ node --env-file=/absolute/private/test.env --conditions=react-server --import ts
 ```
 
 正式切换尚未执行。后续部署阶段先准备兼容 SQLite 的镜像、持久卷及启动流程，再冻结旧 Web、调度和全部写入，取得最终归档并重复预检、导入、核对。保留旧镜像、配置、PostgreSQL 卷和旧备份；核对前不要启动新应用。新库开始接收写入后，旧 PostgreSQL 将落后，不能直接切回而丢失增量。生产 Compose、Portainer 和调度切换需单独实施与验证。
+
+## 定时发布退役迁移
+
+`0004_remove_post_scheduling.sql` 将所有 `scheduled` 文章转为 `draft`，保留正文、分类标签关联、版本、创建及修改时间、首次发布时间与 slug 锁定信息，再删除 `scheduledFor` 列与排期索引。排期失败与成功通知及其已读关联同时删除；友链和备份通知保留。历史迁移和 PostgreSQL 源 contract 保留，导入映射执行相同退役策略。
+
+升级仍通过停 Web／调度后的启动备份、迁移与完整校验流程执行。回退使用旧版本恢复到独立新文件；本次仅使用临时库验证，没有操作现有开发库或生产库。
 
 ## 正文格式与查询机制
 

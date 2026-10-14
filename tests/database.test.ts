@@ -69,7 +69,9 @@ void test("现行业务表的字段、主键、非空和唯一约束与源库映
       ...source,
       columns: Object.fromEntries(
         Object.entries(source.columns).filter(
-          ([name]) => table !== "site_setting" || !removedSettingFields.has(name),
+          ([name]) =>
+            (table !== "site_setting" || !removedSettingFields.has(name)) &&
+            (table !== "post" || name !== "scheduledFor"),
         ),
       ),
     };
@@ -140,7 +142,7 @@ void test("迁移重复执行保留数据，校验拒绝结构漂移和未知版
     db.select().from(category).where(eq(category.id, "foundation-category")).get()?.name,
     "分类",
   );
-  assert.equal(migrationManifest().migrations.length, 4);
+  assert.equal(migrationManifest().migrations.length, 5);
   db.$client.exec("DROP INDEX post_createdAt_id_idx");
   assert.throws(() => verifyDatabase(db.$client), /结构/);
   db.$client.exec("CREATE INDEX `post_createdAt_id_idx` ON `post` (`createdAt`,`id`)");

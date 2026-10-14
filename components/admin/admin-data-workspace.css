@@ -70,11 +70,6 @@
   background: currentColor;
 }
 
-.admin-data-page .admin-post-status.is-published,
-.admin-data-page .admin-post-status.is-scheduled {
-  background: transparent;
-}
-
 .admin-data-page .admin-post-pagination {
   flex-wrap: wrap;
   gap: 12px;

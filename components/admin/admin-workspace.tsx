@@ -22,7 +22,7 @@ import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-type DialogPanel = Exclude<AdminPanel, "compose" | "backup" | "categories" | "schedule">;
+type DialogPanel = Exclude<AdminPanel, "compose" | "backup" | "categories">;
 
 const panelTitles: Record<DialogPanel, string> = {
   notifications: "通知",
@@ -77,16 +77,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const openPanel = useCallback(
     (name: AdminPanel) => {
       if (postMutation.current || operationMutation.current) return;
-      if (name === "backup" || name === "categories" || name === "schedule") {
+      if (name === "backup" || name === "categories") {
         guardNavigation(() => {
           setPanel(null);
-          router.push(
-            name === "schedule"
-              ? "/admin/posts?status=scheduled"
-              : name === "backup"
-                ? "/admin/backups"
-                : "/admin/categories",
-          );
+          router.push(name === "backup" ? "/admin/backups" : "/admin/categories");
         });
         return;
       }
@@ -148,29 +142,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         }),
       post.isFeatured ? "已取消精选" : "已设为精选",
     );
-  const cancelPostSchedule = (post: PostItem) =>
-    mutatePost(async () => {
-      const latest = await postRequest<PostDetail>(`/${post.id}`);
-      return postRequest<PostDetail>(`/${post.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: latest.title,
-          slug: latest.slug,
-          content: latest.content,
-          summary: latest.summary,
-          isFeatured: latest.isFeatured,
-          featuredOrder: latest.featuredOrder,
-          categoryId: latest.categoryId,
-          tagIds: latest.tags.map((tag) => tag.id),
-          status: "draft",
-          scheduledFor: null,
-          version: post.version,
-        }),
-      });
-    }, "排期已取消，文章已转为草稿");
-
-  const runOperation = async <T,>(work: () => Promise<T>, refreshPosts = false) => {
+  const runOperation = async <T,>(work: () => Promise<T>) => {
     if (operationMutation.current || postMutation.current) throw new Error("请等待当前操作完成。");
     operationMutation.current = true;
     setOperationPending(true);
@@ -181,7 +153,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
       if (mounted.current) {
         setOperationPending(false);
         setOperationRevision((value) => value + 1);
-        if (refreshPosts) setPostRevision((value) => value + 1);
       }
     }
   };
@@ -208,7 +179,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         postSummaryError: summary.error,
         reloadPostSummary: summary.reload,
         savePost,
-        cancelPostSchedule,
         setPostFeatured,
         ...taxonomy,
         onOpen: openPanel,
@@ -336,7 +306,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           <DialogTitle>删除文章？</DialogTitle>
           <DialogDescription>
             永久删除《{postDeleteTarget ? postDisplayTitle(postDeleteTarget.title) : ""}
-            》及其标签关联和文章排期，删除后无法恢复。
+            》及其标签关联，删除后无法恢复。
           </DialogDescription>
           {postDeleteError && (
             <p className="admin-post-error" role="alert">

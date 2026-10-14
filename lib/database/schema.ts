@@ -195,13 +195,11 @@ export const post = sqliteTable(
     createdAt: datetime("createdAt").notNull(),
     updatedAt: datetime("updatedAt").notNull(),
     publishedAt: datetime("publishedAt"),
-    scheduledFor: datetime("scheduledFor"),
     version: safeInteger("version").notNull(),
   },
   (t) => [
     index("post_createdAt_id_idx").on(t.createdAt, t.id),
     index("post_categoryId_idx").on(t.categoryId),
-    index("post_status_scheduledFor_idx").on(t.status, t.scheduledFor),
     index("post_status_publishedAt_id_idx").on(t.status, t.publishedAt, t.id),
     foreignKey({ columns: [t.categoryId], foreignColumns: [category.id] }).onDelete("restrict"),
   ],

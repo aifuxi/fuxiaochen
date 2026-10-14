@@ -123,7 +123,6 @@ await copyRuntimePath("drizzle/meta/_journal.json");
 const manifest = JSON.parse(await readFile(join(projectRoot, "package.json"), "utf8"));
 const supportedScripts = [
   "operations:run",
-  "posts:publish-due",
   "db:backup",
   "db:restore",
   "db:init",

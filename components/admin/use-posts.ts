@@ -104,14 +104,3 @@ export function usePostList(
     if (value !== undefined && value !== "" && value !== "all") params.set(key, String(value));
   return usePostQuery(enabled ? `?${params}` : null, revision, postRequest<PostList>);
 }
-
-export function usePostClock() {
-  const [now, setNow] = useState<number | null>(null);
-  useEffect(() => {
-    const tick = () => setNow(Date.now());
-    queueMicrotask(tick);
-    const timer = window.setInterval(tick, 60_000);
-    return () => window.clearInterval(timer);
-  }, []);
-  return now;
-}

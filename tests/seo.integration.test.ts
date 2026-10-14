@@ -201,7 +201,7 @@ void test(
           headers: { Cookie: cookie!, Origin: siteOrigin, "Content-Type": "application/json" },
         };
         if (body !== undefined) options.body = JSON.stringify(body);
-        const response = await fetch(`${serverOrigin}/api/admin${path}`, options);
+        const response: Response = await fetch(`${serverOrigin}/api/admin${path}`, options);
         const result: { data: T; error?: unknown } = await response.json();
         assert.ok(response.ok, `${method} ${path} 失败：${JSON.stringify(result.error)}`);
         return result.data;
@@ -270,7 +270,7 @@ void test(
           { type: "paragraph", content: [{ type: "text", text: "用于 SEO 的正文回退摘要。" }] },
         ],
       });
-      const makePost = (slug: string, status: "published" | "draft" | "scheduled", summary = "") =>
+      const makePost = (slug: string, status: "published" | "draft", summary = "") =>
         api<PostDetail>("/posts", "POST", {
           slug,
           title: `SEO 文章 ${slug}`,
@@ -279,13 +279,26 @@ void test(
           categoryId: category.id,
           tagIds: [],
           status,
-          scheduledFor:
-            status === "scheduled" ? new Date(Date.now() + 86_400_000).toISOString() : null,
         });
       const first = await makePost("seo-first", "published", "后台填写的文章摘要。");
+      assert.ok(!Object.hasOwn(first, "scheduledFor"));
+      const summary = await api<Record<string, unknown>>("/posts/summary");
+      assert.ok(!Object.hasOwn(summary, "schedules"));
+      for (const [path, method, body, expected] of [
+        ["/posts?status=scheduled", "GET", undefined, 400],
+        ["/posts", "POST", { ...first, content, tagIds: [], status: "scheduled" }, 400],
+        [`/posts/${first.id}`, "PUT", { ...first, content, tagIds: [], status: "scheduled" }, 400],
+        ["/operations/publish-due", "POST", {}, 404],
+      ] as const) {
+        const response: Response = await fetch(`${serverOrigin}/api/admin${path}`, {
+          method,
+          headers: { Cookie: cookie, Origin: siteOrigin, "Content-Type": "application/json" },
+          body: body === undefined ? undefined : JSON.stringify(body),
+        });
+        assert.equal(response.status, expected, `${method} ${path}`);
+      }
       await makePost("seo-second", "published");
       let draft = await makePost("seo-draft", "draft");
-      await makePost("seo-scheduled", "scheduled");
       const blankDraft = await api<PostDetail>("/posts", "POST", {
         title: "",
         slug: "",
@@ -293,7 +306,6 @@ void test(
         tagIds: [],
         content: EMPTY_POST_CONTENT,
         status: "draft",
-        scheduledFor: null,
       });
       assert.equal(blankDraft.slug, null);
       assert.equal(blankDraft.category, null);
@@ -340,7 +352,6 @@ void test(
       }
       assert.ok(map.urls.includes(`${siteOrigin}/posts/seo-first`));
       assert.ok(!map.urls.includes(`${siteOrigin}/posts/seo-draft`));
-      assert.ok(!map.urls.includes(`${siteOrigin}/posts/seo-scheduled`));
       assert.match(map.xml, new RegExp(first.updatedAt.replaceAll(".", "\\.")));
 
       const article = await html("/posts/seo-first");
@@ -387,7 +398,6 @@ void test(
           categoryId: post.categoryId,
           tagIds: post.tags.map((tag) => tag.id),
           status,
-          scheduledFor: null,
           version: post.version,
         });
       draft = await updatePost(draft, "published");

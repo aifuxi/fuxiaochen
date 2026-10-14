@@ -21,7 +21,6 @@ const challengeCookie = (response: Response, previous = "") =>
     .join("; ");
 const categoryId = "c548b67d-2e86-4d7c-a1f5-74b51b4249aa";
 const postId = "4b612872-7410-4de5-a01c-136d9053c6dd";
-const scheduledId = "462e8d1e-b994-4c23-82bc-6a2728b36c22";
 const content = serializeDocument({
   type: "doc",
   content: [{ type: "paragraph", content: [{ type: "text", text: "容器独立测试正文" }] }],
@@ -214,9 +213,8 @@ const hash = await argon2.hash(${JSON.stringify(password)}, { type: argon2.argon
 db.prepare('INSERT INTO admin VALUES (1, ?, ?, ?, ?)').run('container_admin', hash, now, now);
 syncAdminAccount(drizzle(db));
 db.prepare('INSERT INTO category VALUES (?, ?, ?, ?, ?)').run(${JSON.stringify(categoryId)}, '容器分类', '容器分类', '#123456', now);
-const insert = db.prepare('INSERT INTO post (id, title, slug, content, categoryId, status, createdAt, updatedAt, publishedAt, scheduledFor, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)');
-insert.run(${JSON.stringify(postId)}, '容器独立文章', 'container-test', ${JSON.stringify(content)}, ${JSON.stringify(categoryId)}, 'published', now, now, now, null);
-insert.run(${JSON.stringify(scheduledId)}, '容器独立排期', 'container-scheduled', ${JSON.stringify(content)}, ${JSON.stringify(categoryId)}, 'scheduled', now, now, null, now - 1000);
+const insert = db.prepare('INSERT INTO post (id, title, slug, content, categoryId, status, createdAt, updatedAt, publishedAt, version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)');
+insert.run(${JSON.stringify(postId)}, '容器独立文章', 'container-test', ${JSON.stringify(content)}, ${JSON.stringify(categoryId)}, 'published', now, now, now);
 db.close();`,
         ),
         "在镜像内创建独立测试库",
@@ -361,7 +359,7 @@ if (manifest.bytes !== bytes.length || manifest.sha256 !== createHash('sha256').
 if ((statSync(path).mode & 0o777) !== 0o600) throw new Error('快照权限不私有');
 const db = new Sqlite(path, { readonly: true, fileMustExist: true });
 if (db.pragma('integrity_check', { simple: true }) !== 'ok' || db.pragma('foreign_key_check').length) throw new Error('快照完整性失败');
-if (db.prepare('SELECT COUNT(*) AS count FROM post').get().count !== 2) throw new Error('快照文章遗漏');
+if (db.prepare('SELECT COUNT(*) AS count FROM post').get().count !== 1) throw new Error('快照文章遗漏');
 if (db.prepare('SELECT COUNT(*) AS count FROM auth_session').get().count !== 0) throw new Error('启动快照应在 HTTP 登录之前');
 db.close();`,
           ),
@@ -497,18 +495,12 @@ db.close();`,
         assert.equal((await state(mainContainer)).Running, true);
       });
 
-      await t.test("同镜像排期与在线备份 CLI 可运行，Web 能立即读取结果", async () => {
-        const publication = z
-          .object({ published: z.number(), skipped: z.number() })
-          .parse(
-            JSON.parse(
-              successful(await cli(mainVolume, "operations", ["publish"]), "运行同镜像排期命令"),
-            ),
-          );
-        assert.equal(publication.published, 1);
-        assert.equal(publication.skipped, 0);
-        const published = await fetch(`${serverOrigin}/posts/container-scheduled`);
-        assert.equal(published.status, 200);
+      await t.test("同镜像备份调度与在线备份 CLI 可运行", async () => {
+        const operation = JSON.parse(
+          successful(await cli(mainVolume, "operations", ["run"]), "运行备份调度"),
+        );
+        assert.ok(!Object.hasOwn(operation, "publication"));
+        assert.notEqual((await cli(mainVolume, "operations", ["publish"])).code, 0);
         const backup = z
           .object({ id: z.string(), status: z.literal("complete") })
           .parse(
@@ -538,7 +530,7 @@ db.close();`,
         );
         assert.deepEqual(JSON.parse(successful(restored, "核对恢复副本会话撤销与文章保留")), {
           session: 0,
-          posts: 2,
+          posts: 1,
         });
       });
 

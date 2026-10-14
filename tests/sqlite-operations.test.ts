@@ -12,17 +12,12 @@ import { verifyDatabase } from "../lib/database/migrations";
 import * as tables from "../lib/database/schema";
 import { createBackup, listBackups } from "../lib/operations/backups";
 import { getNotifications, readNotifications } from "../lib/operations/notifications";
-import { publishDuePosts } from "../lib/operations/scheduler";
+import { runScheduledOperations } from "../lib/operations/scheduler";
 import { getOperationSettings, saveOperationSettings } from "../lib/operations/settings";
-import { serializeDocument } from "../lib/posts/document";
 import { createTestDatabase } from "./helpers/sqlite";
 
 let context: Awaited<ReturnType<typeof createTestDatabase>>;
 const now = new Date();
-const content = serializeDocument({
-  type: "doc",
-  content: [{ type: "paragraph", content: [{ type: "text", text: "正文 SQLite" }] }],
-});
 before(async () => {
   context = await createTestDatabase();
   writeTransaction((tx) => {
@@ -34,32 +29,6 @@ before(async () => {
         color: "#000000",
         createdAt: now,
       })
-      .run();
-    tx.insert(tables.post)
-      .values([
-        {
-          id: "post",
-          title: "Äpfel %_ 字面",
-          slug: "test-post",
-          categoryId: "category",
-          content,
-          status: "scheduled",
-          createdAt: now,
-          updatedAt: now,
-          scheduledFor: new Date(now.getTime() - 1000),
-          version: 1,
-        },
-        {
-          id: "invalid",
-          title: "",
-          content,
-          status: "scheduled",
-          createdAt: now,
-          updatedAt: now,
-          scheduledFor: new Date(now.getTime() - 1000),
-          version: 1,
-        },
-      ])
       .run();
     tx.insert(tables.releaseLog)
       .values({
@@ -135,27 +104,11 @@ void test("通知同步幂等、已读与来源版本变化自动解决旧通知
   );
 });
 
-void test("排期发布验证内容、保持重复执行幂等与失败通知幂等", async () => {
-  const published = await publishDuePosts(context.actor);
-  assert.equal(published.published, 1);
-  assert.equal(published.skipped, 1);
-  const repeated = await publishDuePosts(context.actor);
-  assert.equal(repeated.published, 0);
-  assert.equal(repeated.skipped, 1);
-  const post = context.db.select().from(tables.post).where(eq(tables.post.id, "post")).get()!;
-  assert.equal(post.status, "published");
-  assert.equal(post.version, 2);
-  assert.equal(post.scheduledFor, null);
-  assert.ok(post.publishedAt instanceof Date);
-  assert.ok(post.slugLockedAt instanceof Date);
-  assert.equal(
-    context.db
-      .select()
-      .from(tables.notification)
-      .where(eq(tables.notification.id, "schedule-error:invalid:1"))
-      .all().length,
-    1,
-  );
+void test("备份调度关闭时只记录执行时间，不发布文章", async () => {
+  const result = await runScheduledOperations();
+  assert.deepEqual(result, { backup: null });
+  const settings = await getOperationSettings(context.actor);
+  assert.ok(settings.schedulerLastRunAt);
 });
 
 void test("运维设置初始化及版本冲突保持原有行为", async () => {
@@ -219,6 +172,10 @@ void test("在线备份包含 WAL 写入，manifest 区分 SQLite，恢复只接
       .run(),
   );
   const id = randomUUID();
+  const scheduled = await runScheduledOperations();
+  assert.equal(scheduled.backup?.status, "complete");
+  assert.equal((await runScheduledOperations()).backup?.id, scheduled.backup?.id);
+  assert.ok(!Object.hasOwn(scheduled, "publication"));
   const daily = "test-day";
   const backup = await createBackup(id, undefined, daily);
   assert.equal(backup.status, "complete");

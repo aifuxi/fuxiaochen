@@ -3,8 +3,9 @@
 import type { OnChangeFn, PaginationState, SortingState } from "@tanstack/react-table";
 
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
-import { postQuerySchema } from "@/lib/posts/schema";
+import { postQuerySchema, postStatusSchema } from "@/lib/posts/schema";
 
 const patch = (changes: Record<string, string | number | undefined>) => {
   const url = new URL(location.href);
@@ -18,7 +19,18 @@ const patch = (changes: Record<string, string | number | undefined>) => {
 
 export function usePostListState() {
   const search = useSearchParams();
-  const parsed = postQuerySchema.safeParse(Object.fromEntries(search));
+  const values = Object.fromEntries(search);
+  const invalidStatus =
+    values.status !== undefined && !postStatusSchema.safeParse(values.status).success;
+  // 旧状态链接回到全部文章，保留关键词等其他筛选并重置页码。
+  if (invalidStatus) {
+    delete values.status;
+    delete values.page;
+  }
+  useEffect(() => {
+    if (invalidStatus) patch({ status: undefined, page: 1 });
+  }, [invalidStatus]);
+  const parsed = postQuerySchema.safeParse(values);
   const state = parsed.success ? parsed.data : postQuerySchema.parse({});
 
   const sorting: SortingState = state.sortBy

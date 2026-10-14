@@ -393,6 +393,19 @@ export async function postgresTransferRows() {
     });
     rows.notification_read.push({ notificationId: id, adminId: 1, readAt: later });
   }
+  for (const kind of ["schedule-error", "published"]) {
+    const id = `${kind}:${ids.scheduled}:3`;
+    rows.notification.push({
+      id,
+      kind,
+      sourceId: ids.scheduled,
+      title: "旧排期通知",
+      href: `/admin/posts/${ids.scheduled}/edit`,
+      createdAt: later,
+      resolvedAt: null,
+    });
+    rows.notification_read.push({ notificationId: id, adminId: 1, readAt: later });
+  }
   return {
     originalSessionToken,
     rows,

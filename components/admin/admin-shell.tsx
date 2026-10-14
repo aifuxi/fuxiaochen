@@ -31,8 +31,7 @@ export type AdminPanel =
   | "compose"
   | "profile"
   | "upload"
-  | "categories"
-  | "schedule";
+  | "categories";
 
 type Props = {
   children: ReactNode;

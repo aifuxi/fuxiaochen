@@ -21,7 +21,7 @@ type AdminState = TaxonomyState & {
   postRevision: number;
   postPending: boolean;
   operationRevision: number;
-  runOperation: <T>(work: () => Promise<T>, refreshPosts?: boolean) => Promise<T>;
+  runOperation: <T>(work: () => Promise<T>) => Promise<T>;
   onNavigate: (href: string) => void;
   writingFocused: boolean;
   setWritingFocused: (focused: boolean) => void;
@@ -31,7 +31,6 @@ type AdminState = TaxonomyState & {
   reloadPostSummary: () => void;
   savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
   setPostFeatured: (post: PostItem) => Promise<PostItem>;
-  cancelPostSchedule: (post: PostItem) => Promise<PostDetail>;
   onOpen: (panel: AdminPanel) => void;
   onEdit: (id: string) => void;
   onDeletePost: (

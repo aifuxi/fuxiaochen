@@ -28,19 +28,13 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { adminPostReturnTo } from "@/lib/admin/navigation";
 import { EMPTY_POST_CONTENT } from "@/lib/posts/document";
-import {
-  postLocalTime,
-  postSchema,
-  postStatusLabels,
-  type PostDetail,
-  type PostStatus,
-} from "@/lib/posts/schema";
+import { postSchema, postStatusLabels, type PostDetail, type PostStatus } from "@/lib/posts/schema";
 
 import { useAdminWorkspace } from "./admin-context";
 import { useNavigationGuard } from "./navigation-guard";
 import { PostQueryStatus } from "./post-status";
 import { TaxonomyStatus } from "./taxonomy-status";
-import { AdminRequestError, postRequest, usePostQuery, usePostClock } from "./use-posts";
+import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 
 const BlockEditor = dynamic(
   () => import("./editor/block-editor").then((module) => module.BlockEditor),
@@ -60,7 +54,6 @@ type Draft = {
   categoryId: string;
   tagIds: string[];
   status: PostStatus;
-  scheduledTime: string;
 };
 
 function draftFrom(post: PostDetail | null): Draft {
@@ -74,7 +67,6 @@ function draftFrom(post: PostDetail | null): Draft {
     categoryId: post?.categoryId ?? "",
     tagIds: post?.tags.map((tag) => tag.id) ?? [],
     status: post?.status ?? "draft",
-    scheduledTime: postLocalTime(post?.scheduledFor ?? null),
   };
 }
 
@@ -87,7 +79,6 @@ const fieldIds: Record<string, string> = {
   featuredOrder: "admin-post-featured-order",
   categoryId: "admin-post-category",
   tagIds: "admin-post-tags",
-  scheduledFor: "admin-post-publish-date",
 };
 const settingsKeys = [
   "summary",
@@ -97,7 +88,6 @@ const settingsKeys = [
   "categoryId",
   "tagIds",
   "status",
-  "scheduledFor",
 ];
 
 export function PostEditor({ id }: { id: string | null }) {
@@ -135,7 +125,6 @@ function PostEditorForm({
 }) {
   const router = useRouter();
   const returnTo = adminPostReturnTo(useSearchParams().get("returnTo"));
-  const now = usePostClock();
   const {
     categoryItems,
     tagItems,
@@ -153,18 +142,8 @@ function PostEditorForm({
   }, [savedPost]);
   const [draft, setDraft] = useState(() => draftFrom(initial));
   const [savedDraft, setSavedDraft] = useState(() => draftFrom(initial));
-  const {
-    title,
-    slug,
-    content,
-    summary,
-    isFeatured,
-    featuredOrder,
-    categoryId,
-    tagIds,
-    status,
-    scheduledTime,
-  } = draft;
+  const { title, slug, content, summary, isFeatured, featuredOrder, categoryId, tagIds, status } =
+    draft;
   const initialBody = initial?.content ?? EMPTY_POST_CONTENT;
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -242,9 +221,7 @@ function PostEditorForm({
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
   const guardNavigation = useNavigationGuard(dirty, postPending);
   const settingsError = settingsKeys.some((key) => Boolean(fieldErrors[key]));
-  const settingsIncomplete =
-    status !== "draft" &&
-    (!slug.trim() || !categoryId || (status === "scheduled" && !scheduledTime));
+  const settingsIncomplete = status !== "draft" && (!slug.trim() || !categoryId);
   const saveLabel = postPending ? "保存中…" : status === "draft" ? "保存草稿" : "保存";
   const closeSettings = useCallback(() => {
     if (postPending) return;
@@ -283,14 +260,6 @@ function PostEditorForm({
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (disabled) return;
-    const scheduledFor =
-      status === "scheduled" && scheduledTime
-        ? Number.isFinite(Date.parse(`${scheduledTime}+08:00`))
-          ? new Date(`${scheduledTime}+08:00`).toISOString()
-          : "invalid"
-        : null;
-    const unchangedSchedule =
-      savedPost?.status === "scheduled" && scheduledTime === postLocalTime(savedPost.scheduledFor);
     const parsed = postSchema.safeParse({
       title,
       slug,
@@ -301,8 +270,6 @@ function PostEditorForm({
       categoryId,
       tagIds,
       status,
-      scheduledFor:
-        status === "scheduled" && unchangedSchedule ? savedPost.scheduledFor : scheduledFor,
     });
     if (!parsed.success) {
       const fields: Record<string, string[]> = {};
@@ -312,17 +279,6 @@ function PostEditorForm({
       }
       revealErrors(fields);
       setError(parsed.error.issues[0].message);
-      return;
-    }
-    if (
-      status === "scheduled" &&
-      !unchangedSchedule &&
-      parsed.data.scheduledFor &&
-      Date.parse(parsed.data.scheduledFor) <= Date.now()
-    ) {
-      const message = "请选择未来的发布时间（北京时间）。";
-      revealErrors({ scheduledFor: [message] });
-      setError(message);
       return;
     }
     setFieldErrors({});
@@ -536,7 +492,7 @@ function PostEditorForm({
       {fieldError("featuredOrder")}
       <fieldset className="admin-status-options" disabled={postPending}>
         <legend>文章状态</legend>
-        {(["draft", "published", "scheduled"] as const).map((value) => (
+        {(["draft", "published"] as const).map((value) => (
           <label key={value}>
             <input
               type="radio"
@@ -548,28 +504,6 @@ function PostEditorForm({
           </label>
         ))}
       </fieldset>
-      {status === "scheduled" && (
-        <label htmlFor="admin-post-publish-date">
-          计划发布时间（北京时间，到期后由调度任务发布）
-          <Input
-            form="article-writing-form"
-            id="admin-post-publish-date"
-            type="datetime-local"
-            value={scheduledTime}
-            disabled={postPending}
-            onChange={(event) => update("scheduledTime", event.target.value)}
-            aria-invalid={Boolean(fieldErrors.scheduledFor)}
-            aria-describedby={fieldErrors.scheduledFor ? "post-error-scheduledFor" : undefined}
-          />
-        </label>
-      )}
-      {fieldError("scheduledFor")}
-      {status === "scheduled" &&
-        savedPost?.scheduledFor &&
-        now !== null &&
-        Date.parse(savedPost.scheduledFor) <= now && (
-          <output>已到发布时间，等待调度任务执行。也可手动发布或调整排期。</output>
-        )}
     </div>
   );
   const settingsHeader = (drawer: boolean) => (
@@ -758,7 +692,7 @@ function PostEditorForm({
         >
           {settingsHeader(true)}
           <DialogDescription className="sr-only">
-            设置文章链接、分类、标签、摘要、精选和发布计划。
+            设置文章链接、分类、标签、摘要、精选和发布状态。
           </DialogDescription>
           {settingsFields}
           <div className="post-settings-drawer-actions">

@@ -60,7 +60,6 @@ const summaryColumns = {
   createdAt: post.createdAt,
   updatedAt: post.updatedAt,
   publishedAt: post.publishedAt,
-  scheduledFor: post.scheduledFor,
   category: { id: category.id, name: category.name, color: category.color },
 };
 const summaries = (db: Database | DatabaseTransaction) =>
@@ -91,7 +90,6 @@ function serialize(row: SummaryRow, tags: TagSummary[]) {
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
     publishedAt: row.publishedAt?.toISOString() ?? null,
-    scheduledFor: row.scheduledFor?.toISOString() ?? null,
     slugLockedAt: row.slugLockedAt?.toISOString() ?? null,
     tags: tags.toSorted((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id)),
   };
@@ -145,11 +143,9 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     // 保持原 PostgreSQL 排序的 NULL 位置：升序末尾、降序开头。
     ordering.push(order(sql`${category.name} IS NULL`), order(category.name));
   } else if (query.sortBy === "status")
-    ordering.push(
-      order(sql`CASE ${post.status} WHEN 'draft' THEN 0 WHEN 'published' THEN 1 ELSE 2 END`),
-    );
+    ordering.push(order(sql`CASE ${post.status} WHEN 'draft' THEN 0 ELSE 1 END`));
   else if (query.sortBy === "time") {
-    const time = sql`CASE WHEN ${post.status} = 'scheduled' THEN ${post.scheduledFor} ELSE coalesce(${post.publishedAt}, ${post.updatedAt}) END`;
+    const time = sql`coalesce(${post.publishedAt}, ${post.updatedAt})`;
     ordering.push(order(sql`${time} IS NULL`), order(time));
   } else ordering.push(desc(post.createdAt));
   ordering.push(desc(post.id));
@@ -171,11 +167,6 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
 export async function getPostSummary(actor: TaxonomyActor) {
   authorize(actor);
   const db = getDatabase();
-  const schedules = summaries(db)
-    .where(eq(post.status, "scheduled"))
-    .orderBy(asc(sql`${post.scheduledFor} IS NULL`), asc(post.scheduledFor), asc(post.id))
-    .limit(5)
-    .all();
   const recentDrafts = summaries(db)
     .where(eq(post.status, "draft"))
     .orderBy(desc(post.updatedAt), desc(post.id))
@@ -183,7 +174,6 @@ export async function getPostSummary(actor: TaxonomyActor) {
     .all();
   return {
     statusCounts: counts(db),
-    schedules: serializeRows(db, schedules),
     recentDrafts: serializeRows(db, recentDrafts),
   };
 }
@@ -236,26 +226,12 @@ function validateSlug(slug: string | null, tx: DatabaseTransaction, id?: string)
 function publication(
   input: PostInput | PostUpdateInput,
   previous?: {
-    status: string;
-    scheduledFor: Date | null;
     publishedAt: Date | null;
     slugLockedAt: Date | null;
   },
 ) {
   const now = new Date();
-  const scheduledFor = input.scheduledFor ? new Date(input.scheduledFor) : null;
-  if (
-    input.status === "scheduled" &&
-    scheduledFor &&
-    scheduledFor <= now &&
-    !(
-      previous?.status === "scheduled" &&
-      previous.scheduledFor?.getTime() === scheduledFor.getTime()
-    )
-  )
-    throw new PostError("INVALID_INPUT", "请选择未来的发布时间（北京时间）。");
   return {
-    scheduledFor,
     publishedAt: previous?.publishedAt ?? (input.status === "published" ? now : null),
     slugLockedAt: previous?.slugLockedAt ?? (input.status === "published" ? now : null),
     updatedAt: now,

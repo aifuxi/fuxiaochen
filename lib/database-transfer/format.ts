@@ -52,17 +52,24 @@ export const removedSettingFields = new Set([
   "localAnalyticsEnabled",
   "localAnalyticsStartedAt",
 ]);
+// published 是旧排期任务生成的成功通知，现行手动发布不生成此类通知。
+export const removedNotificationKinds = new Set(["comment", "schedule-error", "published"]);
 export function targetTableSpec(name: string): TableSpec | undefined {
   const source = tableSpecs.find((spec) => spec.name === name);
   if (!source || removedTables.has(name)) return undefined;
-  return name === "site_setting"
+  return name === "post"
     ? {
         ...source,
-        columns: source.columns.filter(
-          ({ name: columnName }) => !removedSettingFields.has(columnName),
-        ),
+        columns: source.columns.filter(({ name: columnName }) => columnName !== "scheduledFor"),
       }
-    : source;
+    : name === "site_setting"
+      ? {
+          ...source,
+          columns: source.columns.filter(
+            ({ name: columnName }) => !removedSettingFields.has(columnName),
+          ),
+        }
+      : source;
 }
 export const tableNames = tableSpecs.map(({ name }) => name);
 export const resetTables = new Set([
@@ -430,7 +437,10 @@ export async function loadArchive(inputDirectory: string): Promise<Archive> {
     for (const spec of tableSpecs) {
       for (const row of rows(spec.name)) {
         collectRelationKeys(relationIndexes, spec, row);
-        if (spec.name === "notification" && ["backup", "comment"].includes(String(row.kind)))
+        if (
+          spec.name === "notification" &&
+          (row.kind === "backup" || removedNotificationKinds.has(String(row.kind)))
+        )
           omittedNotificationIds.add(String(row.id));
         if (spec.name === "comment")
           parents.set(String(row.id), {
@@ -468,7 +478,8 @@ export async function loadArchive(inputDirectory: string): Promise<Archive> {
         if (
           resetTables.has(name) ||
           removedTables.has(name) ||
-          (name === "notification" && ["backup", "comment"].includes(String(row.kind))) ||
+          (name === "notification" &&
+            (row.kind === "backup" || removedNotificationKinds.has(String(row.kind)))) ||
           (name === "notification_read" && omittedNotificationIds.has(String(row.notificationId)))
         )
           continue;
@@ -478,7 +489,14 @@ export async function loadArchive(inputDirectory: string): Promise<Archive> {
             ? Object.fromEntries(
                 Object.entries(row).filter(([key]) => !removedSettingFields.has(key)),
               )
-            : row;
+            : name === "post"
+              ? Object.fromEntries(
+                  Object.entries({
+                    ...row,
+                    status: row.status === "scheduled" ? "draft" : row.status,
+                  }).filter(([key]) => key !== "scheduledFor"),
+                )
+              : row;
       }
     };
     return {
