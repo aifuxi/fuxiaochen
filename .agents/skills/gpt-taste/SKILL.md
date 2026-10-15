@@ -17,7 +17,7 @@ LLMs are inherently lazy and always pick the first layout option. To prevent thi
 Use a deterministic seed (e.g., character count of the user prompt modulo math) to simulate `random.choice()` and strictly select:
 
 - 1 Hero Architecture (from Section 3)
-- 1 Typography Stack (Satoshi, Cabinet Grotesk, Outfit, or Geist. NEVER Inter)
+- 1 Typography Stack (Source Sans Pro for this project; follow DESIGN.md)
 - 3 Unique Component Architectures (from Section 6)
 - 2 Advanced GSAP Paradigms (from Section 5)
   You are forbidden from defaulting to the same UI twice. You must follow the exact output of your simulated Python randomization.

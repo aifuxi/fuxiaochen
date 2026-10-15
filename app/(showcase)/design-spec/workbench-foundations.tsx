@@ -250,7 +250,8 @@ function TypographyFoundations() {
   return (
     <div className="workbench-stack">
       <p className="workbench-note">
-        英文使用 Inter，中文使用系统字体。工作台以 14px 正文为基础，用字号、字重与间距建立层级。
+        英文使用 Source Sans Pro，中文使用系统字体。工作台以 14px
+        正文为基础，用字号、字重与间距建立层级。
       </p>
       <section className="workbench-sample" aria-label="工作台排版阶梯">
         <div className="space-y-2">

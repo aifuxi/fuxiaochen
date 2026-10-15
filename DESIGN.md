@@ -100,35 +100,35 @@ shadows:
     toast: "0 15px 40px rgb(15 23 42 / 12%)"
 typography:
   display:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 42px
     fontWeight: 500
     lineHeight: 45px
     letterSpacing: "-0.005em"
   display-mobile:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 30px
     fontWeight: 500
     lineHeight: 34px
     letterSpacing: "-0.005em"
   heading:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 30px
     fontWeight: 500
     lineHeight: 1.16
     letterSpacing: "-0.01em"
   title:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 1rem
     fontWeight: 500
     lineHeight: 1.4
   body:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 0.875rem
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: Inter
+    fontFamily: Source Sans Pro
     fontSize: 0.8125rem
     fontWeight: 500
     lineHeight: 1.25
@@ -237,7 +237,7 @@ components:
 
 ## 状态与职责
 
-本文件规定已批准的**目标设计**。YAML 是目标 token 的唯一数值来源，不是运行时代码或生成输入；文档更新不会自动修改页面。2026-10-05 完成规范解耦；2026-10-06 已实施 Inter、前台导航、原生指针、首页与展示页构图，并同步共享 token。实施证据与实际验证范围集中记录在文末。
+本文件规定已批准的**目标设计**。YAML 是目标 token 的唯一数值来源，不是运行时代码或生成输入；文档更新不会自动修改页面。2026-10-05 完成规范解耦；2026-10-06 已实施共享无衬线字体、前台导航、原生指针、首页与展示页构图，并同步共享 token。实施证据与实际验证范围集中记录在文末。
 
 以 [Libraries.dev](https://libraries.dev/) 为主要视觉参考：近黑连续底色、低对比层级、精密胶囊材质、平实排版与克制的交互反馈。前台构图紧贴参考，后台与阅读页保留任务密度和阅读宽度。品牌资产、专有字体、产品插图、营销文案与付费功能不复制。
 
@@ -328,9 +328,11 @@ Picker、Dialog、Popover 与 Menu 浮层沿用既有结构，表面、遮罩与
 
 ## 排版与间距
 
-标题、正文和标签使用 `"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`；display 与 sans 共用字体栈。2026-10-09 按用户要求对齐 [Hugging Face 中文文章](https://huggingface.co/learn/agents-course/zh-CN/unit1/agent-steps-and-structure) 的字体回退顺序，仅将首项 Source Sans Pro 替换为 Inter；中文由系统字体兜底，不显式优先指定苹方或微软雅黑。Inter 在 [共享样式](app/globals.css) 中通过 `@font-face` 直接加载 jsDelivr 上固定版本的 `@fontsource-variable/inter@5.3.0`，只加载 standard normal 的 Latin 子集，保留 `wght`（100–900）与 `opsz`（14–32）轴及 Fontsource 的 `unicode-range`；中文与 Latin 子集以外的字符使用上述字体栈兜底；采用 `font-display: swap`，CDN 不可用时继续使用系统兜底。[根布局](app/layout.tsx) 预连接 CDN，不再使用 `next/font` 或随项目分发字体文件。字体许可为 [OFL-1.1](https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.3.0/LICENSE)。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+标题、正文和标签统一使用 `"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`；display 与 sans 共用字体栈。中文由系统字体兜底，不显式优先指定苹方或微软雅黑。2026-10-15 按用户要求统一替换原首选字体，现行实现、设计工作台、独立 HTML 与项目内字体示例均使用 Source Sans Pro；字号、行高、字距、颜色和等宽字体保持。
 
-2026-10-09 已将字体加载从本地文件切换为上述 CDN 方式；字体请求、页面回归及检查限制见 [Inter CDN 替换记录](docs/engineering/verification-history.md#inter-cdn-替换2026-10-09)与同日的 [Inter 子集精简记录](docs/engineering/verification-history.md#inter-子集精简2026-10-09)，下方 2026-10-06 同步表保留当时的实施事实。
+在 [共享样式](app/globals.css) 中通过 `@font-face` 加载 jsDelivr 上固定版本的 `@fontsource/source-sans-pro@5.3.0`，仅声明 Latin 子集，使用 Fontsource 官方 `unicode-range`。该包提供静态的 200、300、400、600、700、900 六档字重，分别声明 normal 与 italic，不使用可变字体范围或不存在的 500 字重文件；现有 500 字重按 CSS 字体匹配规则使用 400，不伪装为可变字重。采用 `font-display: swap`，CDN 不可用时继续使用系统兜底；中文与 Latin 子集以外的字符沿用共享回退栈。[根布局](app/layout.tsx) 继续预连接 CDN，应用不新增字体依赖或本地字体文件；独立 HTML 为离线交付内嵌相同字体，并保留包内 [OFL-1.1 许可](https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/LICENSE)。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+
+此前字体加载方式与子集调整属于历史事实，见[旧无衬线字体 CDN 替换记录](docs/engineering/verification-history.md#旧无衬线字体-cdn-替换2026-10-09)和[旧无衬线字体子集精简记录](docs/engineering/verification-history.md#旧无衬线字体子集精简2026-10-09)。本次字体替换的实际验证范围见[Source Sans Pro 字体统一](docs/engineering/verification-history.md#source-sans-pro-字体统一2026-10-15)，不将旧字体的验收结果当作新字体的运行证据。
 
 首页与展示页使用 display；小于 640px 使用 display-mobile。章节标题使用 heading。其余 title、body、label 与 mono 保留既有值；后台页标题、阅读正文与编辑标题属于场景变体，不回写共享 display。卡片标题可选 title 或场景明确的紧凑字号，描述低一级，不让所有内容争夺焦点。
 
@@ -422,15 +424,15 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 来源：[首页](https://libraries.dev/)、[组件页](https://libraries.dev/beam)、[共享样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/public/assets/site.css)、[首页结构及专属样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/index.html)。记录日期与实际页面数值构成本次基线；上游更新后重新采集，不自动改变本规范。
 
-| 观察                                                           | 项目目标或显式适配                                                               |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件 Inter    | 使用 Inter 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异        |
-| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px | 原色值保留为历史参考；当前颜色改用已批准深浅色色盘，现有圆角和业务 Card 变体保留 |
-| 首页 CTA 32px 胶囊与精密材质层                                 | 保留 small 与材质；primary 按当前深浅模式角色，触屏目标保持扩大                  |
-| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                    | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                           |
-| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                 | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                 |
-| 普通导航链接，当前项局部胶囊                                   | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                     |
-| hover 提亮、微卡约上浮 6px；源码提供多档时长                   | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移           |
+| 观察                                                                    | 项目目标或显式适配                                                                  |
+| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件为参考站无衬线字体 | 使用 Source Sans Pro 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异 |
+| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px          | 原色值保留为历史参考；当前颜色改用已批准深浅色色盘，现有圆角和业务 Card 变体保留    |
+| 首页 CTA 32px 胶囊与精密材质层                                          | 保留 small 与材质；primary 按当前深浅模式角色，触屏目标保持扩大                     |
+| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                             | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                              |
+| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                          | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                    |
+| 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                        |
+| hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移              |
 
 原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。其他参考不扩展本次视觉目标。
 
@@ -448,14 +450,14 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 2026-10-06 完成以下实施，并针对交互遗漏回归修正。此表记录源码证据和验证边界，不形成第二套有效规则；运行记录见[视觉实施验收](docs/engineering/verification-history.md#视觉基线实施2026-10-06)及[逐项交互回归](docs/engineering/verification-history.md#参考采集与交互回归2026-10-06)。
 
-| 项目                 | 已批准目标                                    | 实现证据                                                                                               | 实施范围                                                                             | 验证状态                                                                                     |
-| -------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| 字体与排版           | Inter、中文系统字体及 display / heading token | [根布局](app/layout.tsx)、[共享样式](app/globals.css)                                                  | 本地字体、主题变量、完整语义排版；保留后台与阅读场景字号                             | 已实施；首页与展示页字号、字体加载及后台字体运行核对通过                                     |
-| 前台导航             | 普通链接、当前项局部胶囊                      | [SiteHeader](components/frontend/site-header.tsx)、[前台样式](<app/(frontend)/site.css>)               | 移除整组材质与蓝线，保留宽度测量与折叠菜单；长品牌换行、跨断点关闭与焦点兜底         | 已实施；当前项、移动排版、Escape 回焦、跨断点关闭及再次缩窗不重开运行通过                    |
-| 指针                 | 全站原生语义指针                              | [根布局](app/layout.tsx)、[展示页](<app/(showcase)/design-spec/page.tsx>)                              | 删除 CursorEffect、专用样式、token 与遗留属性；展示系统指针示例                      | 已实施；普通区域、按钮、文本与禁用输入指针已运行核对；本次补验禁用 Tab 指针                  |
-| 首页                 | 参考构图、五个既有栏目入口                    | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 居中文案、散布微卡、窄屏 2–1–2；沿用公开设置，微卡不预取；上浮与标签展开反馈         | 已实施；布局边界、五卡 hover/focus-visible、完整命中区与栏目跳转核对通过                     |
-| 展示页               | 独立两栏工作台与局部视觉变体                  | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 固定目录、单项预览、移动目录与局部浮层；官方效果启停、互斥与离屏暂停                 | 已实施；目录、列明组件交互及首页/登录页隔离对照通过；边界见设计工作台验收                    |
-| Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion           | [共享样式](app/globals.css)、[Button](components/ui/button.tsx)、[Card](components/ui/card.tsx)        | 圆角/控件/过渡引用变量，form Button；Accordion 状态与 Tab 禁用；减少动态效果取消变换 | 已实施；Tab/Switch 44px 及列明控件流程通过；按压视觉、粗指针及系统 reduced-motion 仅源码核对 |
+| 项目                 | 已批准目标                                                   | 实现证据                                                                                               | 实施范围                                                                             | 验证状态                                                                                     |
+| -------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| 字体与排版           | 当时的共享无衬线字体、中文系统字体及 display / heading token | [根布局](app/layout.tsx)、[共享样式](app/globals.css)                                                  | 本地字体、主题变量、完整语义排版；保留后台与阅读场景字号                             | 已实施；首页与展示页字号、字体加载及后台字体运行核对通过                                     |
+| 前台导航             | 普通链接、当前项局部胶囊                                     | [SiteHeader](components/frontend/site-header.tsx)、[前台样式](<app/(frontend)/site.css>)               | 移除整组材质与蓝线，保留宽度测量与折叠菜单；长品牌换行、跨断点关闭与焦点兜底         | 已实施；当前项、移动排版、Escape 回焦、跨断点关闭及再次缩窗不重开运行通过                    |
+| 指针                 | 全站原生语义指针                                             | [根布局](app/layout.tsx)、[展示页](<app/(showcase)/design-spec/page.tsx>)                              | 删除 CursorEffect、专用样式、token 与遗留属性；展示系统指针示例                      | 已实施；普通区域、按钮、文本与禁用输入指针已运行核对；本次补验禁用 Tab 指针                  |
+| 首页                 | 参考构图、五个既有栏目入口                                   | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 居中文案、散布微卡、窄屏 2–1–2；沿用公开设置，微卡不预取；上浮与标签展开反馈         | 已实施；布局边界、五卡 hover/focus-visible、完整命中区与栏目跳转核对通过                     |
+| 展示页               | 独立两栏工作台与局部视觉变体                                 | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 固定目录、单项预览、移动目录与局部浮层；官方效果启停、互斥与离屏暂停                 | 已实施；目录、列明组件交互及首页/登录页隔离对照通过；边界见设计工作台验收                    |
+| Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion                          | [共享样式](app/globals.css)、[Button](components/ui/button.tsx)、[Card](components/ui/card.tsx)        | 圆角/控件/过渡引用变量，form Button；Accordion 状态与 Tab 禁用；减少动态效果取消变换 | 已实施；Tab/Switch 44px 及列明控件流程通过；按压视觉、粗指针及系统 reduced-motion 仅源码核对 |
 
 长资料与空资料的布局边界经源码核对；当前数据库为空，非空文章正文与列表、后台编辑字号、登录表单、最大字段长度、200% 文本缩放和全面辅助技术未在本轮重新运行验收。实施完成不代表这些场景均已运行通过。
 

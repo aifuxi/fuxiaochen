@@ -56,7 +56,7 @@ import { MetalFx, MetalText, MetalBadge } from 'metal-fx';
 <MetalFx preset="chromatic" strength={1}>
   <button>Upgrade to Pro</button>
 </MetalFx>
-<MetalText font="500 24px/1.2 Inter" color="#E2E2E2">Pro</MetalText>
+<MetalText font="500 24px/1.2 'Source Sans Pro'" color="#E2E2E2">Pro</MetalText>
 <MetalBadge>New</MetalBadge>
 // v1 engine: npm install metal-fx@1
 ```
@@ -129,7 +129,7 @@ const planRef = useRef(null);
 useMetalTextReflection(planRef); // "Plan" catches the metal
 
 <span ref={planRef}>Plan</span>
-<MetalText font="500 24px/1.2 Inter, sans-serif" color="#E2E2E2" strength={0.90} reflectionTargets={[{ ref: planRef, strength: 0.64 }]}>
+<MetalText font="500 24px/1.2 'Source Sans Pro', sans-serif" color="#E2E2E2" strength={0.90} reflectionTargets={[{ ref: planRef, strength: 0.64 }]}>
   Pro
 </MetalText>
 ```
@@ -236,7 +236,7 @@ export function PlanLine() {
     <div className="plan-line">
       <span ref={planRef}>Plan</span>
       <MetalText
-        font="500 24px/1.2 Inter, sans-serif"
+        font="500 24px/1.2 'Source Sans Pro', sans-serif"
         color="#E2E2E2"
         strength={0.9}
         reflectionTargets={targets}
