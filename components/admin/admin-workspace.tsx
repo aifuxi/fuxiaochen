@@ -43,6 +43,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const postMutation = useRef(false);
   const taxonomy = useTaxonomy();
   const [panel, setPanel] = useState<DialogPanel | null>(null);
+  const panelReturnFocus = useRef<HTMLElement | null>(null);
   const [message, setMessage] = useState("");
   const notifications = useNotificationSummary(operationRevision);
   const postDeleteFocus = useRef<{
@@ -68,7 +69,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   }, [message]);
 
   const openPanel = useCallback(
-    (name: AdminPanel) => {
+    (name: AdminPanel, returnFocus?: HTMLElement | null) => {
       if (postMutation.current || operationMutation.current) return;
       if (name === "backup") {
         guardNavigation(() => {
@@ -82,6 +83,9 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         guardNavigation(() => router.push("/admin/posts/new"));
         return;
       }
+      panelReturnFocus.current =
+        returnFocus ??
+        (document.activeElement instanceof HTMLElement ? document.activeElement : null);
       setPanel(name);
     },
     [router, guardNavigation],
@@ -212,7 +216,7 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
           if (!open && !postMutation.current && !operationMutation.current) setPanel(null);
         }}
       >
-        <DialogContent className="admin-modal">
+        <DialogContent className="admin-modal" finalFocus={panelReturnFocus}>
           {panel && (
             <>
               <div className="admin-modal-heading">

@@ -7,7 +7,6 @@ import {
   FileText,
   Link2,
   Menu,
-  Plus,
   Settings,
   Tags,
   X,
@@ -16,9 +15,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactElement, type ReactNode } from "react";
+import { useRef, useState, type ReactElement, type ReactNode } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
+import { useTheme } from "@/components/theme/theme-provider";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -30,7 +30,7 @@ type Props = {
   children: ReactNode;
   unreadCount: number | null;
   notificationError: string;
-  onOpen: (panel: AdminPanel) => void;
+  onOpen: (panel: AdminPanel, returnFocus?: HTMLElement | null) => void;
   writingFocused: boolean;
   postPending: boolean;
 };
@@ -76,6 +76,77 @@ export function AdminShell({
 }: Props) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mobilePanel = useRef<"notifications" | "profile" | null>(null);
+  const mobileMenuButton = useRef<HTMLButtonElement | null>(null);
+  const { theme } = useTheme();
+  const themeLabel = theme === "dark" ? "切换到浅色模式" : "切换到深色模式";
+  const notificationLabel = notificationError
+    ? "通知读取失败，打开后重试"
+    : `通知，${unreadCount ?? "未知数量"} 条未读`;
+
+  const openUtility = (
+    panel: "notifications" | "profile",
+    mobile: boolean,
+    trigger: HTMLElement,
+  ) => {
+    if (postPending) return;
+    if (mobile) {
+      // 等抽屉关闭并恢复焦点后再打开业务弹窗，关闭后能回到悬浮导航按钮。
+      mobilePanel.current = panel;
+      setMobileOpen(false);
+    } else onOpen(panel, trigger);
+  };
+
+  const utilities = (mobile: boolean) => {
+    const toggle = <ThemeToggle className="admin-utility-button" showLabel={mobile} title="" />;
+    const notifications = (
+      <Button
+        size="compact"
+        variant="ghost"
+        className="admin-utility-button"
+        disabled={postPending}
+        aria-haspopup="dialog"
+        aria-label={notificationLabel}
+        onClick={(event) => openUtility("notifications", mobile, event.currentTarget)}
+      >
+        <Bell size={20} aria-hidden="true" />
+        {mobile && <span>通知</span>}
+        {(notificationError || unreadCount === null || unreadCount > 0) && (
+          <span className="admin-notification-count" aria-hidden="true">
+            {notificationError
+              ? "!"
+              : unreadCount === null
+                ? "—"
+                : unreadCount > 99
+                  ? "99+"
+                  : unreadCount}
+          </span>
+        )}
+      </Button>
+    );
+    const profile = (
+      <Button
+        size="compact"
+        variant="ghost"
+        className="admin-utility-button admin-profile"
+        aria-haspopup="dialog"
+        aria-label="账户菜单"
+        disabled={postPending}
+        onClick={(event) => openUtility("profile", mobile, event.currentTarget)}
+      >
+        <Image src="/avatar.avif" width={28} height={28} alt="" />
+        {mobile && <span>管理账户</span>}
+      </Button>
+    );
+    return (
+      <fieldset className="admin-utility-actions">
+        <legend className="sr-only">全局操作</legend>
+        {mobile ? toggle : <DockHint label={themeLabel}>{toggle}</DockHint>}
+        {mobile ? notifications : <DockHint label={notificationLabel}>{notifications}</DockHint>}
+        {mobile ? profile : <DockHint label="管理账户">{profile}</DockHint>}
+      </fieldset>
+    );
+  };
 
   const frontLink = (mobile: boolean) => (
     <Link
@@ -159,6 +230,7 @@ export function AdminShell({
       </div>
       <div className="admin-sidebar-bottom">
         {mobile ? frontLink(true) : <DockHint label="前往网站首页">{frontLink(false)}</DockHint>}
+        {utilities(mobile)}
       </div>
     </div>
   );
@@ -169,60 +241,6 @@ export function AdminShell({
         <TooltipProvider delay={250}>{sidebar(false)}</TooltipProvider>
       </aside>
       <div className="admin-main-column">
-        <header className="admin-topbar">
-          <div className="admin-topbar-start">
-            <Button
-              size="compact"
-              variant="ghost"
-              className="admin-menu-button"
-              aria-label="打开导航"
-              onClick={() => setMobileOpen(true)}
-            >
-              <Menu size={20} />
-            </Button>
-          </div>
-          <div className="admin-topbar-actions">
-            <ThemeToggle className="admin-icon-button" />
-            <Button
-              size="compact"
-              variant="ghost"
-              disabled={postPending}
-              aria-haspopup="dialog"
-              title={notificationError || undefined}
-              aria-label={
-                notificationError
-                  ? "通知读取失败，打开后重试"
-                  : `通知，${unreadCount ?? "未知数量"} 条未读`
-              }
-              onClick={() => onOpen("notifications")}
-            >
-              <Bell size={17} aria-hidden="true" />
-              <span>{unreadCount === null ? "—" : unreadCount > 99 ? "99+" : unreadCount}</span>
-            </Button>
-            <Button
-              size="compact"
-              variant="secondary"
-              className="admin-create"
-              aria-label="新建文章"
-              disabled={postPending}
-              onClick={() => onOpen("compose")}
-            >
-              <Plus size={16} aria-hidden="true" />
-              <span>新建文章</span>
-            </Button>
-            <Button
-              size="compact"
-              variant="ghost"
-              className="admin-profile"
-              onClick={() => onOpen("profile")}
-              aria-label="账户菜单"
-              disabled={postPending}
-            >
-              <Image src="/avatar.avif" width={30} height={30} alt="" />
-              <span>管理账户</span>
-            </Button>
-          </div>
-        </header>
         <main data-page-motion className="admin-content">
           {children}
         </main>
@@ -230,8 +248,30 @@ export function AdminShell({
           <span>© 付小晨</span>
         </footer>
       </div>
-      <Dialog open={mobileOpen} onOpenChange={setMobileOpen}>
-        <DialogContent className="admin-mobile-dialog">
+      <Button
+        size="compact"
+        variant="ghost"
+        className="admin-menu-button"
+        ref={mobileMenuButton}
+        aria-label="打开导航"
+        aria-haspopup="dialog"
+        aria-expanded={mobileOpen}
+        onClick={() => setMobileOpen(true)}
+      >
+        <Menu size={20} aria-hidden="true" />
+      </Button>
+      <Dialog
+        open={mobileOpen}
+        onOpenChange={setMobileOpen}
+        onOpenChangeComplete={(open) => {
+          if (!open && mobilePanel.current) {
+            const panel = mobilePanel.current;
+            mobilePanel.current = null;
+            onOpen(panel, mobileMenuButton.current);
+          }
+        }}
+      >
+        <DialogContent className="admin-mobile-dialog" finalFocus={mobileMenuButton}>
           <DialogTitle className="sr-only">管理导航</DialogTitle>
           {sidebar(true)}
         </DialogContent>

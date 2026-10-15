@@ -15,7 +15,7 @@
 }
 .post-writing-bar {
   position: sticky;
-  top: var(--writing-top-offset, 70px);
+  top: var(--writing-top-offset, 0px);
   z-index: 15;
   display: flex;
   align-items: center;
@@ -93,8 +93,8 @@
 }
 .post-editor-settings {
   position: sticky;
-  top: calc(var(--writing-top-offset, 70px) + 80px);
-  max-height: calc(100dvh - var(--writing-top-offset, 70px) - 100px);
+  top: calc(var(--writing-top-offset, 0px) + 80px);
+  max-height: calc(100dvh - var(--writing-top-offset, 0px) - 100px);
   overflow-y: auto;
   min-width: 0;
   padding: 0 0 16px 16px;
@@ -192,7 +192,7 @@
 .post-writing-title,
 .post-editor-canvas .tiptap,
 .post-editor-settings-fields [id] {
-  scroll-margin-top: calc(var(--writing-top-offset, 70px) + 100px);
+  scroll-margin-top: calc(var(--writing-top-offset, 0px) + 100px);
 }
 .admin-post-editor-page .post-block-editor {
   border: 0;

@@ -18,7 +18,7 @@ type AdminState = TaxonomyState & {
   setWritingFocused: (focused: boolean) => void;
   savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
   setPostFeatured: (post: PostItem) => Promise<PostItem>;
-  onOpen: (panel: AdminPanel) => void;
+  onOpen: (panel: AdminPanel, returnFocus?: HTMLElement | null) => void;
   onEdit: (id: string) => void;
   onDeletePost: (
     post: PostItem,
