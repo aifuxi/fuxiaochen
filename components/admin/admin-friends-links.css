@@ -80,7 +80,7 @@
   font-weight: 500;
 }
 .admin-friend-identity a {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   font-size: 12px;
   line-height: 18px;
   text-decoration: none;

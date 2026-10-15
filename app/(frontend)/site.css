@@ -649,7 +649,7 @@ html:has(.site-layout) {
   min-height: 44px;
 }
 .site-post-link:hover h2 {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
 }
 .site-post-link:active h2 {
   color: var(--color-caption);
@@ -732,7 +732,7 @@ html:has(.site-layout) {
   font-size: 14px;
 }
 .site-empty a {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   text-decoration: underline;
 }
 .site-pagination {
@@ -1036,7 +1036,7 @@ html:has(.site-layout) {
 }
 .site-changelog-type[data-type="feature"] {
   --changelog-type-color: var(--color-focus);
-  --changelog-type-text: var(--color-focus);
+  --changelog-type-text: var(--color-focus-text);
 }
 .site-changelog-type[data-type="performance"] {
   --changelog-type-color: var(--color-success);

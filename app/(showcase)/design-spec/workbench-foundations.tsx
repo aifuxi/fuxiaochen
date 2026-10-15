@@ -15,7 +15,7 @@ type FoundationsProps = {
 const paletteGroups = [
   {
     title: "表面",
-    description: "用午夜黑蓝或冷瓷白区分页面、预览和操作区域。",
+    description: "深色采用午夜黑蓝；浅色以纯白页面和冷霜白内容表面建立层级。",
     colors: [
       { token: "background", label: "页面底色", usage: "工作台的连续背景" },
       { token: "surface", label: "内容表面", usage: "预览面板与内容分组" },
@@ -34,6 +34,7 @@ const paletteGroups = [
       { token: "foreground-reading", label: "阅读文字", usage: "正文与连续说明" },
       { token: "muted", label: "辅助颜色", usage: "暗色说明文字与浅色辅助图标" },
       { token: "caption", label: "说明文字", usage: "当前模式的说明与输入占位文字" },
+      { token: "focus-text", label: "蓝色强调文字", usage: "链接、小字与选中导航的可读蓝色" },
       { token: "subtle", label: "弱化颜色", usage: "用于滚动条等非文字辅助元素" },
       { token: "primary-foreground", label: "主要操作文字", usage: "蓝色按钮内的白色文字" },
     ],
@@ -412,7 +413,7 @@ function Guidelines() {
           {[
             [
               "表面保持安静",
-              "以午夜黑蓝或冷瓷白表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
+              "以午夜黑蓝或纯白与冷霜白表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
             ],
             [
               "每次操作都有回应",
@@ -446,7 +447,7 @@ function Guidelines() {
             ["components/ui/*", "本地组件与 Base UI 交互语义"],
             ["design-spec/preview.module.css", "当前试验区的局部尺寸与组件变体"],
             ["components/theme/*", "全站主题偏好与切换入口"],
-            ["ai_studio_code.html", "本页深浅色色盘的参考"],
+            ["COLOR_TOKENS.md", "当前深浅色色盘的用户参考"],
           ].map(([path, role]) => (
             <div
               key={path}
@@ -463,7 +464,7 @@ function Guidelines() {
             href="https://libraries.dev/"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 rounded-sm text-[var(--color-focus)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+            className="inline-flex items-center gap-1 rounded-sm text-[var(--color-focus-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
           >
             Libraries.dev <ExternalLink size={14} aria-hidden="true" />
             <span className="sr-only">（在新标签页打开）</span>

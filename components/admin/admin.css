@@ -86,7 +86,7 @@
 }
 .admin-nav-item.is-active {
   background: color-mix(in srgb, var(--color-primary) 16%, var(--color-surface));
-  color: var(--color-focus);
+  color: var(--color-focus-text);
 }
 .admin-nav-item:focus-visible,
 .admin-front-link:focus-visible,
@@ -99,7 +99,7 @@
   padding: 11px 9px;
 }
 .admin-front-link {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
 }
 .admin-collapse {
@@ -947,7 +947,7 @@
   overflow-wrap: anywhere;
 }
 .admin-post-title:hover {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
 }
 .admin-post-title:active {
   color: var(--color-primary);

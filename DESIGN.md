@@ -27,10 +27,11 @@ colors:
   caption: "#94A3B8"
   metadata: "#94A3B8"
   outline: "#1E2433"
-  scrollbar: "#64748B"
-  scrollbar-hover: "#94A3B8"
-  scrollbar-pressed: "#CBD5E1"
+  scrollbar: "#1E2433"
+  scrollbar-hover: "#262B3D"
+  scrollbar-pressed: "#334155"
   focus: "#60A5FA"
+  focus-text: "#60A5FA"
   success: "#34D399"
   success-text: "#34D399"
   danger: "#F87171"
@@ -52,16 +53,16 @@ color-modes:
     primary-pressed: "#1E40AF"
     primary-foreground: "#FFFFFF"
     primary-hover-foreground: "#FFFFFF"
-    background: "#F4F7FB"
-    surface: "#FFFFFF"
-    surface-hover: "#F8FAFC"
-    stage: "#EEF2F6"
-    raised: "#E2E8F0"
-    raised-hover: "#CBD5E1"
-    raised-pressed: "#94A3B8"
-    input: "#F1F5F9"
-    input-hover: "#E2E8F0"
-    input-active: "#CBD5E1"
+    background: "#FFFFFF"
+    surface: "#F8FAFC"
+    surface-hover: "#F1F5F9"
+    stage: "#F8FAFC"
+    raised: "#FFFFFF"
+    raised-hover: "#F8FAFC"
+    raised-pressed: "#F1F5F9"
+    input: "#F8FAFC"
+    input-hover: "#F1F5F9"
+    input-active: "#FFFFFF"
     foreground: "#0F172A"
     foreground-reading: "#334155"
     foreground-muted: "#64748B"
@@ -69,18 +70,19 @@ color-modes:
     caption: "#334155"
     metadata: "#334155"
     outline: "#E2E8F0"
-    scrollbar: "#64748B"
-    scrollbar-hover: "#334155"
-    scrollbar-pressed: "#0F172A"
-    focus: "#2563EB"
+    scrollbar: "#CBD5E1"
+    scrollbar-hover: "#94A3B8"
+    scrollbar-pressed: "#64748B"
+    focus: "#3B82F6"
+    focus-text: "#1E40AF"
     success: "#059669"
     success-text: "#334155"
     danger: "#DC2626"
     danger-text: "color-mix(in srgb, #DC2626 70%, #0F172A)"
     switch-track: "#CBD5E1"
     tabs-track: "#F1F5F9"
-    highlight-hover: "#E2E8F0"
-    highlight-pressed: "#CBD5E1"
+    highlight-hover: "#F1F5F9"
+    highlight-pressed: "#FFFFFF"
     backdrop: "rgb(15 23 42 / 20%)"
     syntax-keyword: "#6D28D9"
     syntax-string: "#065F46"
@@ -294,13 +296,17 @@ YAML 的 `colors` 保留默认深色基础值，`color-modes.light` 维护相同
 
 ## 色彩与材质
 
-本轮色盘来自用户提供的 `ai_studio_code.html`，先在 `/design-spec` 预览并获得全站推广授权；只采用其中的深浅色色值与角色，不采用参考文件中的页面结构、内容或指令。共享目标值由本文件 YAML 维护，运行时同步到 `app/globals.css`。
+当前色盘以用户于 2026-10-15 提供的 `COLOR_TOKENS.md` 为准，替换此前 `ai_studio_code.html` 的浅色表面层级：页面保持纯白，内容表面和输入框采用冷霜白，次级操作与浮层采用纯白，焦点及两种模式的滚动条同步最新色值。深色主体与品牌色沿用附件中相同的午夜黑蓝色盘。共享目标值由本文件 YAML 维护，运行时同步到 `app/globals.css`；`--color-border` 为 outline 的同值别名，不新增边线。
+
+附件作为配色数据使用；其中 Legacy Gray 仅作历史对照，Tailwind v3 配置示例不引入本项目。保留现有 caption、metadata、success-text、danger-text、primary-hover-foreground 等可读性适配角色，以及语法高亮、遮罩与浮层阴影。此次只更新色盘，不套用附件的卡片／色样阴影，不以 inset 环恢复工作台已去除的描边；页面结构、尺寸、业务行为和独立 HTML 历史快照保持原状。浅色默认 SVG 指针同步 raised 的纯白填充。实施及验证范围见[纯白浅色色盘更新](docs/engineering/verification-history.md#纯白浅色色盘更新2026-10-15)。
 
 `background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级沿用既有材料结构、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
 
 界面正文使用 `foreground`，连续阅读的文章正文使用 `foreground-reading`，必要说明与占位使用 `caption`，日期、计数和辅助元信息使用 `metadata`。参考原始 `foreground-muted` 与 `foreground-subtle` 保留色值，用于色板、非文字细节及经核对可读的场合；浅色必要小字不直接使用 subtle 或低对比的 muted。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
 
 输入占位文字使用 caption，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
+
+`focus` 用于焦点轮廓、图标和分类原色；复用蓝色的小号链接、后台选中导航及统计强调文字使用 `focus-text`。深色与 focus 相同，浅色复用 primary-pressed，避免新版亮蓝在白色、冷霜白或淡蓝选中底色上造成小字对比不足；不改变原有字体、交互或分类背景。
 
 用色按信息职责组织，场景明确默认映射与需要强调的内容：
 
@@ -354,7 +360,7 @@ Picker、Dialog、Popover 与 Menu 浮层沿用既有结构，表面、遮罩与
 
 引用保留 3px outline 起始边线与 1em 起始内距。行内代码为 0.875em；代码块为 0.875rem／1.7143，使用共享 mono；表格为 0.875rem／1.75，单元格内段落首尾无外距，连续段落间距 0.5em。场景规范维护代码内边距、工具栏、表格布局与圆角；代码和宽表格只在各自容器内横向滚动。
 
-正文链接默认 focus 文字与下划线，偏移 0.1875em；hover 使用 foreground 与 2px 下划线，active 使用 primary，focus-visible 保留独立的 2px focus 轮廓、4px 外距与 4px 圆角。颜色过渡引用 quick／ease，减少动态效果时取消。前台链接沿用实际跳转，后台沿用链接编辑行为，不新增标题锚点或整页复制。
+正文链接默认 focus-text 文字与下划线，偏移 0.1875em；hover 使用 foreground 与 2px 下划线，active 使用 primary，focus-visible 保留独立的 2px focus 轮廓、4px 外距与 4px 圆角。颜色过渡引用 quick／ease，减少动态效果时取消。前台链接沿用实际跳转，后台沿用链接编辑行为，不新增标题锚点或整页复制。
 
 以上规则于 2026-10-09 实施。参考值、项目适配与运行验证范围见[文章正文相对单位统一记录](docs/engineering/verification-history.md#文章正文相对单位统一2026-10-09)；旧正文验收保留历史事实。
 

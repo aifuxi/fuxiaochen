@@ -12,7 +12,7 @@
   line-height: 18px;
 }
 .admin-changelog-filters strong {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   font-family: var(--font-mono, ui-monospace);
 }
 .admin-release-search {
@@ -82,7 +82,7 @@
   white-space: nowrap;
 }
 .admin-release-tag.is-feature {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
 }
 .admin-release-tag.is-security {
   color: var(--color-danger-text);

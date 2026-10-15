@@ -72,7 +72,7 @@
   color: var(--color-caption);
 }
 .article-prose :where(a) {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   text-decoration: underline;
   text-underline-offset: 0.1875em;
   transition: color var(--motion-quick) var(--motion-ease);

@@ -36,10 +36,12 @@
   --color-caption: var(--color-muted);
   --color-metadata: var(--color-muted);
   --color-outline: #1e2433;
-  --color-scrollbar: var(--color-subtle);
-  --color-scrollbar-hover: var(--color-muted);
-  --color-scrollbar-pressed: var(--color-foreground-reading);
+  --color-border: var(--color-outline);
+  --color-scrollbar: #1e2433;
+  --color-scrollbar-hover: #262b3d;
+  --color-scrollbar-pressed: #334155;
   --color-focus: #60a5fa;
+  --color-focus-text: var(--color-focus);
   --color-success: #34d399;
   --color-success-text: var(--color-success);
   --color-danger: #f87171;
@@ -125,16 +127,16 @@
 /* 两种主题共用尺寸与交互；这里只重映射颜色和原有浮层阴影。 */
 :root[data-theme="light"] {
   color-scheme: light;
-  --color-background: #f4f7fb;
-  --color-surface: #ffffff;
-  --color-surface-hover: #f8fafc;
-  --color-stage: #eef2f6;
-  --color-raised: #e2e8f0;
-  --color-raised-hover: #cbd5e1;
-  --color-raised-pressed: #94a3b8;
-  --color-input: #f1f5f9;
-  --color-input-hover: #e2e8f0;
-  --color-input-active: #cbd5e1;
+  --color-background: #ffffff;
+  --color-surface: #f8fafc;
+  --color-surface-hover: #f1f5f9;
+  --color-stage: #f8fafc;
+  --color-raised: #ffffff;
+  --color-raised-hover: #f8fafc;
+  --color-raised-pressed: #f1f5f9;
+  --color-input: #f8fafc;
+  --color-input-hover: #f1f5f9;
+  --color-input-active: #ffffff;
   --color-foreground: #0f172a;
   --color-foreground-reading: #334155;
   --color-muted: #64748b;
@@ -144,7 +146,9 @@
   --color-primary-hover: #1d4ed8;
   --color-primary-pressed: #1e40af;
   --color-primary-hover-foreground: var(--color-primary-foreground);
-  --color-focus: #2563eb;
+  --color-focus: #3b82f6;
+  /* 焦点环保持新版亮蓝；小字复用色盘中更深的蓝色以保证对比度。 */
+  --color-focus-text: var(--color-primary-pressed);
   --color-success: #059669;
   --color-success-text: var(--color-foreground-reading);
   --color-danger: #dc2626;
@@ -152,9 +156,9 @@
   --color-outline: #e2e8f0;
   --color-switch-track: #cbd5e1;
   --color-tabs-track: #f1f5f9;
-  --color-scrollbar: var(--color-muted);
-  --color-scrollbar-hover: var(--color-foreground-reading);
-  --color-scrollbar-pressed: var(--color-foreground);
+  --color-scrollbar: #cbd5e1;
+  --color-scrollbar-hover: #94a3b8;
+  --color-scrollbar-pressed: #64748b;
   --color-highlight-hover: var(--color-input-hover);
   --color-highlight-pressed: var(--color-input-active);
   --color-backdrop: rgb(15 23 42 / 20%);

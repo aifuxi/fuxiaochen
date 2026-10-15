@@ -121,7 +121,7 @@
 
 每条顶部以版本号为主要锚点，采用 foreground、18px、500 字重、行高 1.5 和共享等宽字体。日期使用 metadata、12px 和共享等宽字体，桌面靠右，600px 及以下独立一行。
 
-类型胶囊采用共享日志分类色：`feature` 新功能使用 focus 蓝色、`fix` 修复使用 muted 灰色、`performance` 性能使用 success 绿色、`security` 安全使用 danger 红色；未知类型回退 muted，并保留实际类型文字。各胶囊底色均在 sRGB 中由对应分类原色 12% 与 surface 88% 混合，保留既有混合比例；必要小字按共享 caption、success-text、danger-text 选择可读角色，色点与图标保留分类原色。“最新”使用 primary 实心底色与 primary-foreground 文字，与版本和类型同组排列；仍仅第一页第一条显示，历史页不显示。类型与“最新”胶囊统一采用 12px、500 字重、18px 行高、上下 2px／左右 8px 内边距和 pill 圆角。空间不足时可整枚换行，胶囊内部不拆字；两者均为静态标记，不使用按钮阴影、虚假交互状态或动画。
+类型胶囊采用共享日志分类色：`feature` 新功能使用 focus 蓝色、`fix` 修复使用 muted 灰色、`performance` 性能使用 success 绿色、`security` 安全使用 danger 红色；未知类型回退 muted，并保留实际类型文字。各胶囊底色均在 sRGB 中由对应分类原色 12% 与 surface 88% 混合，保留既有混合比例；必要小字按共享 focus-text、caption、success-text、danger-text 选择可读角色，色点与图标保留分类原色。“最新”使用 primary 实心底色与 primary-foreground 文字，与版本和类型同组排列；仍仅第一页第一条显示，历史页不显示。类型与“最新”胶囊统一采用 12px、500 字重、18px 行高、上下 2px／左右 8px 内边距和 pill 圆角。空间不足时可整枚换行，胶囊内部不拆字；两者均为静态标记，不使用按钮阴影、虚假交互状态或动画。
 
 主题独立成行，距版本行 12px，采用 foreground、20px、500 字重和行高 1.5。逐条清单距主题 12px，采用 caption、14px 和行高 1.8，相邻清单条目间距 8px。版本、主题与清单完整呈现并自然换行，不裁切长文案，也不产生页面级横向溢出。
 

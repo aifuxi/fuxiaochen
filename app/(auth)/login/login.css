@@ -38,7 +38,7 @@
 }
 
 .login-brand:active {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
 }
 
 .login-brand:focus-visible {

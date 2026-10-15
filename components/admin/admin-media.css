@@ -22,7 +22,7 @@
   flex-shrink: 0;
 }
 .admin-media-count strong {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   font-family: var(--font-mono);
 }
 .admin-media-kind {
@@ -303,7 +303,7 @@
   gap: var(--space-sm);
 }
 .admin-media-references a {
-  color: var(--color-focus);
+  color: var(--color-focus-text);
   text-decoration: underline;
 }
 .admin-media-force {
