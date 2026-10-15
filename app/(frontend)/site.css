@@ -140,7 +140,7 @@ html:has(.site-layout) {
   justify-content: center;
   height: var(--control-compact);
   padding: 0 16px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
@@ -148,31 +148,27 @@ html:has(.site-layout) {
   white-space: nowrap;
 }
 .site-navigation a:hover {
-  background: var(--color-surface);
+  background: var(--color-fill-0);
 }
 .site-navigation a:active {
-  background: color-mix(in srgb, var(--color-surface) 50%, var(--color-background));
+  background: var(--color-fill-1);
 }
 .site-layout .site-navigation a.is-current,
 .site-mobile-menu nav a.is-current {
   color: var(--color-foreground);
-  background: var(--color-raised);
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px color-mix(in srgb, var(--color-foreground) 4%, transparent),
-    inset 0 -1px rgba(0, 0, 0, 0.06),
-    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground-reading) 10%, transparent);
+  background: var(--color-fill-0);
+  box-shadow: var(--shadow-button-light);
 }
 .site-navigation a.is-current:hover,
 .site-mobile-menu nav a.is-current:hover {
-  background: var(--color-input-hover);
+  background: var(--color-fill-1);
 }
 .site-navigation a.is-current:active,
 .site-mobile-menu nav a.is-current:active {
-  background: var(--color-input);
+  background: var(--color-fill-2);
 }
 .site-layout .site-navigation a:focus-visible {
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
 }
 .site-header[data-collapsed="true"] .site-navigation {
   visibility: hidden;
@@ -201,18 +197,18 @@ html:has(.site-layout) {
   align-items: center;
   min-height: 44px;
   padding: 10px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   color: var(--color-caption);
   font-size: 14px;
   line-height: 20px;
   font-weight: 500;
 }
 .site-mobile-menu nav a:hover {
-  background: var(--color-surface-hover);
+  background: var(--color-fill-0);
   color: var(--color-foreground);
 }
 .site-mobile-menu nav a:active {
-  background: color-mix(in srgb, var(--color-surface) 50%, var(--color-background));
+  background: var(--color-fill-1);
 }
 .site-mobile-menu nav a:focus-visible {
   outline: 2px solid var(--color-focus);
@@ -272,7 +268,7 @@ html:has(.site-layout) {
   color: var(--color-primary-foreground);
 }
 .site-layout .site-home-cta:focus-visible {
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-sm);
 }
 .site-home .site-profile {
   justify-content: center;
@@ -382,11 +378,7 @@ html:has(.site-layout) {
   z-index: 0;
   border-radius: var(--radius-pill);
   background: var(--color-raised);
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.04),
-    inset 0 1px color-mix(in srgb, var(--color-foreground) 4%, transparent),
-    inset 0 -1px rgba(0, 0, 0, 0.06),
-    inset 0 0 0 1px color-mix(in srgb, var(--color-foreground-reading) 10%, transparent);
+  box-shadow: var(--shadow-button-light);
   opacity: 0;
   transform: scale(0.85);
   transform-origin: top center;

@@ -194,7 +194,7 @@
 }
 .design-showcase .workbench-sample {
   padding: 24px;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   min-width: 0;
 }
@@ -249,7 +249,7 @@
 .design-showcase .workbench-swatch {
   min-width: 0;
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   /* 实色卡片包围真实 token 色块，近黑色样不再与页面融为一体。 */
   background: var(--color-raised);
 }
@@ -289,14 +289,16 @@
 .design-showcase .workbench-notice > span {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   max-width: 560px;
-  border-radius: var(--radius-lg);
-  background: var(--color-raised);
-  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-3);
+  padding: 12px 8px;
+  font-family: var(--font-control);
   font-size: 14px;
-  line-height: 22px;
-  box-shadow: var(--shadow-notice);
+  line-height: 20px;
+  font-weight: 600;
+  box-shadow: var(--shadow-toast);
 }
 
 .design-showcase .workbench-mobile-bar {

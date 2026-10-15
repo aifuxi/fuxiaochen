@@ -188,13 +188,12 @@ function ButtonsDemo({ onNotice }: NoticeProps) {
           <Button disabled>暂不可用</Button>
         </div>
         <p className="workbench-caption mt-4">
-          桌面从左到右为小型 32px、工具栏 36px、表单 40px；禁用样本不可操作。窄屏与触屏统一为 44px。
+          桌面从左到右为小型 24px、工具栏 32px、表单 32px；禁用样本不可操作。窄屏与触屏统一为 44px。
         </p>
       </section>
       <Rule>
-        独立按钮与输入统一使用 12px
-        圆角。蓝色用于当前主要操作，灰色用于次要操作；每次点击都有明确反馈。键盘焦点使用独立的 2px
-        蓝色轮廓。
+        按钮与输入统一使用 8px
+        圆角，实心、淡色与轻量操作继承共享样式。每次点击都有明确反馈，键盘焦点保持可见。
       </Rule>
     </div>
   );
@@ -274,8 +273,8 @@ function InputsDemo({ onNotice }: NoticeProps) {
       </section>
       <DensityDemo onNotice={onNotice} />
       <Rule>
-        字段保留可见标签与 12px 圆角；输入高度桌面 40px，紧凑工具栏 36px，触屏
-        44px。用填充底色区分输入区域，错误通过文字说明，键盘焦点按需显示。
+        字段保留可见标签与 8px 圆角；普通表单与紧凑工具栏的桌面输入均高 32px，触屏 44px。输入使用
+        Semi 填充与边框状态，错误同时提供颜色和文字说明。
       </Rule>
     </div>
   );
@@ -290,7 +289,7 @@ function DensityDemo({ onNotice }: NoticeProps) {
       </p>
       <div className="workbench-stack">
         <div>
-          <h3 className="mb-4 text-base font-medium">普通表单 · 桌面 40px</h3>
+          <h3 className="mb-4 text-base font-medium">普通表单 · 桌面 32px</h3>
           <div className="workbench-fieldgrid workbench-density-row">
             <Field id="density-default" label="文本输入">
               <Input id="density-default" placeholder="默认输入框" className="w-full" />
@@ -302,7 +301,7 @@ function DensityDemo({ onNotice }: NoticeProps) {
           </div>
         </div>
         <div>
-          <h3 className="mb-4 text-base font-medium">筛选工具栏 · 桌面 36px</h3>
+          <h3 className="mb-4 text-base font-medium">筛选工具栏 · 桌面 32px</h3>
           <div className="workbench-fieldgrid workbench-density-row">
             <Field id="density-compact" label="搜索关键词">
               <InputGroup size="compact">
@@ -353,7 +352,7 @@ function SelectionDemo() {
       </section>
       <Rule>
         固定选项使用 Select，可搜索列表使用 Combobox。使用方向键选择、Enter 确认、Escape
-        关闭。输入与浮层外壳均为 12px，内部选项为 8px。
+        关闭。输入为 8px 圆角，浮层为 16px 圆角；选项状态继承共享样式。
       </Rule>
     </div>
   );
@@ -394,7 +393,8 @@ function SwitchDemo() {
         </div>
       </section>
       <Rule>
-        开关仅控制这个本地预览。状态文字同步更新；Space 切换，Tab 移动焦点。开关轨道保留胶囊轮廓。
+        开关仅控制这个本地预览。状态文字同步更新；Space 切换，Tab 移动焦点。开启态采用 Semi
+        默认的成功绿色，轨道保留胶囊轮廓。
       </Rule>
     </div>
   );
@@ -427,8 +427,8 @@ function TabsDemo() {
         </Tabs>
       </section>
       <Rule>
-        标签组外壳 12px，标签项与指示器 8px，中间保留 4px。
-        选中项通过灰色底面和明亮文字区分，指示器随选中项移动；减少动态效果时直接更新状态。
+        标签组继承共享 Tabs
+        样式。选中项通过底面与主要颜色区分，指示器随选中项移动；减少动态效果时直接更新状态。
       </Rule>
     </div>
   );
@@ -439,8 +439,8 @@ function AccordionDemo() {
     ["base-ui", "为什么使用 Base UI？", "它提供可访问的交互行为与键盘支持，视觉由本地组件控制。"],
     [
       "tokens",
-      "工作台的局部变体会影响其他页面吗？",
-      "深浅色色盘与全站共用；工作台的尺寸、布局与无描边变体只作用于本页和它的浮层。",
+      "工作台与业务页使用相同的组件样式吗？",
+      "是。色盘与基础组件统一使用全站 Semi 默认主题叠加 modern，工作台仅保留自己的样本布局和滚动容器。",
     ],
     [
       "motion",
@@ -480,7 +480,7 @@ function AccordionDemo() {
         </Accordion>
       </section>
       <Rule>
-        标题作为内嵌列表操作，圆角保持 8px，不额外增加按钮。Enter 或 Space
+        标题作为内嵌列表操作，视觉继承共享折叠面板，不额外增加按钮。Enter 或 Space
         展开与收起；内容随高度自然展开，不固定裁切。
       </Rule>
     </div>
@@ -512,7 +512,8 @@ function DialogDemo({ onNotice }: NoticeProps) {
               </DialogClose>
             </div>
             <DialogDescription className="mt-3 text-sm leading-[22px] text-[var(--color-foreground-reading)]">
-              浮层沿用本页的设计试验值。按 Escape 或点击背景可关闭，焦点将返回打开按钮。
+              浮层与全站共用 Semi 默认主题叠加 modern 的表面、边框和高光。按 Escape
+              或点击背景可关闭，焦点将返回打开按钮。
             </DialogDescription>
             <div className="mt-6 space-y-2">
               <label htmlFor="dialog-note" className="block text-sm font-medium">
@@ -533,8 +534,7 @@ function DialogDemo({ onNotice }: NoticeProps) {
         </Dialog>
       </section>
       <Rule>
-        对话框圆角
-        16px，使用不透明表面和一层柔和阴影。焦点限制在浮层内，关闭后回到触发点；背景遮罩不使用模糊材质。
+        对话框圆角 24px，边框、高光、投影与遮罩继承共享样式。焦点限制在浮层内，关闭后回到触发点。
       </Rule>
     </div>
   );

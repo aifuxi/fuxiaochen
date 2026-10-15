@@ -1,0 +1,447 @@
+/*
+ * Base UI 的本地皮肤：对应 Semi Design v2.102.0 默认组件样式与 Semi UI Vue modern。
+ * 色值和材质取自 semi-theme-tokens.css；布局、数据和焦点行为由现有组件承担。
+ */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/inter/Inter-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/inter/Inter-SemiBold.ttf") format("truetype");
+}
+
+.ds-card {
+  border: 1px solid var(--color-outline);
+  box-shadow: var(--shadow-card);
+}
+.ds-card-link {
+  color: var(--color-foreground);
+  transition: background-color var(--motion-quick) var(--motion-ease);
+}
+.ds-card-link:hover {
+  background: var(--color-surface-hover);
+}
+.ds-card-link:active {
+  background: var(--color-fill-1);
+}
+.ds-card-link:focus-visible {
+  outline: 2px solid var(--color-primary-light-active);
+  outline-offset: 2px;
+}
+.ds-stage {
+  box-shadow: inset 0 0 0 1px var(--color-outline);
+}
+
+/* 现有三种业务 variant 分别映射 primary solid、tertiary light、tertiary borderless。 */
+.ds-button {
+  border: 0;
+  font-family: var(--font-control);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  text-decoration: none;
+  cursor: var(--cursor-action);
+  transition:
+    background-color 100ms linear,
+    color 100ms linear,
+    box-shadow 100ms linear;
+}
+.ds-control-compact,
+.ds-input-group.ds-control-compact {
+  height: var(--control-compact);
+}
+.ds-button:focus-visible {
+  outline: 2px solid var(--color-primary-light-active);
+  outline-offset: 0;
+}
+.ds-button-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  box-shadow: var(--shadow-button-solid);
+}
+.ds-button-primary:hover:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-primary-hover);
+}
+.ds-button-primary:active:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-primary-active);
+}
+.ds-button-secondary {
+  background: var(--color-fill-0);
+  color: var(--color-text-1);
+  box-shadow: var(--shadow-button-light);
+}
+.ds-button-secondary:hover:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-fill-1);
+}
+.ds-button-secondary:active:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-fill-2);
+}
+.ds-button-ghost {
+  background: transparent;
+  color: var(--color-text-1);
+}
+.ds-button-ghost:hover:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-fill-0);
+  box-shadow: var(--shadow-button-light);
+}
+.ds-button-ghost:active:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-fill-1);
+}
+.ds-button:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--color-disabled-text);
+  box-shadow: none;
+  opacity: 1;
+  cursor: not-allowed;
+}
+.ds-button-primary:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--color-disabled-bg);
+}
+.ds-button-secondary:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--color-fill-0);
+}
+.ds-button-ghost:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: transparent;
+}
+
+/* 组合控件只在外框绘制状态；内部 input 保持透明且不重复叠边。 */
+.ds-input,
+.ds-input-group,
+.ds-color-input {
+  --field-bg: var(--color-input);
+  --field-hover-bg: var(--color-input-hover);
+  --field-active-bg: var(--color-input-active);
+  --field-border: transparent;
+  --field-focus-border: var(--color-focus);
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-form);
+  background: var(--field-bg);
+  color: var(--color-foreground);
+  font-family: var(--font-control);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  outline: none;
+  transition:
+    background-color 100ms linear,
+    border-color 100ms linear;
+}
+.ds-color-input {
+  cursor: var(--cursor-action);
+}
+.ds-input::placeholder {
+  color: var(--color-text-2);
+}
+:is(.ds-input, .ds-input-group, .ds-color-input):where(:hover) {
+  background: var(--field-hover-bg);
+  border-color: var(--field-border);
+}
+:is(.ds-input, .ds-input-group, .ds-color-input):where(
+  :focus,
+  [data-popup-open],
+  :has(> :is(.ds-input-group-control, .ds-combobox-input):focus)
+) {
+  background: var(--field-bg);
+  border-color: var(--field-focus-border);
+}
+:is(.ds-input, .ds-input-group, .ds-color-input):where(
+    :focus,
+    [data-popup-open],
+    :focus-within
+  ):active {
+  background: var(--field-active-bg);
+}
+/* 键盘焦点保留 Semi 的内侧焦点边框；按钮附加操作只绘制自己的焦点。 */
+:is(.ds-input, .ds-input-group, .ds-color-input):where(
+  :focus-visible,
+  :has(> :is(.ds-input-group-control, .ds-combobox-input):focus-visible)
+) {
+  border-color: var(--field-focus-border);
+}
+:is(.ds-input, .ds-input-group, .ds-color-input):where(
+  [aria-invalid="true"],
+  [data-invalid],
+  :has(> :is(.ds-input-group-control, .ds-combobox-input):is([aria-invalid="true"], [data-invalid]))
+) {
+  --field-bg: var(--color-danger-light-default);
+  --field-hover-bg: var(--color-danger-light-hover);
+  --field-active-bg: var(--color-danger-light-active);
+  --field-border: var(--color-danger-light-default);
+  --field-focus-border: var(--color-danger);
+}
+:is(.ds-input, .ds-input-group, .ds-color-input):where(
+  :disabled,
+  [data-disabled],
+  [aria-disabled="true"],
+  :has(> :is(.ds-input-group-control, .ds-combobox-input):is(:disabled, [data-disabled]))
+) {
+  background: var(--color-disabled-fill);
+  border-color: transparent;
+  color: var(--color-disabled-text);
+  -webkit-text-fill-color: var(--color-disabled-text);
+  opacity: 1;
+  cursor: not-allowed;
+}
+.ds-input:disabled::placeholder {
+  color: var(--color-disabled-text);
+}
+.ds-combobox-input {
+  font-family: var(--font-control);
+}
+.ds-combobox-input:is(:disabled, [data-disabled]) {
+  color: var(--color-disabled-text);
+}
+.ds-combobox-group > .ds-combobox-input {
+  border: 0;
+  outline: none;
+}
+.ds-input-group:has(> .ds-input-group-control:disabled) .ds-input-group-addon,
+.ds-combobox-group[data-disabled] .ds-picker-action {
+  color: var(--color-disabled-text);
+}
+
+/* 保留现有按钮式 Tabs 组合，采用 Semi type="button" 的颜色、字重与矩形圆角。 */
+.ds-tabs-list {
+  position: relative;
+  padding: 0;
+  background: transparent;
+}
+.ds-tabs-trigger {
+  position: relative;
+  z-index: 1;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-2);
+  font-family: var(--font-control);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  cursor: var(--cursor-action);
+  transition:
+    color 100ms linear,
+    background-color 100ms linear;
+}
+.ds-tabs-trigger[data-active]:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.ds-tabs-trigger:hover:not([data-active]):not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ) {
+  background: var(--color-fill-0);
+  color: var(--color-foreground);
+}
+.ds-tabs-trigger:active:not([data-active]):not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ) {
+  background: var(--color-fill-1);
+}
+.ds-tabs-trigger:focus-visible,
+.ds-tabs-panel:focus-visible {
+  outline: 2px solid var(--color-primary-light-active);
+  outline-offset: -2px;
+}
+.ds-tabs-trigger:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+.ds-tabs-indicator {
+  position: absolute;
+  top: var(--active-tab-top);
+  left: 0;
+  width: var(--active-tab-width);
+  height: var(--active-tab-height);
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light-default);
+  transform: translateX(var(--active-tab-left));
+  transition:
+    transform var(--motion-quick) var(--motion-ease),
+    width var(--motion-quick) var(--motion-ease);
+  pointer-events: none;
+}
+
+/* Switch 默认以 success 表达开启；触屏 variant 只扩大点击区域，不放大轨道。 */
+.ds-switch {
+  --switch-bg: var(--color-fill-0);
+  width: 40px;
+  height: 24px;
+  border: 1px solid transparent;
+  padding: 0;
+  background: var(--switch-bg);
+  transition: background-color 200ms ease-in-out;
+}
+.ds-switch:hover:not(:disabled):not([data-disabled]) {
+  --switch-bg: var(--color-fill-1);
+}
+.ds-switch:active:not(:disabled):not([data-disabled]) {
+  --switch-bg: var(--color-fill-2);
+}
+.ds-switch[data-checked] {
+  --switch-bg: var(--color-success);
+}
+.ds-switch[data-checked]:hover:not(:disabled):not([data-disabled]) {
+  --switch-bg: var(--color-success-hover);
+}
+.ds-switch[data-checked]:active:not(:disabled):not([data-disabled]) {
+  --switch-bg: var(--color-success-active);
+}
+.ds-switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 18px;
+  height: 18px;
+  background: white;
+  box-shadow:
+    0 4px 6px rgb(0 0 0 / 10%),
+    0 0 1px rgb(0 0 0 / 30%);
+  transform: translateX(2px);
+  transition:
+    transform 200ms ease-in-out,
+    width 200ms ease-in-out;
+}
+.ds-switch[data-checked] .ds-switch-thumb {
+  transform: translateX(18px);
+}
+.ds-switch:active:not(:disabled):not([data-disabled]) .ds-switch-thumb {
+  width: 24px;
+}
+.ds-switch[data-checked]:active:not(:disabled):not([data-disabled]) .ds-switch-thumb {
+  transform: translateX(12px);
+}
+.ds-switch:focus-visible {
+  outline: 2px solid var(--color-primary-light-active);
+}
+.ds-switch:where(:disabled, [data-disabled]) {
+  --switch-bg: transparent;
+  border-color: var(--color-outline);
+  cursor: not-allowed;
+}
+.ds-switch:where(:disabled, [data-disabled]) .ds-switch-thumb {
+  border: 1px solid var(--color-outline);
+  box-shadow: none;
+}
+.ds-switch[data-checked]:where(:disabled, [data-disabled]) {
+  --switch-bg: var(--color-success-disabled);
+  border-color: transparent;
+}
+.ds-switch[data-checked]:where(:disabled, [data-disabled]) .ds-switch-thumb {
+  border: 0;
+}
+.ds-switch.ds-switch-touch {
+  width: var(--control-touch);
+  height: var(--control-touch);
+  border: 0;
+  background: transparent;
+}
+.ds-switch-touch::before {
+  content: "";
+  position: absolute;
+  inset: 10px 2px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--switch-bg);
+  transition: background-color 200ms ease-in-out;
+}
+.ds-switch-touch:where(:disabled, [data-disabled])::before {
+  border-color: var(--color-outline);
+}
+.ds-switch-touch[data-checked]:where(:disabled, [data-disabled])::before {
+  border-color: transparent;
+}
+.ds-switch-touch .ds-switch-thumb {
+  top: 13px;
+  left: 3px;
+}
+
+.ds-accordion-trigger {
+  border-radius: var(--radius-sm);
+  color: var(--color-foreground);
+  font-family: var(--font-control);
+  cursor: var(--cursor-action);
+  transition:
+    color 100ms linear,
+    background-color 100ms linear;
+}
+.ds-accordion-trigger:hover:not(:disabled):not([data-disabled]) {
+  background: var(--color-fill-0);
+}
+.ds-accordion-trigger:active:not(:disabled):not([data-disabled]) {
+  background: var(--color-fill-1);
+}
+.ds-accordion-trigger:focus-visible {
+  outline: 2px solid var(--color-primary-light-active);
+  outline-offset: -2px;
+}
+.ds-accordion-trigger:where(:disabled, [data-disabled]) {
+  color: var(--color-disabled-text);
+  cursor: not-allowed;
+}
+.ds-accordion-chevron {
+  flex: none;
+  transition: transform var(--motion-quick) var(--motion-ease);
+}
+.ds-accordion-trigger[data-panel-open] .ds-accordion-chevron {
+  transform: rotate(180deg);
+}
+.ds-accordion-panel {
+  height: var(--accordion-panel-height);
+  transition:
+    height var(--motion-standard) var(--motion-ease),
+    opacity var(--motion-quick) var(--motion-ease);
+}
+.ds-accordion-panel[data-starting-style],
+.ds-accordion-panel[data-ending-style] {
+  height: 0;
+  opacity: 0;
+}
+.animate-panel-in {
+  animation: panel-in var(--motion-standard) var(--motion-ease) both;
+}
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  :root[data-theme] {
+    --control-form: var(--control-touch);
+  }
+  .ds-button,
+  .ds-tabs-list,
+  .ds-control-compact,
+  .ds-input-group.ds-control-compact {
+    min-height: var(--control-touch);
+    height: var(--control-touch);
+  }
+  .ds-tabs-trigger {
+    min-height: var(--control-touch);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .animate-panel-in {
+    transform: none;
+  }
+}

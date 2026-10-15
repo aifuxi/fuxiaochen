@@ -16,13 +16,13 @@ export function Switch({
       nativeButton
       render={<button type="button" aria-label={props["aria-label"]} />}
       className={cn(
-        "ds-switch relative inline-flex h-6 w-11 shrink-0 cursor-[var(--cursor-action)] rounded-full bg-[var(--color-switch-track)] p-[3px] transition-colors duration-[var(--motion-quick)] ease-[var(--motion-ease)] data-checked:bg-[var(--color-primary)] enabled:hover:brightness-110 enabled:active:brightness-90 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[var(--color-focus)] data-disabled:cursor-not-allowed data-disabled:opacity-40",
+        "ds-switch relative inline-flex shrink-0 cursor-[var(--cursor-action)] rounded-full",
         touchTarget && "ds-switch-touch",
         className,
       )}
       {...props}
     >
-      <BaseSwitch.Thumb className="ds-switch-thumb block h-[18px] w-[18px] rounded-full bg-white shadow-sm transition-transform duration-[var(--motion-quick)] ease-[var(--motion-ease)] data-checked:translate-x-5" />
+      <BaseSwitch.Thumb className="ds-switch-thumb block rounded-full" />
     </BaseSwitch.Root>
   );
 }

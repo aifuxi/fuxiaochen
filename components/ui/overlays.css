@@ -1,0 +1,159 @@
+/* Semi 默认主题提供表面与尺寸，modern 在共享阴影 token 中叠加边缘高光。 */
+.ds-popover-popup,
+.ds-picker-popup {
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-overlay);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-popup);
+  font-family: var(--font-control);
+  font-size: 14px;
+  line-height: 20px;
+}
+.ds-picker-popup {
+  width: 100%;
+  overflow: hidden;
+}
+.ds-picker-list {
+  padding: 4px 0;
+}
+.ds-picker-item {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 0;
+  outline: none;
+  color: var(--color-foreground);
+  font-size: 14px;
+  line-height: 20px;
+  cursor: var(--cursor-action);
+  transition: background-color var(--motion-quick) var(--motion-ease);
+}
+.ds-picker-item:not(:disabled):not([data-disabled]):not([aria-disabled="true"]):where(
+    :hover,
+    [data-highlighted]
+  ) {
+  background: var(--semi-color-fill-0);
+}
+.ds-picker-item:not(:disabled):not([data-disabled]):not([aria-disabled="true"]):active {
+  background: var(--semi-color-fill-1);
+}
+.ds-picker-item[data-selected] {
+  font-weight: 600;
+}
+.ds-picker-item:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.ds-picker-item:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--semi-color-disabled-text);
+  cursor: not-allowed;
+}
+.ds-picker-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 20px;
+  color: var(--semi-color-text-2);
+}
+.ds-picker-item:where(:disabled, [data-disabled], [aria-disabled="true"]) .ds-picker-indicator {
+  color: inherit;
+}
+.ds-picker-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  height: var(--control-small);
+  width: var(--control-small);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--semi-color-text-2);
+  cursor: var(--cursor-action);
+  transition:
+    color var(--motion-quick) var(--motion-ease),
+    background-color var(--motion-quick) var(--motion-ease);
+}
+.ds-picker-action:hover:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--semi-color-fill-0);
+  color: var(--color-primary);
+}
+.ds-picker-action:active:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--semi-color-fill-1);
+}
+.ds-picker-action:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.ds-picker-action:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--semi-color-disabled-text);
+  cursor: not-allowed;
+}
+.ds-dialog-backdrop {
+  background: var(--color-backdrop);
+  transition: opacity var(--motion-quick) var(--motion-ease);
+}
+.ds-dialog-backdrop[data-starting-style],
+.ds-dialog-backdrop[data-ending-style] {
+  opacity: 0;
+}
+.ds-dialog-popup {
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-2);
+  background-clip: padding-box;
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-modal);
+  font-family: var(--font-control);
+  font-size: 14px;
+  line-height: 20px;
+  transition:
+    opacity var(--motion-standard) var(--motion-ease),
+    transform var(--motion-standard) var(--motion-ease);
+}
+.ds-dialog-popup[data-starting-style],
+.ds-dialog-popup[data-ending-style] {
+  opacity: 0;
+  transform: translateY(8px) scale(0.97);
+}
+.ds-dialog-title {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+.ds-dialog-description {
+  color: var(--color-foreground);
+  font-size: 14px;
+  line-height: 20px;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .ds-picker-action {
+    min-height: var(--control-touch);
+    height: var(--control-touch);
+    width: var(--control-touch);
+  }
+  .ds-picker-item {
+    min-height: var(--control-touch);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-picker-item,
+  .ds-picker-action,
+  .ds-dialog-backdrop,
+  .ds-dialog-popup {
+    transition: none;
+  }
+  .ds-dialog-popup,
+  .ds-dialog-popup[data-starting-style],
+  .ds-dialog-popup[data-ending-style] {
+    transform: none;
+  }
+}

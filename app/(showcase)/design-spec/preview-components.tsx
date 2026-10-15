@@ -9,7 +9,6 @@ import { Select as BaseSelect } from "@base-ui/react/select";
 import type { SelectContent as SharedSelectContent } from "@/components/ui/select";
 
 import { renderPopupMotion } from "@/components/motion/popup-motion";
-import { useTheme } from "@/components/theme/theme-provider";
 import { ComboboxContent as SharedComboboxContent } from "@/components/ui/combobox";
 import { DialogContent as SharedDialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -32,12 +31,11 @@ export function DialogContent({
   children,
   ...props
 }: ComponentProps<typeof SharedDialogContent>) {
-  const { theme } = useTheme();
   return (
     <SharedDialogContent
       {...props}
       className={cn(styles.scrollDialog, className)}
-      portalClassName={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
+      portalClassName={cn(styles.scope, portalClassName)}
     >
       <ScrollArea.Root className={styles.scrollArea}>
         <ScrollArea.Viewport
@@ -63,11 +61,8 @@ export function SelectContent({
   render,
   ...props
 }: ComponentProps<typeof SharedSelectContent>) {
-  const { theme } = useTheme();
   return (
-    <BaseSelect.Portal
-      className={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
-    >
+    <BaseSelect.Portal className={cn(styles.scope, portalClassName)}>
       <BaseSelect.Positioner
         alignItemWithTrigger={false}
         sideOffset={6}
@@ -129,12 +124,11 @@ export function ComboboxContent({
   className,
   ...props
 }: ComponentProps<typeof SharedComboboxContent>) {
-  const { theme } = useTheme();
   return (
     <SharedComboboxContent
       {...props}
       className={cn(styles.comboboxPopup, className)}
-      portalClassName={cn(styles.scope, theme === "light" && styles.light, portalClassName)}
+      portalClassName={cn(styles.scope, portalClassName)}
     />
   );
 }

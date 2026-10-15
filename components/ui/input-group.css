@@ -12,6 +12,7 @@
   opacity: 1;
   /* 输入始终透明，由组合外框统一绘制背景、错误边线和焦点轮廓。 */
   background: transparent;
+  border: 0;
   box-shadow: none;
   outline: none;
 }

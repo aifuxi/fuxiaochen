@@ -1,104 +1,266 @@
 ---
 version: alpha
 status: target
-name: 付小晨 Afterglow
-description: 受 Libraries.dev 启发，采用冷灰蓝深浅色色盘的精密、克制交互设计系统。
-# colors 为默认深色值；color-modes.light 为相同角色的浅色覆盖。
+name: 付小晨 Semi Modern
+description: 以本地 Semi UI Vue default + modern 为色盘及组件视觉基准，保留 Base UI 语义与既有页面构图。
+# colors 为默认深色目标值；color-modes.light 为浅色覆盖。
+# 完整原始语义变量、来源及 MIT 归属见 app/semi-theme-tokens.css。
 colors:
-  primary: "#2563EB"
-  primary-hover: "#3B82F6"
-  primary-pressed: "#1D4ED8"
-  primary-foreground: "#FFFFFF"
-  primary-hover-foreground: "#090A0F"
-  background: "#090A0F"
-  surface: "#12141C"
-  surface-hover: "#181B26"
-  stage: "#0D0F17"
-  raised: "#1E2230"
-  raised-hover: "#262B3D"
-  raised-pressed: "#171A24"
-  input: "#171A24"
-  input-hover: "#1F2432"
-  input-active: "#252B3B"
-  foreground: "#F8FAFC"
-  foreground-reading: "#CBD5E1"
-  foreground-muted: "#94A3B8"
-  foreground-subtle: "#64748B"
-  caption: "#94A3B8"
-  metadata: "#94A3B8"
-  outline: "#1E2433"
-  scrollbar: "#1E2433"
-  scrollbar-hover: "#262B3D"
-  scrollbar-pressed: "#334155"
-  focus: "#60A5FA"
-  focus-text: "#60A5FA"
-  success: "#34D399"
-  success-text: "#34D399"
-  danger: "#F87171"
-  danger-text: "#F87171"
-  switch-track: "#262B3D"
-  tabs-track: "rgb(255 255 255 / 5%)"
-  highlight-hover: "color-mix(in srgb, #F8FAFC 5%, transparent)"
-  highlight-pressed: "color-mix(in srgb, #F8FAFC 3%, transparent)"
-  backdrop: "rgb(0 0 0 / 70%)"
-  syntax-keyword: "#C4A7E7"
-  syntax-string: "#A3D9A5"
-  syntax-number: "#F2C078"
-  syntax-function: "#8FC7F4"
-  syntax-comment: "#94A3B8"
+  primary: "#54A9FF"
+  primary-hover: "#7FC1FF"
+  primary-active: "#A9D7FF"
+  primary-light-default: "rgba(84, 169, 255, 0.2)"
+  primary-light-hover: "rgba(84, 169, 255, 0.3)"
+  primary-light-active: "rgba(84, 169, 255, 0.4)"
+  primary-disabled: "#135CB8"
+  primary-light: "rgba(84, 169, 255, 0.2)"
+  secondary: "#40B4F3"
+  secondary-hover: "#6EC8F6"
+  secondary-active: "#9DDCF9"
+  secondary-light-default: "rgba(64, 180, 243, 0.2)"
+  secondary-light-hover: "rgba(64, 180, 243, 0.3)"
+  secondary-light-active: "rgba(64, 180, 243, 0.4)"
+  secondary-disabled: "#0366A9"
+  secondary-light: "rgba(64, 180, 243, 0.2)"
+  tertiary: "#888D92"
+  tertiary-hover: "#A7ABB0"
+  tertiary-active: "#C6CACD"
+  tertiary-light-default: "rgba(136, 141, 146, 0.2)"
+  tertiary-light-hover: "rgba(136, 141, 146, 0.3)"
+  tertiary-light-active: "rgba(136, 141, 146, 0.4)"
+  tertiary-disabled: "#2E3238"
+  tertiary-light: "rgba(136, 141, 146, 0.2)"
+  info: "#54A9FF"
+  info-hover: "#7FC1FF"
+  info-active: "#A9D7FF"
+  info-light-default: "rgba(84, 169, 255, 0.2)"
+  info-light-hover: "rgba(84, 169, 255, 0.3)"
+  info-light-active: "rgba(84, 169, 255, 0.4)"
+  info-disabled: "#135CB8"
+  info-light: "rgba(84, 169, 255, 0.2)"
+  success: "#5DC264"
+  success-hover: "#7FD184"
+  success-active: "#A6E1A8"
+  success-light-default: "rgba(93, 194, 100, 0.2)"
+  success-light-hover: "rgba(93, 194, 100, 0.3)"
+  success-light-active: "rgba(93, 194, 100, 0.4)"
+  success-disabled: "#277731"
+  success-light: "rgba(93, 194, 100, 0.2)"
+  danger: "#FC725A"
+  danger-hover: "#FD9983"
+  danger-active: "#FDBEAC"
+  danger-light-default: "rgba(252, 114, 90, 0.2)"
+  danger-light-hover: "rgba(252, 114, 90, 0.3)"
+  danger-light-active: "rgba(252, 114, 90, 0.4)"
+  danger-disabled: "#2E3238"
+  danger-light: "rgba(252, 114, 90, 0.2)"
+  warning: "#FFAE43"
+  warning-hover: "#FFC772"
+  warning-active: "#FFDDA1"
+  warning-light-default: "rgba(255, 174, 67, 0.2)"
+  warning-light-hover: "rgba(255, 174, 67, 0.3)"
+  warning-light-active: "rgba(255, 174, 67, 0.4)"
+  warning-disabled: "#2E3238"
+  warning-light: "rgba(255, 174, 67, 0.2)"
+  bg-0: "#16161A"
+  bg-1: "#232429"
+  bg-2: "#35363C"
+  bg-3: "#43444A"
+  bg-4: "#4F5159"
+  text-0: "#F9F9F9"
+  text-1: "rgba(249, 249, 249, 0.8)"
+  text-2: "rgba(249, 249, 249, 0.6)"
+  text-3: "rgba(249, 249, 249, 0.35)"
+  fill-0: "rgba(255, 255, 255, 0.12)"
+  fill-1: "rgba(255, 255, 255, 0.16)"
+  fill-2: "rgba(255, 255, 255, 0.2)"
+  disabled-text: "rgba(249, 249, 249, 0.35)"
+  disabled-border: "#2E3238"
+  disabled-bg: "#2E3238"
+  disabled-fill: "rgba(230, 232, 234, 0.04)"
+  primary-pressed: "#A9D7FF"
+  primary-foreground: "#E4E7F5"
+  primary-hover-foreground: "#E4E7F5"
+  background: "#16161A"
+  surface: "#16161A"
+  surface-hover: "rgba(255, 255, 255, 0.12)"
+  stage: "rgba(255, 255, 255, 0.12)"
+  raised: "#43444A"
+  raised-hover: "rgba(255, 255, 255, 0.12)"
+  raised-pressed: "rgba(255, 255, 255, 0.16)"
+  input: "rgba(255, 255, 255, 0.12)"
+  input-hover: "rgba(255, 255, 255, 0.16)"
+  input-active: "rgba(255, 255, 255, 0.2)"
+  foreground: "#F9F9F9"
+  foreground-reading: "rgba(249, 249, 249, 0.8)"
+  foreground-muted: "rgba(249, 249, 249, 0.6)"
+  foreground-subtle: "rgba(249, 249, 249, 0.35)"
+  caption: "rgba(249, 249, 249, 0.6)"
+  metadata: "rgba(249, 249, 249, 0.6)"
+  outline: "rgba(255, 255, 255, 0.08)"
+  border: "rgba(255, 255, 255, 0.08)"
+  scrollbar: "rgba(136, 141, 146, 0.3)"
+  scrollbar-hover: "rgba(136, 141, 146, 0.5)"
+  scrollbar-pressed: "rgba(136, 141, 146, 0.7)"
+  focus: "#54A9FF"
+  focus-text: "#A9D7FF"
+  success-text: "#A6E1A8"
+  danger-text: "#FDBEAC"
+  switch-track: "rgba(255, 255, 255, 0.12)"
+  tabs-track: "rgba(255, 255, 255, 0.12)"
+  highlight-hover: "rgba(255, 255, 255, 0.12)"
+  highlight-pressed: "rgba(255, 255, 255, 0.16)"
+  overlay: "#43444A"
+  backdrop: "rgba(22, 22, 26, 0.6)"
+  tooltip: "#C6CACD"
+  tooltip-foreground: "#16161A"
+  syntax-keyword: "#DDA0E1"
+  syntax-string: "#A6E1A8"
+  syntax-number: "#FFDDA1"
+  syntax-function: "#A9D7FF"
+  syntax-comment: "rgba(249, 249, 249, 0.6)"
 color-modes:
   light:
-    primary: "#2563EB"
-    primary-hover: "#1D4ED8"
-    primary-pressed: "#1E40AF"
+    primary: "#0064FA"
+    primary-hover: "#0062D6"
+    primary-active: "#004FB3"
+    primary-light-default: "#EAF5FF"
+    primary-light-hover: "#CBE7FE"
+    primary-light-active: "#98CDFD"
+    primary-disabled: "#98CDFD"
+    primary-light: "#EAF5FF"
+    secondary: "#0095EE"
+    secondary-hover: "#007BCA"
+    secondary-active: "#0063A7"
+    secondary-light-default: "#E9F7FD"
+    secondary-light-hover: "#C9ECFC"
+    secondary-light-active: "#95D8F8"
+    secondary-disabled: "#95D8F8"
+    secondary-light: "#E9F7FD"
+    tertiary: "#6B7075"
+    tertiary-hover: "#555B61"
+    tertiary-active: "#41464C"
+    tertiary-light-default: "#F9F9F9"
+    tertiary-light-hover: "#E6E8EA"
+    tertiary-light-active: "#C6CACD"
+    tertiary-disabled: "#E6E8EA"
+    tertiary-light: "#F9F9F9"
+    info: "#0064FA"
+    info-hover: "#0062D6"
+    info-active: "#004FB3"
+    info-light-default: "#EAF5FF"
+    info-light-hover: "#CBE7FE"
+    info-light-active: "#98CDFD"
+    info-disabled: "#98CDFD"
+    info-light: "#EAF5FF"
+    success: "#3BB346"
+    success-hover: "#30953B"
+    success-active: "#25772F"
+    success-light-default: "#ECF7EC"
+    success-light-hover: "#D0F0D1"
+    success-light-active: "#A4E0A7"
+    success-disabled: "#A4E0A7"
+    success-light: "#ECF7EC"
+    danger: "#F93920"
+    danger-hover: "#D52515"
+    danger-active: "#B2140C"
+    danger-light-default: "#FEF2ED"
+    danger-light-hover: "#FEDDD2"
+    danger-light-active: "#FDB7A5"
+    danger-disabled: "#E6E8EA"
+    danger-light: "#FEF2ED"
+    warning: "#FC8800"
+    warning-hover: "#D26700"
+    warning-active: "#A84A00"
+    warning-light-default: "#FFF8EA"
+    warning-light-hover: "#FEEECC"
+    warning-light-active: "#FED998"
+    warning-disabled: "#E6E8EA"
+    warning-light: "#FFF8EA"
+    bg-0: "#FFFFFF"
+    bg-1: "#FFFFFF"
+    bg-2: "#FFFFFF"
+    bg-3: "#FFFFFF"
+    bg-4: "#FFFFFF"
+    text-0: "#1C1F23"
+    text-1: "rgba(28, 31, 35, 0.8)"
+    text-2: "rgba(28, 31, 35, 0.62)"
+    text-3: "rgba(28, 31, 35, 0.35)"
+    fill-0: "rgba(46, 50, 56, 0.05)"
+    fill-1: "rgba(46, 50, 56, 0.09)"
+    fill-2: "rgba(46, 50, 56, 0.13)"
+    disabled-text: "rgba(28, 31, 35, 0.35)"
+    disabled-border: "#E6E8EA"
+    disabled-bg: "#E6E8EA"
+    disabled-fill: "rgba(46, 50, 56, 0.04)"
+    primary-pressed: "#004FB3"
     primary-foreground: "#FFFFFF"
     primary-hover-foreground: "#FFFFFF"
     background: "#FFFFFF"
-    surface: "#F8FAFC"
-    surface-hover: "#F1F5F9"
-    stage: "#F8FAFC"
+    surface: "#FFFFFF"
+    surface-hover: "rgba(46, 50, 56, 0.05)"
+    stage: "rgba(46, 50, 56, 0.05)"
     raised: "#FFFFFF"
-    raised-hover: "#F8FAFC"
-    raised-pressed: "#F1F5F9"
-    input: "#F8FAFC"
-    input-hover: "#F1F5F9"
-    input-active: "#FFFFFF"
-    foreground: "#0F172A"
-    foreground-reading: "#334155"
-    foreground-muted: "#64748B"
-    foreground-subtle: "#94A3B8"
-    caption: "#334155"
-    metadata: "#334155"
-    outline: "#E2E8F0"
-    scrollbar: "#CBD5E1"
-    scrollbar-hover: "#94A3B8"
-    scrollbar-pressed: "#64748B"
-    focus: "#3B82F6"
-    focus-text: "#1E40AF"
-    success: "#059669"
-    success-text: "#334155"
-    danger: "#DC2626"
-    danger-text: "color-mix(in srgb, #DC2626 70%, #0F172A)"
-    switch-track: "#CBD5E1"
-    tabs-track: "#F1F5F9"
-    highlight-hover: "#F1F5F9"
-    highlight-pressed: "#FFFFFF"
-    backdrop: "rgb(15 23 42 / 20%)"
-    syntax-keyword: "#6D28D9"
-    syntax-string: "#065F46"
-    syntax-number: "#92400E"
-    syntax-function: "#075985"
-    syntax-comment: "#475569"
+    raised-hover: "rgba(46, 50, 56, 0.05)"
+    raised-pressed: "rgba(46, 50, 56, 0.09)"
+    input: "rgba(46, 50, 56, 0.05)"
+    input-hover: "rgba(46, 50, 56, 0.09)"
+    input-active: "rgba(46, 50, 56, 0.13)"
+    foreground: "#1C1F23"
+    foreground-reading: "rgba(28, 31, 35, 0.8)"
+    foreground-muted: "rgba(28, 31, 35, 0.62)"
+    foreground-subtle: "rgba(28, 31, 35, 0.35)"
+    caption: "rgba(28, 31, 35, 0.62)"
+    metadata: "rgba(28, 31, 35, 0.62)"
+    outline: "rgba(28, 31, 35, 0.08)"
+    border: "rgba(28, 31, 35, 0.08)"
+    scrollbar: "rgba(107, 112, 117, 0.3)"
+    scrollbar-hover: "rgba(107, 112, 117, 0.5)"
+    scrollbar-pressed: "rgba(107, 112, 117, 0.7)"
+    focus: "#0064FA"
+    focus-text: "#004FB3"
+    success-text: "#25772F"
+    danger-text: "#B2140C"
+    switch-track: "rgba(46, 50, 56, 0.05)"
+    tabs-track: "rgba(46, 50, 56, 0.05)"
+    highlight-hover: "rgba(46, 50, 56, 0.05)"
+    highlight-pressed: "rgba(46, 50, 56, 0.09)"
+    overlay: "#FFFFFF"
+    backdrop: "rgba(22, 22, 26, 0.6)"
+    tooltip: "#41464C"
+    tooltip-foreground: "#FFFFFF"
+    syntax-keyword: "#71168A"
+    syntax-string: "#25772F"
+    syntax-number: "#A84A00"
+    syntax-function: "#004FB3"
+    syntax-comment: "rgba(28, 31, 35, 0.62)"
 shadows:
   dark:
-    popup: "0 8px 24px rgb(0 0 0 / 24%)"
-    notice: "0 12px 32px #0004"
-    toast: "0 15px 40px #0008"
+    elevated: "inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 14px rgba(0, 0, 0, 0.25)"
+    button-solid: "inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(0, 0, 0, 0.14), 0 2px 4px rgba(0, 0, 0, 0.22)"
+    button-light: "inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 1px 2px rgba(0, 0, 0, 0.16)"
+    card: "inset 0 1px 0 rgba(255, 255, 255, 0.045), inset 0 0 0 1px rgba(255, 255, 255, 0.045), 0 1px 3px rgba(0, 0, 0, 0.16)"
+    modal: "inset 0 1px 0 rgba(255, 255, 255, 0.055), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 14px rgba(0, 0, 0, 0.25)"
+    tooltip: "inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 0 0 1px rgba(0, 0, 0, 0.06)"
+    popup: "inset 0 1px 0 rgba(255, 255, 255, 0.075), inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 14px rgba(0, 0, 0, 0.25)"
+    notice: "inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 14px rgba(0, 0, 0, 0.25)"
+    toast: "inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 14px rgba(0, 0, 0, 0.25)"
   light:
-    popup: "0 8px 24px rgb(15 23 42 / 12%)"
-    notice: "0 12px 32px rgb(15 23 42 / 12%)"
-    toast: "0 15px 40px rgb(15 23 42 / 12%)"
+    elevated: "0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1)"
+    button-solid: "inset 0 1px 0 rgba(255, 255, 255, 0.38), inset 0 -1px 0 rgba(0, 0, 0, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.1)"
+    button-light: "inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(0, 0, 0, 0.035), 0 1px 2px rgba(0, 0, 0, 0.04)"
+    card: "inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 0 0 1px rgba(0, 0, 0, 0.025), 0 1px 3px rgba(0, 0, 0, 0.035)"
+    modal: "inset 0 1px 0 rgba(255, 255, 255, 0.26), 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1)"
+    tooltip: "inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.04)"
+    popup: "inset 0 1px 0 rgba(255, 255, 255, 0.42), inset 0 0 0 1px rgba(0, 0, 0, 0.025), 0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1)"
+    notice: "0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1)"
+    toast: "0 0 1px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.1)"
 typography:
+  control:
+    fontFamily: Inter
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 20px
   display:
     fontFamily: Source Sans Pro
     fontSize: 42px
@@ -138,11 +300,12 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
 rounded:
+  xs: 4px
   sm: 8px
-  md: 14px
-  form: 12px
+  md: 16px
+  form: 8px
   lg: 24px
-  pill: 999px
+  pill: 9999px
 spacing:
   xs: 4px
   sm: 8px
@@ -153,10 +316,11 @@ spacing:
   3xl: 48px
   4xl: 72px
 control-sizes:
-  small: 32px
-  default: 40px
-  compact: 36px
-  form: 40px
+  small: 24px
+  default: 32px
+  large: 40px
+  compact: 32px
+  form: 32px
   touch: 44px
 motion:
   micro: 80ms
@@ -181,8 +345,8 @@ components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.primary-foreground}"
-    rounded: "{rounded.pill}"
-    height: "{control-sizes.small}"
+    rounded: "{rounded.form}"
+    height: "{control-sizes.default}"
     padding: 12px
     typography: "{typography.label}"
   button-primary-hover:
@@ -192,16 +356,16 @@ components:
     backgroundColor: "{colors.primary-pressed}"
     textColor: "{colors.primary-foreground}"
   button-secondary:
-    backgroundColor: "{colors.raised}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.pill}"
-    height: "{control-sizes.small}"
+    backgroundColor: "{colors.fill-0}"
+    textColor: "{colors.text-1}"
+    rounded: "{rounded.form}"
+    height: "{control-sizes.default}"
     padding: 12px
     typography: "{typography.label}"
   card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.foreground}"
-    rounded: "{rounded.lg}"
+    rounded: "{rounded.md}"
     padding: 12px
   card-hover:
     backgroundColor: "{colors.surface-hover}"
@@ -237,9 +401,9 @@ components:
 
 ## 状态与职责
 
-本文件规定已批准的**目标设计**。YAML 是目标 token 的唯一数值来源，不是运行时代码或生成输入；文档更新不会自动修改页面。2026-10-05 完成规范解耦；2026-10-06 已实施共享无衬线字体、前台导航、原生指针、首页与展示页构图，并同步共享 token。实施证据与实际验证范围集中记录在文末。
+本文件规定已批准的**目标设计**。YAML 记录本站语义角色的目标值，运行时唯一数值来源是 `app/semi-theme-tokens.css` 中从固定 Semi 基线适配的原始 token；文档不是生成输入，更新文档不会自动修改页面。2026-10-05 完成规范解耦；2026-10-06 已实施共享无衬线字体、前台导航、原生指针、首页与展示页构图，并同步共享 token。实施证据与实际验证范围集中记录在文末。
 
-以 [Libraries.dev](https://libraries.dev/) 为主要视觉参考：近黑连续底色、低对比层级、精密胶囊材质、平实排版与克制的交互反馈。前台构图紧贴参考，后台与阅读页保留任务密度和阅读宽度。品牌资产、专有字体、产品插图、营销文案与付费功能不复制。
+色盘与基础组件的视觉参考为本地 [Semi UI Vue 文档站](http://127.0.0.1:4321/zh-CN/advanced/customize-theme) 实际使用的 **default + modern**，以本地源码为精确依据。Libraries.dev 继续作为既有前台构图与已接入演示效果的历史参考；页面信息架构、阅读宽度、业务规则与 Base UI 交互语义保持。品牌资产、产品插图与营销文案不复制。
 
 | 文档                                                                                                 | 负责的规则                                     |
 | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -252,9 +416,9 @@ components:
 
 各文档按职责负责。场景文档可定义用途明确的布局、组件尺寸变体及共享颜色的用途组合，不另设基础颜色、字体或重复定义控件状态；共享设计变化先更新本文件，再在授权范围内同步实现。行为调整进入产品文档，技术调整进入对应工程文档。外部参考与[历史验收记录](docs/engineering/verification-history.md)是证据，不直接覆盖现行规范。
 
-2026-10-14 用户先授权在 `/design-spec` 中试验新设计，随后明确将参考页面的深浅色色盘与模式切换推广至前台、登录页及后台。本次共享目标只更新颜色与模式选择；保持既有字体、字号、圆角、间距、页面布局、组件尺寸和业务交互。工作台的局部密度、圆角与无描边变体继续限于该页，不随色盘推广。使用方式和边界见[展示页设计试验区](docs/design/frontend.md#展示页设计试验区)。
+2026-10-15 用户授权将当前项目的深浅色色盘及输入框、按钮、弹窗、Toast 等组件皮肤对齐本地 Semi UI Vue 文档站，明确参考是默认主题叠加 modern。授权覆盖共享 token、组件尺寸、圆角、边框、填充、阴影、排版和交互状态；继续以 Base UI 封装本地组件，不引入 Vue 或 Semi 组件运行时。前台、登录、后台与展示页统一消费共享实现，页面布局、数据流及业务操作保持。
 
-2026-10-14 用户明确的视觉禁则：后续设计禁止常驻浅色描边和装饰分割线，包含表单、卡片以及区域之间的分隔；不得用 inset 阴影、伪元素或环形高光变相恢复。使用底色、间距和字重建立层级，保留按操作需要出现的键盘焦点提示。该禁则已在 `/design-spec` 落地，覆盖此前工作台的边框方案；这是当时的实施范围。本次授权只推广色盘与模式，既有业务页面的材料结构、边线和分隔保持，不新增描边或装饰分割线，也不把工作台去描边改造顺带推广。
+此前“禁止常驻浅色描边及所有 inset 边缘”的限制已由本次视觉授权替代。采用参考组件实际包含的边框、细边缘、高光与阴影：普通 Modal 保留实体边框，modern 按钮及独立 bordered Card 保留轻微内侧层次；默认填充 Input 的静止边框仍透明。分隔线只承担参考组件或现有业务结构中的分组职责，不额外装饰页面。
 
 ## 品牌资产
 
@@ -268,23 +432,23 @@ components:
 
 ## Token 与运行时映射
 
-YAML 的 `colors` 保留默认深色基础值，`color-modes.light` 维护相同角色的浅色覆盖；语义组件引用同一角色，不保留旧色盘作为第二套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
+YAML 的 `colors` 记录默认深色角色，`color-modes.light` 记录浅色覆盖；原始 `--semi-*` 与本站 `--color-*` 别名集中于 `app/semi-theme-tokens.css`。该 CSS 仅包含当前组件消费到的色盘、完整通用语义色及 modern 材质，不预装图表或 AI 专用色。语义组件引用同一角色，不保留旧色盘作为第二套目标。下文数值是对 token 的解释；页面特有尺寸仅在对应场景维护。主题变量和组件 variant 引用 token，避免在页面重复实现基础状态。不新增 token 生成器或依赖。
 
-| 目标 token                           | 运行时对应                           | 同步要求                                                                                                                             |
-| ------------------------------------ | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `colors.*` / `color-modes.light.*`   | Tailwind v4 `--color-*`              | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其余角色同名映射，由 `html[data-theme]` 覆盖模式 |
-| `shadows.dark.*` / `shadows.light.*` | `--shadow-popup` / `--shadow-notice` | 保留现有浮层几何尺寸，仅随模式同步颜色与透明度                                                                                       |
-| `typography.*`                       | 字体变量与语义排版 class             | `--font-sans`、`--font-display` 使用下方字体栈；字号、行高、字重和字距一并映射，不仅同步 family                                      |
-| `rounded.*`                          | `--radius-*`                         | 包括 sm、md、form、lg、pill；组件通过变量选择圆角                                                                                    |
-| `spacing.*`                          | 本地间距变量或等值 Tailwind 间距     | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                                                   |
-| `control-sizes.*`                    | 本地组件 size / 触屏目标             | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch                                          |
-| `motion.*`                           | 本地过渡时长、曲线与位移变量         | 按反馈职责选择，不在业务页面新增临时时长                                                                                             |
-| `cursor.*`                           | `public/cursors/` SVG 与 CSS 热点    | 造型资产沿用共享颜色；尺寸、描边、阴影和热点同步，CSS 变量按语义选择资产                                                             |
-| `scrollbar.*`                        | 滚动条轨道、滑块宽度                 | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                                                               |
+| 目标 token                           | 运行时对应                        | 同步要求                                                                                                                             |
+| ------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `colors.*` / `color-modes.light.*`   | Tailwind v4 `--color-*`           | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其余角色同名映射，由 `html[data-theme]` 覆盖模式 |
+| `shadows.dark.*` / `shadows.light.*` | `--shadow-*`                      | 采用 Semi elevated 和 modern 对应容器层次；Toast 使用 elevated，Tooltip 仅内侧边缘                                                   |
+| `typography.*`                       | 字体变量与语义排版 class          | 页面使用 `--font-sans` / `--font-display`，基础组件使用 `--font-control`；字号、行高与字重按用途映射                                 |
+| `rounded.*`                          | `--radius-*`                      | xs=4、sm/form=8、md=16、lg=24、pill=9999；组件通过变量选择圆角                                                                       |
+| `spacing.*`                          | 本地间距变量或等值 Tailwind 间距  | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                                                   |
+| `control-sizes.*`                    | 本地组件 size / 触屏目标          | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch                                          |
+| `motion.*`                           | 本地过渡时长、曲线与位移变量      | 按反馈职责选择，不在业务页面新增临时时长                                                                                             |
+| `cursor.*`                           | `public/cursors/` SVG 与 CSS 热点 | 造型资产沿用共享颜色；尺寸、描边、阴影和热点同步，CSS 变量按语义选择资产                                                             |
+| `scrollbar.*`                        | 滚动条轨道、滑块宽度              | 与 scrollbar 颜色 token 配合；平台不支持时使用系统兜底                                                                               |
 
-映射已在 `app/globals.css` 接入：排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
+色盘与材质由 `app/globals.css` 导入 `app/semi-theme-tokens.css`，Tailwind 只注册语义映射；排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
 
-`--control-form` 的桌面基值为 40px，`--control-compact` 为 36px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
+`--control-small` / `--control-default` / `--control-large` 对应 Semi 的 24 / 32 / 40px；`--control-form` 与 `--control-compact` 的桌面基值均为 32px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
 
 ## 深浅模式
 
@@ -296,21 +460,21 @@ YAML 的 `colors` 保留默认深色基础值，`color-modes.light` 维护相同
 
 ## 色彩与材质
 
-当前色盘以用户于 2026-10-15 提供的 `COLOR_TOKENS.md` 为准，替换此前 `ai_studio_code.html` 的浅色表面层级：页面保持纯白，内容表面和输入框采用冷霜白，次级操作与浮层采用纯白，焦点及两种模式的滚动条同步最新色值。深色主体与品牌色沿用附件中相同的午夜黑蓝色盘。共享目标值由本文件 YAML 维护，运行时同步到 `app/globals.css`；`--color-border` 为 outline 的同值别名，不新增边线。
+当前色盘以本地 `semi-ui-vue/vendor/semi-design` 固定的 Semi Design v2.102.0 为默认层，再叠加 `packages/theme-modern/src/index.scss`；加载顺序以文档站 `apps/docs/.vitepress/theme/styles/site.css` 为证。modern 不另设色盘，它覆盖 4 / 8 / 16 / 24px 圆角，并为部分按钮、Card、浮层和 Modal 增加轻微内侧层次。不能仅载入 modern 或只替换主色；两个模式的背景、文字、fill、边框、禁用、成功、危险、警告、信息、遮罩与交互状态一并映射。
 
-附件作为配色数据使用；其中 Legacy Gray 仅作历史对照，Tailwind v3 配置示例不引入本项目。保留现有 caption、metadata、success-text、danger-text、primary-hover-foreground 等可读性适配角色，以及语法高亮、遮罩与浮层阴影。此次只更新色盘，不套用附件的卡片／色样阴影，不以 inset 环恢复工作台已去除的描边；页面结构、尺寸、业务行为和独立 HTML 历史快照保持原状。浅色默认 SVG 指针同步 raised 的纯白填充。实施及验证范围见[纯白浅色色盘更新](docs/engineering/verification-history.md#纯白浅色色盘更新2026-10-15)。
+此前 `COLOR_TOKENS.md`、`ai_studio_code.html` 与工作台局部去描边方案均为历史参考，不构成第二套现行视觉规范。保留本站必要的小字适配角色：`success-text` / `danger-text` 使用源色盘 green-7 / red-7，`focus-text` 使用 link-active；语法高亮也从源色盘选择较深的浅色模式颜色。除这些可读性适配与页面既有字体外，组件按参考实际状态使用语义变量；独立 HTML 历史快照不随此次运行时组件迁移重做。
 
-`background` 为连续页面底色，`surface` 为展示卡或业务模块的默认灰阶表面，`stage` 仅为明确的展示舞台或场景定义的局部区。层级沿用既有材料结构、留白与用途建立；`surface-hover` 只用于交互悬停，不作为另一种常驻卡片色。`raised` 用于次级按钮与浮层，输入使用 `input`，hover 使用 `input-hover`。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
+`background` 和 `surface` 对应 bg-0；Card 依靠参考中的边缘和阴影建立层级。`stage` 为 fill-0 的局部展示区，`surface-hover` 仅用于可交互卡片的悬停。`raised` 对应 Popover、Dropdown 和 Toast 的 bg-3，Modal 使用 bg-2；次级按钮不复用 raised，而采用 fill-0。输入默认、hover、active 分别使用 fill-0 / fill-1 / fill-2。灰阶基底是默认材质，不要求图标、标签、数据系列和重点信息全部使用灰色。
 
 界面正文使用 `foreground`，连续阅读的文章正文使用 `foreground-reading`，必要说明与占位使用 `caption`，日期、计数和辅助元信息使用 `metadata`。参考原始 `foreground-muted` 与 `foreground-subtle` 保留色值，用于色板、非文字细节及经核对可读的场合；浅色必要小字不直接使用 subtle 或低对比的 muted。小字号正文、标签和混合底色上的文字需核对实际对比度，不能仅因使用共享 token 就视为可读。
 
-输入占位文字使用 caption，保持在 input 与 input-hover 表面上可读；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
+输入占位文字对应 Semi text-2，必要说明和可见标签保持独立；占位文字不代替可见字段标签。TabsPanel 接收键盘焦点时保留独立的 2px focus 轮廓与 2px 外距，不能以选中 Tab 代替面板焦点。
 
-`focus` 用于焦点轮廓、图标和分类原色；复用蓝色的小号链接、后台选中导航及统计强调文字使用 `focus-text`。深色与 focus 相同，浅色复用 primary-pressed，避免新版亮蓝在白色、冷霜白或淡蓝选中底色上造成小字对比不足；不改变原有字体、交互或分类背景。
+`focus` 对应 Semi focus-border，用于独立焦点提示；小号链接、后台选中导航及统计强调文字使用 `focus-text`（link-active）。焦点反馈不改变分类数据颜色或真实操作语义。
 
 用色按信息职责组织，场景明确默认映射与需要强调的内容：
 
-- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。本轮以已预览的冷灰蓝深浅色色盘替换旧中性灰色盘；实心 primary 按钮和静态徽标使用 primary-foreground，主按钮悬停使用 primary-hover-foreground，避免浅色模式继承页面深色文字。强调文字使用对应模式角色，并核对实际底色上的对比度。
+- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。本轮以本地 Semi default + modern 的深浅色语义替换旧色盘；实心 primary 按钮和静态徽标使用 primary-foreground，主按钮悬停使用 primary-hover-foreground，避免浅色模式继承页面深色文字。强调文字使用对应模式角色，并核对实际底色上的对比度。
 - **分类与数据**：栏目、更新类型、分类和数据系列允许使用共享颜色建立稳定映射；同一类别在同一场景及切换查询区间后保持一致，并保留文字或图例。分类识别可复用既有颜色，但应明确它表达类别，避免被误读为操作结果或告警。没有分类或强调需求时，必要文字使用 caption / metadata 等灰阶阅读角色。
 - **状态与焦点**：success、danger 保留参考原色用于图标、状态点及已有视觉标记；必要的成功、危险小字分别使用 success-text、danger-text。它们表达实际成功、有利结果、错误或风险，不能凭视觉需要制造业务状态。控件的 focus 指示始终独立于分类色、选中色与状态色，保留清晰的焦点轮廓。颜色不承担唯一识别，状态同时有文字或符号。
 
@@ -318,19 +482,19 @@ YAML 的 `colors` 保留默认深色基础值，`color-modes.light` 维护相同
 
 静态徽标通过文字和颜色表达信息，不自动继承按钮的材质阴影、hover、active、焦点状态或动画。已有日志类型映射与“最新”配色由前台、后台场景维护，适用上述通用规则。
 
-Picker、Dialog、Popover 与 Menu 浮层沿用既有结构，表面、遮罩与投影颜色按主题同步。共享 Picker、Dialog 与 Popover 保留既有轻微外阴影和边缘材质；Menu 与工作台覆盖浮层引用 `--shadow-popup`，反馈浮层引用 `--shadow-notice`，数值按 YAML 的 `shadows` 模式角色同步。遮罩使用 backdrop，切换模式不重建浮层或改变关闭与焦点行为；保留各组件原有投影几何尺度与材料结构。
+Picker、Popover 与 Menu 使用 bg-3、md 圆角及 `--shadow-popup`（modern overlay 内侧边缘 + elevated）。Dialog 使用 bg-2、lg 圆角、border 和 `--shadow-modal`，普通 Modal 的浅高光保留，遮罩使用 backdrop；`overlay` 作为浮层实体表面的兼容角色对应 bg-3。Toast 使用 bg-3、md 圆角与 elevated 投影，light 彩色变体使用语义浅底和 1px 对应语义色边框；不额外叠加 modern overlay 边缘。模式切换不重建浮层，不改变关闭、保存和焦点恢复行为。
 
-展示 Card 由 surface 外壳、低对比内边线、轻微顶部高光和更暗的内舞台组成。舞台与外缘采用 card padding，说明区位于下方。后台业务 Card 默认使用 surface 与淡边线，无顶部高光、不套舞台；内部信息和局部标识可按上述职责使用颜色。连续工作区与字段分组的边界见后台场景。
+独立 bordered Card 使用 surface、md 圆角、border 及 `--shadow-card`，遵循 modern 的淡边缘与轻微高光，不叠加旧有大阴影；无边框或分组网格 Card 不强加相同材质。已有展示卡舞台、业务模块结构及页面留白保持。`CardLink` 继续是真实链接，保留独立操作的既有组合边界，hover/active 只改变填充，focus-visible 显示独立轮廓。
 
-信息链接使用本地 `CardLink`，与 Card 共用 surface 外壳、lg 圆角、低对比内边线和轻微顶部高光；图文直接组合，不强制套展示舞台。整卡保留真实链接语义，不嵌套其他操作。hover 使用 surface-hover，active 由 surface 与 background 各半混合压暗，文字保持 foreground；focus-visible 只增加独立轮廓，不覆盖既定圆角。减少动态效果时取消过渡，尺寸与内边距由场景定义。
-
-次级操作胶囊在 raised 上保留 `0 1px 3px rgba(0,0,0,.04)` 外阴影、foreground 4% 的顶部内层、`inset 0 -1px rgba(0,0,0,.06)` 底部暗线及 foreground 10% 的边缘环。primary 操作胶囊保留相同几何尺度，顶部内层采用 foreground 4%，两层内边线分别采用 foreground 6% 与 10%；这些颜色都在 sRGB 中与透明色混合，随当前模式变化，不增加边线或改变材料结构。hover 与 active 只改变必要底色，避免缩放导致细线抖动；ghost 无材质阴影。全站不使用大面积模糊阴影、重复光晕或装饰渐变，发光限于明确的效果演示。
+Button 的 primary 对应 Semi primary solid：主色填充、白字、8px 圆角与 `--shadow-button-solid`；secondary 对应 tertiary light：fill-0、text-1 与 `--shadow-button-light`；ghost 对应 tertiary borderless，静止透明，hover/active 出现填充时才显示 light 材质。disabled 使用明确的禁用色且不带 modern 材质，focus-visible 始终独立。默认文字 14px / 20px、600 字重；不再默认采用旧胶囊材质。全站不新增无职责的大阴影、循环光晕或装饰渐变，发光限于既有明确的演示。
 
 ## 排版与间距
 
-标题、正文和标签统一使用 `"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`；display 与 sans 共用字体栈。中文由系统字体兜底，不显式优先指定苹方或微软雅黑。2026-10-15 按用户要求统一替换原首选字体，现行实现、设计工作台、独立 HTML 与项目内字体示例均使用 Source Sans Pro；字号、行高、字距、颜色和等宽字体保持。
+页面标题、正文和标签继续使用 `"Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"`；display 与 sans 共用字体栈。中文由系统字体兜底，不显式优先指定苹方或微软雅黑。2026-10-15 按用户要求统一替换原首选字体，现行实现、设计工作台、独立 HTML 与项目内字体示例均使用 Source Sans Pro；字号、行高、字距、颜色和等宽字体保持。
 
-在 [共享样式](app/globals.css) 中通过 `@font-face` 加载 jsDelivr 上固定版本的 `@fontsource/source-sans-pro@5.3.0`，仅声明 Latin 子集，使用 Fontsource 官方 `unicode-range`。该包提供静态的 200、300、400、600、700、900 六档字重，分别声明 normal 与 italic，不使用可变字体范围或不存在的 500 字重文件；现有 500 字重按 CSS 字体匹配规则使用 400，不伪装为可变字重。采用 `font-display: swap`，CDN 不可用时继续使用系统兜底；中文与 Latin 子集以外的字符沿用共享回退栈。[根布局](app/layout.tsx) 继续预连接 CDN，应用不新增字体依赖或本地字体文件；独立 HTML 为离线交付内嵌相同字体，并保留包内 [OFL-1.1 许可](https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/LICENSE)。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+在 [共享样式](app/globals.css) 中通过 `@font-face` 加载 jsDelivr 上固定版本的 `@fontsource/source-sans-pro@5.3.0`，仅声明 Latin 子集，使用 Fontsource 官方 `unicode-range`。该包提供静态的 200、300、400、600、700、900 六档字重，分别声明 normal 与 italic，不使用可变字体范围或不存在的 500 字重文件；现有 500 字重按 CSS 字体匹配规则使用 400，不伪装为可变字重。采用 `font-display: swap`，CDN 不可用时继续使用系统兜底；中文与 Latin 子集以外的字符沿用共享回退栈。[根布局](app/layout.tsx) 继续预连接 CDN，页面字体不新增依赖或本地文件，控件 Inter 另按下段加载；独立 HTML 为离线交付内嵌相同字体，并保留包内 [OFL-1.1 许可](https://cdn.jsdelivr.net/npm/@fontsource/source-sans-pro@5.3.0/LICENSE)。数字、参数和代码保持等宽字体，代码优先 `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`。
+
+基础组件内部使用 `--font-control` 的 Semi 字体栈：`"Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif`。Inter 的 Regular / SemiBold 从本地参考资源加载，并保留字体 OFL 许可；不新增远程字体请求。控件文字默认 14px / 20px；Button 600、输入 400、Tabs 400 且选中 600。页面的 Source Sans Pro、标题尺度和阅读排版保持，这是明确的项目适配。
 
 此前字体加载方式与子集调整属于历史事实，见[旧无衬线字体 CDN 替换记录](docs/engineering/verification-history.md#旧无衬线字体-cdn-替换2026-10-09)和[旧无衬线字体子集精简记录](docs/engineering/verification-history.md#旧无衬线字体子集精简2026-10-09)。本次字体替换的实际验证范围见[Source Sans Pro 字体统一](docs/engineering/verification-history.md#source-sans-pro-字体统一2026-10-15)，不将旧字体的验收结果当作新字体的运行证据。
 
@@ -338,7 +502,7 @@ Picker、Dialog、Popover 与 Menu 浮层沿用既有结构，表面、遮罩与
 
 标题简短，中文自然断行，不强制英文式大写，不裁切长标题。用 spacing 组织节奏；容器最大宽度、网格比例与阅读列宽只在场景文档维护，避免所有页面共用一个宽度。
 
-按钮与标签采用 pill；展示外壳与独立业务模块采用 lg，舞台与输入采用 md / form，局部代码等使用场景声明的 sm。图标常用 16–20px，装饰图标不承担唯一的操作名称。默认输入采用填充表面，无常驻描边；焦点与错误提示必须可辨。
+按钮、输入采用 form=8px；Card 与小型浮层采用 md=16px；Modal 采用 lg=24px；胶囊只用于明确的标签、徽标及圆形控件。既有场景外壳在共享材质范围内更新，页面网格与间距保持。图标常用 16–20px，装饰图标不承担唯一的操作名称。默认输入采用填充表面与透明静止边框；焦点、错误、禁用分别使用源语义色，不受旧绝对无描边限制。
 
 滚动条采用透明轨道、灰阶滑块与 pill 圆角，默认、hover、active 依次使用 scrollbar 颜色 token。保持可拖动轨道、较窄视觉滑块，不隐藏滚动条或改变滚动行为；支持标准属性的浏览器使用同色窄条，强制颜色模式交给系统。
 
@@ -394,28 +558,28 @@ Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，�
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Button                              | primary / secondary / ghost；small 用于紧凑 CTA，default 用于组件面板，compact 用于后台工具栏与页面操作，form 用于表单提交；粗指针或场景指定的窄屏目标至少 touch 高度；loading 与 disabled 保留说明                                                                                                                 |
 | 展示 Card                           | 外壳、舞台、标题、描述、可选操作；可点击卡片为真实链接或按钮，含独立操作时不嵌套点击；悬停不改变内容布局                                                                                                                                                                                                            |
-| 业务 Card                           | 默认 surface 与淡边线，内部信息和局部标识可按职责用色；无舞台及顶部高光，是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                                                 |
-| Tabs                                | raised 选中胶囊独立于文字，使用 standard / ease 滑动到选中项；文字只过渡颜色，面板短淡入且不阻塞内容；键盘可切换，reduced-motion 取消滑动                                                                                                                                                                           |
-| Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；surface / raised 与 md / lg 按用途选择，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                                                                               |
-| Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 四侧内边距 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角与 input 填充，正常、错误、焦点和禁用状态遵循下方表单表面规则；字段有可见标签，错误文字通过 aria-describedby 关联                                                                         |
-| Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 40px、窄屏或粗指针至少高 44px；高亮默认灰阶提亮，也可用共享强调色区分当前高亮或选中，保留文字、勾选和独立焦点；附加图标操作桌面 32×32px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件 |
-| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 32×32px、窄屏或粗指针 44×44px；内部输入保持透明，不重复边框或焦点环，错误标记与输入焦点由完整外框承载，附加按钮只显示自身焦点；点击非按钮附加区可聚焦输入                                |
-| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
-| Switch                              | 状态与名称由本地组件提供；浅色关闭态滑块用 foreground-reading、开启态保持白色，轨道引用 switch-track / primary；触屏 variant 保留 44×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                       |
+| 业务 Card                           | 默认 surface、border 与 modern card 淡边缘；内部信息和局部标识可按职责用色；不自动套展示舞台，是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                            |
+| Tabs                                | 选中状态通过共享填充、文字与字重区分，控件采用 Semi 排版与材质；面板切换保留既有键盘行为与不阻塞内容的反馈，reduced-motion 取消位移                                                                                                                                                                                 |
+| Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；Dialog 使用 bg-2 / lg / modal 阴影，其他浮层使用 bg-3 / md / popup 阴影，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                                              |
+| Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 上下内边距 5px、左右 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角与 input 填充，正常、错误、焦点和禁用状态遵循下方表单表面规则；字段有可见标签，错误文字通过 aria-describedby 关联                                                               |
+| Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 36px、窄屏或粗指针至少高 44px；高亮默认灰阶提亮，也可用共享强调色区分当前高亮或选中，保留文字、勾选和独立焦点；附加图标操作桌面 24×24px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件 |
+| InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 24×24px、窄屏或粗指针 44×44px；内部输入保持透明，不重复边框或焦点环，错误标记与输入焦点由完整外框承载，附加按钮只显示自身焦点；点击非按钮附加区可聚焦输入                                |
+| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 32×32px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
+| Switch                              | 状态与名称由本地组件提供；滑块使用 Semi 白色，轨道引用 fill-0 / success；触屏 variant 保留 40×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                              |
 
 Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
 
 ### 图标名称提示
 
-本地 `Tooltip` 基于 Base UI，名称提示使用 raised 表面、foreground 文字、sm 圆角、上下 sm／左右 md 内边距、12px／18px 的 500 字重及 popup 投影，无常驻描边。提示宽度不超过 240px 与视口减 24px，Portal 定位并保留碰撞留白。只使用 quick 时长的透明度过渡，减少动态效果时取消过渡，不放大或移动触发控件。提示不包含可交互内容，始终保留触发对象的可访问名称；支持悬停、键盘聚焦、Escape 和失焦关闭，具体方向和等待时间由场景规定。
+本地 `Tooltip` 基于 Base UI，名称提示使用 Semi grey-7 表面、bg-0 文字、md 圆角、上下 sm／左右 md 内边距、14px／20px 与 `--shadow-tooltip` 内侧边缘，不额外添加外投影。提示宽度不超过 240px 与视口减 24px，Portal 定位并保留碰撞留白。只使用 quick 时长的透明度过渡，减少动态效果时取消过渡，不放大或移动触发控件。提示不包含可交互内容，始终保留触发对象的可访问名称；支持悬停、键盘聚焦、Escape 和失焦关闭，具体方向和等待时间由场景规定。
 
 ### 表单表面状态
 
-Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸、圆角及组件 props 保持各自既有定义；状态样式集中在共享样式，页面不重复绘制。
+Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸与圆角使用上方 Semi 角色，组件 props 保持既有契约；状态样式集中在共享样式，页面不重复绘制。
 
-- 正常状态使用 input 表面，hover 提亮、active 压暗，鼠标聚焦可使用 primary 内边线。focus-visible 移除正常字段的 primary 内边线，保留独立的 2px focus 外轮廓与 2px 外距。
-- `aria-invalid="true"` 或 Base UI 的 `[data-invalid]` 表达错误。错误态保持 input 灰底，以均匀的 1px danger 内边框标记，不混入红色背景、不绘制底部阴影线；hover、active、focus 和 focus-visible 都不能覆盖灰底或红色内框。错误标记与 focus-visible 外轮廓同时存在，错误文字通过 `aria-describedby` 关联真实控件。
-- disabled 沿用控件的透明度和 not-allowed 指针反馈，已有错误内框继续保留，hover 和 active 不改变表面。删除错误属性后立即恢复当前正常交互状态，不复制业务错误到组件内部。
+- 正常状态使用 fill-0，hover 使用 fill-1、active 使用 fill-2；聚焦使用 fill-0 与 1px focus-border，键盘 focus-visible 沿用 Semi 的内侧焦点边框。错误字段聚焦时使用 danger 边框，并保留错误底色与说明；按钮等独立操作继续按各自规则显示 2px 焦点轮廓。
+- `aria-invalid="true"` 或 Base UI 的 `[data-invalid]` 表达错误。按 Semi 使用 danger-light-default，hover/active 使用对应 danger-light 状态，焦点保留 danger 边框；错误标记与键盘焦点同时可见，错误文字通过 `aria-describedby` 关联真实控件，不复制业务错误到组件内部。
+- disabled 使用 disabled-fill / disabled-text 与 not-allowed 指针，hover 和 active 不改变表面；仅在参考状态需要时使用透明度，避免整控件统一变淡而改变源色。删除错误或禁用属性后立即恢复当前正常交互状态。
 - InputGroup 与 Combobox 将内部输入的错误属性和输入焦点提升到完整外框；内部输入保持透明，不重复绘制边框或焦点环。附加按钮聚焦时只显示按钮自身的焦点，不触发组合外框的输入焦点。ColorInput 沿用同一表面状态，并保持既有 form 方形宽高。
 
 文章标题的透明、无圆角画布输入属于显式场景例外，详见[后台写作工作区](docs/design/admin.md#文章列表与写作工作区)；其他表单字段沿用上述规则。
@@ -424,23 +588,35 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 ## 参考基线与项目适配
 
+### Semi 组件视觉基线（2026-10-15）
+
+参考入口为 [本地定制主题页](http://127.0.0.1:4321/zh-CN/advanced/customize-theme)，对应仓库为 `../semi-ui-vue`。精确来源：默认 [palette](../semi-ui-vue/vendor/semi-design/packages/semi-theme-default/scss/_palette.scss)、[global](../semi-ui-vue/vendor/semi-design/packages/semi-theme-default/scss/global.scss)、[Foundation 组件规则](../semi-ui-vue/vendor/semi-design/packages/semi-foundation/)，以及本地 [modern](../semi-ui-vue/packages/theme-modern/src/index.scss)。固定上游为 `v2.102.0` / `cdfba6e520fc83ad871b30f51f36d8af3aaa5a21`；不自动跟随在线新版。文档站先载入 default，再载入 modern，见 [site.css](../semi-ui-vue/apps/docs/.vitepress/theme/styles/site.css)。
+
+适配只移植视觉数值与对应状态：Base UI 继续负责语义、键盘、定位、焦点和 Portal；本站公开组件接口与业务动作保留。默认深色、显式浅色选择、44px 触屏目标、页面 Source Sans Pro 和既有页面构图属于本站适配；不复制文档站导航、侧栏、文章布局或 Vue 组件实现。
+
+来源代码使用 MIT：默认层归属 `Copyright (c) 2021 DouyinFE`，本地 modern 归属 `Copyright (c) 2026 aifuxi`。移植的 CSS 保留两方版权与完整许可声明；Inter 另随本地字体保留 OFL 许可。不将其描述为本站原创或 Semi 官方 modern 主题。
+
+本节记录已实施的视觉基线与源码来源。实际参考操作、页面运行、键盘/disabled/reduced-motion 和业务操作分别见 [Semi 主题迁移验收](docs/engineering/verification-history.md#semi-默认主题叠加-modern-视觉迁移2026-10-15)；未执行项不得从源码或截图推定通过。
+
+### 既有页面构图参考（历史）
+
 采集日期：**2026-10-05（Asia/Shanghai）**。本次浏览器核对首页与 Border beam 组件页，桌面基线为 **1440×1000、100% 缩放**，另观察默认 780px 宽视口。移动构图和断点取自源码，未作为手机运行验收通过。
 
 来源：[首页](https://libraries.dev/)、[组件页](https://libraries.dev/beam)、[共享样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/public/assets/site.css)、[首页结构及专属样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/index.html)。记录日期与实际页面数值构成本次基线；上游更新后重新采集，不自动改变本规范。
 
-| 观察                                                                    | 项目目标或显式适配                                                                  |
-| ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件为参考站无衬线字体 | 使用 Source Sans Pro 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异 |
-| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px          | 原色值保留为历史参考；当前颜色改用已批准深浅色色盘，现有圆角和业务 Card 变体保留    |
-| 首页 CTA 32px 胶囊与精密材质层                                          | 保留 small 与材质；primary 按当前深浅模式角色，触屏目标保持扩大                     |
-| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                             | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                              |
-| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                          | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                    |
-| 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                        |
-| hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移              |
+| 观察                                                                    | 项目目标或显式适配                                                                            |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件为参考站无衬线字体 | 使用 Source Sans Pro 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异           |
+| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px          | 原色值与14px圆角保留为历史参考；组件色盘、圆角与材质以本次 Semi 目标替代                      |
+| 首页 CTA 32px 胶囊与精密材质层                                          | CTA 按场景选择32px default；胶囊与旧材质由 Semi form 圆角和 modern 材质替代，触屏目标保持扩大 |
+| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                             | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                                        |
+| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                          | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                              |
+| 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                                  |
+| hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移                        |
 
-原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。其他参考不扩展本次视觉目标。
+原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。此表保留页面构图依据，其旧颜色、组件尺寸与材料不覆盖上方 Semi 基线。
 
-2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
+历史记录（尺寸已由本次 Semi 目标替代）：2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
 
 ## 核对方法
 
@@ -471,4 +647,4 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 2026-10-09 按用户要求将指针更新为 Recent 风格的 Afterglow CSS SVG 造型，并适配全站操作与编辑语义。当前实现、运行回归及剩余边界见 [Recent 指针适配](docs/engineering/verification-history.md#recent-指针适配2026-10-09)；上表保留 2026-10-06 的历史事实。
 
-2026-10-14 本轮将 `/design-spec` 的深浅色色盘提升为共享目标，并要求前台、登录页、后台与展示页采用同一模式选择。字体、圆角、间距、布局、控件尺寸、既有材料结构与业务交互保持；本轮不重做局部工作台视觉。源码接入与运行验证见[全站深浅色色盘与模式切换](docs/engineering/verification-history.md#全站深浅色色盘与模式切换2026-10-14)，尚未核对的路由与流程不记为通过。
+历史记录：2026-10-14 将 `/design-spec` 的深浅色色盘提升为共享目标，并要求前台、登录页、后台与展示页采用同一模式选择。字体、圆角、间距、布局、控件尺寸、既有材料结构与业务交互保持；本轮不重做局部工作台视觉。源码接入与运行验证见[全站深浅色色盘与模式切换](docs/engineering/verification-history.md#全站深浅色色盘与模式切换2026-10-14)，尚未核对的路由与流程不记为通过。

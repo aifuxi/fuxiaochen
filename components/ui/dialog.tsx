@@ -6,11 +6,22 @@ import { Dialog as BaseDialog } from "@base-ui/react/dialog";
 
 import { cn } from "@/lib/utils";
 
+import "./overlays.css";
+
 export const Dialog = BaseDialog.Root;
 export const DialogTrigger = BaseDialog.Trigger;
 export const DialogClose = BaseDialog.Close;
-export const DialogTitle = BaseDialog.Title;
-export const DialogDescription = BaseDialog.Description;
+
+export function DialogTitle({ className, ...props }: ComponentProps<typeof BaseDialog.Title>) {
+  return <BaseDialog.Title className={cn("ds-dialog-title", className)} {...props} />;
+}
+
+export function DialogDescription({
+  className,
+  ...props
+}: ComponentProps<typeof BaseDialog.Description>) {
+  return <BaseDialog.Description className={cn("ds-dialog-description", className)} {...props} />;
+}
 
 export function DialogContent({
   className,
@@ -25,7 +36,7 @@ export function DialogContent({
 }) {
   return (
     <BaseDialog.Portal className={portalClassName}>
-      <BaseDialog.Backdrop className="ds-dialog-backdrop fixed inset-0 z-50 bg-[var(--color-backdrop)] backdrop-blur-[3px]" />
+      <BaseDialog.Backdrop className="ds-dialog-backdrop fixed inset-0 z-50" />
       <BaseDialog.Viewport
         className={cn(
           "fixed inset-0 z-50 flex",
@@ -33,10 +44,7 @@ export function DialogContent({
         )}
       >
         <BaseDialog.Popup
-          className={cn(
-            "ds-dialog-popup w-full max-w-md rounded-[var(--radius-lg)] bg-[var(--color-surface)] p-6 outline-none",
-            className,
-          )}
+          className={cn("ds-dialog-popup w-full max-w-md p-6 outline-none", className)}
           {...props}
         >
           {children}

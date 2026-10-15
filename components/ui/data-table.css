@@ -14,6 +14,7 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  font-family: var(--font-control);
 }
 .ds-table-sort {
   display: inline-flex;

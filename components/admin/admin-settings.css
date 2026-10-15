@@ -57,7 +57,7 @@
 }
 .admin-settings-field label,
 .admin-settings-field-label {
-  padding-top: 12px;
+  padding-top: calc((var(--control-form) - 20px) / 2);
   color: var(--color-caption);
   font-size: 14px;
   line-height: 20px;

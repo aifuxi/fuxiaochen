@@ -2,7 +2,7 @@ import type { AnchorHTMLAttributes, HTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-const cardClassName = "ds-card rounded-[var(--radius-lg)] bg-[var(--color-surface)]";
+const cardClassName = "ds-card rounded-[var(--radius-md)] bg-[var(--color-surface)]";
 
 export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn(cardClassName, className)} {...props} />;

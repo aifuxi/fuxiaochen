@@ -6,19 +6,57 @@
   pointer-events: none;
 }
 .ds-tooltip {
+  position: relative;
   max-width: min(240px, calc(100vw - 24px));
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
-  background: var(--color-raised);
-  color: var(--color-foreground);
-  box-shadow: var(--shadow-popup);
-  font: 500 12px/18px var(--font-sans);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-tooltip);
+  color: var(--color-tooltip-foreground);
+  box-shadow: var(--shadow-tooltip);
+  font: 400 14px/20px var(--font-control);
   overflow-wrap: anywhere;
   transition: opacity var(--motion-quick) var(--motion-ease);
 }
 .ds-tooltip[data-starting-style],
 .ds-tooltip[data-ending-style] {
   opacity: 0;
+}
+.ds-tooltip-arrow {
+  display: flex;
+  width: 24px;
+  height: 7px;
+  color: var(--color-tooltip);
+}
+.ds-tooltip-arrow svg {
+  display: block;
+  fill: currentColor;
+}
+.ds-tooltip-arrow .ds-tooltip-arrow-vertical {
+  display: none;
+}
+.ds-tooltip-arrow[data-side="top"] {
+  bottom: -6px;
+}
+.ds-tooltip-arrow[data-side="bottom"] {
+  top: -6px;
+  transform: scaleY(-1);
+}
+.ds-tooltip-arrow:is([data-side="left"], [data-side="right"]) {
+  width: 7px;
+  height: 24px;
+}
+.ds-tooltip-arrow:is([data-side="left"], [data-side="right"]) .ds-tooltip-arrow-horizontal {
+  display: none;
+}
+.ds-tooltip-arrow:is([data-side="left"], [data-side="right"]) .ds-tooltip-arrow-vertical {
+  display: block;
+}
+.ds-tooltip-arrow[data-side="left"] {
+  right: -6px;
+}
+.ds-tooltip-arrow[data-side="right"] {
+  left: -6px;
+  transform: scaleX(-1);
 }
 @media (prefers-reduced-motion: reduce) {
   .ds-tooltip {

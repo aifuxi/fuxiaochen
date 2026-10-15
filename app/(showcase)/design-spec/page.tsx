@@ -83,10 +83,7 @@ export default function DesignWorkbench() {
   );
 
   return (
-    <div
-      className={cn(styles.scope, theme === "light" && styles.light, "design-showcase workbench")}
-      data-preview-theme={theme}
-    >
+    <div className={cn(styles.scope, "design-showcase workbench")} data-preview-theme={theme}>
       <a
         href="#workbench-content"
         className="workbench-skip"
@@ -210,7 +207,7 @@ export default function DesignWorkbench() {
           </div>
           <footer className="workbench-footer">
             Afterglow <span aria-hidden="true">·</span> 设计工作台 <span aria-hidden="true">/</span>{" "}
-            局部试验
+            Semi 默认主题 + modern
           </footer>
         </div>
       </main>

@@ -160,7 +160,7 @@
   border-radius: 0;
   padding: 24px;
   color: var(--color-foreground);
-  background: var(--color-surface);
+  background: var(--color-bg-2);
   --admin-divider: color-mix(in srgb, var(--color-outline) 60%, transparent);
   transition: none;
   transform: none;
@@ -247,8 +247,8 @@
   padding: 0;
 }
 .post-editor-icon[aria-pressed="true"] {
-  color: var(--color-focus);
-  background: var(--color-raised);
+  color: var(--color-primary);
+  background: var(--color-primary-light-default);
 }
 .post-editor-insert.ds-button {
   height: 34px;
@@ -352,9 +352,10 @@
 }
 .post-editor-bubble {
   z-index: 60;
-  border: 1px solid var(--color-outline);
-  background: var(--color-raised);
-  border-radius: 10px;
+  border: 0;
+  background: var(--color-overlay);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popup);
   padding: 4px;
   max-width: calc(100vw - 40px);
   overflow-x: auto;
@@ -369,9 +370,11 @@
   max-height: min(420px, 55dvh);
   overflow-y: auto;
   padding: 8px;
-  border: 1px solid var(--color-outline);
-  border-radius: 14px;
-  background: var(--color-raised);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-overlay);
+  box-shadow: var(--shadow-popup);
+  font-family: var(--font-control);
   color: var(--color-foreground);
   z-index: 60;
 }
@@ -394,15 +397,17 @@
   height: 38px;
   gap: 12px;
   padding: 0 10px;
-  border-radius: 8px;
-  font-size: 13px;
+  border-radius: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
 }
 .post-editor-menu-item[aria-selected="true"],
 .post-editor-menu-item:hover:not(:disabled) {
-  background: var(--color-input-hover);
+  background: var(--color-fill-0);
 }
 .post-editor-menu-item:active:not(:disabled) {
-  background: var(--color-input);
+  background: var(--color-fill-1);
 }
 .post-editor-footer {
   display: flex;

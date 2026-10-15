@@ -15,12 +15,12 @@ type FoundationsProps = {
 const paletteGroups = [
   {
     title: "表面",
-    description: "深色采用午夜黑蓝；浅色以纯白页面和冷霜白内容表面建立层级。",
+    description: "沿用 Semi 默认主题的深浅色表面，modern 补充组件边缘、高光与阴影。",
     colors: [
       { token: "background", label: "页面底色", usage: "工作台的连续背景" },
       { token: "surface", label: "内容表面", usage: "预览面板与内容分组" },
       { token: "stage", label: "效果舞台", usage: "需要独立背景的效果样本" },
-      { token: "raised", label: "浮起表面", usage: "次级操作、色板卡片与浮层" },
+      { token: "raised", label: "浮起表面", usage: "色板卡片与浮层" },
       { token: "input", label: "输入底色", usage: "表单控件的默认表面" },
       { token: "input-hover", label: "输入悬停", usage: "输入控件的悬停表面" },
       { token: "input-active", label: "输入按下", usage: "输入控件的按下表面" },
@@ -32,11 +32,11 @@ const paletteGroups = [
     colors: [
       { token: "foreground", label: "主要文字", usage: "标题、字段值与重要内容" },
       { token: "foreground-reading", label: "阅读文字", usage: "正文与连续说明" },
-      { token: "muted", label: "辅助颜色", usage: "暗色说明文字与浅色辅助图标" },
-      { token: "caption", label: "说明文字", usage: "当前模式的说明与输入占位文字" },
+      { token: "muted", label: "辅助颜色", usage: "辅助说明与图标" },
+      { token: "caption", label: "说明文字", usage: "当前模式的说明文字" },
       { token: "focus-text", label: "蓝色强调文字", usage: "链接、小字与选中导航的可读蓝色" },
-      { token: "subtle", label: "弱化颜色", usage: "用于滚动条等非文字辅助元素" },
-      { token: "primary-foreground", label: "主要操作文字", usage: "蓝色按钮内的白色文字" },
+      { token: "subtle", label: "弱化颜色", usage: "占位、禁用与弱化信息" },
+      { token: "primary-foreground", label: "主要操作文字", usage: "实心主要操作内的白色文字" },
     ],
   },
   {
@@ -45,10 +45,25 @@ const paletteGroups = [
     colors: [
       { token: "primary", label: "主要操作", usage: "主按钮与重点标识" },
       { token: "primary-hover", label: "主要操作悬停", usage: "主按钮悬停时的反馈色" },
-      { token: "primary-pressed", label: "主要操作按下", usage: "主按钮按下时压暗" },
-      { token: "focus", label: "键盘焦点", usage: "独立的 2px 焦点轮廓" },
+      { token: "primary-pressed", label: "主要操作按下", usage: "主按钮按下时的反馈色" },
+      { token: "focus", label: "键盘焦点", usage: "组件聚焦边框与键盘焦点轮廓" },
       { token: "success", label: "成功状态", usage: "完成操作与成功反馈" },
       { token: "danger", label: "错误状态", usage: "错误信息与无效字段" },
+    ],
+  },
+  {
+    title: "填充与边缘",
+    description: "以共享语义色复现 Semi 控件填充、边框、选中和禁用状态。",
+    colors: [
+      { token: "fill-0", label: "默认填充", usage: "轻量操作与交互底面" },
+      { token: "fill-1", label: "悬停填充", usage: "轻量操作的悬停反馈" },
+      { token: "fill-2", label: "按下填充", usage: "轻量操作的按下反馈" },
+      { token: "primary-light-default", label: "主要淡色", usage: "主要轻量按钮与选中底色" },
+      { token: "outline", label: "默认边框", usage: "卡片、输入与浮层的语义边缘" },
+      { token: "disabled-text", label: "禁用文字", usage: "不可操作控件的文字与图标" },
+      { token: "disabled-bg", label: "禁用底色", usage: "不可操作控件的背景" },
+      { token: "overlay", label: "浮层表面", usage: "选择面板与非模态浮层的底色" },
+      { token: "backdrop", label: "模态遮罩", usage: "对话框背后的遮罩" },
     ],
   },
 ] as const;
@@ -148,13 +163,13 @@ function ColorFoundations({ onNotice }: Pick<FoundationsProps, "onNotice">) {
               className="w-full"
             />
             <p id="color-focus-description" className="workbench-caption">
-              可操作示例。焦点保留 2px 轮廓与 2px 外距，独立于选中和错误状态。
+              可操作示例。输入使用焦点边框，其他控件按各自样式显示键盘焦点提示。
             </p>
           </div>
         </div>
       </section>
       <div className="workbench-stack">
-        <p className="workbench-note">色值来自当前试验区。点击复制按钮可获取正在使用的值。</p>
+        <p className="workbench-note">色值来自当前全站主题。点击复制按钮可获取正在使用的值。</p>
         {paletteGroups.map(({ title, description, colors }) => (
           <section key={title} className="space-y-4" aria-label={title}>
             <div>
@@ -241,7 +256,7 @@ const typeSamples = [
   {
     name: "参数与代码",
     spec: "12 / 18 · 400",
-    text: "--radius-form: 12px; 0123456789",
+    text: "--radius-form: 8px; 0123456789",
     className: "font-mono text-xs leading-[18px] text-[var(--color-caption)]",
   },
 ] as const;
@@ -299,24 +314,20 @@ function SpacingFoundations() {
             圆角分工
           </h2>
           <p className="workbench-note mt-1">
-            同级控件保持一致，内嵌操作比外层小一档；开关、徽标与状态圆点保留自身形状。
+            采用 modern 的 4 / 8 / 16 / 24px 圆角阶梯；细节使用
+            4px，开关、徽标与状态圆点保留自身形状。
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             [
               "8px",
-              "内嵌操作与列表项",
-              "--radius-sm",
-              "输入框内的图标操作、选项、标签项、目录与折叠面板标题。",
-            ],
-            [
-              "12px",
-              "独立控件与组合外壳",
+              "按钮与表单控件",
               "--radius-form",
-              "按钮、输入、选择浮层与标签组外壳；外壳与 8px 选项之间保留 4px。",
+              "按钮、输入与选择触发器采用一致的控件轮廓。",
             ],
-            ["16px", "卡片与对话框", "--radius-lg", "样本、色板卡片、对话框与反馈浮层。"],
+            ["16px", "卡片与反馈浮层", "--radius-md", "内容卡片、选择浮层、Tooltip 与 Toast。"],
+            ["24px", "对话框", "--radius-lg", "模态任务表面沿用 modern 的大圆角。"],
           ].map(([value, label, token, description]) => (
             <div key={token} className="space-y-3">
               <div
@@ -364,8 +375,8 @@ function SpacingFoundations() {
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            [36, "桌面导航与工具栏"],
-            [40, "桌面表单"],
+            [24, "小型按钮"],
+            [32, "桌面控件与表单"],
             [44, "触屏操作目标"],
           ].map(([value, label]) => (
             <div key={value} className="space-y-3">
@@ -397,13 +408,14 @@ function Guidelines() {
           设计试验区
         </h2>
         <p className="workbench-note">
-          这里用来查看和试用设计规则。深浅色色盘和模式选择已与全站共用；工作台的尺寸、布局与无描边变体继续只作用于本页及其浮层。
+          这里用来查看和试用设计规则。色盘、组件尺寸、圆角与状态均继承全站的 Semi 默认主题叠加
+          modern；工作台保留独立的目录、样本布局与滚动容器。
         </p>
         <p className="workbench-note">
           从目录选择一个条目，先操作样本，再检查状态与使用规则。切换条目后，组件回到初始状态；切换深浅模式保留当前条目与输入，并记住全站的模式选择。
         </p>
         <p className="workbench-rule">
-          本页为开发环境预览。布局与组件变体按授权范围单独推广，色值与全站共享主题同步。
+          本页为开发环境预览。页面布局保持原有构图，基础组件与业务页面使用同一套共享样式。
         </p>
       </section>
       <section className="workbench-sample space-y-5" aria-labelledby="principles-title">
@@ -413,8 +425,8 @@ function Guidelines() {
         <dl className="space-y-5">
           {[
             [
-              "表面保持安静",
-              "以午夜黑蓝或纯白与冷霜白表面、留白与字重建立层级。禁止常驻浅色描边和装饰分割线，也不使用内阴影或伪元素变相画线。",
+              "表面层级与组件语义一致",
+              "以 Semi 默认主题的表面、填充与边框表达层级，采用 modern 的细边缘、高光与阴影。页面装饰保持克制。",
             ],
             [
               "每次操作都有回应",
@@ -446,9 +458,9 @@ function Guidelines() {
             ["docs/design/frontend.md", "前台场景与试验区边界"],
             ["app/globals.css", "全站主题与共享默认样式"],
             ["components/ui/*", "本地组件与 Base UI 交互语义"],
-            ["design-spec/preview.module.css", "当前试验区的局部尺寸与组件变体"],
+            ["design-spec/preview.module.css", "工作台排版与局部滚动容器"],
             ["components/theme/*", "全站主题偏好与切换入口"],
-            ["COLOR_TOKENS.md", "当前深浅色色盘的用户参考"],
+            ["semi-ui-vue/packages/theme-default + theme-modern", "组件视觉与主题叠加顺序的来源"],
           ].map(([path, role]) => (
             <div
               key={path}
@@ -460,7 +472,7 @@ function Guidelines() {
           ))}
         </dl>
         <p className="workbench-note">
-          设计语言与效果实现参考{" "}
+          组件视觉采用 Semi UI Vue 默认主题叠加 modern；已有动效参考{" "}
           <a
             href="https://libraries.dev/"
             target="_blank"

@@ -7,6 +7,8 @@ import { Popover as BasePopover } from "@base-ui/react/popover";
 import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
+import "./overlays.css";
+
 export const Popover = BasePopover.Root;
 export const PopoverTrigger = BasePopover.Trigger;
 export const PopoverTitle = BasePopover.Title;
@@ -22,10 +24,7 @@ export function PopoverContent({
     <BasePopover.Portal>
       <BasePopover.Positioner align="end" sideOffset={12} collisionPadding={12} className="z-50">
         <BasePopover.Popup
-          className={cn(
-            "ds-popover-popup rounded-[var(--radius-lg)] bg-[var(--color-surface)] outline-none",
-            className,
-          )}
+          className={cn("ds-popover-popup outline-none", className)}
           render={render ?? renderPopupMotion}
           {...props}
         >

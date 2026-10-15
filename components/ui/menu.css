@@ -3,21 +3,22 @@
   max-width: calc(100vw - 24px);
   max-height: var(--available-height);
   overflow-y: auto;
-  padding: 6px;
-  border: 1px solid var(--color-outline);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
+  padding: 4px 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-overlay);
   color: var(--color-foreground);
   outline: none;
   box-shadow: var(--shadow-popup);
+  font-family: var(--font-control);
 }
 .ds-menu-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: var(--control-compact);
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 16px;
+  border-radius: 0;
   outline: none;
   font-size: 14px;
   line-height: 20px;
@@ -27,28 +28,30 @@
 .ds-menu-item > span {
   display: flex;
 }
-.ds-menu-item:hover,
-.ds-menu-item[data-highlighted] {
-  background: var(--color-surface-hover);
+.ds-menu-item:not(:disabled):not([data-disabled]):not([aria-disabled="true"]):where(
+    :hover,
+    [data-highlighted]
+  ) {
+  background: var(--semi-color-fill-0);
 }
-.ds-menu-item:active {
-  background: var(--color-stage);
+.ds-menu-item:not(:disabled):not([data-disabled]):not([aria-disabled="true"]):active {
+  background: var(--semi-color-fill-1);
 }
 .ds-menu-item:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: -2px;
 }
 .ds-menu-item.is-destructive {
-  color: var(--color-danger-text);
+  color: var(--color-danger);
 }
-.ds-menu-item[data-disabled] {
-  opacity: 0.45;
+.ds-menu-item:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--semi-color-disabled-text);
   cursor: not-allowed;
   background: transparent;
 }
 .ds-menu-separator {
   height: 1px;
-  margin: 6px 4px;
+  margin: 4px 0;
   background: var(--color-outline);
 }
 .ds-row-actions.ds-button {

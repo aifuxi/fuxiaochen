@@ -8,8 +8,13 @@ import { Check, ChevronDown, X } from "lucide-react";
 import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
+import "./overlays.css";
+
 export const Combobox = BaseCombobox.Root;
-export const ComboboxList = BaseCombobox.List;
+
+export function ComboboxList({ className, ...props }: ComponentProps<typeof BaseCombobox.List>) {
+  return <BaseCombobox.List className={cn("ds-picker-list", className)} {...props} />;
+}
 
 export function ComboboxInputGroup({
   className,
@@ -92,7 +97,7 @@ export function ComboboxContent({
           render={render ?? renderPopupMotion}
           {...props}
         >
-          <BaseCombobox.Empty className="px-3 py-4 text-center text-xs text-[var(--color-caption)]">
+          <BaseCombobox.Empty className="px-3 py-4 text-center text-sm leading-5 text-[var(--color-caption)]">
             {emptyText}
           </BaseCombobox.Empty>
           {children}
@@ -109,10 +114,12 @@ export function ComboboxItem({
 }: ComponentProps<typeof BaseCombobox.Item>) {
   return (
     <BaseCombobox.Item className={cn("ds-picker-item", className)} {...props}>
+      <span className="ds-picker-indicator" aria-hidden="true">
+        <BaseCombobox.ItemIndicator>
+          <Check size={16} />
+        </BaseCombobox.ItemIndicator>
+      </span>
       <span className="min-w-0 flex-1 truncate">{children}</span>
-      <BaseCombobox.ItemIndicator className="shrink-0 text-[var(--color-focus)]">
-        <Check size={15} aria-hidden="true" />
-      </BaseCombobox.ItemIndicator>
     </BaseCombobox.Item>
   );
 }
