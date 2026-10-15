@@ -346,7 +346,7 @@
   position: absolute;
   inset: 10px 2px;
   border: 1px solid transparent;
-  border-radius: 12px;
+  border-radius: var(--radius-pill);
   background: var(--switch-bg);
   transition: background-color 200ms ease-in-out;
 }
