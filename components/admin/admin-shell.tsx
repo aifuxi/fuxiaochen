@@ -8,7 +8,6 @@ import {
   Clock3,
   FileText,
   Home,
-  ImageIcon,
   Link2,
   Menu,
   Plus,
@@ -27,13 +26,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-export type AdminPanel =
-  | "notifications"
-  | "backup"
-  | "compose"
-  | "profile"
-  | "upload"
-  | "categories";
+export type AdminPanel = "notifications" | "backup" | "compose" | "profile" | "categories";
 
 type Props = {
   children: ReactNode;
@@ -51,7 +44,6 @@ const navGroups = [
     items: [
       { name: "文章管理", icon: FileText, href: "/admin/posts" },
       { name: "分类与标签", icon: Tags, href: "/admin/categories" },
-      { name: "媒体库", icon: ImageIcon, href: "/admin/media" },
       { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
     ],
   },

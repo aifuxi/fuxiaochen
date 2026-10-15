@@ -66,7 +66,7 @@ docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/f
 docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/fuxiaochen/compose.yaml run --rm --no-deps -T app npm run db:verify
 ```
 
-支持管理员初始化/重置、数据库备份/恢复、媒体 dry-run/清理。交互命令保留 TTY；自动任务使用 -T。不共享宿主机 .env 到镜像，Compose 显式注入运行环境。停止 Web 和调度后才手工 db:migrate；日常更新交给 serve 启动流程。
+支持管理员初始化/重置和数据库备份/恢复。媒体清理命令已移除，升级时停用旧媒体清理调度，OSS 文件由管理员自行管理。交互命令保留 TTY；自动任务使用 -T。不共享宿主机 .env 到镜像，Compose 显式注入运行环境。停止 Web 和调度后才手工 db:migrate；日常更新交给 serve 启动流程。
 
 每分钟 operations:run 的外部调度继续保留：记录备份调度时间，按后台开关执行当天自动备份。首次切换时将旧 tools 命令更新为上述 app 命令，版本随唯一 APP_IMAGE 更新；未配置调度时每日自动备份不会执行。启动前备份独立于后台每日开关，无需启用自动备份即可执行。调度配置本阶段未改动任何服务器。
 

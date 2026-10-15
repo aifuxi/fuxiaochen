@@ -7,9 +7,6 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { AdminBusinessError, authorizeAdmin } from "@/lib/admin/service";
 import { writeTransaction, type DatabaseTransaction } from "@/lib/database";
 import { friendLink } from "@/lib/database/schema";
-import { MediaError } from "@/lib/media/error";
-import { friendReferenceUrls } from "@/lib/media/reference-urls";
-import { ensureNewMediaReferences } from "@/lib/media/references";
 
 import {
   friendSchema,
@@ -78,12 +75,6 @@ export async function getFriend(id: string, actor: TaxonomyActor) {
 export async function createFriend(input: CreateFriendInput, actor: TaxonomyActor) {
   return writeTransaction((tx) => {
     authorizeAdmin(actor, tx);
-    try {
-      ensureNewMediaReferences(tx, friendReferenceUrls(input));
-    } catch (error) {
-      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
-      throw error;
-    }
     const now = new Date();
     const id = randomUUID();
     tx.insert(friendLink)
@@ -103,13 +94,7 @@ export async function createFriend(input: CreateFriendInput, actor: TaxonomyActo
 export async function updateFriend(id: string, input: UpdateFriendInput, actor: TaxonomyActor) {
   return writeTransaction((tx) => {
     authorizeAdmin(actor, tx);
-    const previous = detail(id, tx);
-    try {
-      ensureNewMediaReferences(tx, friendReferenceUrls(input), friendReferenceUrls(previous));
-    } catch (error) {
-      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
-      throw error;
-    }
+    detail(id, tx);
     const { version, ...fields } = input;
     if (
       !tx

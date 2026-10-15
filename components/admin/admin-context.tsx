@@ -2,22 +2,13 @@
 
 import { createContext, useContext } from "react";
 
-import type { DeleteMediaInput } from "@/lib/media/schema";
 import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
-import type { UploadJob } from "./use-media";
 import type { TaxonomyState } from "./use-taxonomy";
 
 type AdminState = TaxonomyState & {
-  mediaRevision: number;
-  mediaUploads: UploadJob[];
-  retryMediaUpload: (id: string) => Promise<void>;
-  clearMediaUploads: () => void;
-  onUploadMedia: (files: File[]) => Promise<void>;
-  onDeleteMedia: (id: string, input?: DeleteMediaInput) => Promise<void>;
   onMessage: (message: string) => void;
-  uploadingMedia: boolean;
   postRevision: number;
   postPending: boolean;
   operationRevision: number;

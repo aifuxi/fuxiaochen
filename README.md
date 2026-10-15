@@ -85,7 +85,7 @@ node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'
 Dockerfile 的 `runtime` 为唯一应用与运维镜像，Compose 只有 `app`，使用已准备的独立外部 SQLite 数据卷；不需要 PostgreSQL 初始化脚本、migrate 或 tools 服务。每次容器启动已有库先备份再迁移和校验，默认拒绝缺失数据库；全新站点仅明确允许 `SQLITE_INITIALIZE=1` 时建库。正式切换仍需准备最终迁移数据、备份和线上授权，不能直接部署到旧卷。每日自动备份继续使用外部调度，CLI 改用相同 app 镜像；备份不包含 OSS 文件。
 
 - [部署、调度与备份恢复](docs/deployment.md)
-- [OSS 配置与临时上传清理](docs/media-storage.md)
+- [OSS 图片直传配置](docs/media-storage.md)
 - [数据库维护](docs/maintenance.md)
 
 ## 项目文档

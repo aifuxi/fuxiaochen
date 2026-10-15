@@ -466,66 +466,26 @@
   min-width: 0;
 }
 .post-media-picker {
-  max-width: 720px;
+  max-width: 560px;
 }
-.post-media-picker > output {
-  display: block;
+.post-media-picker .admin-post-error {
+  color: var(--color-danger-text);
+}
+.post-image-upload {
+  display: grid;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+.post-image-progress {
+  display: grid;
+  gap: var(--space-sm);
   color: var(--color-caption);
   font-size: var(--text-label);
-  line-height: 20px;
-}
-.post-media-picker-tools {
-  display: flex;
-  gap: 12px;
-  margin: 20px 0;
-}
-.post-media-picker-tools input {
-  flex: 1;
-  min-width: 0;
-}
-.post-media-picker-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-bottom: 20px;
-}
-.post-media-picker-grid .ds-button {
-  height: auto;
-  min-width: 0;
-  display: grid;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 8px;
-}
-.post-media-picker-grid img {
-  width: 100%;
-  height: 100px;
-  object-fit: contain;
-  background: var(--color-stage);
-  border-radius: 8px;
-}
-.post-media-picker-grid span {
   overflow-wrap: anywhere;
-  white-space: normal;
-  font-size: 12px;
 }
-.post-media-picker-grid [aria-pressed="true"] {
-  outline: 2px solid var(--color-focus);
-  outline-offset: -2px;
-}
-.post-media-picker-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin: 16px 0;
-}
-.post-media-picker-pagination > span {
-  color: var(--color-caption);
-  font-family: var(--font-mono);
-  font-size: var(--text-label);
-  line-height: 20px;
-  text-align: center;
+.post-image-progress progress {
+  width: 100%;
+  accent-color: var(--color-primary);
 }
 
 @media (max-width: 600px), (pointer: coarse) {
@@ -553,15 +513,6 @@
   .post-editor-footer {
     flex-direction: column;
     gap: 6px;
-  }
-  .post-media-picker-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .post-media-picker-tools {
-    flex-direction: column;
-  }
-  .post-media-picker-tools .ds-input {
-    flex: none;
   }
 }
 @media (max-width: 600px) {

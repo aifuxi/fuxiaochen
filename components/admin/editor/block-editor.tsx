@@ -565,14 +565,20 @@ export function BlockEditor({
       {imageOpen && (
         <EditorMediaPicker
           onClose={closeImage}
-          onInsert={(image, alt) => {
-            if (!image.url || disabled) return;
-            editor
+          onInsert={(src, alt) => {
+            if (disabled) throw new Error("请等待文章保存完成。");
+            const inserted = editor
               .chain()
               .focus()
               .setTextSelection(imageSelection)
-              .setImage({ src: image.url, alt })
+              .setImage({ src, alt })
+              .command(({ tr }) => {
+                // 图片与其他正文块共用文档约束，插入失败保留弹窗和输入。
+                postContentSchema.parse(serializeDocument(tr.doc.toJSON()));
+                return true;
+              })
               .run();
+            if (!inserted) throw new Error("图片无法插入当前位置，请选择正文中的其他位置。");
             setImageOpen(false);
           }}
         />

@@ -23,8 +23,6 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?请配置至少 32 个字符的随机认证密钥}
       OSS_BUCKET: ${OSS_BUCKET:-}
       OSS_REGION: ${OSS_REGION:-cn-hangzhou}
-      OSS_SERVER_ENDPOINT: ${OSS_SERVER_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
-      OSS_SERVER_ENDPOINT_MODE: ${OSS_SERVER_ENDPOINT_MODE:-service}
       OSS_UPLOAD_ENDPOINT: ${OSS_UPLOAD_ENDPOINT:-https://s3.oss-cn-hangzhou.aliyuncs.com}
       OSS_UPLOAD_ENDPOINT_MODE: ${OSS_UPLOAD_ENDPOINT_MODE:-service}
       OSS_PUBLIC_ORIGIN: ${OSS_PUBLIC_ORIGIN:-}

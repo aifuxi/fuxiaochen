@@ -8,9 +8,6 @@ import type { TaxonomyActor } from "@/lib/taxonomy/service";
 import { authorizeAdmin, AdminBusinessError } from "@/lib/admin/service";
 import { writeTransaction, type DatabaseTransaction } from "@/lib/database";
 import { siteSetting, socialAccount } from "@/lib/database/schema";
-import { MediaError } from "@/lib/media/error";
-import { settingsReferenceUrls } from "@/lib/media/reference-urls";
-import { ensureNewMediaReferences } from "@/lib/media/references";
 
 import { defaultSettings, settingsSchema, type SettingsInput, type PublicSettings } from "./schema";
 
@@ -64,14 +61,8 @@ export async function getSettings(actor: TaxonomyActor) {
 export async function saveSettings(input: SettingsInput, actor: TaxonomyActor) {
   return writeTransaction((tx) => {
     authorizeAdmin(actor);
-    const previous = read(tx);
+    read(tx);
     const { socials, version, ...fields } = input;
-    try {
-      ensureNewMediaReferences(tx, settingsReferenceUrls(input), settingsReferenceUrls(previous));
-    } catch (error) {
-      if (error instanceof MediaError) throw new AdminBusinessError("INVALID_INPUT", error.message);
-      throw error;
-    }
     const updated = tx
       .update(siteSetting)
       .set({

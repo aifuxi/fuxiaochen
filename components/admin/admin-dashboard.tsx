@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Plus, Tags, UploadCloud } from "lucide-react";
+import { ArrowUpRight, Plus, Tags } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -126,10 +126,6 @@ export function AdminDashboard({
       <section className="admin-quick" aria-label="常用操作">
         <h2>常用操作</h2>
         <div className="admin-quick-buttons">
-          <Button size="compact" variant="secondary" onClick={() => onOpen("upload")}>
-            <UploadCloud size={15} />
-            上传媒体
-          </Button>
           <Button size="compact" variant="secondary" onClick={() => onOpen("categories")}>
             <Tags size={15} />
             分类标签

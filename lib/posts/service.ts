@@ -12,9 +12,6 @@ import {
   type DatabaseTransaction,
 } from "@/lib/database";
 import { category, post, postTag, tag } from "@/lib/database/schema";
-import { MediaError } from "@/lib/media/error";
-import { documentReferenceUrls } from "@/lib/media/reference-urls";
-import { ensureNewMediaReferences } from "@/lib/media/references";
 
 import type {
   FeaturedPostInput,
@@ -192,19 +189,6 @@ export async function getPost(id: string, actor: TaxonomyActor) {
   authorize(actor);
   return detail(id, getDatabase());
 }
-function validateMedia(content: string, tx: DatabaseTransaction, previous?: string) {
-  try {
-    ensureNewMediaReferences(
-      tx,
-      documentReferenceUrls(content),
-      previous ? documentReferenceUrls(previous) : [],
-    );
-  } catch (error) {
-    if (error instanceof MediaError)
-      throw new PostError("INVALID_INPUT", error.message, { content: [error.message] });
-    throw error;
-  }
-}
 function validateRelations(input: PostInput | PostUpdateInput, tx: DatabaseTransaction) {
   if (
     input.categoryId &&
@@ -243,7 +227,6 @@ export async function createPost(input: PostInput, actor: TaxonomyActor) {
     authorize(actor);
     validateRelations(input, tx);
     validateSlug(input.slug, tx);
-    validateMedia(input.content, tx);
     const { tagIds, isFeatured, ...data } = input;
     const dates = publication(input);
     const id = randomUUID();
@@ -278,7 +261,6 @@ export async function updatePost(id: string, input: PostUpdateInput, actor: Taxo
       });
     validateRelations(input, tx);
     validateSlug(input.slug, tx, id);
-    validateMedia(input.content, tx, previous.content);
     const { tagIds, version, summary, isFeatured, featuredOrder, ...data } = input;
     const updated = tx
       .update(post)

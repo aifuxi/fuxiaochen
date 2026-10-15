@@ -8,16 +8,13 @@ import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/s
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { MEDIA_SIZE_HINT } from "@/lib/media/schema";
 import { postDisplayTitle } from "@/lib/posts/schema";
 
 import { AdminContext } from "./admin-context";
 import { AdminPasskeys } from "./admin-passkeys";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { NotificationCenter, useNotificationSummary } from "./global-operations";
-import { MediaUploadStatus } from "./media-upload-status";
 import { useNavigationGuard } from "./navigation-guard";
-import { useMediaUploads } from "./use-media";
 import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
@@ -27,13 +24,11 @@ type DialogPanel = Exclude<AdminPanel, "compose" | "backup" | "categories">;
 const panelTitles: Record<DialogPanel, string> = {
   notifications: "通知",
   profile: "管理账户",
-  upload: "上传媒体",
 };
 
 const panelDescriptions: Record<DialogPanel, string> = {
   notifications: "查看待办和执行结果，已读状态随账户保存。",
   profile: "管理通行密钥并退出登录。",
-  upload: "选择图片或附件上传到媒体库。",
 };
 
 export function AdminWorkspace({ children }: { children: ReactNode }) {
@@ -59,7 +54,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [postDeleteTarget, setPostDeleteTarget] = useState<PostItem | null>(null);
   const [postDeleteError, setPostDeleteError] = useState("");
   const [postDeleteConflict, setPostDeleteConflict] = useState(false);
-  const mediaState = useMediaUploads(setMessage);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -160,7 +154,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   return (
     <AdminContext.Provider
       value={{
-        ...mediaState,
         onMessage: setMessage,
         postRevision,
         postPending: postPending || operationPending,
@@ -252,35 +245,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
                       退出登录
                     </Button>
                   </form>
-                </div>
-              )}
-              {panel === "upload" && (
-                <div className="admin-modal-section">
-                  <label htmlFor="admin-upload">选择图片或附件</label>
-                  <input
-                    id="admin-upload"
-                    className="admin-file-input"
-                    type="file"
-                    multiple
-                    disabled={mediaState.uploadingMedia}
-                    onChange={(event) => {
-                      const selected = Array.from(event.target.files ?? []);
-                      event.target.value = "";
-                      void mediaState.onUploadMedia(selected);
-                    }}
-                  />
-                  <p className="admin-muted">
-                    {MEDIA_SIZE_HINT}文件上传并通过核验后可复制永久链接。
-                  </p>
-                  <MediaUploadStatus />
-                  <Button
-                    onClick={() => {
-                      setPanel(null);
-                      guardNavigation(() => router.push("/admin/media"));
-                    }}
-                  >
-                    查看媒体库
-                  </Button>
                 </div>
               )}
             </>
