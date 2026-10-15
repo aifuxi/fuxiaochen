@@ -32,7 +32,6 @@ import {
   createPost,
   deletePost,
   getPost,
-  getPostSummary,
   listPosts,
   updatePost,
   updatePostFeatured,
@@ -219,9 +218,9 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
   assert.equal(draft.category, null);
   assert.equal(draft.slugLockedAt, null);
   assert.deepEqual(draft.tags, []);
-  const summary = await getPostSummary(actor);
-  assert.equal(summary.recentDrafts[0].id, draft.id);
-  assert.deepEqual(summary.statusCounts, { all: 1, draft: 1, published: 0 });
+  const drafts = await listPosts(postQuerySchema.parse({ status: "draft" }), actor);
+  assert.equal(drafts.items[0].id, draft.id);
+  assert.deepEqual(drafts.statusCounts, { all: 1, draft: 1, published: 0 });
   const category = await createCategory({ name: "发布分类", color: "#123456" }, actor);
   const tags = await Promise.all([
     createTag({ name: "Z 标签" }, actor),

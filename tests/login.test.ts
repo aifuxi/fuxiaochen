@@ -97,7 +97,7 @@ void test("HTML fallback 保持成功 303 和非生产 Cookie", async () => {
   const { app } = fixture({ secure: false });
   const response = await app.request(request({}, false));
   assert.equal(response.status, 303);
-  assert.equal(response.headers.get("location"), "/admin");
+  assert.equal(response.headers.get("location"), "/admin/posts");
   assert.equal(response.headers.get("cache-control"), "no-store");
   assert.ok(response.headers.get("set-cookie")?.includes("HttpOnly"));
   assert.ok(!response.headers.get("set-cookie")?.includes("Secure"));

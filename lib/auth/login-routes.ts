@@ -54,7 +54,7 @@ export function createLoginRoutes(dependencies: LoginDependencies) {
       // 签名与 Cookie 属性由 Better Auth 生成，不在表单适配层重新实现。
       for (const cookie of result.headers.getSetCookie())
         c.header("Set-Cookie", cookie, { append: true });
-      return acceptsLoginJson(c) ? c.json({ success: true }) : c.redirect("/admin", 303);
+      return acceptsLoginJson(c) ? c.json({ success: true }) : c.redirect("/admin/posts", 303);
     },
   );
   return routes;

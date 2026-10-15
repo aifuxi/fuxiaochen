@@ -20,7 +20,6 @@ import {
   createPost,
   deletePost,
   getPost,
-  getPostSummary,
   listPosts,
   PostError,
   updatePost,
@@ -88,7 +87,6 @@ postRoutes.get(
   }),
   async (c) => c.json({ data: await listPosts(c.req.valid("query"), c.get("admin")) }),
 );
-postRoutes.get("/summary", async (c) => c.json({ data: await getPostSummary(c.get("admin")) }));
 postRoutes.get("/:id", idValidator, async (c) =>
   c.json({ data: await getPost(c.req.valid("param").id, c.get("admin")) }),
 );

@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
-import type { PostDetail, PostInput, PostItem, PostSummary } from "@/lib/posts/schema";
+import type { PostDetail, PostInput, PostItem } from "@/lib/posts/schema";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -15,11 +15,11 @@ import { AdminPasskeys } from "./admin-passkeys";
 import { AdminShell, type AdminPanel } from "./admin-shell";
 import { NotificationCenter, useNotificationSummary } from "./global-operations";
 import { useNavigationGuard } from "./navigation-guard";
-import { AdminRequestError, postRequest, usePostQuery } from "./use-posts";
+import { AdminRequestError, postRequest } from "./use-posts";
 import { useTaxonomy } from "./use-taxonomy";
 import "./admin.css";
 
-type DialogPanel = Exclude<AdminPanel, "compose" | "backup" | "categories">;
+type DialogPanel = Exclude<AdminPanel, "compose" | "backup">;
 
 const panelTitles: Record<DialogPanel, string> = {
   notifications: "通知",
@@ -37,7 +37,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const [operationRevision, setOperationRevision] = useState(0);
   const [operationPending, setOperationPending] = useState(false);
   const operationMutation = useRef(false);
-  const summary = usePostQuery("/summary", postRevision, postRequest<PostSummary>);
   const [postPending, setPostPending] = useState(false);
   const guardNavigation = useNavigationGuard(false, postPending || operationPending);
   const [writingFocused, setWritingFocused] = useState(false);
@@ -71,10 +70,10 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
   const openPanel = useCallback(
     (name: AdminPanel) => {
       if (postMutation.current || operationMutation.current) return;
-      if (name === "backup" || name === "categories") {
+      if (name === "backup") {
         guardNavigation(() => {
           setPanel(null);
-          router.push(name === "backup" ? "/admin/backups" : "/admin/categories");
+          router.push("/admin/backups");
         });
         return;
       }
@@ -167,10 +166,6 @@ export function AdminWorkspace({ children }: { children: ReactNode }) {
         },
         writingFocused,
         setWritingFocused,
-        postSummary: summary.data,
-        postSummaryLoading: summary.loading,
-        postSummaryError: summary.error,
-        reloadPostSummary: summary.reload,
         savePost,
         setPostFeatured,
         ...taxonomy,

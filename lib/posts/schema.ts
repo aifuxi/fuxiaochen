@@ -112,10 +112,6 @@ export type PostList = {
   pageCount: number;
   statusCounts: PostCounts;
 };
-export type PostSummary = {
-  statusCounts: PostCounts;
-  recentDrafts: PostItem[];
-};
 export const emptyPostCounts: PostCounts = { all: 0, draft: 0, published: 0 };
 export const postDisplayTitle = (title: string) => title.trim() || "未命名草稿";
 export function postTime(value: string | null, dateOnly = false) {

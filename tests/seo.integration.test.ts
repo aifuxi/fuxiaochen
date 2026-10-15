@@ -192,8 +192,24 @@ void test(
         body: new URLSearchParams({ username: "seo_test_admin", password }),
       });
       assert.equal(login.status, 303);
+      assert.equal(login.headers.get("location"), "/admin/posts");
       const cookie = login.headers.get("set-cookie")?.split(";")[0];
       assert.ok(cookie, "标准登录 API 应返回测试管理员会话 Cookie。");
+
+      // 旧地址和已登录的登录页统一进入文章管理，匿名访问继续受鉴权保护。
+      for (const path of ["/admin", "/login"]) {
+        const response: Response = await fetch(`${serverOrigin}${path}`, {
+          redirect: "manual",
+          headers: { Cookie: cookie },
+        });
+        assert.equal(response.status, 307);
+        assert.equal(response.headers.get("location"), "/admin/posts");
+      }
+      for (const path of ["/admin", "/admin/posts"]) {
+        const response: Response = await fetch(`${serverOrigin}${path}`, { redirect: "manual" });
+        assert.equal(response.status, 307);
+        assert.equal(response.headers.get("location"), "/login");
+      }
 
       async function api<T>(path: string, method = "GET", body?: unknown): Promise<T> {
         const options: RequestInit = {
@@ -282,8 +298,6 @@ void test(
         });
       const first = await makePost("seo-first", "published", "后台填写的文章摘要。");
       assert.ok(!Object.hasOwn(first, "scheduledFor"));
-      const summary = await api<Record<string, unknown>>("/posts/summary");
-      assert.ok(!Object.hasOwn(summary, "schedules"));
       for (const [path, method, body, expected] of [
         ["/posts?status=scheduled", "GET", undefined, 400],
         ["/posts", "POST", { ...first, content, tagIds: [], status: "scheduled" }, 400],

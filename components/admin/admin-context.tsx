@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import type { PostItem, PostDetail, PostInput, PostSummary } from "@/lib/posts/schema";
+import type { PostItem, PostDetail, PostInput } from "@/lib/posts/schema";
 
 import type { AdminPanel } from "./admin-shell";
 import type { TaxonomyState } from "./use-taxonomy";
@@ -16,10 +16,6 @@ type AdminState = TaxonomyState & {
   onNavigate: (href: string) => void;
   writingFocused: boolean;
   setWritingFocused: (focused: boolean) => void;
-  postSummary: PostSummary | null;
-  postSummaryLoading: boolean;
-  postSummaryError: string;
-  reloadPostSummary: () => void;
   savePost: (input: PostInput, initial: PostDetail | null) => Promise<PostDetail>;
   setPostFeatured: (post: PostItem) => Promise<PostItem>;
   onOpen: (panel: AdminPanel) => void;

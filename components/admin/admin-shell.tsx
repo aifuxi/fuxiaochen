@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Clock3,
   FileText,
-  Home,
   Link2,
   Menu,
   Plus,
@@ -26,7 +25,7 @@ import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
-export type AdminPanel = "notifications" | "backup" | "compose" | "profile" | "categories";
+export type AdminPanel = "notifications" | "backup" | "compose" | "profile";
 
 type Props = {
   children: ReactNode;
@@ -38,7 +37,6 @@ type Props = {
 };
 
 const navGroups = [
-  { name: "", items: [{ name: "工作台", icon: Home, href: "/admin" }] },
   {
     name: "内容",
     items: [
@@ -104,9 +102,7 @@ export function AdminShell({
               )}
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const active =
-                  pathname === item.href ||
-                  (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
+                const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 const content = (
                   <>
                     <Icon size={18} strokeWidth={1.8} aria-hidden="true" />

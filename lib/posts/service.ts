@@ -161,19 +161,6 @@ export async function listPosts(query: PostQuery, actor: TaxonomyActor) {
     statusCounts: counts(db),
   };
 }
-export async function getPostSummary(actor: TaxonomyActor) {
-  authorize(actor);
-  const db = getDatabase();
-  const recentDrafts = summaries(db)
-    .where(eq(post.status, "draft"))
-    .orderBy(desc(post.updatedAt), desc(post.id))
-    .limit(3)
-    .all();
-  return {
-    statusCounts: counts(db),
-    recentDrafts: serializeRows(db, recentDrafts),
-  };
-}
 function detail(id: string, db: Database | DatabaseTransaction) {
   const row = db
     .select({ ...summaryColumns, content: post.content })

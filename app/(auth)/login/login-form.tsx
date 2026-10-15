@@ -75,7 +75,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
       lifecycle.controller = null;
       if (result.success) {
         // 完整导航让新 Cookie 参与后台页面和数据入口的服务端鉴权。
-        window.location.replace("/admin");
+        window.location.replace("/admin/posts");
         return;
       }
       pendingRef.current = false;
@@ -102,7 +102,7 @@ export function LoginForm({ invalidCredentials = false }: { invalidCredentials?:
         "success" in result.data &&
         result.data.success === true
       ) {
-        window.location.replace("/admin");
+        window.location.replace("/admin/posts");
         return;
       }
       setError({ code: "UNCONFIRMED_RESULT", message: passkeyError(result.error) });
