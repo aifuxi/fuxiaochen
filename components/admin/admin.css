@@ -5,18 +5,28 @@
 .admin-layout {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   color: var(--color-foreground);
   background: var(--color-background);
 }
-.admin-layout-collapsed {
-  grid-template-columns: 68px minmax(0, 1fr);
-}
 .admin-sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
+  position: fixed;
+  z-index: 30;
+  top: 50%;
+  left: 16px;
+  width: 72px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
+  box-shadow: var(--shadow-popup);
+  transform: translateY(-50%);
+}
+@supports (backdrop-filter: blur(16px)) {
+  .admin-sidebar {
+    background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+    backdrop-filter: blur(16px);
+  }
 }
 .admin-sidebar-inner {
   height: 100%;
@@ -75,13 +85,13 @@
 .admin-front-link svg {
   flex: none;
 }
-.admin-nav-item:hover,
-.admin-front-link:hover {
+.admin-nav-item:hover:not([aria-disabled="true"]),
+.admin-front-link:hover:not([aria-disabled="true"]) {
   background: var(--color-surface-hover);
   color: var(--color-foreground);
 }
-.admin-nav-item:active,
-.admin-front-link:active {
+.admin-nav-item:active:not([aria-disabled="true"]),
+.admin-front-link:active:not([aria-disabled="true"]) {
   background: var(--color-raised);
 }
 .admin-nav-item.is-active {
@@ -102,20 +112,53 @@
   color: var(--color-focus-text);
   background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
 }
-.admin-collapse {
-  width: 100%;
-  margin-top: 7px;
-  justify-content: flex-start;
-  padding-left: 11px;
+/* Dock 只改变桌面导航，移动抽屉沿用完整的文字布局。 */
+.admin-sidebar .admin-sidebar-inner {
+  height: auto;
+  gap: var(--space-md);
+  padding: var(--space-sm);
 }
-.admin-layout-collapsed .admin-sidebar .admin-brand,
-.admin-layout-collapsed .admin-sidebar .admin-nav-item,
-.admin-layout-collapsed .admin-sidebar .admin-front-link,
-.admin-layout-collapsed .admin-sidebar .admin-collapse {
+.admin-sidebar .admin-brand {
+  height: 44px;
   justify-content: center;
   padding-inline: 0;
 }
+.admin-sidebar .admin-nav {
+  gap: var(--space-md);
+  padding: var(--space-md) 0 0;
+}
+.admin-sidebar .admin-nav-group {
+  display: grid;
+  gap: var(--space-xs);
+}
+.admin-sidebar .admin-nav-group + .admin-nav-group {
+  margin-top: 0;
+}
+.admin-sidebar .admin-nav-item,
+.admin-sidebar .admin-front-link {
+  width: 44px;
+  min-height: 44px;
+  margin-inline: auto;
+  padding: 0;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+.admin-sidebar .admin-sidebar-bottom {
+  padding: var(--space-xs) 0 0;
+}
+.admin-sidebar .admin-front-link {
+  background: transparent;
+  color: var(--color-caption);
+}
+.admin-sidebar .admin-front-link:hover:not([aria-disabled="true"]) {
+  background: var(--color-surface-hover);
+  color: var(--color-foreground);
+}
+.admin-sidebar .admin-front-link:active:not([aria-disabled="true"]) {
+  background: var(--color-raised);
+}
 .admin-main-column {
+  grid-column: 2;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -658,8 +701,7 @@
   padding: 0;
 }
 @media (max-width: 900px) {
-  .admin-layout,
-  .admin-layout-collapsed {
+  .admin-layout {
     display: block;
   }
   .admin-sidebar {
@@ -1000,6 +1042,9 @@
 .admin-layout.admin-layout-writing {
   --writing-top-offset: 0px;
   grid-template-columns: minmax(0, 1fr);
+}
+.admin-layout-writing > .admin-main-column {
+  grid-column: 1;
 }
 .admin-layout-writing > .admin-sidebar,
 .admin-layout-writing .admin-topbar,

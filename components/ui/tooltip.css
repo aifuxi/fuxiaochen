@@ -1,0 +1,27 @@
+.ds-tooltip-positioner {
+  z-index: 40;
+}
+.ds-tooltip-positioner[data-anchor-hidden] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.ds-tooltip {
+  max-width: min(240px, calc(100vw - 24px));
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-raised);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-popup);
+  font: 500 12px/18px var(--font-sans);
+  overflow-wrap: anywhere;
+  transition: opacity var(--motion-quick) var(--motion-ease);
+}
+.ds-tooltip[data-starting-style],
+.ds-tooltip[data-ending-style] {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-tooltip {
+    transition: none;
+  }
+}

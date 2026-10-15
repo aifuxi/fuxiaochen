@@ -3,8 +3,6 @@
 import {
   Database,
   Bell,
-  ChevronLeft,
-  ChevronRight,
   Clock3,
   FileText,
   Link2,
@@ -18,12 +16,13 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useState, type ReactElement, type ReactNode } from "react";
 
 import { BrandLogo } from "@/components/brand-logo";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export type AdminPanel = "notifications" | "backup" | "compose" | "profile";
 
@@ -58,6 +57,15 @@ const navGroups = [
   },
 ];
 
+function DockHint({ label, children }: { label: string; children: ReactElement }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger render={children} />
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
 export function AdminShell({
   children,
   unreadCount,
@@ -67,19 +75,32 @@ export function AdminShell({
   postPending,
 }: Props) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const frontLink = (mobile: boolean) => (
+    <Link
+      href="/"
+      className="admin-front-link"
+      aria-label="前往网站首页"
+      aria-disabled={postPending || undefined}
+      onClick={(event) => {
+        if (postPending) event.preventDefault();
+        else setMobileOpen(false);
+      }}
+    >
+      <Globe2 size={mobile ? 16 : 20} aria-hidden="true" />
+      {mobile && <span>前往网站首页</span>}
+    </Link>
+  );
 
   const sidebar = (mobile: boolean) => (
     <div className="admin-sidebar-inner">
       <div>
         <div className="admin-brand">
           <BrandLogo className="admin-brand-logo" />
-          {(!collapsed || mobile) && (
-            <span className="admin-brand-name">
-              付小晨 <small>管理空间</small>
-            </span>
-          )}
+          <span className={mobile ? "admin-brand-name" : "sr-only"}>
+            付小晨 <small>管理空间</small>
+          </span>
           {mobile && (
             <Button
               variant="ghost"
@@ -95,27 +116,22 @@ export function AdminShell({
         <nav className="admin-nav" aria-label="管理导航">
           {navGroups.map((group) => (
             <div key={group.name} className="admin-nav-group">
-              {group.name && (
-                <p className={collapsed && !mobile ? "sr-only" : "admin-nav-group-label"}>
-                  {group.name}
-                </p>
-              )}
+              <p className={mobile ? "admin-nav-group-label" : "sr-only"}>{group.name}</p>
               {group.items.map((item) => {
                 const Icon = item.icon;
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 const content = (
                   <>
-                    <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                    {(!collapsed || mobile) && <span>{item.name}</span>}
+                    <Icon size={mobile ? 18 : 20} strokeWidth={1.8} aria-hidden="true" />
+                    {mobile && <span>{item.name}</span>}
                   </>
                 );
                 const sharedProps = {
                   className: `admin-nav-item ${active ? "is-active" : ""}`,
                   "aria-label": item.name,
-                  title: collapsed && !mobile ? item.name : undefined,
                   "aria-disabled": postPending || undefined,
                 };
-                return (
+                const link = (
                   <Link
                     key={item.name}
                     href={item.href}
@@ -129,52 +145,28 @@ export function AdminShell({
                     {content}
                   </Link>
                 );
+                return mobile ? (
+                  link
+                ) : (
+                  <DockHint key={item.href} label={item.name}>
+                    {link}
+                  </DockHint>
+                );
               })}
             </div>
           ))}
         </nav>
       </div>
       <div className="admin-sidebar-bottom">
-        <Link
-          href="/"
-          className="admin-front-link"
-          title="前往网站首页"
-          aria-disabled={postPending || undefined}
-          onClick={(event) => {
-            if (postPending) event.preventDefault();
-          }}
-        >
-          <Globe2 size={16} aria-hidden="true" />
-          {(!collapsed || mobile) && <span>前往网站首页</span>}
-        </Link>
-        {!mobile && (
-          <Button
-            size="compact"
-            variant="ghost"
-            className="admin-collapse"
-            onClick={() => setCollapsed((value) => !value)}
-            aria-label={collapsed ? "展开侧边栏" : "收起侧边栏"}
-          >
-            {collapsed ? (
-              <ChevronRight size={17} />
-            ) : (
-              <>
-                <ChevronLeft size={17} />
-                <span>收起侧边栏</span>
-              </>
-            )}
-          </Button>
-        )}
+        {mobile ? frontLink(true) : <DockHint label="前往网站首页">{frontLink(false)}</DockHint>}
       </div>
     </div>
   );
 
   return (
-    <div
-      className={`admin-layout ${collapsed ? "admin-layout-collapsed" : ""} ${writingFocused ? "admin-layout-writing" : ""}`}
-    >
+    <div className={`admin-layout ${writingFocused ? "admin-layout-writing" : ""}`}>
       <aside className="admin-sidebar" aria-label="侧边栏">
-        {sidebar(false)}
+        <TooltipProvider delay={250}>{sidebar(false)}</TooltipProvider>
       </aside>
       <div className="admin-main-column">
         <header className="admin-topbar">

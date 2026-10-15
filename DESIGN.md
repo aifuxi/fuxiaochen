@@ -405,6 +405,10 @@ Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，�
 
 Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
 
+### 图标名称提示
+
+本地 `Tooltip` 基于 Base UI，名称提示使用 raised 表面、foreground 文字、sm 圆角、上下 sm／左右 md 内边距、12px／18px 的 500 字重及 popup 投影，无常驻描边。提示宽度不超过 240px 与视口减 24px，Portal 定位并保留碰撞留白。只使用 quick 时长的透明度过渡，减少动态效果时取消过渡，不放大或移动触发控件。提示不包含可交互内容，始终保留触发对象的可访问名称；支持悬停、键盘聚焦、Escape 和失焦关闭，具体方向和等待时间由场景规定。
+
 ### 表单表面状态
 
 Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸、圆角及组件 props 保持各自既有定义；状态样式集中在共享样式，页面不重复绘制。
