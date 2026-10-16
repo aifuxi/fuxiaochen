@@ -6,6 +6,7 @@ import type { ColumnDef, TableMeta } from "@tanstack/react-table";
 import type { ReactElement, ReactNode, RefObject } from "react";
 
 import {
+  ArrowRight,
   Bell,
   Check,
   CheckCircle2,
@@ -35,6 +36,7 @@ import { AdminRowActionsCell } from "@/components/admin/admin-table";
 import { BrandLogo } from "@/components/brand-logo";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import {
   Dialog,
@@ -181,6 +183,17 @@ function SearchBox({
   );
 }
 
+function useCollectionSidebar() {
+  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 1201px)").matches);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1201px)");
+    const update = () => setWide(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return wide;
+}
+
 function Modal({
   open,
   onOpenChange,
@@ -265,11 +278,61 @@ const exampleBackups: Backup[] = [
   },
 ];
 
+function backupStatus(status: Backup["status"]) {
+  return status === "complete" ? "备份完成" : status === "running" ? "正在备份" : "备份失败";
+}
+
+const backupColumns: ColumnDef<Backup>[] = [
+  {
+    accessorKey: "date",
+    header: "执行时间",
+    enableSorting: true,
+    meta: { width: "34%", rowHeader: true, className: "ap-mono" },
+  },
+  {
+    accessorKey: "status",
+    header: "状态",
+    enableSorting: true,
+    meta: { width: "22%" },
+    cell: ({ row }) => (
+      <span className={row.original.status === "complete" ? "ap-status is-success" : "ap-status"}>
+        {row.original.status === "complete" ? <CheckCircle2 size={15} /> : <Clock3 size={15} />}
+        {backupStatus(row.original.status)}
+      </span>
+    ),
+  },
+  {
+    accessorKey: "bytes",
+    header: "文件大小",
+    enableSorting: true,
+    meta: { width: "20%", className: "ap-mono" },
+    cell: ({ row }) => (row.original.bytes / 1024 / 1024).toFixed(2) + " MiB",
+  },
+  {
+    id: "details",
+    header: "校验信息",
+    meta: { width: "24%" },
+    cell: ({ row, table }) => (
+      <Button
+        variant="ghost"
+        size="compact"
+        disabled={table.options.meta?.disableActions}
+        onClick={() => table.options.meta?.editRow?.(row.original)}
+      >
+        查看详情 <ArrowRight size={15} />
+      </Button>
+    ),
+  },
+];
+
 function BackupsPreview({ notify }: { notify: Notify }) {
   const [records, setRecords] = useState(exampleBackups);
   const [automatic, setAutomatic] = useState(true);
   const [pending, setPending] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [detail, setDetail] = useState<Backup | null>(null);
+  const detailTrigger = useRef<HTMLElement | null>(null);
+  const tableState = useDataTableState();
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -278,10 +341,21 @@ function BackupsPreview({ notify }: { notify: Notify }) {
     [],
   );
   function makeBackup() {
-    if (pending) return;
+    if (pending || refreshing) return;
     setPending(true);
     const id = crypto.randomUUID();
-    const date = new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai", hour12: false });
+    // 固定两位日期，保持示例记录的展示与字符串排序一致。
+    const date = new Date().toLocaleString("zh-CN", {
+      timeZone: "Asia/Shanghai",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    });
+    tableState.setPage(1);
     setRecords((current) => [{ id, date, bytes: 3846144, status: "running", sha: "" }, ...current]);
     timer.current = setTimeout(() => {
       setRecords((current) =>
@@ -294,82 +368,178 @@ function BackupsPreview({ notify }: { notify: Notify }) {
     }, 1000);
   }
   function refresh() {
+    if (pending || refreshing) return;
     setRefreshing(true);
     timer.current = setTimeout(() => {
       setRefreshing(false);
       notify("示例备份记录已刷新。");
     }, 650);
   }
+  function openDetails(item: Backup) {
+    detailTrigger.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setDetail(item);
+  }
+  const latest = records[0];
   return (
     <div className="admin-data-page">
       <PageHeading title="备份管理" description="查看数据库备份记录、执行备份与配置自动备份。">
-        <Button size="compact" variant="primary" disabled={pending} onClick={makeBackup}>
+        <Button
+          size="compact"
+          variant="primary"
+          disabled={pending || refreshing}
+          onClick={makeBackup}
+        >
           <Database size={16} />
           {pending ? "正在执行…" : "立即备份数据库"}
         </Button>
       </PageHeading>
-      <section className="admin-data-workspace ap-backups" aria-label="数据库备份工作区">
-        <div className="ap-backup-intro">
-          <h2 className="ap-section-title">备份范围</h2>
-          <p>保存文章、设置、会话及媒体元数据。OSS 文件不在数据库备份中。</p>
-        </div>
-        <div className="ap-backup-automatic">
-          <div>
+      <div className="ap-backup-layout">
+        <Card className="ap-backup-latest">
+          <div className="ap-latest-heading">
+            <h2 className="ap-section-title">最近一次备份</h2>
+            <span className={latest.status === "complete" ? "ap-status is-success" : "ap-status"}>
+              {latest.status === "complete" ? <CheckCircle2 size={15} /> : <Clock3 size={15} />}
+              {backupStatus(latest.status)}
+            </span>
+          </div>
+          <div className="ap-latest-facts">
+            <div>
+              <span className="ap-muted">执行时间（北京时间）</span>
+              <strong>{latest.date}</strong>
+            </div>
+            <div>
+              <span className="ap-muted">文件大小</span>
+              <strong>
+                {(latest.bytes / 1024 / 1024).toFixed(2)}
+                <small>MiB</small>
+              </strong>
+            </div>
+          </div>
+          <div className="ap-latest-reference">
+            <div>
+              <span className="ap-muted">备份编号</span>
+              <code>{latest.id}</code>
+            </div>
+            <Button
+              size="compact"
+              variant="ghost"
+              disabled={pending}
+              onClick={() => openDetails(latest)}
+            >
+              校验详情 <ArrowRight size={15} />
+            </Button>
+          </div>
+        </Card>
+        <Card className="ap-backup-automation">
+          <div className="ap-latest-heading">
+            <h2 className="ap-section-title">自动备份</h2>
+            <span className="ap-muted">{automatic ? "已开启" : "已关闭"}</span>
+          </div>
+          <div className="ap-backup-switch-row">
             <label htmlFor="preview-auto-backup">每日自动备份数据库</label>
-            <p className="ap-muted">自动备份由服务器定时任务执行。</p>
+            <Switch
+              id="preview-auto-backup"
+              touchTarget
+              checked={automatic}
+              disabled={pending}
+              onCheckedChange={(value) => {
+                setAutomatic(value);
+                notify(value ? "预览：已启用每日数据库备份。" : "预览：已关闭每日数据库备份。");
+              }}
+            />
           </div>
-          <Switch
-            id="preview-auto-backup"
-            touchTarget
-            checked={automatic}
-            disabled={pending}
-            onCheckedChange={(value) => {
-              setAutomatic(value);
-              notify(value ? "预览：已启用每日数据库备份。" : "预览：已关闭每日数据库备份。");
-            }}
-          />
-        </div>
-        <div className="ap-schedule">
-          <span className="ap-muted">最近调度</span>
-          <time dateTime="2026-10-15T18:00:03Z">2026/10/16 02:00:03</time>
-          <span className="ap-muted">备份保存在服务器，恢复时会撤销全部登录会话。</span>
-        </div>
-        <div className="ap-record-heading">
-          <div className="ap-heading-with-count">
-            <h2 className="ap-section-title">备份记录</h2>
-            <span className="ap-count">{records.length}</span>
+          <p className="ap-muted">自动备份由服务器定时任务执行。</p>
+          <div className="ap-last-schedule">
+            <span className="ap-muted">最近调度</span>
+            <time dateTime="2026-10-15T18:00:03Z">2026/10/16 02:00:03</time>
           </div>
-          <Button variant="ghost" size="compact" disabled={pending || refreshing} onClick={refresh}>
-            <RefreshCw size={15} />
-            {refreshing ? "正在刷新…" : "刷新备份记录"}
-          </Button>
-        </div>
-        <div aria-live="polite" aria-busy={pending || refreshing} className="ap-backup-records">
-          {records.map((row) => (
-            <article key={row.id} className="ap-backup-record">
-              <div className="ap-record-summary">
-                <span className={row.status === "complete" ? "ap-status is-success" : "ap-status"}>
-                  {row.status === "complete" ? <CheckCircle2 size={15} /> : <Clock3 size={15} />}
-                  {row.status === "complete" ? "备份完成" : "正在备份"}
-                </span>
-                <time>{row.date}</time>
-                <span>{row.bytes.toLocaleString("zh-CN")} 字节</span>
+        </Card>
+        <section className="admin-data-workspace ap-backup-history" aria-label="数据库备份记录">
+          <div className="ap-record-heading">
+            <div className="ap-heading-with-count">
+              <h2 className="ap-section-title">执行记录</h2>
+              <span className="ap-count">{records.length}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="compact"
+              disabled={pending || refreshing}
+              onClick={refresh}
+            >
+              <RefreshCw size={15} />
+              {refreshing ? "正在刷新…" : "刷新备份记录"}
+            </Button>
+          </div>
+          <DataTable
+            data={records}
+            columns={backupColumns}
+            getRowId={(item) => item.id}
+            {...tableState}
+            meta={{ editRow: openDetails, disableActions: pending || refreshing }}
+            loading={refreshing}
+            disabled={pending || refreshing}
+            caption="示例备份执行记录"
+            tableClassName="ap-backup-table"
+            emptyState={
+              <div className="ap-empty">
+                <h2>暂无备份记录</h2>
+                <p>执行一次数据库备份后，记录会显示在这里。</p>
               </div>
-              <p className="ap-record-id">{row.id}</p>
-              {row.sha && <p className="ap-record-sha">SHA-256：{row.sha}</p>}
-            </article>
-          ))}
+            }
+          />
+        </section>
+        <Card className="ap-backup-scope">
+          <h2 className="ap-section-title">备份与恢复</h2>
+          <div>
+            <h3>数据库内容</h3>
+            <p>包含文章、设置、会话及媒体元数据。</p>
+          </div>
+          <div>
+            <h3>OSS 文件</h3>
+            <p>文件本体不在数据库备份中。</p>
+          </div>
+          <div>
+            <h3>恢复影响</h3>
+            <p>备份保存在服务器。恢复时会撤销全部登录会话。</p>
+          </div>
+        </Card>
+      </div>
+      <Modal
+        open={Boolean(detail)}
+        onOpenChange={(open) => !open && setDetail(null)}
+        title="备份校验详情"
+        description="保留完整备份标识、文件大小与校验摘要。"
+        finalFocus={detailTrigger}
+      >
+        {detail && (
+          <dl className="ap-backup-detail">
+            <div>
+              <dt>执行时间</dt>
+              <dd>{detail.date}</dd>
+            </div>
+            <div>
+              <dt>状态</dt>
+              <dd>{backupStatus(detail.status)}</dd>
+            </div>
+            <div>
+              <dt>文件大小</dt>
+              <dd>{detail.bytes.toLocaleString("zh-CN")} 字节</dd>
+            </div>
+            <div>
+              <dt>备份编号</dt>
+              <dd>{detail.id}</dd>
+            </div>
+            <div>
+              <dt>SHA-256</dt>
+              <dd>{detail.sha || "执行完成后生成"}</dd>
+            </div>
+          </dl>
+        )}
+        <div className="ap-dialog-actions">
+          <Button onClick={() => setDetail(null)}>关闭</Button>
         </div>
-        <div className="ap-pagination" aria-label="备份记录分页">
-          <span>1 / 1 · 共 {records.length} 条</span>
-          <Button variant="ghost" size="compact" disabled>
-            上一页
-          </Button>
-          <Button variant="ghost" size="compact" disabled>
-            下一页
-          </Button>
-        </div>
-      </section>
+      </Modal>
     </div>
   );
 }
@@ -530,6 +700,7 @@ const postColumns: ColumnDef<Post>[] = [
 ];
 
 function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }) {
+  const wide = useCollectionSidebar();
   const [posts, setPosts] = useState(examplePosts);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -585,52 +756,42 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
       </PageHeading>
       <section className="admin-data-workspace ap-posts" ref={search} aria-label="文章工作区">
         <Tabs
+          className="ap-collection-layout"
+          orientation={wide ? "vertical" : "horizontal"}
           value={status}
           onValueChange={(value) => {
             setStatus(String(value));
             state.setPage(1);
           }}
         >
-          <div className="ap-toolbar ap-post-toolbar">
+          <div className="ap-task-navigation">
+            <h2>文章状态</h2>
             <div className="ap-tabs-scroll">
-              <TabsList size="compact" aria-label="按文章状态筛选">
-                <TabsTrigger value="all">全部文章 ({posts.length})</TabsTrigger>
+              <TabsList size="compact" className="ap-task-tabs" aria-label="按文章状态筛选">
+                <TabsTrigger value="all">
+                  <FileText size={16} />
+                  <span>全部文章</span>
+                  <span className="ap-task-count">{posts.length}</span>
+                </TabsTrigger>
                 <TabsTrigger value="published">
-                  已发布 ({posts.filter((post) => post.status === "published").length})
+                  <CheckCircle2 size={16} />
+                  <span>已发布</span>
+                  <span className="ap-task-count">
+                    {posts.filter((post) => post.status === "published").length}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="draft">
-                  草稿箱 ({posts.filter((post) => post.status === "draft").length})
+                  <Pencil size={16} />
+                  <span>草稿箱</span>
+                  <span className="ap-task-count">
+                    {posts.filter((post) => post.status === "draft").length}
+                  </span>
                 </TabsTrigger>
               </TabsList>
             </div>
-            <div className="ap-filter-group">
-              <Filter
-                label="按分类筛选"
-                value={category}
-                onChange={(value) => {
-                  setCategory(value);
-                  state.setPage(1);
-                }}
-                options={[
-                  ["all", "全部分类"],
-                  ...[...new Set(posts.map((post) => post.category))].map(
-                    (value): [string, string] => [value, value],
-                  ),
-                ]}
-              />
-              <Filter
-                label="按精选筛选"
-                value={featured}
-                onChange={(value) => {
-                  setFeatured(value);
-                  state.setPage(1);
-                }}
-                options={[
-                  ["all", "全部精选状态"],
-                  ["yes", "仅精选"],
-                  ["no", "未精选"],
-                ]}
-              />
+          </div>
+          <div className="ap-collection-main">
+            <div className="ap-toolbar ap-post-toolbar">
               <SearchBox
                 label="搜索标题、摘要、标签或分类"
                 value={query}
@@ -639,39 +800,74 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                   state.setPage(1);
                 }}
               />
+              <div className="ap-filter-group">
+                <Filter
+                  label="按分类筛选"
+                  value={category}
+                  onChange={(value) => {
+                    setCategory(value);
+                    state.setPage(1);
+                  }}
+                  options={[
+                    ["all", "全部分类"],
+                    ...[...new Set(posts.map((post) => post.category))].map(
+                      (value): [string, string] => [value, value],
+                    ),
+                  ]}
+                />
+                <Filter
+                  label="按精选筛选"
+                  value={featured}
+                  onChange={(value) => {
+                    setFeatured(value);
+                    state.setPage(1);
+                  }}
+                  options={[
+                    ["all", "全部精选状态"],
+                    ["yes", "仅精选"],
+                    ["no", "未精选"],
+                  ]}
+                />
+              </div>
             </div>
+            <div className="ap-collection-heading">
+              <h2>
+                {status === "draft" ? "草稿箱" : status === "published" ? "已发布文章" : "全部文章"}
+              </h2>
+              <span>{filtered.length} 篇文章</span>
+            </div>
+            <TabsPanel value={status} className="ap-table-panel">
+              <DataTable
+                data={filtered}
+                columns={postColumns}
+                meta={{
+                  editRow: onEdit,
+                  getRowActions: getPostActions,
+                }}
+                getRowId={(row) => row.id}
+                {...state}
+                caption="示例文章列表"
+                tableClassName="admin-post-table"
+                emptyState={
+                  <div className="ap-empty">
+                    <h2>没有找到文章</h2>
+                    <p>试试其他关键词，或清除当前筛选。</p>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setQuery("");
+                        setCategory("all");
+                        setFeatured("all");
+                        setStatus("all");
+                      }}
+                    >
+                      清除筛选
+                    </Button>
+                  </div>
+                }
+              />
+            </TabsPanel>
           </div>
-          <TabsPanel value={status} className="ap-table-panel">
-            <DataTable
-              data={filtered}
-              columns={postColumns}
-              meta={{
-                editRow: onEdit,
-                getRowActions: getPostActions,
-              }}
-              getRowId={(row) => row.id}
-              {...state}
-              caption="示例文章列表"
-              tableClassName="admin-post-table"
-              emptyState={
-                <div className="ap-empty">
-                  <h2>没有找到文章</h2>
-                  <p>试试其他关键词，或清除当前筛选。</p>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setQuery("");
-                      setCategory("all");
-                      setFeatured("all");
-                      setStatus("all");
-                    }}
-                  >
-                    清除筛选
-                  </Button>
-                </div>
-              }
-            />
-          </TabsPanel>
         </Tabs>
       </section>
       <Modal
@@ -793,6 +989,7 @@ const friendColumns: ColumnDef<Friend>[] = [
 ];
 
 function FriendsPreview({ notify }: { notify: Notify }) {
+  const wide = useCollectionSidebar();
   const [items, setItems] = useState(exampleFriends);
   const [category, setCategory] = useState("all");
   const [review, setReview] = useState("all");
@@ -845,6 +1042,10 @@ function FriendsPreview({ notify }: { notify: Notify }) {
               item.id === friend.id ? { ...item, approved: !item.approved } : item,
             ),
           );
+          // 当前审核视图会移除这条记录，等 DOM 更新后回到仍可用的搜索入口。
+          if (review !== "all") {
+            requestAnimationFrame(() => workspace.current?.querySelector("input")?.focus());
+          }
           notify("预览审核状态已更新。");
         },
       },
@@ -873,75 +1074,126 @@ function FriendsPreview({ notify }: { notify: Notify }) {
         </Button>
       </PageHeading>
       <section className="admin-data-workspace ap-friends" ref={workspace} aria-label="友链工作区">
-        <div className="ap-toolbar">
-          <div className="ap-filter-group">
-            <Filter
-              label="筛选友链分类"
-              value={category}
-              onChange={setCategory}
-              options={[
-                ["all", "全部分类"],
-                ["技术博客", "技术博客"],
-                ["创意设计", "创意设计"],
-                ["生活记录", "生活记录"],
-              ]}
-            />
-            <Filter
-              label="筛选审核状态"
-              value={review}
-              onChange={setReview}
-              options={[
-                ["all", "全部审核状态"],
-                ["approved", "已通过"],
-                ["pending", "待审核"],
-              ]}
-            />
-            <Filter
-              label="筛选展示状态"
-              value={visibility}
-              onChange={setVisibility}
-              options={[
-                ["all", "全部展示状态"],
-                ["yes", "展示启用"],
-                ["no", "展示停用"],
-              ]}
-            />
-          </div>
-          <div className="ap-filter-group">
-            <SearchBox value={query} onChange={setQuery} label="搜索名称、地址或描述" />
-            <Button size="compact" variant="ghost" onClick={() => notify("示例友链已刷新。")}>
-              <RefreshCw size={15} />
-              刷新列表
-            </Button>
-          </div>
-        </div>
-        <DataTable
-          data={filtered}
-          columns={friendColumns}
-          meta={{
-            getRowActions: getFriendActions,
+        <Tabs
+          className="ap-collection-layout"
+          orientation={wide ? "vertical" : "horizontal"}
+          value={review}
+          onValueChange={(value) => {
+            setReview(String(value));
+            tableState.setPage(1);
           }}
-          getRowId={(item) => item.id}
-          {...tableState}
-          caption="示例友情链接列表"
-          tableClassName="admin-post-table ap-friend-table"
-          emptyState={
-            <div className="ap-empty">
-              <h2>没有找到友链</h2>
-              <p>调整筛选条件后再试。</p>
-              <Button
-                onClick={() => {
-                  setQuery("");
-                  setReview("all");
-                  setCategory("all");
-                  setVisibility("all");
-                }}
-              >
-                清除筛选
-              </Button>
+        >
+          <div className="ap-task-navigation">
+            <h2>审核状态</h2>
+            <div className="ap-tabs-scroll">
+              <TabsList size="compact" className="ap-task-tabs" aria-label="筛选审核状态">
+                <TabsTrigger value="all">
+                  <Link2 size={16} />
+                  <span>全部友链</span>
+                  <span className="ap-task-count">{items.length}</span>
+                </TabsTrigger>
+                <TabsTrigger value="pending">
+                  <Clock3 size={16} />
+                  <span>待审核</span>
+                  <span className="ap-task-count">
+                    {items.filter((item) => !item.approved).length}
+                  </span>
+                </TabsTrigger>
+                <TabsTrigger value="approved">
+                  <CheckCircle2 size={16} />
+                  <span>已通过</span>
+                  <span className="ap-task-count">
+                    {items.filter((item) => item.approved).length}
+                  </span>
+                </TabsTrigger>
+              </TabsList>
             </div>
-          }
-        />
+          </div>
+          <div className="ap-collection-main">
+            <div className="ap-toolbar">
+              <SearchBox
+                value={query}
+                onChange={(value) => {
+                  setQuery(value);
+                  tableState.setPage(1);
+                }}
+                label="搜索名称、地址或描述"
+              />
+              <div className="ap-filter-group">
+                <Filter
+                  label="筛选友链分类"
+                  value={category}
+                  onChange={(value) => {
+                    setCategory(value);
+                    tableState.setPage(1);
+                  }}
+                  options={[
+                    ["all", "全部分类"],
+                    ["技术博客", "技术博客"],
+                    ["创意设计", "创意设计"],
+                    ["生活记录", "生活记录"],
+                  ]}
+                />
+                <Filter
+                  label="筛选展示状态"
+                  value={visibility}
+                  onChange={(value) => {
+                    setVisibility(value);
+                    tableState.setPage(1);
+                  }}
+                  options={[
+                    ["all", "全部展示状态"],
+                    ["yes", "展示启用"],
+                    ["no", "展示停用"],
+                  ]}
+                />
+                <Button size="compact" variant="ghost" onClick={() => notify("示例友链已刷新。")}>
+                  <RefreshCw size={15} />
+                  刷新列表
+                </Button>
+              </div>
+            </div>
+            <div className="ap-collection-heading">
+              <h2>
+                {review === "pending"
+                  ? "待审核友链"
+                  : review === "approved"
+                    ? "已通过友链"
+                    : "全部友链"}
+              </h2>
+              <span>{filtered.length} 个站点</span>
+            </div>
+            <TabsPanel value={review} className="ap-table-panel">
+              <DataTable
+                data={filtered}
+                columns={friendColumns}
+                meta={{
+                  getRowActions: getFriendActions,
+                }}
+                getRowId={(item) => item.id}
+                {...tableState}
+                caption="示例友情链接列表"
+                tableClassName="admin-post-table ap-friend-table"
+                emptyState={
+                  <div className="ap-empty">
+                    <h2>没有找到友链</h2>
+                    <p>调整筛选条件后再试。</p>
+                    <Button
+                      onClick={() => {
+                        setQuery("");
+                        setReview("all");
+                        setCategory("all");
+                        setVisibility("all");
+                      }}
+                    >
+                      清除筛选
+                    </Button>
+                  </div>
+                }
+              />
+            </TabsPanel>
+          </div>
+        </Tabs>
       </section>
       <p className="ap-muted">前台仅展示审核通过且已启用的友链。</p>
       <Modal

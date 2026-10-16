@@ -23,10 +23,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ColorInput } from "@/components/ui/color-input";
 import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
@@ -115,6 +114,9 @@ export function CategoriesPreview({ notify }: NotifyProps) {
     "工具",
   ]);
   const [name, setName] = useState("");
+  const [categoryQuery, setCategoryQuery] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+  const createCategoryButton = useRef<HTMLButtonElement>(null);
   const [color, setColor] = useState("#0064fa");
   const [tag, setTag] = useState("");
   const [error, setError] = useState("");
@@ -195,73 +197,60 @@ export function CategoriesPreview({ notify }: NotifyProps) {
           <h1>分类与标签</h1>
           <p>整理文章的主题，让内容更容易被发现。</p>
         </div>
+        <Button
+          ref={createCategoryButton}
+          variant="primary"
+          size="compact"
+          onClick={() => {
+            setError("");
+            setCreateOpen(true);
+          }}
+        >
+          <Plus size={16} />
+          新增分类
+        </Button>
       </div>
-      <div className="ap-taxonomy-grid">
-        <Card className="ap-taxonomy-card">
-          <div className="ap-module-heading">
-            <h2>分类</h2>
-            <span className="ap-count">{categories.length}</span>
-          </div>
-          <form
-            className="ap-taxonomy-form"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const value = name.trim();
-              if (!value || categories.some((item) => item.name === value)) {
-                setError(value ? "该分类已存在。" : "请填写分类名称。");
-                categoryInput.current?.focus();
-                return;
-              }
-              setCategories([
-                ...categories,
-                { id: `c${Date.now()}`, name: value, color, postCount: 0 },
-              ]);
-              setName("");
-              setError("");
-              notify("分类已添加到预览");
-              categoryInput.current?.focus();
-            }}
-          >
-            <label htmlFor="ap-category-name">分类名称</label>
-            <div className="ap-taxonomy-add">
-              <Input
-                id="ap-category-name"
-                ref={categoryInput}
-                value={name}
-                placeholder="输入分类名称"
-                onChange={(event) => setName(event.target.value)}
-                aria-invalid={Boolean(error) && !editing}
-                aria-describedby={error && !editing ? "ap-category-error" : undefined}
-              />
-              <ColorInput
-                value={color}
-                onChange={(event) => setColor(event.target.value)}
-                aria-label="分类颜色"
-              />
-              <Button type="submit" size="form" variant="primary">
-                <Plus size={16} />
-                添加
-              </Button>
+      <div className="ap-taxonomy-workbench">
+        <section className="ap-taxonomy-main" aria-labelledby="ap-category-heading">
+          <div className="ap-taxonomy-main-heading">
+            <div className="ap-module-title">
+              <h2 id="ap-category-heading">文章分类</h2>
+              <span className="ap-count">{categories.length}</span>
             </div>
-            {error && !editing && (
-              <p id="ap-category-error" className="ap-field-error" role="alert">
-                {error}
-              </p>
-            )}
-          </form>
+            <Input
+              className="ds-control-compact ap-category-search"
+              aria-label="搜索分类"
+              value={categoryQuery}
+              onChange={(event) => {
+                setCategoryQuery(event.target.value);
+                state.setPage(1);
+              }}
+              placeholder="搜索分类名称"
+            />
+          </div>
+
           <DataTable
-            data={categories}
+            data={categories.filter((item) => item.name.includes(categoryQuery))}
             columns={columns}
             getRowId={(item) => item.id}
             {...state}
             caption="分类及关联文章数量"
             tableClassName="ap-category-table"
-            emptyState={<p className="ap-empty">还没有分类，添加一个主题开始整理。</p>}
+            emptyState={
+              <div className="ap-empty">
+                <p>{categoryQuery ? "没有匹配的分类。" : "还没有分类，添加一个主题开始整理。"}</p>
+                {categoryQuery && (
+                  <Button variant="ghost" onClick={() => setCategoryQuery("")}>
+                    清除搜索
+                  </Button>
+                )}
+              </div>
+            }
           />
-        </Card>
-        <Card className="ap-taxonomy-card">
+        </section>
+        <aside className="ap-taxonomy-tags" aria-labelledby="ap-tags-heading">
           <div className="ap-module-heading">
-            <h2>标签</h2>
+            <h2 id="ap-tags-heading">文章标签</h2>
             <span className="ap-count">{tags.length}</span>
           </div>
           <form
@@ -327,8 +316,75 @@ export function CategoriesPreview({ notify }: NotifyProps) {
             ))}
           </div>
           <p className="ap-module-note">标签可用于细分文章主题。已关联文章的标签需要先解除引用。</p>
-        </Card>
+        </aside>
       </div>
+      <Dialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          setCreateOpen(open);
+          if (!open) setError("");
+        }}
+      >
+        <DialogContent
+          className="ap-dialog"
+          portalClassName="ap-preview-portal"
+          finalFocus={createCategoryButton}
+        >
+          <DialogTitle>新增分类</DialogTitle>
+          <DialogDescription>为文章添加一个清晰的主题分类。</DialogDescription>
+          <form
+            className="ap-dialog-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              const value = name.trim();
+              if (!value || categories.some((item) => item.name === value)) {
+                setError(value ? "该分类已存在。" : "请填写分类名称。");
+                categoryInput.current?.focus();
+                return;
+              }
+              setCategories([
+                ...categories,
+                { id: `c${Date.now()}`, name: value, color, postCount: 0 },
+              ]);
+              setName("");
+              setError("");
+              notify("分类已添加到预览");
+              setCreateOpen(false);
+            }}
+          >
+            <label htmlFor="ap-category-name">分类名称</label>
+            <div className="ap-taxonomy-add">
+              <Input
+                id="ap-category-name"
+                ref={categoryInput}
+                value={name}
+                placeholder="输入分类名称"
+                onChange={(event) => setName(event.target.value)}
+                aria-invalid={Boolean(error) && !editing}
+                aria-describedby={error && !editing ? "ap-category-error" : undefined}
+              />
+              <ColorInput
+                value={color}
+                onChange={(event) => setColor(event.target.value)}
+                aria-label="分类颜色"
+              />
+            </div>
+            {error && !editing && (
+              <p id="ap-category-error" className="ap-field-error" role="alert">
+                {error}
+              </p>
+            )}
+            <DialogActions>
+              <Button type="button" onClick={() => setCreateOpen(false)}>
+                取消
+              </Button>
+              <Button type="submit" variant="primary">
+                创建分类
+              </Button>
+            </DialogActions>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => {
@@ -341,7 +397,9 @@ export function CategoriesPreview({ notify }: NotifyProps) {
         <DialogContent
           className="ap-dialog"
           portalClassName="ap-preview-portal"
-          finalFocus={() => trigger.current ?? categoryInput.current}
+          finalFocus={() =>
+            trigger.current?.isConnected ? trigger.current : createCategoryButton.current
+          }
         >
           <DialogTitle>编辑分类</DialogTitle>
           <DialogDescription>调整名称和分类色，仅影响当前预览。</DialogDescription>
@@ -412,7 +470,7 @@ export function CategoriesPreview({ notify }: NotifyProps) {
         <DialogContent
           className="ap-dialog"
           portalClassName="ap-preview-portal"
-          finalFocus={() => (deleted.current ? categoryInput.current : trigger.current)}
+          finalFocus={() => (deleted.current ? createCategoryButton.current : trigger.current)}
         >
           <DialogTitle>{deleting?.postCount ? "分类仍有关联文章" : "删除分类"}</DialogTitle>
           <DialogDescription>
@@ -565,52 +623,54 @@ export function ChangelogPreview({ notify }: NotifyProps) {
               <div className="ap-release-date">
                 <time dateTime={item.date}>{item.date}</time>
                 <strong>v{item.version}</strong>
+                <span className={item.published ? "ap-status-success" : "ap-secondary-text"}>
+                  {item.published ? "已发布" : "已撤回"}
+                </span>
               </div>
               <div className="ap-release-content">
-                <div className="ap-release-title">
-                  <h2>{item.title}</h2>
-                  <span className={`ap-release-type ap-release-${item.type}`}>
-                    {releaseOptions.find((option) => option.value === item.type)?.label}
-                  </span>
+                <div className="ap-release-row-heading">
+                  <div className="ap-release-title">
+                    <h2>{item.title}</h2>
+                    <span className={`ap-release-type ap-release-${item.type}`}>
+                      {releaseOptions.find((option) => option.value === item.type)?.label}
+                    </span>
+                  </div>
+                  <div className="ap-release-actions">
+                    <Button
+                      variant="ghost"
+                      size="compact"
+                      onClick={(event) => edit(item, event.currentTarget)}
+                    >
+                      <Pencil size={14} />
+                      编辑
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="compact"
+                      className={item.published ? "ap-danger-action" : undefined}
+                      onClick={(event) => {
+                        if (item.published) {
+                          trigger.current = event.currentTarget;
+                          setWithdrawing(item);
+                        } else {
+                          setItems(
+                            items.map((current) =>
+                              current.id === item.id ? { ...current, published: true } : current,
+                            ),
+                          );
+                          notify("更新已在预览中重新发布");
+                        }
+                      }}
+                    >
+                      {item.published ? "撤回" : "重新发布"}
+                    </Button>
+                  </div>
                 </div>
                 <ul>
                   {item.changes.map((line) => (
                     <li key={line}>{line}</li>
                   ))}
                 </ul>
-                <div className="ap-release-actions">
-                  <span className={item.published ? "ap-status-success" : "ap-secondary-text"}>
-                    {item.published ? "已发布" : "已撤回"}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="compact"
-                    onClick={(event) => edit(item, event.currentTarget)}
-                  >
-                    <Pencil size={14} />
-                    编辑
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="compact"
-                    className={item.published ? "ap-danger-action" : undefined}
-                    onClick={(event) => {
-                      if (item.published) {
-                        trigger.current = event.currentTarget;
-                        setWithdrawing(item);
-                      } else {
-                        setItems(
-                          items.map((current) =>
-                            current.id === item.id ? { ...current, published: true } : current,
-                          ),
-                        );
-                        notify("更新已在预览中重新发布");
-                      }
-                    }}
-                  >
-                    {item.published ? "撤回" : "重新发布"}
-                  </Button>
-                </div>
               </div>
             </li>
           ))}
@@ -646,7 +706,11 @@ export function ChangelogPreview({ notify }: NotifyProps) {
         <DialogContent
           className="ap-release-dialog"
           portalClassName="ap-preview-portal"
-          finalFocus={() => trigger.current ?? createButton.current}
+          finalFocus={() =>
+            trigger.current?.isConnected
+              ? trigger.current
+              : (search.current ?? createButton.current)
+          }
         >
           <DialogTitle>{editing ? "编辑更新" : "发布更新"}</DialogTitle>
           <DialogDescription>将改动分条记录，每行一项。内容仅保留在预览中。</DialogDescription>
@@ -733,7 +797,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
         <DialogContent
           className="ap-dialog"
           portalClassName="ap-preview-portal"
-          finalFocus={() => trigger.current ?? search.current}
+          finalFocus={() => (trigger.current?.isConnected ? trigger.current : search.current)}
         >
           <DialogTitle>撤回更新</DialogTitle>
           <DialogDescription>
@@ -783,13 +847,23 @@ const initialSettings: Record<string, string> = {
   baiduId: "",
 };
 const settingsGroups = [
-  { value: "profile", label: "资料与站点" },
-  { value: "seo", label: "SEO" },
-  { value: "system", label: "系统偏好" },
-  { value: "filing", label: "备案" },
-  { value: "social", label: "社交账号" },
-  { value: "analytics", label: "访问统计" },
+  { value: "profile", description: "站点资料与个人介绍", label: "资料与站点" },
+  { value: "seo", description: "搜索摘要与分享信息", label: "SEO" },
+  { value: "system", description: "阅读与展示偏好", label: "系统偏好" },
+  { value: "filing", description: "网站与公安备案", label: "备案" },
+  { value: "social", description: "公开账号与展示顺序", label: "社交账号" },
+  { value: "analytics", description: "GA4 与百度统计", label: "访问统计" },
 ];
+
+const settingsNavQuery = "(min-width: 901px)";
+function subscribeSettingsNav(listener: () => void) {
+  const query = window.matchMedia(settingsNavQuery);
+  query.addEventListener("change", listener);
+  return () => query.removeEventListener("change", listener);
+}
+function readSettingsNav() {
+  return window.matchMedia(settingsNavQuery).matches;
+}
 
 function SettingSection({
   title,
@@ -819,6 +893,11 @@ export function SettingsPreview({
   const [draft, setDraft] = useState(initialSettings);
   const [saved, setSaved] = useState(initialSettings);
   const [tab, setTab] = useState("profile");
+  const verticalNavigation = useSyncExternalStore(
+    subscribeSettingsNav,
+    readSettingsNav,
+    () => false,
+  );
   const [reload, setReload] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [error, setError] = useState("");
@@ -940,14 +1019,25 @@ export function SettingsPreview({
           {error}
         </p>
       )}
-      <Tabs value={tab} onValueChange={(next) => setTab(String(next))}>
-        <div className="ap-settings-toolbar">
+      <Tabs
+        className="ap-settings-layout"
+        value={tab}
+        onValueChange={(next) => setTab(String(next))}
+        orientation={verticalNavigation ? "vertical" : "horizontal"}
+      >
+        <aside className="ap-settings-navigation" aria-label="设置分组导航">
           <div className="ap-settings-tab-scroll">
-            <TabsList size="compact" aria-label="设置分组">
+            <TabsList className="ap-settings-nav-list" size="compact" aria-label="设置分组">
               {settingsGroups.map((group) => (
-                <TabsTrigger key={group.value} value={group.value}>
-                  {group.label}
-                </TabsTrigger>
+                <div className="ap-settings-nav-item" key={group.value}>
+                  <TabsTrigger
+                    value={group.value}
+                    aria-describedby={`ap-setting-group-${group.value}`}
+                  >
+                    {group.label}
+                  </TabsTrigger>
+                  <p id={`ap-setting-group-${group.value}`}>{group.description}</p>
+                </div>
               ))}
             </TabsList>
           </div>
@@ -958,252 +1048,266 @@ export function SettingsPreview({
             type="button"
             onClick={() => setReload(true)}
           >
-            重新载入已保存设置
+            重新载入设置
           </Button>
-        </div>
-        <TabsPanel value="profile">
-          <SettingSection title="站点信息" description="首页、导航与页脚使用这些资料。">
-            {field("title", "站点名称")}
-            {field("subtitle", "站点副标题")}
-          </SettingSection>
-          <SettingSection title="个人资料">
-            <div className="ap-settings-identity">
-              {/* 独立 HTML 会内嵌此本地头像，不经过 Next 图片服务。 */}
-              {/* oxlint-disable-next-line next/no-img-element */}
-              <img
-                className="ap-identity-avatar"
-                src="/avatar.avif"
-                alt=""
-                width={56}
-                height={56}
-              />
-              <span>{draft.authorName}</span>
-            </div>
-            {field("authorName", "博主昵称")}
-            {field("authorRole", "身份头衔")}
-            {field("avatarUrl", "头像图片链接", "HTTPS 图片链接或站内绝对路径；留空使用默认图标。")}
-            {field("aboutMe", "个人简介", "用简短的文字介绍自己。", true)}
-          </SettingSection>
-        </TabsPanel>
-        <TabsPanel value="seo">
-          <SettingSection title="搜索与分享" description="设置站点的默认搜索描述与分享图片。">
-            {field("seoDescription", "搜索描述", "最多 300 个字符；文章页优先使用文章摘要。", true)}
-            {field(
-              "ogImageUrl",
-              "默认分享图片",
-              "HTTPS 图片链接或站内绝对路径；留空使用站点默认分享图。",
-            )}
-          </SettingSection>
-          <SettingSection
-            title="站长平台验证"
-            description="填写验证标签 content 中的验证码；留空时不输出验证标签。"
-          >
-            {field("googleVerification", "Google Search Console")}
-            {field("bingVerification", "Bing Webmaster Tools")}
-            {field("baiduVerification", "百度搜索资源平台")}
-          </SettingSection>
-        </TabsPanel>
-        <TabsPanel value="system">
-          <SettingSection title="阅读偏好" description="设置前台文章列表每页显示的条数。">
-            {field("postsPerPage", "每页文章数量", "1-100 之间的整数。")}
-          </SettingSection>
-        </TabsPanel>
-        <TabsPanel value="filing">
-          <SettingSection
-            title="备案信息（选填）"
-            description="每项文案与链接一起填写或一起留空；留空不展示。"
-          >
-            {field("icpText", "网站备案展示文案")}
-            {field("icpUrl", "网站备案查询链接")}
-            {field("policeText", "公安备案展示文案")}
-            {field("policeUrl", "公安备案查询链接")}
-          </SettingSection>
-        </TabsPanel>
-        <TabsPanel value="social">
-          <SettingSection
-            title="社交账号"
-            description="按列表顺序展示启用账号，支持同一平台多个账号。"
-          >
-            {socials.map((social, index) => (
-              <section
-                className="ap-social-editor"
-                key={social.id}
-                aria-label={`社交账号 ${index + 1}`}
-              >
-                <div className="ap-social-actions">
-                  <span className="ap-social-index">账号 {index + 1}</span>
-                  <Switch
-                    touchTarget
-                    aria-label={`展示账号 ${index + 1}`}
-                    checked={social.enabled}
-                    onCheckedChange={(checked) => {
-                      setSocials(
-                        socials.map((item) =>
-                          item.id === social.id ? { ...item, enabled: checked } : item,
-                        ),
-                      );
-                      setDirty(true);
-                    }}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="compact"
-                    aria-label={`上移账号 ${index + 1}`}
-                    disabled={index === 0}
-                    onClick={() => {
-                      const next = [...socials];
-                      [next[index - 1], next[index]] = [next[index], next[index - 1]];
-                      setSocials(next);
-                      setDirty(true);
-                    }}
-                  >
-                    <ArrowUp size={16} />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="compact"
-                    aria-label={`下移账号 ${index + 1}`}
-                    disabled={index === socials.length - 1}
-                    onClick={() => {
-                      const next = [...socials];
-                      [next[index + 1], next[index]] = [next[index], next[index + 1]];
-                      setSocials(next);
-                      setDirty(true);
-                    }}
-                  >
-                    <ArrowDown size={16} />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="compact"
-                    aria-label={`删除账号 ${index + 1}`}
-                    onClick={() => {
-                      const next = socials[index + 1] ?? socials[index - 1];
-                      setSocials(socials.filter((item) => item.id !== social.id));
-                      setDirty(true);
-                      requestAnimationFrame(() =>
-                        document
-                          .getElementById(next ? `ap-social-${next.id}-label` : "ap-social-add")
-                          ?.focus(),
-                      );
-                    }}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-                <div className="ap-settings-field">
-                  <label htmlFor={`ap-social-${social.id}-label`}>展示文案</label>
-                  <Input
-                    id={`ap-social-${social.id}-label`}
-                    value={social.label}
-                    onChange={(event) => {
-                      setSocials(
-                        socials.map((item) =>
-                          item.id === social.id ? { ...item, label: event.target.value } : item,
-                        ),
-                      );
-                      setDirty(true);
-                    }}
-                  />
-                </div>
-                <div className="ap-settings-field">
-                  <label htmlFor={`ap-social-${social.id}-url`}>账号链接</label>
-                  <Input
-                    id={`ap-social-${social.id}-url`}
-                    value={social.url}
-                    onChange={(event) => {
-                      setSocials(
-                        socials.map((item) =>
-                          item.id === social.id ? { ...item, url: event.target.value } : item,
-                        ),
-                      );
-                      setDirty(true);
-                    }}
-                  />
-                </div>
-                <div className="ap-settings-field">
-                  <label htmlFor={`ap-social-${social.id}-icon`}>图标</label>
-                  <PreviewSelect
-                    id={`ap-social-${social.id}-icon`}
-                    value={social.icon}
-                    onChange={(icon) => {
-                      setSocials(
-                        socials.map((item) => (item.id === social.id ? { ...item, icon } : item)),
-                      );
-                      setDirty(true);
-                    }}
-                    options={[
-                      { value: "github", label: "GitHub" },
-                      { value: "globe", label: "网站" },
-                      { value: "mail", label: "邮箱" },
-                    ]}
-                  />
-                </div>
-              </section>
-            ))}
-            <Button
-              id="ap-social-add"
-              type="button"
-              size="compact"
-              disabled={socials.length >= 20}
-              onClick={() => {
-                const id = `s${Date.now()}`;
-                setSocials([...socials, { id, label: "", url: "", icon: "globe", enabled: true }]);
-                setDirty(true);
-                requestAnimationFrame(() =>
-                  document.getElementById(`ap-social-${id}-label`)?.focus(),
-                );
-              }}
+        </aside>
+        <div className="ap-settings-content">
+          <TabsPanel value="profile">
+            <SettingSection title="站点信息" description="首页、导航与页脚使用这些资料。">
+              {field("title", "站点名称")}
+              {field("subtitle", "站点副标题")}
+            </SettingSection>
+            <SettingSection title="个人资料">
+              <div className="ap-settings-identity">
+                {/* 独立 HTML 会内嵌此本地头像，不经过 Next 图片服务。 */}
+                {/* oxlint-disable-next-line next/no-img-element */}
+                <img
+                  className="ap-identity-avatar"
+                  src="/avatar.avif"
+                  alt=""
+                  width={56}
+                  height={56}
+                />
+                <span>{draft.authorName}</span>
+              </div>
+              {field("authorName", "博主昵称")}
+              {field("authorRole", "身份头衔")}
+              {field(
+                "avatarUrl",
+                "头像图片链接",
+                "HTTPS 图片链接或站内绝对路径；留空使用默认图标。",
+              )}
+              {field("aboutMe", "个人简介", "用简短的文字介绍自己。", true)}
+            </SettingSection>
+          </TabsPanel>
+          <TabsPanel value="seo">
+            <SettingSection title="搜索与分享" description="设置站点的默认搜索描述与分享图片。">
+              {field(
+                "seoDescription",
+                "搜索描述",
+                "最多 300 个字符；文章页优先使用文章摘要。",
+                true,
+              )}
+              {field(
+                "ogImageUrl",
+                "默认分享图片",
+                "HTTPS 图片链接或站内绝对路径；留空使用站点默认分享图。",
+              )}
+            </SettingSection>
+            <SettingSection
+              title="站长平台验证"
+              description="填写验证标签 content 中的验证码；留空时不输出验证标签。"
             >
-              <Plus size={16} />
-              新增账号
-            </Button>
-          </SettingSection>
-        </TabsPanel>
-        <TabsPanel value="analytics">
-          <SettingSection
-            title="Google Analytics（GA4）"
-            description="请在 GA4 数据流设置中关闭基于浏览器历史记录的网页浏览，避免重复计数。"
-          >
-            <div className="ap-settings-field">
-              <label htmlFor="ap-ga-enabled">启用 Google 统计</label>
-              <div className="ap-settings-toggle">
-                <Switch
-                  id="ap-ga-enabled"
-                  touchTarget
-                  checked={analytics.google}
-                  onCheckedChange={(checked) => {
-                    setAnalytics({ ...analytics, google: checked });
-                    setDirty(true);
-                  }}
-                />
-                <span>{analytics.google ? "已启用" : "未启用"}</span>
+              {field("googleVerification", "Google Search Console")}
+              {field("bingVerification", "Bing Webmaster Tools")}
+              {field("baiduVerification", "百度搜索资源平台")}
+            </SettingSection>
+          </TabsPanel>
+          <TabsPanel value="system">
+            <SettingSection title="阅读偏好" description="设置前台文章列表每页显示的条数。">
+              {field("postsPerPage", "每页文章数量", "1-100 之间的整数。")}
+            </SettingSection>
+          </TabsPanel>
+          <TabsPanel value="filing">
+            <SettingSection
+              title="备案信息（选填）"
+              description="每项文案与链接一起填写或一起留空；留空不展示。"
+            >
+              {field("icpText", "网站备案展示文案")}
+              {field("icpUrl", "网站备案查询链接")}
+              {field("policeText", "公安备案展示文案")}
+              {field("policeUrl", "公安备案查询链接")}
+            </SettingSection>
+          </TabsPanel>
+          <TabsPanel value="social">
+            <SettingSection
+              title="社交账号"
+              description="按列表顺序展示启用账号，支持同一平台多个账号。"
+            >
+              {socials.map((social, index) => (
+                <section
+                  className="ap-social-editor"
+                  key={social.id}
+                  aria-label={`社交账号 ${index + 1}`}
+                >
+                  <div className="ap-social-actions">
+                    <span className="ap-social-index">账号 {index + 1}</span>
+                    <Switch
+                      touchTarget
+                      aria-label={`展示账号 ${index + 1}`}
+                      checked={social.enabled}
+                      onCheckedChange={(checked) => {
+                        setSocials(
+                          socials.map((item) =>
+                            item.id === social.id ? { ...item, enabled: checked } : item,
+                          ),
+                        );
+                        setDirty(true);
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="compact"
+                      aria-label={`上移账号 ${index + 1}`}
+                      disabled={index === 0}
+                      onClick={() => {
+                        const next = [...socials];
+                        [next[index - 1], next[index]] = [next[index], next[index - 1]];
+                        setSocials(next);
+                        setDirty(true);
+                      }}
+                    >
+                      <ArrowUp size={16} />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="compact"
+                      aria-label={`下移账号 ${index + 1}`}
+                      disabled={index === socials.length - 1}
+                      onClick={() => {
+                        const next = [...socials];
+                        [next[index + 1], next[index]] = [next[index], next[index + 1]];
+                        setSocials(next);
+                        setDirty(true);
+                      }}
+                    >
+                      <ArrowDown size={16} />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="compact"
+                      aria-label={`删除账号 ${index + 1}`}
+                      onClick={() => {
+                        const next = socials[index + 1] ?? socials[index - 1];
+                        setSocials(socials.filter((item) => item.id !== social.id));
+                        setDirty(true);
+                        requestAnimationFrame(() =>
+                          document
+                            .getElementById(next ? `ap-social-${next.id}-label` : "ap-social-add")
+                            ?.focus(),
+                        );
+                      }}
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                  <div className="ap-settings-field">
+                    <label htmlFor={`ap-social-${social.id}-label`}>展示文案</label>
+                    <Input
+                      id={`ap-social-${social.id}-label`}
+                      value={social.label}
+                      onChange={(event) => {
+                        setSocials(
+                          socials.map((item) =>
+                            item.id === social.id ? { ...item, label: event.target.value } : item,
+                          ),
+                        );
+                        setDirty(true);
+                      }}
+                    />
+                  </div>
+                  <div className="ap-settings-field">
+                    <label htmlFor={`ap-social-${social.id}-url`}>账号链接</label>
+                    <Input
+                      id={`ap-social-${social.id}-url`}
+                      value={social.url}
+                      onChange={(event) => {
+                        setSocials(
+                          socials.map((item) =>
+                            item.id === social.id ? { ...item, url: event.target.value } : item,
+                          ),
+                        );
+                        setDirty(true);
+                      }}
+                    />
+                  </div>
+                  <div className="ap-settings-field">
+                    <label htmlFor={`ap-social-${social.id}-icon`}>图标</label>
+                    <PreviewSelect
+                      id={`ap-social-${social.id}-icon`}
+                      value={social.icon}
+                      onChange={(icon) => {
+                        setSocials(
+                          socials.map((item) => (item.id === social.id ? { ...item, icon } : item)),
+                        );
+                        setDirty(true);
+                      }}
+                      options={[
+                        { value: "github", label: "GitHub" },
+                        { value: "globe", label: "网站" },
+                        { value: "mail", label: "邮箱" },
+                      ]}
+                    />
+                  </div>
+                </section>
+              ))}
+              <Button
+                id="ap-social-add"
+                type="button"
+                size="compact"
+                disabled={socials.length >= 20}
+                onClick={() => {
+                  const id = `s${Date.now()}`;
+                  setSocials([
+                    ...socials,
+                    { id, label: "", url: "", icon: "globe", enabled: true },
+                  ]);
+                  setDirty(true);
+                  requestAnimationFrame(() =>
+                    document.getElementById(`ap-social-${id}-label`)?.focus(),
+                  );
+                }}
+              >
+                <Plus size={16} />
+                新增账号
+              </Button>
+            </SettingSection>
+          </TabsPanel>
+          <TabsPanel value="analytics">
+            <SettingSection
+              title="Google Analytics（GA4）"
+              description="请在 GA4 数据流设置中关闭基于浏览器历史记录的网页浏览，避免重复计数。"
+            >
+              <div className="ap-settings-field">
+                <label htmlFor="ap-ga-enabled">启用 Google 统计</label>
+                <div className="ap-settings-toggle">
+                  <Switch
+                    id="ap-ga-enabled"
+                    touchTarget
+                    checked={analytics.google}
+                    onCheckedChange={(checked) => {
+                      setAnalytics({ ...analytics, google: checked });
+                      setDirty(true);
+                    }}
+                  />
+                  <span>{analytics.google ? "已启用" : "未启用"}</span>
+                </div>
               </div>
-            </div>
-            {field("googleId", "Measurement ID", "例如 G-XXXXXXXXXX；不接受脚本代码。")}
-          </SettingSection>
-          <SettingSection title="百度统计">
-            <div className="ap-settings-field">
-              <label htmlFor="ap-baidu-enabled">启用百度统计</label>
-              <div className="ap-settings-toggle">
-                <Switch
-                  id="ap-baidu-enabled"
-                  touchTarget
-                  checked={analytics.baidu}
-                  onCheckedChange={(checked) => {
-                    setAnalytics({ ...analytics, baidu: checked });
-                    setDirty(true);
-                  }}
-                />
-                <span>{analytics.baidu ? "已启用" : "未启用"}</span>
+              {field("googleId", "Measurement ID", "例如 G-XXXXXXXXXX；不接受脚本代码。")}
+            </SettingSection>
+            <SettingSection title="百度统计">
+              <div className="ap-settings-field">
+                <label htmlFor="ap-baidu-enabled">启用百度统计</label>
+                <div className="ap-settings-toggle">
+                  <Switch
+                    id="ap-baidu-enabled"
+                    touchTarget
+                    checked={analytics.baidu}
+                    onCheckedChange={(checked) => {
+                      setAnalytics({ ...analytics, baidu: checked });
+                      setDirty(true);
+                    }}
+                  />
+                  <span>{analytics.baidu ? "已启用" : "未启用"}</span>
+                </div>
               </div>
-            </div>
-            {field("baiduId", "站点 ID", "填写统计代码 hm.js 后的 32 位站点 ID。")}
-          </SettingSection>
-        </TabsPanel>
+              {field("baiduId", "站点 ID", "填写统计代码 hm.js 后的 32 位站点 ID。")}
+            </SettingSection>
+          </TabsPanel>
+        </div>
       </Tabs>
       <output className="ap-settings-footnote">
         {dirty ? "有未保存的预览变更。" : "预览中的设置已保存。"}
@@ -1428,96 +1532,105 @@ export function EditorPreview({
   };
   const settingsFields = (
     <div className="ap-article-fields">
-      <div className="ap-dialog-field">
-        <label htmlFor="ap-article-status">文章状态</label>
-        <div id="ap-article-status" className="ap-status-radios">
-          {[
-            { value: "draft", label: "草稿" },
-            { value: "published", label: "已发布" },
-          ].map((item) => (
-            <label key={item.value}>
-              <input
-                type="radio"
-                name="ap-article-status"
-                value={item.value}
-                checked={status === item.value}
-                onChange={() => {
-                  setStatus(item.value);
-                  change();
-                }}
-              />
-              {item.label}
-            </label>
-          ))}
+      <fieldset className="ap-article-group">
+        <legend>发布与归类</legend>
+        <div className="ap-dialog-field">
+          <label htmlFor="ap-article-status">文章状态</label>
+          <div id="ap-article-status" className="ap-status-radios">
+            {[
+              { value: "draft", label: "草稿" },
+              { value: "published", label: "已发布" },
+            ].map((item) => (
+              <label key={item.value}>
+                <input
+                  type="radio"
+                  name="ap-article-status"
+                  value={item.value}
+                  checked={status === item.value}
+                  onChange={() => {
+                    setStatus(item.value);
+                    change();
+                  }}
+                />
+                {item.label}
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="ap-dialog-field">
-        <label htmlFor="ap-article-category">文章分类</label>
-        <PreviewSelect
-          id="ap-article-category"
-          value={category}
-          onChange={(value) => {
-            setCategory(value);
-            change();
-          }}
-          options={[
-            { value: "design", label: "设计与体验" },
-            { value: "frontend", label: "前端开发" },
-            { value: "life", label: "生活记录" },
-            { value: "none", label: "未分类" },
-          ]}
-        />
-      </div>
-      <div className="ap-dialog-field">
-        <label htmlFor="ap-article-tags">标签</label>
-        <Input
-          id="ap-article-tags"
-          value={tag}
-          onChange={(event) => {
-            setTag(event.target.value);
-            change();
-          }}
-        />
-        <p className="ap-field-hint">多个标签使用逗号分隔。</p>
-      </div>
-      <div className="ap-dialog-field">
-        <label htmlFor="ap-article-summary">摘要</label>
-        <Textarea
-          id="ap-article-summary"
-          rows={4}
-          maxLength={300}
-          value={summary}
-          onChange={(event) => {
-            setSummary(event.target.value);
-            change();
-          }}
-        />
-        <span className="ap-field-hint">{summary.length} / 300</span>
-      </div>
-      <div className="ap-article-switch">
-        <label htmlFor="ap-article-featured">精选文章</label>
-        <Switch
-          id="ap-article-featured"
-          checked={featured}
-          onCheckedChange={(value) => {
-            setFeatured(value);
-            change();
-          }}
-          touchTarget
-        />
-      </div>
-      <div className="ap-dialog-field">
-        <label htmlFor="ap-article-sort">排序</label>
-        <Input
-          id="ap-article-sort"
-          type="number"
-          value={sort}
-          onChange={(event) => {
-            setSort(event.target.value);
-            change();
-          }}
-        />
-      </div>
+        <div className="ap-dialog-field">
+          <label htmlFor="ap-article-category">文章分类</label>
+          <PreviewSelect
+            id="ap-article-category"
+            value={category}
+            onChange={(value) => {
+              setCategory(value);
+              change();
+            }}
+            options={[
+              { value: "design", label: "设计与体验" },
+              { value: "frontend", label: "前端开发" },
+              { value: "life", label: "生活记录" },
+              { value: "none", label: "未分类" },
+            ]}
+          />
+        </div>
+        <div className="ap-dialog-field">
+          <label htmlFor="ap-article-tags">标签</label>
+          <Input
+            id="ap-article-tags"
+            value={tag}
+            onChange={(event) => {
+              setTag(event.target.value);
+              change();
+            }}
+          />
+          <p className="ap-field-hint">多个标签使用逗号分隔。</p>
+        </div>
+      </fieldset>
+      <fieldset className="ap-article-group">
+        <legend>内容摘要</legend>
+        <div className="ap-dialog-field">
+          <label htmlFor="ap-article-summary">摘要</label>
+          <Textarea
+            id="ap-article-summary"
+            rows={4}
+            maxLength={300}
+            value={summary}
+            onChange={(event) => {
+              setSummary(event.target.value);
+              change();
+            }}
+          />
+          <span className="ap-field-hint">{summary.length} / 300</span>
+        </div>
+      </fieldset>
+      <fieldset className="ap-article-group">
+        <legend>展示与排序</legend>
+        <div className="ap-article-switch">
+          <label htmlFor="ap-article-featured">精选文章</label>
+          <Switch
+            id="ap-article-featured"
+            checked={featured}
+            onCheckedChange={(value) => {
+              setFeatured(value);
+              change();
+            }}
+            touchTarget
+          />
+        </div>
+        <div className="ap-dialog-field">
+          <label htmlFor="ap-article-sort">排序</label>
+          <Input
+            id="ap-article-sort"
+            type="number"
+            value={sort}
+            onChange={(event) => {
+              setSort(event.target.value);
+              change();
+            }}
+          />
+        </div>
+      </fieldset>
     </div>
   );
   return (

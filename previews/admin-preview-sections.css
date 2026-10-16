@@ -1,13 +1,43 @@
 /* 仅负责独立预览布局，控件皮肤与主题数值继续复用项目共享实现。 */
-.ap-taxonomy-grid {
+.ap-taxonomy-workbench {
   display: grid;
-  grid-template-columns: 7fr 5fr;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
   align-items: start;
-  gap: 24px;
-}
-.ap-taxonomy-card {
-  min-width: 0;
   overflow: hidden;
+  border-radius: 14px;
+  background: var(--color-surface);
+}
+.ap-taxonomy-main {
+  min-width: 0;
+}
+.ap-taxonomy-main-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 24px;
+}
+.ap-module-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ap-module-title h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+.ap-category-search {
+  width: 220px;
+  max-width: 100%;
+}
+.ap-taxonomy-tags {
+  min-width: 0;
+  align-self: stretch;
+  border-left: 1px solid var(--admin-divider);
+  padding-bottom: 4px;
 }
 .ap-module-heading {
   display: flex;
@@ -149,13 +179,13 @@
 .ap-release-timeline {
   list-style: none;
   margin: 0;
-  padding: 8px 32px 16px;
+  padding: 0 24px;
 }
 .ap-release-item {
   display: grid;
-  grid-template-columns: 132px minmax(0, 1fr);
+  grid-template-columns: 112px minmax(0, 1fr);
   position: relative;
-  padding: 28px 0;
+  padding: 20px 0;
   gap: 24px;
 }
 .ap-release-item + .ap-release-item {
@@ -163,31 +193,45 @@
 }
 .ap-release-date {
   display: flex;
+  min-width: 0;
+  overflow-wrap: anywhere;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
   font-variant-numeric: tabular-nums;
 }
 .ap-release-date strong {
+  order: -1;
   color: var(--color-foreground);
   font-size: 16px;
   line-height: 24px;
   font-weight: 500;
 }
 .ap-release-content {
-  padding-left: 24px;
-  border-left: 1px solid var(--color-outline);
   min-width: 0;
 }
+.ap-release-row-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 36px;
+}
 .ap-release-title {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
 }
 .ap-release-title h2 {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: 16px;
   font-weight: 500;
@@ -217,19 +261,20 @@
 }
 .ap-release-content > ul {
   list-style: disc;
-  margin: 16px 0;
+  margin: 12px 0 0;
   padding-left: 18px;
   color: var(--color-foreground-reading);
-  line-height: 24px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
 }
 .ap-release-content > ul li + li {
-  margin-top: 6px;
+  margin-top: 4px;
 }
 .ap-release-actions {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
 }
 .ap-release-actions > span {
   font-size: 12px;
@@ -257,19 +302,55 @@
   font-size: 13px;
   line-height: 20px;
 }
-.ap-settings-toolbar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
+.ap-settings-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  align-items: start;
+  gap: 48px;
+}
+.ap-settings-navigation {
+  position: sticky;
+  top: 24px;
+  min-width: 0;
 }
 .ap-settings-tab-scroll {
   min-width: 0;
   overflow-x: auto;
   max-width: 100%;
 }
-.ap-settings-toolbar > .ds-button {
-  margin-left: auto;
+.ap-settings-nav-list.ds-tabs-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
+  gap: 12px;
+}
+.ap-settings-nav-item {
+  min-width: 0;
+}
+.ap-settings-nav-list .ds-tabs-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: var(--control-compact);
+  text-align: left;
+}
+.ap-settings-nav-item p {
+  margin: 4px 12px 0;
+  color: var(--color-caption);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+.ap-settings-navigation > .ds-button {
+  margin-top: 24px;
+}
+.ap-settings-content {
+  min-width: 0;
+}
+.ap-settings-content > .ds-tabs-panel {
+  padding-top: 0;
 }
 .ap-settings-section + .ap-settings-section {
   margin-top: 48px;
@@ -487,7 +568,23 @@
   margin-top: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
+}
+.ap-article-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.ap-article-group legend {
+  padding: 0 0 12px;
+  color: var(--color-foreground-reading);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
 }
 .ap-dialog-field .ds-input {
   width: 100%;
@@ -538,12 +635,44 @@
     padding-left: 24px;
   }
 }
-@media (max-width: 1100px) {
-  .ap-taxonomy-grid {
+@media (max-width: 900px) {
+  .ap-taxonomy-workbench {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-@media (max-width: 900px) {
+  .ap-taxonomy-tags {
+    border-left: 0;
+    border-top: 1px solid var(--admin-divider);
+  }
+  .ap-settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .ap-settings-navigation {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .ap-settings-tab-scroll {
+    width: 100%;
+  }
+  .ap-settings-nav-list.ds-tabs-list {
+    flex-direction: row;
+    width: max-content;
+    gap: 8px;
+  }
+  .ap-settings-nav-item {
+    flex: 0 0 auto;
+  }
+  .ap-settings-nav-item p {
+    display: none;
+  }
+  .ap-settings-navigation > .ds-button {
+    margin-top: 0;
+    margin-left: auto;
+  }
+
   .ap-settings-field,
   .ap-settings-field-wide {
     grid-template-columns: minmax(0, 1fr);
@@ -587,12 +716,17 @@
     padding-top: 0;
     padding-bottom: 0;
   }
-  .ap-release-search {
-    flex-basis: 100%;
+  .ap-release-toolbar {
+    align-items: stretch;
+  }
+  .ap-release-search,
+  .ap-release-filter {
+    flex: none;
+    width: 100%;
     max-width: none;
   }
-  .ap-release-filter {
-    flex: 1;
+  .ap-release-toolbar .ap-results {
+    align-self: flex-end;
   }
   .ap-release-timeline {
     padding: 0 20px;
@@ -600,19 +734,27 @@
   .ap-release-item {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
-    padding: 24px 0;
+    padding: 20px 0;
   }
   .ap-release-date {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 4px 16px;
   }
   .ap-release-date strong {
+    grid-column: 1 / -1;
     font-size: 14px;
   }
-  .ap-release-content {
-    padding-left: 0;
-    border-left: 0;
+  .ap-release-row-heading {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .ap-release-title {
+    flex-basis: 100%;
+  }
+  .ap-release-actions {
+    margin-left: -8px;
   }
   .ap-local-pagination > span {
     flex-basis: 100%;
@@ -620,11 +762,11 @@
   .ap-local-pagination .ds-button {
     flex: 1;
   }
-  .ap-settings-toolbar {
-    align-items: flex-start;
+  .ap-taxonomy-main-heading {
+    padding: 20px;
   }
-  .ap-settings-toolbar > .ds-button {
-    margin-left: 0;
+  .ap-category-search {
+    width: 100%;
   }
   .ap-settings-section + .ap-settings-section {
     margin-top: 32px;
@@ -691,5 +833,11 @@
   .ap-tag .ds-button {
     width: 44px;
     height: 44px;
+  }
+}
+
+@media (max-width: 600px), (pointer: coarse) {
+  .ap-settings-nav-list .ds-tabs-trigger {
+    min-height: var(--control-touch);
   }
 }
