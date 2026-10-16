@@ -183,17 +183,6 @@ function SearchBox({
   );
 }
 
-function useCollectionSidebar() {
-  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 1201px)").matches);
-  useEffect(() => {
-    const query = window.matchMedia("(min-width: 1201px)");
-    const update = () => setWide(query.matches);
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
-  return wide;
-}
-
 function Modal({
   open,
   onOpenChange,
@@ -700,7 +689,6 @@ const postColumns: ColumnDef<Post>[] = [
 ];
 
 function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }) {
-  const wide = useCollectionSidebar();
   const [posts, setPosts] = useState(examplePosts);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -757,15 +745,14 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
       <section className="admin-data-workspace ap-posts" ref={search} aria-label="文章工作区">
         <Tabs
           className="ap-collection-layout"
-          orientation={wide ? "vertical" : "horizontal"}
+          orientation="horizontal"
           value={status}
           onValueChange={(value) => {
             setStatus(String(value));
             state.setPage(1);
           }}
         >
-          <div className="ap-task-navigation">
-            <h2>文章状态</h2>
+          <div className="ap-collection-status-bar">
             <div className="ap-tabs-scroll">
               <TabsList size="compact" className="ap-task-tabs" aria-label="按文章状态筛选">
                 <TabsTrigger value="all">
@@ -789,6 +776,7 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                 </TabsTrigger>
               </TabsList>
             </div>
+            <span className="ap-collection-count">{filtered.length} 篇文章</span>
           </div>
           <div className="ap-collection-main">
             <div className="ap-toolbar ap-post-toolbar">
@@ -829,12 +817,6 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                   ]}
                 />
               </div>
-            </div>
-            <div className="ap-collection-heading">
-              <h2>
-                {status === "draft" ? "草稿箱" : status === "published" ? "已发布文章" : "全部文章"}
-              </h2>
-              <span>{filtered.length} 篇文章</span>
             </div>
             <TabsPanel value={status} className="ap-table-panel">
               <DataTable
@@ -989,7 +971,6 @@ const friendColumns: ColumnDef<Friend>[] = [
 ];
 
 function FriendsPreview({ notify }: { notify: Notify }) {
-  const wide = useCollectionSidebar();
   const [items, setItems] = useState(exampleFriends);
   const [category, setCategory] = useState("all");
   const [review, setReview] = useState("all");
@@ -1076,15 +1057,14 @@ function FriendsPreview({ notify }: { notify: Notify }) {
       <section className="admin-data-workspace ap-friends" ref={workspace} aria-label="友链工作区">
         <Tabs
           className="ap-collection-layout"
-          orientation={wide ? "vertical" : "horizontal"}
+          orientation="horizontal"
           value={review}
           onValueChange={(value) => {
             setReview(String(value));
             tableState.setPage(1);
           }}
         >
-          <div className="ap-task-navigation">
-            <h2>审核状态</h2>
+          <div className="ap-collection-status-bar">
             <div className="ap-tabs-scroll">
               <TabsList size="compact" className="ap-task-tabs" aria-label="筛选审核状态">
                 <TabsTrigger value="all">
@@ -1108,6 +1088,7 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                 </TabsTrigger>
               </TabsList>
             </div>
+            <span className="ap-collection-count">{filtered.length} 个站点</span>
           </div>
           <div className="ap-collection-main">
             <div className="ap-toolbar">
@@ -1152,16 +1133,6 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                   刷新列表
                 </Button>
               </div>
-            </div>
-            <div className="ap-collection-heading">
-              <h2>
-                {review === "pending"
-                  ? "待审核友链"
-                  : review === "approved"
-                    ? "已通过友链"
-                    : "全部友链"}
-              </h2>
-              <span>{filtered.length} 个站点</span>
             </div>
             <TabsPanel value={review} className="ap-table-panel">
               <DataTable

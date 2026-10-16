@@ -496,30 +496,31 @@
   max-height: 85dvh;
   overflow-y: auto;
 }
-/* 状态视图成为工作区内的任务导航，搜索与筛选留在主列表一侧。 */
+/* 两个列表始终采用顶部状态切换与全宽数据区，不保留局部侧栏。 */
 .ap-collection-layout {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  align-items: stretch;
-  min-height: 560px;
+  grid-template-columns: minmax(0, 1fr);
 }
-.ap-task-navigation {
-  padding: 24px 12px;
-  border-right: 1px solid var(--admin-divider);
+.ap-collection-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+  border-bottom: 1px solid var(--admin-divider);
 }
-.ap-task-navigation h2 {
-  padding-inline: 12px;
-  margin: 0 0 20px;
+.ap-collection-count {
+  flex: none;
   color: var(--color-caption);
   font-size: 12px;
-  font-weight: 500;
   line-height: 18px;
 }
 .ap-task-tabs.ds-tabs-list {
   display: flex;
-  flex-direction: column;
-  height: auto;
-  width: 100%;
+  flex-direction: row;
+  height: 36px;
+  width: max-content;
   gap: 8px;
 }
 .ap-task-tabs .ds-tabs-trigger {
@@ -527,23 +528,22 @@
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
-  width: 100%;
+  width: auto;
   min-height: 36px;
-  padding: 8px 10px;
+  padding: 0 12px;
   text-align: left;
 }
 .ap-task-tabs .ds-tabs-trigger svg {
   flex: none;
 }
 .ap-task-count {
-  margin-left: auto;
   font: 12px/18px var(--font-mono);
 }
 .ap-collection-main {
   min-width: 0;
 }
 .ap-collection-main .ap-toolbar {
-  min-height: 84px;
+  min-height: 72px;
 }
 .ap-collection-main .ap-search {
   flex: 1;
@@ -554,51 +554,13 @@
 .ap-collection-main .ap-post-toolbar > .ap-filter-group {
   flex: none;
 }
-.ap-collection-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 24px 16px 16px;
-}
-.ap-collection-heading h2 {
-  margin: 0;
-  font: 500 16px/24px var(--font-display);
-}
-.ap-collection-heading > span {
-  color: var(--color-caption);
-  font-size: 12px;
-  line-height: 18px;
-}
 .ap-collection-main .admin-post-table thead th {
   padding-block: 12px;
 }
-@media (max-width: 1200px) {
-  .ap-collection-layout {
-    grid-template-columns: minmax(0, 1fr);
-    min-height: 0;
-  }
-  .ap-task-navigation {
-    padding: 16px;
-    border-right: 0;
-    border-bottom: 1px solid var(--admin-divider);
-  }
-  .ap-task-navigation h2 {
+@media (max-width: 600px) {
+  .ap-collection-count {
     display: none;
   }
-  .ap-task-tabs.ds-tabs-list {
-    flex-direction: row;
-    width: max-content;
-    height: 36px;
-  }
-  .ap-task-tabs .ds-tabs-trigger {
-    width: auto;
-  }
-  .ap-collection-main .ap-toolbar {
-    min-height: 0;
-  }
-}
-@media (max-width: 600px) {
   .ap-collection-main .ap-search {
     min-width: 0;
     width: 100%;
