@@ -2,38 +2,119 @@
   display: grid;
   gap: 24px;
 }
-.admin-taxonomy-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 24px;
-  align-items: start;
-}
-.admin-taxonomy-card {
+.admin-taxonomy-workspace {
   min-width: 0;
   overflow: hidden;
+  border-radius: 14px;
+  background: var(--color-surface);
 }
-.admin-taxonomy-heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 20px;
+.admin-taxonomy-navigation {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 16px;
 }
-.admin-taxonomy-heading h2 {
+.admin-taxonomy-navigation .ds-tabs-list {
+  width: max-content;
+}
+.admin-taxonomy-navigation .ds-tabs-trigger {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+.admin-taxonomy-panel.ds-tabs-panel {
+  padding-top: 0;
+}
+.admin-taxonomy-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+}
+.admin-taxonomy-search {
+  flex: 1;
+  min-width: 0;
+  width: 360px;
+  max-width: 360px;
+}
+.admin-taxonomy-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+}
+.admin-taxonomy-sort,
+.admin-taxonomy-batch-size {
+  flex: none;
+  max-width: 100%;
+}
+.admin-taxonomy-sort {
+  width: 180px;
+}
+.admin-taxonomy-batch-size {
+  width: 140px;
+}
+.admin-taxonomy-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  list-style: none;
   margin: 0;
-  font: 500 16px/24px var(--font-sans);
+  padding: 8px 16px 16px;
 }
-.admin-taxonomy-badge {
-  border-radius: 999px;
-  padding: 2px 8px;
+.admin-taxonomy-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  min-width: 0;
+  min-height: 104px;
+  border-radius: var(--radius-md);
+  background: var(--color-fill-0);
+}
+.admin-taxonomy-identity {
+  min-width: 0;
+}
+.admin-taxonomy-identity p {
+  margin: 4px 0 0 18px;
   color: var(--color-caption);
-  background: var(--color-raised);
-  font: 12px/1.5 var(--font-mono);
+  font-size: 12px;
+  line-height: 18px;
 }
-.admin-taxonomy-body {
-  padding: 0 20px 20px;
+.admin-taxonomy-item > .ds-button {
+  flex: none;
+}
+.admin-taxonomy-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font: 500 16px/24px var(--font-display);
+  overflow-wrap: anywhere;
+}
+.admin-taxonomy-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex: none;
+}
+.admin-taxonomy-item:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.admin-taxonomy-count {
+  color: var(--color-caption);
+  font: 12px/18px var(--font-mono);
+  white-space: nowrap;
+}
+.admin-taxonomy-more {
+  padding: 16px;
+}
+.admin-taxonomy-tag-form {
+  max-width: 640px;
+  padding: 16px 16px 24px;
 }
 .admin-taxonomy-form {
   display: flex;
@@ -50,62 +131,6 @@
   margin: 8px 0 0;
   font-size: 12px;
 }
-.admin-taxonomy-table {
-  min-width: 340px;
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin-top: 20px;
-  text-align: left;
-  font-size: 13px;
-}
-.admin-taxonomy-table thead th {
-  background: var(--color-stage);
-  color: var(--color-caption);
-  font-size: 12px;
-  font-weight: 500;
-}
-.admin-taxonomy-table th,
-.admin-taxonomy-table td {
-  padding: 12px 8px;
-  border-bottom: 1px solid var(--admin-divider);
-}
-.admin-taxonomy-table thead th:nth-child(2) {
-  width: 110px;
-}
-.admin-taxonomy-table thead th:last-child {
-  width: 60px;
-}
-.admin-taxonomy-table tbody th {
-  background: transparent;
-  color: inherit;
-  font-size: inherit;
-  font-weight: 400;
-  text-align: left;
-}
-.admin-taxonomy-table tbody tr:hover > :is(th, td) {
-  background: var(--color-surface-hover);
-}
-.admin-taxonomy-table tbody tr:last-child > :is(th, td) {
-  border-bottom: 0;
-}
-.admin-taxonomy-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  overflow-wrap: anywhere;
-}
-.admin-taxonomy-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  flex: none;
-}
-.admin-taxonomy-count {
-  color: var(--color-caption);
-  font: 12px/1.5 var(--font-mono);
-  white-space: nowrap;
-}
 .admin-taxonomy-delete-confirm {
   color: var(--color-danger-text);
 }
@@ -115,9 +140,8 @@
   display: flex;
   align-content: start;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-  padding: 0;
+  gap: 10px;
+  padding: 0 16px;
 }
 .admin-taxonomy-tag {
   display: flex;
@@ -142,50 +166,56 @@
 }
 .admin-taxonomy-empty {
   color: var(--color-caption);
-  padding: 24px 8px;
-  font-size: 13px;
+  padding: 24px 16px;
+  font-size: 14px;
+  line-height: 20px;
   text-align: center;
   margin: auto;
+}
+.admin-taxonomy-note {
+  margin: 24px 16px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
 }
 .admin-categories .admin-confirm {
   overflow-wrap: anywhere;
 }
-@media (max-width: 1100px) {
-  .admin-taxonomy-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-@media (max-width: 480px) {
-  .admin-taxonomy-heading {
-    padding: 16px;
-  }
-  .admin-taxonomy-body {
-    padding: 0 16px 16px;
-  }
-  .admin-taxonomy-form .ds-button {
-    padding-inline: 12px;
-  }
-  .admin-taxonomy-table thead th:nth-child(2) {
-    width: 76px;
-  }
-  .admin-taxonomy-table thead th:last-child {
-    width: 48px;
-  }
-  .admin-taxonomy-table th,
-  .admin-taxonomy-table td {
-    padding-inline: 4px;
-  }
-  .admin-taxonomy-cloud {
-    gap: 8px;
-  }
-}
-
 .admin-taxonomy-label {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
   line-height: 20px;
   color: var(--color-caption);
+}
+@media (max-width: 600px) {
+  .admin-categories {
+    gap: 20px;
+  }
+  .admin-categories .admin-page-heading > .ds-button,
+  .admin-taxonomy-controls,
+  .admin-taxonomy-sort,
+  .admin-taxonomy-batch-size {
+    width: 100%;
+  }
+  .admin-taxonomy-search {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: none;
+  }
+  .admin-taxonomy-more .ds-button {
+    width: 100%;
+  }
+  .admin-taxonomy-form {
+    flex-wrap: wrap;
+  }
+  .admin-taxonomy-form .ds-input {
+    width: 100%;
+    flex-basis: 100%;
+  }
+  .admin-taxonomy-form .ds-button {
+    flex: 1;
+  }
 }
 @media (max-width: 600px), (pointer: coarse) {
   .admin-taxonomy-tag-remove {

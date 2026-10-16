@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, desc, eq, gte, lt } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, isNull, lt, sql, type SQL } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 import { chmod, mkdir, rm, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -14,7 +14,7 @@ import { migrationManifest } from "@/lib/database/migrations";
 import { backupRun, notification } from "@/lib/database/schema";
 
 import type { OperationTransaction } from "./notifications";
-import type { BackupItem, BackupPage } from "./schema";
+import type { BackupItem, BackupPage, BackupQuery } from "./schema";
 
 import { backupDirectory, fileDigest, verifySqliteArchive } from "./backup-files";
 
@@ -61,7 +61,7 @@ function expireBackupRuns(tx: OperationTransaction) {
   }
 }
 export async function listBackups(
-  query: z.infer<typeof listQuerySchema>,
+  query: z.infer<typeof listQuerySchema> & Partial<Pick<BackupQuery, "sortBy" | "sortDirection">>,
   actor: TaxonomyActor,
 ): Promise<BackupPage> {
   return writeTransaction((tx) => {
@@ -70,10 +70,24 @@ export async function listBackups(
     const { total } = tx.select({ total: count() }).from(backupRun).get()!;
     const pageCount = Math.max(1, Math.ceil(total / query.pageSize));
     const page = Math.min(query.page, pageCount);
+    const direction = query.sortDirection === "asc" ? asc : desc;
+    const ordering: SQL[] = [];
+    if (query.sortBy === "bytes") {
+      // 未完成记录没有文件大小，升降序都放到末尾，不能把未知大小当作零。
+      ordering.push(asc(isNull(backupRun.bytes)), direction(backupRun.bytes));
+    } else if (query.sortBy === "status") {
+      ordering.push(
+        direction(
+          sql`CASE ${backupRun.status} WHEN 'running' THEN 0 WHEN 'complete' THEN 1 ELSE 2 END`,
+        ),
+      );
+    } else ordering.push(direction(backupRun.createdAt));
+    // 排序在分页之前应用，并列时始终按 ID 降序，追加页不会随机交换记录。
+    ordering.push(desc(backupRun.id));
     const rows = tx
       .select()
       .from(backupRun)
-      .orderBy(desc(backupRun.createdAt), desc(backupRun.id))
+      .orderBy(...ordering)
       .limit(query.pageSize)
       .offset((page - 1) * query.pageSize)
       .all();

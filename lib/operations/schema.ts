@@ -27,6 +27,11 @@ export type OperationSettings = {
   schedulerLastRunAt: string | null;
 };
 export const backupRequestSchema = z.strictObject({ id: z.uuid() });
+export const backupQuerySchema = listQuerySchema.omit({ q: true }).extend({
+  sortBy: z.enum(["createdAt", "status", "bytes"]).default("createdAt"),
+  sortDirection: z.enum(["asc", "desc"]).default("desc"),
+});
+export type BackupQuery = z.infer<typeof backupQuerySchema>;
 export type BackupItem = {
   id: string;
   status: "running" | "complete" | "failed";

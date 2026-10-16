@@ -329,181 +329,196 @@ function PostEditorForm({
           重新载入最新内容
         </Button>
       )}
-      <label htmlFor="admin-post-slug">
-        文章 slug
-        <Input
-          form="article-writing-form"
-          id="admin-post-slug"
-          value={slug}
-          maxLength={120}
-          readOnly={Boolean(savedPost?.slugLockedAt)}
-          disabled={postPending}
-          onChange={(event) => update("slug", event.target.value)}
-          aria-invalid={Boolean(fieldErrors.slug)}
-          aria-describedby="post-slug-help post-error-slug"
-        />
-      </label>
-      <p id="post-slug-help">
-        {slug ? `链接：/posts/${slug}。` : "草稿可暂不填写，发布前需设置唯一链接。"}
-        {savedPost?.slugLockedAt
-          ? "首次发布后已锁定。"
-          : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
-      </p>
-      {fieldError("slug")}
-      <label htmlFor="admin-post-category">分类</label>
-      <Select
-        value={categoryId}
-        disabled={disabled || !categoryItems.length}
-        onValueChange={(value) => update("categoryId", value ?? "")}
-      >
-        <SelectTrigger
-          id="admin-post-category"
-          aria-invalid={Boolean(fieldErrors.categoryId)}
-          aria-describedby={fieldErrors.categoryId ? "post-error-categoryId" : undefined}
-        >
-          <SelectValue placeholder="请选择分类">
-            {categoryItems.find((item) => item.id === categoryId)?.name ??
-              (status === "draft" ? "暂不分类" : "请选择分类")}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {status === "draft" && <SelectItem value="">暂不分类</SelectItem>}
-          {categoryItems.map((item) => (
-            <SelectItem value={item.id} key={item.id}>
-              {item.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      {fieldError("categoryId")}
-      {!taxonomyLoading && !taxonomyError && !categoryItems.length && (
-        <p>
-          草稿可先保存；发布前请在{" "}
-          <Link
-            href="/admin/categories"
-            aria-disabled={postPending || undefined}
-            onClick={(event) => {
-              if (postPending) event.preventDefault();
-            }}
-          >
-            分类与标签
-          </Link>{" "}
-          创建分类。
-        </p>
-      )}
-      <label htmlFor="admin-post-tags">标签</label>
-      <Combobox
-        multiple
-        items={tagItems.map((item) => item.id)}
-        value={tagIds}
-        onValueChange={(value) => update("tagIds", value)}
-        disabled={disabled}
-        itemToStringLabel={(value: string) =>
-          tagItems.find((tag) => tag.id === value)?.name ?? value
-        }
-      >
-        <ComboboxInputGroup>
-          <ComboboxInput
-            id="admin-post-tags"
-            placeholder="选择已有标签"
-            aria-invalid={Boolean(fieldErrors.tagIds)}
-            aria-describedby={fieldErrors.tagIds ? "post-error-tagIds" : undefined}
-          />
-          <ComboboxTrigger />
-        </ComboboxInputGroup>
-        <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
-          <ComboboxList>
-            {(tagId: string) => (
-              <ComboboxItem key={tagId} value={tagId}>
-                {tagItems.find((tag) => tag.id === tagId)?.name}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-      {fieldError("tagIds")}
-      <div aria-label="已选标签">
-        {tagIds.map((tagId) => (
-          <Button
-            type="button"
-            key={tagId}
-            variant="ghost"
-            size="sm"
-            disabled={postPending}
-            onClick={() =>
-              update(
-                "tagIds",
-                tagIds.filter((id) => id !== tagId),
-              )
-            }
-            aria-label={`移除标签 ${tagItems.find((tag) => tag.id === tagId)?.name ?? tagId}`}
-          >
-            {tagItems.find((tag) => tag.id === tagId)?.name ?? "标签已移除"}
-            <X size={14} aria-hidden="true" />
-          </Button>
-        ))}
-      </div>
-      <label htmlFor="admin-post-summary">
-        文章摘要
-        <Textarea
-          form="article-writing-form"
-          id="admin-post-summary"
-          value={summary}
-          maxLength={200}
-          disabled={postPending}
-          onChange={(event) => update("summary", event.target.value)}
-          aria-invalid={Boolean(fieldErrors.summary)}
-          aria-describedby={`post-summary-help${fieldErrors.summary ? " post-error-summary" : ""}`}
-        />
-      </label>
-      <p id="post-summary-help">建议 50～100 字，最多 200 字；可留空。{summary.length}/200</p>
-      {fieldError("summary")}
-      <div className="post-editor-featured-toggle">
-        <label htmlFor="admin-post-featured">设为精选</label>
-        <Switch
-          id="admin-post-featured"
-          aria-label="设为精选"
-          touchTarget
-          checked={isFeatured}
-          disabled={postPending}
-          onCheckedChange={(checked) => update("isFeatured", checked)}
-          aria-invalid={Boolean(fieldErrors.isFeatured)}
-          aria-describedby={fieldErrors.isFeatured ? "post-error-isFeatured" : undefined}
-        />
-      </div>
-      {fieldError("isFeatured")}
-      <label htmlFor="admin-post-featured-order">
-        精选排序
-        <Input
-          form="article-writing-form"
-          id="admin-post-featured-order"
-          type="number"
-          min={0}
-          max={9999}
-          step={1}
-          value={featuredOrder}
-          disabled={postPending || !isFeatured}
-          onChange={(event) => update("featuredOrder", event.target.value)}
-          aria-invalid={Boolean(fieldErrors.featuredOrder)}
-          aria-describedby={`post-featured-order-help${fieldErrors.featuredOrder ? " post-error-featuredOrder" : ""}`}
-        />
-      </label>
-      <p id="post-featured-order-help">数值越小越靠前，范围 0～9999；关闭精选保留排序值。</p>
-      {fieldError("featuredOrder")}
-      <fieldset className="admin-status-options" disabled={postPending}>
-        <legend>文章状态</legend>
-        {(["draft", "published"] as const).map((value) => (
-          <label key={value}>
-            <input
-              type="radio"
-              name="post-status"
-              checked={status === value}
-              onChange={() => update("status", value)}
+      <section className="post-editor-settings-group" aria-labelledby="post-settings-publishing">
+        <h3 id="post-settings-publishing">发布与归类</h3>
+        <div className="post-editor-settings-group-fields">
+          <fieldset className="admin-status-options" disabled={postPending}>
+            <legend>文章状态</legend>
+            {(["draft", "published"] as const).map((value) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name="post-status"
+                  checked={status === value}
+                  onChange={() => update("status", value)}
+                />
+                {postStatusLabels[value]}
+              </label>
+            ))}
+          </fieldset>
+          <label htmlFor="admin-post-slug">
+            文章 slug
+            <Input
+              form="article-writing-form"
+              id="admin-post-slug"
+              value={slug}
+              maxLength={120}
+              readOnly={Boolean(savedPost?.slugLockedAt)}
+              disabled={postPending}
+              onChange={(event) => update("slug", event.target.value)}
+              aria-invalid={Boolean(fieldErrors.slug)}
+              aria-describedby="post-slug-help post-error-slug"
             />
-            {postStatusLabels[value]}
           </label>
-        ))}
-      </fieldset>
+          <p id="post-slug-help">
+            {slug ? `链接：/posts/${slug}。` : "草稿可暂不填写，发布前需设置唯一链接。"}
+            {savedPost?.slugLockedAt
+              ? "首次发布后已锁定。"
+              : "使用小写英文字母、数字和单个连字符，首次发布后锁定。"}
+          </p>
+          {fieldError("slug")}
+          <label htmlFor="admin-post-category">分类</label>
+          <Select
+            value={categoryId}
+            disabled={disabled || !categoryItems.length}
+            onValueChange={(value) => update("categoryId", value ?? "")}
+          >
+            <SelectTrigger
+              id="admin-post-category"
+              aria-invalid={Boolean(fieldErrors.categoryId)}
+              aria-describedby={fieldErrors.categoryId ? "post-error-categoryId" : undefined}
+            >
+              <SelectValue placeholder="请选择分类">
+                {categoryItems.find((item) => item.id === categoryId)?.name ??
+                  (status === "draft" ? "暂不分类" : "请选择分类")}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {status === "draft" && <SelectItem value="">暂不分类</SelectItem>}
+              {categoryItems.map((item) => (
+                <SelectItem value={item.id} key={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {fieldError("categoryId")}
+          {!taxonomyLoading && !taxonomyError && !categoryItems.length && (
+            <p>
+              草稿可先保存；发布前请在{" "}
+              <Link
+                href="/admin/categories"
+                aria-disabled={postPending || undefined}
+                onClick={(event) => {
+                  if (postPending) event.preventDefault();
+                }}
+              >
+                分类与标签
+              </Link>{" "}
+              创建分类。
+            </p>
+          )}
+          <label htmlFor="admin-post-tags">标签</label>
+          <Combobox
+            multiple
+            items={tagItems.map((item) => item.id)}
+            value={tagIds}
+            onValueChange={(value) => update("tagIds", value)}
+            disabled={disabled}
+            itemToStringLabel={(value: string) =>
+              tagItems.find((tag) => tag.id === value)?.name ?? value
+            }
+          >
+            <ComboboxInputGroup>
+              <ComboboxInput
+                id="admin-post-tags"
+                placeholder="选择已有标签"
+                aria-invalid={Boolean(fieldErrors.tagIds)}
+                aria-describedby={fieldErrors.tagIds ? "post-error-tagIds" : undefined}
+              />
+              <ComboboxTrigger />
+            </ComboboxInputGroup>
+            <ComboboxContent emptyText="暂无匹配标签，请在分类与标签页创建">
+              <ComboboxList>
+                {(tagId: string) => (
+                  <ComboboxItem key={tagId} value={tagId}>
+                    {tagItems.find((tag) => tag.id === tagId)?.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
+          {fieldError("tagIds")}
+          <div aria-label="已选标签">
+            {tagIds.map((tagId) => (
+              <Button
+                type="button"
+                key={tagId}
+                variant="ghost"
+                size="sm"
+                disabled={postPending}
+                onClick={() =>
+                  update(
+                    "tagIds",
+                    tagIds.filter((id) => id !== tagId),
+                  )
+                }
+                aria-label={`移除标签 ${tagItems.find((tag) => tag.id === tagId)?.name ?? tagId}`}
+              >
+                {tagItems.find((tag) => tag.id === tagId)?.name ?? "标签已移除"}
+                <X size={14} aria-hidden="true" />
+              </Button>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="post-editor-settings-group" aria-labelledby="post-settings-summary">
+        <h3 id="post-settings-summary">内容摘要</h3>
+        <div className="post-editor-settings-group-fields">
+          <label htmlFor="admin-post-summary">
+            文章摘要
+            <Textarea
+              form="article-writing-form"
+              id="admin-post-summary"
+              value={summary}
+              maxLength={200}
+              disabled={postPending}
+              onChange={(event) => update("summary", event.target.value)}
+              aria-invalid={Boolean(fieldErrors.summary)}
+              aria-describedby={`post-summary-help${fieldErrors.summary ? " post-error-summary" : ""}`}
+            />
+          </label>
+          <p id="post-summary-help">建议 50～100 字，最多 200 字；可留空。{summary.length}/200</p>
+          {fieldError("summary")}
+        </div>
+      </section>
+      <section className="post-editor-settings-group" aria-labelledby="post-settings-display">
+        <h3 id="post-settings-display">展示与排序</h3>
+        <div className="post-editor-settings-group-fields">
+          <div className="post-editor-featured-toggle">
+            <label htmlFor="admin-post-featured">设为精选</label>
+            <Switch
+              id="admin-post-featured"
+              aria-label="设为精选"
+              touchTarget
+              checked={isFeatured}
+              disabled={postPending}
+              onCheckedChange={(checked) => update("isFeatured", checked)}
+              aria-invalid={Boolean(fieldErrors.isFeatured)}
+              aria-describedby={fieldErrors.isFeatured ? "post-error-isFeatured" : undefined}
+            />
+          </div>
+          {fieldError("isFeatured")}
+          <label htmlFor="admin-post-featured-order">
+            精选排序
+            <Input
+              form="article-writing-form"
+              id="admin-post-featured-order"
+              type="number"
+              min={0}
+              max={9999}
+              step={1}
+              value={featuredOrder}
+              disabled={postPending || !isFeatured}
+              onChange={(event) => update("featuredOrder", event.target.value)}
+              aria-invalid={Boolean(fieldErrors.featuredOrder)}
+              aria-describedby={`post-featured-order-help${fieldErrors.featuredOrder ? " post-error-featuredOrder" : ""}`}
+            />
+          </label>
+          <p id="post-featured-order-help">数值越小越靠前，范围 0～9999；关闭精选保留排序值。</p>
+          {fieldError("featuredOrder")}
+        </div>
+      </section>
     </div>
   );
   const settingsHeader = (drawer: boolean) => (

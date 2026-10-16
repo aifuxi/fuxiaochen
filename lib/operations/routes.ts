@@ -1,6 +1,5 @@
 import "server-only";
 import { adminRoutes, validate } from "@/lib/admin/routes";
-import { listQuerySchema } from "@/lib/admin/schema";
 import { authorizeAdmin } from "@/lib/admin/service";
 import { writeTransaction } from "@/lib/database";
 
@@ -13,6 +12,7 @@ import {
 } from "./notifications";
 import {
   backupRequestSchema,
+  backupQuerySchema,
   notificationQuerySchema,
   operationSettingsSchema,
   readNotificationsSchema,
@@ -42,7 +42,7 @@ operationsRoutes.get("/operations/settings", async (c) =>
 operationsRoutes.put("/operations/settings", validate("json", operationSettingsSchema), async (c) =>
   c.json({ data: await saveOperationSettings(c.req.valid("json"), c.get("admin")) }),
 );
-operationsRoutes.get("/backups", validate("query", listQuerySchema.omit({ q: true })), async (c) =>
+operationsRoutes.get("/backups", validate("query", backupQuerySchema), async (c) =>
   c.json({ data: await listBackups({ ...c.req.valid("query"), q: "" }, c.get("admin")) }),
 );
 operationsRoutes.post("/backups", validate("json", backupRequestSchema), async (c) =>

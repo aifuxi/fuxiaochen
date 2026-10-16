@@ -39,20 +39,20 @@ const navGroups = [
   {
     name: "内容",
     items: [
-      { name: "文章管理", icon: FileText, href: "/admin/posts" },
-      { name: "分类与标签", icon: Tags, href: "/admin/categories" },
-      { name: "更新日志", icon: Clock3, href: "/admin/changelog" },
+      { name: "文章管理", shortName: "文章", icon: FileText, href: "/admin/posts" },
+      { name: "分类与标签", shortName: "分类", icon: Tags, href: "/admin/categories" },
+      { name: "更新日志", shortName: "日志", icon: Clock3, href: "/admin/changelog" },
     ],
   },
   {
     name: "互动",
-    items: [{ name: "友情链接", icon: Link2, href: "/admin/friends-links" }],
+    items: [{ name: "友情链接", shortName: "友链", icon: Link2, href: "/admin/friends-links" }],
   },
   {
     name: "系统",
     items: [
-      { name: "系统设置", icon: Settings, href: "/admin/settings" },
-      { name: "备份管理", icon: Database, href: "/admin/backups" },
+      { name: "系统设置", shortName: "设置", icon: Settings, href: "/admin/settings" },
+      { name: "备份管理", shortName: "备份", icon: Database, href: "/admin/backups" },
     ],
   },
 ];
@@ -166,9 +166,25 @@ export function AdminShell({
 
   const sidebar = (mobile: boolean) => (
     <div className="admin-sidebar-inner">
-      <div>
+      <div className="admin-dock-navigation">
         <div className="admin-brand">
-          <BrandLogo className="admin-brand-logo" />
+          {mobile ? (
+            <BrandLogo className="admin-brand-logo" />
+          ) : (
+            <DockHint label="前往网站首页">
+              <Link
+                href="/"
+                className="admin-dock-home"
+                aria-label="前往网站首页"
+                aria-disabled={postPending || undefined}
+                onClick={(event) => {
+                  if (postPending) event.preventDefault();
+                }}
+              >
+                <BrandLogo className="admin-brand-logo" />
+              </Link>
+            </DockHint>
+          )}
           <span className={mobile ? "admin-brand-name" : "sr-only"}>
             付小晨 <small>管理空间</small>
           </span>
@@ -194,7 +210,13 @@ export function AdminShell({
                 const content = (
                   <>
                     <Icon size={mobile ? 18 : 20} strokeWidth={1.8} aria-hidden="true" />
-                    {mobile && <span>{item.name}</span>}
+                    {mobile ? (
+                      <span>{item.name}</span>
+                    ) : (
+                      <span className="admin-dock-label" aria-hidden="true">
+                        {item.shortName}
+                      </span>
+                    )}
                   </>
                 );
                 const sharedProps = {
@@ -229,7 +251,7 @@ export function AdminShell({
         </nav>
       </div>
       <div className="admin-sidebar-bottom">
-        {mobile ? frontLink(true) : <DockHint label="前往网站首页">{frontLink(false)}</DockHint>}
+        {mobile && frontLink(true)}
         {utilities(mobile)}
       </div>
     </div>

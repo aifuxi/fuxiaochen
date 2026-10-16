@@ -1,12 +1,21 @@
 "use client";
-import type { ColumnDef } from "@tanstack/react-table";
-
-import { Check, Link2, Pencil, Plus, Search, Trash2, X } from "lucide-react";
-import { useRef, useState, type SubmitEvent } from "react";
+import {
+  Check,
+  CheckCircle2,
+  CircleX,
+  Clock3,
+  Link2,
+  Pencil,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 
 import { ConfiguredImage } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
-import { DataTable, getDataTableSort, useDataTableState } from "@/components/ui/data-table";
+import { getDataTableSort, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +24,7 @@ import {
   InputGroupAddon,
   InputGroupButton,
 } from "@/components/ui/input-group";
+import { RowActions } from "@/components/ui/menu";
 import {
   Select,
   SelectContent,
@@ -23,6 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsPanel, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import {
   friendCategories,
@@ -36,11 +47,12 @@ import {
 } from "@/lib/friends-links/schema";
 
 import { useAdminWorkspace } from "./admin-context";
-import { AdminRowActionsCell } from "./admin-table";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
+import { RecordListMore, RecordPageSize, RecordSort } from "./record-list";
 import { RecordLocator, useRecordTarget } from "./record-locator";
-import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
+import { usePagedResource } from "./use-paged-resource";
+import { AdminRequestError, useDebouncedPostQuery } from "./use-posts";
 import "./admin-data-workspace.css";
 import "./admin-friends-links.css";
 import "./admin-business.css";
@@ -102,81 +114,6 @@ const actionIcons = {
   Trash2: <Trash2 size={16} />,
 };
 
-const columns: ColumnDef<FriendLink>[] = [
-  {
-    id: "name",
-    header: "博客名称 / 地址",
-    accessorKey: "name",
-    enableSorting: true,
-    meta: { rowHeader: true },
-    cell: ({ row }) => {
-      const link = row.original;
-      return (
-        <>
-          <div className="admin-friend-identity">
-            <span className="admin-friend-avatar">
-              <ConfiguredImage src={link.avatar} size={36} fallback="link" />
-            </span>
-            <div>
-              <strong>{link.name}</strong>
-              <a href={link.url} target="_blank" rel="noopener noreferrer">
-                {link.url}
-              </a>
-            </div>
-          </div>
-        </>
-      );
-    },
-  },
-  {
-    id: "description",
-    header: "站点描述",
-    enableSorting: false,
-    cell: ({ row }) => {
-      const link = row.original;
-      return (
-        <>
-          <p className="admin-friend-description">{link.description || "未填写简介"}</p>
-        </>
-      );
-    },
-  },
-  {
-    id: "category",
-    header: "分类",
-    accessorKey: "category",
-    enableSorting: true,
-    cell: ({ row }) => {
-      const link = row.original;
-      return (
-        <>
-          <span className="admin-post-category">{link.category}</span>
-        </>
-      );
-    },
-  },
-  {
-    id: "status",
-    header: "审核 / 展示",
-    accessorKey: "status",
-    enableSorting: true,
-    cell: ({ row }) => {
-      const link = row.original;
-      return (
-        <>
-          <span
-            className={`admin-post-status ${link.status === "approved" ? "is-published" : link.status === "rejected" ? "is-rejected" : ""}`}
-          >
-            {friendStatusLabels[link.status]}
-          </span>
-          <p className="admin-muted">{link.enabled ? "展示启用" : "展示停用"}</p>
-        </>
-      );
-    },
-  },
-  { id: "actions", header: "操作", cell: AdminRowActionsCell },
-];
-
 export function AdminFriendsLinks() {
   const record = useRecordTarget();
   const { onMessage } = useAdminWorkspace();
@@ -190,7 +127,6 @@ export function AdminFriendsLinks() {
   const keyword = useDebouncedPostQuery(q);
   const params = new URLSearchParams({
     q: keyword,
-    page: String(page),
     pageSize: String(pagination.pageSize),
   });
   for (const [key, value] of Object.entries({
@@ -201,8 +137,9 @@ export function AdminFriendsLinks() {
   }))
     if (value !== undefined && value !== "all") params.set(key, value);
   if (record) params.set("record", record);
-  const query = usePostQuery(`?${params}`, revision, load);
+  const query = usePagedResource<FriendList>(`?${params}`, revision, load, page);
   const [formOpen, setFormOpen] = useState(false);
+  const [formClosed, setFormClosed] = useState(true);
   const [editing, setEditing] = useState<FriendLink | null>(null);
   const [draft, setDraft] = useState(emptyDraft);
   const [deleting, setDeleting] = useState<FriendLink | null>(null);
@@ -218,6 +155,38 @@ export function AdminFriendsLinks() {
   const nameInput = useRef<HTMLInputElement>(null);
   const cancelDelete = useRef<HTMLButtonElement>(null);
   const deleted = useRef(false);
+  const createdFocus = useRef<string | null>(null);
+  const list = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    const id = createdFocus.current;
+    if (!id || !formClosed || query.loading || query.error || keyword !== q.trim())
+      return undefined;
+    if (q || category !== "all" || status !== "all" || enabled !== "all" || sorting.length) {
+      createdFocus.current = null;
+      return undefined;
+    }
+    if (!query.data?.items.some((item) => item.id === id)) return undefined;
+    const item = list.current?.querySelector<HTMLElement>(`[data-record-id="${id}"]`);
+    if (!item) return undefined;
+    const frame = requestAnimationFrame(() => {
+      if (item.isConnected) {
+        item.focus();
+        createdFocus.current = null;
+      }
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [
+    formClosed,
+    query.loading,
+    query.error,
+    query.data,
+    keyword,
+    q,
+    category,
+    status,
+    enabled,
+    sorting,
+  ]);
   const reset = () => {
     setCategory("all");
     setStatus("all");
@@ -226,9 +195,15 @@ export function AdminFriendsLinks() {
     setPage(1);
   };
   const returnFocus = () =>
-    deleted.current ? search.current : trigger.current?.isConnected ? trigger.current : add.current;
+    deleted.current
+      ? search.current
+      : trigger.current?.isConnected
+        ? trigger.current
+        : (search.current ?? add.current);
   function open(element: HTMLElement, link?: FriendLink) {
     if (busy.current) return;
+    createdFocus.current = null;
+    setFormClosed(false);
     trigger.current = element;
     deleted.current = false;
     setEditing(link ?? null);
@@ -250,15 +225,15 @@ export function AdminFriendsLinks() {
     setConflict(false);
     setFormOpen(true);
   }
-  async function mutate(work: () => Promise<unknown>, success: () => void) {
+  async function mutate<T>(work: () => Promise<T>, success: (value: T) => void) {
     if (busy.current) return;
     busy.current = true;
     setPending(true);
     setError("");
     setConflict(false);
     try {
-      await work();
-      success();
+      const value = await work();
+      success(value);
       setRevision((v) => v + 1);
     } catch (e) {
       setError(e instanceof Error ? e.message : "请求失败，请重新加载列表核对。");
@@ -296,13 +271,22 @@ export function AdminFriendsLinks() {
     }
     void mutate(
       () =>
-        request(editing ? `/${editing.id}` : "", {
+        request<FriendLink>(editing ? `/${editing.id}` : "", {
           method: editing ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(parsed.data),
         }),
-      () => {
-        if (!editing) reset();
+      (saved) => {
+        if (!editing) {
+          reset();
+          // 默认按创建时间降序；名称/分类排序会把刚创建的记录放到后续批次。
+          tableState.onSortingChange([]);
+          const url = new URL(location.href);
+          url.searchParams.delete("record");
+          url.searchParams.delete("kind");
+          history.replaceState(null, "", url.pathname + url.search);
+          createdFocus.current = saved.id;
+        }
         setFormOpen(false);
         onMessage(`友链已${editing ? "更新" : "添加"}。`);
       },
@@ -341,7 +325,8 @@ export function AdminFriendsLinks() {
   }
 
   const data = query.data;
-  const currentPage = data?.page ?? page;
+  const actionDisabled = pending || query.loading || query.loadingMore || Boolean(query.error);
+  const sortValue = sorting[0] ? `${sorting[0].id}-${sorting[0].desc ? "desc" : "asc"}` : "default";
   const errorBlock = error && (
     <div className="admin-business-feedback" role="alert">
       <p className="admin-business-error">{error}</p>
@@ -389,173 +374,273 @@ export function AdminFriendsLinks() {
       </div>
       {!formOpen && !deleting && errorBlock}
       <div className="admin-data-workspace">
-        <div className="admin-post-filters">
-          <div className="admin-friend-filter-selects">
-            <FriendSelect
-              label="筛选友链分类"
-              value={category}
-              options={[{ value: "all", label: "全部分类" }, ...categories]}
-              onChange={(v) => {
-                setCategory(v);
-                setPage(1);
-              }}
-              compact
-            />
-            <FriendSelect
-              label="筛选审核状态"
-              value={status}
-              options={[{ value: "all", label: "全部审核状态" }, ...statuses]}
-              onChange={(v) => {
-                setStatus(v);
-                setPage(1);
-              }}
-              compact
-            />
-            <FriendSelect
-              label="筛选展示状态"
-              value={enabled}
-              options={[
-                { value: "all", label: "全部展示状态" },
-                { value: "true", label: "展示启用" },
-                { value: "false", label: "展示停用" },
-              ]}
-              onChange={(v) => {
-                setEnabled(v);
-                setPage(1);
-              }}
-              compact
-            />
+        <Tabs
+          value={status}
+          orientation="horizontal"
+          onValueChange={(value) => {
+            setStatus(String(value));
+            setPage(1);
+          }}
+        >
+          <div className="admin-friend-status-bar">
+            <div className="admin-post-tabs-scroll">
+              <TabsList size="compact" aria-label="筛选友链审核状态">
+                <TabsTrigger value="all" disabled={pending}>
+                  <Link2 size={16} aria-hidden="true" />
+                  全部友链
+                </TabsTrigger>
+                <TabsTrigger value="pending" disabled={pending}>
+                  <Clock3 size={16} aria-hidden="true" />
+                  待审核
+                </TabsTrigger>
+                <TabsTrigger value="approved" disabled={pending}>
+                  <CheckCircle2 size={16} aria-hidden="true" />
+                  已通过
+                </TabsTrigger>
+                <TabsTrigger value="rejected" disabled={pending}>
+                  <CircleX size={16} aria-hidden="true" />
+                  已拒绝
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            {data && <span className="admin-friend-result-count">{data.total} 个站点</span>}
           </div>
-          <InputGroup size="compact" className="admin-friend-search">
-            <InputGroupInput
-              ref={search}
-              aria-label="搜索友链"
-              placeholder="搜索友链名称、地址或描述…"
-              maxLength={200}
-              value={q}
-              onChange={(e) => {
-                setQ(e.target.value);
-                setPage(1);
-              }}
-            />
-            <InputGroupAddon>
-              <Search size={16} />
-            </InputGroupAddon>
-            {q && (
-              <InputGroupAddon align="inline-end">
-                <InputGroupButton
-                  size="compact"
-                  aria-label="清空友链搜索"
-                  onClick={() => {
-                    setQ("");
-                    setPage(1);
-                    search.current?.focus();
-                  }}
-                >
-                  <X size={16} />
-                </InputGroupButton>
+          <div className="admin-post-filters">
+            <InputGroup size="compact" className="admin-friend-search">
+              <InputGroupAddon>
+                <Search size={16} aria-hidden="true" />
               </InputGroupAddon>
-            )}
-          </InputGroup>
-          <Button size="compact" variant="secondary" onClick={query.reload}>
-            刷新列表
-          </Button>
-        </div>
-        <BusinessStatus {...query} />
-        {data && (
-          <div className="admin-post-list">
-            <DataTable
-              highlightRowId={record}
-              meta={{
-                getRowActions: (link) => ({
-                  label: `友链 ${link.name} 的操作`,
-                  disabled: pending || query.loading || Boolean(query.error),
-                  actions: [
-                    ...(link.status === "pending"
-                      ? [
-                          {
-                            label: "通过审核",
-                            icon: actionIcons.Check,
-                            onSelect: () => {
-                              const {
-                                id: _id,
-                                createdAt: _created,
-                                updatedAt: _updated,
-                                ...fields
-                              } = link;
-                              void mutate(
-                                () =>
-                                  request(`/${link.id}`, {
-                                    method: "PUT",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ ...fields, status: "approved" }),
-                                  }),
-                                () => onMessage("友链已通过审核。"),
-                              );
-                            },
+              <InputGroupInput
+                ref={search}
+                aria-label="搜索友链"
+                placeholder="搜索友链名称、地址或描述…"
+                maxLength={200}
+                value={q}
+                disabled={pending}
+                onChange={(e) => {
+                  setQ(e.target.value);
+                  setPage(1);
+                }}
+              />
+              {q && (
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    size="compact"
+                    disabled={pending}
+                    aria-label="清空友链搜索"
+                    onClick={() => {
+                      setQ("");
+                      setPage(1);
+                      search.current?.focus();
+                    }}
+                  >
+                    <X size={16} />
+                  </InputGroupButton>
+                </InputGroupAddon>
+              )}
+            </InputGroup>
+            <div className="admin-friend-filter-selects">
+              <FriendSelect
+                label="筛选友链分类"
+                value={category}
+                options={[{ value: "all", label: "全部分类" }, ...categories]}
+                disabled={pending}
+                onChange={(value) => {
+                  setCategory(value);
+                  setPage(1);
+                }}
+                compact
+              />
+              <FriendSelect
+                label="筛选展示状态"
+                value={enabled}
+                options={[
+                  { value: "all", label: "全部展示状态" },
+                  { value: "true", label: "展示启用" },
+                  { value: "false", label: "展示停用" },
+                ]}
+                disabled={pending}
+                onChange={(value) => {
+                  setEnabled(value);
+                  setPage(1);
+                }}
+                compact
+              />
+              <RecordSort
+                label="友链排序"
+                value={sortValue}
+                disabled={pending}
+                onChange={(value) => {
+                  const [id, direction] = value.split("-");
+                  tableState.onSortingChange(
+                    value === "default" ? [] : [{ id, desc: direction === "desc" }],
+                  );
+                }}
+                options={[
+                  ["default", "默认顺序"],
+                  ["name-asc", "名称正序"],
+                  ["name-desc", "名称倒序"],
+                  ["category-asc", "分类正序"],
+                  ["category-desc", "分类倒序"],
+                  ["status-asc", "待审核优先"],
+                  ["status-desc", "已拒绝优先"],
+                ]}
+              />
+              <RecordPageSize
+                value={pagination.pageSize}
+                disabled={pending}
+                onChange={(pageSize) => tableState.onPaginationChange({ pageIndex: 0, pageSize })}
+              />
+              <Button
+                size="compact"
+                variant="ghost"
+                disabled={pending || query.loading || query.loadingMore}
+                onClick={query.reload}
+              >
+                刷新列表
+              </Button>
+              {(q || category !== "all" || enabled !== "all") && (
+                <Button size="compact" variant="ghost" disabled={pending} onClick={reset}>
+                  重置筛选
+                </Button>
+              )}
+            </div>
+          </div>
+          <TabsPanel value={status} className="admin-post-panel">
+            <div className="admin-post-list" aria-busy={query.loading}>
+              <BusinessStatus {...query} />
+              <ul ref={list} className="admin-record-list" aria-label="友情链接列表">
+                {data?.items.map((link) => (
+                  <li
+                    key={link.id}
+                    data-record-id={link.id}
+                    tabIndex={-1}
+                    className={`admin-record-item admin-friend-record ${link.id === record ? "admin-record-highlight" : ""}`}
+                  >
+                    <span className="admin-friend-avatar">
+                      <ConfiguredImage src={link.avatar} size={36} fallback="link" />
+                    </span>
+                    <div className="admin-record-copy">
+                      <div className="admin-entry-heading">
+                        <h2>{link.name}</h2>
+                        <div className="admin-entry-states">
+                          <span
+                            className={`admin-post-status ${link.status === "approved" ? "is-published" : link.status === "rejected" ? "is-rejected" : ""}`}
+                          >
+                            {link.status === "approved" ? (
+                              <Check size={13} aria-hidden="true" />
+                            ) : link.status === "rejected" ? (
+                              <CircleX size={13} aria-hidden="true" />
+                            ) : (
+                              <Clock3 size={13} aria-hidden="true" />
+                            )}
+                            {friendStatusLabels[link.status]}
+                          </span>
+                          <span>{link.enabled ? "展示启用" : "展示停用"}</span>
+                        </div>
+                      </div>
+                      <p className="admin-entry-description">{link.description || "未填写简介"}</p>
+                      <div className="admin-entry-meta">
+                        <a
+                          className="admin-friend-url"
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {link.url}
+                        </a>
+                        <span>{link.category}</span>
+                      </div>
+                    </div>
+                    <RowActions
+                      label={`友链 ${link.name} 的操作`}
+                      disabled={actionDisabled}
+                      actions={[
+                        ...(link.status === "pending"
+                          ? [
+                              {
+                                label: "通过审核",
+                                icon: actionIcons.Check,
+                                onSelect: () => {
+                                  const {
+                                    id: _id,
+                                    createdAt: _created,
+                                    updatedAt: _updated,
+                                    ...fields
+                                  } = link;
+                                  void mutate(
+                                    () =>
+                                      request(`/${link.id}`, {
+                                        method: "PUT",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ ...fields, status: "approved" }),
+                                      }),
+                                    () => {
+                                      onMessage("友链已通过审核。");
+                                      // 当前审核筛选可能移除该项，完成后回到稳定的搜索入口。
+                                      requestAnimationFrame(() => search.current?.focus());
+                                    },
+                                  );
+                                },
+                              },
+                            ]
+                          : []),
+                        {
+                          label: "编辑友链",
+                          icon: actionIcons.Pencil,
+                          separator: link.status === "pending",
+                          opensDialog: true,
+                          onSelect: (element) => element && open(element, link),
+                        },
+                        {
+                          label: "删除友链",
+                          icon: actionIcons.Trash2,
+                          destructive: true,
+                          separator: true,
+                          opensDialog: true,
+                          onSelect: (element) => {
+                            trigger.current = element;
+                            deleted.current = false;
+                            setDeleting(link);
+                            setError("");
+                            setConflict(false);
                           },
-                        ]
-                      : []),
-                    {
-                      label: "编辑友链",
-                      icon: actionIcons.Pencil,
-                      separator: link.status === "pending",
-                      opensDialog: true,
-                      onSelect: (element) => element && open(element, link),
-                    },
-                    {
-                      label: "删除友链",
-                      icon: actionIcons.Trash2,
-                      destructive: true,
-                      separator: true,
-                      opensDialog: true,
-                      onSelect: (element) => {
-                        trigger.current = element;
-                        deleted.current = false;
-                        setDeleting(link);
-                        setError("");
-                        setConflict(false);
-                      },
-                    },
-                  ],
-                }),
-              }}
-              {...tableState}
-              data={data.items}
-              columns={columns}
-              getRowId={(link) => link.id}
-              mode="server"
-              rowCount={data.total}
-              loading={query.loading}
-              disabled={Boolean(query.error)}
-              caption={`友情链接列表，共 ${data.total} 条，第 ${currentPage} 页`}
-              tableClassName="admin-post-table admin-friend-table"
-              emptyState={
+                        },
+                      ]}
+                    />
+                  </li>
+                ))}
+              </ul>
+              {data && !query.loading && !query.error && !data.items.length && (
                 <div className="admin-post-empty">
-                  <Link2 size={28} />
+                  <Link2 size={28} aria-hidden="true" />
                   <h2>暂无对应友链数据</h2>
                   <p>调整筛选条件，或添加第一条友情链接。</p>
                   <div className="admin-form-actions">
-                    <Button size="compact" variant="secondary" onClick={reset}>
+                    <Button size="compact" variant="secondary" disabled={pending} onClick={reset}>
                       重置筛选
                     </Button>
                     <Button
                       size="compact"
                       disabled={pending}
-                      onClick={(e) => open(e.currentTarget)}
+                      onClick={(event) => open(event.currentTarget)}
                     >
                       新增友链
                     </Button>
                   </div>
                 </div>
-              }
-            />
-          </div>
-        )}
+              )}
+              <RecordListMore resource={query} label="显示更多友链" disabled={pending} />
+            </div>
+          </TabsPanel>
+        </Tabs>
       </div>
       <p className="admin-post-session-note">前台仅展示审核通过且已启用的友链。</p>
       <Dialog
         open={formOpen}
+        onOpenChangeComplete={(isOpen) => {
+          if (!isOpen) setFormClosed(true);
+        }}
         onOpenChange={(v) => {
           if (!pending) setFormOpen(v);
         }}

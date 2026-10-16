@@ -1,3 +1,31 @@
+.admin-posts-page .admin-post-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+}
+.admin-posts-page .admin-post-tabs-scroll .ds-tabs-list {
+  white-space: nowrap;
+}
+.admin-posts-page .ds-tabs-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-post-tab-count,
+.admin-post-result-count {
+  color: var(--color-caption);
+  font: 12px/18px var(--font-mono);
+}
+.admin-post-result-count {
+  flex: none;
+}
+.admin-posts-page .admin-post-filters {
+  border-bottom: 0;
+  gap: 16px;
+}
 .admin-posts-page .admin-post-filter-fields {
   min-width: 0;
   display: flex;
@@ -8,116 +36,68 @@
   gap: 12px;
   margin: 0;
 }
-
 .admin-posts-page .admin-post-category-field {
   width: 148px;
   max-width: 100%;
 }
-
-.admin-posts-page .admin-post-search {
-  width: min(100%, 300px);
-}
-
-.admin-posts-page .admin-post-table col:nth-child(1) {
-  width: 38%;
-}
-
-.admin-posts-page .admin-post-table col:nth-child(2) {
-  width: 12%;
-}
-
-.admin-posts-page .admin-post-table col:nth-child(3) {
-  width: 10%;
-}
-
-.admin-posts-page .admin-post-table col:nth-child(4) {
-  width: 12%;
-}
-
-.admin-posts-page .admin-post-table col:nth-child(5) {
-  width: 18%;
-}
-
-.admin-posts-page .admin-post-table col:nth-child(6) {
-  width: 10%;
-}
-
-.admin-posts-page .admin-post-table th:first-child,
-.admin-posts-page .admin-post-table td:first-child {
-  width: 38%;
-  min-width: 280px;
-}
-
-.admin-posts-page .admin-post-table td:nth-child(5) {
-  white-space: normal;
-}
-
-.admin-posts-page .admin-post-title {
-  font-size: 14px;
-  line-height: 20px;
-}
-
-.admin-posts-page .admin-post-tags {
-  gap: 4px 8px;
-  margin-top: 4px;
-}
-
-.admin-posts-page .admin-post-tags span {
+.admin-posts-page .admin-post-filter-fields > .ds-input {
+  width: 148px;
   max-width: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  color: var(--color-metadata);
-  font-size: 12px;
-  line-height: 18px;
 }
-
-.admin-posts-page .admin-post-category {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  white-space: normal;
-  overflow-wrap: anywhere;
+.admin-posts-page .admin-post-search {
+  flex: 1 1 280px;
+  width: 300px;
+  max-width: 360px;
+  min-width: 0;
 }
-
-.admin-posts-page .admin-post-row-actions .ds-button {
-  width: 36px;
-  padding: 0;
+.admin-posts-page .admin-post-title {
+  font: inherit;
 }
-
-@media (max-width: 600px) {
-  .admin-posts-page .admin-post-filter-fields {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-content: stretch;
-    margin: 0;
-  }
-
-  .admin-posts-page .admin-post-category-field,
-  .admin-posts-page .admin-post-search {
-    width: 100%;
-  }
+.admin-posts-page .admin-post-title:disabled {
+  cursor: not-allowed;
 }
-
-@media (max-width: 600px), (pointer: coarse) {
-  .admin-posts-page .admin-post-row-actions .ds-button {
-    width: 44px;
-  }
+.admin-posts-page .admin-post-status::before {
+  display: none;
 }
-
-.admin-posts-page .admin-post-summary {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-  overflow-wrap: anywhere;
-  margin: 4px 0 0;
+.admin-posts-page .admin-post-featured {
   color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
 }
-
 .admin-posts-page .admin-error {
-  margin: 16px 18px;
+  margin: 16px;
   color: var(--color-danger-text);
+}
+@media (max-width: 1100px) {
+  .admin-posts-page .admin-post-filter-fields {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 600px) {
+  .admin-posts-page .admin-post-status-bar {
+    display: block;
+  }
+  .admin-posts-page .admin-post-result-count {
+    display: none;
+  }
+  .admin-posts-page .admin-post-filter-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+  }
+  .admin-posts-page .admin-post-category-field,
+  .admin-posts-page .admin-post-filter-fields > .ds-input,
+  .admin-posts-page .admin-post-search {
+    width: 100%;
+    max-width: none;
+  }
+  .admin-posts-page .admin-post-search {
+    flex: none;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .admin-posts-page .admin-post-title {
+    min-height: var(--control-touch);
+  }
 }

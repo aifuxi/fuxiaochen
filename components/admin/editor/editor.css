@@ -117,6 +117,21 @@
   gap: 16px;
   min-width: 0;
 }
+.post-editor-settings-group,
+.post-editor-settings-group-fields {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.post-editor-settings-group + .post-editor-settings-group {
+  margin-top: 16px;
+}
+.post-editor-settings-group h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
 .post-editor-featured-toggle {
   display: flex;
   align-items: center;
@@ -125,14 +140,16 @@
   color: var(--color-caption);
   font-size: 13px;
 }
-.post-editor-settings-fields > label {
+.post-editor-settings-group-fields > label {
   display: grid;
   gap: 8px;
   color: var(--color-caption);
   font-size: 13px;
 }
 .post-editor-settings-fields > p,
-.post-editor-settings-fields > output {
+.post-editor-settings-fields > output,
+.post-editor-settings-group-fields > p,
+.post-editor-settings-group-fields > output {
   margin: 0;
   color: var(--color-caption);
   font-size: 12px;

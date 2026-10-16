@@ -1,8 +1,28 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Plus, Save, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChartNoAxesColumn,
+  Plus,
+  RotateCcw,
+  Save,
+  Search,
+  Settings2,
+  Share2,
+  ShieldCheck,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState, type SubmitEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type SubmitEvent,
+  type ReactNode,
+} from "react";
 
 import { ConfiguredImage, SocialIcon } from "@/components/frontend/configured-image";
 import { Button } from "@/components/ui/button";
@@ -35,14 +55,23 @@ import "./admin-business.css";
 
 const request = resourceRequest("/api/admin/settings");
 const load = request<SiteSettings>;
-const groups = {
-  profile: "资料与站点",
-  seo: "SEO",
-  system: "系统偏好",
-  filing: "备案",
-  social: "社交账号",
-  analytics: "访问统计",
-};
+const groups = [
+  { value: "profile", label: "资料与站点", description: "站点资料与个人介绍", icon: UserRound },
+  { value: "seo", label: "SEO", description: "搜索摘要与分享信息", icon: Search },
+  { value: "system", label: "系统偏好", description: "阅读与展示偏好", icon: Settings2 },
+  { value: "filing", label: "备案", description: "网站与公安备案", icon: ShieldCheck },
+  { value: "social", label: "社交账号", description: "公开账号与展示顺序", icon: Share2 },
+  { value: "analytics", label: "访问统计", description: "GA4 与百度统计", icon: ChartNoAxesColumn },
+];
+const settingsNavigationQuery = "(min-width: 901px)";
+function subscribeSettingsNavigation(listener: () => void) {
+  const query = window.matchMedia(settingsNavigationQuery);
+  query.addEventListener("change", listener);
+  return () => query.removeEventListener("change", listener);
+}
+function readSettingsNavigation() {
+  return window.matchMedia(settingsNavigationQuery).matches;
+}
 function fieldGroup(key: string) {
   if (
     [
@@ -99,6 +128,11 @@ function SettingsForm({
   const [conflict, setConflict] = useState(false);
   const [pending, setPending] = useState(false);
   const [reloadOpen, setReloadOpen] = useState(false);
+  const verticalNavigation = useSyncExternalStore(
+    subscribeSettingsNavigation,
+    readSettingsNavigation,
+    () => false,
+  );
   useNavigationGuard(
     JSON.stringify(draft) !== JSON.stringify(baseline) ||
       quantity !== String(baseline.postsPerPage),
@@ -107,6 +141,7 @@ function SettingsForm({
   const busy = useRef(false);
   const form = useRef<HTMLFormElement>(null);
   const addButton = useRef<HTMLButtonElement>(null);
+  const reloadButton = useRef<HTMLButtonElement>(null);
   const errorFocus = useRef<string | null>(null);
   useEffect(() => {
     const key = errorFocus.current;
@@ -272,10 +307,23 @@ function SettingsForm({
           <h1>系统设置</h1>
           <p>管理站点资料、SEO、备案、社交账号与访问统计。</p>
         </div>
-        <Button variant="primary" size="compact" type="submit" disabled={pending || conflict}>
-          <Save size={16} aria-hidden="true" />
-          {pending ? "正在处理…" : "保存所有变更"}
-        </Button>
+        <div className="admin-settings-actions">
+          <Button
+            ref={reloadButton}
+            type="button"
+            size="compact"
+            variant="ghost"
+            disabled={pending}
+            onClick={() => setReloadOpen(true)}
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            重新载入设置
+          </Button>
+          <Button variant="primary" size="compact" type="submit" disabled={pending || conflict}>
+            <Save size={16} aria-hidden="true" />
+            {pending ? "正在处理…" : "保存所有变更"}
+          </Button>
+        </div>
       </div>
       {error && (
         <div role="alert" className="admin-business-feedback">
@@ -283,27 +331,38 @@ function SettingsForm({
           {error.includes("登录") && <Link href="/login">重新登录</Link>}
         </div>
       )}
-      <Tabs value={tab} onValueChange={(v) => setTab(String(v))}>
-        <div className="admin-settings-toolbar">
+      <Tabs
+        className="admin-settings-layout"
+        value={tab}
+        onValueChange={(v) => setTab(String(v))}
+        orientation={verticalNavigation ? "vertical" : "horizontal"}
+      >
+        <aside className="admin-settings-navigation" aria-label="设置分组导航">
           <div className="admin-settings-tab-scroll">
-            <TabsList size="compact" aria-label="设置分组">
-              {Object.entries(groups).map(([key, label]) => (
-                <TabsTrigger value={key} key={key}>
-                  {label}
+            <TabsList className="admin-settings-nav-list" size="compact" aria-label="设置分组">
+              {groups.map((group) => (
+                <TabsTrigger
+                  className="admin-settings-nav-item"
+                  value={group.value}
+                  key={group.value}
+                  aria-label={group.label}
+                  aria-describedby={`settings-group-${group.value}`}
+                >
+                  <group.icon size={18} aria-hidden="true" />
+                  <span className="admin-settings-nav-copy">
+                    <span className="admin-settings-nav-title">{group.label}</span>
+                    <span
+                      className="admin-settings-nav-description"
+                      id={`settings-group-${group.value}`}
+                    >
+                      {group.description}
+                    </span>
+                  </span>
                 </TabsTrigger>
               ))}
             </TabsList>
           </div>
-          <Button
-            type="button"
-            size="compact"
-            variant="ghost"
-            disabled={pending}
-            onClick={() => setReloadOpen(true)}
-          >
-            重新载入已保存设置
-          </Button>
-        </div>
+        </aside>
         <fieldset disabled={pending} className="admin-settings-fieldset">
           <TabsPanel value="profile" className="admin-settings-panel">
             <div className="admin-settings-stack">
@@ -662,7 +721,7 @@ function SettingsForm({
           if (!pending) setReloadOpen(v);
         }}
       >
-        <DialogContent>
+        <DialogContent finalFocus={reloadButton}>
           <DialogTitle>重新载入设置</DialogTitle>
           <DialogDescription>将替换当前未保存草稿，请确认后继续。</DialogDescription>
           <div className="admin-business-actions">

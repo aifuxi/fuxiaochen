@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Plus, Search, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { History, Plus, Search, X } from "lucide-react";
 import { useRef, useState, type SubmitEvent } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,10 @@ import { useAdminWorkspace } from "./admin-context";
 import { resourceRequest } from "./business-request";
 import { BusinessStatus } from "./business-status";
 import { useNavigationGuard } from "./navigation-guard";
+import { RecordListMore } from "./record-list";
 import { RecordLocator, useRecordTarget } from "./record-locator";
-import { AdminRequestError, usePostQuery, useDebouncedPostQuery } from "./use-posts";
+import { usePagedResource } from "./use-paged-resource";
+import { AdminRequestError, useDebouncedPostQuery } from "./use-posts";
 import "./admin-business.css";
 import "./admin-data-workspace.css";
 import "./admin-changelog.css";
@@ -65,10 +67,9 @@ export function AdminChangelog() {
   const titleInput = useRef<HTMLInputElement>(null);
   const searchInput = useRef<HTMLInputElement>(null);
   const keyword = useDebouncedPostQuery(query);
-  const [page, setPage] = useState(1);
   const [revision, setRevision] = useState(0);
-  const result = usePostQuery(
-    `?${new URLSearchParams(record ? { record } : { q: keyword, page: String(page), ...(status === "all" ? {} : { status }) })}`,
+  const result = usePagedResource<ReleaseList>(
+    `?${new URLSearchParams(record ? { record } : { q: keyword, ...(status === "all" ? {} : { status }) })}`,
     revision,
     load,
   );
@@ -187,7 +188,6 @@ export function AdminChangelog() {
       });
       if (!editing) {
         setQuery("");
-        setPage(1);
         setStatus("all");
       }
       setRevision((v) => v + 1);
@@ -289,7 +289,6 @@ export function AdminChangelog() {
               maxLength={200}
               onChange={(event) => {
                 setQuery(event.target.value);
-                setPage(1);
               }}
             />
             <InputGroupAddon>
@@ -302,7 +301,6 @@ export function AdminChangelog() {
                   aria-label="清空搜索"
                   onClick={() => {
                     setQuery("");
-                    setPage(1);
                     searchInput.current?.focus();
                   }}
                 >
@@ -322,7 +320,6 @@ export function AdminChangelog() {
             onValueChange={(value) => {
               if (value) {
                 setStatus(value);
-                setPage(1);
               }
             }}
           >
@@ -353,31 +350,31 @@ export function AdminChangelog() {
                   <li
                     key={log.id}
                     data-record-id={log.id}
-                    tabIndex={record === log.id ? -1 : undefined}
+                    tabIndex={-1}
                     className={`admin-release-item is-${log.type} ${record === log.id ? "admin-record-highlight" : ""}`}
                   >
-                    <div className="admin-release-heading">
+                    <div className="admin-release-meta">
                       <span className="admin-release-version">{log.version}</span>
-                      <span className={`admin-release-tag is-${log.type}`}>
-                        {releaseTypes[log.type]}
-                      </span>
-                      <span className="admin-release-tag">
-                        {log.status === "published" ? "已发布" : "已撤回"}
-                      </span>
-                      <h2>{log.title}</h2>
-                    </div>
-                    {!log.changes.length && <p className="admin-muted">未填写更新详情</p>}
-                    <ul className="admin-release-changes">
-                      {log.changes.map((change, index) => (
-                        <li key={index}>{change}</li>
-                      ))}
-                    </ul>
-                    <div className="admin-release-footer">
                       <time dateTime={log.createdAt}>
                         {new Date(log.createdAt).toLocaleDateString("sv-SE", {
                           timeZone: "Asia/Shanghai",
                         })}
                       </time>
+                      <span
+                        className={
+                          log.status === "published" ? "admin-release-published" : "admin-muted"
+                        }
+                      >
+                        {log.status === "published" ? "已发布" : "已撤回"}
+                      </span>
+                    </div>
+                    <div className="admin-release-heading">
+                      <div className="admin-release-title">
+                        <h2>{log.title}</h2>
+                        <span className={`admin-release-tag is-${log.type}`}>
+                          {releaseTypes[log.type]}
+                        </span>
+                      </div>
                       <div className="admin-release-actions">
                         <Button
                           size="compact"
@@ -408,6 +405,12 @@ export function AdminChangelog() {
                         </Button>
                       </div>
                     </div>
+                    {!log.changes.length && <p className="admin-muted">未填写更新详情</p>}
+                    <ul className="admin-release-changes">
+                      {log.changes.map((change, index) => (
+                        <li key={index}>{change}</li>
+                      ))}
+                    </ul>
                   </li>
                 ))}
               </ol>
@@ -427,7 +430,6 @@ export function AdminChangelog() {
                   onClick={() => {
                     setQuery("");
                     setStatus("all");
-                    setPage(1);
                     searchInput.current?.focus();
                   }}
                 >
@@ -436,41 +438,7 @@ export function AdminChangelog() {
               )}
             </div>
           ))}
-        {result.data && (
-          <div className="admin-post-pagination">
-            <output aria-live="polite">
-              显示第 {result.data.total ? (result.data.page - 1) * result.data.pageSize + 1 : 0}–
-              {Math.min(result.data.page * result.data.pageSize, result.data.total)} 条，共{" "}
-              {result.data.total} 条
-            </output>
-            <nav aria-label="更新日志分页">
-              <Button
-                size="compact"
-                variant="ghost"
-                aria-label="上一页日志"
-                disabled={result.data.page === 1}
-                onClick={() => setPage(result.data!.page - 1)}
-              >
-                <ChevronLeft size={16} />
-              </Button>
-              <span
-                aria-current="page"
-                aria-label={`第 ${result.data.page} 页，共 ${result.data.pageCount} 页`}
-              >
-                {result.data.page} / {result.data.pageCount}
-              </span>
-              <Button
-                size="compact"
-                variant="ghost"
-                aria-label="下一页日志"
-                disabled={result.data.page === result.data.pageCount}
-                onClick={() => setPage(result.data!.page + 1)}
-              >
-                <ChevronRight size={16} />
-              </Button>
-            </nav>
-          </div>
-        )}
+        <RecordListMore resource={result} label="加载更早更新" disabled={pending} />
       </section>
 
       <Dialog

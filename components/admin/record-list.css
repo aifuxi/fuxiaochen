@@ -1,0 +1,73 @@
+/* 正式后台开放列表只规定信息布局，基础材质和状态继续沿用共享体系。 */
+.admin-record-list {
+  display: grid;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 16px 16px 24px;
+  min-width: 0;
+}
+.admin-record-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+  padding: 4px 0;
+}
+.admin-record-copy {
+  min-width: 0;
+}
+.admin-entry-heading,
+.admin-entry-states,
+.admin-entry-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  min-width: 0;
+}
+.admin-entry-heading :is(h2, h3) {
+  min-width: 0;
+  margin: 0;
+  font: 500 16px/24px var(--font-display);
+  overflow-wrap: anywhere;
+}
+.admin-record-item:focus-visible,
+.admin-entry-heading :is(h2, h3):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
+}
+.admin-entry-description {
+  max-width: 72ch;
+  margin: 6px 0 8px;
+  color: var(--color-caption);
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.admin-entry-meta {
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.admin-record-more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 0 16px 24px;
+}
+.admin-record-more [role="alert"] {
+  flex-basis: 100%;
+  color: var(--color-danger-text);
+}
+@media (max-width: 600px) {
+  .admin-record-item {
+    gap: 12px;
+  }
+  .admin-record-more > .ds-button {
+    width: 100%;
+  }
+}

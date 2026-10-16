@@ -1,5 +1,6 @@
 .admin-changelog .admin-changelog-filters {
   justify-content: flex-start;
+  border-bottom: 0;
 }
 .admin-release-status {
   flex: 0 0 150px;
@@ -16,66 +17,76 @@
   font-family: var(--font-mono, ui-monospace);
 }
 .admin-release-search {
-  flex: 0 1 300px;
-  width: 300px;
-  max-width: 100%;
+  flex: 1;
+  min-width: 0;
+  max-width: 360px;
 }
 .admin-release-content {
-  padding: 24px;
+  padding: 24px 16px 8px;
 }
 .admin-release-timeline {
+  display: grid;
+  gap: 44px;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 .admin-release-item {
-  position: relative;
-  padding: 0 0 32px 24px;
-  margin-left: 7px;
-  border-left: 1px solid var(--color-outline);
+  min-width: 0;
   overflow-wrap: anywhere;
 }
-.admin-release-item:last-child {
-  border-color: transparent;
-  padding-bottom: 0;
+.admin-release-item:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
 }
-.admin-release-item::before {
-  content: "";
-  position: absolute;
-  left: -5px;
-  top: 8px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--color-subtle);
-  box-shadow: 0 0 0 5px var(--color-surface);
+.admin-release-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
 }
-.admin-release-item.is-security::before {
-  background: var(--color-danger);
+.admin-release-version {
+  min-width: 0;
+  max-width: 100%;
+  color: var(--color-foreground);
+  font: 500 16px/24px var(--font-mono, ui-monospace);
 }
-.admin-release-item.is-performance::before {
-  background: var(--color-success);
+.admin-release-meta time {
+  color: var(--color-metadata);
+  font: 12px/18px var(--font-mono, ui-monospace);
+}
+.admin-release-published {
+  color: var(--color-success-text);
 }
 .admin-release-heading {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
-.admin-release-version {
-  font: 600 17px/1.5 var(--font-mono, ui-monospace);
+.admin-release-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
 }
 .admin-release-heading h2 {
   min-width: 0;
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 20px;
+  line-height: 24px;
 }
 .admin-release-tag {
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: var(--color-stage);
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--color-input);
   color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
@@ -91,22 +102,24 @@
   color: var(--color-success-text);
 }
 .admin-release-changes {
-  margin: 12px 0 24px;
-  padding: 0 0 0 20px;
-  color: var(--color-caption);
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: var(--color-foreground-reading);
   font-size: 14px;
-  line-height: 20px;
+  line-height: 22px;
   list-style: disc;
 }
 .admin-release-changes li + li {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 .admin-release-changes li::marker {
   color: var(--color-caption);
 }
-.admin-release-item time {
-  color: var(--color-metadata);
-  font: 12px/1.5 var(--font-mono, ui-monospace);
+.admin-release-actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
 }
 .admin-release-modal {
   max-width: 560px;
@@ -141,28 +154,16 @@
   .admin-release-search {
     flex: none;
     width: 100%;
+    max-width: none;
   }
-  .admin-release-content {
-    padding: 16px;
+  .admin-release-heading {
+    flex-direction: column;
+    gap: 8px;
   }
-  .admin-release-item {
-    padding-left: 20px;
-  }
-  .admin-release-heading h2 {
-    flex-basis: 100%;
+  .admin-release-timeline {
+    gap: 32px;
   }
   .admin-release-fields {
     grid-template-columns: minmax(0, 1fr);
   }
-}
-
-.admin-release-footer,
-.admin-release-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.admin-release-footer {
-  justify-content: space-between;
 }

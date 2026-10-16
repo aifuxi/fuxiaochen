@@ -6,6 +6,23 @@
 .admin-settings > .admin-page-heading {
   margin-bottom: 24px;
 }
+.admin-settings-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-settings-layout {
+  display: grid;
+  grid-template-columns: 216px minmax(0, 1fr);
+  align-items: start;
+  gap: 32px;
+}
+.admin-settings-navigation {
+  position: sticky;
+  top: 24px;
+  min-width: 0;
+}
 .admin-settings-tab-scroll {
   max-width: 100%;
   min-width: 0;
@@ -13,17 +30,52 @@
   padding: 3px;
   margin: -3px;
 }
-.admin-settings .ds-tabs-list {
-  min-width: max-content;
-}
-.admin-settings .ds-tabs-trigger {
-  display: inline-flex;
-  align-items: center;
+.admin-settings-nav-list.ds-tabs-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: auto;
   gap: 8px;
-  white-space: nowrap;
+}
+.admin-settings-nav-list .ds-tabs-trigger {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 66px;
+  padding: 12px;
+  text-align: left;
+}
+.admin-settings-nav-item > svg {
+  margin-top: 1px;
+}
+.admin-settings-nav-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.admin-settings-nav-title {
+  font-weight: 500;
+}
+.admin-settings-nav-item[data-active] .admin-settings-nav-title {
+  font-weight: 600;
+}
+.admin-settings-nav-description {
+  color: var(--color-caption);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+}
+.admin-settings-nav-item[data-active]:hover:not(:disabled):not([data-disabled]) {
+  background: var(--color-primary-light-hover);
+}
+.admin-settings-nav-item[data-active]:active:not(:disabled):not([data-disabled]) {
+  background: var(--color-primary-light-active);
 }
 .admin-settings .admin-settings-panel {
-  padding-top: 32px;
+  padding-top: 0;
 }
 .admin-settings-stack {
   display: grid;
@@ -222,6 +274,35 @@
   overflow-wrap: anywhere;
 }
 @media (max-width: 900px) {
+  .admin-settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .admin-settings-navigation {
+    position: static;
+  }
+  .admin-settings-tab-scroll {
+    width: 100%;
+  }
+  .admin-settings-nav-list.ds-tabs-list {
+    flex-direction: row;
+    width: max-content;
+  }
+  .admin-settings-nav-list .ds-tabs-trigger {
+    grid-template-columns: 18px auto;
+    align-items: center;
+    flex: 0 0 auto;
+    width: auto;
+    min-height: var(--control-touch);
+    padding: 0 12px;
+    white-space: nowrap;
+  }
+  .admin-settings-nav-item > svg {
+    margin-top: 0;
+  }
+  .admin-settings-nav-description {
+    display: none;
+  }
   .admin-settings-field {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
@@ -238,7 +319,12 @@
   .admin-settings > .admin-page-heading {
     margin-bottom: 20px;
   }
-  .admin-settings .admin-page-heading > .ds-button {
+  .admin-settings-actions {
+    display: grid;
+    width: 100%;
+    gap: 8px;
+  }
+  .admin-settings-actions > .ds-button {
     width: 100%;
   }
   .admin-settings-field-body,
@@ -288,19 +374,4 @@
 }
 .admin-social-actions > span {
   margin-right: auto;
-}
-
-.admin-settings-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-.admin-settings-toolbar .admin-settings-tab-scroll {
-  flex: 0 1 auto;
-}
-.admin-settings-toolbar > .ds-button {
-  flex-shrink: 0;
-  margin-left: auto;
 }
