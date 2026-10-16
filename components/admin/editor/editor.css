@@ -241,9 +241,9 @@
   background: var(--color-outline);
 }
 .post-editor-icon.ds-button {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: var(--control-compact);
+  height: var(--control-compact);
+  border-radius: var(--radius-form);
   padding: 0;
 }
 .post-editor-icon[aria-pressed="true"] {
@@ -251,10 +251,10 @@
   background: var(--color-primary-light-default);
 }
 .post-editor-insert.ds-button {
-  height: 34px;
+  height: var(--control-compact);
   padding: 0 10px;
   font-size: 13px;
-  border-radius: 8px;
+  border-radius: var(--radius-form);
 }
 .post-editor-canvas .tiptap {
   min-height: 360px;
@@ -336,7 +336,7 @@
   display: grid;
   place-items: center;
   width: 18px;
-  height: 34px;
+  height: var(--control-compact);
   color: var(--color-caption);
   cursor: grab;
 }
@@ -553,6 +553,17 @@
   }
   .post-settings-drawer.ds-dialog-popup {
     padding: 20px;
+  }
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .post-editor-icon.ds-button,
+  .post-editor-drag-handle .post-editor-icon.ds-button {
+    width: var(--control-touch);
+    height: var(--control-touch);
+  }
+  .post-editor-insert.ds-button,
+  .post-editor-grip {
+    height: var(--control-touch);
   }
 }
 @media (prefers-reduced-motion: reduce) {

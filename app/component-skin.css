@@ -216,7 +216,7 @@
   position: relative;
   z-index: 1;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   background: transparent;
   color: var(--color-text-2);
   font-family: var(--font-control);
@@ -258,7 +258,7 @@
   left: 0;
   width: var(--active-tab-width);
   height: var(--active-tab-height);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   background: var(--color-primary-light-default);
   transform: translateX(var(--active-tab-left));
   transition:

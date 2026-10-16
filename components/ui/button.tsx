@@ -20,7 +20,7 @@ export function Button({
   return (
     <BaseButton
       className={cn(
-        "ds-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)]",
+        "ds-button inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-form)]",
         size === "sm" ? "h-[var(--control-small)] px-3" : "h-[var(--control-default)] px-3",
         size === "compact" && "ds-control-compact",
         size === "form" && "h-[var(--control-form)]",

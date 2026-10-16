@@ -326,7 +326,11 @@ export function AdminChangelog() {
               }
             }}
           >
-            <SelectTrigger className="admin-release-status" aria-label="筛选日志状态">
+            <SelectTrigger
+              size="compact"
+              className="admin-release-status"
+              aria-label="筛选日志状态"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

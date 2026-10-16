@@ -256,7 +256,7 @@ const typeSamples = [
   {
     name: "参数与代码",
     spec: "12 / 18 · 400",
-    text: "--radius-form: 8px; 0123456789",
+    text: "--radius-form: 12px; 0123456789",
     className: "font-mono text-xs leading-[18px] text-[var(--color-caption)]",
   },
 ] as const;
@@ -314,17 +314,17 @@ function SpacingFoundations() {
             圆角分工
           </h2>
           <p className="workbench-note mt-1">
-            采用 modern 的 4 / 8 / 16 / 24px 圆角阶梯；细节使用
-            4px，开关、徽标与状态圆点保留自身形状。
+            表单控件采用项目的 12px 圆角，其余组件保留 modern 的 4 / 8 / 16 / 24px
+            阶梯；开关、徽标与状态圆点保留自身形状。
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             [
-              "8px",
+              "12px",
               "按钮与表单控件",
               "--radius-form",
-              "按钮、输入与选择触发器采用一致的控件轮廓。",
+              "按钮、Tabs、输入与附加图标操作采用一致的表单圆角。",
             ],
             ["16px", "卡片与反馈浮层", "--radius-md", "内容卡片、选择浮层、Tooltip 与 Toast。"],
             ["24px", "对话框", "--radius-lg", "模态任务表面沿用 modern 的大圆角。"],
@@ -375,8 +375,8 @@ function SpacingFoundations() {
         </div>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
-            [24, "小型按钮"],
-            [32, "桌面控件与表单"],
+            [36, "紧凑工具栏"],
+            [40, "普通操作与表单"],
             [44, "触屏操作目标"],
           ].map(([value, label]) => (
             <div key={value} className="space-y-3">
@@ -393,7 +393,7 @@ function SpacingFoundations() {
           ))}
         </div>
         <p className="workbench-caption">
-          静态尺寸样本。触屏中的图标按钮同时保证至少 44px 宽和 44px 高。
+          静态尺寸样本。小型按钮仍为 24px；触屏中的图标按钮同时保证至少 44px 宽和 44px 高。
         </p>
       </section>
     </div>
@@ -408,8 +408,8 @@ function Guidelines() {
           设计试验区
         </h2>
         <p className="workbench-note">
-          这里用来查看和试用设计规则。色盘、组件尺寸、圆角与状态均继承全站的 Semi 默认主题叠加
-          modern；工作台保留独立的目录、样本布局与滚动容器。
+          这里用来查看和试用设计规则。配色与材质沿用全站的 Semi 默认主题叠加 modern，表单采用共享的
+          40 / 36px 高度与 12px 圆角；工作台保留独立的目录、样本布局与滚动容器。
         </p>
         <p className="workbench-note">
           从目录选择一个条目，先操作样本，再检查状态与使用规则。切换条目后，组件回到初始状态；切换深浅模式保留当前条目与输入，并记住全站的模式选择。

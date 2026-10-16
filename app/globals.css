@@ -226,7 +226,7 @@
   --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 16px;
-  --radius-form: 8px;
+  --radius-form: 12px;
   --radius-lg: 24px;
   --radius-pill: 9999px;
 }
@@ -242,10 +242,11 @@
   --space-3xl: 48px;
   --space-4xl: 72px;
   --control-small: 24px;
-  --control-default: 32px;
+  /* 按项目表单密度恢复尺寸；Semi 的颜色、边框和材质保持独立。 */
+  --control-default: 40px;
   --control-large: 40px;
-  --control-compact: 32px;
-  --control-form: 32px;
+  --control-compact: 36px;
+  --control-form: 40px;
   --control-touch: 44px;
   --motion-micro: 80ms;
   --motion-quick: 150ms;

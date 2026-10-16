@@ -262,13 +262,15 @@ html:has(.site-layout) {
   line-height: 1.8;
 }
 .site-home-cta {
+  /* 首页入口沿用场景规定的 32px，普通表单按钮使用共享 default 高度。 */
+  height: 32px;
   margin-top: 24px;
 }
 .site-home-cta:active {
   color: var(--color-primary-foreground);
 }
 .site-layout .site-home-cta:focus-visible {
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
 }
 .site-home .site-profile {
   justify-content: center;
@@ -1198,6 +1200,7 @@ html:has(.site-layout) {
     height: var(--control-touch);
   }
   .site-home-cta {
+    height: var(--control-touch);
     min-height: var(--control-touch);
     padding-inline: 16px;
   }

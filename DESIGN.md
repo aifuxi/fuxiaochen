@@ -303,7 +303,7 @@ rounded:
   xs: 4px
   sm: 8px
   md: 16px
-  form: 8px
+  form: 12px
   lg: 24px
   pill: 9999px
 spacing:
@@ -317,10 +317,10 @@ spacing:
   4xl: 72px
 control-sizes:
   small: 24px
-  default: 32px
+  default: 40px
   large: 40px
-  compact: 32px
-  form: 32px
+  compact: 36px
+  form: 40px
   touch: 44px
 motion:
   micro: 80ms
@@ -418,6 +418,8 @@ components:
 
 2026-10-15 用户授权将当前项目的深浅色色盘及输入框、按钮、弹窗、Toast 等组件皮肤对齐本地 Semi UI Vue 文档站，明确参考是默认主题叠加 modern。授权覆盖共享 token、组件尺寸、圆角、边框、填充、阴影、排版和交互状态；继续以 Base UI 封装本地组件，不引入 Vue 或 Semi 组件运行时。前台、登录、后台与展示页统一消费共享实现，页面布局、数据流及业务操作保持。
 
+2026-10-16 用户明确恢复项目表单密度：普通桌面按钮和单行表单控件高 40px，compact 工具栏控件高 36px，表单圆角 12px；窄屏与粗指针操作目标保持 44px。颜色、边框、填充、高光、阴影和状态继续使用 Semi default + modern；small=24px、large=40px、页面明确的 32px CTA 与图标复制尺寸保持各自场景，Card、弹层、菜单和 Switch 不随表单密度调整。
+
 此前“禁止常驻浅色描边及所有 inset 边缘”的限制已由本次视觉授权替代。采用参考组件实际包含的边框、细边缘、高光与阴影：普通 Modal 保留实体边框，modern 按钮及独立 bordered Card 保留轻微内侧层次；默认填充 Input 的静止边框仍透明。分隔线只承担参考组件或现有业务结构中的分组职责，不额外装饰页面。
 
 ## 品牌资产
@@ -439,7 +441,7 @@ YAML 的 `colors` 记录默认深色角色，`color-modes.light` 记录浅色覆
 | `colors.*` / `color-modes.light.*`   | Tailwind v4 `--color-*`           | `foreground-muted`、`foreground-subtle` 分别映射 `--color-muted`、`--color-subtle`；其余角色同名映射，由 `html[data-theme]` 覆盖模式 |
 | `shadows.dark.*` / `shadows.light.*` | `--shadow-*`                      | 采用 Semi elevated 和 modern 对应容器层次；Toast 使用 elevated，Tooltip 仅内侧边缘                                                   |
 | `typography.*`                       | 字体变量与语义排版 class          | 页面使用 `--font-sans` / `--font-display`，基础组件使用 `--font-control`；字号、行高与字重按用途映射                                 |
-| `rounded.*`                          | `--radius-*`                      | xs=4、sm/form=8、md=16、lg=24、pill=9999；组件通过变量选择圆角                                                                       |
+| `rounded.*`                          | `--radius-*`                      | xs=4、sm=8、form=12、md=16、lg=24、pill=9999；组件通过变量选择圆角                                                                   |
 | `spacing.*`                          | 本地间距变量或等值 Tailwind 间距  | 保留 Tailwind 原有间距尺度；token 对应值只维护一份                                                                                   |
 | `control-sizes.*`                    | 本地组件 size / 触屏目标          | 按用途选择尺寸；YAML 记录桌面基值，form token 与 compact 控件在窄屏或粗指针条件下使用 touch                                          |
 | `motion.*`                           | 本地过渡时长、曲线与位移变量      | 按反馈职责选择，不在业务页面新增临时时长                                                                                             |
@@ -448,7 +450,7 @@ YAML 的 `colors` 记录默认深色角色，`color-modes.light` 记录浅色覆
 
 色盘与材质由 `app/globals.css` 导入 `app/semi-theme-tokens.css`，Tailwind 只注册语义映射；排版使用 `--text-*` 与 `.ds-display`、`.ds-heading`、`.ds-title`、`.ds-body`、`.ds-label`、`.ds-mono`；间距、尺寸与动效分别使用 `--space-*`、`--control-*` 与 `--motion-*`，滚动条使用 `--scrollbar-track-width` 和 `--scrollbar-thumb-width`。保留原 Tailwind 间距尺度与场景字号变体，页面无需重复共享状态。
 
-`--control-small` / `--control-default` / `--control-large` 对应 Semi 的 24 / 32 / 40px；`--control-form` 与 `--control-compact` 的桌面基值均为 32px；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
+`--control-small` / `--control-large` 保留 Semi 的 24 / 40px；`--control-default` 与 `--control-form` 采用项目普通桌面密度 40px，`--control-compact` 为工具栏密度 36px。按钮、Tabs 触发项、表单和附加图标操作引用 `--radius-form` 的 12px，`--radius-sm` 保持 8px 供其他组件使用；在 `(max-width: 600px), (pointer: coarse)` 条件下，form token 覆盖为 `--control-touch` 的 44px，compact 控件也使用 touch 高度。默认 Input、Select、Combobox、InputGroup、ColorInput 和 form Button 引用 form，工具栏显式选择 compact；ColorInput 的宽高以及附加图标操作的触屏宽高一并覆盖，避免只扩大高度造成窄目标或组合控件溢出。
 
 ## 深浅模式
 
@@ -486,7 +488,7 @@ Picker、Popover 与 Menu 使用 bg-3、md 圆角及 `--shadow-popup`（modern o
 
 独立 bordered Card 使用 surface、md 圆角、border 及 `--shadow-card`，遵循 modern 的淡边缘与轻微高光，不叠加旧有大阴影；无边框或分组网格 Card 不强加相同材质。已有展示卡舞台、业务模块结构及页面留白保持。`CardLink` 继续是真实链接，保留独立操作的既有组合边界，hover/active 只改变填充，focus-visible 显示独立轮廓。
 
-Button 的 primary 对应 Semi primary solid：主色填充、白字、8px 圆角与 `--shadow-button-solid`；secondary 对应 tertiary light：fill-0、text-1 与 `--shadow-button-light`；ghost 对应 tertiary borderless，静止透明，hover/active 出现填充时才显示 light 材质。disabled 使用明确的禁用色且不带 modern 材质，focus-visible 始终独立。默认文字 14px / 20px、600 字重；不再默认采用旧胶囊材质。全站不新增无职责的大阴影、循环光晕或装饰渐变，发光限于既有明确的演示。
+Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆角与 `--shadow-button-solid`；secondary 对应 tertiary light：fill-0、text-1 与 `--shadow-button-light`；ghost 对应 tertiary borderless，静止透明，hover/active 出现填充时才显示 light 材质。disabled 使用明确的禁用色且不带 modern 材质，focus-visible 始终独立。默认文字 14px / 20px、600 字重；不再默认采用旧胶囊材质。全站不新增无职责的大阴影、循环光晕或装饰渐变，发光限于既有明确的演示。
 
 ## 排版与间距
 
@@ -502,7 +504,7 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、8px 圆�
 
 标题简短，中文自然断行，不强制英文式大写，不裁切长标题。用 spacing 组织节奏；容器最大宽度、网格比例与阅读列宽只在场景文档维护，避免所有页面共用一个宽度。
 
-按钮、输入采用 form=8px；Card 与小型浮层采用 md=16px；Modal 采用 lg=24px；胶囊只用于明确的标签、徽标及圆形控件。既有场景外壳在共享材质范围内更新，页面网格与间距保持。图标常用 16–20px，装饰图标不承担唯一的操作名称。默认输入采用填充表面与透明静止边框；焦点、错误、禁用分别使用源语义色，不受旧绝对无描边限制。
+按钮、Tabs、输入及附加图标操作采用项目 form=12px；Card 与小型浮层采用 md=16px；Modal 采用 lg=24px；胶囊只用于明确的标签、徽标及圆形控件。既有场景外壳在共享材质范围内更新，页面网格与间距保持。图标常用 16–20px，装饰图标不承担唯一的操作名称。默认输入采用填充表面与透明静止边框；焦点、错误、禁用分别使用源语义色，不受旧绝对无描边限制。
 
 滚动条采用透明轨道、灰阶滑块与 pill 圆角，默认、hover、active 依次使用 scrollbar 颜色 token。保持可拖动轨道、较窄视觉滑块，不隐藏滚动条或改变滚动行为；支持标准属性的浏览器使用同色窄条，强制颜色模式交给系统。
 
@@ -556,15 +558,15 @@ Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，�
 
 | 组件                                | 共享规则                                                                                                                                                                                                                                                                                                            |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Button                              | primary / secondary / ghost；small 用于紧凑 CTA，default 用于组件面板，compact 用于后台工具栏与页面操作，form 用于表单提交；粗指针或场景指定的窄屏目标至少 touch 高度；loading 与 disabled 保留说明                                                                                                                 |
+| Button                              | primary / secondary / ghost；small 保留 24px，default 用于普通 40px 操作，compact 用于 36px 工具栏与页面操作，form 用于 40px 表单提交；显式场景尺寸按对应文档执行；粗指针或场景指定的窄屏目标至少 touch 高度；loading 与 disabled 保留说明                                                                          |
 | 展示 Card                           | 外壳、舞台、标题、描述、可选操作；可点击卡片为真实链接或按钮，含独立操作时不嵌套点击；悬停不改变内容布局                                                                                                                                                                                                            |
 | 业务 Card                           | 默认 surface、border 与 modern card 淡边缘；内部信息和局部标识可按职责用色；不自动套展示舞台，是否成卡取决于独立业务意义，具体见后台场景                                                                                                                                                                            |
-| Tabs                                | 选中状态通过共享填充、文字与字重区分，控件采用 Semi 排版与材质；面板切换保留既有键盘行为与不阻塞内容的反馈，reduced-motion 取消位移                                                                                                                                                                                 |
+| Tabs                                | 选中状态通过共享填充、文字与字重区分，控件采用 Semi 排版与材质、项目 form 圆角和 default / compact 高度；面板切换保留既有键盘行为与不阻塞内容的反馈，reduced-motion 取消位移                                                                                                                                        |
 | Accordion / Dialog / Popover / Menu | Base UI 提供语义、定位与焦点管理；Dialog 使用 bg-2 / lg / modal 阴影，其他浮层使用 bg-3 / md / popup 阴影，Portal 避免裁切；关闭后的焦点恢复按场景执行                                                                                                                                                              |
 | Input / Textarea                    | 单行 Input 使用 form 高度、水平内边距 12px；Textarea 上下内边距 5px、左右 12px，高度由场景与内容决定，可纵向调整；两者使用 form 圆角与 input 填充，正常、错误、焦点和禁用状态遵循下方表单表面规则；字段有可见标签，错误文字通过 aria-describedby 关联                                                               |
 | Select / Combobox                   | form 触发器沿用 input，水平内边距 12px；菜单使用 raised，选项桌面至少高 36px、窄屏或粗指针至少高 44px；高亮默认灰阶提亮，也可用共享强调色区分当前高亮或选中，保留文字、勾选和独立焦点；附加图标操作桌面 24×24px、窄屏或粗指针 44×44px；Select 用于固定少量选项，Combobox 用于可输入筛选的固定选项；标签关联真实控件 |
 | InputGroup                          | 输入、前后图标与附加操作共用完整表面；高度 form、圆角 form，搜索图标 16px、左侧留白 12px，附加图标按钮 small / ghost，桌面 24×24px、窄屏或粗指针 44×44px；内部输入保持透明，不重复边框或焦点环，错误标记与输入焦点由完整外框承载，附加按钮只显示自身焦点；点击非按钮附加区可聚焦输入                                |
-| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 32×32px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
+| ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
 | Switch                              | 状态与名称由本地组件提供；滑块使用 Semi 白色，轨道引用 fill-0 / success；触屏 variant 保留 40×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                              |
 
 Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
@@ -575,7 +577,7 @@ Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺�
 
 ### 表单表面状态
 
-Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸与圆角使用上方 Semi 角色，组件 props 保持既有契约；状态样式集中在共享样式，页面不重复绘制。
+Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规则。尺寸与圆角使用上方项目密度及共享角色，Semi 配色、边框和材质保持，组件 props 保持既有契约；状态样式集中在共享样式，页面不重复绘制。
 
 - 正常状态使用 fill-0，hover 使用 fill-1、active 使用 fill-2；聚焦使用 fill-0 与 1px focus-border，键盘 focus-visible 沿用 Semi 的内侧焦点边框。错误字段聚焦时使用 danger 边框，并保留错误底色与说明；按钮等独立操作继续按各自规则显示 2px 焦点轮廓。
 - `aria-invalid="true"` 或 Base UI 的 `[data-invalid]` 表达错误。按 Semi 使用 danger-light-default，hover/active 使用对应 danger-light 状态，焦点保留 danger 边框；错误标记与键盘焦点同时可见，错误文字通过 `aria-describedby` 关联真实控件，不复制业务错误到组件内部。
@@ -592,7 +594,7 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 参考入口为 [本地定制主题页](http://127.0.0.1:4321/zh-CN/advanced/customize-theme)，对应仓库为 `../semi-ui-vue`。精确来源：默认 [palette](../semi-ui-vue/vendor/semi-design/packages/semi-theme-default/scss/_palette.scss)、[global](../semi-ui-vue/vendor/semi-design/packages/semi-theme-default/scss/global.scss)、[Foundation 组件规则](../semi-ui-vue/vendor/semi-design/packages/semi-foundation/)，以及本地 [modern](../semi-ui-vue/packages/theme-modern/src/index.scss)。固定上游为 `v2.102.0` / `cdfba6e520fc83ad871b30f51f36d8af3aaa5a21`；不自动跟随在线新版。文档站先载入 default，再载入 modern，见 [site.css](../semi-ui-vue/apps/docs/.vitepress/theme/styles/site.css)。
 
-适配只移植视觉数值与对应状态：Base UI 继续负责语义、键盘、定位、焦点和 Portal；本站公开组件接口与业务动作保留。默认深色、显式浅色选择、44px 触屏目标、页面 Source Sans Pro 和既有页面构图属于本站适配；不复制文档站导航、侧栏、文章布局或 Vue 组件实现。
+适配只移植视觉数值与对应状态：Base UI 继续负责语义、键盘、定位、焦点和 Portal；本站公开组件接口与业务动作保留。默认深色、显式浅色选择、普通 40px / compact 36px / form 12px 圆角、44px 触屏目标、页面 Source Sans Pro 和既有页面构图属于本站适配；不复制文档站导航、侧栏、文章布局或 Vue 组件实现。
 
 来源代码使用 MIT：默认层归属 `Copyright (c) 2021 DouyinFE`，本地 modern 归属 `Copyright (c) 2026 aifuxi`。移植的 CSS 保留两方版权与完整许可声明；Inter 另随本地字体保留 OFL 许可。不将其描述为本站原创或 Semi 官方 modern 主题。
 
@@ -604,19 +606,19 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 
 来源：[首页](https://libraries.dev/)、[组件页](https://libraries.dev/beam)、[共享样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/public/assets/site.css)、[首页结构及专属样式](https://github.com/Jakubantalik/Libraries.dev/blob/main/sites/home/index.html)。记录日期与实际页面数值构成本次基线；上游更新后重新采集，不自动改变本规范。
 
-| 观察                                                                    | 项目目标或显式适配                                                                            |
-| ----------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件为参考站无衬线字体 | 使用 Source Sans Pro 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异           |
-| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px          | 原色值与14px圆角保留为历史参考；组件色盘、圆角与材质以本次 Semi 目标替代                      |
-| 首页 CTA 32px 胶囊与精密材质层                                          | CTA 按场景选择32px default；胶囊与旧材质由 Semi form 圆角和 modern 材质替代，触屏目标保持扩大 |
-| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                             | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                                        |
-| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                          | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                              |
-| 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                                  |
-| hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移                        |
+| 观察                                                                    | 项目目标或显式适配                                                                          |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 首页标题 Saans 42px / 45px、500、-0.005em；正文与控件为参考站无衬线字体 | 使用 Source Sans Pro 与中文系统字体；display 保留参考尺度，专有标题字体列为有意差异         |
+| 页面 #121212、卡片 #181818、舞台 #131313；外壳 24px、内层 14px          | 原色值与14px圆角保留为历史参考；组件色盘、圆角与材质以本次 Semi 目标替代                    |
+| 首页 CTA 32px 胶囊与精密材质层                                          | CTA 保留显式32px场景尺寸；胶囊与旧材质由 Semi form 圆角和 modern 材质替代，触屏目标保持扩大 |
+| 桌面居中文案、五处散布微卡；手机 2–1–2 聚合                             | 前台场景规定相同构图，五微卡改为既有栏目入口并常显名称                                      |
+| 展示区最大 1008px、24px 间距；宽屏两张大卡开头                          | 展示页采用该比例；后台与博客阅读使用各自任务宽度                                            |
+| 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                                |
+| hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移                      |
 
 原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。此表保留页面构图依据，其旧颜色、组件尺寸与材料不覆盖上方 Semi 基线。
 
-历史记录（尺寸已由本次 Semi 目标替代）：2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
+历史记录（2026-10-15 迁移时尺寸曾由 Semi 基线替代，2026-10-16 已重新授权恢复上述项目密度）：2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
 
 ## 核对方法
 

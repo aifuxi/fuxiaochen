@@ -72,7 +72,7 @@
   width: var(--control-small);
   padding: 0;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   background: transparent;
   color: var(--semi-color-text-2);
   cursor: var(--cursor-action);

@@ -188,11 +188,11 @@ function ButtonsDemo({ onNotice }: NoticeProps) {
           <Button disabled>暂不可用</Button>
         </div>
         <p className="workbench-caption mt-4">
-          桌面从左到右为小型 24px、工具栏 32px、表单 32px；禁用样本不可操作。窄屏与触屏统一为 44px。
+          桌面从左到右为小型 24px、工具栏 36px、表单 40px；禁用样本不可操作。窄屏与触屏统一为 44px。
         </p>
       </section>
       <Rule>
-        按钮与输入统一使用 8px
+        按钮与输入统一使用 12px
         圆角，实心、淡色与轻量操作继承共享样式。每次点击都有明确反馈，键盘焦点保持可见。
       </Rule>
     </div>
@@ -273,7 +273,7 @@ function InputsDemo({ onNotice }: NoticeProps) {
       </section>
       <DensityDemo onNotice={onNotice} />
       <Rule>
-        字段保留可见标签与 8px 圆角；普通表单与紧凑工具栏的桌面输入均高 32px，触屏 44px。输入使用
+        字段保留可见标签与 12px 圆角；普通表单桌面高 40px，紧凑工具栏高 36px，触屏 44px。输入使用
         Semi 填充与边框状态，错误同时提供颜色和文字说明。
       </Rule>
     </div>
@@ -289,7 +289,7 @@ function DensityDemo({ onNotice }: NoticeProps) {
       </p>
       <div className="workbench-stack">
         <div>
-          <h3 className="mb-4 text-base font-medium">普通表单 · 桌面 32px</h3>
+          <h3 className="mb-4 text-base font-medium">普通表单 · 桌面 40px</h3>
           <div className="workbench-fieldgrid workbench-density-row">
             <Field id="density-default" label="文本输入">
               <Input id="density-default" placeholder="默认输入框" className="w-full" />
@@ -301,7 +301,7 @@ function DensityDemo({ onNotice }: NoticeProps) {
           </div>
         </div>
         <div>
-          <h3 className="mb-4 text-base font-medium">筛选工具栏 · 桌面 32px</h3>
+          <h3 className="mb-4 text-base font-medium">筛选工具栏 · 桌面 36px</h3>
           <div className="workbench-fieldgrid workbench-density-row">
             <Field id="density-compact" label="搜索关键词">
               <InputGroup size="compact">
@@ -352,7 +352,7 @@ function SelectionDemo() {
       </section>
       <Rule>
         固定选项使用 Select，可搜索列表使用 Combobox。使用方向键选择、Enter 确认、Escape
-        关闭。输入为 8px 圆角，浮层为 16px 圆角；选项状态继承共享样式。
+        关闭。输入为 12px 圆角，浮层为 16px 圆角；选项状态继承共享样式。
       </Rule>
     </div>
   );
