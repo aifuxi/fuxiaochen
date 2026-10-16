@@ -1,0 +1,695 @@
+/* 仅负责独立预览布局，控件皮肤与主题数值继续复用项目共享实现。 */
+.ap-taxonomy-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  align-items: start;
+  gap: 24px;
+}
+.ap-taxonomy-card {
+  min-width: 0;
+  overflow: hidden;
+}
+.ap-module-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px 24px 0;
+}
+.ap-module-heading h2,
+.ap-article-settings h2,
+.ap-settings-section h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+.ap-count {
+  border-radius: var(--radius-sm);
+  background: var(--color-raised);
+  color: var(--color-caption);
+  padding: 1px 8px;
+  font-size: 12px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.ap-taxonomy-form {
+  padding: 20px 24px 24px;
+}
+.ap-taxonomy-form > label,
+.ap-dialog-form > label,
+.ap-dialog-field > label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-caption);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ap-taxonomy-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ap-taxonomy-add > .ds-input {
+  flex: 1;
+  min-width: 0;
+  width: 0;
+}
+.ap-category-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.ap-category-swatch {
+  height: 8px;
+  width: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+}
+.ap-tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 24px;
+}
+.ap-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px 4px 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-raised);
+  color: var(--color-foreground-reading);
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+.ap-tag .ds-button {
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.ap-module-note {
+  margin: 24px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ap-field-error {
+  color: var(--color-danger-text);
+  font-size: 13px;
+  line-height: 20px;
+  margin: 8px 0 0;
+}
+.ap-dialog-form {
+  margin-top: 24px;
+}
+.ap-dialog-form > .ds-input,
+.ap-dialog-form > .ds-color-input {
+  width: 100%;
+}
+.ap-dialog-form > .ds-color-input {
+  width: var(--control-form);
+}
+.ap-dialog-form > label:not(:first-child) {
+  margin-top: 16px;
+}
+.ap-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+.ap-empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--color-caption);
+}
+.ap-release-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.ap-release-search {
+  min-width: 0;
+  flex: 1;
+  max-width: 360px;
+}
+.ap-release-search .ds-input {
+  width: 100%;
+}
+.ap-release-filter {
+  width: 160px;
+}
+.ap-results {
+  margin-left: auto;
+  color: var(--color-caption);
+  font-size: 12px;
+}
+.ap-release-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 8px 32px 16px;
+}
+.ap-release-item {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  position: relative;
+  padding: 28px 0;
+  gap: 24px;
+}
+.ap-release-item + .ap-release-item {
+  border-top: 1px solid var(--admin-divider);
+}
+.ap-release-date {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.ap-release-date strong {
+  color: var(--color-foreground);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 500;
+}
+.ap-release-content {
+  padding-left: 24px;
+  border-left: 1px solid var(--color-outline);
+  min-width: 0;
+}
+.ap-release-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ap-release-title h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+}
+.ap-release-type {
+  font-size: 12px;
+  line-height: 18px;
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  background: var(--color-input);
+}
+.ap-release-feature {
+  color: var(--color-focus-text);
+}
+.ap-release-fix,
+.ap-secondary-text {
+  color: var(--color-caption);
+}
+.ap-release-performance,
+.ap-status-success {
+  color: var(--color-success-text);
+}
+.ap-release-security,
+.ap-danger-action.ds-button {
+  color: var(--color-danger-text);
+}
+.ap-release-content > ul {
+  list-style: disc;
+  margin: 16px 0;
+  padding-left: 18px;
+  color: var(--color-foreground-reading);
+  line-height: 24px;
+}
+.ap-release-content > ul li + li {
+  margin-top: 6px;
+}
+.ap-release-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ap-release-actions > span {
+  font-size: 12px;
+  line-height: 18px;
+  margin-right: 12px;
+}
+.ap-release-dialog.ds-dialog-popup,
+.ap-markdown-dialog.ds-dialog-popup {
+  max-width: 640px;
+  max-height: 88dvh;
+  overflow-y: auto;
+}
+.ap-local-pagination {
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--admin-divider);
+}
+.ap-local-pagination > span {
+  font-family: var(--font-mono);
+  color: var(--color-caption);
+  font-size: 13px;
+  line-height: 20px;
+}
+.ap-settings-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.ap-settings-tab-scroll {
+  min-width: 0;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.ap-settings-toolbar > .ds-button {
+  margin-left: auto;
+}
+.ap-settings-section + .ap-settings-section {
+  margin-top: 48px;
+}
+.ap-settings-section-heading {
+  margin-bottom: 24px;
+}
+.ap-settings-section-heading p {
+  margin: 8px 0 0;
+  color: var(--color-caption);
+  font-size: 14px;
+  line-height: 20px;
+  max-width: 720px;
+}
+.ap-settings-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ap-settings-field {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 480px);
+  gap: 24px;
+  align-items: start;
+}
+.ap-settings-field > label {
+  padding-top: 10px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--color-caption);
+}
+.ap-settings-field-wide {
+  grid-template-columns: 200px minmax(0, 640px);
+}
+.ap-settings-field .ds-input {
+  width: 100%;
+}
+.ap-settings-field .ds-textarea {
+  min-height: 112px;
+}
+.ap-field-hint {
+  display: block;
+  margin: 8px 0 0;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ap-settings-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 224px;
+  margin-bottom: 8px;
+}
+.ap-identity-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-input);
+  color: var(--color-caption);
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+.ap-settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  color: var(--color-caption);
+  font-size: 13px;
+}
+.ap-settings-footnote {
+  margin: 32px 0 0;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ap-settings-feedback {
+  margin-bottom: 20px;
+}
+.ap-social-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 24px;
+}
+.ap-social-editor + .ap-social-editor {
+  padding-top: 24px;
+  border-top: 1px solid var(--admin-divider);
+}
+.ap-social-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ap-social-index {
+  font-weight: 500;
+  margin-right: 8px;
+}
+.ap-settings-fields > .ds-button {
+  align-self: flex-start;
+}
+.ap-writing-bar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 0;
+  background: var(--color-background);
+  z-index: 5;
+}
+.ap-writing-status {
+  color: var(--color-caption);
+  font-size: 12px;
+}
+.ap-writing-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+.ap-writing-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 24px;
+  padding-top: 24px;
+}
+.ap-writing-canvas {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  min-width: 0;
+}
+.ap-writing-title {
+  field-sizing: content;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-bottom: 16px;
+  padding: 0;
+  resize: none;
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 44px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--color-foreground);
+  border: none;
+  border-radius: 0;
+}
+.ap-writing-title:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+.ap-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  border-top: 1px solid var(--admin-divider);
+  border-bottom: 1px solid var(--admin-divider);
+  padding: 8px 0;
+}
+.ap-editor-toolbar > .ds-button {
+  flex-shrink: 0;
+  padding: 0 10px;
+}
+.ap-writing-body {
+  display: block;
+  resize: vertical;
+  width: 100%;
+  min-height: 560px;
+  background: transparent;
+  color: var(--color-foreground-reading);
+  font-family: var(--font-sans);
+  padding: 24px 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+}
+.ap-article-render {
+  padding-block: 12px 28px;
+  min-height: 560px;
+}
+.ap-article-render pre {
+  overflow-x: auto;
+}
+.ap-writing-title[aria-invalid="true"] {
+  border-bottom: 2px solid var(--color-danger);
+}
+.ap-editor-toolbar.is-invalid {
+  border-bottom: 2px solid var(--color-danger);
+}
+.ap-editor-footnote {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid var(--admin-divider);
+  padding-top: 16px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ap-article-settings {
+  display: none;
+}
+.ap-article-fields {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.ap-dialog-field .ds-input {
+  width: 100%;
+}
+.ap-status-radios {
+  display: flex;
+  gap: 24px;
+}
+.ap-status-radios label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  min-height: 40px;
+}
+.ap-status-radios input {
+  accent-color: var(--color-primary);
+}
+.ap-article-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 13px;
+}
+.ap-article-drawer.ds-dialog-popup {
+  max-width: 360px;
+  max-height: 100dvh;
+  border-radius: 0;
+  overflow-y: auto;
+}
+.ap-drawer-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.ap-editor {
+  container-type: inline-size;
+}
+@container (min-width: 1100px) {
+  .ap-writing-layout.has-settings {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+  .ap-article-settings {
+    display: block;
+    min-width: 0;
+    padding-left: 24px;
+  }
+}
+@media (max-width: 1100px) {
+  .ap-taxonomy-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .ap-settings-field,
+  .ap-settings-field-wide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    max-width: 640px;
+  }
+  .ap-settings-field > label {
+    padding-top: 0;
+  }
+  .ap-settings-identity {
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .ap-module-heading {
+    padding: 20px 20px 0;
+  }
+  .ap-taxonomy-form {
+    padding: 16px 20px 20px;
+  }
+  .ap-tag-cloud {
+    padding: 0 20px;
+  }
+  .ap-module-note {
+    margin: 20px;
+  }
+  .ap-taxonomy-add {
+    flex-wrap: wrap;
+  }
+  .ap-taxonomy-add > .ds-input {
+    flex-basis: calc(100% - 56px);
+  }
+  .ap-taxonomy-add > .ds-button {
+    width: 100%;
+  }
+  .ap-tag .ds-button {
+    width: 44px;
+    height: 44px;
+  }
+  .ap-tag {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .ap-release-search {
+    flex-basis: 100%;
+    max-width: none;
+  }
+  .ap-release-filter {
+    flex: 1;
+  }
+  .ap-release-timeline {
+    padding: 0 20px;
+  }
+  .ap-release-item {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0;
+  }
+  .ap-release-date {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .ap-release-date strong {
+    font-size: 14px;
+  }
+  .ap-release-content {
+    padding-left: 0;
+    border-left: 0;
+  }
+  .ap-local-pagination > span {
+    flex-basis: 100%;
+  }
+  .ap-local-pagination .ds-button {
+    flex: 1;
+  }
+  .ap-settings-toolbar {
+    align-items: flex-start;
+  }
+  .ap-settings-toolbar > .ds-button {
+    margin-left: 0;
+  }
+  .ap-settings-section + .ap-settings-section {
+    margin-top: 32px;
+  }
+  .ap-writing-bar {
+    gap: 8px;
+  }
+  .ap-writing-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .ap-writing-actions .ds-button {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .ap-writing-title {
+    font-size: 28px;
+    line-height: 40px;
+    min-height: 40px;
+  }
+
+  .ap-dialog-actions .ds-button {
+    flex: 1;
+  }
+  .ap-status-radios label {
+    min-height: 44px;
+  }
+}
+@media (pointer: coarse) {
+  .ap-status-radios label {
+    min-height: 44px;
+  }
+}
+
+.ap-category-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  line-height: 20px;
+}
+.ap-category-table :is(th, td) {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: middle;
+}
+.ap-category-table thead th {
+  background: var(--color-stage);
+  color: var(--color-caption);
+  font-weight: 500;
+}
+.ap-category-table tbody :is(th, td) {
+  border-top: 1px solid var(--admin-divider);
+  font-weight: 400;
+}
+.ap-category-table tbody th {
+  background: transparent;
+}
+.ap-category-table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+@media (pointer: coarse) {
+  .ap-tag .ds-button {
+    width: 44px;
+    height: 44px;
+  }
+}
