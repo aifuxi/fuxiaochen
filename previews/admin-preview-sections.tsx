@@ -1,7 +1,13 @@
 "use client";
 
-import type { ColumnDef } from "@tanstack/react-table";
-
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+} from "@tanstack/react-table";
 import {
   ArrowDown,
   ArrowLeft,
@@ -23,6 +29,7 @@ import {
   Settings2,
   Share2,
   ShieldCheck,
+  Tags,
   Trash2,
   UserRound,
   X,
@@ -31,7 +38,6 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactN
 
 import { Button } from "@/components/ui/button";
 import { ColorInput } from "@/components/ui/color-input";
-import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { RowActions } from "@/components/ui/menu";
@@ -101,6 +107,8 @@ function DialogActions({ children }: { children: ReactNode }) {
 }
 
 export function CategoriesPreview({ notify }: NotifyProps) {
+  "use no memo";
+
   const [categories, setCategories] = useState<Category[]>([
     { id: "c1", name: "前端开发", color: "#0064fa", postCount: 12 },
     { id: "c2", name: "设计与体验", color: "#30953b", postCount: 7 },
@@ -119,6 +127,9 @@ export function CategoriesPreview({ notify }: NotifyProps) {
   ]);
   const [name, setName] = useState("");
   const [categoryQuery, setCategoryQuery] = useState("");
+  const [taxonomyTab, setTaxonomyTab] = useState("categories");
+  const [categorySort, setCategorySort] = useState("default");
+  const [visibleCount, setVisibleCount] = useState(8);
   const [createOpen, setCreateOpen] = useState(false);
   const createCategoryButton = useRef<HTMLButtonElement>(null);
   const [color, setColor] = useState("#0064fa");
@@ -133,31 +144,17 @@ export function CategoriesPreview({ notify }: NotifyProps) {
   const tagInput = useRef<HTMLInputElement>(null);
   const trigger = useRef<HTMLElement | null>(null);
   const deleted = useRef(false);
-  const state = useDataTableState();
   const columns = useMemo<ColumnDef<Category>[]>(
     () => [
       {
         accessorKey: "name",
         header: "分类名称",
         enableSorting: true,
-        meta: { rowHeader: true },
-        // oxlint-disable-next-line react/no-unstable-nested-components -- 列定义由 useMemo 固定，避免行操作在弹窗切换时重建。
-        cell: ({ row }) => (
-          <span className="ap-category-name">
-            <span
-              className="ap-category-swatch"
-              style={{ background: row.original.color }}
-              aria-hidden="true"
-            />
-            {row.original.name}
-          </span>
-        ),
       },
-      { accessorKey: "postCount", header: "关联博文", enableSorting: true, meta: { width: "24%" } },
+      { accessorKey: "postCount", header: "关联博文", enableSorting: true },
       {
         id: "actions",
         header: "操作",
-        meta: { width: "15%" },
         // oxlint-disable-next-line react/no-unstable-nested-components -- 列定义由 useMemo 固定，避免行操作在弹窗切换时重建。
         cell: ({ row }) => (
           <RowActions
@@ -194,6 +191,34 @@ export function CategoriesPreview({ notify }: NotifyProps) {
     ],
     [],
   );
+  const filteredCategories = useMemo(
+    () => categories.filter((item) => item.name.includes(categoryQuery)),
+    [categories, categoryQuery],
+  );
+  const sorting = useMemo<SortingState>(
+    () =>
+      categorySort === "default"
+        ? []
+        : [
+            {
+              id: categorySort.startsWith("name") ? "name" : "postCount",
+              desc: categorySort.endsWith("desc"),
+            },
+          ],
+    [categorySort],
+  );
+  // 继续使用现有 TanStack 排序模型，仅将表格外观改为语义列表。
+  // oxlint-disable-next-line react/incompatible-library -- v8 实例可变，本组件明确使用 use no memo。
+  const table = useReactTable({
+    data: filteredCategories,
+    columns,
+    state: { sorting },
+    getRowId: (item) => item.id,
+    autoResetPageIndex: false,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+  const categoryRows = table.getRowModel().rows;
   return (
     <div className="admin-data-page">
       <div className="ap-page-heading">
@@ -201,62 +226,128 @@ export function CategoriesPreview({ notify }: NotifyProps) {
           <h1>分类与标签</h1>
           <p>整理文章的主题，让内容更容易被发现。</p>
         </div>
-        <Button
-          ref={createCategoryButton}
-          variant="primary"
-          size="compact"
-          onClick={() => {
-            setError("");
-            setCreateOpen(true);
-          }}
-        >
-          <Plus size={16} />
-          新增分类
-        </Button>
+        {taxonomyTab === "categories" && (
+          <Button
+            ref={createCategoryButton}
+            variant="primary"
+            size="compact"
+            onClick={() => {
+              setError("");
+              setCreateOpen(true);
+            }}
+          >
+            <Plus size={16} />
+            新增分类
+          </Button>
+        )}
       </div>
-      <div className="ap-taxonomy-workbench">
-        <section className="ap-taxonomy-main" aria-labelledby="ap-category-heading">
-          <div className="ap-taxonomy-main-heading">
-            <div className="ap-module-title">
-              <h2 id="ap-category-heading">文章分类</h2>
-              <span className="ap-count">{categories.length}</span>
-            </div>
+      <Tabs
+        className="ap-taxonomy-workbench"
+        value={taxonomyTab}
+        onValueChange={(next) => setTaxonomyTab(String(next))}
+      >
+        <div className="ap-taxonomy-navigation">
+          <div className="ap-tabs-scroll">
+            <TabsList size="compact" className="ap-task-tabs" aria-label="分类与标签视图">
+              <TabsTrigger value="categories">
+                <List size={16} />
+                分类<span className="ap-task-count">{categories.length}</span>
+              </TabsTrigger>
+              <TabsTrigger value="tags">
+                <Tags size={16} />
+                标签<span className="ap-task-count">{tags.length}</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+        </div>
+        <TabsPanel value="categories" className="ap-taxonomy-panel">
+          <div className="ap-taxonomy-toolbar">
             <Input
               className="ds-control-compact ap-category-search"
               aria-label="搜索分类"
               value={categoryQuery}
               onChange={(event) => {
                 setCategoryQuery(event.target.value);
-                state.setPage(1);
+                setVisibleCount(8);
               }}
               placeholder="搜索分类名称"
             />
+            <div className="ap-category-sort">
+              <label className="sr-only" htmlFor="ap-category-sort">
+                分类排序
+              </label>
+              <PreviewSelect
+                id="ap-category-sort"
+                compact
+                value={categorySort}
+                onChange={(next) => {
+                  setCategorySort(next);
+                  setVisibleCount(8);
+                }}
+                options={[
+                  { value: "default", label: "默认顺序" },
+                  { value: "name-asc", label: "名称正序" },
+                  { value: "name-desc", label: "名称倒序" },
+                  { value: "count-desc", label: "文章数从多到少" },
+                  { value: "count-asc", label: "文章数从少到多" },
+                ]}
+              />
+            </div>
           </div>
-
-          <DataTable
-            data={categories.filter((item) => item.name.includes(categoryQuery))}
-            columns={columns}
-            getRowId={(item) => item.id}
-            {...state}
-            caption="分类及关联文章数量"
-            tableClassName="ap-category-table"
-            emptyState={
-              <div className="ap-empty">
-                <p>{categoryQuery ? "没有匹配的分类。" : "还没有分类，添加一个主题开始整理。"}</p>
-                {categoryQuery && (
-                  <Button variant="ghost" onClick={() => setCategoryQuery("")}>
-                    清除搜索
-                  </Button>
-                )}
-              </div>
-            }
-          />
-        </section>
-        <aside className="ap-taxonomy-tags" aria-labelledby="ap-tags-heading">
-          <div className="ap-module-heading">
-            <h2 id="ap-tags-heading">文章标签</h2>
-            <span className="ap-count">{tags.length}</span>
-          </div>
+          <ul className="ap-category-list" aria-label="文章分类">
+            {categoryRows.slice(0, visibleCount).map((row) => (
+              <li className="ap-category-item" key={row.id}>
+                <div className="ap-category-identity">
+                  <h2 id={`ap-category-entry-${row.id}`} tabIndex={-1} className="ap-category-name">
+                    <span
+                      className="ap-category-swatch"
+                      style={{ background: row.original.color }}
+                      aria-hidden="true"
+                    />
+                    {row.original.name}
+                  </h2>
+                  <p>{row.original.postCount} 篇文章</p>
+                </div>
+                {row
+                  .getVisibleCells()
+                  .filter((cell) => cell.column.id === "actions")
+                  .map((cell) => (
+                    <div key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
+                  ))}
+              </li>
+            ))}
+          </ul>
+          {!categoryRows.length && (
+            <div className="ap-empty">
+              <p>{categoryQuery ? "没有匹配的分类。" : "还没有分类，添加一个主题开始整理。"}</p>
+              {categoryQuery && (
+                <Button variant="ghost" onClick={() => setCategoryQuery("")}>
+                  清除搜索
+                </Button>
+              )}
+            </div>
+          )}
+          {visibleCount < categoryRows.length && (
+            <div className="ap-taxonomy-more">
+              <Button
+                variant="secondary"
+                size="compact"
+                onClick={() => {
+                  const firstNew = categoryRows[visibleCount];
+                  setVisibleCount((count) => count + 8);
+                  requestAnimationFrame(() =>
+                    document.getElementById(`ap-category-entry-${firstNew.id}`)?.focus(),
+                  );
+                }}
+              >
+                显示更多分类
+              </Button>
+            </div>
+          )}
+        </TabsPanel>
+        <TabsPanel value="tags" className="ap-taxonomy-panel" aria-label="文章标签">
           <form
             className="ap-taxonomy-form"
             onSubmit={(event) => {
@@ -319,9 +410,9 @@ export function CategoriesPreview({ notify }: NotifyProps) {
               </span>
             ))}
           </div>
-          <p className="ap-module-note">标签可用于细分文章主题。已关联文章的标签需要先解除引用。</p>
-        </aside>
-      </div>
+          <p className="ap-module-note">标签可用于细分文章主题。</p>
+        </TabsPanel>
+      </Tabs>
       <Dialog
         open={createOpen}
         onOpenChange={(open) => {
@@ -350,6 +441,8 @@ export function CategoriesPreview({ notify }: NotifyProps) {
                 ...categories,
                 { id: `c${Date.now()}`, name: value, color, postCount: 0 },
               ]);
+              setCategoryQuery("");
+              setVisibleCount(categories.length + 1);
               setName("");
               setError("");
               notify("分类已添加到预览");

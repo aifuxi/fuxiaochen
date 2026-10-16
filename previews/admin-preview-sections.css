@@ -1,51 +1,73 @@
 /* 仅负责独立预览布局，控件皮肤与主题数值继续复用项目共享实现。 */
 .ap-taxonomy-workbench {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
-  align-items: start;
+  min-width: 0;
   overflow: hidden;
   border-radius: 14px;
   background: var(--color-surface);
 }
-.ap-taxonomy-main {
-  min-width: 0;
+.ap-taxonomy-navigation {
+  padding: 16px;
 }
-.ap-taxonomy-main-heading {
+.ap-taxonomy-panel.ds-tabs-panel {
+  padding-top: 0;
+}
+.ap-taxonomy-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 24px;
-}
-.ap-module-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.ap-module-title h2 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
+  padding: 16px;
 }
 .ap-category-search {
-  width: 220px;
+  flex: 1;
+  min-width: 0;
+  width: 360px;
+  max-width: 360px;
+}
+.ap-category-sort {
+  width: 180px;
   max-width: 100%;
 }
-.ap-taxonomy-tags {
-  min-width: 0;
-  align-self: stretch;
-  border-left: 1px solid var(--admin-divider);
-  padding-bottom: 4px;
+.ap-category-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 8px 16px 16px;
 }
-.ap-module-heading {
+.ap-category-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 24px 24px 0;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  min-width: 0;
+  min-height: 104px;
+  border-radius: var(--radius-md);
+  background: var(--color-fill-0);
 }
-.ap-module-heading h2,
+.ap-category-identity {
+  min-width: 0;
+}
+.ap-category-identity p {
+  margin: 4px 0 0 18px;
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+}
+.ap-category-item > :last-child {
+  flex: none;
+}
+.ap-category-name:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
+}
+.ap-taxonomy-more {
+  padding: 16px;
+}
 .ap-article-settings h2,
 .ap-settings-section h2 {
   margin: 0;
@@ -63,7 +85,8 @@
   font-variant-numeric: tabular-nums;
 }
 .ap-taxonomy-form {
-  padding: 20px 24px 24px;
+  max-width: 640px;
+  padding: 16px 16px 24px;
 }
 .ap-taxonomy-form > label,
 .ap-dialog-form > label,
@@ -85,9 +108,12 @@
   width: 0;
 }
 .ap-category-name {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
+  margin: 0;
+  font: 500 16px/24px var(--font-display);
+  overflow-wrap: anywhere;
 }
 .ap-category-swatch {
   height: 8px;
@@ -99,7 +125,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  padding: 0 24px;
+  padding: 0 16px;
 }
 .ap-tag {
   display: inline-flex;
@@ -119,7 +145,7 @@
   flex-shrink: 0;
 }
 .ap-module-note {
-  margin: 24px;
+  margin: 24px 16px;
   color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
@@ -651,13 +677,6 @@
   }
 }
 @media (max-width: 900px) {
-  .ap-taxonomy-workbench {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .ap-taxonomy-tags {
-    border-left: 0;
-    border-top: 1px solid var(--admin-divider);
-  }
   .ap-settings-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 24px;
@@ -711,17 +730,11 @@
   .ap-settings-actions > .ds-button {
     width: 100%;
   }
-  .ap-module-heading {
-    padding: 20px 20px 0;
+  .ap-category-sort {
+    width: 100%;
   }
-  .ap-taxonomy-form {
-    padding: 16px 20px 20px;
-  }
-  .ap-tag-cloud {
-    padding: 0 20px;
-  }
-  .ap-module-note {
-    margin: 20px;
+  .ap-taxonomy-more .ds-button {
+    width: 100%;
   }
   .ap-taxonomy-add {
     flex-wrap: wrap;
@@ -772,11 +785,10 @@
   .ap-release-more .ds-button {
     width: 100%;
   }
-  .ap-taxonomy-main-heading {
-    padding: 20px;
-  }
   .ap-category-search {
     width: 100%;
+    max-width: none;
+    flex-basis: 100%;
   }
   .ap-settings-section + .ap-settings-section {
     margin-top: 32px;
@@ -813,32 +825,6 @@
   }
 }
 
-.ap-category-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  line-height: 20px;
-}
-.ap-category-table :is(th, td) {
-  padding: 12px 16px;
-  text-align: left;
-  vertical-align: middle;
-}
-.ap-category-table thead th {
-  background: var(--color-stage);
-  color: var(--color-caption);
-  font-weight: 500;
-}
-.ap-category-table tbody :is(th, td) {
-  border-top: 1px solid var(--admin-divider);
-  font-weight: 400;
-}
-.ap-category-table tbody th {
-  background: transparent;
-}
-.ap-category-table tbody tr:hover {
-  background: var(--color-surface-hover);
-}
 @media (pointer: coarse) {
   .ap-tag .ds-button {
     width: 44px;
