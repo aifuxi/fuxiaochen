@@ -8,8 +8,6 @@ import {
   ArrowUp,
   Bold,
   ChartNoAxesColumn,
-  ChevronLeft,
-  ChevronRight,
   Code2,
   Eye,
   FileUp,
@@ -511,6 +509,7 @@ const releaseOptions = [
   { value: "performance", label: "性能" },
   { value: "security", label: "安全" },
 ];
+const releaseBatchSize = 8;
 
 export function ChangelogPreview({ notify }: NotifyProps) {
   const [items, setItems] = useState<Release[]>([
@@ -548,6 +547,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
   ]);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+  const [visibleCount, setVisibleCount] = useState(releaseBatchSize);
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Release | null>(null);
   const [version, setVersion] = useState("");
@@ -566,6 +566,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
         .toLowerCase()
         .includes(query.toLowerCase()),
   );
+  const shown = filtered.slice(0, visibleCount);
   const edit = (item: Release | null, button: HTMLElement | null) => {
     trigger.current = button;
     setEditing(item);
@@ -605,7 +606,10 @@ export function ChangelogPreview({ notify }: NotifyProps) {
               className="ds-control-compact"
               placeholder="搜索版本、标题或内容"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setVisibleCount(releaseBatchSize);
+              }}
             />
           </div>
           <div className="ap-release-filter">
@@ -613,7 +617,10 @@ export function ChangelogPreview({ notify }: NotifyProps) {
               id="ap-release-status"
               compact
               value={status}
-              onChange={setStatus}
+              onChange={(next) => {
+                setStatus(next);
+                setVisibleCount(releaseBatchSize);
+              }}
               options={[
                 { value: "all", label: "全部状态" },
                 { value: "published", label: "已发布" },
@@ -624,7 +631,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
           <span className="ap-results">{filtered.length} 条更新</span>
         </div>
         <ol className="ap-release-timeline">
-          {filtered.map((item) => (
+          {shown.map((item) => (
             <li key={item.id} className="ap-release-item">
               <div className="ap-release-date">
                 <time dateTime={item.date}>{item.date}</time>
@@ -636,7 +643,9 @@ export function ChangelogPreview({ notify }: NotifyProps) {
               <div className="ap-release-content">
                 <div className="ap-release-row-heading">
                   <div className="ap-release-title">
-                    <h2>{item.title}</h2>
+                    <h2 id={`ap-release-entry-${item.id}`} tabIndex={-1}>
+                      {item.title}
+                    </h2>
                     <span className={`ap-release-type ap-release-${item.type}`}>
                       {releaseOptions.find((option) => option.value === item.type)?.label}
                     </span>
@@ -664,6 +673,9 @@ export function ChangelogPreview({ notify }: NotifyProps) {
                               current.id === item.id ? { ...current, published: true } : current,
                             ),
                           );
+                          if (status === "withdrawn") {
+                            requestAnimationFrame(() => search.current?.focus());
+                          }
                           notify("更新已在预览中重新发布");
                         }
                       }}
@@ -689,6 +701,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
               onClick={() => {
                 setQuery("");
                 setStatus("all");
+                setVisibleCount(releaseBatchSize);
                 search.current?.focus();
               }}
             >
@@ -696,17 +709,24 @@ export function ChangelogPreview({ notify }: NotifyProps) {
             </Button>
           </div>
         )}
-        <div className="ap-local-pagination">
-          <span>共 {filtered.length} 条，第 1 / 1 页</span>
-          <Button variant="ghost" size="compact" disabled aria-label="上一页">
-            <ChevronLeft size={16} />
-            上一页
-          </Button>
-          <Button variant="ghost" size="compact" disabled aria-label="下一页">
-            下一页
-            <ChevronRight size={16} />
-          </Button>
-        </div>
+        {visibleCount < filtered.length && (
+          <div className="ap-release-more">
+            <Button
+              variant="secondary"
+              size="compact"
+              onClick={() => {
+                const firstNew = filtered[visibleCount];
+                setVisibleCount((count) => count + releaseBatchSize);
+                // 最后一批会移除加载按钮，将焦点交给新出现的内容。
+                requestAnimationFrame(() =>
+                  document.getElementById(`ap-release-entry-${firstNew.id}`)?.focus(),
+                );
+              }}
+            >
+              加载更早更新
+            </Button>
+          </div>
+        )}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
@@ -745,6 +765,7 @@ export function ChangelogPreview({ notify }: NotifyProps) {
                   ? items.map((item) => (item.id === editing.id ? data : item))
                   : [data, ...items],
               );
+              if (!editing) setVisibleCount(releaseBatchSize);
               setOpen(false);
               notify(editing ? "更新已在预览中保存" : "更新已在预览中发布");
             }}

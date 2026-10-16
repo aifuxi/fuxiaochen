@@ -159,6 +159,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  border-bottom: 0;
 }
 .ap-release-search {
   min-width: 0;
@@ -177,32 +178,31 @@
   font-size: 12px;
 }
 .ap-release-timeline {
+  display: grid;
+  gap: 44px;
   list-style: none;
   margin: 0;
-  padding: 0 24px;
+  padding: 24px 16px 8px;
 }
 .ap-release-item {
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  position: relative;
-  padding: 20px 0;
-  gap: 24px;
-}
-.ap-release-item + .ap-release-item {
-  border-top: 1px solid var(--admin-divider);
+  min-width: 0;
 }
 .ap-release-date {
   display: flex;
   min-width: 0;
   overflow-wrap: anywhere;
-  flex-direction: column;
-  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 8px;
   color: var(--color-caption);
   font-size: 12px;
   line-height: 18px;
   font-variant-numeric: tabular-nums;
 }
 .ap-release-date strong {
+  min-width: 0;
+  max-width: 100%;
   order: -1;
   color: var(--color-foreground);
   font-size: 16px;
@@ -236,6 +236,11 @@
   font-size: 16px;
   font-weight: 500;
   line-height: 24px;
+}
+.ap-release-title h2:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
 }
 .ap-release-type {
   font-size: 12px;
@@ -287,20 +292,8 @@
   max-height: 88dvh;
   overflow-y: auto;
 }
-.ap-local-pagination {
-  padding: 16px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 12px;
-  border-top: 1px solid var(--admin-divider);
-}
-.ap-local-pagination > span {
-  font-family: var(--font-mono);
-  color: var(--color-caption);
-  font-size: 13px;
-  line-height: 20px;
+.ap-release-more {
+  padding: 32px 16px 8px;
 }
 .ap-settings-layout {
   display: grid;
@@ -760,21 +753,10 @@
     align-self: flex-end;
   }
   .ap-release-timeline {
-    padding: 0 20px;
-  }
-  .ap-release-item {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 20px 0;
-  }
-  .ap-release-date {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 4px 16px;
+    gap: 32px;
+    padding-top: 20px;
   }
   .ap-release-date strong {
-    grid-column: 1 / -1;
     font-size: 14px;
   }
   .ap-release-row-heading {
@@ -787,11 +769,8 @@
   .ap-release-actions {
     margin-left: -8px;
   }
-  .ap-local-pagination > span {
-    flex-basis: 100%;
-  }
-  .ap-local-pagination .ds-button {
-    flex: 1;
+  .ap-release-more .ds-button {
+    width: 100%;
   }
   .ap-taxonomy-main-heading {
     padding: 20px;
