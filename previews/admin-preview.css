@@ -7,6 +7,62 @@
 .ap-preview main {
   min-height: calc(100dvh - 80px);
 }
+/* 业务导航与全局操作分为两段，保留 Dock 的位置、宽度及点击目标。 */
+.ap-preview > .admin-sidebar {
+  overflow: visible;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.ap-preview > .admin-sidebar .admin-sidebar-inner {
+  gap: 12px;
+  padding: 0;
+}
+.ap-preview .admin-sidebar :is(.ap-dock-navigation, .admin-sidebar-bottom) {
+  flex: none;
+  padding: 8px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-popup);
+}
+.ap-preview .admin-sidebar .admin-nav {
+  gap: 12px;
+  padding-top: 12px;
+}
+.ap-preview .admin-sidebar .admin-nav-item {
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+.ap-dock-label {
+  font: 500 12px/18px var(--font-sans);
+  white-space: nowrap;
+}
+.ap-preview .admin-sidebar .admin-nav-item.is-active .ap-dock-label {
+  font-weight: 600;
+}
+.ap-preview .admin-sidebar .admin-brand .ap-dock-home {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  justify-content: center;
+  border-radius: var(--radius-md);
+}
+.ap-preview .admin-sidebar .admin-sidebar-bottom {
+  display: block;
+}
+@supports (backdrop-filter: blur(16px)) {
+  .ap-preview .admin-sidebar :is(.ap-dock-navigation, .admin-sidebar-bottom) {
+    background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+    backdrop-filter: blur(16px);
+  }
+}
+@media (max-height: 600px) {
+  .ap-preview > .admin-sidebar {
+    overflow-y: auto;
+  }
+}
 .ap-page-heading {
   display: flex;
   align-items: flex-start;
@@ -749,7 +805,7 @@ body.ap-editor-focus .admin-main-column {
   grid-column: 1;
 }
 @media (prefers-reduced-transparency: reduce) {
-  .ap-preview .admin-sidebar {
+  .ap-preview .admin-sidebar :is(.ap-dock-navigation, .admin-sidebar-bottom) {
     background: var(--color-surface);
     backdrop-filter: none;
   }

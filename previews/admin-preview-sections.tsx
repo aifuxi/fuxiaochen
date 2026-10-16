@@ -7,6 +7,7 @@ import {
   ArrowLeft,
   ArrowUp,
   Bold,
+  ChartNoAxesColumn,
   ChevronLeft,
   ChevronRight,
   Code2,
@@ -18,9 +19,14 @@ import {
   List,
   Pencil,
   Plus,
+  RotateCcw,
   Save,
+  Search,
   Settings2,
+  Share2,
+  ShieldCheck,
   Trash2,
+  UserRound,
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
@@ -847,12 +853,17 @@ const initialSettings: Record<string, string> = {
   baiduId: "",
 };
 const settingsGroups = [
-  { value: "profile", description: "站点资料与个人介绍", label: "资料与站点" },
-  { value: "seo", description: "搜索摘要与分享信息", label: "SEO" },
-  { value: "system", description: "阅读与展示偏好", label: "系统偏好" },
-  { value: "filing", description: "网站与公安备案", label: "备案" },
-  { value: "social", description: "公开账号与展示顺序", label: "社交账号" },
-  { value: "analytics", description: "GA4 与百度统计", label: "访问统计" },
+  { value: "profile", description: "站点资料与个人介绍", label: "资料与站点", icon: UserRound },
+  { value: "seo", description: "搜索摘要与分享信息", label: "SEO", icon: Search },
+  { value: "system", description: "阅读与展示偏好", label: "系统偏好", icon: Settings2 },
+  { value: "filing", description: "网站与公安备案", label: "备案", icon: ShieldCheck },
+  { value: "social", description: "公开账号与展示顺序", label: "社交账号", icon: Share2 },
+  {
+    value: "analytics",
+    description: "GA4 与百度统计",
+    label: "访问统计",
+    icon: ChartNoAxesColumn,
+  },
 ];
 
 const settingsNavQuery = "(min-width: 901px)";
@@ -1009,10 +1020,22 @@ export function SettingsPreview({
           <h1>系统设置</h1>
           <p>管理站点资料、SEO、备案、社交账号与访问统计。</p>
         </div>
-        <Button variant="primary" size="compact" type="submit">
-          <Save size={16} />
-          保存所有变更
-        </Button>
+        <div className="ap-settings-actions">
+          <Button
+            ref={reloadButton}
+            variant="ghost"
+            size="compact"
+            type="button"
+            onClick={() => setReload(true)}
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            重新载入设置
+          </Button>
+          <Button variant="primary" size="compact" type="submit">
+            <Save size={16} />
+            保存所有变更
+          </Button>
+        </div>
       </div>
       {error && (
         <p id="ap-settings-error" role="alert" className="ap-field-error ap-settings-feedback">
@@ -1029,27 +1052,27 @@ export function SettingsPreview({
           <div className="ap-settings-tab-scroll">
             <TabsList className="ap-settings-nav-list" size="compact" aria-label="设置分组">
               {settingsGroups.map((group) => (
-                <div className="ap-settings-nav-item" key={group.value}>
-                  <TabsTrigger
-                    value={group.value}
-                    aria-describedby={`ap-setting-group-${group.value}`}
-                  >
-                    {group.label}
-                  </TabsTrigger>
-                  <p id={`ap-setting-group-${group.value}`}>{group.description}</p>
-                </div>
+                <TabsTrigger
+                  className="ap-settings-nav-item"
+                  key={group.value}
+                  value={group.value}
+                  aria-label={group.label}
+                  aria-describedby={`ap-setting-group-${group.value}`}
+                >
+                  <group.icon size={18} aria-hidden="true" />
+                  <span className="ap-settings-nav-copy">
+                    <span className="ap-settings-nav-title">{group.label}</span>
+                    <span
+                      className="ap-settings-nav-description"
+                      id={`ap-setting-group-${group.value}`}
+                    >
+                      {group.description}
+                    </span>
+                  </span>
+                </TabsTrigger>
               ))}
             </TabsList>
           </div>
-          <Button
-            ref={reloadButton}
-            variant="ghost"
-            size="compact"
-            type="button"
-            onClick={() => setReload(true)}
-          >
-            重新载入设置
-          </Button>
         </aside>
         <div className="ap-settings-content">
           <TabsPanel value="profile">

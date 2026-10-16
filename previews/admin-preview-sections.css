@@ -304,9 +304,15 @@
 }
 .ap-settings-layout {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 216px minmax(0, 1fr);
   align-items: start;
-  gap: 48px;
+  gap: 32px;
+}
+.ap-settings-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .ap-settings-navigation {
   position: sticky;
@@ -323,28 +329,44 @@
   flex-direction: column;
   width: 100%;
   height: auto;
-  gap: 12px;
-}
-.ap-settings-nav-item {
-  min-width: 0;
+  gap: 8px;
 }
 .ap-settings-nav-list .ds-tabs-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
   width: 100%;
-  min-height: var(--control-compact);
+  min-width: 0;
+  min-height: 66px;
+  padding: 12px;
   text-align: left;
 }
-.ap-settings-nav-item p {
-  margin: 4px 12px 0;
+.ap-settings-nav-item > svg {
+  margin-top: 1px;
+}
+.ap-settings-nav-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.ap-settings-nav-title {
+  font-weight: 500;
+}
+.ap-settings-nav-item[data-active] .ap-settings-nav-title {
+  font-weight: 600;
+}
+.ap-settings-nav-description {
   color: var(--color-caption);
   font-size: 12px;
   font-weight: 400;
   line-height: 18px;
 }
-.ap-settings-navigation > .ds-button {
-  margin-top: 24px;
+.ap-settings-nav-item[data-active]:hover:not(:disabled):not([data-disabled]) {
+  background: var(--color-primary-light-hover);
+}
+.ap-settings-nav-item[data-active]:active:not(:disabled):not([data-disabled]) {
+  background: var(--color-primary-light-active);
 }
 .ap-settings-content {
   min-width: 0;
@@ -649,10 +671,6 @@
   }
   .ap-settings-navigation {
     position: static;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
   }
   .ap-settings-tab-scroll {
     width: 100%;
@@ -662,15 +680,20 @@
     width: max-content;
     gap: 8px;
   }
-  .ap-settings-nav-item {
+  .ap-settings-nav-list .ds-tabs-trigger {
+    grid-template-columns: 18px auto;
+    align-items: center;
     flex: 0 0 auto;
+    width: auto;
+    min-height: var(--control-touch);
+    padding: 0 12px;
+    white-space: nowrap;
   }
-  .ap-settings-nav-item p {
-    display: none;
-  }
-  .ap-settings-navigation > .ds-button {
+  .ap-settings-nav-item > svg {
     margin-top: 0;
-    margin-left: auto;
+  }
+  .ap-settings-nav-description {
+    display: none;
   }
 
   .ap-settings-field,
@@ -687,6 +710,14 @@
   }
 }
 @media (max-width: 600px) {
+  .ap-settings-actions {
+    display: grid;
+    width: 100%;
+    gap: 8px;
+  }
+  .ap-settings-actions > .ds-button {
+    width: 100%;
+  }
   .ap-module-heading {
     padding: 20px 20px 0;
   }

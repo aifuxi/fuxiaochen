@@ -1450,9 +1450,22 @@ function App() {
   };
   const sidebar = (mobile: boolean) => (
     <div className="admin-sidebar-inner">
-      <div>
+      <div className="ap-dock-navigation">
         <div className="admin-brand">
-          <BrandLogo />
+          {mobile ? (
+            <BrandLogo />
+          ) : (
+            <Hint label="前往网站首页">
+              <Button
+                className="ap-dock-home"
+                variant="ghost"
+                aria-label="前往网站首页"
+                onClick={() => notify("这是离线后台预览，网站首页未包含在本文件中。")}
+              >
+                <BrandLogo />
+              </Button>
+            </Hint>
+          )}
           {mobile && (
             <>
               <span className="admin-brand-name">
@@ -1497,7 +1510,18 @@ function App() {
                     }}
                   >
                     <Icon size={mobile ? 18 : 20} strokeWidth={1.8} aria-hidden="true" />
-                    {mobile && <span>{item.name}</span>}
+                    <span className={mobile ? undefined : "ap-dock-label"} aria-hidden={!mobile}>
+                      {mobile
+                        ? item.name
+                        : {
+                            posts: "文章",
+                            categories: "分类",
+                            changelog: "日志",
+                            friends: "友链",
+                            settings: "设置",
+                            backups: "备份",
+                          }[item.page]}
+                    </span>
                   </a>
                 );
                 return mobile ? (
@@ -1522,18 +1546,7 @@ function App() {
             <Globe2 size={18} />
             前往网站首页
           </Button>
-        ) : (
-          <Hint label="前往网站首页">
-            <Button
-              className="admin-front-link"
-              variant="ghost"
-              aria-label="前往网站首页"
-              onClick={() => notify("这是离线后台预览，网站首页未包含在本文件中。")}
-            >
-              <Globe2 size={20} />
-            </Button>
-          </Hint>
-        )}
+        ) : null}
         {utilities(mobile)}
       </div>
     </div>
