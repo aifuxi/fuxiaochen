@@ -423,9 +423,9 @@ html {
   width: 160px;
   max-width: 50%;
   min-width: 0;
-  height: var(--control-small);
+  height: var(--control-compact);
   padding: 0 8px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   background: transparent;
   font-size: 12px;
 }
@@ -443,9 +443,9 @@ html {
   min-width: 0;
 }
 .code-block-copy-button.ds-button {
-  height: var(--control-small);
+  height: var(--control-compact);
   padding: 0 8px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   color: var(--color-caption);
   font-size: 12px;
 }

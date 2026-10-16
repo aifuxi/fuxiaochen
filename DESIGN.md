@@ -418,7 +418,7 @@ components:
 
 2026-10-15 用户授权将当前项目的深浅色色盘及输入框、按钮、弹窗、Toast 等组件皮肤对齐本地 Semi UI Vue 文档站，明确参考是默认主题叠加 modern。授权覆盖共享 token、组件尺寸、圆角、边框、填充、阴影、排版和交互状态；继续以 Base UI 封装本地组件，不引入 Vue 或 Semi 组件运行时。前台、登录、后台与展示页统一消费共享实现，页面布局、数据流及业务操作保持。
 
-2026-10-16 用户明确恢复项目表单密度：普通桌面按钮和单行表单控件高 40px，compact 工具栏控件高 36px，表单圆角 12px；窄屏与粗指针操作目标保持 44px。颜色、边框、填充、高光、阴影和状态继续使用 Semi default + modern；small=24px、large=40px、页面明确的 32px CTA 与图标复制尺寸保持各自场景，Card、弹层、菜单和 Switch 不随表单密度调整。
+2026-10-16 用户明确恢复项目表单密度：普通桌面按钮和单行表单控件高 40px，compact 工具栏控件高 36px，表单圆角 12px；窄屏与粗指针操作目标保持 44px。颜色、边框、填充、高光、阴影和状态继续使用 Semi default + modern；small=24px、large=40px、页面明确的 32px CTA 与工作台图标复制尺寸保持各自场景，Card、弹层、菜单和 Switch 不随表单密度调整。
 
 此前“禁止常驻浅色描边及所有 inset 边缘”的限制已由本次视觉授权替代。采用参考组件实际包含的边框、细边缘、高光与阴影：普通 Modal 保留实体边框，modern 按钮及独立 bordered Card 保留轻微内侧层次；默认填充 Input 的静止边框仍透明。分隔线只承担参考组件或现有业务结构中的分组职责，不额外装饰页面。
 
@@ -569,7 +569,7 @@ Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，�
 | ColorInput                          | 使用 input 表面、form 圆角及 form 宽高，桌面 40×40px、窄屏或粗指针 44×44px；保留色块内边距和独立焦点，表面状态与相邻输入一致，错误与禁用不改变方形尺寸                                                                                                                                                              |
 | Switch                              | 状态与名称由本地组件提供；滑块使用 Semi 白色，轨道引用 fill-0 / success；触屏 variant 保留 40×24px 轨道与真实 44×44px 点击区，不用放大轨道代替扩大目标                                                                                                                                                              |
 
-Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，代码块控件保留场景明确的独立尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
+Button、TabsList、SelectTrigger 与 InputGroup 沿用 `size="compact"` 的尺寸接口；Switch 的 `touchTarget` 只扩大触屏目标。普通表单和提交操作使用 form，工具栏及其中的保存操作使用 compact；同组操作沿用相同尺寸，前台与编辑器代码工具栏的语言选择和复制控件统一使用 compact 高 36px、form 圆角 12px，窄屏或粗指针高 44px；不再保留代码工具的 32px / 24px 高度或 8px 圆角例外。专用内嵌操作与关闭图标继续保留明确的 small 尺寸。禁用组合控件时整个表面反馈一致，附加按钮保持独立操作语义。
 
 ### 图标名称提示
 

@@ -109,7 +109,7 @@ export function NotificationCenter() {
     <div className="admin-modal-section">
       <div className="admin-operation-filters">
         <Button
-          size="sm"
+          size="compact"
           variant="ghost"
           aria-pressed={!unread}
           disabled={postPending}
@@ -121,7 +121,7 @@ export function NotificationCenter() {
           全部
         </Button>
         <Button
-          size="sm"
+          size="compact"
           variant="ghost"
           aria-pressed={unread}
           disabled={postPending}
@@ -133,7 +133,7 @@ export function NotificationCenter() {
           未读 {data?.unreadCount ?? "—"}
         </Button>
         <Button
-          size="sm"
+          size="compact"
           variant="secondary"
           disabled={postPending || !data?.items.some((item) => !item.read)}
           onClick={() =>

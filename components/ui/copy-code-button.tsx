@@ -38,7 +38,7 @@ export function CopyCodeButton({ code, disabled = false }: { code: string; disab
       <Button
         type="button"
         variant="ghost"
-        size="sm"
+        size="compact"
         className="code-block-copy-button"
         disabled={disabled || status === "copying"}
         onClick={copy}

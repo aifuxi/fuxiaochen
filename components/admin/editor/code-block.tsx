@@ -46,7 +46,11 @@ function CodeBlockView({ editor, node, getPos }: ReactNodeViewProps) {
             });
           }}
         >
-          <SelectTrigger className="code-block-language-select" aria-label="代码块语言">
+          <SelectTrigger
+            size="compact"
+            className="code-block-language-select"
+            aria-label="代码块语言"
+          >
             <SelectValue>{codeLanguageLabel(language)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
