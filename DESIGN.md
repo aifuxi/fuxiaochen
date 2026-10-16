@@ -484,7 +484,7 @@ YAML 的 `colors` 记录默认深色角色，`color-modes.light` 记录浅色覆
 
 静态徽标通过文字和颜色表达信息，不自动继承按钮的材质阴影、hover、active、焦点状态或动画。已有日志类型映射与“最新”配色由前台、后台场景维护，适用上述通用规则。
 
-Picker、Popover 与 Menu 使用 bg-3、md 圆角及 `--shadow-popup`（modern overlay 内侧边缘 + elevated）。Dialog 使用 bg-2、lg 圆角、border 和 `--shadow-modal`，普通 Modal 的浅高光保留，遮罩使用 backdrop；`overlay` 作为浮层实体表面的兼容角色对应 bg-3。Toast 使用 bg-3、md 圆角与 elevated 投影，light 彩色变体使用语义浅底和 1px 对应语义色边框；不额外叠加 modern overlay 边缘。模式切换不重建浮层，不改变关闭、保存和焦点恢复行为。
+Picker、Popover 与 Menu 使用 bg-3、md 圆角及 `--shadow-popup`（modern overlay 内侧边缘 + elevated）。Dialog 使用 bg-2、lg 圆角、border 和 `--shadow-modal`，普通 Modal 的浅高光保留，遮罩使用 backdrop；`overlay` 作为浮层实体表面的兼容角色对应 bg-3。Toast 使用 bg-3、md 圆角与 elevated 投影，关闭按钮使用共享 form 圆角 12px；light 彩色变体使用语义浅底和 1px 对应语义色边框；不额外叠加 modern overlay 边缘。模式切换不重建浮层，不改变关闭、保存和焦点恢复行为。
 
 独立 bordered Card 使用 surface、md 圆角、border 及 `--shadow-card`，遵循 modern 的淡边缘与轻微高光，不叠加旧有大阴影；无边框或分组网格 Card 不强加相同材质。已有展示卡舞台、业务模块结构及页面留白保持。`CardLink` 继续是真实链接，保留独立操作的既有组合边界，hover/active 只改变填充，focus-visible 显示独立轮廓。
 

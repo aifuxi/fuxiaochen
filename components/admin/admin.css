@@ -363,7 +363,7 @@
   height: 24px;
   padding: 0;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-form);
   background: transparent;
   color: var(--semi-color-tertiary);
   cursor: var(--cursor-action);

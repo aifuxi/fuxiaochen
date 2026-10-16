@@ -24,7 +24,7 @@
   max-width: 100%;
   padding: 4px 0;
   border: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-form);
   background: transparent;
   color: inherit;
   font: inherit;

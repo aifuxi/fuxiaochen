@@ -174,7 +174,12 @@ export default function DesignWorkbench() {
                 <DialogTitle className="text-lg font-semibold">设计规范目录</DialogTitle>
                 <DialogClose
                   render={
-                    <Button variant="ghost" className="workbench-copy" aria-label="关闭目录" />
+                    <Button
+                      size="compact"
+                      variant="ghost"
+                      className="workbench-directory-close"
+                      aria-label="关闭目录"
+                    />
                   }
                 >
                   <X size={18} aria-hidden="true" />

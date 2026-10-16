@@ -394,7 +394,7 @@
   display: flex;
   justify-content: flex-start;
   width: 100%;
-  height: 38px;
+  height: var(--control-compact);
   gap: 12px;
   padding: 0 10px;
   border-radius: 0;
@@ -504,7 +504,7 @@
     height: 44px;
   }
   .post-editor-menu-item.ds-button {
-    height: 44px;
+    height: var(--control-touch);
   }
   .post-editor-drag-handle {
     display: none !important;

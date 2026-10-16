@@ -241,6 +241,13 @@
   padding: 0;
   flex-shrink: 0;
 }
+/* 目录关闭采用 compact，色值复制继续保留独立的 32px 尺寸。 */
+.design-showcase .workbench-directory-close {
+  width: var(--control-compact);
+  min-width: var(--control-compact);
+  padding: 0;
+  flex-shrink: 0;
+}
 .design-showcase .workbench-palette {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -422,7 +429,8 @@
   .design-showcase .workbench-stage {
     padding: 16px;
   }
-  .design-showcase .workbench-copy {
+  .design-showcase .workbench-copy,
+  .design-showcase .workbench-directory-close {
     width: 44px;
     min-width: 44px;
     height: 44px;
@@ -430,7 +438,8 @@
 }
 
 @media (pointer: coarse) {
-  .design-showcase .workbench-copy {
+  .design-showcase .workbench-copy,
+  .design-showcase .workbench-directory-close {
     width: 44px;
     min-width: 44px;
     height: 44px;
