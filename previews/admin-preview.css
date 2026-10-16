@@ -128,11 +128,6 @@
 .ap-table-panel {
   padding-top: 0;
 }
-.ap-post-identity {
-  display: grid;
-  gap: 3px;
-  min-width: 0;
-}
 .ap-title-link {
   width: fit-content;
   padding: 0;
@@ -140,7 +135,8 @@
   background: transparent;
   color: var(--color-foreground);
   text-align: left;
-  font: 500 14px/20px var(--font-sans);
+  font: inherit;
+  overflow-wrap: anywhere;
   cursor: var(--cursor-action);
 }
 .ap-title-link:hover {
@@ -153,20 +149,6 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 3px;
   border-radius: var(--radius-xs);
-}
-.ap-post-identity p {
-  overflow: hidden;
-  margin: 0;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: var(--color-caption);
-  font-size: 12px;
-  line-height: 18px;
-}
-.ap-post-identity > span {
-  color: var(--color-caption);
-  font-size: 12px;
-  line-height: 18px;
 }
 .ap-muted {
   color: var(--color-caption);
@@ -219,22 +201,6 @@
 .ap-empty p {
   color: var(--color-caption);
 }
-.ap-friend-table {
-  min-width: 960px !important;
-}
-.ap-friend-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.ap-friend-identity > div {
-  display: grid;
-  min-width: 0;
-  gap: 4px;
-}
-.ap-friend-identity strong {
-  font-weight: 500;
-}
 .ap-friend-icon {
   display: grid;
   place-items: center;
@@ -250,10 +216,6 @@
   font-size: 12px;
   line-height: 18px;
   overflow-wrap: anywhere;
-}
-.ap-friend-status {
-  display: grid;
-  gap: 4px;
 }
 .ap-record-heading {
   display: flex;
@@ -508,7 +470,6 @@
   gap: 16px;
   min-width: 0;
   padding: 16px;
-  border-bottom: 1px solid var(--admin-divider);
 }
 .ap-collection-count {
   flex: none;
@@ -544,6 +505,7 @@
 }
 .ap-collection-main .ap-toolbar {
   min-height: 72px;
+  border-bottom: 0;
 }
 .ap-collection-main .ap-search {
   flex: 1;
@@ -554,8 +516,69 @@
 .ap-collection-main .ap-post-toolbar > .ap-filter-group {
   flex: none;
 }
-.ap-collection-main .admin-post-table thead th {
-  padding-block: 12px;
+.ap-content-list {
+  display: grid;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 16px 16px 24px;
+}
+.ap-content-entry {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 16px;
+  min-width: 0;
+  padding: 4px 0;
+}
+.ap-friend-entry {
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+}
+.ap-entry-copy {
+  min-width: 0;
+}
+.ap-entry-heading,
+.ap-entry-states,
+.ap-entry-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  min-width: 0;
+}
+.ap-entry-heading h2 {
+  min-width: 0;
+  margin: 0;
+  font: 500 16px/24px var(--font-display);
+  overflow-wrap: anywhere;
+}
+.ap-entry-heading h2:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  border-radius: var(--radius-xs);
+}
+.ap-entry-description {
+  max-width: 72ch;
+  margin: 6px 0 8px;
+  color: var(--color-caption);
+  font-size: 14px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+.ap-entry-meta {
+  color: var(--color-caption);
+  font-size: 12px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.ap-collection-more {
+  padding: 0 16px 24px;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .ap-content-entry .ap-title-link {
+    min-width: var(--control-touch);
+    min-height: var(--control-touch);
+  }
 }
 @media (max-width: 600px) {
   .ap-collection-count {
@@ -572,6 +595,18 @@
   }
   .ap-task-tabs .ds-tabs-trigger {
     min-height: 44px;
+  }
+  .ap-content-entry {
+    gap: 12px;
+  }
+  .ap-friend-entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .ap-friend-entry > .ap-friend-icon {
+    display: none;
+  }
+  .ap-collection-more .ds-button {
+    width: 100%;
   }
 }
 @media (pointer: coarse) {

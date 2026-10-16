@@ -1,10 +1,17 @@
+import type { ReactElement, ReactNode, RefObject } from "react";
+
 /**
  * 后台独立预览入口。所有数据和写入仅存在于 React 内存。
  * 直接复用项目组件；构建脚本负责内嵌样式、字体与运行时。
  */
-import type { ColumnDef, TableMeta } from "@tanstack/react-table";
-import type { ReactElement, ReactNode, RefObject } from "react";
-
+import {
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+  type SortingState,
+  type TableMeta,
+} from "@tanstack/react-table";
 import {
   ArrowRight,
   Bell,
@@ -29,10 +36,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 
-import { AdminRowActionsCell } from "@/components/admin/admin-table";
 import { BrandLogo } from "@/components/brand-logo";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { Button } from "@/components/ui/button";
@@ -47,6 +53,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { RowActions } from "@/components/ui/menu";
 import {
   Select,
   SelectContent,
@@ -636,59 +643,18 @@ const examplePosts: Post[] = [
   },
 ];
 
+// 表头移除后继续由 TanStack 提供排序，选择框只改变对应字段和方向。
 const postColumns: ColumnDef<Post>[] = [
-  {
-    accessorKey: "title",
-    header: "文章标题",
-    enableSorting: true,
-    meta: { width: "38%", rowHeader: true },
-    cell: ({ row, table }) => (
-      <div className="ap-post-identity">
-        <button
-          className="ap-title-link"
-          onClick={() => table.options.meta?.editRow?.(row.original)}
-        >
-          {row.original.title}
-        </button>
-        <p title={row.original.summary}>{row.original.summary}</p>
-        <span>#{row.original.tag}</span>
-      </div>
-    ),
-  },
-  { accessorKey: "category", header: "分类", enableSorting: true, meta: { width: "12%" } },
-  {
-    accessorKey: "status",
-    header: "状态",
-    enableSorting: true,
-    meta: { width: "10%" },
-    cell: ({ row }) => (
-      <span className={row.original.status === "published" ? "ap-status is-success" : "ap-status"}>
-        {row.original.status === "published" && <Check size={13} />}
-        {row.original.status === "published" ? "已发布" : "草稿"}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "featured",
-    header: "精选",
-    meta: { width: "12%" },
-    cell: ({ row }) => (row.original.featured ? "精选" : "未精选"),
-  },
-  {
-    accessorKey: "date",
-    header: "时间",
-    enableSorting: true,
-    meta: { width: "18%", className: "ap-mono" },
-  },
-  {
-    id: "actions",
-    header: "操作",
-    meta: { width: "10%" },
-    cell: AdminRowActionsCell,
-  },
+  { accessorKey: "title", enableSorting: true },
+  { accessorKey: "category", enableSorting: true },
+  { accessorKey: "status", enableSorting: true },
+  { accessorKey: "date", enableSorting: true },
 ];
+const collectionBatchSize = 8;
 
 function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }) {
+  "use no memo";
+
   const [posts, setPosts] = useState(examplePosts);
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -697,14 +663,33 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
   const [deleting, setDeleting] = useState<Post | null>(null);
   const deleteTrigger = useRef<HTMLElement | null>(null);
   const search = useRef<HTMLDivElement | null>(null);
-  const state = useDataTableState();
-  const filtered = posts.filter(
-    (post) =>
-      (status === "all" || post.status === status) &&
-      (category === "all" || post.category === category) &&
-      (featured === "all" || post.featured === (featured === "yes")) &&
-      (post.title + post.summary + post.tag + post.category).includes(query),
+  const [sort, setSort] = useState("date-desc");
+  const [visibleCount, setVisibleCount] = useState(collectionBatchSize);
+  const filtered = useMemo(
+    () =>
+      posts.filter(
+        (post) =>
+          (status === "all" || post.status === status) &&
+          (category === "all" || post.category === category) &&
+          (featured === "all" || post.featured === (featured === "yes")) &&
+          (post.title + post.summary + post.tag + post.category).includes(query),
+      ),
+    [posts, status, category, featured, query],
   );
+  const sorting = useMemo<SortingState>(() => {
+    const [id, direction] = sort.split("-");
+    return [{ id, desc: direction === "desc" }];
+  }, [sort]);
+  // oxlint-disable-next-line react/incompatible-library -- 可变 v8 实例与明确的 use no memo 边界配合。
+  const table = useReactTable({
+    data: filtered,
+    columns: postColumns,
+    state: { sorting },
+    getRowId: (post) => post.id,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+  const rows = table.getRowModel().rows;
 
   const getPostActions: NonNullable<TableMeta<Post>["getRowActions"]> = (post) => ({
     label: `文章 ${post.title} 的操作`,
@@ -719,6 +704,10 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
               item.id === post.id ? { ...item, featured: !item.featured } : item,
             ),
           );
+          // 筛选或排序后当前项可能离开首批结果，回到稳定的搜索入口。
+          if (featured !== "all") {
+            requestAnimationFrame(() => search.current?.querySelector("input")?.focus());
+          }
           notify("预览精选状态已更新。");
         },
       },
@@ -749,7 +738,7 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
           value={status}
           onValueChange={(value) => {
             setStatus(String(value));
-            state.setPage(1);
+            setVisibleCount(collectionBatchSize);
           }}
         >
           <div className="ap-collection-status-bar">
@@ -785,7 +774,7 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                 value={query}
                 onChange={(value) => {
                   setQuery(value);
-                  state.setPage(1);
+                  setVisibleCount(collectionBatchSize);
                 }}
               />
               <div className="ap-filter-group">
@@ -794,7 +783,7 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                   value={category}
                   onChange={(value) => {
                     setCategory(value);
-                    state.setPage(1);
+                    setVisibleCount(collectionBatchSize);
                   }}
                   options={[
                     ["all", "全部分类"],
@@ -808,7 +797,7 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                   value={featured}
                   onChange={(value) => {
                     setFeatured(value);
-                    state.setPage(1);
+                    setVisibleCount(collectionBatchSize);
                   }}
                   options={[
                     ["all", "全部精选状态"],
@@ -816,38 +805,100 @@ function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }
                     ["no", "未精选"],
                   ]}
                 />
+                <Filter
+                  label="文章排序"
+                  value={sort}
+                  onChange={(value) => {
+                    setSort(value);
+                    setVisibleCount(collectionBatchSize);
+                  }}
+                  options={[
+                    ["date-desc", "最新优先"],
+                    ["date-asc", "最早优先"],
+                    ["title-asc", "标题正序"],
+                    ["title-desc", "标题倒序"],
+                    ["category-asc", "分类正序"],
+                    ["category-desc", "分类倒序"],
+                    ["status-asc", "草稿优先"],
+                    ["status-desc", "已发布优先"],
+                  ]}
+                />
               </div>
             </div>
             <TabsPanel value={status} className="ap-table-panel">
-              <DataTable
-                data={filtered}
-                columns={postColumns}
-                meta={{
-                  editRow: onEdit,
-                  getRowActions: getPostActions,
-                }}
-                getRowId={(row) => row.id}
-                {...state}
-                caption="示例文章列表"
-                tableClassName="admin-post-table"
-                emptyState={
-                  <div className="ap-empty">
-                    <h2>没有找到文章</h2>
-                    <p>试试其他关键词，或清除当前筛选。</p>
-                    <Button
-                      variant="secondary"
-                      onClick={() => {
-                        setQuery("");
-                        setCategory("all");
-                        setFeatured("all");
-                        setStatus("all");
-                      }}
-                    >
-                      清除筛选
-                    </Button>
-                  </div>
-                }
-              />
+              <ul className="ap-content-list" aria-label="文章列表">
+                {rows.slice(0, visibleCount).map(({ original: post }) => (
+                  <li className="ap-content-entry" key={post.id}>
+                    <div className="ap-entry-copy">
+                      <div className="ap-entry-heading">
+                        <h2 id={`ap-post-entry-${post.id}`} tabIndex={-1}>
+                          <button className="ap-title-link" onClick={onEdit}>
+                            {post.title}
+                          </button>
+                        </h2>
+                        <div className="ap-entry-states">
+                          <span
+                            className={
+                              post.status === "published" ? "ap-status is-success" : "ap-status"
+                            }
+                          >
+                            {post.status === "published" && <Check size={13} />}
+                            {post.status === "published" ? "已发布" : "草稿"}
+                          </span>
+                          {post.featured && <span className="ap-status">精选</span>}
+                        </div>
+                      </div>
+                      <p className="ap-entry-description">{post.summary}</p>
+                      <div className="ap-entry-meta">
+                        <span>{post.category}</span>
+                        <span>#{post.tag}</span>
+                        <time className="ap-mono" dateTime={post.date}>
+                          {post.date}
+                        </time>
+                      </div>
+                    </div>
+                    <RowActions {...getPostActions(post)} />
+                  </li>
+                ))}
+              </ul>
+              {!rows.length && (
+                <div className="ap-empty">
+                  <h2>没有找到文章</h2>
+                  <p>试试其他关键词，或清除当前筛选。</p>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setQuery("");
+                      setCategory("all");
+                      setFeatured("all");
+                      setStatus("all");
+                      setVisibleCount(collectionBatchSize);
+                      requestAnimationFrame(() => search.current?.querySelector("input")?.focus());
+                    }}
+                  >
+                    清除筛选
+                  </Button>
+                </div>
+              )}
+              {visibleCount < rows.length && (
+                <div className="ap-collection-more">
+                  <Button
+                    size="compact"
+                    onClick={() => {
+                      const firstNew = rows[visibleCount];
+                      setVisibleCount((count) => count + collectionBatchSize);
+                      requestAnimationFrame(() =>
+                        document.getElementById(`ap-post-entry-${firstNew.id}`)?.focus(),
+                      );
+                      notify(
+                        `已显示 ${Math.min(visibleCount + collectionBatchSize, rows.length)} 篇文章。`,
+                      );
+                    }}
+                  >
+                    显示更多文章
+                  </Button>
+                </div>
+              )}
             </TabsPanel>
           </div>
         </Tabs>
@@ -928,49 +979,14 @@ const exampleFriends: Friend[] = [
 ];
 
 const friendColumns: ColumnDef<Friend>[] = [
-  {
-    accessorKey: "name",
-    header: "博客名称 / 地址",
-    enableSorting: true,
-    meta: { width: "32%", rowHeader: true },
-    cell: ({ row }) => (
-      <div className="ap-friend-identity">
-        <span className="ap-friend-icon">
-          <Link2 size={18} />
-        </span>
-        <div>
-          <strong>{row.original.name}</strong>
-          <span className="ap-site-url">{row.original.url}</span>
-        </div>
-      </div>
-    ),
-  },
-  { accessorKey: "description", header: "站点描述", meta: { width: "34%" } },
-  { accessorKey: "category", header: "分类", enableSorting: true, meta: { width: "12%" } },
-  {
-    accessorKey: "approved",
-    header: "审核 / 展示",
-    enableSorting: true,
-    meta: { width: "14%" },
-    cell: ({ row }) => (
-      <div className="ap-friend-status">
-        <span className={row.original.approved ? "ap-status is-success" : "ap-status"}>
-          {row.original.approved ? <Check size={13} /> : <Clock3 size={13} />}
-          {row.original.approved ? "已通过" : "待审核"}
-        </span>
-        <span className="ap-muted">{row.original.enabled ? "展示启用" : "展示停用"}</span>
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    header: "操作",
-    meta: { width: "8%" },
-    cell: AdminRowActionsCell,
-  },
+  { accessorKey: "name", enableSorting: true },
+  { accessorKey: "category", enableSorting: true },
+  { accessorKey: "approved", enableSorting: true },
 ];
 
 function FriendsPreview({ notify }: { notify: Notify }) {
+  "use no memo";
+
   const [items, setItems] = useState(exampleFriends);
   const [category, setCategory] = useState("all");
   const [review, setReview] = useState("all");
@@ -980,15 +996,35 @@ function FriendsPreview({ notify }: { notify: Notify }) {
   const [invalid, setInvalid] = useState(false);
   const [deleting, setDeleting] = useState<Friend | null>(null);
   const trigger = useRef<HTMLElement | null>(null);
-  const tableState = useDataTableState();
+  const [sort, setSort] = useState("default");
+  const [visibleCount, setVisibleCount] = useState(collectionBatchSize);
   const workspace = useRef<HTMLElement>(null);
-  const filtered = items.filter(
-    (item) =>
-      (category === "all" || category === item.category) &&
-      (review === "all" || item.approved === (review === "approved")) &&
-      (visibility === "all" || item.enabled === (visibility === "yes")) &&
-      (item.name + item.url + item.description).includes(query),
+  const filtered = useMemo(
+    () =>
+      items.filter(
+        (item) =>
+          (category === "all" || category === item.category) &&
+          (review === "all" || item.approved === (review === "approved")) &&
+          (visibility === "all" || item.enabled === (visibility === "yes")) &&
+          (item.name + item.url + item.description).includes(query),
+      ),
+    [items, category, review, visibility, query],
   );
+  const sorting = useMemo<SortingState>(() => {
+    if (sort === "default") return [];
+    const [id, direction] = sort.split("-");
+    return [{ id, desc: direction === "desc" }];
+  }, [sort]);
+  // oxlint-disable-next-line react/incompatible-library -- 可变 v8 实例与明确的 use no memo 边界配合。
+  const table = useReactTable({
+    data: filtered,
+    columns: friendColumns,
+    state: { sorting },
+    getRowId: (friend) => friend.id,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+  const rows = table.getRowModel().rows;
   function edit(item: Friend | null, target: HTMLElement | null = null) {
     trigger.current = target;
     setInvalid(false);
@@ -1023,8 +1059,8 @@ function FriendsPreview({ notify }: { notify: Notify }) {
               item.id === friend.id ? { ...item, approved: !item.approved } : item,
             ),
           );
-          // 当前审核视图会移除这条记录，等 DOM 更新后回到仍可用的搜索入口。
-          if (review !== "all") {
+          // 审核筛选或审核排序可能让条目离开可见批次，回到稳定的搜索入口。
+          if (review !== "all" || sort.startsWith("approved-")) {
             requestAnimationFrame(() => workspace.current?.querySelector("input")?.focus());
           }
           notify("预览审核状态已更新。");
@@ -1061,7 +1097,7 @@ function FriendsPreview({ notify }: { notify: Notify }) {
           value={review}
           onValueChange={(value) => {
             setReview(String(value));
-            tableState.setPage(1);
+            setVisibleCount(collectionBatchSize);
           }}
         >
           <div className="ap-collection-status-bar">
@@ -1096,7 +1132,7 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                 value={query}
                 onChange={(value) => {
                   setQuery(value);
-                  tableState.setPage(1);
+                  setVisibleCount(collectionBatchSize);
                 }}
                 label="搜索名称、地址或描述"
               />
@@ -1106,7 +1142,7 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                   value={category}
                   onChange={(value) => {
                     setCategory(value);
-                    tableState.setPage(1);
+                    setVisibleCount(collectionBatchSize);
                   }}
                   options={[
                     ["all", "全部分类"],
@@ -1120,12 +1156,29 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                   value={visibility}
                   onChange={(value) => {
                     setVisibility(value);
-                    tableState.setPage(1);
+                    setVisibleCount(collectionBatchSize);
                   }}
                   options={[
                     ["all", "全部展示状态"],
                     ["yes", "展示启用"],
                     ["no", "展示停用"],
+                  ]}
+                />
+                <Filter
+                  label="友链排序"
+                  value={sort}
+                  onChange={(value) => {
+                    setSort(value);
+                    setVisibleCount(collectionBatchSize);
+                  }}
+                  options={[
+                    ["default", "默认顺序"],
+                    ["name-asc", "名称正序"],
+                    ["name-desc", "名称倒序"],
+                    ["category-asc", "分类正序"],
+                    ["category-desc", "分类倒序"],
+                    ["approved-asc", "待审核优先"],
+                    ["approved-desc", "已通过优先"],
                   ]}
                 />
                 <Button size="compact" variant="ghost" onClick={() => notify("示例友链已刷新。")}>
@@ -1135,33 +1188,76 @@ function FriendsPreview({ notify }: { notify: Notify }) {
               </div>
             </div>
             <TabsPanel value={review} className="ap-table-panel">
-              <DataTable
-                data={filtered}
-                columns={friendColumns}
-                meta={{
-                  getRowActions: getFriendActions,
-                }}
-                getRowId={(item) => item.id}
-                {...tableState}
-                caption="示例友情链接列表"
-                tableClassName="admin-post-table ap-friend-table"
-                emptyState={
-                  <div className="ap-empty">
-                    <h2>没有找到友链</h2>
-                    <p>调整筛选条件后再试。</p>
-                    <Button
-                      onClick={() => {
-                        setQuery("");
-                        setReview("all");
-                        setCategory("all");
-                        setVisibility("all");
-                      }}
-                    >
-                      清除筛选
-                    </Button>
-                  </div>
-                }
-              />
+              <ul className="ap-content-list" aria-label="友情链接列表">
+                {rows.slice(0, visibleCount).map(({ original: friend }) => (
+                  <li className="ap-content-entry ap-friend-entry" key={friend.id}>
+                    <span className="ap-friend-icon" aria-hidden="true">
+                      <Link2 size={18} />
+                    </span>
+                    <div className="ap-entry-copy">
+                      <div className="ap-entry-heading">
+                        <h2 id={`ap-friend-entry-${friend.id}`} tabIndex={-1}>
+                          {friend.name}
+                        </h2>
+                        <div className="ap-entry-states">
+                          <span className={friend.approved ? "ap-status is-success" : "ap-status"}>
+                            {friend.approved ? <Check size={13} /> : <Clock3 size={13} />}
+                            {friend.approved ? "已通过" : "待审核"}
+                          </span>
+                          <span className="ap-status">
+                            {friend.enabled ? "展示启用" : "展示停用"}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="ap-entry-description">{friend.description}</p>
+                      <div className="ap-entry-meta">
+                        <span className="ap-site-url">{friend.url}</span>
+                        <span>{friend.category}</span>
+                      </div>
+                    </div>
+                    <RowActions {...getFriendActions(friend)} />
+                  </li>
+                ))}
+              </ul>
+              {!rows.length && (
+                <div className="ap-empty">
+                  <h2>没有找到友链</h2>
+                  <p>调整筛选条件后再试。</p>
+                  <Button
+                    onClick={() => {
+                      setQuery("");
+                      setReview("all");
+                      setCategory("all");
+                      setVisibility("all");
+                      setVisibleCount(collectionBatchSize);
+                      requestAnimationFrame(() =>
+                        workspace.current?.querySelector("input")?.focus(),
+                      );
+                    }}
+                  >
+                    清除筛选
+                  </Button>
+                </div>
+              )}
+              {visibleCount < rows.length && (
+                <div className="ap-collection-more">
+                  <Button
+                    size="compact"
+                    onClick={() => {
+                      const firstNew = rows[visibleCount];
+                      setVisibleCount((count) => count + collectionBatchSize);
+                      requestAnimationFrame(() =>
+                        document.getElementById(`ap-friend-entry-${firstNew.id}`)?.focus(),
+                      );
+                      notify(
+                        `已显示 ${Math.min(visibleCount + collectionBatchSize, rows.length)} 个站点。`,
+                      );
+                    }}
+                  >
+                    显示更多友链
+                  </Button>
+                </div>
+              )}
             </TabsPanel>
           </div>
         </Tabs>
@@ -1189,6 +1285,13 @@ function FriendsPreview({ notify }: { notify: Notify }) {
                   ? current.map((item) => (item.id === editing.id ? editing : item))
                   : [...current, editing],
               );
+              if (!items.some((item) => item.id === editing.id)) {
+                setQuery("");
+                setCategory("all");
+                setReview("all");
+                setVisibility("all");
+                setVisibleCount(items.length + 1);
+              }
               setEditing(null);
               notify("示例友链已保存。");
             }}
