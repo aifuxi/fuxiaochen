@@ -43,7 +43,6 @@ import { BrandLogo } from "@/components/brand-logo";
 import { MotionProvider } from "@/components/motion/motion-provider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { DataTable, useDataTableState } from "@/components/ui/data-table";
 import {
   Dialog,
   DialogClose,
@@ -74,6 +73,7 @@ import {
 
 type Page = "posts" | "categories" | "changelog" | "friends" | "settings" | "backups" | "editor";
 type Notify = (message: string) => void;
+const collectionBatchSize = 8;
 const navigation = [
   {
     group: "内容",
@@ -144,14 +144,16 @@ function Filter({
   value,
   onChange,
   options,
+  disabled = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: [string, string][];
+  disabled?: boolean;
 }) {
   return (
-    <Select value={value} onValueChange={(next) => next && onChange(next)}>
+    <Select value={value} disabled={disabled} onValueChange={(next) => next && onChange(next)}>
       <SelectTrigger size="compact" aria-label={label} className="ap-filter">
         <SelectValue>{options.find((option) => option[0] === value)?.[1]}</SelectValue>
       </SelectTrigger>
@@ -279,56 +281,37 @@ function backupStatus(status: Backup["status"]) {
 }
 
 const backupColumns: ColumnDef<Backup>[] = [
-  {
-    accessorKey: "date",
-    header: "执行时间",
-    enableSorting: true,
-    meta: { width: "34%", rowHeader: true, className: "ap-mono" },
-  },
-  {
-    accessorKey: "status",
-    header: "状态",
-    enableSorting: true,
-    meta: { width: "22%" },
-    cell: ({ row }) => (
-      <span className={row.original.status === "complete" ? "ap-status is-success" : "ap-status"}>
-        {row.original.status === "complete" ? <CheckCircle2 size={15} /> : <Clock3 size={15} />}
-        {backupStatus(row.original.status)}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "bytes",
-    header: "文件大小",
-    enableSorting: true,
-    meta: { width: "20%", className: "ap-mono" },
-    cell: ({ row }) => (row.original.bytes / 1024 / 1024).toFixed(2) + " MiB",
-  },
-  {
-    id: "details",
-    header: "校验信息",
-    meta: { width: "24%" },
-    cell: ({ row, table }) => (
-      <Button
-        variant="ghost"
-        size="compact"
-        disabled={table.options.meta?.disableActions}
-        onClick={() => table.options.meta?.editRow?.(row.original)}
-      >
-        查看详情 <ArrowRight size={15} />
-      </Button>
-    ),
-  },
+  { accessorKey: "date", enableSorting: true },
+  { accessorKey: "status", enableSorting: true },
+  { accessorKey: "bytes", enableSorting: true },
 ];
 
 function BackupsPreview({ notify }: { notify: Notify }) {
+  "use no memo";
+
   const [records, setRecords] = useState(exampleBackups);
   const [automatic, setAutomatic] = useState(true);
   const [pending, setPending] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [detail, setDetail] = useState<Backup | null>(null);
   const detailTrigger = useRef<HTMLElement | null>(null);
-  const tableState = useDataTableState();
+  const [sort, setSort] = useState("date-desc");
+  const [visibleCount, setVisibleCount] = useState(collectionBatchSize);
+  const sorting = useMemo<SortingState>(() => {
+    const [id, direction] = sort.split("-");
+    return [{ id, desc: direction === "desc" }];
+  }, [sort]);
+  // 原始日期、状态和数值排序保留，展示形态改为列表。
+  // oxlint-disable-next-line react/incompatible-library -- 可变 v8 实例与明确的 use no memo 边界配合。
+  const table = useReactTable({
+    data: records,
+    columns: backupColumns,
+    state: { sorting },
+    getRowId: (item) => item.id,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+  const rows = table.getRowModel().rows;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(
     () => () => {
@@ -351,7 +334,9 @@ function BackupsPreview({ notify }: { notify: Notify }) {
       second: "2-digit",
       hour12: false,
     });
-    tableState.setPage(1);
+    // 执行新任务后回到最新批次，使新增进度始终可见。
+    setSort("date-desc");
+    setVisibleCount(collectionBatchSize);
     setRecords((current) => [{ id, date, bytes: 3846144, status: "running", sha: "" }, ...current]);
     timer.current = setTimeout(() => {
       setRecords((current) =>
@@ -457,33 +442,118 @@ function BackupsPreview({ notify }: { notify: Notify }) {
               <h2 className="ap-section-title">执行记录</h2>
               <span className="ap-count">{records.length}</span>
             </div>
-            <Button
-              variant="ghost"
-              size="compact"
-              disabled={pending || refreshing}
-              onClick={refresh}
-            >
-              <RefreshCw size={15} />
-              {refreshing ? "正在刷新…" : "刷新备份记录"}
-            </Button>
+            <div className="ap-backup-history-actions">
+              <Filter
+                label="备份记录排序"
+                value={sort}
+                disabled={pending || refreshing}
+                onChange={(value) => {
+                  setSort(value);
+                  setVisibleCount(collectionBatchSize);
+                }}
+                options={[
+                  ["date-desc", "最新优先"],
+                  ["date-asc", "最早优先"],
+                  ["status-asc", "状态正序"],
+                  ["status-desc", "状态倒序"],
+                  ["bytes-desc", "文件从大到小"],
+                  ["bytes-asc", "文件从小到大"],
+                ]}
+              />
+              <Button
+                variant="ghost"
+                size="compact"
+                disabled={pending || refreshing}
+                onClick={refresh}
+              >
+                <RefreshCw size={15} />
+                {refreshing ? "正在刷新…" : "刷新备份记录"}
+              </Button>
+            </div>
           </div>
-          <DataTable
-            data={records}
-            columns={backupColumns}
-            getRowId={(item) => item.id}
-            {...tableState}
-            meta={{ editRow: openDetails, disableActions: pending || refreshing }}
-            loading={refreshing}
-            disabled={pending || refreshing}
-            caption="示例备份执行记录"
-            tableClassName="ap-backup-table"
-            emptyState={
+          <output className="sr-only" aria-live="polite">
+            {pending ? "正在执行数据库备份。" : refreshing ? "正在刷新备份记录。" : ""}
+          </output>
+          <div aria-busy={refreshing}>
+            {refreshing ? (
+              <div className="ap-backup-loading" aria-hidden="true">
+                {Array.from({ length: Math.min(visibleCount, records.length) || 3 }, (_, index) => (
+                  <div key={index} className="ap-backup-loading-item" />
+                ))}
+              </div>
+            ) : (
+              <ul className="ap-content-list" aria-label="备份执行记录">
+                {rows.slice(0, visibleCount).map(({ original: item }) => (
+                  <li className="ap-content-entry ap-backup-entry" key={item.id}>
+                    <div className="ap-entry-copy">
+                      <div className="ap-entry-heading">
+                        <h3 id={`ap-backup-entry-${item.id}`} tabIndex={-1}>
+                          <time
+                            dateTime={item.date.replaceAll("/", "-").replace(" ", "T") + "+08:00"}
+                          >
+                            {item.date}
+                          </time>
+                        </h3>
+                        <span
+                          className={
+                            item.status === "complete" ? "ap-status is-success" : "ap-status"
+                          }
+                        >
+                          {item.status === "complete" ? (
+                            <CheckCircle2 size={15} />
+                          ) : (
+                            <Clock3 size={15} />
+                          )}
+                          {backupStatus(item.status)}
+                        </span>
+                      </div>
+                      <div className="ap-entry-meta">
+                        <span className="ap-mono">{(item.bytes / 1024 / 1024).toFixed(2)} MiB</span>
+                        <span>
+                          编号 <span className="ap-mono">{item.id}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="compact"
+                      disabled={pending || refreshing}
+                      aria-label={`查看 ${item.date} 的备份详情`}
+                      onClick={() => openDetails(item)}
+                    >
+                      查看详情 <ArrowRight size={15} />
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {!refreshing && !rows.length && (
               <div className="ap-empty">
-                <h2>暂无备份记录</h2>
+                <h3>暂无备份记录</h3>
                 <p>执行一次数据库备份后，记录会显示在这里。</p>
               </div>
-            }
-          />
+            )}
+            {visibleCount < rows.length && (
+              <div className="ap-collection-more">
+                <Button
+                  size="compact"
+                  disabled={pending || refreshing}
+                  onClick={() => {
+                    const firstNew = rows[visibleCount];
+                    setVisibleCount((count) => count + collectionBatchSize);
+                    requestAnimationFrame(() =>
+                      document.getElementById(`ap-backup-entry-${firstNew.id}`)?.focus(),
+                    );
+                    notify(
+                      `已显示 ${Math.min(visibleCount + collectionBatchSize, rows.length)} 条备份记录。`,
+                    );
+                  }}
+                >
+                  显示更多记录
+                </Button>
+              </div>
+            )}
+          </div>
         </section>
         <Card className="ap-backup-scope">
           <h2 className="ap-section-title">备份与恢复</h2>
@@ -650,7 +720,6 @@ const postColumns: ColumnDef<Post>[] = [
   { accessorKey: "status", enableSorting: true },
   { accessorKey: "date", enableSorting: true },
 ];
-const collectionBatchSize = 8;
 
 function PostsPreview({ notify, onEdit }: { notify: Notify; onEdit: () => void }) {
   "use no memo";

@@ -221,10 +221,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 16px;
   padding: 16px;
-  border-top: 1px solid var(--admin-divider);
-  border-bottom: 1px solid var(--admin-divider);
 }
 .ap-heading-with-count {
   display: flex;
@@ -363,32 +362,61 @@
   line-height: 20px;
 }
 .ap-backup-history .ap-record-heading {
-  border-top: 0;
   padding: 20px 16px;
 }
-.ap-backup-table {
-  table-layout: fixed;
-  min-width: 620px;
-  font-size: 14px;
-  line-height: 20px;
+.ap-backup-history-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
 }
-.ap-backup-table :is(th, td) {
-  padding: 16px;
-  text-align: left;
+.ap-backup-history-actions .ap-filter {
+  width: 180px;
+  min-width: 0;
+  max-width: 100%;
 }
-.ap-backup-table thead {
-  background: var(--color-stage);
+.ap-content-entry.ap-backup-entry {
+  align-items: center;
 }
-.ap-backup-table tbody tr + tr {
-  border-top: 1px solid var(--admin-divider);
+.ap-backup-entry .ap-entry-heading h3 {
+  font-family: var(--font-mono);
 }
-.ap-backup-table th[scope="row"] {
-  color: var(--color-foreground-reading);
-  font-size: 12px;
-  font-weight: 400;
+.ap-backup-entry .ap-entry-meta {
+  margin-top: 8px;
 }
-.ap-backup-table .ds-button {
-  margin-left: -12px;
+.ap-backup-history .ap-empty h3 {
+  margin: 0;
+  font: 500 16px/24px var(--font-display);
+}
+/* 刷新只表达短暂等待，不让整页或条目反复入场。 */
+.ap-backup-loading {
+  display: grid;
+  gap: 24px;
+  padding: 16px 16px 24px;
+}
+.ap-backup-loading-item {
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  min-width: 0;
+  padding: 4px 0;
+}
+.ap-backup-loading-item::before,
+.ap-backup-loading-item::after {
+  content: "";
+  max-width: 100%;
+  border-radius: var(--radius-xs);
+  background: var(--color-fill-0);
+}
+.ap-backup-loading-item::before {
+  width: 240px;
+  height: 24px;
+}
+.ap-backup-loading-item::after {
+  width: 320px;
+  height: 18px;
 }
 .ap-backup-detail {
   display: grid;
@@ -546,13 +574,13 @@
   gap: 8px 16px;
   min-width: 0;
 }
-.ap-entry-heading h2 {
+.ap-entry-heading :is(h2, h3) {
   min-width: 0;
   margin: 0;
   font: 500 16px/24px var(--font-display);
   overflow-wrap: anywhere;
 }
-.ap-entry-heading h2:focus-visible {
+.ap-entry-heading :is(h2, h3):focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
   border-radius: var(--radius-xs);
@@ -604,6 +632,13 @@
   }
   .ap-friend-entry > .ap-friend-icon {
     display: none;
+  }
+  .ap-backup-entry {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ap-backup-entry > .ds-button {
+    width: 100%;
+    min-height: var(--control-touch);
   }
   .ap-collection-more .ds-button {
     width: 100%;
