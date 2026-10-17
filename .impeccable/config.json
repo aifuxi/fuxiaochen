@@ -22,6 +22,13 @@
         "files": ["app/component-skin.css"],
         "createdAt": "2026-10-15T15:05:32.994Z",
         "reason": "Agent: 用户已确认对齐本地 Semi 默认主题叠加 modern 的组件视觉；参考组件字体为 Inter，DESIGN.md 已明确登记控件使用 Inter，页面继续 Source Sans Pro。本例外仅适用于组件皮肤中的两个 font-face 声明。"
+      },
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": ["app/article-prose.css"],
+        "createdAt": "2026-10-17T14:47:02.636Z",
+        "reason": "Agent: DESIGN.md:535 明确保留正文 blockquote 的 3px outline 起始边线；此语义样式自提交 05935f3fe 已存在，不属于装饰卡片侧边色条。"
       }
     ]
   }
