@@ -2,7 +2,7 @@
 version: alpha
 status: target
 name: 付小晨 Semi Modern
-description: 以本地 Semi UI Vue default + modern 为色盘及组件视觉基准，保留 Base UI 语义与既有页面构图。
+description: 以本地 Semi UI Vue default + modern 为色盘及组件视觉基准，保留 Base UI 语义，按已批准场景组织页面构图。
 # colors 为默认深色目标值；color-modes.light 为浅色覆盖。
 # 完整原始语义变量、来源及 MIT 归属见 app/semi-theme-tokens.css。
 colors:
@@ -420,6 +420,8 @@ components:
 
 2026-10-16 用户明确恢复项目表单密度：普通桌面按钮和单行表单控件高 40px，compact 工具栏控件高 36px，表单圆角 12px；窄屏与粗指针操作目标保持 44px。颜色、边框、填充、高光、阴影和状态继续使用 Semi default + modern；small=24px、large=40px、页面明确的 32px CTA 与工作台图标复制尺寸保持各自场景，Card、弹层、菜单和 Switch 不随表单密度调整。
 
+2026-10-17 用户批准前台独立预览并授权应用到正式页面。前台改为阅读导向的首页、直接分类与可展开标签、开放式列表与时间线；旧五微卡和独立分类／标签栏目退为历史，布局与数据规则分别由前台场景和产品文档维护。共享色盘、字体、Base UI 与其余页面保持；前台首页 CTA 使用普通 40px，不再保留旧 32px 例外。前台深色首页实心 CTA 与“最新”徽标用现有 background 作深色文字，精选使用 primary-light 与 focus-text，保证亮蓝底上的文字可读；这项明确组合仅限前台，不改共享 primary-foreground 数值或后台皮肤。
+
 此前“禁止常驻浅色描边及所有 inset 边缘”的限制已由本次视觉授权替代。采用参考组件实际包含的边框、细边缘、高光与阴影：普通 Modal 保留实体边框，modern 按钮及独立 bordered Card 保留轻微内侧层次；默认填充 Input 的静止边框仍透明。分隔线只承担参考组件或现有业务结构中的分组职责，不额外装饰页面。
 
 ## 品牌资产
@@ -476,7 +478,7 @@ YAML 的 `colors` 记录默认深色角色，`color-modes.light` 记录浅色覆
 
 用色按信息职责组织，场景明确默认映射与需要强调的内容：
 
-- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。本轮以本地 Semi default + modern 的深浅色语义替换旧色盘；实心 primary 按钮和静态徽标使用 primary-foreground，主按钮悬停使用 primary-hover-foreground，避免浅色模式继承页面深色文字。强调文字使用对应模式角色，并核对实际底色上的对比度。
+- **品牌与重点**：primary 用于主要 CTA、选中状态、交互指示和重要静态信息，例如“最新”“精选”徽标、关键指标或前三名标记。强调集中在相关文字、图标、边线或局部底色上，与默认灰阶层级共同组织页面，无需为每个静态标记另开许可。本轮以本地 Semi default + modern 的深浅色语义替换旧色盘；实心 primary 按钮和静态徽标默认使用 primary-foreground（前台已批准的对比度组合见上文），主按钮悬停使用 primary-hover-foreground，避免浅色模式继承页面深色文字。强调文字使用对应模式角色，并核对实际底色上的对比度。
 - **分类与数据**：栏目、更新类型、分类和数据系列允许使用共享颜色建立稳定映射；同一类别在同一场景及切换查询区间后保持一致，并保留文字或图例。分类识别可复用既有颜色，但应明确它表达类别，避免被误读为操作结果或告警。没有分类或强调需求时，必要文字使用 caption / metadata 等灰阶阅读角色。
 - **状态与焦点**：success、danger 保留参考原色用于图标、状态点及已有视觉标记；必要的成功、危险小字分别使用 success-text、danger-text。它们表达实际成功、有利结果、错误或风险，不能凭视觉需要制造业务状态。控件的 focus 指示始终独立于分类色、选中色与状态色，保留清晰的焦点轮廓。颜色不承担唯一识别，状态同时有文字或符号。
 
@@ -540,7 +542,7 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 采用 [Recent](https://recent.design/) 的圆润箭头、描边和 CSS 光标方式，按本项目深浅主题与操作语义适配；没有鼠标跟随层、尾迹或循环动画。输入框、Textarea 和 contenteditable 使用 text；禁用控件覆盖原生 disabled、aria-disabled 与 Base UI data-disabled，使用 not-allowed；拖拽、缩放及浏览器文本选择继续使用其语义。粗指针、无 hover、forced-colors 和资产加载失败时使用系统光标，减少动态效果下静态光标不变。焦点、标签与真实点击区域仍由控件提供，颜色不是唯一操作提示。参考多人在线指针、头像与聊天不在本次范围。
 
-时长与曲线选择 motion token：micro 用于微小反馈，quick 用于短状态切换，standard 用于面板或选中状态，expressive 用于展示性微卡位移。展示卡或首页微卡最大上浮 lift-max；后台业务卡、表格行与字段分组不单独入场、上浮或循环。
+时长与曲线选择 motion token：micro 用于微小反馈，quick 用于短状态切换，standard 用于面板或选中状态，expressive 用于展示性微卡位移。展示卡最大上浮 lift-max；前台正文与首页近期文章不增加上浮，后台业务卡、表格行与字段分组不单独入场、上浮或循环。
 
 全站使用 Motion 14.0.0。已提交的 pathname 变化时，当前可见的页面 main（登录页使用现有 login-panel，避免全屏 main 的位移增加滚动溢出）按 standard / ease 整体淡入，从 lift-max 向上归位；导航、侧栏、顶栏与页脚静止，不新增容器或按路径重挂载。首次 SSR 与 hydration 直接显示，筛选、分页、hash、刷新与轮询不重播；流式后续内容直接显示，不补第二轮入场。页面动画完成、连续导航、卸载或减少动态效果时取消实例并恢复原有内联样式，保留原生导航、缓存、滚动与草稿保护。
 
@@ -616,7 +618,7 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 | 普通导航链接，当前项局部胶囊                                            | 前台场景以此为目标；不沿用整组胶囊与蓝色短线                                                |
 | hover 提亮、微卡约上浮 6px；源码提供多档时长                            | 采用 motion 四档；循环限明确播放的演示，减少动态效果取消循环与所有位移                      |
 
-原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。此表保留页面构图依据，其旧颜色、组件尺寸与材料不覆盖上方 Semi 基线。
+原胶囊导航图仅在前台场景的追溯说明中保留，VibeHub 不再作为现行指针依据。此表仅保留历史构图依据，五微卡与 32px 首页 CTA 已由 2026-10-17 批准的前台方案取代；旧颜色、组件尺寸与材料不覆盖当前规范。
 
 历史记录（2026-10-15 迁移时尺寸曾由 Semi 基线替代，2026-10-16 已重新授权恢复上述项目密度）：2026-10-06 用户批准表单密度适配：普通桌面表单采用 40px 高、12px form 圆角与 12px 输入内边距，工具栏采用 36px，窄屏或粗指针保持 44px 点击目标。这是项目任务密度的选择；Card 外壳与舞台继续分别采用 lg 与 md，Textarea 的既有默认及场景高度保持。实现同步与实际运行结果另按验收记录追踪。
 
@@ -637,7 +639,7 @@ Input、Textarea、Select、InputGroup、Combobox 和 ColorInput 共用以下规
 | 字体与排版           | 当时的共享无衬线字体、中文系统字体及 display / heading token | [根布局](app/layout.tsx)、[共享样式](app/globals.css)                                                  | 本地字体、主题变量、完整语义排版；保留后台与阅读场景字号                             | 已实施；首页与展示页字号、字体加载及后台字体运行核对通过                                     |
 | 前台导航             | 普通链接、当前项局部胶囊                                     | [SiteHeader](components/frontend/site-header.tsx)、[前台样式](<app/(frontend)/site.css>)               | 移除整组材质与蓝线，保留宽度测量与折叠菜单；长品牌换行、跨断点关闭与焦点兜底         | 已实施；当前项、移动排版、Escape 回焦、跨断点关闭及再次缩窗不重开运行通过                    |
 | 指针                 | 全站原生语义指针                                             | [根布局](app/layout.tsx)、[展示页](<app/(showcase)/design-spec/page.tsx>)                              | 删除 CursorEffect、专用样式、token 与遗留属性；展示系统指针示例                      | 已实施；普通区域、按钮、文本与禁用输入指针已运行核对；本次补验禁用 Tab 指针                  |
-| 首页                 | 参考构图、五个既有栏目入口                                   | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 居中文案、散布微卡、窄屏 2–1–2；沿用公开设置，微卡不预取；上浮与标签展开反馈         | 已实施；布局边界、五卡 hover/focus-visible、完整命中区与栏目跳转核对通过                     |
+| 首页                 | 作者介绍、写作图与三篇真实近期文章                           | [首页](<app/(frontend)/page.tsx>)、[前台样式](<app/(frontend)/site.css>)                               | 双列 Hero、手机单列；公开查询、40px CTA、现有图片与字体                              | 2026-10-17 已实施；本轮实际范围见前台改版验证，不复用五微卡旧验收                            |
 | 展示页               | 独立两栏工作台与局部视觉变体                                 | [展示页](<app/(showcase)/design-spec/page.tsx>)、[局部样式](<app/(showcase)/design-spec/showcase.css>) | 固定目录、单项预览、移动目录与局部浮层；官方效果启停、互斥与离屏暂停                 | 已实施；目录、列明组件交互及首页/登录页隔离对照通过；边界见设计工作台验收                    |
 | Token 映射与基础状态 | 完整映射、尺寸变体与 reduced-motion                          | [共享样式](app/globals.css)、[Button](components/ui/button.tsx)、[Card](components/ui/card.tsx)        | 圆角/控件/过渡引用变量，form Button；Accordion 状态与 Tab 禁用；减少动态效果取消变换 | 已实施；Tab/Switch 44px 及列明控件流程通过；按压视觉、粗指针及系统 reduced-motion 仅源码核对 |
 

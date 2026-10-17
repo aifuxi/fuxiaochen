@@ -101,9 +101,15 @@ export async function listPublicPosts(params: SearchParams) {
   if (!parsed.success) return { error: "筛选参数无效，请清除筛选后重试。" } as const;
   return listPosts(JSON.stringify(parsed.data));
 }
-const listPosts = cache(async (queryKey: string) => {
+// 首页固定读取三篇近期文章，独立于文章归档的每页条数设置。
+export const getRecentPublicPosts = cache(async () => {
+  const result = await listPosts(JSON.stringify(publicPostQuerySchema.parse({})), 3);
+  return result.items;
+});
+const listPosts = cache(async (queryKey: string, pageSize?: number) => {
   const query = publicPostQuerySchema.parse(JSON.parse(queryKey));
   const settings = await getPublicSettings();
+  const limit = pageSize ?? settings.postsPerPage;
   return writeTransaction((tx) => {
     const filters: SQL[] = [eq(post.status, "published")];
     if (query.categoryId) filters.push(eq(post.categoryId, query.categoryId));
@@ -122,13 +128,13 @@ const listPosts = cache(async (queryKey: string) => {
       )`);
     const where = and(...filters);
     const total = tx.select({ total: count() }).from(post).where(where).get()!.total;
-    const pageCount = Math.max(1, Math.ceil(total / settings.postsPerPage));
+    const pageCount = Math.max(1, Math.ceil(total / limit));
     const page = Math.min(query.page, pageCount);
     const rows = postItems(tx)
       .where(where)
       .orderBy(desc(sql`${post.publishedAt} IS NULL`), desc(post.publishedAt), desc(post.id))
-      .offset((page - 1) * settings.postsPerPage)
-      .limit(settings.postsPerPage)
+      .offset((page - 1) * limit)
+      .limit(limit)
       .all();
     const emptyIds = rows.filter((row) => !row.summary.trim()).map((row) => row.id);
     const bodies = emptyIds.length

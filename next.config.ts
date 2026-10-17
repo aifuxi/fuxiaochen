@@ -3,6 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   distDir: process.env.NEXT_BUILD_DIR ?? ".next",
   output: "standalone",
+  redirects() {
+    // 旧栏目合并到文章页；Next 保留原查询参数，包括筛选条件和追踪参数。
+    return [
+      { source: "/categories", destination: "/posts", permanent: true },
+      { source: "/tags", destination: "/posts", permanent: true },
+    ];
+  },
   // node-gyp-build 动态选择原生文件，显式保留当前构建平台及源码编译产物。
   outputFileTracingIncludes: {
     "/*": [

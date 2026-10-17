@@ -8,6 +8,7 @@ import { siteDescription } from "@/lib/seo";
 import { getPublicSettings } from "@/lib/settings/service";
 
 import "./site.css";
+import "./sections.css";
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSettings();
   return {

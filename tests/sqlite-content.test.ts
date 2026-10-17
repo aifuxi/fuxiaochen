@@ -20,7 +20,7 @@ import { releaseQuerySchema } from "../lib/changelog/schema";
 import { createRelease, getRelease, listReleases, updateRelease } from "../lib/changelog/service";
 import { closeDatabase, getDatabase, writeTransaction } from "../lib/database";
 import { migrateDatabase } from "../lib/database/migrations";
-import { admin, friendLink } from "../lib/database/schema";
+import { admin, friendLink, post } from "../lib/database/schema";
 import { serializeDocument, EMPTY_POST_CONTENT } from "../lib/posts/document";
 import {
   featuredPostSchema,
@@ -39,6 +39,7 @@ import {
 import {
   getPublicPost,
   getPublicTaxonomies,
+  getRecentPublicPosts,
   listPublicChangelog,
   listPublicFriends,
   listPublicPosts,
@@ -443,6 +444,65 @@ void test("前台：仅已发布、真实关系数量、摘要回退、分页回
   assert.equal(
     urls.find((item) => item.url.endsWith("/posts/public-post"))?.lastModified?.valueOf(),
     new Date(row.updatedAt).valueOf(),
+  );
+});
+
+void test("首页近期文章固定取最新三篇，不受归档条数影响并保留真实摘要和分类标签", async () => {
+  const initial = await getSettings(actor);
+  await saveSettings({ ...initial, postsPerPage: 1 }, actor);
+  // 创建顺序刻意不同于发布时间，避免测试只验证插入顺序。
+  const newest = await published("最新文章", "recent-newest", body("最新正文的摘要回退"));
+  const third = await published("第三新文章", "recent-third", body("第三篇正文的摘要回退"));
+  const oldest = await published("较早文章", "recent-oldest");
+  const second = await published("次新文章", "recent-second", body("不应替代人工摘要的正文"));
+  await createPost(
+    postSchema.parse({
+      title: "不应公开的草稿",
+      slug: "recent-draft",
+      categoryId: newest.category.id,
+      tagIds: [newest.tag.id],
+      content: body("隐藏的草稿正文"),
+      status: "draft",
+    }),
+    actor,
+  );
+  // 固定时间仅写入本测试临时库，排序验证不依赖机器时钟或等待。
+  writeTransaction((tx) => {
+    for (const [fixture, date, summary] of [
+      [newest, "2026-10-15T08:00:00.000Z", ""],
+      [second, "2026-10-14T08:00:00.000Z", "保留这段人工摘要"],
+      [third, "2026-10-13T08:00:00.000Z", ""],
+      [oldest, "2026-10-12T08:00:00.000Z", ""],
+    ] as const)
+      tx.update(post)
+        .set({ publishedAt: new Date(date), summary })
+        .where(eq(post.id, fixture.row.id))
+        .run();
+  });
+
+  const archive = await request(() => listPublicPosts({}));
+  assert.equal(archive.error, null);
+  assert.equal(archive.items.length, 1, "归档仍采用后台每页一篇的设置");
+  const recent = await request(getRecentPublicPosts);
+  assert.deepEqual(
+    recent.map((item) => item.title),
+    ["最新文章", "次新文章", "第三新文章"],
+    "首页应取发布时间最新的三篇，排除草稿及第四篇",
+  );
+  assert.deepEqual(
+    recent.map((item) => item.summary),
+    ["最新正文的摘要回退", "保留这段人工摘要", "第三篇正文的摘要回退"],
+  );
+  assert.deepEqual(
+    recent.map((item) => ({ category: item.category, tags: item.tags })),
+    [newest, second, third].map((fixture) => ({
+      category: {
+        id: fixture.category.id,
+        name: fixture.category.name,
+        color: fixture.category.color,
+      },
+      tags: [{ id: fixture.tag.id, name: fixture.tag.name }],
+    })),
   );
 });
 

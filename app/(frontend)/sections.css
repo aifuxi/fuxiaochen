@@ -1,0 +1,194 @@
+/* 仅组织次级前台页面的布局，颜色、材质、控件状态均继承共享设计系统。 */
+.site-about-page .site-page-heading {
+  margin-bottom: 36px;
+}
+
+.site-about-page .site-about-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.site-about-identity > div {
+  min-width: 0;
+}
+
+.site-about-avatar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-stage);
+  color: var(--color-caption);
+}
+
+.site-about-identity h2 {
+  margin: 0;
+  color: var(--color-foreground);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.site-about-role {
+  margin-top: 6px;
+  color: var(--color-caption);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.site-about-page .site-about-content {
+  max-width: 38em;
+  margin: var(--space-2xl) 0 0;
+  color: var(--color-foreground-reading);
+  font-size: 17px;
+  line-height: 1.85;
+  white-space: normal;
+}
+
+.site-about-content p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.site-about-content p + p {
+  margin-top: 20px;
+}
+
+.site-about-page .site-about-socials {
+  margin-top: 28px;
+}
+
+.site-about-page .site-about-socials a {
+  margin-left: 0;
+  padding-inline: 0;
+}
+
+.site-about-socials .site-social-external {
+  color: var(--color-caption);
+}
+
+.site-friends-page .site-friends-filters {
+  margin-bottom: 0;
+}
+
+.site-friends-count {
+  margin: 20px 0 0;
+  color: var(--color-caption);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.site-friends-page .site-friends {
+  margin-top: var(--space-lg);
+}
+
+.site-friends .site-friend-card {
+  min-width: 0;
+  padding: 20px var(--space-lg);
+}
+
+.site-friend-card .site-friend-content > p {
+  min-height: 3.2em;
+}
+
+.site-friend-card .site-friend-meta {
+  align-items: center;
+  margin-top: var(--space-lg);
+}
+
+.site-friend-card .site-friend-url {
+  align-items: center;
+}
+
+.site-friend-card .site-friend-url svg {
+  margin-top: 0;
+}
+
+.site-friends-empty .ds-button {
+  margin-top: var(--space-md);
+}
+
+.site-changelog-page .site-changelog {
+  margin-top: 36px;
+}
+
+/* 连线只连接相邻版本的内容，不穿过节点，也不延伸到最后一条之后。 */
+.site-changelog-page .site-changelog > li {
+  margin-left: 0;
+  padding: 0 0 36px 28px;
+  border-left: 0;
+}
+
+.site-changelog-page .site-changelog > li::before {
+  left: 0;
+  box-shadow: none;
+}
+
+.site-changelog-page .site-changelog > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: 4px;
+  left: 4px;
+  width: 1px;
+  background: var(--color-outline);
+}
+
+.site-changelog-page .site-changelog > li:last-child {
+  padding-bottom: 0;
+}
+
+.site-changelog-page .site-changelog-meta {
+  gap: var(--space-sm) 20px;
+}
+
+.site-changelog-page .site-changelog-release {
+  gap: var(--space-sm);
+}
+
+.site-changelog-type,
+.site-changelog-latest {
+  flex: none;
+}
+
+.site-changelog-page .site-pagination {
+  margin-top: 36px;
+}
+
+@media (max-width: 767px) {
+  .site-friends-page .site-friends {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .site-friends .site-friend-card {
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .site-friend-card .site-friend-content > p {
+    min-height: 0;
+  }
+
+  .site-changelog-page .site-changelog > li {
+    padding-left: 22px;
+  }
+
+  .site-changelog-page .site-changelog-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-changelog-page .site-changelog-release {
+    flex-basis: auto;
+  }
+
+  .site-changelog-page .site-changelog h2 {
+    font-size: 18px;
+  }
+}

@@ -34,3 +34,5 @@ Lighting/mood: soft cool daylight from the left, delicate cast shadows revealing
 Color palette: cool gray background, off-white paper, minimal single blue accent close to #54A9FF / #0064FA; neutral cold shadows suited to #16161A dark website and white light mode.
 Constraints: no other objects, no hands, no people, no plants, no laptop, no screen, no digital UI, no logos, no text, no watermark, no purple, no warm yellow or beige lighting, no decorative graphic overlays, no illustration or CGI. Photographic texture, physically plausible geometry.
 ```
+
+2026-10-17 用户批准前台方案后，首页图复用为 `public/images/writing-hero.webp`；文章插图仍仅用于独立预览，不写入真实文章。

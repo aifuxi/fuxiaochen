@@ -22,7 +22,12 @@ function displayFriendUrl(url: string) {
 
 export function FriendLinkCard({ friend }: { friend: FriendCardData }) {
   return (
-    <CardLink href={friend.url} target="_blank" rel="noopener noreferrer">
+    <CardLink
+      className="site-friend-card"
+      href={friend.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
       <span className="site-friend-icon" aria-hidden="true">
         <ConfiguredImage src={friend.avatar} size={32} fallback="link" />
       </span>

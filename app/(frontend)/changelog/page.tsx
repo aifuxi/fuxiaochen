@@ -56,7 +56,9 @@ export default async function ChangelogPage({ searchParams }: Props) {
       <main data-page-motion id="main-content" className="site-main site-changelog-page">
         <header className="site-page-heading">
           <h1>更新日志</h1>
-          <p role="alert">页码无效，请返回更新日志。</p>
+          <p className="site-lead" role="alert">
+            页码无效，请返回更新日志。
+          </p>
         </header>
         <Button
           className="site-changelog-return"
@@ -73,7 +75,7 @@ export default async function ChangelogPage({ searchParams }: Props) {
     <main data-page-motion id="main-content" className="site-main site-changelog-page">
       <header className="site-page-heading">
         <h1>更新日志</h1>
-        <p>记录每一次改进。</p>
+        <p className="site-lead">记录每一次改进。</p>
       </header>
       {result.items.length ? (
         // oxlint-disable-next-line jsx-a11y/no-redundant-roles -- Safari 在 list-style: none 时会移除列表语义，显式角色保留时间线结构。

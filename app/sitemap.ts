@@ -20,9 +20,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
   return [
     // 栏目没有独立修改时间，不伪造 lastmod；文章使用真实修改时间。
-    ...["/", "/posts", "/categories", "/tags", "/changelog", "/friends-links", "/about"].map(
-      (path) => ({ url: siteUrl(path) }),
-    ),
+    ...["/", "/posts", "/changelog", "/friends-links", "/about"].map((path) => ({
+      url: siteUrl(path),
+    })),
     ...posts.flatMap((row) =>
       row.slug
         ? [

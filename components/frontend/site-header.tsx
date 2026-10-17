@@ -12,8 +12,6 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 const links = [
   ["/", "首页"],
   ["/posts", "文章"],
-  ["/categories", "分类"],
-  ["/tags", "标签"],
   ["/changelog", "日志"],
   ["/friends-links", "友链"],
   ["/about", "关于"],
@@ -36,8 +34,9 @@ export function SiteHeader({ title }: { title: string }) {
         const themeWidth = actions.current.firstElementChild?.getBoundingClientRect().width ?? 44;
         const actionsWidth = themeWidth + 44 + 8;
         const nextCollapsed =
+          window.matchMedia("(max-width: 767px)").matches ||
           nav.current.offsetWidth + 2 * Math.max(brand.current.offsetWidth, actionsWidth) + 64 >
-          header.current.clientWidth;
+            header.current.clientWidth;
         setCollapsed(nextCollapsed);
         if (!nextCollapsed) setOpen(false);
       }
@@ -84,7 +83,7 @@ export function SiteHeader({ title }: { title: string }) {
                 <Button variant="ghost" aria-label="打开导航菜单" className="site-menu-button" />
               }
             >
-              <Menu size={20} />
+              <Menu size={20} aria-hidden="true" />
             </DialogTrigger>
           )}
           <DialogContent
@@ -97,12 +96,12 @@ export function SiteHeader({ title }: { title: string }) {
             }
           >
             <div className="site-menu-heading">
-              <DialogTitle>导航</DialogTitle>
+              <DialogTitle>浏览栏目</DialogTitle>
               <Button variant="ghost" aria-label="关闭导航菜单" onClick={() => setOpen(false)}>
-                <X size={20} />
+                <X size={20} aria-hidden="true" />
               </Button>
             </div>
-            <nav aria-label="主导航">{items(true)}</nav>
+            <nav aria-label="移动导航">{items(true)}</nav>
           </DialogContent>
         </Dialog>
       </div>

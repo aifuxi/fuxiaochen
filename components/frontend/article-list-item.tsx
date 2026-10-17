@@ -2,8 +2,6 @@ import Link from "next/link";
 
 import { postTime } from "@/lib/posts/schema";
 
-import { CategoryDot } from "./category-dot";
-
 type Article = {
   id: string;
   slug: string;
@@ -15,15 +13,26 @@ type Article = {
   tags: { id: string; name: string }[];
 };
 
-export function ArticleListItem({ post }: { post: Article }) {
+export function ArticleListItem({
+  post,
+  compact = false,
+  returnTo,
+}: {
+  post: Article;
+  compact?: boolean;
+  returnTo?: string;
+}) {
+  const Title = compact ? "h3" : "h2";
+  const href = `/posts/${post.slug}${returnTo ? `?${new URLSearchParams({ returnTo })}` : ""}`;
   return (
-    <article className="site-post-row">
+    <article className={`site-post-row${compact ? " site-post-row-compact" : ""}`}>
       <Link
         className="site-post-link"
-        href={`/posts/${post.slug}`}
+        href={href}
         aria-labelledby={`post-title-${post.id}`}
+        data-article-list-return={returnTo}
       >
-        <h2 id={`post-title-${post.id}`}>{post.title}</h2>
+        <Title id={`post-title-${post.id}`}>{post.title}</Title>
         {post.summary && <p className="site-post-summary">{post.summary}</p>}
       </Link>
       <div className="site-post-details">
@@ -33,15 +42,15 @@ export function ArticleListItem({ post }: { post: Article }) {
         </span>
         {post.category && (
           <Link className="site-category-link" href={`/posts?categoryId=${post.category.id}`}>
-            <CategoryDot color={post.category.color} />
             <span className="min-w-0">{post.category.name}</span>
           </Link>
         )}
-        {post.tags.map((tag) => (
-          <Link key={tag.id} href={`/posts?tagId=${tag.id}`}>
-            #{tag.name}
-          </Link>
-        ))}
+        {!compact &&
+          post.tags.map((tag) => (
+            <Link className="site-post-tag-link" key={tag.id} href={`/posts?tagId=${tag.id}`}>
+              #{tag.name}
+            </Link>
+          ))}
       </div>
     </article>
   );

@@ -5,6 +5,7 @@ import { permanentRedirect } from "next/navigation";
 
 import { ArticleFilters } from "@/components/frontend/article-filters";
 import { ArticleListItem } from "@/components/frontend/article-list-item";
+import { ArticleListPosition } from "@/components/frontend/article-list-position";
 import { Pagination } from "@/components/frontend/pagination";
 import {
   normalizedQueryPath,
@@ -35,7 +36,17 @@ async function postsContext(params: SearchParams) {
     permanentRedirect(normalizedQueryPath("/posts", params, normalized));
   const values = singleParams(normalized);
   const isFiltered = Boolean(values.q || values.categoryId || values.tagId);
-  return { taxonomies, result, values, isFiltered, path: queryPath("/posts", normalized) };
+  // 分类计数不包含未分类文章，全部数量必须来自完整的公开文章查询。
+  const allPosts = isFiltered || result.error ? await listPublicPosts({}) : result;
+  const totalCount = allPosts.error ? 0 : allPosts.total;
+  return {
+    taxonomies,
+    result,
+    values,
+    isFiltered,
+    totalCount,
+    path: queryPath("/posts", normalized),
+  };
 }
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
@@ -54,13 +65,16 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 
 export default async function PostsPage({ searchParams }: Props) {
   const params = await searchParams;
-  const { taxonomies, result, values, isFiltered } = await postsContext(params);
+  const { taxonomies, result, values, isFiltered, totalCount, path } = await postsContext(params);
   return (
     <main data-page-motion id="main-content" className="site-main">
       <section aria-labelledby="posts-heading" className="site-posts">
         <header className="site-page-heading site-posts-heading">
-          <h1 id="posts-heading">文章</h1>
-          {!result.error && <span className="site-post-count">{result.total} 篇</span>}
+          <div className="site-posts-title-row">
+            <h1 id="posts-heading">文章</h1>
+            <span className="site-post-count">{totalCount} 篇</span>
+          </div>
+          <p className="site-posts-description">开发实践、设计思考，和一些日常记录。</p>
         </header>
         <ArticleFilters
           q={values.q ?? ""}
@@ -68,27 +82,9 @@ export default async function PostsPage({ searchParams }: Props) {
           tagId={values.tagId ?? ""}
           categories={taxonomies.categories}
           tags={taxonomies.tags}
+          totalCount={totalCount}
+          resultCount={result.error ? undefined : result.total}
         />
-        {isFiltered && (
-          <div className="site-post-results-heading">
-            <p>
-              {[
-                values.q && `搜索“${values.q}”`,
-                values.categoryId &&
-                  (taxonomies.categories.find((c) => c.id === values.categoryId)?.name ??
-                    "分类已不可用"),
-                values.tagId &&
-                  `#${taxonomies.tags.find((t) => t.id === values.tagId)?.name ?? "标签已不可用"}`,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-              {!result.error && <span> · {result.total} 篇匹配</span>}
-            </p>
-            <Link className="site-clear-filter" href="/posts">
-              清除筛选
-            </Link>
-          </div>
-        )}
         {result.error ? (
           <p className="site-empty" role="alert">
             {result.error} <Link href="/posts">清除筛选</Link>
@@ -104,18 +100,19 @@ export default async function PostsPage({ searchParams }: Props) {
             ) : (
               <div className="site-post-list">
                 {result.items.map((post) => (
-                  <ArticleListItem key={post.id} post={post} />
+                  <ArticleListItem key={post.id} post={post} returnTo={path} />
                 ))}
               </div>
             )}
             <Pagination
               path="/posts"
-              params={params}
+              params={values}
               page={result.page}
               pageCount={result.pageCount}
             />
           </>
         )}
+        <ArticleListPosition path={path} />
       </section>
     </main>
   );

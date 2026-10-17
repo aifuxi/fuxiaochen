@@ -280,6 +280,7 @@ void test(
         name: "SEO 测试",
         color: "#123456",
       });
+      const testTag = await api<{ id: string }>("/tags", "POST", { name: "SEO 标签" });
       const content = serializeDocument({
         type: "doc",
         content: [
@@ -293,7 +294,7 @@ void test(
           content,
           summary,
           categoryId: category.id,
-          tagIds: [],
+          tagIds: [testTag.id],
           status,
         });
       const first = await makePost("seo-first", "published", "后台填写的文章摘要。");
@@ -353,20 +354,42 @@ void test(
       assert.equal(release.createdAt, createdAt);
       assert.ok((await html("/changelog")).includes("HTTP日志修改验证"));
       let map = await sitemap();
-      for (const path of [
-        "/",
-        "/about",
-        "/posts",
-        "/categories",
-        "/tags",
-        "/changelog",
-        "/friends-links",
-      ]) {
+      for (const path of ["/", "/about", "/posts", "/changelog", "/friends-links"]) {
         assert.ok(map.urls.includes(`${siteOrigin}${path}`), `sitemap 缺少 ${path}`);
       }
+      for (const path of ["/categories", "/tags"])
+        assert.ok(!map.urls.includes(`${siteOrigin}${path}`), `sitemap 不应收录旧栏目 ${path}`);
       assert.ok(map.urls.includes(`${siteOrigin}/posts/seo-first`));
       assert.ok(!map.urls.includes(`${siteOrigin}/posts/seo-draft`));
       assert.match(map.xml, new RegExp(first.updatedAt.replaceAll(".", "\\.")));
+
+      // 验证真实 HTTP 迁移，而非只检查 redirects 配置；旧链接不能丢失筛选和追踪信息。
+      for (const path of ["/categories", "/tags"]) {
+        for (const query of [
+          "",
+          "?" +
+            new URLSearchParams({
+              q: "SEO 测试",
+              categoryId: category.id,
+              tagId: testTag.id,
+              page: "2",
+              utm_source: "旧栏目",
+            }) +
+            "&utm_source=repeat",
+        ]) {
+          const response = await fetch(`${serverOrigin}${path}${query}`, {
+            redirect: "manual",
+          });
+          assert.equal(response.status, 308, `${path}${query} 应永久重定向`);
+          const location = response.headers.get("location");
+          assert.ok(location, "永久重定向应提供 Location");
+          const destination = new URL(location, serverOrigin);
+          assert.equal(destination.origin, serverOrigin);
+          assert.equal(destination.pathname, "/posts");
+          const original = new URL(`${path}${query}`, serverOrigin);
+          assert.deepEqual([...destination.searchParams], [...original.searchParams]);
+        }
+      }
 
       const article = await html("/posts/seo-first");
       assert.equal(meta(article, "description"), first.summary);
@@ -376,6 +399,20 @@ void test(
       assert.ok(articleData);
       const author = z.object({ name: z.string() }).parse(articleData.author);
       assert.equal(author.name, settings.authorName);
+      // 阅读返回上下文只能改变返回入口，不能污染文章的搜索与分享地址。
+      const returnPath = `/posts?${new URLSearchParams({
+        q: "SEO 测试",
+        categoryId: category.id,
+        tagId: testTag.id,
+        page: "2",
+      })}`;
+      const fromList = await html(
+        `/posts/seo-first?${new URLSearchParams({ returnTo: returnPath })}`,
+      );
+      assert.equal(canonical(fromList), canonical(article));
+      assert.equal(og(fromList, "og:url"), og(article, "og:url"));
+      assert.deepEqual(jsonLd(fromList), jsonLd(article));
+      assert.ok(fromList.includes(`href="${returnPath.replaceAll("&", "&amp;")}"`));
       assert.equal(
         meta(await html("/posts/seo-second"), "description"),
         "用于 SEO 的正文回退摘要。",
@@ -384,6 +421,7 @@ void test(
       for (const query of [
         "q=SEO",
         `categoryId=${category.id}`,
+        `tagId=${testTag.id}`,
         `q=SEO&categoryId=${category.id}`,
       ]) {
         const filtered = await html(`/posts?${query}`);

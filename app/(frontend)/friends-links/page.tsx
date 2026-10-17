@@ -41,7 +41,7 @@ export default async function FriendsPage({ searchParams }: Props) {
     <main data-page-motion id="main-content" className="site-main site-friends-page">
       <header className="site-page-heading">
         <h1>友情链接</h1>
-        <p>值得走走看看的地方。</p>
+        <p className="site-lead">值得走走看看的地方。</p>
       </header>
       {result.categories.length > 0 && (
         <nav className="site-friends-filters" aria-label="友链分类">
@@ -72,6 +72,9 @@ export default async function FriendsPage({ searchParams }: Props) {
           ))}
         </nav>
       )}
+      <p className="site-friends-count">
+        {category ? `${category}分类` : "全部网站"}，共 {result.items.length} 个
+      </p>
       {result.items.length ? (
         <div className="site-friends">
           {result.items.map((f) => (
@@ -79,9 +82,21 @@ export default async function FriendsPage({ searchParams }: Props) {
           ))}
         </div>
       ) : (
-        <p className="site-empty">
-          {category ? "该分类暂时没有友情链接。" : "暂时没有公开的友情链接。"}
-        </p>
+        <div className="site-empty site-friends-empty">
+          <p>{category ? "该分类暂时没有友情链接。" : "暂时没有公开的友情链接。"}</p>
+          {category && (
+            <Button
+              render={<Link href="/friends-links" />}
+              nativeButton={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- render 输出真实链接，清除当前分类后重新读取公开数据。
+              role="link"
+              variant="ghost"
+              size="compact"
+            >
+              查看全部网站
+            </Button>
+          )}
+        </div>
       )}
     </main>
   );

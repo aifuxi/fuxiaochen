@@ -1,31 +1,73 @@
 "use client";
 
-import { Search, SlidersHorizontal } from "lucide-react";
+import { ChevronDown, Search, X } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+
+type Taxonomy = { id: string; name: string; count: number };
+type Filters = { q: string; categoryId: string; tagId: string };
+
+function filterHref(filters: Filters) {
+  const params = new URLSearchParams();
+  if (filters.q.trim()) params.set("q", filters.q.trim());
+  if (filters.categoryId) params.set("categoryId", filters.categoryId);
+  if (filters.tagId) params.set("tagId", filters.tagId);
+  // 所有条件操作都从第一页开始；翻页由独立分页链接负责。
+  return params.size ? `/posts?${params}` : "/posts";
+}
+
+function FilterLink({
+  href,
+  label,
+  selected,
+  pending,
+  navigate,
+  className,
+  children,
+}: {
+  href: string;
+  label: string;
+  selected?: boolean;
+  pending: boolean;
+  navigate: (href: string) => void;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Button
+      render={
+        <Link
+          href={href}
+          aria-label={label}
+          scroll={false}
+          onNavigate={(event) => {
+            event.preventDefault();
+            if (!pending) navigate(href);
+          }}
+        />
+      }
+      nativeButton={false}
+      // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- Base UI render 输出真实链接，保留可刷新与新窗口导航。
+      role="link"
+      variant={selected ? "secondary" : "ghost"}
+      size="compact"
+      className={className}
+      disabled={pending}
+      aria-current={selected ? "true" : undefined}
+    >
+      {children}
+    </Button>
+  );
+}
 
 export function ArticleFilters({
   q,
@@ -33,144 +75,193 @@ export function ArticleFilters({
   tagId,
   categories,
   tags,
-}: {
-  q: string;
-  categoryId: string;
-  tagId: string;
-  categories: { id: string; name: string }[];
-  tags: { id: string; name: string }[];
+  totalCount,
+  resultCount,
+}: Filters & {
+  categories: Taxonomy[];
+  tags: Taxonomy[];
+  totalCount: number;
+  resultCount?: number;
 }) {
   const router = useRouter();
   const [search, setSearch] = useState({ source: q, value: q });
   const query = search.source === q ? search.value : q;
-  const [category, setCategory] = useState(categoryId);
-  const [tag, setTag] = useState(tagId);
-  const [open, setOpen] = useState(false);
+  const [tagPanel, setTagPanel] = useState({ source: tagId, open: Boolean(tagId) });
+  const tagsOpen = tagPanel.source === tagId ? tagPanel.open : Boolean(tagId) || tagPanel.open;
   const [pending, startTransition] = useTransition();
-  const filterCount = Number(Boolean(categoryId)) + Number(Boolean(tagId));
+  const applied = { q, categoryId, tagId };
+  const hasFilters = Boolean(q || categoryId || tagId);
+  const category = categories.find((item) => item.id === categoryId);
+  const tag = tags.find((item) => item.id === tagId);
 
-  // 查询改变时重置输入，保持组件实例以保留弹窗触发器焦点。
+  // 地址变化时同步已提交值；普通输入和标签展开仍是当前页面的本地状态。
   if (search.source !== q) setSearch({ source: q, value: q });
+  if (tagPanel.source !== tagId) setTagPanel({ source: tagId, open: tagsOpen });
 
-  const navigate = (nextCategory: string, nextTag: string) => {
-    const params = new URLSearchParams();
-    if (query.trim()) params.set("q", query.trim());
-    if (nextCategory) params.set("categoryId", nextCategory);
-    if (nextTag) params.set("tagId", nextTag);
-    startTransition(() => {
-      router.push(params.size ? `/posts?${params}` : "/posts", { scroll: false });
-    });
+  const navigate = (href: string) => {
+    startTransition(() => router.push(href, { scroll: false }));
   };
+  const linkProps = { pending, navigate };
 
   return (
     <div className="site-article-tools" aria-busy={pending}>
-      <div className="site-filters">
+      <section className="site-article-discovery" aria-label="查找文章">
         <search aria-label="搜索文章">
           <form
+            action="/posts"
+            method="get"
             onSubmit={(event) => {
               event.preventDefault();
-              if (!pending) navigate(categoryId, tagId);
+              if (!pending) navigate(filterHref({ ...applied, q: query }));
             }}
           >
-            <label className="sr-only" htmlFor="post-search">
+            <label className="site-search-label" htmlFor="post-search">
               搜索文章
             </label>
-            <InputGroup size="compact">
+            {categoryId && <input type="hidden" name="categoryId" value={categoryId} />}
+            {tagId && <input type="hidden" name="tagId" value={tagId} />}
+            <InputGroup>
               <InputGroupInput
                 type="search"
                 id="post-search"
+                name="q"
                 maxLength={200}
-                placeholder="搜索文章、分类或标签"
+                placeholder="搜索标题、正文、分类或标签"
                 value={query}
                 onChange={(event) => setSearch({ source: q, value: event.target.value })}
                 disabled={pending}
               />
               <InputGroupAddon align="inline-end">
-                <InputGroupButton type="submit" aria-label="搜索文章" disabled={pending}>
-                  <Search size={16} aria-hidden="true" />
+                <InputGroupButton type="submit" aria-label="提交搜索" disabled={pending}>
+                  <Search size={18} aria-hidden="true" />
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
           </form>
         </search>
-        <Dialog
-          open={open}
-          onOpenChange={(nextOpen) => {
-            if (nextOpen) {
-              setCategory(categoryId);
-              setTag(tagId);
-            }
-            setOpen(nextOpen);
-          }}
-        >
-          <DialogTrigger render={<Button variant="ghost" size="compact" disabled={pending} />}>
-            <SlidersHorizontal size={16} aria-hidden="true" />
-            筛选{filterCount > 0 ? ` (${filterCount})` : ""}
-          </DialogTrigger>
-          <DialogContent className="site-filter-dialog">
-            <DialogTitle className="site-filter-title">筛选文章</DialogTitle>
-            <DialogDescription className="site-filter-description">
-              分类与标签可组合筛选。
-            </DialogDescription>
-            <form
-              onSubmit={(event) => {
-                event.preventDefault();
-                if (pending) return;
-                setOpen(false);
-                navigate(category, tag);
-              }}
+        <nav className="site-post-categories" aria-label="按分类浏览">
+          <FilterLink
+            {...linkProps}
+            href={filterHref({ ...applied, categoryId: "" })}
+            label={`全部分类，${totalCount} 篇文章`}
+            selected={!categoryId}
+          >
+            全部{" "}
+            <span key="count" className="site-filter-count">
+              {totalCount}
+            </span>
+          </FilterLink>
+          {categories.map((item) => (
+            <FilterLink
+              {...linkProps}
+              key={item.id}
+              href={filterHref({ ...applied, categoryId: item.id })}
+              label={`${item.name}，${item.count} 篇文章`}
+              selected={categoryId === item.id}
             >
-              <div className="site-filter-fields">
-                <div className="site-filter-field">
-                  <label htmlFor="post-category">分类</label>
-                  <Select value={category} onValueChange={(value) => setCategory(value ?? "")}>
-                    <SelectTrigger id="post-category">
-                      <SelectValue>
-                        {categories.find((c) => c.id === category)?.name ??
-                          (category ? "分类已不可用" : "全部分类")}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">全部分类</SelectItem>
-                      {categories.map((c) => (
-                        <SelectItem value={c.id} key={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="site-filter-field">
-                  <label htmlFor="post-tag">标签</label>
-                  <Select value={tag} onValueChange={(value) => setTag(value ?? "")}>
-                    <SelectTrigger id="post-tag">
-                      <SelectValue>
-                        {tags.find((t) => t.id === tag)?.name ??
-                          (tag ? "标签已不可用" : "全部标签")}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">全部标签</SelectItem>
-                      {tags.map((t) => (
-                        <SelectItem value={t.id} key={t.id}>
-                          {t.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="site-filter-actions">
-                <DialogClose render={<Button variant="secondary" />}>取消</DialogClose>
-                <Button type="submit" variant="primary" disabled={pending}>
-                  应用筛选
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
+              {item.name}{" "}
+              <span key="count" className="site-filter-count">
+                {item.count}
+              </span>
+            </FilterLink>
+          ))}
+        </nav>
+        {tags.length > 0 && (
+          <div className="site-tags-disclosure">
+            <Button
+              variant="ghost"
+              size="compact"
+              className="site-tags-trigger"
+              aria-expanded={tagsOpen}
+              aria-controls="post-tags"
+              disabled={pending}
+              onClick={() => setTagPanel({ source: tagId, open: !tagsOpen })}
+            >
+              按标签浏览
+              {tagId && <span className="site-filter-count">已选 1 项</span>}
+              <ChevronDown
+                size={15}
+                aria-hidden="true"
+                className={tagsOpen ? "is-open" : undefined}
+              />
+            </Button>
+            <div id="post-tags" hidden={!tagsOpen}>
+              <nav className="site-post-tags" aria-label="按标签浏览">
+                {tags.map((item) => (
+                  <FilterLink
+                    {...linkProps}
+                    key={item.id}
+                    href={filterHref({ ...applied, tagId: tagId === item.id ? "" : item.id })}
+                    label={`${tagId === item.id ? "移除" : "筛选"}标签 ${item.name}，${item.count} 篇文章`}
+                    className="site-tag-choice"
+                    selected={tagId === item.id}
+                  >
+                    #{item.name}{" "}
+                    <span key="count" className="site-filter-count">
+                      {item.count}
+                    </span>
+                  </FilterLink>
+                ))}
+              </nav>
+            </div>
+          </div>
+        )}
+      </section>
+      <div className="site-post-results-heading">
+        <output className="site-filter-status" aria-atomic="true">
+          {pending
+            ? "更新文章列表中"
+            : resultCount === undefined
+              ? "文章筛选参数无效"
+              : hasFilters
+                ? `找到 ${resultCount} 篇文章`
+                : "全部文章"}
+        </output>
+        {hasFilters && (
+          <FilterLink
+            {...linkProps}
+            href="/posts"
+            label="清除全部筛选"
+            className="site-clear-filter"
+          >
+            清除筛选
+          </FilterLink>
+        )}
       </div>
-      <output className="sr-only">{pending ? "更新文章列表中" : ""}</output>
+      {hasFilters && (
+        <nav className="site-applied-filters" aria-label="已选条件">
+          {q && (
+            <FilterLink
+              {...linkProps}
+              href={filterHref({ ...applied, q: "" })}
+              label={`移除关键词：${q}`}
+              className="site-applied-filter"
+            >
+              搜索：{q} <X key="remove" size={13} aria-hidden="true" />
+            </FilterLink>
+          )}
+          {categoryId && (
+            <FilterLink
+              {...linkProps}
+              href={filterHref({ ...applied, categoryId: "" })}
+              label={`移除分类：${category?.name ?? "已不可用的分类"}`}
+              className="site-applied-filter"
+            >
+              {category?.name ?? "已不可用的分类"} <X key="remove" size={13} aria-hidden="true" />
+            </FilterLink>
+          )}
+          {tagId && (
+            <FilterLink
+              {...linkProps}
+              href={filterHref({ ...applied, tagId: "" })}
+              label={`移除标签：${tag?.name ?? "已不可用的标签"}`}
+              className="site-applied-filter"
+            >
+              #{tag?.name ?? "已不可用的标签"} <X key="remove" size={13} aria-hidden="true" />
+            </FilterLink>
+          )}
+        </nav>
+      )}
     </div>
   );
 }
