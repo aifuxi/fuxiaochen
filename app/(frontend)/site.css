@@ -712,17 +712,30 @@ html:has(.site-layout) {
   overflow-x: auto;
   padding: 20px;
   border-radius: 14px;
-  background: var(--color-surface);
+  background: var(--color-stage);
 }
 .site-markdown .article-code-block {
+  overflow: hidden;
+  border: 1px solid var(--color-outline);
   border-radius: 14px;
-  background: var(--color-surface);
+  /* Semi 的 surface 与页面同色，代码和工具栏共用灰阶填充建立整体边界。 */
+  background: var(--color-stage);
+}
+.site-markdown .article-code-block .code-block-toolbar,
+.site-markdown
+  .article-code-block
+  .code-block-copy-button.ds-button:not(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--color-foreground-reading);
 }
 .site-markdown .article-code-block pre {
   margin: 0;
   border-radius: 0;
   background: transparent;
   white-space: pre;
+}
+.site-markdown .article-code-block pre:focus-visible {
+  /* 圆角容器裁切内容时，焦点环仍完整保留在代码区内侧。 */
+  outline-offset: -2px;
 }
 .site-markdown pre:focus-visible,
 .site-table-scroll:focus-visible {
