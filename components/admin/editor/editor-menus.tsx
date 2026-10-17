@@ -2,12 +2,13 @@
 
 import type { Editor } from "@tiptap/core";
 
-import { Selection, TextSelection } from "@tiptap/pm/state";
+import { NodeSelection } from "@tiptap/pm/state";
 import { useEditorState } from "@tiptap/react";
 import {
   ArrowDown,
   ArrowUp,
   ChevronDown,
+  ChevronRight,
   Copy,
   CopyPlus,
   Scissors,
@@ -19,12 +20,22 @@ import {
   Palette,
   Check,
   Eraser,
+  GripVertical,
 } from "lucide-react";
-import { useRef, useState, type ReactNode, type KeyboardEvent } from "react";
+import { useRef, useState, type ReactNode, type KeyboardEvent, type CSSProperties } from "react";
 
 import { Button } from "@/components/ui/button";
+import { ContextMenu, ContextMenuTrigger, ContextMenuContent } from "@/components/ui/context-menu";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
-import { Menu, MenuTrigger, MenuContent, MenuItem, MenuSeparator } from "@/components/ui/menu";
+import {
+  Menu,
+  MenuTrigger,
+  MenuContent,
+  MenuItem,
+  MenuSeparator,
+  MenuSubmenu,
+  MenuSubmenuTrigger,
+} from "@/components/ui/menu";
 import { Popover, PopoverTrigger, PopoverContent, PopoverTitle } from "@/components/ui/popover";
 import { CONTENT_COLORS, highlightColor, textColor } from "@/lib/posts/content-palette";
 
@@ -34,11 +45,93 @@ import {
   copyBlock,
   selectedBlock,
   equalizeTable,
+  blockTypeName,
   type InsertHandlers,
   type BlockAction,
 } from "./editor-commands";
 
 type MenuProps = { editor: Editor; disabled: boolean; handlers: InsertHandlers };
+type InsertAction = ReturnType<typeof insertActions>[number];
+
+function runType(editor: Editor, action: InsertAction) {
+  editor.chain().focus().clearNodes().run();
+  action.run(editor);
+}
+
+// 基础类型使用飞书的紧凑网格；图片、表格等插入项保持可读的分组行。
+function CommandItems({
+  editor,
+  disabled,
+  handlers,
+  convert = false,
+  onRun,
+}: MenuProps & {
+  convert?: boolean;
+  onRun?: (action: InsertAction) => void;
+}) {
+  const active = useEditorState({
+    editor,
+    selector: ({ editor: instance }) =>
+      blockTypeName(instance.state.doc.nodeAt(selectedBlock(instance))),
+  });
+  const actions = insertActions(handlers);
+  const order = [
+    convert ? "正文" : null,
+    "一级标题",
+    "二级标题",
+    "三级标题",
+    "有序列表",
+    "无序列表",
+    "任务列表",
+    "代码块",
+    "引用",
+    convert ? null : "分隔线",
+    "四级标题",
+    "五级标题",
+    "六级标题",
+  ];
+  const execute = (action: InsertAction) => {
+    if (!editor.isEditable) return;
+    if (onRun) onRun(action);
+    else if (convert) runType(editor, action);
+    else action.run(editor);
+  };
+  return (
+    <>
+      {!convert && <p className="post-editor-menu-caption">基础</p>}
+      <fieldset className="post-editor-type-grid" aria-label={convert ? "转换类型" : "基础内容"}>
+        {order.flatMap((title) => {
+          const action = actions.find((item) => item.title === title);
+          return action
+            ? [
+                <MenuItem
+                  key={action.title}
+                  className="post-editor-type-option"
+                  disabled={disabled}
+                  aria-label={action.title}
+                  title={action.title}
+                  data-active={convert && active === action.title}
+                  onClick={() => execute(action)}
+                >
+                  <action.icon size={18} aria-hidden="true" />
+                  <span className="sr-only">{action.title}</span>
+                </MenuItem>,
+              ]
+            : [];
+        })}
+      </fieldset>
+      {!convert && <p className="post-editor-menu-caption">常用</p>}
+      {(convert ? ["高亮块"] : ["图片", "表格", "高亮块"])
+        .flatMap((title) => actions.filter((item) => item.title === title))
+        .map((item) => (
+          <MenuItem key={item.title} disabled={disabled} onClick={() => execute(item)}>
+            <item.icon size={16} aria-hidden="true" />
+            {item.title}
+          </MenuItem>
+        ))}
+    </>
+  );
+}
 
 export function CommandMenu({
   editor,
@@ -46,10 +139,37 @@ export function CommandMenu({
   handlers,
   children,
   convert = false,
-  beforeRun,
-}: MenuProps & { children: ReactNode; convert?: boolean; beforeRun?: (title: string) => void }) {
+  onOpenChange,
+}: MenuProps & {
+  children: ReactNode;
+  convert?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}) {
+  const insertionSelection = useRef<{
+    doc: Editor["state"]["doc"];
+    selection: Editor["state"]["selection"];
+  } | null>(null);
   return (
-    <Menu>
+    <Menu
+      onOpenChange={(open) => {
+        onOpenChange?.(open);
+        if (convert) return;
+        if (open) {
+          const { doc, selection } = editor.state;
+          const position = selectedBlock(editor);
+          const node = doc.nodeAt(position);
+          if (node?.type.name !== "paragraph" || node.content.size) return;
+          insertionSelection.current = { doc, selection };
+          editor.view.dispatch(editor.state.tr.setSelection(NodeSelection.create(doc, position)));
+        } else {
+          const previous = insertionSelection.current;
+          // 空行菜单与飞书一样选中整行；取消时恢复输入点，执行命令后不覆盖新选区。
+          if (previous?.doc === editor.state.doc && editor.state.selection instanceof NodeSelection)
+            editor.view.dispatch(editor.state.tr.setSelection(previous.selection));
+          insertionSelection.current = null;
+        }
+      }}
+    >
       <MenuTrigger
         render={<Button type="button" variant="ghost" className="post-editor-icon" />}
         disabled={disabled}
@@ -57,27 +177,47 @@ export function CommandMenu({
       >
         {children}
       </MenuTrigger>
-      <MenuContent className="post-editor-command-menu" finalFocus={false}>
-        <p className="post-editor-menu-caption">{convert ? "转换类型" : "插入内容"}</p>
-        {insertActions(handlers)
-          .filter((item) => !convert || !["图片", "表格", "分隔线"].includes(item.title))
-          .map((item) => (
-            <MenuItem
-              key={item.title}
-              disabled={disabled}
-              onClick={() => {
-                if (!editor.isEditable) return;
-                beforeRun?.(item.title);
-                if (convert) editor.chain().focus().clearNodes().run();
-                item.run(editor);
-              }}
-            >
-              <item.icon size={16} aria-hidden="true" />
-              {item.title}
-            </MenuItem>
-          ))}
+      <MenuContent
+        className="post-editor-command-menu"
+        side={convert ? "bottom" : "left"}
+        align="start"
+        collisionAvoidance={{ side: "flip", align: "shift", fallbackAxisSide: "end" }}
+        finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+      >
+        <CommandItems editor={editor} disabled={disabled} handlers={handlers} convert={convert} />
       </MenuContent>
     </Menu>
+  );
+}
+
+function Submenu({
+  title,
+  icon,
+  disabled,
+  children,
+}: {
+  title: string;
+  icon: ReactNode;
+  disabled: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <MenuSubmenu>
+      <MenuSubmenuTrigger className="ds-menu-item post-editor-submenu-trigger" disabled={disabled}>
+        {icon}
+        {title}
+        <ChevronRight size={14} aria-hidden="true" />
+      </MenuSubmenuTrigger>
+      <MenuContent
+        className="post-editor-command-menu post-editor-submenu"
+        side="right"
+        align="start"
+        collisionAvoidance={{ side: "flip", align: "shift", fallbackAxisSide: "end" }}
+        finalFocus={false}
+      >
+        {children}
+      </MenuContent>
+    </MenuSubmenu>
   );
 }
 
@@ -88,22 +228,50 @@ export function BlockMenu({
   position,
   children,
   onStatus,
+  context = false,
 }: MenuProps & {
   position?: () => number;
   children: ReactNode;
   onStatus: (message: string) => void;
+  context?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
   const [target, setTarget] = useState(0);
   const targetDocument = useRef(editor.state.doc);
-  const node = editor.state.doc.nodeAt(target);
+  const contextPosition = useRef<number | null>(null);
+  // 菜单关闭后仍可能保留旧位置；整段替换或撤销会缩短正文，不能读取越界节点。
+  const node = target < editor.state.doc.content.size ? editor.state.doc.nodeAt(target) : null;
   const positions: number[] = [];
   editor.state.doc.forEach((_, pos) => positions.push(pos));
   const index = positions.indexOf(target);
-  const act = (action: BlockAction) => {
-    if (!editor.isEditable || editor.state.doc !== targetDocument.current) {
-      onStatus("正文已变化，请重新打开内容块菜单。");
-      return;
+  const ready = () => {
+    if (editor.isEditable && editor.state.doc === targetDocument.current) return true;
+    onStatus("正文已变化，请重新打开内容块菜单。");
+    return false;
+  };
+  const changeOpen = (next: boolean) => {
+    if (next) {
+      if (disabled || !editor.isEditable) return;
+      const selected = context
+        ? (contextPosition.current ?? selectedBlock(editor))
+        : (position?.() ?? selectedBlock(editor));
+      if (
+        selected < 0 ||
+        selected >= editor.state.doc.content.size ||
+        !editor.state.doc.nodeAt(selected)
+      )
+        return;
+      setTarget(selected);
+      targetDocument.current = editor.state.doc;
+      // 类型入口选择整个内容块，后续格式、剪切和转换始终作用于同一个目标。
+      editor.view.dispatch(
+        editor.state.tr.setSelection(NodeSelection.create(editor.state.doc, selected)),
+      );
     }
+    setOpen(next);
+  };
+  const act = (action: BlockAction) => {
+    if (!ready()) return;
     const transaction = blockTransaction(editor.state, target, action);
     if (transaction) editor.view.dispatch(transaction);
     editor.commands.focus();
@@ -127,97 +295,206 @@ export function BlockMenu({
       onStatus("无法访问剪贴板，请使用系统复制快捷键。");
     }
   };
+  const convert = (action: InsertAction) => {
+    if (ready()) runType(editor, action);
+  };
+  const insert = (where: "before" | "after", action: InsertAction) => {
+    if (!ready()) return;
+    const at = target + (where === "after" ? (node?.nodeSize ?? 0) : 0);
+    if (action.title === "图片" || action.title === "表格") {
+      if (action.title === "图片") handlers.image(editor, at);
+      else handlers.table(editor, at);
+      return;
+    }
+    const transaction = blockTransaction(editor.state, target, where);
+    if (!transaction) return;
+    editor.view.dispatch(transaction);
+    // 新段落的选择由事务给出；媒体弹窗则直接保留边界位置，取消不改正文。
+    action.run(editor);
+  };
+  const contents = (
+    <>
+      {node && !node.isAtom && node.type.name !== "table" && (
+        <>
+          <CommandItems
+            editor={editor}
+            disabled={disabled}
+            handlers={handlers}
+            convert
+            onRun={convert}
+          />
+          <MenuSeparator className="ds-menu-separator" />
+          <Submenu title="缩进和对齐" icon={<AlignLeft size={16} />} disabled={disabled}>
+            <AlignmentItems editor={editor} disabled={disabled} />
+          </Submenu>
+          <Submenu title="颜色" icon={<Palette size={16} />} disabled={disabled}>
+            <ColorOptions editor={editor} disabled={disabled} menu />
+          </Submenu>
+          <MenuSeparator className="ds-menu-separator" />
+        </>
+      )}
+      <MenuItem disabled={disabled} onClick={() => void clipboard(true)}>
+        <Scissors size={16} />
+        剪切
+      </MenuItem>
+      <MenuItem disabled={disabled} onClick={() => void clipboard(false)}>
+        <Copy size={16} />
+        复制
+      </MenuItem>
+      <MenuItem disabled={disabled} onClick={() => act("duplicate")}>
+        <CopyPlus size={16} />
+        创建副本
+      </MenuItem>
+      <MenuItem disabled={disabled} destructive onClick={() => act("delete")}>
+        <Trash2 size={16} />
+        删除内容块
+      </MenuItem>
+      <MenuSeparator className="ds-menu-separator" />
+      <Submenu title="在上方添加" icon={<Plus size={16} />} disabled={disabled}>
+        <MenuItem disabled={disabled} onClick={() => insert("before", insertActions(handlers)[0])}>
+          正文
+        </MenuItem>
+        <CommandItems
+          editor={editor}
+          disabled={disabled}
+          handlers={handlers}
+          onRun={(action) => insert("before", action)}
+        />
+      </Submenu>
+      <Submenu title="在下方添加" icon={<Plus size={16} />} disabled={disabled}>
+        <MenuItem disabled={disabled} onClick={() => insert("after", insertActions(handlers)[0])}>
+          正文
+        </MenuItem>
+        <CommandItems
+          editor={editor}
+          disabled={disabled}
+          handlers={handlers}
+          onRun={(action) => insert("after", action)}
+        />
+      </Submenu>
+      <MenuItem disabled={disabled || index <= 0} onClick={() => act("up")}>
+        <ArrowUp size={16} />
+        上移
+      </MenuItem>
+      <MenuItem
+        disabled={disabled || index < 0 || index === positions.length - 1}
+        onClick={() => act("down")}
+      >
+        <ArrowDown size={16} />
+        下移
+      </MenuItem>
+    </>
+  );
+  if (context)
+    return (
+      <ContextMenu open={open} onOpenChange={changeOpen} disabled={disabled}>
+        <ContextMenuTrigger
+          className="post-editor-context-area"
+          onContextMenu={(event) => {
+            const hit =
+              event.clientX || event.clientY
+                ? editor.view.posAtCoords({ left: event.clientX, top: event.clientY })
+                : null;
+            const resolved = hit ? editor.state.doc.resolve(hit.pos) : editor.state.selection.$from;
+            contextPosition.current = resolved.depth ? resolved.before(1) : selectedBlock(editor);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "F10" && event.shiftKey) {
+              event.preventDefault();
+              contextPosition.current = selectedBlock(editor);
+              const point = editor.view.coordsAtPos(editor.state.selection.from);
+              // 跨平台提供标准键盘上下文入口，菜单定位仍交给 Base UI。
+              event.currentTarget.dispatchEvent(
+                new MouseEvent("contextmenu", {
+                  bubbles: true,
+                  cancelable: true,
+                  clientX: point.left + 2,
+                  clientY: point.top + 2,
+                }),
+              );
+            }
+          }}
+          onTouchStart={(event) => {
+            const touch = event.touches[0];
+            if (!touch) return;
+            const hit = editor.view.posAtCoords({ left: touch.clientX, top: touch.clientY });
+            const resolved = hit ? editor.state.doc.resolve(hit.pos) : editor.state.selection.$from;
+            contextPosition.current = resolved.depth ? resolved.before(1) : selectedBlock(editor);
+          }}
+        >
+          {children}
+        </ContextMenuTrigger>
+        <ContextMenuContent
+          className="post-editor-command-menu"
+          aria-label="内容块操作"
+          finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+        >
+          {contents}
+        </ContextMenuContent>
+      </ContextMenu>
+    );
   return (
-    <Menu
-      onOpenChange={(open) => {
-        if (open) {
-          setTarget(position?.() ?? selectedBlock(editor));
-          targetDocument.current = editor.state.doc;
-        }
-      }}
-    >
+    <Menu open={open} onOpenChange={changeOpen}>
       <MenuTrigger
-        render={<Button type="button" variant="ghost" className="post-editor-icon" />}
+        render={<Button type="button" variant="ghost" className="post-editor-block-type" />}
         disabled={disabled}
         aria-label="内容块操作"
+        title="内容块操作"
       >
         {children}
       </MenuTrigger>
-      <MenuContent className="post-editor-command-menu" finalFocus={false}>
-        <MenuItem disabled={disabled} onClick={() => void clipboard(false)}>
-          <Copy size={16} />
-          复制
-        </MenuItem>
-        <MenuItem disabled={disabled} onClick={() => void clipboard(true)}>
-          <Scissors size={16} />
-          剪切
-        </MenuItem>
-        <MenuItem disabled={disabled} onClick={() => act("duplicate")}>
-          <CopyPlus size={16} />
-          创建副本
-        </MenuItem>
-        <MenuSeparator className="ds-menu-separator" />
-        <MenuItem disabled={disabled || index <= 0} onClick={() => act("up")}>
-          <ArrowUp size={16} />
-          上移
-        </MenuItem>
-        <MenuItem
-          disabled={disabled || index < 0 || index === positions.length - 1}
-          onClick={() => act("down")}
-        >
-          <ArrowDown size={16} />
-          下移
-        </MenuItem>
-        <MenuItem disabled={disabled} onClick={() => act("before")}>
-          <Plus size={16} />
-          在上方添加
-        </MenuItem>
-        <MenuItem disabled={disabled} onClick={() => act("after")}>
-          <Plus size={16} />
-          在下方添加
-        </MenuItem>
-        <MenuItem disabled={disabled} destructive onClick={() => act("delete")}>
-          <Trash2 size={16} />
-          删除内容块
-        </MenuItem>
-        {node && !node.isAtom && node.type.name !== "table" && (
-          <>
-            <MenuSeparator className="ds-menu-separator" />
-            <p className="post-editor-menu-caption">转换类型</p>
-            {insertActions(handlers)
-              .filter((item) => !["图片", "表格", "分隔线"].includes(item.title))
-              .map((item) => (
-                <MenuItem
-                  key={item.title}
-                  disabled={disabled}
-                  onClick={() => {
-                    if (!editor.isEditable || editor.state.doc !== targetDocument.current) return;
-                    const selection = TextSelection.between(
-                      editor.state.doc.resolve(target + 1),
-                      editor.state.doc.resolve(target + node.nodeSize - 1),
-                    );
-                    editor.view.dispatch(editor.state.tr.setSelection(selection));
-                    editor.chain().focus().clearNodes().run();
-                    item.run(editor);
-                  }}
-                >
-                  <item.icon size={16} />
-                  {item.title}
-                </MenuItem>
-              ))}
-          </>
-        )}
+      <Button
+        type="button"
+        variant="ghost"
+        className="post-editor-grip"
+        aria-label="拖动或操作内容块"
+        disabled={disabled}
+        title="拖动排序，点击操作内容块"
+        onClick={() => changeOpen(!open)}
+      >
+        <GripVertical size={13} />
+      </Button>
+      <MenuContent
+        className="post-editor-command-menu"
+        side="left"
+        align="start"
+        collisionAvoidance={{ side: "flip", align: "shift", fallbackAxisSide: "end" }}
+        finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+      >
+        {contents}
       </MenuContent>
     </Menu>
   );
 }
 
-export function AlignmentMenu({ editor, disabled }: { editor: Editor; disabled: boolean }) {
+function AlignmentItems({ editor, disabled }: { editor: Editor; disabled: boolean }) {
   const active = useEditorState({
     editor,
     selector: ({ editor: instance }) =>
       ["left", "center", "right"].filter((value) => instance.isActive({ textAlign: value })),
   });
+  return (
+    <>
+      {[
+        { value: "left", title: "左对齐", icon: AlignLeft },
+        { value: "center", title: "居中对齐", icon: AlignCenter },
+        { value: "right", title: "右对齐", icon: AlignRight },
+      ].map((item) => (
+        <MenuItem
+          key={item.value}
+          disabled={disabled}
+          onClick={() => editor.chain().focus().setTextAlign(item.value).run()}
+        >
+          <item.icon size={16} />
+          {item.title}
+          {active.includes(item.value) && <Check size={14} />}
+        </MenuItem>
+      ))}
+    </>
+  );
+}
+
+export function AlignmentMenu({ editor, disabled }: { editor: Editor; disabled: boolean }) {
   return (
     <Menu>
       <MenuTrigger
@@ -227,34 +504,159 @@ export function AlignmentMenu({ editor, disabled }: { editor: Editor; disabled: 
       >
         <AlignLeft size={17} />
       </MenuTrigger>
-      <MenuContent className="post-editor-command-menu" finalFocus={false}>
-        {[
-          { value: "left", title: "左对齐", icon: AlignLeft },
-          { value: "center", title: "居中对齐", icon: AlignCenter },
-          { value: "right", title: "右对齐", icon: AlignRight },
-        ].map((item) => (
-          <MenuItem
-            key={item.value}
-            disabled={disabled}
-            onClick={() => editor.chain().focus().setTextAlign(item.value).run()}
-          >
-            <item.icon size={16} />
-            {item.title}
-            {active.includes(item.value) && <Check size={14} />}
-          </MenuItem>
-        ))}
+      <MenuContent
+        className="post-editor-command-menu"
+        finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+      >
+        <AlignmentItems editor={editor} disabled={disabled} />
       </MenuContent>
     </Menu>
   );
 }
 
+function ColorOptions({
+  editor,
+  disabled,
+  menu = false,
+  onApplied,
+}: {
+  editor: Editor;
+  disabled: boolean;
+  menu?: boolean;
+  onApplied?: () => void;
+}) {
+  const control = ({
+    label,
+    pressed,
+    style,
+    children,
+    apply,
+  }: {
+    label: string;
+    pressed?: boolean;
+    style?: CSSProperties;
+    children?: ReactNode;
+    apply: () => void;
+  }) => {
+    const onClick = () => {
+      if (editor.isEditable) {
+        apply();
+        onApplied?.();
+      }
+    };
+    return menu ? (
+      <MenuItem
+        key={label}
+        className="post-color-swatch"
+        aria-label={label}
+        title={label}
+        disabled={disabled}
+        style={style}
+        data-active={pressed}
+        onClick={onClick}
+      >
+        {children}
+      </MenuItem>
+    ) : (
+      <Button
+        key={label}
+        type="button"
+        variant="ghost"
+        className="post-color-swatch"
+        aria-label={label}
+        title={label}
+        disabled={disabled}
+        style={style}
+        aria-pressed={pressed}
+        onClick={onClick}
+      >
+        {children}
+      </Button>
+    );
+  };
+  return (
+    <div className="post-color-options">
+      <p>字体颜色</p>
+      <div className="post-color-swatches">
+        {control({
+          label: "默认文字颜色",
+          children: "A",
+          apply: () => editor.chain().focus().unsetColor().run(),
+        })}
+        {CONTENT_COLORS.map((item) =>
+          control({
+            label: `${item.name}文字`,
+            children: "A",
+            style: { color: textColor(item.key) },
+            pressed: editor.isActive("textStyle", { color: textColor(item.key) }),
+            apply: () => editor.chain().focus().setColor(textColor(item.key)).run(),
+          }),
+        )}
+      </div>
+      <p>背景颜色</p>
+      <div className="post-color-swatches">
+        {control({
+          label: "清除背景高亮",
+          children: <Eraser size={16} />,
+          apply: () => editor.chain().focus().unsetHighlight().run(),
+        })}
+        {CONTENT_COLORS.map((item) =>
+          control({
+            label: `${item.name}高亮`,
+            style: { backgroundColor: highlightColor(item.key) },
+            pressed: editor.isActive("highlight", { color: highlightColor(item.key) }),
+            apply: () =>
+              editor
+                .chain()
+                .focus()
+                .setHighlight({ color: highlightColor(item.key) })
+                .run(),
+          }),
+        )}
+      </div>
+      {editor.isActive("callout") && (
+        <>
+          <p>高亮块颜色</p>
+          <div className="post-color-swatches">
+            {CONTENT_COLORS.map((item) =>
+              control({
+                label: `${item.name}高亮块`,
+                style: { backgroundColor: highlightColor(item.key) },
+                apply: () =>
+                  editor.chain().focus().updateAttributes("callout", { tone: item.key }).run(),
+              }),
+            )}
+          </div>
+        </>
+      )}
+      {menu ? (
+        <MenuItem
+          disabled={disabled}
+          onClick={() => editor.chain().focus().unsetColor().unsetHighlight().run()}
+        >
+          <Eraser size={16} />
+          恢复默认
+        </MenuItem>
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          className="post-color-reset"
+          disabled={disabled}
+          onClick={() => {
+            editor.chain().focus().unsetColor().unsetHighlight().run();
+            onApplied?.();
+          }}
+        >
+          恢复默认
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function ColorMenu({ editor, disabled }: { editor: Editor; disabled: boolean }) {
   const [open, setOpen] = useState(false);
-  const apply = (run: () => void) => {
-    if (!editor.isEditable) return;
-    run();
-    setOpen(false);
-  };
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
@@ -264,118 +666,12 @@ export function ColorMenu({ editor, disabled }: { editor: Editor; disabled: bool
       >
         <Palette size={17} />
       </PopoverTrigger>
-      <PopoverContent className="post-color-menu" finalFocus={false}>
+      <PopoverContent
+        className="post-color-menu"
+        finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+      >
         <PopoverTitle className="sr-only">文字颜色与高亮</PopoverTitle>
-        <p>字体颜色</p>
-        <div className="post-color-swatches">
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-color-swatch"
-            aria-label="默认文字颜色"
-            disabled={disabled}
-            onClick={() =>
-              apply(() => {
-                editor.chain().focus().unsetColor().run();
-              })
-            }
-          >
-            A
-          </Button>
-          {CONTENT_COLORS.map((item) => (
-            <Button
-              key={item.key}
-              type="button"
-              variant="ghost"
-              className="post-color-swatch"
-              style={{ color: textColor(item.key) }}
-              aria-label={`${item.name}文字`}
-              disabled={disabled}
-              aria-pressed={editor.isActive("textStyle", { color: textColor(item.key) })}
-              onClick={() =>
-                apply(() => {
-                  editor.chain().focus().setColor(textColor(item.key)).run();
-                })
-              }
-            >
-              A
-            </Button>
-          ))}
-        </div>
-        <p>背景颜色</p>
-        <div className="post-color-swatches">
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-color-swatch"
-            aria-label="清除背景高亮"
-            disabled={disabled}
-            onClick={() =>
-              apply(() => {
-                editor.chain().focus().unsetHighlight().run();
-              })
-            }
-          >
-            <Eraser size={16} />
-          </Button>
-          {CONTENT_COLORS.map((item) => (
-            <Button
-              key={item.key}
-              type="button"
-              variant="ghost"
-              className="post-color-swatch"
-              style={{ backgroundColor: highlightColor(item.key) }}
-              aria-label={`${item.name}高亮`}
-              disabled={disabled}
-              aria-pressed={editor.isActive("highlight", { color: highlightColor(item.key) })}
-              onClick={() =>
-                apply(() => {
-                  editor
-                    .chain()
-                    .focus()
-                    .setHighlight({ color: highlightColor(item.key) })
-                    .run();
-                })
-              }
-            />
-          ))}
-        </div>
-        {editor.isActive("callout") && (
-          <>
-            <p>高亮块颜色</p>
-            <div className="post-color-swatches">
-              {CONTENT_COLORS.map((item) => (
-                <Button
-                  key={item.key}
-                  type="button"
-                  variant="ghost"
-                  className="post-color-swatch"
-                  style={{ backgroundColor: highlightColor(item.key) }}
-                  aria-label={`${item.name}高亮块`}
-                  disabled={disabled}
-                  onClick={() =>
-                    apply(() => {
-                      editor.chain().focus().updateAttributes("callout", { tone: item.key }).run();
-                    })
-                  }
-                />
-              ))}
-            </div>
-          </>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          className="post-color-reset"
-          disabled={disabled}
-          onClick={() =>
-            apply(() => {
-              editor.chain().focus().unsetColor().unsetHighlight().run();
-            })
-          }
-        >
-          恢复默认
-        </Button>
+        <ColorOptions editor={editor} disabled={disabled} onApplied={() => setOpen(false)} />
       </PopoverContent>
     </Popover>
   );
@@ -506,15 +802,4 @@ export function TableMenu({ editor, disabled }: { editor: Editor; disabled: bool
       </MenuContent>
     </Menu>
   );
-}
-
-export function insertParagraphAfter(editor: Editor, position: number) {
-  const transaction = blockTransaction(editor.state, position, "after");
-  if (transaction) editor.view.dispatch(transaction);
-  else
-    editor.view.dispatch(
-      editor.state.tr.setSelection(
-        Selection.near(editor.state.doc.resolve(editor.state.doc.content.size)),
-      ),
-    );
 }

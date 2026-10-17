@@ -13,15 +13,28 @@ import "./menu.css";
 export const Menu = BaseMenu.Root;
 export const MenuTrigger = BaseMenu.Trigger;
 export const MenuSeparator = BaseMenu.Separator;
+export const MenuSubmenu = BaseMenu.SubmenuRoot;
+export const MenuSubmenuTrigger = BaseMenu.SubmenuTrigger;
 
 export function MenuContent({
   className,
   render,
+  side = "bottom",
+  align = "end",
+  collisionAvoidance,
   ...props
-}: ComponentProps<typeof BaseMenu.Popup>) {
+}: ComponentProps<typeof BaseMenu.Popup> &
+  Pick<ComponentProps<typeof BaseMenu.Positioner>, "side" | "align" | "collisionAvoidance">) {
   return (
     <BaseMenu.Portal>
-      <BaseMenu.Positioner align="end" sideOffset={6} collisionPadding={12} className="z-50">
+      <BaseMenu.Positioner
+        side={side}
+        align={align}
+        sideOffset={6}
+        collisionPadding={12}
+        collisionAvoidance={collisionAvoidance}
+        className="z-50"
+      >
         <BaseMenu.Popup
           className={cn("ds-menu", className)}
           render={render ?? renderPopupMotion}

@@ -4,8 +4,8 @@ import type { Editor } from "@tiptap/core";
 import type { EditorState } from "@tiptap/pm/state";
 
 import DragHandle from "@tiptap/extension-drag-handle-react";
-import Placeholder from "@tiptap/extension-placeholder";
 import { closeHistory } from "@tiptap/pm/history";
+import { NodeSelection } from "@tiptap/pm/state";
 import { CellSelection } from "@tiptap/pm/tables";
 import { Decoration, DecorationSet, type EditorView } from "@tiptap/pm/view";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
@@ -18,7 +18,6 @@ import {
   Code,
   Link2,
   Plus,
-  GripVertical,
   Ellipsis,
   Eraser,
   Type,
@@ -49,13 +48,12 @@ import { markdownDocument } from "@/lib/posts/markdown-document";
 import { isImageParagraph } from "@/lib/posts/prose";
 
 import { EditorCodeBlock } from "./code-block";
-import { selectedBlock } from "./editor-commands";
+import { blockTypeName, insertActions, selectedBlock } from "./editor-commands";
 import {
   AlignmentMenu,
   BlockMenu,
   ColorMenu,
   CommandMenu,
-  insertParagraphAfter,
   TableMenu,
   TablePicker,
 } from "./editor-menus";
@@ -84,7 +82,12 @@ type Props = {
 // 插件配置保持引用稳定，保存与主题切换不能重新注册插件或关闭建议菜单。
 const dragPosition = { placement: "left-start", strategy: "absolute" } as const;
 const bubblePosition = { placement: "top", offset: 8 } as const;
-const emptyPosition = { placement: "left", offset: 8 } as const;
+const emptyPosition = {
+  placement: "left",
+  offset: 8,
+  // 整行选中后锚点落在段落边界，窄屏仍需把插入按钮留在视口内。
+  shift: { crossAxis: true, padding: 12 },
+} as const;
 const articleEditorProps = {
   attributes: {
     class: "article-prose article-editor-prose",
@@ -171,6 +174,11 @@ export function BlockEditor({
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const hovered = useRef<number | null>(null);
+  const emptyMenuOpen = useRef(false);
+  const [hoveredBlock, setHoveredBlock] = useState<{
+    pos: number;
+    node: Editor["state"]["doc"];
+  } | null>(null);
   const [image, setImage] = useState<{
     from: number;
     to: number;
@@ -219,9 +227,6 @@ export function BlockEditor({
     () => [
       ...contentExtensions({ codeBlock: EditorCodeBlock, editable: true }),
       OutlineAnchors,
-      Placeholder.configure({
-        placeholder: ({ node }) => (node.type.name === "paragraph" ? "输入 / 插入内容" : ""),
-      }),
       createSlashExtension(handlers),
     ],
     [handlers],
@@ -248,7 +253,6 @@ export function BlockEditor({
             link: instance.isActive("link"),
             count: documentText(instance.getJSON()).length,
             block: selectedBlock(instance),
-            callout: instance.isActive("callout"),
           }
         : null,
   });
@@ -374,52 +378,54 @@ export function BlockEditor({
       <item.icon size={17} aria-hidden="true" />
     </Button>
   ));
-  const insertAfterHovered = (title: string) => {
-    const position = hovered.current ?? selectedBlock(editor);
-    const node = editor.state.doc.nodeAt(position);
-    if (!node) return;
-    if (title !== "图片" && title !== "表格") insertParagraphAfter(editor, position);
-  };
-  const afterHovered = () => {
-    const position = hovered.current ?? selectedBlock(editor);
-    return position + (editor.state.doc.nodeAt(position)?.nodeSize ?? 0);
-  };
-  const gutterHandlers = {
-    image: (instance: Editor) => openImage(instance, afterHovered()),
-    table: (instance: Editor) => openTable(instance, afterHovered()),
-  };
+  const hoveredNode =
+    hoveredBlock && hoveredBlock.pos >= 0 && hoveredBlock.pos < editor.state.doc.content.size
+      ? editor.state.doc.nodeAt(hoveredBlock.pos)
+      : null;
+  const hideBlockHandle =
+    !hoveredNode || (hoveredNode.type.name === "paragraph" && hoveredNode.content.size === 0);
+  const typeName = isImageParagraph(hoveredNode ?? editor.state.doc)
+    ? "图片"
+    : blockTypeName(hoveredNode);
+  const TypeIcon = insertActions(handlers).find((item) => item.title === typeName)?.icon ?? Type;
   return (
     <div className="post-block-editor" ref={host} data-disabled={disabled} data-invalid={invalid}>
-      <EditorContent editor={editor} className="post-editor-canvas" />
+      <BlockMenu
+        editor={editor}
+        disabled={disabled}
+        handlers={handlers}
+        onStatus={setStatus}
+        context
+      >
+        <EditorContent editor={editor} className="post-editor-canvas" />
+      </BlockMenu>
       {!disabled && (
         <DragHandle
           editor={editor}
-          className="post-editor-drag-handle"
+          className={`post-editor-drag-handle${hideBlockHandle ? " is-empty" : ""}`}
           computePositionConfig={dragPosition}
           onNodeChange={({ node, pos }) => {
             hovered.current = node ? pos : null;
+            setHoveredBlock((current) =>
+              current?.pos === pos && current?.node === node
+                ? current
+                : node
+                  ? { pos, node }
+                  : null,
+            );
           }}
         >
-          <CommandMenu
-            editor={editor}
-            disabled={disabled}
-            handlers={gutterHandlers}
-            beforeRun={insertAfterHovered}
-          >
-            <Plus size={16} />
-          </CommandMenu>
-          <span className="post-editor-grip" aria-hidden="true" title="拖动调整内容块顺序">
-            <GripVertical size={16} />
-          </span>
-          <BlockMenu
-            editor={editor}
-            disabled={disabled}
-            handlers={handlers}
-            position={() => hovered.current ?? selectedBlock(editor)}
-            onStatus={setStatus}
-          >
-            <Ellipsis size={16} />
-          </BlockMenu>
+          <div className="post-editor-block-handle">
+            <BlockMenu
+              editor={editor}
+              disabled={disabled}
+              handlers={handlers}
+              position={() => hovered.current ?? selectedBlock(editor)}
+              onStatus={setStatus}
+            >
+              <TypeIcon size={15} />
+            </BlockMenu>
+          </div>
         </DragHandle>
       )}
       <FloatingMenu
@@ -429,14 +435,22 @@ export function BlockEditor({
         options={emptyPosition}
         shouldShow={({ editor: instance, state: current }) =>
           instance.isEditable &&
-          instance.isFocused &&
-          current.selection.empty &&
-          current.selection.$from.parent.type.name === "paragraph" &&
-          current.selection.$from.parent.content.size === 0 &&
-          !busy
+          !busy &&
+          (emptyMenuOpen.current ||
+            (instance.isFocused &&
+              current.selection.empty &&
+              current.selection.$from.parent.type.name === "paragraph" &&
+              current.selection.$from.parent.content.size === 0))
         }
       >
-        <CommandMenu editor={editor} disabled={disabled} handlers={handlers}>
+        <CommandMenu
+          editor={editor}
+          disabled={disabled}
+          handlers={handlers}
+          onOpenChange={(open) => {
+            emptyMenuOpen.current = open;
+          }}
+        >
           <Plus size={17} />
         </CommandMenu>
       </FloatingMenu>
@@ -450,6 +464,7 @@ export function BlockEditor({
           instance.isEditable &&
           !busy &&
           from !== to &&
+          !(instance.state.selection instanceof NodeSelection) &&
           !(instance.state.selection instanceof CellSelection) &&
           !instance.isActive("codeBlock") &&
           instance.state.doc.textBetween(from, to).trim().length > 0
@@ -578,26 +593,15 @@ export function BlockEditor({
           </Button>
         </div>
       </BubbleMenu>
-      <div className="post-editor-footer">
-        <div className="post-editor-footer-tools">
-          <CommandMenu editor={editor} disabled={disabled} handlers={handlers}>
-            <Plus size={16} />
-          </CommandMenu>
-          <BlockMenu editor={editor} disabled={disabled} handlers={handlers} onStatus={setStatus}>
-            <Ellipsis size={16} />
-          </BlockMenu>
-          {state.callout && <ColorMenu editor={editor} disabled={disabled} />}
-        </div>
-        <span id="post-editor-help" className="sr-only">
-          输入 / 插入内容；选中文字设置格式；内容块菜单支持移动、复制和删除。
-        </span>
-        <output
-          className={state.count > CONTENT_TEXT_LIMIT ? "admin-post-error" : ""}
-          aria-label="正文字符数"
-        >
-          {state.count.toLocaleString()} / {CONTENT_TEXT_LIMIT.toLocaleString()}
-        </output>
-      </div>
+      <span id="post-editor-help" className="sr-only">
+        输入 / 插入内容；选中文字设置格式；右键或 Shift+F10 打开内容块菜单，触屏可长按内容块。
+      </span>
+      <output
+        className={`post-document-count${state.count > CONTENT_TEXT_LIMIT ? " admin-post-error" : ""}`}
+        aria-label="正文字符数"
+      >
+        {state.count.toLocaleString()} / {CONTENT_TEXT_LIMIT.toLocaleString()}
+      </output>
       <output className="post-editor-action-status" aria-live="polite">
         {status}
       </output>

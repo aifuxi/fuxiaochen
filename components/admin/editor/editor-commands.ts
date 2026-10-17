@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/core";
+import type { Node } from "@tiptap/pm/model";
 
 import { Fragment, DOMSerializer } from "@tiptap/pm/model";
 import { Selection, type EditorState } from "@tiptap/pm/state";
@@ -23,8 +24,8 @@ import {
 } from "lucide-react";
 
 export type InsertHandlers = {
-  image: (editor: Editor) => void;
-  table: (editor: Editor) => void;
+  image: (editor: Editor, position?: number) => void;
+  table: (editor: Editor, position?: number) => void;
 };
 
 // 所有入口共用命令，避免斜杠菜单、选区和块菜单产生不同的文档结构。
@@ -94,6 +95,25 @@ export function insertActions(handlers: InsertHandlers) {
 export function selectedBlock(editor: Editor) {
   const { $from } = editor.state.selection;
   return $from.depth ? $from.before(1) : $from.pos;
+}
+
+export function blockTypeName(node: Node | null | undefined) {
+  if (!node) return "正文";
+  if (node.type.name === "heading")
+    return ["一级标题", "二级标题", "三级标题", "四级标题", "五级标题", "六级标题"][
+      node.attrs.level - 1
+    ];
+  const names: Record<string, string> = {
+    bulletList: "无序列表",
+    orderedList: "有序列表",
+    taskList: "任务列表",
+    codeBlock: "代码块",
+    blockquote: "引用",
+    callout: "高亮块",
+    table: "表格",
+    horizontalRule: "分隔线",
+  };
+  return names[node.type.name] ?? "正文";
 }
 
 export type BlockAction = "duplicate" | "delete" | "up" | "down" | "before" | "after";

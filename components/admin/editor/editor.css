@@ -247,13 +247,6 @@
 .post-editor-canvas .tiptap .ProseMirror-selectednode {
   outline: 2px solid var(--color-focus);
 }
-.post-editor-canvas .tiptap .is-empty::before {
-  float: left;
-  height: 0;
-  color: var(--color-caption);
-  content: attr(data-placeholder);
-  pointer-events: none;
-}
 .post-editor-canvas .tableWrapper {
   max-width: 100%;
   overflow-x: auto;
@@ -358,31 +351,59 @@
   margin: 0 4px;
   background: var(--color-outline);
 }
+/* 空行只保留一个插入按钮；非空块使用类型和拖拽组成的同一组控件。 */
 .post-editor-drag-handle {
   display: flex;
+  padding-right: 8px;
+}
+.post-editor-drag-handle.is-empty {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+.post-editor-drag-handle:has([data-popup-open]) {
+  visibility: visible !important;
+}
+.post-editor-block-handle {
+  display: flex;
   align-items: center;
-  padding-right: 4px;
+  border: 1px solid var(--color-outline);
+  border-radius: 5px;
+  background: var(--color-background);
 }
-.post-editor-drag-handle .post-editor-icon.ds-button {
+.post-editor-block-type.ds-button,
+.post-editor-grip.ds-button {
+  height: 26px;
+  min-height: 26px;
+  padding: 0;
+  border-radius: 3px;
+}
+.post-editor-block-type.ds-button {
   width: 24px;
+  color: var(--color-primary);
 }
-.post-editor-grip {
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 32px;
+.post-editor-grip.ds-button {
+  width: 16px;
   color: var(--color-caption);
   cursor: grab;
 }
-.post-editor-grip:hover {
-  color: var(--color-foreground);
-}
-.post-editor-grip:active {
+.post-editor-grip.ds-button:active {
   cursor: grabbing;
-  background: var(--color-fill-1);
 }
 .post-empty-insert {
   z-index: 10;
+}
+.post-empty-insert .post-editor-icon.ds-button {
+  width: 26px;
+  height: 26px;
+  min-height: 26px;
+  border: 1px solid var(--color-outline);
+  border-radius: 5px;
+  background: var(--color-background);
+}
+.post-editor-canvas .tiptap > .ProseMirror-selectednode:not([data-resize-container]) {
+  outline: none;
+  border-radius: 3px;
+  background: var(--color-primary-light-default);
 }
 .post-editor-bubble {
   z-index: 40;
@@ -401,10 +422,43 @@
 .post-editor-command-menu.ds-menu {
   width: 240px;
   max-height: min(480px, var(--available-height));
+  border-radius: 8px;
 }
 .post-editor-command-menu .ds-menu-item {
   min-height: 32px;
   padding: 6px 12px;
+}
+.post-editor-type-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 3px;
+  padding: 4px 12px 8px;
+  margin: 0;
+  min-width: 0;
+  border: 0;
+}
+.post-editor-type-grid .post-editor-type-option {
+  justify-content: center;
+  min-height: 32px;
+  padding: 0;
+  border-radius: 4px;
+}
+.post-editor-type-option[data-active="true"] {
+  color: var(--color-primary);
+  background: var(--color-primary-light-default);
+}
+.post-editor-submenu-trigger > :last-child {
+  margin-left: auto;
+}
+.post-editor-submenu:has(.post-color-options) {
+  width: 300px;
+}
+.post-editor-submenu .post-color-options {
+  padding: 8px 12px;
+}
+.post-editor-submenu .post-color-swatch {
+  display: grid;
+  place-items: center;
 }
 .post-editor-menu-caption {
   margin: 0;
@@ -437,6 +491,12 @@
   margin-top: 4px;
   font-size: 11px;
 }
+.post-slash-group {
+  margin: 0;
+  padding: 8px 12px 4px;
+  color: var(--color-caption);
+  font-size: 12px;
+}
 .post-editor-menu-item.ds-button {
   display: flex;
   justify-content: flex-start;
@@ -453,24 +513,22 @@
 .post-editor-menu-item[aria-selected="true"] {
   background: var(--color-fill-0);
 }
-.post-editor-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-top: 16px;
+.post-document-count {
+  position: fixed;
+  right: 24px;
+  bottom: 12px;
+  z-index: 20;
   color: var(--color-caption);
   font-size: 12px;
-}
-.post-editor-footer-tools {
-  display: flex;
-  gap: 2px;
+  pointer-events: none;
 }
 .post-editor-action-status {
   display: block;
   color: var(--color-caption);
   font-size: 12px;
-  min-height: 20px;
+}
+.post-editor-action-status:empty {
+  display: none;
 }
 .post-color-menu.ds-popover-popup {
   width: 300px;
@@ -478,7 +536,7 @@
   padding: 12px;
   background: var(--color-overlay);
 }
-.post-color-menu p {
+.post-color-options p {
   margin: 0 0 8px;
   color: var(--color-caption);
   font-size: 12px;
@@ -489,7 +547,7 @@
   gap: 4px;
   margin-bottom: 12px;
 }
-.post-color-swatch.ds-button {
+.post-color-swatch:is(.ds-button, .ds-menu-item) {
   height: 28px;
   width: 100%;
   min-height: 28px;
@@ -497,7 +555,7 @@
   border-radius: 4px;
   border: 1px solid var(--color-outline);
 }
-.post-color-swatch[aria-pressed="true"] {
+.post-color-swatch:is([aria-pressed="true"], [data-active="true"]) {
   outline: 2px solid var(--color-focus);
   outline-offset: 1px;
 }
@@ -739,6 +797,19 @@
   }
 }
 @media (max-width: 600px), (pointer: coarse) {
+  .post-editor-command-menu.ds-menu {
+    width: 320px;
+  }
+  .post-editor-type-grid {
+    grid-template-columns: repeat(6, minmax(44px, 1fr));
+    overflow-x: auto;
+  }
+  .post-empty-insert .post-editor-icon.ds-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+
   .post-writing-bar .ds-button,
   .post-editor-icon.ds-button,
   .post-editor-insert.ds-button,
@@ -770,7 +841,7 @@
   .post-color-swatches {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-  .post-color-swatch.ds-button {
+  .post-color-swatch:is(.ds-button, .ds-menu-item) {
     min-height: 44px;
     height: 44px;
   }
