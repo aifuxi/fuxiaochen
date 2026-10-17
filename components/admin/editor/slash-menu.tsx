@@ -1,112 +1,23 @@
 "use client";
 
-import { Extension, type Editor } from "@tiptap/core";
+import { Extension } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
 import { ReactRenderer } from "@tiptap/react";
 import Suggestion, { type SuggestionProps } from "@tiptap/suggestion";
-import {
-  Type,
-  Heading1,
-  Heading2,
-  Heading3,
-  List,
-  ListOrdered,
-  ListChecks,
-  Quote,
-  Code2,
-  Minus,
-  Table2,
-  ImagePlus,
-} from "lucide-react";
-import { forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from "react";
+import { useEffect, useId, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 
-export const slashKey = new PluginKey("article-slash");
-export function insertActions(onImage: (editor: Editor) => void) {
-  return [
-    {
-      title: "正文",
-      keywords: "text paragraph zhengwen",
-      icon: Type,
-      run: (editor: Editor) => editor.chain().focus().setParagraph().run(),
-    },
-    {
-      title: "一级标题",
-      keywords: "heading h1 biaoti",
-      icon: Heading1,
-      run: (editor: Editor) => editor.chain().focus().setHeading({ level: 1 }).run(),
-    },
-    {
-      title: "二级标题",
-      keywords: "heading h2 biaoti",
-      icon: Heading2,
-      run: (editor: Editor) => editor.chain().focus().setHeading({ level: 2 }).run(),
-    },
-    {
-      title: "三级标题",
-      keywords: "heading h3 biaoti",
-      icon: Heading3,
-      run: (editor: Editor) => editor.chain().focus().setHeading({ level: 3 }).run(),
-    },
-    {
-      title: "无序列表",
-      keywords: "bullet list liebiao",
-      icon: List,
-      run: (editor: Editor) => editor.chain().focus().toggleBulletList().run(),
-    },
-    {
-      title: "有序列表",
-      keywords: "ordered list liebiao",
-      icon: ListOrdered,
-      run: (editor: Editor) => editor.chain().focus().toggleOrderedList().run(),
-    },
-    {
-      title: "任务列表",
-      keywords: "task check todo renwu",
-      icon: ListChecks,
-      run: (editor: Editor) => editor.chain().focus().toggleTaskList().run(),
-    },
-    {
-      title: "引用",
-      keywords: "quote blockquote yinyong",
-      icon: Quote,
-      run: (editor: Editor) => editor.chain().focus().toggleBlockquote().run(),
-    },
-    {
-      title: "代码块",
-      keywords: "code daima",
-      icon: Code2,
-      run: (editor: Editor) => editor.chain().focus().toggleCodeBlock().run(),
-    },
-    {
-      title: "分隔线",
-      keywords: "divider hr fengexian",
-      icon: Minus,
-      run: (editor: Editor) => editor.chain().focus().setHorizontalRule().run(),
-    },
-    {
-      title: "表格",
-      keywords: "table biaoge",
-      icon: Table2,
-      run: (editor: Editor) =>
-        editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
-    },
-    { title: "图片", keywords: "image photo tupian", icon: ImagePlus, run: onImage },
-  ];
-}
-type Action = ReturnType<typeof insertActions>[number];
-type MenuProps = SuggestionProps<Action, Action>;
-type MenuHandle = { onKeyDown: (event: KeyboardEvent) => boolean };
+import { insertActions, type InsertHandlers } from "./editor-commands";
 
-const SlashMenu = forwardRef<MenuHandle, MenuProps>(function SlashMenu(props, ref) {
+export const slashKey = new PluginKey("article-slash");
+type Action = ReturnType<typeof insertActions>[number];
+type MenuProps = SuggestionProps<Action, Action> & { selectedIndex: number };
+
+function SlashMenu(props: MenuProps) {
   const id = useId();
   const list = useRef<HTMLDivElement>(null);
-  const [selection, setSelection] = useState({ query: props.query, index: 0 });
-  const index =
-    selection.query === props.query
-      ? Math.min(selection.index, Math.max(0, props.items.length - 1))
-      : 0;
+  const index = props.selectedIndex;
   useEffect(() => {
     // 搜索后选项数可能不变，仍需刷新当前活动项与滚动位置。
     const query = props.query;
@@ -123,26 +34,6 @@ const SlashMenu = forwardRef<MenuHandle, MenuProps>(function SlashMenu(props, re
       dom.removeAttribute("aria-expanded");
     };
   }, [id, index, props.editor, props.items.length, props.query]);
-  useImperativeHandle(ref, () => ({
-    onKeyDown(event) {
-      if (event.isComposing || props.editor.view.composing) return false;
-      if (["ArrowUp", "ArrowDown"].includes(event.key)) {
-        if (props.items.length)
-          setSelection({
-            query: props.query,
-            index:
-              (index + (event.key === "ArrowUp" ? -1 : 1) + props.items.length) %
-              props.items.length,
-          });
-        return true;
-      }
-      if (event.key === "Enter") {
-        if (props.items[index]) props.command(props.items[index]);
-        return true;
-      }
-      return false;
-    },
-  }));
   return (
     <div className="post-slash-menu" ref={list}>
       <p>
@@ -172,9 +63,9 @@ const SlashMenu = forwardRef<MenuHandle, MenuProps>(function SlashMenu(props, re
       {!props.items.length && <output>没有匹配的内容块</output>}
     </div>
   );
-});
+}
 
-export function createSlashExtension(onImage: (editor: Editor) => void) {
+export function createSlashExtension(handlers: InsertHandlers) {
   return Extension.create({
     name: "articleSlash",
     addProseMirrorPlugins() {
@@ -188,7 +79,7 @@ export function createSlashExtension(onImage: (editor: Editor) => void) {
           allow: ({ editor, state }) =>
             editor.isEditable && state.selection.$from.parent.type.name === "paragraph",
           items: ({ query }) =>
-            insertActions(onImage).filter((item) =>
+            insertActions(handlers).filter((item) =>
               `${item.title} ${item.keywords}`.includes(query.toLowerCase()),
             ),
           command: ({ editor, range, props }) => {
@@ -196,15 +87,44 @@ export function createSlashExtension(onImage: (editor: Editor) => void) {
             props.run(editor);
           },
           render: () => {
-            let component: ReactRenderer<MenuHandle, MenuProps> | undefined;
+            let component: ReactRenderer<unknown, MenuProps> | undefined;
+            let latest: SuggestionProps<Action, Action> | undefined;
+            let selectedIndex = 0;
             let unmount: (() => void) | undefined;
             return {
               onStart: (props) => {
-                component = new ReactRenderer(SlashMenu, { props, editor: props.editor });
+                latest = props;
+                selectedIndex = 0;
+                component = new ReactRenderer(SlashMenu, {
+                  props: { ...props, selectedIndex },
+                  editor: props.editor,
+                });
                 unmount = props.mount(component.element);
               },
-              onUpdate: (props) => component?.updateProps(props),
-              onKeyDown: ({ event }) => component?.ref?.onKeyDown(event) ?? false,
+              onUpdate: (props) => {
+                if (latest?.query !== props.query) selectedIndex = 0;
+                selectedIndex = Math.min(selectedIndex, Math.max(0, props.items.length - 1));
+                latest = props;
+                component?.updateProps({ ...props, selectedIndex });
+              },
+              // 键盘处理不能依赖 React 提交后的 ref，否则快速输入再按 Enter 会落回正文换行。
+              onKeyDown: ({ event }) => {
+                if (!latest || event.isComposing || latest.editor.view.composing) return false;
+                if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                  if (latest.items.length)
+                    selectedIndex =
+                      (selectedIndex + (event.key === "ArrowUp" ? -1 : 1) + latest.items.length) %
+                      latest.items.length;
+                  component?.updateProps({ ...latest, selectedIndex });
+                  return true;
+                }
+                if (event.key === "Enter") {
+                  const action = latest.items[selectedIndex];
+                  if (action) latest.command(action);
+                  return true;
+                }
+                return false;
+              },
               onExit: () => {
                 unmount?.();
                 component?.destroy();

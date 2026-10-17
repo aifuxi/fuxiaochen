@@ -6,6 +6,67 @@
   overflow-wrap: anywhere;
 }
 
+.article-prose :where(mark) {
+  background: var(--article-yellow-bg);
+  color: inherit;
+}
+.article-prose [style*="--article-"] :where(strong, em, u, s, a) {
+  color: inherit;
+}
+.article-prose .article-callout {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  margin-block: 1.25em;
+  border: 1px solid color-mix(in srgb, var(--callout-color, var(--article-blue)) 24%, transparent);
+  border-radius: 8px;
+  background: var(--callout-background, var(--article-blue-bg));
+  color: var(--color-foreground-reading);
+}
+.article-callout-icon {
+  flex: none;
+  user-select: none;
+  line-height: inherit;
+}
+.article-callout-content {
+  flex: 1;
+  min-width: 0;
+}
+.article-callout-content > :first-child {
+  margin-top: 0;
+}
+.article-callout-content > :last-child {
+  margin-bottom: 0;
+}
+.article-callout[data-callout="gray"] {
+  --callout-color: var(--article-gray);
+  --callout-background: var(--article-gray-bg);
+}
+.article-callout[data-callout="red"] {
+  --callout-color: var(--article-red);
+  --callout-background: var(--article-red-bg);
+}
+.article-callout[data-callout="orange"] {
+  --callout-color: var(--article-orange);
+  --callout-background: var(--article-orange-bg);
+}
+.article-callout[data-callout="yellow"] {
+  --callout-color: var(--article-yellow);
+  --callout-background: var(--article-yellow-bg);
+}
+.article-callout[data-callout="green"] {
+  --callout-color: var(--article-green);
+  --callout-background: var(--article-green-bg);
+}
+.article-callout[data-callout="blue"] {
+  --callout-color: var(--article-blue);
+  --callout-background: var(--article-blue-bg);
+}
+.article-callout[data-callout="purple"] {
+  --callout-color: var(--article-purple);
+  --callout-background: var(--article-purple-bg);
+}
+
 .article-prose :where(p, ul, ol) {
   margin-block: 1.25em;
 }

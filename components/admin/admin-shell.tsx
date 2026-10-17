@@ -75,6 +75,7 @@ export function AdminShell({
   postPending,
 }: Props) {
   const pathname = usePathname();
+  const documentRoute = /^\/admin\/posts\/(new|[^/]+\/edit)$/.test(pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
   const mobilePanel = useRef<"notifications" | "profile" | null>(null);
   const mobileMenuButton = useRef<HTMLButtonElement | null>(null);
@@ -258,7 +259,9 @@ export function AdminShell({
   );
 
   return (
-    <div className={`admin-layout ${writingFocused ? "admin-layout-writing" : ""}`}>
+    <div
+      className={`admin-layout ${writingFocused || documentRoute ? "admin-layout-writing" : ""}`}
+    >
       <aside className="admin-sidebar" aria-label="侧边栏">
         <TooltipProvider delay={250}>{sidebar(false)}</TooltipProvider>
       </aside>

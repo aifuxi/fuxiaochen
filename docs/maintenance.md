@@ -155,6 +155,8 @@ node --env-file=/absolute/private/test.env --conditions=react-server --import ts
 
 正文保存为带格式与版本的 Tiptap JSON 文本；`lib/posts/document.ts` 序列化 `{ format: "fuxiaochen-tiptap", version: 1, document, text }`，读取时校验格式、版本及完整节点结构。编辑器、服务端校验和前台静态渲染共用内容节点定义；正文搜索使用归一化的纯文本，不查询标记结构。当前编辑、前台渲染和搜索不读取旧 Markdown，Markdown 仅作为导入格式，不在本轮恢复旧数据迁移。
 
+2026-10-17 增量扩展同一 version 1 的节点白名单：增加 callout（预设 tone）、textStyle.color、highlight.color 和段落／标题 textAlign，编辑器、校验与前台共用定义；不执行历史数据批量迁移。颜色仅接受固定主题变量，合法 mark 可叠加到 8 个且不得重复，未知节点、属性或非法正文拒绝保存而非静默丢弃。callout 子块参与纯文本提取和字数限制。表格 colwidth 按 colspan 对应展开，允许 0 表示 Tiptap 的未指定宽度；其他数值继续校验整数和上限。图片原有 width／height 用于持久化缩放结果。目录 ID 只存在于编辑视图装饰，不写入正文。
+
 Markdown 导入由 `lib/posts/markdown-document.ts` 解析为同一种文档，支持 GFM；原始 HTML 和不支持的语法保留为文字，不执行。导入合并后再次校验完整文档，链接与图片使用共享 URL 校验。导入上限、插入语义、保存状态与失败保留见 [产品行为](product/behavior.md)，编辑器和正文布局分别见 [后台场景](design/admin.md) 与 [前台场景](design/frontend.md)。
 
 后台筛选和搜索使用业务查询入口，查询条件变化时取消旧请求，避免旧结果覆盖新条件。产品状态与分页由产品文档维护。

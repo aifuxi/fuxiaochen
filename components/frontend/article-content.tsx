@@ -3,22 +3,38 @@ import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
 import { contentExtensions } from "@/lib/posts/content-extensions";
 import { readDocument } from "@/lib/posts/document";
 import { isImageParagraph } from "@/lib/posts/prose";
+import { tableColumns } from "@/lib/posts/table-layout";
 
 import { ArticleCodeBlock } from "./code-block";
 
 const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>[0]["options"]> = {
   nodeMapping: {
     paragraph: ({ node, children }) => (
-      <p className={isImageParagraph(node) ? "article-image-block" : undefined}>{children}</p>
+      <p
+        className={isImageParagraph(node) ? "article-image-block" : undefined}
+        style={node.attrs.textAlign ? { textAlign: node.attrs.textAlign } : undefined}
+      >
+        {children}
+      </p>
     ),
-    table: ({ children }) => (
-      // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 保留宽表格的键盘滚动入口。
-      <div className="site-table-scroll" tabIndex={0} aria-label="文章表格">
-        <table>
-          <tbody>{children}</tbody>
-        </table>
-      </div>
-    ),
+    table: ({ node, children }) => {
+      const widths = tableColumns(node);
+      const fixed = widths.every((width) => width > 0);
+      const size = widths.reduce((sum, width) => sum + (width || 60), 0);
+      return (
+        // oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- 保留宽表格的键盘滚动入口。
+        <div className="site-table-scroll" tabIndex={0} aria-label="文章表格">
+          <table style={fixed ? { width: size } : { minWidth: size }}>
+            <colgroup>
+              {widths.map((width, index) => (
+                <col key={index} style={width ? { width } : { minWidth: 60 }} />
+              ))}
+            </colgroup>
+            <tbody>{children}</tbody>
+          </table>
+        </div>
+      );
+    },
     codeBlock: ({ node }) => (
       <ArticleCodeBlock code={node.textContent} language={node.attrs.language} />
     ),

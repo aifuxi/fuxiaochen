@@ -4,14 +4,18 @@ import { TableMap } from "@tiptap/pm/tables";
 import { z } from "zod";
 
 import { contentExtensions } from "./content-extensions";
+import { isContentColor, isHighlightColor, isTextColor } from "./content-palette";
 import { safeContentUrl } from "./content-url";
 
 export const CONTENT_FORMAT = "fuxiaochen-tiptap";
 export const CONTENT_TEXT_LIMIT = 100_000;
 const schema = getSchema(contentExtensions());
 const nullableString = z.string().max(2000).nullable().optional();
+const textAlign = z.enum(["left", "center", "right"]).nullable().optional();
 const nodeAttributes: Record<string, z.ZodType> = {
-  heading: z.strictObject({ level: z.number().int().min(1).max(6) }),
+  paragraph: z.strictObject({ textAlign }),
+  heading: z.strictObject({ level: z.number().int().min(1).max(6), textAlign }),
+  callout: z.strictObject({ tone: z.string().refine(isContentColor).optional() }),
   orderedList: z.strictObject({
     start: z.number().int().min(1).max(1_000_000).optional(),
     type: z.enum(["1", "a", "A", "i", "I"]).nullable().optional(),
@@ -29,12 +33,17 @@ const nodeAttributes: Record<string, z.ZodType> = {
     height: z.number().int().min(1).max(10_000).nullable().optional(),
   }),
 };
-const cellAttributes = z.strictObject({
-  colspan: z.number().int().min(1).max(100).optional(),
-  rowspan: z.number().int().min(1).max(100).optional(),
-  colwidth: z.array(z.number().int().min(1).max(10_000)).max(100).nullable().optional(),
-  align: z.enum(["left", "center", "right"]).nullable().optional(),
-});
+const cellAttributes = z
+  .strictObject({
+    colspan: z.number().int().min(1).max(100).optional(),
+    rowspan: z.number().int().min(1).max(100).optional(),
+    colwidth: z.array(z.number().int().min(0).max(10_000)).max(100).nullable().optional(),
+    align: z.enum(["left", "center", "right"]).nullable().optional(),
+  })
+  .superRefine((cell, ctx) => {
+    if (cell.colwidth && cell.colwidth.length !== (cell.colspan ?? 1))
+      ctx.addIssue({ code: "custom", message: "单元格列宽与合并列数不一致。" });
+  });
 nodeAttributes.tableCell = cellAttributes;
 nodeAttributes.tableHeader = cellAttributes;
 const linkAttributes = z.strictObject({
@@ -49,13 +58,28 @@ const linkAttributes = z.strictObject({
 });
 const markSchema = z
   .strictObject({
-    type: z.enum(["bold", "italic", "strike", "underline", "code", "link"]),
+    type: z.enum([
+      "bold",
+      "italic",
+      "strike",
+      "underline",
+      "code",
+      "link",
+      "textStyle",
+      "highlight",
+    ]),
     attrs: z.record(z.string(), z.unknown()).optional(),
   })
   .superRefine((mark, ctx) => {
-    const result = (mark.type === "link" ? linkAttributes : z.strictObject({})).safeParse(
-      mark.attrs ?? {},
-    );
+    const attributes =
+      mark.type === "link"
+        ? linkAttributes
+        : mark.type === "textStyle"
+          ? z.strictObject({ color: z.string().refine(isTextColor).nullable().optional() })
+          : mark.type === "highlight"
+            ? z.strictObject({ color: z.string().refine(isHighlightColor).nullable().optional() })
+            : z.strictObject({});
+    const result = attributes.safeParse(mark.attrs ?? {});
     if (!result.success) ctx.addIssue({ code: "custom", message: "文字格式属性无效。" });
   });
 const nodeSchema: z.ZodType<JSONContent> = z.lazy(() =>
@@ -72,6 +96,7 @@ const nodeSchema: z.ZodType<JSONContent> = z.lazy(() =>
         "taskList",
         "taskItem",
         "blockquote",
+        "callout",
         "codeBlock",
         "horizontalRule",
         "hardBreak",
@@ -83,7 +108,7 @@ const nodeSchema: z.ZodType<JSONContent> = z.lazy(() =>
       ]),
       text: z.string().max(CONTENT_TEXT_LIMIT).optional(),
       attrs: z.record(z.string(), z.unknown()).optional(),
-      marks: z.array(markSchema).max(6).optional(),
+      marks: z.array(markSchema).max(8).optional(),
       content: z.array(nodeSchema).max(10_000).optional(),
     })
     .superRefine((node, ctx) => {
@@ -91,6 +116,8 @@ const nodeSchema: z.ZodType<JSONContent> = z.lazy(() =>
         ctx.addIssue({ code: "custom", message: "内容块属性无效。" });
       if (node.type !== "text" && node.text !== undefined)
         ctx.addIssue({ code: "custom", message: "非文字节点不能包含 text。" });
+      if (node.marks && new Set(node.marks.map((mark) => mark.type)).size !== node.marks.length)
+        ctx.addIssue({ code: "custom", message: "文字格式不能重复。" });
     }),
 );
 
@@ -140,6 +167,7 @@ export function documentText(document: JSONContent): string {
     "orderedList",
     "taskList",
     "blockquote",
+    "callout",
     "listItem",
     "taskItem",
     "tableCell",

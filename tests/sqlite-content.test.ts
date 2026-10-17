@@ -21,7 +21,7 @@ import { createRelease, getRelease, listReleases, updateRelease } from "../lib/c
 import { closeDatabase, getDatabase, writeTransaction } from "../lib/database";
 import { migrateDatabase } from "../lib/database/migrations";
 import { admin, friendLink, post } from "../lib/database/schema";
-import { serializeDocument, EMPTY_POST_CONTENT } from "../lib/posts/document";
+import { serializeDocument, EMPTY_POST_CONTENT, readDocument } from "../lib/posts/document";
 import {
   featuredPostSchema,
   postQuerySchema,
@@ -55,6 +55,7 @@ import {
   updateCategory,
   type TaxonomyActor,
 } from "../lib/taxonomy/service";
+import { richEditorDocument } from "./fixtures/editor-document";
 import { loginToken as login } from "./helpers/sqlite";
 
 let directory: string;
@@ -277,6 +278,34 @@ void test("文章生命周期：空白草稿、发布锁定 slug、精选与版�
     code: "VERSION_CONFLICT",
   });
   assert.equal((await getPost(changed.id, actor)).version, featured.version);
+});
+
+void test("编辑器新增正文：草稿保存、重新载入、发布与过期保存不丢格式", async () => {
+  const input = postSchema.parse({
+    title: "编辑器格式回归",
+    slug: null,
+    categoryId: null,
+    tagIds: [],
+    content: serializeDocument(richEditorDocument),
+    status: "draft",
+  });
+  const draft = await createPost(input, actor);
+  const reopened = await getPost(draft.id, actor);
+  assert.deepEqual(readDocument(reopened.content), readDocument(input.content));
+  const category = await createCategory({ name: "编辑器测试分类", color: "#123456" }, actor);
+  const publishInput = updatePostSchema.parse({
+    ...input,
+    slug: "rich-editor-roundtrip",
+    categoryId: category.id,
+    status: "published",
+    version: reopened.version,
+  });
+  const saved = await updatePost(reopened.id, publishInput, actor);
+  const publicPost = await request(() => getPublicPost("rich-editor-roundtrip"));
+  assert.ok(publicPost);
+  assert.deepEqual(readDocument(publicPost.content), readDocument(input.content));
+  await assert.rejects(updatePost(reopened.id, publishInput, actor), { code: "VERSION_CONFLICT" });
+  assert.equal((await getPost(saved.id, actor)).content, saved.content);
 });
 
 void test("文章搜索：正文纯文本、摘要、分类标签、字面 %_ 和 Unicode 大小写", async () => {

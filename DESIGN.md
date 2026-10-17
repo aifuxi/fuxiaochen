@@ -514,6 +514,10 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 前台文章正文与后台 Tiptap 正文共用 `app/article-prose.css` 的 `article-prose`，独立于界面 body、文章主标题与工具栏。字体使用共享 sans，普通段落、列表内容与表格数据使用 foreground-reading；标题、粗体、表头与代码文字使用 foreground，引用使用 caption，普通列表序号和圆点使用 metadata。语法高亮继续使用共享 syntax 颜色；任务 checkbox 保持原有状态配色。采用 Hugging Face 的正文与强调层级，配色适配本次共享冷灰蓝深浅色背景。正文在桌面和手机使用同一比例：`1.05rem`、无单位行高 `1.75`，强调字重 600。不修改根字号；字号使用 rem，随内容变化的留白使用 em。
 
+2026-10-17 的文章编辑器是明确的编辑场景变体：继续共享字体、颜色和内容语义，字号与块间距按后台场景覆盖为 16px / 26px 等写作密度；下表继续规定前台阅读基线，不把编辑变体推广到前台或其他页面。
+
+正文新增预设灰、红、橙、黄、绿、蓝、紫色及相应背景高亮。运行时角色 `--article-*` 在 `app/semi-theme-tokens.css` 绑定现有 caption、danger-text、syntax-number、success-text、focus-text 和 syntax-keyword；黄色深色用 Semi yellow-4，浅色用 yellow-2。背景从对应前景色混合透明色派生，灰色使用 fill-0。持久化只接受这些角色，不接受任意 CSS。主动设置的文字色由嵌套强调与链接继承，默认格式仍沿用原有层级。高亮块共享这些角色，文字保持 foreground-reading，不另设场景色盘。
+
 | 正文元素         | 字号     | 无单位行高 | 上／下外距     |
 | ---------------- | -------- | ---------- | -------------- |
 | H1               | 1.5rem   | 1.3333     | 2em／1.7rem    |

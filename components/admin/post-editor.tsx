@@ -1,10 +1,11 @@
 "use client";
-import { ArrowLeft, Maximize2, Minimize2, Settings2, X } from "lucide-react";
+import { ArrowLeft, ListTree, Settings2, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -30,7 +31,10 @@ import { adminPostReturnTo } from "@/lib/admin/navigation";
 import { EMPTY_POST_CONTENT } from "@/lib/posts/document";
 import { postSchema, postStatusLabels, type PostDetail, type PostStatus } from "@/lib/posts/schema";
 
+import type { EditorTools } from "./editor/block-editor";
+
 import { useAdminWorkspace } from "./admin-context";
+import { EditorOutline } from "./editor/outline";
 import { useNavigationGuard } from "./navigation-guard";
 import { PostQueryStatus } from "./post-status";
 import { TaxonomyStatus } from "./taxonomy-status";
@@ -42,6 +46,10 @@ const BlockEditor = dynamic(
     ssr: false,
     loading: () => <output>正在载入编辑器…</output>,
   },
+);
+const EditorDocumentMenu = dynamic(
+  () => import("./editor/block-editor").then((module) => module.EditorDocumentMenu),
+  { ssr: false },
 );
 
 type Draft = {
@@ -133,8 +141,6 @@ function PostEditorForm({
     taxonomyPending,
     postPending,
     savePost,
-    writingFocused,
-    setWritingFocused,
   } = useAdminWorkspace();
   const [savedPost, setSavedPost] = useState(initial);
   useEffect(() => {
@@ -150,17 +156,22 @@ function PostEditorForm({
   const [conflict, setConflict] = useState(false);
   const [confirmReload, setConfirmReload] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [docked, setDocked] = useState(false);
+  const [tools, setTools] = useState<EditorTools | null>(null);
+  const [outlineOpen, setOutlineOpen] = useState(false);
   const [focusField, setFocusField] = useState<string | null>(null);
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLDivElement>(null);
   const titleInput = useRef<HTMLTextAreaElement>(null);
   const settingsTrigger = useRef<HTMLButtonElement>(null);
+  const outlineTrigger = useRef<HTMLButtonElement>(null);
+  const outlineTarget = useRef<string | null>(null);
+  const outlineFrame = useRef(0);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
     return () => {
       mounted.current = false;
+      cancelAnimationFrame(outlineFrame.current);
     };
   }, []);
   const resizeTitle = useCallback(() => {
@@ -170,20 +181,17 @@ function PostEditorForm({
     input.style.height = `${input.scrollHeight}px`;
   }, []);
   useEffect(() => {
-    const page = host.current;
     const main = canvas.current;
-    if (!page || !main) return undefined;
+    if (!main) return undefined;
     let canvasWidth = -1;
     const observer = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target === page) setDocked(entry.contentRect.width >= 1100);
         if (entry.target === main && entry.contentRect.width !== canvasWidth) {
           canvasWidth = entry.contentRect.width;
           resizeTitle();
         }
       }
     });
-    observer.observe(page);
     observer.observe(main);
     return () => observer.disconnect();
   }, [resizeTitle]);
@@ -217,7 +225,8 @@ function PostEditorForm({
     setSavedDraft((current) => ({ ...current, content: value }));
   }, []);
   const taxonomyDisabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
-  const disabled = postPending || taxonomyDisabled;
+  const disabled =
+    postPending || taxonomyDisabled || !tools?.editor || Boolean(tools?.error) || tools.busy;
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
   const guardNavigation = useNavigationGuard(dirty, postPending);
   const settingsError = settingsKeys.some((key) => Boolean(fieldErrors[key]));
@@ -227,24 +236,22 @@ function PostEditorForm({
     if (postPending) return;
     setSettingsOpen(false);
     setFocusField(null);
-    if (docked) settingsTrigger.current?.focus();
-  }, [docked, postPending]);
+  }, [postPending]);
   useEffect(() => {
-    if (!docked || !settingsOpen) return undefined;
-    const closeOnEscape = (event: KeyboardEvent) => {
+    const saveShortcut = (event: KeyboardEvent) => {
       if (
-        event.key === "Escape" &&
-        !event.defaultPrevented &&
-        event.target instanceof Element &&
-        event.target.closest("#post-settings-panel")
+        (event.metaKey || event.ctrlKey) &&
+        event.key.toLowerCase() === "s" &&
+        !event.isComposing
       ) {
         event.preventDefault();
-        closeSettings();
+        if (!disabled)
+          document.querySelector<HTMLFormElement>("#article-writing-form")?.requestSubmit();
       }
     };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [docked, settingsOpen, closeSettings]);
+    document.addEventListener("keydown", saveShortcut);
+    return () => document.removeEventListener("keydown", saveShortcut);
+  }, [disabled]);
   const revealErrors = (fields: Record<string, string[]>) => {
     setFieldErrors(fields);
     const setting = Object.keys(fields).find((key) => settingsKeys.includes(key));
@@ -311,12 +318,12 @@ function PostEditorForm({
   const settingsFields = (
     <div className="post-editor-settings-fields">
       <TaxonomyStatus />
-      {!docked && error && (
+      {error && (
         <p className="admin-post-error" role="alert">
           {error}
         </p>
       )}
-      {!docked && conflict && (
+      {conflict && (
         <Button
           type="button"
           variant="secondary"
@@ -521,9 +528,9 @@ function PostEditorForm({
       </section>
     </div>
   );
-  const settingsHeader = (drawer: boolean) => (
+  const settingsHeader = () => (
     <div className="post-editor-settings-heading">
-      {drawer ? <DialogTitle>文章设置</DialogTitle> : <h2 id="post-settings-title">文章设置</h2>}
+      <DialogTitle>文章设置</DialogTitle>
       <Button
         type="button"
         variant="ghost"
@@ -559,14 +566,38 @@ function PostEditorForm({
               <ArrowLeft size={18} aria-hidden="true" />
               <span className="post-writing-back-label">返回</span>
             </Button>
-            <output className="post-writing-save-status" aria-live="polite">
-              {postPending ? "保存中" : dirty ? "未保存" : "已保存"}
-            </output>
+            <div className="post-writing-document-info">
+              <span className="post-writing-document-name" title={title || "未命名草稿"}>
+                {title || "未命名草稿"}
+              </span>
+              <output className="post-writing-save-status" aria-live="polite">
+                {postPending ? "保存中" : dirty ? "未保存" : savedPost ? "已保存" : "新草稿"}
+              </output>
+            </div>
           </div>
           <div className="post-writing-bar-actions">
             <Button
               type="button"
+              variant="ghost"
+              size="compact"
+              ref={outlineTrigger}
+              className="post-outline-trigger"
+              aria-label="打开文档目录"
+              aria-expanded={outlineOpen}
+              disabled={postPending}
+              onClick={() => setOutlineOpen(true)}
+            >
+              <ListTree size={18} />
+            </Button>
+            <ThemeToggle disabled={postPending} />
+            <EditorDocumentMenu
+              tools={tools}
+              disabled={postPending || !tools?.editor || tools.busy}
+            />
+            <Button
+              type="button"
               ref={settingsTrigger}
+              aria-label="文章设置"
               variant="ghost"
               size="compact"
               aria-expanded={settingsOpen}
@@ -575,7 +606,7 @@ function PostEditorForm({
               onClick={() => (settingsOpen ? closeSettings() : setSettingsOpen(true))}
             >
               <Settings2 size={16} aria-hidden="true" />
-              文章设置
+              <span className="post-settings-label">文章设置</span>
               {(settingsError || settingsIncomplete) && (
                 <span
                   className={
@@ -585,25 +616,6 @@ function PostEditorForm({
                   {settingsError ? "有错误" : "待完善"}
                 </span>
               )}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="compact"
-              aria-pressed={writingFocused}
-              disabled={postPending}
-              aria-label={writingFocused ? "退出专注模式" : "进入专注模式"}
-              title={writingFocused ? "退出专注模式" : "进入专注模式"}
-              onClick={() => setWritingFocused(!writingFocused)}
-            >
-              {writingFocused ? (
-                <Minimize2 size={18} aria-hidden="true" />
-              ) : (
-                <Maximize2 size={18} aria-hidden="true" />
-              )}
-              <span className="post-writing-focus-label">
-                {writingFocused ? "退出专注" : "专注"}
-              </span>
             </Button>
             <Button type="submit" variant="primary" size="compact" disabled={disabled}>
               {saveLabel}
@@ -642,7 +654,10 @@ function PostEditorForm({
             </Button>
           </div>
         )}
-        <div className={`post-writing-layout ${docked && settingsOpen ? "has-settings" : ""}`}>
+        <div className="post-writing-layout">
+          <aside className="post-outline-sidebar">
+            <EditorOutline editor={tools?.editor ?? null} />
+          </aside>
           <div className="post-editor-main" ref={canvas}>
             <h1 className="sr-only">{savedPost ? "编辑文章" : "新建文章"}</h1>
             <label htmlFor="admin-post-title" className="sr-only">
@@ -662,6 +677,19 @@ function PostEditorForm({
               aria-describedby={fieldErrors.title ? "post-error-title" : undefined}
             />
             {fieldError("title")}
+            <div className="post-document-metadata">
+              <span>{status === "draft" ? "草稿" : "已发布"}</span>
+              {savedPost && (
+                <time dateTime={savedPost.updatedAt}>
+                  修改于{" "}
+                  {new Date(savedPost.updatedAt).toLocaleString("zh-CN", {
+                    timeZone: "Asia/Shanghai",
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </time>
+              )}
+            </div>
             <div id="admin-post-body-label" className="sr-only">
               正文内容
             </div>
@@ -669,26 +697,17 @@ function PostEditorForm({
               initialContent={initialBody}
               onChange={onContentChange}
               onReady={onContentReady}
+              onToolsReady={setTools}
               disabled={postPending}
               invalid={Boolean(fieldErrors.content)}
               describedBy={fieldErrors.content ? "post-error-content" : undefined}
             />
             {fieldError("content")}
           </div>
-          {docked && settingsOpen && (
-            <aside
-              id="post-settings-panel"
-              className="post-editor-settings"
-              aria-labelledby="post-settings-title"
-            >
-              {settingsHeader(false)}
-              {settingsFields}
-            </aside>
-          )}
         </div>
       </form>
       <Dialog
-        open={!docked && settingsOpen}
+        open={settingsOpen}
         onOpenChange={(open) => {
           if (!postPending) setSettingsOpen(open);
         }}
@@ -705,7 +724,7 @@ function PostEditorForm({
             focusField ? () => document.getElementById(fieldIds[focusField]) : undefined
           }
         >
-          {settingsHeader(true)}
+          {settingsHeader()}
           <DialogDescription className="sr-only">
             设置文章链接、分类、标签、摘要、精选和发布状态。
           </DialogDescription>
@@ -730,6 +749,50 @@ function PostEditorForm({
               {saveLabel}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={outlineOpen}
+        onOpenChange={setOutlineOpen}
+        onOpenChangeComplete={(open) => {
+          // 抽屉解除滚动锁后再跳转，避免关闭时恢复旧滚动位置。
+          if (!open && outlineTarget.current) {
+            const target = outlineTarget.current;
+            outlineTarget.current = null;
+            cancelAnimationFrame(outlineFrame.current);
+            // Base UI 1.8 的滚动锁延迟一个任务释放，等待下一次绘制后再定位。
+            outlineFrame.current = requestAnimationFrame(() => {
+              outlineFrame.current = requestAnimationFrame(() => {
+                document.getElementById(target)?.scrollIntoView({ block: "start" });
+              });
+            });
+          }
+        }}
+      >
+        <DialogContent
+          placement="right"
+          className="post-settings-drawer post-outline-drawer"
+          finalFocus={outlineTrigger}
+        >
+          <div className="post-editor-settings-heading">
+            <DialogTitle>文档目录</DialogTitle>
+            <Button
+              type="button"
+              variant="ghost"
+              aria-label="关闭文档目录"
+              onClick={() => setOutlineOpen(false)}
+            >
+              <X size={18} />
+            </Button>
+          </div>
+          <DialogDescription className="sr-only">跳转到文章中的各级标题。</DialogDescription>
+          <EditorOutline
+            editor={tools?.editor ?? null}
+            onNavigate={(id) => {
+              outlineTarget.current = id;
+              setOutlineOpen(false);
+            }}
+          />
         </DialogContent>
       </Dialog>
       <Dialog open={confirmReload} onOpenChange={setConfirmReload}>

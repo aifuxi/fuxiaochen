@@ -293,6 +293,21 @@
   --color-syntax-string: rgba(var(--semi-green-7), 1);
   --color-syntax-number: rgba(var(--semi-orange-7), 1);
   --color-syntax-function: rgba(var(--semi-blue-7), 1);
+  /* 正文预设色使用本站语义色，文档不持久化任意 CSS 或模式专属色值。 */
+  --article-gray: var(--color-caption);
+  --article-red: var(--color-danger-text);
+  --article-orange: var(--color-syntax-number);
+  --article-yellow: rgba(var(--semi-yellow-4), 1);
+  --article-green: var(--color-success-text);
+  --article-blue: var(--color-focus-text);
+  --article-purple: var(--color-syntax-keyword);
+  --article-gray-bg: var(--color-fill-0);
+  --article-red-bg: color-mix(in srgb, var(--article-red) 14%, transparent);
+  --article-orange-bg: color-mix(in srgb, var(--article-orange) 14%, transparent);
+  --article-yellow-bg: color-mix(in srgb, var(--article-yellow) 18%, transparent);
+  --article-green-bg: color-mix(in srgb, var(--article-green) 14%, transparent);
+  --article-blue-bg: color-mix(in srgb, var(--article-blue) 14%, transparent);
+  --article-purple-bg: color-mix(in srgb, var(--article-purple) 14%, transparent);
   --color-syntax-comment: var(--semi-color-text-2);
   --shadow-elevated: var(--semi-shadow-elevated);
   --shadow-button-solid: var(--semi-modern-button-solid-shadow);
@@ -307,6 +322,7 @@
 
 /* 模式覆盖留在同一主题根；Portal 继承相同的最终语义值。 */
 :root[data-theme="light"] {
+  --article-yellow: rgba(var(--semi-yellow-2), 1);
   --semi-black: 0, 0, 0;
   --semi-blue-0: 234, 245, 255;
   --semi-blue-1: 203, 231, 254;

@@ -13,16 +13,22 @@ import { uploadEditorImage } from "../use-media";
 export function EditorMediaPicker({
   onInsert,
   onClose,
+  initialAlt = "",
+  initialUrl = "",
+  finalFocus,
 }: {
   onInsert: (src: string, alt: string) => void;
   onClose: () => void;
+  initialAlt?: string;
+  initialUrl?: string;
+  finalFocus?: () => HTMLElement;
 }) {
   const { postPending } = useAdminWorkspace();
   const fileInput = useRef<HTMLInputElement>(null);
   const urlInput = useRef<HTMLInputElement>(null);
   const controller = useRef<AbortController | null>(null);
-  const [url, setUrl] = useState("");
-  const [alt, setAlt] = useState("");
+  const [url, setUrl] = useState(initialUrl);
+  const [alt, setAlt] = useState(initialAlt);
   const [file, setFile] = useState<File | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState("");
   const [busy, setBusy] = useState(false);
@@ -83,7 +89,7 @@ export function EditorMediaPicker({
         if (!open) close();
       }}
     >
-      <DialogContent className="post-media-picker" finalFocus={false}>
+      <DialogContent className="post-media-picker" finalFocus={finalFocus ?? false}>
         <DialogTitle>插入图片</DialogTitle>
         <DialogDescription>
           上传图片后直接插入正文，或粘贴图片 URL。移除正文图片不会删除原文件。

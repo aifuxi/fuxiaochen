@@ -146,6 +146,14 @@ export function NavigationGuardProvider({ children }: { children: ReactNode }) {
         link.href === location.href
       )
         return;
+      const destination = new URL(link.href);
+      // 目录只在当前文档内滚动，不会卸载编辑器，不能触发离开保护。
+      if (
+        destination.origin === location.origin &&
+        destination.pathname === location.pathname &&
+        destination.search === location.search
+      )
+        return;
       if (!status().dirty && !status().pending) return;
       event.preventDefault();
       event.stopPropagation();
