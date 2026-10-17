@@ -6,6 +6,32 @@
   overflow-wrap: anywhere;
 }
 
+.article-image-node {
+  display: inline-flex;
+  flex-direction: column;
+  max-width: 100%;
+  vertical-align: middle;
+}
+.article-image-viewport {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+}
+.article-prose .article-image-viewport > img {
+  display: block;
+  margin: 0;
+}
+.article-image-caption {
+  display: block;
+  margin-top: 8px;
+  color: var(--color-caption);
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
 .article-prose :where(mark) {
   background: var(--article-yellow-bg);
   color: inherit;

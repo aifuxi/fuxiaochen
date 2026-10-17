@@ -73,7 +73,12 @@ export const richEditorDocument: JSONContent = {
           content: [
             {
               type: "tableHeader",
-              attrs: { colspan: 2, rowspan: 1, colwidth: [180, 0] },
+              attrs: {
+                colspan: 2,
+                rowspan: 1,
+                colwidth: [180, 0],
+                backgroundColor: highlightColor("blue", true),
+              },
               content: [{ type: "paragraph", content: [{ type: "text", text: "合并表头" }] }],
             },
           ],
@@ -104,6 +109,8 @@ export const richEditorDocument: JSONContent = {
             alt: "缩放图片",
             width: 240,
             height: 180,
+            crop: { left: 0.1, top: 0.1, width: 0.8, height: 0.8 },
+            caption: "保存后保留的图片描述",
           },
         },
       ],

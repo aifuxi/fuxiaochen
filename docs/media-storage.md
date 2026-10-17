@@ -81,3 +81,9 @@ OSS CORS：AllowedOrigin 使用实际 `APP_ORIGIN`，AllowedMethod 为 PUT，All
 ## 验证范围
 
 本次实现与实际运行证据见[图片直传简化验证](engineering/media-direct-upload-verification.md)。真实 OSS 的 CORS、签名兼容性及公开域名访问需使用部署账号另行核对，不把模拟上传当作云端验证。
+
+### 编辑器真实 OSS 回归（2026-10-17）
+
+本轮在现有 `localhost:3000` 授权来源使用 `/Users/chen/xxx/test-resources` 的两个 JPG 完成真实签名、浏览器 PUT 和公开图片加载，原图均为 1024×1024；替换成功、撤销恢复原 URL，裁剪／图注／缩放后保存重开及前台读取也已验证。没有修改 Bucket 权限、CORS 或凭证，也没有自动删除生成对象。对象标识为 `5abb297e-622e-4017-a05a-6d65831cbcce`、`29c05557-a861-4465-90df-bf9b0c1c4dd4`、`a67777ee-f469-4a6e-a6e7-935423304cce`，均位于现有 `media/` 前缀，保留供管理员按需处理。
+
+隔离环境不加载业务 `.env`，单独验证了签名失败、文件及替代文字保留、重试错误和改用已上传 URL 继续编辑。自动媒体测试另覆盖 OSS PUT 失败后重试成功与取消；这两类证据不能替代真实断网恢复、上传中取消或生产域名 CORS 验证。详见[编辑器完整对齐验收](engineering/feishu-editor-verification.md#完整交互对齐复查2026-10-18)。

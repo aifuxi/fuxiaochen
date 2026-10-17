@@ -2,6 +2,8 @@
 @import "./article-prose.css";
 @import "./semi-theme-tokens.css";
 @import "./component-skin.css";
+/* Menu 与 ContextMenu 共用全局皮肤，固定从根样式加载，避免路由分包遗漏。 */
+@import "../components/ui/menu.css";
 
 /* 组件视觉由共享皮肤集中维护，页面继续只定义布局。 */
 

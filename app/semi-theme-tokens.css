@@ -308,6 +308,25 @@
   --article-green-bg: color-mix(in srgb, var(--article-green) 14%, transparent);
   --article-blue-bg: color-mix(in srgb, var(--article-blue) 14%, transparent);
   --article-purple-bg: color-mix(in srgb, var(--article-purple) 14%, transparent);
+  --article-gray-bg-strong: color-mix(in srgb, var(--article-gray) 38%, var(--color-background));
+  --article-red-bg-strong: color-mix(in srgb, var(--article-red) 38%, var(--color-background));
+  --article-orange-bg-strong: color-mix(
+    in srgb,
+    var(--article-orange) 38%,
+    var(--color-background)
+  );
+  --article-yellow-bg-strong: color-mix(
+    in srgb,
+    var(--article-yellow) 45%,
+    var(--color-background)
+  );
+  --article-green-bg-strong: color-mix(in srgb, var(--article-green) 38%, var(--color-background));
+  --article-blue-bg-strong: color-mix(in srgb, var(--article-blue) 38%, var(--color-background));
+  --article-purple-bg-strong: color-mix(
+    in srgb,
+    var(--article-purple) 38%,
+    var(--color-background)
+  );
   --color-syntax-comment: var(--semi-color-text-2);
   --shadow-elevated: var(--semi-shadow-elevated);
   --shadow-button-solid: var(--semi-modern-button-solid-shadow);

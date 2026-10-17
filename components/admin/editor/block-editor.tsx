@@ -3,6 +3,7 @@
 import type { Editor } from "@tiptap/core";
 import type { EditorState } from "@tiptap/pm/state";
 
+import { posToDOMRect } from "@tiptap/core";
 import DragHandle from "@tiptap/extension-drag-handle-react";
 import { closeHistory } from "@tiptap/pm/history";
 import { NodeSelection } from "@tiptap/pm/state";
@@ -27,6 +28,13 @@ import {
   Undo2,
   Redo2,
   FileInput,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Crop,
+  MessageSquareText,
+  RotateCcw,
+  Grid2X2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
@@ -34,6 +42,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
+import { Popover, PopoverContent, PopoverTitle } from "@/components/ui/popover";
 import { contentExtensions } from "@/lib/posts/content-extensions";
 import { safeContentUrl } from "@/lib/posts/content-url";
 import {
@@ -44,23 +53,19 @@ import {
   draftContentSchema,
   postContentSchema,
 } from "@/lib/posts/document";
+import { IMAGE_ACTION_META, IMAGE_UI_META, boundedImageSize } from "@/lib/posts/image-layout";
 import { markdownDocument } from "@/lib/posts/markdown-document";
 import { isImageParagraph } from "@/lib/posts/prose";
 
 import { EditorCodeBlock } from "./code-block";
 import { blockTypeName, insertActions, selectedBlock } from "./editor-commands";
-import {
-  AlignmentMenu,
-  BlockMenu,
-  ColorMenu,
-  CommandMenu,
-  TableMenu,
-  TablePicker,
-} from "./editor-menus";
+import { AlignmentMenu, BlockMenu, ColorMenu, CommandMenu, TablePicker } from "./editor-menus";
+import { EditorImage } from "./image-view";
 import { MarkdownImportDialog } from "./markdown-import-dialog";
 import { EditorMediaPicker } from "./media-picker";
 import { OutlineAnchors } from "./outline";
 import { createSlashExtension, slashKey } from "./slash-menu";
+import { TableControls, TableTools } from "./table-controls";
 import "./editor.css";
 
 export type EditorTools = {
@@ -81,7 +86,12 @@ type Props = {
 
 // 插件配置保持引用稳定，保存与主题切换不能重新注册插件或关闭建议菜单。
 const dragPosition = { placement: "left-start", strategy: "absolute" } as const;
-const bubblePosition = { placement: "top", offset: 8 } as const;
+const bubblePosition = {
+  placement: "top",
+  offset: 8,
+  flip: { padding: { top: 80, bottom: 12, left: 12, right: 12 } },
+  shift: { padding: { top: 80, bottom: 12, left: 12, right: 12 } },
+} as const;
 const emptyPosition = {
   placement: "left",
   offset: 8,
@@ -175,6 +185,26 @@ export function BlockEditor({
   const host = useRef<HTMLDivElement>(null);
   const hovered = useRef<number | null>(null);
   const emptyMenuOpen = useRef(false);
+  const blockMenuOpen = useRef(false);
+  const [imageEditing, setImageEditing] = useState(false);
+  const [writingBarHeight, setWritingBarHeight] = useState(64);
+  const floatingPosition = useMemo(
+    () => ({
+      ...bubblePosition,
+      flip: { padding: { top: writingBarHeight + 12, bottom: 12, left: 12, right: 12 } },
+      shift: { padding: { top: writingBarHeight + 12, bottom: 12, left: 12, right: 12 } },
+    }),
+    [writingBarHeight],
+  );
+  useEffect(() => {
+    const bar = document.querySelector(".post-writing-bar");
+    if (!bar) return undefined;
+    const observer = new ResizeObserver(([entry]) =>
+      setWritingBarHeight(entry.target.getBoundingClientRect().height),
+    );
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
   const [hoveredBlock, setHoveredBlock] = useState<{
     pos: number;
     node: Editor["state"]["doc"];
@@ -225,7 +255,7 @@ export function BlockEditor({
   const handlers = useMemo(() => ({ image: openImage, table: openTable }), [openImage, openTable]);
   const extensions = useMemo(
     () => [
-      ...contentExtensions({ codeBlock: EditorCodeBlock, editable: true }),
+      ...contentExtensions({ codeBlock: EditorCodeBlock, image: EditorImage, editable: true }),
       OutlineAnchors,
       createSlashExtension(handlers),
     ],
@@ -251,6 +281,8 @@ export function BlockEditor({
             underline: instance.isActive("underline"),
             code: instance.isActive("code"),
             link: instance.isActive("link"),
+            imageAlignment: instance.getAttributes("paragraph").textAlign ?? "left",
+            imageCropped: Boolean(instance.getAttributes("image").crop),
             count: documentText(instance.getJSON()).length,
             block: selectedBlock(instance),
           }
@@ -274,7 +306,46 @@ export function BlockEditor({
       else onChange(content);
     }
   }, [editor, initial.error, onChange, onReady]);
-  const busy = Boolean(image || table || link || alt || size || importPosition !== null);
+  useEffect(() => {
+    if (!editor) return undefined;
+    const sync = ({ transaction }: { transaction: EditorState["tr"] }) => {
+      const active = transaction.getMeta(IMAGE_UI_META);
+      if (active !== undefined) setImageEditing(Boolean(active));
+    };
+    editor.on("transaction", sync);
+    return () => {
+      editor.off("transaction", sync);
+    };
+  }, [editor]);
+  const busy = Boolean(
+    image || table || link || alt || size || importPosition !== null || imageEditing,
+  );
+  useEffect(() => {
+    if (!editor) return undefined;
+    // 非模态图片编辑结束时选区可以完全不变；显式刷新可见性，不伪造正文事务。
+    const frame = requestAnimationFrame(() => {
+      if (editor.isDestroyed) return;
+      const selection = editor.state.selection;
+      const active =
+        busy || blockMenuOpen.current
+          ? null
+          : editor.isActive("image")
+            ? "image-context-bubble"
+            : selection instanceof CellSelection
+              ? "table-context-bubble"
+              : !selection.empty &&
+                  !(selection instanceof NodeSelection) &&
+                  !editor.isActive("codeBlock")
+                ? "text-format-bubble"
+                : null;
+      let tr = editor.state.tr;
+      for (const key of ["image-context-bubble", "table-context-bubble", "text-format-bubble"])
+        tr = tr.setMeta(key, key === active ? "show" : "hide");
+      editor.view.dispatch(tr);
+      if (active) editor.view.dispatch(editor.state.tr.setMeta(active, "updatePosition"));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [editor, busy]);
   useEffect(() => {
     onToolsReady({
       editor,
@@ -362,22 +433,25 @@ export function BlockEditor({
       },
     },
   ];
-  const formatButtons = formats.map((item) => (
-    <Button
-      key={item.name}
-      type="button"
-      variant="ghost"
-      className="post-editor-icon"
-      title={item.name}
-      aria-label={item.name}
-      aria-pressed={item.active}
-      disabled={disabled}
-      onMouseDown={(event) => event.preventDefault()}
-      onClick={item.run}
-    >
-      <item.icon size={17} aria-hidden="true" />
-    </Button>
-  ));
+  const formatOrder = ["加粗", "删除线", "斜体", "下划线", "链接", "行内代码"];
+  const formatButtons = formats
+    .toSorted((a, b) => formatOrder.indexOf(a.name) - formatOrder.indexOf(b.name))
+    .map((item) => (
+      <Button
+        key={item.name}
+        type="button"
+        variant="ghost"
+        className="post-editor-icon"
+        title={item.name}
+        aria-label={item.name}
+        aria-pressed={item.active}
+        disabled={disabled}
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={item.run}
+      >
+        <item.icon size={17} aria-hidden="true" />
+      </Button>
+    ));
   const hoveredNode =
     hoveredBlock && hoveredBlock.pos >= 0 && hoveredBlock.pos < editor.state.doc.content.size
       ? editor.state.doc.nodeAt(hoveredBlock.pos)
@@ -395,6 +469,9 @@ export function BlockEditor({
         disabled={disabled}
         handlers={handlers}
         onStatus={setStatus}
+        onOpenChange={(open) => {
+          blockMenuOpen.current = open;
+        }}
         context
       >
         <EditorContent editor={editor} className="post-editor-canvas" />
@@ -422,6 +499,9 @@ export function BlockEditor({
               handlers={handlers}
               position={() => hovered.current ?? selectedBlock(editor)}
               onStatus={setStatus}
+              onOpenChange={(open) => {
+                blockMenuOpen.current = open;
+              }}
             >
               <TypeIcon size={15} />
             </BlockMenu>
@@ -436,6 +516,8 @@ export function BlockEditor({
         shouldShow={({ editor: instance, state: current }) =>
           instance.isEditable &&
           !busy &&
+          !blockMenuOpen.current &&
+          !instance.isActive("table") &&
           (emptyMenuOpen.current ||
             (instance.isFocused &&
               current.selection.empty &&
@@ -456,13 +538,15 @@ export function BlockEditor({
       </FloatingMenu>
       <BubbleMenu
         editor={editor}
+        updateDelay={0}
         pluginKey="text-format-bubble"
         appendTo={() => host.current!}
         className="post-editor-bubble"
-        options={bubblePosition}
+        options={floatingPosition}
         shouldShow={({ editor: instance, from, to }) =>
           instance.isEditable &&
           !busy &&
+          !blockMenuOpen.current &&
           from !== to &&
           !(instance.state.selection instanceof NodeSelection) &&
           !(instance.state.selection instanceof CellSelection) &&
@@ -474,123 +558,247 @@ export function BlockEditor({
           <CommandMenu editor={editor} disabled={disabled} handlers={handlers} convert>
             <Type size={17} />
           </CommandMenu>
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
           <AlignmentMenu editor={editor} disabled={disabled} />
           <span className="post-editor-toolbar-divider" aria-hidden="true" />
           {formatButtons}
           <ColorMenu editor={editor} disabled={disabled} />
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-editor-icon"
-            aria-label="清除文字格式"
-            title="清除文字格式"
-            disabled={disabled}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => editor.chain().focus().unsetAllMarks().run()}
-          >
-            <Eraser size={17} />
-          </Button>
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
+          <Menu>
+            <MenuTrigger
+              disabled={disabled}
+              aria-label="更多文字操作"
+              title="更多文字操作"
+              render={<Button type="button" variant="ghost" className="post-editor-icon" />}
+            >
+              <Grid2X2 size={18} />
+            </MenuTrigger>
+            <MenuContent
+              className="post-editor-command-menu"
+              finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+            >
+              <MenuItem
+                disabled={disabled}
+                onClick={() => editor.chain().focus().unsetAllMarks().run()}
+              >
+                <Eraser size={16} />
+                清除文字格式
+              </MenuItem>
+            </MenuContent>
+          </Menu>
         </div>
       </BubbleMenu>
       <BubbleMenu
         editor={editor}
+        updateDelay={0}
         pluginKey="table-context-bubble"
         appendTo={() => host.current!}
         className="post-editor-bubble"
-        options={bubblePosition}
+        options={floatingPosition}
         shouldShow={({ editor: instance }) =>
           instance.isEditable &&
           !busy &&
+          !blockMenuOpen.current &&
           instance.isActive("table") &&
-          (instance.state.selection.empty || instance.state.selection instanceof CellSelection)
+          instance.state.selection instanceof CellSelection
         }
       >
-        <div role="toolbar" aria-label="表格工具">
-          <TableMenu editor={editor} disabled={disabled} />
+        <TableTools editor={editor} disabled={disabled}>
+          <CommandMenu editor={editor} disabled={disabled} handlers={handlers} convert>
+            <Type size={17} />
+          </CommandMenu>
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
           <AlignmentMenu editor={editor} disabled={disabled} />
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
+          {formatButtons.filter((button) => button.key !== "链接")}
           <ColorMenu editor={editor} disabled={disabled} />
-        </div>
+        </TableTools>
       </BubbleMenu>
+      <TableControls editor={editor} host={host} disabled={disabled || busy} />
       <BubbleMenu
         editor={editor}
+        updateDelay={0}
         pluginKey="image-context-bubble"
         appendTo={() => host.current!}
         className="post-editor-bubble"
-        options={bubblePosition}
+        options={floatingPosition}
         shouldShow={({ editor: instance }) =>
-          instance.isEditable && !busy && instance.isActive("image")
+          instance.isEditable && !busy && !blockMenuOpen.current && instance.isActive("image")
         }
       >
         <div role="toolbar" aria-label="图片工具">
           <Button
             type="button"
             variant="ghost"
-            className="post-editor-insert"
+            className="post-editor-icon"
             disabled={disabled}
-            onClick={() => openImage(editor)}
-          >
-            <ImagePlus size={16} />
-            替换图片
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-editor-insert"
-            disabled={disabled}
-            onClick={() => {
-              const position = editor.state.selection.from;
-              const element = editor.view.nodeDOM(position);
-              const imageElement =
-                element instanceof HTMLElement ? element.querySelector("img") : null;
-              const attrs = editor.getAttributes("image");
-              const width = imageElement?.offsetWidth || attrs.width || 240;
-              const ratio =
-                imageElement?.naturalWidth && imageElement.naturalHeight
-                  ? imageElement.naturalWidth / imageElement.naturalHeight
-                  : width / (attrs.height || width);
-              setSizeError("");
-              setSize({ position, width: String(width), ratio });
-            }}
-          >
-            图片尺寸
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-editor-insert"
-            disabled={disabled}
+            aria-label="裁剪图片"
+            title="裁剪图片"
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() =>
-              setAlt({
-                position: editor.state.selection.from,
-                value: editor.getAttributes("image").alt ?? "",
-              })
+              editor.view.dispatch(
+                editor.state.tr.setMeta(IMAGE_ACTION_META, {
+                  position: editor.state.selection.from,
+                  action: "crop",
+                }),
+              )
             }
           >
-            替代文字
+            <Crop size={18} />
           </Button>
           <Button
             type="button"
             variant="ghost"
             className="post-editor-icon"
             disabled={disabled}
-            aria-label="恢复图片原始尺寸"
+            aria-label="图片描述"
+            title="图片描述"
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() =>
-              editor.chain().focus().updateAttributes("image", { width: null, height: null }).run()
+              editor.view.dispatch(
+                editor.state.tr.setMeta(IMAGE_ACTION_META, {
+                  position: editor.state.selection.from,
+                  action: "caption",
+                }),
+              )
             }
           >
-            <Scan size={17} />
+            <MessageSquareText size={18} />
           </Button>
-          <AlignmentMenu editor={editor} disabled={disabled} />
-          <Button
-            type="button"
-            variant="ghost"
-            className="post-editor-icon"
-            disabled={disabled}
-            aria-label="删除图片"
-            onClick={() => editor.chain().focus().deleteSelection().run()}
-          >
-            <Trash2 size={17} />
-          </Button>
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
+          {[
+            { value: "left", label: "图片左对齐", icon: AlignLeft },
+            { value: "center", label: "图片居中", icon: AlignCenter },
+            { value: "right", label: "图片右对齐", icon: AlignRight },
+          ].map((item) => (
+            <Button
+              key={item.value}
+              type="button"
+              variant="ghost"
+              className="post-editor-icon"
+              disabled={disabled}
+              aria-label={item.label}
+              title={item.label}
+              aria-pressed={state.imageAlignment === item.value}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => editor.chain().focus().setTextAlign(item.value).run()}
+            >
+              <item.icon size={18} />
+            </Button>
+          ))}
+          {state.imageCropped && (
+            <Button
+              type="button"
+              variant="ghost"
+              className="post-editor-icon"
+              disabled={disabled}
+              aria-label="恢复裁剪"
+              title="恢复裁剪"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                const attrs = editor.getAttributes("image");
+                const crop = attrs.crop;
+                editor
+                  .chain()
+                  .focus()
+                  .updateAttributes("image", {
+                    crop: null,
+                    ...(attrs.width && attrs.height && crop
+                      ? boundedImageSize(attrs.width / crop.width, attrs.height / crop.height)
+                      : { width: null, height: null }),
+                  })
+                  .run();
+              }}
+            >
+              <RotateCcw size={18} />
+            </Button>
+          )}
+          <span className="post-editor-toolbar-divider" aria-hidden="true" />
+          <Menu>
+            <MenuTrigger
+              disabled={disabled}
+              aria-label="更多图片操作"
+              title="更多图片操作"
+              render={<Button type="button" variant="ghost" className="post-editor-icon" />}
+            >
+              <Ellipsis size={18} />
+            </MenuTrigger>
+            <MenuContent
+              className="post-editor-command-menu"
+              finalFocus={(method) => (method === "keyboard" ? editor.view.dom : false)}
+            >
+              <MenuItem disabled={disabled} onClick={() => openImage(editor)}>
+                <ImagePlus size={16} />
+                替换图片
+              </MenuItem>
+              <MenuItem
+                disabled={disabled}
+                onClick={() => {
+                  const position = editor.state.selection.from;
+                  const element = editor.view.nodeDOM(position);
+                  const imageElement =
+                    element instanceof HTMLElement ? element.querySelector("img") : null;
+                  const attrs = editor.getAttributes("image");
+                  const width = imageElement?.offsetWidth || attrs.width || 240;
+                  const ratio =
+                    attrs.width && attrs.height
+                      ? attrs.width / attrs.height
+                      : imageElement?.naturalWidth && imageElement.naturalHeight
+                        ? imageElement.naturalWidth / imageElement.naturalHeight
+                        : 1;
+                  setSizeError("");
+                  setSize({ position, width: String(width), ratio });
+                }}
+              >
+                <Scan size={16} />
+                图片尺寸
+              </MenuItem>
+              <MenuItem
+                disabled={disabled}
+                onClick={() =>
+                  setAlt({
+                    position: editor.state.selection.from,
+                    value: editor.getAttributes("image").alt ?? "",
+                  })
+                }
+              >
+                <Type size={16} />
+                替代文字
+              </MenuItem>
+              <MenuItem
+                disabled={disabled}
+                onClick={() => {
+                  const attrs = editor.getAttributes("image");
+                  const node = editor.view.nodeDOM(editor.state.selection.from);
+                  const img =
+                    node instanceof HTMLElement
+                      ? node.querySelector<HTMLImageElement>("img[src]")
+                      : null;
+                  const dimensions =
+                    attrs.crop && img?.naturalWidth && img.naturalHeight
+                      ? boundedImageSize(
+                          img.naturalWidth * attrs.crop.width,
+                          img.naturalHeight * attrs.crop.height,
+                        )
+                      : attrs.crop
+                        ? { width: attrs.width, height: attrs.height }
+                        : { width: null, height: null };
+                  editor.chain().focus().updateAttributes("image", dimensions).run();
+                }}
+              >
+                <Scan size={16} />
+                恢复图片原始尺寸
+              </MenuItem>
+              <MenuItem
+                disabled={disabled}
+                destructive
+                onClick={() => editor.chain().focus().deleteSelection().run()}
+              >
+                <Trash2 size={16} />
+                删除图片
+              </MenuItem>
+            </MenuContent>
+          </Menu>
         </div>
       </BubbleMenu>
       <span id="post-editor-help" className="sr-only">
@@ -650,13 +858,18 @@ export function BlockEditor({
             if (image.insertAt !== null)
               chain.insertContentAt(image.insertAt, {
                 type: "paragraph",
+                attrs: { textAlign: "center" },
                 content: [{ type: "image", attrs }],
               });
             else if (image.replace)
               chain
                 .setNodeSelection(image.from)
-                .updateAttributes("image", { ...attrs, width: null, height: null });
-            else chain.setTextSelection({ from: image.from, to: image.to }).setImage(attrs);
+                .updateAttributes("image", { ...attrs, width: null, height: null, crop: null });
+            else
+              chain
+                .setTextSelection({ from: image.from, to: image.to })
+                .setImage(attrs)
+                .setTextAlign("center");
             const inserted = chain
               .command(({ tr }) => {
                 draftContentSchema.parse(serializeDocument(tr.doc.toJSON()));
@@ -670,6 +883,9 @@ export function BlockEditor({
       )}
       {table && (
         <TablePicker
+          anchor={{
+            getBoundingClientRect: () => posToDOMRect(editor.view, table.position, table.position),
+          }}
           disabled={disabled}
           finalFocus={() => editor.view.dom}
           onClose={closeTable}
@@ -699,7 +915,7 @@ export function BlockEditor({
           }}
         />
       )}
-      <Dialog
+      <Popover
         open={link !== null}
         onOpenChange={(open) => {
           if (!open) {
@@ -708,12 +924,26 @@ export function BlockEditor({
           }
         }}
       >
-        <DialogContent className="post-editor-link-dialog" finalFocus={() => editor.view.dom}>
-          <DialogTitle>编辑链接</DialogTitle>
-          <DialogDescription>填写链接地址；清空地址可移除链接。</DialogDescription>
-          <label className="post-editor-field" htmlFor="post-link-url">
-            链接地址
+        <PopoverContent
+          className="post-editor-link-popover"
+          side="bottom"
+          align="start"
+          sideOffset={8}
+          anchor={{
+            getBoundingClientRect: () =>
+              posToDOMRect(
+                editor.view,
+                link?.from ?? editor.state.selection.from,
+                link?.to ?? editor.state.selection.to,
+              ),
+          }}
+          finalFocus={() => editor.view.dom}
+        >
+          <PopoverTitle className="sr-only">编辑链接</PopoverTitle>
+          <div className="post-editor-link-row">
             <Input
+              aria-label="链接地址"
+              placeholder="粘贴或输入链接"
               id="post-link-url"
               value={link?.url ?? ""}
               maxLength={2000}
@@ -730,29 +960,17 @@ export function BlockEditor({
                 }
               }}
             />
-          </label>
+            <Button type="button" variant="primary" disabled={disabled} onClick={applyLink}>
+              确认
+            </Button>
+          </div>
           {linkError && (
             <p id="post-link-error" className="admin-post-error" role="alert">
               {linkError}
             </p>
           )}
-          <div className="admin-form-actions">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => {
-                setLink(null);
-                editor.commands.focus();
-              }}
-            >
-              取消
-            </Button>
-            <Button type="button" variant="primary" disabled={disabled} onClick={applyLink}>
-              应用
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        </PopoverContent>
+      </Popover>
       <Dialog
         open={alt !== null}
         onOpenChange={(open) => {

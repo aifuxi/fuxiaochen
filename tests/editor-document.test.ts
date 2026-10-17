@@ -2,15 +2,22 @@ import { getSchema, type JSONContent } from "@tiptap/core";
 import { history, undo, redo } from "@tiptap/pm/history";
 import { Node } from "@tiptap/pm/model";
 import { EditorState, TextSelection } from "@tiptap/pm/state";
+import { CellSelection, TableMap } from "@tiptap/pm/tables";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { blockTransaction } from "../components/admin/editor/editor-commands";
 import { headingEntries } from "../components/admin/editor/outline";
+import { insertTableAxis, selectTableAxis } from "../components/admin/editor/table-actions";
 import { ArticleContent } from "../components/frontend/article-content";
 import { contentExtensions } from "../lib/posts/content-extensions";
-import { CONTENT_COLORS, highlightColor, textColor } from "../lib/posts/content-palette";
+import {
+  CONTENT_BACKGROUNDS,
+  CONTENT_COLORS,
+  highlightColor,
+  textColor,
+} from "../lib/posts/content-palette";
 import {
   CONTENT_TEXT_LIMIT,
   documentText,
@@ -19,6 +26,7 @@ import {
   readDocument,
   serializeDocument,
 } from "../lib/posts/document";
+import { croppedImageStyle, boundedImageSize } from "../lib/posts/image-layout";
 import { markdownDocument } from "../lib/posts/markdown-document";
 import { tableColumns } from "../lib/posts/table-layout";
 import { applyTextAlignment } from "../lib/posts/text-alignment";
@@ -27,6 +35,195 @@ import { legacyEditorDocument, richEditorDocument } from "./fixtures/editor-docu
 const schema = getSchema(contentExtensions());
 const roundtrip = (document: JSONContent) =>
   readDocument(postContentSchema.parse(serializeDocument(document)));
+
+void test("裁剪、图注及两档背景色保存后在前台保持一致", () => {
+  const document: JSONContent = {
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        attrs: { textAlign: "center" },
+        content: [
+          {
+            type: "image",
+            attrs: {
+              src: "https://images.example/crop.jpg",
+              alt: "原始替代文字",
+              width: 300,
+              height: 200,
+              caption: "裁剪后的图注",
+              crop: { left: 0.25, top: 0.1, width: 0.5, height: 0.8 },
+            },
+          },
+        ],
+      },
+      {
+        type: "table",
+        content: [
+          {
+            type: "tableRow",
+            content: CONTENT_BACKGROUNDS.map((item) => ({
+              type: "tableCell",
+              attrs: { backgroundColor: item.value },
+              content: [
+                {
+                  type: "paragraph",
+                  content: [
+                    {
+                      type: "text",
+                      text: item.name,
+                      marks: [{ type: "highlight", attrs: { color: item.value } }],
+                    },
+                  ],
+                },
+              ],
+            })),
+          },
+        ],
+      },
+    ],
+  };
+  const restored = roundtrip(document);
+  assert.deepEqual(roundtrip(restored), restored);
+  assert.match(documentText(restored), /原始替代文字\n裁剪后的图注/);
+  const html = renderToStaticMarkup(ArticleContent({ content: serializeDocument(restored) }));
+  assert.match(html, /data-article-image=""/);
+  assert.match(html, /aspect-ratio:300 \/ 200/);
+  assert.match(html, /width:200%/);
+  assert.match(html, /left:-50%/);
+  assert.match(html, /article-image-caption">裁剪后的图注/);
+  assert.match(html, /background-color:var\(--article-blue-bg-strong\)/);
+  assert.deepEqual(croppedImageStyle({ left: 0.25, top: 0.1, width: 0.5, height: 0.8 }), {
+    width: "200%",
+    height: "125%",
+    left: "-50%",
+    top: "-12.5%",
+  });
+});
+
+void test("大图恢复与扩展裁剪时等比限制尺寸，缺少可见宽高的裁剪不能保存", () => {
+  assert.deepEqual(boundedImageSize(20000, 12000), { width: 10000, height: 6000 });
+  assert.throws(() =>
+    roundtrip({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            {
+              type: "image",
+              attrs: { src: "/image.jpg", crop: { left: 0, top: 0, width: 0.5, height: 1 } },
+            },
+          ],
+        },
+      ],
+    }),
+  );
+});
+
+void test("拒绝越界裁剪、超长图注与任意单元格背景", () => {
+  for (const crop of [
+    { left: -0.1, top: 0, width: 1, height: 1 },
+    { left: 0.5, top: 0, width: 0.6, height: 1 },
+    { left: 0, top: 0, width: 0, height: 1 },
+    { left: 0, top: 0, width: 1, height: 1, unknown: true },
+  ]) {
+    assert.throws(() =>
+      roundtrip({
+        type: "doc",
+        content: [
+          { type: "paragraph", content: [{ type: "image", attrs: { src: "/image.jpg", crop } }] },
+        ],
+      }),
+    );
+  }
+  assert.throws(() =>
+    roundtrip({
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "image", attrs: { src: "/image.jpg", caption: "字".repeat(2001) } }],
+        },
+      ],
+    }),
+  );
+  assert.throws(() =>
+    roundtrip({
+      type: "doc",
+      content: [
+        {
+          type: "table",
+          content: [
+            {
+              type: "tableRow",
+              content: [
+                {
+                  type: "tableCell",
+                  attrs: { backgroundColor: "url(https://evil.example)" },
+                  content: [{ type: "paragraph" }],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }),
+  );
+});
+
+void test("行列控制条跨合并边界插入可撤销，选区包含完整逻辑行列", () => {
+  const doc = Node.fromJSON(schema, roundtrip(richEditorDocument));
+  let position = 0;
+  doc.forEach((node, pos) => {
+    if (node.type.name === "table") position = pos;
+  });
+  const table = doc.nodeAt(position)!;
+  const map = TableMap.get(table);
+  let state = EditorState.create({
+    schema,
+    doc,
+    selection: CellSelection.create(doc, position + 1 + map.map[0]),
+    plugins: [history()],
+  });
+  // 只模拟 Editor 的事务边界；操作本身使用真实 ProseMirror 表格算法。
+  const editor = {
+    get state() {
+      return state;
+    },
+    isEditable: true,
+    view: {
+      dispatch: (tr: EditorState["tr"]) => {
+        state = state.apply(tr);
+      },
+    },
+    commands: { focus: () => true },
+  };
+  assert.equal(selectTableAxis(editor, "column", 1), true);
+  assert.ok(state.selection instanceof CellSelection && state.selection.isColSelection());
+  assert.equal(insertTableAxis(editor, "column", 1), true);
+  assert.equal(TableMap.get(state.doc.nodeAt(position)!).width, map.width + 1);
+  assert.equal(state.doc.nodeAt(position)!.firstChild!.firstChild!.attrs.colspan, 3);
+  assert.doesNotThrow(() => roundtrip(state.doc.toJSON()));
+  assert.ok(
+    undo(state, (tr) => {
+      state = state.apply(tr);
+    }),
+  );
+  assert.deepEqual(state.doc.toJSON(), doc.toJSON());
+  assert.equal(selectTableAxis(editor, "row", 1), true);
+  assert.ok(state.selection instanceof CellSelection && state.selection.isRowSelection());
+  assert.equal(insertTableAxis(editor, "row", 1), true);
+  assert.equal(TableMap.get(state.doc.nodeAt(position)!).height, map.height + 1);
+  assert.doesNotThrow(() => roundtrip(state.doc.toJSON()));
+  assert.ok(
+    undo(state, (tr) => {
+      state = state.apply(tr);
+    }),
+  );
+  assert.deepEqual(state.doc.toJSON(), doc.toJSON());
+  assert.equal(insertTableAxis(editor, "column", 101), false);
+});
 
 void test("旧版正文无迁移读取，新增格式往返保持稳定", () => {
   const old = roundtrip(legacyEditorDocument);

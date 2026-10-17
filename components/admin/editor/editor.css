@@ -250,7 +250,8 @@
 .post-editor-canvas .tableWrapper {
   max-width: 100%;
   overflow-x: auto;
-  margin-block: 16px;
+  padding: 12px 0 0 12px;
+  margin: 4px 0 16px -12px;
 }
 .post-editor-canvas table {
   width: 100%;
@@ -274,7 +275,8 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: var(--color-primary-light-default);
+  /* 选区层覆盖在内容上方，必须透明，不能遮住浅色主题的单元格文字。 */
+  background: color-mix(in srgb, var(--color-primary) 16%, transparent);
   pointer-events: none;
 }
 .post-editor-canvas .column-resize-handle {
@@ -305,11 +307,21 @@
 .post-editor-canvas [data-resize-handle] {
   width: 12px;
   height: 12px;
-  background: var(--color-surface);
-  border: 2px solid var(--color-primary);
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: 0;
   border-radius: 50%;
   opacity: 0;
   z-index: 3;
+}
+.post-editor-canvas [data-resize-handle]::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
 }
 .post-editor-canvas
   [data-resize-container]:is(:hover, .ProseMirror-selectednode)
@@ -350,6 +362,266 @@
   flex-shrink: 0;
   margin: 0 4px;
   background: var(--color-outline);
+}
+.post-editor-type-trigger.ds-button,
+.post-editor-color-arrow.ds-button {
+  min-height: 32px;
+  height: 32px;
+  padding: 0 4px;
+  gap: 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.post-editor-current-check {
+  margin-left: auto;
+}
+.post-color-split {
+  display: flex;
+  flex-shrink: 0;
+}
+.post-color-sample {
+  font: 17px/20px var(--font-control);
+  padding-inline: 3px;
+}
+.post-color-none {
+  width: 16px;
+  height: 1px;
+  background: var(--color-danger);
+  transform: rotate(-45deg);
+}
+.post-editor-link-popover.ds-popover-popup {
+  width: 430px;
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+  border-radius: 8px;
+}
+.post-editor-link-row {
+  display: flex;
+  gap: 8px;
+}
+.post-editor-link-row .ds-input {
+  min-width: 0;
+  flex: 1;
+}
+.post-editor-link-popover .admin-post-error {
+  margin-top: 8px;
+  font-size: 13px;
+}
+/* 行列控制层只在活动表格周围接受输入，不遮挡单元格或横向滚动。 */
+.post-table-frame {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+}
+.post-table-column-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 10px;
+  overflow: hidden;
+  pointer-events: auto;
+}
+.post-table-row-strip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -12px;
+  width: 10px;
+  pointer-events: auto;
+}
+.post-table-axis.ds-button {
+  position: absolute;
+  padding: 0;
+  min-height: 0;
+  border-radius: 2px;
+  background: var(--color-fill-0);
+}
+.post-table-column-strip .post-table-axis {
+  height: 10px;
+  border-right: 1px solid var(--color-background);
+}
+.post-table-row-strip .post-table-axis {
+  width: 10px;
+  border-bottom: 1px solid var(--color-background);
+}
+.post-table-axis.ds-button:hover {
+  background: var(--color-fill-1);
+}
+.post-table-axis.ds-button[aria-pressed="true"]:not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ) {
+  background: var(--color-primary);
+}
+.post-table-column-insert {
+  position: absolute;
+  inset: -24px 0 auto;
+  height: 24px;
+  overflow: hidden;
+}
+.post-table-row-insert {
+  position: absolute;
+  inset: 0 auto 0 -24px;
+  width: 24px;
+}
+.post-table-insert.ds-button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  pointer-events: auto;
+  opacity: 0;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.post-table-column-insert .post-table-insert {
+  transform: translateX(-50%);
+  top: 0;
+}
+.post-table-row-insert .post-table-insert {
+  transform: translateY(-50%);
+  left: 0;
+}
+.post-table-insert:is(:hover, :focus-visible) {
+  opacity: 1;
+}
+.post-table-insert.ds-button:not(:disabled):not([data-disabled]):not([aria-disabled="true"]) {
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+/* 图片的缩放由官方 NodeView 执行，裁剪和图注共用正文的无损显示规则。 */
+.post-image-node {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  max-width: 100%;
+  position: relative;
+}
+.post-image-shell {
+  display: block;
+  max-width: 100%;
+  line-height: 0;
+}
+.post-image-node .article-image-viewport {
+  display: block;
+}
+.post-editor-canvas .post-image-node .article-image-viewport > img {
+  position: absolute;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+}
+.post-image-node[data-selected="true"] [data-resize-container] {
+  outline: 2px solid var(--color-primary);
+}
+.post-image-node[data-selected="true"] [data-resize-handle] {
+  opacity: 1;
+}
+.post-image-caption.ds-input {
+  width: 100%;
+  min-height: 30px;
+  border: 0;
+  border-radius: 0;
+  padding: 4px 0;
+  text-align: center;
+  font: 14px/22px var(--font-sans);
+  background: transparent;
+  color: var(--color-caption);
+}
+.post-image-crop {
+  position: relative;
+  max-width: 100%;
+  line-height: 0;
+}
+.post-editor-canvas .post-image-crop > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+}
+.post-image-crop-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  background: var(--color-overlay);
+  border-radius: 6px;
+  box-shadow: var(--shadow-popup);
+  z-index: 5;
+}
+.post-image-crop-frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.post-image-crop-frame:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.post-image-crop-selection {
+  position: absolute;
+  outline: 1px solid var(--color-surface);
+  box-shadow: 0 0 0 100vmax rgb(0 0 0 / 48%);
+}
+.post-image-crop-move.ds-button {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+  cursor: move;
+  background: transparent;
+  touch-action: none;
+}
+.post-image-crop-handle.ds-button {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  min-height: 14px;
+  padding: 0;
+  border: 2px solid var(--color-primary);
+  background: var(--color-surface);
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  touch-action: none;
+}
+.post-image-crop-handle[data-direction*="top"] {
+  top: 0;
+}
+.post-image-crop-handle[data-direction*="bottom"] {
+  top: 100%;
+}
+.post-image-crop-handle[data-direction*="left"] {
+  left: 0;
+}
+.post-image-crop-handle[data-direction*="right"] {
+  left: 100%;
+}
+.post-image-crop-handle[data-direction="top"],
+.post-image-crop-handle[data-direction="bottom"] {
+  left: 50%;
+  cursor: ns-resize;
+}
+.post-image-crop-handle[data-direction="left"],
+.post-image-crop-handle[data-direction="right"] {
+  top: 50%;
+  cursor: ew-resize;
+}
+.post-image-crop-handle[data-direction="top-left"],
+.post-image-crop-handle[data-direction="bottom-right"] {
+  cursor: nwse-resize;
+}
+.post-image-crop-handle[data-direction="top-right"],
+.post-image-crop-handle[data-direction="bottom-left"] {
+  cursor: nesw-resize;
 }
 /* 空行只保留一个插入按钮；非空块使用类型和拖拽组成的同一组控件。 */
 .post-editor-drag-handle {
@@ -400,7 +672,9 @@
   border-radius: 5px;
   background: var(--color-background);
 }
-.post-editor-canvas .tiptap > .ProseMirror-selectednode:not([data-resize-container]) {
+.post-editor-canvas
+  .tiptap
+  > .ProseMirror-selectednode:not([data-resize-container], .article-image-block) {
   outline: none;
   border-radius: 3px;
   background: var(--color-primary-light-default);
@@ -535,6 +809,7 @@
   max-width: calc(100vw - 24px);
   padding: 12px;
   background: var(--color-overlay);
+  border-radius: 8px;
 }
 .post-color-options p {
   margin: 0 0 8px;
@@ -564,14 +839,25 @@
   min-height: 32px;
   font-size: 12px;
 }
-.post-table-picker.ds-dialog-popup {
-  max-width: 340px;
+.post-table-picker.ds-popover-popup {
+  width: 314px;
+  max-width: calc(100vw - 24px);
+  padding: 12px;
   max-height: calc(100dvh - 40px);
   overflow: auto;
+  border-radius: 8px;
+}
+.post-table-picker-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 .post-table-picker h2 {
-  font-size: 18px;
-  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0;
+  margin: 0;
 }
 .post-table-picker p {
   color: var(--color-caption);
@@ -580,8 +866,10 @@
 .post-table-grid {
   display: grid;
   grid-template-columns: repeat(9, minmax(0, 1fr));
-  gap: 4px;
-  margin: 16px 0;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 12px;
+  border: 1px solid var(--color-outline);
 }
 .post-table-grid-cell.ds-button {
   width: 100%;
@@ -598,10 +886,9 @@
   border-color: var(--color-primary);
 }
 .post-table-picker output {
-  display: block;
-  text-align: center;
+  flex-shrink: 0;
   color: var(--color-caption);
-  font-size: 13px;
+  font-size: 12px;
 }
 .post-outline-drawer .post-document-outline {
   overflow-y: auto;
@@ -797,6 +1084,73 @@
   }
 }
 @media (max-width: 600px), (pointer: coarse) {
+  .post-editor-type-trigger.ds-button,
+  .post-editor-color-arrow.ds-button {
+    min-width: 44px;
+    min-height: 44px;
+    height: 44px;
+  }
+  .post-editor-canvas .tableWrapper {
+    padding: 44px 0 0 44px;
+    margin-left: 0;
+  }
+  .post-table-column-strip {
+    top: -44px;
+    height: 44px;
+  }
+  .post-table-row-strip {
+    left: -44px;
+    width: 44px;
+    background: var(--color-background);
+  }
+  .post-table-column-strip .post-table-axis {
+    height: 44px;
+  }
+  .post-table-row-strip .post-table-axis {
+    width: 44px;
+  }
+  .post-table-column-insert,
+  .post-table-row-insert {
+    display: none;
+  }
+  .post-image-crop-handle.ds-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    transform: none;
+    border: 0;
+    background: transparent;
+  }
+  .post-image-crop-handle.ds-button::after {
+    content: "";
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--color-primary);
+    background: var(--color-surface);
+  }
+  .post-image-crop-handle[data-direction*="top"] {
+    top: 0;
+  }
+  .post-image-crop-handle[data-direction*="bottom"] {
+    top: calc(100% - 44px);
+  }
+  .post-image-crop-handle[data-direction*="left"] {
+    left: 0;
+  }
+  .post-image-crop-handle[data-direction*="right"] {
+    left: calc(100% - 44px);
+  }
+  .post-image-crop-handle[data-direction="top"],
+  .post-image-crop-handle[data-direction="bottom"] {
+    left: calc(50% - 22px);
+  }
+  .post-image-crop-handle[data-direction="left"],
+  .post-image-crop-handle[data-direction="right"] {
+    top: calc(50% - 22px);
+  }
+  .post-editor-canvas :is(td, th) {
+    height: 44px;
+  }
   .post-editor-command-menu.ds-menu {
     width: 320px;
   }
@@ -845,7 +1199,7 @@
     min-height: 44px;
     height: 44px;
   }
-  .post-table-picker.ds-dialog-popup {
+  .post-table-picker.ds-popover-popup {
     max-width: 100vw;
   }
   .post-table-grid {

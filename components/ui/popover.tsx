@@ -18,11 +18,28 @@ export function PopoverContent({
   className,
   children,
   render,
+  anchor,
+  side = "bottom",
+  align = "end",
+  sideOffset = 12,
+  collisionAvoidance,
   ...props
-}: ComponentProps<typeof BasePopover.Popup>) {
+}: ComponentProps<typeof BasePopover.Popup> &
+  Pick<
+    ComponentProps<typeof BasePopover.Positioner>,
+    "anchor" | "side" | "align" | "sideOffset" | "collisionAvoidance"
+  >) {
   return (
     <BasePopover.Portal>
-      <BasePopover.Positioner align="end" sideOffset={12} collisionPadding={12} className="z-50">
+      <BasePopover.Positioner
+        anchor={anchor}
+        side={side}
+        align={align}
+        sideOffset={sideOffset}
+        collisionPadding={12}
+        collisionAvoidance={collisionAvoidance}
+        className="z-50"
+      >
         <BasePopover.Popup
           className={cn("ds-popover-popup outline-none", className)}
           render={render ?? renderPopupMotion}

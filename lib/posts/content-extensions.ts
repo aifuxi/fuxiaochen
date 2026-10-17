@@ -1,7 +1,6 @@
 import type { AnyExtension } from "@tiptap/core";
 
 import Highlight from "@tiptap/extension-highlight";
-import Image from "@tiptap/extension-image";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Table, TableCell, TableHeader, TableRow } from "@tiptap/extension-table";
 import TextAlign from "@tiptap/extension-text-align";
@@ -11,6 +10,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Callout } from "./callout";
 import { isTextColor, isHighlightColor } from "./content-palette";
 import { safeContentUrl } from "./content-url";
+import { ArticleImage } from "./image";
 import { applyTextAlignment } from "./text-alignment";
 
 const ArticleTextAlign = TextAlign.extend({
@@ -66,21 +66,22 @@ const ArticleHighlight = Highlight.extend({
   },
 });
 
-function imageDimension(attribute: "width" | "height") {
-  return {
+const cellBackground = {
+  backgroundColor: {
     default: null,
-    parseHTML: (element: HTMLElement) => {
-      const value = Number(element.getAttribute(attribute));
-      return Number.isInteger(value) && value >= 1 && value <= 10_000 ? value : null;
-    },
-  };
-}
+    parseHTML: (element: HTMLElement) =>
+      isHighlightColor(element.style.backgroundColor) ? element.style.backgroundColor : null,
+    renderHTML: ({ backgroundColor }: { backgroundColor?: string }) =>
+      isHighlightColor(backgroundColor) ? { style: `background-color: ${backgroundColor}` } : {},
+  },
+};
 
 // 编辑、校验及服务端渲染共用节点定义，避免打开文档时丢失不认识的节点。
 export function contentExtensions({
   codeBlock,
+  image = ArticleImage,
   editable = false,
-}: { codeBlock?: AnyExtension; editable?: boolean } = {}) {
+}: { codeBlock?: AnyExtension; image?: AnyExtension; editable?: boolean } = {}) {
   return [
     StarterKit.configure({
       ...(codeBlock ? { codeBlock: false as const } : {}),
@@ -99,36 +100,7 @@ export function contentExtensions({
       alignments: ["left", "center", "right"],
     }),
     Callout,
-    Image.extend({
-      addAttributes() {
-        return {
-          ...this.parent?.(),
-          width: imageDimension("width"),
-          height: imageDimension("height"),
-        };
-      },
-      addNodeView() {
-        const render = this.parent?.();
-        if (!render) return null;
-        return (props) => {
-          const view = render(props);
-          const update = view.update?.bind(view);
-          // 3.31.4 的官方缩放视图仅在初始化时应用尺寸，补齐数字输入、撤销和恢复原图的同步。
-          view.update = (node, decorations, innerDecorations) => {
-            const accepted = update?.(node, decorations, innerDecorations) ?? false;
-            if (accepted) {
-              const image = view.dom.querySelector("img");
-              if (image) {
-                image.style.width = node.attrs.width ? `${node.attrs.width}px` : "";
-                image.style.height = node.attrs.height ? `${node.attrs.height}px` : "";
-              }
-            }
-            return accepted;
-          };
-          return view;
-        };
-      },
-    }).configure({
+    image.configure({
       inline: true,
       allowBase64: false,
       resize: editable
@@ -156,7 +128,15 @@ export function contentExtensions({
       allowTableNodeSelection: true,
     }),
     TableRow,
-    TableCell,
-    TableHeader,
+    TableCell.extend({
+      addAttributes() {
+        return { ...this.parent?.(), ...cellBackground };
+      },
+    }),
+    TableHeader.extend({
+      addAttributes() {
+        return { ...this.parent?.(), ...cellBackground };
+      },
+    }),
   ];
 }

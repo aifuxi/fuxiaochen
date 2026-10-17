@@ -516,7 +516,7 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 2026-10-17 的文章编辑器是明确的编辑场景变体：继续共享字体、颜色和内容语义，字号与块间距按后台场景覆盖为 16px / 26px 等写作密度；下表继续规定前台阅读基线，不把编辑变体推广到前台或其他页面。
 
-正文新增预设灰、红、橙、黄、绿、蓝、紫色及相应背景高亮。运行时角色 `--article-*` 在 `app/semi-theme-tokens.css` 绑定现有 caption、danger-text、syntax-number、success-text、focus-text 和 syntax-keyword；黄色深色用 Semi yellow-4，浅色用 yellow-2。背景从对应前景色混合透明色派生，灰色使用 fill-0。持久化只接受这些角色，不接受任意 CSS。主动设置的文字色由嵌套强调与链接继承，默认格式仍沿用原有层级。高亮块共享这些角色，文字保持 foreground-reading，不另设场景色盘。
+正文新增预设灰、红、橙、黄、绿、蓝、紫色及相应背景高亮。运行时角色 `--article-*` 在 `app/semi-theme-tokens.css` 绑定现有 caption、danger-text、syntax-number、success-text、focus-text 和 syntax-keyword；黄色深色用 Semi yellow-4，浅色用 yellow-2。背景从对应前景色混合透明色派生，灰色使用 fill-0。持久化只接受这些角色，不接受任意 CSS。主动设置的文字色由嵌套强调与链接继承，默认格式仍沿用原有层级。高亮块共享这些角色，文字保持 foreground-reading，不另设场景色盘。 背景高亮和表格背景增加同色的强档 `--article-*-bg-strong`，从既有文字色与 background 混合派生，深浅主题共用固定角色白名单；已有浅档不变。图片裁剪使用保存的归一化矩形显示原始资源，图注使用 caption 色、14px／22px、居中，前后台共用；图注与替代文字分别保存。
 
 | 正文元素         | 字号     | 无单位行高 | 上／下外距     |
 | ---------------- | -------- | ---------- | -------------- |
@@ -550,7 +550,7 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 全站使用 Motion 14.0.0。已提交的 pathname 变化时，当前可见的页面 main（登录页使用现有 login-panel，避免全屏 main 的位移增加滚动溢出）按 standard / ease 整体淡入，从 lift-max 向上归位；导航、侧栏、顶栏与页脚静止，不新增容器或按路径重挂载。首次 SSR 与 hydration 直接显示，筛选、分页、hash、刷新与轮询不重播；流式后续内容直接显示，不补第二轮入场。页面动画完成、连续导航、卸载或减少动态效果时取消实例并恢复原有内联样式，保留原生导航、缓存、滚动与草稿保护。
 
-Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，由 Base UI 的公开 open / transitionStatus 驱动，保留挂载、关闭与焦点恢复；首次默认打开直接可见，instant 状态即时切换。同步加载 LazyMotion / domAnimation，使用轻量 m 组件；自定义 render 扩展点由调用方负责呈现与动效；与 Motion 手势同名的原生动画／拖拽事件沿用静态 div，以保留 DOM 事件语义。Dialog、Tabs、Accordion 与既有 hover 保留原效果，不重复叠加，不新增滚动显示或长列表错峰。减少动态效果显式跳过全部新增动画并取消运行实例；不以隐藏 SSR 正文等待客户端。token 或动画能力不可用时直接静态显示。
+Menu 与 ContextMenu 的基础皮肤固定从根 globals.css 加载，组件不重复引入，避免路由分包遗漏。Menu、Popover、Select、Combobox 浮层按 quick / ease 仅过渡透明度，由 Base UI 的公开 open / transitionStatus 驱动，保留挂载、关闭与焦点恢复；首次默认打开直接可见，instant 状态即时切换。同步加载 LazyMotion / domAnimation，使用轻量 m 组件；自定义 render 扩展点由调用方负责呈现与动效；与 Motion 手势同名的原生动画／拖拽事件沿用静态 div，以保留 DOM 事件语义。Dialog、Tabs、Accordion 与既有 hover 保留原效果，不重复叠加，不新增滚动显示或长列表错峰。减少动态效果显式跳过全部新增动画并取消运行实例；不以隐藏 SSR 正文等待客户端。token 或动画能力不可用时直接静态显示。
 
 根元素启用平滑滚动时，`html` 同步声明 `data-scroll-behavior="smooth"`，由 Next.js 在路由滚动处理期间临时切换为即时滚动，并在处理后恢复原样式，避免页面切换与历史位置恢复出现非预期滑动。
 

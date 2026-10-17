@@ -6,6 +6,7 @@ import { z } from "zod";
 import { contentExtensions } from "./content-extensions";
 import { isContentColor, isHighlightColor, isTextColor } from "./content-palette";
 import { safeContentUrl } from "./content-url";
+import { imageCropSchema } from "./image-layout";
 
 export const CONTENT_FORMAT = "fuxiaochen-tiptap";
 export const CONTENT_TEXT_LIMIT = 100_000;
@@ -22,16 +23,23 @@ const nodeAttributes: Record<string, z.ZodType> = {
   }),
   codeBlock: z.strictObject({ language: z.string().max(100).nullable().optional() }),
   taskItem: z.strictObject({ checked: z.boolean() }),
-  image: z.strictObject({
-    src: z
-      .string()
-      .max(2000)
-      .refine((value) => safeContentUrl(value, true)),
-    alt: nullableString,
-    title: nullableString,
-    width: z.number().int().min(1).max(10_000).nullable().optional(),
-    height: z.number().int().min(1).max(10_000).nullable().optional(),
-  }),
+  image: z
+    .strictObject({
+      src: z
+        .string()
+        .max(2000)
+        .refine((value) => safeContentUrl(value, true)),
+      alt: nullableString,
+      title: nullableString,
+      width: z.number().int().min(1).max(10_000).nullable().optional(),
+      height: z.number().int().min(1).max(10_000).nullable().optional(),
+      caption: z.string().max(2000).nullable().optional(),
+      crop: imageCropSchema.nullable().optional(),
+    })
+    .refine(
+      (image) => !image.crop || Boolean(image.width && image.height),
+      "裁剪图片必须包含可见宽高。",
+    ),
 };
 const cellAttributes = z
   .strictObject({
@@ -39,6 +47,7 @@ const cellAttributes = z
     rowspan: z.number().int().min(1).max(100).optional(),
     colwidth: z.array(z.number().int().min(0).max(10_000)).max(100).nullable().optional(),
     align: z.enum(["left", "center", "right"]).nullable().optional(),
+    backgroundColor: z.string().refine(isHighlightColor).nullable().optional(),
   })
   .superRefine((cell, ctx) => {
     if (cell.colwidth && cell.colwidth.length !== (cell.colspan ?? 1))
@@ -159,7 +168,8 @@ export function validateDocument(value: unknown): JSONContent {
 
 export function documentText(document: JSONContent): string {
   if (document.type === "text") return document.text ?? "";
-  if (document.type === "image") return String(document.attrs?.alt ?? "");
+  if (document.type === "image")
+    return [document.attrs?.alt, document.attrs?.caption].filter(Boolean).join("\n");
   if (document.type === "hardBreak") return "\n";
   const separator = [
     "doc",

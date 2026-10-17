@@ -6,8 +6,6 @@ import { ContextMenu as BaseContextMenu } from "@base-ui/react/context-menu";
 
 import { cn } from "@/lib/utils";
 
-import "./menu.css";
-
 export const ContextMenu = BaseContextMenu.Root;
 export const ContextMenuTrigger = BaseContextMenu.Trigger;
 

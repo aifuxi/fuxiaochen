@@ -8,7 +8,6 @@ import { renderPopupMotion } from "@/components/motion/popup-motion";
 import { cn } from "@/lib/utils";
 
 import { Button } from "./button";
-import "./menu.css";
 
 export const Menu = BaseMenu.Root;
 export const MenuTrigger = BaseMenu.Trigger;

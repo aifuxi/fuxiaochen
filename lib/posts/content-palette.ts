@@ -12,10 +12,21 @@ export const CONTENT_COLORS = [
 export type ContentColor = (typeof CONTENT_COLORS)[number]["key"];
 export const contentColorKeys = CONTENT_COLORS.map((item) => item.key);
 export const textColor = (key: ContentColor) => `var(--article-${key})`;
-export const highlightColor = (key: ContentColor) => `var(--article-${key}-bg)`;
+export const highlightColor = (key: ContentColor, strong = false) =>
+  `var(--article-${key}-bg${strong ? "-strong" : ""})`;
+export const CONTENT_BACKGROUNDS = [
+  ...CONTENT_COLORS.map((item) => ({ name: item.name, value: highlightColor(item.key) })),
+  { name: "默认", value: highlightColor("gray") },
+  ...CONTENT_COLORS.map((item) => ({
+    name: `深${item.name}`,
+    value: highlightColor(item.key, true),
+  })),
+];
 export const isTextColor = (value: unknown): value is string =>
   CONTENT_COLORS.some((item) => textColor(item.key) === value);
 export const isHighlightColor = (value: unknown): value is string =>
-  CONTENT_COLORS.some((item) => highlightColor(item.key) === value);
+  CONTENT_COLORS.some(
+    (item) => highlightColor(item.key) === value || highlightColor(item.key, true) === value,
+  );
 export const isContentColor = (value: unknown): value is ContentColor =>
   contentColorKeys.some((key) => key === value);
