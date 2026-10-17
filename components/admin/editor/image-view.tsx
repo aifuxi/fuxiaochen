@@ -24,6 +24,8 @@ import {
   type ImageCrop,
 } from "@/lib/posts/image-layout";
 
+import { installTouchImageResize } from "./touch-image-resize";
+
 const directions = [
   "top-left",
   "top",
@@ -119,6 +121,17 @@ function ImageView({ node, editor, getPos, updateAttributes, selected }: NodeVie
     viewport.append(image);
     nativeImage.current = image;
     // 使用安装版本公开的 ResizableNodeView；尺寸同步和图注由本站视图负责。
+    const commitSize = (width: number, height: number) => {
+      const position = getPos();
+      if (position === undefined || !editor.isEditable) return;
+      editor.view.dispatch(closeHistory(editor.state.tr));
+      editor
+        .chain()
+        .setNodeSelection(position)
+        .updateAttributes("image", boundedImageSize(width, height))
+        .run();
+      editor.view.dispatch(closeHistory(editor.state.tr));
+    };
     const view = new ResizableNodeView({
       element: viewport,
       editor,
@@ -129,18 +142,7 @@ function ImageView({ node, editor, getPos, updateAttributes, selected }: NodeVie
         viewport.style.height = "auto";
         viewport.style.aspectRatio = `${width} / ${height}`;
       },
-      onCommit: (width, height) => {
-        const position = getPos();
-        if (position === undefined || !editor.isEditable) return;
-        editor
-          .chain()
-          .setNodeSelection(position)
-          .updateAttributes("image", {
-            width: clamp(Math.round(width), 1, 10_000),
-            height: clamp(Math.round(height), 1, 10_000),
-          })
-          .run();
-      },
+      onCommit: commitSize,
       onUpdate: (next) => {
         applyDisplay(next);
         return true;
@@ -152,6 +154,13 @@ function ImageView({ node, editor, getPos, updateAttributes, selected }: NodeVie
       },
     });
     resize.current = view;
+    const removeTouchResize = installTouchImageResize(
+      view.dom,
+      viewport,
+      () => editor.isEditable,
+      commitSize,
+      () => applyDisplay(latestNode.current),
+    );
     host.append(view.dom);
     const loaded = () => {
       setNatural({ width: image.naturalWidth, height: image.naturalHeight });
@@ -167,6 +176,7 @@ function ImageView({ node, editor, getPos, updateAttributes, selected }: NodeVie
     return () => {
       observer.disconnect();
       image.removeEventListener("load", loaded);
+      removeTouchResize();
       view.destroy();
       view.dom.remove();
       nativeImage.current = null;
@@ -390,6 +400,7 @@ function ImageView({ node, editor, getPos, updateAttributes, selected }: NodeVie
             if (editor.isEditable) updateAttributes({ caption: event.target.value });
           }}
           onKeyDown={(event) => {
+            if (event.nativeEvent.isComposing || event.nativeEvent.keyCode === 229) return;
             if (event.key === "Enter" || event.key === "Escape") {
               event.preventDefault();
               event.stopPropagation();

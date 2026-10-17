@@ -664,6 +664,9 @@
 .post-empty-insert {
   z-index: 10;
 }
+.post-block-editor[data-uploading="true"] .post-empty-insert {
+  display: none;
+}
 .post-empty-insert .post-editor-icon.ds-button {
   width: 26px;
   height: 26px;
@@ -1000,21 +1003,18 @@
 }
 
 .post-editor-link-dialog,
-.post-editor-import-dialog,
-.post-media-picker {
+.post-editor-import-dialog {
   max-height: 88dvh;
   overflow-y: auto;
 }
 .post-editor-link-dialog h2,
-.post-editor-import-dialog h2,
-.post-media-picker h2 {
+.post-editor-import-dialog h2 {
   font-size: 20px;
   font-weight: 500;
   margin-bottom: 8px;
 }
 .post-editor-link-dialog p,
-.post-editor-import-dialog p,
-.post-media-picker p {
+.post-editor-import-dialog p {
   color: var(--color-caption);
   font-size: 13px;
   margin-bottom: 16px;
@@ -1048,29 +1048,85 @@
   width: 100%;
   min-width: 0;
 }
-.post-media-picker {
-  max-width: 560px;
+/* 上传占位只存在于装饰层，不参与正文序列化。 */
+.post-image-upload-anchor {
+  display: block;
+  margin-block: 12px;
+  white-space: normal;
 }
-.post-media-picker .admin-post-error {
+.post-image-upload-inline {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 200px;
+  margin-inline: auto;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-input);
+  border-radius: 4px;
+  text-align: center;
+  font: 14px/20px var(--font-sans);
+}
+.post-image-upload-inline > img {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.15;
+}
+.post-image-upload-feedback {
+  grid-area: 1 / 1;
+  position: relative;
+  display: flex;
+  width: 100%;
+  padding: 24px;
+  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--color-caption);
+}
+.post-image-upload-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.post-image-upload-actions {
+  display: flex;
+  gap: 8px;
+}
+.post-image-upload-feedback [role="alert"] {
   color: var(--color-danger-text);
 }
-.post-image-upload {
-  display: grid;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
-}
-.post-image-progress {
-  display: grid;
-  gap: var(--space-sm);
-  color: var(--color-caption);
-  font-size: var(--text-label);
-  overflow-wrap: anywhere;
-}
-.post-image-progress progress {
-  width: 100%;
+.post-image-upload-feedback progress {
+  appearance: none;
+  width: 144px;
+  height: 4px;
+  max-width: 100%;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-fill-1);
   accent-color: var(--color-primary);
 }
-
+.post-image-upload-feedback progress::-webkit-progress-bar {
+  border-radius: inherit;
+  background: var(--color-fill-1);
+}
+.post-image-upload-feedback progress::-webkit-progress-value {
+  border-radius: inherit;
+  background: var(--color-primary);
+}
+.post-image-upload-feedback progress::-moz-progress-bar {
+  border-radius: inherit;
+  background: var(--color-primary);
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .post-image-upload-actions button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
 @media (max-width: 1100px) {
   .post-writing-layout {
     grid-template-columns: minmax(0, 820px);

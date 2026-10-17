@@ -3,10 +3,10 @@ import Sqlite from "better-sqlite3";
 import { spawn, type ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
-import { cp, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { isAbsolute, join, resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
 
 import { syncAdminAccount } from "../../lib/auth/accounts";
@@ -18,6 +18,10 @@ import { serializeDocument } from "../../lib/posts/document";
 import { legacyEditorDocument } from "../fixtures/editor-document";
 
 const project = resolve(import.meta.dirname, "../..");
+const uploadFaultIndex = process.argv.indexOf("--upload-faults");
+const uploadFaultImage = uploadFaultIndex < 0 ? null : process.argv[uploadFaultIndex + 1];
+if (uploadFaultIndex >= 0 && (!uploadFaultImage || !isAbsolute(uploadFaultImage)))
+  throw new Error("--upload-faults 需要显式提供一张测试图片的绝对路径。");
 const directory = await mkdtemp(join(tmpdir(), "fx-editor-browser-"));
 const username = "editor_browser_test";
 const categoryId = randomUUID();
@@ -106,6 +110,41 @@ try {
     await cp(join(project, path), join(directory, path), { recursive: true });
   }
   await symlink(join(project, "node_modules"), join(directory, "node_modules"), "dir");
+  if (uploadFaultImage) {
+    // 仅写入临时项目：模拟 OSS 失败、慢请求和取消；不会加载或改动真实 OSS 配置。
+    const signing = join(directory, "app/api/admin/media/uploads");
+    const transfer = join(directory, "app/api/editor-upload-test/put");
+    await mkdir(signing, { recursive: true });
+    await mkdir(transfer, { recursive: true });
+    await cp(uploadFaultImage, join(directory, "public/editor-upload-test.jpg"));
+    const events = JSON.stringify(join(directory, "upload-events.jsonl"));
+    await writeFile(
+      join(signing, "route.ts"),
+      `
+import { appendFile } from "node:fs/promises";
+export async function POST() {
+  await appendFile(${events}, JSON.stringify({ event: "sign" }) + "\\n");
+  return Response.json({ data: { url: ${JSON.stringify(origin + "/api/editor-upload-test/put")}, publicUrl: ${JSON.stringify(origin + "/editor-upload-test.jpg")}, headers: { "Content-Type": "image/jpeg" }, expiresAt: new Date(Date.now() + 300000).toISOString() } });
+}
+`,
+    );
+    await writeFile(
+      join(transfer, "route.ts"),
+      `
+import { appendFile, readFile } from "node:fs/promises";
+export async function PUT(request: Request) {
+  await request.arrayBuffer();
+  await appendFile(${events}, JSON.stringify({ event: "put" }) + "\\n");
+  const events = await readFile(${events}, "utf8");
+  const attempt = events.split("\\n").filter((line) => line.includes('"put"')).length;
+  request.signal.addEventListener("abort", () => { void appendFile(${events}, JSON.stringify({ event: "abort", attempt }) + "\\n"); }, { once: true });
+  await new Promise((resolve) => setTimeout(resolve, attempt > 2 ? 10000 : 2500));
+  await appendFile(${events}, JSON.stringify({ event: "finish", attempt, aborted: request.signal.aborted }) + "\\n");
+  return new Response(null, { status: attempt === 1 ? 503 : 200 });
+}
+`,
+    );
+  }
   // 副本没有 IDE 运行配置；与现有 :3000 服务、构建目录及数据库完全隔离。
   const childEnv: NodeJS.ProcessEnv = {
     ...process.env,

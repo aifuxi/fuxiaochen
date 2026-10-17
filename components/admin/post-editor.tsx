@@ -227,7 +227,7 @@ function PostEditorForm({
   const taxonomyDisabled = taxonomyLoading || Boolean(taxonomyError) || taxonomyPending;
   const disabled =
     postPending || taxonomyDisabled || !tools?.editor || Boolean(tools?.error) || tools.busy;
-  const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
+  const dirty = Boolean(tools?.uploading) || JSON.stringify(draft) !== JSON.stringify(savedDraft);
   const guardNavigation = useNavigationGuard(dirty, postPending);
   const settingsError = settingsKeys.some((key) => Boolean(fieldErrors[key]));
   const settingsIncomplete = status !== "draft" && (!slug.trim() || !categoryId);
@@ -242,7 +242,8 @@ function PostEditorForm({
       if (
         (event.metaKey || event.ctrlKey) &&
         event.key.toLowerCase() === "s" &&
-        !event.isComposing
+        !event.isComposing &&
+        event.keyCode !== 229
       ) {
         event.preventDefault();
         if (!disabled)

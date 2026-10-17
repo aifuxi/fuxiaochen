@@ -60,9 +60,10 @@ import { isImageParagraph } from "@/lib/posts/prose";
 import { EditorCodeBlock } from "./code-block";
 import { blockTypeName, insertActions, selectedBlock } from "./editor-commands";
 import { AlignmentMenu, BlockMenu, ColorMenu, CommandMenu, TablePicker } from "./editor-menus";
+import { EditorImageUpload, IMAGE_UPLOAD_REQUEST, IMAGE_URL_REQUEST } from "./image-upload";
+import { ImageUploadAnchors } from "./image-upload-state";
 import { EditorImage } from "./image-view";
 import { MarkdownImportDialog } from "./markdown-import-dialog";
-import { EditorMediaPicker } from "./media-picker";
 import { OutlineAnchors } from "./outline";
 import { createSlashExtension, slashKey } from "./slash-menu";
 import { TableControls, TableTools } from "./table-controls";
@@ -72,6 +73,8 @@ export type EditorTools = {
   editor: Editor | null;
   error: string;
   busy: boolean;
+  uploading: boolean;
+  openImageUrl: () => void;
   openImport: () => void;
 };
 type Props = {
@@ -164,6 +167,10 @@ export function EditorDocumentMenu({
           <Redo2 size={16} />
           重做
         </MenuItem>
+        <MenuItem disabled={disabled} onClick={() => tools?.openImageUrl()}>
+          <ImagePlus size={16} />
+          插入网络图片
+        </MenuItem>
         <MenuItem disabled={disabled} onClick={() => tools?.openImport()}>
           <FileInput size={16} />
           导入 Markdown
@@ -209,14 +216,7 @@ export function BlockEditor({
     pos: number;
     node: Editor["state"]["doc"];
   } | null>(null);
-  const [image, setImage] = useState<{
-    from: number;
-    to: number;
-    insertAt: number | null;
-    replace: boolean;
-    src: string;
-    alt: string;
-  } | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [table, setTable] = useState<{ position: number } | null>(null);
   const [importPosition, setImportPosition] = useState<number | null>(null);
   const [link, setLink] = useState<{ from: number; to: number; url: string } | null>(null);
@@ -237,16 +237,9 @@ export function BlockEditor({
   }, [initialContent]);
   const openImage = useCallback((instance: Editor, position: number | null = null) => {
     if (!instance.isEditable) return;
-    const { from, to } = instance.state.selection;
-    const attrs = instance.getAttributes("image");
-    setImage({
-      from,
-      to,
-      insertAt: position,
-      replace: position === null && instance.isActive("image"),
-      src: attrs.src ?? "",
-      alt: attrs.alt ?? "",
-    });
+    instance.view.dispatch(
+      instance.state.tr.setMeta(IMAGE_UPLOAD_REQUEST, { position }).setMeta("addToHistory", false),
+    );
   }, []);
   const openTable = useCallback((instance: Editor, position: number | null = null) => {
     if (!instance.isEditable) return;
@@ -257,6 +250,7 @@ export function BlockEditor({
     () => [
       ...contentExtensions({ codeBlock: EditorCodeBlock, image: EditorImage, editable: true }),
       OutlineAnchors,
+      ImageUploadAnchors,
       createSlashExtension(handlers),
     ],
     [handlers],
@@ -317,9 +311,7 @@ export function BlockEditor({
       editor.off("transaction", sync);
     };
   }, [editor]);
-  const busy = Boolean(
-    image || table || link || alt || size || importPosition !== null || imageEditing,
-  );
+  const busy = Boolean(table || link || alt || size || importPosition !== null || imageEditing);
   useEffect(() => {
     if (!editor) return undefined;
     // 非模态图片编辑结束时选区可以完全不变；显式刷新可见性，不伪造正文事务。
@@ -350,12 +342,19 @@ export function BlockEditor({
     onToolsReady({
       editor,
       error: initial.error,
-      busy,
+      busy: busy || uploading,
+      uploading,
+      openImageUrl: () => {
+        if (editor)
+          editor.view.dispatch(
+            editor.state.tr.setMeta(IMAGE_URL_REQUEST, true).setMeta("addToHistory", false),
+          );
+      },
       openImport: () => {
         if (editor?.isEditable) setImportPosition(editor.state.selection.from);
       },
     });
-  }, [editor, initial.error, busy, onToolsReady]);
+  }, [editor, initial.error, busy, uploading, onToolsReady]);
   useEffect(() => () => onToolsReady(null), [onToolsReady]);
   if (initial.error)
     return (
@@ -364,10 +363,6 @@ export function BlockEditor({
       </p>
     );
   if (!editor || !state) return <output>正在载入编辑器…</output>;
-  const closeImage = () => {
-    setImage(null);
-    editor.commands.focus();
-  };
   const closeTable = () => {
     setTable(null);
     editor.commands.focus();
@@ -463,7 +458,13 @@ export function BlockEditor({
     : blockTypeName(hoveredNode);
   const TypeIcon = insertActions(handlers).find((item) => item.title === typeName)?.icon ?? Type;
   return (
-    <div className="post-block-editor" ref={host} data-disabled={disabled} data-invalid={invalid}>
+    <div
+      className="post-block-editor"
+      ref={host}
+      data-disabled={disabled}
+      data-invalid={invalid}
+      data-uploading={uploading}
+    >
       <BlockMenu
         editor={editor}
         disabled={disabled}
@@ -516,6 +517,7 @@ export function BlockEditor({
         shouldShow={({ editor: instance, state: current }) =>
           instance.isEditable &&
           !busy &&
+          !uploading &&
           !blockMenuOpen.current &&
           !instance.isActive("table") &&
           (emptyMenuOpen.current ||
@@ -845,42 +847,7 @@ export function BlockEditor({
           }}
         />
       )}
-      {image && (
-        <EditorMediaPicker
-          finalFocus={() => editor.view.dom}
-          initialAlt={image.alt}
-          initialUrl={image.replace ? image.src : ""}
-          onClose={closeImage}
-          onInsert={(src, altText) => {
-            if (!editor.isEditable) throw new Error("请等待文章保存完成。");
-            const attrs = { src, alt: altText };
-            const chain = editor.chain().focus();
-            if (image.insertAt !== null)
-              chain.insertContentAt(image.insertAt, {
-                type: "paragraph",
-                attrs: { textAlign: "center" },
-                content: [{ type: "image", attrs }],
-              });
-            else if (image.replace)
-              chain
-                .setNodeSelection(image.from)
-                .updateAttributes("image", { ...attrs, width: null, height: null, crop: null });
-            else
-              chain
-                .setTextSelection({ from: image.from, to: image.to })
-                .setImage(attrs)
-                .setTextAlign("center");
-            const inserted = chain
-              .command(({ tr }) => {
-                draftContentSchema.parse(serializeDocument(tr.doc.toJSON()));
-                return true;
-              })
-              .run();
-            if (!inserted) throw new Error("图片无法插入当前位置，请选择正文中的其他位置。");
-            setImage(null);
-          }}
-        />
-      )}
+      <EditorImageUpload editor={editor} onPendingChange={setUploading} />
       {table && (
         <TablePicker
           anchor={{
@@ -954,7 +921,11 @@ export function BlockEditor({
                 setLink((current) => (current ? { ...current, url: event.target.value } : null))
               }
               onKeyDown={(event) => {
-                if (event.key === "Enter" && !event.nativeEvent.isComposing) {
+                if (
+                  event.key === "Enter" &&
+                  !event.nativeEvent.isComposing &&
+                  event.nativeEvent.keyCode !== 229
+                ) {
                   event.preventDefault();
                   applyLink();
                 }

@@ -117,7 +117,13 @@ export function createSlashExtension(handlers: InsertHandlers) {
               },
               // 键盘处理不能依赖 React 提交后的 ref，否则快速输入再按 Enter 会落回正文换行。
               onKeyDown: ({ event }) => {
-                if (!latest || event.isComposing || latest.editor.view.composing) return false;
+                if (
+                  !latest ||
+                  event.isComposing ||
+                  event.keyCode === 229 ||
+                  latest.editor.view.composing
+                )
+                  return false;
                 if (event.key === "ArrowUp" || event.key === "ArrowDown") {
                   if (latest.items.length)
                     selectedIndex =
