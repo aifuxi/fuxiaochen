@@ -7,8 +7,11 @@ import type { SearchParams } from "@/lib/public/schema";
 
 import { ArticleBackLink } from "@/components/frontend/article-back-link";
 import { ArticleContent } from "@/components/frontend/article-content";
+import { ArticleOutline } from "@/components/frontend/article-outline";
 import { JsonLd } from "@/components/frontend/json-ld";
 import { articleReturnPath } from "@/lib/frontend/article-return";
+import { readDocumentNode } from "@/lib/posts/document";
+import { headingEntries } from "@/lib/posts/outline";
 import { postTime } from "@/lib/posts/schema";
 import { getPublicPost } from "@/lib/public/service";
 import { articleJsonLd, articleMetadata } from "@/lib/seo";
@@ -25,9 +28,16 @@ export default async function PostPage({ params, searchParams }: Props) {
   if (!post) notFound();
   const settings = await getPublicSettings();
   const returnPath = articleReturnPath((await searchParams).returnTo);
+  const document = readDocumentNode(post.content);
+  const headings = headingEntries(document);
   return (
-    <main data-page-motion id="main-content" className="site-main site-article">
+    <main
+      data-page-motion
+      id="main-content"
+      className={`site-main site-article${headings.length ? " site-article-with-outline" : ""}`}
+    >
       <JsonLd data={articleJsonLd(settings, post)} />
+      {headings.length > 0 && <ArticleOutline entries={headings} />}
       <article>
         <ArticleBackLink href={returnPath} />
         <header className="site-article-heading">
@@ -35,7 +45,9 @@ export default async function PostPage({ params, searchParams }: Props) {
             <span>{settings.authorName}</span>
             <time dateTime={post.publishedAt ?? undefined}>{postTime(post.publishedAt, true)}</time>
             {post.publishedAt && post.updatedAt !== post.publishedAt && (
-              <span className="site-updated">更新于 {postTime(post.updatedAt)}</span>
+              <time className="site-updated" dateTime={post.updatedAt}>
+                更新于 {postTime(post.updatedAt)}
+              </time>
             )}
           </div>
           <h1>{post.title}</h1>
@@ -55,7 +67,7 @@ export default async function PostPage({ params, searchParams }: Props) {
             </nav>
           )}
         </header>
-        <ArticleContent content={post.content} />
+        <ArticleContent content={document} />
         <footer className="site-article-end">
           <ArticleBackLink
             href={returnPath}

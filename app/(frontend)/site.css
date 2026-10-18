@@ -703,7 +703,125 @@ html:has(.site-layout) {
 .site-updated {
   color: var(--color-metadata);
   font-size: 12px;
-  margin-top: 16px;
+}
+.site-article-heading .site-post-meta {
+  align-items: baseline;
+  line-height: 20px;
+}
+
+.site-article-with-outline > article {
+  min-width: 0;
+}
+.site-article-outline {
+  position: sticky;
+  top: 12px;
+  align-self: start;
+  z-index: 20;
+  min-width: 0;
+  margin-bottom: 24px;
+}
+.site-article-outline-desktop {
+  display: none;
+}
+.site-article-outline-trigger.ds-button {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  min-height: 44px;
+}
+.site-article-outline-current {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-caption);
+  font-weight: 400;
+  text-align: right;
+}
+.site-article-outline-label {
+  margin-bottom: 12px;
+  color: var(--color-caption);
+  font-size: 13px;
+  line-height: 20px;
+}
+.site-article-outline-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-article-outline-links a {
+  display: block;
+  padding: 8px;
+  border-radius: var(--radius-xs);
+  color: var(--color-caption);
+  font-size: 13px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+.site-article-outline-links a:hover {
+  background: var(--color-fill-0);
+  color: var(--color-foreground);
+}
+.site-article-outline-links a:active {
+  background: var(--color-fill-1);
+}
+.site-article-outline-links a[aria-current="location"] {
+  color: var(--color-focus-text);
+}
+.site-article-outline-links a:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: -2px;
+}
+.site-article-outline-dialog {
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+}
+.site-article-outline-dialog .site-article-outline-links a {
+  min-height: 44px;
+  padding-block: 12px;
+}
+.site-article-outline-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.site-article .article-prose :where(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 96px;
+}
+.site-article .article-prose :where(h1, h2, h3, h4, h5, h6):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+}
+@media (min-width: 1024px) {
+  .site-main.site-article-with-outline {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 896px);
+    gap: 32px;
+    max-width: 1128px;
+  }
+  .site-article-outline {
+    top: 32px;
+    z-index: auto;
+    margin: 0;
+  }
+  .site-article-outline-desktop {
+    display: block;
+    max-height: calc(100dvh - 64px);
+    overflow-y: auto;
+  }
+  .site-article-outline-trigger.ds-button {
+    display: none;
+  }
+}
+@media (pointer: coarse) {
+  .site-article-outline-links a {
+    min-height: 44px;
+    padding-block: 12px;
+  }
 }
 .site-markdown .article-code-block pre:focus-visible {
   /* 圆角容器裁切内容时，焦点环仍完整保留在代码区内侧。 */
@@ -1110,6 +1228,7 @@ html:has(.site-layout) {
   font-weight: 600;
   letter-spacing: -0.015em;
   margin-block: 16px;
+  text-wrap: balance;
 }
 .site-article-summary {
   max-width: 46em;

@@ -535,7 +535,7 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 引用保留 3px outline 起始边线与 1em 起始内距。行内代码为 0.875em，raised 底、2px／4px 内边距与 xs 圆角；代码块为 0.875rem／1.7143，使用共享 mono、input 底、1px outline 边线、sm（8px）圆角及 1rem 内边距。语言与复制工具栏位于同一容器，代码区背景透明、工具栏不随代码横滚。表格为 0.875rem／1.75，折叠 outline 边线、固定列布局、单元格 0.5rem 内边距并顶部对齐，表头 fill-0、600 字重；容器不加圆角外框，表头可自然换行，保存的列宽和跨度优先保留。单元格内段落首尾无外距，连续段落间距 0.5em。代码和宽表格只在各自容器内横向滚动，前台滚动入口保留独立键盘焦点。后台表格选择条所需的外层留白由后台场景维护，不进入共享内容外观。
 
-正文链接默认 focus-text 文字与下划线，偏移 0.1875em；hover 使用 foreground 与 2px 下划线，active 使用 primary，focus-visible 保留独立的 2px focus 轮廓、4px 外距与 4px 圆角。颜色过渡引用 quick／ease，减少动态效果时取消。前台链接沿用实际跳转，后台沿用链接编辑行为，不新增标题锚点或整页复制。
+正文链接默认 focus-text 文字与下划线，偏移 0.1875em；hover 使用 foreground 与 2px 下划线，active 使用 primary，focus-visible 保留独立的 2px focus 轮廓、4px 外距与 4px 圆角。颜色过渡引用 quick／ease，减少动态效果时取消。前台链接沿用实际跳转，后台沿用链接编辑行为。前台文章目录的标题锚点按前台场景维护，仅用于视图定位，不写入保存内容。
 
 原阅读比例于 2026-10-09 实施；2026-10-18 更新为上述前后台共用飞书正文基线，本次证据见[前台正文对齐验证](docs/engineering/article-prose-alignment-verification.md)。旧参考值、项目适配与运行验证范围见[文章正文相对单位统一记录](docs/engineering/verification-history.md#文章正文相对单位统一2026-10-09)；旧正文验收保留历史事实。
 

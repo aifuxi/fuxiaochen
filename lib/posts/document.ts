@@ -222,6 +222,11 @@ export function readDocument(content: string): JSONContent {
   return validateDocument(envelope.document);
 }
 
+// 服务端正文与目录共享同一个节点树，避免锚点和标题位置分别计算。
+export function readDocumentNode(content: string): Node {
+  return Node.fromJSON(schema, readDocument(content));
+}
+
 const contentSchema = (allowEmpty: boolean) =>
   z
     .string()

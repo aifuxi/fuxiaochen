@@ -8,7 +8,6 @@ import { test } from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { blockTransaction } from "../components/admin/editor/editor-commands";
-import { headingEntries } from "../components/admin/editor/outline";
 import { insertTableAxis, selectTableAxis } from "../components/admin/editor/table-actions";
 import { ArticleContent } from "../components/frontend/article-content";
 import { contentExtensions } from "../lib/posts/content-extensions";
@@ -24,10 +23,12 @@ import {
   draftContentSchema,
   postContentSchema,
   readDocument,
+  readDocumentNode,
   serializeDocument,
 } from "../lib/posts/document";
 import { croppedImageStyle, boundedImageSize } from "../lib/posts/image-layout";
 import { markdownDocument } from "../lib/posts/markdown-document";
+import { headingEntries } from "../lib/posts/outline";
 import { tableColumns } from "../lib/posts/table-layout";
 import { applyTextAlignment } from "../lib/posts/text-alignment";
 import { legacyEditorDocument, richEditorDocument } from "./fixtures/editor-document";
@@ -35,6 +36,45 @@ import { legacyEditorDocument, richEditorDocument } from "./fixtures/editor-docu
 const schema = getSchema(contentExtensions());
 const roundtrip = (document: JSONContent) =>
   readDocument(postContentSchema.parse(serializeDocument(document)));
+
+void test("前台目录锚点与六级同名标题一一对应，渲染不改写正文", () => {
+  const content = serializeDocument({
+    type: "doc",
+    content: [
+      ...Array.from({ length: 6 }, (_, index) => ({
+        type: "heading",
+        attrs: { level: index + 1, textAlign: "right" },
+        content: [{ type: "text", text: "同名标题" }],
+      })),
+      { type: "blockquote", content: [{ type: "heading", attrs: { level: 3 } }] },
+    ],
+  });
+  const document = readDocumentNode(content);
+  const entries = headingEntries(document);
+  const before = document.toJSON();
+  const html = renderToStaticMarkup(ArticleContent({ content: document }));
+  const ids = Array.from(html.matchAll(/<h[1-6] id="([^"]+)"/g), (match) => match[1]);
+  assert.deepEqual(
+    ids,
+    entries.map((entry) => entry.id),
+  );
+  assert.equal(new Set(ids).size, 7);
+  assert.equal(entries.at(-1)?.title, "未命名标题");
+  assert.match(html, /tabindex="-1" style="text-align:right"/);
+  assert.deepEqual(document.toJSON(), before);
+  assert.equal(renderToStaticMarkup(ArticleContent({ content })), html);
+});
+
+void test("没有正文标题时目录为空，普通段落不生成虚假锚点", () => {
+  const content = serializeDocument({
+    type: "doc",
+    content: [{ type: "paragraph", content: [{ type: "text", text: "只有正文" }] }],
+  });
+  assert.deepEqual(headingEntries(readDocumentNode(content)), []);
+  const html = renderToStaticMarkup(ArticleContent({ content }));
+  assert.match(html, /<p>只有正文<\/p>/);
+  assert.doesNotMatch(html, /post-heading-|tabindex/);
+});
 
 void test("裁剪、图注及两档背景色保存后在前台保持一致", () => {
   const document: JSONContent = {

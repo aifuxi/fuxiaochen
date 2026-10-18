@@ -7,19 +7,7 @@ import { Plugin } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { useEffect, useState } from "react";
 
-export function headingEntries(document: Node) {
-  const entries: { id: string; title: string; level: number; position: number }[] = [];
-  document.descendants((node, position) => {
-    if (node.type.name === "heading")
-      entries.push({
-        id: `post-heading-${position}`,
-        title: node.textContent || "未命名标题",
-        level: node.attrs.level,
-        position,
-      });
-  });
-  return entries;
-}
+import { headingEntries } from "@/lib/posts/outline";
 
 function headingDecorations(document: Node) {
   return DecorationSet.create(

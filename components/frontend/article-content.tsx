@@ -1,7 +1,11 @@
+import type { Node } from "@tiptap/pm/model";
+
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
+import { createElement } from "react";
 
 import { contentExtensions } from "@/lib/posts/content-extensions";
-import { readDocument } from "@/lib/posts/document";
+import { readDocumentNode } from "@/lib/posts/document";
+import { headingEntries } from "@/lib/posts/outline";
 import { isImageParagraph } from "@/lib/posts/prose";
 import { tableColumns } from "@/lib/posts/table-layout";
 
@@ -66,14 +70,36 @@ const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>
   },
 };
 
-export function ArticleContent({ content }: { content: string }) {
-  const document = readDocument(content);
+function renderOptions(document: Node): typeof documentRenderOptions {
+  const anchors = new Map(
+    headingEntries(document).map((entry) => [document.nodeAt(entry.position), entry.id]),
+  );
+  return {
+    ...documentRenderOptions,
+    nodeMapping: {
+      ...documentRenderOptions.nodeMapping,
+      heading: ({ node, children }) =>
+        createElement(
+          `h${node.attrs.level}`,
+          {
+            id: anchors.get(node),
+            tabIndex: -1,
+            style: node.attrs.textAlign ? { textAlign: node.attrs.textAlign } : undefined,
+          },
+          children,
+        ),
+    },
+  };
+}
+
+export function ArticleContent({ content }: { content: string | Node }) {
+  const document = typeof content === "string" ? readDocumentNode(content) : content;
   return (
     <div className="site-markdown article-prose">
       {renderToReactElement({
         content: document,
         extensions: contentExtensions(),
-        options: documentRenderOptions,
+        options: renderOptions(document),
       })}
     </div>
   );
