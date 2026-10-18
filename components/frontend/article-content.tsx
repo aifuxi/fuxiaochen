@@ -1,14 +1,18 @@
 import type { Node } from "@tiptap/pm/model";
 
 import { renderToReactElement } from "@tiptap/static-renderer/pm/react";
+import { Check } from "lucide-react";
 import { createElement } from "react";
 
 import { contentExtensions } from "@/lib/posts/content-extensions";
 import { readDocumentNode } from "@/lib/posts/document";
+import { imageCrop } from "@/lib/posts/image-layout";
 import { headingEntries } from "@/lib/posts/outline";
 import { isImageParagraph } from "@/lib/posts/prose";
 import { tableColumns } from "@/lib/posts/table-layout";
 
+import { ArticleImage } from "./article-image";
+import { ArticleImages, type PreviewImage } from "./article-images";
 import { ArticleCodeBlock } from "./code-block";
 
 const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>[0]["options"]> = {
@@ -45,11 +49,19 @@ const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>
     taskList: ({ children }) => <ul className="article-task-list">{children}</ul>,
     taskItem: ({ node, children }) => (
       <li className="article-task-item">
+        <span
+          className="article-task-indicator"
+          data-checked={Boolean(node.attrs.checked)}
+          aria-hidden="true"
+        >
+          {node.attrs.checked && <Check size={11} strokeWidth={3} />}
+        </span>
         <input
+          className="sr-only"
           type="checkbox"
           checked={Boolean(node.attrs.checked)}
           disabled
-          aria-label={node.attrs.checked ? "已完成任务" : "未完成任务"}
+          aria-label={`${node.attrs.checked ? "已完成任务" : "未完成任务"}：${node.textContent}`}
         />
         <div>{children}</div>
       </li>
@@ -70,7 +82,7 @@ const documentRenderOptions: NonNullable<Parameters<typeof renderToReactElement>
   },
 };
 
-function renderOptions(document: Node): typeof documentRenderOptions {
+function renderOptions(document: Node, images: Map<Node, number>): typeof documentRenderOptions {
   const anchors = new Map(
     headingEntries(document).map((entry) => [document.nodeAt(entry.position), entry.id]),
   );
@@ -78,6 +90,7 @@ function renderOptions(document: Node): typeof documentRenderOptions {
     ...documentRenderOptions,
     nodeMapping: {
       ...documentRenderOptions.nodeMapping,
+      image: ({ node }) => <ArticleImage node={node} index={images.get(node)} />,
       heading: ({ node, children }) =>
         createElement(
           `h${node.attrs.level}`,
@@ -94,13 +107,25 @@ function renderOptions(document: Node): typeof documentRenderOptions {
 
 export function ArticleContent({ content }: { content: string | Node }) {
   const document = typeof content === "string" ? readDocumentNode(content) : content;
+  const images: PreviewImage[] = [];
+  const indexes = new Map<Node, number>();
+  document.descendants((node) => {
+    if (node.type.name !== "image" || node.marks.some((mark) => mark.type.name === "link")) return;
+    indexes.set(node, images.length);
+    images.push({
+      src: node.attrs.src,
+      alt: node.attrs.alt ?? "",
+      caption: node.attrs.caption ?? null,
+      crop: imageCrop(node.attrs.crop),
+    });
+  });
   return (
-    <div className="site-markdown article-prose">
+    <ArticleImages images={images}>
       {renderToReactElement({
         content: document,
         extensions: contentExtensions(),
-        options: renderOptions(document),
+        options: renderOptions(document, indexes),
       })}
-    </div>
+    </ArticleImages>
   );
 }

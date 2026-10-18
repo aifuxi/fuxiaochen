@@ -4,6 +4,7 @@
   font-size: 1rem;
   line-height: 1.625;
   overflow-wrap: anywhere;
+  white-space: break-spaces;
 }
 
 .article-image-node {
@@ -286,6 +287,20 @@
 }
 .article-prose :where(input[type="checkbox"]) {
   accent-color: var(--color-primary);
+}
+.article-task-indicator {
+  display: inline-flex;
+  flex: none;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--color-metadata);
+  border-radius: 2px;
+  background: var(--color-fill-0);
+}
+.article-task-indicator[data-checked="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-background);
 }
 .article-prose :where(ul[data-type="taskList"] > li > label) {
   flex: none;

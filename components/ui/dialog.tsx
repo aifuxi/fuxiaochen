@@ -11,6 +11,10 @@ import "./overlays.css";
 export const Dialog = BaseDialog.Root;
 export const DialogTrigger = BaseDialog.Trigger;
 export const DialogClose = BaseDialog.Close;
+export const DialogPortal = BaseDialog.Portal;
+export const DialogBackdrop = BaseDialog.Backdrop;
+export const DialogViewport = BaseDialog.Viewport;
+export const DialogPopup = BaseDialog.Popup;
 
 export function DialogTitle({ className, ...props }: ComponentProps<typeof BaseDialog.Title>) {
   return <BaseDialog.Title className={cn("ds-dialog-title", className)} {...props} />;

@@ -76,6 +76,43 @@ void test("没有正文标题时目录为空，普通段落不生成虚假锚点
   assert.doesNotMatch(html, /post-heading-|tabindex/);
 });
 
+void test("图片预览保留行内顺序、无脚本原图入口及已有链接，不改写文档", () => {
+  const content = serializeDocument({
+    type: "doc",
+    content: [
+      {
+        type: "paragraph",
+        attrs: { textAlign: "right" },
+        content: [
+          { type: "text", text: "图片之前" },
+          { type: "image", attrs: { src: "/one.png", alt: "第一张", width: 80, height: 40 } },
+          { type: "text", text: "图片之后" },
+          {
+            type: "image",
+            attrs: { src: "/linked.png", alt: "链接图片" },
+            marks: [{ type: "link", attrs: { href: "/posts" } }],
+          },
+          { type: "image", attrs: { src: "/two.png", alt: "第二张", caption: "图注" } },
+        ],
+      },
+    ],
+  });
+  const document = readDocumentNode(content);
+  const before = document.toJSON();
+  const html = renderToStaticMarkup(ArticleContent({ content: document }));
+  assert.match(
+    html,
+    /图片之前<a[^>]+href="\/one.png"[^>]+target="_blank"[^>]+data-image-index="0"[^>]+aria-label="预览图片：第一张"/,
+  );
+  assert.match(html, /width="80" height="40"[^>]*\/><\/a>图片之后/);
+  assert.match(html, /<a href="\/posts"><img src="\/linked.png" alt="链接图片"\/><\/a>/);
+  assert.match(html, /data-image-index="1" aria-label="预览图片：第二张"/);
+  assert.equal((html.match(/data-image-index=/g) ?? []).length, 2);
+  assert.equal((html.match(/article-image-caption">图注/g) ?? []).length, 1);
+  assert.doesNotMatch(html, /role="dialog"|site-image-preview-canvas/);
+  assert.deepEqual(document.toJSON(), before);
+});
+
 void test("裁剪、图注及两档背景色保存后在前台保持一致", () => {
   const document: JSONContent = {
     type: "doc",

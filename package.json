@@ -26,7 +26,7 @@
     "typecheck": "tsc --noEmit",
     "test:media": "node --import tsx --test tests/media-upload.test.ts",
     "test:theme": "node --import tsx --test tests/theme.test.ts",
-    "test:editor": "node --import tsx --test tests/editor-document.test.ts tests/editor-upload.test.ts tests/editor-transfer.test.ts",
+    "test:editor": "node --import tsx --import ./tests/helpers/register-styles.ts --test tests/editor-document.test.ts tests/editor-upload.test.ts tests/editor-transfer.test.ts",
     "admin:init": "node --conditions=react-server --import tsx scripts/admin.ts init",
     "admin:reset-password": "node --conditions=react-server --import tsx scripts/admin.ts reset-password",
     "test:login": "node --conditions=react-server --import tsx --test --test-concurrency=1 tests/login.test.ts tests/better-auth.test.ts tests/passkey.test.ts",

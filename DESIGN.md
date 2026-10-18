@@ -537,6 +537,8 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 正文链接默认 focus-text 文字与下划线，偏移 0.1875em；hover 使用 foreground 与 2px 下划线，active 使用 primary，focus-visible 保留独立的 2px focus 轮廓、4px 外距与 4px 圆角。颜色过渡引用 quick／ease，减少动态效果时取消。前台链接沿用实际跳转，后台沿用链接编辑行为。前台文章目录的标题锚点按前台场景维护，仅用于视图定位，不写入保存内容。
 
+正文空白处理统一为 `break-spaces`，保留连续空格和文本中的换行；代码继续显式使用 `pre`，不折行。前台任务保持只读 checkbox 语义，以静态 13px 状态标记避免原生 disabled 灰化；完成态使用 primary 底与 background 勾线，未完成态使用 metadata 边线与 fill-0，不提供 hover 或切换操作。
+
 原阅读比例于 2026-10-09 实施；2026-10-18 更新为上述前后台共用飞书正文基线，本次证据见[前台正文对齐验证](docs/engineering/article-prose-alignment-verification.md)。旧参考值、项目适配与运行验证范围见[文章正文相对单位统一记录](docs/engineering/verification-history.md#文章正文相对单位统一2026-10-09)；旧正文验收保留历史事实。
 
 ## 通用交互与文案
