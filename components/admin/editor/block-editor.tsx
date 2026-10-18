@@ -60,6 +60,7 @@ import { isImageParagraph } from "@/lib/posts/prose";
 import { EditorCodeBlock } from "./code-block";
 import { blockTypeName, insertActions, selectedBlock } from "./editor-commands";
 import { AlignmentMenu, BlockMenu, ColorMenu, CommandMenu, TablePicker } from "./editor-menus";
+import { ImageTransfer } from "./image-transfer";
 import { EditorImageUpload, IMAGE_UPLOAD_REQUEST, IMAGE_URL_REQUEST } from "./image-upload";
 import { ImageUploadAnchors } from "./image-upload-state";
 import { EditorImage } from "./image-view";
@@ -251,6 +252,7 @@ export function BlockEditor({
       ...contentExtensions({ codeBlock: EditorCodeBlock, image: EditorImage, editable: true }),
       OutlineAnchors,
       ImageUploadAnchors,
+      ImageTransfer,
       createSlashExtension(handlers),
     ],
     [handlers],

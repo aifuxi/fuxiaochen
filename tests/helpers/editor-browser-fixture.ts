@@ -3,7 +3,7 @@ import Sqlite from "better-sqlite3";
 import { spawn, type ChildProcess } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
-import { cp, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
@@ -117,6 +117,22 @@ try {
     await mkdir(signing, { recursive: true });
     await mkdir(transfer, { recursive: true });
     await cp(uploadFaultImage, join(directory, "public/editor-upload-test.jpg"));
+    if (process.argv.includes("--transfer-controls")) {
+      await cp(
+        join(project, "tests/helpers/editor-transfer-controls.tsx"),
+        join(directory, "components/editor-transfer-controls.tsx"),
+      );
+      const layoutPath = join(directory, "app/(backend)/admin/layout.tsx");
+      const layout = await readFile(layoutPath, "utf8");
+      await writeFile(
+        layoutPath,
+        'import EditorTransferControls from "@/components/editor-transfer-controls";\n' +
+          layout.replace(
+            "{children}</AdminWorkspace>",
+            "{children}<EditorTransferControls /></AdminWorkspace>",
+          ),
+      );
+    }
     const events = JSON.stringify(join(directory, "upload-events.jsonl"));
     await writeFile(
       join(signing, "route.ts"),

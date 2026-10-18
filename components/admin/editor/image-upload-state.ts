@@ -10,24 +10,60 @@ export type ImageUploadAnchor = {
   position: number;
   replaceSrc?: string;
   element?: HTMLElement;
+  pastedRange?: { from: number; to: number };
 };
-type UploadAction = { add: ImageUploadAnchor } | { remove: string };
+type UploadAction =
+  | { add: ImageUploadAnchor }
+  | { addMany: ImageUploadAnchor[] }
+  | { attach: ImageUploadAnchor[] }
+  | { remove: string }
+  | { commit: { id: string; position: number; before?: number; after?: number } };
 export const imageUploadKey = new PluginKey<readonly ImageUploadAnchor[]>("article-image-uploads");
 
 export function mapUploadAnchors(
   anchors: readonly ImageUploadAnchor[],
   tr: Transaction,
 ): readonly ImageUploadAnchor[] {
-  const mapped = anchors.flatMap((anchor) => {
+  const action: UploadAction | undefined = tr.getMeta(imageUploadKey);
+  const commit = action && "commit" in action ? action.commit : undefined;
+  const committedIndex = anchors.findIndex((anchor) => anchor.id === commit?.id);
+  const mapped = anchors.flatMap((anchor, index) => {
+    let pastedRange = anchor.pastedRange;
+    if (pastedRange) {
+      const from = tr.mapping.mapResult(pastedRange.from, 1);
+      const to = tr.mapping.mapResult(pastedRange.to, -1);
+      if (from.pos >= to.pos && (from.deleted || to.deleted)) return [];
+      pastedRange = { from: from.pos, to: to.pos };
+    }
+    // 同一位置的多图可乱序完成；按粘贴／拖入顺序保留各自位置，不被兄弟任务的段落替换误删。
+    if (
+      commit?.before !== undefined &&
+      !anchor.replaceSrc &&
+      anchor.position === commit.position &&
+      anchor.id !== commit.id
+    )
+      return [
+        {
+          ...anchor,
+          pastedRange,
+          position: index < committedIndex ? commit.before : commit.after!,
+        },
+      ];
     const result = tr.mapping.mapResult(anchor.position, 1);
     // 整段删除、导入替换或原图片移除后，晚到的请求不能复活内容。
     if (result.deletedAcross || (anchor.replaceSrc && result.deletedAfter)) return [];
     if (anchor.replaceSrc && tr.doc.nodeAt(result.pos)?.attrs.src !== anchor.replaceSrc) return [];
-    return [{ ...anchor, position: result.pos }];
+    return [{ ...anchor, pastedRange, position: result.pos }];
   });
-  const action: UploadAction | undefined = tr.getMeta(imageUploadKey);
   if (action && "add" in action) return [...mapped, action.add];
+  if (action && "addMany" in action) return [...mapped, ...action.addMany];
+  if (action && "attach" in action)
+    return mapped.map((anchor) => ({
+      ...anchor,
+      ...action.attach.find((item) => item.id === anchor.id),
+    }));
   if (action && "remove" in action) return mapped.filter((anchor) => anchor.id !== action.remove);
+  if (commit) return mapped.filter((anchor) => anchor.id !== commit.id);
   return mapped;
 }
 
@@ -70,6 +106,7 @@ export function uploadImageTransaction(state: EditorState, id: string, src: stri
   const anchor = uploadAnchor(state, id);
   if (!anchor) throw new Error("原插入位置已变化，请取消后重新选择位置。");
   const tr = closeHistory(state.tr);
+  let before: number | undefined, after: number | undefined;
   if (anchor.replaceSrc) {
     const node = tr.doc.nodeAt(anchor.position);
     if (node?.type.name !== "image" || node.attrs.src !== anchor.replaceSrc)
@@ -90,9 +127,18 @@ export function uploadImageTransaction(state: EditorState, id: string, src: stri
       anchor.position,
       state.schema.nodes.paragraph.create({ textAlign: "center" }, image),
     );
+    tr.doc.descendants((node, position) => {
+      if (node === image) {
+        before = position - 1;
+        after = position + 2;
+        return false;
+      }
+      return before === undefined;
+    });
+    if (before === undefined) throw new Error("图片无法插入当前位置，请重新选择。");
   }
   draftContentSchema.parse(serializeDocument(tr.doc.toJSON()));
-  return tr.setMeta(imageUploadKey, { remove: id });
+  return tr.setMeta(imageUploadKey, { commit: { id, position: anchor.position, before, after } });
 }
 
 export type UploadSnapshot = {

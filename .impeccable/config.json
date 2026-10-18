@@ -29,6 +29,13 @@
         "files": ["app/article-prose.css"],
         "createdAt": "2026-10-17T14:47:02.636Z",
         "reason": "Agent: DESIGN.md:535 明确保留正文 blockquote 的 3px outline 起始边线；此语义样式自提交 05935f3fe 已存在，不属于装饰卡片侧边色条。"
+      },
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": ["components/admin/editor/image-transfer.ts"],
+        "createdAt": "2026-10-18T00:44:21.892Z",
+        "reason": "Codex：仅用于脱离文档的剪贴板解析及临时事务，派发前移除；测试验证正文无占位图片，不会渲染破损图片。"
       }
     ]
   }

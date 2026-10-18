@@ -6,7 +6,7 @@ import { posToDOMRect } from "@tiptap/core";
 import { closeHistory } from "@tiptap/pm/history";
 import { NodeSelection } from "@tiptap/pm/state";
 import { ImagePlus, X, RotateCcw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,11 @@ import { safeContentUrl } from "@/lib/posts/content-url";
 
 import { uploadEditorImage } from "../use-media";
 import { waitForComposition } from "./composition";
+import {
+  IMAGE_TRANSFER_REQUEST,
+  IMAGE_TRANSFER_FEEDBACK,
+  type ImageTransferRequest,
+} from "./image-transfer";
 import {
   ImageUploadTask,
   imageUploadKey,
@@ -49,11 +54,12 @@ export function EditorImageUpload({
 }) {
   const input = useRef<HTMLInputElement>(null);
   const choice = useRef<ImageUploadAnchor | null>(null);
-  const active = useRef<ActiveUpload | null>(null);
-  const committing = useRef(false);
-  const [display, setDisplay] = useState<{ upload: ActiveUpload; snapshot: UploadSnapshot } | null>(
-    null,
+  const active = useRef(new Map<string, ActiveUpload>());
+  const committing = useRef(new Set<string>());
+  const [displays, setDisplays] = useState<{ upload: ActiveUpload; snapshot: UploadSnapshot }[]>(
+    [],
   );
+  const [feedback, setFeedback] = useState("");
   const [urlTarget, setUrlTarget] = useState<string | null>(null);
   const [url, setUrl] = useState("");
   const [urlError, setUrlError] = useState("");
@@ -67,38 +73,115 @@ export function EditorImageUpload({
     return () => node?.removeEventListener("cancel", cancel);
   }, [editor]);
 
-  const removeAnchor = (id: string) => {
-    if (!editor.isDestroyed)
+  const removeAnchor = useCallback(
+    (id: string) => {
+      if (!editor.isDestroyed)
+        editor.view.dispatch(
+          editor.state.tr.setMeta(imageUploadKey, { remove: id }).setMeta("addToHistory", false),
+        );
+    },
+    [editor],
+  );
+  const insert = useCallback(
+    (id: string, src: string, alt: string) => {
+      if (!editor.isEditable) throw new Error("请等待文章保存完成。");
+      // 使用事务当前的位置，保留用户上传期间新增的文字、光标及滚动位置。
+      const tr = uploadImageTransaction(editor.state, id, src, alt);
+      const restoreFocus = active.current.get(id)?.element.contains(document.activeElement);
+      committing.current.add(id);
+      try {
+        editor.view.dispatch(tr);
+        editor.view.dispatch(closeHistory(editor.state.tr));
+      } finally {
+        committing.current.delete(id);
+      }
+      if (restoreFocus) editor.commands.focus(null, { scrollIntoView: false });
+    },
+    [editor],
+  );
+
+  const beginUploads = useCallback(
+    ({ entries, anchors }: ImageTransferRequest, attached = false) => {
+      if (!entries.length || !editor.isEditable) return;
+      setFeedback("");
+      const uploads = entries.map(({ id, file }) => {
+        const element = document.createElement("span");
+        element.className = "post-image-upload-anchor";
+        element.contentEditable = "false";
+        const preview = URL.createObjectURL(file);
+        const changed = () => {
+          const upload = active.current.get(id);
+          if (!upload) return;
+          if (["done", "cancelled"].includes(upload.task.snapshot.status)) {
+            const restoreFocus = upload.element.contains(document.activeElement);
+            active.current.delete(id);
+            removeAnchor(id);
+            URL.revokeObjectURL(upload.preview);
+            if (restoreFocus && !editor.isDestroyed)
+              editor.commands.focus(null, { scrollIntoView: false });
+          }
+          onPendingChange(active.current.size > 0);
+          setDisplays(
+            Array.from(active.current.values(), (pendingUpload) => ({
+              upload: pendingUpload,
+              snapshot: { ...pendingUpload.task.snapshot },
+            })),
+          );
+        };
+        const task = new ImageUploadTask(
+          file,
+          uploadEditorImage,
+          async (src, signal) => {
+            await waitForComposition(editor.view, signal);
+            signal.throwIfAborted();
+            insert(id, src, file.name);
+          },
+          changed,
+        );
+        const upload = { id, task, element, preview };
+        active.current.set(id, upload);
+        return upload;
+      });
+      onPendingChange(true);
+      const decorated = anchors.map((anchor) => ({
+        ...anchor,
+        element: active.current.get(anchor.id)!.element,
+      }));
       editor.view.dispatch(
-        editor.state.tr.setMeta(imageUploadKey, { remove: id }).setMeta("addToHistory", false),
+        editor.state.tr
+          .setMeta(imageUploadKey, attached ? { attach: decorated } : { addMany: decorated })
+          .setMeta("addToHistory", false),
       );
-  };
-  const insert = (id: string, src: string, alt: string) => {
-    if (!editor.isEditable) throw new Error("请等待文章保存完成。");
-    // 使用事务当前的位置，保留用户上传期间新增的文字、光标及滚动位置。
-    const tr = uploadImageTransaction(editor.state, id, src, alt);
-    const restoreFocus = active.current?.element.contains(document.activeElement);
-    committing.current = true;
-    try {
-      editor.view.dispatch(tr);
-      editor.view.dispatch(closeHistory(editor.state.tr));
-    } finally {
-      committing.current = false;
-    }
-    if (restoreFocus) editor.commands.focus(null, { scrollIntoView: false });
-  };
+      for (const upload of uploads) void upload.task.start();
+    },
+    [editor, insert, onPendingChange, removeAnchor],
+  );
 
   useEffect(() => {
     const request = ({ transaction }: { transaction: Editor["state"]["tr"] }) => {
+      const message: string | undefined = transaction.getMeta(IMAGE_TRANSFER_FEEDBACK);
+      if (message) setFeedback(message);
+      const transferred: ImageTransferRequest | undefined =
+        transaction.getMeta(IMAGE_TRANSFER_REQUEST);
+      if (transferred) {
+        beginUploads(transferred, true);
+        return;
+      }
       const fileRequest = transaction.getMeta(IMAGE_UPLOAD_REQUEST);
       const urlRequest = transaction.getMeta(IMAGE_URL_REQUEST);
       if ((!fileRequest && !urlRequest) || !editor.isEditable || editor.view.composing) return;
-      if (active.current) {
-        active.current.element.querySelector<HTMLButtonElement>("button")?.focus();
-        return;
-      }
       if (fileRequest) {
-        choice.current = target(editor, fileRequest.position);
+        const anchor = target(editor, fileRequest.position);
+        const running = Array.from(active.current.values()).find((upload) => {
+          const pending = uploadAnchor(editor.state, upload.id);
+          return anchor.replaceSrc && pending?.replaceSrc && pending.position === anchor.position;
+        });
+        if (running) {
+          running.element.querySelector<HTMLButtonElement>("button:not(:disabled)")?.focus();
+          return;
+        }
+        choice.current = anchor;
+        if (input.current) input.current.multiple = !anchor.replaceSrc;
         // 在菜单触发的同一事务中打开原生选择器，保持用户激活状态。
         input.current?.click();
       } else {
@@ -115,22 +198,23 @@ export function EditorImageUpload({
     return () => {
       editor.off("transaction", request);
     };
-  }, [editor]);
+  }, [editor, beginUploads]);
 
   useEffect(() => {
+    const uploads = active.current;
     const check = () => {
-      const current = active.current;
-      if (current && !committing.current && !uploadAnchor(editor.state, current.id))
-        current.task.cancel();
+      for (const current of Array.from(uploads.values()))
+        if (!committing.current.has(current.id) && !uploadAnchor(editor.state, current.id))
+          current.task.cancel();
     };
     editor.on("transaction", check);
     return () => {
       editor.off("transaction", check);
-      const current = active.current;
-      active.current = null;
-      if (current) {
-        current.task.cancel();
-        URL.revokeObjectURL(current.preview);
+      const remaining = Array.from(uploads.values());
+      uploads.clear();
+      for (const upload of remaining) {
+        upload.task.cancel();
+        URL.revokeObjectURL(upload.preview);
       }
     };
   }, [editor]);
@@ -140,8 +224,6 @@ export function EditorImageUpload({
     setUrlTarget(null);
     editor.commands.focus(null, { scrollIntoView: false });
   };
-  const current = display?.upload;
-  const snapshot = display?.snapshot;
   return (
     <>
       <input
@@ -151,51 +233,20 @@ export function EditorImageUpload({
         hidden
         aria-label="上传文章图片"
         onChange={(event) => {
-          const file = event.target.files?.[0],
-            anchor = choice.current;
+          const files = Array.from(event.target.files ?? []);
+          const anchor = choice.current;
           event.target.value = "";
           choice.current = null;
-          if (!file || !anchor || active.current || !editor.isEditable) return;
-          const element = document.createElement("span");
-          element.className = "post-image-upload-anchor";
-          element.contentEditable = "false";
-          const preview = URL.createObjectURL(file);
-          const changed = () => {
-            const upload = active.current;
-            if (!upload || upload.id !== anchor.id) return;
-            if (["done", "cancelled"].includes(upload.task.snapshot.status)) {
-              const restoreFocus = upload.element.contains(document.activeElement);
-              active.current = null;
-              removeAnchor(upload.id);
-              URL.revokeObjectURL(upload.preview);
-              onPendingChange(false);
-              setDisplay(null);
-              if (restoreFocus && !editor.isDestroyed)
-                editor.commands.focus(null, { scrollIntoView: false });
-            } else setDisplay({ upload, snapshot: { ...upload.task.snapshot } });
-          };
-          const task = new ImageUploadTask(
+          if (!anchor || !editor.isEditable) return;
+          const images = files.filter((file) => file.type.startsWith("image/"));
+          const entries = (anchor.replaceSrc ? images.slice(0, 1) : images).map((file, index) => ({
+            id: index ? crypto.randomUUID() : anchor.id,
             file,
-            uploadEditorImage,
-            async (src, signal) => {
-              await waitForComposition(editor.view, signal);
-              signal.throwIfAborted();
-              insert(anchor.id, src, file.name);
-            },
-            changed,
-          );
-          active.current = { id: anchor.id, task, element, preview };
-          onPendingChange(true);
-          editor.view.dispatch(
-            editor.state.tr
-              .setMeta(imageUploadKey, { add: { ...anchor, element } })
-              .setMeta("addToHistory", false),
-          );
-          void task.start();
+          }));
+          beginUploads({ entries, anchors: entries.map(({ id }) => ({ ...anchor, id })) });
         }}
       />
-      {current &&
-        snapshot &&
+      {displays.map(({ upload: current, snapshot }) =>
         createPortal(
           <span className="post-image-upload-inline" data-state={snapshot.status}>
             {/* 本地预览只存在于界面，不进入正文或保存请求。 */}
@@ -220,17 +271,19 @@ export function EditorImageUpload({
               )}
               {snapshot.error && <span role="alert">{snapshot.error}</span>}
               <span className="post-image-upload-actions">
-                {snapshot.status === "error" && (
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => void current.task.start()}
-                  >
-                    <RotateCcw size={15} />
-                    {snapshot.uploadedUrl ? "重试插入" : "重试上传"}
-                  </Button>
-                )}
+                {/* 重试隐藏时保留占位，避免双击重试的第二次点击落到取消按钮。 */}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  disabled={snapshot.status !== "error"}
+                  aria-hidden={snapshot.status !== "error"}
+                  style={{ visibility: snapshot.status === "error" ? "visible" : "hidden" }}
+                  onClick={() => void current.task.start()}
+                >
+                  <RotateCcw size={15} />
+                  {snapshot.uploadedUrl ? "重试插入" : "重试上传"}
+                </Button>
                 <Button
                   type="button"
                   size="sm"
@@ -244,7 +297,10 @@ export function EditorImageUpload({
             </span>
           </span>,
           current.element,
-        )}
+          current.id,
+        ),
+      )}
+      {feedback && <output className="post-editor-action-status">{feedback}</output>}
       {urlTarget && (
         <Popover
           open

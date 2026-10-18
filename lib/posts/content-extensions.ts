@@ -85,6 +85,7 @@ export function contentExtensions({
   return [
     StarterKit.configure({
       ...(codeBlock ? { codeBlock: false as const } : {}),
+      dropcursor: editable ? { color: "var(--color-primary)", width: 2 } : false,
       link: {
         openOnClick: false,
         isAllowedUri: (url) => safeContentUrl(url),
