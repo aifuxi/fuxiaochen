@@ -192,84 +192,17 @@
   padding: 0 0 48px;
   outline: none;
 }
-.post-editor-canvas .article-editor-prose {
-  font-size: 16px;
-  line-height: 26px;
-}
-.article-editor-prose :where(p, ul, ol) {
-  margin-block: 8px;
-}
-.article-editor-prose :where(h1) {
-  font-size: 28px;
-  line-height: 42px;
-  margin-block: 32px 12px;
-}
-.article-editor-prose :where(h2) {
-  font-size: 24px;
-  line-height: 36px;
-  margin-block: 28px 10px;
-}
-.article-editor-prose :where(h3) {
-  font-size: 20px;
-  line-height: 30px;
-  margin-block: 24px 8px;
-}
-.article-editor-prose :where(h4, h5, h6) {
-  font-size: 18px;
-  line-height: 28px;
-  margin-block: 20px 8px;
-}
-.article-editor-prose :where(li) {
-  margin-block: 4px;
-}
-.post-editor-canvas .tiptap .editor-code-block {
-  background: var(--color-input);
-  border: 1px solid var(--color-outline);
-  border-radius: 8px;
-}
-.post-editor-canvas .tiptap .editor-code-block pre {
-  margin: 0;
-  max-width: 100%;
-  overflow-x: auto;
-  padding: 16px;
-  background: transparent;
-  border: 0;
-  white-space: pre;
-}
-.post-editor-canvas .tiptap :not(pre) > code {
-  padding: 2px 4px;
-  background: var(--color-raised);
-  border-radius: 4px;
-}
-.post-editor-canvas .tiptap img {
-  border-radius: 4px;
-}
 .post-editor-canvas .tiptap .ProseMirror-selectednode {
   outline: 2px solid var(--color-focus);
 }
 .post-editor-canvas .tableWrapper {
-  max-width: 100%;
-  overflow-x: auto;
+  /* 给编辑器行列操作条留出空间，表格外观由 article-prose 共用。 */
   padding: 12px 0 0 12px;
-  margin: 4px 0 16px -12px;
-}
-.post-editor-canvas table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  margin: 0;
+  margin-left: -12px;
 }
 .post-editor-canvas td,
 .post-editor-canvas th {
-  min-width: 60px;
-  padding: 8px;
-  border: 1px solid var(--color-outline);
   position: relative;
-  vertical-align: top;
-}
-.post-editor-canvas th {
-  background: var(--color-fill-0);
-  font-weight: 600;
 }
 .post-editor-canvas .selectedCell::after {
   content: "";

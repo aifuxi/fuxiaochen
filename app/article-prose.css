@@ -1,8 +1,8 @@
 .article-prose {
   color: var(--color-foreground-reading);
   font-family: var(--font-sans);
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-size: 1rem;
+  line-height: 1.625;
   overflow-wrap: anywhere;
 }
 
@@ -17,6 +17,7 @@
   position: relative;
   overflow: hidden;
   max-width: 100%;
+  border-radius: var(--radius-xs);
 }
 .article-prose .article-image-viewport > img {
   display: block;
@@ -94,31 +95,31 @@
 }
 
 .article-prose :where(p, ul, ol) {
-  margin-block: 1.25em;
+  margin-block: 0.5rem;
 }
 .article-prose :where(h1, h2, h3, h4, h5, h6) {
   color: var(--color-foreground);
   font-weight: 600;
 }
 .article-prose :where(h1) {
-  font-size: 1.5rem;
-  line-height: 1.3333;
-  margin-block: 2em 1.7rem;
+  font-size: 1.75rem;
+  line-height: 1.5;
+  margin-block: 2rem 0.75rem;
 }
 .article-prose :where(h2) {
-  font-size: 1.25rem;
-  line-height: 1.4;
-  margin-block: 2em 1.45rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  margin-block: 1.75rem 0.625rem;
 }
 .article-prose :where(h3) {
-  font-size: 1.125rem;
-  line-height: 1.5556;
-  margin-block: 1.6em 1.3rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  margin-block: 1.5rem 0.5rem;
 }
 .article-prose :where(h4, h5, h6) {
-  font-size: 1.05rem;
-  line-height: 1.5;
-  margin-block: 1.5em 1.2rem;
+  font-size: 1.125rem;
+  line-height: 1.555556;
+  margin-block: 1.25rem 0.5rem;
 }
 .article-prose :where(strong) {
   color: var(--color-foreground);
@@ -134,13 +135,13 @@
   list-style: decimal;
 }
 .article-prose :where(li) {
-  margin-block: 0.5em;
+  margin-block: 0.25rem;
 }
 .article-prose :where(li)::marker {
   color: var(--color-metadata);
 }
 .article-prose :where(li > p, ul ul, ul ol, ol ul, ol ol) {
-  margin-block: 0.75em;
+  margin-block: 0.5rem;
 }
 .article-prose
   :where(li, blockquote, .article-task-item > div, ul[data-type="taskList"] > li > div)
@@ -181,11 +182,9 @@
   max-width: 100%;
   height: auto;
   vertical-align: middle;
+  border-radius: var(--radius-xs);
 }
 /* 仅标记文档中只含一张图片的段落，避免把文字中的图片变成独立块。 */
-.article-prose :where(.article-image-block) {
-  margin-block: 2em;
-}
 .article-prose :where(.article-image-block img) {
   display: block;
 }
@@ -200,36 +199,71 @@
 .article-prose :where(:not(pre) > code) {
   font-size: 0.875em;
   overflow-wrap: anywhere;
+  padding: 2px 4px;
+  background: var(--color-raised);
+  border-radius: var(--radius-xs);
 }
 .article-prose :where(pre) {
   font-size: 0.875rem;
   line-height: 1.7143;
   margin-block: 1.5rem;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-sm);
+  background: var(--color-input);
+  white-space: pre;
 }
 .article-prose :where(pre > code) {
   font-size: inherit;
   line-height: inherit;
   overflow-wrap: normal;
 }
-.article-prose
-  :where(
-    .article-code-block,
-    .editor-code-block,
-    .node-codeBlock,
-    .site-table-scroll,
-    .tableWrapper
-  ) {
+.article-prose :where(.article-code-block, .editor-code-block, .node-codeBlock) {
   margin-block: 1.5rem;
+}
+.article-prose :where(.article-code-block, .editor-code-block) {
+  overflow: hidden;
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-sm);
+  background: var(--color-input);
+}
+/* 高于 Tiptap 注入的 .tiptap pre，保证编辑和阅读均不折行。 */
+.article-prose :is(.article-code-block, .editor-code-block) pre {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  white-space: pre;
 }
 .article-prose :where(.node-codeBlock > .editor-code-block) {
   margin: 0;
 }
 .article-prose :where(table) {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+  table-layout: fixed;
   font-size: 0.875rem;
   line-height: 1.75;
 }
+.article-prose :where(.site-table-scroll, .tableWrapper) {
+  max-width: 100%;
+  overflow-x: auto;
+  margin-block: 0.25rem 1rem;
+}
+.article-prose :where(th, td) {
+  min-width: 60px;
+  padding: 0.5rem;
+  border: 1px solid var(--color-outline);
+  vertical-align: top;
+  text-align: left;
+}
 .article-prose :where(th) {
   color: var(--color-foreground);
+  background: var(--color-fill-0);
+  font-weight: 600;
 }
 .article-prose :where(th, td) > p {
   margin: 0;

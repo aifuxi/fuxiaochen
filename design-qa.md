@@ -93,3 +93,17 @@ final result: passed（本轮可自动验证范围；实机边界见上文）
 82 项自动测试、类型、lint、改动文件格式和生产构建通过。真实 Finder 文件拖入、中文候选、物理触屏、真实云端断网／慢传取消、辅助技术及文本缩放未验证。`broken-image` 在 `image-transfer.ts` 的定位标记为误报，已持久化该文件内窄范围忽略；测试及 SQLite 确认不渲染／保存标记，未扩大规则忽略。既有语义 blockquote 边线保持。
 
 final result: passed（本轮可自动验证范围；实机边界单独保留）
+
+## 前台正文同步复查（2026-10-18）
+
+本轮为已确认的正文样式对齐，沿用现有设计系统；不抽取新的页面设计方向，不补造文章内容或增加营销动效。参考是当前飞书风格编辑器，前台外壳与 896px 阅读列保持。完整检查项、运行证据和未验证边界见[前台正文对齐验证](docs/engineering/article-prose-alignment-verification.md)。
+
+首轮在实际 computed style 中发现代码区 `white-space` 被 Tiptap 注入规则覆盖，已提高共享选择器优先级，并重采六组视口／主题。最终逐项核对正文、H1–H6、列表、引用、高亮块、行内代码、代码表面及表格单元格，两端的字号、行高、颜色、内外距和圆角相同；NodeView 内层外距、编辑空白处理和操作条留白按各自语义保留。
+
+已查看 1440、768、390px 的深浅主题完整截图，以及复制失败、链接焦点、代码／表格键盘滚动和语言菜单。文字层级、阅读边线、段落节奏、主题对比、图片裁剪与行内关系均符合本次目标；代码及宽表格明确局部横滚。窄屏复制按钮实测 44px，失败文字可换行，页面不横向溢出。没有以编辑器只读适配、原图被裁切后的实际尺寸或隐藏的零尺寸 NodeView 标记判定为正文丢失。
+
+证据根目录为 `/Users/chen/.codex/visualizations/2026/10/18/01a14c8e-4497-7571-8520-30ebd5ecce73/article-alignment/`。`matrix-summary.json` 为六组最终逐项匹配结果；`copy-failure-narrow.png`、`link-keyboard-focus.png`、`table-keyboard-scroll.png`、`code-keyboard-scroll.png` 和 `editor-language-menu.png` 记录适用操作状态。初期未生效的尺寸和主题采集已排除，未记为运行通过。
+
+共享正文静态检测 0 FAIL／3 WARN，批准的高亮块和代码边线保留；场景文件中的既有组件阴影、等宽元信息与编辑分隔线遵循项目规范，未增加忽略项。实际截图与样式使用 `cua_repl` 采集，没有运行另行控制浏览器的 CDP 检测器。物理触屏、辅助技术、200% 文本缩放与生产部署未验证。
+
+final result: passed（本次正文对齐与已列运行范围）
