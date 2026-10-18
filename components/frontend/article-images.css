@@ -15,64 +15,142 @@
 .article-prose a.site-article-image-link:active {
   opacity: 0.85;
 }
+/* 根滚动条的预留区也呈现遮罩色，保留阅读页宽度，避免浅色主题露出白边。 */
+html:has(.site-image-preview-viewport) {
+  background-color: color-mix(in srgb, rgb(var(--semi-black)) 80%, var(--color-background));
+}
 .site-image-preview-backdrop {
   position: fixed;
   inset: 0;
+  width: 100vw;
   z-index: 60;
-  background: color-mix(in srgb, var(--semi-color-black) 85%, transparent);
+  background: rgba(var(--semi-black), 0.8);
 }
 .site-image-preview-viewport {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100dvh;
   z-index: 60;
   display: flex;
-  padding: 24px;
 }
+/* 媒体控制层固定为黑底白字；不随正文的深浅主题切成白色卡片。 */
 .site-image-preview {
   position: relative;
-  display: flex;
-  flex-direction: column;
   width: 100%;
+  height: 100%;
   min-width: 0;
   min-height: 0;
   outline: none;
-  color: var(--color-foreground);
-  font-family: var(--font-control);
-  font-size: 14px;
-  line-height: 20px;
+  color: rgb(var(--semi-white));
+  font: 400 12px/20px var(--font-control);
 }
-.site-image-preview .ds-button,
+.site-image-preview .site-image-preview-tool.ds-button,
 .site-image-preview-original {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   flex: none;
-  width: 44px;
-  height: 44px;
-  min-height: 44px;
+  width: var(--control-small);
+  height: var(--control-small);
+  min-height: var(--control-small);
   padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: rgb(var(--semi-white));
+  box-shadow: none;
+  transition: background-color var(--motion-quick) var(--motion-ease);
 }
-.site-image-preview .site-image-preview-close {
+.site-image-preview
+  .site-image-preview-tool.ds-button:hover:not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ),
+.site-image-preview-original:hover {
+  color: rgb(var(--semi-white));
+  background: rgba(var(--semi-white), 0.2);
+  box-shadow: none;
+}
+.site-image-preview
+  .site-image-preview-tool.ds-button:active:not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ),
+.site-image-preview-original:active {
+  background: rgba(var(--semi-white), 0.3);
+}
+.site-image-preview
+  .site-image-preview-tool.ds-button:where(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: rgba(var(--semi-white), 0.4);
+  background: transparent;
+  box-shadow: none;
+}
+.site-image-preview .site-image-preview-tool.ds-button:focus-visible,
+.site-image-preview-original:focus-visible {
+  outline: 2px solid rgb(var(--semi-white));
+  outline-offset: 3px;
+}
+.site-image-preview .site-image-preview-close.ds-button {
   position: absolute;
   z-index: 1;
-  top: 0;
-  right: 0;
-  background: var(--color-overlay);
-  box-shadow: var(--shadow-popup);
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 12px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(var(--semi-black), 0.6);
+  color: rgb(var(--semi-white));
+  box-shadow: none;
+}
+.site-image-preview
+  .site-image-preview-close.ds-button:hover:not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ) {
+  background: rgba(var(--semi-black), 0.8);
+  color: rgb(var(--semi-white));
+  box-shadow: none;
+}
+.site-image-preview
+  .site-image-preview-close.ds-button:active:not(:disabled):not([data-disabled]):not(
+    [aria-disabled="true"]
+  ) {
+  background: rgba(var(--semi-black), 0.9);
+}
+.site-image-preview .site-image-preview-close.ds-button:focus-visible {
+  outline: 2px solid rgb(var(--semi-white));
+  outline-offset: 3px;
 }
 .site-image-preview-canvas {
   position: relative;
-  flex: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
   min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  appearance: none;
   overflow: auto;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+  cursor: var(--cursor-default);
+}
+/* 图片画布沿用原生滚动和键盘，只隐藏遮住图片的滚动条外观。 */
+.site-image-preview-canvas::-webkit-scrollbar {
+  display: none;
 }
 .site-image-preview-center {
   display: flex;
   width: max-content;
   min-width: 100%;
   min-height: 100%;
-  padding: 16px;
 }
 .site-image-preview-canvas:focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid rgb(var(--semi-white));
   outline-offset: -2px;
 }
 .site-image-preview-extent {
@@ -105,27 +183,28 @@
   max-width: calc(100% - 32px);
   margin: 0;
   padding: 12px 16px;
-  border-radius: var(--radius-md);
-  background: var(--color-overlay);
+  border-radius: 6px;
+  background: rgba(var(--semi-black), 0.7);
   transform: translate(-50%, -50%);
   text-align: center;
 }
 .site-image-preview-footer {
-  flex: none;
-  align-self: center;
-  max-width: 100%;
-  margin-top: 12px;
-  padding: 8px;
-  border-radius: var(--radius-md);
-  background: var(--color-overlay);
-  box-shadow: var(--shadow-popup);
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  transform: translateX(-50%);
 }
 .site-image-preview-caption {
   max-height: 60px;
   overflow: auto;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
-  margin: 4px 8px 8px;
+  margin: 0 0 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(var(--semi-black), 0.7);
   text-align: center;
 }
 .site-image-preview-toolbar,
@@ -133,36 +212,88 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
 }
 .site-image-preview-toolbar {
-  flex-wrap: wrap;
-  gap: 4px 12px;
+  min-height: 48px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: rgba(var(--semi-black), 0.7);
+}
+.site-image-preview-group + .site-image-preview-group {
+  margin-left: 4px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(var(--semi-white), 0.2);
 }
 .site-image-preview-count {
-  min-width: 52px;
-  font-variant-numeric: tabular-nums;
+  min-width: 24px;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
-.site-image-preview-original {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: var(--radius-form);
-  color: var(--color-foreground);
+.site-image-preview-scale {
+  min-width: 40px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
-.site-image-preview-original:hover {
-  background: var(--color-fill-0);
+.site-image-preview-native-size {
+  font: 600 11px/16px var(--font-mono);
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  padding: 0 2px;
 }
-.site-image-preview-original:active {
-  background: var(--color-fill-1);
+.site-image-preview-footer,
+.site-image-preview .site-image-preview-close {
+  transition: opacity var(--motion-standard) var(--motion-ease);
 }
-.site-image-preview-original:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: -2px;
+.site-image-preview[data-controls-visible="false"]
+  :is(.site-image-preview-footer, .site-image-preview-close) {
+  opacity: 0;
+  pointer-events: none;
 }
-@media (max-width: 600px) {
-  .site-image-preview-viewport {
-    padding: 12px;
+.site-image-preview-tooltip-positioner.ds-tooltip-positioner {
+  z-index: 70;
+}
+.site-image-preview-tooltip.ds-tooltip {
+  --color-tooltip: rgb(var(--semi-white));
+  color: rgba(var(--semi-black), 0.85);
+  padding: 6px 12px;
+  border-radius: 6px;
+  box-shadow: none;
+  font-size: 12px;
+}
+@media (max-width: 600px), (pointer: coarse) {
+  .site-image-preview .site-image-preview-tool.ds-button,
+  .site-image-preview-original {
+    width: var(--control-touch);
+    height: var(--control-touch);
+    min-height: var(--control-touch);
+  }
+  .site-image-preview .site-image-preview-close.ds-button {
+    top: 12px;
+    right: 12px;
+  }
+  .site-image-preview-footer {
+    bottom: 12px;
+  }
+  .site-image-preview-toolbar {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 8px;
+  }
+  .site-image-preview-group {
+    gap: 4px;
+  }
+  .site-image-preview-group + .site-image-preview-group {
+    padding-left: 0;
+    margin-left: 0;
+    border-left: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-image-preview .site-image-preview-tool.ds-button,
+  .site-image-preview-original,
+  .site-image-preview-footer,
+  .site-image-preview .site-image-preview-close {
+    transition: none;
   }
 }

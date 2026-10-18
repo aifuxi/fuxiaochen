@@ -17,16 +17,20 @@ export function TooltipContent({
   className,
   side = "top",
   sideOffset = 12,
+  positionerClassName,
   ...props
 }: ComponentProps<typeof BaseTooltip.Popup> &
-  Pick<ComponentProps<typeof BaseTooltip.Positioner>, "side" | "sideOffset">) {
+  Pick<ComponentProps<typeof BaseTooltip.Positioner>, "side" | "sideOffset"> & {
+    /** 用于媒体预览等更高层级的局部浮层，不改变普通 Tooltip 的层级。 */
+    positionerClassName?: string;
+  }) {
   return (
     <BaseTooltip.Portal>
       <BaseTooltip.Positioner
         side={side}
         sideOffset={sideOffset}
         collisionPadding={12}
-        className="ds-tooltip-positioner"
+        className={cn("ds-tooltip-positioner", positionerClassName)}
       >
         <BaseTooltip.Popup className={cn("ds-tooltip", className)} {...props}>
           {children}

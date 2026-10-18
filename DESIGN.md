@@ -539,6 +539,8 @@ Button 的 primary 对应 Semi primary solid：主色填充、白字、form 圆�
 
 正文空白处理统一为 `break-spaces`，保留连续空格和文本中的换行；代码继续显式使用 `pre`，不折行。前台任务保持只读 checkbox 语义，以静态 13px 状态标记避免原生 disabled 灰化；完成态使用 primary 底与 background 勾线，未完成态使用 metadata 边线与 fill-0，不提供 hover 或切换操作。
 
+图片预览控制层采用飞书媒体变体，独立于页面深浅主题：沿用 Semi black／white 原始角色，遮罩 black 80%、工具栏 black 70%、关闭按钮 black 60%，文字与图标为 white；不复用普通 overlay 的白色表面与 modern 阴影。工具栏 6px 圆角、12px／20px 控件文字，桌面 small（24px）目标、触屏／600px 以下 touch（44px）目标，关闭按钮为显式 48px 圆形。hover／active 分别为 white 20%／30%，禁用 white 40%，键盘保留独立白色焦点环。Tooltip 为局部白底深字变体，仅该预览层使用。媒体画布隐藏滚动条外观而保留原生滚动、键盘和拖动，是通用滚动条外观规则的局部例外；预留区只在预览打开时着遮罩色，关闭自动恢复，不改变阅读列宽度。
+
 原阅读比例于 2026-10-09 实施；2026-10-18 更新为上述前后台共用飞书正文基线，本次证据见[前台正文对齐验证](docs/engineering/article-prose-alignment-verification.md)。旧参考值、项目适配与运行验证范围见[文章正文相对单位统一记录](docs/engineering/verification-history.md#文章正文相对单位统一2026-10-09)；旧正文验收保留历史事实。
 
 ## 通用交互与文案

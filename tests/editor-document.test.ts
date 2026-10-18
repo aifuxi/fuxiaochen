@@ -27,6 +27,7 @@ import {
   serializeDocument,
 } from "../lib/posts/document";
 import { croppedImageStyle, boundedImageSize } from "../lib/posts/image-layout";
+import { previewFitScale, previewZoomScale } from "../lib/posts/image-preview";
 import { markdownDocument } from "../lib/posts/markdown-document";
 import { headingEntries } from "../lib/posts/outline";
 import { tableColumns } from "../lib/posts/table-layout";
@@ -36,6 +37,23 @@ import { legacyEditorDocument, richEditorDocument } from "./fixtures/editor-docu
 const schema = getSchema(contentExtensions());
 const roundtrip = (document: JSONContent) =>
   readDocument(postContentSchema.parse(serializeDocument(document)));
+
+void test("图片适配保留完整视口留白，小图不放大，旋转后的长边仍可适配", () => {
+  assert.equal(previewFitScale(1024, 1024, 1280, 720), 648 / 1024);
+  assert.equal(previewFitScale(200, 100, 1280, 720), 1);
+  assert.equal(previewFitScale(2146, 526, 390, 844), 351 / 2146);
+  assert.equal(previewFitScale(526, 2146, 390, 844), 759.6 / 2146);
+  assert.equal(previewFitScale(0, 0, 390, 844), 1);
+});
+
+void test("预览连续缩放保持整数百分比、100% 判断及边界", () => {
+  let scale = 0.63;
+  for (let index = 0; index < 7; index++) scale = previewZoomScale(scale + 0.1);
+  assert.equal(scale, 1.33);
+  assert.equal(previewZoomScale(0.9 + 0.1), 1);
+  assert.equal(previewZoomScale(0), 0.1);
+  assert.equal(previewZoomScale(5.1), 5);
+});
 
 void test("前台目录锚点与六级同名标题一一对应，渲染不改写正文", () => {
   const content = serializeDocument({
