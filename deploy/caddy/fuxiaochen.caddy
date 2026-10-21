@@ -7,3 +7,14 @@ fuxiaochen.com {
     header_up X-Real-IP {remote_host}
   }
 }
+
+# www 仅作为主域名别名；保留路径和查询参数，308 保留请求方法。
+www.fuxiaochen.com {
+  import alidns_tls
+  redir https://fuxiaochen.com{uri} 308
+}
+
+# HTTP 直接跳到最终主域名，避免先升级 www HTTPS 再跳转的两次往返。
+http://www.fuxiaochen.com {
+  redir https://fuxiaochen.com{uri} 308
+}

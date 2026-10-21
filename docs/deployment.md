@@ -93,6 +93,10 @@ RESTORE_DATABASE_PATH=/app/data/restored.sqlite docker compose -p fuxiaochen --e
 
 沿用 deploy/caddy/fuxiaochen.caddy 和现有 gateway 的 alidns_tls 片段，通过 fuxiaochen:3000 反代；APP_ORIGIN=https://fuxiaochen.com。部署时只修改本应用站点文件，现有 Caddy、Portainer、凭据和证书卷保留。Secure Cookie 登录通过正式 HTTPS。
 
+`www.fuxiaochen.com` 由独立 HTTPS 站点自动签发和续期证书；HTTP、HTTPS 均以 308 直接跳转到 `https://fuxiaochen.com{uri}`，保留路径、查询参数和请求方法。主域名继续负责应用、canonical、robots 和 Sitemap。
+
+2026-10-22 已完成服务器配置和实际访问验证，见 [www 与 Sitemap 核验](engineering/www-sitemap-verification.md)。Caddy 的 ACME HTTPS 出站通过专用 Docker 桥与 systemd socket 转发到既有回环代理；生产 `/srv/infra/compose.edge.yaml` 已持久化 `HTTPS_PROXY`、`NO_PROXY` 和网络优先级，原 `infra_edge` 仍为默认网关。`deploy/caddy/caddy-egress-proxy.socket`、`.service` 是该服务器的配套 unit，绑定 `br-caddy` 的 `172.23.0.1:17890`，部署到其他环境前必须核对专用网络网关；不要直接套用地址或将监听改为公网地址。
+
 ## 本地验证
 
 ```sh

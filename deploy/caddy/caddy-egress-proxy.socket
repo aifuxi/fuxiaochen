@@ -1,0 +1,17 @@
+[Unit]
+Description=Caddy 专用出站代理入口
+# Docker 创建专用桥后再监听，避免默认 sockets.target 与 Docker 的启动顺序循环。
+DefaultDependencies=no
+Wants=docker.service mihomo.service
+After=docker.service mihomo.service
+Before=shutdown.target
+Conflicts=shutdown.target
+
+[Socket]
+# 仅监听专用 Docker 桥；其他网卡和公网不能访问此转发入口。
+ListenStream=172.23.0.1:17890
+BindToDevice=br-caddy
+Accept=no
+
+[Install]
+WantedBy=multi-user.target

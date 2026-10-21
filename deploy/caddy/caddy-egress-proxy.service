@@ -1,0 +1,16 @@
+[Unit]
+Description=Caddy 出站代理到本机 Mihomo
+Requires=caddy-egress-proxy.socket mihomo.service
+After=caddy-egress-proxy.socket mihomo.service
+
+[Service]
+# 复用系统组件与现有回环代理，不修改 Mihomo 的监听或订阅配置。
+# 服务器 systemd 252 的 proxyd 不发送 READY 通知，使用 simple 避免启动超时。
+Type=simple
+ExecStart=/usr/lib/systemd/systemd-socket-proxyd 127.0.0.1:7890
+DynamicUser=yes
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
