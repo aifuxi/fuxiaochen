@@ -51,7 +51,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 
 Portainer UI 导入变量时使用无外层引号的独立文件，填写后权限 0600，不提交 Git。服务器 Portainer 2.45.1 的文件导入可能保留外层引号并追加已有项；本次在 Advanced mode 整体替换后回到 Simple mode，逐项确认变量完整、无重复且与私有配置一致。更新时继续核对，避免重复变量和引号成为内容。Compose 命令行使用的 production.env 可按 dotenv 规则引用，其实际值须与 Portainer 一致。
 
-首次发布遇到 Portainer 容器经宿主机 Mihomo 路由访问 GitHub 超时，临时对该容器到 GitHub 当时解析地址设置直连路由后部署成功，随后已撤销。后续 Git 更新若再次出现 `unexpected EOF` 或连接超时，应先验证 Portainer 容器出站链路并处理，再停止旧服务；不要仅凭宿主机 curl 成功判断容器可用，不关闭 TLS 校验。
+首次发布的 Portainer GitHub 出站问题已于 2026-10-22 完成持久修复：管理容器使用外部网络 `infra_portainer_egress`，固定 Linux bridge 为 `br-portainer`；Mihomo 的生效配置和 `tun-overlay.yaml` 同时将该接口加入 `include-interface`，订阅更新继续保留，systemd 确保 Docker 先启动。已验证 Portainer 重建、Mihomo 重启、订阅生成预演和实际 Pull and redeploy，无需按容器/GitHub IP 临时添加路由。配置位置、证据及回退见 [Portainer 出站核验](engineering/portainer-egress-verification.md)。后续仍先验证 Git Source 连接，再更新 Stack；不关闭 TLS 校验。
 
 生产 app 不发布宿主机端口，只连接 Caddy 的 infra_edge，别名 fuxiaochen。保留现有 DNS 223.5.5.5/223.6.6.6 与 OSS 配置；首次生产切换的 HTTPS 页面和 OSS 图片抽样读取已通过，上传及所有对象的完整验收另行验证。
 
