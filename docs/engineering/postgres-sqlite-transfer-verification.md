@@ -1,5 +1,7 @@
 # PostgreSQL → SQLite 迁移工具验收
 
+> 2026-10-21：已按用户要求将阿里云线上旧 PostgreSQL 的只读快照导入本地 SQLite 并切换本地预览，见文末[线上 PostgreSQL 数据导入本地](#线上-postgresql-数据导入本地)。线上应用、数据库及部署配置未修改。
+
 > 2026-10-14：评论、本地访问统计、访客日志与全局搜索已移除。本文保留历史验收事实；现行范围和验证见[功能移除验收](feature-removal-verification.md)。
 
 > 2026-10-14：已按用户要求导入本机旧 PostgreSQL 开发数据并切换本地开发服务，见文末[实际导入记录](#本地旧-postgresql-数据实际导入)。此前演练范围与限制保留作为历史记录。
@@ -91,3 +93,35 @@
 管理员原密码哈希已保留，并通过 Argon2 核对与当前本地私有配置密码匹配；未使用真实账号执行登录或写入业务内容，原会话不迁移，使用时需重新登录。OSS 仅保留引用与元数据，本轮未验证远程对象可访问性；浏览器交互和媒体加载未在本轮重新验收。
 
 私有归档、源连接配置、导入库、旧库、一致性备份及报告全部位于 Git 忽略目录 `data/postgres-import-20261014/`，目录权限为 0700，数据库、配置与报告为 0600。`export.json`、`preflight.json`、`import.json`、`verify.json`、`runtime-verify.json`、`cutover.json` 和 `runtime-checks.json` 分别保存源导出、预检、导入、独立目标核对、运行路径核对、切换摘要与 HTTP／运行库检查；未提交私有数据和凭据。离线核对报告描述服务启动前的文件状态，后续业务写入后不可直接将其作为当前文件的一致性证明。
+
+## 线上 PostgreSQL 数据导入本地
+
+2026-10-21 23:46–23:48（Asia/Shanghai），按用户要求，经 `aliyun_vps` SSH 连接读取 Portainer 部署的 `fuxiaochen-app-1` 和 `fuxiaochen-postgres-1` 配置，将线上 `fuxiaochen` 数据库快照导入本地。此次仅查询线上配置、只读导出数据库及切换本地开发库；未修改线上数据、容器、Stack、端口或部署配置，未停止线上服务、推送或部署。
+
+### 导出、导入与本地切换
+
+- PostgreSQL 为 `18.6-bookworm`，没有发布数据库端口。SSH 隧道只监听本机 loopback，经容器内网连接；实际连接从应用容器配置读取，仅保存到私有文件，不输出凭据。沿用既有数据库账号，以默认只读连接和 `REPEATABLE READ READ ONLY` 统一快照执行导出；未新建或修改线上账号。导出完成后已关闭本次 SSH 隧道。
+- 现有迁移 CLI 依次完成 export、dry-run、apply、verify，源归档为 22 张表、1,788 行，现行映射保留 166 行，另由工具派生 Better Auth 管理员记录。独立导入目标为 `data/production-import-20261021-1792597590208/site.sqlite`，未覆盖或预先初始化已有库。
+- 评论、本地访问统计、访客会话、旧备份记录及相应通知按现行策略仅保留源归档。旧登录会话和临时限流不迁移，自动备份关闭；管理员原密码哈希、现行业务字段及 OSS 引用保留。排期文章按工具策略转为草稿。
+- 独立目标 verify 通过后，停止本项目 Next dev，确认 3000 端口释放、数据库没有打开句柄，也没有本项目调度进程。使用 SQLite backup API 保存 `previous-consistent-backup.sqlite`，`integrity_check=ok`、`foreign_key_check` 为零条；旧运行库及仍存在的日志另外保留为 `previous-site.sqlite` 及对应文件。
+- 使用独占复制将新库发布到 `data/site.sqlite`，核对复制前后 SHA-256 一致，并在启动前对运行路径再次执行 verify。独立目标和运行路径报告均为 `targetChecked=true`、`verified=true`，结构、迁移历史、完整性、外键和逐行全部字段核对通过。
+- 通过 WebStorm 原有 `Next.js: server-side` 配置重启，监听 3000 的进程持有本项目 `data/site.sqlite`；`.env`、`DATABASE_PATH`、`APP_ORIGIN` 和共享 IDE 配置保持原值。
+
+### 核对与验证状态
+
+| 数据         | PostgreSQL 快照 | 本地 SQLite |
+| ------------ | --------------- | ----------- |
+| 文章         | 27              | 27          |
+| 分类         | 6               | 6           |
+| 标签         | 37              | 37          |
+| 文章标签关联 | 47              | 47          |
+| 更新日志     | 3               | 3           |
+| 媒体元数据   | 40              | 40          |
+| 友链         | 1               | 1           |
+| 管理员       | 1               | 1           |
+
+- **运行通过**：上述两次离线 verify；旧库一致性备份完整性及外键检查；首页、文章列表、友链、关于、更新日志、登录、robots、sitemap 和一篇实际导入文章详情共 9 项 HTTP 200，文章详情包含导入标题；匿名访问工作台、文章管理、备份管理共 3 项 HTTP 307 到 `/login`。
+- **未验证**：未使用真实账号执行登录或业务写入，使用时需以线上原密码重新登录；未重新验收浏览器交互及 OSS 对象加载，媒体只迁移元数据与引用。
+- **范围限制**：此次是线上持续运行期间的一致性快照，导出后的线上新增或修改不会自动同步到本地；不构成生产数据库切换或部署验收。
+
+私有输出全部位于 Git 忽略目录 `data/production-import-20261021-1792597590208/`，目录权限 0700，配置、数据、备份与报告权限 0600。`export.json`、`preflight.json`、`import.json`、`verify.json`、`runtime-verify.json`、`cutover.json` 和 `runtime-checks.json` 保存各阶段证据，仅本文记录提交 Git。离线报告对应启动前文件，后续业务写入后需重新评估当前状态，不能将旧报告作为实时一致性证明。
