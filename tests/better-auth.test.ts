@@ -241,7 +241,15 @@ void test("缺少签名密钥拒绝初始化；迁移保留原密码和业务数
         ?.name,
       "原有分类",
     );
-    assert.equal(migrationManifest().migrations.length, 4);
+    // 核对实际落库的完整历史，新增业务迁移后不依赖固定的迁移数量。
+    assert.deepEqual(
+      client
+        .prepare<[], { hash: string; createdAt: number }>(
+          "SELECT hash, created_at AS createdAt FROM __drizzle_migrations ORDER BY id",
+        )
+        .all(),
+      migrationManifest().migrations,
+    );
     client.close();
     client = undefined;
     const result = await login({ username: "A", password }, undefined);
