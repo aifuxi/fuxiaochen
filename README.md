@@ -4,9 +4,9 @@
 
 ## 当前实施状态
 
-2026-10-13 已完成 SQLite + Drizzle + better-sqlite3 适配、PostgreSQL → SQLite 离线迁移工具，以及单镜像/Portainer 配置和启动前备份、迁移、校验。全部只在本地独立数据库与容器验证，线上尚未切换，未推送或部署。阶段记录见 [SQLite 适配](docs/engineering/sqlite-adaptation-verification.md)、[数据迁移](docs/engineering/postgres-sqlite-transfer-verification.md) 和 [单镜像验收](docs/engineering/sqlite-deployment-verification.md)。
+2026-10-22 已将代码合并并推送到 `master`，经 GitHub Actions 发布镜像，通过阿里云服务器既有 Portainer Git Stack 完成 SQLite 首次生产部署。按用户明确选择使用本地 `data/site.sqlite` 的一致性快照，保留旧 PostgreSQL 容器、卷、镜像及备份；数据摘要、启动备份、HTTPS 页面和媒体抽样验证通过，真实账号登录尚未实测。见[生产部署核验](docs/engineering/sqlite-production-deployment-verification.md)。基础阶段记录见 [SQLite 适配](docs/engineering/sqlite-adaptation-verification.md)、[数据迁移](docs/engineering/postgres-sqlite-transfer-verification.md) 和 [单镜像本地验收](docs/engineering/sqlite-deployment-verification.md)。
 
-2026-10-14 已移除评论、本地访问统计、访客日志与全局搜索，保留 GA4／百度配置。数据清理通过新增迁移实施，本地常用 SQLite 已完成备份与升级，线上库尚未执行升级；验证见[功能移除验收](docs/engineering/feature-removal-verification.md)。
+2026-10-14 已移除评论、本地访问统计、访客日志与全局搜索，保留 GA4／百度配置。数据清理通过新增迁移实施，当前本地库与生产 SQLite 均使用升级后的结构；旧线上 PostgreSQL 原样保留。功能验证见[功能移除验收](docs/engineering/feature-removal-verification.md)。
 
 ## 运行要求
 

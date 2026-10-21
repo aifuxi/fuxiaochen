@@ -1,6 +1,6 @@
 # 数据库维护
 
-当前应用已使用 SQLite + Drizzle + better-sqlite3。以下新机制用于本地适配；历史 PostgreSQL 机制保留作迁移对照，不表示线上已切换。
+当前应用已使用 SQLite + Drizzle + better-sqlite3。2026-10-22 已按用户指定的本地 SQLite 快照完成首次生产切换，见[生产部署核验](engineering/sqlite-production-deployment-verification.md)；历史 PostgreSQL 机制保留作迁移对照。
 
 ## SQLite 基础层与迁移
 
@@ -24,7 +24,7 @@ npm run db:verify
 
 SQLite 备份使用 better-sqlite3 在线 backup API，生成 `database.sqlite` 与 `manifest.json`；manifest 记录格式、迁移版本、大小与摘要。显式校验、备份和恢复使用 `integrity_check`，普通连接使用快速完整性校验加版本/结构/外键检查。恢复指定绝对 `RESTORE_DATABASE_PATH`，目标必须独立且不存在，拒绝已有文件、主库、源库和遗留 WAL；成功后撤销会话、关闭自动备份并标记中断任务。PostgreSQL 备份格式不兼容，旧备份必须使用匹配旧版本恢复。
 
-PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。2026-10-14 已按用户要求将本机旧 PostgreSQL 开发数据导入 SQLite，并切换本地开发服务，见[实际导入记录](engineering/postgres-sqlite-transfer-verification.md#本地旧-postgresql-数据实际导入)。SQLite 单镜像、启动前自动备份/迁移/校验和 Portainer 单服务配置已完成本地验证；线上尚未切换。当前操作见 [部署指南](deployment.md)，历史 PostgreSQL 配置只作对照。
+PostgreSQL → SQLite 离线迁移工具已实现并在独立测试库演练，操作见下节。2026-10-14 已导入本机旧 PostgreSQL 开发数据，2026-10-21 又按用户要求只读导入线上快照，见[实际导入记录](engineering/postgres-sqlite-transfer-verification.md)。2026-10-22 已按用户明确指定的当前本地库完成单镜像、独立新卷和 Portainer 生产切换，启动前自动备份/迁移/校验运行通过。当前操作见 [部署指南](deployment.md)，历史 PostgreSQL 配置只作对照。
 
 ### 启动前备份与升级
 
@@ -72,7 +72,7 @@ node --env-file=/absolute/private/runtime.env --conditions=react-server --import
 
 Prisma 依赖、源码、旧 SQLite → PostgreSQL 导入脚本及旧回归已移除；历史实现如需查阅，使用 Git 历史中的匹配版本。当前工具保留旧源库 `prisma_contract.marker` 的只读核验，以拒绝不匹配的源结构。
 
-入口为 `scripts/postgres-transfer.ts`，实现位于 `lib/database-transfer/`。工具依赖 Node.js 24、已安装的 `pg`、better-sqlite3 与 tsx，源库结构基线保存在 `lib/database-transfer/source-contract.json`，不依赖旧 ORM 或连接应用数据库。当前已完成专用 PostgreSQL 18.6 与临时 SQLite 的演练，未连接线上数据库；验收见 [迁移工具验证记录](engineering/postgres-sqlite-transfer-verification.md)。
+入口为 `scripts/postgres-transfer.ts`，实现位于 `lib/database-transfer/`。工具依赖 Node.js 24、已安装的 `pg`、better-sqlite3 与 tsx，源库结构基线保存在 `lib/database-transfer/source-contract.json`，不依赖旧 ORM 或连接应用数据库。已完成专用 PostgreSQL 18.6 与临时 SQLite 的演练，以及用户授权的本地旧库和线上只读快照实际导入；验收见 [迁移工具验证记录](engineering/postgres-sqlite-transfer-verification.md)。
 
 ### 源库与归档
 
@@ -143,7 +143,7 @@ node --env-file=/absolute/private/test.env --conditions=react-server --import ts
   --test --test-concurrency=1 tests/postgres-transfer.test.ts
 ```
 
-正式切换尚未执行。后续部署阶段先准备兼容 SQLite 的镜像、持久卷及启动流程，再冻结旧 Web、调度和全部写入，取得最终归档并重复预检、导入、核对。保留旧镜像、配置、PostgreSQL 卷和旧备份；核对前不要启动新应用。新库开始接收写入后，旧 PostgreSQL 将落后，不能直接切回而丢失增量。生产 Compose、Portainer 和调度切换需单独实施与验证。
+2026-10-22 首次生产切换已按用户明确指定的当前本地 `data/site.sqlite` 一致性快照执行，未以停机时的旧 PostgreSQL 数据替换该选择，详见[生产部署核验](engineering/sqlite-production-deployment-verification.md)。一般迁移仍应先准备兼容镜像和独立卷，再冻结全部旧写入，取得最终归档并预检、导入、核对。保留旧镜像、配置、PostgreSQL 卷和备份；核对前不要启动新应用。新库接收写入后，回退必须先保存并核对增量，不能直接切回旧 PostgreSQL。
 
 ## 定时发布退役迁移
 

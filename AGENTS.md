@@ -59,5 +59,5 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - 生产 `runtime` 为单镜像，包含 standalone Web 和追踪后的维护 CLI；Compose 仅一个 app，使用明确的外部新 SQLite 卷，不接管旧 PostgreSQL/SQLite 卷。
 - 容器 serve 每次已有库启动先备份、迁移并完整校验；默认拒绝缺失文件，仅全新站点显式 `SQLITE_INITIALIZE=1` 可初始化。迁移前在 IMMEDIATE 锁内复核备份期间没有其他提交；启动/迁移失败不启动 Web 且保留完整备份。
 - entrypoint 使用实例/维护 flock，禁止同库多 Web、滚动升级及在线结构迁移；日常 CLI 可共享维护锁。不要绕过入口或删除锁文件；SQLite 使用本机持久磁盘，不支持多机/NFS。
-- 当前已完成基础层、查询适配、迁移工具与单镜像/Portainer 本地验证；线上数据切换、生产部署和真实服务器验证尚未执行。
+- 当前已完成基础层、查询适配、迁移工具与单镜像/Portainer 本地验证；2026-10-22 已按用户指定的本地 SQLite 快照完成首次生产切换，服务器数据核对、启动备份、HTTPS 页面及媒体抽样验证通过，真实账号登录与 Passkey 流程尚未实测，见 `docs/engineering/sqlite-production-deployment-verification.md`。
 - Prisma 依赖、源码及旧 PostgreSQL 实现已移除。PostgreSQL → SQLite 工具仅使用 `pg` 和 `lib/database-transfer/source-contract.json` 中的固定源库基线；旧源库 control marker 的只读核验属于迁移兼容性，不引入旧 ORM。

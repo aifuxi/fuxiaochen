@@ -1,12 +1,12 @@
 # SQLite 单镜像与 Portainer 部署
 
-2026-10-13：当前配置为单实例 SQLite + Drizzle + better-sqlite3。一个镜像同时包含 standalone Web、启动前备份/迁移/校验和日常运维 CLI；Compose 只有 app 服务，不再需要 PostgreSQL、migrate 或 tools 容器，也无需预置数据库初始化脚本。本阶段只在本地独立库/容器验证，尚未推送、发布或切换线上。历史数据与卷不自动删除。
+当前配置为单实例 SQLite + Drizzle + better-sqlite3。一个镜像同时包含 standalone Web、启动前备份/迁移/校验和日常运维 CLI；Compose 只有 app 服务，不再需要 PostgreSQL、migrate 或 tools 容器，也无需预置数据库初始化脚本。2026-10-22 已按用户指定的本地 SQLite 快照通过既有 Portainer Git Stack 完成首次生产切换，详见[生产部署核验](engineering/sqlite-production-deployment-verification.md)。历史数据与卷保留。
 
 ## 镜像与启动流程
 
 Dockerfile 的唯一生产 target 为 runtime。构建安装完整开发依赖用于类型检查和 Next.js 构建，运行镜像只复制 standalone 及 NFT 追踪的维护依赖；不包含 Prisma、PostgreSQL 客户端、pg、drizzle-kit 或历史导入脚本。SQL/journal、tsx 及当前平台 SQLite/Argon2/Sharp 原生文件随镜像打包，并在最终 node 用户环境实际调用。
 
-GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有分支/版本/完整 SHA 标签、revision 标签和 npm/Next BuildKit 缓存。正式配置固定 sha-<完整commit> 或 digest，并选同一提交的 compose.yaml；不依赖 latest 判定版本。当前未执行远程工作流，后续获准推送后等待构建发布成功再部署。
+GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有分支/版本/完整 SHA 标签、revision 标签和 npm/Next BuildKit 缓存。正式配置固定 sha-<完整commit> 或 digest，并选同一提交的 compose.yaml；不依赖 latest 判定版本。首次生产发布的远程工作流已通过，后续更新仍须等待对应镜像构建发布成功再部署。
 
 每次 serve（包括 Docker 自动重启）执行以下流程：
 
@@ -41,7 +41,7 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 
 已有 PostgreSQL 站点首次切换按 [离线迁移工具](maintenance.md#postgresql--sqlite-离线迁移) 冻结写入、导出、导入和核对；工具在安装开发依赖的独立工作环境运行，不在生产镜像安装 pg 或 Prisma。保留原镜像、配置、PostgreSQL 卷和最终归档，将核对后的单文件 SQLite 导入产物复制到新卷 database.sqlite；复制前后 SHA 必须一致，随后用目标镜像 db:verify。不要先 db:init 或 admin:init，不用演练归档替代最终归档。仅完成这些一次性准备后才在 Portainer 切换 Stack。
 
-后续获得部署授权后：
+每次获得对应部署授权后：
 
 1. 等待发布完成，记录新/旧镜像 digest 与对应 Git reference，暂停外部调度，确认新 SQLite 卷已准备好。
 2. 已有 Stack 保持 Git 管理；选已发布提交的 reference，Compose path 为 compose.yaml。从 deploy/portainer.env.example 只补新增变量（认证升级须配置 BETTER_AUTH_SECRET），已有值直接编辑，移除不再使用的 TOOLS_IMAGE、DATABASE_URL、RESTORE_DATABASE_URL 与 POSTGRES_* 变量。Passkey 无额外密钥变量，RP ID 固定取 APP_ORIGIN 的主机名；确认其为最终 HTTPS 来源，并由反向代理正确转发 Origin 与 Cookie。
@@ -49,13 +49,15 @@ GitHub Actions 只发布 ghcr.io/aifuxi/fuxiaochen 一个镜像，保留现有�
 4. 在 Portainer 重新拉取并部署。此后每次重新部署 app 自行备份、迁移和校验，无需创建或强制重跑 migrate 服务；若重建阶段旧 Web 尚未退出，实例锁让新容器失败重试，不能认为第一条启动请求就是成功。
 5. 查看 app 日志、健康状态，核对本次启动备份 manifest 和业务数据，再通过 HTTPS 验证原密码登录、文章、第三方统计及媒体，最后恢复调度。
 
-Portainer UI 导入变量时使用无外层引号的独立文件，填写后权限 0600，不提交 Git。此前服务器 Portainer 2.45.1 的导入会保留外层引号并追加已有项；当前未重新操作该服务器，更新时按实际 UI 核对，避免重复变量和引号成为内容。Compose 命令行使用的 production.env 可按 dotenv 规则引用，其实际值须与 Portainer 一致。
+Portainer UI 导入变量时使用无外层引号的独立文件，填写后权限 0600，不提交 Git。服务器 Portainer 2.45.1 的文件导入可能保留外层引号并追加已有项；本次在 Advanced mode 整体替换后回到 Simple mode，逐项确认变量完整、无重复且与私有配置一致。更新时继续核对，避免重复变量和引号成为内容。Compose 命令行使用的 production.env 可按 dotenv 规则引用，其实际值须与 Portainer 一致。
 
-生产 app 不发布宿主机端口，只连接 Caddy 的 infra_edge，别名 fuxiaochen。保留现有 DNS 223.5.5.5/223.6.6.6 与 OSS 配置，正式切换时验证实际解析及访问；本阶段没有访问真实 OSS。
+首次发布遇到 Portainer 容器经宿主机 Mihomo 路由访问 GitHub 超时，临时对该容器到 GitHub 当时解析地址设置直连路由后部署成功，随后已撤销。后续 Git 更新若再次出现 `unexpected EOF` 或连接超时，应先验证 Portainer 容器出站链路并处理，再停止旧服务；不要仅凭宿主机 curl 成功判断容器可用，不关闭 TLS 校验。
+
+生产 app 不发布宿主机端口，只连接 Caddy 的 infra_edge，别名 fuxiaochen。保留现有 DNS 223.5.5.5/223.6.6.6 与 OSS 配置；首次生产切换的 HTTPS 页面和 OSS 图片抽样读取已通过，上传及所有对象的完整验收另行验证。
 
 ## 管理员、调度与运维
 
-同一镜像直接执行维护命令。下列示例用于已部署且版本匹配的环境，宿主配置与 Portainer 保持一致；本次未执行服务器命令。
+同一镜像直接执行维护命令。下列示例用于已部署且版本匹配的环境，宿主配置与 Portainer 保持一致；首次生产切换已实际执行同版 `db:verify`，其他写入命令按具体任务运行。
 
 ```sh
 # 仅全新站点首次交互建管理员；导入已有账号时跳过。
@@ -68,7 +70,7 @@ docker compose -p fuxiaochen --env-file /srv/fuxiaochen/production.env -f /srv/f
 
 支持管理员初始化/重置和数据库备份/恢复。媒体清理命令已移除，升级时停用旧媒体清理调度，OSS 文件由管理员自行管理。交互命令保留 TTY；自动任务使用 -T。不共享宿主机 .env 到镜像，Compose 显式注入运行环境。停止 Web 和调度后才手工 db:migrate；日常更新交给 serve 启动流程。
 
-每分钟 operations:run 的外部调度继续保留：记录备份调度时间，按后台开关执行当天自动备份。首次切换时将旧 tools 命令更新为上述 app 命令，版本随唯一 APP_IMAGE 更新；未配置调度时每日自动备份不会执行。启动前备份独立于后台每日开关，无需启用自动备份即可执行。调度配置本阶段未改动任何服务器。
+需要每日自动备份时，配置每分钟 operations:run 的外部调度：记录备份调度时间，按后台开关执行当天自动备份。旧 tools 调度须更新为上述 app 命令，版本随唯一 APP_IMAGE 更新；未配置调度时每日自动备份不会执行。首次生产切换时未发现项目调度，后台自动备份开关保持关闭，没有新增计划任务。启动前备份独立于后台每日开关，无需启用自动备份即可执行。
 
 定时发布已移除，`posts:publish-due` 与发布 API 不再可用。已有 `operations:run` 调度命令可以继续用于每日备份，无需修改执行入口。本次没有变更服务器调度。
 
@@ -108,6 +110,6 @@ TEST_SQLITE_IMAGE=fuxiaochen:sqlite-local TEST_PORTAINER_IMAGE=portainer/portain
   node --conditions=react-server --import tsx --test tests/sqlite-portainer.test.ts
 ```
 
-完整结果见 [单镜像与启动验收](engineering/sqlite-deployment-verification.md)。历史双镜像 PostgreSQL 的部署实现与记录已移除，需要时查阅 Git 历史中的匹配版本。尚未验证 GitHub 托管 runner、真实生产数据/服务器与生产 Portainer 的 Git 更新；本地 API 演练与服务通过不代表线上切换完成。
+本地完整结果见 [单镜像与启动验收](engineering/sqlite-deployment-verification.md)，GitHub 托管 runner、阿里云 linux/amd64、生产数据与 Portainer Git 更新的首次实际结果见[生产部署核验](engineering/sqlite-production-deployment-verification.md)。历史双镜像 PostgreSQL 的部署实现与记录已移除，需要时查阅 Git 历史中的匹配版本。各记录的验证范围分别适用，不将页面健康视为登录、上传或 Passkey 全流程通过。
 
 依据：[Docker Compose 服务](https://docs.docker.com/reference/compose-file/services/)、[外部数据卷](https://docs.docker.com/reference/compose-file/volumes/)、[Portainer Stack 创建](https://docs.portainer.io/user/docker/stacks/add)、[Git Stack 更新](https://docs.portainer.io/user/docker/stacks/edit)、[Portainer 相对路径支持](https://docs.portainer.io/advanced/relative-paths)。Next.js 16.3.7 行为已按已安装 output/deploying 文档核对。
